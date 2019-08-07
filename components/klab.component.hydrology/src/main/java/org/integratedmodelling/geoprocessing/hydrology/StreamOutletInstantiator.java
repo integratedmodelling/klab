@@ -57,11 +57,6 @@ public class StreamOutletInstantiator implements IInstantiator, IExpression {
 		}
 	}
 
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.create("#s0");
-//	}
-
 	@Override
 	public Type getType() {
 		return Type.OBJECT;

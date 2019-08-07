@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Utils;
 
-public class FlowAccumulationResolver implements IResolver<IState>, IExpression {
+public class ContributingAreaResolver implements IResolver<IState>, IExpression {
 
 	boolean cells = false;
 
@@ -51,7 +51,7 @@ public class FlowAccumulationResolver implements IResolver<IState>, IExpression 
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;
-		context.getMonitor().info("computing flow directions...");
+		context.getMonitor().info("computing contributing area...");
 		try {
 			algorithm.process();
 		} catch (Exception e) {
@@ -82,7 +82,7 @@ public class FlowAccumulationResolver implements IResolver<IState>, IExpression 
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		FlowAccumulationResolver ret = new FlowAccumulationResolver();
+		ContributingAreaResolver ret = new ContributingAreaResolver();
 		ret.cells = parameters.get("cells", Boolean.FALSE);
 		return ret;
 	}

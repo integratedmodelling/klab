@@ -33,6 +33,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   required, including to the Description activity API.
 - Syntactic support in k.IM for quantities with units, such as 10.year, to be used in 
   function and annotation parameters.
+- Added a highly configurable flow accumulation resolver that can walk the flow directions
+  from the outlet and perform all sorts of neighborhood calculations to compute an arbitrary
+  quality along the drainage directions.
 ### Changed
 - Revised k.IM syntax for restrictions and allowed arbitrary properties to be defined
   through it, which is discouraged but should remain possible. Implementation still

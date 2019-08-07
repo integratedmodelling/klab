@@ -57,11 +57,6 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 
 	};
 
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.create("#s2");
-//	}
-
 	@Override
 	public Type getType() {
 		return Type.OBJECT;

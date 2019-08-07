@@ -1,0 +1,330 @@
+package org.integratedmodelling.geoprocessing.hydrology;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.integratedmodelling.geoprocessing.GeoprocessingComponent;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
+import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.utils.Pair;
+
+/**
+ * Proxy for a cell with a knowledge of the flow directions and the context and
+ * added methods, to be used in Groovy expressions to wrap the regular 'space'
+ * variable. Used in the generic flow accumulation contextualizer.
+ * 
+ * @author ferdinando.villa
+ *
+ */
+public class ContributingCell {
+
+	private Cell delegate;
+	// non-null if this is relative to the focal cell
+	private Orientation orientation = null;
+	// original d8 code
+	int d8 = 0;
+
+	/*
+	 * if we have this, we can compute upstream and downstream cells.
+	 */
+	private IState flowdirections = null;
+	private Map<String, IState> states = new HashMap<>();
+
+	public ContributingCell(Cell cell) {
+		this.delegate = cell;
+	}
+
+	public ContributingCell(Cell cell, int flowDirection, IState flowdirections, Map<String, IState> states) {
+		this.delegate = cell;
+		this.d8 = flowDirection;
+		this.flowdirections = flowdirections;
+		this.states.putAll(states);
+	}
+
+	public ContributingCell(Cell cell, ContributingCell focal, Orientation orientation) {
+		this.delegate = cell;
+		this.orientation = orientation;
+		this.flowdirections = focal.flowdirections;
+		this.d8 = this.flowdirections.get(cell, Double.class).intValue();
+		this.states.putAll(focal.states);
+	}
+
+	public List<ContributingCell> getUpstream() {
+		List<ContributingCell> ret = new ArrayList<>();
+		for (Pair<Cell, Orientation> upstream : GeoprocessingComponent.getUpstreamCellsWithOrientation(delegate,
+				flowdirections, null)) {
+			ret.add(new ContributingCell(upstream.getFirst(), this, upstream.getSecond()));
+		}
+		return ret;
+	}
+
+	public ContributingCell getDownstream() {
+		Pair<Cell, Orientation> downstream = GeoprocessingComponent.getDownstreamCellWithOrientation(delegate,
+				flowdirections);
+		if (downstream != null) {
+			return new ContributingCell(downstream.getFirst(), this, downstream.getSecond());
+		}
+		return null;
+	}
+
+	public List<ContributingCell> getNeighborhood() {
+		List<ContributingCell> ret = new ArrayList<>();
+		for (Orientation orientation : Orientation.values()) {
+			Cell neighbor = delegate.getNeighbor(orientation);
+			if (neighbor != null) {
+				ret.add(new ContributingCell(neighbor, this, orientation));
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * This returns all the values we know at the focal cell, accessible
+	 * to Groovy directly from dot notation.
+	 * 
+	 * @param state
+	 * @return
+	 */
+	public Object getProperty(String state) {
+		if (states.containsKey(state)) {
+			return states.get(state).get(this.delegate);
+		}
+		return null;
+	}
+
+	/**
+	 * Will return non-null only when this is the result of a neighborhood operation
+	 * on another ContributingCell and we're not at the wrong edge.
+	 * 
+	 * @return
+	 */
+	public ContributingCell opposite() {
+		if (orientation != null) {
+			Cell opposite = delegate.getNeighbor(orientation.getOpposite());
+			if (opposite != null) {
+				return new ContributingCell(opposite, this, orientation.getOpposite());
+			}
+		}
+		return null;
+	}
+
+	public boolean contains(IExtent o) throws KlabException {
+		return delegate.contains(o);
+	}
+
+	public long size() {
+		return delegate.size();
+	}
+
+	public IProjection getProjection() {
+		return delegate.getProjection();
+	}
+
+	public <T extends ILocator> T as(Class<T> cls) {
+		return delegate.as(cls);
+	}
+
+	public ISpace at(ILocator locator) {
+		return delegate.at(locator);
+	}
+
+	public Cell E() {
+		return delegate.E();
+	}
+
+	public double getStandardizedArea() {
+		return delegate.getStandardizedArea();
+	}
+
+	/**
+	 * Return the D8 code using the standard scheme (1-8 counterclockwise from
+	 * east).
+	 * 
+	 * @return
+	 */
+	public int getD8() {
+		return d8;
+	}
+
+	/**
+	 * Return the D8 code in powers of 2 (1 to 128 in powers of 2 clockwise from
+	 * east) like silly ArcGIS does.
+	 * 
+	 * @return
+	 */
+	public int getD8pow() {
+		return GeoprocessingComponent.getD8Pow(d8);
+	}
+
+	/**
+	 * Diagonal in meters.
+	 * 
+	 * @return
+	 */
+	public double getDiagonal() {
+		return Math.sqrt((getWidth() * getWidth()) + ((getHeight() * getHeight())));
+	}
+
+	/**
+	 * Return the actual flow direction from this cell.
+	 * 
+	 * @return
+	 */
+	public Orientation getFlowdirection() {
+		return GeoprocessingComponent.getOrientation(d8);
+	}
+
+	public Cell getNeighbor(Orientation orientation) {
+		return delegate.getNeighbor(orientation);
+	}
+
+	public IExtent collapse() {
+		return delegate.collapse();
+	}
+
+	public IEnvelope getEnvelope() {
+		return delegate.getEnvelope();
+	}
+
+	public boolean overlaps(IExtent o) throws KlabException {
+		return delegate.overlaps(o);
+	}
+
+	public boolean intersects(IExtent o) throws KlabException {
+		return delegate.intersects(o);
+	}
+
+	public IExtent merge(IExtent extent) {
+		return delegate.merge(extent);
+	}
+
+	public SpatialExtent getExtentDescriptor() {
+		return delegate.getExtentDescriptor();
+	}
+
+	public double getStandardizedVolume() {
+		return delegate.getStandardizedVolume();
+	}
+
+	public ContributingCell getN() {
+		return new ContributingCell(delegate.N(), this, Orientation.N);
+	}
+
+	public ContributingCell S() {
+		return new ContributingCell(delegate.S(), this, Orientation.S);
+	}
+
+	public ContributingCell W() {
+		return new ContributingCell(delegate.W(), this, Orientation.W);
+	}
+
+	public ContributingCell NE() {
+		return new ContributingCell(delegate.NE(), this, Orientation.NE);
+	}
+
+	public ContributingCell NW() {
+		return new ContributingCell(delegate.NW(), this, Orientation.NW);
+	}
+
+	public ContributingCell SE() {
+		return new ContributingCell(delegate.SE(), this, Orientation.SE);
+	}
+
+	public ContributingCell SW() {
+		return new ContributingCell(delegate.SW(), this, Orientation.SW);
+	}
+
+	public double getWidth() {
+		return delegate.getStandardizedWidth();
+	}
+
+	public long getX() {
+		return delegate.getX();
+	}
+
+	public long getY() {
+		return delegate.getY();
+	}
+
+	public double getHeight() {
+		return delegate.getStandardizedHeight();
+	}
+
+	public double getStandardizedDepth() {
+		return delegate.getStandardizedDepth();
+	}
+
+	public double getStandardizedLength() {
+		return delegate.getStandardizedLength();
+	}
+
+	public double getEast() {
+		return delegate.getEast();
+	}
+
+	public double getWest() {
+		return delegate.getWest();
+	}
+
+	public int getScaleRank() {
+		return delegate.getScaleRank();
+	}
+
+	public double getSouth() {
+		return delegate.getSouth();
+	}
+
+	public double getNorth() {
+		return delegate.getNorth();
+	}
+
+	public Long getOffset() {
+		return delegate.getOffsetInGrid();
+	}
+
+	public boolean isAdjacent(ContributingCell cell) {
+		return delegate.isAdjacent(cell.delegate);
+	}
+
+	public double[] getCenter() {
+		return delegate.getCenter();
+	}
+
+	public double getDistance(ISpace extent) {
+		return delegate.getStandardizedDistance(extent);
+	}
+
+	public IShape getShape() {
+		return delegate.getShape();
+	}
+
+	public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+		return delegate.merge(other, how);
+	}
+
+	public long getOffset(ILocator index) {
+		return delegate.getOffset(index);
+	}
+
+	public IState getFlowdirections() {
+		return flowdirections;
+	}
+
+	public void setFlowdirections(IState flowdirections) {
+		this.flowdirections = flowdirections;
+	}
+
+}

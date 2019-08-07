@@ -1,14 +1,12 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -19,12 +17,7 @@ public class StreamNetworkResolver implements IResolver<IState>, IExpression {
 	private static final double DEFAULT_TCA_THRESHOLD = 0.001;
 
 	double threshold = Double.NaN;
-
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.create("S2");
-//	}
-
+		
 	@Override
 	public Type getType() {
 		return Type.BOOLEAN;

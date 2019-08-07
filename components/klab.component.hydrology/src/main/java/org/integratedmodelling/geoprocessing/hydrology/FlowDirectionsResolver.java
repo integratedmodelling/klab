@@ -42,7 +42,7 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;
-		context.getMonitor().info("computing flow accumulation...");
+		context.getMonitor().info("computing flow directions...");
 		try {
 			algorithm.process();
 		} catch (Exception e) {

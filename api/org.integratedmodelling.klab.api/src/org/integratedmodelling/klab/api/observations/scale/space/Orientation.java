@@ -16,25 +16,58 @@
 package org.integratedmodelling.klab.api.observations.scale.space;
 
 /**
- * Geographic orientations for a Moore neighborhood 2D model, constants
- * chosen to represent the actual geographic heading.
+ * Geographic orientations for a Moore neighborhood 2D model, constants chosen
+ * to represent the actual geographic heading.
+ *
+ * TODO add iterables for clockwise and counterclockwise sequences from the current
+ * orientation.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public enum Orientation {
 
-    N(0),
-    NE(45),
-    E(90),
-    SE(135),
-    S(180),
-    SW(225),
-    W(270),
-    NW(315);
+	N(0), NE(45), E(90), SE(135), S(180), SW(225), W(270), NW(315);
 
-    int heading;
-    
-    Orientation(int h) { heading = h; }
-    
+	private int heading;
+
+	Orientation(int h) {
+		heading = h;
+	}
+
+	/**
+	 * Get the geographic heading corresponding to this orientation.
+	 * 
+	 * @return
+	 */
+	public int getHeading() {
+		return heading;
+	}
+	
+	/**
+	 * Get the opposite orientation in a Moore neighborhood.
+	 * 
+	 * @return
+	 */
+	public Orientation getOpposite() {
+		switch(this) {
+		case E:
+			return W;
+		case N:
+			return S;
+		case NE:
+			return SW;
+		case NW:
+			return SE;
+		case S:
+			return N;
+		case SE:
+			return NW;
+		case SW:
+			return NE;
+		case W:
+			return E;
+		}
+		return null;
+	}
 }

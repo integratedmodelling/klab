@@ -17,16 +17,15 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 
 /**
- * Find a partitionning of a graph trying to maximize the modularity. The
+ * Find a partitioning of a graph trying to maximize the modularity. The
  * algorithm is a simple greedy algorithm.
  * 
  * @author Gilles Vuidel
  */
 public class Modularity<N, E> {
-	
+
 	private final Graph<N, E> graph;
 	private final EdgeWeighter<E> weighter;
-	private int nSave = 0;
 
 	private TreeMap<Integer, Double> modularities;
 	private TreeMapList<Double, Set<Cluster>> partitions;
@@ -39,10 +38,8 @@ public class Modularity<N, E> {
 	/**
 	 * Creates a new Modularity class for the graph
 	 * 
-	 * @param graph
-	 *            the graph
-	 * @param weighter
-	 *            the edge weighter
+	 * @param graph    the graph
+	 * @param weighter the edge weighter
 	 */
 	public Modularity(Graph<N, E> graph, EdgeWeighter<E> weighter) {
 		this.graph = graph;
@@ -77,8 +74,7 @@ public class Modularity<N, E> {
 	/**
 	 * Calculates the modularity for this partitionning
 	 * 
-	 * @param partition
-	 *            the partition of the graph
+	 * @param partition the partition of the graph
 	 * @return the modularity index between -1/2 : 1
 	 */
 	public double getModularity(Set<Cluster> partition) {
@@ -136,11 +132,9 @@ public class Modularity<N, E> {
 	/**
 	 * {@link #partitions() } must be called before
 	 * 
-	 * @param nbCluster
-	 *            the size of the partition
+	 * @param nbCluster the size of the partition
 	 * @return the partition
-	 * @throws IllegalArgumentException
-	 *             if no partition with nbCluster exists
+	 * @throws IllegalArgumentException if no partition with nbCluster exists
 	 */
 	public Set<Cluster> getPartition(int nbCluster) {
 		for (List<Set<Cluster>> parts : partitions.values()) {
@@ -158,8 +152,7 @@ public class Modularity<N, E> {
 	 * exchanging nodes between clusters. {@link #partitions() } must be called
 	 * before The returned partition may have a lesser size.
 	 * 
-	 * @param nbCluster
-	 *            the size of the partition
+	 * @param nbCluster the size of the partition
 	 * @return the optimized partition
 	 */
 	public Set<Cluster> getOptimPartition(int nbCluster) {
@@ -176,8 +169,7 @@ public class Modularity<N, E> {
 	 * Try to optimize the modularity of the partition by exchanging nodes between
 	 * clusters.
 	 * 
-	 * @param partition
-	 *            the partition to optimize
+	 * @param partition the partition to optimize
 	 */
 	public void optimPartition(Set<Cluster> partition) {
 		boolean increase = true;
@@ -554,16 +546,13 @@ public class Modularity<N, E> {
 			return hash;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean equals(Object obj) {
-			if (obj == null) {
-				return false;
+			if (obj instanceof Modularity.Cluster) {
+				return this.id == ((Cluster) obj).id;
 			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-			final Cluster other = (Cluster) obj;
-			return this.id == other.id;
+			return false;
 		}
 
 		private void addNeighbour(Cluster c, double delta) {

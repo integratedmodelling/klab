@@ -38,11 +38,6 @@ public class StreamInstantiator implements IInstantiator, IExpression {
 	Map<Cell, List<Coordinate>> segments = new HashMap<>();
 	List<com.vividsolutions.jts.geom.Geometry> lines = new ArrayList<>();
 
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.create("S2");
-//	}
-
 	@Override
 	public Type getType() {
 		return Type.BOOLEAN;

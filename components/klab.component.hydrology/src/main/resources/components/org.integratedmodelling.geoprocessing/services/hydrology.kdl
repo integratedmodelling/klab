@@ -12,13 +12,18 @@ export number fillsinks
 	import number elevation
 		"The DEM to correct"
 
+	geometry S2
+
 	class org.integratedmodelling.geoprocessing.hydrology.HydrologicallyCorrectedElevationResolver
 }
 
 export number flowdirections
+	
 	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. For now
-	 only D8 is supported."
-	 label 'Compute flow direction'
+	 only D8 is supported. Returns values from 1 to 8, i.e. the exponents to be applied to 2 in the standard 
+	 D8 scheme."
+	 
+	 label 'Flow directions'
 {
 	import number hydrologically_corrected_elevation
 		"A hydrologically corrected DEM with no areas where water can pool"
@@ -27,13 +32,15 @@ export number flowdirections
 		"If true, angles are computed as output instead of integer flow direction codes per D8 conventions."
 		default false
 
+	geometry S2
+
 	class org.integratedmodelling.geoprocessing.hydrology.FlowDirectionsResolver
 }
 
 export number flowaccumulation
-	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. For now
-	 only D8 is supported."
-	 label 'Accumulate upstream flow'
+	"Import a hydrologically corrected DEM and produce the total upstream area of each
+	 raster cell."
+	 label 'Contributing area'
 {
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"
@@ -41,8 +48,40 @@ export number flowaccumulation
 	optional boolean cells
 		"If true, number of contributing cells is output instead of actual contributing area."
 		default false
+		
+	geometry S2
 
-	class org.integratedmodelling.geoprocessing.hydrology.FlowAccumulationResolver
+	class org.integratedmodelling.geoprocessing.hydrology.ContributingAreaResolver
+}
+
+export value accumulateflow
+
+	"Perform arbitrary calculation on each cell's neighborhood using the order established by
+	 the flow directions, with access to values upstream and in the neighborhood of each 
+	 raster cell through a 'cell' variable that points to an object with plenty of
+	 inspection capabilities."
+	 
+	 label 'Accumulate upstream flow'
+{
+	import number flow_directions_d8
+		"The D8 numeric code for flow direction"
+
+	value expression evaluate
+		"The expression that determines the value in each cell. The 'cell' variable contains
+		 a proxy to the cell that can produce the neighborhood, the upstream portion of the 
+		 neighborhood, arbitrary neighbors in each direction, and (when the cell is from the
+		 neighborhood) the opposite relative to the focal cell. Each cell knows the values of
+		 all the dependencies in its location. All these values are extracted using space.xxx
+		 where xxx is: neighborhood, upstream, downstream (producing a list of cells); n, s, e, 
+		 w, ne, se, nw, se (producing one cell or null if at the edges), and the name of each
+		 quality dependency (producing the value of that dependency at the cell). The expression
+		 'xxx.self' where xxx is one of the cells returned by 'cell.upstream' produces the value 
+		 of the target state at each upstream location. That is the only context where using 
+		 'self' makes any sense."
+
+	geometry S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.AccumulateFlowResolver
 }
 
 export boolean streamnetwork
@@ -57,6 +96,8 @@ export boolean streamnetwork
 		"The percent of the total basin drainage that makes a cell part of a stream. A default is chosen
 		 adaptively; defaults are unlikely to work in delta areas or any other difficult context."
 		default 0.0
+
+	geometry S2
 
 	class org.integratedmodelling.geoprocessing.hydrology.StreamNetworkResolver
 }
@@ -79,6 +120,8 @@ export object tracestreams
 		"The percent of the total basin drainage that makes a cell part of a stream. A default is chosen
 		 adaptively; defaults are unlikely to work in delta areas or any other difficult context."
 		default 0.0
+
+	geometry #s1
 
 	class org.integratedmodelling.geoprocessing.hydrology.StreamInstantiator
 }
@@ -104,6 +147,8 @@ export object extractoutlets
 		 area down to the drainage threshold.  Default is -1, i.e. all outlets down to the
 		 minimum drainage threshold will be extracted."
 		default -1
+		
+	geometry #s0
 
 	class org.integratedmodelling.geoprocessing.hydrology.StreamOutletInstantiator
 }
@@ -126,6 +171,8 @@ export object delineatewatersheds
 		 crosses the context's outline. Default is false. A warning is emitted in any case."
 		default false
 		
+	geometry #s0
+	
 	class org.integratedmodelling.geoprocessing.hydrology.WatershedInstantiator
 }
 

@@ -253,8 +253,9 @@ public class ObservationReference implements IObservationReference {
 	private String parentId;
 
 	/**
-	 * ID of physical parent artifact. Either the logical parentId or a group ID if
-	 * the observation is part of a group.
+	 * ID of physical parent artifact. Either the logical parentId, a group ID if
+	 * the observation is part of a group, or the ID of a view if the observation
+	 * was returned as part of a getChildren() request on a view.
 	 */
 	private String parentArtifactId;
 
