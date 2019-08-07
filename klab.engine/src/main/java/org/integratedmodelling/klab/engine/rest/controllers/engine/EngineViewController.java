@@ -33,7 +33,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
@@ -71,8 +71,10 @@ public class EngineViewController {
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public IObservationReference describeObservation(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) Integer childLevel,
-			/*@RequestParam(required = false) boolean collapseSiblings,*/ @RequestParam(required = false) String locator) {
+			@RequestParam(required = false) Integer childLevel, /*
+																 * @RequestParam(required = false) boolean
+																 * collapseSiblings,
+																 */ @RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
@@ -86,7 +88,7 @@ public class EngineViewController {
 				: obs.getContext();
 
 		return Observations.INSTANCE.createArtifactDescriptor(obs, parent, loc, childLevel == null ? -1 : childLevel,
-				/*collapseSiblings,*/ false);
+				/* collapseSiblings, */ false);
 	}
 
 	/**
@@ -148,7 +150,8 @@ public class EngineViewController {
 				break;
 			}
 
-			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs.getContext(), loc, 0, /*false,*/ false));
+			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs.getContext(), loc, 0, false,
+					obs instanceof ObservationGroupView ? obs.getId() : null));
 			n++;
 		}
 

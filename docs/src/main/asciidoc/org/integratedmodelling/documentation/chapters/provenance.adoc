@@ -1,0 +1,17 @@
+= Provenance in k.LAB
+
+Everything starts with provenance. In fact the provenance ontology (PROV-O) is the only external ontology imported by the core observation ontology included in k.LAB. Why it's important to the user.
+
+Brief recap and references.
+
+Artifacts = observations. They are the ultimate reason for using k.LAB.
+
+Tasks as activities, all of which are observation activities.
+
+Activities and agents.
+
+The activity "incarnates" the observation and attributes its predicates - a markedly non-realist stance. There is no artifact without the observation activity. There is a "culprit" for everything and it's either a model or the session owner. The code itself is written like that.
+
+Exporting provenance information
+
+Using provenance information during contextualization.

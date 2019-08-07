@@ -5,13 +5,13 @@
 
 What models are, how they are chosen and what they cause once used.
 
-Models make observations, i.e. _contextualize_ a concept in a context, producing the observational artifact throug a two-step process: first, the concept is _resolved_ to the best model or models for the context - which, through its dependencies, may cause more resolutions to take place until the system has a strategy to make the observation. Second, the resolved strategy is compiled into a _dataflow_, i.e. a computation that can be run by a runtime system that is unaware of any semantics. Third, the dataflow is run to compute all the observations in the context.
+Models make observations, i.e. _contextualize_ a concept in a context, producing the intended observational artifact through a two-step process: first, the concept is _resolved_ to the best model or models for the context - which, through its dependencies, may cause more resolutions to take place until the system has a strategy to make the observation. Second, the resolved strategy is compiled into a _dataflow_, i.e. a computation that can be run by a runtime system that is unaware of any semantics. Third, the dataflow is run to compute all the observations in the context.
 
 Because all contextualizations are context-dependent, the choice of the overall context for the observation is an arbitrary choice of the user. So the first observation is not computed, but merely _acknowledged_: for example, we may _choose_ to use Italy as a context, and maybe pre-define a resolution and extent for the time and space that we want reflected in the observations. After that initial choice, users can just say what they want and how they want it observed, by querying the k.LAB engine. 
 
 Models make _observations_, and according to the underlying https://github.com/integratedmodelling/odo.html[ontology], the activities that create observational artifacts are of two fundamental types: _resolution_ and _instantiation_.  These, in turn, are subdivided into a few subcategories. The <<section-kim-observable,observable>> declared for the model determines which type of observation activity is encoded in each model.
 
-
+It is very typical for all k.LAB models to be very short and very simple. Every model is (with few exceptions) written for one concept only, with all its inputs stated merely as semantics, and can be computed and tested as an independent, self-contained module. When the model logics require that certain dependencies are satisfied in a specific way, you use <<modeling-scoping,scoping rules>> to ensure that the specific dependencies you need are picked. It is also possible to use <<TBD,non-semantic models>> to bring in specific computations that have no worthwhile semantic equivalent. In most situations, models can also be written independent of the spatial and temporal context in which they will be run, and often even in ways that are compatible with different interpretations of space and time. Input, output, visualization and validation are all concerns that are left to the k.LAB runtime. In general, writing models this way enforces discipline and maximizes clarity, readability and parsimony: you only write the core computation that leads you to one specific observation, leaving every other aspect to the resolver and the k.LAB runtime.
 
 === The resolution process
 
@@ -27,7 +27,10 @@ Models make _observations_, and according to the underlying https://github.com/i
 
 === Learning models
 
+[#modeling-scoping]
 === Scope
+
+If any k.LAB model could use any other k.LAB model on the network to satisfy its dependencies, and contribute its observable to any model made by any user without discrimination, it would be very difficult to ensure proper results. 
 
 === What does the work: contextualizers
 

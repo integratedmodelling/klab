@@ -70,7 +70,7 @@ public class ObservationReference implements IObservationReference {
 	}
 
 	public enum ObservationType {
-		PROCESS, STATE, SUBJECT, CONFIGURATION, EVENT, RELATIONSHIP, GROUP
+		PROCESS, STATE, SUBJECT, CONFIGURATION, EVENT, RELATIONSHIP, GROUP, VIEW
 	}
 
 	/**

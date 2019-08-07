@@ -77,7 +77,6 @@ import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
-import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -218,7 +217,12 @@ public enum Observations implements IObservationService {
 //	}
 
 	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
-			ILocator locator, int childLevel, /* boolean collapseSiblings, */ boolean isMain) {
+			ILocator locator, int childLevel, boolean isMain) {
+		return createArtifactDescriptor(observation, parent, locator, childLevel, isMain, null);
+	}
+
+	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
+			ILocator locator, int childLevel, boolean isMain, String viewId) {
 
 		ObservationReference ret = new ObservationReference();
 
@@ -239,8 +243,10 @@ public enum Observations implements IObservationService {
 			ret.setObservationType(ObservationReference.ObservationType.CONFIGURATION);
 		} else if (observation instanceof IRelationship) {
 			ret.setObservationType(ObservationReference.ObservationType.RELATIONSHIP);
-		} else if (observation instanceof ObservationGroup || observation instanceof ObservationGroupView) {
+		} else if (observation instanceof ObservationGroup) {
 			ret.setObservationType(ObservationReference.ObservationType.GROUP);
+		} else if (observation instanceof ObservationGroupView) {
+			ret.setObservationType(ObservationReference.ObservationType.VIEW);
 		}
 
 		ret.setMain(isMain);
@@ -270,16 +276,16 @@ public enum Observations implements IObservationService {
 		if (observation instanceof ObservationGroup) {
 			ret.setLabel(StringUtils.capitalize(English.plural(observation.getObservable().getType().getName())));
 		} else {
-			
+
 			ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
 					: observation.getObservable().getName());
 			ret.setLabel(StringUtils.capitalize(ret.getLabel().replaceAll("_", " ")));
-			
+
 			if (observation instanceof ObservationGroupView) {
 				// pluralize the last word, then tell me I don't care for details.
 				String[] sss = ret.getLabel().split("\\s+");
 				if (sss.length > 0) {
-					sss[sss.length-1] = English.plural(sss[sss.length-1]);
+					sss[sss.length - 1] = English.plural(sss[sss.length - 1]);
 					ret.setLabel(StringUtils.join(sss, ' '));
 				}
 			}
@@ -446,16 +452,22 @@ public enum Observations implements IObservationService {
 			 * physical parent
 			 */
 			if (observation instanceof DirectObservation) {
-				ret.setParentArtifactId(((DirectObservation) observation).getGroup() == null ? ret.getParentId()
-						: ((DirectObservation) observation).getGroup().getId());
+				if (viewId != null) {
+					ret.setParentArtifactId(viewId);
+				} else {
+					ret.setParentArtifactId(((DirectObservation) observation).getGroup() == null ? ret.getParentId()
+							: ((DirectObservation) observation).getGroup().getId());
+				}
 			}
 		}
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
 
 			for (IArtifact child : observation.getChildArtifacts()) {
 				if (child instanceof IObservation) {
-					ret.getChildren().add(createArtifactDescriptor((IObservation) child, observation, locator,
-							childLevel > 0 ? (childLevel - 1) : childLevel, /* collapseSiblings, */ false));
+					ret.getChildren()
+							.add(createArtifactDescriptor((IObservation) child, observation, locator,
+									childLevel > 0 ? (childLevel - 1) : childLevel, false,
+									observation instanceof ObservationGroupView ? observation.getId() : null));
 				}
 			}
 		}
