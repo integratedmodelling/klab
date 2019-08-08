@@ -997,7 +997,7 @@ public class Scale implements IScale {
 	@Override
 	public IScale at(ILocator locator) {
 		if (locator.equals(ITime.INITIALIZATION)) {
-			if (getTime() == null) {
+			if (getTime() == null || getTime().isGeneric()) {
 				// I want you just the way you are
 				return this;
 			} else {

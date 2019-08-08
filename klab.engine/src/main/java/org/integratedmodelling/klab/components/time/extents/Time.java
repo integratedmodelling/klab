@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
