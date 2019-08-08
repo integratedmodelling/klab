@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -434,15 +435,12 @@ public class WCSService {
 	}
 
 	public URL buildRetrieveUrl(WCSLayer layer, Version version, IGeometry geometry) {
-
-		/*
-		 * TODO handle temporal extents
-		 */
+		
 		Dimension space = geometry.getDimension(IGeometry.Dimension.Type.SPACE);
 		URL url = null;
 
 		if (space.shape().length != 2 || !space.isRegular()) {
-			throw new IllegalArgumentException("cannot retrieve a grid dataset from WCS in a non-grid context");
+			throw new IllegalArgumentException("cannot retrieve  a grid dataset from WCS in a non-grid context");
 		}
 
 		String rcrs = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);

@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
-import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
@@ -23,6 +23,22 @@ import org.integratedmodelling.klab.scale.Scale.Mediator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Range;
+
+/**
+ * Examples:
+ * 
+ * create(ITime.GENERIC, 1, ITime.Resolution.Type.YEAR) -> generic 1-year
+ * create(ITime.GENERIC, 10, ITime.Resolution.Type.YEAR) -> generic 10-year
+ * create(1975, ITime.Resolution.Type.YEAR) -> specific 1-year period 1975
+ * create(1980, 2000) -> specific, 20 years period create(1980, 2000, 1,
+ * ITime.Resolution.Type.DAY) -> 1-day Grid create("ISOdate", "ISOdate",
+ * 102030L) -> date to date grid with ms resolution create(ITime.REALTIME,
+ * ITime.Resolution.Type.HOUR) -> realtime year-res, start now, end never
+ * 
+ * @param objects
+ * @return
+ */
 public class Time extends Extent implements ITime {
 
 	ITime.Type extentType;
@@ -52,54 +68,34 @@ public class Time extends Extent implements ITime {
 		public double getMultiplier() {
 			return multiplier;
 		}
+
+		public Resolution copy() {
+			return new ResolutionImpl(type, multiplier);
+		}
+
+		@Override
+		public double getMultiplier(ITimeInstant start, ITimeInstant end) {
+			double span = end.getMillis() - start.getMillis();
+			return span / type.getMilliseconds();
+		}
+
+		public void setMultiplier(double multiplier) {
+			this.multiplier = multiplier;
+		}
 	}
 
 	private Time() {
 	}
 
-	/**
-	 * Examples:
-	 * 
-	 *     create(ITime.GENERIC, 1, ITime.Resolution.Type.YEAR) -> generic 1-year
-	 *     create(ITime.GENERIC, 10, ITime.Resolution.Type.YEAR) -> generic 10-year
-	 *     create(1975, ITime.Resolution.Type.YEAR) -> specific 1-year period 1975
-	 *     create(1980, 2000) -> specific, 20 years period
-	 *     create(1980, 2000, 1, ITime.Resolution.Type.DAY)  -> 1-day Grid 
-	 *     create("ISOdate", "ISOdate", 102030L) -> date to date grid with ms resolution
-	 *     create(ITime.REALTIME, ITime.Resolution.Type.HOUR) -> realtime year-res, start now, end never
-	 *     
-	 * @param objects
-	 * @return
-	 */
-	public static Time create(Object... objects) {
-
-		Time ret = new Time();
-
-		int startYear = Integer.MIN_VALUE;;
-		int endYear = Integer.MIN_VALUE;
-		ITime.Type type = ITime.Type.SPECIFIC;
-		ITime.Resolution.Type resolutionType = null;
-		ITimeDuration step = null;
-		
-		if (objects != null) {
-			for (Object o : objects) {
-				if (o instanceof Integer) {
-					if (startYear == Integer.MIN_VALUE) {
-						startYear = (Integer)o;
-					} else if (endYear == Integer.MIN_VALUE) {
-						startYear = (Integer)o;
-					}
-				} else if (o instanceof ITime.Type) {
-					type = (ITime.Type)o;
-				} else if (o instanceof ITime.Resolution.Type) {
-					resolutionType = (ITime.Resolution.Type)o;
-				} else if (o instanceof ITimeDuration) {
-					step = (ITimeDuration)o;
-				}
-			}
-		}
-
-		return ret;
+	private Time(Time time) {
+		this.baseDimension = time.baseDimension;
+		this.end = time.end;
+		this.extentType = time.extentType;
+		this.multiplicity = time.multiplicity;
+		this.realtime = time.realtime;
+		this.resolution = ((ResolutionImpl) time.resolution).copy();
+		this.start = time.start;
+		this.step = time.step;
 	}
 
 	public static Time create(int year) {
@@ -136,10 +132,12 @@ public class Time extends Extent implements ITime {
 		return resolution.getType().getRank();
 	}
 
+	private Range<Long> getRange() {
+		return Range.closed(start.getMillis(), end.getMillis());
+	}
+
 	@Override
 	public IExtent merge(IExtent extent) throws KlabException {
-		// TODO Auto-generated method stub
-		// return null;
 		return this;
 	}
 
@@ -150,8 +148,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public double getCoverage() {
-		// TODO Auto-generated method stub
-		return 0;
+		return end.getMillis() - start.getMillis();
 	}
 
 	@Override
@@ -179,20 +176,17 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public boolean contains(IExtent o) throws KlabException {
-		// TODO Auto-generated method stub
-		return false;
+		return o instanceof Time ? getRange().encloses(((Time) o).getRange()) : false;
 	}
 
 	@Override
 	public boolean overlaps(IExtent o) throws KlabException {
-		// TODO Auto-generated method stub
-		return false;
+		return o instanceof Time ? ((Time) o).intersects(this) : false;
 	}
 
 	@Override
 	public boolean intersects(IExtent o) throws KlabException {
-		// TODO Auto-generated method stub
-		return false;
+		return o instanceof Time ? getRange().intersection(((Time) o).getRange()).isEmpty() : false;
 	}
 
 	@Override
@@ -202,8 +196,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public int getDimensionality() {
-		// TODO Auto-generated method stub
-		return 0;
+		return step == null ? 0 : 1;
 	}
 
 	@Override
@@ -225,9 +218,9 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public ITimePeriod collapse() {
-		// TODO Auto-generated method stub
-		return null;
+	public Time collapse() {
+		return create(this.extentType == ITime.Type.GENERIC ? ITime.Type.GENERIC : ITime.Type.SPECIFIC,
+				this.resolution.getType(), resolution.getMultiplier(start, end), start, end, null);
 	}
 
 	@Override
@@ -259,26 +252,24 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public boolean isCovered(long stateIndex) {
-		// TODO Auto-generated method stub
-		return false;
+		// TODO only meaningful for irregular time
+		return true;
 	}
 
 	@Override
 	public boolean isConsistent() {
-		// TODO Auto-generated method stub
-		return false;
+		// TODO irregular will need checks
+		return true;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return start.getMillis() >= end.getMillis();
 	}
 
 	@Override
 	public long[] getDimensionSizes() {
-		// TODO Auto-generated method stub
-		return null;
+		return new long[] { multiplicity };
 	}
 
 	@Override
@@ -289,7 +280,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public String encode() {
-		String ret = "S" + (multiplicity == 1 ? "0" : "1") + "(" + multiplicity + ")";
+		String ret = "T" + getDimensionality() + "(" + multiplicity + ")";
 		String opt = "{";
 		if (opt.length() > 1) {
 			ret += opt + "}";
@@ -299,32 +290,53 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IExtent mergeCoverage(IExtent other, LogicalConnector connector) {
-		// TODO Auto-generated method stub
+
+		if (other instanceof Time) {
+
+			Time ott = (Time) other;
+			Time ret = (Time) copy();
+			if (connector.equals(LogicalConnector.INTERSECTION)) {
+				Range<Long> merged = getRange().intersection(ott.getRange());
+				ret.start = new TimeInstant(new DateTime(merged.lowerEndpoint()));
+				ret.end = new TimeInstant(new DateTime(merged.upperEndpoint()));
+			} else if (connector.equals(LogicalConnector.UNION)) {
+				Range<Long> merged = getRange().span(ott.getRange());
+				ret.start = new TimeInstant(new DateTime(merged.lowerEndpoint()));
+				ret.end = new TimeInstant(new DateTime(merged.upperEndpoint()));
+			}
+
+			ret.extentType = extentType == ITime.Type.GENERIC ? ITime.Type.GENERIC : ITime.Type.SPECIFIC;
+			ret.step = null;
+			((ResolutionImpl) ret.resolution).setMultiplier(ret.resolution.getMultiplier(ret.start, ret.end));
+			
+			return ret;
+		}
+
 		return null;
+	}
+	
+	public String toString() {
+		return "<TIME " + encode() + ">";
 	}
 
 	@Override
 	public long[] getDimensionOffsets(long linearOffset) {
-		// TODO Auto-generated method stub
-		return null;
+		return new long[] { linearOffset };
 	}
 
 	@Override
 	public long getOffset(long[] dimOffsets) {
-		// TODO Auto-generated method stub
-		return 0;
+		return dimOffsets[0];
 	}
 
 	@Override
 	public IExtent getExtent() {
-		// TODO Auto-generated method stub
-		return null;
+		return collapse();
 	}
 
 	@Override
 	public AbstractExtent copy() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Time(this);
 	}
 
 	@Override
@@ -340,31 +352,41 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public Resolution getResolution() {
-		// TODO Auto-generated method stub
-		return null;
+		return resolution;
 	}
 
 	@Override
 	public boolean isGeneric() {
-		// TODO Auto-generated method stub
-		return false;
+		return extentType == ITime.Type.GENERIC;
 	}
 
 	@Override
 	public IExtent getBoundingExtent() {
-		// TODO Auto-generated method stub
-		// TODO return a line Shape
-		return null;
+		return collapse();
 	}
-	
-    @Override
-    public ExtentDimension getExtentDimension() {
-        return ExtentDimension.TEMPORAL;
-    }
+
+	@Override
+	public ExtentDimension getExtentDimension() {
+		return ExtentDimension.TEMPORAL;
+	}
 
 	@Override
 	public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public static IExtent create(Dimension dimension) {
+		
+		Resolution resolution = null;
+		TimeInstant start = null;
+		TimeInstant end = null;
+		ITime.Type type = null;
+		ITimeDuration step = null;
+		
+		// TODO
+		System.out.println("FAAAAAAAAAA");
+
+		return create(type, resolution.getType(), resolution.getMultiplier(), start, end, step);
 	}
 }

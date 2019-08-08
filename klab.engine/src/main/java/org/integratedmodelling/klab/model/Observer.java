@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -11,11 +10,15 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -26,6 +29,8 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+
+import com.google.common.collect.Lists;
 
 public class Observer extends KimObject implements IObserver {
 
@@ -78,12 +83,16 @@ public class Observer extends KimObject implements IObserver {
 						? (double) envelope.getResolutionForZoomLevel().getFirst()
 						: regionOfInterest.getGridResolution();
 
-				return Collections.singletonList(Space.create(Shape.create(envelope), resolution));
+				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+				ISpace space =  Space.create(Shape.create(envelope), resolution);
+				
+				return Lists.newArrayList(time, space);
 			}
 		};
 	}
-	
+
 	public Observer(Shape shape, Observable observable, Namespace namespace) {
+		
 		super(null);
 
 		this.namespace = namespace;
@@ -105,11 +114,15 @@ public class Observer extends KimObject implements IObserver {
 				}
 
 				double resolution = shape.getEnvelope().getResolutionForZoomLevel().getFirst();
-				return Collections.singletonList(Space.create(shape, resolution));
+				
+				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+				ISpace space = Space.create(shape, resolution);
+				
+				return  Lists.newArrayList(time, space);
 			}
 		};
 	}
-	
+
 	public String toString() {
 		return "[" + getName() + "]";
 	}

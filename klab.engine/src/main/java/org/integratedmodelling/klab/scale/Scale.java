@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.common.Geometry.OffsetLocator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.InstanceIdentifier;
@@ -293,7 +294,7 @@ public class Scale implements IScale {
 				ret.mergeExtent(e);
 			}
 		}
-		ret.sort();
+//		ret.sort();
 		return ret;
 	}
 
@@ -314,7 +315,7 @@ public class Scale implements IScale {
 			if (dimension.getType() == Type.SPACE) {
 				extents.add(Space.create(dimension));
 			} else if (dimension.getType() == Type.TIME) {
-				// TODO
+				extents.add(Time.create(dimension));
 			}
 			// TODO ELSE
 		}

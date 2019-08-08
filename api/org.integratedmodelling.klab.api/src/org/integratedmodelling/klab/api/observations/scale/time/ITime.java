@@ -111,6 +111,15 @@ public interface ITime extends IExtent {
 
 		double getMultiplier();
 
+		/**
+		 * Get the number of units of this resolution between the two time points.
+		 * 
+		 * @param start
+		 * @param end
+		 * @return
+		 */
+		double getMultiplier(ITimeInstant start, ITimeInstant end);
+
 	}
 
 	static public enum Type {
@@ -164,7 +173,7 @@ public interface ITime extends IExtent {
 	 * getValueCount() == 1.
 	 */
 	@Override
-	ITimePeriod collapse();
+	ITime collapse();
 
 	/**
 	 * May be null in partially specified extents.

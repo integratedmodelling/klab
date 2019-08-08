@@ -34,4 +34,9 @@ public class TimeDuration implements ITimeDuration {
 		return period;
 	}
 	
+	@Override
+	public String toString() {
+		return period.toString();
+	}
+	
 }
