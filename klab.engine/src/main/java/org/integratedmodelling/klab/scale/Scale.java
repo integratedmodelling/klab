@@ -96,10 +96,9 @@ public class Scale implements IScale {
 		 * to aggregation strategy.
 		 * 
 		 * @param toReduce
-		 * @param metadata
-		 *            a map to fill with any relevant statistics related to the
-		 *            aggregation (errors, uncertainty, boundaries, distributions, truth
-		 *            values etc) using the keys above.
+		 * @param metadata a map to fill with any relevant statistics related to the
+		 *                 aggregation (errors, uncertainty, boundaries, distributions,
+		 *                 truth values etc) using the keys above.
 		 * 
 		 * @return the reduced value
 		 */
@@ -998,9 +997,11 @@ public class Scale implements IScale {
 	public IScale at(ILocator locator) {
 		if (locator.equals(ITime.INITIALIZATION)) {
 			if (getTime() == null || getTime().isGeneric()) {
-				// I want you just the way you are
+				// I want you just the way you are. If generic, it should already be compatible
+				// by design.
 				return this;
 			} else {
+				// TODO no - must relocate non-generic time according to the locator
 				return minus(IGeometry.Dimension.Type.TIME);
 			}
 		} else if (locator instanceof IExtent) {
