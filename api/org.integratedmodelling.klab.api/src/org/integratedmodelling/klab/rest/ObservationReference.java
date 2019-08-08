@@ -190,6 +190,9 @@ public class ObservationReference implements IObservationReference {
 	private boolean primary;
 	private DataSummary dataSummary;
 	private List<ExportFormat> exportFormats = new ArrayList<>();
+	// only non-null in views
+	private String originalGroupId;
+	
 	/*
 	 * Only sent when the observation redefines the scale (new context)
 	 */
@@ -834,6 +837,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setExportLabel(String exportLabel) {
 		this.exportLabel = exportLabel;
+	}
+
+	public String getOriginalGroupId() {
+		return originalGroupId;
+	}
+
+	public void setOriginalGroupId(String originalGroupId) {
+		this.originalGroupId = originalGroupId;
 	}
 
 }

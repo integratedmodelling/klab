@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
-	public final static String FUNCTION_ID = "klab.runtime.resolve";
+	public final static String FUNCTION_ID = "klab.runtime.contextualize";
 
 	private IResource resource;
 	private Map<String, String> urnParameters;

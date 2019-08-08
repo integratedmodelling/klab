@@ -179,7 +179,7 @@ filter value lookup
 
 }
 
-export value resolve
+export value contextualize
 	"Return a resolver for a URN-specified resource"
 	label 'Extract data from URN'
 {

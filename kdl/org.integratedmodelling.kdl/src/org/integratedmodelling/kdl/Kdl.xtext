@@ -34,15 +34,10 @@ ActorDefinition:
 	
 	annotations += Annotation*
 	// abstract only allowed at root level; only exists to be extended
-	(abstract?='abstract')?
-	(final?='final')? (optional?='optional')? 
-	// export and import are from a CONTEXT and refer to artifacts. So 'export number' is a contextualizer that produces numbers and
-	// if used internally to an actuator, it defines inputs to and outputs from that actuator besides the defaults.
-	// A processor is a filter for something that was created before. Used to declare roles among other contextualizers that expect 
-	// their observation already computed.
-	((exported?='export' | filter?='filter' | (imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?))? 
-	// parameters denotes the ability of the implementation of accepting modified values during run
-	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
+	(abstract?='abstract')? (final?='final')? (optional?='optional')? 
+	(
+		(exported?='export' | filter?='filter' | (imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?)
+	)? 
 	(parameter?='parameter')?
 	type=ACTOR 
 		// expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
@@ -67,12 +62,14 @@ ActorDefinition:
 	
 DataflowBody:
 	{DataflowBody}
-	(dataflows+=ActorDefinition*)
-	(('geometry' geometry=Geometry)? &
-	('units' units=Unit)? &
-	(computations=Computation)? &
-	('metadata' metadata=Metadata)?
-	('class' javaClass=(JavaClass|STRING))?);
+	(dataflows+=ActorDefinition*) 
+	(
+		('geometry' geometry=Geometry)? &
+		('units' units=Unit)? &
+		(computations=Computation)? &
+		('metadata' metadata=Metadata)?
+		('class' javaClass=(JavaClass|STRING))?
+	);
 
 Computation:
 	'compute' functions+=Function (',' functions+=Function)*;
@@ -101,7 +98,9 @@ ACTOR:
 	// only for command prototypes
 	'void' |
 	// partial contextualizers for their parents
-	'partition';
+	'partition' |
+	// introduces a dataflow to resolve individual instances
+	'resolve';
 	
 TARGET:
 	'models' | 'concepts' | 'observers' | 'definitions' | 'dependencies';
@@ -197,9 +196,10 @@ LocalFilePath:
 KeyValuePair:
 	name=(LOWERCASE_ID|LOWERCASE_DASHID) (interactive?='=?' | '=') value=Value;
 Function:
-	(mediated=LOWERCASE_ID '>>')? ((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal | expression=EXPR) ('as' variable=LOWERCASE_ID)? 
+	((mediated=LOWERCASE_ID '>>') | (target=LOWERCASE_ID '<<') | (variable=LOWERCASE_ID '<-'))? 
+	((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal | expression=EXPR) /* ('as' variable=LOWERCASE_ID)? */
 	|
-	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
+	'(' chain+=Function (',' chain+=Function)* ')' /* ('as' variable=LOWERCASE_ID)? */;
 	/**
  * ---------------------------------------
  * Unit of measurement re: jsr-108, parseable by Java

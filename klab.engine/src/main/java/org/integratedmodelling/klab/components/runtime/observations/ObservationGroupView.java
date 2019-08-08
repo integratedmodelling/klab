@@ -68,6 +68,9 @@ public class ObservationGroupView extends CountableObservation implements ISubje
 		filters.add(filter);
 	}
 
+	public ObservationGroup getOriginalGroup() {
+		return original;
+	}
 	
 	@Override
 	public DirectObservation at(ILocator locator) {

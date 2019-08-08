@@ -247,6 +247,7 @@ public enum Observations implements IObservationService {
 			ret.setObservationType(ObservationReference.ObservationType.GROUP);
 		} else if (observation instanceof ObservationGroupView) {
 			ret.setObservationType(ObservationReference.ObservationType.VIEW);
+			ret.setOriginalGroupId(((ObservationGroupView)observation).getOriginalGroup().getId());
 		}
 
 		ret.setMain(isMain);
