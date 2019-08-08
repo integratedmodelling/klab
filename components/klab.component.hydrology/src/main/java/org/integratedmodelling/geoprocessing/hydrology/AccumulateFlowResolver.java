@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -42,11 +42,11 @@ import com.vividsolutions.jts.geom.Point;
 public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 
 	private Descriptor exprDescriptor;
-	private IComputationContext context;
+	private IContextualizationScope context;
 	
 	public AccumulateFlowResolver() {}
 
-	public AccumulateFlowResolver(IParameters<String> parameters, IComputationContext context) {
+	public AccumulateFlowResolver(IParameters<String> parameters, IContextualizationScope context) {
 
 		this.context = context;
 		if (parameters.containsKey("evaluate")) {
@@ -67,7 +67,7 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public IState resolve(IState target, IComputationContext context) throws KlabException {
+	public IState resolve(IState target, IContextualizationScope context) throws KlabException {
 
 		IState flowdirection = context.getArtifact("flow_directions_d8", IState.class);
 
@@ -152,7 +152,7 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new AccumulateFlowResolver(parameters, context);
 	}
 }

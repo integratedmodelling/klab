@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -24,7 +24,7 @@ public class StreamNetworkResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public IState resolve(IState target, IComputationContext context) throws KlabException {
+	public IState resolve(IState target, IContextualizationScope context) throws KlabException {
 
 		IState tca = context.getArtifact("upstream_cell_count", IState.class);
 		Grid grid = Space.extractGrid(target);
@@ -51,7 +51,7 @@ public class StreamNetworkResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		StreamNetworkResolver ret = new StreamNetworkResolver();
 		ret.threshold = parameters.get("tca.threshold", Double.NaN);
 		return ret;

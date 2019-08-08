@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -40,7 +40,7 @@ public class WekaEncoder implements IResourceEncoder {
 
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			Builder builder, IComputationContext context) {
+			Builder builder, IContextualizationScope context) {
 
 		/*
 		 * load the classifier

@@ -39,7 +39,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.NonReentrant;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -70,7 +70,7 @@ import org.integratedmodelling.klab.data.storage.ConceptSingletonStorage;
 import org.integratedmodelling.klab.data.storage.DoubleSingletonStorage;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -115,7 +115,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				boolean switchContext = ((Actuator) actuator).getObservable().getType().is(Type.COUNTABLE)
 						&& scope.getMode() == Mode.RESOLUTION;
 
-				IRuntimeContext runtimeContext = null;
+				IRuntimeScope runtimeContext = null;
 				if (context == null) {
 					// new context
 					runtimeContext = createRuntimeContext(actuator, scope, scale, monitor);
@@ -132,7 +132,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 				int i = 0;
 				for (Actuator active : order) {
-					IRuntimeContext ctx = runtimeContext;
+					IRuntimeScope ctx = runtimeContext;
 					if (active != actuator) {
 						ctx = runtimeContext.createChild(scale, active, scope, monitor);
 					}
@@ -161,9 +161,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public RuntimeContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
+	public RuntimeScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
 			IMonitor monitor) {
-		RuntimeContext ret = new RuntimeContext((Actuator) actuator, scope, scale, monitor);
+		RuntimeScope ret = new RuntimeScope((Actuator) actuator, scope, scale, monitor);
 		IArtifact target = ret.createTarget((Actuator) actuator, scale, scope, null);
 		if (target instanceof IDirectObservation) {
 			((ResolutionScope) scope).setContext((IDirectObservation) target);
@@ -233,12 +233,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IDataArtifact distributeComputation(IStateResolver resolver, IState data, IComputationContext context,
+	public IDataArtifact distributeComputation(IStateResolver resolver, IState data, IContextualizationScope context,
 			IScale scale) throws KlabException {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
 		IArtifact self = context.get("self", IArtifact.class);
-		RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
+		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context);
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 
 		if (reentrant) {
@@ -260,7 +260,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return data;
 	}
 
-	private IComputationContext localizeContext(RuntimeContext context, IScale state, IArtifact self,
+	private IContextualizationScope localizeContext(RuntimeScope context, IScale state, IArtifact self,
 			Collection<Pair<String, IDataArtifact>> variables) {
 
 		/*
@@ -290,16 +290,16 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return context;
 	}
 
-	static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context) {
+	static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope context) {
 		return createObservation(observable, scale, context, false);
 	}
 
 	@Override
-	public IObservation createEmptyObservation(IObservable observable, IComputationContext context) {
+	public IObservation createEmptyObservation(IObservable observable, IContextualizationScope context) {
 		return Observation.empty(observable, context);
 	}
 
-	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,
+	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope context,
 			boolean scalarStorage) {
 
 		boolean createActors = observable.is(Type.COUNTABLE) && scale.getTime() != null && scale.getTime().size() > 1;
@@ -360,7 +360,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	static IRelationship createRelationship(Observable observable, IScale scale, IDirectObservation relationshipSource,
-			IDirectObservation relationshipTarget, RuntimeContext runtimeContext) {
+			IDirectObservation relationshipTarget, RuntimeScope runtimeContext) {
 
 		Activity activity = null;
 
@@ -410,9 +410,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IState createState(IObservable observable, IArtifact.Type type, IScale scale, IComputationContext context) {
+	public IState createState(IObservable observable, IArtifact.Type type, IScale scale, IContextualizationScope context) {
 		IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
-		return new State((Observable) observable, (Scale) scale, (RuntimeContext) context, storage);
+		return new State((Observable) observable, (Scale) scale, (RuntimeScope) context, storage);
 	}
 
 	@Override

@@ -29,10 +29,10 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.classification.Discretization;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.kim.Prototype;
@@ -63,7 +63,7 @@ public class WekaInstances {
 	private Instances rawInstances, instances;
 	private ArrayList<Attribute> attributes;
 	private String name;
-	private IRuntimeContext context;
+	private IRuntimeScope context;
 	private IConcept weightObservable;
 	private Map<String, Double> attributeWeights = new HashMap<>();
 	private IServiceCall classDiscretizer;
@@ -197,8 +197,8 @@ public class WekaInstances {
 	private double predictedMax = Double.NaN;
 
 	// for use in the encoder. Presets the attribute and predictor arrays.
-	public WekaInstances(IComputationContext context, int nPredictors) {
-		this.context = (IRuntimeContext) context;
+	public WekaInstances(IContextualizationScope context, int nPredictors) {
+		this.context = (IRuntimeScope) context;
 		this.attributes = new ArrayList<>();
 		// Add null predictors and attributes so we have the same number and order as in
 		// the original instance
@@ -250,7 +250,7 @@ public class WekaInstances {
 	}
 
 	// for use in learning models
-	public WekaInstances(IState predicted, IModel model, IRuntimeContext context, boolean mustDiscretize,
+	public WekaInstances(IState predicted, IModel model, IRuntimeScope context, boolean mustDiscretize,
 			boolean admitsNodata, IServiceCall classDiscretizer) {
 
 		this.predicted = predicted;

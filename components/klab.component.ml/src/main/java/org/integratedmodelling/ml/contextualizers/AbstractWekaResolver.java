@@ -25,12 +25,12 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -80,7 +80,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
     }
 
     @Override
-    public IState resolve(IState ret, IComputationContext context) throws KlabException {
+    public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
         /*
          * check if we're asking for uncertainty
@@ -94,7 +94,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
             }
         }
 
-        WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeContext) context, true,
+        WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeScope) context, true,
                 admitsNodata, classDiscretizer);
 
         if (instances.getInstances().isEmpty()) {
@@ -199,7 +199,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
         }
     }
 
-    private IResource buildResource(WekaInstances instances, IComputationContext context) {
+    private IResource buildResource(WekaInstances instances, IContextualizationScope context) {
 
         if (resourceId == null) {
             resourceId = NameGenerator.newName("weka");
@@ -214,7 +214,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
          * Geometry will be the coverage of the dataflow or, if global, S2T1 reflecting
          * the extents in the training context.
          */
-        Scale scale = ((Scale) ((IRuntimeContext) context).getDataflow().getCoverage());
+        Scale scale = ((Scale) ((IRuntimeScope) context).getDataflow().getCoverage());
         Geometry geometry = null;
         if (learnedGeometry != null) {
             if ("coverage".equals(learnedGeometry)) {

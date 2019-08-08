@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -63,7 +63,7 @@ public class StreamOutletInstantiator implements IInstantiator, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		StreamOutletInstantiator ret = new StreamOutletInstantiator();
 		ret.threshold = parameters.get("threshold", 0.05);
 		ret.extract = parameters.get("extract", -1);
@@ -71,7 +71,7 @@ public class StreamOutletInstantiator implements IInstantiator, IExpression {
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Grid grid = Space.extractGrid(context.getContextObservation());

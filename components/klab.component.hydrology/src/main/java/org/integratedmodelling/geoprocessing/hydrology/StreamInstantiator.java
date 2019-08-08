@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
@@ -44,14 +44,14 @@ public class StreamInstantiator implements IInstantiator, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		StreamInstantiator ret = new StreamInstantiator();
 		ret.threshold = parameters.get("tca.threshold", Double.NaN);
 		return ret;
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 
 		IState fdr = context.getArtifact("flow_directions_d8", IState.class);
 		IState tca = context.getArtifact("upstream_cell_count", IState.class);
@@ -112,7 +112,7 @@ public class StreamInstantiator implements IInstantiator, IExpression {
 		return new Coordinate(xy[0], xy[1]);
 	}
 
-	private void trace(Cell cell, double thresh, IState tca, IState fdr, IComputationContext context) {
+	private void trace(Cell cell, double thresh, IState tca, IState fdr, IContextualizationScope context) {
 
 		if (context.getMonitor().isInterrupted()) {
 			return;

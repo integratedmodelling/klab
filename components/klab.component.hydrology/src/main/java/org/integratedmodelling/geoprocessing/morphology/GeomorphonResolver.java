@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -35,7 +35,7 @@ public class GeomorphonResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public IState resolve(IState target, IComputationContext context) throws KlabException {
+	public IState resolve(IState target, IContextualizationScope context) throws KlabException {
 
 		IState dem = context.getArtifact("elevation", IState.class);
 		ISpace space = target.getSpace();
@@ -81,7 +81,7 @@ public class GeomorphonResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		GeomorphonResolver ret = new GeomorphonResolver();
 		ret.pRadius = parameters.get("radius", Double.NaN);
 		ret.pThreshold = parameters.get("threshold", Double.NaN);

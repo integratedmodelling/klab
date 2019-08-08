@@ -73,12 +73,16 @@ DataflowBody:
 	(computations=Computation)? &
 	('metadata' metadata=Metadata)?
 	('class' javaClass=(JavaClass|STRING))?);
+
 Computation:
 	'compute' functions+=Function (',' functions+=Function)*;
+
 Geometry:
 	'*' | SHAPE (',' SHAPE)*;
+
 Parameter:
 	name=LOWERCASE_ID value=Value (docstring=STRING)?;
+
 ACTOR:
 	// countable, so always a dataflow for direct object instantiation. Resolvers for single objects or processes are void.
 	'object' |

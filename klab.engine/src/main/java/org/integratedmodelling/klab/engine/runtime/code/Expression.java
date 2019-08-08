@@ -19,7 +19,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -29,16 +29,16 @@ import org.integratedmodelling.klab.utils.Parameters;
 public abstract class Expression implements IExpression {
 
   // A dummy context to use when we don't have a context to pass
-  public static class Context extends Parameters<String> implements IComputationContext {
+  public static class Scope extends Parameters<String> implements IContextualizationScope {
 
     private IMonitor monitor;
     private INamespace namespace;
     
-    public Context(IMonitor monitor) {
+    public Scope(IMonitor monitor) {
       this.monitor = monitor;
     }
 
-    Context(IMonitor monitor, INamespace namespace) {
+    Scope(IMonitor monitor, INamespace namespace) {
       this.monitor = monitor;
       this.namespace = namespace;
     }
@@ -212,11 +212,11 @@ public abstract class Expression implements IExpression {
 	}
   }
   
-  public static IComputationContext emptyContext(IMonitor monitor) {
-    return new Context(monitor);
+  public static IContextualizationScope emptyContext(IMonitor monitor) {
+    return new Scope(monitor);
   }
   
-  public static IComputationContext emptyContext(IMonitor monitor, INamespace namespace) {
-    return new Context(monitor, namespace);
+  public static IContextualizationScope emptyContext(IMonitor monitor, INamespace namespace) {
+    return new Scope(monitor, namespace);
   }    
 }

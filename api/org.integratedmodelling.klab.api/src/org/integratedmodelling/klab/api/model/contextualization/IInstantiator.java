@@ -18,7 +18,7 @@ package org.integratedmodelling.klab.api.model.contextualization;
 import java.util.List;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -39,6 +39,6 @@ public interface IInstantiator extends IContextualizer {
    * @return a list of observations, possibly empty but never null.
    * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
-  List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException;
+  List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException;
 
 }

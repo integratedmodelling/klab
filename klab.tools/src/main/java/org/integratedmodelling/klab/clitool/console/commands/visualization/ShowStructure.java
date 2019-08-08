@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 
@@ -24,7 +24,7 @@ public class ShowStructure implements ICommand {
 			throw new KlabValidationException("show::structure requires a valid observation ID as argument");
 		}
 		
-		IRuntimeContext context = ((Observation)obs).getRuntimeContext();
+		IRuntimeScope context = ((Observation)obs).getRuntimeContext();
 		
 		Graphs.show(context.getStructure(), "Structure of observation " + obs, Graphs.Layout.HIERARCHICAL);
 		

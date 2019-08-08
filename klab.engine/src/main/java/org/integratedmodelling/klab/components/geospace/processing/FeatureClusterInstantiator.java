@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.utils.ConcaveHull;
@@ -40,7 +40,7 @@ public class FeatureClusterInstantiator implements IExpression, IInstantiator {
 	public FeatureClusterInstantiator() {
 	}
 
-	public FeatureClusterInstantiator(IParameters<String> parameters, IComputationContext context)
+	public FeatureClusterInstantiator(IParameters<String> parameters, IContextualizationScope context)
 			throws KlabValidationException {
 
 		IScale scale = context.getScale();
@@ -71,7 +71,7 @@ public class FeatureClusterInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 
 		List<IObjectArtifact> ret = new ArrayList<>();
 		List<DoublePoint> dpoints = new ArrayList<>();
@@ -124,7 +124,7 @@ public class FeatureClusterInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new FeatureClusterInstantiator(parameters, context);
 	}
 

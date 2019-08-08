@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -56,7 +56,7 @@ import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.Worldview;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
@@ -113,13 +113,13 @@ public enum Observations implements IObservationService {
 	}
 
 	@Override
-	public IState getStateView(IState state, IScale scale, IComputationContext context) {
-		return new RescalingState(state, (Scale) scale, (IRuntimeContext) context);
+	public IState getStateView(IState state, IScale scale, IContextualizationScope context) {
+		return new RescalingState(state, (Scale) scale, (IRuntimeScope) context);
 	}
 
 	@Override
-	public IState getStateViewAs(IObservable observable, IState state, IScale scale, IComputationContext context) {
-		return new RescalingState(state, observable, (Scale) scale, (IRuntimeContext) context);
+	public IState getStateViewAs(IObservable observable, IState state, IScale scale, IContextualizationScope context) {
+		return new RescalingState(state, observable, (Scale) scale, (IRuntimeScope) context);
 	}
 
 	/**

@@ -16,7 +16,7 @@
 package org.integratedmodelling.klab.api.data.classification;
 
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * The Interface IClassifier.
@@ -35,7 +35,7 @@ public interface IClassifier {
 	 *            the context
 	 * @return True if passed object matches the conditions of the classifier
 	 */
-	public boolean classify(Object o, IComputationContext context);
+	public boolean classify(Object o, IContextualizationScope context);
 
 	/**
 	 * True if this classifier matches everything.
@@ -76,7 +76,7 @@ public interface IClassifier {
 	 * 
 	 * @return the value this classifier resolves to.
 	 */
-	Object asValue(IComputationContext context);
+	Object asValue(IContextualizationScope context);
 
 	/**
 	 * Return the type of the classifier when used as a value.

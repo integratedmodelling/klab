@@ -26,13 +26,13 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyProcessor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -118,7 +118,7 @@ public enum Extensions implements IExtensionService {
 		return callFunction(functionCall, Expression.emptyContext(monitor));
 	}
 
-	public Object callFunction(IServiceCall functionCall, IComputationContext context) throws KlabException {
+	public Object callFunction(IServiceCall functionCall, IContextualizationScope context) throws KlabException {
 
 		Object ret = null;
 
@@ -273,7 +273,7 @@ public enum Extensions implements IExtensionService {
 	 * @param context
 	 * @return
 	 */
-	public boolean callAsCondition(IComputableResource condition, IComputationContext context) {
+	public boolean callAsCondition(IComputableResource condition, IContextualizationScope context) {
 		if (condition.getLiteral() != null) {
 			if (condition.getLiteral() instanceof Boolean) {
 				return (Boolean) condition.getLiteral();
@@ -335,7 +335,7 @@ public enum Extensions implements IExtensionService {
 	 * @param context
 	 * @return
 	 */
-	public Object recontextualizeIdentifier(String targetId, String contextId, IRuntimeContext context,
+	public Object recontextualizeIdentifier(String targetId, String contextId, IRuntimeScope context,
 			ILanguageExpression expression, Map<?, ?> variables) {
 
 		/*

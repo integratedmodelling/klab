@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
@@ -69,7 +69,7 @@ public enum DataflowDocumentation {
 	 * @param context
 	 * @return
 	 */
-	public String getDocumentation(Flowchart.Element element, IRuntimeContext context) {
+	public String getDocumentation(Flowchart.Element element, IRuntimeScope context) {
 		// TODO check stage and whether it should be re-rendered
 		return element.getDocumentation();
 	}

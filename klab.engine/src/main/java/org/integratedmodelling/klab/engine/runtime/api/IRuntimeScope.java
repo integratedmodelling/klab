@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.jgrapht.Graph;
 
 /**
- * This API extends {@link IComputationContext} to add setters and other
+ * This API extends {@link IContextualizationScope} to add setters and other
  * functionalities that are needed at runtime. It is used within common
  * computation code so that any {@link IRuntimeProvider} may implement the
  * computation contexts as needed.
@@ -39,7 +39,7 @@ import org.jgrapht.Graph;
  * @author Ferd
  *
  */
-public interface IRuntimeContext extends IComputationContext {
+public interface IRuntimeScope extends IContextualizationScope {
 
 	/**
 	 * A context is created for the root observation, and this information never
@@ -84,7 +84,7 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @param monitor
 	 * @return
 	 */
-	public IRuntimeContext createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
+	public IRuntimeScope createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
 
 	/**
 	 * Called to create the computation context for any actuator contained in a root
@@ -106,7 +106,7 @@ public interface IRuntimeContext extends IComputationContext {
 	 * 
 	 * @return the child context that will resolve the target
 	 */
-	public IRuntimeContext createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
+	public IRuntimeScope createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
 
 	/**
 	 * Create a child context for the passed observable within the current actuator.
@@ -116,7 +116,7 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @param indirectTarget
 	 * @return
 	 */
-	IRuntimeContext createChild(IObservable indirectTarget);
+	IRuntimeScope createChild(IObservable indirectTarget);
 
 	/**
 	 * Set the passed data object in the symbol table.
@@ -151,7 +151,7 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @return an identical context with a rewriteable object catalog and
 	 *         parameters.
 	 */
-	IRuntimeContext copy();
+	IRuntimeScope copy();
 
 	/**
 	 * Rename the passed observation data as the passed alias.

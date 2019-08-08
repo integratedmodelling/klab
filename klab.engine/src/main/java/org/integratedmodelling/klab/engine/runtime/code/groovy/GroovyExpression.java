@@ -44,8 +44,8 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -88,7 +88,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 	private List<KimNotification> errors = new ArrayList<>();
 	private KlabGroovyShell shell = new KlabGroovyShell();
 	private String preprocessed = null;
-	private IRuntimeContext runtimeContext;
+	private IRuntimeScope runtimeContext;
 	private Descriptor descriptor;
 
 	public GroovyExpression() {
@@ -125,7 +125,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 		this.sclass = shell.parseToClass(code);
 	}
 
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 
 		if (isTrue) {
 			return true;
@@ -250,7 +250,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 	 * @param context
 	 * @param parameters
 	 */
-	private void setupBindings(IComputationContext context, IParameters<String> parameters) {
+	private void setupBindings(IContextualizationScope context, IParameters<String> parameters) {
 
 		Binding bindings = new Binding();
 
@@ -344,7 +344,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 	}
 
 	@Override
-	public Object eval(IComputationContext context, Object... parameters) {
+	public Object eval(IContextualizationScope context, Object... parameters) {
 		return eval(Parameters.create(parameters), context);
 	}
 

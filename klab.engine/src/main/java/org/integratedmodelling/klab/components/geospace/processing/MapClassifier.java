@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -135,7 +135,7 @@ public class MapClassifier {
 	 * @param monitor
 	 * @param locators
 	 */
-	public MapClassifier(Collection<IState> states, int maxBinsPerState, IComputationContext context,
+	public MapClassifier(Collection<IState> states, int maxBinsPerState, IContextualizationScope context,
 			ILocator locator) {
 
 		// this.locator = locator;

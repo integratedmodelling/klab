@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
@@ -113,7 +113,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						System.out.println(dataflow.getKdlCode());
 
-						IRuntimeContext ctx = ((Observation) context).getRuntimeContext();
+						IRuntimeScope ctx = ((Observation) context).getRuntimeContext();
 						ctx.getContextualizationStrategy().add(dataflow);
 
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,

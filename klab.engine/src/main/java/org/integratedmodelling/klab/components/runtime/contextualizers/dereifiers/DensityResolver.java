@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.IndexLocator;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -38,7 +38,7 @@ public class DensityResolver implements IResolver<IDataArtifact>, IExpression {
 	public DensityResolver() {
 	}
 
-	public DensityResolver(IParameters<String> parameters, IComputationContext context) {
+	public DensityResolver(IParameters<String> parameters, IContextualizationScope context) {
 		this.artifactId = parameters.get("artifact", String.class);
 	}
 
@@ -52,12 +52,12 @@ public class DensityResolver implements IResolver<IDataArtifact>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new DensityResolver(parameters, context);
 	}
 
 	@Override
-	public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
+	public IDataArtifact resolve(IDataArtifact ret, IContextualizationScope context) throws KlabException {
 
 		ISpace space = ((Scale) ret.getGeometry()).getSpace();
 		Geometry geometry =  ((Scale) ret.getGeometry()).asGeometry();

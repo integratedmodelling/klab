@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.StateSummary;
 
@@ -20,7 +20,7 @@ public class StandardizingTransformation implements IResolver<IState>, IProcesso
 
 	public StandardizingTransformation() {}
 	
-	public StandardizingTransformation(IParameters<String> parameters, IComputationContext context) {
+	public StandardizingTransformation(IParameters<String> parameters, IContextualizationScope context) {
 		IArtifact artifact = context.getArtifact(parameters.get("artifact", String.class));
 		if (artifact instanceof IState && (artifact.getType() != Type.NUMBER && artifact.getType() != Type.VALUE)) {
 			throw new IllegalArgumentException("normalization operations can only be performed on numeric states");
@@ -34,12 +34,12 @@ public class StandardizingTransformation implements IResolver<IState>, IProcesso
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new StandardizingTransformation(parameters, context);
 	}
 
 	@Override
-	public IState resolve(IState ret, IComputationContext context) throws KlabException {
+	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 		/*
 		 * this is for when the contextualizer is used directly without arguments in a
 		 * 'using' clause. In that circumstance, it means 'contextualize myself'.

@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class LookupTable implements ILookupTable {
@@ -107,7 +107,7 @@ public class LookupTable implements ILookupTable {
 	}
 
 	@Override
-	public Object lookup(IParameters<String> parameters, IComputationContext context) {
+	public Object lookup(IParameters<String> parameters, IContextualizationScope context) {
 
 		StringBuffer s = new StringBuffer(1024);
 		Object[] values = new Object[variables.size()];

@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class ExpressionContext implements IExpression.Context {
@@ -27,7 +27,7 @@ public class ExpressionContext implements IExpression.Context {
 	private IScale scale;
 	private IMonitor monitor;
 
-	public static ExpressionContext create(IRuntimeContext context) {
+	public static ExpressionContext create(IRuntimeScope context) {
 
 		ExpressionContext ret = new ExpressionContext();
 

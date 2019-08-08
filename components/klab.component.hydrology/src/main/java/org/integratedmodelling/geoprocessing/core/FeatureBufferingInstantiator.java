@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -41,7 +41,7 @@ public class FeatureBufferingInstantiator implements IInstantiator, IExpression 
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		FeatureBufferingInstantiator ret = new FeatureBufferingInstantiator();
 		ret.distance = parameters.get("radius", Double.class);
 		ret.artifact = parameters.get("artifact", String.class);
@@ -51,7 +51,7 @@ public class FeatureBufferingInstantiator implements IInstantiator, IExpression 
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 
 		IArtifact source = null;
 		boolean transform = false;

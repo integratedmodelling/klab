@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -141,7 +141,7 @@ public interface IObservationService {
      * @param context
      * @return the state view
      */
-    IState getStateView(IState state, IScale scale, IComputationContext context);
+    IState getStateView(IState state, IScale scale, IContextualizationScope context);
 
     /**
      * Get a state that represents a specified observable through the values of
@@ -157,7 +157,7 @@ public interface IObservationService {
      * @param context
      * @return the state view
      */
-    IState getStateViewAs(IObservable observable, IState state, IScale scale, IComputationContext context);
+    IState getStateViewAs(IObservable observable, IState state, IScale scale, IContextualizationScope context);
 
     /**
      * Export an observation to a file using adapter export capabilities. 

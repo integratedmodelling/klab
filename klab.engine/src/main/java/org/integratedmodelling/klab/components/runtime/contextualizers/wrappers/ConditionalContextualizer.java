@@ -6,7 +6,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class ConditionalContextualizer implements IExpression {
@@ -17,7 +17,7 @@ public class ConditionalContextualizer implements IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 
 		IServiceCall call = parameters.get("call", IServiceCall.class);
 		IComputableResource condition = parameters.get("condition", IComputableResource.class);

@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -64,7 +64,7 @@ public class LiteralStateResolver implements IStateResolver, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new LiteralStateResolver(parameters.get("val"));
 	}
 
@@ -74,7 +74,7 @@ public class LiteralStateResolver implements IStateResolver, IExpression {
 //	}
 
 	@Override
-	public Object resolve(IObservable semantics, IComputationContext context) {
+	public Object resolve(IObservable semantics, IContextualizationScope context) {
 		return value;
 	}
 

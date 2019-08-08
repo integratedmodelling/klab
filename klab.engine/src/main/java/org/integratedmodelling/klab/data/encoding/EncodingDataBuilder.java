@@ -3,10 +3,10 @@ package org.integratedmodelling.klab.data.encoding;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
 /**
  * A builder that encodes the data into a Protobuf object which will be sent
@@ -19,9 +19,9 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
  */
 public class EncodingDataBuilder implements IKlabData.Builder {
 
-	IComputationContext context;
+	IContextualizationScope context;
 
-	public EncodingDataBuilder(IComputationContext context) {
+	public EncodingDataBuilder(IContextualizationScope context) {
 		this.context = context;
 	}
 
@@ -67,7 +67,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 
 	@Override
 	public IKlabData build() {
-		return new RemoteData(buildEncoded(), (IRuntimeContext) context);
+		return new RemoteData(buildEncoded(), (IRuntimeScope) context);
 	}
 
 	@Override

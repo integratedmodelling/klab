@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
@@ -45,7 +45,7 @@ public class WcsEncoder implements IResourceEncoder {
 	RasterEncoder encoder = new RasterEncoder();
 
 	@Override
-	public void getEncodedData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, Builder builder, IComputationContext context) {
+	public void getEncodedData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope context) {
 		WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
 				Version.create(resource.getParameters().get("wcsVersion", String.class)));
 		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));

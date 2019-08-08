@@ -22,7 +22,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
@@ -99,12 +99,12 @@ public interface IExpression {
      *
      * @param parameters from context or defined in a language call
      * @param context possibly empty, may be added to determine the result of the evaluation according
-     *        to the calling context. The {@link IComputationContext#getMonitor() monitor in the
+     *        to the calling context. The {@link IContextualizationScope#getMonitor() monitor in the
      *        context} will never be null and can be used to send messages or interrupt the
      *        computation.
      * @return the result of evaluating the expression
      * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
      */
-    Object eval(IParameters<String> parameters, IComputationContext context);
+    Object eval(IParameters<String> parameters, IContextualizationScope context);
 
 }

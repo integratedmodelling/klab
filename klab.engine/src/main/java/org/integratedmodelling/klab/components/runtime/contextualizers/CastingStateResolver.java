@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -37,7 +37,7 @@ public class CastingStateResolver implements IStateResolver, IProcessor, IExpres
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new CastingStateResolver(IArtifact.Type.valueOf(parameters.get("source", String.class)),
 				IArtifact.Type.valueOf(parameters.get("destination", String.class)));
 	}
@@ -48,7 +48,7 @@ public class CastingStateResolver implements IStateResolver, IProcessor, IExpres
 //	}
 
 	@Override
-	public Object resolve(IObservable observable, IComputationContext context) throws KlabException {
+	public Object resolve(IObservable observable, IContextualizationScope context) throws KlabException {
 		
 		Object value = context.get("self");
 		

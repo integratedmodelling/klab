@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.components.network.model.Network;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -15,7 +15,7 @@ public class Configuration extends CountableObservation implements IConfiguratio
 
 	private Collection<IObservation> targets;
 
-	public Configuration(String name, Observable observable, Scale scale, RuntimeContext context) {
+	public Configuration(String name, Observable observable, Scale scale, RuntimeScope context) {
 		super(name, observable, scale, context);
 	}
 

@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.localstorage.impl.BooleanStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.ConceptStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.DoubleStorage;
@@ -21,7 +21,7 @@ public class LocalStorageComponent implements IStorageProvider {
 	}
 
 	@Override
-	public IDataArtifact createStorage(IArtifact.Type type, IScale scale, IComputationContext context) {
+	public IDataArtifact createStorage(IArtifact.Type type, IScale scale, IContextualizationScope context) {
 		switch (type) {
 		case CONCEPT:
 			return new ConceptStorage(scale);

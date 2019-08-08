@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 
@@ -13,7 +13,7 @@ public class CostRouter {
 
 	IShape from;
 	IShape to;
-	IComputationContext context;
+	IContextualizationScope context;
 	IExpression costFunction;
 	
     private final double resolution;
@@ -62,7 +62,7 @@ public class CostRouter {
 
     }
 	
-	public CostRouter(IShape from, IShape to, IComputationContext context, IExpression costFunction) {
+	public CostRouter(IShape from, IShape to, IContextualizationScope context, IExpression costFunction) {
 
 		this.space = context.getScale().getSpace();
 		

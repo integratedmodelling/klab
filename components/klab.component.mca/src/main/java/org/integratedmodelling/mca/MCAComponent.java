@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -151,7 +151,7 @@ public class MCAComponent {
 	 * @return
 	 */
 	public static boolean extractAssessment(IArtifact target, List<IAlternative> alternatives,
-			Collection<ICriterion> criteria, List<IStakeholder> observers, Method method, IComputationContext context) {
+			Collection<ICriterion> criteria, List<IStakeholder> observers, Method method, IContextualizationScope context) {
 		// TODO Auto-generated method stub
 
 		// check out the model for indication of the likely way to go

@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.extensions;
 
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * A compiled expression used in an expression language. It adds wrapping/unwrapping and overriding methods and methods to
@@ -28,7 +28,7 @@ public interface ILanguageExpression extends IExpression {
      * @param parameters
      * @return the value after evaluation with passed parameters.
      */
-    Object eval(IComputationContext context, Object... parameters);
+    Object eval(IContextualizationScope context, Object... parameters);
 
     /**
      * Unwrap an object from an expression result if needed.

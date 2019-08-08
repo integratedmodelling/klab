@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.api.model.contextualization;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * A predicate classifier will receive each observation and decide the concrete
@@ -30,7 +30,7 @@ public interface IPredicateClassifier<T extends IDirectObservation> extends ICon
 	 * @return true if classification should proceed.
 	 */
 	public boolean initialize(IObjectArtifact observations, IConcept abstractPredicate, IConcept targetPredicate,
-			IComputationContext context);
+			IContextualizationScope context);
 
 	/**
 	 * Classify an individual observation.
@@ -42,6 +42,6 @@ public interface IPredicateClassifier<T extends IDirectObservation> extends ICon
 	 *         observation will get. Null will cause attribution and resolution to
 	 *         be canceled for this object.
 	 */
-	public IConcept classify(IConcept abstractPredicate, T observation, IComputationContext context);
+	public IConcept classify(IConcept abstractPredicate, T observation, IContextualizationScope context);
 
 }

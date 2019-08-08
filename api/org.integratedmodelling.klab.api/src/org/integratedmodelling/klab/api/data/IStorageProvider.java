@@ -18,7 +18,7 @@ package org.integratedmodelling.klab.api.data;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * Interface for a component. If exactly one component implementing this is available, the system
@@ -36,9 +36,9 @@ public interface IStorageProvider {
    *
    * @param observable a {@link org.integratedmodelling.klab.api.knowledge.IObservable} object.
    * @param scale a {@link org.integratedmodelling.klab.api.observations.scale.IScale} object.
-   * @param context a {@link org.integratedmodelling.klab.api.runtime.IComputationContext} object.
+   * @param context a {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope} object.
    * @return a {@link org.integratedmodelling.klab.api.data.artifacts.IDataArtifact} object.
    */
-  IDataArtifact createStorage(IArtifact.Type type, IScale scale, IComputationContext context);
+  IDataArtifact createStorage(IArtifact.Type type, IScale scale, IContextualizationScope context);
 
 }

@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IPredicateClassi
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * A classifier that defines the predicate to attribute a direct observation
@@ -50,7 +50,7 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 	}
 
 	public ExpressionClassifier(Descriptor code, Descriptor condition, IParameters<String> parameters,
-			IComputationContext context, Map<String, Object> additional) {
+			IContextualizationScope context, Map<String, Object> additional) {
 		this.expressionDescriptor = code;
 		this.conditionDescriptor = condition;
 		if (this.expression == null) {
@@ -67,7 +67,7 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 	}
 
 	@Override
-	public IConcept classify(IConcept abstractPredicate, IDirectObservation observation, IComputationContext context) {
+	public IConcept classify(IConcept abstractPredicate, IDirectObservation observation, IContextualizationScope context) {
 
 		/*
 		 * run expression, ensure it returns an OK concept, if so return it.
@@ -95,7 +95,7 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) {
 
 		ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
@@ -125,7 +125,7 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 
 	@Override
 	public boolean initialize(IObjectArtifact observations, IConcept abstractPredicate, IConcept targetPredicate,
-			IComputationContext context) {
+			IContextualizationScope context) {
 		return true;
 	}
 

@@ -47,7 +47,7 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.OWL;
@@ -71,14 +71,14 @@ import org.jgrapht.graph.DefaultEdge;
  * @author ferdinando.villa
  *
  */
-public class SimpleContext extends Parameters<String> implements IRuntimeContext {
+public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	INamespace namespace = null;
 	IObservable observable = null;
 	IScale scale = null;
 	IObservation target = null;
 	IMonitor monitor;
-	SimpleContext parent;
+	SimpleRuntimeScope parent;
 	String targetName;
 
 	// these are shared among all children, created in root only and passed around
@@ -89,7 +89,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	ISubject rootSubject;
 	Map<String, IObservable> semantics;
 
-	public SimpleContext(Actuator actuator) {
+	public SimpleRuntimeScope(Actuator actuator) {
 	    this.observable = actuator.getObservable();
 	    this.scale = actuator.getDataflow().getScale();
         this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
@@ -107,7 +107,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	 * @param scale
 	 * @param monitor
 	 */
-	public SimpleContext(IObservable observable, IScale scale, IMonitor monitor) {
+	public SimpleRuntimeScope(IObservable observable, IScale scale, IMonitor monitor) {
 		this.observable = observable;
 		this.scale = scale;
 		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
@@ -124,7 +124,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		this.observations.put(this.target.getId(), this.target);
 	}
 
-	public SimpleContext(SimpleContext parent) {
+	public SimpleRuntimeScope(SimpleRuntimeScope parent) {
 		this.scale = parent.scale;
 		this.structure = parent.structure;
 		this.network = parent.network;
@@ -312,7 +312,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	}
 
 	@Override
-	public IRuntimeContext createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
+	public IRuntimeScope createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
 		throw new IllegalStateException(
 				"Context is meant for testing of individual resources and cannot support child observations");
 	}
@@ -336,7 +336,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	}
 
 	@Override
-	public IRuntimeContext copy() {
+	public IRuntimeScope copy() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -401,7 +401,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	 * @param resource
 	 * @return
 	 */
-	public SimpleContext getChild(IObservable observable, IResource resource) {
+	public SimpleRuntimeScope getChild(IObservable observable, IResource resource) {
 
 		if (observable == null) {
 			IConcept concept = OWL.INSTANCE.getNonsemanticPeer(
@@ -410,7 +410,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 			observable = Observable.promote(concept);
 		}
 
-		SimpleContext ret = new SimpleContext(this);
+		SimpleRuntimeScope ret = new SimpleRuntimeScope(this);
 		if (resource.getType() != IArtifact.Type.OBJECT) {
 			IDataArtifact data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale(), this);
 			ret.target = new State((Observable) observable, (Scale) scale, this, data);
@@ -459,8 +459,8 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	}
 
 	@Override
-	public IRuntimeContext createChild(IObservable indirectTarget) {
-		SimpleContext ret = new SimpleContext(this);
+	public IRuntimeScope createChild(IObservable indirectTarget) {
+		SimpleRuntimeScope ret = new SimpleRuntimeScope(this);
 		ret.observable = indirectTarget;
 		ret.targetName = indirectTarget.getName();
 		ret.target = (IObservation) getArtifact(ret.targetName);
@@ -481,7 +481,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	}
 
 	@Override
-	public IRuntimeContext createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
+	public IRuntimeScope createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -19,8 +19,34 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 /**
- * The Interface ITime.
+ * Time, as seen by k.LAB when the default contextualizer time() is used.
+ * <p>
+ * Legal time extents are:
  *
+ * <ul>
+ * <li>Generic with resolution and no specific interval: dependencies will be
+ * matched only by resolution and no temporal mediation will be possible.</li>
+ * <li>Generic with resolution and interval: dependencies will be matched by
+ * resolution and closeness to the interval; mediation will be possible;
+ * resources having time <i>closer</i> to the interval will be chosen even if
+ * they are not within the interval. This will be the default time extent for
+ * k.Explorer users, tuned in on the current year.</li>
+ * <li>Specific with resolution and interval: dependencies will be matched by
+ * resolution and interval; mediation will be possible; resources having time
+ * not within the interval will <i>not</i> be chosen even if they are.</li>
+ * <li>Regular grid must have interval and step: dependencies will be matched by
+ * resolution and interval, choosing "moving" dependencies over
+ * initialization-only ones; mediation will be possible. The end of period may
+ * remain unspecified for endless process simulations.</li>
+ * <li>Irregular grid has steps that follow a resource and may have individually
+ * different duration. Any use of this is likely to involve complex and
+ * potentially costly mediations.</li>
+ * <li>Event time is an irregular grid aligned with a source of events. A
+ * transition is generated per each event.</li>
+ * <li>Real time is a grid aligned with the current time. Start time is now if
+ * not specified. End time, if specified, must be in the actual future.</li>
+ * </ul>
+ * 
  * @author ferdinando.villa
  * @version $Id: $Id
  */
@@ -35,8 +61,8 @@ public interface ITime extends IExtent {
 
 		public enum Type {
 
-			MILLENNIUM(0), CENTURY(1), DECADE(2), YEAR(3), MONTH(4), WEEK(5), DAY(6), HOUR(7), MINUTE(8), SECOND(
-					9), MILLISECOND(10);
+			MILLENNIUM(0), CENTURY(1), DECADE(2), YEAR(3), MONTH(4), WEEK(5), DAY(6), HOUR(7), MINUTE(8), SECOND(9),
+			MILLISECOND(10);
 
 			int rank;
 

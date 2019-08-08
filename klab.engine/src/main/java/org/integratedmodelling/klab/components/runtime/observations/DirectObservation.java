@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
@@ -38,7 +38,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	 */
 	private Set<IConcept> predicates = new LinkedHashSet<>();
 
-	protected DirectObservation(String name, Observable observable, Scale scale, IRuntimeContext context) {
+	protected DirectObservation(String name, Observable observable, Scale scale, IRuntimeScope context) {
 		super(observable, scale, context);
 		this.name = name;
 	}

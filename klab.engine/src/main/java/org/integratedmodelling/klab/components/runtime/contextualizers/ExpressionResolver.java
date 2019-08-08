@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -64,7 +64,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	}
 
 	public ExpressionResolver(Descriptor descriptor, Descriptor condition, IParameters<String> parameters,
-			IComputationContext context, Map<String, Object> additionalParameters) {
+			IContextualizationScope context, Map<String, Object> additionalParameters) {
 		this.expressionDescriptor = descriptor;
 		this.conditionDescriptor = condition;
 		this.additionalParameters = additionalParameters;
@@ -96,7 +96,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 
 		ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
@@ -147,7 +147,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		return new ExpressionResolver(descriptor, condition, parameters, context, additionalParameters);
 	}
 
-	private Set<String> getDistributedStateIds(IComputationContext context) {
+	private Set<String> getDistributedStateIds(IContextualizationScope context) {
 		Set<String> ret = new HashSet<>();
 		for (Pair<String, IState> state : context.getArtifacts(IState.class)) {
 			if (!state.getSecond().isConstant()) {
@@ -158,7 +158,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	}
 
 	@Override
-	public IArtifact resolve(IArtifact ret, IComputationContext context) throws KlabException {
+	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 		
 	    IParameters<String> parameters = context;
 	    if (additionalParameters != null) {

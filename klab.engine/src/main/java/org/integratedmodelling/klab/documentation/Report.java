@@ -42,13 +42,13 @@ import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.util.StringUtils;
@@ -128,7 +128,7 @@ public class Report implements IReport {
     }
 
     // @Override
-    public void include(IDocumentation.Template template, IComputationContext context) {
+    public void include(IDocumentation.Template template, IContextualizationScope context) {
         ReportSection section = getMainSection(((TemplateImpl) template).getRole());
         template.compile(section, context);
     }
@@ -184,7 +184,7 @@ public class Report implements IReport {
      * @param processArguments
      * @param context
      */
-    public void require(Object[] args, IDocumentation documentation, IComputationContext context) {
+    public void require(Object[] args, IDocumentation documentation, IContextualizationScope context) {
 
         if (inserted.contains(args[0] + "|" + args[1])) {
             return;
@@ -233,13 +233,13 @@ public class Report implements IReport {
 
     public static final String SEPARATOR = "\n\n----\n\n";
 
-    IRuntimeContext context = null;
+    IRuntimeScope context = null;
     private String sessionId;
 
     public Report() {
     }
 
-    public Report(IRuntimeContext context, String sessionId) {
+    public Report(IRuntimeScope context, String sessionId) {
         this.context = context;
         this.sessionId = sessionId;
     }

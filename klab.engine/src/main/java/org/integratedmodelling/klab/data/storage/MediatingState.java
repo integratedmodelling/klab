@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.mediation.RecontextualizingUnit;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
@@ -34,7 +34,7 @@ public class MediatingState extends Observation implements IState {
 	IValueMediator rescalingTo = null;
 	boolean convertScale = false;
 
-	public MediatingState(IState state, RuntimeContext context, IValueMediator from, IValueMediator to) {
+	public MediatingState(IState state, RuntimeScope context, IValueMediator from, IValueMediator to) {
 		super(new Observable((Observable) state.getObservable()), (Scale) state.getScale(), context);
 		this.delegate = state;
 		this.from = from;
@@ -127,7 +127,7 @@ public class MediatingState extends Observation implements IState {
 		if (delegate.getType() == type) {
 			return this;
 		}
-		return new MediatingState(delegate.as(type), (RuntimeContext) getRuntimeContext(), from, to);
+		return new MediatingState(delegate.as(type), (RuntimeScope) getRuntimeContext(), from, to);
 	}
 
 	@Override
@@ -142,7 +142,7 @@ public class MediatingState extends Observation implements IState {
 
 	@Override
 	public IState at(ILocator locator) {
-		return new MediatingState((IState) delegate.at(locator), (RuntimeContext) getRuntimeContext(), from, to);
+		return new MediatingState((IState) delegate.at(locator), (RuntimeScope) getRuntimeContext(), from, to);
 	}
 
 	@Override
@@ -168,7 +168,7 @@ public class MediatingState extends Observation implements IState {
 		}
 
 		return from.equals(to) ? state
-				: new MediatingState(state, (RuntimeContext) ((Observation) state).getRuntimeContext(), from, to);
+				: new MediatingState(state, (RuntimeScope) ((Observation) state).getRuntimeContext(), from, to);
 	}
 
 	@Override

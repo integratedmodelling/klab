@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -52,13 +52,13 @@ public class ObjectClassificationResolver
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new ObjectClassificationResolver(context.getArtifact(parameters.get("artifact", String.class)),
 				parameters.get("classifier", IConcept.class));
 	}
 
 	@Override
-	public IState resolve(IState ret, IComputationContext context) throws KlabException {
+	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
 		Map<Object, Double> cache = new HashMap<>();
 		Map<Object, Long> count = new HashMap<>();

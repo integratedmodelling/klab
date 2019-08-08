@@ -12,8 +12,8 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
@@ -42,17 +42,17 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		ConcordanceResolver ret = new ConcordanceResolver();
 		ret.levels = parameters.get("levels", 5);
 		return ret;
 	}
 
 	@Override
-	public IState resolve(IState ret, IComputationContext context) throws KlabException {
+	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
 		this.geometry = context.getScale();
-		MCAContext mcaContext = new MCAContext(ret.getObservable(), (IRuntimeContext) context, ITime.INITIALIZATION,
+		MCAContext mcaContext = new MCAContext(ret.getObservable(), (IRuntimeScope) context, ITime.INITIALIZATION,
 				levels);
 
 		if (mcaContext.isComputable()) {

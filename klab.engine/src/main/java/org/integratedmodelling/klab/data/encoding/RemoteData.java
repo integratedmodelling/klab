@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
 /**
  * A data object initialized with a protobuf object encoded by a remote builder
@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
  */
 public class RemoteData implements IKlabData {
 
-	public RemoteData(KlabData data, IRuntimeContext context) {
+	public RemoteData(KlabData data, IRuntimeScope context) {
 
 	}
 

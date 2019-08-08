@@ -30,7 +30,7 @@ import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
@@ -990,7 +990,7 @@ public class ResolutionScope implements IResolutionScope {
 		Observable ret = resolvable;
 		Map<String, IObservable> knownObservables = new HashMap<>();
 		if (context != null) {
-			IRuntimeContext ctx = context.getRuntimeContext();
+			IRuntimeScope ctx = context.getRuntimeContext();
 			if (ctx != null) {
 				for (Pair<String, IObservation> obs : ctx.getArtifacts(IObservation.class)) {
 					knownObservables.put(obs.getSecond().getObservable().getReferenceName(),

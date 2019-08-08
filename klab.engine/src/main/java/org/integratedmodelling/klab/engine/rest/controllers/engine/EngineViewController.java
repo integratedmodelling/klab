@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -136,7 +136,7 @@ public class EngineViewController {
 		}
 
 		List<IObservationReference> ret = new ArrayList<>();
-		IRuntimeContext context = ((Observation) obs).getRuntimeContext();
+		IRuntimeScope context = ((Observation) obs).getRuntimeContext();
 
 		int i = -1;
 		int n = 0;

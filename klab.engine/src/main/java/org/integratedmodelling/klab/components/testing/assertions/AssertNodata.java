@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.testing.Assertion;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -21,12 +21,12 @@ public class AssertNodata implements Assertion, IExpression {
 	List<String> details = new ArrayList<>();
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new AssertNodata();
 	}
 
 	@Override
-	public boolean evaluate(List<String> targets, Parameters<String> parameters, IComputationContext context)
+	public boolean evaluate(List<String> targets, Parameters<String> parameters, IContextualizationScope context)
 			throws KlabValidationException {
 		int errors = 0;
 		for (String target : targets) {

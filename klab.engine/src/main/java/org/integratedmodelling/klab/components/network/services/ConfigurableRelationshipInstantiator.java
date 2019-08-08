@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -67,12 +67,12 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
     private Method                              method    = Method.ErdosRenyi;
     private SpaceType                           spaceType = SpaceType.Default;
     private Graph<IObjectArtifact, DefaultEdge> graph;
-    private IComputationContext                 context;
+    private IContextualizationScope                 context;
 
     public ConfigurableRelationshipInstantiator() {
         /* to instantiate as expression - do not remove (or use) */}
 
-    public ConfigurableRelationshipInstantiator(IParameters<String> parameters, IComputationContext context) {
+    public ConfigurableRelationshipInstantiator(IParameters<String> parameters, IContextualizationScope context) {
 
         this.context = context;
         this.sourceArtifact = parameters.get("source", String.class);
@@ -112,7 +112,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 //    }
 
     @Override
-    public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context)
+    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
             throws KlabException {
 
         // force this if we are instantiating bonds
@@ -347,7 +347,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
         return new ConfigurableRelationshipInstantiator(parameters, context);
     }
 

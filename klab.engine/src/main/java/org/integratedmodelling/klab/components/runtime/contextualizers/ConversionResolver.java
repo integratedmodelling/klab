@@ -9,8 +9,8 @@ import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -42,14 +42,14 @@ public class ConversionResolver implements IResolver<IState>, IProcessor, IExpre
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new ConversionResolver((IValueMediator) parameters.get("original"),
 				(IValueMediator) parameters.get("target"));
 	}
 
 	@Override
-	public IState resolve(IState ret, IComputationContext context) throws KlabException {
-		return new MediatingState(ret, (RuntimeContext) context, from, to);
+	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
+		return new MediatingState(ret, (RuntimeScope) context, from, to);
 	}
 
 	@Override

@@ -48,7 +48,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.documentation.Documentation;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.springframework.util.StringUtils;
 

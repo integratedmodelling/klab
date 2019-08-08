@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
@@ -76,7 +76,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 	/**
 	 * Use this to extract features through
 	 * {@link #extractShapes(IState, IExpression, IMonitor)} or
-	 * {@link #extractShapes(GridCoverage2D, IProjection, IExpression, IComputationContext)}
+	 * {@link #extractShapes(GridCoverage2D, IProjection, IExpression, IContextualizationScope)}
 	 * outside of a k.LAB contextualizer.
 	 * 
 	 * @param grid
@@ -85,7 +85,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 		this.grid = grid;
 	}
 
-	public PolygonInstantiator(IParameters<String> parameters, IComputationContext context)
+	public PolygonInstantiator(IParameters<String> parameters, IContextualizationScope context)
 			throws KlabValidationException {
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
@@ -117,7 +117,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 
 		List<IState> sourceStates = new ArrayList<>();
 		List<IObjectArtifact> ret = new ArrayList<>();
@@ -265,7 +265,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new PolygonInstantiator(parameters, context);
 	}
 
@@ -325,7 +325,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 		return IArtifact.Type.OBJECT;
 	}
 
-	public Collection<IShape> extractShapes(GridCoverage2D state, IExpression selector, IComputationContext context) {
+	public Collection<IShape> extractShapes(GridCoverage2D state, IExpression selector, IContextualizationScope context) {
 
 		List<IShape> ret = new ArrayList<>();
 

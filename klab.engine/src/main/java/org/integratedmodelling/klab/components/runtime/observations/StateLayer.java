@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 
 /**
  * A proxy implementation of a state to support multiple layers, implementing
@@ -27,7 +27,7 @@ public class StateLayer extends State implements IState {
 	}
 	
 	public StateLayer(State state, IDataArtifact layer) {
-		super(state.getObservable(), state.getScale(), (RuntimeContext) state.getRuntimeContext(), layer);
+		super(state.getObservable(), state.getScale(), (RuntimeScope) state.getRuntimeContext(), layer);
 		this.delegate = state;
 		// share the same layers map of the original layer
 		this.layers = state.layers;

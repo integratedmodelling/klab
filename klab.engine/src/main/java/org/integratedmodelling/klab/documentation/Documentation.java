@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Escape;
@@ -172,7 +172,7 @@ public class Documentation implements IDocumentation {
 		}
 
 		@Override
-		public void compile(IReport.Section sect, IComputationContext context) {
+		public void compile(IReport.Section sect, IContextualizationScope context) {
 
 			ReportSection current = (ReportSection)sect;
 
@@ -351,7 +351,7 @@ public class Documentation implements IDocumentation {
 			return type;
 		}
 
-		public String evaluate(IComputationContext context, Section section) {
+		public String evaluate(IContextualizationScope context, Section section) {
 			Object ret = "";
 			Parameters<String> parameters = new Parameters<>();
 			parameters.putAll(context);

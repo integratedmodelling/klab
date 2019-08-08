@@ -29,7 +29,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Template;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**

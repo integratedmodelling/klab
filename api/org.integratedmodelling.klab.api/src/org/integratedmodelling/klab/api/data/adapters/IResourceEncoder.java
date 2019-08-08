@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * The Interface IResourceEncoder.
@@ -32,7 +32,7 @@ public interface IResourceEncoder {
     /**
      * Check if the resource can be accessed. This should ensure the ability of
      * calling
-     * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IComputationContext)}
+     * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IContextualizationScope)}
      * without spending too much time.
      * 
      * @param resource
@@ -61,5 +61,5 @@ public interface IResourceEncoder {
      * @param context
      *            the context of computation
      */
-    void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, IKlabData.Builder builder, IComputationContext context);
+    void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, IKlabData.Builder builder, IContextualizationScope context);
 }

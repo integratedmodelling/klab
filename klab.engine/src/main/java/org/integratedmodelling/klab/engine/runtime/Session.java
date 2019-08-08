@@ -69,7 +69,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.SearchContext;
 import org.integratedmodelling.klab.engine.resources.Project;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.KimObject;
@@ -150,7 +150,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 * The contexts for all root observations built in this session, up to the
 	 * configured number, most recent first. Synchronized.
 	 */
-	Deque<IRuntimeContext> observationContexts = new LinkedBlockingDeque<>(
+	Deque<IRuntimeScope> observationContexts = new LinkedBlockingDeque<>(
 			Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
 
 	/*
@@ -354,7 +354,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	@Override
 	public IObservation getObservation(String observationId) {
 		// start at the most recent
-		for (IRuntimeContext context : observationContexts) {
+		for (IRuntimeScope context : observationContexts) {
 			IObservation ret = context.getObservation(observationId);
 			if (ret != null) {
 				return ret;
@@ -417,7 +417,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 * 
 	 * @param runtimeContext
 	 */
-	public void registerObservationContext(IRuntimeContext runtimeContext) {
+	public void registerObservationContext(IRuntimeScope runtimeContext) {
 
 		if (!observationContexts.offerFirst(runtimeContext)) {
 			disposeObservation(observationContexts.pollLast());
@@ -428,7 +428,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				+ runtimeContext.getRootSubject());
 	}
 
-	private void disposeObservation(IRuntimeContext context) {
+	private void disposeObservation(IRuntimeScope context) {
 		// TODO dispose of the observation
 		// TODO send a notification through the session monitor that the obs is now out
 		// of scope.
@@ -664,7 +664,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	@MessageHandler(type = IMessage.Type.DataflowNodeDetail)
 	private void handleDataflowAction(DataflowState state) {
 
-		IRuntimeContext context = findContext(state.getContextId());
+		IRuntimeScope context = findContext(state.getContextId());
 		if (context != null) {
 			Flowchart.Element element = context.getContextualizationStrategy().findDataflowElement(state.getNodeId());
 			if (element != null) {
@@ -682,8 +682,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		}
 	}
 
-	private IRuntimeContext findContext(String contextId) {
-		for (IRuntimeContext ctx : observationContexts) {
+	private IRuntimeScope findContext(String contextId) {
+		for (IRuntimeScope ctx : observationContexts) {
 			if (ctx.getRootSubject().getId().equals(contextId)) {
 				return ctx;
 			}
@@ -1111,7 +1111,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		ret.setTimeRetrieved(System.currentTimeMillis());
 		ret.setTimeLastActivity(lastActivity);
 
-		for (IRuntimeContext ctx : observationContexts) {
+		for (IRuntimeScope ctx : observationContexts) {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
 					.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0, /* false, */ false));
 		}

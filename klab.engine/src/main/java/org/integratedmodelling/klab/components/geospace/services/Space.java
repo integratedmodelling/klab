@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -25,7 +25,7 @@ public class Space implements IExpression {
 	private static Map<String, ISpace> shapeCache = new HashMap<>();
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 
 		Shape shape = null;
 		Double resolution = null;

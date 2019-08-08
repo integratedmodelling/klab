@@ -51,7 +51,7 @@ import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
@@ -63,9 +63,9 @@ import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.Report;
-import org.integratedmodelling.klab.engine.runtime.SimpleContext;
+import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -133,7 +133,7 @@ public class Actuator implements IActuator {
 	private List<IAnnotation> annotations = new ArrayList<>();
 
 	// this is for documentation templates, not saved
-	private transient IRuntimeContext currentContext;
+	private transient IRuntimeScope currentContext;
 
 	/*
 	 * this gets a copy of the original model resource, so we can do things to it.
@@ -255,7 +255,7 @@ public class Actuator implements IActuator {
 	 *         null.
 	 * @throws KlabException
 	 */
-	public IArtifact compute(IArtifact target, IRuntimeContext runtimeContext) throws KlabException {
+	public IArtifact compute(IArtifact target, IRuntimeScope runtimeContext) throws KlabException {
 
 		this.currentContext = runtimeContext;
 		this.status.set(1);
@@ -273,7 +273,7 @@ public class Actuator implements IActuator {
 		 * and applies any requested mediation to the inputs. Target may be swapped for
 		 * a mediator.
 		 */
-		IRuntimeContext ctx = setupContext(target, runtimeContext, ITime.INITIALIZATION);
+		IRuntimeScope ctx = setupContext(target, runtimeContext, ITime.INITIALIZATION);
 
 		for (Pair<IServiceCall, IComputableResource> service : computationStrategy) {
 
@@ -325,7 +325,7 @@ public class Actuator implements IActuator {
 			 */
 			IObservable indirectTarget = contextualizer.getSecond().getTarget();
 			String targetId = "self_";
-			IRuntimeContext context = ctx;
+			IRuntimeScope context = ctx;
 
 			if (indirectTarget != null) {
 				targetId = indirectTarget.getName();
@@ -403,7 +403,7 @@ public class Actuator implements IActuator {
 
 		// FIXME the original context does not get the indirect artifacts
 		if (runtimeContext.getTargetArtifact() == null || !runtimeContext.getTargetArtifact().equals(ret)) {
-			((IRuntimeContext) runtimeContext).setTarget(ret);
+			((IRuntimeScope) runtimeContext).setTarget(ret);
 		}
 
 		// add any artifact, including the empty artifact, to the provenance. FIXME the
@@ -477,7 +477,7 @@ public class Actuator implements IActuator {
 
 	@SuppressWarnings("unchecked")
 	private IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
-			IComputableResource resource, IArtifact ret, IRuntimeContext ctx, IScale scale) throws KlabException {
+			IComputableResource resource, IArtifact ret, IRuntimeScope ctx, IScale scale) throws KlabException {
 
 		if (ctx.getMonitor().isInterrupted()) {
 			return Observation.empty(getObservable(), ctx);
@@ -633,8 +633,8 @@ public class Actuator implements IActuator {
 	 * @param second
 	 * @return
 	 */
-	private IRuntimeContext addParameters(IRuntimeContext ctx, IArtifact self, IComputableResource resource) {
-		IRuntimeContext ret = ctx.copy();
+	private IRuntimeScope addParameters(IRuntimeScope ctx, IArtifact self, IComputableResource resource) {
+		IRuntimeScope ret = ctx.copy();
 		if (self != null) {
 			ret.replaceTarget(self);
 			ret.set("self", self);
@@ -646,10 +646,10 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
-	private IRuntimeContext setupContext(IArtifact target, final IRuntimeContext runtimeContext, ILocator locator)
+	private IRuntimeScope setupContext(IArtifact target, final IRuntimeScope runtimeContext, ILocator locator)
 			throws KlabException {
 
-		IRuntimeContext ret = runtimeContext.copy();
+		IRuntimeScope ret = runtimeContext.copy();
 
 		// compile mediators
 		List<Pair<IContextualizer, IComputableResource>> mediation = new ArrayList<>();
@@ -1100,7 +1100,7 @@ public class Actuator implements IActuator {
 	 * 
 	 * @param isMainObservable
 	 */
-	public void notifyArtifacts(boolean isMainObservable, IRuntimeContext context) {
+	public void notifyArtifacts(boolean isMainObservable, IRuntimeScope context) {
 
 		this.currentContext = context;
 
@@ -1175,9 +1175,9 @@ public class Actuator implements IActuator {
 		this.currentContext = null;
 	}
 
-	public IComputationContext getCurrentContext() {
+	public IContextualizationScope getCurrentContext() {
 		if (currentContext == null) {
-			return new SimpleContext(this);
+			return new SimpleRuntimeScope(this);
 		}
 		return currentContext;
 	}

@@ -62,7 +62,7 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -88,7 +88,7 @@ import org.jgrapht.graph.DefaultEdge;
  * @author ferdinando.villa
  *
  */
-public class RuntimeContext extends Parameters<String> implements IRuntimeContext {
+public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	INamespace namespace;
 	Provenance provenance;
@@ -98,7 +98,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	Structure structure;
 	Map<String, IArtifact> catalog;
 	IMonitor monitor;
-	RuntimeContext parent;
+	RuntimeScope parent;
 	IArtifact target;
 	IScale scale;
 	IKimConcept.Type artifactType;
@@ -123,7 +123,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	private IActuator actuator;
 
-	public RuntimeContext(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
+	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
 		this.catalog = new HashMap<>();
 		this.report = new Report(this, monitor.getIdentity().getParentIdentity(ISession.class).getId());
@@ -167,7 +167,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 	}
 
-	RuntimeContext(RuntimeContext context) {
+	RuntimeScope(RuntimeScope context) {
 		this.putAll(context);
 		this.namespace = context.namespace;
 		this.provenance = context.provenance;
@@ -197,9 +197,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	@Override
-	public IRuntimeContext createChild(IObservable indirectTarget) {
+	public IRuntimeScope createChild(IObservable indirectTarget) {
 
-		RuntimeContext ret = new RuntimeContext(this);
+		RuntimeScope ret = new RuntimeScope(this);
 
 		ret.parent = this;
 		ret.targetName = indirectTarget.getName();
@@ -302,8 +302,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	@Override
-	public IRuntimeContext copy() {
-		RuntimeContext ret = new RuntimeContext(this);
+	public IRuntimeScope copy() {
+		RuntimeScope ret = new RuntimeScope(this);
 		// make a deep copy of all localizable info so we can rename elements
 		ret.catalog = new HashMap<>(this.catalog);
 		ret.semantics = new HashMap<>(this.semantics);
@@ -602,11 +602,11 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	@Override
-	public IRuntimeContext createChild(IScale scale, IActuator act, IResolutionScope scope, IMonitor monitor) {
+	public IRuntimeScope createChild(IScale scale, IActuator act, IResolutionScope scope, IMonitor monitor) {
 
 		Actuator actuator = (Actuator) act;
 
-		RuntimeContext ret = new RuntimeContext(this);
+		RuntimeScope ret = new RuntimeScope(this);
 		ret.parent = this;
 		ret.namespace = actuator.getNamespace();
 		ret.targetName = actuator.isPartition() ? actuator.getPartitionedTarget() : actuator.getName();
@@ -691,9 +691,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	@Override
-	public IRuntimeContext createContext(IScale scale, IActuator actuator, IResolutionScope scope, IMonitor monitor) {
+	public IRuntimeScope createContext(IScale scale, IActuator actuator, IResolutionScope scope, IMonitor monitor) {
 
-		RuntimeContext ret = new RuntimeContext(this);
+		RuntimeScope ret = new RuntimeScope(this);
 		ret.parent = this;
 		ret.namespace = ((Actuator) actuator).getNamespace();
 		ret.targetName = ((Actuator) actuator).isPartition() ? ((Actuator) actuator).getPartitionedTarget()
@@ -955,7 +955,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 						if (!done) {
 							// look up in the first context that has the root subject as a target, or get
 							// the parent if none does.
-							RuntimeContext p = getParentWithTarget(rootSubject);
+							RuntimeScope p = getParentWithTarget(rootSubject);
 							IArtifact artifact = p.findArtifactByObservableName(attr);
 							if (artifact == null) {
 								artifact = p
@@ -1108,11 +1108,11 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	}
 
-	private RuntimeContext getParentWithTarget(IDirectObservation subject) {
+	private RuntimeScope getParentWithTarget(IDirectObservation subject) {
 		if (subject == null || subject.equals(this.target)) {
 			return this;
 		}
-		RuntimeContext ret = parent == null ? null : parent.getParentWithTarget(subject);
+		RuntimeScope ret = parent == null ? null : parent.getParentWithTarget(subject);
 		return ret == null ? (parent == null ? this : parent) : ret;
 	}
 
@@ -1256,8 +1256,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			return true;
 		}
 
-		private RuntimeContext getOuterType() {
-			return RuntimeContext.this;
+		private RuntimeScope getOuterType() {
+			return RuntimeScope.this;
 		}
 
 	}

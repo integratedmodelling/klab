@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.api.observations.ISubject
 import org.integratedmodelling.klab.api.provenance.IArtifact
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
 import org.integratedmodelling.klab.contrib.math.ExponentialIntegrals
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope
 import org.integratedmodelling.klab.exceptions.KlabException
 import org.integratedmodelling.klab.extensions.groovy.model.Concept
 import org.integratedmodelling.klab.extensions.groovy.model.DirectObservation
@@ -319,7 +319,7 @@ abstract class ActionBase extends Script {
         if (binding.hasVariable("_self") && binding.getVariable("_self") instanceof IDirectObservation) {
             ctx = (IDirectObservation)binding.getVariable("_self");
         } else if (binding.hasVariable("_c")) {
-            ctx = ((IRuntimeContext)binding.getVariable("_c")).getContextSubject();
+            ctx = ((IRuntimeScope)binding.getVariable("_c")).getContextSubject();
         }
 
         if (ctx != null) {

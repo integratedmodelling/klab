@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
 public class TestRunner implements Annotations.Handler {
 
@@ -249,7 +249,7 @@ public class TestRunner implements Annotations.Handler {
 		return result;
 	}
 
-	private void evaluateAssertion(IServiceCall assertion, Assertion test, IRuntimeContext runtimeContext,
+	private void evaluateAssertion(IServiceCall assertion, Assertion test, IRuntimeScope runtimeContext,
 			TestMonitor monitor) {
 
 		Object o = assertion.getParameters().get("target");

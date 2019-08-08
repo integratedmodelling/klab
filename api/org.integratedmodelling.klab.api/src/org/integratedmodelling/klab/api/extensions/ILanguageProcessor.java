@@ -18,7 +18,7 @@ package org.integratedmodelling.klab.api.extensions;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
@@ -142,7 +142,7 @@ public interface ILanguageProcessor {
 	 *            a {@link java.lang.String} object.
 	 * @param context
 	 *            a
-	 *            {@link org.integratedmodelling.klab.api.runtime.IComputationContext}
+	 *            {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope}
 	 *            object.
 	 * @return the compiled expression
 	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
@@ -160,7 +160,7 @@ public interface ILanguageProcessor {
 	 *            a {@link java.lang.String} object.
 	 * @param context
 	 *            a
-	 *            {@link org.integratedmodelling.klab.api.runtime.IComputationContext}
+	 *            {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope}
 	 *            object.
 	 * @param forcedScalar
 	 *            if true, the expression will be forced to evaluate in scalar

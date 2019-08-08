@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.model.contextualization;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * The predicate resolver takes a concrete predicate and an observation, and
@@ -21,6 +21,6 @@ public interface IPredicateResolver<T extends IDirectObservation> extends IConte
 	 * @param observation
 	 * @param context
 	 */
-	boolean resolve(IConcept predicate, T observation, IComputationContext context);
+	boolean resolve(IConcept predicate, T observation, IContextualizationScope context);
 
 }

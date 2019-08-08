@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.testing;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -28,7 +28,7 @@ public interface Assertion {
 	 *             for any error that can be described better than with just a fail
 	 *             message.
 	 */
-	boolean evaluate(List<String> targets, Parameters<String> parameters, IComputationContext context)
+	boolean evaluate(List<String> targets, Parameters<String> parameters, IContextualizationScope context)
 			throws KlabValidationException;
 	
 	/**

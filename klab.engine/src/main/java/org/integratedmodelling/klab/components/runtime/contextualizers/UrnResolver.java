@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -44,13 +44,13 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 	}
 
 	@Override
-	public IArtifact resolve(IArtifact observation, IComputationContext context) {
+	public IArtifact resolve(IArtifact observation, IContextualizationScope context) {
 		IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
 		return data.getArtifact();
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		// TODO support multiple URNs
 		return new UrnResolver(parameters.get("urn", String.class));
 	}

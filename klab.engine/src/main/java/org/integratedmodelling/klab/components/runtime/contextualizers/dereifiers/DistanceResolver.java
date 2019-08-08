@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.indexing.DistanceCalculator;
 import org.integratedmodelling.klab.components.geospace.indexing.SpatialIndex;
@@ -40,7 +40,7 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 	public DistanceResolver() {
 	}
 
-	public DistanceResolver(IParameters<String> parameters, IComputationContext context) {
+	public DistanceResolver(IParameters<String> parameters, IContextualizationScope context) {
 		this.artifactId = parameters.get("artifact", String.class);
 		this.unit = Units.INSTANCE.getUnit(parameters.get("unit", String.class));
 	}
@@ -53,7 +53,7 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		if (context.getScale().getSpace() == null) {
 			throw new IllegalArgumentException("cannot compute distances in a non-spatial context");
 		}
@@ -61,7 +61,7 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 	}
 
 	@Override
-	public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
+	public IDataArtifact resolve(IDataArtifact ret, IContextualizationScope context) throws KlabException {
 
 		if (context.getArtifact(this.artifactId) == null || context.getArtifact(this.artifactId).isEmpty()) {
 			return ret;

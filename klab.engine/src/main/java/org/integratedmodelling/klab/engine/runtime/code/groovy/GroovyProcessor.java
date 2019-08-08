@@ -13,8 +13,8 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public enum GroovyProcessor implements ILanguageProcessor {

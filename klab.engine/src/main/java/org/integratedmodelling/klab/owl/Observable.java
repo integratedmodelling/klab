@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Annotation;
@@ -518,7 +518,7 @@ public class Observable implements IObservable {
 	 * @param context
 	 * @return
 	 */
-	public List<IAnnotation> getAnnotations(IRuntimeContext context) {
+	public List<IAnnotation> getAnnotations(IRuntimeScope context) {
 		Dataflow dataflow = (Dataflow) context.getDataflow();
 		if (dataflow != null) {
 			List<IAnnotation> ret = new ArrayList<>();

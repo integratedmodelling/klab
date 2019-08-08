@@ -16,7 +16,7 @@
 package org.integratedmodelling.klab.api.data.classification;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -62,7 +62,7 @@ public interface IClassification extends IDataKey, Iterable<Pair<IConcept, IClas
 	 *            context of computation
 	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
 	 */
-	IConcept classify(Object object, IComputationContext context);
+	IConcept classify(Object object, IContextualizationScope context);
 
 	/**
 	 * Get the undiscretized value for the passed concept. If the concept is not in
@@ -97,6 +97,6 @@ public interface IClassification extends IDataKey, Iterable<Pair<IConcept, IClas
 	 *            a context
 	 * @return a numeric ranking - equivalent to calling getNumericCode(classify(o))
 	 */
-	int classifyToIndex(Object o, IComputationContext context);
+	int classifyToIndex(Object o, IContextualizationScope context);
 
 }

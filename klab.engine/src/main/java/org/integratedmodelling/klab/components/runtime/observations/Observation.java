@@ -13,11 +13,11 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
@@ -56,11 +56,11 @@ public abstract class Observation extends ObservedArtifact implements IObservati
         return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
     }
 
-    public static IObservation empty(IObservable observable, IComputationContext context) {
-        return ((IRuntimeContext)context).getObservationGroup(observable, context.getScale());
+    public static IObservation empty(IObservable observable, IContextualizationScope context) {
+        return ((IRuntimeScope)context).getObservationGroup(observable, context.getScale());
     }
 
-    protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
+    protected Observation(Observable observable, Scale scale, IRuntimeScope context) {
         super(scale, context);
         this.observable = observable;
         this.setCreationTime(context.getScheduler() != null ? context.getScheduler().getTime() : timestamp);

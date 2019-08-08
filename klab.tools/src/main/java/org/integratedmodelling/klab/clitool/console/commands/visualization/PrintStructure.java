@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.StringUtil;
 
@@ -29,7 +29,7 @@ public class PrintStructure implements ICommand {
 
 	private String printStructure(IObservation obs, int level) {
 
-		IRuntimeContext context = ((Observation)obs).getRuntimeContext();
+		IRuntimeScope context = ((Observation)obs).getRuntimeContext();
 		
 		String ret = StringUtil.repeat(' ', level) + obs;
 		for (IObservation child : context.getChildrenOf(obs)) {

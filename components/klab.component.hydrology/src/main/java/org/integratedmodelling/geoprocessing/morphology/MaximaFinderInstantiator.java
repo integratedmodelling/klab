@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -64,7 +64,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		MaximaFinderInstantiator ret = new MaximaFinderInstantiator();
 		ret.chmId = parameters.get("chm", String.class);
 		ret.surfaceId = parameters.get("surface", String.class);
@@ -81,7 +81,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Grid grid = Space.extractGrid(context.getContextObservation());

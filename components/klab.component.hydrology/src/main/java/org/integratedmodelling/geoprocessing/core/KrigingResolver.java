@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -65,7 +65,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public IState resolve(IState target, IComputationContext context) throws KlabException {
+	public IState resolve(IState target, IContextualizationScope context) throws KlabException {
 
 		final Grid grid = Space.extractGrid(target);
 		if (grid == null) {
@@ -223,7 +223,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 
 		KrigingResolver ret = new KrigingResolver();
 

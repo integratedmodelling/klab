@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
@@ -58,7 +58,7 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 	/**
 	 * Use this to extract features through
 	 * {@link #extractShapes(IState, IExpression, IMonitor)} or
-	 * {@link #extractShapes(GridCoverage2D, IProjection, IExpression, IComputationContext)}
+	 * {@link #extractShapes(GridCoverage2D, IProjection, IExpression, IContextualizationScope)}
 	 * outside of a k.LAB contextualizer.
 	 * 
 	 * @param grid
@@ -67,7 +67,7 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 		this.grid = grid;
 	}
 
-	public PointClusterInstantiator(IParameters<String> parameters, IComputationContext context)
+	public PointClusterInstantiator(IParameters<String> parameters, IContextualizationScope context)
 			throws KlabValidationException {
 
 		IScale scale = context.getScale();
@@ -112,7 +112,7 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 
 		List<IState> sourceStates = new ArrayList<>();
 		List<IObjectArtifact> ret = new ArrayList<>();
@@ -212,7 +212,7 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new PointClusterInstantiator(parameters, context);
 	}
 

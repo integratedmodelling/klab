@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IPredicateResolv
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * A classifier that defines the predicate to attribute a direct observation
@@ -49,7 +49,7 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 	}
 
 	public ExpressionCharacterizer(Descriptor code, Descriptor condition, IParameters<String> parameters,
-			IComputationContext context, Map<String, Object> additional) {
+			IContextualizationScope context, Map<String, Object> additional) {
 		this.expressionDescriptor = code;
 		this.conditionDescriptor = condition;
 		if (this.expression == null) {
@@ -67,7 +67,7 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) {
 
 		ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
@@ -101,7 +101,7 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 	}
 
 	@Override
-	public boolean resolve(IConcept predicate, IDirectObservation observation, IComputationContext context) {
+	public boolean resolve(IConcept predicate, IDirectObservation observation, IContextualizationScope context) {
 
 		/*
 		 * run expression for the side effects. If it returns a boolean, take it as the

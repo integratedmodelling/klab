@@ -16,7 +16,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -49,6 +49,6 @@ public abstract interface IResolver<T extends IArtifact> extends IContextualizer
 	 *         a new one if any mediation was necessary.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	T resolve(T ret, IComputationContext context) throws KlabException;
+	T resolve(T ret, IContextualizationScope context) throws KlabException;
 
 }

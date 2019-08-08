@@ -50,12 +50,12 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -74,7 +74,7 @@ public class RasterEncoder implements IResourceEncoder {
 
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			IKlabData.Builder builder, IComputationContext context) {
+			IKlabData.Builder builder, IContextualizationScope context) {
 		encodeFromCoverage(resource, urnParameters, getCoverage(resource, geometry), geometry, builder, context);
 	}
 
@@ -91,7 +91,7 @@ public class RasterEncoder implements IResourceEncoder {
 	 * @param context
 	 */
 	public void encodeFromCoverage(IResource resource, Map<String, String> urnParameters, GridCoverage coverage,
-			IGeometry geometry, IKlabData.Builder builder, IComputationContext context) {
+			IGeometry geometry, IKlabData.Builder builder, IContextualizationScope context) {
 
 		/*
 		 * Set the data from the transformed coverage
@@ -114,7 +114,7 @@ public class RasterEncoder implements IResourceEncoder {
 		 * expressions
 		 */
 
-		builder = builder.startState(((IRuntimeContext) context).getTargetName());
+		builder = builder.startState(((IRuntimeScope) context).getTargetName());
 
 		for (long ofs = 0; ofs < space.size(); ofs++) {
 

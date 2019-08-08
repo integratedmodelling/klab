@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class ExpressionStateResolver implements IStateResolver {
@@ -22,14 +22,14 @@ public class ExpressionStateResolver implements IStateResolver {
 
     public ExpressionStateResolver(Descriptor descriptor, Descriptor condition,
             IParameters<String> parameters,
-            IComputationContext context, Map<String, Object> additionalParameters) {
+            IContextualizationScope context, Map<String, Object> additionalParameters) {
         this.expressionDescriptor = descriptor;
         this.conditionDescriptor = condition;
         this.additionalParameters = additionalParameters;
     }
 
     @Override
-    public Object resolve(IObservable semantics, IComputationContext context) throws KlabException {
+    public Object resolve(IObservable semantics, IContextualizationScope context) throws KlabException {
 
         boolean ok = true;
         if (this.expression == null) {

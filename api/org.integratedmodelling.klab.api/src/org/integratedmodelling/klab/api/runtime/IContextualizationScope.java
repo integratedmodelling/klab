@@ -39,11 +39,10 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
 
-// TODO: Auto-generated Javadoc
 /**
- * The runtime context holds all information about the computation being run and
- * the artifacts computed this far. It is passed to dataflows and down to
- * actuators and contextualizers, customized to reflect names, states and
+ * The contextualization scope holds all information about the computation being
+ * run and the artifacts computed this far. It is passed to dataflows and down
+ * to actuators and contextualizers, customized to reflect names, states and
  * locators as each actuator expects them.
  *
  * The {@link org.integratedmodelling.kim.api.IParameters} methods access
@@ -53,9 +52,8 @@ import org.integratedmodelling.klab.utils.Pair;
  * artifacts are always available through {@link #getArtifact(String)}.
  *
  * @author Ferd
- * @version $Id: $Id
  */
-public interface IComputationContext extends IParameters<String> {
+public interface IContextualizationScope extends IParameters<String> {
 
 	/**
 	 * The namespace of reference in this context. Usually that of the running model

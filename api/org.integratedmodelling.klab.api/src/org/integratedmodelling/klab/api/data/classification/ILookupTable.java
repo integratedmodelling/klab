@@ -5,7 +5,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * A lookup table matches a table to a lookup strategy expressed as a set of
@@ -42,7 +42,7 @@ public interface ILookupTable extends IDataKey {
 	 * @param context
 	 * @return the first matching object from the result column, or null
 	 */
-	Object lookup(IParameters<String> parameters, IComputationContext context);
+	Object lookup(IParameters<String> parameters, IContextualizationScope context);
 
 	/**
 	 * The artifact type for the results in the lookup column, which must be 

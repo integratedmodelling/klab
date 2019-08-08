@@ -44,7 +44,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.CompileInfo;
@@ -64,8 +64,8 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.resources.ServiceWorkspace;
-import org.integratedmodelling.klab.engine.runtime.SimpleContext;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -806,7 +806,7 @@ public enum Resources implements IResourceService {
 			contextObservable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
 		}
 
-		SimpleContext context = new SimpleContext((Observable) contextObservable, scale, monitor);
+		SimpleRuntimeScope context = new SimpleRuntimeScope((Observable) contextObservable, scale, monitor);
 		IArtifact ctxArtifact = context.getTargetArtifact();
 
 		if (observable == null) {
@@ -876,7 +876,7 @@ public enum Resources implements IResourceService {
 	 */
 	@Override
 	public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			IComputationContext context) {
+			IContextualizationScope context) {
 
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 
@@ -886,7 +886,7 @@ public enum Resources implements IResourceService {
 						"adapter for resource of type " + resource.getAdapterType() + " not available");
 			}
 
-			IKlabData.Builder builder = new LocalDataBuilder((IRuntimeContext) context);
+			IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
 			adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
 			return builder.build();
 

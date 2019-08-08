@@ -39,7 +39,7 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -68,7 +68,7 @@ public class VectorEncoder implements IResourceEncoder {
 
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			Builder builder, IComputationContext context) {
+			Builder builder, IContextualizationScope context) {
 		FeatureSource<SimpleFeatureType, SimpleFeature> features = getFeatureSource(resource, geometry);
 		encodeFromFeatures(features, resource, urnParameters, geometry, builder, context);
 	}
@@ -107,7 +107,7 @@ public class VectorEncoder implements IResourceEncoder {
 
 	// TODO use URN parameters
 	private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource, 
-			Map<String, String> urnParameters, IGeometry geometry, Builder builder, IComputationContext context) {
+			Map<String, String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope context) {
 
 
         Filter filter = null;

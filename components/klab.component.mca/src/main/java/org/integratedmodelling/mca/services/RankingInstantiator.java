@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -43,7 +43,7 @@ public class RankingInstantiator implements IInstantiator, IProcessor, IExpressi
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		RankingInstantiator ret = new RankingInstantiator();
 		// TODO method
 		ret.normalize = parameters.get("normalize", Boolean.TRUE);
@@ -51,7 +51,7 @@ public class RankingInstantiator implements IInstantiator, IProcessor, IExpressi
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 
 		IArtifact target = null;
 		if (targetArtifact == null) {

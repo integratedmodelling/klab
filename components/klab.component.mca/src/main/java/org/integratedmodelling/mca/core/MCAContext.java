@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.geospace.processing.MapClassifier;
 import org.integratedmodelling.klab.components.geospace.processing.MapClassifier.MapClass;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
@@ -53,7 +53,7 @@ public class MCAContext {
 
 	private final static String DEFAULT_STAKEHOLDER = "___default_stakeholder";
 
-	public MCAContext(IObservable concordanceObservable, IRuntimeContext context, ILocator locator, int levels) {
+	public MCAContext(IObservable concordanceObservable, IRuntimeScope context, ILocator locator, int levels) {
 
 		IObservable stakeholderObservable = null;
 		IObservable alternativeObservable = null;
@@ -184,7 +184,7 @@ public class MCAContext {
 
 	}
 
-	private void buildDistributedAlternatives(IRuntimeContext context, ILocator locator, int levels) {
+	private void buildDistributedAlternatives(IRuntimeScope context, ILocator locator, int levels) {
 
 		List<IState> states = new ArrayList<>();
 		for (ICriterion criterion : criteria) {
@@ -225,7 +225,7 @@ public class MCAContext {
 
 	}
 
-	private ICriterion buildCriterion(IObservable observable, IRuntimeContext context) {
+	private ICriterion buildCriterion(IObservable observable, IRuntimeScope context) {
 
 		ICriterion ret = null;
 		IArtifact crit = context.getArtifact(observable.getName());
@@ -243,7 +243,7 @@ public class MCAContext {
 		return ret;
 	}
 
-	private void buildStakeholders(Map<?, ?> value, IObservable observable, IRuntimeContext context, boolean b) {
+	private void buildStakeholders(Map<?, ?> value, IObservable observable, IRuntimeScope context, boolean b) {
 
 		for (Object o : value.keySet()) {
 			if (!(o instanceof IConcept)
@@ -264,7 +264,7 @@ public class MCAContext {
 
 	}
 
-	private IAnnotation getCriterionAnnotation(IObservable observable, IRuntimeContext context) {
+	private IAnnotation getCriterionAnnotation(IObservable observable, IRuntimeScope context) {
 		for (final IAnnotation annotation : ((Observable) observable).getAnnotations(context)) {
 			if (MCAComponent.criterionAnnotations.contains(annotation.getName())) {
 				return annotation;

@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.documentation.Report.RefType;
@@ -144,7 +144,7 @@ public class ReportSection extends Parameters<String> implements Section {
      *            tag
      * @param context
      */
-    public void describe(Object[] args, IDocumentation documentation, IComputationContext context) {
+    public void describe(Object[] args, IDocumentation documentation, IContextualizationScope context) {
         // TODO Auto-generated method stub
 //        System.out.println("FOC");
     }
@@ -156,7 +156,7 @@ public class ReportSection extends Parameters<String> implements Section {
      *            tag
      * @param context
      */
-    public void tag(Object[] args, IDocumentation documentation, IComputationContext context) {
+    public void tag(Object[] args, IDocumentation documentation, IContextualizationScope context) {
         body.append("{#user:" + args[0] + "}");
     }
 
@@ -168,7 +168,7 @@ public class ReportSection extends Parameters<String> implements Section {
      *            tag, text
      * @param context
      */
-    public void link(Object[] args, IDocumentation documentation, IComputationContext context) {
+    public void link(Object[] args, IDocumentation documentation, IContextualizationScope context) {
         RefType type = report.getReferenceType(args[0].toString());
         if (type != null) {
             body.append("[@" + type.name().toLowerCase() + ":" + args[0] + "]");
@@ -184,7 +184,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void table(Object[] args, IDocumentation documentation, IComputationContext context) {
+    public void table(Object[] args, IDocumentation documentation, IContextualizationScope context) {
 
         ITable<?> table = getTable(args[0].toString());
         if (table != null) {
@@ -240,7 +240,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void cite(Object[] args, IDocumentation documentation, IComputationContext context) {
+    public void cite(Object[] args, IDocumentation documentation, IContextualizationScope context) {
 
         if (!report.referencesCited.containsKey(args[0])) {
             Reference reference = ((Documentation) documentation).getReference(args[0].toString());
@@ -260,7 +260,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void footnote(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
+    public void footnote(Object[] processArguments, IDocumentation documentation, IContextualizationScope context) {
         // TODO Auto-generated method stub
 //        System.out.println("FOC");
     }
@@ -275,7 +275,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void figure(Object[] args, IDocumentation documentation, IComputationContext context) {
+    public void figure(Object[] args, IDocumentation documentation, IContextualizationScope context) {
 
         IArtifact artifact = "self".equals(args[0]) ? context.getTargetArtifact()
                 : context.getArtifact(args[0].toString());
@@ -302,7 +302,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void insert(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
+    public void insert(Object[] processArguments, IDocumentation documentation, IContextualizationScope context) {
         // TODO Auto-generated method stub
         System.out.println("FOC");
     }

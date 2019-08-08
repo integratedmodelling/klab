@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.Metadata;
@@ -117,7 +117,7 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
     }
 
     @SuppressWarnings("unchecked")
-    public OSMSubjectInstantiator(IParameters<String> parameters, IComputationContext context) {
+    public OSMSubjectInstantiator(IParameters<String> parameters, IContextualizationScope context) {
 
         this.contextSubject = context.getContextObservation();
 
@@ -163,7 +163,7 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
     }
 
     @Override
-    public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context)
+    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
             throws KlabException {
 
         if (query == null) {
@@ -264,7 +264,7 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
         return new OSMSubjectInstantiator(parameters, context);
     }
 
@@ -323,7 +323,7 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
         return ret;
     }
 
-    private ISubject makeSubject(IObservable observable, Geometry geometry, OsmEntity node, IComputationContext context)
+    private ISubject makeSubject(IObservable observable, Geometry geometry, OsmEntity node, IContextualizationScope context)
             throws KlabException {
 
         this.nsubjs++;

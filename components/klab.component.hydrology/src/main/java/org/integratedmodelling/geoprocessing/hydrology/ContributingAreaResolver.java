@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
@@ -31,7 +31,7 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 	}
 
 	@Override
-	public IState resolve(IState target, IComputationContext context) throws KlabException {
+	public IState resolve(IState target, IContextualizationScope context) throws KlabException {
 
 		IState flowDir = context.getArtifact("flow_directions_d8", IState.class);
 		IUnit tUnit = target.getObservable().getUnit();
@@ -81,7 +81,7 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		ContributingAreaResolver ret = new ContributingAreaResolver();
 		ret.cells = parameters.get("cells", Boolean.FALSE);
 		return ret;

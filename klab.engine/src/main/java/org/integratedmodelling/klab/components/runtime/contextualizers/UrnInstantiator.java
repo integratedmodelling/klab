@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -48,7 +48,7 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 		IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
 		List<IObjectArtifact> ret = new ArrayList<>();
 		if (data.getArtifact() != null) {
@@ -62,7 +62,7 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new UrnInstantiator(parameters.get("urn", String.class));
 	}
 

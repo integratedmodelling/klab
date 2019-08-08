@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -52,7 +52,7 @@ public class RescalingState extends Observation implements IState {
     private IActivity.Description observationType;
     boolean redistribute = false;
 
-    public RescalingState(IState state, Scale newScale, IRuntimeContext context) {
+    public RescalingState(IState state, Scale newScale, IRuntimeScope context) {
         super(new Observable((Observable) state.getObservable()), newScale, context);
         this.delegate = state;
         this.newScale = newScale;
@@ -63,7 +63,7 @@ public class RescalingState extends Observation implements IState {
         // this.redistribute = ...
     }
 
-    public RescalingState(IState state, IObservable newObservable, Scale newScale, IRuntimeContext context) {
+    public RescalingState(IState state, IObservable newObservable, Scale newScale, IRuntimeScope context) {
         super(new Observable((Observable) newObservable), newScale, context);
         this.delegate = state;
         this.newScale = newScale;

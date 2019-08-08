@@ -33,7 +33,7 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -136,7 +136,7 @@ public interface IResourceService {
 	 * @return KlabException if anything goes wrong
 	 */
 	IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			IComputationContext context);
+			IContextualizationScope context);
 
 	/**
 	 * Create or update a locally available resource from a specification or/and by

@@ -4,7 +4,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 import weka.classifiers.bayes.BayesNet;
@@ -42,11 +42,11 @@ java weka.classifiers.bayes.BayesNet -t iris.arff -D \
  */
 public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements IExpression {
 
-	private IComputationContext context;
+	private IContextualizationScope context;
 
 	public BayesNetResolver() {}
 	
-	public BayesNetResolver(IParameters<String> parameters,IComputationContext context) {
+	public BayesNetResolver(IParameters<String> parameters,IContextualizationScope context) {
 		super(BayesNet.class, checkDefaults(parameters), true, true, false);
 		this.context = context;
 	}
@@ -78,7 +78,7 @@ public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements 
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new BayesNetResolver(parameters, context);
 	}
 

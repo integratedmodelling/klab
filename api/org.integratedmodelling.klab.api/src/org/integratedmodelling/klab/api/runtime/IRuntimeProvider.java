@@ -86,7 +86,7 @@ public interface IRuntimeProvider {
 	 *            object.
 	 * @return a new runtime context.
 	 */
-	IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
+	IContextualizationScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
 			IMonitor monitor);
 
 	/**
@@ -130,7 +130,7 @@ public interface IRuntimeProvider {
 	 * 
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	IDataArtifact distributeComputation(IStateResolver resolver, IState data, IComputationContext context, IScale scale)
+	IDataArtifact distributeComputation(IStateResolver resolver, IState data, IContextualizationScope context, IScale scale)
 			throws KlabException;
 
 	/**
@@ -150,7 +150,7 @@ public interface IRuntimeProvider {
 	 * @return a {@link org.integratedmodelling.klab.api.observations.IObservation}
 	 *         object.
 	 */
-	IObservation createEmptyObservation(IObservable observable, IComputationContext context);
+	IObservation createEmptyObservation(IObservable observable, IContextualizationScope context);
 
 	/**
 	 * Create a state to be used for intermediate computations or temporary storage
@@ -165,7 +165,7 @@ public interface IRuntimeProvider {
 	 * @param context
 	 * @return a new state
 	 */
-	IState createState(IObservable observable, IArtifact.Type type, IScale scale, IComputationContext context);
+	IState createState(IObservable observable, IArtifact.Type type, IScale scale, IContextualizationScope context);
 
 	/**
 	 * If the runtime provides a computation that can turn the passed artifact type

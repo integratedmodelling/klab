@@ -14,7 +14,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -35,6 +35,6 @@ public interface IStateResolver extends IContextualizer {
    * @return the computed value at the locator
    * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
-  Object resolve(IObservable observable, IComputationContext context) throws KlabException;
+  Object resolve(IObservable observable, IContextualizationScope context) throws KlabException;
 
 }

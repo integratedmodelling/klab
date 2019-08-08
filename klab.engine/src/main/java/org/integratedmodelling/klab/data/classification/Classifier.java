@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -128,7 +128,7 @@ public class Classifier implements IClassifier {
 	}
 
 	@Override
-	public synchronized boolean classify(Object o, IComputationContext context) {
+	public synchronized boolean classify(Object o, IContextualizationScope context) {
 
 		// if (this.conceptMatch != null &&
 		// this.conceptMatch.toString().endsWith("ArtificialSurface")) {
@@ -421,7 +421,7 @@ public class Classifier implements IClassifier {
 	}
 
 	@Override
-	public Object asValue(IComputationContext context) {
+	public Object asValue(IContextualizationScope context) {
 
 		if (numberMatch != null) {
 			return numberMatch;

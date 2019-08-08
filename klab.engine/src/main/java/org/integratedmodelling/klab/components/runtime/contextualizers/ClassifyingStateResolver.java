@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -38,7 +38,7 @@ public class ClassifyingStateResolver implements IStateResolver, IProcessor, IEx
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new ClassifyingStateResolver(parameters.get("classification", IClassification.class));
 	}
 
@@ -48,7 +48,7 @@ public class ClassifyingStateResolver implements IStateResolver, IProcessor, IEx
 //	}
 
 	@Override
-	public Object resolve(IObservable observable, IComputationContext context) throws KlabException {
+	public Object resolve(IObservable observable, IContextualizationScope context) throws KlabException {
 		return classification.classify(context.get("self"), context);
 	}
 

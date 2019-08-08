@@ -7,7 +7,7 @@ import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.documentation.IReport.Section.Type;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * A documentation object corresponds to one tag in the \@documented k.IM
@@ -155,7 +155,7 @@ public interface IDocumentation {
          * @param context
          * @return
          */
-        void compile(IReport.Section section, IComputationContext context);
+        void compile(IReport.Section section, IContextualizationScope context);
 
         /**
          * Return the section type that this applies to.

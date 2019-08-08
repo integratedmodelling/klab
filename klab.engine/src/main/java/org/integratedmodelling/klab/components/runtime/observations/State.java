@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
@@ -45,7 +45,7 @@ public class State extends Observation implements IState, IKeyHolder {
 	Map<IArtifact.Type, IDataArtifact> layers = new HashMap<>();
 	ITable<Number> table;
 
-	public State(Observable observable, Scale scale, IRuntimeContext context, IDataArtifact data) {
+	public State(Observable observable, Scale scale, IRuntimeScope context, IDataArtifact data) {
 		super(observable, scale, context);
 		this.storage = data;
 		this.layers.put(data.getType(), data);

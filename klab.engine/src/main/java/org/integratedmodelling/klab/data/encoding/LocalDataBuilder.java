@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.Metadata;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
@@ -33,7 +33,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 
 	IState state = null;
 	IObservation observation = null;
-	IRuntimeContext context = null;
+	IRuntimeScope context = null;
 	long offset = 0;
 	List<INotification> notifications = new ArrayList<>();
 	Metadata metadata = new Metadata();
@@ -42,7 +42,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	IScale scale;
 	LocalDataBuilder parent;
 
-	public LocalDataBuilder(IRuntimeContext context) {
+	public LocalDataBuilder(IRuntimeScope context) {
 		this.context = context;
 		if (context.getTargetArtifact() instanceof IState) {
 			this.state = (IState) context.getTargetArtifact();

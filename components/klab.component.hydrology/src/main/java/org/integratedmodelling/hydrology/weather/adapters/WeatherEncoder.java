@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 public class WeatherEncoder implements IResourceEncoder {
 
@@ -18,7 +18,7 @@ public class WeatherEncoder implements IResourceEncoder {
 
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			Builder builder, IComputationContext context) {
+			Builder builder, IContextualizationScope context) {
 		// TODO Auto-generated method stub
 
 	}

@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -83,7 +83,7 @@ public class Network implements INetwork {
 		 * Build network
 		 */
 		for (IObservation observation : configuration.getTargetObservations()) {
-			IRuntimeContext context = ((Observation) observation).getRuntimeContext();
+			IRuntimeScope context = ((Observation) observation).getRuntimeContext();
 			for (IArtifact artifact : observation) {
 				if (artifact instanceof IRelationship) {
 					IDirectObservation source = context.getSourceSubject((IRelationship) artifact);

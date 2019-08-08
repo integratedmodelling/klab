@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -37,7 +37,7 @@ public class LookupStateResolver implements IStateResolver, IProcessor, IExpress
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new LookupStateResolver(parameters.get("table", ILookupTable.class));
 	}
 
@@ -47,7 +47,7 @@ public class LookupStateResolver implements IStateResolver, IProcessor, IExpress
 //	}
 
 	@Override
-	public Object resolve(IObservable observable, IComputationContext context) throws KlabException {
+	public Object resolve(IObservable observable, IContextualizationScope context) throws KlabException {
 		return lookupTable.lookup(context, context);
 	}
 
