@@ -704,8 +704,6 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public IScaleMediator getMediator(IExtent extent) {
-		// TODO Auto-generated method stub
-
 		if (!(extent instanceof ISpace)) {
 			throw new IllegalArgumentException("extent " + extent + " cannot mediate to " + this);
 		}

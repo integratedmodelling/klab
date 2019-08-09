@@ -35,6 +35,38 @@ public interface ITimeDuration extends Comparable<ITimeDuration> {
     long getMilliseconds();
 
     /**
+     * Return a new period anchored to the passed instant.
+     * 
+     * @param instant
+     * @return
+     */
+    ITimeDuration anchor(ITimeInstant instant);
+    
+    /**
+     * True if the period is anchored to a start time.
+     * 
+     * @return
+     */
+    boolean isAnchored();
+    
+    /**
+     * Get start time, or null if not anchored.
+     * 
+     * @return
+     */
+    ITimeInstant getStart();
+
+	/**
+	 * Return the natural resolution for something whose time is expressed in this
+	 * range of duration.
+	 * 
+	 * @return
+	 */
+	ITime.Resolution.Type getResolution();
+	
+	
+	
+    /**
      * Localize a duration to an extent starting at the current moment
      * using the same resolution that was implied in the generating
      * text. For example, if the duration was one year, localize to the
@@ -51,4 +83,5 @@ public interface ITimeDuration extends Comparable<ITimeDuration> {
      * @return
      */
 	boolean isEmpty();
+
 }

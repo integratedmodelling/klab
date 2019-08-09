@@ -1,17 +1,73 @@
 package org.integratedmodelling.klab.components.time.extents;
 
 import org.integratedmodelling.klab.api.data.utils.IPair;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
+import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.Period;
 
 public class TimeDuration implements ITimeDuration {
 
-	private Period period;
-	
+	// may be anchored to a start point or not
+	private ITimeInstant start = null;
+	private Period period = null;
+	private Resolution.Type resolution = null;
+
+	private TimeDuration(Period period, ITimeInstant start) {
+		this.period = period;
+		this.start = start;
+	}
+
+	private TimeDuration() {
+	}
+
+	@Override
+	public Resolution.Type getResolution() {
+
+		if (this.resolution == null) {
+
+			// order of magnitude
+			Range order = Range.create(1, 9.999, false);
+
+			if (order.contains(period.getMillis() / Resolution.Type.MILLENNIUM.getMilliseconds())) {
+				this.resolution = Resolution.Type.MILLENNIUM;
+			} else if (order.contains(period.getMillis() / Resolution.Type.CENTURY.getMilliseconds())) {
+				this.resolution = Resolution.Type.CENTURY;
+			} else if (order.contains(period.getMillis() / Resolution.Type.DECADE.getMilliseconds())) {
+				this.resolution = Resolution.Type.DECADE;
+			} else if (order.contains(period.getMillis() / Resolution.Type.YEAR.getMilliseconds())) {
+				this.resolution = Resolution.Type.YEAR;
+			} else if (order.contains(period.getMillis() / Resolution.Type.MONTH.getMilliseconds())) {
+				this.resolution = Resolution.Type.MONTH;
+			} else if (order.contains(period.getMillis() / Resolution.Type.WEEK.getMilliseconds())) {
+				this.resolution = Resolution.Type.WEEK;
+			} else if (order.contains(period.getMillis() / Resolution.Type.DAY.getMilliseconds())) {
+				this.resolution = Resolution.Type.DAY;
+			} else if (order.contains(period.getMillis() / Resolution.Type.HOUR.getMilliseconds())) {
+				this.resolution = Resolution.Type.HOUR;
+			} else if (order.contains(period.getMillis() / Resolution.Type.MINUTE.getMilliseconds())) {
+				this.resolution = Resolution.Type.MINUTE;
+			} else if (order.contains(period.getMillis() / Resolution.Type.SECOND.getMilliseconds())) {
+				this.resolution = Resolution.Type.SECOND;
+			} else {
+				this.resolution = Resolution.Type.MILLISECOND;
+			}
+
+		}
+		
+		return this.resolution;
+	}
+
+	public static TimeDuration create(ITimeInstant start, ITimeInstant end, boolean anchor) {
+		Period period = Period.millis((int) (end.getMillis() - start.getMillis()));
+		return new TimeDuration(period, anchor ? start : null);
+	}
+
 	@Override
 	public int compareTo(ITimeDuration o) {
-		return Integer.compare(period.getMillis(), ((TimeDuration)o).period.getMillis());
+		return Integer.compare(period.getMillis(), ((TimeDuration) o).period.getMillis());
 	}
 
 	@Override
@@ -29,9 +85,36 @@ public class TimeDuration implements ITimeDuration {
 	public boolean isEmpty() {
 		return period.getMillis() == 0;
 	}
-	
+
 	public Period asPeriod() {
 		return period;
 	}
-	
+
+	@Override
+	public String toString() {
+		return period.toString();
+	}
+
+	@Override
+	public ITimeDuration anchor(ITimeInstant instant) {
+		return new TimeDuration(period, instant);
+	}
+
+	@Override
+	public boolean isAnchored() {
+		return start != null;
+	}
+
+	@Override
+	public ITimeInstant getStart() {
+		return start;
+	}
+
+	public static ITimeDuration create(long milliseconds, Type type) {
+		TimeDuration ret = new TimeDuration();
+		ret.resolution = type;
+		ret.period = new Period(milliseconds);
+		return ret;
+	}
+
 }

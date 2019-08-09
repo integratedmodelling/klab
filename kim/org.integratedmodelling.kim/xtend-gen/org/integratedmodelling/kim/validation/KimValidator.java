@@ -46,6 +46,7 @@ import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.Function;
@@ -74,6 +75,7 @@ import org.integratedmodelling.kim.model.KimAnnotation;
 import org.integratedmodelling.kim.model.KimBehavior;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.kim.model.KimConceptStatement;
+import org.integratedmodelling.kim.model.KimDate;
 import org.integratedmodelling.kim.model.KimLookupTable;
 import org.integratedmodelling.kim.model.KimMacro;
 import org.integratedmodelling.kim.model.KimMetadata;
@@ -128,6 +130,16 @@ public class KimValidator extends AbstractKimValidator {
       final String namespaceId = Kim.getNamespaceId(namespace);
       Kim.INSTANCE.initializeNamespaceRegisters(namespaceId);
       Kim.INSTANCE.removeNamespace(namespace);
+    }
+  }
+  
+  @Check
+  public void checkDate(final Date date) {
+    final KimDate dt = new KimDate(date);
+    boolean _isValid = dt.isValid();
+    boolean _not = (!_isValid);
+    if (_not) {
+      this.error("invalid date", date.eContainer(), KimPackage.Literals.VALUE__DATE);
     }
   }
   

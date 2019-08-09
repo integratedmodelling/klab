@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.Quantity#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Quantity#getUnit <em>Unit</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Quantity#getCurrency <em>Currency</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getQuantity()
@@ -68,5 +69,27 @@ public interface Quantity extends EObject
    * @generated
    */
   void setUnit(Unit value);
+
+  /**
+   * Returns the value of the '<em><b>Currency</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Currency</em>' containment reference.
+   * @see #setCurrency(Currency)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getQuantity_Currency()
+   * @model containment="true"
+   * @generated
+   */
+  Currency getCurrency();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Quantity#getCurrency <em>Currency</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Currency</em>' containment reference.
+   * @see #getCurrency()
+   * @generated
+   */
+  void setCurrency(Currency value);
 
 } // Quantity

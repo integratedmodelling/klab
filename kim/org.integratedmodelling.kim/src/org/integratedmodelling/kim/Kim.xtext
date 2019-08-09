@@ -760,6 +760,7 @@ ValueWithIdAndConcept returns Value:
 	id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	list=List |
 	table=LookupTable |
+	date=Date |
 	map=Map |
 	quantity=Quantity |
 	null?='unknown';
@@ -772,6 +773,7 @@ Value:
 	list=List |
 	table=LookupTable |
 	quantity=Quantity |
+	date=Date |
 	map=Map |
 	null?='unknown';
 
@@ -782,6 +784,7 @@ LiteralValueWithConcept returns Value:
 	function=Function |
 	expr=EXPR |
 	quantity=Quantity |
+	date=Date |
 	id=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) /* |
 	list=List |
 	table=LookupTable |
@@ -801,7 +804,7 @@ enum DataType:
 	BOOLEAN='boolean' |
 	DATE='date';
 
-	/**
+/**
  * Carefully selected keywords to define a concept, which enable automatic definition of
  * fairly complex semantics and validation against upper ontologies. For now implement
  * physical properties, value concepts and basic agent types re: DOLCE types.
@@ -966,7 +969,11 @@ Number:
 	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
 
 Quantity:
-	value=Number '.' unit=Unit
+	value=Number '.' (unit=Unit | currency=Currency)
+;
+
+Date:
+	year=INT ('AD' | 'CE' | bc?='BC')? '-' month=INT '-' day=INT (hour=INT ':' min=INT (':' sec=INT ('.' ms=INT)?)?)?
 ;
 
 terminal LOWERCASE_ID:

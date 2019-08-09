@@ -511,6 +511,15 @@ public interface KimFactory extends EFactory
   Quantity createQuantity();
 
   /**
+   * Returns a new object of class '<em>Date</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Date</em>'.
+   * @generated
+   */
+  Date createDate();
+
+  /**
    * Returns the package supported by this factory.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

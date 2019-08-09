@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getModifier <em>Modifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getDownTo <em>Down To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonValue <em>Comparison Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonQuantity <em>Comparison Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonObservable <em>Comparison Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getTotal <em>Total</em>}</li>
@@ -94,6 +95,28 @@ public interface ValueOperator extends EObject
    * @generated
    */
   void setComparisonValue(org.integratedmodelling.kim.kim.Number value);
+
+  /**
+   * Returns the value of the '<em><b>Comparison Quantity</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Comparison Quantity</em>' containment reference.
+   * @see #setComparisonQuantity(Quantity)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValueOperator_ComparisonQuantity()
+   * @model containment="true"
+   * @generated
+   */
+  Quantity getComparisonQuantity();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonQuantity <em>Comparison Quantity</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Comparison Quantity</em>' containment reference.
+   * @see #getComparisonQuantity()
+   * @generated
+   */
+  void setComparisonQuantity(Quantity value);
 
   /**
    * Returns the value of the '<em><b>Comparison Concept</b></em>' containment reference.

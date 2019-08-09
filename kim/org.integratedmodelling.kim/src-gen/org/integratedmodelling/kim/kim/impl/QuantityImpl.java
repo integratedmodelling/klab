@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Quantity;
 import org.integratedmodelling.kim.kim.Unit;
@@ -27,6 +28,7 @@ import org.integratedmodelling.kim.kim.Unit;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.QuantityImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.QuantityImpl#getUnit <em>Unit</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.QuantityImpl#getCurrency <em>Currency</em>}</li>
  * </ul>
  *
  * @generated
@@ -52,6 +54,16 @@ public class QuantityImpl extends MinimalEObjectImpl.Container implements Quanti
    * @ordered
    */
   protected Unit unit;
+
+  /**
+   * The cached value of the '{@link #getCurrency() <em>Currency</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCurrency()
+   * @generated
+   * @ordered
+   */
+  protected Currency currency;
 
   /**
    * <!-- begin-user-doc -->
@@ -180,6 +192,56 @@ public class QuantityImpl extends MinimalEObjectImpl.Container implements Quanti
    * @generated
    */
   @Override
+  public Currency getCurrency()
+  {
+    return currency;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetCurrency(Currency newCurrency, NotificationChain msgs)
+  {
+    Currency oldCurrency = currency;
+    currency = newCurrency;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.QUANTITY__CURRENCY, oldCurrency, newCurrency);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCurrency(Currency newCurrency)
+  {
+    if (newCurrency != currency)
+    {
+      NotificationChain msgs = null;
+      if (currency != null)
+        msgs = ((InternalEObject)currency).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.QUANTITY__CURRENCY, null, msgs);
+      if (newCurrency != null)
+        msgs = ((InternalEObject)newCurrency).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.QUANTITY__CURRENCY, null, msgs);
+      msgs = basicSetCurrency(newCurrency, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.QUANTITY__CURRENCY, newCurrency, newCurrency));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -188,6 +250,8 @@ public class QuantityImpl extends MinimalEObjectImpl.Container implements Quanti
         return basicSetValue(null, msgs);
       case KimPackage.QUANTITY__UNIT:
         return basicSetUnit(null, msgs);
+      case KimPackage.QUANTITY__CURRENCY:
+        return basicSetCurrency(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -206,6 +270,8 @@ public class QuantityImpl extends MinimalEObjectImpl.Container implements Quanti
         return getValue();
       case KimPackage.QUANTITY__UNIT:
         return getUnit();
+      case KimPackage.QUANTITY__CURRENCY:
+        return getCurrency();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -225,6 +291,9 @@ public class QuantityImpl extends MinimalEObjectImpl.Container implements Quanti
         return;
       case KimPackage.QUANTITY__UNIT:
         setUnit((Unit)newValue);
+        return;
+      case KimPackage.QUANTITY__CURRENCY:
+        setCurrency((Currency)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -246,6 +315,9 @@ public class QuantityImpl extends MinimalEObjectImpl.Container implements Quanti
       case KimPackage.QUANTITY__UNIT:
         setUnit((Unit)null);
         return;
+      case KimPackage.QUANTITY__CURRENCY:
+        setCurrency((Currency)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -264,6 +336,8 @@ public class QuantityImpl extends MinimalEObjectImpl.Container implements Quanti
         return value != null;
       case KimPackage.QUANTITY__UNIT:
         return unit != null;
+      case KimPackage.QUANTITY__CURRENCY:
+        return currency != null;
     }
     return super.eIsSet(featureID);
   }

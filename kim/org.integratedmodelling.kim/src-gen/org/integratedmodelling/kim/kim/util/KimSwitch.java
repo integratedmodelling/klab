@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
@@ -503,6 +504,13 @@ public class KimSwitch<T> extends Switch<T>
       {
         Quantity quantity = (Quantity)theEObject;
         T result = caseQuantity(quantity);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.DATE:
+      {
+        Date date = (Date)theEObject;
+        T result = caseDate(date);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1370,6 +1378,22 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseQuantity(Quantity object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Date</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Date</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDate(Date object)
   {
     return null;
   }

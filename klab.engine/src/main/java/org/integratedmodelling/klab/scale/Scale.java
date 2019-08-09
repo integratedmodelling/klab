@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.common.Geometry.OffsetLocator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.InstanceIdentifier;
@@ -95,10 +96,9 @@ public class Scale implements IScale {
 		 * to aggregation strategy.
 		 * 
 		 * @param toReduce
-		 * @param metadata
-		 *            a map to fill with any relevant statistics related to the
-		 *            aggregation (errors, uncertainty, boundaries, distributions, truth
-		 *            values etc) using the keys above.
+		 * @param metadata a map to fill with any relevant statistics related to the
+		 *                 aggregation (errors, uncertainty, boundaries, distributions,
+		 *                 truth values etc) using the keys above.
 		 * 
 		 * @return the reduced value
 		 */
@@ -293,7 +293,7 @@ public class Scale implements IScale {
 				ret.mergeExtent(e);
 			}
 		}
-		ret.sort();
+//		ret.sort();
 		return ret;
 	}
 
@@ -314,7 +314,7 @@ public class Scale implements IScale {
 			if (dimension.getType() == Type.SPACE) {
 				extents.add(Space.create(dimension));
 			} else if (dimension.getType() == Type.TIME) {
-				// TODO
+				extents.add(Time.create(dimension));
 			}
 			// TODO ELSE
 		}
@@ -996,11 +996,13 @@ public class Scale implements IScale {
 	@Override
 	public IScale at(ILocator locator) {
 		if (locator.equals(ITime.INITIALIZATION)) {
-			if (getTime() == null) {
-				// I want you just the way you are
+			if (getTime() == null || getTime().isGeneric()) {
+				// I want you just the way you are. If generic, it should already be compatible
+				// by design.
 				return this;
 			} else {
-				return minus(IGeometry.Dimension.Type.TIME);
+				// relocate to non-generic time 0
+				return substituteExtent(this, ((Time)getTime()).getExtent(0));
 			}
 		} else if (locator instanceof IExtent) {
 			if (((AbstractExtent) locator).isOwnExtent(this)) {

@@ -35,4 +35,8 @@ public class TimeInstant implements ITimeInstant {
 		return time;
 	}
 	
+	public String toString() {
+		return time.toString();
+	}
+	
 }

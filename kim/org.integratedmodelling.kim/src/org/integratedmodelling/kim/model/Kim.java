@@ -68,6 +68,7 @@ import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Quantity;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
@@ -274,7 +275,9 @@ public enum Kim {
 	}
 
 	public static enum FunctionType {
-		SPACE_DOMAIN, TIME_DOMAIN, TABULAR_DATA, SPATIAL_DATA, OBJECT_DATA, STATE_CONTEXTUALIZER, PROCESS_CONTEXTUALIZER, SUBJECT_CONTEXTUALIZER, EVENT_CONTEXTUALIZER, RELATIONSHIP_CONTEXTUALIZER, SUBJECT_INSTANTIATOR, EVENT_INSTANTIATOR, RELATIONSHIP_INSTANTIATOR, LITERAL_ATOMIC, LITERAL_LIST,
+		SPACE_DOMAIN, TIME_DOMAIN, TABULAR_DATA, SPATIAL_DATA, OBJECT_DATA, STATE_CONTEXTUALIZER,
+		PROCESS_CONTEXTUALIZER, SUBJECT_CONTEXTUALIZER, EVENT_CONTEXTUALIZER, RELATIONSHIP_CONTEXTUALIZER,
+		SUBJECT_INSTANTIATOR, EVENT_INSTANTIATOR, RELATIONSHIP_INSTANTIATOR, LITERAL_ATOMIC, LITERAL_LIST,
 	}
 
 	public static enum LiteralType {
@@ -397,8 +400,7 @@ public enum Kim {
 		 * or its usage. Only called if {@link #isAnnotationKnown(String)} returns true.
 		 * 
 		 * @param annotationCall
-		 * @param target
-		 *            the statement that the annotation describes
+		 * @param target         the statement that the annotation describes
 		 * @return pairs of message + level, or an empty list if OK.
 		 */
 		List<Pair<String, Level>> validateAnnotation(IServiceCall annotationCall, IKimStatement target);
@@ -496,8 +498,12 @@ public enum Kim {
 
 	public Object parseValue(Value value, IKimNamespace namespace) {
 
-		if (value.getLiteral() != null) {
+		if (value.getQuantity() != null) {
+			return parseQuantity(value.getQuantity(), namespace);
+		} else if (value.getLiteral() != null) {
 			return parseLiteral(value.getLiteral(), namespace);
+		} else if (value.getDate() != null) {
+			return new KimDate(value.getDate());
 		} else if (value.getFunction() != null) {
 			return new KimServiceCall(value.getFunction(), null);
 		} else if (value.getId() != null) {
@@ -527,6 +533,19 @@ public enum Kim {
 		}
 
 		return null;
+	}
+
+	private Object parseQuantity(Quantity quantity, IKimNamespace namespace) {
+		KimQuantity ret = new KimQuantity(quantity);
+		ret.setValue(parseNumber(quantity.getValue()));
+		if (quantity.getUnit() != null) {
+			ICompositeNode node = NodeModelUtils.getNode(quantity.getUnit());
+			ret.setUnit(node.getText().trim());
+		} else if (quantity.getCurrency() != null) {
+			ICompositeNode node = NodeModelUtils.getNode(quantity.getCurrency());
+			ret.setCurrency(node.getText().trim());
+		}
+		return ret;
 	}
 
 	/*
@@ -891,7 +910,7 @@ public enum Kim {
 		if (string == null) {
 			return EnumSet.noneOf(Type.class);
 		}
-		
+
 		String id = string.toLowerCase();
 
 		switch (id) {
@@ -1075,18 +1094,18 @@ public enum Kim {
 					orphanNamespaceRegistry.put(uri, ret);
 				}
 			} else {
-				
+
 				String uri = namespace.eResource().getURI().toString();
 				String projectName = getProjectName(uri);
 				KimWorkspace workspace = projectName == null ? null : getWorkspaceForProject(projectName);
 				if (projectName != null && workspace == null) {
-					// haven't seen this project before: will make an educated guess and 
+					// haven't seen this project before: will make an educated guess and
 					// assume this is the user workspace, as this happens when a validator
 					// automatically loads an imported project from the IDE before we come in.
 					if (userWorkspace != null) {
 						File root = getProjectRoot(uri);
 						if (root != null) {
-							project = (KimProject)userWorkspace.overrideProject(projectName, root);
+							project = (KimProject) userWorkspace.overrideProject(projectName, root);
 							ret = new KimNamespace(namespace, project);
 							projectWorkspaces.put(projectName, userWorkspace);
 						}
@@ -1102,9 +1121,9 @@ public enum Kim {
 				 * FIXME this happens when importing a project because the validator is called
 				 * before the project exists.
 				 */
-				if (ret /* still */ == null) {	
+				if (ret /* still */ == null) {
 					throw new KlabInternalErrorException(
-						"cannot establish project ownership for namespace " + Kim.getNamespaceId(namespace));
+							"cannot establish project ownership for namespace " + Kim.getNamespaceId(namespace));
 				}
 			}
 		}
@@ -1127,13 +1146,11 @@ public enum Kim {
 	 * Return a project by ID, looking up in all workspaces or (optionally) in the
 	 * workspaces under a passed file root.
 	 * 
-	 * @param id
-	 *            the project ID
-	 * @param workspaceRoot
-	 *            the file root of the workspace. If the project is present in more
-	 *            than one workspace, the version in the passed root is returned.
-	 *            Can be null, if so the first instance of the project found is
-	 *            returned.
+	 * @param id            the project ID
+	 * @param workspaceRoot the file root of the workspace. If the project is
+	 *                      present in more than one workspace, the version in the
+	 *                      passed root is returned. Can be null, if so the first
+	 *                      instance of the project found is returned.
 	 * @return the project or null
 	 */
 	public IKimProject getProject(String id) {
@@ -1189,7 +1206,7 @@ public enum Kim {
 
 		return ret;
 	}
-	
+
 	/**
 	 * Get the project name from the string form of any Xtext resource URI.
 	 * 
@@ -1580,8 +1597,7 @@ public enum Kim {
 	 * 
 	 * @param call
 	 * @param prototype
-	 * @param command
-	 *            command to prepend to the options.
+	 * @param command   command to prepend to the options.
 	 * @return the command line
 	 */
 	public String createCommandLine(IParameters<String> parameters, IPrototype prototype, String command) {
@@ -1594,11 +1610,10 @@ public enum Kim {
 	 * 
 	 * @param call
 	 * @param prototype
-	 * @param command
-	 *            command to prepend to the options.
-	 * @param callTranslator
-	 *            function to translate any service call argument (nested function)
-	 *            into a command argument. If null, any such arguments are ignored.
+	 * @param command        command to prepend to the options.
+	 * @param callTranslator function to translate any service call argument (nested
+	 *                       function) into a command argument. If null, any such
+	 *                       arguments are ignored.
 	 * @return the command line
 	 */
 	public String createCommandLine(IParameters<String> parameters, IPrototype prototype, String command,
@@ -1856,11 +1871,11 @@ public enum Kim {
 		if (ret.is(Type.TRAIT)) {
 			return isAbstract;
 		}
-		
+
 		if (ret.getSemanticModifier() != null) {
 			isAbstract = false;
 		}
-		
+
 		if (isAbstract) {
 
 			boolean traitsOk = true;
@@ -1881,7 +1896,7 @@ public enum Kim {
 		}
 
 		if (/* still */ isAbstract) {
-			
+
 			boolean componentsOk = true;
 			boolean haveDefiningComponents = false;
 			for (IKimConcept subsetter : ((KimConcept) ret).getSemanticSubsetters()) {
@@ -1891,7 +1906,7 @@ public enum Kim {
 					break;
 				}
 			}
-			
+
 			if (haveDefiningComponents && componentsOk) {
 				isAbstract = false;
 			}

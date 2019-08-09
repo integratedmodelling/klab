@@ -28,6 +28,7 @@ import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.DataType;
+import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
@@ -177,6 +178,7 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.CURRENCY: return createCurrency();
       case KimPackage.NUMBER: return createNumber();
       case KimPackage.QUANTITY: return createQuantity();
+      case KimPackage.DATE: return createDate();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -866,6 +868,18 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     QuantityImpl quantity = new QuantityImpl();
     return quantity;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Date createDate()
+  {
+    DateImpl date = new DateImpl();
+    return date;
   }
 
   /**
