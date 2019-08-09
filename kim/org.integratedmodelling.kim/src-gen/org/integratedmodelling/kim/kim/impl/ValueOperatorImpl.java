@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Quantity;
 import org.integratedmodelling.kim.kim.ValueOperator;
 
 /**
@@ -29,6 +30,7 @@ import org.integratedmodelling.kim.kim.ValueOperator;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getModifier <em>Modifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getDownTo <em>Down To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getComparisonValue <em>Comparison Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getComparisonQuantity <em>Comparison Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getComparisonConcept <em>Comparison Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getComparisonObservable <em>Comparison Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getTotal <em>Total</em>}</li>
@@ -87,6 +89,16 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
    * @ordered
    */
   protected org.integratedmodelling.kim.kim.Number comparisonValue;
+
+  /**
+   * The cached value of the '{@link #getComparisonQuantity() <em>Comparison Quantity</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getComparisonQuantity()
+   * @generated
+   * @ordered
+   */
+  protected Quantity comparisonQuantity;
 
   /**
    * The cached value of the '{@link #getComparisonConcept() <em>Comparison Concept</em>}' containment reference.
@@ -255,6 +267,56 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
    * @generated
    */
   @Override
+  public Quantity getComparisonQuantity()
+  {
+    return comparisonQuantity;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetComparisonQuantity(Quantity newComparisonQuantity, NotificationChain msgs)
+  {
+    Quantity oldComparisonQuantity = comparisonQuantity;
+    comparisonQuantity = newComparisonQuantity;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY, oldComparisonQuantity, newComparisonQuantity);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setComparisonQuantity(Quantity newComparisonQuantity)
+  {
+    if (newComparisonQuantity != comparisonQuantity)
+    {
+      NotificationChain msgs = null;
+      if (comparisonQuantity != null)
+        msgs = ((InternalEObject)comparisonQuantity).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY, null, msgs);
+      if (newComparisonQuantity != null)
+        msgs = ((InternalEObject)newComparisonQuantity).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY, null, msgs);
+      msgs = basicSetComparisonQuantity(newComparisonQuantity, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY, newComparisonQuantity, newComparisonQuantity));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public ConceptDeclaration getComparisonConcept()
   {
     return comparisonConcept;
@@ -386,6 +448,8 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
     {
       case KimPackage.VALUE_OPERATOR__COMPARISON_VALUE:
         return basicSetComparisonValue(null, msgs);
+      case KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY:
+        return basicSetComparisonQuantity(null, msgs);
       case KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT:
         return basicSetComparisonConcept(null, msgs);
       case KimPackage.VALUE_OPERATOR__COMPARISON_OBSERVABLE:
@@ -410,6 +474,8 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
         return getDownTo();
       case KimPackage.VALUE_OPERATOR__COMPARISON_VALUE:
         return getComparisonValue();
+      case KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY:
+        return getComparisonQuantity();
       case KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT:
         return getComparisonConcept();
       case KimPackage.VALUE_OPERATOR__COMPARISON_OBSERVABLE:
@@ -438,6 +504,9 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
         return;
       case KimPackage.VALUE_OPERATOR__COMPARISON_VALUE:
         setComparisonValue((org.integratedmodelling.kim.kim.Number)newValue);
+        return;
+      case KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY:
+        setComparisonQuantity((Quantity)newValue);
         return;
       case KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT:
         setComparisonConcept((ConceptDeclaration)newValue);
@@ -471,6 +540,9 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
       case KimPackage.VALUE_OPERATOR__COMPARISON_VALUE:
         setComparisonValue((org.integratedmodelling.kim.kim.Number)null);
         return;
+      case KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY:
+        setComparisonQuantity((Quantity)null);
+        return;
       case KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT:
         setComparisonConcept((ConceptDeclaration)null);
         return;
@@ -500,6 +572,8 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
         return DOWN_TO_EDEFAULT == null ? downTo != null : !DOWN_TO_EDEFAULT.equals(downTo);
       case KimPackage.VALUE_OPERATOR__COMPARISON_VALUE:
         return comparisonValue != null;
+      case KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY:
+        return comparisonQuantity != null;
       case KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT:
         return comparisonConcept != null;
       case KimPackage.VALUE_OPERATOR__COMPARISON_OBSERVABLE:

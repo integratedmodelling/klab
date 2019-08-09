@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.kim.Concept
 import org.integratedmodelling.kim.kim.ConceptDeclaration
 import org.integratedmodelling.kim.kim.ConceptStatement
 import org.integratedmodelling.kim.kim.ConceptStatementBody
+import org.integratedmodelling.kim.kim.Date
 import org.integratedmodelling.kim.kim.DefineStatement
 import org.integratedmodelling.kim.kim.Function
 import org.integratedmodelling.kim.kim.KimPackage
@@ -50,6 +51,7 @@ import org.integratedmodelling.kim.model.KimConcept
 import org.integratedmodelling.kim.model.KimConceptStatement
 import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConceptImpl
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept
+import org.integratedmodelling.kim.model.KimDate
 import org.integratedmodelling.kim.model.KimLookupTable
 import org.integratedmodelling.kim.model.KimMacro
 import org.integratedmodelling.kim.model.KimMetadata
@@ -92,6 +94,14 @@ class KimValidator extends AbstractKimValidator {
 			val namespaceId = Kim.getNamespaceId(namespace)
 			Kim.INSTANCE.initializeNamespaceRegisters(namespaceId)
 			Kim.INSTANCE.removeNamespace(namespace);
+		}
+	}
+
+	@Check
+	def checkDate(Date date) {
+		val dt = new KimDate(date);
+		if (!dt.isValid()) {
+				error("invalid date", date.eContainer, KimPackage.Literals.VALUE__DATE)
 		}
 	}
 

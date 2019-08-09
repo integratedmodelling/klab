@@ -1001,8 +1001,8 @@ public class Scale implements IScale {
 				// by design.
 				return this;
 			} else {
-				// TODO no - must relocate non-generic time according to the locator
-				return minus(IGeometry.Dimension.Type.TIME);
+				// relocate to non-generic time 0
+				return substituteExtent(this, ((Time)getTime()).getExtent(0));
 			}
 		} else if (locator instanceof IExtent) {
 			if (((AbstractExtent) locator).isOwnExtent(this)) {

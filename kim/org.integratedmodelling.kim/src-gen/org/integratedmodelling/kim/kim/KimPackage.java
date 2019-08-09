@@ -1976,13 +1976,22 @@ public interface KimPackage extends EPackage
   int VALUE_OPERATOR__COMPARISON_VALUE = 2;
 
   /**
+   * The feature id for the '<em><b>Comparison Quantity</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__COMPARISON_QUANTITY = 3;
+
+  /**
    * The feature id for the '<em><b>Comparison Concept</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE_OPERATOR__COMPARISON_CONCEPT = 3;
+  int VALUE_OPERATOR__COMPARISON_CONCEPT = 4;
 
   /**
    * The feature id for the '<em><b>Comparison Observable</b></em>' containment reference.
@@ -1991,7 +2000,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_OPERATOR__COMPARISON_OBSERVABLE = 4;
+  int VALUE_OPERATOR__COMPARISON_OBSERVABLE = 5;
 
   /**
    * The feature id for the '<em><b>Total</b></em>' attribute.
@@ -2000,7 +2009,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_OPERATOR__TOTAL = 5;
+  int VALUE_OPERATOR__TOTAL = 6;
 
   /**
    * The number of structural features of the '<em>Value Operator</em>' class.
@@ -2009,7 +2018,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_OPERATOR_FEATURE_COUNT = 6;
+  int VALUE_OPERATOR_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DependencyImpl <em>Dependency</em>}' class.
@@ -3887,13 +3896,22 @@ public interface KimPackage extends EPackage
   int VALUE__TABLE = 6;
 
   /**
+   * The feature id for the '<em><b>Date</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__DATE = 7;
+
+  /**
    * The feature id for the '<em><b>Map</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__MAP = 7;
+  int VALUE__MAP = 8;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -3902,7 +3920,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__QUANTITY = 8;
+  int VALUE__QUANTITY = 9;
 
   /**
    * The feature id for the '<em><b>Null</b></em>' attribute.
@@ -3911,7 +3929,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__NULL = 9;
+  int VALUE__NULL = 10;
 
   /**
    * The feature id for the '<em><b>Language</b></em>' attribute.
@@ -3920,7 +3938,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LANGUAGE = 10;
+  int VALUE__LANGUAGE = 11;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -3929,7 +3947,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 11;
+  int VALUE_FEATURE_COUNT = 12;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.FunctionImpl <em>Function</em>}' class.
@@ -4299,13 +4317,113 @@ public interface KimPackage extends EPackage
   int QUANTITY__UNIT = 1;
 
   /**
+   * The feature id for the '<em><b>Currency</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QUANTITY__CURRENCY = 2;
+
+  /**
    * The number of structural features of the '<em>Quantity</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int QUANTITY_FEATURE_COUNT = 2;
+  int QUANTITY_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DateImpl <em>Date</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.DateImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDate()
+   * @generated
+   */
+  int DATE = 54;
+
+  /**
+   * The feature id for the '<em><b>Year</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__YEAR = 0;
+
+  /**
+   * The feature id for the '<em><b>Bc</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__BC = 1;
+
+  /**
+   * The feature id for the '<em><b>Month</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__MONTH = 2;
+
+  /**
+   * The feature id for the '<em><b>Day</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__DAY = 3;
+
+  /**
+   * The feature id for the '<em><b>Hour</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__HOUR = 4;
+
+  /**
+   * The feature id for the '<em><b>Min</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__MIN = 5;
+
+  /**
+   * The feature id for the '<em><b>Sec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__SEC = 6;
+
+  /**
+   * The feature id for the '<em><b>Ms</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__MS = 7;
+
+  /**
+   * The number of structural features of the '<em>Date</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE_FEATURE_COUNT = 8;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}' enum.
@@ -4315,7 +4433,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
    * @generated
    */
-  int DATA_TYPE = 54;
+  int DATA_TYPE = 55;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.
@@ -4325,7 +4443,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 55;
+  int UNIT_OP = 56;
 
 
   /**
@@ -6336,6 +6454,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getValueOperator_ComparisonValue();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonQuantity <em>Comparison Quantity</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Comparison Quantity</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator#getComparisonQuantity()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EReference getValueOperator_ComparisonQuantity();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}'.
@@ -8396,6 +8525,17 @@ public interface KimPackage extends EPackage
   EReference getValue_Table();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getDate <em>Date</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Date</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getDate()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Date();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getMap <em>Map</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8805,6 +8945,115 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getQuantity_Unit();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Quantity#getCurrency <em>Currency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Currency</em>'.
+   * @see org.integratedmodelling.kim.kim.Quantity#getCurrency()
+   * @see #getQuantity()
+   * @generated
+   */
+  EReference getQuantity_Currency();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Date <em>Date</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Date</em>'.
+   * @see org.integratedmodelling.kim.kim.Date
+   * @generated
+   */
+  EClass getDate();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Date#getYear <em>Year</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Year</em>'.
+   * @see org.integratedmodelling.kim.kim.Date#getYear()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Year();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Date#isBc <em>Bc</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Bc</em>'.
+   * @see org.integratedmodelling.kim.kim.Date#isBc()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Bc();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Date#getMonth <em>Month</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Month</em>'.
+   * @see org.integratedmodelling.kim.kim.Date#getMonth()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Month();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Date#getDay <em>Day</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Day</em>'.
+   * @see org.integratedmodelling.kim.kim.Date#getDay()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Day();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Date#getHour <em>Hour</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Hour</em>'.
+   * @see org.integratedmodelling.kim.kim.Date#getHour()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Hour();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Date#getMin <em>Min</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Min</em>'.
+   * @see org.integratedmodelling.kim.kim.Date#getMin()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Min();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Date#getSec <em>Sec</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Sec</em>'.
+   * @see org.integratedmodelling.kim.kim.Date#getSec()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Sec();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Date#getMs <em>Ms</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ms</em>'.
+   * @see org.integratedmodelling.kim.kim.Date#getMs()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Ms();
 
   /**
    * Returns the meta object for enum '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}'.
@@ -10382,6 +10631,14 @@ public interface KimPackage extends EPackage
     EReference VALUE_OPERATOR__COMPARISON_VALUE = eINSTANCE.getValueOperator_ComparisonValue();
 
     /**
+     * The meta object literal for the '<em><b>Comparison Quantity</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE_OPERATOR__COMPARISON_QUANTITY = eINSTANCE.getValueOperator_ComparisonQuantity();
+
+    /**
      * The meta object literal for the '<em><b>Comparison Concept</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -11936,6 +12193,14 @@ public interface KimPackage extends EPackage
     EReference VALUE__TABLE = eINSTANCE.getValue_Table();
 
     /**
+     * The meta object literal for the '<em><b>Date</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__DATE = eINSTANCE.getValue_Date();
+
+    /**
      * The meta object literal for the '<em><b>Map</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -12252,6 +12517,88 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference QUANTITY__UNIT = eINSTANCE.getQuantity_Unit();
+
+    /**
+     * The meta object literal for the '<em><b>Currency</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference QUANTITY__CURRENCY = eINSTANCE.getQuantity_Currency();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.DateImpl <em>Date</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.DateImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDate()
+     * @generated
+     */
+    EClass DATE = eINSTANCE.getDate();
+
+    /**
+     * The meta object literal for the '<em><b>Year</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__YEAR = eINSTANCE.getDate_Year();
+
+    /**
+     * The meta object literal for the '<em><b>Bc</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__BC = eINSTANCE.getDate_Bc();
+
+    /**
+     * The meta object literal for the '<em><b>Month</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__MONTH = eINSTANCE.getDate_Month();
+
+    /**
+     * The meta object literal for the '<em><b>Day</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__DAY = eINSTANCE.getDate_Day();
+
+    /**
+     * The meta object literal for the '<em><b>Hour</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__HOUR = eINSTANCE.getDate_Hour();
+
+    /**
+     * The meta object literal for the '<em><b>Min</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__MIN = eINSTANCE.getDate_Min();
+
+    /**
+     * The meta object literal for the '<em><b>Sec</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__SEC = eINSTANCE.getDate_Sec();
+
+    /**
+     * The meta object literal for the '<em><b>Ms</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__MS = eINSTANCE.getDate_Ms();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}' enum.

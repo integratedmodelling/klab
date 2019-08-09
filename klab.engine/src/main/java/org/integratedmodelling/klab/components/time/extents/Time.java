@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.components.time.extents;
 
+import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.KimDate;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -124,6 +126,51 @@ public class Time extends Extent implements ITime {
 		ret.resolution = new ResolutionImpl(resolutionType, resolutionMultiplier);
 		ret.step = period;
 		return ret;
+	}
+
+	public static ITimeInstant instant(KimDate date) {
+		DateTime dtime = new DateTime(date.getYear(), date.getMonth(), date.getDay(), date.getHour(), date.getMin(),
+				date.getSec(), date.getMs());
+		return new TimeInstant(dtime);
+	}
+
+	public static ITimeInstant instant(int year) {
+		return instant(KimDate.asDate(year));
+	}
+
+	public static ITimeDuration duration(IKimQuantity iKimQuantity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static ITimeDuration duration(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static ITimeDuration duration(Number number, Resolution.Type type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public static Resolution resolution(int i, Resolution.Type focus) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public static Resolution resolution(IKimQuantity spec) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public static Resolution resolution(ITimeInstant start2, ITimeInstant end2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Resolution resolution(String string) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -307,13 +354,13 @@ public class Time extends Extent implements ITime {
 			ret.extentType = extentType == ITime.Type.GENERIC ? ITime.Type.GENERIC : ITime.Type.SPECIFIC;
 			ret.step = null;
 			((ResolutionImpl) ret.resolution).setMultiplier(ret.resolution.getMultiplier(ret.start, ret.end));
-			
+
 			return ret;
 		}
 
 		return null;
 	}
-	
+
 	public String toString() {
 		return "<TIME " + encode() + ">";
 	}
@@ -376,16 +423,19 @@ public class Time extends Extent implements ITime {
 	}
 
 	public static IExtent create(Dimension dimension) {
-		
+
 		Resolution resolution = null;
 		TimeInstant start = null;
 		TimeInstant end = null;
 		ITime.Type type = null;
 		ITimeDuration step = null;
-		
+
 		// TODO
 		System.out.println("FAAAAAAAAAA");
 
 		return create(type, resolution.getType(), resolution.getMultiplier(), start, end, step);
 	}
+
+
+
 }

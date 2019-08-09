@@ -25,6 +25,7 @@ import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
@@ -398,6 +399,11 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseQuantity(Quantity object)
       {
         return createQuantityAdapter();
+      }
+      @Override
+      public Adapter caseDate(Date object)
+      {
+        return createDateAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -1227,6 +1233,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createQuantityAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Date <em>Date</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Date
+   * @generated
+   */
+  public Adapter createDateAdapter()
   {
     return null;
   }
