@@ -27,20 +27,6 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Range;
 
-/**
- * Examples:
- * 
- * create(ITime.GENERIC, 1, ITime.Resolution.Type.YEAR) -> generic 1-year
- * create(ITime.GENERIC, 10, ITime.Resolution.Type.YEAR) -> generic 10-year
- * create(1975, ITime.Resolution.Type.YEAR) -> specific 1-year period 1975
- * create(1980, 2000) -> specific, 20 years period create(1980, 2000, 1,
- * ITime.Resolution.Type.DAY) -> 1-day Grid create("ISOdate", "ISOdate",
- * 102030L) -> date to date grid with ms resolution create(ITime.REALTIME,
- * ITime.Resolution.Type.HOUR) -> realtime year-res, start now, end never
- * 
- * @param objects
- * @return
- */
 public class Time extends Extent implements ITime {
 
 	ITime.Type extentType;
@@ -84,6 +70,10 @@ public class Time extends Extent implements ITime {
 		public void setMultiplier(double multiplier) {
 			this.multiplier = multiplier;
 		}
+
+		public String toString() {
+			return multiplier + " " + type;
+		}
 	}
 
 	private Time() {
@@ -126,6 +116,9 @@ public class Time extends Extent implements ITime {
 		ret.end = end;
 		ret.resolution = new ResolutionImpl(resolutionType, resolutionMultiplier);
 		ret.step = period;
+		if (ret.step != null) {
+			ret.multiplicity = (long) ret.getCoveredExtent() / ret.step.getMilliseconds();
+		}
 		return ret;
 	}
 
@@ -140,8 +133,8 @@ public class Time extends Extent implements ITime {
 	}
 
 	public static ITimeDuration duration(IKimQuantity spec) {
-			Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit()), spec.getValue().doubleValue());
-			return TimeDuration.create((long)(res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
+		Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit()), spec.getValue().doubleValue());
+		return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
 	}
 
 	public static ITimeDuration duration(String string) {
@@ -290,14 +283,17 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IExtent getExtent(long stateIndex) {
-		// TODO Auto-generated method stub
+		if (this.multiplicity == 1) {
+			if (stateIndex == 0) {
+				return this;
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public boolean isCovered(long stateIndex) {
-		// TODO only meaningful for irregular time
-		return true;
+		return stateIndex >= 0 && stateIndex < multiplicity;
 	}
 
 	@Override
