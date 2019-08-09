@@ -33,8 +33,8 @@ public class Time implements IExpression {
 						.resolution(parameters.get("focus", IKimQuantity.class));
 			} else {
 				try {
-					Resolution.Type focus = Resolution.Type.valueOf(parameters.get("focus").toString().toUpperCase());
-					resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(1, focus);
+					Resolution.Type focus = Resolution.Type.parse(parameters.get("focus").toString());
+					resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(1.0, focus);
 				} catch (Throwable t) {
 					// later
 				}

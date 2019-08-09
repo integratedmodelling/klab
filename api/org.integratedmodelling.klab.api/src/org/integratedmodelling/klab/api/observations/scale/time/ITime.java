@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.observations.scale.time;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
  * Time, as seen by k.LAB when the default contextualizer time() is used.
@@ -103,6 +104,61 @@ public interface ITime extends IExtent {
 
 				}
 				return 0;
+			}
+
+			public static Type parse(String unit) {
+				switch (unit) {
+				case "M":
+				case "millennium":
+				case "millennia":
+					return Type.MILLENNIUM;
+				case "C":
+				case "century":
+				case "centuries":
+					return Type.CENTURY;
+				case "decades":
+				case "decade":
+					return Type.DECADE;
+				case "y":
+				case "yr":
+				case "year":
+					return Type.YEAR;
+				case "month":
+				case "months":
+				case "mon":
+					return Type.MONTH;
+				case "week":
+				case "weeks":
+				case "wk":
+				case "w":
+					return Type.WEEK;
+				case "d":
+				case "day":
+				case "days":
+					return Type.DAY;
+				case "h":
+				case "hr":
+				case "hour":
+				case "hours":
+					return Type.HOUR;
+				case "m":
+				case "min":
+				case "mins":
+				case "minute":
+				case "minutes":
+					return Type.MINUTE;				
+				case "s":
+				case "sec":
+				case "secs":
+				case "second":
+				case "seconds":
+					return Type.SECOND;
+				case "ms":
+				case "milliseconds":
+				case "millisecond":
+					return Type.MILLISECOND;				
+				}
+				throw new KlabValidationException("invalid time unit for resolution: " + unit);
 			}
 
 		}

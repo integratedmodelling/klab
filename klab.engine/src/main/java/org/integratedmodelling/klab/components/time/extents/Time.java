@@ -4,6 +4,7 @@ import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimDate;
+import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -138,39 +139,35 @@ public class Time extends Extent implements ITime {
 		return instant(KimDate.asDate(year));
 	}
 
-	public static ITimeDuration duration(IKimQuantity iKimQuantity) {
-		// TODO Auto-generated method stub
-		return null;
+	public static ITimeDuration duration(IKimQuantity spec) {
+			Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit()), spec.getValue().doubleValue());
+			return TimeDuration.create((long)(res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
 	}
 
 	public static ITimeDuration duration(String string) {
-		// TODO Auto-generated method stub
-		return null;
+		return duration(KimQuantity.parse(string));
 	}
 
 	public static ITimeDuration duration(Number number, Resolution.Type type) {
-		// TODO Auto-generated method stub
-		return null;
+		return TimeDuration.create(number.longValue(), type);
 	}
-	
-	public static Resolution resolution(int i, Resolution.Type focus) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+
 	public static Resolution resolution(IKimQuantity spec) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ResolutionImpl(Resolution.Type.parse(spec.getUnit()), spec.getValue().doubleValue());
 	}
-	
-	public static Resolution resolution(ITimeInstant start2, ITimeInstant end2) {
-		// TODO Auto-generated method stub
-		return null;
+
+	public static Resolution resolution(ITimeInstant start, ITimeInstant end) {
+		TimeDuration duration = TimeDuration.create(start, end, false);
+		Resolution.Type res = duration.getResolution();
+		return new ResolutionImpl(res, (double) duration.getMilliseconds() / (double) res.getMilliseconds());
+	}
+
+	public static Resolution resolution(double value, Resolution.Type type) {
+		return new ResolutionImpl(type, value);
 	}
 
 	public static Resolution resolution(String string) {
-		// TODO Auto-generated method stub
-		return null;
+		return resolution(KimQuantity.parse(string));
 	}
 
 	@Override
@@ -184,6 +181,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IExtent merge(IExtent extent) throws KlabException {
+		// TODO hostia
 		return this;
 	}
 
@@ -435,7 +433,5 @@ public class Time extends Extent implements ITime {
 
 		return create(type, resolution.getType(), resolution.getMultiplier(), start, end, step);
 	}
-
-
 
 }

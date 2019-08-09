@@ -7,31 +7,34 @@ temporalextent time
 {
 
 	optional value start 
-		"A string specifying the start of the temporal extent as a date in yyyy/mm/dd[:MM:SS] format."
-		default ""
+		"A date specifying the start of the temporal extent in yyyy-mm-dd [HH:MM:SS.MS] format. A single year
+		 or a partial date are allowed."
 	
 	optional value end 
-		"A string specifying the end of the temporal extent as a date in yyyy/mm/dd[:MM:SS] format."
-		default ""
+		"A date specifying the end of the temporal extent in yyyy-mm-dd [HH:MM:SS.MS] format. A single year
+		 or a partial date are allowed."
 
 	optional value step 
-		"A string specifying the linear resolution of the desired time grid as a number with duration
-		 units. Example: '1 day'."
-		default ""
+		"A quantity or string specifying the linear resolution of the desired time grid as a number with duration
+		 units. Example: 1.day."
 
 	optional value focus 
-		"A string specifying a period with an optional unit that will be the generic temporal focus
-		 for the observation. No specific time start or end is allowed if this is specified. Example:
-		 '5 year'."
-		default ""
+		"A quantity (e.g. 1.year) or string specifying a period with a length and a unit, which will be interpreted as the 
+		 generic temporal focus for the observation. Should only be specified in generic time definitions."
 
 	optional number year
-		"A year is an integer number, interpreted as the period covering the entire year."
-		default 0
+		"A year is an integer number, interpreted as the period covering the entire year. If the year is specified,
+		 start and end should not."
 		
 	optional boolean realtime
 		"If the realtime parameter is true, all time transition will be performed in real time from the 
-         start of contextualization."
+         start of contextualization. Step, start and end must all be specified."
+		default false
+		
+	optional boolean generic
+		"A generic time extent will be matched based on resolution and, if available, focal period but
+		 will allow matching resources with temporal span and extent close to the stated, without the
+		 possibility of mediation for extensive quantities. A step cannot be specified."
 		default false
 		
 	class org.integratedmodelling.klab.components.time.services.Time
