@@ -11,6 +11,23 @@ package org.integratedmodelling.klab.api.data;
  * classes, and the "conformant" cases where the locator correspond to a simple
  * offset without mediations should be detected and translated as fast as
  * possible.
+ * <p>
+ * Locators can be parsed from a simple string parameters using the syntax
+ * below:
+ * 
+ * <pre>
+ * &lt;geometry&gt;@n,m,...
+ * </pre>
+ * 
+ * where the {@link IGeometry geometry} specs before @ and the @ character
+ * itself are optional if the locator is part of a request that unambiguously
+ * identifies an observation. Any of the numbers in the list after that is either a
+ * linear long integer offset in the correspondent dimension of the geometry or
+ * a set of dimensional offsets in parentheses for dimensions with inherent
+ * dimensionality > 1, and each can be substituted by a dot, meaning that the
+ * entire dimension is located. If only one offset is mentioned, the remaining
+ * ones are substituted with dots. So usually [0] in a temporally explicit
+ * context means whatever is located at t=0.
  * 
  * @author Ferd
  *
@@ -18,8 +35,8 @@ package org.integratedmodelling.klab.api.data;
 public interface ILocator {
 
 	/**
-	 * Use this instead of null to pass to extent functions when the entire
-	 * extent should be used.
+	 * Use this instead of null to pass to extent functions when the entire extent
+	 * should be used.
 	 */
 	public static ILocator FULL = null;
 
@@ -30,14 +47,16 @@ public interface ILocator {
 	 * 
 	 * @param locator
 	 * @return another valid locator
-	 * @throws IllegalArgumentException
-	 *             if the locator is inappropriate, i.e. does not intersect this
-	 *             either in extent or geometry.
+	 * @throws IllegalArgumentException if the locator is inappropriate, i.e. does
+	 *                                  not intersect this either in extent or
+	 *                                  geometry.
 	 */
 	ILocator at(ILocator locator);
 
 	/**
-	 * Get a locator of the passed interface from this one, or null.
+	 * Get a locator of the passed interface from this one, or null. Allows
+	 * switching between a full-scale locator to a specific extent's, or from/to an
+	 * offset-based locator to an extent-based one.
 	 * 
 	 * @param type
 	 * @return

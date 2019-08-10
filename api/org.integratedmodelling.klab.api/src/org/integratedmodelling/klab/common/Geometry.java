@@ -3,10 +3,8 @@ package org.integratedmodelling.klab.common;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -22,6 +20,9 @@ import org.integratedmodelling.klab.utils.Utils;
 public class Geometry implements IGeometry {
 
 	private static final long serialVersionUID = 8430057200107796568L;
+
+	// size that's only valid for the time dimension
+	public static long INFINITE_SIZE = Long.MAX_VALUE;
 
 	/**
 	 * Bounding box as a double[]{minX, maxX, minY, maxY}
@@ -149,7 +150,7 @@ public class Geometry implements IGeometry {
 			if (dim.shape() != null && !isUndefined(dim.shape())) {
 				ret += "(";
 				for (int i = 0; i < dim.shape().length; i++) {
-					ret += (i == 0 ? "" : ",") + dim.shape()[i];
+					ret += (i == 0 ? "" : ",") + (dim.shape()[i] == INFINITE_SIZE ? "" : ("\u221E" + dim.shape()[i]));
 				}
 				ret += ")";
 			}
@@ -272,8 +273,35 @@ public class Geometry implements IGeometry {
 			return shape == null ? Utils.newArray(UNDEFINED, dimensionality) : shape;
 		}
 
-		public long computeOffsets(long... offsets) {
-			// TODO
+		@Override
+		public long getOffset(long... offsets) {
+
+			if (offsets == null) {
+				return 0;
+			}
+			if (offsets.length != dimensionality) {
+				throw new IllegalArgumentException("geometry: cannot address a " + dimensionality
+						+ "-dimensional extent with an offset array of lenght " + offsets.length);
+			}
+			if (shape == null) {
+				throw new IllegalArgumentException("geometry: cannot address a geometry with no shape");
+			}
+
+			if (offsets.length == 1) {
+				return offsets[0];
+			}
+
+			if (this.type == Type.SPACE && offsets.length == 2) {
+
+				/*
+				 * TODO this is arbitrary and repeats the addressing in Grid. I just can't go
+				 * over the entire codebase to just use this one at this moment. Should have a
+				 * centralized offsetting strategy and use that everywhere, configuring it
+				 * according to and extent types.
+				 */
+				return ((shape[1] - offsets[1] - 1) * shape[0]) + offsets[0];
+			}
+
 			return 0;
 		}
 
@@ -566,7 +594,7 @@ public class Geometry implements IGeometry {
 					String[] dims = shape.toString().split(",");
 					long[] sdimss = new long[dims.length];
 					for (int d = 0; d < dims.length; d++) {
-						sdimss[d] = Long.parseLong(dims[d].trim());
+						sdimss[d] = dims[d].trim().equals("\u221E") ? INFINITE_SIZE : Long.parseLong(dims[d].trim());
 					}
 					dimensionality.dimensionality = sdimss.length;
 					dimensionality.shape = sdimss;
@@ -604,7 +632,8 @@ public class Geometry implements IGeometry {
 			if (val.startsWith("[") && val.endsWith("]")) {
 				v = NumberUtils.podArrayFromString(val, "\\s+");
 			} else if (NumberUtils.encodesLong(val)) {
-				// This way all integers will be longs and the next won't be called - check if that's OK
+				// This way all integers will be longs and the next won't be called - check if
+				// that's OK
 				v = Long.parseLong(val);
 			} else if (NumberUtils.encodesInteger(val)) {
 				v = Integer.parseInt(val);
@@ -895,7 +924,7 @@ public class Geometry implements IGeometry {
 	}
 
 	public String getLabel() {
-		// TODO handle numerosity
+
 		String prefix = "";
 		if (size() > 0) {
 			prefix = "distributed ";

@@ -120,7 +120,7 @@ public interface IObservation extends IArtifactIdentity, IArtifact {
 
     /**
      * Time of creation. If the context has no time, this is equal to the {@link IArtifact#getTimestamp()}; otherwise
-     * it is the time reported by {@link IScheduler#getTime()} at the moment of construction.
+     * it is the time reported by {@link IScheduler#getSliceOffsetInBackend()} at the moment of construction.
      * 
      * @return the time of creation
      */
@@ -128,7 +128,7 @@ public interface IObservation extends IArtifactIdentity, IArtifact {
 
     /**
      * Time of exit. If the context has no time or the object is current, this is -1L; otherwise
-     * it is the time reported by {@link IScheduler#getTime()} at the moment of exit.
+     * it is the time reported by {@link IScheduler#getSliceOffsetInBackend()} at the moment of exit.
      * 
      * @return the time of exit
      */

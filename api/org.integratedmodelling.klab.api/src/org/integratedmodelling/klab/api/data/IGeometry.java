@@ -161,6 +161,15 @@ public interface IGeometry extends Serializable, ILocator {
          * @throws IllegalArgumentException if the locator type is not suitable for the receiver.
          */
         public abstract long getOffset(ILocator index);
+        
+        /**
+         * Return a linear offset for the array of offsets matching the dimensionality in
+         * size.
+         * 
+         * @param offsets
+         * @return
+         */
+		long getOffset(long... offsets);
 
         /**
          * Return the size of this dimension. In a geometry that has been declared but not defined (such
@@ -210,6 +219,7 @@ public interface IGeometry extends Serializable, ILocator {
          * @return
          */
         ExtentDimension getExtentDimension();
+
 
     }
 
