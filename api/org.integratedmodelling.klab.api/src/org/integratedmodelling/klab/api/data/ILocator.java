@@ -56,7 +56,8 @@ public interface ILocator {
 	/**
 	 * Get a locator of the passed interface from this one, or null. Allows
 	 * switching between a full-scale locator to a specific extent's, or from/to an
-	 * offset-based locator to an extent-based one.
+	 * offset-based locator to an extent-based one. The API also expects this to
+	 * be convertible to a numeric offset by passing Long.class.
 	 * 
 	 * @param type
 	 * @return

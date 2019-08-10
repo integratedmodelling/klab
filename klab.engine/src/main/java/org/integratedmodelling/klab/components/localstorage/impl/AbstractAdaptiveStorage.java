@@ -6,6 +6,7 @@ import java.util.List;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 
 /**
  * Smart storage using a configurable backend to store slices that are not in
@@ -34,7 +35,7 @@ public abstract class AbstractAdaptiveStorage<T> {
 	 * and it may be infinite.
 	 */
 	long maxTimeOffset;
-	
+
 	/*
 	 * 
 	 */
@@ -101,7 +102,7 @@ public abstract class AbstractAdaptiveStorage<T> {
 	 * Called once with the size of each slice before anything is written. Should
 	 * ensure that each slice can hold the size passed. There is no guarantee that
 	 * the storage will be used, so it will be best created and initialized when the
-	 * first {@link #setValueIntoBackend(Object, long, long)} is called. 
+	 * first {@link #setValueIntoBackend(Object, long, long)} is called.
 	 * 
 	 * @param sliceSize
 	 */
@@ -130,7 +131,8 @@ public abstract class AbstractAdaptiveStorage<T> {
 
 	/**
 	 * Write a value to the backend. The backendTimeSlice is whatever we need to use
-	 * for the specific timestep and it's <= the real timestep
+	 * for the specific timestep and it's <= the real timestep; if the writes are
+	 * monotonic in time, this will be called with values increasing by 0 or 1.
 	 * 
 	 * @param value
 	 * @param offsetInSlice
@@ -143,24 +145,33 @@ public abstract class AbstractAdaptiveStorage<T> {
 	}
 
 	protected void setValue(T value, ILocator locator) {
+
+		// NAH use the original geometry to establish this stuff. Turn locator into
+		// offset-based geometry locator and go from there.
 		
 		long timeSlice = 0; // TODO
+		ITime time = locator.as(ITime.class);
+		if (time != null) {
+//			timeSlice = locator.as(Long.class);
+		}
+
 		Slice slice = null;
 		if (slices.isEmpty() && !Observations.INSTANCE.isNodata(value)) {
 			slices.add(slice = new Slice());
 		} else {
 			slice = findClosestSlice(timeSlice);
 		}
-		
-		this.maxTimeOffset = timeSlice;
-		
+
+		if (timeSlice > this.maxTimeOffset) {
+			this.maxTimeOffset = timeSlice;
+		}
+
 	}
 
 	private Slice findClosestSlice(long timeSlice) {
 
 		return null;
-		
+
 	}
 
-	
 }
