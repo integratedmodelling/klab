@@ -275,4 +275,8 @@ public abstract class AbstractAdaptiveStorage<T> {
 		return low == null ? null : low.getValue();
 	}
 
+	protected int sliceCount() {
+		return slices.size();
+	}
+
 }

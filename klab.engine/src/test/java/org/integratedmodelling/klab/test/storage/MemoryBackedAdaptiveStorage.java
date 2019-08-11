@@ -59,4 +59,12 @@ public class MemoryBackedAdaptiveStorage<T> extends AbstractAdaptiveStorage<T> {
 		
 	}
 
+	public int getSliceCount() {
+		return super.sliceCount();
+	}
+
+	public int getBackendSliceCount() {
+		return data.size();
+	}
+
 }
