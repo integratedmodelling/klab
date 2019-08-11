@@ -21,9 +21,6 @@ public class Geometry implements IGeometry {
 
 	private static final long serialVersionUID = 8430057200107796568L;
 
-	// size that's only valid for the time dimension
-	public static long INFINITE_SIZE = Long.MAX_VALUE;
-
 	/**
 	 * Bounding box as a double[]{minX, maxX, minY, maxY}
 	 */
@@ -150,7 +147,7 @@ public class Geometry implements IGeometry {
 			if (dim.shape() != null && !isUndefined(dim.shape())) {
 				ret += "(";
 				for (int i = 0; i < dim.shape().length; i++) {
-					ret += (i == 0 ? "" : ",") + (dim.shape()[i] == INFINITE_SIZE ? "" : ("\u221E" + dim.shape()[i]));
+					ret += (i == 0 ? "" : ",") + (dim.shape()[i] == INFINITE_SIZE ? "\u221E" : ("" + dim.shape()[i]));
 				}
 				ret += ")";
 			}
@@ -684,7 +681,9 @@ public class Geometry implements IGeometry {
 			if (dimension.size() == UNDEFINED) {
 				return UNDEFINED;
 			}
-			ret *= dimension.size();
+			if (dimension.size() != INFINITE_SIZE) {
+				ret *= dimension.size();
+			}
 		}
 		return ret;
 	}
@@ -946,6 +945,11 @@ public class Geometry implements IGeometry {
 			return prefix + "temporal";
 		}
 		return "empty";
+	}
+
+	@Override
+	public boolean isInfiniteTime() {
+		return getDimension(Dimension.Type.TIME) != null && getDimension(Dimension.Type.TIME).size() == INFINITE_SIZE;
 	}
 
 }

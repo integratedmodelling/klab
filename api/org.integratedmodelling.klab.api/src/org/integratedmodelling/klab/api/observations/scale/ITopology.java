@@ -25,12 +25,6 @@ package org.integratedmodelling.klab.api.observations.scale;
  */
 public interface ITopology<T> extends ITopologicallyComparable<T> {
 
-    /** The Constant INFINITE. */
-    public static final long INFINITE          = Long.MAX_VALUE;
-    
-    /** The Constant NEGATIVE_INFINITE. */
-    public static final long NEGATIVE_INFINITE = Long.MIN_VALUE;
-
     /**
      * Return the total number of distinct subdivisions in this topology. {@link #INFINITE} is
      * an option when applicable.

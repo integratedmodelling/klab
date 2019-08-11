@@ -387,6 +387,9 @@ public class TimeEditor extends Composite {
 		case GRID:
 		case REAL:
 			ret = "T1";
+			if (timeType == Type.REAL && time_end.getText().trim().isEmpty()) {
+				ret += "(\u221E)";
+			}
 			break;
 		case SPECIFIC:
 			ret = "t1";

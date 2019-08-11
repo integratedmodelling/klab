@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
@@ -117,7 +118,11 @@ public class Time extends Extent implements ITime {
 		ret.resolution = new ResolutionImpl(resolutionType, resolutionMultiplier);
 		ret.step = period;
 		if (ret.step != null) {
-			ret.multiplicity = (long) ret.getCoveredExtent() / ret.step.getMilliseconds();
+			if (type == ITime.Type.REAL && ret.end == null) {
+				ret.multiplicity = Geometry.INFINITE_SIZE;
+			} else {
+				ret.multiplicity = (long) ret.getCoveredExtent() / ret.step.getMilliseconds();
+			}
 		}
 		return ret;
 	}

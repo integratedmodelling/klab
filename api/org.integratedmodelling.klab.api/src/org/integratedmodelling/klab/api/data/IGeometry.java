@@ -96,6 +96,11 @@ public interface IGeometry extends Serializable, ILocator {
      * Constant for undefined dimension size.
      */
     public static final long UNDEFINED = -1l;
+    
+    /**
+     * Infinite size, only admitted for the time dimension.
+     */
+    public static final long INFINITE_SIZE = Long.MAX_VALUE;
 
     /**
      * @author Ferd
@@ -351,6 +356,15 @@ public interface IGeometry extends Serializable, ILocator {
      * @return the dimension's shape
      */
     long[] shape(Type space);
+    
+    /**
+     * If this is true, the reported size will not include the time, and the time dimension
+     * will have {@link #INFINITE_SIZE} size.
+     * 
+     * @return
+     */
+	boolean isInfiniteTime();
+
 
 
 }

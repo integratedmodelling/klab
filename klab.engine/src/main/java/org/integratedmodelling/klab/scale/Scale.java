@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.scale;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -134,6 +133,13 @@ public class Scale implements IScale {
 	private Scale originalScale = null;
 	// the offset in the original scale (only applies if originalScaleId > 0);
 	long originalScaleOffset = -1;
+
+	private boolean isInfiniteTime;
+
+	@Override
+	public boolean isInfiniteTime() {
+		return isInfiniteTime;
+	}
 
 	protected Scale() {
 	}
@@ -509,9 +515,6 @@ public class Scale implements IScale {
 		int idx = 0;
 		for (IExtent e : order) {
 
-			if (e.size() == INFINITE) {
-				multiplicity = INFINITE;
-			}
 			if (e.getType() == Dimension.Type.TIME) {
 				tIndex = idx;
 				time = (ITime) e;
@@ -520,8 +523,11 @@ public class Scale implements IScale {
 				space = (ISpace) e;
 			}
 
-			if (multiplicity != INFINITE)
+			if (e.size() != Geometry.INFINITE_SIZE) {
 				multiplicity *= e.size();
+			} else {
+				isInfiniteTime = true;
+			}
 
 			idx++;
 		}
@@ -529,15 +535,15 @@ public class Scale implements IScale {
 		// better safe than sorry. Only time can be infinite so this should be pretty
 		// safe
 		// as long as the comparator above works.
-		if (multiplicity == INFINITE && extents.get(0).size() != INFINITE) {
+		if (isInfiniteTime && extents.get(0).size() != Geometry.INFINITE_SIZE) {
 			throw new KlabInternalErrorException("internal error: infinite dimension is not the first in scale");
 		}
 
 		// recompute strided offsets for quick extent access
 		cursor = new MultidimensionalCursor();
-		long[] dims = new long[multiplicity == INFINITE ? extents.size() - 1 : extents.size()];
+		long[] dims = new long[isInfiniteTime ? extents.size() - 1 : extents.size()];
 		int n = 0;
-		for (int i = multiplicity == INFINITE ? 1 : 0; i < extents.size(); i++) {
+		for (int i = isInfiniteTime ? 1 : 0; i < extents.size(); i++) {
 			dims[n++] = extents.get(i).size();
 		}
 		cursor.defineDimensions(dims);
