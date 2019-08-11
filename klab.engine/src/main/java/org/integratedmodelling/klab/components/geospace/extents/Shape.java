@@ -631,7 +631,7 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends ILocator> T as(Class<T> cls) {
+	public <T> T as(Class<T> cls) {
 		return (T) envelope.asLocator();
 	}
 

@@ -1,12 +1,14 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 
 /**
  * Smart storage using a configurable backend to store slices that are not in
@@ -19,27 +21,15 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
  */
 public abstract class AbstractAdaptiveStorage<T> {
 
+	private NavigableMap<Long, Slice> slices = new TreeMap<>();
+	private long highTimeOffset = -1;
+	private long maxTimeOffset;
+	private long sliceSize;
+	private long slicesInBackend = 0;
 	/*
-	 * slice storage: each slice is only added when needed along with its time
-	 * index. There is always at least one slice in storage.
+	 * If trivial, we have no time and can contain at most one slice.
 	 */
-	List<Slice> slices = new LinkedList<>();
-
-	/*
-	 * the geometry of each slice, with time removed if it's there.
-	 */
-	IGeometry sliceGeometry;
-
-	/*
-	 * The time offset reached so far. We don't need to know the max time possible
-	 * and it may be infinite.
-	 */
-	long maxTimeOffset;
-
-	/*
-	 * 
-	 */
-	long sliceSize;
+	private boolean trivial;
 
 	/**
 	 * A slice is generated when there are values in a timestep. Within a slice,
@@ -49,53 +39,105 @@ public abstract class AbstractAdaptiveStorage<T> {
 	 */
 	class Slice {
 
-		// assign to value, then use the smart logics after the first assignment
+		/*
+		 * assign the first value to the value field, then use the smart logics after
+		 * the first assignment
+		 */
 		boolean isNew = true;
 
-		// use this until there is more than one value in the slice.
+		/* use this until there is more than one value in the slice. */
 		T value = null;
+
 		// if not using backend, < 0; otherwise the slice offset in it, 0 or <= time
 		long sliceOffsetInBackend = -1l;
 
-	}
+		// the timestep this slice refers to
+		long timestep;
 
-	T getValue(long offset) {
-		Slice slice = requestSlice(offset);
-		return slice.sliceOffsetInBackend >= 0
-				? getValueFromBackend(getOffsetInSlice(offset, slice.sliceOffsetInBackend), slice.sliceOffsetInBackend)
-				: slice.value;
-	}
+		public T getAt(long sliceOffset) {
 
-	private long getOffsetInSlice(long offset, long sliceOffsetInBackend) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private Slice requestSlice(long offset) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	void setValue(T value, long offset) {
-
-		Slice slice = requestSlice(offset);
-
-		if (slice.isNew) {
-			slice.value = value;
-			slice.isNew = false;
-			return;
+			if (this.sliceOffsetInBackend < 0) {
+				return this.value;
+			}
+			return getValueFromBackend(sliceOffset, this.sliceOffsetInBackend);
 		}
 
-		boolean valuesDiffer = (slice.value == null && value != null) || (slice.value != null && value == null)
-				|| (slice.value != null && value != null && !value.equals(slice.value));
+		public void setAt(long sliceOffset, T value) {
 
-		if (slice.sliceOffsetInBackend < 0 && valuesDiffer) {
-//			request slice in backend and set value in it at the correspondent offset
+			if (isNew) {
+				this.value = value;
+				isNew = false;
+				return;
+			}
+
+			boolean valuesDiffer = (this.value == null && value != null) || (this.value != null && value == null)
+					|| (this.value != null && value != null && !value.equals(this.value));
+
+			if (this.sliceOffsetInBackend < 0 && valuesDiffer) {
+				this.sliceOffsetInBackend = slicesInBackend;
+				slicesInBackend++;
+				createBackendStorage(this.sliceOffsetInBackend);
+				fillSlice(this.sliceOffsetInBackend, value);
+			}
+
+			setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
 		}
 
+		Slice(long timestep) {
+			this.timestep = timestep;
+		}
+
+	}
+
+	/**
+	 * The time offset reached so far. We don't need to know the max time possible
+	 * and it may be infinite. We may not have slices that reach to this level,
+	 * which means a value was assigned but it was equal to the value in the last
+	 * recorded slice.
+	 * 
+	 * @return
+	 */
+	protected long getHighTimeOffset() {
+		return highTimeOffset;
+	}
+
+	/**
+	 * The maximum possible time offset or IGeometry.INFINITE. Only meaningful if
+	 * not trivial. Only for debugging and for the implementing classes to check so
+	 * they can optimize storage when it's finite.
+	 * 
+	 * @return
+	 */
+	protected long getMaxTimeOffset() {
+		return maxTimeOffset;
+	}
+
+	/**
+	 * Size of a non-temporal slice. All we need is linear storage of this size per
+	 * each slice.
+	 * 
+	 * @return
+	 */
+	protected long getSliceSize() {
+		return sliceSize;
 	}
 
 	protected AbstractAdaptiveStorage(IGeometry geometry) {
+
+		Dimension time = geometry.getDimension(Type.TIME);
+		if (time == null) {
+			this.trivial = true;
+			this.sliceSize = geometry.size();
+		} else if (time.size() != IGeometry.INFINITE_SIZE) {
+			this.maxTimeOffset = time.size();
+			this.sliceSize = geometry.size();
+		} else {
+			this.maxTimeOffset = time.size();
+			this.sliceSize = geometry.size() / time.size();
+		}
+
+		this.initializeStorage(this.sliceSize, !this.trivial);
+
 	}
 
 	/**
@@ -106,7 +148,16 @@ public abstract class AbstractAdaptiveStorage<T> {
 	 * 
 	 * @param sliceSize
 	 */
-	protected abstract void initializeStorage(long sliceSize);
+	protected abstract void initializeStorage(long sliceSize, boolean hasTime);
+
+	/**
+	 * Fill a slice with a specified value, which may or may not be null (for
+	 * nodata).
+	 * 
+	 * @param sliceSize
+	 * @param value
+	 */
+	protected abstract void fillSlice(long sliceSize, T value);
 
 	/**
 	 * Create storage backend for the passed timestep. This would normally use a
@@ -116,18 +167,21 @@ public abstract class AbstractAdaptiveStorage<T> {
 	 * This can also be used to initialize the values from a previous timestep into
 	 * the new one.
 	 * 
-	 * @param timestep
+	 * @param sliceOffsetInBackend the offset of the new slice. Calls will be
+	 *                             ordered if the values are set in temporal order.
 	 */
-	protected abstract void createBackendStorage(long timestep);
+	protected abstract void createBackendStorage(long sliceOffsetInBackend);
 
 	/**
-	 * Get a value from the backend. The backendTimeSlice is whatever we need to use
-	 * for the specific timestep and it's <= the real timestep.
+	 * Get a value from the backend. The sliceOffsetInBackend is whatever we need to
+	 * use for the specific timestep; it's <= the real timestep.
 	 * 
-	 * @param sliceOffset
+	 * @param offsetInSlice        the offset within the slice specified by the
+	 *                             second parameter
+	 * @param sliceOffsetInBackend the offset of the slice in the backend
 	 * @return
 	 */
-	protected abstract T getValueFromBackend(long offsetInSlice, long backendTimeSlice);
+	protected abstract T getValueFromBackend(long offsetInSlice, long sliceOffsetInBackend);
 
 	/**
 	 * Write a value to the backend. The backendTimeSlice is whatever we need to use
@@ -140,38 +194,81 @@ public abstract class AbstractAdaptiveStorage<T> {
 	 */
 	protected abstract void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice);
 
-	protected T getValue(ILocator locator) {
-		return null;
+	public T getValue(ILocator locator) {
+
+		if (slices.isEmpty()) {
+			return null;
+		}
+
+		Long[] offsets = locator.as(Long[].class);
+		long sliceOffset = product(offsets, trivial ? 0 : 1);
+		long timeOffset = trivial ? 0 : offsets[0];
+
+		// can only be the closest at this point.
+		return getClosest(timeOffset).getAt(sliceOffset);
 	}
 
-	protected void setValue(T value, ILocator locator) {
+	public void setValue(T value, ILocator locator) {
 
-		// NAH use the original geometry to establish this stuff. Turn locator into
-		// offset-based geometry locator and go from there.
-		
-		long timeSlice = 0; // TODO
-		ITime time = locator.as(ITime.class);
-		if (time != null) {
-//			timeSlice = locator.as(Long.class);
+		Long[] offsets = locator.as(Long[].class);
+		long sliceOffset = product(offsets, trivial ? 0 : 1);
+		long timeOffset = trivial ? 0 : offsets[0];
+		boolean noData = Observations.INSTANCE.isNodata(value);
+
+		if (noData && slices.isEmpty()) {
+			// everything's nodata so far, no need to store.
+			return;
 		}
 
-		Slice slice = null;
-		if (slices.isEmpty() && !Observations.INSTANCE.isNodata(value)) {
-			slices.add(slice = new Slice());
-		} else {
-			slice = findClosestSlice(timeSlice);
+		/*
+		 * record high offset for posterity
+		 */
+		if (highTimeOffset < timeOffset) {
+			highTimeOffset = timeOffset;
 		}
 
-		if (timeSlice > this.maxTimeOffset) {
-			this.maxTimeOffset = timeSlice;
+		/*
+		 * find the closest slice for the time
+		 */
+		Slice slice = getClosest(timeOffset);
+		if (slice != null && equals(slice.getAt(sliceOffset), value)) {
+			// don't store anything until it's different from the previous slice.
+			return;
 		}
+
+		/*
+		 * if we get here, we need to store in a slice of our own unless we found the
+		 * exact timestep.
+		 */
+		if (slice == null || slice.timestep != timeOffset) {
+			slice = addSlice(timeOffset);
+		}
+
+		slice.setAt(sliceOffset, value);
 
 	}
 
-	private Slice findClosestSlice(long timeSlice) {
+	private long product(Long[] offsets, int i) {
+		long ret = offsets[i];
+		for (int n = i + 1; n < offsets.length; n++) {
+			ret *= offsets[n];
+		}
+		return ret;
+	}
 
-		return null;
+	private AbstractAdaptiveStorage<T>.Slice addSlice(long timeOffset) {
+		Slice slice = new Slice(timeOffset);
+		slices.put(timeOffset, slice);
+		return slice;
+	}
 
+	private boolean equals(Object valueAt, T value) {
+		return (valueAt == null && value == null) || (valueAt != null && value != null && valueAt.equals(value));
+	}
+
+	private Slice getClosest(long timeSlice) {
+		Map.Entry<Long, Slice> low = slices.floorEntry(timeSlice);
+		return low == null ? null : low.getValue();
 	}
 
 }

@@ -70,7 +70,7 @@ public class SpaceLocator implements ISpaceLocator {
 	}
 
 	@Override
-	public <T extends ILocator> T as(Class<T> cls) {
+	public <T> T as(Class<T> cls) {
 		throw new IllegalArgumentException("a simple space locator cannot be further located");
 	}
 

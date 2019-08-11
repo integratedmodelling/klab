@@ -48,7 +48,7 @@ public class IndexLocator implements ILocator {
 	}
 
 	@Override
-	public <T extends ILocator> T as(Class<T> cls) {
+	public <T> T as(Class<T> cls) {
 		throw new IllegalStateException("naive index locators do not mediate");
 	}
 

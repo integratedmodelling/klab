@@ -215,7 +215,7 @@ public interface ITime extends IExtent {
 		}
 
 		@Override
-		public <T extends ILocator> T as(Class<T> cls) {
+		public <T> T as(Class<T> cls) {
 			// TODO Auto-generated method stub
 			return null;
 		}

@@ -749,7 +749,7 @@ public class Geometry implements IGeometry {
 		}
 
 		@Override
-		public <T extends ILocator> T as(Class<T> cls) {
+		public <T> T as(Class<T> cls) {
 			throw new IllegalArgumentException("offset locator cannot be further located");
 		}
 	}
@@ -825,7 +825,7 @@ public class Geometry implements IGeometry {
 	}
 
 	@Override
-	public <T extends ILocator> T as(Class<T> cls) {
+	public <T> T as(Class<T> cls) {
 		// TODO Auto-generated method stub
 		return null;
 	}

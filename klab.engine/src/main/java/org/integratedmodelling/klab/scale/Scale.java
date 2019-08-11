@@ -1231,7 +1231,7 @@ public class Scale implements IScale {
 	}
 
 	@Override
-	public <T extends ILocator> T as(Class<T> cls) {
+	public <T> T as(Class<T> cls) {
 		for (IExtent extent : getExtents()) {
 			T ret = extent.as(cls);
 			if (ret != null) {

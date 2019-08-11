@@ -781,7 +781,7 @@ public class Space extends Extent implements ISpace {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends ILocator> T as(Class<T> cls) {
+	public <T> T as(Class<T> cls) {
 		if (ISpaceLocator.class.isAssignableFrom(cls)) {
 			return (T) envelope.asLocator();
 		}

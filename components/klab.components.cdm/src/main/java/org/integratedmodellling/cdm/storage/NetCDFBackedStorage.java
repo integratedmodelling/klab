@@ -3,17 +3,15 @@ package org.integratedmodellling.cdm.storage;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 
-public class NetcdfStorage<T> extends AbstractAdaptiveStorage<T> {
+public class NetCDFBackedStorage<T> extends AbstractAdaptiveStorage<T> {
 
-	protected NetcdfStorage(IGeometry geometry) {
+	protected NetCDFBackedStorage(IGeometry geometry, Class<?> valueClass) {
 		super(geometry);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	protected void initializeStorage(long sliceSize) {
-		// TODO Auto-generated method stub
-		
+	protected void initializeStorage(long sliceSize, boolean hasTime) {
+
 	}
 
 	@Override
@@ -30,6 +28,12 @@ public class NetcdfStorage<T> extends AbstractAdaptiveStorage<T> {
 
 	@Override
 	protected void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void fillSlice(long sliceSize, T value) {
 		// TODO Auto-generated method stub
 		
 	}

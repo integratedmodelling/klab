@@ -21,13 +21,13 @@ package org.integratedmodelling.klab.api.data;
  * 
  * where the {@link IGeometry geometry} specs before @ and the @ character
  * itself are optional if the locator is part of a request that unambiguously
- * identifies an observation. Any of the numbers in the list after that is either a
- * linear long integer offset in the correspondent dimension of the geometry or
- * a set of dimensional offsets in parentheses for dimensions with inherent
- * dimensionality > 1, and each can be substituted by a dot, meaning that the
- * entire dimension is located. If only one offset is mentioned, the remaining
- * ones are substituted with dots. So usually [0] in a temporally explicit
- * context means whatever is located at t=0.
+ * identifies an observation. Any of the numbers in the list after that is
+ * either a linear long integer offset in the correspondent dimension of the
+ * geometry or a set of dimensional offsets in parentheses for dimensions with
+ * inherent dimensionality > 1, and each can be substituted by a dot, meaning
+ * that the entire dimension is located. If only one offset is mentioned, the
+ * remaining ones are substituted with dots. So usually [0] in a temporally
+ * explicit context means whatever is located at t=0.
  * 
  * @author Ferd
  *
@@ -43,25 +43,26 @@ public interface ILocator {
 	/**
 	 * Return another locator that describes the portion of the geometry located by
 	 * the passed one. According to the types of locator passed, the return value
-	 * may be a scanner for a dimension or a subset of another.
+	 * may be a scanner for a dimension or a full geometry that is a subset of the
+	 * original.
 	 * 
 	 * @param locator
 	 * @return another valid locator
 	 * @throws IllegalArgumentException if the locator is inappropriate, i.e. does
-	 *                                  not intersect this either in extent or
-	 *                                  geometry.
+	 *                                  not intersect the located geometry either in
+	 *                                  extent or resolution.
 	 */
 	ILocator at(ILocator locator);
 
 	/**
 	 * Get a locator of the passed interface from this one, or null. Allows
 	 * switching between a full-scale locator to a specific extent's, or from/to an
-	 * offset-based locator to an extent-based one. The API also expects this to
-	 * be convertible to a numeric offset by passing Long.class.
+	 * offset-based locator to an extent-based one. The API also expects this to be
+	 * convertible to a set of numeric offset by passing Long[].class.
 	 * 
 	 * @param type
 	 * @return
 	 */
-	<T extends ILocator> T as(Class<T> cls);
+	<T> T as(Class<T> cls);
 
 }

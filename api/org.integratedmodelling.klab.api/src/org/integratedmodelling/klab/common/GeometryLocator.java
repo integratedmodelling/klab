@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 public class GeometryLocator implements ILocator {
 
 	private IGeometry geometry = null;
-	private long[] offsets;
+	private Long[] offsets;
 
 	private GeometryLocator() {
 	}
@@ -43,11 +43,12 @@ public class GeometryLocator implements ILocator {
 			spec = spec.substring(at + 1);
 		}
 		ret.offsets = read(spec, geometry);
+		ret.geometry = geometry;
 		return ret;
 	}
 
-	private static long[] read(String spec, IGeometry geometry) {
-		long[] sret = new long[geometry.getDimensions().size()];
+	private static Long[] read(String spec, IGeometry geometry) {
+		Long[] sret = new Long[geometry.getDimensions().size()];
 		StringTokenizer tokenizer = new StringTokenizer(spec, "(,)*\u221E", true);
 
 		int i = 0, ii = 0;
@@ -113,10 +114,13 @@ public class GeometryLocator implements ILocator {
 		throw new IllegalStateException("offset-based locators cannot be further located");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends ILocator> T as(Class<T> cls) {
+	public <T> T as(Class<T> cls) {
 		// TODO Auto-generated method stub
-		if (cls.isAssignableFrom(IScale.class)) {
+		if (cls.isAssignableFrom(Long[].class)) {
+			return (T) offsets;
+		} else if (cls.isAssignableFrom(IScale.class)) {
 			// return a scale
 		} else if (cls.isAssignableFrom(IGeometry.class)) {
 
@@ -126,14 +130,6 @@ public class GeometryLocator implements ILocator {
 
 		}
 		return null;
-	}
-
-	public long[] getOffsets() {
-		return offsets;
-	}
-
-	public void setOffsets(long[] offsets) {
-		this.offsets = offsets;
 	}
 
 	public IGeometry getGeometry() {
@@ -150,7 +146,7 @@ public class GeometryLocator implements ILocator {
 			if (!oofs.isEmpty()) {
 				oofs += ",";
 			}
-			oofs += offsets[i] == Geometry.INFINITE_SIZE ? "\u221E" : ("" + oofs);
+			oofs += (offsets[i] == Geometry.INFINITE_SIZE ? "\u221E" : ("" + offsets[i]));
 		}
 		return geometry + "@" + oofs;
 	}

@@ -633,7 +633,7 @@ public class Grid extends Area implements IGrid {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T extends ILocator> T as(Class<T> cls) {
+		public <T> T as(Class<T> cls) {
 			if (ISpaceLocator.class.isAssignableFrom(cls)) {
 				SpaceLocator ret = new SpaceLocator(getX(), getY(), getOffsetInGrid());
 				ret.setWorldCoordinates(getEast() + (getEast() - getWest()) / 2.,
