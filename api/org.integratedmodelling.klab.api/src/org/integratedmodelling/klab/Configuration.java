@@ -45,7 +45,7 @@ public enum Configuration implements IConfigurationService {
 	private File dataPath;
 	private Level loggingLevel = Level.SEVERE;
 	private Level notificationLevel = Level.INFO;
-	
+
 	/** The klab relative work path. */
 	public String KLAB_RELATIVE_WORK_PATH = ".klab";
 
@@ -164,7 +164,7 @@ public enum Configuration implements IConfigurationService {
 		}
 		return ret;
 	}
-	
+
 	public File getDefaultExportDirectory() {
 		File ret = new File(getProperties().getProperty(KLAB_EXPORT_PATH, dataPath + File.separator + "export"));
 		ret.mkdirs();
@@ -280,8 +280,12 @@ public enum Configuration implements IConfigurationService {
 		}
 		return new File(export);
 	}
-	
+
 	public boolean forceResourcesOnline() {
 		return System.getProperty("forceResourcesOnline") != null;
+	}
+
+	public String getTemporaryDataDirectory() {
+		return getProperties().getProperty(KLAB_TEMPORARY_DATA_DIRECTORY, System.getProperty("java.io.tmpdir"));
 	}
 }

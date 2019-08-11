@@ -99,7 +99,10 @@ public interface IConfigurationService {
      * ${user.home}/THINKLAB_WORK_DIRECTORY
      */
     public static final String KLAB_DATA_DIRECTORY = "klab.data.directory";
-
+    
+    // configurable temp dir for (potentially very large) storage during simulation.
+    public static final String KLAB_TEMPORARY_DATA_DIRECTORY = "klab.temporary.data.directory";
+    
     /**
      * Name of work directory relative to ${user.home}. Ignored if
      * THINKLAB_DATA_DIRECTORY_PROPERTY is specified.

@@ -65,9 +65,6 @@ import org.integratedmodelling.klab.components.runtime.observations.Process;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.data.storage.BooleanSingletonStorage;
-import org.integratedmodelling.klab.data.storage.ConceptSingletonStorage;
-import org.integratedmodelling.klab.data.storage.DoubleSingletonStorage;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -290,17 +287,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return context;
 	}
 
-	static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope context) {
-		return createObservation(observable, scale, context, false);
-	}
-
 	@Override
 	public IObservation createEmptyObservation(IObservable observable, IContextualizationScope context) {
 		return Observation.empty(observable, context);
 	}
 
-	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope context,
-			boolean scalarStorage) {
+	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope context) {
 
 		boolean createActors = observable.is(Type.COUNTABLE) && scale.getTime() != null && scale.getTime().size() > 1;
 		Activity activity = null;
@@ -320,29 +312,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		} else if (observable.is(Type.RELATIONSHIP)) {
 			throw new KlabInternalErrorException(
 					"createObservation() does not create relationships: use createRelationship()");
-		} else if (observable.is(Type.QUALITY) || observable.is(Type.TRAIT)) {
-
-			IDataArtifact storage = null;
-
-			if (scalarStorage) {
-				switch (observable.getArtifactType()) {
-				case CONCEPT:
-					storage = new ConceptSingletonStorage(observable, (Scale) scale);
-					break;
-				case NUMBER:
-					storage = new DoubleSingletonStorage(observable, (Scale) scale);
-					break;
-				case BOOLEAN:
-					storage = new BooleanSingletonStorage(observable, (Scale) scale);
-					break;
-				default:
-					throw new IllegalArgumentException("illegal observable for singleton storage: " + observable);
-				}
-			} else {
-				storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(), scale,
-						context);
-			}
-
+		} else if (observable.is(Type.QUALITY)) {
+			IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(),
+					scale, context);
 			ret = new State((Observable) observable, (Scale) scale, context, storage);
 
 		} else if (observable.is(Type.CONFIGURATION)) {
@@ -410,7 +382,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IState createState(IObservable observable, IArtifact.Type type, IScale scale, IContextualizationScope context) {
+	public IState createState(IObservable observable, IArtifact.Type type, IScale scale,
+			IContextualizationScope context) {
 		IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
 		return new State((Observable) observable, (Scale) scale, (RuntimeScope) context, storage);
 	}
