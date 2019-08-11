@@ -15,7 +15,7 @@ public class NetCDFBackedStorage<T> extends AbstractAdaptiveStorage<T> {
 	}
 
 	@Override
-	protected void createBackendStorage(long timestep) {
+	protected void createBackendStorage(long timestep, T initialValue) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -33,7 +33,7 @@ public class NetCDFBackedStorage<T> extends AbstractAdaptiveStorage<T> {
 	}
 
 	@Override
-	protected void fillSlice(long sliceSize, T value) {
+	protected void duplicateBackendSlice(long sliceToCopy, long newSliceIndex) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -55,6 +55,7 @@ public class StorageTests {
 			System.out.println();
 		}
 
+		// now for the actual test
 		for (int time = 0; time < 10; time++) {
 			for (int spaceX = 0; spaceX < 10; spaceX++) {
 				for (int spaceY = 0; spaceY < 10; spaceY++) {

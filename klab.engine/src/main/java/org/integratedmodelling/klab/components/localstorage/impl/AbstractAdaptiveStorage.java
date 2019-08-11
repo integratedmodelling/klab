@@ -11,9 +11,10 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 
 /**
- * Smart storage using a configurable backend to store slices that are not in
- * the current time projection. This guarantees optimization of storage and
- * scales from scalars to huge datasets as long as the backend can keep up.
+ * Smart storage using a configurable backend to store slices that are only
+ * created when the values are different from others. This guarantees
+ * optimization of storage and scales from scalars to huge datasets as long as
+ * the backend can provide slices.
  * 
  * @author Ferd
  *
@@ -76,15 +77,23 @@ public abstract class AbstractAdaptiveStorage<T> {
 			if (this.sliceOffsetInBackend < 0 && valuesDiffer) {
 				this.sliceOffsetInBackend = slicesInBackend;
 				slicesInBackend++;
-				createBackendStorage(this.sliceOffsetInBackend);
-				fillSlice(this.sliceOffsetInBackend, value);
+				createBackendStorage(this.sliceOffsetInBackend, this.value);
 			}
 
 			setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
 		}
 
-		Slice(long timestep) {
+		Slice(long timestep, Slice closest) {
 			this.timestep = timestep;
+			if (closest != null) {
+				this.isNew = false;
+				if (closest.sliceOffsetInBackend >= 0) {
+					this.sliceOffsetInBackend = closest.sliceOffsetInBackend + 1;
+					duplicateBackendSlice(closest.sliceOffsetInBackend, this.sliceOffsetInBackend);
+				} else {
+					this.value = closest.value;
+				}
+			}
 		}
 
 	}
@@ -100,6 +109,8 @@ public abstract class AbstractAdaptiveStorage<T> {
 	protected long getHighTimeOffset() {
 		return highTimeOffset;
 	}
+
+	protected abstract void duplicateBackendSlice(long sliceToCopy, long newSliceIndex);
 
 	/**
 	 * The maximum possible time offset or IGeometry.INFINITE. Only meaningful if
@@ -151,15 +162,6 @@ public abstract class AbstractAdaptiveStorage<T> {
 	protected abstract void initializeStorage(long sliceSize, boolean hasTime);
 
 	/**
-	 * Fill a slice with a specified value, which may or may not be null (for
-	 * nodata).
-	 * 
-	 * @param sliceSize
-	 * @param value
-	 */
-	protected abstract void fillSlice(long sliceSize, T value);
-
-	/**
 	 * Create storage backend for the passed timestep. This would normally use a
 	 * single backend for all timesteps, created only at the first call, but we call
 	 * it anyway at each new timestep so that implementations are free to decide.
@@ -169,8 +171,10 @@ public abstract class AbstractAdaptiveStorage<T> {
 	 * 
 	 * @param sliceOffsetInBackend the offset of the new slice. Calls will be
 	 *                             ordered if the values are set in temporal order.
+	 * @param initialValue         value with which to fill the slice. Null for
+	 *                             nodata.
 	 */
-	protected abstract void createBackendStorage(long sliceOffsetInBackend);
+	protected abstract void createBackendStorage(long sliceOffsetInBackend, T initialValue);
 
 	/**
 	 * Get a value from the backend. The sliceOffsetInBackend is whatever we need to
@@ -241,7 +245,7 @@ public abstract class AbstractAdaptiveStorage<T> {
 		 * exact timestep.
 		 */
 		if (slice == null || slice.timestep != timeOffset) {
-			slice = addSlice(timeOffset);
+			slice = addSlice(timeOffset, slice);
 		}
 
 		slice.setAt(sliceOffset, value);
@@ -256,8 +260,8 @@ public abstract class AbstractAdaptiveStorage<T> {
 		return ret;
 	}
 
-	private AbstractAdaptiveStorage<T>.Slice addSlice(long timeOffset) {
-		Slice slice = new Slice(timeOffset);
+	private Slice addSlice(long timeOffset, Slice closest) {
+		Slice slice = new Slice(timeOffset, closest);
 		slices.put(timeOffset, slice);
 		return slice;
 	}

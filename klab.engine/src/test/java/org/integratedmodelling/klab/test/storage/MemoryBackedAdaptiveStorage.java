@@ -11,7 +11,7 @@ public class MemoryBackedAdaptiveStorage<T> extends AbstractAdaptiveStorage<T> {
 
 	Map<Long, T[]> data = new HashMap<>();
 	Class<?> cls;
-	
+
 	public MemoryBackedAdaptiveStorage(IGeometry geometry, Class<?> cls) {
 		super(geometry);
 		this.cls = cls;
@@ -24,27 +24,39 @@ public class MemoryBackedAdaptiveStorage<T> extends AbstractAdaptiveStorage<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void createBackendStorage(long timestep) {
+	protected void createBackendStorage(long timestep, T initialValue) {
 		if (data.get(timestep) == null) {
-			data.put(timestep, (T[]) Array.newInstance(cls, (int)getSliceSize()));
+			T[] slice =  (T[]) Array.newInstance(cls, (int)getSliceSize());
+			for (long n = 0; n < getSliceSize(); n++) {
+				slice[(int)n] = initialValue;
+			}
+			data.put(timestep, slice);
 		}
 	}
 
 	@Override
 	protected T getValueFromBackend(long offsetInSlice, long backendTimeSlice) {
-		return data.get(backendTimeSlice)[(int)offsetInSlice];
+		return data.get(backendTimeSlice)[(int) offsetInSlice];
 	}
 
 	@Override
 	protected void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice) {
-		data.get(backendTimeSlice)[(int)offsetInSlice] = value;
+		data.get(backendTimeSlice)[(int) offsetInSlice] = value;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void fillSlice(long sliceIndex, T value) {
-		for (long n = 0; n < getSliceSize(); n++) {
-			data.get(sliceIndex)[(int)n] = value;
+	protected void duplicateBackendSlice(long sliceToCopy, long newSliceIndex) {
+		T[] slice = data.get(newSliceIndex);
+		T[] sourc = data.get(sliceToCopy);
+		if (slice == null) {
+			slice =  (T[]) Array.newInstance(cls, (int)getSliceSize());
+			data.put(newSliceIndex, slice);
 		}
+		for (int i = 0; i < slice.length; i++) {
+			slice[i] = sourc[i];
+		}
+		
 	}
 
 }
