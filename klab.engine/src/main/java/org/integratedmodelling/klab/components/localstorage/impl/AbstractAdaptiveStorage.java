@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -28,8 +29,13 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	private long maxTimeOffset;
 	private long sliceSize;
 	private long slicesInBackend = 0;
+	
+	// FIXME this is only for debugging, remove when done.
+	private IGeometry geometry;
+
 	/*
-	 * If trivial, we have no time and can contain at most one slice.
+	 * If trivial, we have no time or just one time state, and can contain at most
+	 * one slice.
 	 */
 	private boolean trivial;
 
@@ -136,11 +142,12 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 	protected AbstractAdaptiveStorage(IGeometry geometry) {
 
+		this.geometry = geometry; 
 		Dimension time = geometry.getDimension(Type.TIME);
 		if (time == null) {
 			this.trivial = true;
 			this.sliceSize = geometry.size();
-		} else if (time.size() != IGeometry.INFINITE_SIZE) {
+		} else if (time.size() == IGeometry.INFINITE_SIZE) {
 			this.maxTimeOffset = time.size();
 			this.sliceSize = geometry.size();
 		} else {
@@ -194,6 +201,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		}
 
 		Long[] offsets = locator.as(Long[].class);
+		
+		if (offsets.length != geometry.getDimensions().size()) {
+			System.out.println("POODOOCIO");
+		}
+		
 		long sliceOffset = product(offsets, trivial ? 0 : 1);
 		long timeOffset = trivial ? 0 : offsets[0];
 
@@ -204,13 +216,18 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	public long put(T value, ILocator locator) {
 
 		Long[] offsets = locator.as(Long[].class);
+		
+		if (offsets.length != geometry.getDimensions().size()) {
+			System.out.println("POODOOCIO");
+		}
+		
 		long sliceOffset = product(offsets, trivial ? 0 : 1);
 		long timeOffset = trivial ? 0 : offsets[0];
 		boolean noData = Observations.INSTANCE.isNodata(value);
 
 		if (noData && slices.isEmpty()) {
 			// everything's nodata so far, no need to store.
-			return trivial ? sliceOffset : sliceOffset * timeOffset;
+			return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 		}
 
 		/*
@@ -224,9 +241,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		 * find the closest slice for the time
 		 */
 		Slice slice = getClosest(timeOffset);
-		if (slice != null && equals(slice.getAt(sliceOffset), value)) {
+		if (slice != null/* && slice.timestep != timeOffset */ && equals(slice.getAt(sliceOffset), value)) {
 			// don't store anything until it's different from the previous slice.
-			return trivial ? sliceOffset : sliceOffset * timeOffset;
+			return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 		}
 
 		/*
@@ -238,8 +255,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		}
 
 		slice.setAt(sliceOffset, value);
-		
-		return trivial ? sliceOffset : sliceOffset * timeOffset;
+
+		return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 	}
 
 	private long product(Long[] offsets, int i) {
@@ -276,9 +293,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 	@Override
 	public long putObject(Object value, ILocator locator) {
-		return put((T)value, locator);
+		return put((T) value, locator);
 	}
-	
-	
 
 }

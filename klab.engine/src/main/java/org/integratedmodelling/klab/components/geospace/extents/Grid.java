@@ -637,7 +637,7 @@ public class Grid extends Area implements IGrid {
 			if (Long.class.isAssignableFrom(cls)) {
 				return (T) Long.valueOf(getOffsetInGrid());
 			} else if (Long[].class.isAssignableFrom(cls)) {
-				return (T) new Long[] { getX(), getY() };
+				return (T) new Long[] { getOffsetInGrid() };
 			} else if (ISpaceLocator.class.isAssignableFrom(cls)) {
 				SpaceLocator ret = new SpaceLocator(getX(), getY(), getOffsetInGrid());
 				ret.setWorldCoordinates(getEast() + (getEast() - getWest()) / 2.,

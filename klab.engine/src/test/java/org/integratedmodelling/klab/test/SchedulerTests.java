@@ -28,5 +28,26 @@ public class SchedulerTests {
 			}
 		}
 	}
+	
+	@Test
+	public void testRealtime() {
+		
+		HashedWheelTimer timer = new HashedWheelTimer();
+		timer.scheduleAtFixedRate(()-> System.out.println("at 3 every 1"), 3, 1, TimeUnit.SECONDS);
+		timer.scheduleAtFixedRate(()-> System.out.println("at 1 every 10"), 1, 10, TimeUnit.SECONDS);
+		timer.startUntil(40000000);
+		
+		while(true) {
+			if (timer.isFinished()) {
+				break;
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 
 }

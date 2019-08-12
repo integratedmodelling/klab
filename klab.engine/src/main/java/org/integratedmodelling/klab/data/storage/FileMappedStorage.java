@@ -30,7 +30,8 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 
 	enum DataType {
 
-		BYTE(Byte.SIZE), SHORT(Short.SIZE), INT(Integer.SIZE), LONG(Long.SIZE), FLOAT(Float.SIZE), DOUBLE(Double.SIZE);
+		BYTE(Byte.SIZE / 8), SHORT(Short.SIZE / 8), INT(Integer.SIZE / 8), LONG(Long.SIZE / 8), FLOAT(Float.SIZE / 8),
+		DOUBLE(Double.SIZE / 8);
 
 		int size;
 
@@ -167,29 +168,29 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	private void put(Object val, MappedByteBuffer page, long offset) {
-		
+
 		if (offset >= 0) {
-			page.position((int)offset * type.size);
+			page.position((int) offset * type.size);
 		}
-		
+
 		switch (type) {
 		case BYTE:
-			page.put(((Byte)val).byteValue());
+			page.put(((Byte) val).byteValue());
 			break;
 		case DOUBLE:
-			page.putDouble(((Double)val).doubleValue());
+			page.putDouble(((Double) val).doubleValue());
 			break;
 		case FLOAT:
-			page.putFloat(((Float)val).floatValue());
+			page.putFloat(((Float) val).floatValue());
 			break;
 		case INT:
-			page.putInt(((Integer)val).intValue());
+			page.putInt(((Integer) val).intValue());
 			break;
 		case LONG:
-			page.putLong(((Long)val).longValue());
+			page.putLong(((Long) val).longValue());
 			break;
 		case SHORT:
-			page.putShort(((Short)val).shortValue());
+			page.putShort(((Short) val).shortValue());
 			break;
 		default:
 			break;
@@ -199,9 +200,9 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	private Object get(MappedByteBuffer page, long offset) {
 
 		if (offset >= 0) {
-			page.position((int)offset * type.size);
+			page.position((int) offset * type.size);
 		}
-		
+
 		switch (type) {
 		case BYTE:
 			return page.get();
@@ -227,10 +228,11 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	protected T getValueFromBackend(long offsetInSlice, long backendTimeSlice) {
 
 		Object result = null;
-		
+
 		if (backendTimeSlice == this.pageIndex0) {
 			result = get(page0, offsetInSlice);
-		} if (backendTimeSlice == this.pageIndex1) {
+		}
+		if (backendTimeSlice == this.pageIndex1) {
 			result = get(page1, offsetInSlice);
 		} else {
 			// read directly from file
@@ -239,10 +241,9 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 			}
 			result = getDirect(offsetInSlice, backendTimeSlice);
 		}
-		
+
 		return result == null ? null : (isNodata(result) ? null : (T) result);
 	}
-
 
 	private Object getDirect(long offsetInSlice, long backendTimeSlice) {
 		try {
@@ -268,28 +269,28 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 		}
 		return null;
 	}
-	
+
 	private void putDirect(Object value, long offsetInSlice, long backendTimeSlice) {
 		try {
 			storage.seek((backendTimeSlice * getSliceSize() * type.size) + (offsetInSlice * type.size));
 			switch (type) {
 			case BYTE:
-				storage.writeByte(((Byte)value).byteValue());
+				storage.writeByte(((Byte) value).byteValue());
 				break;
 			case DOUBLE:
-				storage.writeDouble(((Double)value).doubleValue());
+				storage.writeDouble(((Double) value).doubleValue());
 				break;
 			case FLOAT:
-				storage.writeFloat(((Float)value).floatValue());
+				storage.writeFloat(((Float) value).floatValue());
 				break;
 			case INT:
-				storage.writeInt(((Integer)value).intValue());
+				storage.writeInt(((Integer) value).intValue());
 				break;
 			case LONG:
-				storage.writeLong(((Long)value).longValue());
+				storage.writeLong(((Long) value).longValue());
 				break;
 			case SHORT:
-				storage.writeShort(((Short)value).shortValue());
+				storage.writeShort(((Short) value).shortValue());
 				break;
 			default:
 				break;
@@ -303,7 +304,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	protected synchronized void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice) {
 
 		Object val = value == null ? getNodataValue() : value;
-		
+
 		if (backendTimeSlice == this.pageIndex1) {
 			put(val, this.page1, offsetInSlice);
 		} else if (backendTimeSlice == this.pageIndex0) {
@@ -348,7 +349,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	public int getSliceCount() {
 		return sliceCount();
 	}
-	
+
 	@Override
 	public Type getType() {
 		return Utils.getArtifactType(valueClass);
