@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.Geometry.OffsetLocator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -1053,7 +1052,7 @@ public class Scale implements IScale {
 		return create(exts);
 	}
 
-	@Override
+//	@Override
 	public long getOffset(ILocator index) {
 
 		if (index instanceof Geometry) {
@@ -1098,9 +1097,9 @@ public class Scale implements IScale {
 			 * TODO
 			 */
 		}
-		if (index instanceof OffsetLocator) {
-			return ((OffsetLocator) index).getOffset();
-		}
+//		if (index instanceof OffsetLocator) {
+//			return ((OffsetLocator) index).getOffset();
+//		}
 
 		throw new IllegalArgumentException("cannot use " + index + " as a scale locator");
 	}
@@ -1192,19 +1191,19 @@ public class Scale implements IScale {
 		return this.geometry;
 	}
 
-	@Override
-	public ILocator getLocator(long offset) {
-		return asGeometry().getLocator(offset);
-	}
+//	@Override
+//	public ILocator getLocator(long offset) {
+//		return asGeometry().getLocator(offset);
+//	}
 
-	public ILocator getLocator(int... offsets) {
-		return asGeometry().locate(offsets);
-	}
+//	public ILocator getLocator(int... offsets) {
+//		return asGeometry().locate(offsets);
+//	}
 
-	@Override
-	public long getOffset(long globalOffset, Type dimension) {
-		return asGeometry().getOffset(globalOffset, dimension);
-	}
+//	@Override
+//	public long getOffset(long globalOffset, Type dimension) {
+//		return asGeometry().getOffset(globalOffset, dimension);
+//	}
 
 	/**
 	 * Return a scale that has enough resolution to demonstrate an observation at

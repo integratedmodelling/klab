@@ -688,30 +688,30 @@ public class Geometry implements IGeometry {
 		return ret;
 	}
 
-	/**
-	 * The simplest locator possible in a non-semantic geometry: offsets along a
-	 * dimension.
-	 * 
-	 * @param offsets
-	 * @return a new offset locator
-	 */
-	public OffsetLocator locate(long... offsets) {
-		return new OffsetLocator(offsets);
-	}
-
-	public OffsetLocator locate(int... offsets) {
-		long[] ofs = new long[offsets.length];
-		for (int i = 0; i < offsets.length; i++) {
-			ofs[i] = offsets[i];
-		}
-		return new OffsetLocator(ofs);
-	}
+//	/**
+//	 * The simplest locator possible in a non-semantic geometry: offsets along a
+//	 * dimension.
+//	 * 
+//	 * @param offsets
+//	 * @return a new offset locator
+//	 */
+//	public OffsetLocator locate(long... offsets) {
+//		return new OffsetLocator(offsets);
+//	}
+//
+//	public OffsetLocator locate(int... offsets) {
+//		long[] ofs = new long[offsets.length];
+//		for (int i = 0; i < offsets.length; i++) {
+//			ofs[i] = offsets[i];
+//		}
+//		return new OffsetLocator(ofs);
+//	}
 
 	@Override
 	public ILocator at(ILocator locator) {
-		if (locator instanceof OffsetLocator) {
-
-		}
+//		if (locator instanceof OffsetLocator) {
+//
+//		}
 		throw new IllegalArgumentException(
 				"geometry cannot use locator of type " + locator.getClass().getCanonicalName());
 	}
@@ -728,63 +728,63 @@ public class Geometry implements IGeometry {
 		return null;
 	}
 
-	public class OffsetLocator implements ILocator {
+//	public class OffsetLocator implements ILocator {
+//
+//		long offset;
+//
+//		public OffsetLocator(long[] offsets) {
+//			this.offset = computeOffset(offsets);
+//		}
+//
+//		OffsetLocator() {
+//		}
+//
+//		public long getOffset() {
+//			return offset;
+//		}
+//
+//		@Override
+//		public ILocator at(ILocator locator) {
+//			throw new IllegalArgumentException("offset locator cannot be further located");
+//		}
+//
+//		@SuppressWarnings("unchecked")
+//		@Override
+//		public <T> T as(Class<T> cls) {
+//			if (Long.class.isAssignableFrom(cls)) {
+//				return (T) Long.valueOf(offset);
+//			} else if (Long[].class.isAssignableFrom(cls)) {
+//				return (T) new Long[] { offset };
+//			}
+//			throw new IllegalArgumentException("offset locator cannot be further located");
+//		}
+//	}
 
-		long offset;
+//	public long computeOffset(long[] offsets) {
+//
+//		// trivial case
+//		if (offsets.length == 1 && dimensions.size() == 1 && dimensions.get(0).shape.length == 1) {
+//			return offsets[0];
+//		}
+//		if (this.cursor == null) {
+//			this.cursor = new MultidimensionalCursor(this);
+//		}
+//		return this.cursor.getElementOffset(offsets);
+//	}
 
-		public OffsetLocator(long[] offsets) {
-			this.offset = computeOffset(offsets);
-		}
+//	public ILocator getLocator(long offset) {
+//		OffsetLocator ret = new OffsetLocator();
+//		ret.offset = offset;
+//		return ret;
+//	}
 
-		OffsetLocator() {
-		}
-
-		public long getOffset() {
-			return offset;
-		}
-
-		@Override
-		public ILocator at(ILocator locator) {
-			throw new IllegalArgumentException("offset locator cannot be further located");
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T> T as(Class<T> cls) {
-			if (Long.class.isAssignableFrom(cls)) {
-				return (T) Long.valueOf(offset);
-			} else if (Long[].class.isAssignableFrom(cls)) {
-				return (T) new Long[] { offset };
-			}
-			throw new IllegalArgumentException("offset locator cannot be further located");
-		}
-	}
-
-	public long computeOffset(long[] offsets) {
-
-		// trivial case
-		if (offsets.length == 1 && dimensions.size() == 1 && dimensions.get(0).shape.length == 1) {
-			return offsets[0];
-		}
-		if (this.cursor == null) {
-			this.cursor = new MultidimensionalCursor(this);
-		}
-		return this.cursor.getElementOffset(offsets);
-	}
-
-	public ILocator getLocator(long offset) {
-		OffsetLocator ret = new OffsetLocator();
-		ret.offset = offset;
-		return ret;
-	}
-
-	@Override
-	public long getOffset(ILocator index) {
-		if (index instanceof OffsetLocator) {
-			return ((OffsetLocator) index).getOffset();
-		}
-		throw new IllegalArgumentException("cannot use " + index + " as a scale locator");
-	}
+//	@Override
+//	public long getOffset(ILocator index) {
+//		if (index instanceof OffsetLocator) {
+//			return ((OffsetLocator) index).getOffset();
+//		}
+//		throw new IllegalArgumentException("cannot use " + index + " as a scale locator");
+//	}
 
 	@Override
 	public long[] shape(Type dimensionType) {
@@ -812,23 +812,23 @@ public class Geometry implements IGeometry {
 		return other.encode().equals(encode());
 	}
 
-	@Override
-	public long getOffset(long globalOffset, Type dimensionType) {
-		int dimIndex = -1;
-		for (int i = 0; i < dimensions.size(); i++) {
-			if (dimensions.get(i).type == dimensionType) {
-				dimIndex = i;
-				break;
-			}
-		}
-		if (dimIndex < 0) {
-			return -1;
-		}
-		if (this.cursor == null) {
-			this.cursor = new MultidimensionalCursor(this);
-		}
-		return cursor.getElementIndexes(globalOffset)[dimIndex];
-	}
+//	@Override
+//	public long getOffset(long globalOffset, Type dimensionType) {
+//		int dimIndex = -1;
+//		for (int i = 0; i < dimensions.size(); i++) {
+//			if (dimensions.get(i).type == dimensionType) {
+//				dimIndex = i;
+//				break;
+//			}
+//		}
+//		if (dimIndex < 0) {
+//			return -1;
+//		}
+//		if (this.cursor == null) {
+//			this.cursor = new MultidimensionalCursor(this);
+//		}
+//		return cursor.getElementIndexes(globalOffset)[dimIndex];
+//	}
 
 	@Override
 	public <T> T as(Class<T> cls) {

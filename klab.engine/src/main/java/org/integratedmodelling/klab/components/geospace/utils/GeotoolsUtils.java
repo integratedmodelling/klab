@@ -39,8 +39,8 @@ public enum GeotoolsUtils {
 	 * 
 	 * @param state
 	 * @return a Geotools grid coverage
-	 * @throws IllegalArgumentException
-	 *             if the state is not suitable for a raster representation.
+	 * @throws IllegalArgumentException if the state is not suitable for a raster
+	 *                                  representation.
 	 */
 	public GridCoverage2D stateToCoverage(IState state, ILocator locator, float noDataValue) {
 		return stateToCoverage(state.at(locator), DataBuffer.TYPE_FLOAT, noDataValue);
@@ -53,16 +53,17 @@ public enum GeotoolsUtils {
 	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue) {
 		return stateToCoverage(state, type, noDataValue, null);
 	}
-	
+
 	/**
 	 * Turn a state into a grid coverage. Assumes the state is scaled so that all
 	 * the values will be spatial.
 	 * 
 	 * @return a Geotools grid coverage
-	 * @throws IllegalArgumentException
-	 *             if the state is not suitable for a raster representation.
+	 * @throws IllegalArgumentException if the state is not suitable for a raster
+	 *                                  representation.
 	 */
-	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue, Function<Object, Object> transformation) {
+	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue,
+			Function<Object, Object> transformation) {
 
 		Space space = (Space) state.getScale().getSpace();
 		if (space == null || space.getGrid() == null) {
@@ -76,8 +77,8 @@ public enum GeotoolsUtils {
 		 * TODO use a raster of the appropriate type - for now there is apparently a bug
 		 * in geotools that makes it work only with float.
 		 */
-		WritableRaster raster = RasterFactory.createBandedRaster(type, (int) grid.getXCells(),
-				(int) grid.getYCells(), 1, null);
+		WritableRaster raster = RasterFactory.createBandedRaster(type, (int) grid.getXCells(), (int) grid.getYCells(),
+				1, null);
 
 		/*
 		 * pre-fill with nodata (the thing is filled with 0s).
@@ -125,12 +126,13 @@ public enum GeotoolsUtils {
 	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation) {
 		coverageToState(layer, state, transformation, null);
 	}
-	
+
 	/**
 	 * Dump the data from a coverage into a pre-existing state.
 	 * 
 	 */
-	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation, Function<long[], Boolean> coordinateChecker) {
+	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation,
+			Function<long[], Boolean> coordinateChecker) {
 
 		ISpace ext = state.getScale().getSpace();
 

@@ -320,35 +320,35 @@ public interface IGeometry extends Serializable, ILocator {
      */
     ILocator at(Dimension.Type dimension, long... offsets);
 
-    /**
-     * Return a trivial locator for the passed numeric offset. May check for suitable offsets or
-     * indexability through a long.
-     * 
-     * @param offset a global offset
-     * @return a locator for long-indexed state operations
-     */
-	ILocator getLocator(long offset);
+//    /**
+//     * Return a trivial locator for the passed numeric offset. May check for suitable offsets or
+//     * indexability through a long.
+//     * 
+//     * @param offset a global offset
+//     * @return a locator for long-indexed state operations
+//     */
+//	ILocator getLocator(long offset);
     
-    /**
-     * Return a long if this maps directly to the original geometry, or -1 if mediation is necessary.
-     * 
-     * @param index
-     * @return a valid offset for this locator, or -1 if mediation is needed.
-     * @throws IllegalArgumentException if the locator type is not suitable for the receiver.
-     * @deprecated use as(Long) on locators
-     */
-    long getOffset(ILocator index);
-
-    /**
-     * Given a valid overall offset, return the correspondent offset in the passed dimension, or -1 if 
-     * the dimension isn't in the geometry.
-     * 
-     * @param globalOffset
-     * @param dimension
-     * @return the dimension-specific offset, or -1.
-     * @deprecated use as(dimension).as(Long) on locators
-     */
-    long getOffset(long globalOffset, Dimension.Type dimension);
+//    /**
+//     * Return a long if this maps directly to the original geometry, or -1 if mediation is necessary.
+//     * 
+//     * @param index
+//     * @return a valid offset for this locator, or -1 if mediation is needed.
+//     * @throws IllegalArgumentException if the locator type is not suitable for the receiver.
+//     * @deprecated use as(Long) on locators
+//     */
+//    long getOffset(ILocator index);
+//
+//    /**
+//     * Given a valid overall offset, return the correspondent offset in the passed dimension, or -1 if 
+//     * the dimension isn't in the geometry.
+//     * 
+//     * @param globalOffset
+//     * @param dimension
+//     * @return the dimension-specific offset, or -1.
+//     * @deprecated use as(dimension).as(Long) on locators
+//     */
+//    long getOffset(long globalOffset, Dimension.Type dimension);
     
     /**
      * Get the shape of the requested dimension.
