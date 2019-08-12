@@ -634,7 +634,11 @@ public class Grid extends Area implements IGrid {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T as(Class<T> cls) {
-			if (ISpaceLocator.class.isAssignableFrom(cls)) {
+			if (Long.class.isAssignableFrom(cls)) {
+				return (T) Long.valueOf(getOffsetInGrid());
+			} else if (Long[].class.isAssignableFrom(cls)) {
+				return (T) new Long[] { getX(), getY() };
+			} else if (ISpaceLocator.class.isAssignableFrom(cls)) {
 				SpaceLocator ret = new SpaceLocator(getX(), getY(), getOffsetInGrid());
 				ret.setWorldCoordinates(getEast() + (getEast() - getWest()) / 2.,
 						getSouth() + (getNorth() - getSouth()) / 2.);
@@ -689,15 +693,15 @@ public class Grid extends Area implements IGrid {
 			return false;
 		}
 
-        @Override
-        public IExtent getBoundingExtent() {
-            return getShape();
-        }
+		@Override
+		public IExtent getBoundingExtent() {
+			return getShape();
+		}
 
-        @Override
-        public ExtentDimension getExtentDimension() {
-            return ExtentDimension.AREAL;
-        }
+		@Override
+		public ExtentDimension getExtentDimension() {
+			return ExtentDimension.AREAL;
+		}
 
 		@Override
 		public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
@@ -1076,10 +1080,8 @@ public class Grid extends Area implements IGrid {
 	/**
 	 * Set the envelope from shape.
 	 * 
-	 * @param shape
-	 *            could be in any CRS.
-	 * @param squareSize
-	 *            should be in meters
+	 * @param shape      could be in any CRS.
+	 * @param squareSize should be in meters
 	 * @throws KlabException
 	 */
 	private void setAdjustedEnvelope(Shape shape, double squareSize) throws KlabException {
@@ -1179,7 +1181,7 @@ public class Grid extends Area implements IGrid {
 		if (index instanceof CellImpl && ((CellImpl) index).getGrid().equals(this)) {
 			return ((CellImpl) index).getOffsetInGrid();
 		} else {
-			double[] wxy = ((CellImpl)index).getGrid().getWorldCoordinatesAt(index.getX(), index.getY());
+			double[] wxy = ((CellImpl) index).getGrid().getWorldCoordinatesAt(index.getX(), index.getY());
 			return this.getOffsetFromWorldCoordinates(wxy[0], wxy[1]);
 		}
 //		throw new IllegalArgumentException("grid: cannot use a cell from a different grid as a locator");

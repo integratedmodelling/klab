@@ -136,6 +136,9 @@ public class Scale implements IScale {
 
 	private boolean isInfiniteTime;
 
+	// if not null, we're locating offsets of another scale
+	private long[] locatedOffsets;
+
 	@Override
 	public boolean isInfiniteTime() {
 		return isInfiniteTime;
@@ -186,11 +189,11 @@ public class Scale implements IScale {
 	public void setLocatorsTo(long offset) {
 
 		this.originalScaleOffset = offset;
-
-		long[] pos = this.originalScale.cursor.getElementIndexes(offset);
+		this.locatedOffsets= this.originalScale.cursor.getElementIndexes(offset);
+		
 		for (int i = 0; i < this.originalScale.extents.size(); i++) {
 			IExtent ext = this.originalScale.extents.get(i) instanceof Extent
-					? ((Extent) this.originalScale.extents.get(i)).getExtent(pos[i])
+					? ((Extent) this.originalScale.extents.get(i)).getExtent(this.locatedOffsets[i])
 					: this.originalScale.extents.get(i);
 			this.extents.add(ext);
 			if (ext instanceof ISpace) {
@@ -1230,8 +1233,26 @@ public class Scale implements IScale {
 		return new Scale(exts);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T as(Class<T> cls) {
+		
+		if (Long.class.isAssignableFrom(cls)) {
+			return (T)Long.valueOf(originalScaleOffset);
+		} else if (Long[].class.isAssignableFrom(cls)) {
+			Long[] ret = new Long[extents.size()];
+			int i = 0;
+			for (IExtent e : getExtents()) {
+				if (locatedOffsets != null) {
+					ret[i] = locatedOffsets[i];
+					i++;
+				} else {
+					ret[i] = -1l;
+				}
+			}
+			return (T)ret;
+		}
+		
 		for (IExtent extent : getExtents()) {
 			T ret = extent.as(cls);
 			if (ret != null) {

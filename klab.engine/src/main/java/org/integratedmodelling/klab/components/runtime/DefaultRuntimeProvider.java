@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
@@ -67,6 +68,7 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
+import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -313,9 +315,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			throw new KlabInternalErrorException(
 					"createObservation() does not create relationships: use createRelationship()");
 		} else if (observable.is(Type.QUALITY)) {
-			IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(),
-					scale, context);
-			ret = new State((Observable) observable, (Scale) scale, context, storage);
+			IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(), scale,
+					context);
+			ret = new State((Observable) observable, (Scale) scale, context, (IDataStorage<?>)storage);
 
 		} else if (observable.is(Type.CONFIGURATION)) {
 
@@ -384,8 +386,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	@Override
 	public IState createState(IObservable observable, IArtifact.Type type, IScale scale,
 			IContextualizationScope context) {
-		IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
-		return new State((Observable) observable, (Scale) scale, (RuntimeScope) context, storage);
+		IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
+		return new State((Observable) observable, (Scale) scale, (RuntimeScope) context, (IDataStorage<?>)storage);
 	}
 
 	@Override

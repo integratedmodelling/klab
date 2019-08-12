@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
 import org.integratedmodelling.klab.utils.Pair;
@@ -37,6 +36,10 @@ public class Time extends Extent implements ITime {
 	boolean realtime = false;
 	Resolution resolution;
 	long multiplicity = 1;
+
+	// if this is coming from a getExtent(long) request, this is the offset it was
+	// asked to locate
+	transient long locatedOffset = -1;
 
 	private static class ResolutionImpl implements Resolution {
 
@@ -205,9 +208,14 @@ public class Time extends Extent implements ITime {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T as(Class<T> cls) {
-		// TODO Auto-generated method stub
+		if (Long.class.isAssignableFrom(cls)) {
+			return (T) Long.valueOf(locatedOffset < 0 ? 0 : locatedOffset);
+		} else if (Long[].class.isAssignableFrom(cls)) {
+			return (T) new Long[] { locatedOffset < 0 ? 0l : locatedOffset };
+		} // TODO
 		return null;
 	}
 
@@ -288,12 +296,33 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IExtent getExtent(long stateIndex) {
-		if (this.multiplicity == 1) {
-			if (stateIndex == 0) {
-				return this;
-			}
+
+		if (stateIndex >= multiplicity || stateIndex < 0) {
+			throw new IllegalArgumentException("time: state " + stateIndex + " requested when size == " + multiplicity);
 		}
-		return null;
+
+		if (this.multiplicity == 1) {
+			return this;
+		}
+
+		// should also work for infinite time
+		long newStart = this.start.getMillis() + (this.step.getMilliseconds() * stateIndex);
+		long newEnd = newStart + this.step.getMilliseconds();
+
+		// TODO if realtime, we should align with the clock as all these ops cannot
+		// guarantee synchronicity
+
+		Time ret = copy();
+
+		ret.locatedOffset = stateIndex;
+
+		ret.start = new TimeInstant(newStart);
+		ret.end = new TimeInstant(newEnd);
+		ret.extentType = ITime.Type.SPECIFIC;
+		ret.multiplicity = 1;
+		ret.resolution = resolution(ret.start, ret.end);
+
+		return ret;
 	}
 
 	@Override
@@ -380,7 +409,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public AbstractExtent copy() {
+	public Time copy() {
 		return new Time(this);
 	}
 

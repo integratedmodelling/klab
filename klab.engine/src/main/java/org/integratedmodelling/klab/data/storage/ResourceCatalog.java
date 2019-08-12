@@ -35,10 +35,9 @@ import org.integratedmodelling.klab.utils.Pair;
 public class ResourceCatalog implements IResourceCatalog {
 
 	String name;
-	
+
 	/**
-	 * TODO use MapDB as a persistent option (for the public catalog). Nitrite is
-	 * more of a mess than an advantage.
+	 * TODO use MapDB as a persistent option (for the public catalog).
 	 */
 	private Map<String, ResourceReference> resources = Collections.synchronizedMap(new HashMap<>());
 

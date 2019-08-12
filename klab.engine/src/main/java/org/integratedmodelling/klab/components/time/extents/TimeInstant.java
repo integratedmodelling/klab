@@ -16,7 +16,11 @@ public class TimeInstant implements ITimeInstant {
 	public TimeInstant(int year) {
 		time = new DateTime(year, 1, 1, 0, 0);
 	}
-	
+
+	public TimeInstant(long milliseconds) {
+		time = new DateTime(milliseconds);
+	}
+
 	public TimeInstant(DateTime time) {
 		this.time = time;
 	}

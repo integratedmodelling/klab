@@ -48,6 +48,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   of attributes.
 - Predicates (and only predicates) will resolve more specific predicates, even if the
   resolving concept is abstract.
+- The default storage provider now uses a single storage back-end that only creates storage
+  when needed, avoids temporal repetition of timeslices, and uses a contiguous memory-mapped
+  file to hold the active slices. Degrades gracefully to almost nothing when storing all
+  nodata or a single value, independent of geometry size.
 ### Fixed
 - Fix declaration of presence dereifier (which caused a number->boolean conversion being
   inserted, and false being produced overall).

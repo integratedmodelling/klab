@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 
 /**
  * Smart storage using a configurable backend to store slices that are only
@@ -20,7 +21,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
  *
  * @param <T>
  */
-public abstract class AbstractAdaptiveStorage<T> {
+public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 	private NavigableMap<Long, Slice> slices = new TreeMap<>();
 	private long highTimeOffset = -1;
@@ -147,19 +148,7 @@ public abstract class AbstractAdaptiveStorage<T> {
 			this.sliceSize = geometry.size() / time.size();
 		}
 
-		this.initializeStorage(this.sliceSize, !this.trivial);
-
 	}
-
-	/**
-	 * Called once with the size of each slice before anything is written. Should
-	 * ensure that each slice can hold the size passed. There is no guarantee that
-	 * the storage will be used, so it will be best created and initialized when the
-	 * first {@link #setValueIntoBackend(Object, long, long)} is called.
-	 * 
-	 * @param sliceSize
-	 */
-	protected abstract void initializeStorage(long sliceSize, boolean hasTime);
 
 	/**
 	 * Create storage backend for the passed timestep. This would normally use a
@@ -198,7 +187,7 @@ public abstract class AbstractAdaptiveStorage<T> {
 	 */
 	protected abstract void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice);
 
-	public T getValue(ILocator locator) {
+	public T get(ILocator locator) {
 
 		if (slices.isEmpty()) {
 			return null;
@@ -212,7 +201,7 @@ public abstract class AbstractAdaptiveStorage<T> {
 		return getClosest(timeOffset).getAt(sliceOffset);
 	}
 
-	public void setValue(T value, ILocator locator) {
+	public long put(T value, ILocator locator) {
 
 		Long[] offsets = locator.as(Long[].class);
 		long sliceOffset = product(offsets, trivial ? 0 : 1);
@@ -221,7 +210,7 @@ public abstract class AbstractAdaptiveStorage<T> {
 
 		if (noData && slices.isEmpty()) {
 			// everything's nodata so far, no need to store.
-			return;
+			return trivial ? sliceOffset : sliceOffset * timeOffset;
 		}
 
 		/*
@@ -237,7 +226,7 @@ public abstract class AbstractAdaptiveStorage<T> {
 		Slice slice = getClosest(timeOffset);
 		if (slice != null && equals(slice.getAt(sliceOffset), value)) {
 			// don't store anything until it's different from the previous slice.
-			return;
+			return trivial ? sliceOffset : sliceOffset * timeOffset;
 		}
 
 		/*
@@ -249,7 +238,8 @@ public abstract class AbstractAdaptiveStorage<T> {
 		}
 
 		slice.setAt(sliceOffset, value);
-
+		
+		return trivial ? sliceOffset : sliceOffset * timeOffset;
 	}
 
 	private long product(Long[] offsets, int i) {
@@ -278,5 +268,17 @@ public abstract class AbstractAdaptiveStorage<T> {
 	protected int sliceCount() {
 		return slices.size();
 	}
+
+	@Override
+	public Object getObject(ILocator locator) {
+		return get(locator);
+	}
+
+	@Override
+	public long putObject(Object value, ILocator locator) {
+		return put((T)value, locator);
+	}
+	
+	
 
 }

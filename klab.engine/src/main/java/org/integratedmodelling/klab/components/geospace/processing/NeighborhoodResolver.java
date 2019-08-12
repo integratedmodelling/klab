@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.geospace.processing;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,19 +13,17 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.Aggregation;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -53,15 +52,10 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 	private Grid grid;
 	Map<IState, String> stateIdentifiers = new HashMap<>();
 	private IContextualizationScope context;
-	IDataArtifact valueCache = null;
+	IDataStorage<?> valueCache = null;
 	IExpression selectExpression = null;
 	IExpression valueExpression = null;
 	LongAdder adder = new LongAdder();
-
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.create("S2");
-//	}
 
 	@Override
 	public Type getType() {
@@ -265,13 +259,13 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					value = evalStates(valueExpression, sourceStates, locator, Object.class, "self", self);
 					if (value != null && valueCache == null) {
 						synchronized (NeighborhoodResolver.this) {
-							valueCache = Klab.INSTANCE.getStorageProvider()
+							valueCache = (IDataStorage<?>)Klab.INSTANCE.getStorageProvider()
 									.createStorage(Utils.getArtifactType(value.getClass()), target.getScale(), context);
 						}
 					}
 				}
 				if (value != null) {
-					valueCache.set(locator, value);
+					valueCache.putObject(value, locator);
 				}
 			});
 			// }
@@ -330,7 +324,11 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		});
 		// }
 		if (valueCache != null) {
-			valueCache.release();
+			try {
+				valueCache.close();
+			} catch (IOException e) {
+				// f'ock
+			}
 		}
 
 		return target;

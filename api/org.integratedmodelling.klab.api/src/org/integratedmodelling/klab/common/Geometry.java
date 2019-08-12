@@ -748,8 +748,14 @@ public class Geometry implements IGeometry {
 			throw new IllegalArgumentException("offset locator cannot be further located");
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T as(Class<T> cls) {
+			if (Long.class.isAssignableFrom(cls)) {
+				return (T) Long.valueOf(offset);
+			} else if (Long[].class.isAssignableFrom(cls)) {
+				return (T) new Long[] { offset };
+			}
 			throw new IllegalArgumentException("offset locator cannot be further located");
 		}
 	}

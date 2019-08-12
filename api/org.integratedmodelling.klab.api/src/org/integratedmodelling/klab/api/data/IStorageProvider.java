@@ -15,7 +15,6 @@
  */
 package org.integratedmodelling.klab.api.data;
 
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -39,6 +38,6 @@ public interface IStorageProvider {
    * @param context a {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope} object.
    * @return a {@link org.integratedmodelling.klab.api.data.artifacts.IDataArtifact} object.
    */
-  IDataArtifact createStorage(IArtifact.Type type, IScale scale, IContextualizationScope context);
+  IStorage<?> createStorage(IArtifact.Type type, IScale scale, IContextualizationScope context);
 
 }

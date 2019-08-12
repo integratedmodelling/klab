@@ -335,6 +335,7 @@ public interface IGeometry extends Serializable, ILocator {
      * @param index
      * @return a valid offset for this locator, or -1 if mediation is needed.
      * @throws IllegalArgumentException if the locator type is not suitable for the receiver.
+     * @deprecated use as(Long) on locators
      */
     long getOffset(ILocator index);
 
@@ -345,17 +346,18 @@ public interface IGeometry extends Serializable, ILocator {
      * @param globalOffset
      * @param dimension
      * @return the dimension-specific offset, or -1.
+     * @deprecated use as(dimension).as(Long) on locators
      */
     long getOffset(long globalOffset, Dimension.Type dimension);
     
     /**
      * Get the shape of the requested dimension.
      * 
-     * @param space
+     * @param type the dimension type
      * @throws IllegalArgumentException if the dimension is not part of the geometry.
      * @return the dimension's shape
      */
-    long[] shape(Type space);
+    long[] shape(Type type);
     
     /**
      * If this is true, the reported size will not include the time, and the time dimension

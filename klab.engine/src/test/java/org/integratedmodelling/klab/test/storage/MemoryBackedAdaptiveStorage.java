@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+
+import java.io.IOException;
 import java.lang.reflect.Array;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 
@@ -16,12 +19,7 @@ public class MemoryBackedAdaptiveStorage<T> extends AbstractAdaptiveStorage<T> {
 		super(geometry);
 		this.cls = cls;
 	}
-
-	@Override
-	protected void initializeStorage(long sliceSize, boolean hasTime) {
-		// nothing to do
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void createBackendStorage(long timestep, T initialValue) {
@@ -65,6 +63,18 @@ public class MemoryBackedAdaptiveStorage<T> extends AbstractAdaptiveStorage<T> {
 
 	public int getBackendSliceCount() {
 		return data.size();
+	}
+
+	@Override
+	public Type getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void close() throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

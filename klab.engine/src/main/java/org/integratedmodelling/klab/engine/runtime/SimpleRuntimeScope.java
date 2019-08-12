@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
+import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
@@ -412,8 +413,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 		SimpleRuntimeScope ret = new SimpleRuntimeScope(this);
 		if (resource.getType() != IArtifact.Type.OBJECT) {
-			IDataArtifact data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale(), this);
-			ret.target = new State((Observable) observable, (Scale) scale, this, data);
+			IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale(), this);
+			ret.target = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>)data);
 		} else {
 			ret.target = new ObservationGroup((Observable) observable, (Scale) scale, this, resource.getType());
 		}
