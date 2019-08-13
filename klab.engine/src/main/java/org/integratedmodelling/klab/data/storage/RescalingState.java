@@ -1,14 +1,12 @@
 package org.integratedmodelling.klab.data.storage;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -19,7 +17,6 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.provenance.IActivity;
-import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -87,7 +84,7 @@ public class RescalingState extends Observation implements IState {
             for (int i = 0; i < mediators.size(); i++) {
                 offsets[i] = mediators.get(i).mapConformant(offsets[i]);
             }
-            return delegate.get(originalGeometry.locate(offsets));
+            return delegate.get(originalGeometry.at(offsets));
         }
 
         return reduce(index, mediators);
@@ -131,7 +128,7 @@ public class RescalingState extends Observation implements IState {
                 offsets[i] = mediators.get(i).mapConformant(offsets[i]);
             }
 
-            delegate.set(originalGeometry.locate(offsets), value);
+            delegate.set(originalGeometry.at(offsets), value);
 
         } else {
             map(index, mediators, value);
@@ -148,7 +145,6 @@ public class RescalingState extends Observation implements IState {
 
         Propagator propagator = new Propagator();
         for (int i = 0; i < mediators.size(); i++) {
-
             for (Pair<Long, Double> mapped : mediators.get(i).map(newScale.getOffset(locator))) {
                 propagator.add(i, mapped.getFirst(), mapped.getSecond());
             }
@@ -253,7 +249,7 @@ public class RescalingState extends Observation implements IState {
             for (CartesianProductIterator it = new CartesianProductIterator(locations); it.hasNext();) {
                 Pair<long[], Double> index = it.next();
                 if (index.getSecond() > 0) {
-                    addValue(delegate.get(originalGeometry.locate(index.getFirst())), index.getSecond());
+                    addValue(delegate.get(originalGeometry.at(index.getFirst())), index.getSecond());
                 }
             }
             return computeAggregation();
@@ -332,7 +328,7 @@ public class RescalingState extends Observation implements IState {
             for (CartesianProductIterator it = new CartesianProductIterator(locations); it.hasNext();) {
                 Pair<long[], Double> index = it.next();
                 if (index.getSecond() > 0) {
-                    propagateValue(value, originalGeometry.locate(index.getFirst()), index.getSecond(), it.size());
+                    propagateValue(value, originalGeometry.at(index.getFirst()), index.getSecond(), it.size());
                 }
             }
         }
@@ -397,9 +393,9 @@ public class RescalingState extends Observation implements IState {
     }
 
     @Override
-    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+    public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
         if (newScale.size() == 1) {
-            return get(newScale.getLocator(0), cls);
+            return get(newScale.at(0), cls);
         }
         throw new KlabUnimplementedException(
                 "aggregation of rescaled states is unimplemented - please submit a request");
@@ -408,7 +404,7 @@ public class RescalingState extends Observation implements IState {
     @Override
     public Object aggregate(ILocator... locators) {
         if (newScale.size() == 1) {
-            return get(newScale.getLocator(0), Utils.getClassForType(delegate.getType()));
+            return get(newScale.at(0), Utils.getClassForType(delegate.getType()));
         }
         if (locators == null) {
             List<Object> values = new ArrayList<>();
@@ -425,7 +421,7 @@ public class RescalingState extends Observation implements IState {
     @Override
     public void fill(Object value) {
         if (newScale.size() == 1) {
-            set(newScale.getLocator(0), value);
+            set(newScale.at(0), value);
         }
         for (ILocator locator : getScale()) {
             set(locator, value);

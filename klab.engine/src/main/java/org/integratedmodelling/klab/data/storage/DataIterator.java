@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.storage;
 import java.util.Iterator;
 import java.util.function.Function;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -20,11 +21,11 @@ import org.integratedmodelling.klab.utils.NumberUtils;
  */
 public class DataIterator<T> implements Iterator<T> {
 
-	private Iterator<IScale> iterator;
+	private Iterator<ILocator> iterator;
 	private IDataArtifact data;
 	private Function<Object, T> converter;
 
-	public DataIterator(IDataArtifact data, Iterator<IScale> iterator, Function<Object, T> translator) {
+	public DataIterator(IDataArtifact data, Iterator<ILocator> iterator, Function<Object, T> translator) {
 		this.iterator = iterator;
 		this.data = data;
 		this.converter = translator;

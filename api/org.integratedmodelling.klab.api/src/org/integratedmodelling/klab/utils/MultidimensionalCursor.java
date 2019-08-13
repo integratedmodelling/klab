@@ -142,6 +142,20 @@ public class MultidimensionalCursor {
         initializeStrides();
     }
     
+    public MultidimensionalCursor(IGeometry geometry, long[] lockedDimensions) {
+        multiplicity = 0;
+        dimensions = 0;
+        storageOrderType = StorageOrdering.ROW_FIRST;
+        long[] dims = new long[geometry.getDimensions().size()];
+        int i = 0;
+        for (Dimension dimension : geometry.getDimensions()) {
+            dims[i] = lockedDimensions[i] < 0 ? dimension.size() : 1;
+            i++;
+        }
+        defineDimensions(dims);
+        initializeStrides();
+    }
+    
     public MultidimensionalCursor() {
         this(StorageOrdering.ROW_FIRST);
     }

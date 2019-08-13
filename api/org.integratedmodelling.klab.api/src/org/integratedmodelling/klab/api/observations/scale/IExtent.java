@@ -39,7 +39,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>, IGeometry.Dimension {
+public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimension {
 
     /**
      * Merge in another extent to complete what is incomplete in this one. This is

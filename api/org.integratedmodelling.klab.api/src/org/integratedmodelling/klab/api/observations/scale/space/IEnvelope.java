@@ -81,6 +81,13 @@ public interface IEnvelope extends IReferenced {
     IEnvelope transform(IProjection projection, boolean lenient);
 
     /**
+     * Return the envelope in a predictable, standard projection.
+     * 
+     * @return
+     */
+    IEnvelope standard();
+    
+    /**
      * <p>getCenterCoordinates.</p>
      *
      * @return an array of {@link double} objects.

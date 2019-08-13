@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.encoding;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -132,7 +133,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public void add(Object value, long offset) {
+	public void add(Object value, ILocator offset) {
 		// TODO Auto-generated method stub
 		
 	}

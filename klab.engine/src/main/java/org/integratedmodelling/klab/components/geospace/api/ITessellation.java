@@ -26,7 +26,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.components.geospace.api;
 
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 
 /**
@@ -36,7 +36,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
  * @author ferdinando.villa
  *
  */
-public interface ITessellation extends Iterable<IExtent> {
+public interface ITessellation extends Iterable<ILocator> {
 
   int size();
 

@@ -30,7 +30,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology<IScale> {
+public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
 
 	/**
 	 * We deal with space and time in all natural systems, so we expose these to
@@ -117,15 +117,6 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
 	 */
 	@Override
 	IScale merge(ITopologicallyComparable<?> other, LogicalConnector how);
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * The scale implementation of {@link ILocator#at(ILocator)} always return a
-	 * scale and can use an extent, other scale, or ITime.INITIALIZATION as locator.
-	 */
-	@Override
-	IScale at(ILocator locator);
 
 	/**
 	 * Mimics

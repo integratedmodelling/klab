@@ -66,22 +66,22 @@ public abstract class AbstractExtent implements IExtent {
 	 */
 	public abstract IExtent mergeCoverage(IExtent other, LogicalConnector connector);
 
-	/**
-	 * Translate a linear offset into the offsets for each dimension. If the
-	 * dimension is 1, return the offset itself.
-	 * 
-	 * @param linearOffset
-	 * @return dimension offsets
-	 */
-	public abstract long[] getDimensionOffsets(long linearOffset);
-
-	/**
-	 * Check and return the offset corresponding to the passed dimensions.
-	 * 
-	 * @param dimOffsets
-	 * @return the linear offset
-	 */
-	public abstract long getOffset(long[] dimOffsets);
+//	/**
+//	 * Translate a linear offset into the offsets for each dimension. If the
+//	 * dimension is 1, return the offset itself.
+//	 * 
+//	 * @param linearOffset
+//	 * @return dimension offsets
+//	 */
+//	public abstract long[] getDimensionOffsets(long linearOffset);
+//
+//	/**
+//	 * Check and return the offset corresponding to the passed dimensions.
+//	 * 
+//	 * @param dimOffsets
+//	 * @return the linear offset
+//	 */
+//	public abstract long getOffset(long[] dimOffsets);
 
 	/**
 	 * Return the single-valued topological value that represents the total extent

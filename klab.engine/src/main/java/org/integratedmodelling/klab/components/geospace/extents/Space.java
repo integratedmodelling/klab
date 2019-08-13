@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -21,14 +22,10 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.IndexLocator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
-import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.FeaturesToShape;
@@ -40,6 +37,7 @@ import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeT
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.Extent;
@@ -59,7 +57,7 @@ public class Space extends Extent implements ISpace {
 	private boolean consistent = false;
 	private String gridSpecs = null;
 	private boolean generic = false;
-	private Dimension originalSpecs = null;
+//	private Dimension originalSpecs = null;
 
 	private static Space EMPTY_SPACE = new Space(Shape.empty());
 
@@ -118,7 +116,7 @@ public class Space extends Extent implements ISpace {
 				// keep whatever info we have to use in a merge()
 				ret.projection = projection;
 				ret.shape = shape;
-				ret.originalSpecs = dimension;
+//				ret.originalSpecs = dimension;
 			}
 		}
 
@@ -295,7 +293,7 @@ public class Space extends Extent implements ISpace {
 		return 0;
 	}
 
-	@Override
+//	@Override
 	public long[] getDimensionOffsets(long linearOffset) {
 		// useless but was a a parameter in 0.9.x - see if it still serves any purpose
 		// before removing
@@ -517,9 +515,9 @@ public class Space extends Extent implements ISpace {
 	}
 
 	@Override
-	public Iterator<IExtent> iterator() {
+	public Iterator<ILocator> iterator() {
 		if (grid != null) {
-			return new IteratorAdapter<IExtent>(grid.iterator());
+			return new IteratorAdapter<ILocator>(grid.iterator());
 		}
 		if (features != null) {
 			return features.iterator();
@@ -627,10 +625,10 @@ public class Space extends Extent implements ISpace {
 		return 2;
 	}
 
-	@Override
-	public ISpace at(ILocator locator) {
-		return null;
-	}
+//	@Override
+//	public ISpace at(ILocator locator) {
+//		return null;
+//	}
 
 	// @Override
 	public Iterable<ILocator> over(Type dimension) {
@@ -652,26 +650,26 @@ public class Space extends Extent implements ISpace {
 		return shape.shape();
 	}
 
-	@Override
-	public long getOffset(ILocator index) {
-
-		if (this.grid != null) {
-			if (index instanceof Cell) {
-				return this.grid.getOffset((Cell) index);
-			} else if (index instanceof IndexLocator && ((IndexLocator) index).getCoordinates().length == 2) {
-				return this.grid.getOffset(((IndexLocator) index).getCoordinates()[0],
-						((IndexLocator) index).getCoordinates()[1]);
-			} else if (index instanceof ISpace && ((ISpace) index).getShape().getGeometryType() == IShape.Type.POINT) {
-				Shape shape = (Shape) ((ISpace) index).getShape().transform(getProjection());
-				return this.grid.getOffsetFromWorldCoordinates(shape.getJTSGeometry().getCoordinates()[0].x,
-						shape.getJTSGeometry().getCoordinates()[0].y);
-			}
-		} else if (this.features != null) {
-			// TODO support direct indexing with IndexLocator and point indexing with latlon
-			// and point coordinates
-		}
-		throw new IllegalArgumentException("cannot use " + index + " as a space locator");
-	}
+//	@Override
+//	public long getOffset(ILocator index) {
+//
+//		if (this.grid != null) {
+//			if (index instanceof Cell) {
+//				return this.grid.getOffset((Cell) index);
+//			} else if (index instanceof IndexLocator && ((IndexLocator) index).getCoordinates().length == 2) {
+//				return this.grid.getOffset(((IndexLocator) index).getCoordinates()[0],
+//						((IndexLocator) index).getCoordinates()[1]);
+//			} else if (index instanceof ISpace && ((ISpace) index).getShape().getGeometryType() == IShape.Type.POINT) {
+//				Shape shape = (Shape) ((ISpace) index).getShape().transform(getProjection());
+//				return this.grid.getOffsetFromWorldCoordinates(shape.getJTSGeometry().getCoordinates()[0].x,
+//						shape.getJTSGeometry().getCoordinates()[0].y);
+//			}
+//		} else if (this.features != null) {
+//			// TODO support direct indexing with IndexLocator and point indexing with latlon
+//			// and point coordinates
+//		}
+//		throw new IllegalArgumentException("cannot use " + index + " as a space locator");
+//	}
 
 	@Override
 	public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
@@ -781,10 +779,10 @@ public class Space extends Extent implements ISpace {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T as(Class<T> cls) {
-		if (ISpaceLocator.class.isAssignableFrom(cls)) {
-			return (T) envelope.asLocator();
-		}
+	public <T extends ILocator> T as(Class<T> cls) {
+//		if (ISpaceLocator.class.isAssignableFrom(cls)) {
+//			return (T) envelope.asLocator();
+//		}
 		return null;
 	}
 
@@ -891,7 +889,14 @@ public class Space extends Extent implements ISpace {
 		if (locator instanceof ISpace) {
 			return ((ISpace)locator).getStandardizedDimension(ILocator.FULL);
 		}
-		return at(locator).getStandardizedDimension(FULL);
+		throw new KlabUnimplementedException("Space::getStandardizedDimension()");
+//		return at(locator).getStandardizedDimension(FULL);
+	}
+
+	@Override
+	public IGeometry getGeometry() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

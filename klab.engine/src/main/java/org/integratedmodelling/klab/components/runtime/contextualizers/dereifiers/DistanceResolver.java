@@ -91,11 +91,6 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 		return ret;
 	}
 
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.create("S2");
-//	}
-
 	@Override
 	public IArtifact.Type getType() {
 		return Type.NUMBER;

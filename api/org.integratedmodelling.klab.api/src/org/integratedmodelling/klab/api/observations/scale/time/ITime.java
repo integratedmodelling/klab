@@ -15,6 +15,9 @@
  */
 package org.integratedmodelling.klab.api.observations.scale.time;
 
+import java.util.Iterator;
+
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -209,13 +212,25 @@ public interface ITime extends IExtent {
 	 */
 	ILocator INITIALIZATION = new ILocator() {
 
+//		@Override
+//		public ILocator at(ILocator locator) {
+//			return this;
+//		}
+
 		@Override
-		public ILocator at(ILocator locator) {
-			return this;
+		public <T extends ILocator> T as(Class<T> cls) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		@Override
-		public <T> T as(Class<T> cls) {
+		public Iterator<ILocator> iterator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IGeometry getGeometry() {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -262,13 +277,13 @@ public interface ITime extends IExtent {
 	 */
 	Resolution getResolution();
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * The time implementation of {@link ILocator#at(ILocator)} always return a time
-	 * and can only use another time as locator.
-	 */
-	@Override
-	ITime at(ILocator locator);
+//	/**
+//	 * {@inheritDoc}
+//	 *
+//	 * The time implementation of {@link ILocator#at(ILocator)} always return a time
+//	 * and can only use another time as locator.
+//	 */
+//	@Override
+//	ITime at(ILocator locator);
 
 }

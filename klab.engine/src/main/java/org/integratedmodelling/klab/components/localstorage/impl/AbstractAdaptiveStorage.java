@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 
 /**
@@ -200,14 +201,14 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			return null;
 		}
 
-		Long[] offsets = locator.as(Long[].class);
+		Offset offsets = locator.as(Offset.class);
 		
 		if (offsets.length != geometry.getDimensions().size()) {
 			System.out.println("POODOOCIO");
 		}
 		
-		long sliceOffset = product(offsets, trivial ? 0 : 1);
-		long timeOffset = trivial ? 0 : offsets[0];
+		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
+		long timeOffset = trivial ? 0 : offsets.pos[0];
 
 		// can only be the closest at this point.
 		return getClosest(timeOffset).getAt(sliceOffset);
@@ -215,14 +216,14 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 	public long put(T value, ILocator locator) {
 
-		Long[] offsets = locator.as(Long[].class);
+		Offset offsets = locator.as(Offset.class);
 		
 		if (offsets.length != geometry.getDimensions().size()) {
 			System.out.println("POODOOCIO");
 		}
 		
-		long sliceOffset = product(offsets, trivial ? 0 : 1);
-		long timeOffset = trivial ? 0 : offsets[0];
+		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
+		long timeOffset = trivial ? 0 : offsets.pos[0];
 		boolean noData = Observations.INSTANCE.isNodata(value);
 
 		if (noData && slices.isEmpty()) {
@@ -259,7 +260,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 	}
 
-	private long product(Long[] offsets, int i) {
+	private long product(long[] offsets, int i) {
 		long ret = offsets[i];
 		for (int n = i + 1; n < offsets.length; n++) {
 			ret *= offsets[n];

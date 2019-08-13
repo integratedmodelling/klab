@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.data.encoding;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -77,7 +78,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public void add(Object value, long offset) {
+	public void add(Object value, ILocator offset) {
 		// TODO Auto-generated method stub
 		
 	}

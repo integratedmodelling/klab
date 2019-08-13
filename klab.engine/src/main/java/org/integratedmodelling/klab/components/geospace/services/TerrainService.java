@@ -1,14 +1,12 @@
 package org.integratedmodelling.klab.components.geospace.services;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.processing.Terrain;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Range;
@@ -32,7 +30,7 @@ public class TerrainService implements IResolver<IDataArtifact>, IExpression {
 	public IDataArtifact resolve(IDataArtifact ret, IContextualizationScope context) {
 
 		Range range = context.get("range", new Range(0., 4000., false, false));
-		long[] xy = context.getScale().shape(Dimension.Type.SPACE);
+		long[] xy = context.getScale().getDimension(Dimension.Type.SPACE).shape();
 		Terrain terrain = new Terrain(context.get("detail", 8), context.get("roughness", 0.55), range.getLowerBound(),
 				range.getUpperBound());
 

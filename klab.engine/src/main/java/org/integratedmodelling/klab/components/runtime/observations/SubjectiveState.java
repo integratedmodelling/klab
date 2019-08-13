@@ -245,7 +245,7 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
     }
 
     @Override
-    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+    public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
         return current.aggregate(geometry, cls);
     }
 

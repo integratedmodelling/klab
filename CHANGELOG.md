@@ -39,6 +39,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   quality along the drainage directions.
 - Clarify semantics for generic time extents (see comment in ITime.java)
 ### Changed
+- Overhauled the location mechanism for subsetting and scanning geometries and scales. Now
+  consistently using IGeometry.at(...) to flexibly obtain a locator and ILocator.as(Class) 
+  to adapt a locator to one with the desired API.
 - Revised k.IM syntax for restrictions and allowed arbitrary properties to be defined
   through it, which is discouraged but should remain possible. Implementation still
   ignores all that. Put stubs in the docs to document why using attributes, roles and

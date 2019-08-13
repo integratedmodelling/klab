@@ -172,9 +172,9 @@ public class ContributingCell extends Expando {
 		return delegate.as(cls);
 	}
 
-	public ISpace at(ILocator locator) {
-		return delegate.at(locator);
-	}
+//	public ILocator at(ILocator locator) {
+//		return delegate.at(locator);
+//	}
 
 	public double getStandardizedArea() {
 		return delegate.getStandardizedArea();
@@ -382,9 +382,9 @@ public class ContributingCell extends Expando {
 		return delegate.merge(other, how);
 	}
 
-	public long getOffset(ILocator index) {
-		return delegate.getOffset(index);
-	}
+//	public long getOffset(ILocator index) {
+//		return delegate.getOffset(index);
+//	}
 
 	public IState getFlowdirections() {
 		return flowdirections;

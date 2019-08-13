@@ -5,6 +5,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimDate;
 import org.integratedmodelling.kim.model.KimQuantity;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -210,12 +211,12 @@ public class Time extends Extent implements ITime {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T as(Class<T> cls) {
-		if (Long.class.isAssignableFrom(cls)) {
-			return (T) Long.valueOf(locatedOffset < 0 ? 0 : locatedOffset);
-		} else if (Long[].class.isAssignableFrom(cls)) {
-			return (T) new Long[] { locatedOffset < 0 ? 0l : locatedOffset };
-		} // TODO
+	public <T extends ILocator> T as(Class<T> cls) {
+//		if (Long.class.isAssignableFrom(cls)) {
+//			return (T) Long.valueOf(locatedOffset < 0 ? 0 : locatedOffset);
+//		} else if (Long[].class.isAssignableFrom(cls)) {
+//			return (T) new Long[] { locatedOffset < 0 ? 0l : locatedOffset };
+//		} // TODO
 		return null;
 	}
 
@@ -250,12 +251,6 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public long getOffset(ILocator index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public long[] shape() {
 		// TODO Auto-generated method stub
 		return new long[] { multiplicity };
@@ -286,12 +281,6 @@ public class Time extends Extent implements ITime {
 	@Override
 	public ITimeDuration getStep() {
 		return step;
-	}
-
-	@Override
-	public ITime at(ILocator locator) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -393,10 +382,10 @@ public class Time extends Extent implements ITime {
 		return "<TIME " + encode() + ">";
 	}
 
-	@Override
-	public long[] getDimensionOffsets(long linearOffset) {
-		return new long[] { linearOffset };
-	}
+//	@Override
+//	public long[] getDimensionOffsets(long linearOffset) {
+//		return new long[] { linearOffset };
+//	}
 
 	@Override
 	public long getOffset(long[] dimOffsets) {
@@ -463,5 +452,12 @@ public class Time extends Extent implements ITime {
 
 		return create(type, resolution.getType(), resolution.getMultiplier(), start, end, step);
 	}
+
+	@Override
+	public IGeometry getGeometry() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

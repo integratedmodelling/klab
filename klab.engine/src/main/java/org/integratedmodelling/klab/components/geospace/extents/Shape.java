@@ -354,12 +354,6 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	@Override
-	public ISpace at(ILocator locator) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public int getScaleRank() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -423,8 +417,8 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	@Override
-	public Iterator<IExtent> iterator() {
-		return Collections.singleton((IExtent) this).iterator();
+	public Iterator<ILocator> iterator() {
+		return Collections.singleton((ILocator) this).iterator();
 	}
 
 	@Override
@@ -448,22 +442,6 @@ public class Shape extends AbstractExtent implements IShape {
 		return ret;
 	}
 
-	@Override
-	public long[] getDimensionOffsets(long linearOffset) {
-		if (linearOffset != 0) {
-			throw new IllegalArgumentException("shape extents don't use offset addressing");
-		}
-		return new long[] { 0 };
-	}
-
-	@Override
-	public long getOffset(long[] dimOffsets) {
-		if (dimOffsets.length != 1 && dimOffsets[0] != 0) {
-			throw new IllegalArgumentException("shape extents don't use offset addressing");
-		}
-		return 0;
-	}
-
 	public ReferencedEnvelope getJTSEnvelope() {
 		return new ReferencedEnvelope(geometry.getEnvelopeInternal(), projection.crs);
 	}
@@ -476,15 +454,6 @@ public class Shape extends AbstractExtent implements IShape {
 			return new long[] { 1 };
 		}
 		return new long[] {};
-	}
-
-	@Override
-	public long getOffset(ILocator index) {
-		// TODO may use a latlon where the point is included.
-		if (index instanceof Shape && this.equals(index)) {
-			return 0;
-		}
-		throw new IllegalArgumentException("cannot use " + index + " as a shape locator");
 	}
 
 	@Override
@@ -631,8 +600,8 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T as(Class<T> cls) {
-		return (T) envelope.asLocator();
+	public <T extends ILocator> T as(Class<T> cls) {
+		return null; //(T) envelope.asLocator();
 	}
 
 	@Override
@@ -818,6 +787,17 @@ public class Shape extends AbstractExtent implements IShape {
 	public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
 		// TODO ignoring the locator: should check and throw exceptions
 		return new Pair<>(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS);
+	}
+
+	@Override
+	public IGeometry getGeometry() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long getOffset(long... offsets) {
+		return 0;
 	}
 
 }

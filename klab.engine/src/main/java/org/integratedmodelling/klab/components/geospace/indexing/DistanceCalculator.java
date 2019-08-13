@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
+import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -59,28 +59,29 @@ public class DistanceCalculator {
 	public double distanceToNearestObjectFrom(ILocator locator, IUnit unit) {
 
 		if (!isEmpty) {
-			ISpaceLocator sloc = locator.as(ISpaceLocator.class);
+			ISpace sloc = locator.as(ISpace.class);
 			if (sloc != null) {
-				return convert(getDistance(new double[] { sloc.getXCoordinate(), sloc.getYCoordinate() }), unit);
+				return convert(getDistance(new double[] { sloc.getEnvelope().standard().getCenterCoordinates()[0],
+						sloc.getEnvelope().standard().getCenterCoordinates()[1] }), unit);
 			}
 		}
 		return Double.NaN;
 	}
 
 	private double convert(double distance, IUnit unit) {
-	    if (Double.isNaN(distance)) {
-	        return distance;
-	    }
+		if (Double.isNaN(distance)) {
+			return distance;
+		}
 		double ret = (distance * widthInMeters) / originalWidth;
 		return unit.equals(Units.INSTANCE.METERS) ? ret : unit.convert(ret, Units.INSTANCE.METERS).doubleValue();
 	}
 
 	private double getDistance(double[] xy) {
-		
+
 		if (isEmpty) {
 			return Double.NaN;
 		}
-		
+
 		Geometry point = Shape.makePoint(xy[0], xy[1]);
 		return getFinalGeometry().distance(point);
 	}

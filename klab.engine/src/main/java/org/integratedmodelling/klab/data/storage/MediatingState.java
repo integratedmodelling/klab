@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.data.storage;
 import java.util.Iterator;
 
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -18,7 +17,6 @@ import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * The state we wrap has the desired semantics but its values must be converted.
@@ -81,7 +79,7 @@ public class MediatingState extends Observation implements IState {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+	public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
 		Object val = delegate.aggregate(geometry, cls);
 		return (T) (val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val);
 	}

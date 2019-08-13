@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.IndexLocator;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -60,7 +59,7 @@ public class DensityResolver implements IResolver<IDataArtifact>, IExpression {
 	public IDataArtifact resolve(IDataArtifact ret, IContextualizationScope context) throws KlabException {
 
 		ISpace space = ((Scale) ret.getGeometry()).getSpace();
-		Geometry geometry =  ((Scale) ret.getGeometry()).asGeometry();
+		Geometry geometry = ((Scale) ret.getGeometry()).asGeometry();
 
 		if (!(space instanceof Space) || ((Space) space).getGrid() == null) {
 			// TODO only return an appropriate state for existence of artifact in context if
@@ -68,6 +67,7 @@ public class DensityResolver implements IResolver<IDataArtifact>, IExpression {
 			// isn't there at all.
 			throw new KlabUnsupportedFeatureException("cannot yet compute indirect density over a non-grid extent");
 		}
+
 		Rasterizer<Integer> rasterizer = new Rasterizer<>(((Space) space).getGrid());
 		for (IArtifact a : context.getArtifact(this.artifactId)) {
 			if (a instanceof IDirectObservation && ((IDirectObservation) a).getSpace() != null) {
@@ -78,20 +78,18 @@ public class DensityResolver implements IResolver<IDataArtifact>, IExpression {
 				rasterizer.add(((IDirectObservation) a).getSpace().getShape(), (shape) -> 1);
 			}
 		}
-		
+
 		if (context.getMonitor().isInterrupted()) {
 			return ret;
 		}
-		
+
 		rasterizer.finish((present, xy) -> {
-			// TODO this must locate only on the spatial dimension and leave the others as they are. Needs
-			// a getLocator(offset, Dimension.type);
-			ILocator spl = geometry.getLocator(space.getOffset(IndexLocator.create(xy)));
-			// TODO this is the extensive value - convert into units if requested!
-			ret.set(spl, present == null ? 0 : present);
+			// TODO units - extensive/intensive
+			for (ILocator spl : geometry.at(space, xy[0], xy[1])) {
+				ret.set(spl, present == null ? 0 : present);
+			}
 		});
 
-		
 		return ret;
 	}
 

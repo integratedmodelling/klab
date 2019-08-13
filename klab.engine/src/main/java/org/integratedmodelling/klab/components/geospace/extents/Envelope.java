@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.opengis.referencing.FactoryException;
@@ -281,8 +280,9 @@ public class Envelope implements IEnvelope {
 		return "bbox=[" + getMinX() + " " + getMaxX() + " " + getMinY() + " " + getMaxY() + "]";
 	}
 
-	public ISpaceLocator asLocator() {
-		return new SpaceLocator(getMinX() + (getMaxX() - getMinX()) / 2, getMinY() + (getMaxY() - getMinY()) / 2);
+	@Override
+	public IEnvelope standard() {
+		return transform(Projection.getDefault(), true);
 	}
 
 }

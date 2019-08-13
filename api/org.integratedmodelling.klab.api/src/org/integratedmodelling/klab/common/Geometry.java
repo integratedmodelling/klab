@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +13,9 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -20,6 +25,91 @@ import org.integratedmodelling.klab.utils.Utils;
 public class Geometry implements IGeometry {
 
 	private static final long serialVersionUID = 8430057200107796568L;
+
+	// internal descriptor to separate out arguments for at() to facilitate
+	// implementation
+	public static class DimensionTarget {
+
+		// this and the next null if the target is an entire scale or just offsets
+		Dimension.Type type;
+		Dimension extent;
+		// this null if the target is an extent or just offsets
+		IGeometry geometry;
+		// this null if target is scanned in its entirety
+		long[] offsets;
+
+		private void defineOffsets(List<Long> numbers) {
+			if (numbers.size() > 0) {
+				offsets = new long[numbers.size()];
+				int i = 0;
+				for (Long l : numbers) {
+					offsets[i++] = l;
+				}
+			}
+		}
+
+		@Override
+		public String toString() {
+			return "<L " + (type == null ? "" : type.name()) + (extent == null ? "" : extent.toString())
+					+ (geometry == null ? "" : geometry.toString()) + (offsets == null ? "" : Arrays.toString(offsets))
+					+ ">";
+		}
+	}
+
+	public static List<DimensionTarget> separateTargets(Object... locators) {
+		List<DimensionTarget> ret = new ArrayList<>();
+		DimensionTarget current = null;
+		List<Long> numbers = new ArrayList<>();
+		if (locators != null) {
+			for (int i = 0; i < locators.length; i++) {
+				Object o = locators[i];
+				if (o instanceof Number) {
+
+					if (current == null) {
+						current = new DimensionTarget();
+					}
+
+					numbers.add(((Number) o).longValue());
+
+				} else {
+
+					if (current != null) {
+						current.defineOffsets(numbers);
+						ret.add(current);
+					}
+					current = new DimensionTarget();
+					numbers.clear();
+
+					if (o instanceof Dimension.Type) {
+						current.type = (Dimension.Type) o;
+					} else if (o instanceof Dimension) {
+						current.extent = (Dimension) o;
+						current.type = ((Dimension) o).getType();
+					} else if (o instanceof IScale) {
+						current.geometry = (IScale) o;
+					} else if (o instanceof IGeometry) {
+						current.geometry = (IGeometry) o;
+					} else if (o instanceof Class<?>) {
+						if (ISpace.class.isAssignableFrom((Class<?>) o)) {
+							current.type = Dimension.Type.SPACE;
+						} else if (ITime.class.isAssignableFrom((Class<?>) o)) {
+							current.type = Dimension.Type.TIME;
+						} else {
+							throw new IllegalArgumentException("illegal locator definition: " + o);
+						}
+					} else {
+						throw new IllegalArgumentException("illegal locator definition: " + o);
+					}
+				}
+			}
+
+			if (current != null) {
+				current.defineOffsets(numbers);
+				ret.add(current);
+			}
+		}
+		return ret;
+	}
 
 	/**
 	 * Bounding box as a double[]{minX, maxX, minY, maxY}
@@ -80,6 +170,10 @@ public class Geometry implements IGeometry {
 	public static GeometryBuilder builder() {
 		return new GeometryBuilder();
 	}
+
+	// if this comes from a scale, hold it here so we can produce it back when
+	// asked.
+	private IScale originalScale;
 
 	private static Geometry emptyGeometry = new Geometry();
 
@@ -270,7 +364,7 @@ public class Geometry implements IGeometry {
 			return shape == null ? Utils.newArray(UNDEFINED, dimensionality) : shape;
 		}
 
-		@Override
+//		@Override
 		public long getOffset(long... offsets) {
 
 			if (offsets == null) {
@@ -302,10 +396,10 @@ public class Geometry implements IGeometry {
 			return 0;
 		}
 
-		@Override
-		public long getOffset(ILocator index) {
-			throw new IllegalArgumentException("getOffset() is not implemented on basic geometry dimensions");
-		}
+//		@Override
+//		public long getOffset(ILocator index) {
+//			throw new IllegalArgumentException("getOffset() is not implemented on basic geometry dimensions");
+//		}
 
 		@Override
 		public IParameters<String> getParameters() {
@@ -375,7 +469,7 @@ public class Geometry implements IGeometry {
 	private boolean scalar;
 
 	// only used to compute offsets if requested
-	transient private MultidimensionalCursor cursor = null;
+//	transient private MultidimensionalCursor cursor = null;
 
 	@Override
 	public IGeometry getChild() {
@@ -651,12 +745,14 @@ public class Geometry implements IGeometry {
 	}
 
 	public static void main(String[] args) {
-		Geometry g1 = create("S2");
-		Geometry g2 = create("#S2T1,#T1");
-		Geometry g3 = create("S2(200,100)");
-		Geometry g4 = create("T1(23)S2(200,100)");
-		Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
-		System.out.println("hla");
+//		Geometry g1 = create("S2");
+//		Geometry g2 = create("#S2T1,#T1");
+//		Geometry g3 = create("S2(200,100)");
+//		Geometry g4 = create("T1(23)S2(200,100)");
+//		Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
+
+		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
+		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
 	}
 
 	@Override
@@ -707,25 +803,22 @@ public class Geometry implements IGeometry {
 //		return new OffsetLocator(ofs);
 //	}
 
-	@Override
-	public ILocator at(ILocator locator) {
-//		if (locator instanceof OffsetLocator) {
-//
-//		}
-		throw new IllegalArgumentException(
-				"geometry cannot use locator of type " + locator.getClass().getCanonicalName());
-	}
+//	@Override
+//	public ILocator at(ILocator locator) {
+////		if (locator instanceof OffsetLocator) {
+////
+////		}
+//		throw new IllegalArgumentException(
+//				"geometry cannot use locator of type " + locator.getClass().getCanonicalName());
+//	}
 
-	@Override
-	public Iterable<ILocator> over(Type dimension) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ILocator at(Type dimension, long... offsets) {
-		// TODO Auto-generated method stub
-		return null;
+	private boolean hasShape() {
+		for (Dimension dimension : getDimensions()) {
+			if (dimension.shape() == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 //	public class OffsetLocator implements ILocator {
@@ -787,15 +880,6 @@ public class Geometry implements IGeometry {
 //	}
 
 	@Override
-	public long[] shape(Type dimensionType) {
-		Dimension dim = getDimension(dimensionType);
-		if (dim == null) {
-			throw new IllegalArgumentException("geometry does not have dimension " + dimensionType);
-		}
-		return dim.shape();
-	}
-
-	@Override
 	public int hashCode() {
 		return encode().hashCode();
 	}
@@ -812,28 +896,94 @@ public class Geometry implements IGeometry {
 		return other.encode().equals(encode());
 	}
 
-//	@Override
-//	public long getOffset(long globalOffset, Type dimensionType) {
-//		int dimIndex = -1;
-//		for (int i = 0; i < dimensions.size(); i++) {
-//			if (dimensions.get(i).type == dimensionType) {
-//				dimIndex = i;
-//				break;
-//			}
-//		}
-//		if (dimIndex < 0) {
-//			return -1;
-//		}
-//		if (this.cursor == null) {
-//			this.cursor = new MultidimensionalCursor(this);
-//		}
-//		return cursor.getElementIndexes(globalOffset)[dimIndex];
-//	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends ILocator> T as(Class<T> cls) {
+		if (IScale.class.isAssignableFrom(cls)) {
+			return (T) originalScale;
+		} else if (IGeometry.class.isAssignableFrom(cls)) {
+			return (T) this;
+		} else if (Offset.class.isAssignableFrom(cls)) {
+			if (!hasShape()) {
+				throw new IllegalStateException(
+						"cannot see a geometry as an offset locator unless shape is specified for all extents");
+			}
+			return (T) new Offset(this);
+		}
+		throw new IllegalArgumentException("cannot translate a simple geometry into a " + cls.getCanonicalName());
+	}
 
 	@Override
-	public <T> T as(Class<T> cls) {
-		// TODO Auto-generated method stub
-		return null;
+	public ILocator at(Object... locators) {
+
+		if (!hasShape()) {
+			throw new IllegalStateException("Geometry has no specified shape: cannot create locators");
+		}
+
+		List<DimensionTarget> targets = separateTargets(locators);
+
+		/*
+		 * dimension-specific targets cannot be combined with an overall targets.
+		 */
+		DimensionTarget overall = null;
+		for (DimensionTarget target : targets) {
+			if (target.type == null) {
+				overall = target;
+				break;
+			}
+		}
+
+		if (overall != null && targets.size() > 1) {
+			throw new IllegalStateException("Geometry cannot be located with both dimension-specific and overall locators");
+		}
+
+		if (overall != null) {
+			return new Offset(this, overall.offsets);
+		}
+		
+		if (!targets.isEmpty()) {
+			long[] pos = new long[this.dimensions.size()];
+			int i = 0;
+			for (Dimension dimension : this.dimensions) {
+				boolean found = false;
+				for (DimensionTarget target : targets) {
+					if (target.type != null && target.type == dimension.getType()) {
+						found = true;
+						if (target.offsets != null) {
+							if (target.offsets.length > 1) {
+								pos[i] = dimension.getOffset(target.offsets);
+							} else {
+								pos[i] = target.offsets[0];
+							}
+						} else {
+							pos[i] = -1;
+						}
+					}
+					if (!found) {
+						pos[i] = -1;
+					}
+				}
+				i++;
+			}
+			
+			return new Offset(this, pos);
+		}
+
+		// no arguments: locate this with this
+		return this;
+	}
+
+	public static long computeOffset(long[] pos, IGeometry geometry) {
+		return new MultidimensionalCursor(geometry).getElementOffset(pos);
+	}
+	
+	public static long[] computeOffsets(long pos, IGeometry geometry) {
+		return new MultidimensionalCursor(geometry).getElementIndexes(pos);
+	}
+
+	@Override
+	public Iterator<ILocator> iterator() {
+		return new GeometryIterator(this);
 	}
 
 	@Override
@@ -956,6 +1106,15 @@ public class Geometry implements IGeometry {
 	@Override
 	public boolean isInfiniteTime() {
 		return getDimension(Dimension.Type.TIME) != null && getDimension(Dimension.Type.TIME).size() == INFINITE_SIZE;
+	}
+
+	public void setOriginalScale(IScale originalScale) {
+		this.originalScale = originalScale;
+	}
+
+	@Override
+	public IGeometry getGeometry() {
+		return originalScale;
 	}
 
 }

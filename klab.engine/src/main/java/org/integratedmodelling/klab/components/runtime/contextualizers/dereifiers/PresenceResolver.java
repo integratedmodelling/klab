@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.IndexLocator;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -72,10 +71,9 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 			return ret;
 		}
 		rasterizer.finish((present, xy) -> {
-			// TODO this must locate only on the spatial dimension and leave the others as they are. Needs
-			// a getLocator(offset, Dimension.type);
-			ILocator spl = geometry.getLocator(space.getOffset(IndexLocator.create(xy)));
-			ret.set(spl, present == null ? false : present);
+			for (ILocator spl : geometry.at(space, xy[0], xy[1])) {
+				ret.set(spl, present == null ? false : present);
+			}
 		});
 
 		return ret;

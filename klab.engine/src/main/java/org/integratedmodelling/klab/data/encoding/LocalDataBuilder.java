@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.encoding;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -10,7 +11,6 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.Metadata;
@@ -88,16 +88,16 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	@Override
 	public void add(Object value) {
 		if (state != null) {
-			state.set(state.getGeometry().getLocator(offset++), value);
+			state.set(state.getGeometry().at(offset++), value);
 		} else {
 			throw new IllegalStateException("data builder: cannot add items: no state set");
 		}
 	}
 
 	@Override
-	public void add(Object value, long offset) {
+	public void add(Object value, ILocator locator) {
 		if (state != null) {
-			state.set(state.getGeometry().getLocator(offset), value);
+			state.set(locator, value);
 		} else {
 			throw new IllegalStateException("data builder: cannot add items: no state set");
 		}

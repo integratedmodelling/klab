@@ -1,7 +1,8 @@
 package org.integratedmodelling.klab.scale;
 
 import java.util.Iterator;
-import org.integratedmodelling.kim.api.IServiceCall;
+
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -13,8 +14,8 @@ public abstract class Extent extends AbstractExtent {
   public static int GENERIC_LOCATOR = -1;
 
   @Override
-  public Iterator<IExtent> iterator() {
-    return new Iterator<IExtent>() {
+  public Iterator<ILocator> iterator() {
+    return new Iterator<ILocator>() {
 
       int i = 0;
 

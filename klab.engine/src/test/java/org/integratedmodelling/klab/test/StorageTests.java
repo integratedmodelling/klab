@@ -6,7 +6,7 @@ package org.integratedmodelling.klab.test;
 import java.util.Random;
 
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.GeometryLocator;
+import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.data.storage.FileMappedStorage;
 import org.integratedmodelling.klab.test.storage.MemoryBackedAdaptiveStorage;
 import org.junit.Test;
@@ -33,8 +33,7 @@ public class StorageTests {
 			for (int spaceX = 0; spaceX < 10; spaceX++) {
 				System.out.print(spaceX == 0 ? "\nT" + time + ": " : "\n    ");
 				for (int spaceY = 0; spaceY < 10; spaceY++) {
-					GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-							geometry);
+					Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 					int value = time * ((spaceX * 100) + spaceY);
 					// first slice should be all 0s, then predictable values
 					storage.put(value, locator);
@@ -49,8 +48,7 @@ public class StorageTests {
 			for (int spaceX = 0; spaceX < 10; spaceX++) {
 				System.out.print(spaceX == 0 ? "\nT" + time + ": " : "\n    ");
 				for (int spaceY = 0; spaceY < 10; spaceY++) {
-					GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-							geometry);
+					Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 					int value = storage.get(locator);
 					System.out.print(String.format("%04d", value) + " ");
 				}
@@ -62,15 +60,13 @@ public class StorageTests {
 		for (int time = 0; time < 10; time++) {
 			for (int spaceX = 0; spaceX < 10; spaceX++) {
 				for (int spaceY = 0; spaceY < 10; spaceY++) {
-					GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-							geometry);
+					Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 					assert (storage.get(locator).equals((time * ((spaceX * 100) + spaceY))));
 				}
 			}
 		}
 
 	}
-
 
 	@Test
 	public void singlevalued() {
@@ -85,8 +81,7 @@ public class StorageTests {
 		for (int time = 0; time < 10; time++) {
 			for (int spaceX = 0; spaceX < 10; spaceX++) {
 				for (int spaceY = 0; spaceY < 10; spaceY++) {
-					GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-							geometry);
+					Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 					int value = 200;
 					storage.put(value, locator);
 				}
@@ -96,8 +91,7 @@ public class StorageTests {
 		for (int time = 0; time < 10; time++) {
 			for (int spaceX = 0; spaceX < 10; spaceX++) {
 				for (int spaceY = 0; spaceY < 10; spaceY++) {
-					GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-							geometry);
+					Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 					int value = storage.get(locator);
 					assert (value == 200);
 				}
@@ -134,8 +128,7 @@ public class StorageTests {
 			for (int spaceX = 0; spaceX < 10; spaceX++) {
 				System.out.print(spaceX == 0 ? "\nT" + time + ": " : "\n    ");
 				for (int spaceY = 0; spaceY < 10; spaceY++) {
-					GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-							geometry);
+					Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 					int value = time < 9 ? source[spaceX][spaceY] : source[spaceX][spaceY] - 25;
 					// first slice should be all 0s, then predictable values
 					storage.put(value, locator);
@@ -150,8 +143,7 @@ public class StorageTests {
 			for (int spaceX = 0; spaceX < 10; spaceX++) {
 				System.out.print(spaceX == 0 ? "\nT" + time + ": " : "\n    ");
 				for (int spaceY = 0; spaceY < 10; spaceY++) {
-					GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-							geometry);
+					Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 					int value = storage.get(locator);
 					System.out.print(String.format("%04d", value) + " ");
 				}
@@ -163,8 +155,7 @@ public class StorageTests {
 		for (int time = 0; time < 10; time++) {
 			for (int spaceX = 0; spaceX < 10; spaceX++) {
 				for (int spaceY = 0; spaceY < 10; spaceY++) {
-					GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-							geometry);
+					Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 					int value = time < 9 ? source[spaceX][spaceY] : source[spaceX][spaceY] - 25;
 					assert (storage.get(locator).equals(value));
 				}
@@ -187,8 +178,7 @@ public class StorageTests {
 				for (int spaceX = 0; spaceX < 10; spaceX++) {
 					System.out.print(spaceX == 0 ? "\nT" + time + ": " : "\n    ");
 					for (int spaceY = 0; spaceY < 10; spaceY++) {
-						GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-								geometry);
+						Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 						int value = time * ((spaceX * 100) + spaceY);
 						// first slice should be all 0s, then predictable values
 						storage.put(value, locator);
@@ -203,8 +193,7 @@ public class StorageTests {
 				for (int spaceX = 0; spaceX < 10; spaceX++) {
 					System.out.print(spaceX == 0 ? "\nT" + time + ": " : "\n    ");
 					for (int spaceY = 0; spaceY < 10; spaceY++) {
-						GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-								geometry);
+						Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 						int value = storage.get(locator);
 						System.out.print(String.format("%04d", value) + " ");
 					}
@@ -216,8 +205,7 @@ public class StorageTests {
 			for (int time = 0; time < 10; time++) {
 				for (int spaceX = 0; spaceX < 10; spaceX++) {
 					for (int spaceY = 0; spaceY < 10; spaceY++) {
-						GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-								geometry);
+						Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 						assert (storage.get(locator).equals((time * ((spaceX * 100) + spaceY))));
 					}
 				}
@@ -237,8 +225,7 @@ public class StorageTests {
 			for (int time = 0; time < 10; time++) {
 				for (int spaceX = 0; spaceX < 10; spaceX++) {
 					for (int spaceY = 0; spaceY < 10; spaceY++) {
-						GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-								geometry);
+						Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 						int value = 200;
 						storage.put(value, locator);
 					}
@@ -248,8 +235,7 @@ public class StorageTests {
 			for (int time = 0; time < 10; time++) {
 				for (int spaceX = 0; spaceX < 10; spaceX++) {
 					for (int spaceY = 0; spaceY < 10; spaceY++) {
-						GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-								geometry);
+						Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 						int value = storage.get(locator);
 						assert (value == 200);
 					}
@@ -288,8 +274,7 @@ public class StorageTests {
 				for (int spaceX = 0; spaceX < 10; spaceX++) {
 					System.out.print(spaceX == 0 ? "\nT" + time + ": " : "\n    ");
 					for (int spaceY = 0; spaceY < 10; spaceY++) {
-						GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-								geometry);
+						Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 						int value = time < 9 ? source[spaceX][spaceY] : source[spaceX][spaceY] - 25;
 						// first slice should be all 0s, then predictable values
 						storage.put(value, locator);
@@ -304,8 +289,7 @@ public class StorageTests {
 				for (int spaceX = 0; spaceX < 10; spaceX++) {
 					System.out.print(spaceX == 0 ? "\nT" + time + ": " : "\n    ");
 					for (int spaceY = 0; spaceY < 10; spaceY++) {
-						GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-								geometry);
+						Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 						int value = storage.get(locator);
 						System.out.print(String.format("%04d", value) + " ");
 					}
@@ -317,8 +301,7 @@ public class StorageTests {
 			for (int time = 0; time < 10; time++) {
 				for (int spaceX = 0; spaceX < 10; spaceX++) {
 					for (int spaceY = 0; spaceY < 10; spaceY++) {
-						GeometryLocator locator = GeometryLocator.create(time + ",(" + spaceX + "," + spaceY + ")",
-								geometry);
+						Offset locator = Offset.create(time + ",(" + spaceX + "," + spaceY + ")", geometry);
 						int value = time < 9 ? source[spaceX][spaceY] : source[spaceX][spaceY] - 25;
 						assert (storage.get(locator).equals(value));
 					}

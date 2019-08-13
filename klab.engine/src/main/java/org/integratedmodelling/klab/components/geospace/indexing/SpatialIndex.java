@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -36,7 +35,7 @@ public class SpatialIndex implements ISpatialIndex {
 	Map<String, IDirectObservation> id2obs = new HashMap<>();
 	ISpace extent;
 	int nextId = 1;
-	
+
 	final static private int MAX_FEATURES_TO_COMPARE = 20;
 
 	// scale to convert distance into meters
@@ -78,9 +77,10 @@ public class SpatialIndex implements ISpatialIndex {
 
 	@Override
 	public double distanceToNearestObjectFrom(ILocator locator, IUnit unit) {
-		ISpaceLocator sloc = locator.as(ISpaceLocator.class);
+		ISpace sloc = locator.as(ISpace.class);
 		if (sloc != null) {
-			double[] xy = new double[] { sloc.getXCoordinate(), sloc.getYCoordinate() };
+			double[] xy = new double[] { sloc.getEnvelope().standard().getCenterCoordinates()[0],
+					sloc.getEnvelope().standard().getCenterCoordinates()[1] };
 			// check out the 20 closest features by bounding box
 			FeatureFinder finder = new FeatureFinder(xy, MAX_FEATURES_TO_COMPARE);
 			List<Integer> ids = finder.find();

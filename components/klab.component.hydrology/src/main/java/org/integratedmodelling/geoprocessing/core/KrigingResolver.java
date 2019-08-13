@@ -148,7 +148,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 				continue;
 			}
 
-			double v = svalue.get(((IObservation) feature).getScale().getLocator(0), Double.class);
+			double v = svalue.get(((IObservation) feature).getScale().at(0), Double.class);
 			double z = 0.0;
 			if (elevation != null) {
 				z = elevation.get(shape, Double.class);

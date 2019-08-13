@@ -26,7 +26,6 @@ import org.integratedmodelling.ml.context.WekaInstances;
 import weka.core.Instance;
 import weka.core.SerializationHelper;
 import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 
 public class WekaEncoder implements IResourceEncoder {
 
@@ -134,17 +133,16 @@ public class WekaEncoder implements IResourceEncoder {
 		/*
 		 * proceed to inference
 		 */
-		for (long offset = 0; offset < context.getScale().size(); offset++) {
-			ILocator locator = context.getScale().getLocator(offset);
+		for (ILocator locator : context.getScale()) {
 			Instance instance = instances.getInstance(locator);
 			if (instance != null) {
-				setValue(offset, classifier.predict(instance, context.getMonitor()), builder, resource,
+				setValue(locator, classifier.predict(instance, context.getMonitor()), builder, resource,
 						/* ACHTUNG probably wrong - should serialize the data key? */predictedState.getDataKey());
 			}
 		}
 	}
 
-	private void setValue(long offset, Object prediction, Builder target, IResource resource, IDataKey dataKey) {
+	private void setValue(ILocator locator, Object prediction, Builder target, IResource resource, IDataKey dataKey) {
 
 		if (prediction instanceof double[]) {
 
@@ -154,14 +152,14 @@ public class WekaEncoder implements IResourceEncoder {
 					instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
 
 			if (resource.getType() == IArtifact.Type.NUMBER) {
-				target.add(distribution.getNumericalMean(), offset);
+				target.add(distribution.getNumericalMean(), locator);
 			} else {
 				// find the most likely class
 				int val = NumberUtils.indexOfLargest((double[]) prediction);
 				if (resource.getType() == IArtifact.Type.BOOLEAN) {
-					target.add(val == 0 ? Boolean.FALSE : Boolean.TRUE, offset);
+					target.add(val == 0 ? Boolean.FALSE : Boolean.TRUE, locator);
 				} else if (resource.getType() == IArtifact.Type.CONCEPT) {
-					target.add(dataKey.lookup(val), offset);
+					target.add(dataKey.lookup(val), locator);
 				}
 			}
 
@@ -174,11 +172,11 @@ public class WekaEncoder implements IResourceEncoder {
 
 		} else {
 			if (resource.getType() == IArtifact.Type.NUMBER) {
-				target.add(prediction, offset);
+				target.add(prediction, locator);
 			} else if (resource.getType() == IArtifact.Type.BOOLEAN) {
-				target.add(((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE, offset);
+				target.add(((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE, locator);
 			} else if (resource.getType() == IArtifact.Type.CONCEPT) {
-				target.add(dataKey.lookup(((Number) prediction).intValue()), offset);
+				target.add(dataKey.lookup(((Number) prediction).intValue()), locator);
 			}
 
 		}

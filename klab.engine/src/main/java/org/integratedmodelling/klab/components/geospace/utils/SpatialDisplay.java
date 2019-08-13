@@ -56,6 +56,7 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -207,7 +208,7 @@ public class SpatialDisplay {
 		 * if (space instanceof Space && ((Space)space).getGrid().isPresent()) {
 		 * add(((Space)space).getGrid().get(), layer); } else
 		 */ if (space instanceof Space && ((Space) space).getTessellation() != null) {
-			for (IExtent shape : ((Space) space).getTessellation()) {
+			for (ILocator shape : ((Space) space).getTessellation()) {
 				add((IShape) shape, layer);
 			}
 		} else {

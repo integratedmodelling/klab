@@ -120,7 +120,7 @@ public interface IDataArtifact extends IArtifact {
      * @throws IllegalArgumentException if the type can't fit the data or the geometry is not 
      *         covered by the original geometry.
      */
-    <T> T aggregate(IGeometry geometry, Class<? extends T> cls);
+    <T> T aggregate(ILocator geometry, Class<? extends T> cls);
 
 
 }

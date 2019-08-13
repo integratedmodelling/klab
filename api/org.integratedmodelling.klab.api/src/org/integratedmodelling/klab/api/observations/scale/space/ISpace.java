@@ -56,15 +56,6 @@ public interface ISpace extends IExtent {
 	IShape getShape();
 
 	/**
-	 * {@inheritDoc}
-	 *
-	 * The space implementation of {@link ILocator#at(ILocator)} always return a
-	 * time and can only use another space as locator.
-	 */
-	@Override
-	ISpace at(ILocator locator);
-
-	/**
 	 * Build a lat/lon descriptor for the extent we represent. This shouldn't really
 	 * be API.
 	 * 
@@ -122,5 +113,6 @@ public interface ISpace extends IExtent {
 	 * @return the distance
 	 */
     double getStandardizedDistance(ISpace extent);
+    
 
 }

@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -10,6 +9,7 @@ import java.util.function.Consumer;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -405,21 +404,21 @@ public class Grid extends Area implements IGrid {
 			return null;
 		}
 
-		@Override
-		public long[] getDimensionOffsets(long linearOffset) {
-			if (linearOffset != 0) {
-				throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
-			}
-			return new long[] { 0 };
-		}
-
-		@Override
-		public long getOffset(long[] dimOffsets) {
-			if (dimOffsets.length != 1 && dimOffsets[0] != 0) {
-				throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
-			}
-			return 0;
-		}
+//		@Override
+//		public long[] getDimensionOffsets(long linearOffset) {
+//			if (linearOffset != 0) {
+//				throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
+//			}
+//			return new long[] { 0 };
+//		}
+//
+//		@Override
+//		public long getOffset(long[] dimOffsets) {
+//			if (dimOffsets.length != 1 && dimOffsets[0] != 0) {
+//				throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
+//			}
+//			return 0;
+//		}
 
 		@Override
 		public double getWest() {
@@ -503,10 +502,10 @@ public class Grid extends Area implements IGrid {
 			return projection;
 		}
 
-		@Override
-		public ISpace at(ILocator locator) {
-			return getShape().at(locator);
-		}
+//		@Override
+//		public ISpace at(ILocator locator) {
+//			return getShape().at(locator);
+//		}
 
 		@Override
 		public int getScaleRank() {
@@ -553,10 +552,10 @@ public class Grid extends Area implements IGrid {
 			return getShape().getStandardizedGeometry().getArea();
 		}
 
-		@Override
-		public Iterator<IExtent> iterator() {
-			return Collections.singleton((IExtent) this).iterator();
-		}
+//		@Override
+//		public Iterator<ILocator> iterator() {
+//			return Collections.singleton((IExtent) this).iterator();
+//		}
 
 		@Override
 		public Type getType() {
@@ -578,13 +577,13 @@ public class Grid extends Area implements IGrid {
 			return new long[] { 1, 1 };
 		}
 
-		@Override
-		public long getOffset(ILocator index) {
-			if (index instanceof CellImpl && this.equals(index)) {
-				return 0;
-			}
-			throw new IllegalArgumentException("cannot use " + index + " as a cell locator");
-		}
+//		@Override
+//		public long getOffset(ILocator index) {
+//			if (index instanceof CellImpl && this.equals(index)) {
+//				return 0;
+//			}
+//			throw new IllegalArgumentException("cannot use " + index + " as a cell locator");
+//		}
 
 		@Override
 		public IExtent getExtent() {
@@ -633,17 +632,13 @@ public class Grid extends Area implements IGrid {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T> T as(Class<T> cls) {
-			if (Long.class.isAssignableFrom(cls)) {
-				return (T) Long.valueOf(getOffsetInGrid());
-			} else if (Long[].class.isAssignableFrom(cls)) {
-				return (T) new Long[] { getOffsetInGrid() };
-			} else if (ISpaceLocator.class.isAssignableFrom(cls)) {
-				SpaceLocator ret = new SpaceLocator(getX(), getY(), getOffsetInGrid());
-				ret.setWorldCoordinates(getEast() + (getEast() - getWest()) / 2.,
-						getSouth() + (getNorth() - getSouth()) / 2.);
-				return (T) ret;
-			}
+		public <T extends ILocator> T as(Class<T> cls) {
+//			if (ISpaceLocator.class.isAssignableFrom(cls)) {
+//				SpaceLocator ret = new SpaceLocator(getX(), getY(), getOffsetInGrid());
+//				ret.setWorldCoordinates(getEast() + (getEast() - getWest()) / 2.,
+//						getSouth() + (getNorth() - getSouth()) / 2.);
+//				return (T) ret;
+//			}
 			return null;
 		}
 
@@ -706,6 +701,23 @@ public class Grid extends Area implements IGrid {
 		@Override
 		public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
 			return new Pair<>(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS);
+		}
+
+		@Override
+		public IGeometry getGeometry() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Iterator<ILocator> iterator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getOffset(long... offsets) {
+			return 0;
 		}
 	}
 

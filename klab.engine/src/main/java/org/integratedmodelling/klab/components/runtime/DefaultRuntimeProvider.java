@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
@@ -233,7 +234,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public IDataArtifact distributeComputation(IStateResolver resolver, IState data, IContextualizationScope context,
-			IScale scale) throws KlabException {
+			ILocator scale) throws KlabException {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
 		IArtifact self = context.get("self", IArtifact.class);
@@ -248,12 +249,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				}
 			});
 		} else {
-			for (IScale state : scale) {
+			for (ILocator state : scale) {
 				if (context.getMonitor().isInterrupted()) {
 					break;
 				}
 				data.set(state, resolver.resolve(data.getObservable(),
-						variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
+						variables.isEmpty() ? ctx : localizeContext(ctx, (IScale)state, self, variables)));
 			}
 		}
 		return data;

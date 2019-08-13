@@ -31,7 +31,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.utils.InstanceIdentifier;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
@@ -111,22 +110,11 @@ public class Scale implements IScale {
 	protected ISpace space = null;
 	protected MultidimensionalCursor cursor;
 
-	// this is copied to transitions so that we can quickly assess if two
-	// transitions
-	// come from the same scale.
-	protected InstanceIdentifier identifier = new InstanceIdentifier();
+//	protected InstanceIdentifier identifier = new InstanceIdentifier();
 
 	/*
-	 * Next four are to support subscales built as views of another
+	 * Next are to support subscales built as views of another
 	 */
-	// originalCursor != null means we derive from a previous scale and are
-	// representing
-	// one slice of it...
-	private MultidimensionalCursor originalCursor = null;
-	// ... identified by this offset...
-	private long sliceOffset = -1;
-	// ... along this dimension
-	private int sliceDimension = -1;
 	// the originating scale. If size() == 1, we can locate directly in it using the
 	// offset below.
 	private Scale originalScale = null;
@@ -153,18 +141,6 @@ public class Scale implements IScale {
 		sort();
 	}
 
-	private Scale(IExtent[] topologies, MultidimensionalCursor cursor, int sliceExtentIndex, long sliceExtentOffset)
-			throws KlabException {
-
-		originalCursor = cursor;
-		sliceDimension = sliceExtentIndex;
-		sliceOffset = sliceExtentOffset;
-
-		for (IExtent e : topologies) {
-			mergeExtent(e);
-		}
-	}
-
 	/**
 	 * 1-sized scale localized to the position passed in the parent scale, and
 	 * needing no sort. Used as the return value of a scale iterator going through
@@ -188,8 +164,8 @@ public class Scale implements IScale {
 	public void setLocatorsTo(long offset) {
 
 		this.originalScaleOffset = offset;
-		this.locatedOffsets= this.originalScale.cursor.getElementIndexes(offset);
-		
+		this.locatedOffsets = this.originalScale.cursor.getElementIndexes(offset);
+
 		for (int i = 0; i < this.originalScale.extents.size(); i++) {
 			IExtent ext = this.originalScale.extents.get(i) instanceof Extent
 					? ((Extent) this.originalScale.extents.get(i)).getExtent(this.locatedOffsets[i])
@@ -200,49 +176,6 @@ public class Scale implements IScale {
 			} else if (ext instanceof ITime) {
 				this.time = (ITime) ext;
 			}
-		}
-	}
-
-	/**
-	 * Scale localizing one dimension to the position passed. If this determines a
-	 * 1-sized scale, quickly set parent scale and offset in super so this can be
-	 * used as a quick locator in it.
-	 * 
-	 * @param scale
-	 * @param dimension
-	 * @param offsets
-	 */
-	public Scale(Scale scale, Dimension.Type dimension, long... offsets) {
-
-		// if only the passed dimension has size > 1, just set the offset and leave
-		boolean simple = true;
-		long[] pos = scale.cursor.getExtents();
-		long expos = 0;
-		int i = 0;
-		for (IExtent extent : scale.extents) {
-			if (extent.getType() != dimension && extent.size() > 1) {
-				simple = false;
-			}
-			pos[i++] = extent.getType() == dimension ? (expos = ((AbstractExtent) extent).getOffset(offsets))
-					: extent.size();
-		}
-
-		for (IExtent extent : scale.extents) {
-			if (extent.getType() == dimension) {
-				extents.add(((Extent) extent).getExtent(expos));
-			} else {
-				extents.add(extent);
-			}
-			if (extent.getType() == Dimension.Type.SPACE) {
-				space = (ISpace) extents.get(extents.size() - 1);
-			} else if (extent.getType() == Dimension.Type.TIME) {
-				time = (ITime) extents.get(extents.size() - 1);
-			}
-		}
-
-		if (simple) {
-			this.originalScaleOffset = expos;
-			this.originalScale = scale;
 		}
 	}
 
@@ -347,103 +280,7 @@ public class Scale implements IScale {
 		return ret;
 	}
 
-	// /**
-	// * Get an index to loop over one dimension (set as -1) given fixed position
-	// for all others, only
-	// * considering the sliceIndex-th part of the field from a total number of
-	// slices = sliceNumber.
-	// * Used for parallelization of loops.
-	// *
-	// * @param sliceIndex
-	// * @param sliceNumber
-	// * @param locators
-	// *
-	// * @return an iterator as requested
-	// */
-	// public final ICursor getCursor(int sliceIndex, int sliceNumber, Locator...
-	// locators) {
-	//
-	// int variableDimension = -1;
-	// long[] exts = new long[getExtentCount()];
-	// Arrays.fill(exts, Extent.GENERIC_LOCATOR);
-	// int i = 0;
-	// for (IExtent e : extents) {
-	// for (Locator o : locators) {
-	// long n = ((Extent) e).locate(o);
-	// if (n != Extent.INAPPROPRIATE_LOCATOR) {
-	// exts[i] = n;
-	// break;
-	// }
-	// }
-	// i++;
-	// }
-	//
-	// /*
-	// *
-	// */
-	// int nm = 0;
-	// for (i = 0; i < exts.length; i++) {
-	// if (exts[i] == Extent.GENERIC_LOCATOR) {
-	// nm++;
-	// variableDimension = i;
-	// }
-	// }
-	//
-	// if (nm > 1) {
-	// throw new KlabRuntimeException("cannot iterate a scale along more than one
-	// dimensions");
-	// }
-	//
-	// return new Cursor(extents,
-	// cursor.getDimensionScanner(variableDimension, exts, sliceIndex, sliceNumber),
-	// cursor,
-	// variableDimension);
-	// }
-
-	// @Override
-	// public final ICursor getCursor(Locator... locators) {
-	//
-	// int variableDimension = -1;
-	// long[] exts = new long[getExtentCount()];
-	// Arrays.fill(exts, Extent.GENERIC_LOCATOR);
-	// int i = 0;
-	// for (IExtent e : extents) {
-	// for (Locator o : locators) {
-	// long n = ((Extent) e).locate(o);
-	// if (n != Extent.INAPPROPRIATE_LOCATOR) {
-	// exts[i] = n;
-	// break;
-	// }
-	// }
-	// i++;
-	// }
-	//
-	// /*
-	// *
-	// */
-	// int nm = 0;
-	// for (i = 0; i < exts.length; i++) {
-	// if (exts[i] == Extent.GENERIC_LOCATOR) {
-	// nm++;
-	// variableDimension = i;
-	// }
-	// }
-	//
-	// if (nm == 0) {
-	// return new Cursor(cursor.getElementOffset(exts));
-	// }
-	//
-	// if (nm > 1) {
-	// throw new KlabRuntimeException("cannot iterate a scale along more than one
-	// dimensions");
-	// }
-	//
-	// return new Cursor(extents, cursor.getDimensionScanner(variableDimension,
-	// exts), cursor,
-	// variableDimension);
-	// }
-
-	private class ScaleIterator implements Iterator<IScale> {
+	private class ScaleIterator implements Iterator<ILocator> {
 
 		long offset = 0;
 
@@ -535,8 +372,7 @@ public class Scale implements IScale {
 		}
 
 		// better safe than sorry. Only time can be infinite so this should be pretty
-		// safe
-		// as long as the comparator above works.
+		// safe and not at all sorry, as long as the comparator above works.
 		if (isInfiniteTime && extents.get(0).size() != Geometry.INFINITE_SIZE) {
 			throw new KlabInternalErrorException("internal error: infinite dimension is not the first in scale");
 		}
@@ -684,38 +520,6 @@ public class Scale implements IScale {
 		sort();
 	}
 
-	/**
-	 * Return a collection of scales with multiplicity 1, one per each combination
-	 * of the extent states we represent.
-	 *
-	 * @return disaggregated scales
-	 * @throws KlabException
-	 */
-	public Collection<IScale> disaggregate() throws KlabException {
-
-		ArrayList<IScale> ret = new ArrayList<>();
-
-		long[] dims = new long[extents.size()];
-		for (int i = 0; i < dims.length; i++) {
-			dims[i] = extents.get(i).size();
-		}
-
-		MultidimensionalCursor cursor = new MultidimensionalCursor();
-		cursor.defineDimensions(dims);
-
-		for (int i = 0; i < cursor.getMultiplicity(); i++) {
-			IExtent[] exts = new IExtent[dims.length];
-			long[] idx = cursor.getElementIndexes(i);
-			for (int j = 0; j < exts.length; j++) {
-				exts[j] = ((Extent) extents.get(j)).getExtent(idx[j]);
-			}
-			ret.add(create(exts));
-		}
-
-		return ret;
-
-	}
-
 	/*
 	 * quick access to "current" T state index for given offset - not in the API for
 	 * now.
@@ -778,30 +582,6 @@ public class Scale implements IScale {
 		return extents;
 	}
 
-	/**
-	 * Return the proportion of coverage of the extent that is covered the least by
-	 * the corresponding extent in the passed scale.
-	 *
-	 * @param context
-	 * @return coverage
-	 */
-	public double getCoverage(IScale context) {
-		// TODO Auto-generated method stub
-		return 1.0;
-	}
-
-	/**
-	 * Return the proportion of coverage that the passed scale would add to the
-	 * coverage of our own extents.
-	 *
-	 * @param mcov
-	 * @return additional coverage
-	 */
-	public double getAdditionalCoverage(Scale mcov) {
-		// TODO Auto-generated method stub
-		return 1.0;
-	}
-
 	@Override
 	public Scale merge(ITopologicallyComparable<?> coverage, LogicalConnector how) {
 
@@ -860,70 +640,6 @@ public class Scale implements IScale {
 		return false;
 	}
 
-	/**
-	 * Take in another scale and complete what's left of our specs by merging in its
-	 * details. E.g., we're a bounding box, we get a grid resolution without extent,
-	 * and we become a grid in that bounding box. Will only be called during
-	 * resolution, so the queries should have selected compatible scales, but throw
-	 * an exception if anything is not compatible.
-	 * 
-	 * @param scale
-	 * @return harmonized scale
-	 * @throws KlabException
-	 */
-	public IScale harmonize(IScale scale) throws KlabException {
-		// TODO Auto-generated method stub
-		return scale;
-	}
-
-	/**
-	 * Get a scale that has either a 1-dimensional extent for the passed concept or
-	 * doesn't have the extent at all (if offset < 0). Ensure this scale remembers
-	 * its offset and previous multiplicity along the extent's dimension so that it
-	 * will respond properly to getOffset() below.
-	 * 
-	 * TODO Possible improvement: allow passing an IExtent instead of an int, to
-	 * accommodate variable scales and ease the use of the API in some
-	 * circumstances. That will require a getExtentOffset(IExtent) method.
-	 * 
-	 * @param extent
-	 * @param offset
-	 * @return the subscale
-	 */
-	public IScale getSubscale(Dimension.Type extent, long offset) {
-
-		int oridx = -1;
-		ArrayList<IExtent> exts = new ArrayList<>();
-		for (int i = 0; i < extents.size(); i++) {
-			if (extents.get(i).getType().equals(extent)) {
-				oridx = i;
-				continue;
-			}
-			exts.add(extents.get(i));
-		}
-
-		if (oridx < 0) {
-			return this;
-		}
-
-		return new Scale(exts.toArray(new IExtent[exts.size()]), cursor, oridx, offset);
-	}
-
-	public long getOriginalOffset(long subscaleOffset) {
-
-		if (originalCursor == null) {
-			return subscaleOffset;
-		}
-
-		long[] slcofs = cursor.getElementIndexes(subscaleOffset);
-		long[] orgofs = new long[originalCursor.getDimensionsCount()];
-		int on = 0;
-		for (int i = 0; i < orgofs.length; i++) {
-			orgofs[i] = i == sliceDimension ? sliceOffset : slcofs[on++];
-		}
-		return originalCursor.getElementOffset(orgofs);
-	}
-
 	public static IScale substituteExtent(IScale scale, IExtent extent) throws KlabException {
 
 		List<IExtent> exts = new ArrayList<>();
@@ -974,7 +690,7 @@ public class Scale implements IScale {
 	}
 
 	@Override
-	public Iterator<IScale> iterator() {
+	public Iterator<ILocator> iterator() {
 		return new ScaleIterator();
 	}
 
@@ -1002,43 +718,44 @@ public class Scale implements IScale {
 	}
 
 	@Override
-	public IScale at(ILocator locator) {
-		if (locator.equals(ITime.INITIALIZATION)) {
-			if (getTime() == null || getTime().isGeneric()) {
-				// I want you just the way you are. If generic, it should already be compatible
-				// by design.
-				return this;
-			} else {
-				// relocate to non-generic time 0
-				return substituteExtent(this, ((Time)getTime()).getExtent(0));
-			}
-		} else if (locator instanceof IExtent) {
-			if (((AbstractExtent) locator).isOwnExtent(this)) {
-				// guarantees no mediation needed
-			} else {
-				// if we don't have this extent, illegal arg (or just return this?)
-				// mediation may be needed
-			}
-		} else if (locator instanceof IScale) {
-			if (((Scale) locator).getScaleId().equals(getScaleId())) {
-				return this;
-			}
-			if (((Scale) locator).hasSameExtents(this)) {
-				List<IExtent> exts = new ArrayList<>();
-				for (int i = 0; i < extents.size(); i++) {
-					IExtent ours = extents.get(i);
-					IExtent hers = ((Scale) locator).extents.get(i);
-					if (!ours.contains(hers)) {
-						return null;
-					}
-					exts.add(hers);
-				}
-				return new Scale(exts);
-			}
-			// all-around mediation possible
-		} else {
-			throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");
-		}
+	public IScale at(Object... locators) {
+
+//		if (locator.equals(ITime.INITIALIZATION)) {
+//			if (getTime() == null || getTime().isGeneric()) {
+//				// I want you just the way you are. If generic, it should already be compatible
+//				// by design.
+//				return this;
+//			} else {
+//				// relocate to non-generic time 0
+//				return substituteExtent(this, ((Time)getTime()).getExtent(0));
+//			}
+//		} else if (locator instanceof IExtent) {
+//			if (((AbstractExtent) locator).isOwnExtent(this)) {
+//				// guarantees no mediation needed
+//			} else {
+//				// if we don't have this extent, illegal arg (or just return this?)
+//				// mediation may be needed
+//			}
+//		} else if (locator instanceof IScale) {
+//			if (((Scale) locator).getScaleId().equals(getScaleId())) {
+//				return this;
+//			}
+//			if (((Scale) locator).hasSameExtents(this)) {
+//				List<IExtent> exts = new ArrayList<>();
+//				for (int i = 0; i < extents.size(); i++) {
+//					IExtent ours = extents.get(i);
+//					IExtent hers = ((Scale) locator).extents.get(i);
+//					if (!ours.contains(hers)) {
+//						return null;
+//					}
+//					exts.add(hers);
+//				}
+//				return new Scale(exts);
+//			}
+//			// all-around mediation possible
+//		} else {
+//			throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");
+//		}
 		return null;
 	}
 
@@ -1073,7 +790,7 @@ public class Scale implements IScale {
 			int i = 0;
 			for (IExtent extent : extents) {
 				IExtent other = ((Scale) index).getDimension(extent.getType());
-				offsets[i++] = other == null ? 0 : extent.getOffset(other);
+//				offsets[i++] = other == null ? 0 : extent.getOffset(other);
 			}
 
 			return cursor.getElementOffset(offsets);
@@ -1090,7 +807,7 @@ public class Scale implements IScale {
 			IExtent mext = getOnlyMultipleExtent(((IExtent) index).getType());
 			if (mext != null) {
 				// offset is the extent's offset in its extent
-				return mext.getOffset(index);
+//				return mext.getOffset(index);
 			}
 
 			/*
@@ -1123,11 +840,6 @@ public class Scale implements IScale {
 	}
 
 	@Override
-	public IScale at(Dimension.Type dimension, long... offsets) {
-		return new Scale(Scale.this, dimension, offsets);
-	}
-
-	@Override
 	public IExtent getDimension(Type type) {
 
 		Dimension dimension = asGeometry().getDimension(type);
@@ -1141,12 +853,6 @@ public class Scale implements IScale {
 				return extent;
 			}
 		}
-		return null;
-	}
-
-	@Override
-	public Iterable<ILocator> over(Type dimension) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -1191,20 +897,6 @@ public class Scale implements IScale {
 		return this.geometry;
 	}
 
-//	@Override
-//	public ILocator getLocator(long offset) {
-//		return asGeometry().getLocator(offset);
-//	}
-
-//	public ILocator getLocator(int... offsets) {
-//		return asGeometry().locate(offsets);
-//	}
-
-//	@Override
-//	public long getOffset(long globalOffset, Type dimension) {
-//		return asGeometry().getOffset(globalOffset, dimension);
-//	}
-
 	/**
 	 * Return a scale that has enough resolution to demonstrate an observation at
 	 * our extents, without making it too large to visualize or too small to be
@@ -1221,7 +913,7 @@ public class Scale implements IScale {
 				exts.add(Space.create(shape, (double) shape.getEnvelope().getResolutionForZoomLevel(50, 2).getFirst()));
 			} else if (extent instanceof ITime) {
 				if (extent.size() > 1) {
-					extents.add(extent.iterator().next());
+					extents.add((IExtent) extent.iterator().next());
 				} else {
 					exts.add(extent);
 				}
@@ -1234,24 +926,24 @@ public class Scale implements IScale {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T as(Class<T> cls) {
-		
-		if (Long.class.isAssignableFrom(cls)) {
-			return (T)Long.valueOf(originalScaleOffset);
-		} else if (Long[].class.isAssignableFrom(cls)) {
-			Long[] ret = new Long[extents.size()];
-			int i = 0;
-			for (IExtent e : getExtents()) {
-				if (locatedOffsets != null) {
-					ret[i] = locatedOffsets[i];
-					i++;
-				} else {
-					ret[i] = -1l;
-				}
-			}
-			return (T)ret;
-		}
-		
+	public <T extends ILocator> T as(Class<T> cls) {
+
+//		if (Long.class.isAssignableFrom(cls)) {
+//			return (T)Long.valueOf(originalScaleOffset);
+//		} else if (Long[].class.isAssignableFrom(cls)) {
+//			Long[] ret = new Long[extents.size()];
+//			int i = 0;
+//			for (IExtent e : getExtents()) {
+//				if (locatedOffsets != null) {
+//					ret[i] = locatedOffsets[i];
+//					i++;
+//				} else {
+//					ret[i] = -1l;
+//				}
+//			}
+//			return (T)ret;
+//		}
+
 		for (IExtent extent : getExtents()) {
 			T ret = extent.as(cls);
 			if (ret != null) {
@@ -1384,6 +1076,12 @@ public class Scale implements IScale {
 		}
 
 		throw new IllegalArgumentException("Scale merge() called with a non-scale parameter");
+	}
+
+	@Override
+	public IGeometry getGeometry() {
+		// TODO maybe just the original scale
+		return originalScale == null ? null : originalScale.asGeometry();
 	}
 
 }

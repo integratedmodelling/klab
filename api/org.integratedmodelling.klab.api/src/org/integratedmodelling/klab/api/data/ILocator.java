@@ -1,16 +1,23 @@
 package org.integratedmodelling.klab.api.data;
 
 /**
+ * Locators are topological subdivisions that can be used to locate and subset
+ * observations. A locator must come from a geometry and is able to produce the
+ * geometry that it locates.
+ * 
  * Any geometry or subset of it can be used as a locator. Scales and extents are
  * also locators and can produce their component locators as appropriate. They
  * can also "relocate" by producing lazy mediators that allow seeing
- * observations through different lenses.
+ * observations through different lenses. When a single extent is used as a
+ * locator, it must come from a located scale and will locate all the extents of
+ * any remaining others in the scale.
  * <p>
  * Numeric offsets are only exposed to communicate with external raw data APIs;
- * within k.LAB code , translation should happen within the implementing
- * classes, and the "conformant" cases where the locator correspond to a simple
- * offset without mediations should be detected and translated as fast as
- * possible.
+ * within k.LAB code, translation should happen within the implementing classes,
+ * and the "conformant" cases where the locator correspond to a simple offset
+ * without mediations should be detected and translated as fast as possible.
+ * When offsets are needed, the Offset locator can be used as the class in a
+ * {@link #as(Class)} request.
  * <p>
  * Locators can be parsed from a simple string parameters using the syntax
  * below:
@@ -32,7 +39,7 @@ package org.integratedmodelling.klab.api.data;
  * @author Ferd
  *
  */
-public interface ILocator {
+public interface ILocator extends Iterable<ILocator> {
 
 	/**
 	 * Use this instead of null to pass to extent functions when the entire extent
@@ -41,28 +48,22 @@ public interface ILocator {
 	public static ILocator FULL = null;
 
 	/**
-	 * Return another locator that describes the portion of the geometry located by
-	 * the passed one. According to the types of locator passed, the return value
-	 * may be a scanner for a dimension or a full geometry that is a subset of the
-	 * original.
+	 * The geometry this locates. Should never be null.
 	 * 
-	 * @param locator
-	 * @return another valid locator
-	 * @throws IllegalArgumentException if the locator is inappropriate, i.e. does
-	 *                                  not intersect the located geometry either in
-	 *                                  extent or resolution.
+	 * @return
 	 */
-	ILocator at(ILocator locator);
+	IGeometry getGeometry();
 
 	/**
-	 * Get a locator of the passed interface from this one, or null. Allows
-	 * switching between a full-scale locator to a specific extent's, or from/to an
-	 * offset-based locator to an extent-based one. The API also expects this to be
-	 * convertible to a set of numeric offset by passing Long[].class.
+	 * Adapt the locator to another with the needed API. If the parameter is the
+	 * class or the type of an extent we want to selec the returned locator may
+	 * only report location information for that extent. For example,
+	 * geometry.as(ISpace.class) will return a locator reflecting only the spatial
+	 * dimension. Such partial locators should not be used for further location.
 	 * 
 	 * @param type
 	 * @return
 	 */
-	<T> T as(Class<T> cls);
+	<T extends ILocator> T as(Class<T> cls);
 
 }

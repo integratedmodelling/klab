@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.data.adapters;
 
 import java.util.List;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -75,15 +76,14 @@ public interface IKlabData {
 		void add(Object value);
 		
 		/**
-		 * Add a value to the state being defined by this builder at the passed offset.
+		 * Add a value to the state being defined by this builder at the passed locator.
 		 * 
 		 * @param value
-		 * @param value
-		 * @param maxOffset
+		 * @param locator
 		 * @throws IllegalStateException
 		 *             if {@link #startState(String)} has not been called.
 		 */
-		void add(Object value, long offset);
+		void add(Object value, ILocator locator);
 
 		/**
 		 * Finish building a state artifact and return the original builder on which

@@ -22,6 +22,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -48,16 +49,12 @@ public interface IRuntimeProvider {
 	 * The main executor for a k.LAB dataflow. Each call returns a new Future
 	 * artifact.
 	 *
-	 * @param actuator
-	 *            a top-level actuator that has no dependencies on external ones.
-	 * @param scale
-	 *            the scale in which to compute
-	 * @param scope
-	 *            the resolution scope for the computation
-	 * @param context
-	 *            the context observation for the computation. Can be null.
-	 * @param monitor
-	 *            the monitor with the identity carrying out the computation
+	 * @param actuator a top-level actuator that has no dependencies on external
+	 *                 ones.
+	 * @param scale    the scale in which to compute
+	 * @param scope    the resolution scope for the computation
+	 * @param context  the context observation for the computation. Can be null.
+	 * @param monitor  the monitor with the identity carrying out the computation
 	 * @return a future that is computing the final artifact for the actuator.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
@@ -69,21 +66,17 @@ public interface IRuntimeProvider {
 	 * subject. The context will also create the subject itself according to the
 	 * runtime's expectations.
 	 *
-	 * @param actuator
-	 *            a
-	 *            {@link org.integratedmodelling.klab.api.runtime.dataflow.IActuator}
-	 *            object.
-	 * @param scope
-	 *            a
-	 *            {@link org.integratedmodelling.klab.api.resolution.IResolutionScope}
-	 *            object.
-	 * @param scale
-	 *            the scale for the contextualization (must be compatible with
-	 *            scope.getScale() but can be different)
-	 * @param monitor
-	 *            a
-	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
-	 *            object.
+	 * @param actuator a
+	 *                 {@link org.integratedmodelling.klab.api.runtime.dataflow.IActuator}
+	 *                 object.
+	 * @param scope    a
+	 *                 {@link org.integratedmodelling.klab.api.resolution.IResolutionScope}
+	 *                 object.
+	 * @param scale    the scale for the contextualization (must be compatible with
+	 *                 scope.getScale() but can be different)
+	 * @param monitor  a
+	 *                 {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *                 object.
 	 * @return a new runtime context.
 	 */
 	IContextualizationScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
@@ -93,11 +86,9 @@ public interface IRuntimeProvider {
 	 * Get a service call that, once executed, will turn the passed specification
 	 * for a resource into a suitable contextualizer that runs on this runtime.
 	 *
-	 * @param resource
-	 *            a {@link org.integratedmodelling.kim.api.IComputableResource}
-	 *            object.
-	 * @param actuator
-	 *            the actuator providing the context for the computation.
+	 * @param resource a {@link org.integratedmodelling.kim.api.IComputableResource}
+	 *                 object.
+	 * @param actuator the actuator providing the context for the computation.
 	 * 
 	 * @return the service call encoding the resource
 	 */
@@ -107,22 +98,18 @@ public interface IRuntimeProvider {
 	 * Distribute the computation of the passed state resolver over the passed
 	 * scale.
 	 *
-	 * @param resolver
-	 *            the state contextualizer, which will be called as many times as
-	 *            scale.size().
-	 * @param data
-	 *            the data being computed (receiver of results). According to the
-	 *            context of computation it may or may not contain initialized
-	 *            values.
-	 * @param context
-	 *            the context before distribution - i.e., all states in it will be
-	 *            whole states and need to be contextualized to each extent before
-	 *            computation happens (the resolver expects individual values at
-	 *            each call). The current version of the target artifact will be set
-	 *            in it as 'self' if it exists.
-	 * @param scale
-	 *            the scale, already set to the geometry needed for this computation
-	 *            so that all of its states are computed.
+	 * @param resolver the state contextualizer, which will be called as many times
+	 *                 as scale.size().
+	 * @param data     the data being computed (receiver of results). According to
+	 *                 the context of computation it may or may not contain
+	 *                 initialized values.
+	 * @param context  the context before distribution - i.e., all states in it will
+	 *                 be whole states and need to be contextualized to each extent
+	 *                 before computation happens (the resolver expects individual
+	 *                 values at each call). The current version of the target
+	 *                 artifact will be set in it as 'self' if it exists.
+	 * @param scale    the scale, already set to the geometry needed for this
+	 *                 computation so that all of its states are computed.
 	 * 
 	 * @return the computed result - return the same object passed as data whenever
 	 *         possible. If a different one is collected, the original one will be
@@ -130,8 +117,8 @@ public interface IRuntimeProvider {
 	 * 
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	IDataArtifact distributeComputation(IStateResolver resolver, IState data, IContextualizationScope context, IScale scale)
-			throws KlabException;
+	IDataArtifact distributeComputation(IStateResolver resolver, IState data, IContextualizationScope context,
+			ILocator locator) throws KlabException;
 
 	/**
 	 * The "empty" observation must contain the observable and the scale. It is
@@ -142,11 +129,10 @@ public interface IRuntimeProvider {
 	 * {@link org.integratedmodelling.klab.api.provenance.IArtifact#isEmpty()}
 	 * method must return true and it must produce no artifacts when iterated.
 	 *
-	 * @param observable
-	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
-	 *            object.
-	 * @param context
-	 *            context for the observation, which must be correct.
+	 * @param observable a
+	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
+	 *                   object.
+	 * @param context    context for the observation, which must be correct.
 	 * @return a {@link org.integratedmodelling.klab.api.observations.IObservation}
 	 *         object.
 	 */
@@ -175,12 +161,10 @@ public interface IRuntimeProvider {
 	 * {@link Type#PRESENCE} and {@link Type#NUMEROSITY} when the context of
 	 * computation is compatible with their resolution.
 	 * 
-	 * @param availableType
-	 *            the type of the alternative observable we have
-	 * @param resolutionMode
-	 *            the mode of the desired resolution. Always RESOLUTION this far.
-	 * @param desiredObservation
-	 *            the type of the observable we want to obtain
+	 * @param availableType      the type of the alternative observable we have
+	 * @param resolutionMode     the mode of the desired resolution. Always
+	 *                           RESOLUTION this far.
+	 * @param desiredObservation the type of the observable we want to obtain
 	 * @return null (not an empty list) if this computation cannot be done;
 	 *         otherwise the list of needed computations, possibly empty. The empty
 	 *         list will be interpreted as "no computation needed", not as "no
@@ -206,15 +190,16 @@ public interface IRuntimeProvider {
 	IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
 
 	/**
-	 * Return a computation that will apply the passed operator and operand to transform a state as requested.
+	 * Return a computation that will apply the passed operator and operand to
+	 * transform a state as requested.
 	 * 
-	 * @param classifiedObservable the quality observable 
+	 * @param classifiedObservable the quality observable
 	 * @param operator
 	 * @param operand
 	 * @return
 	 */
 	IComputableResource getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand);
-	
+
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID
 	 * after creation. FIXME this is ugly and unstable - needs a different logic and

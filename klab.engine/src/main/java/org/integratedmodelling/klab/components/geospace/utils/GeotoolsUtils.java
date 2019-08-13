@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.IndexLocator;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
@@ -148,7 +147,7 @@ public enum GeotoolsUtils {
 		for (int i = 0; i < grid.getCellCount(); i++) {
 			long[] xy = grid.getXYOffsets(i);
 			Double value = itera.getSampleDouble((int) xy[0], (int) xy[1], 0);
-			ILocator spl = geometry.getLocator(ext.getOffset(IndexLocator.create(xy)));
+			ILocator spl = geometry.at(ISpace.class, xy[0], xy[1]);
 			if (transformation != null) {
 				value = transformation.apply(value);
 			}
@@ -157,7 +156,9 @@ public enum GeotoolsUtils {
 					value = Double.NaN;
 				}
 			}
-			state.set(spl, value);
+			for (ILocator spp : spl) {
+				state.set(spp, value);
+			}
 		}
 	}
 

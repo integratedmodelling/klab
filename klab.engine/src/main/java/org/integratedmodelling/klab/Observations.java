@@ -484,7 +484,7 @@ public enum Observations implements IObservationService {
 			ret.setValueCount(observation.getScale().size());
 			if (observation.getScale().size() == 1) {
 				ret.setLiteralValue(formatValue(observation.getObservable(),
-						((IState) observation).get(observation.getScale().getLocator(0))));
+						((IState) observation).get(observation.getScale().at(0))));
 			} else if (observation.getScale().getSpace().size() > 1 && observation.getScale().getSpace().isRegular()) {
 
 				if (!summary.isDegenerate()) {
