@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.data.storage.FileMappedStorage;
+import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -15,7 +16,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 
-public class KeyedStorage<T> implements IStorage<T>, IKeyHolder {
+public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 
 	private IStorage<Integer> keyStore;
 	private BiMap<T, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
@@ -35,9 +36,9 @@ public class KeyedStorage<T> implements IStorage<T>, IKeyHolder {
 	public long put(T value, ILocator locator) {
 		Integer cValue = null;
 		if (value != null) {
-			cValue = dataKey == null ? conceptKey.size() : dataKey.reverseLookup(value.toString());
-			if (conceptKey.containsKey(value.toString())) {
-				cValue = conceptKey.get(value.toString());
+			cValue = dataKey == null ? conceptKey.size() : dataKey.reverseLookup(value);
+			if (conceptKey.containsKey(value)) {
+				cValue = conceptKey.get(value);
 			} else {
 				if (dataKey == null) {
 					cValue++;
@@ -67,6 +68,17 @@ public class KeyedStorage<T> implements IStorage<T>, IKeyHolder {
 	@Override
 	public IDataKey getDataKey() {
 		return dataKey;
+	}
+	
+	@Override
+	public Object getObject(ILocator locator) {
+		return get(locator);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public long putObject(Object value, ILocator locator) {
+		return put((T) value, locator);
 	}
 
 }

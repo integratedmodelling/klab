@@ -38,10 +38,23 @@ public class Time extends Extent implements ITime {
 	Resolution resolution;
 	long multiplicity = 1;
 
-	// if this is coming from a getExtent(long) request, this is the offset it was
-	// asked to locate
-	transient long locatedOffset = -1;
 
+	/**
+	 * The empty, non-descript initialization locator refers to the time before
+	 * time begins. 
+	 */
+	public static ILocator INITIALIZATION = new Time() {
+		
+		public int hashCode() {
+			return 234567;
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			return o == this;
+		}
+	};
+	
 	private static class ResolutionImpl implements Resolution {
 
 		private Type type;
@@ -303,14 +316,15 @@ public class Time extends Extent implements ITime {
 
 		Time ret = copy();
 
-		ret.locatedOffset = stateIndex;
 
 		ret.start = new TimeInstant(newStart);
 		ret.end = new TimeInstant(newEnd);
 		ret.extentType = ITime.Type.SPECIFIC;
 		ret.multiplicity = 1;
 		ret.resolution = resolution(ret.start, ret.end);
-
+		ret.locatedExtent = this;
+		ret.locatedOffsets = new long[] { stateIndex };
+		
 		return ret;
 	}
 
@@ -382,13 +396,8 @@ public class Time extends Extent implements ITime {
 		return "<TIME " + encode() + ">";
 	}
 
-//	@Override
-//	public long[] getDimensionOffsets(long linearOffset) {
-//		return new long[] { linearOffset };
-//	}
-
 	@Override
-	public long getOffset(long[] dimOffsets) {
+	public long getOffset(long...dimOffsets) {
 		return dimOffsets[0];
 	}
 
@@ -455,8 +464,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
+		return geometry;
 	}
 
 

@@ -81,7 +81,7 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 
 		context.getMonitor().info("computing distances over a " + ret.getGeometry().size() + "-pixel grid...");
 
-		for (ILocator locator : (IScale) ret.getGeometry()) {
+		for (ILocator locator : ret.getGeometry()) {
 			if (context.getMonitor().isInterrupted()) {
 				break;
 			}

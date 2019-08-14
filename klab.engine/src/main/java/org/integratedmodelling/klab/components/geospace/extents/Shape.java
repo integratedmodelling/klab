@@ -27,13 +27,13 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.Geospace;
-import org.integratedmodelling.klab.components.geospace.api.IGrid;
-import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToFeatures;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToGrid;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
@@ -64,11 +64,17 @@ import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
+/**
+ * TODO setup for using as locator.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public class Shape extends AbstractExtent implements IShape {
 
 	private static WKBWriter wkbWriter = new WKBWriter();
 
-	Geometry geometry;
+	Geometry shapeGeometry;
 	// the geometry in WGS84, only cached if asked for and originally not in it.
 	Geometry standardizedGeometry;
 	Envelope envelope;
@@ -89,32 +95,32 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public String toString() {
-		return projection.getSimpleSRS() + " " + geometry;
+		return projection.getSimpleSRS() + " " + shapeGeometry;
 	}
 
 	public static Shape create(String wkt) throws KlabValidationException {
 		Shape ret = new Shape();
 		ret.parseWkt(wkt);
-		if (ret.geometry != null) {
-			ret.envelope = Envelope.create(ret.geometry.getEnvelopeInternal(), ret.projection);
+		if (ret.shapeGeometry != null) {
+			ret.envelope = Envelope.create(ret.shapeGeometry.getEnvelopeInternal(), ret.projection);
 		}
 		return ret;
 	}
 
 	public static Shape create(double x1, double y1, double x2, double y2, Projection projection) {
 		Shape ret = new Shape();
-		ret.geometry = makeCell(x1, y1, x2, y2);
+		ret.shapeGeometry = makeCell(x1, y1, x2, y2);
 		ret.projection = projection;
-		ret.envelope = Envelope.create(ret.geometry.getEnvelopeInternal(), ret.projection);
+		ret.envelope = Envelope.create(ret.shapeGeometry.getEnvelopeInternal(), ret.projection);
 		ret.type = IShape.Type.POLYGON;
 		return ret;
 	}
 
 	public static Shape create(double x1, double y1, Projection projection) {
 		Shape ret = new Shape();
-		ret.geometry = makePoint(x1, y1);
+		ret.shapeGeometry = makePoint(x1, y1);
 		ret.projection = projection;
-		ret.envelope = Envelope.create(ret.geometry.getEnvelopeInternal(), ret.projection);
+		ret.envelope = Envelope.create(ret.shapeGeometry.getEnvelopeInternal(), ret.projection);
 		ret.type = IShape.Type.POINT;
 		return ret;
 	}
@@ -126,9 +132,9 @@ public class Shape extends AbstractExtent implements IShape {
 
 	public static Shape create(Geometry geometry, IProjection projection) {
 		Shape ret = new Shape();
-		ret.geometry = geometry;
+		ret.shapeGeometry = geometry;
 		ret.projection = (Projection) projection;
-		ret.envelope = Envelope.create(ret.geometry.getEnvelopeInternal(), ret.projection);
+		ret.envelope = Envelope.create(ret.shapeGeometry.getEnvelopeInternal(), ret.projection);
 		return ret;
 	}
 
@@ -175,7 +181,7 @@ public class Shape extends AbstractExtent implements IShape {
 	private Geometry getMeteredShape() {
 		if (metered == null) {
 			if (projection.isMeters()) {
-				metered = geometry;
+				metered = shapeGeometry;
 			} else {
 				metered = transform(Projection.getUTM(getEnvelope())).getJTSGeometry();
 			}
@@ -186,17 +192,17 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public IShape.Type getGeometryType() {
 		if (type == null) {
-			if (geometry instanceof Polygon) {
+			if (shapeGeometry instanceof Polygon) {
 				type = IShape.Type.POLYGON;
-			} else if (geometry instanceof MultiPolygon) {
+			} else if (shapeGeometry instanceof MultiPolygon) {
 				type = IShape.Type.MULTIPOLYGON;
-			} else if (geometry instanceof Point) {
+			} else if (shapeGeometry instanceof Point) {
 				type = IShape.Type.POINT;
-			} else if (geometry instanceof MultiLineString) {
+			} else if (shapeGeometry instanceof MultiLineString) {
 				type = IShape.Type.MULTILINESTRING;
-			} else if (geometry instanceof LineString) {
+			} else if (shapeGeometry instanceof LineString) {
 				type = IShape.Type.LINESTRING;
-			} else if (geometry instanceof MultiPoint) {
+			} else if (shapeGeometry instanceof MultiPoint) {
 				type = IShape.Type.MULTIPOINT;
 			}
 		}
@@ -204,7 +210,7 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	public double getNativeArea() {
-		return geometry.getArea();
+		return shapeGeometry.getArea();
 	}
 
 	@Override
@@ -213,16 +219,16 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	public Shape getCentroid() {
-		return create(geometry.getCentroid(), projection);
+		return create(shapeGeometry.getCentroid(), projection);
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return geometry == null || geometry.isEmpty();
+		return shapeGeometry == null || shapeGeometry.isEmpty();
 	}
 
 	public Geometry getJTSGeometry() {
-		return geometry;
+		return shapeGeometry;
 	}
 
 	@Override
@@ -234,7 +240,7 @@ public class Shape extends AbstractExtent implements IShape {
 		Geometry g = null;
 
 		try {
-			g = JTS.transform(geometry, CRS.findMathTransform(projection.crs, ((Projection) otherProjection).crs));
+			g = JTS.transform(shapeGeometry, CRS.findMathTransform(projection.crs, ((Projection) otherProjection).crs));
 		} catch (Exception e) {
 			throw new KlabValidationException(e);
 		}
@@ -256,7 +262,7 @@ public class Shape extends AbstractExtent implements IShape {
 				return empty();
 			}
 		}
-		return create(fix(geometry).intersection(fix(((Shape) other).geometry)), projection);
+		return create(fix(shapeGeometry).intersection(fix(((Shape) other).shapeGeometry)), projection);
 	}
 
 	@Override
@@ -268,12 +274,12 @@ public class Shape extends AbstractExtent implements IShape {
 				return empty();
 			}
 		}
-		return create(fix(geometry).union(fix(((Shape) other).geometry)), projection);
+		return create(fix(shapeGeometry).union(fix(((Shape) other).shapeGeometry)), projection);
 	}
 
 	public boolean containsCoordinates(double x, double y) {
 		checkPreparedShape();
-		return preparedShape == null ? geometry.contains(Geospace.gFactory.createPoint(new Coordinate(x, y)))
+		return preparedShape == null ? shapeGeometry.contains(Geospace.gFactory.createPoint(new Coordinate(x, y)))
 				: preparedShape.contains(Geospace.gFactory.createPoint(new Coordinate(x, y)));
 	}
 
@@ -281,7 +287,7 @@ public class Shape extends AbstractExtent implements IShape {
 		if (this.preparedShape == null && !preparationAttempted) {
 			preparationAttempted = true;
 			try {
-				this.preparedShape = PreparedGeometryFactory.prepare(geometry);
+				this.preparedShape = PreparedGeometryFactory.prepare(shapeGeometry);
 			} catch (Throwable t) {
 			}
 		}
@@ -298,16 +304,16 @@ public class Shape extends AbstractExtent implements IShape {
 		if (preparedShape == null) {
 			if (simpleIntersection) {
 				Geometry gm = makePoint(cell);
-				return gm.intersects(geometry) ? 1.0 : 0.0;
+				return gm.intersects(shapeGeometry) ? 1.0 : 0.0;
 			}
 			Geometry gm = makeCell(cell.getEast(), cell.getSouth(), cell.getWest(), cell.getNorth());
-			return gm.covers(geometry) ? 1.0 : (gm.intersection(geometry).getArea() / gm.getArea());
+			return gm.covers(shapeGeometry) ? 1.0 : (gm.intersection(shapeGeometry).getArea() / gm.getArea());
 		}
 		if (simpleIntersection) {
 			return preparedShape.covers(makePoint(cell)) ? 1 : 0;
 		}
 		Geometry gm = makeCell(cell.getEast(), cell.getSouth(), cell.getWest(), cell.getNorth());
-		return preparedShape.covers(gm) ? 1.0 : (gm.intersection(geometry).getArea() / gm.getArea());
+		return preparedShape.covers(gm) ? 1.0 : (gm.intersection(shapeGeometry).getArea() / gm.getArea());
 	}
 
 	private void parseWkt(String s) throws KlabValidationException {
@@ -336,15 +342,15 @@ public class Shape extends AbstractExtent implements IShape {
 		}
 
 		this.projection = Projection.create(pcode);
-		this.geometry = geometry;
+		this.shapeGeometry = geometry;
 	}
 
 	public Geometry getStandardizedGeometry() {
 		if (this.isEmpty() || this.projection.equals(Projection.getLatLon())) {
-			return this.geometry;
+			return this.shapeGeometry;
 		}
 		Shape shape = this.transform(Projection.getLatLon());
-		this.standardizedGeometry = shape.geometry;
+		this.standardizedGeometry = shape.shapeGeometry;
 		return this.standardizedGeometry;
 	}
 
@@ -434,16 +440,16 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public int getDimensionality() {
 		int ret = 0;
-		if (Arrays.contains(geometry.getClass().getInterfaces(), Lineal.class)) {
+		if (Arrays.contains(shapeGeometry.getClass().getInterfaces(), Lineal.class)) {
 			ret = 1;
-		} else if (Arrays.contains(geometry.getClass().getInterfaces(), Polygonal.class)) {
+		} else if (Arrays.contains(shapeGeometry.getClass().getInterfaces(), Polygonal.class)) {
 			ret = 2;
 		}
 		return ret;
 	}
 
 	public ReferencedEnvelope getJTSEnvelope() {
-		return new ReferencedEnvelope(geometry.getEnvelopeInternal(), projection.crs);
+		return new ReferencedEnvelope(shapeGeometry.getEnvelopeInternal(), projection.crs);
 	}
 
 	@Override
@@ -465,7 +471,7 @@ public class Shape extends AbstractExtent implements IShape {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((geometry == null) ? 0 : geometry.hashCode());
+		result = prime * result + ((shapeGeometry == null) ? 0 : shapeGeometry.hashCode());
 		result = prime * result + ((projection == null) ? 0 : projection.hashCode());
 		return result;
 	}
@@ -480,15 +486,15 @@ public class Shape extends AbstractExtent implements IShape {
 			return false;
 		}
 		Shape other = (Shape) obj;
-		if (geometry == null) {
-			if (other.geometry != null) {
+		if (shapeGeometry == null) {
+			if (other.shapeGeometry != null) {
 				return false;
 			}
 		} else if (other.getGeometryType() != getGeometryType()) {
 			return false;
 		} else if ((isMultiGeometry() && !other.isMultiGeometry()) || (!isMultiGeometry() && other.isMultiGeometry())) {
 			return false;
-		} else if (!fix(geometry).equals(fix(other.geometry))) {
+		} else if (!fix(shapeGeometry).equals(fix(other.shapeGeometry))) {
 			return false;
 		}
 		if (projection == null) {
@@ -502,7 +508,7 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	private boolean isMultiGeometry() {
-		return geometry instanceof GeometryCollection;
+		return shapeGeometry instanceof GeometryCollection;
 	}
 
 	@Override
@@ -513,11 +519,11 @@ public class Shape extends AbstractExtent implements IShape {
 			shape = (Shape) ((ISpace) other).getShape();
 		}
 		if (how == LogicalConnector.UNION) {
-			return create(geometry.union(shape.transform(this.projection).getJTSGeometry()), this.projection);
+			return create(shapeGeometry.union(shape.transform(this.projection).getJTSGeometry()), this.projection);
 		} else if (how == LogicalConnector.INTERSECTION) {
-			return create(geometry.intersection(shape.transform(this.projection).getJTSGeometry()), this.projection);
+			return create(shapeGeometry.intersection(shape.transform(this.projection).getJTSGeometry()), this.projection);
 		} else if (how == LogicalConnector.EXCLUSION) {
-			return create(geometry.difference(shape.transform(this.projection).getJTSGeometry()), this.projection);
+			return create(shapeGeometry.difference(shape.transform(this.projection).getJTSGeometry()), this.projection);
 		}
 		throw new IllegalArgumentException("cannot merge a shape with " + other);
 	}
@@ -533,7 +539,7 @@ public class Shape extends AbstractExtent implements IShape {
 	 * @return the WKB code
 	 */
 	public String getWKB() {
-		return WKBWriter.toHex(wkbWriter.write(geometry));
+		return WKBWriter.toHex(wkbWriter.write(shapeGeometry));
 	}
 
 	@Override
@@ -561,7 +567,7 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public Shape copy() {
-		return create((Geometry) geometry.clone(), projection);
+		return create((Geometry) shapeGeometry.clone(), projection);
 	}
 
 	@Override
@@ -574,13 +580,13 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public IShape getBoundingExtent() {
-		return create(geometry.getBoundary(), projection);
+		return create(shapeGeometry.getBoundary(), projection);
 	}
 
 	@Override
 	public Collection<IShape> getHoles() {
 		List<IShape> ret = new ArrayList<>();
-		if (geometry instanceof Polygonal) {
+		if (shapeGeometry instanceof Polygonal) {
 			// scan all polygons in multipolygon, one in polygon
 			// add all interior rings in each as a new shape
 		}
@@ -649,30 +655,30 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	public void simplify(double simplifyFactor) {
-		this.geometry = TopologyPreservingSimplifier.simplify(geometry, simplifyFactor);
-		this.envelope = Envelope.create(this.geometry.getEnvelopeInternal(), this.projection);
+		this.shapeGeometry = TopologyPreservingSimplifier.simplify(shapeGeometry, simplifyFactor);
+		this.envelope = Envelope.create(this.shapeGeometry.getEnvelopeInternal(), this.projection);
 	}
 
 	public Shape getSimplified(double simplifyFactor) {
-		Geometry geom = TopologyPreservingSimplifier.simplify(geometry, simplifyFactor);
+		Geometry geom = TopologyPreservingSimplifier.simplify(shapeGeometry, simplifyFactor);
 		return create(geom, this.projection);
 	}
 
 	public boolean containsPoint(double[] coordinates) {
 		checkPreparedShape();
-		Point point = geometry.getFactory().createPoint(new Coordinate(coordinates[0], coordinates[1]));
-		return preparedShape != null ? preparedShape.contains(point) : geometry.contains(point);
+		Point point = shapeGeometry.getFactory().createPoint(new Coordinate(coordinates[0], coordinates[1]));
+		return preparedShape != null ? preparedShape.contains(point) : shapeGeometry.contains(point);
 	}
 
 	@Override
 	public IShape buffer(double distance) {
-		Geometry geom = this.geometry.buffer(distance);
+		Geometry geom = this.shapeGeometry.buffer(distance);
 		return create(geom, projection);
 	}
 
 	@Override
 	public Shape difference(IShape shape) {
-		Geometry geom = fix(this.geometry).difference(fix(((Shape) shape).getJTSGeometry()));
+		Geometry geom = fix(this.shapeGeometry).difference(fix(((Shape) shape).getJTSGeometry()));
 		return create(geom, projection);
 	}
 
@@ -693,7 +699,7 @@ public class Shape extends AbstractExtent implements IShape {
 	 * @return
 	 */
 	public Shape simplifyIfNecessary(int maxCoordinates, int nDivisions) {
-		if (geometry.getNumPoints() > maxCoordinates) {
+		if (shapeGeometry.getNumPoints() > maxCoordinates) {
 			double distance = Math.sqrt(Math.pow(getEnvelope().getWidth(), 2) + Math.pow(getEnvelope().getHeight(), 2))
 					/ (double) nDivisions;
 			return getSimplified(distance);
@@ -750,7 +756,7 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public double[] getCenter(boolean standardized) {
-		Point centroid = standardized ? getStandardizedGeometry().getCentroid() : geometry.getCentroid();
+		Point centroid = standardized ? getStandardizedGeometry().getCentroid() : shapeGeometry.getCentroid();
 		return new double[] { centroid.getCoordinate().x, centroid.getCoordinate().y };
 	}
 
@@ -773,7 +779,7 @@ public class Shape extends AbstractExtent implements IShape {
 		public void paint(Graphics g) {
 			ShapeWriter sw = new ShapeWriter();
 			g.setColor(Color.RED);
-			java.awt.Shape polyShape = sw.toShape(geometry);
+			java.awt.Shape polyShape = sw.toShape(shapeGeometry);
 			((Graphics2D) g).draw(polyShape);
 		}
 	}
@@ -791,8 +797,7 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
+		return geometry;
 	}
 
 	@Override

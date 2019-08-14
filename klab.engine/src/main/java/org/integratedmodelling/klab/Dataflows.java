@@ -15,7 +15,6 @@ import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -111,7 +110,7 @@ public enum Dataflows implements IDataflowService {
 	public List<Trigger> getActionTriggersFor(ILocator transition) {
 		List<Trigger> ret = new ArrayList<>();
 		// TODO!
-		if (transition.equals(ITime.INITIALIZATION)) {
+		if (transition.equals(org.integratedmodelling.klab.components.time.extents.Time.INITIALIZATION)) {
 			ret.add(Trigger.DEFINITION);
 			ret.add(Trigger.RESOLUTION);
 			ret.add(Trigger.INSTANTIATION);

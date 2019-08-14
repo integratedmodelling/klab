@@ -24,21 +24,18 @@
  *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *     The license is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.klab.components.geospace.api;
+package org.integratedmodelling.klab.api.observations.scale.space;
 
 import java.util.Collection;
 
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.observations.scale.space.Direction;
-import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 
 /**
- * FIXME this is just a space extent - check how to simplify
+ * A grid that sits within a space extent to produce Cell sub-extents and
+ * locators. The grid itself is not a locator or an extent, it merely incarnates
+ * a S2 geometry for it.
  * 
  * @author Ferd
  *
@@ -47,30 +44,86 @@ public interface IGrid extends Iterable<Cell> {
 
 	public interface Cell extends ISpace {
 
+		/**
+		 * Cell to the North, or null.
+		 * 
+		 * @return
+		 */
 		Cell N();
 
+		/**
+		 * 
+		 * @return
+		 */
 		Cell S();
 
+		/**
+		 * 
+		 * @return
+		 */
 		Cell E();
 
+		/**
+		 * 
+		 * @return
+		 */
 		Cell W();
 
+		/**
+		 * 
+		 * @return
+		 */
 		Cell NE();
 
+		/**
+		 * 
+		 * @return
+		 */
 		Cell NW();
 
+		/**
+		 * 
+		 * @return
+		 */
 		Cell SE();
 
+		/**
+		 * 
+		 * @return
+		 */
 		Cell SW();
 
+		/**
+		 * 
+		 * @return
+		 */
 		Collection<Cell> getNeighbors();
 
+		/**
+		 * 
+		 * @param orientation
+		 * @return
+		 */
 		Cell getNeighbor(Orientation orientation);
 
+		/**
+		 * 
+		 * @param xOffset
+		 * @param yOffset
+		 * @return
+		 */
 		Cell getNeighbor(long xOffset, long yOffset);
-		
+
+		/**
+		 * 
+		 * @return
+		 */
 		long getX();
 
+		/**
+		 * 
+		 * @return
+		 */
 		long getY();
 
 		/**
@@ -83,16 +136,41 @@ public interface IGrid extends Iterable<Cell> {
 		 */
 		Cell move(long xOfs, long yOfs);
 
+		/**
+		 * 
+		 * @return
+		 */
 		double getEast();
 
+		/**
+		 * 
+		 * @return
+		 */
 		double getWest();
 
+		/**
+		 * 
+		 * @return
+		 */
 		double getSouth();
 
+		/**
+		 * 
+		 * @return
+		 */
 		double getNorth();
 
-		Long getOffsetInGrid();
+		/**
+		 * 
+		 * @return
+		 */
+		long getOffsetInGrid();
 
+		/**
+		 * 
+		 * @param cell
+		 * @return
+		 */
 		boolean isAdjacent(Cell cell);
 
 		/**
@@ -102,8 +180,15 @@ public interface IGrid extends Iterable<Cell> {
 		 */
 		double[] getCenter();
 
+		/**
+		 * Return the grid as a shape.
+		 */
 		IShape getShape();
 
+		/**
+		 * Get the geometry this grid is part of.
+		 */
+		IGeometry getGeometry();
 
 	}
 
@@ -120,12 +205,11 @@ public interface IGrid extends Iterable<Cell> {
 		/**
 		 * Merge with another mask. Changes the contents of the mask.
 		 * 
-		 * @param other
-		 *            another mask of the same shape. No check is made for compatibility
-		 *            and exceptions will only be thrown if the total size is different.
-		 * @param connector
-		 *            only {@link LogicalConnector#UNION} and
-		 *            {@link LogicalConnector#INTERSECTION} are supported.
+		 * @param other     another mask of the same shape. No check is made for
+		 *                  compatibility and exceptions will only be thrown if the
+		 *                  total size is different.
+		 * @param connector only {@link LogicalConnector#UNION} and
+		 *                  {@link LogicalConnector#INTERSECTION} are supported.
 		 */
 		void merge(Mask other, LogicalConnector connector);
 
@@ -279,18 +363,6 @@ public interface IGrid extends Iterable<Cell> {
 	 * @return world coordinates for linear offset
 	 */
 	double[] getCoordinates(long index);
-
-	// /**
-	// * Get a locator for the passed grid coordinates. Use this instead of creating
-	// a
-	// * locator from scratch, to ensure that the grid coordinates conform to the
-	// * arrangement of this grid.
-	// *
-	// * @param x
-	// * @param y
-	// * @return locator for x,y cell
-	// */
-	// IScale.Locator getLocator(long x, long y);
 
 	double getCellWidth();
 

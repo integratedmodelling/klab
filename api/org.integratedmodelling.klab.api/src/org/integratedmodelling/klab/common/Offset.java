@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -72,7 +73,7 @@ public class Offset implements ILocator {
 	 * 
 	 * @param geometry
 	 */
-	Offset(IGeometry geometry) {
+	public Offset(IGeometry geometry) {
 		this.geometry = geometry;
 		this.pos = new long[geometry.getDimensions().size()];
 		int i = 0;
@@ -90,7 +91,7 @@ public class Offset implements ILocator {
 	 * 
 	 * @param geometry
 	 */
-	Offset(IGeometry geometry, long[] pos) {
+	public Offset(IGeometry geometry, long[] pos) {
 
 		this.geometry = geometry;
 		if (pos.length == 1 && geometry.getDimensions().size() > 1) {
@@ -114,6 +115,10 @@ public class Offset implements ILocator {
 					+ "-dimensional geometry cannot be initialized with offsets of length " + pos.length);
 		}
 
+	}
+
+	public Offset(IGrid.Cell cell) {
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -214,16 +219,22 @@ public class Offset implements ILocator {
 	public <T extends ILocator> T as(Class<T> cls) {
 		if (Offset.class.isAssignableFrom(cls)) {
 			return (T) this;
-		} else if (IScale.class.isAssignableFrom(cls)) {
-			// return a scale if the original geometry is or proxies a scale
 		} else if (IGeometry.class.isAssignableFrom(cls)) {
-
-		} else if (ISpace.class.isAssignableFrom(cls)) {
-
-		} else if (ITime.class.isAssignableFrom(cls)) {
-
+			return (T)geometry;
+		} else if (geometry instanceof IScale) {
+			if (IScale.class.isAssignableFrom(cls)) {
+				return (T)geometry;
+			} else if (ISpace.class.isAssignableFrom(cls)) {
+				if (((IScale)geometry).getSpace() != null) {
+					return (T)((IScale)geometry).getSpace();
+				}
+			} else if (ITime.class.isAssignableFrom(cls)) {
+				if (((IScale)geometry).getTime() != null) {
+					return (T)((IScale)geometry).getTime();
+				}
+			}
 		}
-		return null;
+		throw new IllegalArgumentException("cannot adapt this offset to a " + cls.getCanonicalName());
 	}
 
 	public IGeometry getGeometry() {

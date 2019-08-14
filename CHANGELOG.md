@@ -54,7 +54,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The default storage provider now uses a single storage back-end that only creates storage
   when needed, avoids temporal repetition of timeslices, and uses a contiguous memory-mapped
   file to hold the active slices. Degrades gracefully to almost nothing when storing all
-  nodata or a single value, independent of geometry size.
+  nodata or a single value, independent of geometry size, and only uses off-heap memory
+  from the OS as needed. Flexible interface can be reimplemented on top of Spark or other
+  distributed storage.
 ### Fixed
 - Fix declaration of presence dereifier (which caused a number->boolean conversion being
   inserted, and false being produced overall).

@@ -22,9 +22,9 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.rest.Capabilities;
@@ -186,7 +186,7 @@ public class KlabController {
         IObservation obs = session.getObservation(observation);
 
         // TODO link to locator parameter
-        ILocator timeLocator = ITime.INITIALIZATION;
+        ILocator timeLocator = Time.INITIALIZATION;
 
         if (obs instanceof IState) {
 

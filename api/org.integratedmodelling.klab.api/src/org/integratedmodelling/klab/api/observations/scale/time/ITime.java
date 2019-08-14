@@ -15,6 +15,7 @@
  */
 package org.integratedmodelling.klab.api.observations.scale.time;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -205,36 +206,6 @@ public interface ITime extends IExtent {
 		 */
 		REAL
 	}
-
-	/**
-	 * The empty, non-descript initialization locator refers to the extent before
-	 * any extent exists. Match with == only.
-	 */
-	ILocator INITIALIZATION = new ILocator() {
-
-//		@Override
-//		public ILocator at(ILocator locator) {
-//			return this;
-//		}
-
-		@Override
-		public <T extends ILocator> T as(Class<T> cls) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public Iterator<ILocator> iterator() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public IGeometry getGeometry() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	};
 
 	/**
 	 * {@inheritDoc}

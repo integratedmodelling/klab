@@ -177,15 +177,15 @@ public abstract class Area {
 //      throws KlabException;
 
   public boolean contains(Area e) throws KlabException {
-    return getBoundingBox().geometry.contains(e.getBoundingBox().geometry);
+    return getBoundingBox().shapeGeometry.contains(e.getBoundingBox().shapeGeometry);
   }
 
   public boolean overlaps(Area e) throws KlabException {
-    return getBoundingBox().geometry.overlaps(e.getBoundingBox().geometry);
+    return getBoundingBox().shapeGeometry.overlaps(e.getBoundingBox().shapeGeometry);
   }
 
   public boolean intersects(Area e) throws KlabException {
-    return getBoundingBox().geometry.intersects(e.getBoundingBox().geometry);
+    return getBoundingBox().shapeGeometry.intersects(e.getBoundingBox().shapeGeometry);
   }
 
 }

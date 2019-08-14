@@ -2,10 +2,10 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.BitSet;
 
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Mask;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.geospace.api.IGrid;
-import org.integratedmodelling.klab.components.geospace.api.IGrid.Mask;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 
 public class GridMask extends BitSet implements IGrid.Mask {

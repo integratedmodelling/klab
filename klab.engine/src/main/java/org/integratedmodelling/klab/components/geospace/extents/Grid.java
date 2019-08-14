@@ -10,24 +10,30 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.geospace.api.IGrid;
+import org.integratedmodelling.klab.common.Offset;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -239,6 +245,7 @@ public class Grid extends Area implements IGrid {
 		CellImpl(long x, long y) {
 			this.x = x;
 			this.y = y;
+			this.locatedOffsets = new long[] { x, y };
 		}
 
 		@Override
@@ -404,22 +411,6 @@ public class Grid extends Area implements IGrid {
 			return null;
 		}
 
-//		@Override
-//		public long[] getDimensionOffsets(long linearOffset) {
-//			if (linearOffset != 0) {
-//				throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
-//			}
-//			return new long[] { 0 };
-//		}
-//
-//		@Override
-//		public long getOffset(long[] dimOffsets) {
-//			if (dimOffsets.length != 1 && dimOffsets[0] != 0) {
-//				throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
-//			}
-//			return 0;
-//		}
-
 		@Override
 		public double getWest() {
 			return Grid.this.getWest() + (x * getCellWidth());
@@ -441,7 +432,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public Long getOffsetInGrid() {
+		public long getOffsetInGrid() {
 			return Grid.this.getOffset(x, y);
 		}
 
@@ -502,11 +493,6 @@ public class Grid extends Area implements IGrid {
 			return projection;
 		}
 
-//		@Override
-//		public ISpace at(ILocator locator) {
-//			return getShape().at(locator);
-//		}
-
 		@Override
 		public int getScaleRank() {
 			return getShape().getScaleRank();
@@ -552,11 +538,6 @@ public class Grid extends Area implements IGrid {
 			return getShape().getStandardizedGeometry().getArea();
 		}
 
-//		@Override
-//		public Iterator<ILocator> iterator() {
-//			return Collections.singleton((IExtent) this).iterator();
-//		}
-
 		@Override
 		public Type getType() {
 			return Type.SPACE;
@@ -576,14 +557,6 @@ public class Grid extends Area implements IGrid {
 		public long[] shape() {
 			return new long[] { 1, 1 };
 		}
-
-//		@Override
-//		public long getOffset(ILocator index) {
-//			if (index instanceof CellImpl && this.equals(index)) {
-//				return 0;
-//			}
-//			throw new IllegalArgumentException("cannot use " + index + " as a cell locator");
-//		}
 
 		@Override
 		public IExtent getExtent() {
@@ -633,13 +606,24 @@ public class Grid extends Area implements IGrid {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends ILocator> T as(Class<T> cls) {
-//			if (ISpaceLocator.class.isAssignableFrom(cls)) {
-//				SpaceLocator ret = new SpaceLocator(getX(), getY(), getOffsetInGrid());
-//				ret.setWorldCoordinates(getEast() + (getEast() - getWest()) / 2.,
-//						getSouth() + (getNorth() - getSouth()) / 2.);
-//				return (T) ret;
-//			}
-			return null;
+			
+			Cell focus = this;
+			if (Grid.this instanceof Subgrid) {
+				focus = ((Subgrid)Grid.this).getOriginalCell(focus);
+			}
+			
+			if (Offset.class.isAssignableFrom(cls)) {
+				// ensure we get an offset and not a scale
+				return (T) (getGeometry() instanceof Scale ? ((Scale) getGeometry()).asGeometry() : getGeometry())
+						.at(Dimension.Type.SPACE, focus.getX(), focus.getY());
+			} else if (IScale.class.isAssignableFrom(cls)) {
+				if (getGeometry() instanceof Scale) {
+					return (T)getGeometry().at(Dimension.Type.SPACE, focus.getX(), focus.getY());
+				}
+			} else if (ISpace.class.isAssignableFrom(cls)) {
+				return (T) focus;
+			}
+			throw new IllegalArgumentException("cannot adapt a cell locator to a " + cls.getCanonicalName());
 		}
 
 		@Override
@@ -704,21 +688,32 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
+		public IExtent getLocatedExtent() {
+			return Grid.this.getSpace();
+		}
+
+		@Override
 		public IGeometry getGeometry() {
-			// TODO Auto-generated method stub
-			return null;
+			return Grid.this.getSpace().getGeometry();
 		}
 
 		@Override
 		public Iterator<ILocator> iterator() {
-			// TODO Auto-generated method stub
-			return null;
+			return new SelfIterator(this);
 		}
 
 		@Override
 		public long getOffset(long... offsets) {
 			return 0;
 		}
+
+//		@Override
+//		protected long[] disambiguate(Dimension d) {
+//			if (d.getParameters().contains(Geometry.PARAMETER_SPACE_LONLAT)) {
+////				Grid.this.getGridCoordinatesAt(x, y)
+//			}
+//			return null;
+//		}
 	}
 
 	Shape shape;
@@ -738,6 +733,7 @@ public class Grid extends Area implements IGrid {
 
 	// computed once on demand and used to efficiently return shape data in meters
 	private IShape firstCell;
+	private Space space;
 
 	public Grid() {
 		// TODO Auto-generated constructor stub
@@ -881,7 +877,7 @@ public class Grid extends Area implements IGrid {
 
 		com.vividsolutions.jts.geom.Envelope genv = Envelope.create(getEast(), getWest(), getSouth(), getNorth(),
 				projection).envelope;
-		com.vividsolutions.jts.geom.Envelope senv = shape.geometry.getEnvelope().getEnvelopeInternal();
+		com.vividsolutions.jts.geom.Envelope senv = shape.shapeGeometry.getEnvelope().getEnvelopeInternal();
 
 		if (!genv.covers(senv)) {
 			return null;
@@ -1254,5 +1250,13 @@ public class Grid extends Area implements IGrid {
 			}
 			return null;
 		}
+	}
+
+	public void setSpace(Space space) {
+		this.space = space;
+	}
+
+	public Space getSpace() {
+		return space;
 	};
 }

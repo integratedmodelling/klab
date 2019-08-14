@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.common.Geometry;
@@ -34,6 +33,7 @@ import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
@@ -78,7 +78,7 @@ public class EngineViewController {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
-		ILocator loc = ITime.INITIALIZATION; // TODO parse the locator
+		ILocator loc = Time.INITIALIZATION; // TODO parse the locator
 		if (obs == null) {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
@@ -102,7 +102,7 @@ public class EngineViewController {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
-		ILocator loc = ITime.INITIALIZATION; // TODO parse the locator
+		ILocator loc = Time.INITIALIZATION; // TODO parse the locator
 		if (obs == null) {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
@@ -130,7 +130,7 @@ public class EngineViewController {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
-		ILocator loc = ITime.INITIALIZATION; // TODO parse locator
+		ILocator loc = Time.INITIALIZATION; // TODO parse locator
 		if (obs == null) {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
@@ -187,9 +187,10 @@ public class EngineViewController {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
 
-		ILocator loc = ITime.INITIALIZATION;
+		ILocator loc = Time.INITIALIZATION;
 		if (locator != null) {
 			loc = Geometry.create(locator);
+			loc = obs.getGeometry().at(loc);
 		}
 
 		boolean done = false;

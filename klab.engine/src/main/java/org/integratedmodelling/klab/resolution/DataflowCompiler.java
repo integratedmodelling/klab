@@ -29,7 +29,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -39,6 +38,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -209,7 +209,7 @@ public class DataflowCompiler {
 			 * recover any instantiation actions
 			 */
 			for (IAction action : contextModel.getBehavior().getActions(Trigger.INSTANTIATION)) {
-				for (IComputableResource resource : action.getComputation(ITime.INITIALIZATION)) {
+				for (IComputableResource resource : action.getComputation(Time.INITIALIZATION)) {
 					actuator.addComputation(((ComputableResource) resource).copy());
 				}
 			}
@@ -447,7 +447,7 @@ public class DataflowCompiler {
 			if (!generated.contains(theModel)) {
 
 				generated.add(theModel);
-				for (IComputableResource resource : getModelComputation(model, ret.getType(), ITime.INITIALIZATION)) {
+				for (IComputableResource resource : getModelComputation(model, ret.getType(), Time.INITIALIZATION)) {
 					ret.addComputation(resource);
 				}
 

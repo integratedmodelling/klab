@@ -23,7 +23,6 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
@@ -46,7 +45,6 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -60,6 +58,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.Report;
@@ -273,7 +272,7 @@ public class Actuator implements IActuator {
 		 * and applies any requested mediation to the inputs. Target may be swapped for
 		 * a mediator.
 		 */
-		IRuntimeScope ctx = setupContext(target, runtimeContext, ITime.INITIALIZATION);
+		IRuntimeScope ctx = setupContext(target, runtimeContext);
 
 		for (Pair<IServiceCall, IComputableResource> service : computationStrategy) {
 
@@ -518,7 +517,7 @@ public class Actuator implements IActuator {
 			 * applied
 			 */
 			ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-					(IState) ret, addParameters(ctx, self, resource), scale.at(ITime.INITIALIZATION));
+					(IState) ret, addParameters(ctx, self, resource), scale.at(Time.INITIALIZATION));
 
 		} else if (contextualizer instanceof IResolver) {
 			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
@@ -646,7 +645,7 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
-	private IRuntimeScope setupContext(IArtifact target, final IRuntimeScope runtimeContext, ILocator locator)
+	private IRuntimeScope setupContext(IArtifact target, final IRuntimeScope runtimeContext)
 			throws KlabException {
 
 		IRuntimeScope ret = runtimeContext.copy();
@@ -1144,7 +1143,7 @@ public class Actuator implements IActuator {
 
 			if (isNew) {
 				IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
-						product.getContext(), ITime.INITIALIZATION, 0, /* false, */ isMainObservable || isMain)
+						product.getContext(), Time.INITIALIZATION, 0, /* false, */ isMainObservable || isMain)
 						.withTaskId(taskId);
 
 				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,

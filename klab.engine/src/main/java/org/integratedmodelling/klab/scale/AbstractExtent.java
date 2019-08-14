@@ -1,9 +1,15 @@
 package org.integratedmodelling.klab.scale;
 
+import java.util.Iterator;
+
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.common.Geometry.DimensionTarget;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 
 /**
  * Common superclass for all Extents.
@@ -22,13 +28,50 @@ import org.integratedmodelling.klab.common.LogicalConnector;
  */
 public abstract class AbstractExtent implements IExtent {
 
+	protected static class SelfIterator implements Iterator<ILocator> {
+
+		ILocator self;
+
+		public SelfIterator(ILocator locator) {
+			this.self = locator;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return self != null;
+		}
+
+		@Override
+		public ILocator next() {
+			ILocator ret = self;
+			self = null;
+			return ret;
+		}
+	}
+
 	private transient String scaleId;
 	protected transient Dimension baseDimension;
+	protected IGeometry geometry;
+
+	protected Extent locatedExtent = null;
+	protected long[] locatedOffsets = null;
+
+	public IExtent getLocatedExtent() {
+		return locatedExtent;
+	}
+
+	public long[] getLocatedOffsets() {
+		return locatedOffsets;
+	}
 
 	protected void setScaleId(String id) {
 		this.scaleId = id;
 	}
-	
+
+	public void setGeometry(IGeometry geometry) {
+		this.geometry = geometry;
+	}
+
 	protected String getScaleId() {
 		return this.scaleId;
 	}
@@ -39,16 +82,15 @@ public abstract class AbstractExtent implements IExtent {
 
 	public abstract boolean isEmpty();
 
-    /**
-     * Return a double that describes the extent of this topological object. It
-     * should only be used to compare objects of the same type. Redundant with
-     * {@link IExtent#getStandardizedDimension()} but this is meant to compute
-     * fast.
-     *
-     * @return the covered extent
-     */
-    public abstract double getCoveredExtent();
-	
+	/**
+	 * Return a double that describes the extent of this topological object. It
+	 * should only be used to compare objects of the same type. Redundant with
+	 * {@link IExtent#getStandardizedDimension()} but this is meant to compute fast.
+	 *
+	 * @return the covered extent
+	 */
+	public abstract double getCoveredExtent();
+
 	/**
 	 * Return the string rep for the {@link Dimension} this represents.
 	 * 
@@ -65,23 +107,6 @@ public abstract class AbstractExtent implements IExtent {
 	 * @return the merged extent
 	 */
 	public abstract IExtent mergeCoverage(IExtent other, LogicalConnector connector);
-
-//	/**
-//	 * Translate a linear offset into the offsets for each dimension. If the
-//	 * dimension is 1, return the offset itself.
-//	 * 
-//	 * @param linearOffset
-//	 * @return dimension offsets
-//	 */
-//	public abstract long[] getDimensionOffsets(long linearOffset);
-//
-//	/**
-//	 * Check and return the offset corresponding to the passed dimensions.
-//	 * 
-//	 * @param dimOffsets
-//	 * @return the linear offset
-//	 */
-//	public abstract long getOffset(long[] dimOffsets);
 
 	/**
 	 * Return the single-valued topological value that represents the total extent
@@ -109,4 +134,17 @@ public abstract class AbstractExtent implements IExtent {
 	public void setDimension(Dimension dimension) {
 		this.baseDimension = dimension;
 	}
+
+	/**
+	 * Called when a locator is passed to a scale's at() function that may require
+	 * reinterpretation within this extent. The typical case is when world
+	 * coordinates appear in a dimension and the scale needs to turn those into
+	 * offsets. In that case, create the appropriate offsets and return it.
+	 * Otherwise return null.
+	 * 
+	 * @param d
+	 * @return the offsets pointed to by the passed dimension parameters in this
+	 *         context, or null.
+	 */
+//	protected abstract long[] disambiguate(Dimension d);
 }

@@ -20,13 +20,13 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -106,7 +106,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 				throw new IllegalArgumentException(
 						"maxima extractor: no input state named '" + surfaceId + "' found in context");
 			}
-			StateSummary summary = Observations.INSTANCE.getStateSummary(state, ITime.INITIALIZATION);
+			StateSummary summary = Observations.INSTANCE.getStateSummary(state, Time.INITIALIZATION);
 			algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(state, DataBuffer.TYPE_FLOAT, floatNovalue,
 					(value) -> {
 						if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {

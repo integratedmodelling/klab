@@ -173,6 +173,10 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 			page.position((int) offset * type.size);
 		}
 
+		if (val instanceof Boolean) {
+			val = Byte.valueOf((byte) (((Boolean)val) ? 1 : 0));
+		}
+		
 		switch (type) {
 		case BYTE:
 			page.put(((Byte) val).byteValue());

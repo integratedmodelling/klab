@@ -15,8 +15,8 @@ import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.Pair;
@@ -171,10 +171,6 @@ public class ContributingCell extends Expando {
 	public <T extends ILocator> T as(Class<T> cls) {
 		return delegate.as(cls);
 	}
-
-//	public ILocator at(ILocator locator) {
-//		return delegate.at(locator);
-//	}
 
 	public double getStandardizedArea() {
 		return delegate.getStandardizedArea();

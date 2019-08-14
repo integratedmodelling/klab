@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.data;
 
 import java.io.Serializable;
 import java.util.List;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
@@ -320,12 +321,13 @@ public interface IGeometry extends Serializable, ILocator {
 	 * state or scan a dimension, calls can be combined as in
 	 * 
 	 * <pre>
-	 * 		Offset offset = geometry.at(geometry.getTime(), ISpace.class, x, y).as(Offset.class);
-	 * 		... use offset.pos[0], offset.pos[1] to point to a grid cell in the current time
+	 * Offset offset = geometry.at(geometry.getTime(), ISpace.class, x, y).as(Offset.class);
+	 * 
+	 * ... use offset.pos[0], offset.pos[1] to point to a grid cell in the current time
 	 * </pre>
 	 * 
-	 * The resulting locator is an iterable and will produce either itself (if
-	 * scalar) or all the locators for the scanned dimension when iterated.
+	 * The resulting locator is an {@link Iterable} and will produce either itself
+	 * (if scalar) or all the locators for the scanned dimension when iterated.
 	 * <p>
 	 * The call format is quite flexible. Object that can be passed are:
 	 * <ul>
@@ -338,7 +340,9 @@ public interface IGeometry extends Serializable, ILocator {
 	 * dimensionality of the target is multiple, it will be treated as a linear
 	 * offset and converted.</li>
 	 * </ul>
-	 *
+	 * Passing an extent locator that is not present in the scale returns the
+	 * locator unmodified.
+	 * 
 	 * @param dimensions identifiers to subset the geometry
 	 * @return a valid locator
 	 */

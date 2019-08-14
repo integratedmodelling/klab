@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.extensions.groovy.model
 
-import org.integratedmodelling.klab.components.geospace.api.IGrid
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid
 
 class Grid {
 

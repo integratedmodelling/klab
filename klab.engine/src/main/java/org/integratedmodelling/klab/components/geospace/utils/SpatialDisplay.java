@@ -59,15 +59,15 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.components.geospace.api.IGrid;
-import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid.CellImpl;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.visualization.Viewport;
 import org.opengis.feature.simple.SimpleFeature;
@@ -105,7 +105,7 @@ public class SpatialDisplay {
 		Layer getLayer() {
 			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state);
 			Layer layer = new GridCoverageLayer(coverage,
-					SLD.wrapSymbolizers(Renderer.INSTANCE.getRasterSymbolizer(state, ITime.INITIALIZATION).getFirst()));
+					SLD.wrapSymbolizers(Renderer.INSTANCE.getRasterSymbolizer(state, Time.INITIALIZATION).getFirst()));
 			layer.setTitle(state.getObservable().getName());
 			return layer;
 		}

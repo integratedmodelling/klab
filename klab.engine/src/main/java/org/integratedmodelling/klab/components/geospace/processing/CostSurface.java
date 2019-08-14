@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
-import org.integratedmodelling.klab.components.geospace.api.IGrid;
 
 import com.vividsolutions.jts.geom.Coordinate;
 

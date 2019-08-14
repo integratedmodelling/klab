@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -41,7 +42,6 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.mediation.Unit;
-import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -163,12 +163,12 @@ public enum Observations implements IObservationService {
 
 		SummaryStatistics statistics = new SummaryStatistics();
 
-		for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
+		for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
 			tdata++;
-			Double d = it.next();
+			Number d = it.next();
 			if (d != null) {
 				ndata++;
-				statistics.addValue(d);
+				statistics.addValue(d.doubleValue());
 			} else {
 				nndat++;
 			}
@@ -186,10 +186,10 @@ public enum Observations implements IObservationService {
 		if (ret.getNodataPercentage() < 1) {
 			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
 					state.getDataKey() == null ? 10 : state.getDataKey().size());
-			for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
-				Double d = it.next();
+			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
+				Number d = it.next();
 				if (d != null) {
-					histogram.add(d);
+					histogram.add(d.doubleValue());
 				}
 			}
 			ret.setHistogram(histogram.build());

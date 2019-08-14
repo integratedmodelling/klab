@@ -25,7 +25,9 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.Geometry.DimensionTarget;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -156,6 +158,22 @@ public class Scale implements IScale {
 	}
 
 	/**
+	 * Scale locator localized to the passed offset(s).
+	 * 
+	 * @param scale
+	 * @param offset
+	 */
+	public Scale(Scale scale, Offset offset) {
+		this.originalScale = scale;
+		this.multiplicity = 1;
+		if (offset.scalar) {
+			setLocatorsTo(offset.linear);
+		} else {
+			setLocatorsTo(offset.pos);
+		}
+	}
+
+	/**
 	 * Call ONLY on a scale locator created with the above constructor, to reset the
 	 * offsets to the passed one.
 	 * 
@@ -165,7 +183,7 @@ public class Scale implements IScale {
 
 		this.originalScaleOffset = offset;
 		this.locatedOffsets = this.originalScale.cursor.getElementIndexes(offset);
-
+		this.extents.clear();
 		for (int i = 0; i < this.originalScale.extents.size(); i++) {
 			IExtent ext = this.originalScale.extents.get(i) instanceof Extent
 					? ((Extent) this.originalScale.extents.get(i)).getExtent(this.locatedOffsets[i])
@@ -175,6 +193,34 @@ public class Scale implements IScale {
 				this.space = (ISpace) ext;
 			} else if (ext instanceof ITime) {
 				this.time = (ITime) ext;
+			}
+		}
+
+	}
+
+	/**
+	 * Call ONLY on a scale locator created with the above constructor, to reset the
+	 * offsets to the passed one.
+	 * 
+	 * @param offset
+	 */
+	public void setLocatorsTo(long[] offset) {
+
+		this.locatedOffsets = offset;
+		this.multiplicity = 1;
+		this.extents.clear();
+		for (int i = 0; i < this.originalScale.extents.size(); i++) {
+
+			IExtent newExt = this.originalScale.extents.get(i);
+			if (offset[i] < 0 && newExt instanceof Extent) {
+				newExt = ((Extent) newExt).getExtent(offset[i]);
+			}
+			this.extents.add(newExt);
+			this.multiplicity *= newExt.size();
+			if (newExt instanceof ISpace) {
+				this.space = (ISpace) newExt;
+			} else if (newExt instanceof ITime) {
+				this.time = (ITime) newExt;
 			}
 		}
 	}
@@ -204,6 +250,7 @@ public class Scale implements IScale {
 				exts.add(((AbstractExtent) existing).copy());
 			}
 		}
+
 		return create(exts);
 	}
 
@@ -235,6 +282,7 @@ public class Scale implements IScale {
 			}
 		}
 //		ret.sort();
+
 		return ret;
 	}
 
@@ -259,6 +307,7 @@ public class Scale implements IScale {
 			}
 			// TODO ELSE
 		}
+
 		return create(extents);
 	}
 
@@ -353,6 +402,8 @@ public class Scale implements IScale {
 		multiplicity = 1L;
 		int idx = 0;
 		for (IExtent e : order) {
+
+			((AbstractExtent) e).setGeometry(this);
 
 			if (e.getType() == Dimension.Type.TIME) {
 				tIndex = idx;
@@ -489,7 +540,8 @@ public class Scale implements IScale {
 		}
 
 		if (!merged) {
-			// extents.add(i, merged);
+			// if (extents.size()>2) { System.out.println("Merda"); } extents.add(i,
+			// merged);
 			// ((AbstractExtent) merged).setScaleId(getScaleId());
 			// } else {
 			extents.add((AbstractExtent) extent);
@@ -686,6 +738,7 @@ public class Scale implements IScale {
 			}
 			extents.add(found ? e.collapse() : ((AbstractExtent) e).copy());
 		}
+
 		return create(extents);
 	}
 
@@ -720,42 +773,87 @@ public class Scale implements IScale {
 	@Override
 	public IScale at(Object... locators) {
 
-//		if (locator.equals(ITime.INITIALIZATION)) {
-//			if (getTime() == null || getTime().isGeneric()) {
-//				// I want you just the way you are. If generic, it should already be compatible
-//				// by design.
-//				return this;
-//			} else {
-//				// relocate to non-generic time 0
-//				return substituteExtent(this, ((Time)getTime()).getExtent(0));
-//			}
-//		} else if (locator instanceof IExtent) {
-//			if (((AbstractExtent) locator).isOwnExtent(this)) {
-//				// guarantees no mediation needed
-//			} else {
-//				// if we don't have this extent, illegal arg (or just return this?)
-//				// mediation may be needed
-//			}
-//		} else if (locator instanceof IScale) {
-//			if (((Scale) locator).getScaleId().equals(getScaleId())) {
-//				return this;
-//			}
-//			if (((Scale) locator).hasSameExtents(this)) {
-//				List<IExtent> exts = new ArrayList<>();
-//				for (int i = 0; i < extents.size(); i++) {
-//					IExtent ours = extents.get(i);
-//					IExtent hers = ((Scale) locator).extents.get(i);
-//					if (!ours.contains(hers)) {
-//						return null;
-//					}
-//					exts.add(hers);
-//				}
-//				return new Scale(exts);
-//			}
-//			// all-around mediation possible
-//		} else {
-//			throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");
-//		}
+		Scale target = this;
+
+		// NO - these may simply be IExtent locators or be translatable to that. If so, we don't go through
+		// geometry.at() but redefine the target directly and use that only if others are left. We should
+		// simply reimplement geometry.at() and handle them properly right here.
+		
+		/*
+		 * Special handling of time initialization: use scale w/o time unless time is
+		 * generic.
+		 */
+		boolean hasTimeInitialization = false;
+		for (Object l : locators) {
+			if (l == Time.INITIALIZATION) {
+				hasTimeInitialization = true;
+				break;
+			}
+		}
+
+		if (locators != null && locators.length > 0 && hasTimeInitialization) {
+			// remove initializer and proceed with scale w/o time unless generic
+			if (getTime() == null || getTime().isGeneric()) {
+				// I want you just the way you are. If generic, it should already be compatible
+				// by design.
+				target = this;
+			} else {
+				// FIXME/CHECK probably will need an initialization that still holds the period
+				// and step.
+				// initialization scale will run the dataflow w/o time.
+				// Dependencies have already been resolved properly to tune the resource on
+				// init.
+				target = this.minus(Type.TIME);
+			}
+
+			if (locators.length == 1) {
+				return target;
+			}
+
+			// if continuing, we use the remaining locators on the target.
+			Object[] newLocators = new Object[locators.length - 1];
+			for (int i = 0, l = 0; i < locators.length; i++) {
+				if (locators[i] == Time.INITIALIZATION) {
+					continue;
+				}
+				newLocators[l++] = locators[i];
+			}
+			locators = newLocators;
+		}
+
+		/*
+		 * re-localize locators if they have undefined offsets and parameters we can
+		 * parse and reinterpret
+		 */
+		List<DimensionTarget> targets = new ArrayList<>();
+		for (DimensionTarget t : Geometry.separateTargets(locators)) {
+			if (t.offsets == null) {
+				// a geometry without offsets may be locatable through its parameters
+				if (t.geometry instanceof Geometry) {
+					// turn into a scale to allow location of world coordinates
+					targets.addAll(disambiguate(Scale.create(t.geometry)));
+				}
+			}
+			targets.add(t);
+		}
+
+		ILocator locator = target.asGeometry().at(targets);
+
+		if (locator instanceof Offset) {
+			return new Scale(target, ((Offset) locator));
+		}
+
+		throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");
+	}
+
+	private Collection<? extends DimensionTarget> disambiguate(Scale locating) {
+		for (IExtent e : locating.getExtents()) {
+			if (e instanceof ISpace && getSpace() != null) {
+				// TODO we need IExtent.at() to return a locator and if successful, change the scale being targeted to
+				// scale.at(locator)
+			}
+			System.out.println("XOCCC");
+		}
 		return null;
 	}
 
@@ -921,6 +1019,7 @@ public class Scale implements IScale {
 				exts.add(extent);
 			}
 		}
+
 		return new Scale(exts);
 	}
 
@@ -928,21 +1027,20 @@ public class Scale implements IScale {
 	@Override
 	public <T extends ILocator> T as(Class<T> cls) {
 
-//		if (Long.class.isAssignableFrom(cls)) {
-//			return (T)Long.valueOf(originalScaleOffset);
-//		} else if (Long[].class.isAssignableFrom(cls)) {
-//			Long[] ret = new Long[extents.size()];
-//			int i = 0;
-//			for (IExtent e : getExtents()) {
-//				if (locatedOffsets != null) {
-//					ret[i] = locatedOffsets[i];
-//					i++;
-//				} else {
-//					ret[i] = -1l;
-//				}
-//			}
-//			return (T)ret;
-//		}
+		if (IScale.class.isAssignableFrom(cls)) {
+			return (T) this;
+		}
+
+		if (Offset.class.isAssignableFrom(cls)) {
+			// make an offset for this one and return it. If it's a scale locator, it will
+			// be a scalar
+			// offset.
+			if (locatedOffsets != null) {
+				return (T) new Offset(this, locatedOffsets);
+			} else {
+				return (T) new Offset(this);
+			}
+		}
 
 		for (IExtent extent : getExtents()) {
 			T ret = extent.as(cls);
@@ -1069,7 +1167,6 @@ public class Scale implements IScale {
 				IExtent merged = (IExtent) e.merge(oext);
 				ret.mergeExtent(merged);
 			}
-
 			ret.scaleId = this.scaleId;
 
 			return ret;

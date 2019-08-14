@@ -1,18 +1,14 @@
 package org.integratedmodelling.mca.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.mca.api.IAlternative;
@@ -52,7 +48,7 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
 		this.geometry = context.getScale();
-		MCAContext mcaContext = new MCAContext(ret.getObservable(), (IRuntimeScope) context, ITime.INITIALIZATION,
+		MCAContext mcaContext = new MCAContext(ret.getObservable(), (IRuntimeScope) context, Time.INITIALIZATION,
 				levels);
 
 		if (mcaContext.isComputable()) {

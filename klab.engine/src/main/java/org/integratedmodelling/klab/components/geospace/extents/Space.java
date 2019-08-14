@@ -21,11 +21,11 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.FeaturesToShape;
@@ -57,7 +57,6 @@ public class Space extends Extent implements ISpace {
 	private boolean consistent = false;
 	private String gridSpecs = null;
 	private boolean generic = false;
-//	private Dimension originalSpecs = null;
 
 	private static Space EMPTY_SPACE = new Space(Shape.empty());
 
@@ -116,7 +115,6 @@ public class Space extends Extent implements ISpace {
 				// keep whatever info we have to use in a merge()
 				ret.projection = projection;
 				ret.shape = shape;
-//				ret.originalSpecs = dimension;
 			}
 		}
 
@@ -201,20 +199,11 @@ public class Space extends Extent implements ISpace {
 	}
 
 	private Space(Shape shape, Grid grid) {
-
 		this.projection = shape.getProjection();
 		this.shape = shape;
 		this.grid = grid;
-		// if (grid != null) {
-		// this.grid = Grid.create(this.shape, grid.getXCells(), grid.getYCells());
-		// if (grid instanceof Grid) {
-		// this.grid.offsetInSupergrid = ((Grid) grid).offsetInSupergrid;
-		// this.grid.superGridId = ((Grid) grid).superGridId;
-		// }
-		// this.envelope = ((Grid) grid).getEnvelope();
-		// } else {
 		this.envelope = this.shape.getEnvelope();
-		// }
+		grid.setSpace(this);
 	}
 
 	public String toString() {
@@ -486,7 +475,7 @@ public class Space extends Extent implements ISpace {
 					"cannot check containment of a space extent within a " + other.getClass().getCanonicalName());
 		}
 		Shape oShape = (Shape) ((ISpace) other).getShape();
-		return shape == null || oShape == null ? false : shape.geometry.contains(oShape.geometry);
+		return shape == null || oShape == null ? false : shape.shapeGeometry.contains(oShape.shapeGeometry);
 	}
 
 	@Override
@@ -496,7 +485,7 @@ public class Space extends Extent implements ISpace {
 					"cannot overlap a space extent with a " + other.getClass().getCanonicalName());
 		}
 		Shape oShape = (Shape) ((ISpace) other).getShape();
-		return shape == null || oShape == null ? false : shape.geometry.overlaps(oShape.geometry);
+		return shape == null || oShape == null ? false : shape.shapeGeometry.overlaps(oShape.shapeGeometry);
 	}
 
 	@Override
@@ -506,7 +495,7 @@ public class Space extends Extent implements ISpace {
 					"cannot intersect a space extent with a " + other.getClass().getCanonicalName());
 		}
 		Shape oShape = (Shape) ((ISpace) other).getShape();
-		return shape == null || oShape == null ? false : shape.geometry.intersects(oShape.geometry);
+		return shape == null || oShape == null ? false : shape.shapeGeometry.intersects(oShape.shapeGeometry);
 	}
 
 	@Override
@@ -580,6 +569,7 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public ISpace getExtent(long stateIndex) {
+
 		if (this.size() == 1 && stateIndex == 0) {
 			return this;
 		}
@@ -834,6 +824,7 @@ public class Space extends Extent implements ISpace {
 	}
 
 	public static IExtent createMergedExtent(ISpace destination, ISpace source) {
+		
 		// TODO Auto-generated method stub
 		// if (!(extent instanceof Space)) {
 		// throw new KlabValidationException("space extent cannot merge non-space
@@ -895,8 +886,7 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
+		return geometry;
 	}
 
 }

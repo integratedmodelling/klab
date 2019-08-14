@@ -292,6 +292,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		return get(locator);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public long putObject(Object value, ILocator locator) {
 		return put((T) value, locator);

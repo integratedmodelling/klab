@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -138,6 +139,7 @@ public class Subgrid extends Grid {
 		this.yofs = yofs;
 		this.projection = (Projection) originalGrid.getProjection();
 		this.grid.createMask(shape);
+		this.setSpace(grid.getSpace());
 	}
 	
 	public Subgrid copy() {
