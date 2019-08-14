@@ -777,7 +777,10 @@ public class Scale implements IScale {
 
 		// NO - these may simply be IExtent locators or be translatable to that. If so, we don't go through
 		// geometry.at() but redefine the target directly and use that only if others are left. We should
-		// simply reimplement geometry.at() and handle them properly right here.
+		// simply reimplement geometry.at() and handle them properly right here to turn them into an OFFSET\
+		// specification - either * or not. Location will work differently and IExtent.at is not in dimensions
+		// because only extents have world coordinates and can locate other extents. The collection mechanism
+		// can work the same way but only to address Geometry locators.
 		
 		/*
 		 * Special handling of time initialization: use scale w/o time unless time is
