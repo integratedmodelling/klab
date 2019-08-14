@@ -263,7 +263,7 @@ public class Space extends Extent implements ISpace {
 	}
 
 	@Override
-	public long getOffset(long[] dimOffsets) {
+	public long getOffset(long...dimOffsets) {
 		if (features != null) {
 			if (dimOffsets.length != 1) {
 				throw new IllegalArgumentException("can't address offset: tessellation space has one dimension");
@@ -887,6 +887,13 @@ public class Space extends Extent implements ISpace {
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
+	}
+
+	@Override
+	public IExtent at(Object... locators) {
+		// must have a grid or a tessellation
+		// can be a point space, a lat/long pair or an offset
+		return null;
 	}
 
 }

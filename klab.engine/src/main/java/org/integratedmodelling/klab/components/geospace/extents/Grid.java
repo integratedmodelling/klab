@@ -606,19 +606,19 @@ public class Grid extends Area implements IGrid {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends ILocator> T as(Class<T> cls) {
-			
+
 			Cell focus = this;
 			if (Grid.this instanceof Subgrid) {
-				focus = ((Subgrid)Grid.this).getOriginalCell(focus);
+				focus = ((Subgrid) Grid.this).getOriginalCell(focus);
 			}
-			
+
 			if (Offset.class.isAssignableFrom(cls)) {
 				// ensure we get an offset and not a scale
 				return (T) (getGeometry() instanceof Scale ? ((Scale) getGeometry()).asGeometry() : getGeometry())
 						.at(Dimension.Type.SPACE, focus.getX(), focus.getY());
 			} else if (IScale.class.isAssignableFrom(cls)) {
 				if (getGeometry() instanceof Scale) {
-					return (T)getGeometry().at(Dimension.Type.SPACE, focus.getX(), focus.getY());
+					return (T) getGeometry().at(Dimension.Type.SPACE, focus.getX(), focus.getY());
 				}
 			} else if (ISpace.class.isAssignableFrom(cls)) {
 				return (T) focus;
@@ -707,13 +707,10 @@ public class Grid extends Area implements IGrid {
 			return 0;
 		}
 
-//		@Override
-//		protected long[] disambiguate(Dimension d) {
-//			if (d.getParameters().contains(Geometry.PARAMETER_SPACE_LONLAT)) {
-////				Grid.this.getGridCoordinatesAt(x, y)
-//			}
-//			return null;
-//		}
+		@Override
+		public IExtent at(Object... locators) {
+			throw new IllegalStateException("an individual shape cannot be further located");
+		}
 	}
 
 	Shape shape;

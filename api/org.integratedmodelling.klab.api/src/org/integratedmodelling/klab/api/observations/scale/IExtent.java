@@ -61,7 +61,9 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 	/**
 	 * Locate the extent and return another with the original located extent and
 	 * offsets set in. Differs from {@link IGeometry#at(Object...)} because it will
-	 * return an extent and not a geometry.
+	 * return an extent and not a geometry. Can be passed another extent (e.g. a
+	 * point to locate a cell in a grid space), one or more integer locators, a
+	 * period, or anything that can be understood by the extent.
 	 * 
 	 * @param locator
 	 * @return the extent, or null if location is impossible.

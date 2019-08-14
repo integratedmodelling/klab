@@ -28,10 +28,10 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToFeatures;
@@ -803,6 +803,11 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public long getOffset(long... offsets) {
 		return 0;
+	}
+
+	@Override
+	public IExtent at(Object... locators) {
+		throw new IllegalStateException("an individual shape cannot be further located");
 	}
 
 }

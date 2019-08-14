@@ -38,23 +38,22 @@ public class Time extends Extent implements ITime {
 	Resolution resolution;
 	long multiplicity = 1;
 
-
 	/**
-	 * The empty, non-descript initialization locator refers to the time before
-	 * time begins. 
+	 * The empty, non-descript initialization locator refers to the time before time
+	 * begins.
 	 */
 	public static ILocator INITIALIZATION = new Time() {
-		
+
 		public int hashCode() {
 			return 234567;
 		}
-		
+
 		@Override
 		public boolean equals(Object o) {
 			return o == this;
 		}
 	};
-	
+
 	private static class ResolutionImpl implements Resolution {
 
 		private Type type;
@@ -316,7 +315,6 @@ public class Time extends Extent implements ITime {
 
 		Time ret = copy();
 
-
 		ret.start = new TimeInstant(newStart);
 		ret.end = new TimeInstant(newEnd);
 		ret.extentType = ITime.Type.SPECIFIC;
@@ -324,7 +322,7 @@ public class Time extends Extent implements ITime {
 		ret.resolution = resolution(ret.start, ret.end);
 		ret.locatedExtent = this;
 		ret.locatedOffsets = new long[] { stateIndex };
-		
+
 		return ret;
 	}
 
@@ -397,7 +395,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public long getOffset(long...dimOffsets) {
+	public long getOffset(long... dimOffsets) {
 		return dimOffsets[0];
 	}
 
@@ -467,5 +465,12 @@ public class Time extends Extent implements ITime {
 		return geometry;
 	}
 
+	@Override
+	public IExtent at(Object... locators) {
+		// TODO must be a grid or realtime
+		// locator can be an anchored time or period contained in a step, a timeinstant, an
+		// integer offset or a long millisecond value.
+		return null;
+	}
 
 }
