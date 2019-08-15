@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
@@ -565,7 +566,7 @@ public class Actuator implements IActuator {
 					targetPredicate, ctx);
 
 			if (ok) {
-				
+
 				for (IArtifact target : ret) {
 
 					@SuppressWarnings("rawtypes")
@@ -587,22 +588,22 @@ public class Actuator implements IActuator {
 			/*
 			 * ensure we return a view if that's necessary
 			 */
-			ret = ctx.getObservationGroupView((Observable)observable, (IObservation)ret);
-			
+			ret = ctx.getObservationGroupView((Observable) observable, (IObservation) ret);
+
 		} else if (contextualizer instanceof IPredicateResolver) {
 
 			/*
 			 * This is called from a dataflow meant to resolve the attribute, so ret is the
-			 * observation being characterized and the attribute is there because createTarget() 
-			 * has added it.
+			 * observation being characterized and the attribute is there because
+			 * createTarget() has added it.
 			 */
 			IConcept predicate = Observables.INSTANCE.getBaseObservable(observable.getType());
 			if (!((IPredicateResolver<IDirectObservation>) contextualizer).resolve(predicate, (IDirectObservation) ret,
 					ctx)) {
 				// strip the attribute that the classifier added
-				((DirectObservation)ret).removePredicate(predicate);
+				((DirectObservation) ret).removePredicate(predicate);
 			}
-			((Observation)ret).evaluateChanges();
+			((Observation) ret).evaluateChanges();
 		}
 
 		/**
@@ -645,8 +646,7 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
-	private IRuntimeScope setupContext(IArtifact target, final IRuntimeScope runtimeContext)
-			throws KlabException {
+	private IRuntimeScope setupContext(IArtifact target, final IRuntimeScope runtimeContext) throws KlabException {
 
 		IRuntimeScope ret = runtimeContext.copy();
 
@@ -885,6 +885,12 @@ public class Actuator implements IActuator {
 		this.priority = priority;
 	}
 
+	/*
+	 * Called after target was created. Not meant for listeners but to complete the
+	 * observation with its model-dependent information before the model goes away.
+	 * 
+	 * @param observation
+	 */
 	public void notifyNewObservation(IObservation observation) {
 
 		/*
@@ -893,24 +899,43 @@ public class Actuator implements IActuator {
 		observation.getAnnotations().addAll(annotations);
 
 		/*
-		 * add classification or lookup table as legend if our computations end with
-		 * one.
+		 * Assess if the computation implies having a datakey and if so, transmit it to
+		 * the state.
 		 */
 		if (observation instanceof IState && computationStrategy.size() > 0) {
-			IComputableResource lastResource = computationStrategy.get(computationStrategy.size() - 1).getSecond();
-			if (lastResource.getClassification() != null || lastResource.getAccordingTo() != null) {
-				if (observation instanceof IKeyHolder) {
-					((IKeyHolder) observation).setDataKey(
-							((ComputableResource) lastResource).getValidatedResource(IClassification.class));
-				}
-			} else if (lastResource.getLookupTable() != null) {
-				if (observation instanceof IKeyHolder
-						&& ((ComputableResource) lastResource).getValidatedResource(LookupTable.class).isKey()) {
-					((IKeyHolder) observation)
-							.setDataKey(((ComputableResource) lastResource).getValidatedResource(ILookupTable.class));
-				}
+			IDataKey dataKey = findDataKey();
+			if (dataKey != null && observation instanceof IKeyHolder) {
+				((IKeyHolder) observation).setDataKey(dataKey);
 			}
 		}
+
+	}
+
+	/*
+	 * Observations have a datakey if their last resource applied to the main
+	 * observable is a lookup table producing concepts or a classification. They
+	 * also have it if the main observable is a transformation of a dependency that
+	 * does.
+	 */
+	private IDataKey findDataKey() {
+		IComputableResource lastResource = computationStrategy.get(computationStrategy.size() - 1).getSecond();
+		if (lastResource.getClassification() != null || lastResource.getAccordingTo() != null) {
+			return ((ComputableResource) lastResource).getValidatedResource(IClassification.class);
+		} else if (lastResource.getLookupTable() != null) {
+			if (((ComputableResource) lastResource).getValidatedResource(LookupTable.class).isKey()) {
+				return ((ComputableResource) lastResource).getValidatedResource(ILookupTable.class);
+			}
+		}
+
+		IDataKey ret = null;
+		for (IActuator actuator : actuators) {
+			if (((Actuator) actuator).observable.getType().equals(observable.getType())) {
+				ret = ((Actuator) actuator).findDataKey();
+				break;
+			}
+		}
+
+		return ret;
 
 	}
 

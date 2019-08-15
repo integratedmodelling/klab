@@ -278,7 +278,7 @@ public enum Resolver {
 		boolean tryPrevious = ret.getContext() != null
 				&& (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
 		if (tryPrevious) {
-			previousArtifact = ((Subject) ret.getContext()).getRuntimeContext().findArtifact(observable);
+			previousArtifact = ((Subject) ret.getContext()).getRuntimeScope().findArtifact(observable);
 		}
 
 		if (previousArtifact != null) {

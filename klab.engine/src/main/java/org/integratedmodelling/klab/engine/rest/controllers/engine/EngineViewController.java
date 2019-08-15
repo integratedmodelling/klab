@@ -136,7 +136,7 @@ public class EngineViewController {
 		}
 
 		List<IObservationReference> ret = new ArrayList<>();
-		IRuntimeScope context = ((Observation) obs).getRuntimeContext();
+		IRuntimeScope context = ((Observation) obs).getRuntimeScope();
 
 		int i = -1;
 		int n = 0;

@@ -13,12 +13,12 @@ public class Relationship extends CountableObservation implements IRelationship 
 
 	@Override
 	public Subject getSource() {
-		return (Subject) getRuntimeContext().getSourceSubject(this);
+		return (Subject) getRuntimeScope().getSourceSubject(this);
 	}
 
 	@Override
 	public Subject getTarget() {
-		return (Subject) getRuntimeContext().getTargetSubject(this);
+		return (Subject) getRuntimeScope().getTargetSubject(this);
 	}
 
 }

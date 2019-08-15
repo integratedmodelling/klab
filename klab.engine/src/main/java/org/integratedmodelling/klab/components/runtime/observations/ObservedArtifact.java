@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 public abstract class ObservedArtifact extends Artifact implements IArtifact {
 
 	private IGeometry geometry;
-	private IRuntimeScope runtimeContext;
+	private IRuntimeScope runtimeScope;
 	private IMetadata metadata = new Metadata();
 	private String token = "o" + NameGenerator.shortUUID();
 	private boolean markedForDeletion;
@@ -32,7 +32,7 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 	
 	public ObservedArtifact(IGeometry geometry, IRuntimeScope context) {
 		this.geometry = geometry;
-		this.runtimeContext = context;
+		this.runtimeScope = context;
 	}
 
 	public String getId() {
@@ -63,8 +63,8 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 		return metadata;
 	}
 
-	public IRuntimeScope getRuntimeContext() {
-		return this.runtimeContext;
+	public IRuntimeScope getRuntimeScope() {
+		return this.runtimeScope;
 	}
 
 	public ObservedArtifact getParent() {
@@ -98,7 +98,7 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 
 	@Override
 	public IProvenance getProvenance() {
-		return getRuntimeContext().getProvenance();
+		return getRuntimeScope().getProvenance();
 	}
 
 	protected void setMetadata(IMetadata metadata) {

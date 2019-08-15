@@ -50,16 +50,16 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 	@Override
 	public Collection<IState> getStates() {
-		return getRuntimeContext().getChildren(this, IState.class);
+		return getRuntimeScope().getChildren(this, IState.class);
 	}
 
 	@Override
 	public <T extends IArtifact> Collection<T> getChildren(Class<T> cls) {
-		return getRuntimeContext().getChildren(this, cls);
+		return getRuntimeScope().getChildren(this, cls);
 	}
 
 	public IObservation getChildArtifact(String name) {
-		for (IArtifact artifact : this.getRuntimeContext().getChildArtifactsOf(this)) {
+		for (IArtifact artifact : this.getRuntimeScope().getChildArtifactsOf(this)) {
 			if ((artifact instanceof IDirectObservation && ((IDirectObservation) artifact).getName().equals(name))
 					|| (artifact instanceof IState && ((IState) artifact).getObservable().getName().equals(name))) {
 				return (IObservation) artifact;
@@ -96,7 +96,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 		if (this.predicates.add(predicate)) {
 
-			IObservable.Builder builder = getObservable().getBuilder(getRuntimeContext().getMonitor());
+			IObservable.Builder builder = getObservable().getBuilder(getRuntimeScope().getMonitor());
 
 			if (predicate.is(IKimConcept.Type.ROLE)) {
 				builder.withRole(predicate);
@@ -125,7 +125,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 		if (this.predicates.remove(predicate)) {
 
-			IObservable.Builder builder = getObservable().getBuilder(getRuntimeContext().getMonitor())
+			IObservable.Builder builder = getObservable().getBuilder(getRuntimeScope().getMonitor())
 					.without(predicate);
 
 			this.setObservable((Observable) builder.buildObservable());
@@ -171,7 +171,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 	@Override
 	public Collection<IArtifact> getChildArtifacts() {
-		return getRuntimeContext().getChildArtifactsOf(this);
+		return getRuntimeScope().getChildArtifactsOf(this);
 	}
 
 }

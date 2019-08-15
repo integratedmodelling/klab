@@ -985,6 +985,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				this.observations.put(observation.getId(), observation);
 				if (this.rootSubject == null && observation instanceof ISubject) {
 					this.rootSubject = (ISubject) observation;
+					this.eventBus = new EventBus((Subject)this.rootSubject);
 				}
 				this.catalog.put(name, observation);
 				this.structure.addVertex(observation);

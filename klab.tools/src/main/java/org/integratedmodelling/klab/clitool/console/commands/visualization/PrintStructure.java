@@ -29,7 +29,7 @@ public class PrintStructure implements ICommand {
 
 	private String printStructure(IObservation obs, int level) {
 
-		IRuntimeScope context = ((Observation)obs).getRuntimeContext();
+		IRuntimeScope context = ((Observation)obs).getRuntimeScope();
 		
 		String ret = StringUtil.repeat(' ', level) + obs;
 		for (IObservation child : context.getChildrenOf(obs)) {

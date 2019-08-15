@@ -83,7 +83,7 @@ public class Network implements INetwork {
 		 * Build network
 		 */
 		for (IObservation observation : configuration.getTargetObservations()) {
-			IRuntimeScope context = ((Observation) observation).getRuntimeContext();
+			IRuntimeScope context = ((Observation) observation).getRuntimeScope();
 			for (IArtifact artifact : observation) {
 				if (artifact instanceof IRelationship) {
 					IDirectObservation source = context.getSourceSubject((IRelationship) artifact);

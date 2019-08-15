@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Indexing;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observables;
@@ -61,6 +62,8 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.runtime.DefaultRuntimeProvider;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
@@ -109,6 +112,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.ibm.icu.text.NumberFormat;
+
+import akka.actor.ActorRef;
 
 /**
  * Engine session. Implements UserDetails to be directly usable as a principal
@@ -176,6 +181,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 */
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
+
+	private ActorRef rootActor;
 
 	public interface Listener {
 
@@ -1153,6 +1160,24 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					((Resource) ret).getReference());
 		}
 		return ret;
+	}
+
+	/**
+	 * TARIK this is the root actor in a Session, created on demand and child of the
+	 * root actor in the engine, which is held by the runtime system. Probably a
+	 * different call should be used (and maybe even a different type - no idea)!
+	 * The {@link EventBus} (part of {@link RuntimeScope} should call this as the
+	 * father of the context's actor, to create it and all the successive ones as new
+	 * observations are created.
+	 * 
+	 * @return
+	 */
+	public ActorRef getRootActor() {
+		if (this.rootActor == null) {
+			this.rootActor = ((DefaultRuntimeProvider) Klab.INSTANCE.getRuntimeProvider()).getActorSystem()
+					.actorFor(getId());
+		}
+		return this.rootActor;
 	}
 
 }

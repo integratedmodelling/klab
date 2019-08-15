@@ -121,7 +121,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
     @Override
     public Monitor getMonitor() {
-        return (Monitor) getRuntimeContext().getMonitor();
+        return (Monitor) getRuntimeScope().getMonitor();
     }
 
     @Override
@@ -136,7 +136,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
     @Override
     public IProvenance getProvenance() {
-        return getRuntimeContext().getProvenance();
+        return getRuntimeScope().getProvenance();
     }
 
     public void setObservable(Observable observable) {
@@ -144,12 +144,12 @@ public abstract class Observation extends ObservedArtifact implements IObservati
     }
 
     public Namespace getNamespace() {
-        return (Namespace) getRuntimeContext().getNamespace();
+        return (Namespace) getRuntimeScope().getNamespace();
     }
 
     @Override
     public DirectObservation getContext() {
-        return (DirectObservation) getRuntimeContext().getParentOf(this);
+        return (DirectObservation) getRuntimeScope().getParentOf(this);
     }
 
     public String toString() {

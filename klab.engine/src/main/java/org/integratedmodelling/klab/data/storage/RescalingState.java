@@ -364,7 +364,7 @@ public class RescalingState extends Observation implements IState {
         if (delegate.getType() == type) {
             return this;
         }
-        return new RescalingState(delegate.as(type), newScale, getRuntimeContext());
+        return new RescalingState(delegate.as(type), newScale, getRuntimeScope());
     }
 
     @Override
@@ -412,7 +412,7 @@ public class RescalingState extends Observation implements IState {
                 values.add(get(locator));
             }
             AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()),
-                    getRuntimeContext().getMonitor());
+                    getRuntimeScope().getMonitor());
         }
         throw new KlabUnimplementedException(
                 "aggregation of rescaled states is unimplemented - please submit a request");

@@ -990,7 +990,7 @@ public class ResolutionScope implements IResolutionScope {
 		Observable ret = resolvable;
 		Map<String, IObservable> knownObservables = new HashMap<>();
 		if (context != null) {
-			IRuntimeScope ctx = context.getRuntimeContext();
+			IRuntimeScope ctx = context.getRuntimeScope();
 			if (ctx != null) {
 				for (Pair<String, IObservation> obs : ctx.getArtifacts(IObservation.class)) {
 					knownObservables.put(obs.getSecond().getObservable().getReferenceName(),

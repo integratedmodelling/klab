@@ -109,7 +109,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
                          * Register the observation context with the session. It will be disposed of
                          * and/or persisted by the session itself.
                          */
-                        session.registerObservationContext(((Observation) ret).getRuntimeContext());
+                        session.registerObservationContext(((Observation) ret).getRuntimeScope());
                         session.unregisterTask(UrnContextualizationTask.this);
                         session.getMonitor().send(Message.create(session
                                 .getId(), IMessage.MessageClass.TaskLifecycle, IMessage.Type.TaskFinished, UrnContextualizationTask.this.descriptor));

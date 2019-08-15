@@ -121,11 +121,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					runtimeContext = createRuntimeContext(actuator, scope, scale, monitor);
 				} else if (switchContext) {
 					// new catalog, new scale, context subject is in the scope
-					runtimeContext = ((Subject) context).getRuntimeContext().createContext(scale, actuator, scope,
+					runtimeContext = ((Subject) context).getRuntimeScope().createContext(scale, actuator, scope,
 							monitor);
 				} else {
 					// instantiating or resolving states: stay in context
-					runtimeContext = ((Subject) context).getRuntimeContext().createChild(scale, actuator, scope,
+					runtimeContext = ((Subject) context).getRuntimeScope().createChild(scale, actuator, scope,
 							monitor);
 				}
 
@@ -151,6 +151,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		});
 	}
 
+	/**
+	 * TARIK this is the root, created on demand.
+	 * @return
+	 */
 	public ActorSystem getActorSystem() {
 		if (rootActorSystem == null) {
 			Logging.INSTANCE.info("Creating root actor system...");

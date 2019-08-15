@@ -265,7 +265,7 @@ public enum Observations implements IObservationService {
 			observation = observation.at(locator);
 		}
 
-		ISubject rootSubject = ((Observation) observation).getRuntimeContext().getRootSubject();
+		ISubject rootSubject = ((Observation) observation).getRuntimeScope().getRootSubject();
 		if (rootSubject != null) {
 			ret.setRootContextId(rootSubject.getId());
 		}
