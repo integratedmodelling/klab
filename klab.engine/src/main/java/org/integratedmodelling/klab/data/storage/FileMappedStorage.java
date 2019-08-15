@@ -182,19 +182,19 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 			page.put(((Byte) val).byteValue());
 			break;
 		case DOUBLE:
-			page.putDouble(((Double) val).doubleValue());
+			page.putDouble(((Number) val).doubleValue());
 			break;
 		case FLOAT:
-			page.putFloat(((Float) val).floatValue());
+			page.putFloat(((Number) val).floatValue());
 			break;
 		case INT:
-			page.putInt(((Integer) val).intValue());
+			page.putInt(((Number) val).intValue());
 			break;
 		case LONG:
-			page.putLong(((Long) val).longValue());
+			page.putLong(((Number) val).longValue());
 			break;
 		case SHORT:
-			page.putShort(((Short) val).shortValue());
+			page.putShort(((Number) val).shortValue());
 			break;
 		default:
 			break;
@@ -209,17 +209,23 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 
 		switch (type) {
 		case BYTE:
-			return page.get();
+			byte b = page.get();
+			return b == Byte.MIN_VALUE ? null : (b == 1);
 		case DOUBLE:
-			return page.getDouble();
+			double d = page.getDouble();
+			return Double.isNaN(d) ? null : d;
 		case FLOAT:
-			return page.getFloat();
+			float f = page.getFloat();
+			return Float.isNaN(f) ? null : f;
 		case INT:
-			return page.getInt();
+			int i = page.getInt();
+			return i == Integer.MIN_VALUE ? null : i;
 		case LONG:
-			return page.getLong();
+			long l = page.getLong();
+			return l == Long.MIN_VALUE ? null : l;
 		case SHORT:
-			return page.getShort();
+			short s = page.getShort();
+			return s == Short.MIN_VALUE ? null : s;
 		default:
 			break;
 		}

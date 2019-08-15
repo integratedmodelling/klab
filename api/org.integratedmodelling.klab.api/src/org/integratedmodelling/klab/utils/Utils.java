@@ -306,4 +306,26 @@ public class Utils {
 		return null;
 	}
 
+	public static Object[] boxArray(double[] a) {
+		Object[] ret = new Object[a.length];
+		int i = 0;
+		for (double aa : a) {
+			ret[i++] = aa;
+		}
+		return ret;
+	}
+
+	public static Object[] boxArray(long[] a) {
+		Object[] ret = new Object[a.length];
+		int i = 0;
+		for (long aa : a) {
+			ret[i++] = aa;
+		}
+		return ret;
+	}
+
+	public static boolean isFloatingPoint(Number number) {
+		return number instanceof Double || number instanceof Float;
+	}
+
 }

@@ -4,7 +4,6 @@ import org.integratedmodelling.klab.Observations
 import org.integratedmodelling.klab.api.data.ILocator
 import org.integratedmodelling.klab.api.knowledge.IConcept
 import org.integratedmodelling.klab.api.observations.IState
-import org.integratedmodelling.klab.api.observations.scale.time.ITime
 import org.integratedmodelling.klab.api.provenance.IArtifact
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException
 import org.integratedmodelling.klab.exceptions.KlabValidationException
@@ -14,7 +13,7 @@ class State extends Observation<IState> {
 
 	// only used to tag a state for reduction when transformed
 	IConcept dataReduction = null;
-	ILocator timePointer = ITime.INITIALIZATION;
+	ILocator timePointer = org.integratedmodelling.klab.components.time.extents.Time.INITIALIZATION;
 	StateSummary summary;
 
 	State(IState obs, Binding binding) {

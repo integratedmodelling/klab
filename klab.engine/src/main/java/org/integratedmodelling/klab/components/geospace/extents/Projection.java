@@ -2,14 +2,18 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 import javax.measure.unit.Unit;
 
+import org.geotools.geometry.DirectPosition2D;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.CRS.AxisOrder;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.components.geospace.utils.UTM;
 import org.integratedmodelling.klab.components.geospace.utils.WGS84;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 
 public class Projection implements IProjection {
 
@@ -74,7 +78,7 @@ public class Projection implements IProjection {
 
 		Envelope standardized = envelope.transform(getLatLon(), true);
 		double[] xy = standardized.getCenterCoordinates();
-		// check longitude, in OpenLayer is possible to get out of range 
+		// check longitude, in OpenLayer is possible to get out of range
 		if (xy[0] > 180 || xy[0] < -180) {
 			throw new IllegalArgumentException("Longitude is out of range (-180/180)");
 		}
@@ -83,7 +87,7 @@ public class Projection implements IProjection {
 		}
 		WGS84 wgs = new WGS84(xy[1], xy[0]);
 		UTM utm = new UTM(wgs);
-		
+
 		int idx = 0;
 		if (wgs.getHemisphere() == 'S') {
 			idx = 1;
@@ -218,6 +222,27 @@ public class Projection implements IProjection {
 		return Math.pow(Math.sin(val / 2), 2);
 	}
 
+	/**
+	 * Transform the passed coordinate from the passed projection to this.
+	 * 
+	 * @param coordinate
+	 * @param other
+	 * @return
+	 */
+	public double[] transformCoordinate(double[] coordinate, IProjection other) {
+		double[] ret = coordinate;
+		if (!this.equals(other)) {
+			try {
+				MathTransform transform = CRS.findMathTransform(((Projection) other).crs, this.crs);
+				DirectPosition position = transform.transform(new DirectPosition2D(ret[0], ret[1]), null);
+				ret = new double[] { position.getCoordinate()[0], position.getCoordinate()[1] };
+			} catch (Exception e) {
+				throw new KlabInternalErrorException(e);
+			}
+		}
+		return ret;
+	}
+
 	public int getSRID() {
 		return Integer.parseInt(code.split(":")[1]);
 	}
@@ -226,7 +251,7 @@ public class Projection implements IProjection {
 	public boolean isMeters() {
 		return getUnits().equals("m");
 	}
-	
+
 	@Override
 	public boolean flipsCoordinates() {
 		return !CRS.getAxisOrder(this.crs).equals(AxisOrder.EAST_NORTH);

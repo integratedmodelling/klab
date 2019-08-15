@@ -37,19 +37,44 @@ public class Geometry implements IGeometry {
 
 		// this and the next null if the target is an entire scale or just offsets
 		public Dimension.Type type;
+		// the only way to get this is by passing a single Dimension or Extent parameter
 		public Dimension extent;
-		// this null if the target is an extent or just offsets
+		// if single parameter is a geometry or scale, this isn't null
 		public IGeometry geometry;
 		// this null if target is scanned in its entirety
 		public long[] offsets;
 
-		private void defineOffsets(List<Long> numbers) {
+		// this like offsets but only if the numbers are doubles (first number coerces
+		// the second). Not handled in Geometry, only in Scale.
+		public double[] coordinates;
+
+		// if not null, we got something else and Geometry will throw an error, but
+		// Scale
+		// may not.
+		public Object[] otherLocators;
+
+		private void defineOffsets(List<Number> numbers) {
 			if (numbers.size() > 0) {
-				offsets = new long[numbers.size()];
-				int i = 0;
-				for (Long l : numbers) {
-					offsets[i++] = l;
+				if (numbers.get(0) instanceof Double || numbers.get(0) instanceof Float) {
+					offsets = new long[numbers.size()];
+					int i = 0;
+					for (Number l : numbers) {
+						coordinates[i++] = l.doubleValue();
+					}
+
+				} else {
+					offsets = new long[numbers.size()];
+					int i = 0;
+					for (Number l : numbers) {
+						offsets[i++] = l.longValue();
+					}
 				}
+			}
+		}
+
+		public void defineOthers(List<Object> others) {
+			if (others.size() > 0) {
+				this.otherLocators = others.toArray();
 			}
 		}
 
@@ -75,12 +100,18 @@ public class Geometry implements IGeometry {
 					+ (geometry == null ? "" : geometry.toString()) + (offsets == null ? "" : Arrays.toString(offsets))
 					+ ">";
 		}
+
 	}
 
 	public static List<DimensionTarget> separateTargets(Object... locators) {
 		List<DimensionTarget> ret = new ArrayList<>();
 		DimensionTarget current = null;
-		List<Long> numbers = new ArrayList<>();
+		List<Number> numbers = new ArrayList<>();
+		List<Object> others = new ArrayList<>();
+
+		boolean haveGeometry = false;
+		int nExtents = 0;
+
 		if (locators != null) {
 			for (int i = 0; i < locators.length; i++) {
 				Object o = locators[i];
@@ -90,25 +121,29 @@ public class Geometry implements IGeometry {
 						current = new DimensionTarget();
 					}
 
-					numbers.add(((Number) o).longValue());
+					numbers.add((Number) o);
 
 				} else {
 
 					if (current != null) {
 						current.defineOffsets(numbers);
+						current.defineOthers(others);
 						ret.add(current);
 					}
 					current = new DimensionTarget();
 					numbers.clear();
+					others.clear();
 
 					if (o instanceof Dimension.Type) {
 						current.type = (Dimension.Type) o;
 					} else if (o instanceof Dimension) {
+						nExtents++;
 						current.extent = (Dimension) o;
 						current.type = ((Dimension) o).getType();
 					} else if (o instanceof IScale) {
 						current.geometry = (IScale) o;
 					} else if (o instanceof IGeometry) {
+						haveGeometry = true;
 						current.geometry = (IGeometry) o;
 					} else if (o instanceof Class<?>) {
 						if (ISpace.class.isAssignableFrom((Class<?>) o)) {
@@ -119,7 +154,8 @@ public class Geometry implements IGeometry {
 							throw new IllegalArgumentException("illegal locator definition: " + o);
 						}
 					} else {
-						throw new IllegalArgumentException("illegal locator definition: " + o);
+						// add to 'weird' stuff for other APIs to process
+						others.add(o);
 					}
 				}
 			}
@@ -129,6 +165,16 @@ public class Geometry implements IGeometry {
 				ret.add(current);
 			}
 		}
+
+		if (haveGeometry && ret.size() > 1) {
+			throw new IllegalArgumentException(
+					"locators defined through a concrete geometry cannot have any other locator parameter");
+		}
+		if (nExtents > 0 && ret.size() != nExtents) {
+			throw new IllegalArgumentException(
+					"locators defined through concrete extents cannot have non-extent locator parameters");
+		}
+
 		return ret;
 	}
 
@@ -176,6 +222,12 @@ public class Geometry implements IGeometry {
 	 * Time scope: integer or floating point number of PARAMETER_TIME_SCOPE_UNITs.
 	 */
 	public static final String PARAMETER_TIME_SCOPE = "tscope";
+
+	/**
+	 * Specific time location, for locator geometries. Expects a long, a date or a
+	 * ITimeInstant.
+	 */
+	public static final String PARAMETER_TIME_LOCATOR = "time";
 
 	/**
 	 * Time scope unit: one of millennium, century, decade, year, month, week, day,
@@ -971,6 +1023,12 @@ public class Geometry implements IGeometry {
 			for (Dimension dimension : this.dimensions) {
 				boolean found = false;
 				for (DimensionTarget target : targets) {
+
+					if (target.coordinates != null || target.otherLocators != null) {
+						// we don't handle these here
+						throw new IllegalStateException("Unrecognized locators for a Geometry: check usage");
+					}
+
 					if (target.type != null && target.type == dimension.getType()) {
 						found = true;
 						if (target.offsets != null) {
@@ -1139,6 +1197,24 @@ public class Geometry implements IGeometry {
 	@Override
 	public IGeometry getGeometry() {
 		return originalScale;
+	}
+
+	/**
+	 * Based on conventions, extract any parameters from a dimension that can
+	 * provide location within a scale. Used internally in
+	 * {@link IScale#at(Object...)}
+	 * 
+	 * @param extent
+	 * @return
+	 */
+	public static Object[] getLocatorParameters(Dimension extent) {
+		if (extent.getType() == Type.TIME && extent.getParameters().containsKey(PARAMETER_TIME_LOCATOR)) {
+			return new Object[] { extent.getParameters().get(PARAMETER_TIME_LOCATOR) };
+		} else if (extent.getType() == Type.SPACE && extent.getParameters().containsKey(PARAMETER_SPACE_LONLAT)) {
+			double[] latlon = extent.getParameters().get(PARAMETER_SPACE_LONLAT, double[].class);
+			return Utils.boxArray(latlon);
+		} // TODO others maybe
+		return null;
 	}
 
 }

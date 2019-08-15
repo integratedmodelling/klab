@@ -55,13 +55,31 @@ public abstract class AbstractExtent implements IExtent {
 
 	protected Extent locatedExtent = null;
 	protected long[] locatedOffsets = null;
+	protected long locatedLinearOffset = -1;
 
+	/**
+	 * The extent this locates, if any.
+	 * 
+	 * @return
+	 */
 	public IExtent getLocatedExtent() {
 		return locatedExtent;
 	}
 
+	/**
+	 * Located offsets wrt the dimensionality of the extent, or null.
+	 * @return
+	 */
 	public long[] getLocatedOffsets() {
 		return locatedOffsets;
+	}
+	
+	/**
+	 * Linear located offset or -1
+	 * @return
+	 */
+	public long getLocatedOffset() {
+		return locatedLinearOffset;
 	}
 
 	protected void setScaleId(String id) {
@@ -135,16 +153,4 @@ public abstract class AbstractExtent implements IExtent {
 		this.baseDimension = dimension;
 	}
 
-	/**
-	 * Called when a locator is passed to a scale's at() function that may require
-	 * reinterpretation within this extent. The typical case is when world
-	 * coordinates appear in a dimension and the scale needs to turn those into
-	 * offsets. In that case, create the appropriate offsets and return it.
-	 * Otherwise return null.
-	 * 
-	 * @param d
-	 * @return the offsets pointed to by the passed dimension parameters in this
-	 *         context, or null.
-	 */
-//	protected abstract long[] disambiguate(Dimension d);
 }

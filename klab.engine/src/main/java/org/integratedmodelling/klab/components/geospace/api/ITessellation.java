@@ -30,16 +30,18 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 
 /**
- * An irregular tessellation topology implemented as an array of shapes, not necessarily 
- * covering a full extent but necessarily non-overlapping.
+ * An irregular tessellation topology implemented as an array of shapes, not
+ * necessarily covering a full extent but necessarily non-overlapping.
  * 
  * @author ferdinando.villa
  *
  */
 public interface ITessellation extends Iterable<ILocator> {
 
-  int size();
+	int size();
 
-  IShape getFeature(long stateIndex);
-  
+	IShape getFeature(long stateIndex);
+
+	IShape getFeatureAt(double[] coordinates, boolean coordinatesAreStandardized);
+
 }

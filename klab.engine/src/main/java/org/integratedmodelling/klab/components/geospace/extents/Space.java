@@ -44,6 +44,7 @@ import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.collections.IterableAdapter;
 import org.integratedmodelling.klab.utils.collections.IteratorAdapter;
 
@@ -263,7 +264,7 @@ public class Space extends Extent implements ISpace {
 	}
 
 	@Override
-	public long getOffset(long...dimOffsets) {
+	public long getOffset(long... dimOffsets) {
 		if (features != null) {
 			if (dimOffsets.length != 1) {
 				throw new IllegalArgumentException("can't address offset: tessellation space has one dimension");
@@ -824,7 +825,7 @@ public class Space extends Extent implements ISpace {
 	}
 
 	public static IExtent createMergedExtent(ISpace destination, ISpace source) {
-		
+
 		// TODO Auto-generated method stub
 		// if (!(extent instanceof Space)) {
 		// throw new KlabValidationException("space extent cannot merge non-space
@@ -878,10 +879,9 @@ public class Space extends Extent implements ISpace {
 					: ((Scale) locator).getDimension(Type.SPACE).getStandardizedDimension(FULL);
 		}
 		if (locator instanceof ISpace) {
-			return ((ISpace)locator).getStandardizedDimension(ILocator.FULL);
+			return ((ISpace) locator).getStandardizedDimension(ILocator.FULL);
 		}
 		throw new KlabUnimplementedException("Space::getStandardizedDimension()");
-//		return at(locator).getStandardizedDimension(FULL);
 	}
 
 	@Override
@@ -891,9 +891,65 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public IExtent at(Object... locators) {
-		// must have a grid or a tessellation
-		// can be a point space, a lat/long pair or an offset
-		return null;
+
+		// must be either one long or two doubles or one spatial object with point shape
+		long offset = -1;
+		double[] coordinates = null;
+		long[] offsets = null;
+		
+		if (locators != null) {
+			if (locators.length == 1) {
+
+				if (locators[0] instanceof ISpace) {
+					if (((ISpace) locators[0]).getDimensionality() == 0) {
+						coordinates = ((ISpace) locators[0]).getStandardizedCentroid();
+					}
+				} else if (locators[0] instanceof Number && !Utils.isFloatingPoint((Number) locators[0])) {
+					offset = ((Number) locators[0]).longValue();
+				}
+
+			} else if (locators.length == 2) {
+				// coordinates - must be doubles
+				if (locators[0] instanceof Number && locators[1] instanceof Number
+						&& Utils.isFloatingPoint((Number) locators[0]) && Utils.isFloatingPoint((Number) locators[1])) {
+					coordinates = new double[] { ((Number) locators[0]).doubleValue(),
+							((Number) locators[1]).doubleValue() };
+				} else if (locators[0] instanceof Number && locators[1] instanceof Number
+						&& !Utils.isFloatingPoint((Number) locators[0]) && !Utils.isFloatingPoint((Number) locators[1])) {
+					offsets = new long[] { ((Number) locators[0]).longValue(),
+							((Number) locators[1]).longValue() };
+				}
+			}
+		}
+
+		if (offset >= 0 || coordinates != null || offsets != null) {
+
+			if (this.grid != null) {
+
+				if (offset >= 0) {
+					return this.grid.getCell(offset);
+				} else if (offsets != null) {
+					return this.grid.getCell(offsets[0], offsets[1]);
+				} else {
+					return this.grid.getCellAt(coordinates, true);
+				}
+				
+			} else if (this.features != null) {
+				if (offset >= 0) {
+					return this.features.getFeature(offset);
+				} else {
+					return this.features.getFeatureAt(coordinates, true);
+				}
+			}
+		}
+
+		throw new IllegalArgumentException("space: can't recognize or apply locators in at()");
+
+	}
+
+	@Override
+	public double[] getStandardizedCentroid() {
+		return getShape().getCenter(true);
 	}
 
 }

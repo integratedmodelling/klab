@@ -40,7 +40,8 @@ public class Time extends Extent implements ITime {
 
 	/**
 	 * The empty, non-descript initialization locator refers to the time before time
-	 * begins.
+	 * begins. Any recontextualization of the initialization locator produces the
+	 * initialization locator.
 	 */
 	public static ILocator INITIALIZATION = new Time() {
 
@@ -52,6 +53,33 @@ public class Time extends Extent implements ITime {
 		public boolean equals(Object o) {
 			return o == this;
 		}
+		
+		@Override
+		public Time copy() {
+			return this;
+		}
+		
+		@Override 
+		public Time getExtent(long offset) {
+			return this;
+		}
+
+		@Override
+		public boolean contains(IExtent o) throws KlabException {
+			return o == this;
+		}
+
+		@Override
+		public boolean overlaps(IExtent o) throws KlabException {
+			return o == this;
+		}
+
+		@Override
+		public boolean intersects(IExtent o) throws KlabException {
+			return o == this;
+		}
+		
+		
 	};
 
 	private static class ResolutionImpl implements Resolution {

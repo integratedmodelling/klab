@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 
 /**
  * Smart storage using a configurable backend to store slices that are only
@@ -30,7 +31,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	private long maxTimeOffset;
 	private long sliceSize;
 	private long slicesInBackend = 0;
-	
+
 	// FIXME this is only for debugging, remove when done.
 	private IGeometry geometry;
 
@@ -143,7 +144,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 	protected AbstractAdaptiveStorage(IGeometry geometry) {
 
-		this.geometry = geometry; 
+		this.geometry = geometry;
 		Dimension time = geometry.getDimension(Type.TIME);
 		if (time == null) {
 			this.trivial = true;
@@ -202,11 +203,12 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		}
 
 		Offset offsets = locator.as(Offset.class);
-		
+
 		if (offsets.length != geometry.getDimensions().size()) {
-			System.out.println("POODOOCIO");
+			throw new KlabInternalErrorException(
+					"locator has different dimensionality than observation: should never happen");
 		}
-		
+
 		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
 		long timeOffset = trivial ? 0 : offsets.pos[0];
 
@@ -217,11 +219,12 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	public long put(T value, ILocator locator) {
 
 		Offset offsets = locator.as(Offset.class);
-		
+
 		if (offsets.length != geometry.getDimensions().size()) {
-			System.out.println("POODOOCIO");
+			throw new KlabInternalErrorException(
+					"locator has different dimensionality than observation: should never happen");
 		}
-		
+
 		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
 		long timeOffset = trivial ? 0 : offsets.pos[0];
 		boolean noData = Observations.INSTANCE.isNodata(value);

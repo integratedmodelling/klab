@@ -83,6 +83,13 @@ public interface ISpace extends IExtent {
 	 * @return
 	 */
 	double getStandardizedWidth();
+	
+	/**
+	 * Centroid in whatever standard coordinates the implementation uses.
+	 * 
+	 * @return
+	 */
+	double[] getStandardizedCentroid();
 
 	/**
 	 * Height in standard SI units (meters), NaN if 1D.

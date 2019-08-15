@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
@@ -282,7 +283,7 @@ public class VectorEncoder implements IResourceEncoder {
         if (rasterize) {
         	final Builder stateBuilder = builder;
             rasterizer.finish((b, xy) -> {
-                    stateBuilder.add(b, requestScale.at(requestScale.getSpace(), xy[0], xy[1]));
+                    stateBuilder.add(b, requestScale.at(ISpace.class, xy[0], xy[1]));
             });
             builder = builder.finishState();
         }

@@ -29,6 +29,7 @@ package org.integratedmodelling.klab.api.observations.scale.space;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.common.LogicalConnector;
 
@@ -372,6 +373,22 @@ public interface IGrid extends Iterable<Cell> {
 
 	long[] getGridCoordinatesAt(double x, double y);
 
+	/**
+	 * 
+	 * @param coordinates
+	 * @param isStandardProjection
+	 * @return
+	 */
+	Cell getCellAt(double[] coordinates, boolean isStandardProjection);
+
+	/**
+	 * 
+	 * @param offset
+	 * @return
+	 */
+	Cell getCell(long offset);
+
 	IProjection getProjection();
+
 
 }

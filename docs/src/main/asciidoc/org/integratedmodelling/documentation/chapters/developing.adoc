@@ -6,7 +6,24 @@ Overview...
 
 == Embedding a k.LAB engine
 
-A programmer can use the engine API to embed observation functionalities in JVM-compatible programs. A basic example of using the Java API to access the network and make observations through referencing concept and observation URNs could look like this:
+A programmer can use the engine API to embed observation functionalities in JVM-compatible programs. In order to do so, the k.LAB code must be imported. As k.LAB is in Maven Central, the simplest way to do so is through Maven or Gradle:
+
+[source,xml]
+----
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.modeler</artifactId>
+			<!-- define or substitute the klab.version variable 
+			     with the most recent version -->
+			<version>${klab.version}</version> 
+		</dependency>
+----
+
+There are several modules in the k.LAB source stack, but the `klab.modeler` dependency should be all you need to follow the examples in this documentation. A note of caution: this will import a _lot_ of code through transitive dependencies. As much as we appreciate single-jar software components, there is simply no way to build anything like this from scratch! 
+
+If, instead, what you desire is to set up a development environment with the k.LAB source code, to explore, study or (bless you) contribute, follow the instructions <<TBD,here>>.
+
+A basic example of using the Java API to access the network and make observations through referencing concept and observation URNs could look like this:
 
 [source,java]
 ----
@@ -53,13 +70,65 @@ try (ISession session = engine.createSession()) {
 
 The rationale of having sessions is that an engine can serve multiple simultaneous sessions, owned by different users. In fact, createSession() can be optionally passed a previously authenticated  IUser, which the web interface of the k.LAB engine allows to configure and authenticate. In  embedded mode, we can simply use the shorthand method createSession() with no arguments, which  will create a session owned by the same user who owns the engine and the certificate. You can retrieve this user from the engine using `engine.getUser()`.
 
-== A field guide to the k.LAB source code
+== A developer's guide to k.LAB
 
-== Using the REST API
+=== Service API
+
+=== Project API
+
+=== Ontology parsing, storing and reasoning
+
+=== Resource API
+
+==== Resource Adapter API
+
+=== Observation API
+
+==== Mediation and rescaling API
+
+=== Observation geometry: space/time topologies
+
+What is a topology, geometry, dimension, scale, extent and how they are implemented.
+
+==== Locating and scanning geometries and scales
+
+=== Storage providers
+
+=== Runtime concepts
+
+==== Authentication and connection to the k.LAB semantic web
+
+==== Identities and Monitors
+
+==== Sessions
+
+==== Dataflow
+
+==== Runtime execution
+
+==== The actor system
+
+==== Tracking provenance
+
+=== Other modules in the k.LAB software stack
+
+So far we have discussed the k.LAB engine. 
+
+==== Languages: k.IM and k.DL
+
+==== UI: the Explorer
+
+==== The k.LAB hub
+
+==== The k.LAB node
+
+==== The k.LAB IDE (k.Modeler)
+
+== The REST APIs
 
 == Developing extensions
 
-A major part of many independent developers’ interests will likely include development of `components` – independent packages that provide functionalities for k.LAB, such as new model integrations. A  Maven archetype is provided that installs a sample component to use as a template. The `klab` project in Bitbucket contains many of the components that are currently available.
+A major part of many independent developers’ interests will likely include development of `components` – independent packages that provide functionalities for k.LAB, such as new model integrations. A  Maven archetype is provided that installs a sample component to use as a template. The https://bitbucket.org/integratedmodelling/klab[klab] project in Bitbucket contains the components that are currently distributed with the system.
 
 Components can provide:
 
@@ -68,4 +137,4 @@ Components can provide:
 * *language support* for a programming language to be usable within a k.IM expression block.
 
 Of course, the entire k.LAB code base is open source and any serious developer who feels they can contribute to the core software is welcome to check it out, fork it, play with it and propose changes and improvements, according to the terms of the https://www.gnu.org/licenses/gpl-3.0.en.html[General Public License 3.0].
- 
+

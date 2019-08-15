@@ -760,6 +760,8 @@ public class Shape extends AbstractExtent implements IShape {
 		return new double[] { centroid.getCoordinate().x, centroid.getCoordinate().y };
 	}
 
+	
+	
 	@Override
 	public boolean isGeneric() {
 		return false;
@@ -808,6 +810,11 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public IExtent at(Object... locators) {
 		throw new IllegalStateException("an individual shape cannot be further located");
+	}
+
+	@Override
+	public double[] getStandardizedCentroid() {
+		return getCenter(true);
 	}
 
 }

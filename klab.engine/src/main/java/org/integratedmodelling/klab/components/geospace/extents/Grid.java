@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
@@ -248,6 +247,11 @@ public class Grid extends Area implements IGrid {
 			this.locatedOffsets = new long[] { x, y };
 		}
 
+		@Override
+		public long getLocatedOffset() {
+			return getOffsetInGrid();
+		}
+		
 		@Override
 		public long getX() {
 			return x;
@@ -710,6 +714,15 @@ public class Grid extends Area implements IGrid {
 		@Override
 		public IExtent at(Object... locators) {
 			throw new IllegalStateException("an individual shape cannot be further located");
+		}
+
+		@Override
+		public double[] getStandardizedCentroid() {
+			double[] ret = getCenter();
+			if (!getProjection().equals(Projection.getDefault())) {
+				ret = Projection.getDefault().transformCoordinate(ret, getProjection());
+			}
+			return ret;
 		}
 	}
 
@@ -1255,5 +1268,14 @@ public class Grid extends Area implements IGrid {
 
 	public Space getSpace() {
 		return space;
+	}
+
+	@Override
+	public Cell getCellAt(double[] coordinates, boolean isStandardProjection) {
+		if (isStandardProjection && !Projection.getDefault().equals(getProjection())) {
+			coordinates = getProjection().transformCoordinate(coordinates, Projection.getDefault());
+		}	
+		long offset = getOffsetFromWorldCoordinates(coordinates[0], coordinates[1]);
+		return getCell(offset);
 	};
 }

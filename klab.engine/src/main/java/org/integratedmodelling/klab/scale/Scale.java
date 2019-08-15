@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
@@ -35,6 +37,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class Scale implements IScale {
 
@@ -773,15 +777,8 @@ public class Scale implements IScale {
 	@Override
 	public IScale at(Object... locators) {
 
-		Scale target = this;
+		Scale targetScale = this;
 
-		// NO - these may simply be IExtent locators or be translatable to that. If so, we don't go through
-		// geometry.at() but redefine the target directly and use that only if others are left. We should
-		// simply reimplement geometry.at() and handle them properly right here to turn them into an OFFSET\
-		// specification - either * or not. Location will work differently and IExtent.at is not in dimensions
-		// because only extents have world coordinates and can locate other extents. The collection mechanism
-		// can work the same way but only to address Geometry locators.
-		
 		/*
 		 * Special handling of time initialization: use scale w/o time unless time is
 		 * generic.
@@ -799,18 +796,18 @@ public class Scale implements IScale {
 			if (getTime() == null || getTime().isGeneric()) {
 				// I want you just the way you are. If generic, it should already be compatible
 				// by design.
-				target = this;
+				targetScale = this;
 			} else {
 				// FIXME/CHECK probably will need an initialization that still holds the period
 				// and step.
 				// initialization scale will run the dataflow w/o time.
 				// Dependencies have already been resolved properly to tune the resource on
-				// init.
-				target = this.minus(Type.TIME);
+				// init, but the contextualizer won't know the time from the passed context.
+				targetScale = this.minus(Type.TIME);
 			}
 
 			if (locators.length == 1) {
-				return target;
+				return targetScale;
 			}
 
 			// if continuing, we use the remaining locators on the target.
@@ -825,39 +822,132 @@ public class Scale implements IScale {
 		}
 
 		/*
-		 * re-localize locators if they have undefined offsets and parameters we can
-		 * parse and reinterpret
+		 * reinterpret through augmented version of Geometry.as(locators).
 		 */
-		List<DimensionTarget> targets = new ArrayList<>();
-		for (DimensionTarget t : Geometry.separateTargets(locators)) {
-			if (t.offsets == null) {
-				// a geometry without offsets may be locatable through its parameters
-				if (t.geometry instanceof Geometry) {
-					// turn into a scale to allow location of world coordinates
-					targets.addAll(disambiguate(Scale.create(t.geometry)));
-				}
-			}
-			targets.add(t);
-		}
+		return locate(targetScale, Geometry.separateTargets(locators));
 
-		ILocator locator = target.asGeometry().at(targets);
-
-		if (locator instanceof Offset) {
-			return new Scale(target, ((Offset) locator));
-		}
-
-		throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");
 	}
 
-	private Collection<? extends DimensionTarget> disambiguate(Scale locating) {
-		for (IExtent e : locating.getExtents()) {
-			if (e instanceof ISpace && getSpace() != null) {
-				// TODO we need IExtent.at() to return a locator and if successful, change the scale being targeted to
-				// scale.at(locator)
-			}
-			System.out.println("XOCCC");
+	/*
+	 * This gets a series of locators that are guaranteed to have either: one
+	 * geometry, a set of extents, or the same stuff that Geometry.as() gets, with
+	 * the ability to also handle double coordinates in lieu of offsets.
+	 */
+	private static Scale locate(Scale scale, List<DimensionTarget> targets) {
+
+		if (targets.isEmpty()) {
+			return scale;
 		}
-		return null;
+
+		if (!Geometry.hasShape(scale)) {
+			// not possible currently, but possibly with constraints later.
+			throw new IllegalStateException("Geometry has no specified shape: cannot create locators");
+		}
+
+		/*
+		 * dimension-specific targets cannot be combined with an overall targets.
+		 */
+		DimensionTarget overall = null;
+		for (DimensionTarget target : targets) {
+			if (target.offsets != null && target.type == null) {
+				overall = target;
+				break;
+			}
+		}
+
+		if (overall != null && targets.size() > 1) {
+			throw new IllegalStateException(
+					"Geometry cannot be located with both dimension-specific and overall locators");
+		}
+
+		if (overall != null) {
+			return new Scale(scale, new Offset(scale, overall.offsets));
+		}
+
+		Map<Dimension.Type, Object[]> extdef = new HashMap<>();
+
+		for (DimensionTarget t : targets) {
+
+			List<Pair<Dimension.Type, Object[]>> defs = new ArrayList<>();
+
+			if (t.geometry instanceof IScale) {
+
+			} else if (t.geometry instanceof IGeometry) {
+
+				// parameters may specify a location
+				for (Dimension dimension : t.geometry.getDimensions()) {
+					Object[] o = Geometry.getLocatorParameters(dimension);
+					if (o != null) {
+						defs.add(new Pair<>(dimension.getType(), o));
+					}
+				}
+
+			} else if (t.extent instanceof IExtent) {
+				defs.add(new Pair<>(t.extent.getType(), new Object[] { t.extent }));
+			} else if (t.extent instanceof Dimension) {
+				Object[] o = Geometry.getLocatorParameters(t.extent);
+				if (o != null) {
+					defs.add(new Pair<>(t.extent.getType(), o));
+				}
+			} else if (t.type != null) {
+				if (t.offsets != null) {
+					defs.add(new Pair<>(t.type, Utils.boxArray(t.offsets)));
+				} else if (t.coordinates != null) {
+					defs.add(new Pair<>(t.type, Utils.boxArray(t.coordinates)));
+				} else if (t.otherLocators != null) {
+					defs.add(new Pair<>(t.type, t.otherLocators));
+				}
+			}
+
+			for (Pair<Type, Object[]> def : defs) {
+				if (extdef.containsKey(def.getFirst())) {
+					throw new IllegalArgumentException("Scale locator contains duplicate specifications for "
+							+ def.getFirst().name().toLowerCase());
+				}
+				extdef.put(def.getFirst(), def.getSecond());
+			}
+
+		}
+
+		if (!extdef.isEmpty()) {
+
+			/*
+			 * reprocess extents using IExtent.at()
+			 */
+			List<IExtent> exts = new ArrayList<>();
+			for (IExtent e : scale.getExtents()) {
+				if (extdef.containsKey(e.getType())) {
+					// this will throw an exception if the parameters aren't recognized
+					exts.add(e.at(extdef.get(e.getType())));
+				} else {
+					exts.add(e);
+				}
+			}
+			Scale ret = create(exts.toArray(new IExtent[exts.size()]));
+
+			/*
+			 * setup the located offsets
+			 */
+			int i = 0;
+			
+			ret.locatedOffsets = new long[scale.getExtents().size()];
+			ret.originalScale = scale;
+			for (IExtent e : ret.getExtents()) {
+				long located = ((AbstractExtent) e).getLocatedOffset();
+				if (located < 0) {
+					// TODO/FIXME this is wrong but will do for now. Initialization should be
+					// preserved and only initialization should allow this behavior.
+					if (e.getType() == Type.TIME && e.size() == 1) {
+						located = 0;
+					}
+				}
+				ret.locatedOffsets[i++] = located;
+			}
+
+			scale = ret;
+		}
+
+		return scale;
 	}
 
 	public Scale minus(Type extent) {
@@ -1029,6 +1119,10 @@ public class Scale implements IScale {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ILocator> T as(Class<T> cls) {
+
+		if (getTime() == Time.INITIALIZATION) {
+			System.out.println("CC");
+		}
 
 		if (IScale.class.isAssignableFrom(cls)) {
 			return (T) this;
