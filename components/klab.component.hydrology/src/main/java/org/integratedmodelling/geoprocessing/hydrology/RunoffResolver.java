@@ -98,6 +98,7 @@ public class RunoffResolver implements IResolver<IState>, IExpression {
 		else {
 		    outflow = ((prec - (0.05 * mret))*(prec - (0.05 * mret)))/(prec + (0.95 * mret));
 		}
+		
 		for (Cell upstream : GeoprocessingComponent.getUpstreamCells(cell, flowdirection, null)) {
 			outflow += computeRunoff(upstream, flowdirection, precipitation, curvenumber, runoff);
 		}
