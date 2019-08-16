@@ -918,12 +918,15 @@ public class Actuator implements IActuator {
 	 * does.
 	 */
 	private IDataKey findDataKey() {
-		IComputableResource lastResource = computationStrategy.get(computationStrategy.size() - 1).getSecond();
-		if (lastResource.getClassification() != null || lastResource.getAccordingTo() != null) {
-			return ((ComputableResource) lastResource).getValidatedResource(IClassification.class);
-		} else if (lastResource.getLookupTable() != null) {
-			if (((ComputableResource) lastResource).getValidatedResource(LookupTable.class).isKey()) {
-				return ((ComputableResource) lastResource).getValidatedResource(ILookupTable.class);
+
+		if (computationStrategy.size() > 0) {
+			IComputableResource lastResource = computationStrategy.get(computationStrategy.size() - 1).getSecond();
+			if (lastResource.getClassification() != null || lastResource.getAccordingTo() != null) {
+				return ((ComputableResource) lastResource).getValidatedResource(IClassification.class);
+			} else if (lastResource.getLookupTable() != null) {
+				if (((ComputableResource) lastResource).getValidatedResource(LookupTable.class).isKey()) {
+					return ((ComputableResource) lastResource).getValidatedResource(ILookupTable.class);
+				}
 			}
 		}
 
