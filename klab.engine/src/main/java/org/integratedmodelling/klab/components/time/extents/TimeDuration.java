@@ -31,32 +31,32 @@ public class TimeDuration implements ITimeDuration {
 			// order of magnitude
 			Range order = Range.create(1, 9.999, false);
 
-			if (order.contains(period.getMillis() / Resolution.Type.MILLENNIUM.getMilliseconds())) {
+			if (order.contains(getMilliseconds() / Resolution.Type.MILLENNIUM.getMilliseconds())) {
 				this.resolution = Resolution.Type.MILLENNIUM;
-			} else if (order.contains(period.getMillis() / Resolution.Type.CENTURY.getMilliseconds())) {
+			} else if (order.contains(getMilliseconds() / Resolution.Type.CENTURY.getMilliseconds())) {
 				this.resolution = Resolution.Type.CENTURY;
-			} else if (order.contains(period.getMillis() / Resolution.Type.DECADE.getMilliseconds())) {
+			} else if (order.contains(getMilliseconds() / Resolution.Type.DECADE.getMilliseconds())) {
 				this.resolution = Resolution.Type.DECADE;
-			} else if (order.contains(period.getMillis() / Resolution.Type.YEAR.getMilliseconds())) {
+			} else if (order.contains(getMilliseconds() / Resolution.Type.YEAR.getMilliseconds())) {
 				this.resolution = Resolution.Type.YEAR;
-			} else if (order.contains(period.getMillis() / Resolution.Type.MONTH.getMilliseconds())) {
+			} else if (order.contains(getMilliseconds() / Resolution.Type.MONTH.getMilliseconds())) {
 				this.resolution = Resolution.Type.MONTH;
-			} else if (order.contains(period.getMillis() / Resolution.Type.WEEK.getMilliseconds())) {
+			} else if (order.contains(getMilliseconds() / Resolution.Type.WEEK.getMilliseconds())) {
 				this.resolution = Resolution.Type.WEEK;
-			} else if (order.contains(period.getMillis() / Resolution.Type.DAY.getMilliseconds())) {
+			} else if (order.contains(getMilliseconds() / Resolution.Type.DAY.getMilliseconds())) {
 				this.resolution = Resolution.Type.DAY;
-			} else if (order.contains(period.getMillis() / Resolution.Type.HOUR.getMilliseconds())) {
+			} else if (order.contains(getMilliseconds() / Resolution.Type.HOUR.getMilliseconds())) {
 				this.resolution = Resolution.Type.HOUR;
-			} else if (order.contains(period.getMillis() / Resolution.Type.MINUTE.getMilliseconds())) {
+			} else if (order.contains(getMilliseconds() / Resolution.Type.MINUTE.getMilliseconds())) {
 				this.resolution = Resolution.Type.MINUTE;
-			} else if (order.contains(period.getMillis() / Resolution.Type.SECOND.getMilliseconds())) {
+			} else if (order.contains(getMilliseconds() / Resolution.Type.SECOND.getMilliseconds())) {
 				this.resolution = Resolution.Type.SECOND;
 			} else {
 				this.resolution = Resolution.Type.MILLISECOND;
 			}
 
 		}
-		
+
 		return this.resolution;
 	}
 
@@ -67,12 +67,15 @@ public class TimeDuration implements ITimeDuration {
 
 	@Override
 	public int compareTo(ITimeDuration o) {
-		return Integer.compare(period.getMillis(), ((TimeDuration) o).period.getMillis());
+		return Long.compare(getMilliseconds(), o.getMilliseconds());
 	}
 
 	@Override
 	public long getMilliseconds() {
-		return period.getMillis();
+		if (start == null) {
+			return period.toStandardDuration().getMillis();
+		}
+		return ((TimeInstant) start).asDate().plus(this.period).getMillis() - start.getMillis();
 	}
 
 	@Override
@@ -83,7 +86,7 @@ public class TimeDuration implements ITimeDuration {
 
 	@Override
 	public boolean isEmpty() {
-		return period.getMillis() == 0;
+		return getMilliseconds() == 0;
 	}
 
 	public Period asPeriod() {
