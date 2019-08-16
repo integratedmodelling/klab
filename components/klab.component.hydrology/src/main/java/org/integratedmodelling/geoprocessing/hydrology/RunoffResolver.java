@@ -72,17 +72,38 @@ public class RunoffResolver implements IResolver<IState>, IExpression {
 	/*
 	 * Computation of runoff accumulates the runoff from upstream cells, ending at the outlet
 	 * This function is called with the outlet cell as parameter. 
+	 * 
 	 */
+	
+	/* These two formulas for modified mret and outflow are referenced from 
+	 * "Hawkins, R.H., R.Jiang, D.E.Woodward, A.T.Hjelmfelt, and J.A.Van Mullem (2002)
+	 *  Runoff Curve Number Method: Examination of the Initial Abstraction Ratio" 
+	*/
+	
 	private double computeRunoff(Cell cell, IState flowdirection, IState precipitation, IState curvenumber, IState runoff) {
 		double prec = precipitation.get(cell, Double.class);
 		double cn = curvenumber.get(cell, Double.class);
-		double mret = (25400 / cn) - 254;
-		double outflow = ((prec - (0.2 * mret))*(prec - (0.2 * mret)))/(prec + (0.8 * mret));
+		
+	//	double mret = (25400 / cn) - 254;
+		
+	/* These two formulas for modified mret and outflow are referenced from 
+		* "Hawkins, R.H., R.Jiang, D.E.Woodward, A.T.Hjelmfelt, and J.A.Van Mullem (2002)
+		*  Runoff Curve Number Method: Examination of the Initial Abstraction Ratio" 
+	*/
+		double mret =  1.33 * 25.4 * Math.pow((1000 / cn - 10),1.15);
+		double outflow;
+		if (prec <= 0.05 * mret) {
+		    outflow = 0;
+		}
+		else {
+		    outflow = ((prec - (0.05 * mret))*(prec - (0.05 * mret)))/(prec + (0.95 * mret));
+		}
 		for (Cell upstream : GeoprocessingComponent.getUpstreamCells(cell, flowdirection, null)) {
 			outflow += computeRunoff(upstream, flowdirection, precipitation, curvenumber, runoff);
 		}
 		runoff.set(cell, outflow);
 		return outflow;
+		
 	}
 
 	@Override
