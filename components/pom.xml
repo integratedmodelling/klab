@@ -20,5 +20,6 @@
   	<module>klab.component.ecology</module>
 
   	<module>klab.component.renjin</module>
+  	<module>klab.component.weather</module>
   </modules>
 </project>

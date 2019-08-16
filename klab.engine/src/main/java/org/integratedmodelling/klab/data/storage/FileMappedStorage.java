@@ -174,9 +174,9 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 		}
 
 		if (val instanceof Boolean) {
-			val = Byte.valueOf((byte) (((Boolean)val) ? 1 : 0));
+			val = Byte.valueOf((byte) (((Boolean) val) ? 1 : 0));
 		}
-		
+
 		switch (type) {
 		case BYTE:
 			page.put(((Byte) val).byteValue());
@@ -201,6 +201,14 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 		}
 	}
 
+	/**
+	 * Allow this to return NaN for nodata in the case of doubles and floats;
+	 * everything else will return null.
+	 * 
+	 * @param page
+	 * @param offset
+	 * @return
+	 */
 	private Object get(MappedByteBuffer page, long offset) {
 
 		if (offset >= 0) {
@@ -213,10 +221,10 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 			return b == Byte.MIN_VALUE ? null : (b == 1);
 		case DOUBLE:
 			double d = page.getDouble();
-			return Double.isNaN(d) ? null : d;
+			return /* Double.isNaN(d) ? null : */ d;
 		case FLOAT:
 			float f = page.getFloat();
-			return Float.isNaN(f) ? null : f;
+			return /* Float.isNaN(f) ? null : */ f;
 		case INT:
 			int i = page.getInt();
 			return i == Integer.MIN_VALUE ? null : i;
