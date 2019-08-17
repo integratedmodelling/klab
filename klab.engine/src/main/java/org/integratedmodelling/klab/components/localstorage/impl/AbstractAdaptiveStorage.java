@@ -86,7 +86,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			if (this.sliceOffsetInBackend < 0 && valuesDiffer) {
 				this.sliceOffsetInBackend = slicesInBackend;
 				slicesInBackend++;
-				createBackendStorage(this.sliceOffsetInBackend, this.value);
+				createBackendStorage(this.sliceOffsetInBackend, null);
 			}
 
 			setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);

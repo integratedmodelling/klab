@@ -248,13 +248,9 @@ public interface ITime extends IExtent {
 	 */
 	Resolution getResolution();
 
-//	/**
-//	 * {@inheritDoc}
-//	 *
-//	 * The time implementation of {@link ILocator#at(ILocator)} always return a time
-//	 * and can only use another time as locator.
-//	 */
-//	@Override
-//	ITime at(ILocator locator);
+	boolean is(Type type);
+
+	Type getTimeType();
+
 
 }

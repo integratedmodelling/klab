@@ -93,10 +93,9 @@ public class State extends Observation implements IState, IKeyHolder {
 		return getGeometry().size();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(ILocator index, Class<T> cls) {
-		return (T) storage.get(index);
+		return Utils.asType(storage.get(index), cls);
 	}
 
 	@Override

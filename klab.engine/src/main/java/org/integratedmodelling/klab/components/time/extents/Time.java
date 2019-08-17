@@ -489,6 +489,16 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
+	public ITime.Type getTimeType() {
+		return extentType;
+	}
+	
+	@Override
+	public boolean is(ITime.Type type) {
+		return this.extentType == type;
+	}
+	
+	@Override
 	public IGeometry getGeometry() {
 		return geometry;
 	}

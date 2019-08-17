@@ -25,7 +25,7 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public abstract class Scheduler<T> implements IScheduler<T> {
 
-	class DGraph extends DefaultDirectedGraph<T,DefaultEdge> {
+	class DGraph extends DefaultDirectedGraph<T, DefaultEdge> {
 
 		public DGraph(T observation) {
 			super(DefaultEdge.class);
@@ -36,9 +36,9 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		 * 
 		 */
 		private static final long serialVersionUID = -7193783283781551257L;
-		
+
 	}
-	
+
 	private HashedWheelTimer timer;
 	private Type type;
 	private Map<Long, DGraph> reactors = new HashMap<>();
@@ -47,6 +47,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 	private long interval = -1;
 	private BiConsumer<T, Long> actionHandler;
 	private BiConsumer<T, Long> errorHandler;
+	private ITime time;
 
 	class TreeNode {
 		TreeNode(T element) {
@@ -59,14 +60,15 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 
 	protected abstract ITime getTime(T object);
 
-	public Scheduler(Type type) {
-		this.type = type;
+	public Scheduler(ITime time) {
+		this.time = time;
+		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void merge(T temporalObject, T... requiredAntecedents) {
-		
+
 		ITime time = getTime(temporalObject);
 		if (time == null || time.getStep().isEmpty()) {
 			return;
@@ -88,9 +90,9 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 
 		if (requiredAntecedents != null) {
 			for (T antecedent : requiredAntecedents) {
-				
+
 				// must have same period and phase
-				
+
 				graph.addVertex(antecedent);
 				graph.addEdge(antecedent, temporalObject);
 			}

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
+import org.apache.lucene.search.TermStatistics;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.Aggregation;
@@ -346,6 +347,9 @@ public class Scale implements IScale {
 		public IScale next() {
 			IScale ret = new Scale(Scale.this, offset);
 			this.offset++;
+			while (this.offset < size() && !isCovered(offset)) {
+				this.offset++;
+			}
 			return ret;
 		}
 	}
@@ -929,7 +933,7 @@ public class Scale implements IScale {
 			 * setup the located offsets
 			 */
 			int i = 0;
-			
+
 			ret.locatedOffsets = new long[scale.getExtents().size()];
 			ret.originalScale = scale;
 			for (IExtent e : ret.getExtents()) {
@@ -1133,6 +1137,9 @@ public class Scale implements IScale {
 			// be a scalar
 			// offset.
 			if (locatedOffsets != null) {
+				if (locatedOffsets[0] == 1) {
+					System.out.println(" FAAAAACK ");
+				}
 				return (T) new Offset(this, locatedOffsets);
 			} else {
 				return (T) new Offset(this);

@@ -169,6 +169,10 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 
 	private void put(Object val, MappedByteBuffer page, long offset) {
 
+		if (val == null) {
+			val = getNodataValue();
+		}
+		
 		if (offset >= 0) {
 			page.position((int) offset * type.size);
 		}
@@ -202,8 +206,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	/**
-	 * Allow this to return NaN for nodata in the case of doubles and floats;
-	 * everything else will return null.
+	 * Always return null for nodata, no matter what.
 	 * 
 	 * @param page
 	 * @param offset
@@ -221,10 +224,10 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 			return b == Byte.MIN_VALUE ? null : (b == 1);
 		case DOUBLE:
 			double d = page.getDouble();
-			return /* Double.isNaN(d) ? null : */ d;
+			return Double.isNaN(d) ? null : d;
 		case FLOAT:
 			float f = page.getFloat();
-			return /* Float.isNaN(f) ? null : */ f;
+			return Float.isNaN(f) ? null : f;
 		case INT:
 			int i = page.getInt();
 			return i == Integer.MIN_VALUE ? null : i;
@@ -289,6 +292,11 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	private void putDirect(Object value, long offsetInSlice, long backendTimeSlice) {
+		
+		if (value == null) {
+			value = getNodataValue();
+		}
+		
 		try {
 			storage.seek((backendTimeSlice * getSliceSize() * type.size) + (offsetInSlice * type.size));
 			switch (type) {
