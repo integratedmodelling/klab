@@ -209,7 +209,7 @@ public class DataflowCompiler {
 			 * recover any instantiation actions
 			 */
 			for (IAction action : contextModel.getBehavior().getActions(Trigger.INSTANTIATION)) {
-				for (IComputableResource resource : action.getComputation(Time.INITIALIZATION)) {
+				for (IComputableResource resource : action.getComputation(true)) {
 					actuator.addComputation(((ComputableResource) resource).copy());
 				}
 			}
@@ -447,7 +447,7 @@ public class DataflowCompiler {
 			if (!generated.contains(theModel)) {
 
 				generated.add(theModel);
-				for (IComputableResource resource : getModelComputation(model, ret.getType(), Time.INITIALIZATION)) {
+				for (IComputableResource resource : getModelComputation(model, ret.getType(), true)) {
 					ret.addComputation(resource);
 				}
 
@@ -779,8 +779,8 @@ public class DataflowCompiler {
 	 * @param iLocator
 	 * @return
 	 */
-	public List<IComputableResource> getModelComputation(Model model, IArtifact.Type targetType, ILocator iLocator) {
-		List<IComputableResource> ret = new ArrayList<>(model.getComputation(iLocator));
+	public List<IComputableResource> getModelComputation(Model model, IArtifact.Type targetType, boolean initialization) {
+		List<IComputableResource> ret = new ArrayList<>(model.getComputation(initialization));
 		int lastDirectPosition = -1;
 		IArtifact.Type lastDirectType = null;
 		int i = 0;

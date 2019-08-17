@@ -48,7 +48,7 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
 		this.geometry = context.getScale();
-		MCAContext mcaContext = new MCAContext(ret.getObservable(), (IRuntimeScope) context, Time.INITIALIZATION,
+		MCAContext mcaContext = new MCAContext(ret.getObservable(), (IRuntimeScope) context/* , Time.INITIALIZATION */,
 				levels);
 
 		if (mcaContext.isComputable()) {

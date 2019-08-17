@@ -168,11 +168,11 @@ public class Observer extends KimObject implements IObserver {
 	}
 
 	@Override
-	public List<IComputableResource> getComputation(ILocator transition) {
+	public List<IComputableResource> getComputation(boolean initialization) {
 		List<IComputableResource> ret = new ArrayList<>();
-		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
+		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggers(initialization)) {
 			for (IAction action : behavior.getActions(trigger)) {
-				ret.addAll(action.getComputation(transition));
+				ret.addAll(action.getComputation(initialization));
 			}
 		}
 		return ret;

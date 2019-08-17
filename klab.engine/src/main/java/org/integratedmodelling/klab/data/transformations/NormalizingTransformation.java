@@ -49,7 +49,7 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 		if (state == null) {
 			state = context.get("self", IState.class);
 		}
-		StateSummary summary = Observations.INSTANCE.getStateSummary(state, Time.INITIALIZATION);
+		StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {
 				Object value = state.get(locator);

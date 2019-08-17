@@ -135,8 +135,10 @@ public class MapClassifier {
 	 * @param monitor
 	 * @param locators
 	 */
-	public MapClassifier(Collection<IState> states, int maxBinsPerState, IContextualizationScope context,
-			ILocator locator) {
+	public MapClassifier(Collection<IState> states, int maxBinsPerState,
+			IContextualizationScope context/*
+											 * , ILocator locator
+											 */) {
 
 		// this.locator = locator;
 		this.maxBinsPerState = maxBinsPerState;
@@ -144,7 +146,7 @@ public class MapClassifier {
 
 		int i = 0;
 		for (IState s : states) {
-			MapDescriptor md = new MapDescriptor(s, locator);
+			MapDescriptor md = new MapDescriptor(s, context.getScale());
 			if (md.discretization != null || md.useRanks) {
 				this.states.add(md);
 				stateIndex.put(s.getObservable().getName(), md);

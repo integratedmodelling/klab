@@ -247,7 +247,7 @@ public enum Observations implements IObservationService {
 			ret.setObservationType(ObservationReference.ObservationType.GROUP);
 		} else if (observation instanceof ObservationGroupView) {
 			ret.setObservationType(ObservationReference.ObservationType.VIEW);
-			ret.setOriginalGroupId(((ObservationGroupView)observation).getOriginalGroup().getId());
+			ret.setOriginalGroupId(((ObservationGroupView) observation).getOriginalGroup().getId());
 		}
 
 		ret.setMain(isMain);
@@ -261,9 +261,13 @@ public enum Observations implements IObservationService {
 			ret.setMain(true);
 		}
 
-		if (locator != null) {
-			observation = observation.at(locator);
-		}
+		// HM probably not- a descriptor is a descriptor, only states and children
+		// should be different. Locator is only used
+		// for the summary we ask later, and defaults to the full scale of the
+		// observation.
+//		if (locator != null) {
+//			observation = observation.at(locator);
+//		}
 
 		ISubject rootSubject = ((Observation) observation).getRuntimeScope().getRootSubject();
 		if (rootSubject != null) {

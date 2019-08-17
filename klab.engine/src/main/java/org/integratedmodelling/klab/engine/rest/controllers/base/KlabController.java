@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.Engine;
@@ -185,13 +186,17 @@ public class KlabController {
         ISession session = Authentication.INSTANCE.getIdentity(sessionId, ISession.class);
         IObservation obs = session.getObservation(observation);
 
-        // TODO link to locator parameter
-        ILocator timeLocator = Time.INITIALIZATION;
+
+		ILocator loc = obs.getScale();
+		if (locator != null) {
+			loc = Geometry.create(locator);
+			loc = obs.getScale().at(loc);
+		}
 
         if (obs instanceof IState) {
 
             if (format == GeometryType.RASTER) {
-                BufferedImage image = Renderer.INSTANCE.render((IState) obs, timeLocator, NumberUtils
+                BufferedImage image = Renderer.INSTANCE.render((IState) obs, loc, NumberUtils
                         .intArrayFromString(viewport == null ? "800,800" : viewport));
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 ImageIO.write(image, "png", os);

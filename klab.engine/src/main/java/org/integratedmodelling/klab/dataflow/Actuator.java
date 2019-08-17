@@ -518,7 +518,7 @@ public class Actuator implements IActuator {
 			 * applied
 			 */
 			ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-					(IState) ret, addParameters(ctx, self, resource), scale.at(Time.INITIALIZATION));
+					(IState) ret, addParameters(ctx, self, resource), scale/* .at(Time.INITIALIZATION) */);
 
 		} else if (contextualizer instanceof IResolver) {
 			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
@@ -1171,7 +1171,7 @@ public class Actuator implements IActuator {
 
 			if (isNew) {
 				IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
-						product.getContext(), Time.INITIALIZATION, 0, /* false, */ isMainObservable || isMain)
+						product.getContext(), context.getScale(), 0, isMainObservable || isMain)
 						.withTaskId(taskId);
 
 				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,

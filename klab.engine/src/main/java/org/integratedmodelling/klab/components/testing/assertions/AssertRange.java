@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 
 public class AssertRange implements Assertion, IExpression {
-	
+
 	List<String> details = new ArrayList<>();
 
 	@Override
@@ -37,8 +37,7 @@ public class AssertRange implements Assertion, IExpression {
 			} else {
 				IArtifact artifact = context.getArtifact(target);
 				if (artifact instanceof IState) {
-					StateSummary summary = Observations.INSTANCE.getStateSummary((IState) artifact,
-							Time.INITIALIZATION);
+					StateSummary summary = Observations.INSTANCE.getStateSummary((IState) artifact, context.getScale());
 					if (parameters.contains("within")) {
 						Range range = parameters.get("range", Range.class);
 						if (!(range.isWithin(summary.getRange().get(0)) && range.isWithin(summary.getRange().get(1)))) {

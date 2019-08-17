@@ -36,8 +36,7 @@ public class AssertNodata implements Assertion, IExpression {
 			} else {
 				IArtifact artifact = context.getArtifact(target);
 				if (artifact instanceof IState) {
-					StateSummary summary = Observations.INSTANCE.getStateSummary((IState) artifact,
-							Time.INITIALIZATION);
+					StateSummary summary = Observations.INSTANCE.getStateSummary((IState) artifact, context.getScale());
 					if (parameters.contains("max.percent")) {
 						if (summary.getNodataPercentage() > parameters.get("max.percent", Double.class)) {
 							errors++;

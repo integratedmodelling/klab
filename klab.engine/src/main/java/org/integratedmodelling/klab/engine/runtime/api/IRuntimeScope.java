@@ -268,14 +268,14 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets, IMetadata metadata);
 
-	/**
-	 * Locate the current computation in time. There is always a single extent when
-	 * things are computed; if time isn't in the context, ITime.INITIALIZATION is
-	 * returned.
-	 * 
-	 * @return
-	 */
-	ILocator getCurrentTimeLocator();
+//	/**
+//	 * Locate the current computation in time. There is always a single extent when
+//	 * things are computed; if time isn't in the context, ITime.INITIALIZATION is
+//	 * returned.
+//	 * 
+//	 * @return
+//	 */
+//	ILocator getCurrentTimeLocator();
 
 	/**
 	 * Get the dataflow we're executing.

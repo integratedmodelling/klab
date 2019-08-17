@@ -73,7 +73,7 @@ public class State extends Observation implements IState, IKeyHolder {
 					layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getRuntimeScope()));
 		}
 
-		return new StateLayer(this, (IDataStorage<?>)layer);
+		return new StateLayer(this, (IDataStorage<?>) layer);
 	}
 
 	public Object get(ILocator index) {
@@ -127,8 +127,8 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public IState at(ILocator locator) {
-		IScale scale = getScale().at(locator);
-		return scale == getScale() ? this : new RescalingState(this, (Scale) scale, getRuntimeScope());
+		Scale scale = (Scale)getScale().at(locator);
+		return scale.isConformant(getScale()) ? this : new RescalingState(this, (Scale) scale, getRuntimeScope());
 	}
 
 	@Override

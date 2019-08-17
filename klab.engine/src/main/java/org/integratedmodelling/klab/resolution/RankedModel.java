@@ -229,8 +229,8 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public List<IComputableResource> getComputation(ILocator transition) {
-		return getDelegate().getComputation(transition);
+	public List<IComputableResource> getComputation(boolean initialization) {
+		return getDelegate().getComputation(initialization);
 	}
 
 	@Override

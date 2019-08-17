@@ -809,6 +809,10 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public IExtent at(Object... locators) {
+		if (locators != null && locators.length == 1 && locators[0] instanceof Number
+				&& ((Number) locators[0]).longValue() == 0) {
+			return this;
+		}
 		throw new IllegalStateException("an individual shape cannot be further located");
 	}
 

@@ -13,7 +13,7 @@ class State extends Observation<IState> {
 
 	// only used to tag a state for reduction when transformed
 	IConcept dataReduction = null;
-	ILocator timePointer = org.integratedmodelling.klab.components.time.extents.Time.INITIALIZATION;
+//	ILocator timePointer = org.integratedmodelling.klab.components.time.extents.Time.INITIALIZATION;
 	StateSummary summary;
 
 	State(IState obs, Binding binding) {
@@ -30,7 +30,7 @@ class State extends Observation<IState> {
 
 	private StateSummary getStateSummary() {
 		if (summary == null) {
-			summary = Observations.INSTANCE.getStateSummary(unwrap(), timePointer);
+			summary = Observations.INSTANCE.getStateSummary(unwrap(), getScope().getScale());
 		}
 		return summary;
 	}
@@ -44,7 +44,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : unwrap().getScale()) {
+				for (ILocator locator : getScope().getScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = summary.getRange().get(1) - d + summary.getRange().get(0);
@@ -60,7 +60,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : unwrap().getScale()) {
+				for (ILocator locator : getScope().getScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));

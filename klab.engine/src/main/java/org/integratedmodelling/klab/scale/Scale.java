@@ -684,7 +684,7 @@ public class Scale implements IScale {
 	public String toString() {
 		String ss = "";
 		for (IExtent e : extents) {
-			ss += "<" + e.getType() + " # " + e.size() + ">";
+			ss += e + " ";
 		}
 		return "Scale #" + extents.size() + " " + ss;
 	}
@@ -700,7 +700,7 @@ public class Scale implements IScale {
 		return false;
 	}
 
-	public static IScale substituteExtent(IScale scale, IExtent extent) throws KlabException {
+	public static Scale substituteExtent(IScale scale, IExtent extent) throws KlabException {
 
 		List<IExtent> exts = new ArrayList<>();
 		for (IExtent e : scale.getExtents()) {
@@ -783,47 +783,47 @@ public class Scale implements IScale {
 
 		Scale targetScale = this;
 
-		/*
-		 * Special handling of time initialization: use scale w/o time unless time is
-		 * generic.
-		 */
-		boolean hasTimeInitialization = false;
-		for (Object l : locators) {
-			if (l == Time.INITIALIZATION) {
-				hasTimeInitialization = true;
-				break;
-			}
-		}
-
-		if (locators != null && locators.length > 0 && hasTimeInitialization) {
-			// remove initializer and proceed with scale w/o time unless generic
-			if (getTime() == null || getTime().isGeneric()) {
-				// I want you just the way you are. If generic, it should already be compatible
-				// by design.
-				targetScale = this;
-			} else {
-				// FIXME/CHECK probably will need an initialization that still holds the period
-				// and step.
-				// initialization scale will run the dataflow w/o time.
-				// Dependencies have already been resolved properly to tune the resource on
-				// init, but the contextualizer won't know the time from the passed context.
-				targetScale = this.minus(Type.TIME);
-			}
-
-			if (locators.length == 1) {
-				return targetScale;
-			}
-
-			// if continuing, we use the remaining locators on the target.
-			Object[] newLocators = new Object[locators.length - 1];
-			for (int i = 0, l = 0; i < locators.length; i++) {
-				if (locators[i] == Time.INITIALIZATION) {
-					continue;
-				}
-				newLocators[l++] = locators[i];
-			}
-			locators = newLocators;
-		}
+//		/*
+//		 * Special handling of time initialization: use scale w/o time unless time is
+//		 * generic.
+//		 */
+//		boolean hasTimeInitialization = false;
+//		for (Object l : locators) {
+//			if (l == Time.INITIALIZATION) {
+//				hasTimeInitialization = true;
+//				break;
+//			}
+//		}
+//
+//		if (locators != null && locators.length > 0 && hasTimeInitialization) {
+//			// remove initializer and proceed with scale w/o time unless generic
+//			if (getTime() == null) {
+//				// I want you just the way you are. If generic, it should already be compatible
+//				// by design.
+//				targetScale = this;
+//			} else {
+//				// FIXME/CHECK probably will need an initialization that still holds the period
+//				// and step.
+//				// initialization scale will run the dataflow w/o time.
+//				// Dependencies have already been resolved properly to tune the resource on
+//				// init, but the contextualizer won't know the time from the passed context.
+//				targetScale = substituteExtent(targetScale, Time.INITIALIZATION);
+//			}
+//
+//			if (locators.length == 1) {
+//				return targetScale;
+//			}
+//
+//			// if continuing, we use the remaining locators on the target.
+//			Object[] newLocators = new Object[locators.length - 1];
+//			for (int i = 0, l = 0; i < locators.length; i++) {
+//				if (locators[i] == Time.INITIALIZATION) {
+//					continue;
+//				}
+//				newLocators[l++] = locators[i];
+//			}
+//			locators = newLocators;
+//		}
 
 		/*
 		 * reinterpret through augmented version of Geometry.as(locators).
@@ -1124,10 +1124,6 @@ public class Scale implements IScale {
 	@Override
 	public <T extends ILocator> T as(Class<T> cls) {
 
-		if (getTime() == Time.INITIALIZATION) {
-			System.out.println("CC");
-		}
-
 		if (IScale.class.isAssignableFrom(cls)) {
 			return (T) this;
 		}
@@ -1137,9 +1133,6 @@ public class Scale implements IScale {
 			// be a scalar
 			// offset.
 			if (locatedOffsets != null) {
-				if (locatedOffsets[0] == 1) {
-					System.out.println(" FAAAAACK ");
-				}
 				return (T) new Offset(this, locatedOffsets);
 			} else {
 				return (T) new Offset(this);
@@ -1283,6 +1276,28 @@ public class Scale implements IScale {
 	public IGeometry getGeometry() {
 		// TODO maybe just the original scale
 		return originalScale == null ? null : originalScale.asGeometry();
+	}
+
+	public boolean isConformant(Scale scale) {
+		// easy way to tell is if this is a subset of the passed one, although it gets
+		// messy afterwards...
+		if (scale.equals(this) || (this.originalScale != null && this.originalScale.equals(scale))) {
+			return true;
+		}
+
+		// ...so let's do it another time.
+		return false;
+	}
+
+	@Override
+	public <T extends ILocator> Iterable<T> scan(Class<T> desiredLocatorClass, Object... dimensionIdentifiers) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IScale initialization() {
+		return getTime() == null ? this : at(ITime.class, 0l);
 	}
 
 }

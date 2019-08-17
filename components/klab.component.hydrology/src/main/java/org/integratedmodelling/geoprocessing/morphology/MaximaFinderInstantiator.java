@@ -106,7 +106,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 				throw new IllegalArgumentException(
 						"maxima extractor: no input state named '" + surfaceId + "' found in context");
 			}
-			StateSummary summary = Observations.INSTANCE.getStateSummary(state, Time.INITIALIZATION);
+			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 			algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(state, DataBuffer.TYPE_FLOAT, floatNovalue,
 					(value) -> {
 						if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {

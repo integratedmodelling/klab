@@ -2,9 +2,7 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -195,7 +193,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		for (IActuator actuator : actuators) {
 			try {
 
-				IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, context, monitor).get();
+				IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, context, monitor)
+						.get();
 				if (ret == null) {
 					ret = data;
 				} else {

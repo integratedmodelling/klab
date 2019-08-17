@@ -366,7 +366,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			Dataflow dataflow = Dataflows.INSTANCE
 					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
 			dataflow.setModel((Model) model);
-			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets).run(scale,
+			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets).run(scale.initialization(),
 					((Monitor) monitor).get(subtask));
 		}
 		return ret;
@@ -440,7 +440,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale, ((Monitor) monitor).get(subtask));
+		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale.initialization(), ((Monitor) monitor).get(subtask));
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
@@ -518,7 +518,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		if (dataflow != null) {
-			dataflow.run(scale, ((Monitor) monitor).get(subtask));
+			dataflow.run(scale.initialization(), ((Monitor) monitor).get(subtask));
 		}
 
 	}
@@ -592,7 +592,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		ret = (IRelationship) dataflow.withMetadata(metadata)
 				.connecting((IDirectObservation) source, (IDirectObservation) target)
-				.run(scale, ((Monitor) monitor).get(subtask));
+				.run(scale.initialization(), ((Monitor) monitor).get(subtask));
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
@@ -1263,10 +1263,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	}
 
-	@Override
-	public ILocator getCurrentTimeLocator() {
-		return scale.getTime() == null ? Time.INITIALIZATION : scale.getTime();
-	}
+//	@Override
+//	public ILocator getCurrentTimeLocator() {
+//		return scale.getTime() == null ? null : scale.getTime();
+//	}
 
 	@Override
 	public Collection<IArtifact> getArtifact(IConcept observable) {

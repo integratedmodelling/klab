@@ -817,7 +817,7 @@ public class Model extends KimObject implements IModel {
 	 * @return the indirectAdapters for the model at the transition
 	 */
 	@Override
-	public List<IComputableResource> getComputation(ILocator transition) {
+	public List<IComputableResource> getComputation(boolean initialization) {
 
 		List<IAnnotation> parameters = new ArrayList<>();
 		for (IAnnotation annotation : getAnnotations()) {
@@ -834,9 +834,9 @@ public class Model extends KimObject implements IModel {
 			}
 			ret.add(res);
 		}
-		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
+		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggers(initialization)) {
 			for (IAction action : behavior.getActions(trigger)) {
-				for (IComputableResource resource : action.getComputation(transition)) {
+				for (IComputableResource resource : action.getComputation(initialization)) {
 					ComputableResource res = ((ComputableResource) resource).copy();
 					if (parameters.size() > 0) {
 						res.addParameters(parameters);

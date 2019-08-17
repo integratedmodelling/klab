@@ -6,7 +6,6 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimAction.Type;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.model.IAction;
 
 /*
@@ -31,7 +30,7 @@ class Action implements IAction {
     }
 
     @Override
-    public List<IComputableResource> getComputation(ILocator transition) {
+    public List<IComputableResource> getComputation(boolean initialization) {
 
       return this.delegate.getComputation();
         

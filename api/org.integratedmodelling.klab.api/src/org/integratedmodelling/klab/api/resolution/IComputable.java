@@ -36,6 +36,6 @@ public interface IComputable {
    * @param locator a {@link org.integratedmodelling.klab.api.data.ILocator} object.
    * @return a list of computable resources, possibly empty.
    */
-  List<IComputableResource> getComputation(ILocator locator);
+  List<IComputableResource> getComputation(boolean initialization);
 
 }

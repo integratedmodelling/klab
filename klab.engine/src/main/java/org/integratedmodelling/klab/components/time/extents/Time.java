@@ -38,49 +38,62 @@ public class Time extends Extent implements ITime {
 	Resolution resolution;
 	long multiplicity = 1;
 
-	/**
-	 * The empty, non-descript initialization locator refers to the time before time
-	 * begins. Any recontextualization of the initialization locator produces the
-	 * initialization locator.
-	 */
-	public static ILocator INITIALIZATION = new Time() {
-
-		public int hashCode() {
-			return 234567;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			return o == this;
-		}
-		
-		@Override
-		public Time copy() {
-			return this;
-		}
-		
-		@Override 
-		public Time getExtent(long offset) {
-			return this;
-		}
-
-		@Override
-		public boolean contains(IExtent o) throws KlabException {
-			return o == this;
-		}
-
-		@Override
-		public boolean overlaps(IExtent o) throws KlabException {
-			return o == this;
-		}
-
-		@Override
-		public boolean intersects(IExtent o) throws KlabException {
-			return o == this;
-		}
-		
-		
-	};
+//	/**
+//	 * The empty, non-descript initialization locator refers to the time before time
+//	 * begins. Any recontextualization of the initialization locator produces the
+//	 * initialization locator.
+//	 */
+//	public static IExtent INITIALIZATION = new Time() {
+//
+//		public int hashCode() {
+//			return 234567;
+//		}
+//
+//		@Override
+//		public boolean equals(Object o) {
+//			return o == this;
+//		}
+//		
+//		@Override
+//		public Time copy() {
+//			return this;
+//		}
+//		
+//		@Override 
+//		public Time getExtent(long offset) {
+//			return this;
+//		}
+//
+//		@Override
+//		public boolean contains(IExtent o) throws KlabException {
+//			return o == this;
+//		}
+//
+//		@Override
+//		public boolean overlaps(IExtent o) throws KlabException {
+//			return o == this;
+//		}
+//
+//		@Override
+//		public boolean intersects(IExtent o) throws KlabException {
+//			return o == this;
+//		}
+//		
+//		public IExtent at(Object...objects) {
+//			return this;
+//		}
+//
+//		public Time collapse() {
+//			return this;
+//		}
+//
+//		@Override
+//		public String toString() {
+//			return "<TIME INIT>";
+//		}
+//		
+//		
+//	};
 
 	private static class ResolutionImpl implements Resolution {
 
@@ -492,12 +505,12 @@ public class Time extends Extent implements ITime {
 	public ITime.Type getTimeType() {
 		return extentType;
 	}
-	
+
 	@Override
 	public boolean is(ITime.Type type) {
 		return this.extentType == type;
 	}
-	
+
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
@@ -505,9 +518,11 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IExtent at(Object... locators) {
-		// TODO must be a grid or realtime
-		// locator can be an anchored time or period contained in a step, a timeinstant, an
-		// integer offset or a long millisecond value.
+		if (locators != null && locators.length == 1 && locators[0] instanceof Number
+				&& ((Number) locators[0]).longValue() == 0) {
+			return this;
+		}
+		// TODO locate in grid or scream
 		return null;
 	}
 

@@ -107,10 +107,10 @@ public enum Dataflows implements IDataflowService {
 	 *            a {@link org.integratedmodelling.klab.api.data.ILocator} object.
 	 * @return all pertaining triggers. Possibly empty, never null.
 	 */
-	public List<Trigger> getActionTriggersFor(ILocator transition) {
+	public List<Trigger> getActionTriggers(boolean initialization) {
 		List<Trigger> ret = new ArrayList<>();
 		// TODO!
-		if (transition.equals(org.integratedmodelling.klab.components.time.extents.Time.INITIALIZATION)) {
+		if (initialization) {
 			ret.add(Trigger.DEFINITION);
 			ret.add(Trigger.RESOLUTION);
 			ret.add(Trigger.INSTANTIATION);

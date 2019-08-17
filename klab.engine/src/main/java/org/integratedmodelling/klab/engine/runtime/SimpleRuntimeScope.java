@@ -523,10 +523,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return null;
 	}
 	
-	@Override
-	public ILocator getCurrentTimeLocator() {
-		return scale.getTime() == null ? Time.INITIALIZATION : scale.getTime();
-	}
+//	@Override
+//	public ILocator getCurrentTimeLocator() {
+//		return scale.getTime() == null ? Time.INITIALIZATION : scale.getTime();
+//	}
 
 	@Override
 	public Collection<IArtifact> getArtifact(IConcept observable) {

@@ -71,14 +71,12 @@ public class EngineViewController {
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public IObservationReference describeObservation(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) Integer childLevel, /*
-																 * @RequestParam(required = false) boolean
-																 * collapseSiblings,
-																 */ @RequestParam(required = false) String locator) {
+			@RequestParam(required = false) Integer childLevel,
+			@RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
-		ILocator loc = Time.INITIALIZATION; // TODO parse the locator
+
 		if (obs == null) {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
@@ -87,6 +85,12 @@ public class EngineViewController {
 				? ((DirectObservation) obs).getGroup()
 				: obs.getContext();
 
+		ILocator loc = obs.getScale();
+		if (locator != null) {
+			loc = Geometry.create(locator);
+			loc = obs.getScale().at(loc);
+		}
+		
 		return Observations.INSTANCE.createArtifactDescriptor(obs, parent, loc, childLevel == null ? -1 : childLevel,
 				/* collapseSiblings, */ false);
 	}
@@ -102,7 +106,6 @@ public class EngineViewController {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
-		ILocator loc = Time.INITIALIZATION; // TODO parse the locator
 		if (obs == null) {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
@@ -111,6 +114,12 @@ public class EngineViewController {
 			throw new IllegalArgumentException("cannot summarize an observation that is not a state");
 		}
 
+		ILocator loc = obs.getScale();
+		if (locator != null) {
+			loc = Geometry.create(locator);
+			loc = obs.getScale().at(loc);
+		}
+		
 		return Observations.INSTANCE.getStateSummary((IState) obs, loc);
 	}
 
@@ -130,9 +139,15 @@ public class EngineViewController {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
-		ILocator loc = Time.INITIALIZATION; // TODO parse locator
+
 		if (obs == null) {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
+		}
+
+		ILocator loc = obs.getScale();
+		if (locator != null) {
+			loc = Geometry.create(locator);
+			loc = obs.getScale().at(loc);
 		}
 
 		List<IObservationReference> ret = new ArrayList<>();
@@ -187,10 +202,10 @@ public class EngineViewController {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
 
-		ILocator loc = Time.INITIALIZATION;
+		ILocator loc = obs.getScale();
 		if (locator != null) {
 			loc = Geometry.create(locator);
-			loc = obs.getGeometry().at(loc);
+			loc = obs.getScale().at(loc);
 		}
 
 		boolean done = false;

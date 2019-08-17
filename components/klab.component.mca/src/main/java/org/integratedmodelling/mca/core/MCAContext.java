@@ -53,7 +53,7 @@ public class MCAContext {
 
 	private final static String DEFAULT_STAKEHOLDER = "___default_stakeholder";
 
-	public MCAContext(IObservable concordanceObservable, IRuntimeScope context, ILocator locator, int levels) {
+	public MCAContext(IObservable concordanceObservable, IRuntimeScope context/* , ILocator locator */, int levels) {
 
 		IObservable stakeholderObservable = null;
 		IObservable alternativeObservable = null;
@@ -164,7 +164,7 @@ public class MCAContext {
 		if (alternativeObservable == null) {
 
 			// build alternatives from the context
-			buildDistributedAlternatives(context, locator, levels);
+			buildDistributedAlternatives(context/* , locator */, levels);
 
 		} else {
 
@@ -184,7 +184,7 @@ public class MCAContext {
 
 	}
 
-	private void buildDistributedAlternatives(IRuntimeScope context, ILocator locator, int levels) {
+	private void buildDistributedAlternatives(IRuntimeScope context/* , ILocator locator */, int levels) {
 
 		List<IState> states = new ArrayList<>();
 		for (ICriterion criterion : criteria) {
@@ -194,7 +194,7 @@ public class MCAContext {
 			states.add(criterion.getState());
 		}
 
-		this.classifier = new MapClassifier(states, levels, context, locator);
+		this.classifier = new MapClassifier(states, levels, context/* , locator */);
 		classifier.classify();
 
 		for (MapClass clas : classifier.getClasses()) {

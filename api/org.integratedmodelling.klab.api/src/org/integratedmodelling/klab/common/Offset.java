@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
  * <li>T1(3)S2(10,10)@1,(1,4)</li>
  * <li>T1(3)S2(10,10)@1,*</li>
  * </ul>
+ * The offset can in turn be iterated to obtain more offsets (and those only).
  * 
  * @author Ferd
  *
@@ -220,17 +221,17 @@ public class Offset implements ILocator {
 		if (Offset.class.isAssignableFrom(cls)) {
 			return (T) this;
 		} else if (IGeometry.class.isAssignableFrom(cls)) {
-			return (T)geometry;
+			return (T) geometry;
 		} else if (geometry instanceof IScale) {
 			if (IScale.class.isAssignableFrom(cls)) {
-				return (T)geometry;
+				return (T) geometry;
 			} else if (ISpace.class.isAssignableFrom(cls)) {
-				if (((IScale)geometry).getSpace() != null) {
-					return (T)((IScale)geometry).getSpace();
+				if (((IScale) geometry).getSpace() != null) {
+					return (T) ((IScale) geometry).getSpace();
 				}
 			} else if (ITime.class.isAssignableFrom(cls)) {
-				if (((IScale)geometry).getTime() != null) {
-					return (T)((IScale)geometry).getTime();
+				if (((IScale) geometry).getTime() != null) {
+					return (T) ((IScale) geometry).getTime();
 				}
 			}
 		}
