@@ -83,8 +83,8 @@ public class Observer extends KimObject implements IObserver {
 						? (double) envelope.getResolutionForZoomLevel().getFirst()
 						: regionOfInterest.getGridResolution();
 
-				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 				ISpace space =  Space.create(Shape.create(envelope), resolution);
+				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 				
 				return Lists.newArrayList(time, space);
 			}

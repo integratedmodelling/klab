@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-import org.apache.lucene.search.TermStatistics;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.Aggregation;
@@ -24,6 +23,8 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -347,9 +348,9 @@ public class Scale implements IScale {
 		public IScale next() {
 			IScale ret = new Scale(Scale.this, offset);
 			this.offset++;
-			while (this.offset < size() && !isCovered(offset)) {
-				this.offset++;
-			}
+//			while (this.offset < size() && !isCovered(offset)) {
+//				this.offset++;
+//			}
 			return ret;
 		}
 	}
@@ -967,6 +968,10 @@ public class Scale implements IScale {
 //	@Override
 	public long getOffset(ILocator index) {
 
+		if (index instanceof Offset) {
+			return ((Offset)index).linear;
+		}
+		
 		if (index instanceof Geometry) {
 			index = Scale.create((IGeometry) index);
 		}
@@ -1289,10 +1294,86 @@ public class Scale implements IScale {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ILocator> Iterable<T> scan(Class<T> desiredLocatorClass, Object... dimensionIdentifiers) {
-		// TODO Auto-generated method stub
-		return null;
+		if (dimensionIdentifiers != null && dimensionIdentifiers.length == 2) {
+			// typical case: scanning a grid with no time or time == 1
+			if (getSpace() != null && ((Space) getSpace()).getGrid() != null
+					&& (getTime() == null || getTime().size() == 1)) {
+				if (dimensionIdentifiers[1] instanceof Class
+						&& IGrid.class.isAssignableFrom((Class<?>) dimensionIdentifiers[1])) {
+					if (dimensionIdentifiers[0] == Offset.class) {
+						return (Iterable<T>) new GridOffsetScanner();
+					} else if (dimensionIdentifiers[0] instanceof Class
+							&& Cell.class.isAssignableFrom((Class<?>) dimensionIdentifiers[1])) {
+						return (Iterable<T>) new GridCellScanner();
+					}
+				}
+			}
+		}
+
+		throw new IllegalArgumentException("Scale scan() called with non-supported arguments: use normal iteration");
+
+	}
+
+	public class GridCellScanner implements Iterable<Cell> {
+
+		class It implements Iterator<Cell> {
+
+			int offset = 0;
+
+			@Override
+			public boolean hasNext() {
+				return offset < space.size();
+			}
+
+			@Override
+			public Cell next() {
+				return ((Space) getSpace()).getGrid().getCell(offset++);
+			}
+
+		}
+
+		@Override
+		public Iterator<Cell> iterator() {
+			return new It();
+		}
+
+	}
+
+	public class GridOffsetScanner implements Iterable<Offset> {
+
+		ThreadLocal<Offset> shuttle = new ThreadLocal<>();
+		
+		class It implements Iterator<Offset> {
+			
+			int offset = 0;
+
+			It() {
+				shuttle.set(Offset.create("0", minus(Dimension.Type.TIME)));
+			}
+			
+			@Override
+			public boolean hasNext() {
+				return offset < space.size();
+			}
+
+			@Override
+			public Offset next() {
+				shuttle.get().linear = offset;
+				long[] xy = ((Space) getSpace()).getGrid().getXYOffsets(offset++);
+				shuttle.get().pos = xy;
+				return shuttle.get();
+			}
+
+		}
+		
+		@Override
+		public Iterator<Offset> iterator() {
+			return new It();
+		}
+
 	}
 
 	@Override

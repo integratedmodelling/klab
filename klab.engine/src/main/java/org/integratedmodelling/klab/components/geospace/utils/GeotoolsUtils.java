@@ -194,9 +194,4 @@ public enum GeotoolsUtils {
 		return ret;
 	}
 
-//	public File exportToTempFile(IState state, ILocator locator, String outputFormat) {
-//
-//
-//		return null;
-//	}
 }

@@ -259,7 +259,7 @@ public class Time extends Extent implements ITime {
 	@Override
 	public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
 		// TODO Auto-generated method stub
-		return null;
+		return copy();
 	}
 
 	@SuppressWarnings("unchecked")

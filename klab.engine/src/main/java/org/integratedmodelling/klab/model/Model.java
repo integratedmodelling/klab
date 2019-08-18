@@ -171,7 +171,7 @@ public class Model extends KimObject implements IModel {
 				}
 			}
 		}
-		
+
 		/*
 		 * all resources after 'using' or further classification/lookup transformations
 		 */
@@ -184,15 +184,17 @@ public class Model extends KimObject implements IModel {
 			}
 		}
 
+		this.behavior = new Behavior(model.getBehavior(), this);
+
 		/*
-		 * TODO validate typechain, units and final result vs. observable artifact type
+		 * validate typechain, units and final result vs. observable artifact type - AFTER
+		 * the behavior has been processed!
 		 */
 		validateTypechain(monitor);
 
 		/*
 		 * actions
 		 */
-		this.behavior = new Behavior(model.getBehavior(), this);
 
 		/*
 		 * validate all action
@@ -223,7 +225,7 @@ public class Model extends KimObject implements IModel {
 		if (observables.size() == 0 || observables.get(0) == null) {
 			return;
 		}
-		
+
 		Map<String, IArtifact.Type> typechain = new HashMap<>();
 
 		/*
@@ -308,7 +310,7 @@ public class Model extends KimObject implements IModel {
 		if (observable == null) {
 			return;
 		}
-		
+
 		((Observable) observable).setOriginatingModelId(this.getName());
 
 		if (!Units.INSTANCE.needsUnits(observable) && observable.getUnit() != null) {
@@ -391,7 +393,7 @@ public class Model extends KimObject implements IModel {
 		if (observable == null) {
 			return ret;
 		}
-		
+
 		boolean isModel = observable.equals(this.getObservables().get(0));
 
 		/*
@@ -458,7 +460,7 @@ public class Model extends KimObject implements IModel {
 			} else if (!geometry.isEmpty()) {
 				this.geometry = ((Geometry) this.geometry).merge(geometry);
 				if (this.geometry == null) {
-					monitor.error("the model uses inconsistent space/time geometries across the computational chain",
+					monitor.error("model " + getName() + " uses inconsistent space/time geometries across the computational chain",
 							this.getStatement());
 					setErrors(true);
 				}
@@ -795,6 +797,7 @@ public class Model extends KimObject implements IModel {
 	public Scale getCoverage(IMonitor monitor) throws KlabException {
 
 		if (this.coverage == null) {
+
 			this.coverage = Scale.create(behavior == null ? new ArrayList<>() : behavior.getExtents(monitor));
 			if (resourceCoverage != null) {
 				this.coverage = this.coverage.merge(resourceCoverage, LogicalConnector.INTERSECTION);
@@ -812,8 +815,7 @@ public class Model extends KimObject implements IModel {
 	 * are annotations that define parameters (possibly interactive), add them to
 	 * the computables.
 	 * 
-	 * @param transition
-	 *            the transition to be computed
+	 * @param transition the transition to be computed
 	 * @return the indirectAdapters for the model at the transition
 	 */
 	@Override

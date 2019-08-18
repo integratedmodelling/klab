@@ -428,7 +428,7 @@ public enum Resolver {
 				 * continue at the modeler's risk.
 				 */
 				parentScope.getMonitor().warn(
-						"Model " + model.getName() + " is being observed outside of its coverage! Expect problems.");
+						"Model " + model.getName() + " is being observed outside its coverage! Expect problems.");
 				coverage.setCoverage(1.0);
 			} else {
 				parentScope.getMonitor().error(new KlabInternalErrorException(

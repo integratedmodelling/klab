@@ -61,6 +61,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fix declaration of presence dereifier (which caused a number->boolean conversion being
   inserted, and false being produced overall).
 - Fixed new Eclipse lack of sync upon creation of scripts and test cases.
+- Fix silly parsing order bug that had deactivated partition resolution.
 ### Removed
 
 ## [0.10.0.176] -- 2019/07/30

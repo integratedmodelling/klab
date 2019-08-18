@@ -404,7 +404,7 @@ public class DataflowCompiler {
 					// known.
 					String name = modelDesc.model.getLocalNameFor(observable) + "_" + index;
 					partial.setPartitionedTarget(observable.getName());
-
+					partial.setName(name);
 					partial.setObservable(observable);
 					partial.setType(ret.getType());
 					defineActuator(partial, name, modelDesc, generated);

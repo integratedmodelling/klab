@@ -303,4 +303,8 @@ public class Offset implements ILocator {
 		return new GeometryIterator(geometry, this);
 	}
 
+	public static Offset empty() {
+		return new Offset();
+	}
+
 }

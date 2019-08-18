@@ -123,6 +123,14 @@ public class Geometry implements IGeometry {
 
 					numbers.add((Number) o);
 
+				} else if (o instanceof int[]) {
+					for (int of : (int[])o) {
+						numbers.add(of);
+					}
+				} else if (o instanceof long[]) {
+					for (long of : (long[])o) {
+						numbers.add(of);
+					}
 				} else {
 
 					if (current != null) {
@@ -164,6 +172,12 @@ public class Geometry implements IGeometry {
 				current.defineOffsets(numbers);
 				ret.add(current);
 			}
+		}
+		
+		if (ret.isEmpty() && !numbers.isEmpty()) {
+			current = new DimensionTarget();
+			current.defineOffsets(numbers);
+			ret.add(current);
 		}
 
 		if (haveGeometry && ret.size() > 1) {
@@ -512,7 +526,8 @@ public class Geometry implements IGeometry {
 			if (generic && !dimension.isGeneric() || !generic && dimension.isGeneric()) {
 				return false;
 			}
-			if (regular && !dimension.isRegular() || !regular && dimension.isRegular()) {
+			if (regular && !(dimension.isRegular() || dimension.size() == 1)
+					|| !regular && (dimension.isRegular() || dimension.size() == 1)) {
 				return false;
 			}
 
