@@ -526,10 +526,14 @@ public class Geometry implements IGeometry {
 			if (generic && !dimension.isGeneric() || !generic && dimension.isGeneric()) {
 				return false;
 			}
-			if (regular && !(dimension.isRegular() || dimension.size() == 1)
-					|| !regular && (dimension.isRegular() || dimension.size() == 1)) {
-				return false;
-			}
+			
+			// TODO must enable a boundary shape to cut any geometry, regular or not, as long
+			// as the dimensionality agrees
+			
+//			if (regular && !(dimension.isRegular() || dimension.size() == 1)
+//					|| !regular && (dimension.isRegular() || dimension.size() == 1)) {
+//				return false;
+//			}
 
 			return true;
 		}

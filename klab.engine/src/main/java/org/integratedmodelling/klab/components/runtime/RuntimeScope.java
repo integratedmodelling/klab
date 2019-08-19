@@ -1010,9 +1010,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				for (IState state : predefinedStates) {
 					link(observation, state);
 				}
+				
+				System.out.println("Created "+ observation + " for " + actuator.getObservable());
+
 			}
 		}
 
+		
 		return preexisting == null ? this.catalog.get(actuator.getName()) : preexisting;
 
 	}
@@ -1262,11 +1266,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 	}
-
-//	@Override
-//	public ILocator getCurrentTimeLocator() {
-//		return scale.getTime() == null ? null : scale.getTime();
-//	}
 
 	@Override
 	public Collection<IArtifact> getArtifact(IConcept observable) {

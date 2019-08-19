@@ -59,8 +59,8 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
@@ -396,9 +396,12 @@ public class Actuator implements IActuator {
 
 		if (!runtimeContext.getTargetArtifact().equals(ret)) {
 			/*
-			 * Computation has changed the artifact: reset into catalog
+			 * Computation has changed the artifact: reset into catalog unless it's a proxy 
+			 * artifact.
 			 */
-			runtimeContext.setData(((IObservation) target).getObservable().getName(), ret);
+			if (!isProxy(target)) {
+				runtimeContext.setData(((IObservation) target).getObservable().getName(), ret);
+			}
 		}
 
 		// FIXME the original context does not get the indirect artifacts
@@ -473,6 +476,10 @@ public class Actuator implements IActuator {
 		this.status.set(2);
 
 		return ret;
+	}
+
+	private boolean isProxy(IArtifact target) {
+		return target instanceof RescalingState || target instanceof StateLayer;
 	}
 
 	@SuppressWarnings("unchecked")

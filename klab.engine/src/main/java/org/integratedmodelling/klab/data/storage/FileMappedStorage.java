@@ -167,7 +167,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 		}
 	}
 
-	private void put(Object val, MappedByteBuffer page, long offset) {
+	private synchronized void put(Object val, MappedByteBuffer page, long offset) {
 
 		if (val == null) {
 			val = getNodataValue();
@@ -212,7 +212,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	 * @param offset
 	 * @return
 	 */
-	private Object get(MappedByteBuffer page, long offset) {
+	private synchronized Object get(MappedByteBuffer page, long offset) {
 
 		if (offset >= 0) {
 			page.position((int) offset * type.size);

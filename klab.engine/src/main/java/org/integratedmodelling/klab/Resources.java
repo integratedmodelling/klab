@@ -797,6 +797,10 @@ public enum Resources implements IResourceService {
 		Pair<String, Map<String, String>> urnp = Urns.INSTANCE.resolveParameters(urn);
 		IResource resource = resolveResource(urn);
 
+		if (resource == null) {
+			return null;
+		}
+		
 		Scale scale = Scale.create(resource.getGeometry());
 		if (forceGrid || resource.getType() != Type.OBJECT) {
 			scale = scale.adaptForExample();

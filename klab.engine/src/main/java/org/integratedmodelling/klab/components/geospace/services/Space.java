@@ -72,6 +72,7 @@ public class Space implements IExpression {
 					throw new IllegalArgumentException("urn " + urn + " does not resolve to a spatial object");
 				}
 				space = ((IScale) artifact.getSecond().iterator().next().getGeometry()).getSpace();
+				shapeCache.put(urn, space);
 			}
 
 			if (projection != null) {
