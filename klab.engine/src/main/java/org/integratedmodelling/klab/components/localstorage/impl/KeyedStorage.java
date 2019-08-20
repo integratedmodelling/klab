@@ -29,7 +29,7 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 	private Class<? extends T> cls;
 
 	public KeyedStorage(IGeometry geometry, Class<? extends T> cls) {
-		keyStore = new FileMappedStorage<>(geometry, Integer.class);
+		keyStore = new FileMappedStorage<>(geometry, Short.class);
 		this.cls = cls;
 	}
 
@@ -48,7 +48,9 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 				if (dataKey == null) {
 					cValue++;
 				}
-				conceptKey.put(value, cValue);
+				if (!conceptKey.containsValue(cValue)) {
+					conceptKey.put(value, cValue);
+				}
 			}
 		}
 		return keyStore.put(cValue, locator);
@@ -104,15 +106,21 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 
 		@Override
 		public int reverseLookup(Object value) {
-			return this.key.containsKey(value) ? this.key.get(value) : -1;
+			if (this.key.containsKey(value)) {
+				return this.key.get(value);
+			}
+			System.err.println("DIO CANE " + value);
+			return /* THIS SHOULD NEVER HAPPEN BUT IT DOES */ -1;
 		}
 
 		@Override
 		public List<String> getLabels() {
 			List<String> ret = new ArrayList<>();
-			for (T value : this.key.keySet()) {
-				ret.add(value instanceof IConcept ? Concepts.INSTANCE.getDisplayName((IConcept) value)
-						: value.toString());
+			synchronized (key) {
+				for (T value : this.key.keySet()) {
+					ret.add(value instanceof IConcept ? Concepts.INSTANCE.getDisplayName((IConcept) value)
+							: value.toString());
+				}
 			}
 			return ret;
 		}
@@ -125,10 +133,12 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 		@Override
 		public List<Pair<Integer, String>> getAllValues() {
 			List<Pair<Integer, String>> ret = new ArrayList<>();
-			for (T value : this.key.keySet()) {
-				ret.add(new Pair<>(this.key.get(value),
-						value instanceof IConcept ? Concepts.INSTANCE.getDisplayName((IConcept) value)
-								: value.toString()));
+			synchronized (key) {
+				for (T value : this.key.keySet()) {
+					ret.add(new Pair<>(this.key.get(value),
+							value instanceof IConcept ? Concepts.INSTANCE.getDisplayName((IConcept) value)
+									: value.toString()));
+				}
 			}
 			return ret;
 		}

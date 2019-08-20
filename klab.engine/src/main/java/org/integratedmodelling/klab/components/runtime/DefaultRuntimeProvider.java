@@ -245,7 +245,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context);
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 
-		if (reentrant) {
+		if (!reentrant) {
 			StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
 				if (!context.getMonitor().isInterrupted()) {
 					data.set(state, resolver.resolve(data.getObservable(),

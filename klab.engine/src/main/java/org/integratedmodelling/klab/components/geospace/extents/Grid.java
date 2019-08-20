@@ -1239,7 +1239,7 @@ public class Grid extends Area implements IGrid {
 			if (monitor.isInterrupted()) {
 				return false;
 			}
-			if (counter < (endSplit - 1)) {
+			if (counter < endSplit) {
 				arg0.accept(splitGrid.getCell(counter++));
 				return true;
 			}

@@ -72,7 +72,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			return getValueFromBackend(sliceOffset, this.sliceOffsetInBackend);
 		}
 
-		public void setAt(long sliceOffset, T value) {
+		// TODO synchronization here voids the parallelism in most functions. The newSlice thing should be
+		// put in the implementation and synchronized there, so that multiple put() may happen.
+		public synchronized void setAt(long sliceOffset, T value) {
 
 			if (isNew) {
 				this.value = value;
@@ -84,14 +86,19 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 					|| (this.value != null && value != null && !value.equals(this.value));
 
 			if (this.sliceOffsetInBackend < 0 && valuesDiffer) {
-				this.sliceOffsetInBackend = slicesInBackend;
-				slicesInBackend++;
-				createBackendStorage(this.sliceOffsetInBackend, null);
+				newSlice();
 			}
 
 			setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
 		}
 
+		private synchronized void newSlice() {
+			// TODO Auto-generated method stub
+			this.sliceOffsetInBackend = slicesInBackend;
+			slicesInBackend++;
+			createBackendStorage(this.sliceOffsetInBackend, null);
+		}
+		
 		Slice(long timestep, Slice closest) {
 			this.timestep = timestep;
 			if (closest != null) {
@@ -118,6 +125,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	protected long getHighTimeOffset() {
 		return highTimeOffset;
 	}
+
 
 	protected abstract void duplicateBackendSlice(long sliceToCopy, long newSliceIndex);
 

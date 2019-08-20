@@ -6,10 +6,10 @@ import java.util.Iterator;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -21,6 +21,15 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class Subgrid extends Grid {
 
+	private static SpatialDisplay display;
+	
+	private static SpatialDisplay getDisplay(Grid original) {
+		if (display == null) {
+			display = new SpatialDisplay(original.getBoundingBox());
+		}
+		return display;
+	}
+	
 	/**
 	 * Get the percentage of area outside the requested shape that needs to be
 	 * covered in order to snap the passed grid to the passed shape so that the
@@ -69,6 +78,9 @@ public class Subgrid extends Grid {
 		Envelope genv = new Envelope(grid.getWest(), grid.getEast(), grid.getSouth(), grid.getNorth());
 		Envelope senv = shape.getEnvelope().getJTSEnvelope();
 
+		getDisplay(grid).add(shape);
+		getDisplay(grid).show();
+		
 		if (!genv.covers(senv)) {
 			throw new IllegalArgumentException(
 					"cannot create subgrid: the passed shape does not cover the original grid");

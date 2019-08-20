@@ -136,7 +136,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	@Override
-	protected void createBackendStorage(long pageIndex, T initialValue) {
+	protected synchronized void createBackendStorage(long pageIndex, T initialValue) {
 
 		if (storage == null) {
 			try {
@@ -150,7 +150,6 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 			} catch (Exception e) {
 				throw new KlabIOException(e);
 			}
-
 		}
 
 		Object val = initialValue;
@@ -344,7 +343,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	@Override
-	protected void duplicateBackendSlice(long sliceToCopy, long newSliceIndex) {
+	protected synchronized void duplicateBackendSlice(long sliceToCopy, long newSliceIndex) {
 
 		try {
 			if (this.page1 != null) {
