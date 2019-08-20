@@ -45,7 +45,9 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
 	@Override
 	public IArtifact resolve(IArtifact observation, IContextualizationScope context) {
+		System.err.println("GETTING DATA FROM " + resource.getUrn());
 		IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
+		System.err.println("DONE " + resource.getUrn());
 		return data.getArtifact();
 	}
 

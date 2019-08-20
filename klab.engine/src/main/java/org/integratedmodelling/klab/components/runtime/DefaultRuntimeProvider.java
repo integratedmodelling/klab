@@ -245,7 +245,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context);
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 
-		if (!reentrant) {
+		System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " + resolver);
+		
+		if (reentrant) {
 			StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
 				if (!context.getMonitor().isInterrupted()) {
 					data.set(state, resolver.resolve(data.getObservable(),
@@ -261,6 +263,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 						variables.isEmpty() ? ctx : localizeContext(ctx, (IScale)state, self, variables)));
 			}
 		}
+		
+		System.err.println("DONE " + data);
+
 		return data;
 	}
 
