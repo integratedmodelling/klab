@@ -1,21 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.integratedmodelling.kdl.ide
-Bundle-Vendor: My Company
-Bundle-Version: 0.10.0.qualifier
-Bundle-SymbolicName: org.integratedmodelling.kdl.ide; singleton:=true
-Bundle-ActivationPolicy: lazy
-Require-Bundle: org.integratedmodelling.kdl,
- org.eclipse.xtext.ide,
- org.eclipse.xtext.xbase.ide,
- org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.integratedmodelling.kdl.ide.contentassist.antlr,
- org.integratedmodelling.kdl.ide.contentassist.antlr.internal
-Automatic-Module-Name: org.integratedmodelling.kdl.ide
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: k.LAB
+Bundle-Name: k.LAB IDE
 Bundle-SymbolicName: org.integratedmodelling.klab.ide;singleton:=true
 Bundle-Version: 0.10.0.qualifier
 Bundle-ClassPath: .
@@ -55,8 +40,7 @@ Require-Bundle: javax.inject,
  org.eclipse.core.filesystem;bundle-version="1.7.0",
  org.eclipse.ui.console;bundle-version="3.7.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
-  javax.inject;version="1.0.0"
+Import-Package: javax.annotation;version="1.0.0";resolution:=optional
 Bundle-ActivationPolicy: lazy
 Export-Package: org.integratedmodelling.klab.ide,
  org.integratedmodelling.klab.ide.builder,
