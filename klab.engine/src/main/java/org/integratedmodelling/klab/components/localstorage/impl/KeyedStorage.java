@@ -29,7 +29,8 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 	private Class<? extends T> cls;
 
 	public KeyedStorage(IGeometry geometry, Class<? extends T> cls) {
-		keyStore = new FileMappedStorage<>(geometry, Short.class);
+		// TODO use a Short
+		keyStore = new FileMappedStorage<>(geometry, Integer.class);
 		this.cls = cls;
 	}
 

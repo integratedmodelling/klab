@@ -396,7 +396,7 @@ public class Actuator implements IActuator {
 
 		if (!runtimeContext.getTargetArtifact().equals(ret)) {
 			/*
-			 * Computation has changed the artifact: reset into catalog unless it's a proxy 
+			 * Computation has changed the artifact: reset into catalog unless it's a proxy
 			 * artifact.
 			 */
 			if (!isProxy(target)) {
@@ -938,13 +938,12 @@ public class Actuator implements IActuator {
 		}
 
 		IDataKey ret = null;
-		for (IActuator actuator : actuators) {
-			if (((Actuator) actuator).observable.getType().equals(observable.getType())) {
-				ret = ((Actuator) actuator).findDataKey();
-				break;
-			}
-		}
-
+//		for (IActuator actuator : actuators) {
+//			if (((Actuator) actuator).observable.getType().equals(observable.getType())) {
+//				ret = ((Actuator) actuator).findDataKey();
+//				break;
+//			}
+//		}
 		return ret;
 
 	}
@@ -1178,8 +1177,7 @@ public class Actuator implements IActuator {
 
 			if (isNew) {
 				IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
-						product.getContext(), context.getScale(), 0, isMainObservable || isMain)
-						.withTaskId(taskId);
+						product.getContext(), context.getScale(), 0, isMainObservable || isMain).withTaskId(taskId);
 
 				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 						IMessage.Type.NewObservation, observation));

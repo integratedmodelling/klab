@@ -72,13 +72,18 @@ public class RescalingState extends Observation implements IState {
 
 	public Object get(ILocator index) {
 
+		long offset = this.newScale.getOffset(index);
+
+		if (!this.newScale.isCovered(offset)) {
+			return null;
+		}
+		
 		if (mediators == null) {
 			mediators = getMediators((Scale) this.delegate.getScale(), this.newScale);
 		}
 
 		if (conformant) {
 
-			long offset = this.newScale.getOffset(index);
 			long[] offsets = this.newScale.getExtentIndex(offset);
 			for (int i = 0; i < mediators.size(); i++) {
 				offsets[i] = mediators.get(i).mapConformant(offsets[i]);
@@ -113,12 +118,17 @@ public class RescalingState extends Observation implements IState {
 	}
 
 	public long set(ILocator index, Object value) {
+		
+		long offset = this.newScale.getOffset(index);
 
+		// may be covered by another state and have been assigned already!
+		if (!this.newScale.isCovered(offset)) {
+			return -1;
+		}
+		
 		if (mediators == null) {
 			mediators = getMediators((Scale) this.delegate.getScale(), this.newScale);
 		}
-
-		long offset = this.newScale.getOffset(index);
 
 		if (conformant) {
 
