@@ -39,19 +39,17 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 	}
 
 	@Override
-	public long put(T value, ILocator locator) {
+	public synchronized long put(T value, ILocator locator) {
 		Integer cValue = null;
 		if (value != null) {
 			cValue = dataKey == null ? conceptKey.size() : dataKey.reverseLookup(value);
 			if (conceptKey.containsKey(value)) {
 				cValue = conceptKey.get(value);
 			} else {
-				if (dataKey == null) {
-					cValue++;
-				}
-				if (!conceptKey.containsValue(cValue)) {
-					conceptKey.put(value, cValue);
-				}
+//				if (dataKey == null) {
+//					cValue++;
+//				}
+				conceptKey.put(value, cValue);
 			}
 		}
 		return keyStore.put(cValue, locator);
