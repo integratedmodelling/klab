@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
+import org.integratedmodelling.klab.data.DataType;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -27,18 +28,6 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	private long pageIndex0 = -1;
 	private long pageIndex1 = -1;
 	private File file;
-
-	enum DataType {
-
-		BYTE(Byte.SIZE / 8), SHORT(Short.SIZE / 8), INT(Integer.SIZE / 8), LONG(Long.SIZE / 8), FLOAT(Float.SIZE / 8),
-		DOUBLE(Double.SIZE / 8);
-
-		int size;
-
-		DataType(int size) {
-			this.size = size;
-		}
-	}
 
 	/*
 	 * stuff below gets reused at each read or write. As we use linear, scalar
@@ -91,7 +80,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	private Object getNodataValue() {
-		switch (type) {
+		switch (getDatatype()) {
 		case BYTE:
 			return Byte.MIN_VALUE;
 		case DOUBLE:

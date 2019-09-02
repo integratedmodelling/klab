@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -26,7 +26,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
  */
 public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
-	private NavigableMap<Long, Slice> slices = new TreeMap<>();
+	private NavigableMap<Long, Slice> slices = Collections.synchronizedNavigableMap(new TreeMap<>());
 	private long highTimeOffset = -1;
 	private long maxTimeOffset;
 	private long sliceSize;

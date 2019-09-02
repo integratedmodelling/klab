@@ -1,0 +1,17 @@
+Drivers:
+
+0 distance to sea
+1 focal mean population density
+2 geology-diorite
+3 geology-ultramafics
+4 geology-sediment
+5 no erosion
+6 moderate erosion
+7 elevation (dem)
+8 slope (dem)
+9 aspect (dem)
+10 distance to road
+11 distance to city
+12 distance to stream
+13 newgeology-ultramafic sediment
+14 newgeology-metamorphic sediment

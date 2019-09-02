@@ -8,7 +8,6 @@ import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
 import org.apache.commons.math3.ml.clustering.DoublePoint;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
