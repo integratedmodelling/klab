@@ -26,7 +26,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
  */
 public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
-	private NavigableMap<Long, Slice> slices = Collections.synchronizedNavigableMap(new TreeMap<>());
+	private NavigableMap<Long, Slice> slices = new TreeMap<>();
 	private long highTimeOffset = -1;
 	private long maxTimeOffset;
 	private long sliceSize;
@@ -74,7 +74,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 		// TODO synchronization here voids the parallelism in most functions. The newSlice thing should be
 		// put in the implementation and synchronized there, so that multiple put() may happen.
-		public synchronized void setAt(long sliceOffset, T value) {
+		public void setAt(long sliceOffset, T value) {
 
 			if (isNew) {
 				this.value = value;
@@ -92,7 +92,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
 		}
 
-		private synchronized void newSlice() {
+		private void newSlice() {
 			// TODO Auto-generated method stub
 			this.sliceOffsetInBackend = slicesInBackend;
 			slicesInBackend++;
@@ -204,7 +204,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	 */
 	protected abstract void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice);
 
-	public T get(ILocator locator) {
+	public synchronized T get(ILocator locator) {
 
 		if (slices.isEmpty()) {
 			return null;
@@ -237,36 +237,39 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		long timeOffset = trivial ? 0 : offsets.pos[0];
 		boolean noData = Observations.INSTANCE.isNodata(value);
 
-		if (noData && slices.isEmpty()) {
-			// everything's nodata so far, no need to store.
-			return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
-		}
+		synchronized(this) {
+			if (noData && slices.isEmpty()) {
+				// everything's nodata so far, no need to store.
+				return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
+			}
+		
 
-		/*
-		 * record high offset for posterity
-		 */
-		if (highTimeOffset < timeOffset) {
-			highTimeOffset = timeOffset;
+			/*
+			 * record high offset for posterity
+			 */
+			if (highTimeOffset < timeOffset) {
+				highTimeOffset = timeOffset;
+			}
+	
+			/*
+			 * find the closest slice for the time
+			 */
+			Slice slice = getClosest(timeOffset);
+			if (slice != null/* && slice.timestep != timeOffset */ && equals(slice.getAt(sliceOffset), value)) {
+				// don't store anything until it's different from the previous slice.
+				return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
+			}
+	
+			/*
+			 * if we get here, we need to store in a slice of our own unless we found the
+			 * exact timestep.
+			 */
+			if (slice == null || slice.timestep != timeOffset) {
+				slice = addSlice(timeOffset, slice);
+			}
+	
+			slice.setAt(sliceOffset, value);
 		}
-
-		/*
-		 * find the closest slice for the time
-		 */
-		Slice slice = getClosest(timeOffset);
-		if (slice != null/* && slice.timestep != timeOffset */ && equals(slice.getAt(sliceOffset), value)) {
-			// don't store anything until it's different from the previous slice.
-			return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
-		}
-
-		/*
-		 * if we get here, we need to store in a slice of our own unless we found the
-		 * exact timestep.
-		 */
-		if (slice == null || slice.timestep != timeOffset) {
-			slice = addSlice(timeOffset, slice);
-		}
-
-		slice.setAt(sliceOffset, value);
 
 		return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 	}

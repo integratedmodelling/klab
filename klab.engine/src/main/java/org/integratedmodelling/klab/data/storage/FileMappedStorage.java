@@ -240,12 +240,11 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 
 		if (backendTimeSlice == this.pageIndex0) {
 			result = get(page0, offsetInSlice);
-		}
-		if (backendTimeSlice == this.pageIndex1) {
+		} else if (backendTimeSlice == this.pageIndex1) {
 			result = get(page1, offsetInSlice);
 		} else {
 			// read directly from file
-			if (backendTimeSlice >= this.pageIndex1) {
+			if (backendTimeSlice > this.pageIndex1) {
 				throw new IllegalStateException("file mapped storage: trying to read an unassigned value");
 			}
 			result = getDirect(offsetInSlice, backendTimeSlice);
@@ -360,7 +359,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 		return (int) highestSliceIndex + 1;
 	}
 
-	public int getSliceCount() {
+	public synchronized int getSliceCount() {
 		return sliceCount();
 	}
 
