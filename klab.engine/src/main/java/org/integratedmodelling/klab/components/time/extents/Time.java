@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.time.extents.mediators.TimeIdentity;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
@@ -37,63 +38,6 @@ public class Time extends Extent implements ITime {
 	boolean realtime = false;
 	Resolution resolution;
 	long multiplicity = 1;
-
-//	/**
-//	 * The empty, non-descript initialization locator refers to the time before time
-//	 * begins. Any recontextualization of the initialization locator produces the
-//	 * initialization locator.
-//	 */
-//	public static IExtent INITIALIZATION = new Time() {
-//
-//		public int hashCode() {
-//			return 234567;
-//		}
-//
-//		@Override
-//		public boolean equals(Object o) {
-//			return o == this;
-//		}
-//		
-//		@Override
-//		public Time copy() {
-//			return this;
-//		}
-//		
-//		@Override 
-//		public Time getExtent(long offset) {
-//			return this;
-//		}
-//
-//		@Override
-//		public boolean contains(IExtent o) throws KlabException {
-//			return o == this;
-//		}
-//
-//		@Override
-//		public boolean overlaps(IExtent o) throws KlabException {
-//			return o == this;
-//		}
-//
-//		@Override
-//		public boolean intersects(IExtent o) throws KlabException {
-//			return o == this;
-//		}
-//		
-//		public IExtent at(Object...objects) {
-//			return this;
-//		}
-//
-//		public Time collapse() {
-//			return this;
-//		}
-//
-//		@Override
-//		public String toString() {
-//			return "<TIME INIT>";
-//		}
-//		
-//		
-//	};
 
 	private static class ResolutionImpl implements Resolution {
 
@@ -178,7 +122,7 @@ public class Time extends Extent implements ITime {
 			if (type == ITime.Type.REAL && ret.end == null) {
 				ret.multiplicity = Geometry.INFINITE_SIZE;
 			} else {
-				ret.multiplicity = (long) ret.getCoveredExtent() / ret.step.getMilliseconds();
+				ret.multiplicity = (long) (ret.getCoveredExtent() / ret.step.getMilliseconds()) + 1;
 			}
 		}
 		return ret;
@@ -253,7 +197,7 @@ public class Time extends Extent implements ITime {
 	@Override
 	public IScaleMediator getMediator(IExtent extent) {
 		// TODO Auto-generated method stub
-		return null;
+		return new TimeIdentity();
 	}
 
 	@Override

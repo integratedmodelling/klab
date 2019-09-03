@@ -109,8 +109,7 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 			if (this.key.containsKey(value)) {
 				return this.key.get(value);
 			}
-			System.err.println("DIO CANE " + value);
-			return /* THIS SHOULD NEVER HAPPEN BUT IT DOES */ -1;
+			return -1;
 		}
 
 		@Override

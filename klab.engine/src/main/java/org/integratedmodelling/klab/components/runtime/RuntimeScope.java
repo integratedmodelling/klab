@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -53,7 +52,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.components.time.extents.Scheduler;
-import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -670,6 +669,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				if (merging instanceof IState) {
 					// complete the partial scale with the overall view of the context
 					ret.target = Observations.INSTANCE.getStateView((IState) merging, actuator.getScale(), ret);
+					if (ret.target instanceof RescalingState) {
+						// for debugging
+						((RescalingState)ret.target).setLocalId(actuator.getName());
+					}
 				} else {
 					ret.target = merging;
 				}

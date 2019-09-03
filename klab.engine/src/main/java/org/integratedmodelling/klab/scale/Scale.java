@@ -348,9 +348,9 @@ public class Scale implements IScale {
 		public IScale next() {
 			IScale ret = new Scale(Scale.this, offset);
 			this.offset++;
-//			while (this.offset < size() && !isCovered(offset)) {
-//				this.offset++;
-//			}
+			while (this.offset < size() && !isCovered(offset)) {
+				this.offset++;
+			}
 			return ret;
 		}
 	}

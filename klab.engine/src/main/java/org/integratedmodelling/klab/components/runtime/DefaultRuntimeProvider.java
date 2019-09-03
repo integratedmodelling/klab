@@ -68,6 +68,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Relationship
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -245,7 +246,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context);
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 
-		System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " + resolver);
+//		System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " + resolver);
 		
 		if (reentrant) {
 			StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
@@ -264,8 +265,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			}
 		}
 		
-		System.err.println("DONE " + data);
-
+//		System.err.println("DONE " + data);
+//
+//		Debug.INSTANCE.summarize(data);
+		
 		return data;
 	}
 

@@ -11,7 +11,6 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Time;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IObserver;
@@ -86,7 +85,7 @@ public class Observer extends KimObject implements IObserver {
 				ISpace space =  Space.create(Shape.create(envelope), resolution);
 				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 				
-				return Lists.newArrayList(time, space);
+				return /*Collections.singletonList(space); */ Lists.newArrayList(time, space);
 			}
 		};
 	}
@@ -118,7 +117,7 @@ public class Observer extends KimObject implements IObserver {
 				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 				ISpace space = Space.create(shape, resolution);
 				
-				return  Lists.newArrayList(time, space);
+				return /* Collections.singletonList(space); */ Lists.newArrayList(time, space);
 			}
 		};
 	}

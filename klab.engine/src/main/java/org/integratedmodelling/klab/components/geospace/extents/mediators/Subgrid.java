@@ -21,9 +21,10 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class Subgrid extends Grid {
 
+	// TODO do this right when we need it again, using a map with a display per original grid indexed by ID
 	private static SpatialDisplay display;
 	
-	private static SpatialDisplay getDisplay(Grid original) {
+	static SpatialDisplay getDisplay(Grid original) {
 		if (display == null) {
 			display = new SpatialDisplay(original.getBoundingBox());
 		}
@@ -78,8 +79,8 @@ public class Subgrid extends Grid {
 		Envelope genv = new Envelope(grid.getWest(), grid.getEast(), grid.getSouth(), grid.getNorth());
 		Envelope senv = shape.getEnvelope().getJTSEnvelope();
 
-		getDisplay(grid).add(shape);
-		getDisplay(grid).show();
+//		getDisplay(grid).add(shape);
+//		getDisplay(grid).show();
 		
 		if (!genv.covers(senv)) {
 			throw new IllegalArgumentException(
