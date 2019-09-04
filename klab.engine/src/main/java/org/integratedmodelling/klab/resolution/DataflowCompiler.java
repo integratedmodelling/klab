@@ -403,7 +403,7 @@ public class DataflowCompiler {
 					// rename and set the target name as partitioned. Number is the priority if
 					// known.
 					String name = modelDesc.model.getLocalNameFor(observable) + "_" + index;
-					partial.setPartitionedTarget(observable.getName());
+					partial.setPartitionedTarget(ret.getName());
 					partial.setName(name);
 					partial.setObservable(observable);
 					partial.setType(ret.getType());
