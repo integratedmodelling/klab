@@ -15,7 +15,6 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.api.services.IAnnotationService;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.Hub;
@@ -34,7 +33,6 @@ import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.ObservableReference;
-import org.integratedmodelling.klab.utils.FileCatalog;
 import org.joda.time.DateTime;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
@@ -44,6 +42,8 @@ public enum Authentication implements IAuthenticationService {
 	 * The global instance singleton.
 	 */
 	INSTANCE;
+
+	String LOCAL_HUB_URL = "http://127.0.0.1:8284/klab";
 
 	/**
 	 * Local catalog of all partner identities registered from the network.
@@ -203,24 +203,22 @@ public enum Authentication implements IAuthenticationService {
 			return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
 		}
 
-		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_PARTNER_HUB);
+		String authenticationServer = null;
 
 		/**
-		 * TODO try new hub @ https://www.integratedmodelling.org/hub/api/auth-cert/engine"
+		 * TODO try new hub @
+		 * https://integratedmodelling.org/hub/api/auth-cert/engine"
 		 * 
 		 * if experimental property set in properties
 		 */
-		if (authenticationServer == null) {
-			Logging.INSTANCE.warn("certificate has no hub address");
-			// try local hub, let fail if not active
-			if (client.ping("http://127.0.0.1:8284/klab")) {
-				authenticationServer = "http://127.0.0.1:8284/klab";
-				Logging.INSTANCE.info("local hub is available: trying local authentication");
-			} else {
-				Logging.INSTANCE.warn("local hub unavailable: continuing offline");
-			}
+		// try local hub, let fail if not active
+		if (client.ping(LOCAL_HUB_URL)) {
+			authenticationServer = LOCAL_HUB_URL;
+			Logging.INSTANCE.info("local hub is available: trying local authentication");
+		} else {
+			authenticationServer = certificate.getProperty(KlabCertificate.KEY_PARTNER_HUB);
 		}
-		
+
 		if (authenticationServer != null) {
 
 			Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME)
@@ -324,11 +322,11 @@ public enum Authentication implements IAuthenticationService {
 		List<ObservableReference> ret = new ArrayList<>();
 		IUserIdentity user = identity.getParentIdentity(IUserIdentity.class);
 		if (user != null) {
-		    for (Group group : user.getGroups()) {
-		        ret.addAll(group.getObservables());
-		    }
+			for (Group group : user.getGroups()) {
+				ret.addAll(group.getObservables());
+			}
 		}
-        // TODO extract from user's groups, not defaults!
+		// TODO extract from user's groups, not defaults!
 //		if (defaultGroups != null) {
 //			for (String groupId : defaultGroups.keySet()) {
 //				for (ObservableReference observable : defaultGroups.get(groupId).getObservables()) {
@@ -344,7 +342,7 @@ public enum Authentication implements IAuthenticationService {
 		List<ISession> ret = new ArrayList<>();
 		for (IIdentity identity : identities.values()) {
 			if (identity instanceof ISession) {
-				ret.add((ISession)identity);
+				ret.add((ISession) identity);
 			}
 		}
 		return ret;
