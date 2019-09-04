@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: k.LAB API
+Bundle-Vendor: org.integratedmodelling
 Bundle-SymbolicName: org.integratedmodelling.klab.api
 Bundle-Version: 0.10.0.qualifier
 Automatic-Module-Name: org.integratedmodelling.klab.api
