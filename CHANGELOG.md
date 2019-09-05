@@ -43,6 +43,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added a highly configurable flow accumulation resolver that can walk the flow directions
   from the outlet and perform all sorts of neighborhood calculations to compute an arbitrary
   quality along the drainage directions.
+- Add 'distribute' upstream expression to flow accumulation resolver for upstream calculations.
 - Clarify semantics for generic time extents (see comment in ITime.java)
 ### Changed
 - Overhauled the location mechanism for subsetting and scanning geometries and scales. Now
