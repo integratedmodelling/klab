@@ -71,6 +71,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			}
 			return getValueFromBackend(sliceOffset, this.sliceOffsetInBackend);
 		}
+		
+		boolean isStorageCreated() {
+			return this.sliceOffsetInBackend >= 0;
+		}
 
 		// TODO synchronization here voids the parallelism in most functions. The newSlice thing should be
 		// put in the implementation and synchronized there, so that multiple put() may happen.
@@ -81,11 +85,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 				isNew = false;
 				return;
 			}
-
-			boolean valuesDiffer = (this.value == null && value != null) || (this.value != null && value == null)
-					|| (this.value != null && value != null && !value.equals(this.value));
-
-			if (this.sliceOffsetInBackend < 0 && valuesDiffer) {
+			// we create new slice only when value isn't no data
+			if (this.sliceOffsetInBackend < 0 && !Observations.INSTANCE.isNodata(value)) {
 				newSlice();
 			}
 
@@ -255,7 +256,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			 * find the closest slice for the time
 			 */
 			Slice slice = getClosest(timeOffset);
-			if (slice != null/* && slice.timestep != timeOffset */ && equals(slice.getAt(sliceOffset), value)) {
+			if (slice != null/* && slice.timestep != timeOffset */ && (slice.isStorageCreated() && equals(slice.getAt(sliceOffset), value))) {
 				// don't store anything until it's different from the previous slice.
 				return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 			}
