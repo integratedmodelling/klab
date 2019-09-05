@@ -40,10 +40,12 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 
-	private Descriptor exprDescriptor;
+	private Descriptor accumulateDescriptor;
+	private Descriptor distributeDescriptor;
 	private IContextualizationScope context;
-	
-	public AccumulateFlowResolver() {}
+
+	public AccumulateFlowResolver() {
+	}
 
 	public AccumulateFlowResolver(IParameters<String> parameters, IContextualizationScope context) {
 
@@ -53,9 +55,18 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 			if (expression instanceof IKimExpression) {
 				expression = ((IKimExpression) expression).getCode();
 			}
-			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
+			this.accumulateDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
 					.describe(expression.toString(), context.getExpressionContext(), false);
-		} else {
+		}
+		if (parameters.containsKey("distribute")) {
+			Object expression = parameters.get("distribute");
+			if (expression instanceof IKimExpression) {
+				expression = ((IKimExpression) expression).getCode();
+			}
+			this.distributeDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
+					.describe(expression.toString(), context.getExpressionContext(), false);
+		}
+		if (this.accumulateDescriptor == null && this.distributeDescriptor == null) {
 			throw new IllegalArgumentException("flow accumulation resolver: no expression to evaluate");
 		}
 	}
@@ -87,17 +98,29 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 		 */
 		Map<String, IState> states = Collections.synchronizedMap(new HashMap<>());
 		states.put("self", target);
-		IExpression expression = null;
+		IExpression downstreamExpression = null;
+		IExpression upstreamExpression = null;
 
-		if (exprDescriptor != null) {
+		if (accumulateDescriptor != null) {
 			// check inputs and see if the expr is worth anything in this context
-			for (String input : exprDescriptor.getIdentifiers()) {
-				if (exprDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
+			for (String input : accumulateDescriptor.getIdentifiers()) {
+				if (accumulateDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
 					IState state = context.getArtifact(input, IState.class);
 					states.put(input, state);
 				}
 			}
-			expression = exprDescriptor.compile();
+			downstreamExpression = accumulateDescriptor.compile();
+		}
+
+		if (distributeDescriptor != null) {
+			// check inputs and see if the expr is worth anything in this context
+			for (String input : distributeDescriptor.getIdentifiers()) {
+				if (distributeDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
+					IState state = context.getArtifact(input, IState.class);
+					states.put(input, state);
+				}
+			}
+			upstreamExpression = distributeDescriptor.compile();
 		}
 
 		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
@@ -111,7 +134,7 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 			Point point = ((Shape) space.getShape()).getJTSGeometry().getCentroid();
 			long xy = grid.getOffsetFromWorldCoordinates(point.getX(), point.getY());
 			Cell start = grid.getCell(xy);
-			compute(start, flowdirection, target, states, expression);
+			compute(start, flowdirection, target, states, downstreamExpression, upstreamExpression, true, null);
 		}
 
 		return target;
@@ -121,15 +144,12 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 	 * Computation of runoff accumulates the runoff from upstream cells, ending at
 	 * the outlet This function is called with the outlet cell as parameter.
 	 */
-	private void compute(Cell cell, IState flowdirection, IState result, Map<String, IState> states,
-			IExpression expression) {
+	private Object compute(Cell cell, IState flowdirection, IState result, Map<String, IState> states,
+			IExpression downstreamExpression, IExpression upstreamExpression, boolean isOutlet, Object previousValue) {
 
-		List<Cell> upstreamCells = GeoprocessingComponent.getUpstreamCells(cell, flowdirection, null);
-		for (Cell upstream : upstreamCells) {
-			compute(upstream, flowdirection, result, states, expression);
-		}
-
+		Object ret = previousValue;
 		Parameters<String> parameters = Parameters.create();
+		parameters.put("current", previousValue);
 
 		/*
 		 * collect values of all states @ self
@@ -142,12 +162,26 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 		 * build the cell descriptor to give us access to the neighborhood
 		 */
 		parameters.put("cell",
-				new ContributingCell(cell, ((Number) flowdirection.get(cell)).intValue(), flowdirection, states));
+				new ContributingCell(cell, ((Number) flowdirection.get(cell)).intValue(), flowdirection, states, isOutlet));
+
+		// call upstream before recursion, in upstream order
+		if (upstreamExpression != null) {
+			result.set(cell, (ret = upstreamExpression.eval(parameters, context)));
+		}
+		
+		List<Cell> upstreamCells = GeoprocessingComponent.getUpstreamCells(cell, flowdirection, null);
+		for (Cell upstream : upstreamCells) {
+			compute(upstream, flowdirection, result, states, downstreamExpression, upstreamExpression, false, ret);
+		}
 
 		/*
-		 * call the f'ing expression
+		 * call downstream after recursion, i.e. in downstream order
 		 */
-		result.set(cell, expression.eval(parameters, context));
+		if (downstreamExpression != null) {
+			result.set(cell, (ret = downstreamExpression.eval(parameters, context)));
+		}
+		
+		return ret;
 	}
 
 	@Override

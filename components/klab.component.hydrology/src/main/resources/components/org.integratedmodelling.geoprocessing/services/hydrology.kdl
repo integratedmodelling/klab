@@ -65,6 +65,10 @@ export value accumulateflow
 {
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"
+		
+	import object stream_outlet
+		"Stream outlets. Only the location of the outlets will be used; if the outlet spatial
+		 extent is not a point, the centroid cell will be used."
 
 	value expression evaluate
 		"An expression that returns the value in each cell. The 'cell' variable contains
@@ -79,6 +83,18 @@ export value accumulateflow
 		 of the target state at each upstream location. That is the only context where using 
 		 'self' makes any sense, as it will not have been computed unless the cell is from the
 		 upstream neighborhood."
+		 
+	value expression distribute
+		"An expression that is evaluated in the opposite order as 'evaluate', starting at the 
+		 outlet(s) and moving upstream. All parameters are the same as 'evaluate' except that
+		 'current' is the value of the output at the previously computed downstream cell, evaluated 
+		 before the expression is called, and repeated equal in case the focal cell is not the 
+		 only upstream cell (its value is null at the outlet). The variable 'cell' can be interrogated 
+		 using 'cell.outlet' to check if the
+		 current cell is an outlet. The 'cell.downstream' and 'cell.upstream' are also defined as
+		 before; remember that the upstream values of the output haven't been computed yet. If 
+		 'distribute' is paired with 'evaluate', a flow accumulation step will follow all the 
+		 'distribute' evaluations."
 
 	geometry S2
 

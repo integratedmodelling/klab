@@ -44,16 +44,19 @@ public class ContributingCell extends Expando {
 	 */
 	private IState flowdirections = null;
 	private Map<String, IState> states = new HashMap<>();
-
+	private boolean outlet = false;
+	
 	public ContributingCell(Cell cell) {
 		this.delegate = cell;
 	}
 
-	public ContributingCell(Cell cell, int flowDirection, IState flowdirections, Map<String, IState> states) {
+	public ContributingCell(Cell cell, int flowDirection, IState flowdirections, Map<String, IState> states,
+			boolean isOutlet) {
 		this.delegate = cell;
 		this.d8 = flowDirection;
 		this.flowdirections = flowdirections;
 		this.states.putAll(states);
+		this.outlet = isOutlet;
 	}
 
 	public ContributingCell(Cell cell, ContributingCell focal, Orientation orientation) {
@@ -94,22 +97,26 @@ public class ContributingCell extends Expando {
 	}
 
 	/**
-	 * This returns all the values we know at the focal cell, accessible
-	 * to Groovy directly from dot notation.
+	 * This returns all the values we know at the focal cell, accessible to Groovy
+	 * directly from dot notation.
 	 * 
 	 * @param state
 	 * @return
 	 */
 	public Object getProperty(String state) {
-		
+
 		switch (state) {
-		case "upstream": return getUpstream();
-		case "downstream": return getUpstream();
-		case "neighborhood": 
-		case "neighbourhood": 
+		case "upstream":
+			return getUpstream();
+		case "downstream":
+			return getDownstream();
+		case "neighborhood":
+		case "neighbourhood":
 			return getNeighborhood();
 		case "opposite":
 			return opposite();
+		case "outlet":
+			return outlet;
 		case "d8":
 			return getD8();
 		case "d8pow":
@@ -377,10 +384,6 @@ public class ContributingCell extends Expando {
 	public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
 		return delegate.merge(other, how);
 	}
-
-//	public long getOffset(ILocator index) {
-//		return delegate.getOffset(index);
-//	}
 
 	public IState getFlowdirections() {
 		return flowdirections;

@@ -28,6 +28,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+### Changed
+### Fixed
+### Removed
+
+## [0.10.0.179] -- 2019/09/05
+### Added
 - Logics for instantiation and subsequent resolution of attributes in direct observations
   wired in. Many fixes to resolution and kbox search to support the implicit inherencies
   required, including to the Description activity API.
@@ -42,6 +48,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Overhauled the location mechanism for subsetting and scanning geometries and scales. Now
   consistently using IGeometry.at(...) to flexibly obtain a locator and ILocator.as(Class) 
   to adapt a locator to one with the desired API.
+- Contexts built by default at k.Explorer map zooming now include the generic time focused on
+  the current year.
 - Revised k.IM syntax for restrictions and allowed arbitrary properties to be defined
   through it, which is discouraged but should remain possible. Implementation still
   ignores all that. Put stubs in the docs to document why using attributes, roles and
@@ -62,7 +70,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   inserted, and false being produced overall).
 - Fixed new Eclipse lack of sync upon creation of scripts and test cases.
 - Fix silly parsing order bug that had deactivated partition resolution.
-### Removed
+- Bring back (and fix) mediation logics for multi-source observations with
+  scale partitions.
 
 ## [0.10.0.176] -- 2019/07/30
 ### Fixed
