@@ -125,7 +125,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	@Override
-	protected synchronized void createBackendStorage(long pageIndex, T initialValue) {
+	protected void createBackendStorage(long pageIndex, T initialValue) {
 
 		if (storage == null) {
 			try {
@@ -155,7 +155,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 		}
 	}
 
-	private synchronized void put(Object val, MappedByteBuffer page, long offset) {
+	private void put(Object val, MappedByteBuffer page, long offset) {
 
 		if (val == null) {
 			val = getNodataValue();
@@ -200,7 +200,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	 * @param offset
 	 * @return
 	 */
-	private synchronized Object get(MappedByteBuffer page, long offset) {
+	private Object get(MappedByteBuffer page, long offset) {
 
 		if (offset >= 0) {
 			page.position((int) offset * type.size);
@@ -314,7 +314,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	@Override
-	protected synchronized void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice) {
+	protected void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice) {
 
 		Object val = value == null ? getNodataValue() : value;
 
@@ -331,7 +331,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	@Override
-	protected synchronized void duplicateBackendSlice(long sliceToCopy, long newSliceIndex) {
+	protected void duplicateBackendSlice(long sliceToCopy, long newSliceIndex) {
 
 		try {
 			if (this.page1 != null) {
@@ -359,7 +359,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 		return (int) highestSliceIndex + 1;
 	}
 
-	public synchronized int getSliceCount() {
+	public int getSliceCount() {
 		return sliceCount();
 	}
 
