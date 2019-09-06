@@ -20,6 +20,13 @@
 			<version>4.3.22</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.opendap/opendap -->
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>opendap</artifactId>
+			<version>4.3.22</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.modeler</artifactId>
@@ -27,4 +34,13 @@
 		</dependency>
 
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>unidata-releases</id>
+			<name>UNIDATA Releases</name>
+			<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+		</repository>
+	</repositories>
+
 </project>

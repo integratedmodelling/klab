@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.List;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.clitool.api.ICommand;
 
 public class Cd implements ICommand {
 

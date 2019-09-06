@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.rest.ModelReference;
 
 public class List implements ICommand {

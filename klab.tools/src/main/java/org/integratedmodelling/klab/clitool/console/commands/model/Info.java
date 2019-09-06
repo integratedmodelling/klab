@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Concept;

@@ -4,8 +4,8 @@ import java.io.File;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class Dir implements ICommand {

@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,12 +29,16 @@ import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.Session.Listener;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.ObservableReference;
+import org.integratedmodelling.klab.utils.FileCatalog;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.joda.time.DateTime;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
@@ -58,9 +64,10 @@ public enum Authentication implements IAuthenticationService {
 	 */
 	Map<String, IIdentity> identities = Collections.synchronizedMap(new HashMap<>());
 
-//	// FIXME TEMPORARY - USED FOR DEFAULTING THE SEARCH MATCHES UNTIL GROUPS ARE ALL
-//	// IN PLACE.
-//	FileCatalog<Group> defaultGroups;
+	/**
+	 * any external credentials taken from the .klab/credentials.json file if any.
+	 */
+	private FileCatalog<ExternalAuthenticationCredentials> externalCredentials;
 
 	/**
 	 * Status of a user wrt. the network. Starts at UNKNOWN.
@@ -95,10 +102,21 @@ public enum Authentication implements IAuthenticationService {
 	private Client client = Client.create();
 
 	private Authentication() {
-//		if (getClass().getClassLoader().getResource("defaults/groups.json") != null) {
-//			defaultGroups = FileCatalog.create(getClass().getClassLoader().getResource("defaults/groups.json"),
-//					Group.class);
-//		}
+
+		/*
+		 * Create or load the external credentials file
+		 */
+		File file = new File(Configuration.INSTANCE.getDataPath() + File.separator + "credentials.json");
+		if (!file.exists()) {
+			try {
+				FileUtils.writeStringToFile(file, "{}");
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
+		externalCredentials = FileCatalog.create(getClass().getClassLoader().getResource("defaults/groups.json"),
+				ExternalAuthenticationCredentials.class);
+
 		Services.INSTANCE.registerService(this, IAuthenticationService.class);
 	}
 
@@ -206,8 +224,7 @@ public enum Authentication implements IAuthenticationService {
 		String authenticationServer = null;
 
 		/**
-		 * TODO try new hub @
-		 * https://integratedmodelling.org/hub/api/auth-cert/engine"
+		 * TODO try new hub @ https://integratedmodelling.org/hub/api/auth-cert/engine"
 		 * 
 		 * if experimental property set in properties
 		 */
@@ -318,6 +335,17 @@ public enum Authentication implements IAuthenticationService {
 		return ret;
 	}
 
+	/**
+	 * Return a map pairing targets (typically web URLs) to the credentials needed to
+	 * access them. These are added by the user in the credentials.json file, which can
+	 * be manipulated using the tools CLI.
+	 * 
+	 * @return
+	 */
+	public Map<String, ExternalAuthenticationCredentials> getExternalCredentials() {
+		return externalCredentials;
+	}
+	
 	public List<ObservableReference> getDefaultObservables(IIdentity identity) {
 		List<ObservableReference> ret = new ArrayList<>();
 		IUserIdentity user = identity.getParentIdentity(IUserIdentity.class);
