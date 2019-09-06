@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.data;
+package org.integratedmodelling.klab.api.data;
 
 public enum DataType {
 

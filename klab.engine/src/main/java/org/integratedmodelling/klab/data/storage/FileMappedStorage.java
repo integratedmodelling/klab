@@ -7,10 +7,10 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
-import org.integratedmodelling.klab.data.DataType;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;

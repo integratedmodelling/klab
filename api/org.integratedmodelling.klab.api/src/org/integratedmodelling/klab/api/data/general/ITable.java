@@ -18,9 +18,7 @@ package org.integratedmodelling.klab.api.data.general;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.api.data.DataType;
 
 /**
  * Unified table interface for both in-memory and persistent tables read from
@@ -32,6 +30,16 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface ITable<T> {
 
+	interface Builder<T> {
+		
+		Builder<T> deleteIfInconsistent();
+		
+		Builder<T> column(String name, DataType type, boolean index);
+		
+		ITable<T> build();
+		
+	}
+	
 	/**
 	 * Table name. E.g. a sheet name in Excel. Tables with no asserted names should
 	 * have a sensible placeholder here.

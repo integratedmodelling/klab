@@ -65,7 +65,7 @@ public abstract class H2Kbox {
 //  };
 
   public H2Kbox(String name) {
-    database = H2Database.get(name);
+    database = H2Database.create(name);
 //    this.monitor = monitor;
   }
 

@@ -109,11 +109,12 @@ public class H2Database {
     }
 
     private H2Database(String kboxName) {
+    	this(kboxName, Configuration.INSTANCE.useInMemoryDatabase());
+    }
+    
+    private H2Database(String kboxName, boolean inMemory) {
 
         this.name = kboxName;
-
-        // TODO link to configuration
-        boolean inMemory = Configuration.INSTANCE.useInMemoryDatabase();
 
         this.ds = new JdbcDataSource();
 
@@ -309,11 +310,7 @@ public class H2Database {
     }
 
     public void query(String sql, SQL.ResultHandler handler) throws KlabException {
-
-        //    if (sql.contains("POINT EMPTY")) {
-        //      System.out.println("WHAT?");
-        //    }
-
+    	
         //    System.out.println(sql);
 
         Connection connection = null;
@@ -349,13 +346,20 @@ public class H2Database {
         }
     }
 
-    public static H2Database get(String kboxName) {
+    public static H2Database create(String kboxName) {
         if (datastores.get(kboxName) != null) {
             return datastores.get(kboxName);
         }
         return new H2Database(kboxName);
     }
 
+    public static H2Database createPersistent(String kboxName) {
+        if (datastores.get(kboxName) != null) {
+            return datastores.get(kboxName);
+        }
+        return new H2Database(kboxName, false);
+    }
+    
     public <T> long storeObject(T o, long foreignKey, Serializer<T> serializer, IMonitor monitor) throws KlabException {
 
         Pair<Class<?>, Schema> schema = getSchema(o.getClass());
@@ -411,46 +415,5 @@ public class H2Database {
             }
         });
         return ret;
-    }
-
-    /**
-     * TODO store all concepts that depend on complex trait composition as their signature from base
-     * concepts, so they can be reconstructed at initialization to avoid surprises when models are
-     * searched for that are based on concepts that haven't been loaded.
-     * 
-     * @param observable
-     */
-    public void updateKnowledge(IObservable observable) {
-
-        if (observable == null) {
-            return;
-        }
-
-        // storeTraits(observable.getType());
-    }
-
-    // private void storeTraits(IConcept c) {
-    //
-    // if (c == null) {
-    // return;
-    // }
-    //
-    // String k = c.toString();
-    // String s = c.getDefinition();
-    //
-    // if (!k.equals(s)) {
-    // /*
-    // * search for k; if not there, insert k,s into knowledge_structure.
-    // */
-    // }
-    // }
-
-    /**
-     * Call after component initialization and each project loading: assembles any concept that was
-     * decomposed into traits before and is still unknown, ensuring that all knowledge is as
-     * synchronized as possible.
-     */
-    public void synchronizeKnowledge() {
-
     }
 }
