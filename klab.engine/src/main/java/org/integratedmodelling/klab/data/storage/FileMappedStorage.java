@@ -237,19 +237,19 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	protected T getValueFromBackend(long offsetInSlice, long backendTimeSlice) {
 
 		Object result = null;
-
-		if (backendTimeSlice == this.pageIndex0) {
-			result = get(page0, offsetInSlice);
-		} else if (backendTimeSlice == this.pageIndex1) {
-			result = get(page1, offsetInSlice);
-		} else {
-			// read directly from file
-			if (backendTimeSlice > this.pageIndex1) {
-				throw new IllegalStateException("file mapped storage: trying to read an unassigned value");
+		if (backendTimeSlice >= 0) {
+			if (backendTimeSlice == this.pageIndex0) {
+				result = get(page0, offsetInSlice);
+			} else if (backendTimeSlice == this.pageIndex1) {
+				result = get(page1, offsetInSlice);
+			} else {
+				// read directly from file
+				if (backendTimeSlice > this.pageIndex1) {
+					throw new IllegalStateException("file mapped storage: trying to read an unassigned value");
+				}
+				result = getDirect(offsetInSlice, backendTimeSlice);
 			}
-			result = getDirect(offsetInSlice, backendTimeSlice);
 		}
-
 		return result == null ? null : (isNodata(result) ? null : (T) result);
 	}
 

@@ -242,7 +242,7 @@ public class StorageTests {
 				}
 			}
 
-			assert (storage.getBackendSliceCount() == 0);
+			assert (storage.getBackendSliceCount() == 1);
 
 		}
 

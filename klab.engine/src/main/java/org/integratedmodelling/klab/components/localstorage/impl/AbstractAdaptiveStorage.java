@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -49,15 +48,6 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	 */
 	class Slice {
 
-		/*
-		 * assign the first value to the value field, then use the smart logics after
-		 * the first assignment
-		 */
-		boolean isNew = true;
-
-		/* use this until there is more than one value in the slice. */
-		T value = null;
-
 		// if not using backend, < 0; otherwise the slice offset in it, 0 or <= time
 		long sliceOffsetInBackend = -1l;
 
@@ -66,35 +56,25 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 		public T getAt(long sliceOffset) {
 
-			if (this.sliceOffsetInBackend < 0) {
-				return this.value;
-			}
 			return getValueFromBackend(sliceOffset, this.sliceOffsetInBackend);
 		}
 		
-		boolean isStorageCreated() {
-			return this.sliceOffsetInBackend >= 0;
-		}
-
 		// TODO synchronization here voids the parallelism in most functions. The newSlice thing should be
 		// put in the implementation and synchronized there, so that multiple put() may happen.
 		public void setAt(long sliceOffset, T value) {
 
-			if (isNew) {
-				this.value = value;
-				isNew = false;
-				return;
-			}
-			// we create new slice only when value isn't no data
-			if (this.sliceOffsetInBackend < 0 && !Observations.INSTANCE.isNodata(value)) {
+			if (isEmpty()) {
 				newSlice();
 			}
 
 			setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
 		}
+		
+		public boolean isEmpty() {
+			return sliceOffsetInBackend < 0;
+		}
 
 		private void newSlice() {
-			// TODO Auto-generated method stub
 			this.sliceOffsetInBackend = slicesInBackend;
 			slicesInBackend++;
 			createBackendStorage(this.sliceOffsetInBackend, null);
@@ -103,12 +83,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		Slice(long timestep, Slice closest) {
 			this.timestep = timestep;
 			if (closest != null) {
-				this.isNew = false;
 				if (closest.sliceOffsetInBackend >= 0) {
 					this.sliceOffsetInBackend = closest.sliceOffsetInBackend + 1;
 					duplicateBackendSlice(closest.sliceOffsetInBackend, this.sliceOffsetInBackend);
-				} else {
-					this.value = closest.value;
 				}
 			}
 		}
@@ -256,7 +233,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			 * find the closest slice for the time
 			 */
 			Slice slice = getClosest(timeOffset);
-			if (slice != null/* && slice.timestep != timeOffset */ && (slice.isStorageCreated() && equals(slice.getAt(sliceOffset), value))) {
+			if (slice != null/* && slice.timestep != timeOffset */ && !slice.isEmpty() && equals(slice.getAt(sliceOffset), value)) {
 				// don't store anything until it's different from the previous slice.
 				return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 			}
