@@ -12,20 +12,27 @@
 
 	<dependencies>
 
-		<!-- NetCDF is used for the basic file-backed storage, which is now part 
-			of the core engine -->
+		<!-- NetCDF -->
 		<dependency>
 			<groupId>edu.ucar</groupId>
-			<artifactId>netcdf</artifactId>
-			<version>4.3.22</version>
+			<artifactId>netcdf4</artifactId>
+			<version>5.0.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.opendap/opendap -->
 		<dependency>
 			<groupId>edu.ucar</groupId>
 			<artifactId>opendap</artifactId>
-			<version>4.3.22</version>
+			<version>5.0.0</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
@@ -37,9 +44,9 @@
 
 	<repositories>
 		<repository>
-			<id>unidata-releases</id>
-			<name>UNIDATA Releases</name>
-			<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+			<id>unidata-all</id>
+			<name>Unidata All</name>
+			<url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
 		</repository>
 	</repositories>
 

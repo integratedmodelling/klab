@@ -8,8 +8,8 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodellling.cdm.CDMComponent;
 
+import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
-import ucar.nc2.dataset.NetcdfDataset;
 
 public class List implements ICommand {
 
@@ -17,13 +17,17 @@ public class List implements ICommand {
 	public Object execute(IServiceCall call, ISession session) throws Exception {
 
 		boolean verbose = call.getParameters().get("verbose", false);
-		return describe(call.getParameters().get("url", String.class), verbose);
+		String ret = "";
+		for (Object id : call.getParameters().get("arguments", java.util.List.class)) {
+			ret += (ret.isEmpty() ? "" : "\n\n") + id + ":\n" + describe(id.toString(), verbose);
+		}
+		return ret;
 	}
 
 	private String describe(String url, boolean verbose) {
 
 		String ret = "";
-		NetcdfDataset ncd = null;
+		NetcdfFile ncd = null;
 		try {
 			ncd = CDMComponent.openAuthenticated(url);
 			ret += ncd.getDetailInfo() + "\n\n";

@@ -2,10 +2,12 @@ package org.integratedmodellling.cdm;
 
 import java.io.IOException;
 
-import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.auth.AuthScheme;
 import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
-import org.apache.commons.httpclient.auth.CredentialsProvider;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
@@ -13,11 +15,12 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 
+import ucar.httpservices.HTTPException;
+import ucar.httpservices.HTTPSession;
 import ucar.ma2.DataType;
-import ucar.nc2.Variable;
+import ucar.nc2.NetcdfFile;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.util.net.HTTPAuthScheme;
-import ucar.nc2.util.net.HTTPSession;
+import ucar.nc2.dods.DODSNetcdfFile;
 
 @Component(id = "org.integratedmodelling.cdm", version = Version.CURRENT)
 public class CDMComponent {
@@ -92,49 +95,72 @@ public class CDMComponent {
 		throw new KlabInternalErrorException("NetCDF-backed storage: unexpected type");
 	}
 
-	public static synchronized NetcdfDataset openAuthenticated(String url) {
+	public static synchronized NetcdfFile openAuthenticated(String url) {
+
+		// TODO just add the credential provider factory at initialization and remove
+		// this function completely.
+		// other settings should go into init as well.
+		DODSNetcdfFile.setAllowCompression(true);
+		DODSNetcdfFile.setAllowSessions(true);
+
+//	    // caching
+//	    RandomAccessFile.enableDefaultGlobalFileCache();
+//	    GribCdmIndex.initDefaultCollectionCache(100, 200, -1
 
 		CredentialsProvider credentialProvider = null;
-		String host = null;
-		AuthScheme scheme;
-		
-		NetcdfDataset ncd = null;
+		NetcdfFile ncd = null;
 
+		// TODO remove
 		try {
 			for (String h : Authentication.INSTANCE.getExternalCredentials().keySet()) {
-				if (url.contains(h)) {
-					host = h;
+				if (url.contains(h) /*
+									 * TODO change to equals and use port if != 80 - may connect to a monitor for
+									 * interactivity
+									 */) {
 					credentialProvider = new CredentialsProvider() {
-						
+
 						@Override
-						public Credentials getCredentials(AuthScheme scheme, String host, int port, boolean proxy)
-								throws CredentialsNotAvailableException {
-							
-							ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getExternalCredentials().get(h);
-							
-							switch (credentials.getScheme().toLowerCase()) {
-							case "basic":
-								break;
-							case "ssl":
-								break;
-//							case "ssl":
-//								break;
-							}
-							
-							return null;
+						public void clear() {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public Credentials getCredentials(AuthScope arg0) {
+
+							ExternalAuthenticationCredentials credentials = Authentication.INSTANCE
+									.getExternalCredentials().get(h);
+
+							return new UsernamePasswordCredentials(credentials.getCredentials().get(0),
+									credentials.getCredentials().get(1));
+						}
+
+						@Override
+						public void setCredentials(AuthScope arg0, org.apache.http.auth.Credentials arg1) {
+							// TODO Auto-generated method stub
+
 						}
 					};
 					break;
 				}
 			}
-			
-			ncd = NetcdfDataset.openDataset(url);
+
+			if (credentialProvider != null) {
+				HTTPSession.setGlobalCredentialsProvider(credentialProvider);
+			}
+
+			ncd = NetcdfDataset.openFile(url, null);
 
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		} finally {
 			if (credentialProvider != null) {
-//				HTTPSession.setGlobalCredentialsProvider(scheme, null);
+				try {
+					HTTPSession.setGlobalCredentialsProvider(null);
+				} catch (HTTPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 

@@ -9,9 +9,6 @@ void info
 	optional boolean verbose
 		"Verbose output: list model details"
 		default false
-		
-	text url
-		"The filename or URL of a CDM resource to report on."
 	
 	class org.integratedmodelling.klab.clitool.console.commands.cdm.List
 }

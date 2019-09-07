@@ -260,10 +260,10 @@ Import:
  * legal, but not required, to start with the default prefix urn:klab:
  */
 UrnId:
-	('urn:klab:')? PathName ':'  PathName ':' PathName ':' Path (':' VersionNumber)? ('#' (LOWERCASE_ID|LOWERCASE_DASHID|UrnKvp) ('&' (LOWERCASE_ID|LOWERCASE_DASHID|UrnKvp))*)?;
+	('urn:klab:')? PathName ':'  PathName ':' PathName ':' Path (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
 	
 UrnKvp:
-	(LOWERCASE_ID|LOWERCASE_DASHID) '=' (LOWERCASE_ID|LOWERCASE_DASHID)
+	PathName '=' (Path|INT)
 ;	
 	
 /**
@@ -983,11 +983,11 @@ terminal LOWERCASE_DASHID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '-')*;
 
 PathName:
-	(LOWERCASE_ID|LOWERCASE_DASHID) ('.' (LOWERCASE_ID|LOWERCASE_DASHID))*
+	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) ('.' (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
 ;
 
 Path:
-	(LOWERCASE_ID|LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID|LOWERCASE_DASHID))*
+	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
 ;
 
 terminal SEPARATOR:

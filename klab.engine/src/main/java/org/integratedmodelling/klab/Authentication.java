@@ -2,6 +2,7 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.client.CredentialsProvider;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.ICertificate.Type;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -114,9 +116,13 @@ public enum Authentication implements IAuthenticationService {
 				throw new KlabIOException(e);
 			}
 		}
-		externalCredentials = FileCatalog.create(getClass().getClassLoader().getResource("defaults/groups.json"),
-				ExternalAuthenticationCredentials.class);
 
+		try {	
+			externalCredentials = FileCatalog.create(file.toURI().toURL(), ExternalAuthenticationCredentials.class);
+		} catch (MalformedURLException e) {
+			// oh, fock
+		}
+		
 		Services.INSTANCE.registerService(this, IAuthenticationService.class);
 	}
 
@@ -336,16 +342,26 @@ public enum Authentication implements IAuthenticationService {
 	}
 
 	/**
-	 * Return a map pairing targets (typically web URLs) to the credentials needed to
-	 * access them. These are added by the user in the credentials.json file, which can
-	 * be manipulated using the tools CLI.
+	 * Return a credential provider that knows the credentials saved into the k.LAB
+	 * database and will log appropriate messages when credentials aren't found.
+	 * 
+	 * @return
+	 */
+	public CredentialsProvider getCredentialProvider() {
+		return null;
+	}
+
+	/**
+	 * Return a map pairing targets (typically web URLs) to the credentials needed
+	 * to access them. These are added by the user in the credentials.json file,
+	 * which can be manipulated using the tools CLI.
 	 * 
 	 * @return
 	 */
 	public Map<String, ExternalAuthenticationCredentials> getExternalCredentials() {
 		return externalCredentials;
 	}
-	
+
 	public List<ObservableReference> getDefaultObservables(IIdentity identity) {
 		List<ObservableReference> ret = new ArrayList<>();
 		IUserIdentity user = identity.getParentIdentity(IUserIdentity.class);

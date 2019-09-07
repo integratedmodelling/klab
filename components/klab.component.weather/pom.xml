@@ -11,11 +11,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>netcdf</artifactId>
-			<version>4.3.22</version>
-		</dependency>
-		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.engine</artifactId>
 			<version>${klab.version}</version>
