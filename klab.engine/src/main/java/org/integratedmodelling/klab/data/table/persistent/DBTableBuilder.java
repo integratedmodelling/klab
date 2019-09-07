@@ -35,11 +35,12 @@ public class DBTableBuilder implements Builder<Object> {
 
 	@Override
 	public ITable<Object> build() {
+		
 		if (database == null) {
 			database = H2Database.createPersistent("");
 		}
 		
-		// verify and create table
+		// verify or create table
 		if (database.hasTable(this.id)) {
 			
 		} else {
