@@ -1,4 +1,4 @@
-package org.integratedmodellling.cdm.adapter;
+package org.integratedmodelling.cdm.adapter;
 
 import java.util.Map;
 

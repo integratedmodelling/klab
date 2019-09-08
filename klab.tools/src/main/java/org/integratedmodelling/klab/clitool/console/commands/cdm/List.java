@@ -6,10 +6,9 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodellling.cdm.CDMComponent;
 
-import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
+import ucar.nc2.dataset.NetcdfDataset;
 
 public class List implements ICommand {
 
@@ -27,9 +26,9 @@ public class List implements ICommand {
 	private String describe(String url, boolean verbose) {
 
 		String ret = "";
-		NetcdfFile ncd = null;
+		NetcdfDataset ncd = null;
 		try {
-			ncd = CDMComponent.openAuthenticated(url);
+			ncd = NetcdfDataset.openDataset(url);
 			ret += ncd.getDetailInfo() + "\n\n";
 			ret += "VARIABLES:\n";
 			for (Variable variable : ncd.getVariables()) {
@@ -37,6 +36,8 @@ public class List implements ICommand {
 						+ variable.getDescription() + "\n";
 			}
 
+		} catch (IOException e) {
+			throw new KlabIOException(e);
 		} finally {
 			if (null != ncd)
 				try {

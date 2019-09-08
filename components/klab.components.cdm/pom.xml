@@ -25,7 +25,12 @@
 			<artifactId>opendap</artifactId>
 			<version>5.0.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>grib</artifactId>
+			<version>5.0.0</version>
+		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.ICertificate.Type;
@@ -32,6 +35,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.Session.Listener;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
@@ -116,13 +120,9 @@ public enum Authentication implements IAuthenticationService {
 				throw new KlabIOException(e);
 			}
 		}
+		externalCredentials = FileCatalog.create(file, ExternalAuthenticationCredentials.class,
+				ExternalAuthenticationCredentials.class);
 
-		try {	
-			externalCredentials = FileCatalog.create(file.toURI().toURL(), ExternalAuthenticationCredentials.class);
-		} catch (MalformedURLException e) {
-			// oh, fock
-		}
-		
 		Services.INSTANCE.registerService(this, IAuthenticationService.class);
 	}
 
@@ -342,24 +342,41 @@ public enum Authentication implements IAuthenticationService {
 	}
 
 	/**
-	 * Return a credential provider that knows the credentials saved into the k.LAB
-	 * database and will log appropriate messages when credentials aren't found.
+	 * Return a new credential provider that knows the credentials saved into the
+	 * k.LAB database and will log appropriate messages when credentials aren't
+	 * found.
 	 * 
 	 * @return
 	 */
 	public CredentialsProvider getCredentialProvider() {
-		return null;
-	}
 
-	/**
-	 * Return a map pairing targets (typically web URLs) to the credentials needed
-	 * to access them. These are added by the user in the credentials.json file,
-	 * which can be manipulated using the tools CLI.
-	 * 
-	 * @return
-	 */
-	public Map<String, ExternalAuthenticationCredentials> getExternalCredentials() {
-		return externalCredentials;
+		return new CredentialsProvider() {
+
+			@Override
+			public void clear() {
+			}
+
+			@Override
+			public Credentials getCredentials(AuthScope arg0) {
+
+				String auth = arg0.getHost() + (arg0.getPort() == 80 ? "" : (":" + arg0.getPort()));
+
+				ExternalAuthenticationCredentials credentials = externalCredentials.get(auth);
+
+				if (credentials == null) {
+					throw new KlabMissingCredentialsException(auth);
+				}
+
+				return new UsernamePasswordCredentials(credentials.getCredentials().get(0),
+						credentials.getCredentials().get(1));
+			}
+
+			@Override
+			public void setCredentials(AuthScope arg0, org.apache.http.auth.Credentials arg1) {
+				// TODO Auto-generated method stub
+
+			}
+		};
 	}
 
 	public List<ObservableReference> getDefaultObservables(IIdentity identity) {
@@ -390,6 +407,11 @@ public enum Authentication implements IAuthenticationService {
 			}
 		}
 		return ret;
+	}
+
+	public void addExternalCredentials(String host, ExternalAuthenticationCredentials credentials) {
+		externalCredentials.put(host, credentials);
+		externalCredentials.write();
 	}
 
 }

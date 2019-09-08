@@ -1,4 +1,4 @@
-package org.integratedmodellling.cdm.adapter;
+package org.integratedmodelling.cdm.adapter;
 
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;

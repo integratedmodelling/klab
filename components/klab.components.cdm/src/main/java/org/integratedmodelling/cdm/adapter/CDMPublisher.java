@@ -1,4 +1,4 @@
-package org.integratedmodellling.cdm.adapter;
+package org.integratedmodelling.cdm.adapter;
 
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
