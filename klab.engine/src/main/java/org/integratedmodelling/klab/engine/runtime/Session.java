@@ -20,6 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
@@ -651,17 +652,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	@MessageHandler
 	private void handleMatchAction(SearchMatchAction action) {
 
+		if (action.getMatchId().startsWith("klab:")) {
+			// TODO/FIXME: use a more robust test
+			observe(action.getMatchId());
+			return;
+		} 
+		
 		final String contextId = action.getContextId();
 		Pair<Context, List<Match>> ctx = searchContexts.get(contextId);
 		if (ctx == null) {
 			throw new IllegalStateException("match action has invalid context ID");
 		}
-
-		// if (action.getMatchIndex() >= ctx.getSecond().size()) {
-		// // Logging.INSTANCE.error("MATCH INDEX NOT IN SYNC WITH CURRENT MATCHES!");
-		// return;
-		// }
-
+		
 		Context newContext = action.isAdded() ? ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()))
 				: ctx.getFirst().previous();
 
@@ -741,13 +743,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 					if (request.getSearchMode() == SearchRequest.Mode.FREETEXT) {
 
-						// TODO match string with network resources. May lookup local matches and
-						// spawn search for remote ones to answer later.
+						// TODO also lookup local matches and spawn search for remote ones to answer
+						// afterwards.
+						List<Match> matches = new ArrayList<>();
+						int i = 0;
 						for (Location location : Nominatim.INSTANCE.lookup(request.getQueryString())) {
 							if ("relation".equals(location.getOsm_type())) {
-								// TODO build match with location URN
-								System.out.println("OSM urn " + location.getURN());
-								System.out.println(location);
+
+								SearchMatch match = new SearchMatch(location.getURN(), location.getName(),
+										location.getDescription(), IKimConcept.Type.SUBJECT);
+								match.setIndex(i++);
+								response.getMatches().add(match);
+								matches.add(new org.integratedmodelling.klab.engine.indexing.SearchMatch(match));
 							}
 						}
 
@@ -1175,8 +1182,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 * root actor in the engine, which is held by the runtime system. Probably a
 	 * different call should be used (and maybe even a different type - no idea)!
 	 * The {@link EventBus} (part of {@link RuntimeScope} should call this as the
-	 * father of the context's actor, to create it and all the successive ones as new
-	 * observations are created.
+	 * father of the context's actor, to create it and all the successive ones as
+	 * new observations are created.
 	 * 
 	 * @return
 	 */

@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
@@ -124,6 +125,7 @@ public enum Resources implements IResourceService {
 	private long RETRY_INTERVAL_MINUTES = 15;
 
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
+	Map<String, IUrnAdapter> urnAdapters = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * The local resource catalog is a map that can be set by the engine according
@@ -378,6 +380,10 @@ public enum Resources implements IResourceService {
 
 	public IResourceAdapter getResourceAdapter(String id) {
 		return resourceAdapters.get(id);
+	}
+	
+	public IUrnAdapter getUrnAdapter(String id) {
+		return urnAdapters.get(id);
 	}
 
 	public List<IResourceAdapter> getResourceAdapter(File resource, IParameters<String> parameters) {
@@ -918,8 +924,13 @@ public enum Resources implements IResourceService {
 			 */
 		}
 
+		if (Urns.INSTANCE.isUrn(urn)) {
+			
+		}
+		
 		if (serverId == null) {
 
+			
 			String ns = Path.getLeading(urn, '.');
 			String ob = Path.getLast(urn, '.');
 			if (ns == null && SemanticType.validate(urn)) {
@@ -969,6 +980,11 @@ public enum Resources implements IResourceService {
 		return null;
 	}
 
+	public void registerUrnAdapter(String type, IUrnAdapter adapter) {
+		urnAdapters.put(type, adapter);
+	}
+
+	
 	public void registerResourceAdapter(String type, IResourceAdapter adapter) {
 		resourceAdapters.put(type, adapter);
 	}

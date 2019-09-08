@@ -15,18 +15,20 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
+import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
-import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -203,6 +205,26 @@ public enum Extensions implements IExtensionService {
 		return ret;
 	}
 
+	public void registerUrnAdapter(UrnAdapter annotation, Class<?> cls) throws KlabException {
+		/*
+		 * class must be a IResourceAdapter
+		 */
+		if (IUrnAdapter.class.isAssignableFrom(cls)) {
+			try {
+				IUrnAdapter adapter = (IUrnAdapter) cls.getDeclaredConstructor().newInstance();
+				Resources.INSTANCE.registerUrnAdapter(annotation.type(), adapter);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				throw new KlabInternalErrorException(e);
+			}
+			Logging.INSTANCE
+					.info("Registered URN adapter " + cls.getCanonicalName() + " for '" + annotation.type() + "'");
+		} else {
+			throw new KlabValidationException(
+					annotation.type() + ": URN adapter annotations must be used on IResourceAdapter classes");
+		}
+	}
+	
 	public void registerResourceAdapter(ResourceAdapter annotation, Class<?> cls) throws KlabException {
 		/*
 		 * class must be a IResourceAdapter

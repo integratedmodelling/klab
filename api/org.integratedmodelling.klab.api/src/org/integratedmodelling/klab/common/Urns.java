@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
  * This class encodes the rules for creating URNs that describe local resources:
@@ -76,6 +77,7 @@ public enum Urns {
 	 * @return
 	 */
 	public String changeLocalProject(String urn, String projectName) {
+		
 		if (!isLocal(urn)) {
 			throw new IllegalArgumentException("cannot change project name in non-local URN " + urn);
 		}
@@ -113,5 +115,9 @@ public enum Urns {
         }
         return new Pair<>(clean, parameters);
     }
+
+	public boolean isUrn(String urn) {
+		return StringUtil.countMatches(urn, ":") > 3;
+	}
 
 }

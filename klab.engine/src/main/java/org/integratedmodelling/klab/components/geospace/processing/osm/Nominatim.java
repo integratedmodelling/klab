@@ -206,6 +206,7 @@ public enum Nominatim {
 		private String country;
 		private int place_rank;
 		private String alternative_names;
+		private String display_name;
 
 		public String getWikidata() {
 			return wikidata;
@@ -364,7 +365,7 @@ public enum Nominatim {
 		}
 
 		public String getURN() {
-			return "klab:osm:osm:" + osm_type + "#" + osm_id; 
+			return "klab:osm:" + osm_type + ":" + osm_id; 
 		}
 		
 		@Override
@@ -379,6 +380,18 @@ public enum Nominatim {
 
 		public void setOsm_type(String osm_type) {
 			this.osm_type = osm_type;
+		}
+
+		public String getDescription() {
+			return getDisplay_name() + " (" + getType() + ")";
+		}
+
+		public String getDisplay_name() {
+			return display_name;
+		}
+
+		public void setDisplay_name(String display_name) {
+			this.display_name = display_name;
 		}
 
 	}
