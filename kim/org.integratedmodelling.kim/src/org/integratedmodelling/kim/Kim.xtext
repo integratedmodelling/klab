@@ -256,11 +256,13 @@ Import:
 	((imports=List | star?='*') 'from')? name=PathName/*[Namespace|PathName]*/;	
 
 /**
- * URN is 4 sections and admits a version number and a fragment (with only lowercase_id chars in it). It is
- * legal, but not required, to start with the default prefix urn:klab:
+ * URN is 4 sections: node (or 'klab' for internal resources), catalog (or adapter for internal resources), namespace and
+ * resource ID. Admits a version number and a fragment (with only lowercase_id chars in it). It is
+ * legal, but not required, to start with the default prefix urn:klab:. The 4th path element (the ID) may be
+ * integer.
  */
 UrnId:
-	('urn:klab:')? PathName ':'  PathName ':' PathName ':' Path (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
+	('urn:klab:')? PathName ':'  PathName ':' PathName ':' (Path|INT) (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
 	
 UrnKvp:
 	PathName '=' (Path|INT)
