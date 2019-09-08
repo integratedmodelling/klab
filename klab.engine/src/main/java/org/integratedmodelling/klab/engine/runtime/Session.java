@@ -62,9 +62,10 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim;
+import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim.Location;
 import org.integratedmodelling.klab.components.runtime.DefaultRuntimeProvider;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
@@ -742,6 +743,13 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 						// TODO match string with network resources. May lookup local matches and
 						// spawn search for remote ones to answer later.
+						for (Location location : Nominatim.INSTANCE.lookup(request.getQueryString())) {
+							if ("relation".equals(location.getOsm_type())) {
+								// TODO build match with location URN
+								System.out.println("OSM urn " + location.getURN());
+								System.out.println(location);
+							}
+						}
 
 					} else if (request.isDefaultResults()) {
 

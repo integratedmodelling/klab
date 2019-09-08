@@ -30,16 +30,107 @@ import org.integratedmodelling.klab.api.data.DataType;
  */
 public interface ITable<T> {
 
-	interface Builder<T> {
-		
-		Builder<T> deleteIfInconsistent();
-		
-		Builder<T> column(String name, DataType type, boolean index);
-		
-		ITable<T> build();
-		
+	/**
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface ObjectTable extends ITable<Object> {
 	}
-	
+
+	interface Structure<T> {
+
+		String getName();
+
+		Structure<T> column(String name, DataType type, boolean index);
+
+	}
+
+	interface Builder<T> extends Structure<T> {
+
+		Structure<T> deleteIfInconsistent();
+
+		ITable<T> build();
+
+	}
+
+	interface Row<T> {
+
+		/**
+		 * Row name is "#n" unless the table has been initialized with explicit row
+		 * names.
+		 * 
+		 * @return
+		 */
+		String getName();
+
+		/**
+		 * @return number of rows with values in column.
+		 */
+		int getValueCount();
+
+		/**
+		 * @return all values.
+		 */
+		Iterable<T> getValues();
+
+		/**
+		 * Get the value as a suitable subclass of T, throwing unchecked exceptions if
+		 * called with wrong arguments.
+		 * 
+		 * @param <K>
+		 * @param index
+		 * @param cls
+		 * @return
+		 */
+		<K extends T> K getValue(int index, Class<K> cls);
+
+		/**
+		 * Get the value as a suitable subclass of T, throwing unchecked exceptions if
+		 * called with wrong arguments.
+		 * 
+		 * @param <K>
+		 * @param index
+		 * @param cls
+		 * @return
+		 */
+		<K extends T> K getValue(String columnName, Class<K> cls);
+
+	}
+
+	interface Column<T> {
+
+		/**
+		 * Column name is "$n" unless the table has been initialized with explicit 
+		 * column names.
+		 * 
+		 * @return
+		 */
+		String getName();
+
+		/**
+		 * @return number of rows with values in column.
+		 */
+		int getValueCount();
+
+		/**
+		 * @return all values.
+		 */
+		Iterable<T> getValues();
+
+		/**
+		 * Get the value as a suitable subclass of T, throwing unchecked exceptions if
+		 * called with wrong arguments.
+		 * 
+		 * @param <K>
+		 * @param index
+		 * @param cls
+		 * @return
+		 */
+		<K extends T> K getValue(long index, Class<K> cls);
+
+	}
+
 	/**
 	 * Table name. E.g. a sheet name in Excel. Tables with no asserted names should
 	 * have a sensible placeholder here.
@@ -63,6 +154,13 @@ public interface ITable<T> {
 	int getColumnCount();
 
 	/**
+	 * The columns themselves.
+	 * 
+	 * @return
+	 */
+	List<Column<T>> getColumns();
+
+	/**
 	 * Return a map between the values in one column and the values in another. This
 	 * is meant to be persisted and cached appropriately - meaning it will be slow
 	 * the first time a specific mapping is asked for, and very fast afterwards
@@ -70,10 +168,8 @@ public interface ITable<T> {
 	 * file at all. It should be implemented so that very large data tables can be
 	 * handled efficiently.
 	 *
-	 * @param keyColumnName
-	 *            a {@link java.lang.String} object.
-	 * @param valueColumnName
-	 *            a {@link java.lang.String} object.
+	 * @param keyColumnName   a {@link java.lang.String} object.
+	 * @param valueColumnName a {@link java.lang.String} object.
 	 * @return a map between values and names in matching columns.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabIOException
 	 */
@@ -95,16 +191,7 @@ public interface ITable<T> {
 	 * @return row data
 	 */
 	T[] getRow(int rowIndex);
-	
-	/**
-	 * Get the content of the passed column. Should be used after checking that
-	 * the column size is acceptable.
-	 * 
-	 * @param columnIndex
-	 * @return column data
-	 */
-	T[] getColumn(int columnIndex);
-	
+
 	/**
 	 * This may return a list of header names or a list of variables like "$1" if
 	 * headers were not defined.

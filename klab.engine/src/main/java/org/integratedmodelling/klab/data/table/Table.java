@@ -9,9 +9,11 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimTable;
+import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.data.classification.Classifier;
+import org.integratedmodelling.klab.utils.Triple;
 
 public class Table<T> implements ITable<T> {
 
@@ -20,7 +22,33 @@ public class Table<T> implements ITable<T> {
 	private List<String> rowHeaders = null;
 	private String name;
 	private Set<IKimExpression> expressions;
-	
+
+	public static class StructureImpl implements Structure<Object> {
+
+		String name;
+		List<Triple<String, DataType, Boolean>> columns = new ArrayList<>();
+
+		protected StructureImpl(String id) {
+			this.name = id;
+		}
+
+		@Override
+		public String getName() {
+			return this.name;
+		}
+
+		@Override
+		public StructureImpl column(String name, DataType type, boolean index) {
+			this.columns.add(new Triple<>(name, type, index));
+			return this;
+		}
+
+	}
+// CdlNPffrAE63fTeIn1VG
+	public static Structure<Object> structure(String name) {
+		return new StructureImpl(name);
+	}
+
 	public static Table<IClassifier> create(IKimTable table) {
 
 		List<String> headers = table.getHeaders();
@@ -39,23 +67,23 @@ public class Table<T> implements ITable<T> {
 			}
 			rows.add(row);
 		}
-		
+
 		Table<IClassifier> ret = new Table<>(rows, headers);
 		ret.expressions = exprs;
 		return ret;
 	}
-	
+
 	private Table(List<T[]> rows, List<String> headers) {
 		this.rows = rows;
 		if (this.columnHeaders == null) {
 			for (int i = 0; i < (rows.size() == 0 ? 0 : rows.get(i).length); i++) {
-				this.columnHeaders.add("$" + (i+1));
+				this.columnHeaders.add("$" + (i + 1));
 			}
 		} else {
 			this.columnHeaders.addAll(headers);
 		}
 	}
-	
+
 	/**
 	 * Set a value. Based on the locators passed and whether they are already in the
 	 * table or not, expand the table and set the headers if necessary.
@@ -67,8 +95,7 @@ public class Table<T> implements ITable<T> {
 	public void set(Object rowLocator, Object columnLocator, T value) {
 		// TODO
 	}
-	
-	
+
 	@Override
 	public List<String> getColumnHeaders() {
 		return this.columnHeaders;
@@ -93,7 +120,7 @@ public class Table<T> implements ITable<T> {
 	public List<T[]> getRows() {
 		return rows;
 	}
-	
+
 	@Override
 	public Map<String, T> map(int keyColumnIndex, int valueColumnIndex) {
 		// TODO Auto-generated method stub
@@ -112,17 +139,11 @@ public class Table<T> implements ITable<T> {
 	}
 
 	@Override
-	public T[] getColumn(int columnIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<String> getRowHeaders() {
 		if (rowHeaders == null) {
 			rowHeaders = new ArrayList<>();
 			for (int i = 0; i < getRowCount(); i++) {
-				rowHeaders.add("row"+(i+1));
+				rowHeaders.add("row" + (i + 1));
 			}
 		}
 		return rowHeaders;
@@ -131,5 +152,11 @@ public class Table<T> implements ITable<T> {
 	public Set<IKimExpression> getExpressions() {
 		return expressions;
 	}
-	
+
+	@Override
+	public List<Column<T>> getColumns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

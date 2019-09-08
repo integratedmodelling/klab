@@ -65,6 +65,7 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -94,7 +95,7 @@ public class Client extends RestTemplate {
 	String authToken;
 
 	RestTemplate basicTemplate = new RestTemplate();
-	
+
 	private static ClientHttpRequestFactory factory;
 
 	public static Client create() {
@@ -110,6 +111,45 @@ public class Client extends RestTemplate {
 		}
 
 		return new Client(factory);
+	}
+
+	/**
+	 * This one will return a client that interprets anything as JSON independent of
+	 * content type. Required for misbehaving services that return JSON with other
+	 * content types.
+	 * 
+	 * @return
+	 */
+	public static Client createUniversalJSON() {
+
+		if (factory == null) {
+			factory = new HttpComponentsClientHttpRequestFactory();
+			if (Configuration.INSTANCE.getProperties().containsKey(KLAB_CONNECTION_TIMEOUT)) {
+				int connectTimeout = 1000
+						* Integer.parseInt(Configuration.INSTANCE.getProperties().getProperty(KLAB_CONNECTION_TIMEOUT));
+				((HttpComponentsClientHttpRequestFactory) factory).setReadTimeout(connectTimeout);
+				((HttpComponentsClientHttpRequestFactory) factory).setConnectTimeout(connectTimeout);
+			}
+		}
+
+		return new UniversalClient(factory);
+	}
+
+	public static class UniversalClient extends Client {
+		UniversalClient(ClientHttpRequestFactory factory) {
+			super(factory);
+			objectMapper = new ObjectMapper();
+			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+			MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+			/*
+			 * Make this converter process any kind of response, not only application/*json,
+			 * which is the default behaviour
+			 */
+			converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+			messageConverters.add(converter);
+			this.setMessageConverters(messageConverters);
+		}
 	}
 
 	/**
@@ -135,12 +175,11 @@ public class Client extends RestTemplate {
 	public NodeAuthenticationResponse authenticateNode(String url, NodeAuthenticationRequest request) {
 		return post(url + API.HUB.AUTHENTICATE_NODE, request, NodeAuthenticationResponse.class);
 	}
-	
+
 	/**
 	 * Check an engine's heartbeat.
 	 * 
-	 * @param url
-	 *            base engine/node URL
+	 * @param url base engine/node URL
 	 * @return true if alive
 	 */
 	public boolean ping(String url) {
@@ -224,8 +263,7 @@ public class Client extends RestTemplate {
 	/**
 	 * Return a client with authorization set to the passed object.
 	 * 
-	 * @param authorizer
-	 *            any identity.
+	 * @param authorizer any identity.
 	 * @return a new
 	 */
 	public Client with(IIdentity authorizer) {
@@ -235,7 +273,7 @@ public class Client extends RestTemplate {
 		ret.authToken = authorizer.getId();
 		return ret;
 	}
-	
+
 	public Client with(String authorization) {
 
 		Client ret = new Client();
@@ -297,7 +335,7 @@ public class Client extends RestTemplate {
 		if (authToken != null) {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
-		
+
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 
 		// HttpHeaders headers = new HttpHeaders();

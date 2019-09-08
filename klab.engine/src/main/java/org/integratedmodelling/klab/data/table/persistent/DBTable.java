@@ -70,12 +70,6 @@ public class DBTable implements ITable<Object> {
 	}
 
 	@Override
-	public Object[] getColumn(int columnIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<String> getColumnHeaders() {
 		// TODO Auto-generated method stub
 		return null;
@@ -89,6 +83,12 @@ public class DBTable implements ITable<Object> {
 
 	@Override
 	public List<Object[]> getRows() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Column<Object>> getColumns() {
 		// TODO Auto-generated method stub
 		return null;
 	}

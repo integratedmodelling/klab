@@ -384,4 +384,12 @@ public class NumberUtils {
 		}
 		return result;
 	}
+
+	public static boolean isEven(int x) {
+		return x % 2 == 0;
+	}
+
+	public static boolean isOdd(int x) {
+		return x % 2 != 0;
+	}
 }

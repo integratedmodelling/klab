@@ -35,16 +35,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 
 import javax.sql.PooledConnection;
 
 import org.h2.jdbcx.JdbcDataSource;
-import org.h2.tools.Recover;
 import org.h2gis.h2spatial.CreateSpatialExtension;
 import org.h2gis.utilities.SFSUtilities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.ITable.Structure;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
@@ -53,166 +54,218 @@ import org.integratedmodelling.klab.persistence.h2.H2Kbox.Schema;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox.Serializer;
 import org.integratedmodelling.klab.utils.Pair;
 
+/**
+ * A wrapper to simplify the use of a H2 database. Can be used with formally
+ * specified schemata for multiple tables (rather obsoleted in design) or with
+ * newer {@link ITable} interface when the structure is simple. The kboxes use
+ * the old structure, so that will remain until we reimplement them.
+ * 
+ * @author Ferd
+ *
+ */
 public class H2Database {
 
-    private static Map<String, H2Database> datastores = new HashMap<>();
+	private static Map<String, H2Database> datastores = new HashMap<>();
 
-    JdbcDataSource ds;
-    String url;
-    boolean isNew = false;
-    AtomicLong oid = new AtomicLong(1);
-    // directory containing the database files.
+	JdbcDataSource ds;
+	String url;
+	boolean isNew = false;
+	AtomicLong oid = new AtomicLong(1);
+	// directory containing the database files.
 //    File directory;
-    String name;
-    // cache for still unknown trait-assembled concepts that were saved before.
-    Map<String, String> derivedConcepts = new HashMap<>();
-    PooledConnection pooledConnection = null;
-    // we leave it to the user to decide whether to reuse a connection (for single-user
-    // repetitive operations) or get one from the pool at every use (default).
-    Connection connection = null;
-    Set<String> tables = null;
-    protected Map<Class<?>, Schema> schemata = new HashMap<>();
+	String name;
+	// cache for still unknown trait-assembled concepts that were saved before.
+	Map<String, String> derivedConcepts = new HashMap<>();
+	PooledConnection pooledConnection = null;
+	// we leave it to the user to decide whether to reuse a connection (for
+	// single-user
+	// repetitive operations) or get one from the pool at every use (default).
+	Connection connection = null;
+	
+	// these for the old-style schema functions
+	Set<String> tables = null;
+	private Map<Class<?>, Schema> schemata = new HashMap<>();
+	private Set<Class<?>> initializedSchemata = new HashSet<>();
 
-    private Set<Class<?>> initializedSchemata = new HashSet<>();
+	// these support the more modern table functions
+	private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
+	private List<Pair<Class<?>, Function<Map<String, Object>, ?>>> deserializers = new ArrayList<>();
 
-    public List<Map<String, String>> dump(String table) throws KlabStorageException {
-        List<Map<String, String>> ret = new ArrayList<>();
+	
+	public static class Builder {
 
-        try {
-            Connection conn = getConnection();
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM " + table + ";");
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnsNumber = rsmd.getColumnCount();
+		private List<Structure<Object>> tables = new ArrayList<>();
+		private String name;
+		private boolean persistent;
+		private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
+		private List<Pair<Class<?>, Function<Map<String, Object>, ?>>> deserializers = new ArrayList<>();
 
-            while (rs.next()) {
-                Map<String, String> mp = new HashMap<>();
-                for (int i = 1; i <= columnsNumber; i++) {
-                    mp.put(rsmd.getColumnName(i), rs.getString(i));
-                }
-                ret.add(mp);
-            }
+		public Builder(String databaseName, boolean persistent) {
+			this.name = databaseName;
+			this.persistent = persistent;
+		}
 
-        } catch (SQLException e) {
-            throw new KlabStorageException(e);
-        } finally {
-            try {
-                if (connection != null) {
-                    // connection.close();
-                }
-            } catch (Exception e) {
-                throw new KlabStorageException(e);
-            }
-        }
+		public Builder table(Structure<Object> structure) {
+			tables.add(structure);
+			return this;
+		}
 
-        return ret;
-    }
+		public <T> Builder serialize(Function<T, String> serializer, Class<? extends T> cls) {
+			return this;
+		}
 
-    private H2Database(String kboxName) {
-    	this(kboxName, Configuration.INSTANCE.useInMemoryDatabase());
-    }
-    
-    private H2Database(String kboxName, boolean inMemory) {
+		public <T> Builder deserialize(Function<Map<String, Object>, T> deserializer, Class<? extends T> cls) {
+			return this;
+		}
 
-        this.name = kboxName;
+		public H2Database build() {
+			return null;
+		}
 
-        this.ds = new JdbcDataSource();
+	}
 
-        if (inMemory) {
+	public static Builder builder(String databaseName, boolean persistent) {
+		return new Builder(databaseName, persistent);
+	}
 
-            this.url = "jdbc:h2:mem:" + kboxName;
-            this.isNew = true;
+	public List<Map<String, String>> dump(String table) throws KlabStorageException {
+		List<Map<String, String>> ret = new ArrayList<>();
 
-        } else {
-            
-            File directory = Configuration.INSTANCE.getDataPath("kbox/" + kboxName);
-            directory.mkdirs();
-            File f1 = new File(directory + File.separator + kboxName + ".mv.db");
-            File f2 = new File(directory + File.separator + kboxName + ".h2.db");
-            /*
-             * FIXME weak check. On Win, only the .mv.db get created anyway; on Linux, the h2 is created and
-             * the mv only exists after the db contains anything.
-             */
-            this.isNew = !f1.exists() && !f2.exists();
-            try {
-                String fileUrl = directory.toURI().toURL().toString();
-                this.url = "jdbc:h2:" + fileUrl + kboxName + ";AUTO_SERVER=TRUE";
-            } catch (MalformedURLException e1) {
-                throw new KlabValidationException(e1);
-            }
+		try {
+			Connection conn = getConnection();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT * FROM " + table + ";");
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnsNumber = rsmd.getColumnCount();
 
-        }
+			while (rs.next()) {
+				Map<String, String> mp = new HashMap<>();
+				for (int i = 1; i <= columnsNumber; i++) {
+					mp.put(rsmd.getColumnName(i), rs.getString(i));
+				}
+				ret.add(mp);
+			}
 
-        this.ds.setURL(url);
-        this.ds.setUser("sa");
-        this.ds.setPassword("sa");
-        try {
-            pooledConnection = this.ds.getPooledConnection();
-        } catch (SQLException e) {
-            throw new KlabStorageException(e);
-        }
+		} catch (SQLException e) {
+			throw new KlabStorageException(e);
+		} finally {
+			try {
+				if (connection != null) {
+					// connection.close();
+				}
+			} catch (Exception e) {
+				throw new KlabStorageException(e);
+			}
+		}
 
-        if (isNew) {
-            try {
-                CreateSpatialExtension.initSpatialExtension(this.ds.getConnection());
-                execute("CREATE TABLE hids (id LONG)");
-                execute("INSERT INTO hids VALUES (1)");
-                execute("CREATE TABLE knowledge_structure (knowledge VARCHAR(256) PRIMARY KEY, structure VARCHAR(4096))");
-            } catch (Exception e) {
-                throw new KlabStorageException(e);
-            }
-        } else {
-            try {
-                oid.set(queryIds("SELECT id FROM hids").get(0));
-                /*
-                 * TODO fill derivedConcept cache
-                 */
-            } catch (KlabException e) {
-                throw new KlabStorageException(e);
-            }
-        }
-        datastores.put(kboxName, this);
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+		return ret;
+	}
 
-            @Override
-            public void run() {
-                deallocateConnection();
-            }
-        });
-        sanityCheck();
-    }
+	private H2Database(String kboxName) {
+		this(kboxName, Configuration.INSTANCE.useInMemoryDatabase());
+	}
 
-    public void preallocateConnection() {
-        if (connection == null) {
-            try {
-                connection = SFSUtilities.wrapConnection(pooledConnection.getConnection());
-            } catch (SQLException e) {
-                // just leave null
-            }
-        }
-    }
+	private H2Database(String kboxName, boolean inMemory) {
 
-    public void deallocateConnection() {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                Logging.INSTANCE.warn(e);
-            } finally {
-                connection = null;
-            }
-        }
-    }
+		this.name = kboxName;
 
-    private void sanityCheck() {
+		this.ds = new JdbcDataSource();
 
-        Logging.INSTANCE.info("sanity check started on kbox " + url);
+		if (inMemory) {
 
-        /*
-         * TODO 2. Run sanity checks: 1. check that installed schemata are in sync with API 2. compute
-         * current statistics 3. if new, install default schemata
-         */
-    }
+			this.url = "jdbc:h2:mem:" + kboxName;
+			this.isNew = true;
+
+		} else {
+
+			File directory = Configuration.INSTANCE.getDataPath("kbox/" + kboxName);
+			directory.mkdirs();
+			File f1 = new File(directory + File.separator + kboxName + ".mv.db");
+			File f2 = new File(directory + File.separator + kboxName + ".h2.db");
+			/*
+			 * FIXME weak check. On Win, only the .mv.db get created anyway; on Linux, the
+			 * h2 is created and the mv only exists after the db contains anything.
+			 */
+			this.isNew = !f1.exists() && !f2.exists();
+			try {
+				String fileUrl = directory.toURI().toURL().toString();
+				this.url = "jdbc:h2:" + fileUrl + kboxName + ";AUTO_SERVER=TRUE";
+			} catch (MalformedURLException e1) {
+				throw new KlabValidationException(e1);
+			}
+
+		}
+
+		this.ds.setURL(url);
+		this.ds.setUser("sa");
+		this.ds.setPassword("sa");
+		try {
+			pooledConnection = this.ds.getPooledConnection();
+		} catch (SQLException e) {
+			throw new KlabStorageException(e);
+		}
+
+		if (isNew) {
+			try {
+				CreateSpatialExtension.initSpatialExtension(this.ds.getConnection());
+				execute("CREATE TABLE hids (id LONG)");
+				execute("INSERT INTO hids VALUES (1)");
+				execute("CREATE TABLE knowledge_structure (knowledge VARCHAR(256) PRIMARY KEY, structure VARCHAR(4096))");
+			} catch (Exception e) {
+				throw new KlabStorageException(e);
+			}
+		} else {
+			try {
+				oid.set(queryIds("SELECT id FROM hids").get(0));
+				/*
+				 * TODO fill derivedConcept cache
+				 */
+			} catch (KlabException e) {
+				throw new KlabStorageException(e);
+			}
+		}
+		datastores.put(kboxName, this);
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+
+			@Override
+			public void run() {
+				deallocateConnection();
+			}
+		});
+		sanityCheck();
+	}
+
+	public void preallocateConnection() {
+		if (connection == null) {
+			try {
+				connection = SFSUtilities.wrapConnection(pooledConnection.getConnection());
+			} catch (SQLException e) {
+				// just leave null
+			}
+		}
+	}
+
+	public void deallocateConnection() {
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				Logging.INSTANCE.warn(e);
+			} finally {
+				connection = null;
+			}
+		}
+	}
+
+	private void sanityCheck() {
+
+		Logging.INSTANCE.info("sanity check started on kbox " + url);
+
+		/*
+		 * TODO 2. Run sanity checks: 1. check that installed schemata are in sync with
+		 * API 2. compute current statistics 3. if new, install default schemata
+		 */
+	}
 
 //    protected void recover() throws KlabException {
 //        try {
@@ -222,198 +275,210 @@ public class H2Database {
 //        }
 //    }
 
-    public synchronized long getNextId() {
-        long ret = oid.getAndIncrement();
-        try {
-            execute("UPDATE hids SET id = " + (ret + 1));
-        } catch (KlabException e) {
-            throw new KlabStorageException(e);
-        }
-        return ret;
-    }
+	public synchronized long getNextId() {
+		long ret = oid.getAndIncrement();
+		try {
+			execute("UPDATE hids SET id = " + (ret + 1));
+		} catch (KlabException e) {
+			throw new KlabStorageException(e);
+		}
+		return ret;
+	}
 
-    public boolean hasTable(String tableName) throws KlabException {
+	public boolean hasTable(String tableName) throws KlabException {
 
-        if (tables == null) {
+		if (tables == null) {
 
-            tables = new HashSet<>();
+			tables = new HashSet<>();
 
-            class RH implements SQL.ResultHandler {
+			class RH implements SQL.ResultHandler {
 
-                @Override
-                public void onRow(ResultSet rs) {
-                    try {
-                        tables.add(rs.getString(1));
-                    } catch (SQLException e) {
-                        throw new KlabStorageException(e);
-                    }
-                }
+				@Override
+				public void onRow(ResultSet rs) {
+					try {
+						tables.add(rs.getString(1));
+					} catch (SQLException e) {
+						throw new KlabStorageException(e);
+					}
+				}
 
-                @Override
-                public void nResults(int nres) {
-                }
-            }
+				@Override
+				public void nResults(int nres) {
+				}
+			}
 
-            RH rh = new RH();
-            this.query("select table_name from information_schema.tables;", rh);
+			RH rh = new RH();
+			this.query("select table_name from information_schema.tables;", rh);
 
-        }
-        return tables.contains(tableName) || tables.contains(tableName.toUpperCase());
-    }
+		}
+		return tables.contains(tableName) || tables.contains(tableName.toUpperCase());
+	}
 
-    /**
-     * Get a connection, turning any exception into a Thinklab one.
-     * 
-     * @return connection
-     * @throws KlabStorageException
-     */
-    public Connection getConnection() throws KlabStorageException {
+	/**
+	 * Get a connection, turning any exception into a Thinklab one.
+	 * 
+	 * @return connection
+	 * @throws KlabStorageException
+	 */
+	public Connection getConnection() throws KlabStorageException {
 
-        if (connection != null) {
-            return connection;
-        }
+		if (connection != null) {
+			return connection;
+		}
 
-        try {
-            // FIXME must close the pooledconnection, not the wrapped connection
-            return SFSUtilities.wrapConnection(pooledConnection.getConnection());
-        } catch (SQLException e) {
-            throw new KlabStorageException(e);
-        }
-    }
+		try {
+			// FIXME must close the pooledconnection, not the wrapped connection
+			return SFSUtilities.wrapConnection(pooledConnection.getConnection());
+		} catch (SQLException e) {
+			throw new KlabStorageException(e);
+		}
+	}
 
-    public void execute(String sql) throws KlabException {
+	public void execute(String sql) throws KlabException {
 
-        if (sql == null) {
-            // FIXME check if an exception should be thrown or if this shouldn't be
-            // checked at all.
-            return;
-        }
+		if (sql == null) {
+			// FIXME check if an exception should be thrown or if this shouldn't be
+			// checked at all.
+			return;
+		}
 
-        //    System.out.println(sql);
+		// System.out.println(sql);
 
-        Connection connection = null;
-        try {
-            connection = getConnection();
-            connection.createStatement().execute(sql);
-            // connection.close();
-        } catch (SQLException e) {
-            throw new KlabStorageException(e);
-        } finally {
-            try {
-                if (connection != null) {
-                    // connection.close();
-                }
-            } catch (Exception e) {
-                throw new KlabStorageException(e);
-            }
-        }
-    }
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			connection.createStatement().execute(sql);
+			// connection.close();
+		} catch (SQLException e) {
+			throw new KlabStorageException(e);
+		} finally {
+			try {
+				if (connection != null) {
+					// connection.close();
+				}
+			} catch (Exception e) {
+				throw new KlabStorageException(e);
+			}
+		}
+	}
 
-    public void query(String sql, SQL.ResultHandler handler) throws KlabException {
-    	
-        //    System.out.println(sql);
+	public void query(String sql, SQL.ResultHandler handler) throws KlabException {
 
-        Connection connection = null;
-        Statement stmt = null;
-        ResultSet result = null;
-        try {
-            connection = getConnection();
-            stmt = connection.createStatement();
-            result = stmt.executeQuery(sql);
-            int res = 0;
-            while (result.next()) {
-                res++;
-                handler.onRow(result);
-            }
-            handler.nResults(res);
-        } catch (SQLException e) {
-            throw new KlabStorageException(e);
-        } finally {
-            // jesus christ
-            try {
-                if (result != null) {
-                    result.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (connection != null) {
-                    // connection.close();
-                }
-            } catch (Exception e) {
-                throw new KlabStorageException(e);
-            }
-        }
-    }
+		// System.out.println(sql);
 
-    public static H2Database create(String kboxName) {
-        if (datastores.get(kboxName) != null) {
-            return datastores.get(kboxName);
-        }
-        return new H2Database(kboxName);
-    }
+		Connection connection = null;
+		Statement stmt = null;
+		ResultSet result = null;
+		try {
+			connection = getConnection();
+			stmt = connection.createStatement();
+			result = stmt.executeQuery(sql);
+			int res = 0;
+			while (result.next()) {
+				res++;
+				handler.onRow(result);
+			}
+			handler.nResults(res);
+		} catch (SQLException e) {
+			throw new KlabStorageException(e);
+		} finally {
+			// jesus christ
+			try {
+				if (result != null) {
+					result.close();
+				}
+				if (stmt != null) {
+					stmt.close();
+				}
+				if (connection != null) {
+					// connection.close();
+				}
+			} catch (Exception e) {
+				throw new KlabStorageException(e);
+			}
+		}
+	}
 
-    public static H2Database createPersistent(String kboxName) {
-        if (datastores.get(kboxName) != null) {
-            return datastores.get(kboxName);
-        }
-        return new H2Database(kboxName, false);
-    }
-    
-    public <T> long storeObject(T o, long foreignKey, Serializer<T> serializer, IMonitor monitor) throws KlabException {
+	public static H2Database create(String kboxName) {
+		if (datastores.get(kboxName) != null) {
+			return datastores.get(kboxName);
+		}
+		return new H2Database(kboxName);
+	}
 
-        Pair<Class<?>, Schema> schema = getSchema(o.getClass());
-        if (schema != null && !initializedSchemata.contains(schema.getFirst())) {
-            if (schema.getSecond().getTableName() != null) {
-                if (!hasTable(schema.getSecond().getTableName())) {
-                    execute(schema.getSecond().getCreateSQL());
-                    tables = null;
-                }
-            }
-            initializedSchemata.add(schema.getFirst());
-        }
-        long id = getNextId();
-        String sql = serializer.serialize(o, /* schema.getSecond(), */ id, foreignKey);
-        if (sql != null && !sql.isEmpty()) {
-            execute(sql);
-        }
-        return id;
-    }
+	public static H2Database createPersistent(String kboxName) {
+		if (datastores.get(kboxName) != null) {
+			return datastores.get(kboxName);
+		}
+		return new H2Database(kboxName, false);
+	}
 
-    private Pair<Class<?>, Schema> getSchema(Class<? extends Object> cls) {
-        for (Class<?> cl : schemata.keySet()) {
-            if (cl.isAssignableFrom(cls)) {
-                return new Pair<>(cl, schemata.get(cl));
-            }
-        }
-        return null;
-    }
+	public <T> long storeObject(T o, long foreignKey, Serializer<T> serializer, IMonitor monitor) throws KlabException {
 
-    public void setSchema(Class<?> cls, Schema schema) {
-        schemata.put(cls, schema);
-    }
+		Pair<Class<?>, Schema> schema = getSchema(o.getClass());
+		if (schema != null && !initializedSchemata.contains(schema.getFirst())) {
+			if (schema.getSecond().getTableName() != null) {
+				if (!hasTable(schema.getSecond().getTableName())) {
+					execute(schema.getSecond().getCreateSQL());
+					tables = null;
+				}
+			}
+			initializedSchemata.add(schema.getFirst());
+		}
+		long id = getNextId();
+		String sql = serializer.serialize(o, /* schema.getSecond(), */ id, foreignKey);
+		if (sql != null && !sql.isEmpty()) {
+			execute(sql);
+		}
+		return id;
+	}
 
-    /**
-     * Returns a list of IDs as a result of running a query, subject to the assumption that the id is
-     * field 1 of the result.
-     * 
-     * @param query
-     * @return the list of IDs resulting, or empty
-     * @throws KlabException
-     */
-    public List<Long> queryIds(String query) throws KlabException {
+	private Pair<Class<?>, Schema> getSchema(Class<? extends Object> cls) {
+		for (Class<?> cl : schemata.keySet()) {
+			if (cl.isAssignableFrom(cls)) {
+				return new Pair<>(cl, schemata.get(cl));
+			}
+		}
+		return null;
+	}
 
-        final List<Long> ret = new ArrayList<>();
-        query(query, new SQL.SimpleResultHandler() {
+	/**
+	 * Old stuff that should be deprecated, but I don't see myself changing this any
+	 * time soon.
+	 * 
+	 * @param cls
+	 * @param schema
+	 */
+	public void setSchema(Class<?> cls, Schema schema) {
+		schemata.put(cls, schema);
+	}
 
-            @Override
-            public void onRow(ResultSet rs) {
-                try {
-                    ret.add(rs.getLong(1));
-                } catch (SQLException e) {
-                }
-            }
-        });
-        return ret;
-    }
+	/**
+	 * Returns a list of IDs as a result of running a query, subject to the
+	 * assumption that the id is field 1 of the result.
+	 * 
+	 * @param query
+	 * @return the list of IDs resulting, or empty
+	 * @throws KlabException
+	 */
+	public List<Long> queryIds(String query) throws KlabException {
+
+		final List<Long> ret = new ArrayList<>();
+		query(query, new SQL.SimpleResultHandler() {
+
+			@Override
+			public void onRow(ResultSet rs) {
+				try {
+					ret.add(rs.getLong(1));
+				} catch (SQLException e) {
+				}
+			}
+		});
+		return ret;
+	}
+
+	public <T> List<T> query(String query, Class<? extends T> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

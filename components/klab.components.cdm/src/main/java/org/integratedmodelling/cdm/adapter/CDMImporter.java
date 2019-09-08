@@ -3,6 +3,7 @@ package org.integratedmodelling.cdm.adapter;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -56,7 +57,7 @@ public class CDMImporter implements IResourceImporter {
 	@Override
 	public Map<String, String> getExportCapabilities(IResource resource) {
 		// TODO Auto-generated method stub
-		return null;
+		return new HashMap<>();
 	}
 
 	@Override
