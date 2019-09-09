@@ -2484,13 +2484,22 @@ public interface KimPackage extends EPackage
   int CONCEPT__MAGNITUDE = 13;
 
   /**
+   * The feature id for the '<em><b>Level</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__LEVEL = 14;
+
+  /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__TYPE = 14;
+  int CONCEPT__TYPE = 15;
 
   /**
    * The feature id for the '<em><b>Observability</b></em>' attribute.
@@ -2499,7 +2508,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OBSERVABILITY = 15;
+  int CONCEPT__OBSERVABILITY = 16;
 
   /**
    * The feature id for the '<em><b>Proportion</b></em>' attribute.
@@ -2508,7 +2517,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PROPORTION = 16;
+  int CONCEPT__PROPORTION = 17;
 
   /**
    * The feature id for the '<em><b>Other</b></em>' containment reference.
@@ -2517,7 +2526,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OTHER = 17;
+  int CONCEPT__OTHER = 18;
 
   /**
    * The feature id for the '<em><b>Percentage</b></em>' attribute.
@@ -2526,7 +2535,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PERCENTAGE = 18;
+  int CONCEPT__PERCENTAGE = 19;
 
   /**
    * The feature id for the '<em><b>Ratio</b></em>' attribute.
@@ -2535,7 +2544,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__RATIO = 19;
+  int CONCEPT__RATIO = 20;
 
   /**
    * The feature id for the '<em><b>Monetary</b></em>' attribute.
@@ -2544,7 +2553,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__MONETARY = 20;
+  int CONCEPT__MONETARY = 21;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2553,7 +2562,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__VALUE = 21;
+  int CONCEPT__VALUE = 22;
 
   /**
    * The feature id for the '<em><b>Occurrence</b></em>' attribute.
@@ -2562,7 +2571,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OCCURRENCE = 22;
+  int CONCEPT__OCCURRENCE = 23;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -2571,7 +2580,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 23;
+  int CONCEPT__DECLARATION = 24;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2580,7 +2589,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 24;
+  int CONCEPT_FEATURE_COUNT = 25;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -7024,6 +7033,17 @@ public interface KimPackage extends EPackage
   EAttribute getConcept_Magnitude();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isLevel <em>Level</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Level</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#isLevel()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Level();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isType <em>Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -11053,6 +11073,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CONCEPT__MAGNITUDE = eINSTANCE.getConcept_Magnitude();
+
+    /**
+     * The meta object literal for the '<em><b>Level</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__LEVEL = eINSTANCE.getConcept_Level();
 
     /**
      * The meta object literal for the '<em><b>Type</b></em>' attribute feature.

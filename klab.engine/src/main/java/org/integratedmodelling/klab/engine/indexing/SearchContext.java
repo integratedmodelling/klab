@@ -643,6 +643,7 @@ public class SearchContext implements IIndexingService.Context {
 				ret.allow(Constraint.allTraits(false).applyingTo(IKimConcept.Type.DISTANCE));
 				break;
 			case MAGNITUDE:
+			case LEVEL:
 				ret.allow(Constraint.allTraits(false).applyingTo(IKimConcept.Type.QUALITY));
 				break;
 			case NOT:

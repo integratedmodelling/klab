@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isAssessment <em>Assessment</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isUncertainty <em>Uncertainty</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isMagnitude <em>Magnitude</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Concept#isLevel <em>Level</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isObservability <em>Observability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isProportion <em>Proportion</em>}</li>
@@ -354,6 +355,28 @@ public interface Concept extends EObject
    * @generated
    */
   void setMagnitude(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Level</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Level</em>' attribute.
+   * @see #setLevel(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_Level()
+   * @model
+   * @generated
+   */
+  boolean isLevel();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#isLevel <em>Level</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Level</em>' attribute.
+   * @see #isLevel()
+   * @generated
+   */
+  void setLevel(boolean value);
 
   /**
    * Returns the value of the '<em><b>Type</b></em>' attribute.

@@ -40,6 +40,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isAssessment <em>Assessment</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isUncertainty <em>Uncertainty</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isMagnitude <em>Magnitude</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isLevel <em>Level</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isObservability <em>Observability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProportion <em>Proportion</em>}</li>
@@ -315,6 +316,26 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean magnitude = MAGNITUDE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isLevel() <em>Level</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isLevel()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean LEVEL_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isLevel() <em>Level</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isLevel()
+   * @generated
+   * @ordered
+   */
+  protected boolean level = LEVEL_EDEFAULT;
 
   /**
    * The default value of the '{@link #isType() <em>Type</em>}' attribute.
@@ -923,6 +944,31 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @generated
    */
   @Override
+  public boolean isLevel()
+  {
+    return level;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLevel(boolean newLevel)
+  {
+    boolean oldLevel = level;
+    level = newLevel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__LEVEL, oldLevel, level));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public boolean isType()
   {
     return type;
@@ -1277,6 +1323,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isUncertainty();
       case KimPackage.CONCEPT__MAGNITUDE:
         return isMagnitude();
+      case KimPackage.CONCEPT__LEVEL:
+        return isLevel();
       case KimPackage.CONCEPT__TYPE:
         return isType();
       case KimPackage.CONCEPT__OBSERVABILITY:
@@ -1352,6 +1400,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__MAGNITUDE:
         setMagnitude((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT__LEVEL:
+        setLevel((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__TYPE:
         setType((Boolean)newValue);
@@ -1439,6 +1490,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__MAGNITUDE:
         setMagnitude(MAGNITUDE_EDEFAULT);
         return;
+      case KimPackage.CONCEPT__LEVEL:
+        setLevel(LEVEL_EDEFAULT);
+        return;
       case KimPackage.CONCEPT__TYPE:
         setType(TYPE_EDEFAULT);
         return;
@@ -1511,6 +1565,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return uncertainty != UNCERTAINTY_EDEFAULT;
       case KimPackage.CONCEPT__MAGNITUDE:
         return magnitude != MAGNITUDE_EDEFAULT;
+      case KimPackage.CONCEPT__LEVEL:
+        return level != LEVEL_EDEFAULT;
       case KimPackage.CONCEPT__TYPE:
         return type != TYPE_EDEFAULT;
       case KimPackage.CONCEPT__OBSERVABILITY:
@@ -1570,6 +1626,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(uncertainty);
     result.append(", magnitude: ");
     result.append(magnitude);
+    result.append(", level: ");
+    result.append(level);
     result.append(", type: ");
     result.append(type);
     result.append(", observability: ");

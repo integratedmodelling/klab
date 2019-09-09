@@ -875,6 +875,8 @@ public enum Kim {
 			return getType("distance");
 		case MAGNITUDE:
 			return getType("magnitude");
+		case LEVEL:
+			return getType("level");
 		case MONETARY_VALUE:
 			return getType("money");
 		case OBSERVABILITY:
@@ -918,6 +920,8 @@ public enum Kim {
 			return EnumSet.of(Type.SUBJECT, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "class":
 			return EnumSet.of(Type.CLASS, Type.QUALITY, Type.OBSERVABLE);
+		case "level":
+			return EnumSet.of(Type.CLASS, Type.QUALITY, Type.ORDERING, Type.OBSERVABLE);
 		case "quantity":
 			return EnumSet.of(Type.QUANTITY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "quality":

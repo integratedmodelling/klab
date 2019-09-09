@@ -3153,7 +3153,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConcept_Type()
+  public EAttribute getConcept_Level()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(14);
   }
@@ -3164,7 +3164,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConcept_Observability()
+  public EAttribute getConcept_Type()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(15);
   }
@@ -3175,7 +3175,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConcept_Proportion()
+  public EAttribute getConcept_Observability()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(16);
   }
@@ -3186,9 +3186,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EAttribute getConcept_Proportion()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(17);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getConcept_Other()
   {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(17);
+    return (EReference)conceptEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -3199,7 +3210,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getConcept_Percentage()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(18);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(19);
   }
 
   /**
@@ -3210,7 +3221,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getConcept_Ratio()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(19);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(20);
   }
 
   /**
@@ -3221,7 +3232,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getConcept_Monetary()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(20);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(21);
   }
 
   /**
@@ -3232,7 +3243,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getConcept_Value()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(21);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(22);
   }
 
   /**
@@ -3243,7 +3254,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getConcept_Occurrence()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(22);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(23);
   }
 
   /**
@@ -3254,7 +3265,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getConcept_Declaration()
   {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(23);
+    return (EReference)conceptEClass.getEStructuralFeatures().get(24);
   }
 
   /**
@@ -5523,6 +5534,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(conceptEClass, CONCEPT__ASSESSMENT);
     createEAttribute(conceptEClass, CONCEPT__UNCERTAINTY);
     createEAttribute(conceptEClass, CONCEPT__MAGNITUDE);
+    createEAttribute(conceptEClass, CONCEPT__LEVEL);
     createEAttribute(conceptEClass, CONCEPT__TYPE);
     createEAttribute(conceptEClass, CONCEPT__OBSERVABILITY);
     createEAttribute(conceptEClass, CONCEPT__PROPORTION);
@@ -6039,6 +6051,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getConcept_Assessment(), ecorePackage.getEBoolean(), "assessment", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Uncertainty(), ecorePackage.getEBoolean(), "uncertainty", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Magnitude(), ecorePackage.getEBoolean(), "magnitude", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Level(), ecorePackage.getEBoolean(), "level", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Type(), ecorePackage.getEBoolean(), "type", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Observability(), ecorePackage.getEBoolean(), "observability", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Proportion(), ecorePackage.getEBoolean(), "proportion", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

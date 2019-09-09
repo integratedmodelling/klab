@@ -30,6 +30,7 @@ public enum UnarySemanticOperator {
     ASSESSMENT(new Type[] { Type.QUALITY }, "assessment of"),
     OBSERVABILITY(new Type[] { Type.OBSERVABLE }, "observability of"),
     MAGNITUDE(new Type[] { Type.QUANTIFIABLE }, "magnitude of"),
+    LEVEL(new Type[] { Type.QUANTIFIABLE }, "level of"),
     TYPE(new Type[] { Type.TRAIT }, "type of");
 
     public String[] declaration;

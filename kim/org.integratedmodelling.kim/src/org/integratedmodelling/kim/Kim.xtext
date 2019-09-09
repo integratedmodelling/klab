@@ -441,6 +441,7 @@ Concept:
 	assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
 	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
 	magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
+	level?='level' 'of' concept=SimpleConceptDeclaration |
 	type?='type' 'of' concept=SimpleConceptDeclaration |
 	observability?='observability' 'of' concept=SimpleConceptDeclaration |
 	proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
