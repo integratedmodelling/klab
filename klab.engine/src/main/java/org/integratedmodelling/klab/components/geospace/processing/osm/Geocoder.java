@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
@@ -31,6 +32,8 @@ import de.topobyte.osm4j.core.resolve.EntityFinders;
 import de.topobyte.osm4j.core.resolve.EntityNotFoundException;
 import de.topobyte.osm4j.core.resolve.EntityNotFoundStrategy;
 import de.topobyte.osm4j.geometry.GeometryBuilder;
+import de.topobyte.osm4j.geometry.MissingEntitiesStrategy;
+import de.topobyte.osm4j.geometry.MissingWayNodeStrategy;
 import de.topobyte.osm4j.geometry.RegionBuilder;
 import de.topobyte.osm4j.geometry.RegionBuilderResult;
 import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
@@ -85,13 +88,13 @@ public enum Geocoder {
 		String query = null;
 		switch (type) {
 		case "node":
-			query = "node(" + id + ");(._;>;);out;";
+			query = "node(" + id + ");\n(._; >;);\nout;";
 			break;
 		case "relation":
-			query = "rel(" + id + ");(._;>;);out;";
+			query = "rel(" + id + ");\n(._; >;);\nout;";
 			break;
 		case "way":
-			query = "way(" + id + ");(._;>;);out;";
+			query = "way(" + id + ");\n(._; >;);\nout;";
 			break;
 		}
 		
@@ -134,21 +137,26 @@ public enum Geocoder {
 				} else if (type.equals("relation") && !data.getRelations().isEmpty()) {
 
 					// relations first, so later we can exclude ways that compose them
-					Set<OsmWay> waysInRelations = new HashSet<>();
-					EntityFinder wayFinder = EntityFinders.create(data, EntityNotFoundStrategy.IGNORE);
+//					Set<OsmWay> waysInRelations = new HashSet<>();
+//					EntityFinder wayFinder = EntityFinders.create(data, EntityNotFoundStrategy.IGNORE);
+					
 					RegionBuilder regionBuilder = new RegionBuilder();
-
+					regionBuilder.setMissingEntitiesStrategy(MissingEntitiesStrategy.BUILD_PARTIAL);
+					regionBuilder.setMissingWayNodeStrategy(MissingWayNodeStrategy.OMIT_VERTEX_FROM_POLYLINE);
+					
 					for (OsmRelation rel : data.getRelations().valueCollection()) {
-						try {
-							wayFinder.findMemberWays(rel, waysInRelations);
-						} catch (EntityNotFoundException e) {
-							// won't happen
-						}
+//						try {
+//							wayFinder.findMemberWays(rel, waysInRelations);
+//						} catch (EntityNotFoundException e) {
+//							// won't happen
+//						}
 						RegionBuilderResult region = regionBuilder.build(rel, data);
 						Geometry polygon = region.getMultiPolygon();
 						if (polygon.isEmpty()) {
+							Logging.INSTANCE.warn("empty polygon for query " + url);
 							continue;
 						}
+						polygon = polygon.buffer(0);
 						Parameters<String> pdata = Parameters.create();
 						pdata.putAll(OsmModelUtil.getTagsAsMap(rel));
 						pdata.put(GEOMETRY_FIELD, polygon);
@@ -171,7 +179,8 @@ public enum Geocoder {
 				break;
 
 			} catch (Throwable e) {
-				// move on
+				// warn and move on
+				Logging.INSTANCE.warn(e);
 			}
 		}
 
