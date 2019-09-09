@@ -91,16 +91,16 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	Map<String, IObservable> semantics;
 
 	public SimpleRuntimeScope(Actuator actuator) {
-	    this.observable = actuator.getObservable();
-	    this.scale = actuator.getDataflow().getScale();
-        this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
-        this.network = new DefaultDirectedGraph<>(Relationship.class);
-        this.artifacts = new HashMap<>();
-        this.observations = new HashMap<>();
-        this.semantics = new HashMap<>();
-        this.namespace = Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace());
+		this.observable = actuator.getObservable();
+		this.scale = actuator.getDataflow().getScale();
+		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
+		this.network = new DefaultDirectedGraph<>(Relationship.class);
+		this.artifacts = new HashMap<>();
+		this.observations = new HashMap<>();
+		this.semantics = new HashMap<>();
+		this.namespace = Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace());
 	}
-	
+
 	/**
 	 * Root context. Don't use this to build a child.
 	 * 
@@ -116,13 +116,15 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		this.artifacts = new HashMap<>();
 		this.observations = new HashMap<>();
 		this.semantics = new HashMap<>();
-		this.namespace = Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace());
 		this.monitor = monitor;
-		this.target = this.rootSubject = new Subject(observable.getName(), (Observable) observable, (Scale) scale,
-				this);
-		this.structure.addVertex(this.target);
-		this.artifacts.put(this.getTargetName(), this.target);
-		this.observations.put(this.target.getId(), this.target);
+		if (observable != null) {
+			this.namespace = Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace());
+			this.target = this.rootSubject = new Subject(observable.getName(), (Observable) observable, (Scale) scale,
+					this);
+			this.structure.addVertex(this.target);
+			this.artifacts.put(this.getTargetName(), this.target);
+			this.observations.put(this.target.getId(), this.target);
+		}
 	}
 
 	public SimpleRuntimeScope(SimpleRuntimeScope parent) {
@@ -212,7 +214,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata) throws KlabException {
+	public IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
+			throws KlabException {
 
 		IDirectObservation ret = null;
 		if (observable.is(Type.SUBJECT)) {
@@ -241,7 +244,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public IObjectArtifact newRelationship(IObservable observable, String name, IScale scale, IObjectArtifact source,
 			IObjectArtifact target, IMetadata metadata) {
-		
+
 		Relationship ret = new Relationship(name, (Observable) observable, (Scale) scale, this);
 
 		if (ret != null) {
@@ -251,7 +254,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 			if (parent != null && parent.target != null) {
 				structure.addEdge(ret, parent.target);
 			}
-			
+
 			network.addVertex(source);
 			network.addVertex(target);
 			network.addEdge(source, target, ret);
@@ -414,7 +417,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		SimpleRuntimeScope ret = new SimpleRuntimeScope(this);
 		if (resource.getType() != IArtifact.Type.OBJECT) {
 			IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale(), this);
-			ret.target = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>)data);
+			ret.target = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
 		} else {
 			ret.target = new ObservationGroup((Observable) observable, (Scale) scale, this, resource.getType());
 		}
@@ -522,7 +525,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 //	@Override
 //	public ILocator getCurrentTimeLocator() {
 //		return scale.getTime() == null ? Time.INITIALIZATION : scale.getTime();
@@ -532,7 +535,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public Collection<IArtifact> getArtifact(IConcept observable) {
 		List<IArtifact> ret = new ArrayList<>();
 		for (IArtifact artifact : artifacts.values()) {
-			if (artifact instanceof IObservation && ((IObservation)artifact).getObservable().getType().is(observable)) {
+			if (artifact instanceof IObservation
+					&& ((IObservation) artifact).getObservable().getType().is(observable)) {
 				ret.add(artifact);
 			}
 		}
@@ -564,24 +568,23 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return null;
 	}
 
-    @Override
-    public Set<String> getNotifiedObservations() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Set<String> getNotifiedObservations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls) {
-		
+
 		Set<IArtifact> ret = new HashSet<>();
 		for (IArtifact artifact : artifacts.values()) {
-			if (artifact instanceof IObservation
-					&& ((IObservation) artifact).getObservable().getType().is(concept)) {
+			if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(concept)) {
 				ret.add(artifact);
 			}
 		}
-		
+
 		Set<IArtifact> chosen = new HashSet<>();
 		if (ret.size() > 1) {
 			for (IArtifact artifact : ret) {
@@ -590,20 +593,20 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 				}
 			}
 		}
-		
+
 		return (T) (chosen.isEmpty() ? null : chosen.iterator().next());
 	}
 
 	@Override
 	public ObservationGroup getObservationGroup(IObservable observable, IScale scale) {
 		// TODO implement the same mechanism as RuntimeContext
-		return new ObservationGroup((Observable)observable, (Scale)scale, this, IArtifact.Type.OBJECT);
+		return new ObservationGroup((Observable) observable, (Scale) scale, this, IArtifact.Type.OBJECT);
 	}
 
 	@Override
 	public void newPredicate(IDirectObservation target, IConcept c) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -611,6 +614,5 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }

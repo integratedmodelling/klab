@@ -117,7 +117,7 @@ public enum Urns {
     }
 
 	public boolean isUrn(String urn) {
-		return StringUtil.countMatches(urn, ":") > 3;
+		return StringUtil.countMatches(urn, ":") > 2;
 	}
 
 }

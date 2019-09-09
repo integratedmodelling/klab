@@ -287,8 +287,6 @@ public class Scale implements IScale {
 				ret.mergeExtent(e);
 			}
 		}
-//		ret.sort();
-
 		return ret;
 	}
 
@@ -1379,6 +1377,10 @@ public class Scale implements IScale {
 	@Override
 	public IScale initialization() {
 		return getTime() == null ? this : at(ITime.class, 0l);
+	}
+
+	public static IScale empty() {
+		return create();
 	}
 
 }

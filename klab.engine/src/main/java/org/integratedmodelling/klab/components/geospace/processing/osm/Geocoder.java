@@ -3,30 +3,39 @@ package org.integratedmodelling.klab.components.geospace.processing.osm;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.Parameters;
 
-import com.slimjars.dist.gnu.trove.map.TLongObjectMap;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.topobyte.osm4j.core.access.OsmIterator;
 import de.topobyte.osm4j.core.dataset.InMemoryMapDataSet;
 import de.topobyte.osm4j.core.dataset.MapDataSetLoader;
+import de.topobyte.osm4j.core.model.iface.OsmNode;
 import de.topobyte.osm4j.core.model.iface.OsmRelation;
+import de.topobyte.osm4j.core.model.iface.OsmWay;
 import de.topobyte.osm4j.core.model.util.OsmModelUtil;
+import de.topobyte.osm4j.core.resolve.EntityFinder;
+import de.topobyte.osm4j.core.resolve.EntityFinders;
+import de.topobyte.osm4j.core.resolve.EntityNotFoundException;
+import de.topobyte.osm4j.core.resolve.EntityNotFoundStrategy;
 import de.topobyte.osm4j.geometry.GeometryBuilder;
+import de.topobyte.osm4j.geometry.RegionBuilder;
+import de.topobyte.osm4j.geometry.RegionBuilderResult;
 import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
 
-public enum Nominatim {
+public enum Geocoder {
 
 	INSTANCE;
 
@@ -36,10 +45,18 @@ public enum Nominatim {
 	Client universal = Client.createUniversalJSON();
 
 	// TODO use ours
-	private String[] OSMNAMES_KEYS = { "dgb7TgC5zR0YpsAqbEgb" };
+	public String[] OSMNAMES_KEYS = { "dgb7TgC5zR0YpsAqbEgb" };
 
 	// TODO add ours
-	private String[] OSMNAMES_URL = { "https://search.osmnames.org/q/" };
+	public String[] OSMNAMES_URL = { "https://search.osmnames.org/q/" };
+
+	// TODO add ours
+	public String[] OSM_API_URLS = { "https://www.openstreetmap.org/api/0.6" };
+
+	// TODO this should be configurable. Also we must provide all this machinery as
+	// a remote resource using its own OSM mirror.
+	public static final String[] OVERPASS_URLS = { "http://150.241.222.1/overpass/api/interpreter",
+			"http://overpass-api.de/api/interpreter" };
 
 	public List<Location> lookup(String query) {
 
@@ -63,46 +80,104 @@ public enum Nominatim {
 		return result == null ? new ArrayList<>() : result.getResults();
 	}
 
-	/**
-	 * Return the parsed OSM data for the passed location. The geometry will be in
-	 * the "the_geom" field, as a hommage to silly GIS conventions, set in the
-	 * {@link #GEOMETRY_FIELD} constant for decency.
-	 * 
-	 * @param location
-	 * @return
-	 */
-	public Map<String, Object> getData(Location location) {
+	public IParameters<String> getData(String type, String id) {
+		
+		String query = null;
+		switch (type) {
+		case "node":
+			query = "node(" + id + ");(._;>;);out;";
+			break;
+		case "relation":
+			query = "rel(" + id + ");(._;>;);out;";
+			break;
+		case "way":
+			query = "way(" + id + ");(._;>;);out;";
+			break;
+		}
+		
+		if (query == null) {
+			throw new IllegalArgumentException("cannot retrieve objects of type " + type + " from OpenStreetMap");
+		}
+		
+		List<IParameters<String>> result = queryOverpass(query, type);
+		
+		return result.isEmpty() ? null : result.get(0);
+		
+	}
+	
+	public List<IParameters<String>> queryOverpass(String query, String type) {
 
-		String query = location.getRetrieveUrl();
-		Map<String, Object> properties = new HashMap<>();
+		List<IParameters<String>> ret = new ArrayList<>();
 
-		try (InputStream input = new URL(query).openStream()) {
+		for (String ourl : OVERPASS_URLS) {
 
-			OsmIterator iterator = new OsmXmlIterator(input, false);
-			InMemoryMapDataSet data = MapDataSetLoader.read(iterator, false, false, true);
+			String url = ourl + "?data=" + Escape.forURL(query);
 
-			TLongObjectMap<OsmRelation> relations = data.getRelations();
+			try (InputStream input = new URL(url).openStream()) {
 
-			if (relations.isEmpty()) {
-				return null;
+				OsmIterator iterator = new OsmXmlIterator(input, true);
+				InMemoryMapDataSet data = MapDataSetLoader.read(iterator, true, true, true);
+
+				if (type.equals("node") && !data.getNodes().isEmpty()) {
+					GeometryBuilder geometryBuilder = new GeometryBuilder();
+					for (OsmNode node : data.getNodes().valueCollection()) {
+						Geometry point = geometryBuilder.build(node);
+						if (point.isEmpty()) {
+							continue;
+						}
+						Parameters<String> pdata = Parameters.create();
+						pdata.putAll(OsmModelUtil.getTagsAsMap(node));
+						pdata.put(GEOMETRY_FIELD, point);
+						ret.add(pdata);
+
+					}
+				} else if (type.equals("relation") && !data.getRelations().isEmpty()) {
+
+					// relations first, so later we can exclude ways that compose them
+					Set<OsmWay> waysInRelations = new HashSet<>();
+					EntityFinder wayFinder = EntityFinders.create(data, EntityNotFoundStrategy.IGNORE);
+					RegionBuilder regionBuilder = new RegionBuilder();
+
+					for (OsmRelation rel : data.getRelations().valueCollection()) {
+						try {
+							wayFinder.findMemberWays(rel, waysInRelations);
+						} catch (EntityNotFoundException e) {
+							// won't happen
+						}
+						RegionBuilderResult region = regionBuilder.build(rel, data);
+						Geometry polygon = region.getMultiPolygon();
+						if (polygon.isEmpty()) {
+							continue;
+						}
+						Parameters<String> pdata = Parameters.create();
+						pdata.putAll(OsmModelUtil.getTagsAsMap(rel));
+						pdata.put(GEOMETRY_FIELD, polygon);
+						ret.add(pdata);
+					}
+				} else if (type.equals("way") && !data.getWays().isEmpty()) {
+					GeometryBuilder geometryBuilder = new GeometryBuilder();
+					for (OsmWay way : data.getWays().valueCollection()) {
+						Geometry line = geometryBuilder.build(way, data);
+						if (line.isEmpty()) {
+							continue;
+						}
+						Parameters<String> pdata = Parameters.create();
+						pdata.putAll(OsmModelUtil.getTagsAsMap(way));
+						pdata.put(GEOMETRY_FIELD, line);
+						ret.add(pdata);
+					}
+				}
+
+				break;
+
+			} catch (Throwable e) {
+				// move on
 			}
-
-			OsmRelation relation = relations.valueCollection().iterator().next();
-
-			Geometry polygon = new GeometryBuilder().build(relation, data);
-
-			Map<String, String> tags = OsmModelUtil.getTagsAsMap(relation);
-			for (String key : tags.keySet()) {
-				properties.put(key, tags.get(key));
-			}
-			properties.put(GEOMETRY_FIELD, polygon);
-
-		} catch (Throwable e) {
-			return null;
 		}
 
-		return properties;
+		return ret;
 	}
+
 
 	public String geocode(IEnvelope envelope) {
 
@@ -131,7 +206,9 @@ public enum Nominatim {
 	}
 
 	public static void main(String[] args) {
-		INSTANCE.lookup("france");
+		for (Location location : INSTANCE.lookup("france")) {
+			System.out.println(location.getURN() + " -- " + location.getDescription());
+		}
 	}
 
 	public static class OsmNamesResult {
@@ -365,9 +442,9 @@ public enum Nominatim {
 		}
 
 		public String getURN() {
-			return "klab:osm:" + osm_type + ":" + osm_id; 
+			return "klab:osm:" + osm_type + ":" + osm_id;
 		}
-		
+
 		@Override
 		public String toString() {
 			return getRetrieveUrl() + ": Location [osm_id=" + osm_id + ", lon=" + lon + ", boundingbox=" + boundingbox
@@ -394,5 +471,15 @@ public enum Nominatim {
 			this.display_name = display_name;
 		}
 
+	}
+
+	public boolean isRetrievalAccessible() {
+		// TODO periodically ping OSM URLs
+		return true;
+	}
+
+	public boolean isGeocodingAccessible() {
+		// TODO periodically ping Nominatim URLs
+		return true;
 	}
 }

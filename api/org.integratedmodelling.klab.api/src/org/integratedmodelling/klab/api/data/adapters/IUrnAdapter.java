@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.data.adapters;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
@@ -48,5 +49,21 @@ public interface IUrnAdapter {
 	 *                 the root observation.
 	 */
 	void getEncodedData(Urn urn, IKlabData.Builder builder, IGeometry geometry, IContextualizationScope context);
+	
+	/**
+	 * Get the resource type.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	IArtifact.Type getType(Urn urn);
+
+	/**
+	 * Get the URN's geometry.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	IGeometry getGeometry(Urn urn);
 
 }

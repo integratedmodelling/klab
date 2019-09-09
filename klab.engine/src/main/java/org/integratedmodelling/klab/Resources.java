@@ -52,8 +52,10 @@ import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
+import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.data.storage.FutureResource;
@@ -381,7 +383,7 @@ public enum Resources implements IResourceService {
 	public IResourceAdapter getResourceAdapter(String id) {
 		return resourceAdapters.get(id);
 	}
-	
+
 	public IUrnAdapter getUrnAdapter(String id) {
 		return urnAdapters.get(id);
 	}
@@ -649,13 +651,10 @@ public enum Resources implements IResourceService {
 	 * Bulk import of several resources from a URL. Uses all the importers that
 	 * declare they can handle the URL unless the adapter type is passed.
 	 * 
-	 * @param source
-	 *            a URL compatible with one or more adapter importers
-	 * @param project
-	 *            the destination project for the local resources built
-	 * @param adapterType
-	 *            optional, pass if needed to resolve ambiguities or prevent
-	 *            excessive calculations.
+	 * @param source      a URL compatible with one or more adapter importers
+	 * @param project     the destination project for the local resources built
+	 * @param adapterType optional, pass if needed to resolve ambiguities or prevent
+	 *                    excessive calculations.
 	 * @return
 	 */
 	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType) {
@@ -806,7 +805,7 @@ public enum Resources implements IResourceService {
 		if (resource == null) {
 			return null;
 		}
-		
+
 		Scale scale = Scale.create(resource.getGeometry());
 		if (forceGrid || resource.getType() != Type.OBJECT) {
 			scale = scale.adaptForExample();
@@ -882,7 +881,8 @@ public enum Resources implements IResourceService {
 	// }
 
 	/*
-	 * OLD version: the one above will break the system when errors happen - TODO figure out why.
+	 * OLD version: the one above will break the system when errors happen - TODO
+	 * figure out why.
 	 */
 	@Override
 	public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
@@ -925,12 +925,41 @@ public enum Resources implements IResourceService {
 		}
 
 		if (Urns.INSTANCE.isUrn(urn)) {
-			
+
+			Urn kurn = new Urn(urn);
+			if (kurn.isUniversal()) {
+
+				/*
+				 * TODO support
+				 */
+
+				IUrnAdapter adapter = urnAdapters.get(kurn.getCatalog());
+				if (adapter == null) {
+					return null;
+				}
+
+				VisitingDataBuilder builder = new VisitingDataBuilder();
+				adapter.getEncodedData(kurn, builder, null, null);
+
+				// resource specifies one object
+				if (builder.getObjectCount() == 1) {
+
+					if (builder.getObjectScale(0).getSpace() != null) {
+						/*
+						 * build an observer from the data and return it
+						 */
+						return Observations.INSTANCE.makeROIObserver(
+								builder.getObjectName(0),
+								builder.getObjectScale(0).getSpace().getShape(),
+								builder.getObjectMetadata(0));
+					}
+				}
+			}
+
 		}
-		
+
 		if (serverId == null) {
 
-			
 			String ns = Path.getLeading(urn, '.');
 			String ob = Path.getLast(urn, '.');
 			if (ns == null && SemanticType.validate(urn)) {
@@ -973,7 +1002,7 @@ public enum Resources implements IResourceService {
 			IObservable obs = Observables.INSTANCE.declare(urn);
 			if (obs != null) {
 				// for debug only
-				((Observable)obs).setOriginatingModelId("QUERY: " + urn);
+				((Observable) obs).setOriginatingModelId("QUERY: " + urn);
 				return ((Observable) obs);
 			}
 		}
@@ -984,7 +1013,6 @@ public enum Resources implements IResourceService {
 		urnAdapters.put(type, adapter);
 	}
 
-	
 	public void registerResourceAdapter(String type, IResourceAdapter adapter) {
 		resourceAdapters.put(type, adapter);
 	}
@@ -1301,7 +1329,7 @@ public enum Resources implements IResourceService {
 			break;
 		default:
 			break;
-		
+
 		}
 		return Geometry.scalar();
 	}

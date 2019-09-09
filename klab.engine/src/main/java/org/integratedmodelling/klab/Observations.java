@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -32,6 +33,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -46,7 +48,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim;
+import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -550,7 +552,7 @@ public enum Observations implements IObservationService {
 
 	public Observer makeROIObserver(final SpatialExtent regionOfInterest, Namespace namespace, IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName(Nominatim.INSTANCE.geocode(regionOfInterest));
+		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
@@ -560,12 +562,21 @@ public enum Observations implements IObservationService {
 
 	public Observer makeROIObserver(final Shape shape, Namespace namespace, IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName(Nominatim.INSTANCE.geocode(shape.getEnvelope()));
+		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
 		}
 		return new Observer(shape, observable, (Namespace) namespace);
+	}
+
+	public Observer makeROIObserver(String name, IShape shape, IMetadata metadata) {
+		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
+		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
+		observable.setOptional(true);
+		Observer ret = new Observer((Shape)shape, observable, Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
+		ret.getMetadata().putAll(metadata);
+		return ret;
 	}
 
 	/**

@@ -109,11 +109,6 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
 	private boolean simplifyShapes = false;
 	double bufferDistance = Double.NaN;
 
-	// TODO this should be configurable. Also we must provide all this machinery as
-	// a remote resource using
-	// its own OSM mirror.
-	public static final String[] OVERPASS_URLS = { "http://150.241.222.1/overpass/api/interpreter",
-			"http://overpass-api.de/api/interpreter" };
 
 	public OSMSubjectInstantiator() {
 	}
@@ -188,7 +183,7 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
 
 		Throwable exception = null;
 
-		for (String ourl : OVERPASS_URLS) {
+		for (String ourl : Geocoder.OVERPASS_URLS) {
 
 			String url = ourl + "?data=" + Escape.forURL(query);
 

@@ -63,8 +63,8 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim;
-import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim.Location;
+import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
+import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder.Location;
 import org.integratedmodelling.klab.components.runtime.DefaultRuntimeProvider;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -747,7 +747,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 						// afterwards.
 						List<Match> matches = new ArrayList<>();
 						int i = 0;
-						for (Location location : Nominatim.INSTANCE.lookup(request.getQueryString())) {
+						for (Location location : Geocoder.INSTANCE.lookup(request.getQueryString())) {
 							if ("relation".equals(location.getOsm_type())) {
 
 								SearchMatch match = new SearchMatch(location.getURN(), location.getName(),

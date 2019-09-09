@@ -56,14 +56,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		this.observation = parent.observation;
 		this.state = state;
 	}
-
-//	private LocalDataBuilder(IDirectObservation obs, LocalDataBuilder parent) {
-//		this.context = parent.context;
-//		this.parent = parent;
-//		this.notifications = parent.notifications;
-//		this.observation = obs;
-//	}
-
+	
 	public LocalDataBuilder(IObservable observable, String objectName, IScale scale,
 			LocalDataBuilder parent) {
 		this.context = parent.context;
