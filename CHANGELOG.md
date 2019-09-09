@@ -28,6 +28,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- New 'level of' operator to allow easy modeling of orderings (on SB's suggestion).
+- API to support 'universal URNs' with 'klab' as node name, resolved entirely by the
+  engine using IUrnResolver. 
+- Implementation of 'klab:osm:' open street maps URNs and search service using OSMNames
+  linked to free-text search.
 ### Changed
 ### Fixed
 ### Removed
