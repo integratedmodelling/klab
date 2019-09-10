@@ -24,7 +24,7 @@
  *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *     The license is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.hydrology.weather.data;
+package org.integratedmodelling.weather.data;
 
 import java.io.File;
 import java.sql.ResultSet;

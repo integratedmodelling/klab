@@ -821,4 +821,9 @@ public class Shape extends AbstractExtent implements IShape {
 		return getCenter(true);
 	}
 
+	@Override
+	public boolean isCovered(long stateIndex) {
+		return true; // stateIndex == 0;
+	}
+
 }

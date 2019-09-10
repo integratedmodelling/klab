@@ -72,398 +72,408 @@ import org.integratedmodelling.klab.utils.Utils;
  */
 public class Resource implements IResource {
 
-    private static final long   serialVersionUID = -923039635832182164L;
+	private static final long serialVersionUID = -923039635832182164L;
 
-    String                      urn;
-    Version                     version;
-    String                      adapterType;
-    String                      localPath;
-    IGeometry                   geometry;
-    IArtifact.Type              type;
-    long                        resourceTimestamp;
-    IMetadata                   metadata         = new Metadata();
-    Parameters<String>          parameters       = new Parameters<>();
-    List<String>                localPaths       = new ArrayList<>();
-    List<ResourceReference>     history          = new ArrayList<>();
-    List<INotification>         notifications    = new ArrayList<>();
-    List<Attribute>             attributes       = new ArrayList<>();
-    List<Attribute>             inputs           = new ArrayList<>();
-    List<Attribute>             outputs          = new ArrayList<>();
-    String                      projectName;
-    String                      localName;
-    // copied from adapter at creation
-    private Map<String, String> exports          = new LinkedHashMap<>();
-    // for display in resource descriptors
-    SpatialExtent               spatialExtent;
+	String urn;
+	Version version;
+	String adapterType;
+	String localPath;
+	IGeometry geometry;
+	IArtifact.Type type;
+	long resourceTimestamp;
+	IMetadata metadata = new Metadata();
+	Parameters<String> parameters = new Parameters<>();
+	List<String> localPaths = new ArrayList<>();
+	List<ResourceReference> history = new ArrayList<>();
+	List<INotification> notifications = new ArrayList<>();
+	List<Attribute> attributes = new ArrayList<>();
+	List<Attribute> inputs = new ArrayList<>();
+	List<Attribute> outputs = new ArrayList<>();
+	String projectName;
+	String localName;
+	// copied from adapter at creation
+	private Map<String, String> exports = new LinkedHashMap<>();
+	// for display in resource descriptors
+	SpatialExtent spatialExtent;
 
-    // folder where all the resource files were uploaded, only for the publisher
-    File                        uploadFolder     = null;
+	/*
+	 * TRY TEMPLATES FOR:
+	 * 
+	 * CRU: (unzip)
+	 * https://crudata.uea.ac.uk/cru/data/hrg/cru_ts_4.03/cruts.1905011326.v4.03/cld/cru_ts4.03.{year1}.{year2}.cld.dat.nc.gz
+	 * 
+	 * TRMM:
+	 * https://disc2.gesdisc.eosdis.nasa.gov:443/opendap/TRMM_L3/TRMM_3B42_Daily.7/{year}/{month}/3B42_Daily.{year}{month}{day}.7.nc4
+	 * year: 1998-2019 month: 01-12 day: 01-31 
+	 */
+	
+	// support for granularity
+	private Map<IGeometry, IResource> granules = new LinkedHashMap<>();
 
-    public Resource(ResourceReference reference) {
+	// folder where all the resource files were uploaded, only for the publisher
+	File uploadFolder = null;
 
-        this.urn = reference.getUrn();
-        this.version = Version.create(reference.getVersion());
-        this.adapterType = reference.getAdapterType();
-        this.localPath = reference.getLocalPath();
-        this.type = reference.getType();
-        this.resourceTimestamp = reference.getResourceTimestamp();
-        this.localPaths.addAll(reference.getLocalPaths());
-        this.geometry = Geometry.create(reference.getGeometry());
-        this.projectName = reference.getProjectName();
-        this.localName = reference.getLocalName();
-        this.spatialExtent = reference.getSpatialExtent();
-        this.attributes.addAll(reference.getAttributes());
-        this.exports.putAll(reference.getExportFormats());
+	public Resource(ResourceReference reference) {
 
-        for (ResourceReference ref : reference.getHistory()) {
-            this.history.add(ref);
-        }
-        for (String key : reference.getParameters().keySet()) {
-            this.parameters.put(key, Utils.asPOD(reference.getParameters().get(key)));
-        }
-        for (String key : reference.getMetadata().keySet()) {
-            this.metadata.put(key, Utils.asPOD(reference.getMetadata().get(key)));
-        }
-        for (org.integratedmodelling.klab.api.runtime.rest.INotification notification : reference
-                .getNotifications()) {
-            this.notifications.add(new KimNotification(notification.getMessage(), Level
-                    .parse(notification.getLevel()), notification.getTimestamp()));
-        }
-        if (reference.getDependencies() != null) {
-            this.inputs.addAll(reference.getDependencies());
-        }
-    }
+		this.urn = reference.getUrn();
+		this.version = Version.create(reference.getVersion());
+		this.adapterType = reference.getAdapterType();
+		this.localPath = reference.getLocalPath();
+		this.type = reference.getType();
+		this.resourceTimestamp = reference.getResourceTimestamp();
+		this.localPaths.addAll(reference.getLocalPaths());
+		this.geometry = Geometry.create(reference.getGeometry());
+		this.projectName = reference.getProjectName();
+		this.localName = reference.getLocalName();
+		this.spatialExtent = reference.getSpatialExtent();
+		this.attributes.addAll(reference.getAttributes());
+		this.exports.putAll(reference.getExportFormats());
 
-    public ResourceReference getReference() {
+		for (ResourceReference ref : reference.getHistory()) {
+			this.history.add(ref);
+		}
+		for (String key : reference.getParameters().keySet()) {
+			this.parameters.put(key, Utils.asPOD(reference.getParameters().get(key)));
+		}
+		for (String key : reference.getMetadata().keySet()) {
+			this.metadata.put(key, Utils.asPOD(reference.getMetadata().get(key)));
+		}
+		for (org.integratedmodelling.klab.api.runtime.rest.INotification notification : reference.getNotifications()) {
+			this.notifications.add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
+					notification.getTimestamp()));
+		}
+		if (reference.getDependencies() != null) {
+			this.inputs.addAll(reference.getDependencies());
+		}
+	}
 
-        ResourceReference ret = new ResourceReference();
+	public ResourceReference getReference() {
 
-        ret.setUrn(this.urn);
-        ret.setVersion(this.version.toString());
-        ret.setGeometry(this.getGeometry() == null ? null : this.getGeometry().encode());
-        ret.setAdapterType(this.getAdapterType());
-        ret.setLocalPath(this.localPath);
-        ret.getLocalPaths().addAll(this.localPaths);
-        ret.setResourceTimestamp(this.resourceTimestamp);
-        ret.setProjectName(this.projectName);
-        ret.setLocalName(getLocalName());
-        ret.setType(this.type);
-        ret.setSpatialExtent(spatialExtent);
-        ret.getExportFormats().putAll(this.getExports());
+		ResourceReference ret = new ResourceReference();
 
-        for (ResourceReference h : this.history) {
-            ret.getHistory().add(h);
-        }
-        for (String key : this.parameters.keySet()) {
-            if (Utils.isPOD(this.parameters.get(key))) {
-                ret.getParameters().put(key, this.parameters.get(key).toString());
-            }
-        }
-        for (String key : this.metadata.keySet()) {
-            if (Utils.isPOD(this.metadata.get(key))) {
-                ret.getMetadata().put(key, this.metadata.get(key).toString());
-            }
-        }
-        for (INotification notification : this.notifications) {
-            ret.getNotifications().add(new Notification(notification.getMessage(), notification
-                    .getLevel(), notification.getTimestamp()));
-        }
-        for (Attribute attribute : attributes) {
-            ret.getAttributes().add((AttributeReference) attribute);
-        }
-        if (this.inputs.size() > 0) {
-            ret.setDependencies(new ArrayList<AttributeReference>());
-            for (Attribute dependency : this.inputs) {
-                ret.getDependencies().add((AttributeReference) dependency);
-            }
-        }
-        if (this.outputs.size() > 0) {
-            ret.setOutputs(new ArrayList<AttributeReference>());
-            for (Attribute output : this.outputs) {
-                ret.getOutputs().add((AttributeReference) output);
-            }
-        }
+		ret.setUrn(this.urn);
+		ret.setVersion(this.version.toString());
+		ret.setGeometry(this.getGeometry() == null ? null : this.getGeometry().encode());
+		ret.setAdapterType(this.getAdapterType());
+		ret.setLocalPath(this.localPath);
+		ret.getLocalPaths().addAll(this.localPaths);
+		ret.setResourceTimestamp(this.resourceTimestamp);
+		ret.setProjectName(this.projectName);
+		ret.setLocalName(getLocalName());
+		ret.setType(this.type);
+		ret.setSpatialExtent(spatialExtent);
+		ret.getExportFormats().putAll(this.getExports());
 
-        return ret;
-    }
+		for (ResourceReference h : this.history) {
+			ret.getHistory().add(h);
+		}
+		for (String key : this.parameters.keySet()) {
+			if (Utils.isPOD(this.parameters.get(key))) {
+				ret.getParameters().put(key, this.parameters.get(key).toString());
+			}
+		}
+		for (String key : this.metadata.keySet()) {
+			if (Utils.isPOD(this.metadata.get(key))) {
+				ret.getMetadata().put(key, this.metadata.get(key).toString());
+			}
+		}
+		for (INotification notification : this.notifications) {
+			ret.getNotifications().add(
+					new Notification(notification.getMessage(), notification.getLevel(), notification.getTimestamp()));
+		}
+		for (Attribute attribute : attributes) {
+			ret.getAttributes().add((AttributeReference) attribute);
+		}
+		if (this.inputs.size() > 0) {
+			ret.setDependencies(new ArrayList<AttributeReference>());
+			for (Attribute dependency : this.inputs) {
+				ret.getDependencies().add((AttributeReference) dependency);
+			}
+		}
+		if (this.outputs.size() > 0) {
+			ret.setOutputs(new ArrayList<AttributeReference>());
+			for (Attribute output : this.outputs) {
+				ret.getOutputs().add((AttributeReference) output);
+			}
+		}
 
-    Resource() {
-    }
+		return ret;
+	}
 
-    /**
-     * Create a resource with the passed URN and a list of errors.
-     *
-     * @param urn
-     *            the urn
-     * @param errors
-     *            the errors
-     * @return the resource
-     */
-    public static Resource error(String urn, List<Throwable> errors) {
-        Resource ret = new Resource();
-        ret.urn = urn;
-        for (Throwable t : errors) {
-            ret.notifications.add(new KimNotification(t.getMessage(), Level.SEVERE));
-        }
-        return ret;
-    }
+	Resource() {
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public Version getVersion() {
-        return version;
-    }
+	/**
+	 * Create a resource with the passed URN and a list of errors.
+	 *
+	 * @param urn    the urn
+	 * @param errors the errors
+	 * @return the resource
+	 */
+	public static Resource error(String urn, List<Throwable> errors) {
+		Resource ret = new Resource();
+		ret.urn = urn;
+		for (Throwable t : errors) {
+			ret.notifications.add(new KimNotification(t.getMessage(), Level.SEVERE));
+		}
+		return ret;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public IMetadata getMetadata() {
-        return metadata;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public Version getVersion() {
+		return version;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public String getUrn() {
-        return urn;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public IMetadata getMetadata() {
+		return metadata;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public List<IResource> getHistory() {
-        List<IResource> ret = new ArrayList<>();
-        for (ResourceReference ref : history) {
-            ret.add(new Resource(ref));
-        }
-        return ret;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public String getUrn() {
+		return urn;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public IGeometry getGeometry() {
-        return geometry;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public List<IResource> getHistory() {
+		List<IResource> ret = new ArrayList<>();
+		for (ResourceReference ref : history) {
+			ret.add(new Resource(ref));
+		}
+		return ret;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public IParameters<String> getParameters() {
-        return parameters;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public IGeometry getGeometry() {
+		return geometry;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public String getAdapterType() {
-        return adapterType;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public IParameters<String> getParameters() {
+		return parameters;
+	}
 
-    @Override
-    public List<String> getLocalPaths() {
-        return localPaths;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public String getAdapterType() {
+		return adapterType;
+	}
 
-    /**
-     * <p>
-     * Getter for the field <code>resourceTimestamp</code>.
-     * </p>
-     *
-     * @return a long.
-     */
-    public long getResourceTimestamp() {
-        return resourceTimestamp;
-    }
+	@Override
+	public List<String> getLocalPaths() {
+		return localPaths;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasErrors() {
-        if (notifications != null) {
-            for (INotification notification : notifications) {
-                if (notification.getLevel().equals(Level.SEVERE.getName())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	/**
+	 * <p>
+	 * Getter for the field <code>resourceTimestamp</code>.
+	 * </p>
+	 *
+	 * @return a long.
+	 */
+	public long getResourceTimestamp() {
+		return resourceTimestamp;
+	}
 
-    /**
-     * Set the upload folder
-     * 
-     * @param uploadFolder
-     * @return
-     */
-    public Resource in(File uploadFolder) {
-        this.uploadFolder = uploadFolder;
-        return this;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public boolean hasErrors() {
+		if (notifications != null) {
+			for (INotification notification : notifications) {
+				if (notification.getLevel().equals(Level.SEVERE.getName())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    public void validate(IResourceService resourceService) {
+	/**
+	 * Set the upload folder
+	 * 
+	 * @param uploadFolder
+	 * @return
+	 */
+	public Resource in(File uploadFolder) {
+		this.uploadFolder = uploadFolder;
+		return this;
+	}
 
-        if (!hasErrors()) {
+	public void validate(IResourceService resourceService) {
 
-            if (adapterType == null) {
-                throw new IllegalStateException("invalid resource: adapter type is undefined");
-            }
-            if (version == null) {
-                throw new IllegalStateException("invalid resource: version is undefined");
-            }
-            if (geometry == null) {
-                throw new IllegalStateException("invalid resource: geometry is undefined");
-            }
-            if (urn == null) {
-                throw new IllegalStateException("invalid resource: urn is undefined");
-            }
-        }
+		if (!hasErrors()) {
 
-        // TODO more checks: consistent version history
-    }
+			if (adapterType == null) {
+				throw new IllegalStateException("invalid resource: adapter type is undefined");
+			}
+			if (version == null) {
+				throw new IllegalStateException("invalid resource: version is undefined");
+			}
+			if (geometry == null) {
+				throw new IllegalStateException("invalid resource: geometry is undefined");
+			}
+			if (urn == null) {
+				throw new IllegalStateException("invalid resource: urn is undefined");
+			}
+		}
 
-    @Override
-    public String toString() {
-        return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType
-                + ", geometry="
-                + geometry + ", parameters=" + parameters + ", history=" + history + ", notifications="
-                + notifications
-                + "]";
-    }
+		// TODO more checks: consistent version history
+	}
 
-    @Override
-    public String getLocalPath() {
-        return localPath;
-    }
+	@Override
+	public String toString() {
+		return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType + ", geometry="
+				+ geometry + ", parameters=" + parameters + ", history=" + history + ", notifications=" + notifications
+				+ "]";
+	}
 
-    @Override
-    public String getLocalProjectName() {
-        return projectName;
-    }
+	@Override
+	public String getLocalPath() {
+		return localPath;
+	}
 
-    @Override
-    public IArtifact.Type getType() {
-        return type;
-    }
+	@Override
+	public String getLocalProjectName() {
+		return projectName;
+	}
 
-    @Override
-    public String getLocalName() {
-        return localName == null ? Path.getLast(urn, ':') : localName;
-    }
+	@Override
+	public IArtifact.Type getType() {
+		return type;
+	}
 
-    /**
-     * Copy the current resource state to the history so that it can be modified
-     * with full records, adding a notification to explain the change.
-     */
-    public void copyToHistory(String modificationLog) {
-        ResourceReference ref = this.getReference();
-        ref.getNotifications()
-                .add(new Notification(modificationLog, Level.INFO.getName(), System.currentTimeMillis()));
-        ref.getHistory().clear();
-        history.add(ref);
-    }
+	@Override
+	public String getLocalName() {
+		return localName == null ? Path.getLast(urn, ':') : localName;
+	}
 
-    public void setLocalProject(String name) {
-        this.projectName = name;
-    }
+	/**
+	 * Copy the current resource state to the history so that it can be modified
+	 * with full records, adding a notification to explain the change.
+	 */
+	public void copyToHistory(String modificationLog) {
+		ResourceReference ref = this.getReference();
+		ref.getNotifications().add(new Notification(modificationLog, Level.INFO.getName(), System.currentTimeMillis()));
+		ref.getHistory().clear();
+		history.add(ref);
+	}
 
-    public void setUrn(String urn) {
-        this.urn = urn;
-    }
+	public void setLocalProject(String name) {
+		this.projectName = name;
+	}
 
-    public void setLocalPath(String string) {
-        this.localPath = string;
-    }
+	public void setUrn(String urn) {
+		this.urn = urn;
+	}
 
-    @Override
-    public Collection<Attribute> getAttributes() {
-        return attributes;
-    }
+	public void setLocalPath(String string) {
+		this.localPath = string;
+	}
 
-    @Override
-    public Collection<Attribute> getInputs() {
-        return inputs;
-    }
+	@Override
+	public Collection<Attribute> getAttributes() {
+		return attributes;
+	}
 
-    /**
-     * If the passed parameters determine a type modification, copy the resource and
-     * return a new one with the modified type.
-     * 
-     * @param second
-     * @return this or a new resource if different
-     */
-    public IResource applyParameters(Map<String, String> parameters) {
-        Resource ret = this;
-        String attribute = parameters.get(IServiceCall.DEFAULT_PARAMETER_NAME);
-        if (attribute != null) {
-            IArtifact.Type type = null;
-            for (Attribute attr : attributes) {
-                if (attr.getName() == null) {
-                    Logging.INSTANCE.warn("Corrupted resource " + urn + ": null attributes");
-                    continue;
-                }
-                if (attr.getName().equalsIgnoreCase(attribute)) {
-                    type = attr.getType();
-                    break;
-                }
-            }
-            if (type != null) {
-                ret = new Resource(getReference());
-                ret.type = type;
-            }
-        }
-        return ret;
-    }
+	@Override
+	public Collection<Attribute> getInputs() {
+		return inputs;
+	}
 
-    public void update(ResourceCRUDRequest request) {
-    	
-    	this.resourceTimestamp = System.currentTimeMillis();
-    	
-    	for (String key : request.getParameters().keySet()) {
-            this.parameters.put(key, Utils.asPOD(request.getParameters().get(key)));
-        }
-        for (String key : request.getMetadata().keySet()) {
-            this.metadata.put(key, request.getMetadata().get(key));
-        }
-        if (request.getGeometry() != null) {
-            this.geometry = Geometry.create(request.getGeometry());
-        }
-    }
+	/**
+	 * If the passed parameters determine a type modification, copy the resource and
+	 * return a new one with the modified type.
+	 * 
+	 * @param second
+	 * @return this or a new resource if different
+	 */
+	public IResource applyParameters(Map<String, String> parameters) {
+		Resource ret = this;
+		String attribute = parameters.get(IServiceCall.DEFAULT_PARAMETER_NAME);
+		if (attribute != null) {
+			IArtifact.Type type = null;
+			for (Attribute attr : attributes) {
+				if (attr.getName() == null) {
+					Logging.INSTANCE.warn("Corrupted resource " + urn + ": null attributes");
+					continue;
+				}
+				if (attr.getName().equalsIgnoreCase(attribute)) {
+					type = attr.getType();
+					break;
+				}
+			}
+			if (type != null) {
+				ret = new Resource(getReference());
+				ret.type = type;
+			}
+		}
+		return ret;
+	}
 
-    /**
-     * Return the file pointed to (as a filename relative to the resource dir) by the passed parameter.
-     * 
-     * @param parameter
-     * @return
-     */
-    public File getLocalFile(String parameter) {
-        if (this.parameters.containsKey(parameter)) {
-            IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
-            if (project != null) {
-                return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER
-                        + File.separator + Path.getLast(urn, ':') + File.separator
-                        + this.parameters.get(parameter));
-            }
-        }
-        return null;
+	public void update(ResourceCRUDRequest request) {
 
-    }
+		this.resourceTimestamp = System.currentTimeMillis();
 
-    /**
-     * Return the file path that stores this resource's files (at minimum resource.json).
-     * @return
-     */
-    public File getPath() {
-        IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
-        if (project != null) {
-            return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER
-                    + File.separator + Path.getLast(urn, ':'));
-        }
-        return null;
-    }
+		for (String key : request.getParameters().keySet()) {
+			this.parameters.put(key, Utils.asPOD(request.getParameters().get(key)));
+		}
+		for (String key : request.getMetadata().keySet()) {
+			this.metadata.put(key, request.getMetadata().get(key));
+		}
+		if (request.getGeometry() != null) {
+			this.geometry = Geometry.create(request.getGeometry());
+		}
+	}
 
-    @Override
-    public Map<String, String> getExports() {
-        return exports;
-    }
+	/**
+	 * Return the file pointed to (as a filename relative to the resource dir) by
+	 * the passed parameter.
+	 * 
+	 * @param parameter
+	 * @return
+	 */
+	public File getLocalFile(String parameter) {
+		if (this.parameters.containsKey(parameter)) {
+			IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
+			if (project != null) {
+				return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
+						+ Path.getLast(urn, ':') + File.separator + this.parameters.get(parameter));
+			}
+		}
+		return null;
 
-    @Override
-    public Collection<Attribute> getOutputs() {
-        return outputs;
-    }
+	}
+
+	/**
+	 * Return the file path that stores this resource's files (at minimum
+	 * resource.json).
+	 * 
+	 * @return
+	 */
+	public File getPath() {
+		IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
+		if (project != null) {
+			return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
+					+ Path.getLast(urn, ':'));
+		}
+		return null;
+	}
+
+	@Override
+	public Map<String, String> getExports() {
+		return exports;
+	}
+
+	@Override
+	public Collection<Attribute> getOutputs() {
+		return outputs;
+	}
 
 	@Override
 	public String getId() {
@@ -485,6 +495,16 @@ public class Resource implements IResource {
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean isGranular() {
+		return granules.size() > 0;
+	}
+
+	@Override
+	public Map<IGeometry, IResource> getGranules() {
+		return granules;
 	}
 
 }

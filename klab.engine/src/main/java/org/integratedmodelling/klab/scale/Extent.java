@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.scale;
 
 import java.util.Iterator;
 
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -40,16 +39,6 @@ public abstract class Extent extends AbstractExtent {
 	 * @return a new extent with getValueCount() == 1.
 	 */
 	public abstract IExtent getExtent(long stateIndex);
-
-	/**
-	 * True if the i-th state of the topology correspond to a concrete subdivision
-	 * where observations can be made. Determines the status of "data" vs. "no-data"
-	 * for the state of an observation defined over this extent.
-	 * 
-	 * @param stateIndex
-	 * @return whether there is an observable world at the given location.
-	 */
-	public abstract boolean isCovered(long stateIndex);
 
 	/**
 	 * True if the extent is completely specified and usable. Extents may be

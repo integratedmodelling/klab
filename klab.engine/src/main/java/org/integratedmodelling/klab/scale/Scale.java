@@ -465,7 +465,7 @@ public class Scale implements IScale {
 	public boolean isCovered(long offset) {
 		long[] oofs = getExtentIndex(offset);
 		for (int i = 0; i < getExtentCount(); i++) {
-			if (!((Extent) extents.get(i)).isCovered(oofs[i])) {
+			if (!((AbstractExtent) extents.get(i)).isCovered(oofs[i])) {
 				return false;
 			}
 		}
@@ -1381,6 +1381,11 @@ public class Scale implements IScale {
 
 	public static IScale empty() {
 		return create();
+	}
+
+	@Override
+	public boolean is(String string) {
+		return asGeometry().is(string);
 	}
 
 }

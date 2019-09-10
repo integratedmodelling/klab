@@ -33,8 +33,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   engine using IUrnResolver. 
 - Implementation of 'klab:osm:' open street maps URNs and search service using OSMNames
   linked to free-text search.
+- Stubs for event instantiators in space/time.
 ### Changed
+- Resources can be "granular", i.e. composed of multiple resources with individual 
+  geometry that give the full resource geometry when merged. Mostly unimplemented.
 ### Fixed
+- Learning models are no longer indexed.
 ### Removed
 
 ## [0.10.0.179] -- 2019/09/05

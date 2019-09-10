@@ -652,18 +652,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	@MessageHandler
 	private void handleMatchAction(SearchMatchAction action) {
 
-		if (action.getMatchId().startsWith("klab:")) {
-			// TODO/FIXME: use a more robust test
-			observe(action.getMatchId());
-			return;
-		} 
-		
 		final String contextId = action.getContextId();
 		Pair<Context, List<Match>> ctx = searchContexts.get(contextId);
 		if (ctx == null) {
 			throw new IllegalStateException("match action has invalid context ID");
 		}
-		
+
+		if (action.getMatchId().startsWith("klab:")) {
+			// TODO/FIXME: use a more robust test
+			observe(action.getMatchId());
+			return;
+		}
+
 		Context newContext = action.isAdded() ? ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()))
 				: ctx.getFirst().previous();
 

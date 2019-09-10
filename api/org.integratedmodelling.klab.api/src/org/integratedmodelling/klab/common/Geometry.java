@@ -124,11 +124,11 @@ public class Geometry implements IGeometry {
 					numbers.add((Number) o);
 
 				} else if (o instanceof int[]) {
-					for (int of : (int[])o) {
+					for (int of : (int[]) o) {
 						numbers.add(of);
 					}
 				} else if (o instanceof long[]) {
-					for (long of : (long[])o) {
+					for (long of : (long[]) o) {
 						numbers.add(of);
 					}
 				} else {
@@ -173,7 +173,7 @@ public class Geometry implements IGeometry {
 				ret.add(current);
 			}
 		}
-		
+
 		if (ret.isEmpty() && !numbers.isEmpty()) {
 			current = new DimensionTarget();
 			current.defineOffsets(numbers);
@@ -526,10 +526,11 @@ public class Geometry implements IGeometry {
 			if (generic && !dimension.isGeneric() || !generic && dimension.isGeneric()) {
 				return false;
 			}
-			
-			// TODO must enable a boundary shape to cut any geometry, regular or not, as long
+
+			// TODO must enable a boundary shape to cut any geometry, regular or not, as
+			// long
 			// as the dimensionality agrees
-			
+
 //			if (regular && !(dimension.isRegular() || dimension.size() == 1)
 //					|| !regular && (dimension.isRegular() || dimension.size() == 1)) {
 //				return false;
@@ -1234,6 +1235,32 @@ public class Geometry implements IGeometry {
 			return Utils.boxArray(latlon);
 		} // TODO others maybe
 		return null;
+	}
+
+	@Override
+	public boolean is(String string) {
+
+		/*
+		 * compares dimension type and dimensionality; if both have a shape, shape is
+		 * also compared.
+		 */
+		Geometry other = create(string);
+		if (other.dimensions.size() == this.dimensions.size()) {
+			for (int i = 0; i < other.dimensions.size(); i++) {
+				if (other.dimensions.get(i).type != this.dimensions.get(i).type
+						|| other.dimensions.get(i).dimensionality != this.dimensions.get(i).dimensionality
+						|| other.dimensions.get(i).regular != this.dimensions.get(i).regular) {
+					return false;
+				}
+				if (other.dimensions.get(i).shape != null || this.dimensions.get(i).shape != null) {
+					if (!Arrays.equals(other.dimensions.get(i).shape, this.dimensions.get(i).shape)) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 }

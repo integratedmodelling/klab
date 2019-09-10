@@ -724,6 +724,11 @@ public class Grid extends Area implements IGrid {
 			}
 			return ret;
 		}
+
+		@Override
+		public boolean isCovered(long stateIndex) {
+			return true; // stateIndex == 0;
+		}
 	}
 
 	Shape shape;

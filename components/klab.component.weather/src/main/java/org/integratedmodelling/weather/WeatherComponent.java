@@ -1,4 +1,4 @@
-package org.integratedmodelling.hydrology.weather;
+package org.integratedmodelling.weather;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;

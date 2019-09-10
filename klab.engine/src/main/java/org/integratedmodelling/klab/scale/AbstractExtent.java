@@ -98,6 +98,16 @@ public abstract class AbstractExtent implements IExtent {
 		return scale.getScaleId().equals(scaleId);
 	}
 
+	/**
+	 * True if the i-th state of the topology correspond to a concrete subdivision
+	 * where observations can be made. Determines the status of "data" vs. "no-data"
+	 * for the state of an observation defined over this extent.
+	 * 
+	 * @param stateIndex
+	 * @return whether there is an observable world at the given location.
+	 */
+	public abstract boolean isCovered(long stateIndex);
+	
 	public abstract boolean isEmpty();
 
 	/**

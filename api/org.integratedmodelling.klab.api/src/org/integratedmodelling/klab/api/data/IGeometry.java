@@ -356,4 +356,14 @@ public interface IGeometry extends Serializable, ILocator {
 	 */
 	boolean isInfiniteTime();
 
+	/**
+	 * Quickly check for dimensional compatibility with the geometry specified by
+	 * the passed string. Intended for simple tests for type, dimensionality,
+	 * regularity and shape if defined by both this and the operand.
+	 * 
+	 * @param string
+	 * @return true if compatible.
+	 */
+	boolean is(String dimensionSpecifications);
+
 }

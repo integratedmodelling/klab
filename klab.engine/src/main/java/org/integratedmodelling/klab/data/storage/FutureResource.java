@@ -200,4 +200,14 @@ public class FutureResource implements IResource, Future<IResource> {
 		return getDelegate(timeout).isEmpty();
 	}
 
+	@Override
+	public boolean isGranular() {
+		return getDelegate(timeout).isGranular();
+	}
+
+	@Override
+	public Map<IGeometry, IResource> getGranules() {
+		return getDelegate(timeout).getGranules();
+	}
+
 }

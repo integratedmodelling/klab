@@ -586,7 +586,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		} catch (Exception e) {
 			Logging.INSTANCE.error(e.getClass().getCanonicalName() + ": " + e);
-			ret = false;
+//			ret = false;
 		} finally {
 			Indexer.INSTANCE.commitChanges();
 		}
