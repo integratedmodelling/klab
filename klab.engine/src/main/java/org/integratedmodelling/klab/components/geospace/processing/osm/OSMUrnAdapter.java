@@ -40,9 +40,11 @@ public class OSMUrnAdapter implements IUrnAdapter {
 			IScale scale = null;
 
 			if (data.containsKey(Geocoder.GEOMETRY_FIELD)) {
-				IShape shape = Shape.create(
+				Shape shape = Shape.create(
 						data.get(Geocoder.GEOMETRY_FIELD, com.vividsolutions.jts.geom.Geometry.class),
 						Projection.getLatLon());
+				// TODO adjust
+				shape.simplifyIfNecessary(8000, 8000);
 				scale = Scale.create(shape);
 			} else {
 				scale = Scale.empty();
