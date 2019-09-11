@@ -11,7 +11,7 @@ public class DataflowState {
 	private boolean monitorable;
 	private double progress;
 	private String contextId;
-	private int rating;
+	private int rating = -1;
 	private String comment;
 
 	public String getNodeId() {
