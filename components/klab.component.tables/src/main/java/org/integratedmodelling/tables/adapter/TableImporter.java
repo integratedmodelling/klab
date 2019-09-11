@@ -64,4 +64,9 @@ public class TableImporter implements IResourceImporter {
         return false;
     }
 
+	@Override
+	public boolean acceptsMultiple() {
+		return false;
+	}
+
 }

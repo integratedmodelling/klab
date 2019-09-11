@@ -11,6 +11,7 @@ public class ResourceAdapterReference {
 	private ServicePrototype parameters;
 	private boolean fileBased;
 	private Map<String, String> exportCapabilities = new HashMap<>();
+	private boolean multipleResources;
 
 	public ServicePrototype getParameters() {
 		return parameters;
@@ -58,5 +59,13 @@ public class ResourceAdapterReference {
 
 	public void setExportCapabilities(Map<String, String> exportCapabilities) {
 		this.exportCapabilities = exportCapabilities;
+	}
+
+	public boolean isMultipleResources() {
+		return multipleResources;
+	}
+
+	public void setMultipleResources(boolean multipleResources) {
+		this.multipleResources = multipleResources;
 	}
 }

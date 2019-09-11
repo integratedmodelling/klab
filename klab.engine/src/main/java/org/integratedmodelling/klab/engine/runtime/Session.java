@@ -69,6 +69,7 @@ import org.integratedmodelling.klab.components.runtime.DefaultRuntimeProvider;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
+import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -681,7 +682,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				if (documentation != null) {
 					System.out.println(documentation);
 					monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.DataflowDocumentation,
-							new DataflowDetail(state.getNodeId(), documentation));
+							new DataflowDetail(state.getNodeId(), documentation,
+									element.getType() == ElementType.RESOURCE
+											|| element.getType() == ElementType.TABLE));
 				}
 			} else {
 				System.out.println("element not found: " + state.getNodeId());

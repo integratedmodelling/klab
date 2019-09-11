@@ -77,6 +77,8 @@ public class BulkImportResource extends WizardPage {
 	private Label templateLabel;
 	private TableViewer tableViewer;
 	private Map<String, String> templateVars = new HashMap<>();
+	private Button mergeResources;
+	private ResourceAdapterReference adapter = null;
 
 	public class ValueSupport extends EditingSupport {
 
@@ -111,29 +113,23 @@ public class BulkImportResource extends WizardPage {
 		@Override
 		protected Object getValue(Object element) {
 			Object ret = null;
-//			if (element instanceof ServicePrototype.Argument) {
-//				ret = values.get(((ServicePrototype.Argument) element).getName());
-//			}
+			if (element instanceof String) {
+				ret = templateVars.get((String)element);
+			}
 			return ret == null ? "" : ret.toString();
 		}
 
 		@Override
 		protected void setValue(Object element, Object value) {
-//			if (element instanceof ServicePrototype.Argument) {
-//				setErrorMessage(null);
-//				if (value != null && !value.toString().isEmpty()) {
-//					if (!Utils.validateAs(value, ((ServicePrototype.Argument) element).getType())) {
-//						setErrorMessage("'" + value + "' is not a suitable value for type "
-//								+ ((ServicePrototype.Argument) element).getType().name().toLowerCase());
-//					}
-//					if (((ServicePrototype.Argument) element).getName().endsWith("Url")) {
-//						if (!UrlValidator.getInstance().isValid(value.toString())) {
-//							setErrorMessage("'" + value + "' is not a valid URL");
-//						}
-//					}
-//				}
-//				values.put(((ServicePrototype.Argument) element).getName(), value.toString());
-//			}
+			if (element instanceof String) {
+				setErrorMessage(null);
+				if (value != null && !value.toString().isEmpty()) {
+					if (!validateVariable(value, element)) {
+						setErrorMessage("'" + value + "' is not a suitable value for template substitution");
+					}
+				}
+				templateVars.put(((String) element), value.toString());
+			}
 			getViewer().update(element, null);
 		}
 
@@ -203,6 +199,11 @@ public class BulkImportResource extends WizardPage {
 		setDescription("Specify a local folder or an external URL to import resources from");
 	}
 
+	public boolean validateVariable(Object value, Object element) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
@@ -214,18 +215,29 @@ public class BulkImportResource extends WizardPage {
 		lblNewLabel.setText("Adapter type");
 
 		combo = new Combo(container, SWT.READ_ONLY);
+		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (combo.getSelectionIndex() > 0) {
+					adapter = Activator.klab().getResourceAdapter(getSelectedAdapter());
+					mergeResources.setSelection(adapter.isMultipleResources());
+				}
+			}
+
+		});
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		Label lblNewLabel_1 = new Label(container, SWT.NONE);
 		lblNewLabel_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 		lblNewLabel_1.setText("URL or folder");
-
 		combo.add(NO_CHOICE);
 		for (ResourceAdapterReference adapter : Activator.klab().getResourceAdapters()) {
-			combo.add(adapter.getName());
+			if (!adapter.isFileBased()) {
+				combo.add(adapter.getName() + (adapter.getLabel() == null ? "" : (" - " + adapter.getLabel())));
+			}
 		}
 		combo.select(0);
-
+		
 		text = new Text(container, SWT.BORDER);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -233,9 +245,11 @@ public class BulkImportResource extends WizardPage {
 				if (vars.size() > 0) {
 					templateLabel.setEnabled(true);
 					table.setEnabled(true);
+					mergeResources.setEnabled(true);
 					tableViewer.setInput(vars);
 				} else {
 					templateLabel.setEnabled(false);
+					mergeResources.setEnabled(false);
 					table.setEnabled(false);
 				}
 			}
@@ -264,7 +278,10 @@ public class BulkImportResource extends WizardPage {
 		templateLabel.setEnabled(false);
 		templateLabel.setText("Template variables");
 		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
+		
+		mergeResources = new Button(container, SWT.CHECK);
+		mergeResources.setEnabled(false);
+		mergeResources.setText("Merge");
 
 		tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
 //		tableViewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
@@ -305,6 +322,12 @@ public class BulkImportResource extends WizardPage {
 
 	}
 
+	protected String getSelectedAdapter() {
+		String text = combo.getText();
+		int ns = text.indexOf(' ');
+		return ns > 0 ? text = text.substring(0, ns) : text;
+	}
+	
 	public String getAdapter() {
 		return combo.getText().equals(NO_CHOICE) ? null : combo.getText();
 	}

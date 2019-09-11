@@ -187,8 +187,8 @@ public class Model extends KimObject implements IModel {
 		this.behavior = new Behavior(model.getBehavior(), this);
 
 		/*
-		 * validate typechain, units and final result vs. observable artifact type - AFTER
-		 * the behavior has been processed!
+		 * validate typechain, units and final result vs. observable artifact type -
+		 * AFTER the behavior has been processed!
 		 */
 		validateTypechain(monitor);
 
@@ -270,8 +270,11 @@ public class Model extends KimObject implements IModel {
 			mergeGeometry(geometry, monitor);
 		}
 
-		mergeGeometry(getCoverage(monitor).asGeometry(), monitor);
-
+		Scale cov =  getCoverage(monitor);
+		if (cov != null) {
+			mergeGeometry(cov.asGeometry(), monitor);
+		}
+		
 		if (geometry == null || geometry.isEmpty()) {
 			geometry = Geometry.scalar();
 		}
@@ -460,7 +463,9 @@ public class Model extends KimObject implements IModel {
 			} else if (!geometry.isEmpty()) {
 				this.geometry = ((Geometry) this.geometry).merge(geometry);
 				if (this.geometry == null) {
-					monitor.error("model " + getName() + " uses inconsistent space/time geometries across the computational chain",
+					monitor.error(
+							"model " + getName()
+									+ " uses inconsistent space/time geometries across the computational chain",
 							this.getStatement());
 					setErrors(true);
 				}
@@ -797,14 +802,18 @@ public class Model extends KimObject implements IModel {
 	public Scale getCoverage(IMonitor monitor) throws KlabException {
 
 		if (this.coverage == null) {
-
-			this.coverage = Scale.create(behavior == null ? new ArrayList<>() : behavior.getExtents(monitor));
-			if (resourceCoverage != null) {
-				this.coverage = this.coverage.merge(resourceCoverage, LogicalConnector.INTERSECTION);
-			}
-			Scale nsScale = namespace.getCoverage(monitor);
-			if (nsScale != null) {
-				this.coverage = this.coverage.merge(nsScale, LogicalConnector.INTERSECTION);
+			try {
+				this.coverage = Scale.create(behavior == null ? new ArrayList<>() : behavior.getExtents(monitor));
+				if (resourceCoverage != null) {
+					this.coverage = this.coverage.merge(resourceCoverage, LogicalConnector.INTERSECTION);
+				}
+				Scale nsScale = namespace.getCoverage(monitor);
+				if (nsScale != null) {
+					this.coverage = this.coverage.merge(nsScale, LogicalConnector.INTERSECTION);
+				}
+			} catch (Throwable e) {
+				monitor.error(e);
+				this.inactive = true;
 			}
 		}
 		return this.coverage;

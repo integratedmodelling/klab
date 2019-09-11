@@ -1288,6 +1288,7 @@ public enum Resources implements IResourceService {
 			ref.setFileBased(resourceAdapters.get(adapter) instanceof IFileResourceAdapter);
 			ref.getExportCapabilities().putAll(Resources.INSTANCE.getResourceAdapter(adapter).getImporter()
 					.getExportCapabilities((IResource) null));
+			ref.setMultipleResources(resourceAdapters.get(adapter).getImporter().acceptsMultiple());
 			ret.add(ref);
 		}
 		return ret;

@@ -126,4 +126,10 @@ public class WcsImporter implements IResourceImporter {
         return false;
     }
 
+	@Override
+	public boolean acceptsMultiple() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

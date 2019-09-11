@@ -241,7 +241,7 @@ public class KimNotifier implements Kim.Notifier {
 						 * validate units vs. coverage and ensure that they're coherent with the
 						 * geometry. Learning models don't get to play.
 						 */
-						if (!((Model) object).isErrors() && !((Model)object).isLearning()) {
+						if (!((Model) object).isErrors() && !((Model)object).isLearning() && !((Model)object).isInactive()) {
 							Models.INSTANCE.index((IModel) object, monitor);
 						}
 					} catch (KlabException e) {

@@ -2,6 +2,7 @@
  * Parameters for the CDM adapter
  */
  annotation cdm 	
-	"" 	
+	"The CDM adapter is used to handle Common Data Model data sources, including NetCDF, Grib, NML and OpenDAP resources." 	
+	label "CDM protocol adapter (NetCDF, OpenDAP, GRIB)" 	
  {
  }

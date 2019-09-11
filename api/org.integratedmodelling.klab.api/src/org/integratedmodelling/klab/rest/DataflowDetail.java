@@ -12,12 +12,14 @@ public class DataflowDetail {
 	private String htmlDescription;
 	private boolean rateable;
 	private int rating;
+	private int averageRating;
 
 	public DataflowDetail() {}
 	
-	public DataflowDetail(String dataflowId, String htmlDescription) {
+	public DataflowDetail(String dataflowId, String htmlDescription, boolean rateable) {
 		this.dataflowId = dataflowId;
 		this.htmlDescription = htmlDescription;
+		this.rateable = rateable;
 	}
 	
 	public String getDataflowId() {
@@ -50,6 +52,14 @@ public class DataflowDetail {
 
 	public void setRateable(boolean rateable) {
 		this.rateable = rateable;
+	}
+
+	public int getAverageRating() {
+		return averageRating;
+	}
+
+	public void setAverageRating(int averageRating) {
+		this.averageRating = averageRating;
 	}
 
 }

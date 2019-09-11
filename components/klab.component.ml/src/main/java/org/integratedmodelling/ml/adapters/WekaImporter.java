@@ -195,4 +195,10 @@ public class WekaImporter implements IResourceImporter {
         return false;
     }
 
+	@Override
+	public boolean acceptsMultiple() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

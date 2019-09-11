@@ -123,4 +123,10 @@ public class RasterImporter extends AbstractFilesetImporter {
         return false;
     }
 
+	@Override
+	public boolean acceptsMultiple() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

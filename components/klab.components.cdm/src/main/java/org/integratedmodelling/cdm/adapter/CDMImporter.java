@@ -5,18 +5,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
-import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
+import org.integratedmodelling.klab.api.data.adapters.IMultipleResourceImporter;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Triple;
 
-public class CDMImporter implements IResourceImporter {
+public class CDMImporter implements IMultipleResourceImporter {
 
 	@Override
 	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
@@ -24,6 +25,13 @@ public class CDMImporter implements IResourceImporter {
 		return null;
 	}
 
+	@Override
+	public Collection<Builder> importResources(List<String> importLocation, IParameters<String> userData,
+			IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
 		// TODO Auto-generated method stub
@@ -66,5 +74,12 @@ public class CDMImporter implements IResourceImporter {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public boolean acceptsMultiple() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 
 }
