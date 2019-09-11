@@ -11,6 +11,8 @@ public class DataflowState {
 	private boolean monitorable;
 	private double progress;
 	private String contextId;
+	private int rating;
+	private String comment;
 
 	public String getNodeId() {
 		return nodeId;
@@ -50,6 +52,22 @@ public class DataflowState {
 
 	public void setContextId(String contextId) {
 		this.contextId = contextId;
+	}
+
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

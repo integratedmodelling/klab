@@ -357,6 +357,10 @@ public class Range implements IValueMediator {
 		return new Range(start, end, false, rightOpen);
 	}
 
+	public static Range create(double start, double end) {
+		return new Range(start, end, false, false);
+	}
+
 	public static Range create(String string) {
 		return new Range(string);
 	}

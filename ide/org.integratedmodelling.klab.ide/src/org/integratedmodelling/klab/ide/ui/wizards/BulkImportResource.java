@@ -26,6 +26,11 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.ide.ui.wizards;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -37,16 +42,16 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -59,17 +64,8 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
-import org.integratedmodelling.klab.ide.ui.wizards.NewResource.PropertyContentProvider;
-import org.integratedmodelling.klab.ide.ui.wizards.NewResource.PropertyLabelProvider;
-import org.integratedmodelling.klab.ide.ui.wizards.NewResource.ValueSupport;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
-import org.integratedmodelling.klab.rest.ServicePrototype;
-import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
-import org.integratedmodelling.klab.utils.StringUtil;
-import org.integratedmodelling.klab.utils.UrlValidator;
-import org.integratedmodelling.klab.utils.Utils;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
+import org.integratedmodelling.klab.utils.TemplateUtil;
 
 public class BulkImportResource extends WizardPage {
 
@@ -77,6 +73,10 @@ public class BulkImportResource extends WizardPage {
 	private Combo combo;
 
 	private static String NO_CHOICE = "All applicable (may result in errors)";
+	private Table table;
+	private Label templateLabel;
+	private TableViewer tableViewer;
+	private Map<String, String> templateVars = new HashMap<>();
 
 	public class ValueSupport extends EditingSupport {
 
@@ -143,8 +143,8 @@ public class BulkImportResource extends WizardPage {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof ResourceAdapterReference) {
-				return ((ResourceAdapterReference) inputElement).getParameters().getArguments().toArray();
+			if (inputElement instanceof Collection) {
+				return ((Collection<?>) inputElement).toArray();
 			}
 			return new Object[] {};
 		}
@@ -155,13 +155,18 @@ public class BulkImportResource extends WizardPage {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			return columnIndex == 0
-					? ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/property.gif")
-					: null;
+			return null;
 		}
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof String) {
+				if (columnIndex == 0) {
+					return (String)element;
+				} else if (columnIndex == 1) {
+					return templateVars.get((String)element);
+				}
+			}
 //			if (element instanceof ServicePrototype.Argument) {
 //				ServicePrototype.Argument arg = (ServicePrototype.Argument) element;
 //				switch (columnIndex) {
@@ -190,7 +195,7 @@ public class BulkImportResource extends WizardPage {
 			return null;
 		}
 	}
-	
+
 	public BulkImportResource(EResourceFolder folder) {
 		super("wizardPage");
 		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
@@ -220,9 +225,22 @@ public class BulkImportResource extends WizardPage {
 			combo.add(adapter.getName());
 		}
 		combo.select(0);
-		
-				text = new Text(container, SWT.BORDER);
-				text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		text = new Text(container, SWT.BORDER);
+		text.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				List<String> vars = TemplateUtil.getTemplateVariables(text.getText().trim());
+				if (vars.size() > 0) {
+					templateLabel.setEnabled(true);
+					table.setEnabled(true);
+					tableViewer.setInput(vars);
+				} else {
+					templateLabel.setEnabled(false);
+					table.setEnabled(false);
+				}
+			}
+		});
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Button btnChooseFolder = new Button(container, SWT.NONE);
 		btnChooseFolder.addMouseListener(new MouseAdapter() {
@@ -241,16 +259,16 @@ public class BulkImportResource extends WizardPage {
 			}
 		});
 		btnChooseFolder.setText("Choose folder");
-		
-		Label lblNewLabel_2 = new Label(container, SWT.NONE);
-		lblNewLabel_2.setEnabled(false);
-		lblNewLabel_2.setText("Template variables");
+
+		templateLabel = new Label(container, SWT.NONE);
+		templateLabel.setEnabled(false);
+		templateLabel.setText("Template variables");
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
-		
-		TableViewer tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+
+		tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
 //		tableViewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
-		Table table = tableViewer.getTable();
+		table = tableViewer.getTable();
 		table.setEnabled(false);
 		table.addMouseListener(new MouseAdapter() {
 			@Override
@@ -284,11 +302,6 @@ public class BulkImportResource extends WizardPage {
 
 		tableViewer.setLabelProvider(new PropertyLabelProvider());
 		tableViewer.setContentProvider(new PropertyContentProvider());
-		
-		
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
 
 	}
 

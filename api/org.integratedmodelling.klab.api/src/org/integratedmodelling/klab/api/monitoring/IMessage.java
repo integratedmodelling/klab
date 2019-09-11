@@ -256,7 +256,7 @@ public interface IMessage {
 		/**
 		 * Task lifecycle F -> B
 		 */
-		TaskInterrupted, DataflowNodeDetail,
+		TaskInterrupted, DataflowNodeDetail, DataflowNodeRating,
 
 		/*
 		 * --- Search-class types ---

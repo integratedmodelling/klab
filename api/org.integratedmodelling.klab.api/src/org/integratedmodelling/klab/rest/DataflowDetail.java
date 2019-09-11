@@ -10,6 +10,8 @@ public class DataflowDetail {
 
 	private String dataflowId;
 	private String htmlDescription;
+	private boolean rateable;
+	private int rating;
 
 	public DataflowDetail() {}
 	
@@ -32,6 +34,22 @@ public class DataflowDetail {
 
 	public void setHtmlDescription(String htmlDescription) {
 		this.htmlDescription = htmlDescription;
+	}
+
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
+	public boolean isRateable() {
+		return rateable;
+	}
+
+	public void setRateable(boolean rateable) {
+		this.rateable = rateable;
 	}
 
 }

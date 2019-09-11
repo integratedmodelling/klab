@@ -2,11 +2,15 @@ package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TemplateUtils {
+/**
+ * 
+ * @author ferdinando.villa
+ *
+ */
+public class TemplateUtil {
 
 	/**
 	 * Find all {xxx} variables in string, return the list of template variables.
@@ -27,34 +31,6 @@ public class TemplateUtils {
 		return ret;
 	}
 
-	/**
-	 * Return all the substituted templates after substituting the passed variables.
-	 * The substitution for each variable can be null, a single POD, a {@link Range}
-	 * or a collection of objects.
-	 * 
-	 * @param template
-	 * @param vars
-	 * @return
-	 */
-	public static List<String> expandMatches(String template, Map<String, Object> vars) {
-		List<String> ret = new ArrayList<>();
-
-		/*
-		 * extract the variables
-		 */
-
-		/*
-		 * set the vars not in the map to null and substitute any single value in it
-		 * with singleton lists
-		 */
-
-		/*
-		 * take the cartesian product of each variable that is represented in the vars
-		 * and substitute one by one
-		 */
-
-		return ret;
-	}
 
 	public static void main(String[] args) {
 		for (String var : getTemplateVariables(
