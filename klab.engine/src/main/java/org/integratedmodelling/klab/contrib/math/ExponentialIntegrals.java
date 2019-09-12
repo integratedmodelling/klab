@@ -371,7 +371,17 @@ public class ExponentialIntegrals {
 			return -Math.exp(x) * y * (1.0 + y * pol(6, y, p) / pol(5, y, q));
 		}
 	}
+	
+	public static double enx(double x) {
+		double a[] = new double[2];
+		enx(x, 0, 1, a);
+		return a[1];
+	}
 
+	public static void main(String[] args) {
+		System.out.println("? " + enx(2.3));
+	}
+	
 	public static void enx(double x, int n1, int n2, double a[]) {
 		if (x <= 1.5) {
 			int i;

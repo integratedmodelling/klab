@@ -184,6 +184,15 @@ abstract class ActionBase extends Script {
     def exponentialIntegral(double d) {
         ExponentialIntegrals.exponentialIntegralEi(d);
     }
+	
+	/**
+	 * Exponential integral
+	 * @param d
+	 * @return
+	 */
+	def enx(double d) {
+		ExponentialIntegrals.enx(d);
+	}
 
     /**
      * Missing math functions, using Apache math
