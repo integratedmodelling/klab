@@ -38,7 +38,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Resources can be "granular", i.e. composed of multiple resources with individual 
   geometry that give the full resource geometry when merged. Mostly unimplemented.
 ### Fixed
-- Learning models are no longer indexed.
+- Learning models and void models are no longer indexed.
+- Catch exceptions from botched URN used for model coverage at indexing so that boot
+  continues instead of aborting without notice.
 ### Removed
 
 ## [0.10.0.179] -- 2019/09/05
