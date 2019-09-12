@@ -36,6 +36,13 @@ public class ScaleReference {
 	private double timeResolution;
 	private String timeResolutionDescription;
 	private String timeUnit;
+	
+	/*
+	 * If this is not empty, user wants to change the scale for an existing
+	 * context.
+	 */
+	private String contextId = null;
+	
 //	private boolean unlockSpace;
 //	private boolean unlockTime;
 	// FIXME REMOVE
@@ -209,5 +216,13 @@ public class ScaleReference {
 
 	public void setSpaceResolutionConverted(double spaceResolutionConverted) {
 		this.spaceResolutionConverted = spaceResolutionConverted;
+	}
+
+	public String getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(String contextId) {
+		this.contextId = contextId;
 	}
 }

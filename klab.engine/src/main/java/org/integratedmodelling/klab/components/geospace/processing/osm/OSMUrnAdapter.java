@@ -8,7 +8,6 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
@@ -44,7 +43,7 @@ public class OSMUrnAdapter implements IUrnAdapter {
 						data.get(Geocoder.GEOMETRY_FIELD, com.vividsolutions.jts.geom.Geometry.class),
 						Projection.getLatLon());
 				// TODO adjust
-				shape.simplifyIfNecessary(8000, 8000);
+				shape.simplifyIfNecessary(5000, 8000);
 				scale = Scale.create(shape);
 			} else {
 				scale = Scale.empty();
