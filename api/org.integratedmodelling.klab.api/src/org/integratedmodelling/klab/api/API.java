@@ -143,13 +143,13 @@ public interface API {
 		 * <br/>
 		 * <b>Authentication:</b> open
 		 */
-		public static final String AUTHENTICATE_ENGINE = "/authenticate/engine";
+		public static final String AUTHENTICATE_ENGINE = "/api/auth-cert/engine";
 
 		/**
 		 * Called by nodes on hubs when authenticating with them. Parameters like the
 		 * engine version.
 		 */
-		public static final String AUTHENTICATE_NODE = "/authenticate/node";
+		public static final String AUTHENTICATE_NODE = "/api/auth-cert/node";
 
 		public static interface INDEXING {
 

@@ -31,7 +31,7 @@ public class Hub {
 
 	int port = IConfigurationService.DEFAULT_HUB_PORT;
 	private ConfigurableApplicationContext context;
-	private String contextPath = "/klab";
+	private String contextPath = "/hub";
 	private HubAuthenticationManager authManager;
 	private ICertificate certificate;
     FileCatalog<Group> defaultGroups;
@@ -43,7 +43,7 @@ public class Hub {
 	}
 
 	public String getLocalAddress() {
-		return "http://127.0.0.1:" + port + contextPath;
+		return "http://192.168.0.104:" + port + contextPath;
 	}
 
 	public void run(String[] args) {
@@ -74,7 +74,7 @@ public class Hub {
 		Hub ret = new Hub(options, certificate);
 
 		if (!ret.boot(options)) {
-			throw new KlabException("node failed to start");
+			throw new KlabException("hub failed to start");
 		}
 
 		return ret;
