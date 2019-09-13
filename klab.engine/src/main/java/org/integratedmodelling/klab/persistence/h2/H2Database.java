@@ -81,7 +81,7 @@ public class H2Database {
 	// single-user
 	// repetitive operations) or get one from the pool at every use (default).
 	Connection connection = null;
-	
+
 	// these for the old-style schema functions
 	Set<String> tables = null;
 	private Map<Class<?>, Schema> schemata = new HashMap<>();
@@ -91,7 +91,6 @@ public class H2Database {
 	private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
 	private List<Pair<Class<?>, Function<Map<String, Object>, ?>>> deserializers = new ArrayList<>();
 
-	
 	public static class Builder {
 
 		private List<Structure<Object>> tables = new ArrayList<>();

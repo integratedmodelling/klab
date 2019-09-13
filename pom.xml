@@ -108,7 +108,7 @@
 			others. Spring security latest is currently requiring 5.0.4, implying boot 
 			2.0.0 -->
 		<spring-boot-version>2.0.0.RELEASE</spring-boot-version>
-		<spring-version>5.0.5.RELEASE</spring-version>
+		<spring-version>5.0.4.RELEASE</spring-version>
 		<junit-version>4.12</junit-version>
 		<jackson-version>2.9.5</jackson-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 

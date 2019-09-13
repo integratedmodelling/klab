@@ -17,6 +17,8 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Triple;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 public class CDMImporter implements IMultipleResourceImporter {
 
 	@Override
@@ -28,10 +30,17 @@ public class CDMImporter implements IMultipleResourceImporter {
 	@Override
 	public Collection<Builder> importResources(List<String> importLocation, IParameters<String> userData,
 			IMonitor monitor) {
+		
+		Geometry geometry = importResource(importLocation.get(0), userData, monitor);
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	Geometry importResource(String url, IParameters<String> userData, IMonitor monitor) {
+		return null;
+	}
+
 	@Override
 	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
 		// TODO Auto-generated method stub
@@ -77,9 +86,7 @@ public class CDMImporter implements IMultipleResourceImporter {
 
 	@Override
 	public boolean acceptsMultiple() {
-		// TODO Auto-generated method stub
 		return true;
 	}
-
 
 }

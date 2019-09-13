@@ -44,7 +44,7 @@ public class Table<T> implements ITable<T> {
 		}
 
 	}
-// CdlNPffrAE63fTeIn1VG
+
 	public static Structure<Object> structure(String name) {
 		return new StructureImpl(name);
 	}

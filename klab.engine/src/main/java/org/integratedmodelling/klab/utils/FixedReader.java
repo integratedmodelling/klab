@@ -37,7 +37,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
-import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
 
@@ -206,6 +205,20 @@ public class FixedReader {
         }
     }
 
+    public static List<FixedReader> parse(URL u, int[] fieldBoundaries) throws KlabIOException {
+
+        BufferedReader in;
+        InputStream is = null;
+        try {
+//            URL u = new URL(url);
+            is = u.openStream();
+            in = new BufferedReader(new InputStreamReader(is), 40000000);
+            return new RecordList(in, fieldBoundaries);
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+    }
+    
     public static List<FixedReader> parse(String url, int[] fieldBoundaries) throws KlabIOException {
 
         BufferedReader in;
@@ -219,4 +232,5 @@ public class FixedReader {
             throw new KlabIOException(e);
         }
     }
+    
 }

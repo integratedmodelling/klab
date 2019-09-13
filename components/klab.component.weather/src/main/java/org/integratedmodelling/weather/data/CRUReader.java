@@ -336,7 +336,7 @@ public class CRUReader {
 
 						WeatherKbox.INSTANCE.store(ws);
 
-						WeatherFactory.logger.info("CRU station created: " + ws);
+						Logging.INSTANCE.info("CRU station created: " + ws);
 
 						nStations++;
 					}
@@ -347,7 +347,7 @@ public class CRUReader {
 			}
 		}
 
-		WeatherFactory.logger.info("Created " + nStations + " CRU weather stations");
+		Logging.INSTANCE.info("Created " + nStations + " CRU weather stations");
 
 		if (nc != null) {
 			try {

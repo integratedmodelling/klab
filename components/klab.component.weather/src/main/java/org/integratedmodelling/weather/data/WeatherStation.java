@@ -58,6 +58,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -280,7 +281,7 @@ public class WeatherStation {
 			/*
 			 * if this is a CRU station, use CRU strategy
 			 */
-			if (_source.equals("CRU") && WeatherFactory.get().getCRUReader() != null) {
+			if (_source.equals("CRU") && WeatherFactory.INSTANCE.getCRUReader() != null) {
 				storeCRUData();
 			} else {
 				/*
@@ -294,11 +295,11 @@ public class WeatherStation {
 
 	private void storeCRUData() throws KlabException {
 
-		WeatherFactory.logger.info("interpolating and storing CRU data for " + _id);
+		Logging.INSTANCE.info("interpolating and storing CRU data for " + _id);
 
 		if (!dataMap.containsKey(_id + ":" + Weather.PRECIPITATION_MM + "@" + _lastKnownYear)) {
 			for (int year = Math.max(_firstKnownYear, 1970); year <= _lastKnownYear; year++) {
-				Map<String, double[]> data = WeatherFactory.get().getCRUReader().readData(_latitude, _longitude, year);
+				Map<String, double[]> data = WeatherFactory.INSTANCE.getCRUReader().readData(_latitude, _longitude, year);
 				for (String variable : data.keySet()) {
 					String id = _id + ":" + variable + "@" + year;
 					dataMap.put(id, data.get(variable));
@@ -308,9 +309,9 @@ public class WeatherStation {
 
 			stationSet.add(_id);
 			timestampMap.put(_id,
-					WeatherFactory.get().getCRUReader().getDataFile(Weather.PRECIPITATION_MM).lastModified());
+					WeatherFactory.INSTANCE.getCRUReader().getDataFile(Weather.PRECIPITATION_MM).lastModified());
 
-			WeatherFactory.logger
+			Logging.INSTANCE
 					.info("stored CRU data for " + _id + " (" + _firstKnownYear + " to " + _lastKnownYear + ")");
 		}
 
@@ -664,7 +665,7 @@ public class WeatherStation {
 		this._source = "GHCND";
 		this._type = "RAW";
 
-		checkStorage();
+//		checkStorage();
 
 		_id = id;
 		_altitude = alt;
@@ -679,16 +680,17 @@ public class WeatherStation {
 	}
 
 	public void checkStorage() {
+
 		if (db == null) {
 
 			File dpath = Configuration.INSTANCE.getDataPath("weather");
 			dpath.mkdirs();
 			db = DBMaker.fileDB(new File(dpath + File.separator + "stationdata")).closeOnJvmShutdown().make();
 
-//			dataMap = db.treeMap("datamap");
-//			nansMap = db.treeMap("nansmap");
-//			stationSet = db.treeSet("stationset");
-//			timestampMap = db.treeMap("timestamps");
+			dataMap = db.treeMap("datamap", Serializer.STRING, Serializer.DOUBLE_ARRAY).createOrOpen();
+			nansMap = db.treeMap("nansmap", Serializer.STRING, Serializer.INTEGER).createOrOpen();
+			stationSet = db.treeSet("stationset", Serializer.STRING).createOrOpen();
+			timestampMap = db.treeMap("timestamps", Serializer.STRING, Serializer.LONG).createOrOpen();
 
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override

@@ -27,49 +27,227 @@
 package org.integratedmodelling.weather.data;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FixedReader;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.URLUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import com.ibm.icu.util.Calendar;
 
-public class WeatherFactory {
+public enum WeatherFactory {
 
-	public static String baseURL = "http://150.241.222.1/ghcn";
-	private static WeatherFactory _this;
-	static Log logger = LogFactory.getLog(WeatherFactory.class);
+	INSTANCE;
 
-	public static WeatherFactory get() {
-		if (_this == null) {
-			_this = new WeatherFactory();
-		}
-		return _this;
-	}
-
-	/**
-	 * Pass the base URL that will find the GHCN dataset right under it. Do not add
-	 * a slash at the end. If this is not used prior to calling checkDatabase(), the
-	 * default (slow) will be used.
-	 * 
-	 * @param url
-	 */
-	public static void setBaseURL(String url) {
-		baseURL = url;
-	}
+	public static String[] GHCN_URLS = { "https://www1.ncdc.noaa.gov/pub/data/ghcn/daily",
+			"http://150.241.222.1/ghcn" };
 
 	private CRUReader cruReader;
+
+	private final static String LAST_UPDATE_PROPERTY = "last.catalog.update";
+
+	/**
+	 * Call with the URL (file or http) to the
+	 * 
+	 * @param catalogFile
+	 */
+	public void setupGHCND(URL catalogFile) {
+
+		try {
+
+			boolean update = true;
+			File wpath = Configuration.INSTANCE.getDataPath("ghcnd");
+			Properties properties = new Properties();
+			File pfile = new File(wpath + File.separator + "ghcnd.properties");
+			if (pfile.exists()) {
+				try (InputStream inp = new FileInputStream(pfile)) {
+					properties.load(inp);
+				}
+			}
+
+			DateTime now = new DateTime();
+			if (properties.getProperty(LAST_UPDATE_PROPERTY) != null) {
+				DateTime then = new DateTime(properties.getProperty(LAST_UPDATE_PROPERTY));
+				if (Days.daysBetween(now, then).getDays() < 30) {
+					update = false;
+				}
+			}
+
+			if (!update && WeatherKbox.INSTANCE.count() < 100000) {
+				update = true;
+			}
+
+			if (update) {
+				URL fInventory = new URL(catalogFile + "/ghcnd-inventory.txt");
+				URL fStations = new URL(catalogFile + "/ghcnd-stations.txt");
+
+				File tempStations = File.createTempFile("stations", ".txt");
+				File tempInventory = File.createTempFile("inventory", ".txt");
+
+				URLUtils.copy(fInventory, tempInventory);
+				URLUtils.copy(fStations, tempStations);
+
+				List<FixedReader> stations = FixedReader.parse(tempStations,
+						new int[] { 0, 12, 21, 31, 38, 41, 72, 76, 80 });
+				List<FixedReader> inventor = FixedReader.parse(tempInventory, new int[] { 0, 12, 21, 31, 35, 40, 45 });
+
+				Iterator<FixedReader> inventory = inventor.iterator();
+				FixedReader invLine = inventory.next();
+
+				if (WeatherKbox.INSTANCE.getDatabase() != null) 
+				WeatherKbox.INSTANCE.getDatabase().preallocateConnection();
+
+				/**
+				 * Format of GHCN station file (ghcnd-stations.txt)
+				 * 
+				 * <pre>
+				 * ------------------------------ 
+				 * Variable Columns Type
+				 * ------------------------------ 
+				 * ID 1-11 Character 
+				 * LATITUDE 13-20 Real
+				 * LONGITUDE 22-30 Real 
+				 * ELEVATION 32-37 Real 
+				 * STATE 39-40 Character 
+				 * NAME 42-71 Character 
+				 * GSNFLAG 73-75 Character 
+				 * HCNFLAG 77-79 Character 
+				 * WMOID 81-85 Character 
+				 * ------------------------------
+				 * </pre>
+				 */
+				int i = 0;
+				for (FixedReader fr : stations) {
+
+					String id = fr.nextString().trim();
+					double lat = fr.nextDouble();
+					double lon = fr.nextDouble();
+					double alt = fr.nextDouble();
+
+					/*
+					 * DO NOT REMOVE - side effects of nextString() are crucial.
+					 */
+					String state = fr.nextString().trim();
+					String name = fr.nextString().trim();
+
+					/*
+					 * make a new object and store it
+					 */
+					WeatherStation ws = new WeatherStation(catalogFile.toString(), id, lat, lon, alt);
+
+					try {
+						/*
+						 * read the available data series from the inventory.
+						 */
+						while (invLine.nextString().trim().equals(id)) {
+
+							invLine.nextDouble();
+							invLine.nextDouble();
+							String varId = invLine.nextString();
+							int firstYear = invLine.nextInt();
+							int lastYear = invLine.nextInt();
+
+							ws._provided.put(varId, new Pair<Integer, Integer>(firstYear, lastYear));
+
+							if (inventory.hasNext()) {
+								invLine = inventory.next();
+							}
+						}
+						
+					} catch (Exception e) {
+						Logging.INSTANCE.error("shitty station: " + ws);
+						continue;
+					}
+
+					/*
+					 * we peeked already, so reset counter for next inventory line if we have more
+					 */
+					if (inventory.hasNext()) {
+						invLine.reset();
+					}
+
+					System.out.println(ws);
+
+					// NAH do the rest asynchronously and/or on-demand
+
+//				if (i >= startAt) {
+////					i++;
+//					try {
+//						// don't re-do it unless the data are not there. To force
+//						// cleanup of the stored data, remove the <datadir>/data
+//						// directory.
+//						ws.cacheData();
+//
+//					} catch (Throwable e) {
+//						Logging.INSTANCE
+//								.error("Data for station " + i + "th station: " + ws + " are unreadable; skipping");
+//						continue;
+//					}
+//					Logging.INSTANCE.info("Storing " + i + "th station: " + ws);
+//					try {
+//						WeatherKbox.INSTANCE.store(ws);
+//					} catch (Exception e) {
+//						Logging.INSTANCE.error(e);
+//					}
+////					try {
+////						FileUtils.writeStringToFile(leftover, "" + i);
+////					} catch (IOException e) {
+////						throw new KlabIOException(e);
+////					}
+//				} else {
+//					Logging.INSTANCE.info("Skipping " + i++ + "th station: " + ws);
+//				}
+				}
+
+				properties.setProperty(LAST_UPDATE_PROPERTY, now.toString());
+				try (OutputStream out = new FileOutputStream(pfile)) {
+					properties.store(out, null);
+				}
+			}
+			
+			for (WeatherStation s : WeatherKbox.INSTANCE) {
+				
+			}
+			
+			/*
+			 * a thread for each station (spawn groups of 2/4/X threads):
+			 * 
+			 * check stored file size against URL's (if available)
+			 * if != (>) previous: read all data again, update size & timestamp
+			 * Run every month and that's it
+			 */
+			
+			if (WeatherKbox.INSTANCE.getDatabase() != null) 
+			WeatherKbox.INSTANCE.getDatabase().deallocateConnection();
+
+//			FileUtils.deleteQuietly(leftover);
+
+		} catch (Throwable e) {
+			// I hate you
+			throw new KlabIOException(e);
+		}
+
+	}
+
+	public void setupCRU(URL repository) {
+
+	}
 
 	/*
 	 * ensures the passed kbox contains the full index to the weather stations.
@@ -77,6 +255,8 @@ public class WeatherFactory {
 	 * on a real server with fast disks and used through REST.
 	 */
 	public void checkDatabase() throws KlabException {
+
+		String baseURL = "http://150.241.222.1/ghcn";
 
 		/*
 		 * check paths first
@@ -111,7 +291,7 @@ public class WeatherFactory {
 		}
 
 		if (!(dataPath.exists() && dataPath.isDirectory() && dataPath.canRead())) {
-			logger.info("GHCND data directory not found at " + dataPath + ": no GHCND stations available");
+			Logging.INSTANCE.info("GHCND data directory not found at " + dataPath + ": no GHCND stations available");
 			return;
 		}
 
@@ -119,7 +299,7 @@ public class WeatherFactory {
 		long wscount = WeatherKbox.INSTANCE.count();
 
 		if (wscount > (stationCount + 100) && !leftover.exists()) {
-			logger.warn("setup was not performed: no lock file and " + (wscount - stationCount)
+			Logging.INSTANCE.warn("setup was not performed: no lock file and " + (wscount - stationCount)
 					+ " GHCND stations are present in the database");
 			return;
 		}
@@ -152,14 +332,6 @@ public class WeatherFactory {
 			}
 		}
 
-		/*
-		 * Format of GHCN station file (ghcnd-stations.txt)
-		 * ------------------------------ Variable Columns Type
-		 * ------------------------------ ID 1-11 Character LATITUDE 13-20 Real
-		 * LONGITUDE 22-30 Real ELEVATION 32-37 Real STATE 39-40 Character NAME 42-71
-		 * Character GSNFLAG 73-75 Character HCNFLAG 77-79 Character WMOID 81-85
-		 * Character ------------------------------
-		 */
 		if (fInv.exists() && fSta.exists()) {
 			stations = FixedReader.parse(fSta, new int[] { 0, 12, 21, 31, 38, 41, 72, 76, 80 });
 			inventor = FixedReader.parse(fInv, new int[] { 0, 12, 21, 31, 35, 40, 45 });
@@ -234,14 +406,14 @@ public class WeatherFactory {
 					ws.cacheData();
 
 				} catch (Throwable e) {
-					logger.error("Data for station " + i + "th station: " + ws + " are unreadable; skipping");
+					Logging.INSTANCE.error("Data for station " + i + "th station: " + ws + " are unreadable; skipping");
 					continue;
 				}
-				logger.info("Storing " + i + "th station: " + ws);
+				Logging.INSTANCE.info("Storing " + i + "th station: " + ws);
 				try {
 					WeatherKbox.INSTANCE.store(ws);
 				} catch (Exception e) {
-					logger.error(e);
+					Logging.INSTANCE.error(e);
 				}
 				try {
 					FileUtils.writeStringToFile(leftover, "" + i);
@@ -249,7 +421,7 @@ public class WeatherFactory {
 					throw new KlabIOException(e);
 				}
 			} else {
-				logger.info("Skipping " + i++ + "th station: " + ws);
+				Logging.INSTANCE.info("Skipping " + i++ + "th station: " + ws);
 			}
 		}
 
@@ -297,6 +469,10 @@ public class WeatherFactory {
 
 	public CRUReader getCRUReader() {
 		return cruReader;
+	}
+
+	public static void main(String[] args) throws Exception {
+		INSTANCE.setupGHCND(new URL(GHCN_URLS[0]));
 	}
 
 }

@@ -54,6 +54,17 @@ public class Parameters<T> implements IParameters<T> {
         }
         return new Parameters(inp);
     }
+    
+    /**
+     * Wrap an existing map and enjoy.
+     * 
+     * @param <T>
+     * @param map
+     * @return
+     */
+    public static <T> Parameters<T> wrap(Map<T, Object> map) {
+    	return new Parameters<T>(map);
+    }
 
     /**
      * Only used when the object must be serialized through reflection.

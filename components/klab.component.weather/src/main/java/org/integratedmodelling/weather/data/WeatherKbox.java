@@ -26,15 +26,14 @@
  *******************************************************************************/
 package org.integratedmodelling.weather.data;
 
-import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -42,7 +41,7 @@ import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.SQL;
 
 // it's just a DBTable - finish that
-public enum WeatherKbox {
+public enum WeatherKbox implements Iterable<WeatherStation> {
 
 	INSTANCE;
 	
@@ -172,7 +171,7 @@ public enum WeatherKbox {
 	 */
 	public long count() throws KlabException {
 
-		if (!database.hasTable("weatherstations")) {
+		if (database == null || !database.hasTable("weatherstations")) {
 			return 0;
 		}
 
@@ -227,7 +226,7 @@ public enum WeatherKbox {
 				String psta = rs.getString(7);
 				String pend = rs.getString(8);
 
-				ret = new WeatherStation(WeatherFactory.baseURL, id, latitude, longitude, elevation);
+//				ret = new WeatherStation(WeatherFactory.baseURL, id, latitude, longitude, elevation);
 				ret.parseVarsDescriptors(pvar, psta, pend);
 
 				if (id.startsWith("CRU_")) {
@@ -269,6 +268,13 @@ public enum WeatherKbox {
 
 	public void remove(String id) throws KlabException {
 		database.execute("DELETE FROM weatherstations WHERE id = '" + id + "'");
+	}
+
+
+	@Override
+	public Iterator<WeatherStation> iterator() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
