@@ -93,7 +93,7 @@ public class H2Database {
 
 	public static class Builder {
 
-		private List<Structure<Object>> tables = new ArrayList<>();
+		private List<Structure> tables = new ArrayList<>();
 		private String name;
 		private boolean persistent;
 		private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
@@ -104,7 +104,7 @@ public class H2Database {
 			this.persistent = persistent;
 		}
 
-		public Builder table(Structure<Object> structure) {
+		public Builder table(Structure structure) {
 			tables.add(structure);
 			return this;
 		}
@@ -363,8 +363,6 @@ public class H2Database {
 
 	public void query(String sql, SQL.ResultHandler handler) throws KlabException {
 
-		// System.out.println(sql);
-
 		Connection connection = null;
 		Statement stmt = null;
 		ResultSet result = null;
@@ -397,6 +395,69 @@ public class H2Database {
 			}
 		}
 	}
+	
+	public DBIterator query(String sql) {
+
+		Connection connection = null;
+		Statement stmt = null;
+		try {
+			connection = getConnection();
+			stmt = connection.createStatement();
+			return new DBIterator(stmt.executeQuery(sql), stmt, connection);
+		} catch (SQLException e) {
+			throw new KlabStorageException(e);
+		}
+	}
+	
+	public class DBIterator {
+
+		public ResultSet result;
+		public boolean finished;
+		private Statement stmt;
+		private Connection connection;
+		
+		DBIterator(ResultSet res, Statement stmt, Connection connection) {
+			this.result = res;
+			this.stmt = stmt;
+			this.connection = connection;
+			try {
+				this.finished = !res.first();
+			} catch (SQLException e) {
+				finish();
+			}
+		}
+				
+		public void finish() {
+
+			try {
+				if (result != null) {
+					result.close();
+				}
+				if (stmt != null) {
+					stmt.close();
+				}
+				if (connection != null) {
+					// connection.close();
+				}
+			} catch (Exception e) {
+				throw new KlabStorageException(e);
+			}
+		}
+
+		public boolean hasNext() {
+			return finished;
+		}
+		
+		public void advance() {
+			try {
+				this.finished = !result.next();
+			} catch (SQLException e) {
+				finish();
+			}
+		}
+		
+	}
+	
 
 	public static H2Database create(String kboxName) {
 		if (datastores.get(kboxName) != null) {

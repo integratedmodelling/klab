@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.data.general.IPersistentTable;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -276,13 +278,13 @@ public class CRUReader {
 	 * 
 	 * @throws Exception
 	 */
-	public void createStations() throws KlabException {
+	public void createStations(IPersistentTable<String, WeatherStation> wbox, IMonitor monitor) throws KlabException {
 
 		/*
 		 * if we have this, the last one built by the algorithm below, we have them all.
 		 */
 		String LAST_STATION_ID = "CRU_719_322";
-		WeatherStation ws = WeatherKbox.INSTANCE.retrieve(LAST_STATION_ID);
+		WeatherStation ws = wbox.retrieve(LAST_STATION_ID);
 		if (ws != null) {
 			return;
 		}
@@ -334,7 +336,7 @@ public class CRUReader {
 
 						ws = new WeatherStation(stationId, lon, lat, start.getYear(), end.getYear());
 
-						WeatherKbox.INSTANCE.store(ws);
+						wbox.store(ws, monitor);
 
 						Logging.INSTANCE.info("CRU station created: " + ws);
 
@@ -356,12 +358,6 @@ public class CRUReader {
 				// OK, screw it
 			}
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		CRUReader reader = new CRUReader(new File("C:\\opt\\wmengine\\cru"));
-		reader.createStations();
 	}
 
 	/**

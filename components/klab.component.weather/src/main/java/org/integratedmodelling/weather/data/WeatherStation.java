@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.FixedReader;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.joda.time.DateTime;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -134,16 +135,17 @@ public class WeatherStation {
 		}
 	}
 
-	Map<String, Data> _variables = new HashMap<>();
-	Metadata _metadata = new Metadata();
-	WeatherGenerator _wg = null;
-	boolean _wgFailure = false;
-	int _maxRecordAge = 15;
+	Map<String, Data> variables = new HashMap<>();
+	Metadata metadata = new Metadata();
+	WeatherGenerator wg = null;
+	boolean wgFailure = false;
+	int maxRecordAge = 15;
 	String _id;
-	double _altitude;
-	double _longitude;
-	double _latitude;
-	String _email;
+	double elevation;
+	double longitude;
+	double latitude;
+	String email;
+	long datasize;
 	Map<String, Pair<Integer, Integer>> _provided = new HashMap<>();
 
 	/*
@@ -167,30 +169,30 @@ public class WeatherStation {
 	 */
 	public void generateWeather(int year) throws KlabException {
 
-		if (_wgFailure) {
+		if (wgFailure) {
 			return;
 		}
 
-		if (_wg == null) {
+		if (wg == null) {
 			Logging.INSTANCE.info("generating weather for " + _id);
-			_wg = new WeatherGenerator(this, 0, year);
+			wg = new WeatherGenerator(this, 0, year);
 		}
 		List<double[]> vars = new ArrayList<double[]>();
 		for (String variable : new String[] { Weather.PRECIPITATION_MM, Weather.MIN_TEMPERATURE_C,
 				Weather.MAX_TEMPERATURE_C }) {
 			vars.add(requireYearData(variable, year));
 		}
-		_wg.generateDaily(vars.get(1), vars.get(2), vars.get(0), true);
-		_variables.get(Weather.PRECIPITATION_MM).generated.add(year);
-		_variables.get(Weather.MIN_TEMPERATURE_C).generated.add(year);
-		_variables.get(Weather.MAX_TEMPERATURE_C).generated.add(year);
+		wg.generateDaily(vars.get(1), vars.get(2), vars.get(0), true);
+		variables.get(Weather.PRECIPITATION_MM).generated.add(year);
+		variables.get(Weather.MIN_TEMPERATURE_C).generated.add(year);
+		variables.get(Weather.MAX_TEMPERATURE_C).generated.add(year);
 	}
 
 	private void generateDataFromMostRecentRecord(int year) throws KlabException {
 
 		for (String variable : new String[] { Weather.PRECIPITATION_MM, Weather.MIN_TEMPERATURE_C,
 				Weather.MAX_TEMPERATURE_C }) {
-			double[] data = generateDataFromMostRecentRecord(variable, year, _maxRecordAge);
+			double[] data = generateDataFromMostRecentRecord(variable, year, maxRecordAge);
 			if (data != null) {
 				setYearData(variable, year, data);
 			}
@@ -208,7 +210,7 @@ public class WeatherStation {
 
 		for (String v : variables) {
 			Pair<Integer, Integer> bnds = _provided.get(v);
-			if (bnds == null || (bnds.getSecond() + _maxRecordAge) < year) {
+			if (bnds == null || (bnds.getSecond() + maxRecordAge) < year) {
 				return false;
 			}
 		}
@@ -299,7 +301,7 @@ public class WeatherStation {
 
 		if (!dataMap.containsKey(_id + ":" + Weather.PRECIPITATION_MM + "@" + _lastKnownYear)) {
 			for (int year = Math.max(_firstKnownYear, 1970); year <= _lastKnownYear; year++) {
-				Map<String, double[]> data = WeatherFactory.INSTANCE.getCRUReader().readData(_latitude, _longitude, year);
+				Map<String, double[]> data = WeatherFactory.INSTANCE.getCRUReader().readData(latitude, longitude, year);
 				for (String variable : data.keySet()) {
 					String id = _id + ":" + variable + "@" + year;
 					dataMap.put(id, data.get(variable));
@@ -327,7 +329,7 @@ public class WeatherStation {
 	double[] requireYearData(String variable, int year) {
 
 		double[] ret = null;
-		Data dr = _variables.get(variable);
+		Data dr = variables.get(variable);
 		if (dr == null) {
 			dr = new Data(variable);
 			dr.variable = variable;
@@ -336,7 +338,7 @@ public class WeatherStation {
 			for (int i = 0; i < ret.length; i++)
 				ret[i] = Double.NaN;
 			dr.data.put(year, ret);
-			_variables.put(variable, dr);
+			variables.put(variable, dr);
 		} else {
 
 			if (dr.data.containsKey(year)) {
@@ -354,11 +356,11 @@ public class WeatherStation {
 
 	void setYearData(String variable, int year, double[] data) {
 
-		Data dr = _variables.get(variable);
+		Data dr = variables.get(variable);
 		if (dr == null) {
 			dr = new Data(variable);
 			dr.variable = variable;
-			_variables.put(variable, dr);
+			variables.put(variable, dr);
 		}
 		dr.data.put(year, data);
 	}
@@ -393,10 +395,10 @@ public class WeatherStation {
 		this._id = name;
 		this._type = "INTERPOLATED";
 		this._source = "CRU";
-		this._altitude = 0;
+		this.elevation = 0;
 
-		_longitude = lon;
-		_latitude = lat;
+		longitude = lon;
+		latitude = lat;
 		_location = Shape.create(lon, lat, Projection.getLatLon());
 		_firstKnownYear = startYear;
 		_lastKnownYear = endYear;
@@ -407,6 +409,40 @@ public class WeatherStation {
 		for (String var : CRUReader.cruVariables) {
 			_provided.put(var, new Pair<>(startYear, endYear));
 		}
+	}
+
+	public WeatherStation(Map<String, Object> data) {
+
+		Parameters<String> rs = Parameters.wrap(data);
+		this._id = rs.get("id", String.class);
+		this.elevation = rs.get("elevation", Double.class);
+		this.latitude = rs.get("latitude", Double.class);
+		this.longitude = rs.get("longitude", Double.class);
+		String pvar = rs.get("provided_vars", String.class);
+		String psta = rs.get("provided_start", String.class);
+		String pend = rs.get("provided_end", String.class);
+
+		parseVarsDescriptors(pvar, psta, pend);
+
+		if (_id.startsWith("CRU_")) {
+			this._type = "INTERPOLATED";
+			this._source = "CRU";
+		}
+	}
+
+	public Map<String, Object> asData() {
+		String[] provided = getProvidedVarsDescriptors();
+		Map<String, Object> ret = new HashMap<>();
+		ret.put("id", _id);
+		ret.put("elevation", elevation);
+		ret.put("latitude", latitude);
+		ret.put("longitude", longitude);
+		ret.put("provided_vars", provided[0]);
+		ret.put("provided_start", provided[1]);
+		ret.put("provided_end", provided[2]);
+		ret.put("datasize", -1);
+		ret.put("location", _location);
+		return ret;
 	}
 
 	/**
@@ -483,19 +519,19 @@ public class WeatherStation {
 					hid = true;
 					break;
 				case "LAT":
-					this._latitude = Double.parseDouble(checkNull(vValues.getValue(i, Object.class), z.toString()));
+					this.latitude = Double.parseDouble(checkNull(vValues.getValue(i, Object.class), z.toString()));
 					hlat = true;
 					break;
 				case "LON":
-					this._longitude = Double.parseDouble(checkNull(vValues.getValue(i, Object.class), z.toString()));
+					this.longitude = Double.parseDouble(checkNull(vValues.getValue(i, Object.class), z.toString()));
 					hlon = true;
 					break;
 				case "ELEVATION":
-					this._altitude = Double.parseDouble(checkNull(vValues.getValue(i, Object.class), z.toString()));
+					this.elevation = Double.parseDouble(checkNull(vValues.getValue(i, Object.class), z.toString()));
 					helev = true;
 					break;
 				case "EMAIL":
-					this._email = checkNull(vValues.getValue(i, Object.class), z.toString());
+					this.email = checkNull(vValues.getValue(i, Object.class), z.toString());
 					hemail = true;
 					break;
 				case "CONTRIBUTOR":
@@ -520,7 +556,7 @@ public class WeatherStation {
 						"the ID within the file (" + this._id + ") does not match the provided " + name);
 			}
 
-			_location = Shape.create(_longitude, _latitude, Projection.getLatLon());
+			_location = Shape.create(longitude, latitude, Projection.getLatLon());
 
 			/*
 			 * set up storage for yearly data as appropriate - we read the whole thing in
@@ -668,9 +704,9 @@ public class WeatherStation {
 //		checkStorage();
 
 		_id = id;
-		_altitude = alt;
-		_longitude = lon;
-		_latitude = lat;
+		elevation = alt;
+		longitude = lon;
+		latitude = lat;
 
 		/*
 		 * URL of data file for this station. Specific to structure of GHCN archive.
@@ -808,18 +844,18 @@ public class WeatherStation {
 		}
 		vdesc += "]";
 
-		return _id + " @" + _latitude + "," + _longitude + " " + vdesc
+		return _id + " @" + latitude + "," + longitude + " " + vdesc
 				+ (_distanceKm < 0.0 ? "" : (" (" + _distanceKm + "km away)"));
 
 	}
 
 //    @Override
 	public IMetadata getMetadata() {
-		return _metadata;
+		return metadata;
 	}
 
 	public double getElevation() {
-		return _altitude;
+		return elevation;
 	}
 
 	/**
@@ -841,8 +877,8 @@ public class WeatherStation {
 	 */
 	Data fetch(String variable) throws KlabException {
 
-		if (_variables.containsKey(variable)) {
-			return _variables.get(variable);
+		if (variables.containsKey(variable)) {
+			return variables.get(variable);
 		}
 		if (!provides(variable)) {
 			return null;
@@ -854,7 +890,7 @@ public class WeatherStation {
 				ret.data.put(year, data);
 			}
 		}
-		_variables.put(variable, ret);
+		variables.put(variable, ret);
 
 		return ret;
 	}
@@ -1169,8 +1205,8 @@ public class WeatherStation {
 				// downstream.
 				Logging.INSTANCE.error(
 						"weather generation for year " + year + " in " + _id + " failed: data may be insufficient");
-				_wg = null;
-				_wgFailure = true;
+				wg = null;
+				wgFailure = true;
 			}
 		}
 
@@ -1186,7 +1222,7 @@ public class WeatherStation {
 	}
 
 	public void setMaxYearsBack(int maxYearsBack) {
-		_maxRecordAge = maxYearsBack;
+		maxRecordAge = maxYearsBack;
 	}
 
 	// for the DB serializer
@@ -1207,6 +1243,10 @@ public class WeatherStation {
 	// for the DB deserializer
 	void parseVarsDescriptors(String names, String start, String end) {
 
+		if (names.isEmpty()) {
+			return;
+		}
+		
 		String[] n = names.split(",");
 		String[] s = start.split(",");
 		String[] e = end.split(",");
@@ -1232,17 +1272,7 @@ public class WeatherStation {
 		return _provided.keySet();
 	}
 
-	/**
-	 * Remove any trace of this station from permanent storage.
-	 * 
-	 * @throws ThinklabException
-	 */
-	public void remove() throws KlabException {
-		WeatherKbox.INSTANCE.remove(_id);
-		removeData();
-	}
-
-	private void removeData() {
+	public void removeData() {
 
 		checkStorage();
 

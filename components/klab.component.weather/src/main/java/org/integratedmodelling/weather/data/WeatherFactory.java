@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -41,6 +42,14 @@ import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.data.DataType;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.data.table.persistent.PersistentTable;
+import org.integratedmodelling.klab.data.table.persistent.PersistentTable.PersistentTableBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FixedReader;
@@ -57,17 +66,33 @@ public enum WeatherFactory {
 
 	public static String[] GHCN_URLS = { "https://www1.ncdc.noaa.gov/pub/data/ghcn/daily",
 			"http://150.241.222.1/ghcn" };
-
 	private CRUReader cruReader;
-
 	private final static String LAST_UPDATE_PROPERTY = "last.catalog.update";
+
+	/*
+	 * the DB
+	 */
+	PersistentTable<String, WeatherStation> wbox;
+
+	private WeatherFactory() {
+		wbox = new PersistentTableBuilder<String, WeatherStation>("weatherstations", String.class, WeatherStation.class)
+				.column("id", DataType.TEXT, 32).column("elevation", DataType.DOUBLE)
+				.column("latitude", DataType.DOUBLE).column("longitude", DataType.DOUBLE)
+				.column("provided_vars", DataType.TEXT, 1024).column("provided_start", DataType.TEXT, 1024)
+				.column("provided_end", DataType.TEXT, 1024).column("datasize", DataType.LONG, false)
+				.column("location", DataType.SHAPE, true)
+				.build(
+						(station) -> { return station.asData(); },
+						(data) -> { return new WeatherStation(data); },
+						(station) -> { return station.getId(); });
+	}
 
 	/**
 	 * Call with the URL (file or http) to the
 	 * 
 	 * @param catalogFile
 	 */
-	public void setupGHCND(URL catalogFile) {
+	public void setupGHCND(URL catalogFile, IMonitor monitor) {
 
 		try {
 
@@ -89,7 +114,7 @@ public enum WeatherFactory {
 				}
 			}
 
-			if (!update && WeatherKbox.INSTANCE.count() < 100000) {
+			if (!update && wbox.count() < 100000) {
 				update = true;
 			}
 
@@ -100,8 +125,11 @@ public enum WeatherFactory {
 				File tempStations = File.createTempFile("stations", ".txt");
 				File tempInventory = File.createTempFile("inventory", ".txt");
 
-				URLUtils.copy(fInventory, tempInventory);
-				URLUtils.copy(fStations, tempStations);
+				tempStations.deleteOnExit();
+				tempInventory.deleteOnExit();
+
+				URLUtils.copyChanneled(fInventory, tempInventory);
+				URLUtils.copyChanneled(fStations, tempStations);
 
 				List<FixedReader> stations = FixedReader.parse(tempStations,
 						new int[] { 0, 12, 21, 31, 38, 41, 72, 76, 80 });
@@ -110,8 +138,8 @@ public enum WeatherFactory {
 				Iterator<FixedReader> inventory = inventor.iterator();
 				FixedReader invLine = inventory.next();
 
-				if (WeatherKbox.INSTANCE.getDatabase() != null) 
-				WeatherKbox.INSTANCE.getDatabase().preallocateConnection();
+				if (wbox.getDatabase() != null)
+					wbox.getDatabase().preallocateConnection();
 
 				/**
 				 * Format of GHCN station file (ghcnd-stations.txt)
@@ -143,8 +171,8 @@ public enum WeatherFactory {
 					/*
 					 * DO NOT REMOVE - side effects of nextString() are crucial.
 					 */
-					String state = fr.nextString().trim();
-					String name = fr.nextString().trim();
+					/* String state = */ fr.nextString()/* .trim() */;
+					/* String name = */ fr.nextString()/* .trim() */;
 
 					/*
 					 * make a new object and store it
@@ -169,11 +197,13 @@ public enum WeatherFactory {
 								invLine = inventory.next();
 							}
 						}
-						
+
 					} catch (Exception e) {
 						Logging.INSTANCE.error("shitty station: " + ws);
 						continue;
 					}
+
+					wbox.store(ws, monitor);
 
 					/*
 					 * we peeked already, so reset counter for next inventory line if we have more
@@ -184,35 +214,6 @@ public enum WeatherFactory {
 
 					System.out.println(ws);
 
-					// NAH do the rest asynchronously and/or on-demand
-
-//				if (i >= startAt) {
-////					i++;
-//					try {
-//						// don't re-do it unless the data are not there. To force
-//						// cleanup of the stored data, remove the <datadir>/data
-//						// directory.
-//						ws.cacheData();
-//
-//					} catch (Throwable e) {
-//						Logging.INSTANCE
-//								.error("Data for station " + i + "th station: " + ws + " are unreadable; skipping");
-//						continue;
-//					}
-//					Logging.INSTANCE.info("Storing " + i + "th station: " + ws);
-//					try {
-//						WeatherKbox.INSTANCE.store(ws);
-//					} catch (Exception e) {
-//						Logging.INSTANCE.error(e);
-//					}
-////					try {
-////						FileUtils.writeStringToFile(leftover, "" + i);
-////					} catch (IOException e) {
-////						throw new KlabIOException(e);
-////					}
-//				} else {
-//					Logging.INSTANCE.info("Skipping " + i++ + "th station: " + ws);
-//				}
 				}
 
 				properties.setProperty(LAST_UPDATE_PROPERTY, now.toString());
@@ -220,21 +221,20 @@ public enum WeatherFactory {
 					properties.store(out, null);
 				}
 			}
-			
-			for (WeatherStation s : WeatherKbox.INSTANCE) {
-				
+
+			for (WeatherStation s : wbox) {
+				System.out.println(s);
 			}
-			
+
 			/*
 			 * a thread for each station (spawn groups of 2/4/X threads):
 			 * 
-			 * check stored file size against URL's (if available)
-			 * if != (>) previous: read all data again, update size & timestamp
-			 * Run every month and that's it
+			 * check stored file size against URL's (if available) if != (>) previous: read
+			 * all data again, update size & timestamp Run every month and that's it
 			 */
-			
-			if (WeatherKbox.INSTANCE.getDatabase() != null) 
-			WeatherKbox.INSTANCE.getDatabase().deallocateConnection();
+
+			if (wbox.getDatabase() != null)
+				wbox.getDatabase().deallocateConnection();
 
 //			FileUtils.deleteQuietly(leftover);
 
@@ -244,9 +244,86 @@ public enum WeatherFactory {
 		}
 
 	}
+	
+	/**
+	 * Get weather station in the spatial extent provided. Expand the bounding box
+	 * by the spatial extent provided (if 0, leave it alone and use the actual
+	 * geometry; if >0, use the bounding box and look as many times around in lenght
+	 * and width). If variables are passed, return only stations that provide them.
+	 *
+	 * @param space
+	 * @param expandFactor distance for buffering around shape before searching 
+	 * @param variables
+	 * @return
+	 * @throws ThinklabException
+	 */
+	public List<WeatherStation> around(ISpace space, double expandFactor, String source, String... variables)
+			throws KlabException {
 
-	public void setupCRU(URL repository) {
+		Shape shape = (Shape) space.getShape();
+		if (expandFactor > 0) {
+			shape = (Shape)shape.buffer(expandFactor);
+		}
+		return within(shape, source, variables);
+	}
 
+//	public List<WeatherStation> around(double lat, double lon, String source, String... variables)
+//			throws KlabException {
+//
+//		Shape shape = Shape.create(lon, lat, Projection.getLatLon());
+//		// NO! FIXME! use isWithinDistance(p1, p2, distance (back in degrees?))
+//		return within(shape, source, variables);
+//	}
+
+	/**
+	 * Return all weather stations in the passed geometry (using the intersect
+	 * operator), optionally restricting to those providing the variables passed.
+	 * 
+	 * @param context
+	 * @param source    pass "ALL" or null for everything or a specific source type
+	 *                  (currently GHCND, CRU, USER).
+	 * @param variables
+	 * @return
+	 * @throws ThinklabException
+	 */
+	public List<WeatherStation> within(IShape context, String source, String... variables) throws KlabException {
+
+		final List<WeatherStation> ret = new ArrayList<>();
+
+		String query = "SELECT * FROM weatherstations WHERE location && '" + ((Shape) context).getStandardizedGeometry()
+				+ "'";
+		if (source != null && !source.equals("ALL")) {
+			switch (source) {
+			case "CRU":
+				query += " AND id LIKE 'CRU_%'";
+				break;
+			case "USER":
+				query += " AND id LIKE 'USER_%'";
+				break;
+			default:
+				query += " AND id NOT LIKE 'USER_%' AND id NOT LIKE 'CRU_%'";
+				break;
+			}
+		}
+		if (variables != null) {
+			for (String v : variables) {
+				query += " AND provided_vars LIKE '%" + v + "%'";
+			}
+		}
+		query += ";";
+
+		for (WeatherStation ws : wbox.query(query)) {
+			ret.add(ws);
+		}
+
+		return ret;
+	}
+	
+
+	public void setupCRU(URL repository, IMonitor monitor) {
+		File repo = null; // TODO get data if absent
+		CRUReader reader = new CRUReader(repo);
+		reader.createStations(wbox, monitor);
 	}
 
 	/*
@@ -286,8 +363,8 @@ public enum WeatherFactory {
 		 */
 		long stationCount = 0;
 		if (cruPath.exists() && fPath.isDirectory() && fPath.canRead()) {
-			initializeCRUData(cruPath);
-			stationCount = WeatherKbox.INSTANCE.count();
+//			initializeCRUData(cruPath);
+			stationCount = wbox.count();
 		}
 
 		if (!(dataPath.exists() && dataPath.isDirectory() && dataPath.canRead())) {
@@ -296,7 +373,7 @@ public enum WeatherFactory {
 		}
 
 		File leftover = new File(dataPath + File.separator + ".ws_lasts");
-		long wscount = WeatherKbox.INSTANCE.count();
+		long wscount = wbox.count();
 
 		if (wscount > (stationCount + 100) && !leftover.exists()) {
 			Logging.INSTANCE.warn("setup was not performed: no lock file and " + (wscount - stationCount)
@@ -347,7 +424,7 @@ public enum WeatherFactory {
 		Iterator<FixedReader> inventory = inventor.iterator();
 		FixedReader invLine = inventory.next();
 
-		WeatherKbox.INSTANCE.getDatabase().preallocateConnection();
+		wbox.getDatabase().preallocateConnection();
 
 		int i = 0;
 		for (FixedReader fr : stations) {
@@ -411,7 +488,7 @@ public enum WeatherFactory {
 				}
 				Logging.INSTANCE.info("Storing " + i + "th station: " + ws);
 				try {
-					WeatherKbox.INSTANCE.store(ws);
+					wbox.store(ws, null);
 				} catch (Exception e) {
 					Logging.INSTANCE.error(e);
 				}
@@ -425,18 +502,18 @@ public enum WeatherFactory {
 			}
 		}
 
-		WeatherKbox.INSTANCE.getDatabase().deallocateConnection();
+		wbox.getDatabase().deallocateConnection();
 
 		FileUtils.deleteQuietly(leftover);
 	}
 
-	private void initializeCRUData(File cruPath) throws KlabException {
-
-		if (new File(cruPath + File.separator + CRUReader.fileMap.get(Weather.PRECIPITATION_MM)).exists()) {
-			this.cruReader = new CRUReader(cruPath);
-			this.cruReader.createStations();
-		}
-	}
+//	private void initializeCRUData(File cruPath) throws KlabException {
+//
+//		if (new File(cruPath + File.separator + CRUReader.fileMap.get(Weather.PRECIPITATION_MM)).exists()) {
+//			this.cruReader = new CRUReader(cruPath);
+//			this.cruReader.createStations();
+//		}
+//	}
 
 	/**
 	 * Compute day length in hours based on day of the year and latitude.
@@ -463,16 +540,12 @@ public enum WeatherFactory {
 		return 24.0 * (1.570796 - Math.atan(csh / Math.sqrt(1. - csh * csh))) / Math.PI;
 	}
 
-	public long countStations() {
-		return WeatherKbox.INSTANCE.count();
-	}
-
 	public CRUReader getCRUReader() {
 		return cruReader;
 	}
 
 	public static void main(String[] args) throws Exception {
-		INSTANCE.setupGHCND(new URL(GHCN_URLS[0]));
+		INSTANCE.setupGHCND(new URL(GHCN_URLS[0]), null);
 	}
 
 }

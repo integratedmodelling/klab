@@ -12,7 +12,7 @@ public interface IPersistentTable<K,V> extends ITable<V>, Iterable<V> {
 	
 	boolean update(K key, V object, IMonitor monitor);
 	
-	Iterable<K> query(String query);
+	Iterable<V> query(String query);
 	
 	long count();
 

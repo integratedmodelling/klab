@@ -38,17 +38,44 @@ public interface ITable<T> {
 	interface ObjectTable extends ITable<Object> {
 	}
 
-	interface Structure<T> {
+	interface Structure {
 
+		public interface Field {
+
+			String getName();
+
+			DataType getDataType();
+
+			int getWidth();
+
+			boolean isIndex();
+
+		}
+		
 		String getName();
 
-		Structure<T> column(String name, DataType type, boolean index);
+		/**
+		 * Define a column. The optional parameters can be used for further
+		 * specification.
+		 * 
+		 * @param name
+		 * @param type
+		 * @param parameters a Boolean will be interpreted as whether to build an index
+		 *                   or not. An integer is a lenght field used for varchars or the
+		 *                   like.
+		 * @return
+		 */
+		Structure column(String name, DataType type, Object... parameters);
+		
+		int getColumnCount();
+
+		List<Field> getColumns();
 
 	}
 
-	interface Builder<T> extends Structure<T> {
+	interface Builder<T> extends Structure {
 
-		Structure<T> deleteIfInconsistent();
+		Structure deleteIfInconsistent();
 
 		ITable<T> build();
 
@@ -101,7 +128,7 @@ public interface ITable<T> {
 	interface Column<T> {
 
 		/**
-		 * Column name is "$n" unless the table has been initialized with explicit 
+		 * Column name is "$n" unless the table has been initialized with explicit
 		 * column names.
 		 * 
 		 * @return

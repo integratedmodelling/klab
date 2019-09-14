@@ -1,59 +1,119 @@
 package org.integratedmodelling.klab.data.table.persistent;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
+import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.general.IPersistentTable;
+import org.integratedmodelling.klab.api.data.general.ITable.Structure.Field;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.table.Table.StructureImpl;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
+import org.integratedmodelling.klab.persistence.h2.H2Database.DBIterator;
+import org.integratedmodelling.klab.persistence.h2.SQL;
 
-public class PersistentTable<K,V> implements IPersistentTable<K,V> {
+public class PersistentTable<K, V> implements IPersistentTable<K, V> {
 
-	static H2Database database = null;
-	
-	public class PersistentTableBuilder<K, V> extends StructureImpl {
+	H2Database database;
+	private Structure structure;
+	DataType keyType = null;
 
-		public PersistentTableBuilder(String id) {
+	Function<V, Map<String, Object>> serializer;
+	Function<Map<String, Object>, V> deserializer;
+	Function<V, K> keyGenerator;
+
+	public static class PersistentTableBuilder<K, V> extends StructureImpl {
+
+		DataType keyType = null;
+
+		public PersistentTableBuilder(String id, Class<? extends K> keyClass, Class<? extends V> valueClass) {
 			super(id);
+			keyType = DataType.forClass(keyClass);
+			if (keyType == null) {
+				throw new IllegalArgumentException(
+						"cannot build a persistent table with key type = " + keyClass.getCanonicalName());
+			}
 		}
 
-//		@Override
-		public IPersistentTable<K, V> build() {
-			
+		H2Database database = null;
+
+		public PersistentTableBuilder<K, V> in(H2Database database) {
+			this.database = database;
+			return this;
+		}
+
+		@Override
+		public PersistentTableBuilder<K, V> column(String name, DataType type, Object... parameters) {
+			super.column(name, type, parameters);
+			return this;
+		}
+
+		public PersistentTable<K, V> build(Function<V, Map<String, Object>> serializer,
+				Function<Map<String, Object>, V> deserializer, Function<V, K> keyGenerator) {
+
 			if (database == null) {
-				database = H2Database.createPersistent("");
+				database = H2Database.createPersistent(getName());
 			}
-			
+
 			// verify or create table
 			if (database.hasTable(getName())) {
-				
+
+				// TODO verify
+
 			} else {
-				
+
+				String sql = "CREATE TABLE " + getName() + " (\n   oid " + SQL.sqlTypes.get(keyType)
+						+ (keyType == DataType.TEXT ? "(1024)" : "");
+				for (Field column : columns) {
+					sql += ",\n   " + column.getName() + " " + SQL.sqlTypes.get(column.getDataType());
+					if (column.getWidth() > 0) {
+						sql += "(" + column.getWidth() + ")";
+					}
+				}
+				sql += ");\nCREATE INDEX oid_index ON " + getName() + "(oid);";
+				for (Field column : columns) {
+					if (column.isIndex()) {
+						sql += "\nCREATE " + (column.getDataType() == DataType.SHAPE ? "SPATIAL" : "") + " INDEX "
+								+ column.getName() + "_index ON " + getName() + "(" + column.getName() + ");";
+					}
+				}
+
+				database.execute(sql);
 			}
-			
-			return null;
+
+			return new PersistentTable<K, V>(database, this, serializer, deserializer, keyGenerator);
 		}
 
 	}
-	
+
+	public PersistentTable(H2Database database, Structure structure, Function<V, Map<String, Object>> serializer,
+			Function<Map<String, Object>, V> deserializer, Function<V, K> keyGenerator) {
+		this.database = database;
+		this.structure = structure;
+		this.serializer = serializer;
+		this.deserializer = deserializer;
+		this.keyGenerator = keyGenerator;
+	}
+
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return structure.getName();
 	}
 
 	@Override
 	public int getRowCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (int) count();
 	}
 
 	@Override
 	public int getColumnCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return structure.getColumnCount();
 	}
 
 	@Override
@@ -100,20 +160,51 @@ public class PersistentTable<K,V> implements IPersistentTable<K,V> {
 
 	@Override
 	public K store(V object, IMonitor monitor) {
-		// TODO Auto-generated method stub
+
+		Map<String, Object> data = serializer.apply(object);
+
+		String sql = "INSERT INTO " + getName() + " VALUES (" + SQL.wrapPOD(keyGenerator.apply(object));
+		for (Field column : structure.getColumns()) {
+			sql += ", " + SQL.wrapPOD(data.get(column.getName()));
+		}
+		sql += ");";
+		database.execute(sql);
 		return null;
 	}
 
 	@Override
 	public V retrieve(K id) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (!database.hasTable(getName())) {
+			return null;
+		}
+
+		List<V> ret = new ArrayList<>();
+		String query = "SELECT * FROM " + getName() + " WHERE oid = " + (keyType == DataType.TEXT ? "'" : "") + id
+				+ (keyType == DataType.TEXT ? "'" : "") + ";";
+
+		database.query(query, new SQL.SimpleResultHandler() {
+			@Override
+			public void onRow(ResultSet rs) {
+				try {
+					Map<String, Object> data = new HashMap<>();
+					for (Field column : structure.getColumns()) {
+						data.put(column.getName(), rs.getObject(column.getName()));
+					}
+					ret.add(deserializer.apply(data));
+				} catch (SQLException e) {
+				}
+			}
+		});
+
+		return ret.isEmpty() ? null : ret.get(0);
 	}
 
 	@Override
 	public boolean delete(K id) {
-		// TODO Auto-generated method stub
-		return false;
+		database.execute("DELETE FROM " + getName() + " WHERE oid = " + (keyType == DataType.TEXT ? "'" : "") + id
+				+ (keyType == DataType.TEXT ? "'" : "") + ";");
+		return true;
 	}
 
 	@Override
@@ -123,23 +214,57 @@ public class PersistentTable<K,V> implements IPersistentTable<K,V> {
 	}
 
 	@Override
-	public Iterable<K> query(String query) {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterable<V> query(String query) {
+
+		List<V> ret = new ArrayList<>();
+		if (!database.hasTable(getName())) {
+			return ret;
+		}
+		database.query(query, new SQL.SimpleResultHandler() {
+			@Override
+			public void onRow(ResultSet rs) {
+				try {
+					Map<String, Object> data = new HashMap<>();
+					for (Field column : structure.getColumns()) {
+						data.put(column.getName(), rs.getObject(column.getName()));
+					}
+					ret.add(deserializer.apply(data));
+				} catch (SQLException e) {
+				}
+			}
+		});
+		return ret;
 	}
 
 	@Override
 	public long count() {
-		// TODO Auto-generated method stub
-		return 0;
+		return count("SELECT COUNT(*) from " + getName() + ";");
 	}
 
 	@Override
 	public long count(String query) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
+		if (database == null || !database.hasTable(getName())) {
+			return 0;
+		}
+
+		/*
+		 * ch'agg'a fa'.
+		 */
+		final List<Long> ret = new ArrayList<>();
+		database.query(query, new SQL.SimpleResultHandler() {
+			@Override
+			public void onRow(ResultSet rs) {
+				try {
+					ret.add(rs.getLong(1));
+				} catch (SQLException e) {
+				}
+			}
+		});
+
+		return ret.size() > 0 ? ret.get(0) : 0l;
+	}
+	
 	@Override
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
@@ -148,9 +273,41 @@ public class PersistentTable<K,V> implements IPersistentTable<K,V> {
 
 	@Override
 	public Iterator<V> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new TableIterator(database.query("SELECT * from " + getName() + ";"));
+	}
+
+	class TableIterator implements Iterator<V> {
+
+		DBIterator it;
+		
+		TableIterator(DBIterator it) {
+			this.it = it;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return !it.finished;
+		}
+
+		@Override
+		public V next() {
+			Map<String, Object> data = new HashMap<>();
+			for (Field column : structure.getColumns()) {
+				try {
+					data.put(column.getName(), it.result.getObject(column.getName()));
+				} catch (SQLException e) {
+					// fock
+				}
+			}
+			V ret = deserializer.apply(data);
+			it.advance();
+			return ret;
+		}
+		
 	}
 	
+	public H2Database getDatabase() {
+		return database;
+	}
 
 }

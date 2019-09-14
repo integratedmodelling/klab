@@ -27,6 +27,15 @@
 package org.integratedmodelling.klab.persistence.h2;
 
 import java.sql.ResultSet;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.integratedmodelling.klab.api.data.DataType;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Simple utility interfaces for cleaner code.
@@ -34,42 +43,65 @@ import java.sql.ResultSet;
  * @author ferdinando.villa
  *
  */
-public interface SQL {
+public class SQL {
 
-    /**
-     * Passed to some SQL kboxes' query() to ease handling of statements and connections.
-     * 
-     * @author ferdinando.villa
-     *
-     */
-    public static interface ResultHandler {
+	public static Map<DataType, String> sqlTypes = Collections.synchronizedMap(new HashMap<>());
+	static {
+		sqlTypes.put(DataType.FLOAT, "FLOAT");
+		sqlTypes.put(DataType.DOUBLE, "DOUBLE");
+		sqlTypes.put(DataType.LONG, "LONG");
+		sqlTypes.put(DataType.SHAPE, "GEOMETRY");
+		sqlTypes.put(DataType.TEXT, "VARCHAR");
+	}
 
-        void onRow(ResultSet rs);
+	public static String wrapPOD(Object o) {
 
-        /**
-         * Passed the number of result AFTER all rows (if any) have been processed with
-         * onRow.
-         * 
-         * @param nres
-         */
-        void nResults(int nres);
+		if (o instanceof ISpace) {
+			o = ((Shape)((ISpace)o).getShape()).getStandardizedGeometry();
+		}
+		
+		if (o instanceof Geometry) {
+			return "'" + o + "'";
+		}
+		
+		return o instanceof String ? ("'" + o + "'") : (o == null ? "NULL" : o.toString());
+	}
 
-    }
+	/**
+	 * Passed to some SQL kboxes' query() to ease handling of statements and
+	 * connections.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public static interface ResultHandler {
 
-    /**
-     * For code tightness when we don't want nResults.
-     * 
-     * @author Ferd
-     *
-     */
-    public abstract static class SimpleResultHandler implements ResultHandler {
+		void onRow(ResultSet rs);
 
-        @Override
-        public void nResults(int nres) {
-            // TODO Auto-generated method stub
+		/**
+		 * Passed the number of result AFTER all rows (if any) have been processed with
+		 * onRow.
+		 * 
+		 * @param nres
+		 */
+		void nResults(int nres);
 
-        }
+	}
 
-    }
+	/**
+	 * For code tightness when we don't want nResults.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public abstract static class SimpleResultHandler implements ResultHandler {
+
+		@Override
+		public void nResults(int nres) {
+			// TODO Auto-generated method stub
+
+		}
+
+	}
 
 }

@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.data.classification.Classifier;
-import org.integratedmodelling.klab.utils.Triple;
 
 public class Table<T> implements ITable<T> {
 
@@ -23,10 +22,45 @@ public class Table<T> implements ITable<T> {
 	private String name;
 	private Set<IKimExpression> expressions;
 
-	public static class StructureImpl implements Structure<Object> {
+	public static class StructureImpl implements Structure {
 
-		String name;
-		List<Triple<String, DataType, Boolean>> columns = new ArrayList<>();
+		static public class ColumnImpl implements Field {
+
+			private String name;
+			private DataType dataType;
+			private int width = -1;
+			private boolean index;
+
+			public ColumnImpl(String name, DataType type) {
+				this.name = name;
+				this.dataType = type;
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+
+			@Override
+			public DataType getDataType() {
+				return dataType;
+			}
+
+			@Override
+			public int getWidth() {
+				return width;
+			}
+
+			@Override
+			public boolean isIndex() {
+				return index;
+			}
+
+			
+		}
+		
+		protected String name;
+		protected List<Field> columns = new ArrayList<>();
 
 		protected StructureImpl(String id) {
 			this.name = id;
@@ -38,14 +72,34 @@ public class Table<T> implements ITable<T> {
 		}
 
 		@Override
-		public StructureImpl column(String name, DataType type, boolean index) {
-			this.columns.add(new Triple<>(name, type, index));
+		public StructureImpl column(String name, DataType type, Object...parameters) {
+			ColumnImpl column = new ColumnImpl(name, type);
+			if (parameters != null) {
+				for (Object o : parameters) {
+					if (o instanceof Boolean) {
+						column.index = (Boolean)o;
+					} else if (o instanceof Integer) {
+						column.width = (Integer)o;
+					}
+				}
+			}
+			this.columns.add(column);
 			return this;
+		}
+
+		@Override
+		public int getColumnCount() {
+			return columns.size();
+		}
+
+		@Override
+		public List<Field> getColumns() {
+			return columns;
 		}
 
 	}
 
-	public static Structure<Object> structure(String name) {
+	public static Structure structure(String name) {
 		return new StructureImpl(name);
 	}
 

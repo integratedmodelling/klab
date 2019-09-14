@@ -91,7 +91,11 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS 
-			should be the same one that geotools needs. -->
+			should be the same one that geotools needs.
+			
+			Next step: gt 20.0, horton 0.9.6, jts 1.16 (with different namespaces) - that should
+			allow Java upgrade to 1.13
+			 -->
 		<geotools.version>18.0</geotools.version>
 		<hortonmachine.version>0.9.1</hortonmachine.version>
 		<jts.version>1.13</jts.version>
@@ -107,8 +111,8 @@
 		<!-- the five below go together. Never change one without checking the 
 			others. Spring security latest is currently requiring 5.0.4, implying boot 
 			2.0.0 -->
-		<spring-boot-version>2.0.0.RELEASE</spring-boot-version>
-		<spring-version>5.0.4.RELEASE</spring-version>
+		<spring-boot-version>2.0.1.RELEASE</spring-boot-version>
+		<spring-version>5.0.5.RELEASE</spring-version>
 		<junit-version>4.12</junit-version>
 		<jackson-version>2.9.5</jackson-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
