@@ -38,328 +38,353 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
  */
 public class URLUtils {
 
+	/**
+	 * Pattern to validate a RFC 2141-compliant URN.
+	 */
+	public final static Pattern URN_PATTERN = Pattern.compile(
+			"^urn:[a-z0-9][a-z0-9-]{0,31}:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
 
-  /**
-   * Pattern to validate a RFC 2141-compliant URN.
-   */
-  public final static Pattern URN_PATTERN =
-      Pattern.compile("^urn:[a-z0-9][a-z0-9-]{0,31}:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$",
-          Pattern.CASE_INSENSITIVE);
+	/**
+	 * Check if passed URN string can be really called a URN according to RFC 2141
+	 * conventions.
+	 *
+	 * @param urn the urn
+	 * @return true if compliant
+	 */
+	public static boolean isCompliant(String urn) {
+		return URN_PATTERN.matcher(urn).matches();
+	}
 
-  /**
-   * Check if passed URN string can be really called a URN according to RFC 2141 conventions.
-   *
-   * @param urn the urn
-   * @return true if compliant
-   */
-  public static boolean isCompliant(String urn) {
-    return URN_PATTERN.matcher(urn).matches();
-  }
+	/**
+	 * Ping the url by requesting the header and inspecting the return code.
+	 *
+	 * @param url the url
+	 * @return true if ping succeeds
+	 */
+	public static boolean ping(String url) {
 
+		// < 100 is undertermined.
+		// 1nn is informal (shouldn't happen on a GET/HEAD)
+		// 2nn is success
+		// 3nn is redirect
+		// 4nn is client error
+		// 5nn is server error
 
-  /**
-   * Ping the url by requesting the header and inspecting the return code.
-   *
-   * @param url the url
-   * @return true if ping succeeds
-   */
-  public static boolean ping(String url) {
+		HttpURLConnection connection = null;
+		boolean ret = false;
+		try {
+			connection = (HttpURLConnection) new URL(url).openConnection();
+			connection.setRequestMethod("HEAD");
+			int responseCode = connection.getResponseCode();
+			if (responseCode > 100 && responseCode < 400) {
+				ret = true;
+			}
+		} catch (Exception e) {
+		}
+		return ret;
+	}
 
-    // < 100 is undertermined.
-    // 1nn is informal (shouldn't happen on a GET/HEAD)
-    // 2nn is success
-    // 3nn is redirect
-    // 4nn is client error
-    // 5nn is server error
+	/**
+	 * Return true if the passed host (not URL) responds on port 80.
+	 *
+	 * @param url the url
+	 * @return true if host responds
+	 */
+	public static boolean pingHost(String url) {
+		Socket socket = null;
+		boolean reachable = false;
+		try {
+			socket = new Socket(url, 80);
+			reachable = true;
+		} catch (Exception e) {
+		} finally {
+			if (socket != null)
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+		}
+		return reachable;
+	}
 
-    HttpURLConnection connection = null;
-    boolean ret = false;
-    try {
-      connection = (HttpURLConnection) new URL(url).openConnection();
-      connection.setRequestMethod("HEAD");
-      int responseCode = connection.getResponseCode();
-      if (responseCode > 100 && responseCode < 400) {
-        ret = true;
-      }
-    } catch (Exception e) {
-    }
-    return ret;
-  }
+	// /**
+	// * Look for thinklab.resource.path in properties, if found scan the path to
+	// resolve
+	// * the passed name as a file url. If the url is already resolved, just return
+	// it. If
+	// * the path contains a http-based URL prefix just use that without checking.
+	// *
+	// * @param url
+	// * @param properties
+	// * @return a resolved url or the original one if not resolved.
+	// */
+	// public static String resolveUrl(String url, Properties properties) {
+	//
+	// String ret = url;
+	//
+	// if (ret.contains(":/"))
+	// return ret;
+	//
+	// String prop = ".";
+	//
+	// for (String path : prop.split(";")) {
+	//
+	// if (path.startsWith("http") && path.contains("/")) {
+	// ret = path + url;
+	// break;
+	// }
+	//
+	// File pth = new File(path + File.separator + url);
+	//
+	// if (pth.exists()) {
+	// try {
+	// ret = pth.toURI().toURL().toString();
+	// break;
+	// } catch (MalformedURLException e) {
+	// }
+	// }
+	// }
+	//
+	// return ret;
+	// }
 
-  /**
-   * Return true if the passed host (not URL) responds on port 80.
-   *
-   * @param url the url
-   * @return true if host responds
-   */
-  public static boolean pingHost(String url) {
-    Socket socket = null;
-    boolean reachable = false;
-    try {
-      socket = new Socket(url, 80);
-      reachable = true;
-    } catch (Exception e) {
-    } finally {
-      if (socket != null)
-        try {
-          socket.close();
-        } catch (IOException e) {
-        }
-    }
-    return reachable;
-  }
+	/**
+	 * Copy the given URL to the given local file, return number of bytes copied.
+	 *
+	 * @param url  the URL
+	 * @param file the File
+	 * @return the number of bytes copied.
+	 * @throws KlabIOException the klab IO exception
+	 */
+	public static long copy(URL url, File file) throws KlabIOException {
+		long count = 0;
+		int oneChar = 0;
 
-  // /**
-  // * Look for thinklab.resource.path in properties, if found scan the path to resolve
-  // * the passed name as a file url. If the url is already resolved, just return it. If
-  // * the path contains a http-based URL prefix just use that without checking.
-  // *
-  // * @param url
-  // * @param properties
-  // * @return a resolved url or the original one if not resolved.
-  // */
-  // public static String resolveUrl(String url, Properties properties) {
-  //
-  // String ret = url;
-  //
-  // if (ret.contains(":/"))
-  // return ret;
-  //
-  // String prop = ".";
-  //
-  // for (String path : prop.split(";")) {
-  //
-  // if (path.startsWith("http") && path.contains("/")) {
-  // ret = path + url;
-  // break;
-  // }
-  //
-  // File pth = new File(path + File.separator + url);
-  //
-  // if (pth.exists()) {
-  // try {
-  // ret = pth.toURI().toURL().toString();
-  // break;
-  // } catch (MalformedURLException e) {
-  // }
-  // }
-  // }
-  //
-  // return ret;
-  // }
+		try {
+			InputStream is = url.openStream();
+			FileOutputStream fos = new FileOutputStream(file);
 
-  /**
-   * Copy the given URL to the given local file, return number of bytes copied.
-   *
-   * @param url the URL
-   * @param file the File
-   * @return the number of bytes copied.
-   * @throws KlabIOException the klab IO exception
-   */
-  public static long copy(URL url, File file) throws KlabIOException {
-    long count = 0;
-    int oneChar = 0;
+			while ((oneChar = is.read()) != -1) {
+				fos.write(oneChar);
+				count++;
+			}
 
-    try {
-      InputStream is = url.openStream();
-      FileOutputStream fos = new FileOutputStream(file);
+			is.close();
+			fos.close();
+		} catch (Exception e) {
+			throw new KlabIOException(e.getMessage());
+		}
 
-      while ((oneChar = is.read()) != -1) {
-        fos.write(oneChar);
-        count++;
-      }
+		return count;
+	}
 
-      is.close();
-      fos.close();
-    } catch (Exception e) {
-      throw new KlabIOException(e.getMessage());
-    }
+	/**
+	 * The listener interface for receiving copy events. The class that is
+	 * interested in processing a copy event implements this interface, and the
+	 * object created with that class is registered with a component using the
+	 * component's <code>addCopyListener</code> method. When the copy event occurs,
+	 * that object's appropriate method is invoked.
+	 */
+	public interface CopyListener {
+		void onProgress(int percent);
+	}
 
-    return count;
-  }
+	/**
+	 * Copy.
+	 *
+	 * @param url      the url
+	 * @param file     the file
+	 * @param listener the listener
+	 * @param size     pass an approx size in case the server does not pass the
+	 *                 length
+	 * @return nothing
+	 * @throws KlabIOException the klab IO exception
+	 */
+	public static long copy(URL url, File file, CopyListener listener, long size) throws KlabIOException {
 
-  /**
-   * The listener interface for receiving copy events. The class that is interested in processing a
-   * copy event implements this interface, and the object created with that class is registered with
-   * a component using the component's <code>addCopyListener</code> method. When the copy event
-   * occurs, that object's appropriate method is invoked.
-   */
-  public interface CopyListener {
-    void onProgress(int percent);
-  }
+		long count = 0;
 
-  /**
-   * Copy.
-   *
-   * @param url the url
-   * @param file the file
-   * @param listener the listener
-   * @param size pass an approx size in case the server does not pass the length
-   * @return nothing
-   * @throws KlabIOException the klab IO exception
-   */
-  public static long copy(URL url, File file, CopyListener listener, long size)
-      throws KlabIOException {
+		try {
 
-    long count = 0;
+			URLConnection connection = url.openConnection();
 
-    try {
+			/*
+			 * set configured timeout
+			 */
+			if (Configuration.INSTANCE.getProperties().containsKey(Configuration.KLAB_CONNECTION_TIMEOUT)) {
+				int timeout = 1000 * Integer.parseInt(Configuration.INSTANCE.getProperties()
+						.getProperty(Configuration.KLAB_CONNECTION_TIMEOUT, "10"));
+				connection.setConnectTimeout(timeout);
+				connection.setReadTimeout(timeout);
 
-      URLConnection connection = url.openConnection();
+			}
+			long stated = connection.getContentLengthLong();
+			if (stated > 0) {
+				size = stated;
+			}
 
-      /*
-       * set configured timeout
-       */
-      if (Configuration.INSTANCE.getProperties()
-          .containsKey(Configuration.KLAB_CONNECTION_TIMEOUT)) {
-        int timeout = 1000 * Integer.parseInt(Configuration.INSTANCE.getProperties()
-            .getProperty(Configuration.KLAB_CONNECTION_TIMEOUT, "10"));
-        connection.setConnectTimeout(timeout);
-        connection.setReadTimeout(timeout);
+			InputStream is = url.openStream();
+			FileOutputStream fos = new FileOutputStream(file);
 
-      }
-      long stated = connection.getContentLengthLong();
-      if (stated > 0) {
-        size = stated;
-      }
+			byte[] buf = new byte[1024];
+			int len;
+			int progress = 0;
+			while ((len = is.read(buf)) > 0) {
+				fos.write(buf, 0, len);
+				count += len;
+				progress = (int) (((double) count / (double) size) * 100.0);
+				listener.onProgress(progress);
+			}
 
-      InputStream is = url.openStream();
-      FileOutputStream fos = new FileOutputStream(file);
+			if (progress < 100) {
+				listener.onProgress(100);
+			}
 
-      byte[] buf = new byte[1024];
-      int len;
-      int progress = 0;
-      while ((len = is.read(buf)) > 0) {
-        fos.write(buf, 0, len);
-        count += len;
-        progress = (int) (((double) count / (double) size) * 100.0);
-        listener.onProgress(progress);
-      }
+			is.close();
+			fos.close();
 
-      if (progress < 100) {
-        listener.onProgress(100);
-      }
+		} catch (Exception e) {
+			throw new KlabIOException(e.getMessage());
+		}
 
-      is.close();
-      fos.close();
+		return count;
+	}
 
-    } catch (Exception e) {
-      throw new KlabIOException(e.getMessage());
-    }
+	/**
+	 * Copy channeled.
+	 *
+	 * @param url  the url
+	 * @param file the file
+	 * @throws KlabIOException the klab IO exception
+	 */
+	public static void copyChanneled(URL url, File file) throws KlabIOException {
 
-    return count;
-  }
+		InputStream is = null;
+		FileOutputStream fos = null;
 
-  /**
-   * Copy channeled.
-   *
-   * @param url the url
-   * @param file the file
-   * @throws KlabIOException the klab IO exception
-   */
-  public static void copyChanneled(URL url, File file) throws KlabIOException {
+		try {
+			is = url.openStream();
+			fos = new FileOutputStream(file);
+			ReadableByteChannel rbc = Channels.newChannel(is);
+			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+		} catch (Exception e) {
+			throw new KlabIOException(e.getMessage());
+		} finally {
+			if (is != null)
+				try {
+					is.close();
+				} catch (IOException e) {
+				}
+			if (fos != null)
+				try {
+					fos.close();
+				} catch (IOException e) {
+				}
+		}
+	}
 
-    InputStream is = null;
-    FileOutputStream fos = null;
+	/**
+	 * Copy the given File to the given local file, return number of bytes copied.
+	 *
+	 * @param url  the URL
+	 * @param file the File
+	 * @return the number of bytes copied.
+	 * @throws KlabIOException the klab IO exception
+	 */
+	public static long copy(File url, File file) throws KlabIOException {
+		long count = 0;
 
-    try {
-      is = url.openStream();
-      fos = new FileOutputStream(file);
-      ReadableByteChannel rbc = Channels.newChannel(is);
-      fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-    } catch (Exception e) {
-      throw new KlabIOException(e.getMessage());
-    } finally {
-      if (is != null)
-        try {
-          is.close();
-        } catch (IOException e) {
-        }
-      if (fos != null)
-        try {
-          fos.close();
-        } catch (IOException e) {
-        }
-    }
-  }
+		try {
+			InputStream is = new FileInputStream(url);
+			FileOutputStream fos = new FileOutputStream(file);
 
-  /**
-   * Copy the given File to the given local file, return number of bytes copied.
-   *
-   * @param url the URL
-   * @param file the File
-   * @return the number of bytes copied.
-   * @throws KlabIOException the klab IO exception
-   */
-  public static long copy(File url, File file) throws KlabIOException {
-    long count = 0;
+			int oneChar;
+			while ((oneChar = is.read()) != -1) {
+				fos.write(oneChar);
+				count++;
+			}
 
-    try {
-      InputStream is = new FileInputStream(url);
-      FileOutputStream fos = new FileOutputStream(file);
+			is.close();
+			fos.close();
+		} catch (Exception e) {
+			throw new KlabIOException(e.getMessage());
+		}
 
-      int oneChar;
-      while ((oneChar = is.read()) != -1) {
-        fos.write(oneChar);
-        count++;
-      }
+		return count;
+	}
 
-      is.close();
-      fos.close();
-    } catch (Exception e) {
-      throw new KlabIOException(e.getMessage());
-    }
+	/**
+	 * Copy buffered.
+	 *
+	 * @param src the src
+	 * @param dst the dst
+	 * @throws KlabIOException the klab IO exception
+	 */
+	public static void copyBuffered(File src, File dst) throws KlabIOException {
 
-    return count;
-  }
+		try {
+			InputStream in = new FileInputStream(src);
+			OutputStream out = new FileOutputStream(dst);
 
-  /**
-   * Copy buffered.
-   *
-   * @param src the src
-   * @param dst the dst
-   * @throws KlabIOException the klab IO exception
-   */
-  public static void copyBuffered(File src, File dst) throws KlabIOException {
+			// Transfer bytes from in to out
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+			in.close();
+			out.close();
+		} catch (Exception e) {
+			throw new KlabIOException(e.getMessage());
+		}
 
-    try {
-      InputStream in = new FileInputStream(src);
-      OutputStream out = new FileOutputStream(dst);
+	}
 
-      // Transfer bytes from in to out
-      byte[] buf = new byte[1024];
-      int len;
-      while ((len = in.read(buf)) > 0) {
-        out.write(buf, 0, len);
-      }
-      in.close();
-      out.close();
-    } catch (Exception e) {
-      throw new KlabIOException(e.getMessage());
-    }
+	/**
+	 * Gets the file for URL.
+	 *
+	 * @param url the url
+	 * @return the file for URL
+	 * @throws KlabIOException the klab IO exception
+	 */
+	public static File getFileForURL(URL url) throws KlabIOException {
+		if (url.toString().startsWith("file:")) {
+			return new File(UrlEscape.unescapeurl(url.getFile()));
+		} else {
+			File temp;
+			try {
+				temp = File.createTempFile("url", "url");
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+			copy(url, temp);
+			return temp;
+		}
+	}
 
-  }
-
-  /**
-   * Gets the file for URL.
-   *
-   * @param url the url
-   * @return the file for URL
-   * @throws KlabIOException the klab IO exception
-   */
-  public static File getFileForURL(URL url) throws KlabIOException {
-    if (url.toString().startsWith("file:")) {
-      return new File(UrlEscape.unescapeurl(url.getFile()));
-    } else {
-      File temp;
-      try {
-        temp = File.createTempFile("url", "url");
-      } catch (IOException e) {
-        throw new KlabIOException(e);
-      }
-      copy(url, temp);
-      return temp;
-    }
-  }
+	/**
+	 * Return the size of the file pointed to by the URL, or -1 if it can't be
+	 * assessed.
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static long getFileSize(URL url) {
+		URLConnection conn = null;
+		try {
+			conn = url.openConnection();
+			if (conn instanceof HttpURLConnection) {
+				((HttpURLConnection) conn).setRequestMethod("HEAD");
+			}
+			conn.getInputStream();
+			return conn.getContentLengthLong();
+		} catch (IOException e) {
+			return -1;
+		} finally {
+			if (conn instanceof HttpURLConnection) {
+				((HttpURLConnection) conn).disconnect();
+			}
+		}
+	}
 
 }
