@@ -2,7 +2,11 @@ package org.integratedmodelling.weather.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Logging;
@@ -11,9 +15,13 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import ucar.ma2.Array;
 import ucar.ma2.InvalidRangeException;
@@ -21,30 +29,45 @@ import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
 /**
- * Pass a station, read data if necessary.
+ * Pass a file path to scan for CRU data.
+ * 
+ * To obtain the files, CD to the file path and run
+ * 
+ * <pre>
+ * wget -r -np -nH https://crudata.uea.ac.uk/cru/data/hrg/cru_ts_4.03/cruts.1905011326.v4.03/
+ * </pre>
+ * 
+ * to get all the data from the current (2019) CRU database. The system will
+ * scan the directories, parse the names, unzip and load all files it finds.
  * 
  * @author Ferd
  */
 public class CRUReader {
 
+	class FileDesc {
+		public File file;
+		public int startYear;
+		public int endYear;
+	}
+
 	/*
 	 * maps CRU varnames in NetCDF files to "official" GHCND identifiers defined in
 	 * WeatherFactory. Below is the "legend" offered by CRU, although not all files
 	 * are available online. Some others we ignore due to the impossibility of
-	 * interpolating to a meaningful daily series. cld cloud cover percentage (%)
-	 * ACMH dtr diurnal temperature range degrees Celsius TRAN (new) frs frost day
-	 * frequency days FRSD (new) pet potential evapotranspiration millimetres per
-	 * day PETM (new) pre precipitation millimetres per month PRCP rhm relative
-	 * humidity percentage (%) HPER (new) ssh sunshine duration hours TSUN
-	 * (MINUTES!) tmp daily mean temperature degrees Celsius TAVG tmn monthly
-	 * average daily minimum temperature degrees Celsius TMIN tmx monthly average
-	 * daily maximum temperature degrees Celsius TMAX vap vapour pressure
-	 * hectopascals (hPa) VPPP (new) wet wet day frequency days DWPR wnd wind speed
-	 * metres per second (m/s) AWND
+	 * interpolating to a meaningful daily series.
+	 * 
+	 * cld cloud cover percentage (%) ACMH dtr diurnal temperature range degrees
+	 * Celsius TRAN (new) frs frost day frequency days FRSD (new) pet potential
+	 * evapotranspiration millimetres per day PETM (new) pre precipitation
+	 * millimetres per month PRCP rhm relative humidity percentage (%) HPER (new)
+	 * ssh sunshine duration hours TSUN (MINUTES!) tmp daily mean temperature
+	 * degrees Celsius TAVG tmn monthly average daily minimum temperature degrees
+	 * Celsius TMIN tmx monthly average daily maximum temperature degrees Celsius
+	 * TMAX vap vapour pressure hectopascals (hPa) VPPP (new) wet wet day frequency
+	 * days DWPR wnd wind speed metres per second (m/s) AWND
 	 */
-	static Map<String, String> variableMap = new HashMap<>();
-	static Map<String, String> fileMap = new HashMap<>();
-	static Map<String, NetcdfFile> dataFiles = new HashMap<>();
+	static BiMap<String, String> variableMap = HashBiMap.create();
+	static Map<String, List<FileDesc>> fileMap = new HashMap<>();
 
 	/*
 	 * vars commented out are advertised as provided but the high-resolution files
@@ -66,100 +89,239 @@ public class CRUReader {
 		variableMap.put(Weather.WET_DAYS_IN_PERIOD, "wet");
 		variableMap.put(Weather.POTENTIAL_EVAPOTRANSPIRATION_MM, "pet");
 
+		// we don't know how to interpolate these. Should probably recover them with no
+		// interpolation.
 		// variableMap.put(Weather.FROST_DAYS_IN_MONTH, "frs");
 		// variableMap.put(Weather.RELATIVE_HUMIDITY_PERCENT, "rhm");
 		// variableMap.put(Weather.SUNSHINE_DURATION_TOTAL_MINUTES, "ssh");
 		// variableMap.put(Weather.WIND_SPEED_M_SEC, "wnd");
 
-		fileMap.put(Weather.PRECIPITATION_MM, "cru_ts3.23.1901.2014.pre.dat.nc");
-		fileMap.put(Weather.MIN_TEMPERATURE_C, "cru_ts3.23.1901.2014.tmn.dat.nc");
-		fileMap.put(Weather.MAX_TEMPERATURE_C, "cru_ts3.23.1901.2014.tmx.dat.nc");
-		fileMap.put(Weather.CLOUD_COVER_PERCENTAGE, "cru_ts3.23.1901.2014.cld.dat.nc");
-		fileMap.put(Weather.DIURNAL_TEMPERATURE_RANGE_C, "cru_ts3.23.1901.2014.dtr.dat.nc");
-		fileMap.put(Weather.WET_DAYS_IN_PERIOD, "cru_ts3.23.01.1901.2014.wet.dat.nc");
-		fileMap.put(Weather.POTENTIAL_EVAPOTRANSPIRATION_MM, "cru_ts3.23.1901.2014.pet.dat.nc");
-
-		// fileMap.put(Weather.FROST_DAYS_IN_MONTH, "cru_ts3.23.1901.2014.frs.dat.nc");
-		// fileMap.put(Weather.RELATIVE_HUMIDITY_PERCENT,
-		// "cru_ts3.23.1901.2014.rhm.dat.nc");
-		// fileMap.put(Weather.SUNSHINE_DURATION_TOTAL_MINUTES,
-		// "cru_ts3.23.1901.2014.ssh.dat.nc");
-		// fileMap.put(Weather.WIND_SPEED_M_SEC, "cru_ts3.23.1901.2014.wnd.dat.nc");
-
 	}
 
 	File cruPath;
-	/*
-	 * all CRU file must have same temporal span, which has been the case so far.
+
+	/**
+	 * Scan the path and find all (zipped or not) CRU files for the variables we
+	 * understand.
+	 * 
+	 * @param path
 	 */
-	DateTime start;
-	DateTime end;
+	public void findCRUFiles(File path) {
+
+		scan(path);
+
+		/*
+		 * sort by decreasing length of interval and weed out partial files
+		 */
+
+		Map<String, FileDesc> overalls = new HashMap<>();
+		for (String var : fileMap.keySet()) {
+
+			int minYear = Integer.MAX_VALUE;
+			int maxYear = Integer.MIN_VALUE;
+
+			for (FileDesc fd : fileMap.get(var)) {
+				if (fd.startYear < minYear) {
+					minYear = fd.startYear;
+				}
+				if (fd.endYear > maxYear) {
+					maxYear = fd.endYear;
+				}
+			}
+
+			Collections.sort(fileMap.get(var), new Comparator<FileDesc>() {
+				@Override
+				public int compare(FileDesc arg0, FileDesc arg1) {
+					int span0 = arg0.endYear - arg0.startYear;
+					int span1 = arg1.endYear - arg1.startYear;
+					return Integer.compare(span1, span0);
+				}
+			});
+
+			FileDesc overall = null;
+			for (FileDesc fd : fileMap.get(var)) {
+				if (fd.startYear == minYear && fd.endYear == maxYear) {
+					overall = fd;
+					break;
+				}
+			}
+
+			if (overall != null) {
+				overalls.put(var, overall);
+			}
+		}
+
+		for (String var : overalls.keySet()) {
+			Logging.INSTANCE.info("Using whole-span CRU file " + overalls.get(var).file + " for " + var);
+			fileMap.put(var, Collections.singletonList(overalls.get(var)));
+		}
+
+	}
+
+	private void scan(File path) {
+
+		for (File f : path.listFiles()) {
+			if (f.isDirectory()) {
+				scan(f);
+			} else {
+				if (f.toString().endsWith(".dat.nc") || f.toString().endsWith(".dat.nc.gz")) {
+
+					// find the 3-char var name just before the .nc
+					int nc = f.toString().lastIndexOf(".dat.nc");
+					String vname = f.toString().substring(nc - 3, nc);
+					String wname = variableMap.inverse().get(vname);
+					if (wname != null) {
+
+						/*
+						 * parse the start and end
+						 */
+						String from = f.toString().substring(nc - 13, nc - 9);
+						String to = f.toString().substring(nc - 8, nc - 4);
+
+						int startYear = 0, endYear = 0;
+
+						try {
+
+							startYear = Integer.parseInt(from);
+							endYear = Integer.parseInt(to);
+
+						} catch (NumberFormatException e) {
+							throw new KlabValidationException(
+									"CRU file name has unexpected format: expecting ...<start>.<end>.<variable>...");
+						}
+
+						/*
+						 * put away
+						 */
+						FileDesc fd = new FileDesc();
+
+						fd.file = f;
+						fd.startYear = startYear;
+						fd.endYear = endYear;
+
+						List<FileDesc> fdd = fileMap.get(wname);
+						if (fdd == null) {
+							fdd = new ArrayList<>();
+							fileMap.put(wname, fdd);
+						}
+
+						fdd.add(fd);
+
+						Logging.INSTANCE
+								.info("Found CRU data for " + vname + " between " + startYear + " and " + endYear);
+
+					} else {
+						Logging.INSTANCE.info("Skipping CRU data for " + vname + " for lack of interpolation strategy");
+					}
+				}
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		new CRUReader(null).findCRUFiles(new File("C:\\CRU"));
+	}
 
 	public CRUReader(File file) {
 		this.cruPath = file;
+		findCRUFiles(file);
 	}
 
-	public NetcdfFile getFile(String variable) throws KlabException {
+	public NetcdfFile getFile(String variable, int year) throws KlabException {
 
-		if (dataFiles.containsKey(variable)) {
-			return dataFiles.get(variable);
+		FileDesc desc = null;
+
+		if (fileMap.containsKey(variable)) {
+			for (FileDesc fd : fileMap.get(variable)) {
+				if (fd.startYear <= year && fd.endYear >= year) {
+					desc = fd;
+					break;
+				}
+			}
 		}
 
-		String filename = fileMap.get(variable);
-
-		if (filename == null) {
+		if (desc == null) {
 			throw new KlabValidationException("cannot map variable " + variable + " to CRU dataset");
 		}
 
-		File file = new File(this.cruPath + File.separator + filename);
+		File file = desc.file;
 		if (!file.exists()) {
 			throw new KlabValidationException(
-					"CRU data for variable " + variable + " expected in non-existent CRU file " + filename);
+					"CRU data for variable " + variable + " expected in non-existent CRU file " + file);
 		}
 
 		try {
-
-			NetcdfFile nc = NetcdfFile.open(file.toString());
-			dataFiles.put(variable, nc);
-			return nc;
-
+			return NetcdfFile.open(file.toString());
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		}
 
 	}
 
-	/**
-	 * If files are left open, ensure that this is called at shutdown.
-	 */
-	public void closeAll() {
-		for (NetcdfFile file : dataFiles.values()) {
-			try {
-				file.close();
-			} catch (IOException e) {
-				Logging.INSTANCE.warn("error closing NetCDF file " + file);
+	public Pair<DateTime, DateTime> getTemporalBoundaries() throws KlabException {
+
+		Pair<DateTime, DateTime> ret = new Pair<>();
+		for (String var : variableMap.keySet()) {
+			Pair<DateTime, DateTime> pret = getTemporalBoundaries(var);
+			if (ret.getFirst() == null || pret.getFirst().isBefore(ret.getFirst())) {
+				ret.setFirst(pret.getFirst());
+			}
+			if (ret.getSecond() == null || pret.getSecond().isAfter(ret.getSecond())) {
+				ret.setSecond(pret.getSecond());
 			}
 		}
+		return ret;
 	}
 
-	public void getTemporalBoundaries() throws KlabException {
+	public Pair<DateTime, DateTime> getTemporalBoundaries(String variable) throws KlabException {
 
-		if (this.start == null) {
-			try {
+		Pair<DateTime, DateTime> ret = new Pair<>();
 
-				NetcdfFile nc = getFile(Weather.PRECIPITATION_MM);
+		for (FileDesc desc : fileMap.get(variable)) {
+
+			try (NetcdfFile nc = NetcdfFile.open(desc.file.toString())) {
+
 				Variable vtime = nc.findVariable("time");
-
 				Array firstTime = vtime.read(new int[] { 0 }, new int[] { 1 });
 				Array lastTime = vtime.read(new int[] { vtime.getDimension(0).getLength() - 1 }, new int[] { 1 });
 
-				this.start = new DateTime(1900, 1, 1, 0, 0).plusDays(firstTime.getInt(0));
-				this.end = new DateTime(1900, 1, 1, 0, 0).plusDays(lastTime.getInt(0));
+				DateTime start = new DateTime(1900, 1, 1, 0, 0).plusDays(firstTime.getInt(0));
+				DateTime end = new DateTime(1900, 1, 1, 0, 0).plusDays(lastTime.getInt(0));
+
+				if (ret.getFirst() == null || start.isBefore(ret.getFirst())) {
+					ret.setFirst(start);
+				}
+				if (ret.getSecond() == null || end.isAfter(ret.getSecond())) {
+					ret.setSecond(end);
+				}
 
 			} catch (IOException | InvalidRangeException e) {
 				throw new KlabIOException(e);
 			}
 		}
+
+		return ret;
+	}
+
+	public Pair<DateTime, DateTime> getTemporalBoundaries(NetcdfFile nc) {
+
+		Pair<DateTime, DateTime> ret = new Pair<>();
+
+		Variable vtime = nc.findVariable("time");
+
+		Array firstTime = null, lastTime = null;
+		try {
+			firstTime = vtime.read(new int[] { 0 }, new int[] { 1 });
+			lastTime = vtime.read(new int[] { vtime.getDimension(0).getLength() - 1 }, new int[] { 1 });
+		} catch (Throwable e) {
+			throw new KlabIOException(e);
+		}
+
+		DateTime start = new DateTime(1900, 1, 1, 0, 0).plusDays(firstTime.getInt(0));
+		DateTime end = new DateTime(1900, 1, 1, 0, 0).plusDays(lastTime.getInt(0));
+
+		return new Pair<>(start, end);
+
 	}
 
 	/**
@@ -175,17 +337,17 @@ public class CRUReader {
 		Map<String, double[]> ret = new HashMap<>();
 
 		/*
-		 * find the time start for the year
+		 * find the time start for the year TODO cache!
 		 */
-		getTemporalBoundaries();
+		Pair<DateTime, DateTime> timespan = getTemporalBoundaries();
 
-		if (this.start.getYear() > year || this.end.getYear() < year) {
+		if (timespan.getFirst().getYear() > year || timespan.getSecond().getYear() < year) {
 			throw new KlabValidationException("access to non-existing CRU data for year " + year);
 		}
 
 		DateTime startPeriod = new DateTime(year, 1, 1, 0, 0);
 		PeriodType month = PeriodType.months();
-		Period difference = new Period(this.start, startPeriod, month);
+		Period difference = new Period(timespan.getFirst(), startPeriod, month);
 		int timeIdx = difference.getMonths();
 		int days = new DateTime(startPeriod.getYear(), 12, 31, 23, 59).getDayOfYear();
 
@@ -203,18 +365,14 @@ public class CRUReader {
 		for (String variable : cruVariables) {
 
 			String varname = variableMap.get(variable);
-			NetcdfFile nc = getFile(variable);
-			Variable var = nc.findVariable(varname);
-
-			double[] data = new double[12];
-			try {
-
+			try (NetcdfFile nc = getFile(variable, year)) {
+				Variable var = nc.findVariable(varname);
+				double[] data = new double[12];
 				Array value = var.read(new int[] { timeIdx, latIdx, lonIdx }, new int[] { 12, 1, 1 });
 				for (int i = 0; i < 12; i++) {
 					data[i] = value.getDouble(i);
 				}
 				monthlyData.put(variable, data);
-
 			} catch (IOException | InvalidRangeException e) {
 				throw new KlabIOException(e);
 			}
@@ -292,71 +450,68 @@ public class CRUReader {
 		/*
 		 * ensure we have start/end set
 		 */
-		getTemporalBoundaries();
+		Pair<DateTime, DateTime> timespan = getTemporalBoundaries();
 
-		File precfile = new File(this.cruPath + File.separator + fileMap.get(Weather.PRECIPITATION_MM));
-		NetcdfFile nc;
-		try {
-			nc = NetcdfFile.open(precfile.toString());
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
+		/*
+		 * take a file as an example for all others
+		 */
+		File precfile = fileMap.get(Weather.PRECIPITATION_MM).get(0).file;
 
-		Variable var = nc.findVariable(variableMap.get(Weather.PRECIPITATION_MM));
-		Variable vlat = nc.findVariable("lat");
-		Variable vlon = nc.findVariable("lon");
+		try (NetcdfFile nc = NetcdfFile.open(precfile.toString())) {
 
-		// just pick this. If we have NaNs in legitimate data cells, we'll need a much
-		// more complicated strategy.
-		int time = 990;
-		int nStations = 0;
+			Variable var = nc.findVariable(variableMap.get(Weather.PRECIPITATION_MM));
+			Variable vlat = nc.findVariable("lat");
+			Variable vlon = nc.findVariable("lon");
 
-		for (int lonIdx = 0; lonIdx < 720; lonIdx++) {
-			for (int latIdx = 0; latIdx < 360; latIdx++) {
+			// just pick this. If we have NaNs in legitimate data cells, we'll need a much
+			// more complicated strategy.
+			int time = 990;
+			int nStations = 0;
 
-				try {
-					/*
-					 * get precipitation for some point in time and continue if NaN
-					 */
-					Array value = var.read(new int[] { time, latIdx, lonIdx }, new int[] { 1, 1, 1 });
+			for (int lonIdx = 0; lonIdx < 720; lonIdx++) {
+				for (int latIdx = 0; latIdx < 360; latIdx++) {
 
-					/*
-					 * assumptions, assumptions. We know CRU uses Double.MAX_VALUE for NaNs, so
-					 * being this precipitation, this should be a fine NaN test.
-					 */
-					if (value.getDouble(0) < 10000) {
+					try {
+						/*
+						 * get precipitation for some point in time and continue if NaN
+						 */
+						Array value = var.read(new int[] { time, latIdx, lonIdx }, new int[] { 1, 1, 1 });
 
-						String stationId = "CRU_" + lonIdx + "_" + latIdx;
+						/*
+						 * assumptions, assumptions. We know CRU uses Double.MAX_VALUE for NaNs, so
+						 * being this precipitation, this should be a fine NaN test.
+						 */
+						if (value.getDouble(0) < 10000) {
 
-						Array vvlat = vlat.read(new int[] { latIdx }, new int[] { 1 });
-						Array vvlon = vlon.read(new int[] { lonIdx }, new int[] { 1 });
+							String stationId = "CRU_" + lonIdx + "_" + latIdx;
 
-						double lat = vvlat.getDouble(0);
-						double lon = vvlon.getDouble(0);
+							Array vvlat = vlat.read(new int[] { latIdx }, new int[] { 1 });
+							Array vvlon = vlon.read(new int[] { lonIdx }, new int[] { 1 });
 
-						ws = new WeatherStation(stationId, lon, lat, start.getYear(), end.getYear());
+							double lat = vvlat.getDouble(0);
+							double lon = vvlon.getDouble(0);
 
-						wbox.store(ws, monitor);
+							ws = new WeatherStation(stationId, lon, lat, timespan.getFirst().getYear(),
+									timespan.getSecond().getYear());
 
-						Logging.INSTANCE.info("CRU station created: " + ws);
+							wbox.store(ws, monitor);
 
-						nStations++;
+							Logging.INSTANCE.info("CRU station created: " + ws);
+
+							WeatherFactory.stationIds.add(ws.getId());
+							
+							nStations++;
+						}
+					} catch (IOException | InvalidRangeException e) {
+						throw new KlabIOException(e);
 					}
-				} catch (IOException | InvalidRangeException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
-		}
 
-		Logging.INSTANCE.info("Created " + nStations + " CRU weather stations");
+			Logging.INSTANCE.info("Created " + nStations + " CRU weather stations");
 
-		if (nc != null) {
-			try {
-				nc.close();
-			} catch (IOException e) {
-				// OK, screw it
-			}
+		} catch (IOException e) {
+			// OK, screw it
 		}
 	}
 

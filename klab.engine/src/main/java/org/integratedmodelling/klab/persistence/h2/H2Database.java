@@ -188,7 +188,7 @@ public class H2Database {
 			this.isNew = !f1.exists() && !f2.exists();
 			try {
 				String fileUrl = directory.toURI().toURL().toString();
-				this.url = "jdbc:h2:" + fileUrl + kboxName + ";AUTO_SERVER=TRUE";
+				this.url = "jdbc:h2:" + fileUrl + kboxName + ";AUTO_SERVER=true;MVCC=true";
 			} catch (MalformedURLException e1) {
 				throw new KlabValidationException(e1);
 			}

@@ -10,7 +10,7 @@ public interface IPersistentTable<K,V> extends ITable<V>, Iterable<V> {
 	
 	boolean delete(K id);
 	
-	boolean update(K key, V object, IMonitor monitor);
+	boolean update(V object, IMonitor monitor);
 	
 	Iterable<V> query(String query);
 	

@@ -175,13 +175,12 @@ public class PersistentTable<K, V> implements IPersistentTable<K, V> {
 	@Override
 	public V retrieve(K id) {
 
-		if (!database.hasTable(getName())) {
-			return null;
-		}
+//		if (!database.hasTable(getName())) {
+//			return null;
+//		}
 
 		List<V> ret = new ArrayList<>();
-		String query = "SELECT * FROM " + getName() + " WHERE oid = " + (keyType == DataType.TEXT ? "'" : "") + id
-				+ (keyType == DataType.TEXT ? "'" : "") + ";";
+		String query = "SELECT * FROM " + getName() + " WHERE oid = " + SQL.wrapPOD(id) + ";";
 
 		database.query(query, new SQL.SimpleResultHandler() {
 			@Override
@@ -202,14 +201,14 @@ public class PersistentTable<K, V> implements IPersistentTable<K, V> {
 
 	@Override
 	public boolean delete(K id) {
-		database.execute("DELETE FROM " + getName() + " WHERE oid = " + (keyType == DataType.TEXT ? "'" : "") + id
-				+ (keyType == DataType.TEXT ? "'" : "") + ";");
+		database.execute("DELETE FROM " + getName() + " WHERE oid = " + SQL.wrapPOD(id) + ";");
 		return true;
 	}
 
 	@Override
-	public boolean update(K key, V object, IMonitor monitor) {
-		// TODO Auto-generated method stub
+	public boolean update(V object, IMonitor monitor) {
+		delete(keyGenerator.apply(object));
+		store(object, monitor);
 		return false;
 	}
 
@@ -217,9 +216,9 @@ public class PersistentTable<K, V> implements IPersistentTable<K, V> {
 	public Iterable<V> query(String query) {
 
 		List<V> ret = new ArrayList<>();
-		if (!database.hasTable(getName())) {
-			return ret;
-		}
+//		if (!database.hasTable(getName())) {
+//			return ret;
+//		}
 		database.query(query, new SQL.SimpleResultHandler() {
 			@Override
 			public void onRow(ResultSet rs) {

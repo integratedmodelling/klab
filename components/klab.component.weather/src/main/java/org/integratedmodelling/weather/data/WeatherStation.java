@@ -27,6 +27,7 @@
 package org.integratedmodelling.weather.data;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,24 +47,23 @@ import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.FixedReader;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.URLUtils;
 import org.joda.time.DateTime;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
 import com.vividsolutions.jts.geom.Point;
-
-import groovy.swing.factory.TableFactory;
 
 /**
  * A weather station with all the data known for it. The closest station to any
@@ -73,13 +73,6 @@ import groovy.swing.factory.TableFactory;
  * @author Ferd
  */
 public class WeatherStation {
-
-	// MapDB-backed storage so we only do URL retrieval the first time.
-	static DB db;
-	static Map<String, double[]> dataMap;
-	static Set<String> stationSet;
-	static Map<String, Integer> nansMap;
-	static Map<String, Long> timestampMap;
 
 	public class Data {
 
@@ -145,7 +138,6 @@ public class WeatherStation {
 	double longitude;
 	double latitude;
 	String email;
-	long datasize;
 	Map<String, Pair<Integer, Integer>> _provided = new HashMap<>();
 
 	/*
@@ -236,10 +228,10 @@ public class WeatherStation {
 		for (int year : Time.yearsBetween(start, end)) {
 
 			for (String v : variables) {
-				if (dataMap == null || !dataMap.containsKey(_id + ":" + v + "@" + year)) {
+				if (WeatherFactory.dataMap == null || !WeatherFactory.dataMap.containsKey(_id + ":" + v + "@" + year)) {
 					return false;
 				}
-				if (nansMap.get(_id + ":" + v + "@" + year) > maxNodataPercentage) {
+				if (WeatherFactory.nansMap.get(_id + ":" + v + "@" + year) > maxNodataPercentage) {
 					return false;
 				}
 			}
@@ -273,44 +265,77 @@ public class WeatherStation {
 	double[] getDataFromDB(String variable, int year) throws KlabException {
 		cacheData();
 		String id = _id + ":" + variable + "@" + year;
-		return dataMap.get(id);
+		return WeatherFactory.dataMap.get(id);
 	}
 
-	void cacheData() throws KlabException {
+	/**
+	 * Cache the data; return true if anything new was written to the database.
+	 * 
+	 * @return
+	 * @throws KlabException
+	 */
+	boolean cacheData() throws KlabException {
 
-		if (!stationSet.contains(_id)) {
+		boolean ret = false;
+
+		if (_source.equals("GHNCD")) {
+			/*
+			 * check if we have different data available; if so, download and read again
+			 */
+			for (String gurl : WeatherFactory.GHCN_URLS) {
+
+				try {
+
+					URL dataUrl = new URL(gurl + "/all/" + _id + ".dly");
+					long storedSize = WeatherFactory.datasizeMap.containsKey(_id) ? WeatherFactory.datasizeMap.get(_id) : 0;
+					long size = URLUtils.getFileSize(dataUrl);
+
+					if ((size > 0 && storedSize < size) || !WeatherFactory.stationSet.contains(_id)) {
+						File dataFile = File.createTempFile("station", ".dly");
+						URLUtils.copyChanneled(dataUrl, dataFile);
+						storeGHCNData(dataFile, size);
+						FileUtils.deleteQuietly(dataFile);
+						ret = true;
+					}
+
+					break;
+				} catch (Throwable e) {
+					// do nothing, go through other URLs
+					Logging.INSTANCE.error(
+							"read of weather data for station " + _id + " failed on " + gurl + ": " + e.getMessage());
+				}
+			}
+
+		} else if (!WeatherFactory.stationSet.contains(_id)) {
 
 			/*
 			 * if this is a CRU station, use CRU strategy
 			 */
 			if (_source.equals("CRU") && WeatherFactory.INSTANCE.getCRUReader() != null) {
 				storeCRUData();
-			} else {
-				/*
-				 * this should be ok as user stations are stored on creation, so stationSet will
-				 * contain the ID and we won't go through this.
-				 */
-				storeGHCNData();
+				ret = true;
 			}
 		}
+
+		return ret;
 	}
 
 	private void storeCRUData() throws KlabException {
 
 		Logging.INSTANCE.info("interpolating and storing CRU data for " + _id);
 
-		if (!dataMap.containsKey(_id + ":" + Weather.PRECIPITATION_MM + "@" + _lastKnownYear)) {
+		if (!WeatherFactory.dataMap.containsKey(_id + ":" + Weather.PRECIPITATION_MM + "@" + _lastKnownYear)) {
 			for (int year = Math.max(_firstKnownYear, 1970); year <= _lastKnownYear; year++) {
 				Map<String, double[]> data = WeatherFactory.INSTANCE.getCRUReader().readData(latitude, longitude, year);
 				for (String variable : data.keySet()) {
 					String id = _id + ":" + variable + "@" + year;
-					dataMap.put(id, data.get(variable));
-					nansMap.put(id, 0);
+					WeatherFactory.dataMap.put(id, data.get(variable));
+					WeatherFactory.nansMap.put(id, 0);
 				}
 			}
 
-			stationSet.add(_id);
-			timestampMap.put(_id,
+			WeatherFactory.stationSet.add(_id);
+			WeatherFactory.datasizeMap.put(_id,
 					WeatherFactory.INSTANCE.getCRUReader().getDataFile(Weather.PRECIPITATION_MM).lastModified());
 
 			Logging.INSTANCE
@@ -376,11 +401,9 @@ public class WeatherStation {
 	int _firstKnownYear;
 	int _lastKnownYear;
 
-	String _dataURL;
-
 	// for the DB
 	public WeatherStation() {
-		checkStorage();
+		WeatherFactory.checkStorage();
 	}
 
 	/**
@@ -440,9 +463,13 @@ public class WeatherStation {
 		ret.put("provided_vars", provided[0]);
 		ret.put("provided_start", provided[1]);
 		ret.put("provided_end", provided[2]);
-		ret.put("datasize", -1);
 		ret.put("location", _location);
 		return ret;
+	}
+	
+	public static Set<String> ids() {
+		WeatherFactory.checkStorage();
+		return WeatherFactory.stationSet;
 	}
 
 	/**
@@ -652,7 +679,7 @@ public class WeatherStation {
 
 			}
 
-			checkStorage();
+			WeatherFactory.checkStorage();
 
 			/*
 			 * Store everything in local cache TODO store flags and an index of what's
@@ -667,14 +694,14 @@ public class WeatherStation {
 					}
 				}
 				int pnans = (int) (((double) nans / (double) dd.length) * 100);
-				dataMap.put(_id + ":" + s, data.get(s));
-				nansMap.put(_id + ":" + s, pnans);
+				WeatherFactory.dataMap.put(_id + ":" + s, data.get(s));
+				WeatherFactory.nansMap.put(_id + ":" + s, pnans);
 			}
 
-			stationSet.add(_id);
-			timestampMap.put(_id, file.lastModified());
+			WeatherFactory.stationSet.add(_id);
+			WeatherFactory.datasizeMap.put(_id, file.lastModified());
 
-			db.commit();
+			WeatherFactory.db.commit();
 
 		}
 
@@ -701,56 +728,32 @@ public class WeatherStation {
 		this._source = "GHCND";
 		this._type = "RAW";
 
-//		checkStorage();
+		WeatherFactory.checkStorage();
 
 		_id = id;
 		elevation = alt;
 		longitude = lon;
 		latitude = lat;
 
-		/*
-		 * URL of data file for this station. Specific to structure of GHCN archive.
-		 */
-		_dataURL = baseURL + "/ghcnd_all/" + id + ".dly";
 		_location = Shape.create(lon, lat, Projection.getLatLon());
 	}
 
-	public void checkStorage() {
-
-		if (db == null) {
-
-			File dpath = Configuration.INSTANCE.getDataPath("weather");
-			dpath.mkdirs();
-			db = DBMaker.fileDB(new File(dpath + File.separator + "stationdata")).closeOnJvmShutdown().make();
-
-			dataMap = db.treeMap("datamap", Serializer.STRING, Serializer.DOUBLE_ARRAY).createOrOpen();
-			nansMap = db.treeMap("nansmap", Serializer.STRING, Serializer.INTEGER).createOrOpen();
-			stationSet = db.treeSet("stationset", Serializer.STRING).createOrOpen();
-			timestampMap = db.treeMap("timestamps", Serializer.STRING, Serializer.LONG).createOrOpen();
-
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				@Override
-				public void run() {
-					// NPE?
-					// db.close();
-				}
-			});
-		}
-	}
 
 	public Point getPoint() {
 		return (Point) _location.getGeometry();
 	}
 
-	void storeGHCNData() throws KlabException {
+	void storeGHCNData(File file, long datasize) throws KlabException {
 
+		WeatherFactory.checkStorage();
+		
 		/*
 		 * set up storage for yearly data as appropriate - we read the whole thing in
 		 * once, then store the years we have. Key for the hash is VAR|YEAR.
 		 */
 		Map<String, double[]> data = new HashMap<>();
 
-		for (FixedReader fr : FixedReader.parse(_dataURL,
+		for (FixedReader fr : FixedReader.parse(file,
 				new int[] { 0, 11, 15, 17, 21, 26, 27, 28, 29, 34, 35, 36, 37, 261, 266, 267, 268 })) {
 
 			String ID = fr.nextString();
@@ -825,11 +828,12 @@ public class WeatherStation {
 				}
 			}
 			int pnans = (int) (((double) nans / (double) dd.length) * 100);
-			dataMap.put(_id + ":" + s, data.get(s));
-			nansMap.put(_id + ":" + s, pnans);
+			WeatherFactory.dataMap.put(_id + ":" + s, data.get(s));
+			WeatherFactory.nansMap.put(_id + ":" + s, pnans);
 		}
-		stationSet.add(_id);
-		db.commit();
+		WeatherFactory.stationSet.add(_id);
+		WeatherFactory.datasizeMap.put(_id, datasize);
+		WeatherFactory.db.commit();
 	}
 
 	@Override
@@ -1246,7 +1250,7 @@ public class WeatherStation {
 		if (names.isEmpty()) {
 			return;
 		}
-		
+
 		String[] n = names.split(",");
 		String[] s = start.split(",");
 		String[] e = end.split(",");
@@ -1274,14 +1278,14 @@ public class WeatherStation {
 
 	public void removeData() {
 
-		checkStorage();
+		WeatherFactory.checkStorage();
 
 		for (String s : _provided.keySet()) {
-			dataMap.remove(_id + ":" + s);
-			nansMap.remove(_id + ":" + s);
+			WeatherFactory.dataMap.remove(_id + ":" + s);
+			WeatherFactory.nansMap.remove(_id + ":" + s);
 		}
-		stationSet.remove(_id);
-		db.commit();
+		WeatherFactory.stationSet.remove(_id);
+		WeatherFactory.db.commit();
 	}
 
 	public double getLongitude() {
