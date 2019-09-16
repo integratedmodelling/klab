@@ -273,7 +273,7 @@ public class WeatherStation implements ISpatial {
 	 * @return
 	 * @throws KlabException
 	 */
-	boolean cacheData() throws KlabException {
+	synchronized boolean cacheData() throws KlabException {
 
 		boolean ret = false;
 
@@ -1340,4 +1340,66 @@ public class WeatherStation implements ISpatial {
 		return _location;
 	}
 
+    /**
+     * Train a weather generator to represent the year range passed, and from this point
+     * on use it to produce any numbers requested (changing the type to SIMULATED). When
+     * calling this, we should be sure that there are no NaNs in the data for the years
+     * (guaranteed with CRU data) and of course that the data for the training years are
+     * available.
+     * 
+     * @param startYear
+     * @param endYear
+     * @throws KlabException 
+     */
+    public void train(int startYear, int endYear) throws KlabException {
+        this.wg = new WeatherGenerator(this, startYear, endYear);
+    }
+	
+    // var -> local yearly data, set externally from data to use for matching to other
+    // locations
+    public Map<String, Double>    refData = new HashMap<>();
+
+    /**
+     * If we have initialized the station in a temporal context, this
+     * will contain the data available in it, either for weather computation
+     * or for creating the state of a weather station subject.
+     */
+    private Map<String, double[]> data    = new HashMap<>();
+    
+    /**
+     * Use previous training to generate data for one year. Note that this will
+     * only generate one year and leave whatever training data were in the data
+     * buffer after that. So ensure that only the first year of data is accessed
+     * after this is called.
+     * 
+     * @param year currently not used
+     * @param variables unused, either - wg only generates prec, mint and maxt.
+     */
+    public void generateData(int year, String[] variables) {
+        
+        if (wg == null) {
+            throw new KlabValidationException("cannot generate data in untrained weather station");
+        }
+        double[] rain = data.get(Weather.PRECIPITATION_MM);
+        double[] minT = data.get(Weather.MIN_TEMPERATURE_C);
+        double[] maxT = data.get(Weather.MAX_TEMPERATURE_C);
+        
+        if (rain == null) {
+            rain = new double[366];
+            data.put(Weather.PRECIPITATION_MM, rain);
+        }
+
+        if (minT == null) {
+            minT = new double[366];
+            data.put(Weather.MIN_TEMPERATURE_C, minT);
+        }
+
+        if (maxT == null) {
+            maxT = new double[366];
+            data.put(Weather.MAX_TEMPERATURE_C, maxT);
+        }
+
+        wg.generateDaily(minT, maxT, rain, false);
+    }
+    
 }

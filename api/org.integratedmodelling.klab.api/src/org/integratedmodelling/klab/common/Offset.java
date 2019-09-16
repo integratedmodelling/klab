@@ -257,6 +257,23 @@ public class Offset implements ILocator {
 		return geometry + "@" + oofs;
 	}
 
+	/**
+	 * Return the linear offset for the passed dimension of the original geometry, or
+	 * -1
+	 * 
+	 * @return
+	 */
+	public long getOffset(Dimension.Type dimension) {
+		
+		for (int i = 0; i < geometry.getDimensions().size(); i++) {
+			if (geometry.getDimensions().get(i).getType() == dimension) {
+				return pos[i];
+			}
+		}
+		
+		return -1;
+	}
+	
 	public static void main(String[] args) {
 
 		String g1 = "S2(431999,27599){bbox=[-179.99999999999966 179.99999999999835 59.99999999999997 82.99999999999997],proj=EPSG:4326}@(30,40)";

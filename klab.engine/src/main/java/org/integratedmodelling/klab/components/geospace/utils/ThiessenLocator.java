@@ -52,6 +52,8 @@ import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
  * area, and it will create an index so that it can be queried for the index of
  * the shape selected to describe each cell in the raster.
  * 
+ * TODO make it use a SHORT storage instead of the array.
+ * 
  * @author Ferd
  *
  */
@@ -129,8 +131,8 @@ public class ThiessenLocator<T extends ISpatial> {
 		}
 	}
 
-	public T get(int offset) {
-		return object == null ? (index == null ? null : pairs.get(index[offset] - 1).getSecond()) : object;
+	public T get(long offset) {
+		return object == null ? (index == null ? null : pairs.get(index[(int)offset] - 1).getSecond()) : object;
 	}
 
 }

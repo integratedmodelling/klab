@@ -37,8 +37,23 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	@Override
 	public void getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
-		// TODO Auto-generated method stub
 
+		// TODO Auto-generated method stub
+		switch (Services.valueOf(urn.getNamespace())) {
+		case data:
+			break;
+		case stations:
+			break;
+		case storms:
+			break;
+		default:
+			break;
+		}
+
+		throw new IllegalArgumentException(
+				"weather service: URN namespace " + urn.getNamespace() + " cannot be understood");
+
+		
 	}
 
 	@Override

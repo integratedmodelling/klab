@@ -1,22 +1,24 @@
 package org.integratedmodelling.weather.observation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Time;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.ThiessenLocator;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.weather.data.WeatherFactory;
+import org.integratedmodelling.weather.data.Weather;
 import org.integratedmodelling.weather.data.WeatherStation;
 import org.joda.time.DateTime;
 
@@ -76,6 +78,8 @@ public class WeatherData {
 	 */
 	List<Observation> observables = new ArrayList<>();
 
+	
+	
 	/**
 	 * Regular weather driver: will use Thiessen polygons and assumes data are raw
 	 * and from actual observations. Data may contain no-data; no weather generator
@@ -86,8 +90,8 @@ public class WeatherData {
 	 * @param stations
 	 * @param monitor
 	 */
-	public WeatherData(IScale scale, IState elevation, Map<String, IState> states, List<WeatherStation> stations,
-			IMonitor monitor) {
+	public WeatherData(IScale scale, ILocator locator, IState elevation, Map<String, IState> states,
+			List<WeatherStation> stations, IMonitor monitor) {
 
 		Grid grid = Space.extractGrid(scale);
 
@@ -102,11 +106,14 @@ public class WeatherData {
 		 */
 		for (String var : states.keySet()) {
 
+			IState state = states.get(var);
+
 			for (WeatherStation ws : stations) {
-				long ofs = grid.getOffsetFromWorldCoordinates(ws.getLongitude(), ws.getLatitude());
-//				if (states.get(var).getValue(ofs) != null && !Double.isNaN(((Number) (states.get(var).getValue(ofs))).doubleValue())) {
-//					ws.refData.put(var, ((Number) (state.getValue(ofs))).doubleValue());
-//				}
+				ILocator ofs = grid.getCellAt(new double[] { ws.getLongitude(), ws.getLatitude() }, true);
+				double sval = state.get(ofs, Double.class);
+				if (!Double.isNaN(sval)) {
+					ws.refData.put(var, sval);
+				}
 			}
 		}
 	}
@@ -120,42 +127,36 @@ public class WeatherData {
 	 * 
 	 * @throws KlabException
 	 */
-	public WeatherData(IScale scale, int startYear, int endYear, Collection<IState> states,
+	public WeatherData(IScale scale, int startYear, int endYear, Map<String, IState> states,
 			List<WeatherStation> stations, IMonitor monitor) throws KlabException {
 
-//		this.scale = scale;
-//		this.stations = stations;
-//		this.locator = new ThiessenLocator<>(scale, stations);
-//
-//		for (WeatherStation ws : stations) {
-//			ws.train(startYear, endYear);
-//		}
-//
-//		this.type = "SIMULATED";
-//
-//		/*
-//		 * record adjustment factors for available reference maps in each station
-//		 */
-//		for (IState state : states) {
-//
-//			if (state.getObservable().getSemantics().is(GeoNS.ELEVATION)) {
-//				this.elevation = state;
-//				continue;
-//			}
-//
-//			String var = WeatherFactory.getVariableForObservable(state.getObservable().getSemantics());
-//			if (var != null) {
-//
-//				statesForVar.put(var, state);
-//
-//				for (WeatherStation ws : stations) {
-//					int ofs = scale.getSpace().getGrid().getOffsetFromWorldCoordinates(ws.longitude, ws.latitude);
-//					if (state.getValue(ofs) != null && !Double.isNaN(((Number) (state.getValue(ofs))).doubleValue())) {
-//						ws.refData.put(var, ((Number) (state.getValue(ofs))).doubleValue());
-//					}
-//				}
-//			}
-//		}
+		Grid grid = Space.extractGrid(scale);
+
+		this.scale = scale;
+		this.stations = stations;
+		this.locator = new ThiessenLocator<>(scale, stations);
+
+		for (WeatherStation ws : stations) {
+			ws.train(startYear, endYear);
+		}
+
+		this.type = "SIMULATED";
+
+		/*
+		 * record adjustment factors for available reference maps in each station
+		 */
+		for (String var : states.keySet()) {
+
+			IState state = states.get(var);
+
+			for (WeatherStation ws : stations) {
+				ILocator ofs = grid.getCellAt(new double[] { ws.getLongitude(), ws.getLatitude() }, true);
+				double sval = state.get(ofs, Double.class);
+				if (!Double.isNaN(sval)) {
+					ws.refData.put(var, sval);
+				}
+			}
+		}
 	}
 
 	/**
@@ -170,66 +171,66 @@ public class WeatherData {
 	 */
 	public Map<String, double[]> defineVariables(DateTime time, String... variables) {
 
-//		if (time.getYear() != currentSimulatedYear) {
-//			currentSimulatedYear = time.getYear();
-//			for (WeatherStation station : stations) {
-//				station.generateData(time.getYear(), variables);
-//			}
-//		}
-//
-//		if (buffers == null) {
-//			buffers = new HashMap<>();
-//		}
-//
-//		for (String var : variables) {
-//			if (!buffers.containsKey(var)) {
-//				buffers.put(var, new double[(int) scale.getSpace().getMultiplicity()]);
-//			}
-//		}
-//
-//		/*
-//		 * determine offset for passed day vs. start of period
-//		 */
-//		int ofs = time.getDayOfYear();
-//
-//		/*
-//		 * TODO check if this was returned before and just get cached data if so.
-//		 */
-//
-//		for (String var : variables) {
-//
-//			double[] state = buffers.get(var);
-//
-//			for (int n : scale.getIndex(IScale.Locator.INITIALIZATION)) {
-//
-//				int spaceOffset = scale.getExtentOffset(scale.getSpace(), n);
-//
-//				WeatherStation representativeStation = locator.get(spaceOffset);
-//				double data = Double.NaN;
-//
-//				if (representativeStation != null) {
-//
+		if (time.getYear() != currentSimulatedYear) {
+			currentSimulatedYear = time.getYear();
+			for (WeatherStation station : stations) {
+				station.generateData(time.getYear(), variables);
+			}
+		}
+
+		if (buffers == null) {
+			buffers = new HashMap<>();
+		}
+
+		for (String var : variables) {
+			if (!buffers.containsKey(var)) {
+				buffers.put(var, new double[(int) scale.getSpace().size()]);
+			}
+		}
+
+		/*
+		 * determine offset for passed day vs. start of period
+		 */
+		int ofs = time.getDayOfYear();
+
+		/*
+		 * TODO check if this was returned before and just get cached data if so.
+		 */
+
+		for (String var : variables) {
+
+			// TODO use (FLOAT) storage, not arrays
+			double[] state = buffers.get(var);
+
+			for (ILocator loc : scale) {
+
+				Offset offset = loc.as(Offset.class);
+				WeatherStation representativeStation = locator.get(offset.linear);
+				double data = Double.NaN;
+
+				if (representativeStation != null) {
+
 //					data = representativeStation.getData().get(var)[ofs];
-//
-//					if (elevation != null && var.equals(WeatherFactory.MAX_TEMPERATURE_C)
-//							|| var.equals(WeatherFactory.MIN_TEMPERATURE_C)) {
-//
-//						double refvalue = States.getDouble(elevation, spaceOffset);
-//						if (!Double.isNaN(refvalue)) {
-//							data += ((representativeStation.elevation - refvalue) * 6.4 / 1000.0);
-//						}
-//					} else if (representativeStation.refData.containsKey(var)) {
-//						IState refstate = statesForVar.get(var);
-//						double refvalue = States.getDouble(refstate, spaceOffset);
-//						if (!Double.isNaN(refvalue)) {
-//							data = (data * refvalue) / representativeStation.refData.get(var);
-//						}
-//					}
-//				}
-//
-//				state[n] = data;
-//			}
-//		}
+
+					if (elevation != null && var.equals(Weather.MAX_TEMPERATURE_C)
+							|| var.equals(Weather.MIN_TEMPERATURE_C)) {
+
+						double refvalue = elevation.get(loc, Double.class);
+						if (!Double.isNaN(refvalue)) {
+							data += ((representativeStation.getElevation() - refvalue) * 6.4 / 1000.0);
+						}
+					} else if (representativeStation.refData.containsKey(var)) {
+						IState refstate = statesForVar.get(var);
+						double refvalue = refstate.get(loc, Double.class);
+						if (!Double.isNaN(refvalue)) {
+							data = (data * refvalue) / representativeStation.refData.get(var);
+						}
+					}
+				}
+
+				state[(int) offset.linear] = data;
+			}
+		}
 
 		return buffers;
 	}
@@ -243,53 +244,46 @@ public class WeatherData {
 	 * @param transition
 	 * @throws KlabIOException
 	 */
-	public void defineState(IState state /* , @Nullable ITransition transition */) throws KlabIOException {
+	public void defineState(String var, IState state) throws KlabIOException {
 
-//		String var = WeatherFactory.getVariableForObservable(state.getObservable().getSemantics());
-//
-//		if (var == null) {
-//			throw new KlabIOException(
-//					"observable " + state.getObservable().getType() + " cannot be mapped to weather data");
-//		}
-//
-//		for (int n : scale.getIndex(transition)) {
-//
-//			int spaceOffset = scale.getExtentOffset(scale.getSpace(), n);
-//
-//			WeatherStation representativeStation = locator.get(spaceOffset);
-//			double data = Double.NaN;
-//
-//			if (representativeStation != null) {
-//
+		for (ILocator loc : scale) {
+
+			Offset offset = loc.as(Offset.class);
+
+			WeatherStation representativeStation = locator.get(offset.linear);
+			double data = Double.NaN;
+
+			if (representativeStation != null) {
+
 //				data = representativeStation.getData().get(var)[transition == null ? 0 : transition.getTimeIndex()];
-//
-//				if (elevation != null && (var.equals(WeatherFactory.MAX_TEMPERATURE_C)
-//						|| var.equals(WeatherFactory.MIN_TEMPERATURE_C))) {
-//
-//					double refvalue = States.getDouble(elevation, spaceOffset);
-//					if (!Double.isNaN(data) && !Double.isNaN(refvalue)) {
-//						if (refvalue < 0) {
-//							/*
-//							 * happens, although it shouldn't - maybe we should warn as typically it's a
-//							 * missing nodata spec.
-//							 */
-//							refvalue = 0;
-//						}
-//						data += (representativeStation.elevation - refvalue) * 6.4 / 1000.0;
-//					}
-//				} else if (representativeStation.refData.containsKey(var)) {
-//
-//					IState refstate = statesForVar.get(var);
-//					double refvalue = States.getDouble(refstate, spaceOffset);
-//					double refdata = representativeStation.refData.get(var);
-//					if (!Double.isNaN(refvalue) && !Double.isNaN(refdata)) {
-//						data = (data * refvalue) / (refdata <= 0 ? 1 : refdata);
-//					}
-//				}
-//			}
-//
-//			States.set(state, data, n);
-//		}
+
+				if (elevation != null
+						&& (var.equals(Weather.MAX_TEMPERATURE_C) || var.equals(Weather.MIN_TEMPERATURE_C))) {
+
+					double refvalue = elevation.get(loc, Double.class);
+					if (!Double.isNaN(data) && !Double.isNaN(refvalue)) {
+						if (refvalue < 0) {
+							/*
+							 * happens, although it shouldn't - maybe we should warn as typically it's a
+							 * missing nodata spec.
+							 */
+							refvalue = 0;
+						}
+						data += (representativeStation.getElevation() - refvalue) * 6.4 / 1000.0;
+					}
+				} else if (representativeStation.refData.containsKey(var)) {
+
+					IState refstate = statesForVar.get(var);
+					double refvalue = refstate.get(loc, Double.class);
+					double refdata = representativeStation.refData.get(var);
+					if (!Double.isNaN(refvalue) && !Double.isNaN(refdata)) {
+						data = (data * refvalue) / (refdata <= 0 ? 1 : refdata);
+					}
+				}
+			}
+
+			state.set(loc, data);
+		}
 	}
 
 }

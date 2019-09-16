@@ -113,7 +113,7 @@ public enum WeatherFactory {
 
 		if (db == null) {
 
-			File dpath = Configuration.INSTANCE.getDataPath("weather");
+			File dpath = Configuration.INSTANCE.getDataPath(WeatherComponent.ID);
 			dpath.mkdirs();
 
 			/**

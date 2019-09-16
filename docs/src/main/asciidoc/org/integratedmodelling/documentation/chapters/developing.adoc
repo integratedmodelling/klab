@@ -92,6 +92,22 @@ What is a topology, geometry, dimension, scale, extent and how they are implemen
 
 ==== Locating and scanning geometries and scales
 
+No matter the internal representation of the scale, all scaling eventually resolves to linear offsets that point to a particular location in storage. k.LAB implements a uniform strategy to resolve scales and geometries to their linear addresses. This is based on the ILocator interface, which is implemented by geometries and extents. Locators can be _adapted_ to other types using their `as(Class<?>)` method: the `Offset` locator is guaranteed to always be defined in such conversions. `Offset` can produce the `IGeometry` over which it is defined and, when used in a scalar fashion, the numeric offsets for each of its dimensions and overall.
+
+By using the `Offset` locator, any locator can be resolved to the corresponding numeric offsets:
+
+[source,java]
+----
+
+	// .... code receives a state and a grid Cell named cell
+	Offset cellOffset = cell.as(Offset.class);
+	// cellOffset now also contains the original geometry so knows the time, too
+	long spaceOffset = cellOffset.getOffset(Dimension.Type.SPACE);
+	long timeOffset = cellOffset.getOffset(Dimension.Type.TIME);
+
+----
+
+
 === Storage providers
 
 === Runtime concepts

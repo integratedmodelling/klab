@@ -152,7 +152,7 @@ public class Weather {
 	 * @throws ThinklabException
 	 */
 	public Weather(Collection<WeatherStation> stations, long start, long end, long step, int maxYearsBack,
-			String[] variables, int maxAcceptableNodataPercentage, boolean adjustData) throws KlabException {
+			String[] variables, int maxAcceptableNodataPercentage, boolean interpolateNodata) throws KlabException {
 
 		int year = Time.getYear(start);
 		ArrayList<WeatherStation> rejected = new ArrayList<>();
