@@ -11,28 +11,20 @@
 	<name>k.LAB node server</name>
 	<dependencies>
 
-		<!-- for the embedded Git server 
+		<!-- for the embedded Git server <dependency> <groupId>org.eclipse.jetty</groupId> 
+			<artifactId>jetty-server</artifactId> <version>9.3.0.M1</version> </dependency> 
+			<dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-webapp</artifactId> 
+			<version>9.3.0.M1</version> </dependency> <dependency> <groupId>org.eclipse.jetty</groupId> 
+			<artifactId>jetty-plus</artifactId> <version>9.3.0.M1</version> </dependency> 
+			<dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId> 
+			<version>9.3.0.M1</version> </dependency> -->
+
 		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>9.3.0.M1</version>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.weather</artifactId>
+			<version>${klab.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
-			<version>9.3.0.M1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-plus</artifactId>
-			<version>9.3.0.M1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-jsp</artifactId>
-			<version>9.3.0.M1</version>
-		</dependency> -->
-		
+
 		<!-- unzip uploaded resources -->
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>

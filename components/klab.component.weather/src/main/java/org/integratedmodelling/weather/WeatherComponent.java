@@ -8,6 +8,8 @@ import org.integratedmodelling.klab.api.extensions.component.Setup;
 @Component(id="org.integratedmodelling.weather", version=Version.CURRENT)
 public class WeatherComponent {
 
+	public static final String ID = "org.integratedmodelling.weather";
+	
 	@Initialize
 	public boolean initialize() {
 		// check for setup done

@@ -27,10 +27,6 @@
 package org.integratedmodelling.weather.data;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,6 +36,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.general.IPersistentTable;
@@ -54,6 +51,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FixedReader;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.URLUtils;
+import org.integratedmodelling.weather.WeatherComponent;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.mapdb.DB;
@@ -121,23 +119,17 @@ public enum WeatherFactory {
 	 * 
 	 * @param catalogFile
 	 */
-	public void setupGHCND(URL catalogFile, IMonitor monitor) {
+	public void setupGHCNDStation(URL catalogFile, IMonitor monitor) {
 
 		checkStorage();
 
 		Logging.INSTANCE.info("Setting up GHCND dataset");
-
+		
+		Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
+		
 		try {
 
 			boolean update = true;
-			File wpath = Configuration.INSTANCE.getDataPath("ghcnd");
-			Properties properties = new Properties();
-			File pfile = new File(wpath + File.separator + "ghcnd.properties");
-			if (pfile.exists()) {
-				try (InputStream inp = new FileInputStream(pfile)) {
-					properties.load(inp);
-				}
-			}
 
 			DateTime now = new DateTime();
 			if (properties.getProperty(LAST_UPDATE_PROPERTY) != null) {
@@ -259,9 +251,8 @@ public enum WeatherFactory {
 				db.commit();
 
 				properties.setProperty(LAST_UPDATE_PROPERTY, now.toString());
-				try (OutputStream out = new FileOutputStream(pfile)) {
-					properties.store(out, null);
-				}
+				Extensions.INSTANCE.saveComponentProperties(WeatherComponent.ID);
+				
 			} else {
 				Logging.INSTANCE.info("GHCND dataset is up to date");
 			}
@@ -278,8 +269,6 @@ public enum WeatherFactory {
 			if (wbox.getDatabase() != null) {
 				wbox.getDatabase().deallocateConnection();
 			}
-
-//			FileUtils.deleteQuietly(leftover);
 
 		} catch (Throwable e) {
 			// I hate you
@@ -354,193 +343,20 @@ public enum WeatherFactory {
 		return ret;
 	}
 
-	public void setupCRU(File repository, IMonitor monitor) {
+	public void setupCRUStations(File repository, IMonitor monitor) {
 		checkStorage();
 		this.cruReader = new CRUReader(repository);
 		this.cruReader.createStations(wbox, monitor);
 	}
+	
+	public void setupTRRMEvents() {
+		// TODO hostia
+	}
 
-//	/*
-//	 * ensures the passed kbox contains the full index to the weather stations.
-//	 * CAUTION: long-running operation - about 3h on a powerful desktop. Better done
-//	 * on a real server with fast disks and used through REST.
-//	 */
-//	public void checkDatabase() throws KlabException {
-//
-//		String baseURL = "http://150.241.222.1/ghcn";
-//
-//		/*
-//		 * check paths first
-//		 */
-//		File fPath = Configuration.INSTANCE.getDataPath();
-//		File dataPath = new File(fPath + File.separator + "ghcnd");
-//		File cruPath = new File(fPath + File.separator + "cru");
-//
-//		if (fPath.exists() && fPath.isDirectory() && fPath.canRead()) {
-//			try {
-//				baseURL = dataPath.toURI().toURL().toString();
-//			} catch (MalformedURLException e) {
-//				// shouldn't happen, but continue with previous URL.
-//			}
-//		} else {
-//			throw new KlabException("wmengine application is misconfigured: no accessible path at "
-//					+ Configuration.INSTANCE.getDataPath());
-//		}
-//
-//		if (!fPath.canWrite()) {
-//			throw new KlabException(
-//					"application path at " + Configuration.INSTANCE.getDataPath() + " must be writable");
-//		}
-//
-//		/*
-//		 * check out CRU data first. These are fairly quick to initialize.
-//		 */
-//		long stationCount = 0;
-//		if (cruPath.exists() && fPath.isDirectory() && fPath.canRead()) {
-////			initializeCRUData(cruPath);
-//			stationCount = wbox.count();
-//		}
-//
-//		if (!(dataPath.exists() && dataPath.isDirectory() && dataPath.canRead())) {
-//			Logging.INSTANCE.info("GHCND data directory not found at " + dataPath + ": no GHCND stations available");
-//			return;
-//		}
-//
-//		File leftover = new File(dataPath + File.separator + ".ws_lasts");
-//		long wscount = wbox.count();
-//
-//		if (wscount > (stationCount + 100) && !leftover.exists()) {
-//			Logging.INSTANCE.warn("setup was not performed: no lock file and " + (wscount - stationCount)
-//					+ " GHCND stations are present in the database");
-//			return;
-//		}
-//
-//		File fInv = new File(dataPath + File.separator + "ghcnd-inventory.txt");
-//		File fSta = new File(dataPath + File.separator + "ghcnd-stations.txt");
-//
-//		/**
-//		 * Try to get these locally, to avoid keeping a URL connection open too long.
-//		 */
-//		try {
-//			if (!fSta.exists()) {
-//				URLUtils.copy(new URL(baseURL + "/ghcnd-stations.txt"), fSta);
-//			}
-//			if (!fInv.exists()) {
-//				URLUtils.copy(new URL(baseURL + "/ghcnd-inventory.txt"), fInv);
-//			}
-//		} catch (MalformedURLException e1) {
-//			// do nothing, try directly.
-//		}
-//
-//		List<FixedReader> stations = null;
-//		List<FixedReader> inventor = null;
-//		int startAt = 0;
-//		if (leftover.exists()) {
-//			try {
-//				startAt = Integer.parseInt(FileUtils.readFileToString(leftover).trim());
-//			} catch (NumberFormatException | IOException e) {
-//				throw new KlabIOException(e);
-//			}
-//		}
-//
-//		if (fInv.exists() && fSta.exists()) {
-//			stations = FixedReader.parse(fSta, new int[] { 0, 12, 21, 31, 38, 41, 72, 76, 80 });
-//			inventor = FixedReader.parse(fInv, new int[] { 0, 12, 21, 31, 35, 40, 45 });
-//		} else {
-//			stations = FixedReader.parse(baseURL + "/ghcnd-stations.txt",
-//					new int[] { 0, 12, 21, 31, 38, 41, 72, 76, 80 });
-//			inventor = FixedReader.parse(baseURL + "/ghcnd-inventory.txt", new int[] { 0, 12, 21, 31, 35, 40, 45 });
-//		}
-//
-//		// reader for the inventory file; the following depends on it being ordered
-//		// exactly like
-//		// the stations file.
-//		Iterator<FixedReader> inventory = inventor.iterator();
-//		FixedReader invLine = inventory.next();
-//
-//		wbox.getDatabase().preallocateConnection();
-//
-//		int i = 0;
-//		for (FixedReader fr : stations) {
-//
-//			String id = fr.nextString().trim();
-//			double lat = fr.nextDouble();
-//			double lon = fr.nextDouble();
-//			double alt = fr.nextDouble();
-//
-//			/*
-//			 * DO NOT REMOVE - side effects of nextString() are crucial.
-//			 */
-//			String state = fr.nextString().trim();
-//			String name = fr.nextString().trim();
-//
-//			/*
-//			 * make a new object and store it
-//			 */
-//			WeatherStation ws = new WeatherStation(baseURL, id, lat, lon, alt);
-//
-//			try {
-//				/*
-//				 * read the available data series from the inventory.
-//				 */
-//				while (invLine.nextString().trim().equals(id)) {
-//
-//					invLine.nextDouble();
-//					invLine.nextDouble();
-//					String varId = invLine.nextString();
-//					int firstYear = invLine.nextInt();
-//					int lastYear = invLine.nextInt();
-//
-//					ws._provided.put(varId, new Pair<Integer, Integer>(firstYear, lastYear));
-//
-//					if (inventory.hasNext()) {
-//						invLine = inventory.next();
-//					}
-//				}
-//			} catch (Exception e) {
-//				throw new KlabIOException(e);
-//			}
-//
-//			/*
-//			 * we peeked already, so reset counter for next inventory line if we have more
-//			 */
-//			if (inventory.hasNext()) {
-//				invLine.reset();
-//			}
-//
-//			if (i >= startAt) {
-//				i++;
-//				try {
-//					// don't re-do it unless the data are not there. To force
-//					// cleanup of the stored data, remove the <datadir>/data
-//					// directory.
-//					ws.cacheData();
-//
-//				} catch (Throwable e) {
-//					Logging.INSTANCE.error("Data for station " + i + "th station: " + ws + " are unreadable; skipping");
-//					continue;
-//				}
-//				Logging.INSTANCE.info("Storing " + i + "th station: " + ws);
-//				try {
-//					wbox.store(ws, null);
-//				} catch (Exception e) {
-//					Logging.INSTANCE.error(e);
-//				}
-//				try {
-//					FileUtils.writeStringToFile(leftover, "" + i);
-//				} catch (IOException e) {
-//					throw new KlabIOException(e);
-//				}
-//			} else {
-//				Logging.INSTANCE.info("Skipping " + i++ + "th station: " + ws);
-//			}
-//		}
-//
-//		wbox.getDatabase().deallocateConnection();
-//
-//		FileUtils.deleteQuietly(leftover);
-//	}
-
+	public void setupContributedStations() {
+		// TODO hostia
+	}
+	
 	/**
 	 * Compute day length in hours based on day of the year and latitude.
 	 * 
@@ -572,9 +388,11 @@ public enum WeatherFactory {
 
 	public static void main(String[] args) throws Exception {
 
-//		INSTANCE.setupGHCND(new URL(GHCN_URLS[0]), null);
-		INSTANCE.setupCRU(new File("C:\\CRU"), null);
-
+		INSTANCE.setupCRUStations(new File("C:\\CRU"), null);
+		INSTANCE.setupGHCNDStation(new URL(GHCN_URLS[0]), null);
+		INSTANCE.setupTRRMEvents();
+		INSTANCE.setupContributedStations();
+		
 		for (String id : stationIds) {
 			WeatherStation ws = INSTANCE.wbox.retrieve(id);
 			if (ws.cacheData()) {

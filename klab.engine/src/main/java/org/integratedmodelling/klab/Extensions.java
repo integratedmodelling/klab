@@ -1,7 +1,11 @@
 package org.integratedmodelling.klab;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -38,6 +43,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyProcessor;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -61,6 +67,9 @@ public enum Extensions implements IExtensionService {
 
 	Map<String, IComponent> components = Collections.synchronizedMap(new HashMap<>());
 	Map<String, Prototype> prototypes = Collections.synchronizedMap(new HashMap<>());
+	// keep the component properties separately from the components themselves to allow 
+	// usage during testing
+	Map<String, Properties> componentProperties = Collections.synchronizedMap(new HashMap<>());
 
 	private Extensions() {
 		Services.INSTANCE.registerService(this, IExtensionService.class);
@@ -224,7 +233,7 @@ public enum Extensions implements IExtensionService {
 					annotation.type() + ": URN adapter annotations must be used on IResourceAdapter classes");
 		}
 	}
-	
+
 	public void registerResourceAdapter(ResourceAdapter annotation, Class<?> cls) throws KlabException {
 		/*
 		 * class must be a IResourceAdapter
@@ -417,9 +426,37 @@ public enum Extensions implements IExtensionService {
 	}
 
 	@Override
-    public <T> T getComponentImplementation(String componentId, Class<? extends T> requestedClass) {
-        org.integratedmodelling.klab.engine.extensions.Component component = getComponent(componentId);
-        return component == null ? null : component.getImplementation(requestedClass);
-    }
+	public <T> T getComponentImplementation(String componentId, Class<? extends T> requestedClass) {
+		org.integratedmodelling.klab.engine.extensions.Component component = getComponent(componentId);
+		return component == null ? null : component.getImplementation(requestedClass);
+	}
+	
+
+	public Properties getComponentProperties(String componentId) {
+		if (!componentProperties.containsKey(componentId)) {
+			Properties cp = new Properties();
+			File pfile = new File(Configuration.INSTANCE.getDataPath() + File.separator + componentId + ".properties");
+			if (pfile.exists()) {
+				try (InputStream inp = new FileInputStream(pfile)) {
+					cp.load(inp);
+				} catch (Exception e) {
+					throw new KlabIOException(e);
+				}
+			}
+			componentProperties.put(componentId, cp);
+		}
+		return componentProperties.get(componentId);
+	}
+
+	public void saveComponentProperties(String componentId) {
+		
+		Properties cp = getComponentProperties(componentId);
+		File pfile = new File(Configuration.INSTANCE.getDataPath() + File.separator + componentId + ".properties");
+		try (OutputStream out = new FileOutputStream(pfile)) {
+			cp.store(out, null);
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+	}
 
 }
