@@ -58,6 +58,22 @@ public class KlabNodeManager {
 		}
 		return listOfGroups;
 	}
+	
+	public List<Group> getGroups() {
+		List<Group> listOfGroups = new ArrayList<>();
+		for (KlabGroup klabGroup : klabGroupService.getGroups()) {
+			if(klabGroup != null) {
+				Group group = new Group();
+				group.setId(klabGroup.getId());
+				group.setProjectUrls(klabGroup.getProjectUrls());
+				group.setSshKey(klabGroup.getSshKey());
+				group.setObservables(klabGroup.getObservables());
+				group.setWorldview(klabGroup.getWorldview());
+				listOfGroups.add(group);
+			}
+		}
+		return listOfGroups;
+	}
 
 	public Collection<String> getNodeNames() {
 		Collection<KlabNode> nodes = getNodes();

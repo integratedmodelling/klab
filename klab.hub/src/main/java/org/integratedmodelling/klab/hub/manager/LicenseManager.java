@@ -8,12 +8,14 @@ import java.io.Writer;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -29,6 +31,7 @@ import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
+import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
@@ -54,6 +57,9 @@ public class LicenseManager {
 	
 	@Autowired
 	KlabNodeManager klabNodeManager;
+	
+	@Autowired
+	KlabGroupService klabGroupService;
 	
 	@Autowired
 	TokenManager tokenManager;
@@ -245,17 +251,39 @@ public class LicenseManager {
 	}
 	
 	
-	public NodeAuthenticationResponse processNodeCert(NodeAuthenticationRequest request, String localAddr) 
-			throws IOException, PGPException, DecoderException {
-		if (!IPUtils.isLocal(localAddr)) {
-			throw new KlabAuthorizationException("pre-installed node certificates are only allowed on local connections");
-		}		
+	public NodeAuthenticationResponse processNodeCert(NodeAuthenticationRequest request, String localAddr) throws IOException, PGPException, DecoderException {
+		INodeIdentity node = null;
+		if (IPUtils.isLocal(localAddr)) {
+			KlabCertificate certificate = hubAuthenticationManager.checkLocalNodeCertificates(request.getCertificate());
+			if (certificate != null) {
+				if (networkManager.getNode(request.getNodeName()) != null) {
+					throw new KlabAuthorizationException("node names must be unique: a node named "
+							+ request.getCertificate() + " was already authorized");
+				}
+				DateTime now = DateTime.now();
+				DateTime tomorrow = now.plusDays(90);
+				node = new Node(hubAuthenticationManager.getHubName() + "." + request.getNodeName(), hubAuthenticationManager.getPartner());
+				node.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));
+				List<Group> Groups = klabNodeManager.getGroups();
+				Logging.INSTANCE.info("authorized installed node " + node.getName());
+				IdentityReference userIdentity = new IdentityReference(node.getName()
+						,node.getParentIdentity().getEmailAddress(), now.toString());	
+				AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
+						Groups, tomorrow.toString(), node.getId());
+				NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
+						hubAuthenticationManager.getHubReference().getId(), Groups,
+						NetworkKeyManager.INSTANCE.getEncodedPublicKey());
+				networkManager.notifyAuthorizedNode(node, hubAuthenticationManager.getHubReference(), true);
+				return response;
+			}
+		}
+			
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
-		INodeIdentity node = authenticateNodeCert(request, localAddr);
+		node = authenticateNodeCert(request, localAddr);
 		List<Group> Groups = klabNodeManager.getNodeGroups(request.getNodeName());
 		
-		Logging.INSTANCE.info("authorized pre-installed node " + node.getName());
+		Logging.INSTANCE.info("authorized node " + node.getName());
 		
 		IdentityReference userIdentity = new IdentityReference(node.getName()
 				,node.getParentIdentity().getEmailAddress(), now.toString());		
@@ -264,9 +292,8 @@ public class LicenseManager {
 		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
 				hubAuthenticationManager.getHubReference().getId(), Groups,
 				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
-		
 		networkManager.notifyAuthorizedNode(node, hubAuthenticationManager.getHubReference(), true);
-		
+		System.out.println(response.getPublicKey());
 		return response;
 	}
 	

@@ -55,6 +55,7 @@ public class HubAuthenticationManager {
 
 		for (String test : new Reflections(new ResourcesScanner()).getResources(Pattern.compile(".*\\.cert"))) {
 			KlabCertificate certificate = KlabCertificate.createFromClasspath(test);
+			System.out.println(test);
 			if (certificate.isValid()) {
 				if (certificate.getType() == ICertificate.Type.NODE) {
 					nodeCertificates.put(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate);
@@ -130,5 +131,26 @@ public class HubAuthenticationManager {
 	 * authentication with a certificate that is only known to each hub for mutual
 	 * authentication.
 	 */
+	
+	
+	public KlabCertificate checkLocalEngineCertificates(String engineCert) {
+		KlabCertificate certificate;
+		certificate = hubCertificates.get(engineCert);
+		return certificate;
+	}
+
+	public KlabCertificate checkLocalNodeCertificates(String nodeCert) {
+		KlabCertificate certificate;
+		certificate = hubCertificates.get(nodeCert);
+		return certificate;
+	}
+
+	public KlabCertificate checkLocalHubCertificates(String hubCert) {
+		KlabCertificate certificate;
+		certificate = hubCertificates.get(hubCert);
+		return certificate;
+	}
+
+
 
 }

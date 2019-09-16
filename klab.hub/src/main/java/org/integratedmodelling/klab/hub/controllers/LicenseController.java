@@ -38,8 +38,8 @@ public class LicenseController {
 	
 	@PostMapping(value="/node", produces = "application/json")
 	public ResponseEntity<?> authenticateNode(@RequestBody NodeAuthenticationRequest request,
-			HttpServletRequest httpRequest) throws IOException, PGPException, DecoderException {
-		NodeAuthenticationResponse response = licenseManager.processNodeCert(request, httpRequest.getLocalAddr() + ":8287");
+			HttpServletRequest httpRequest) throws Exception {
+		NodeAuthenticationResponse response = licenseManager.processNodeCert(request, httpRequest.getLocalAddr());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

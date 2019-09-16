@@ -74,7 +74,6 @@ public enum NetworkKeyManager {
 		File directory = Configuration.INSTANCE.getDataPath("hub");
 		File certificate = new File(directory + File.separator + "certificate.pkcs12");
 		char[] password = serverKey.toCharArray();
-
 		if (certificate.exists()) {
 			try {
 				keyPair = loadFromPKCS12(certificate, password);

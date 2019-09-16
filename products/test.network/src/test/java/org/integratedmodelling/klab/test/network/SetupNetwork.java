@@ -38,7 +38,7 @@ public enum SetupNetwork {
 		}
 		started = true;
 		Hub hub = startHub(8284);
-		hubs.put("hub", hub);
+		hubs.put("klab", hub);
 		nodes.put("node", startNode(hub, 8287));
 	}
 
