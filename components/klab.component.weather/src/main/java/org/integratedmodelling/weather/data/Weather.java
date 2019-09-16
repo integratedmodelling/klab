@@ -40,243 +40,246 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 /**
- * The weather in a location. Also serves as a factory to obtain the weather given a lat/long pair, a frequency
- * of observation, a date range and a set of variables. Will use the GHCN dataset and if necessary
- * a weather generator to fulfill the request, picking the closest record to the requested
- * location. Weather can be modified with point events or bias and trends.
+ * The weather in a location. Also serves as a factory to obtain the weather
+ * given a lat/long pair, a frequency of observation, a date range and a set of
+ * variables. Will use the GHCN dataset and if necessary a weather generator to
+ * fulfill the request, picking the closest record to the requested location.
+ * Weather can be modified with point events or bias and trends.
  * 
  * @author Ferd
  *
  */
 public class Weather {
 
-    /*
-     * variable keys matched to GHCN codes. There's more.
-     * TODO need cloudiness, insolation/shortwave radiation 
-     */
-    public final static String PRECIPITATION_MM   = "PRCP";
-    public final static String SNOWFALL_MM        = "SNOW";
-    public final static String SNOWDEPTH_MM       = "SNDP";
-    public final static String MAX_TEMPERATURE_C  = "TMAX";
-    public final static String MIN_TEMPERATURE_C  = "TMIN";
-    
-    /**
-     * Used for the undescript one in CRU; will only match the "manual" kind
-     * in GHNC.
-     */
-    public final static String CLOUD_COVER_PERCENTAGE = "ACMH";
+	/*
+	 * variable keys matched to GHCN codes. There's more. TODO need cloudiness,
+	 * insolation/shortwave radiation
+	 */
+	public final static String PRECIPITATION_MM = "PRCP";
+	public final static String SNOWFALL_MM = "SNOW";
+	public final static String SNOWDEPTH_MM = "SNDP";
+	public final static String MAX_TEMPERATURE_C = "TMAX";
+	public final static String MIN_TEMPERATURE_C = "TMIN";
 
-    /**
-     * Only in CRU
-     */
-    public final static String DIURNAL_TEMPERATURE_RANGE_C = "TRAN";
-    
-    /**
-     * Only in CRU
-     */
-    public final static String FROST_DAYS_IN_MONTH = "FRSD";
+	/**
+	 * Used for the undescript one in CRU; will only match the "manual" kind in
+	 * GHNC.
+	 */
+	public final static String CLOUD_COVER_PERCENTAGE = "ACMH";
 
-    /**
-     * Only in CRU
-     */
-    public final static String POTENTIAL_EVAPOTRANSPIRATION_MM = "PETM";
-    
-    /**
-     * Only in CRU
-     */
-    public final static String RELATIVE_HUMIDITY_PERCENT = "HPER";
-    
-    /**
-     * 
-     */
-    public final static String SUNSHINE_DURATION_TOTAL_MINUTES = "TSUN";
-    
-    /**
-     * 
-     */
-    public final static String WET_DAYS_IN_PERIOD = "DWPR";
-        
-    /* 
-     * CRU mappings:
-     * cld cloud cover percentage (%) ACMH 
-    * dtr diurnal temperature range degrees Celsius TRAN (new) 
-    * frs frost day frequency days FRSD (new) 
-    * pet potential evapotranspiration millimetres per day PETM (new) 
-    * pre precipitation millimetres per month PRCP 
-    * rhm relative humidity percentage (%) HPER (new) 
-    * ssh sunshine duration hours TSUN (MINUTES!) 
-    * tmp daily mean temperature degrees Celsius TAVG 
-    * tmn monthly average daily minimum temperature degrees Celsius TMIN 
-    * tmx monthly average daily maximum temperature degrees Celsius TMAX 
-    * vap vapour pressure hectopascals (hPa) VPPP (new) 
-    * wet wet day frequency days DWPR 
-    * wnd wind speed metres per second (m/s) AWND
-    */
-    
-    // this one will (should) get the first available of the 4 choices.
-    public final static String WIND_SPEED_M_SEC   = "AWND";
+	/**
+	 * Only in CRU
+	 */
+	public final static String DIURNAL_TEMPERATURE_RANGE_C = "TRAN";
 
-    public static Set<String>  varCatalog         = new HashSet<>();
-    public static Set<String>  extensiveVars      = new HashSet<>();
+	/**
+	 * Only in CRU
+	 */
+	public final static String FROST_DAYS_IN_MONTH = "FRSD";
 
-    static {
-        varCatalog.add(PRECIPITATION_MM);
-        varCatalog.add(SNOWFALL_MM);
-        varCatalog.add(SNOWDEPTH_MM);
-        varCatalog.add(MAX_TEMPERATURE_C);
-        varCatalog.add(MIN_TEMPERATURE_C);
-        varCatalog.add(WIND_SPEED_M_SEC);
-        // TODO the rest
-        extensiveVars.add(PRECIPITATION_MM);
-        extensiveVars.add(SNOWFALL_MM);
-    }
+	/**
+	 * Only in CRU
+	 */
+	public final static String POTENTIAL_EVAPOTRANSPIRATION_MM = "PETM";
 
-    /*
-     * minimum number of stations we'll use before taking those with lots of no-data. We will
-     * use even one station in the end, this is just to filter out the bad ones if there is
-     * enough information in others.
-     */
-    private static final int   MIN_STATIONS = 5;
-    List<WeatherStation>                     _stations               = new ArrayList<WeatherStation>();
-    private Collection<Map<String, Object>>  _stationData;
+	/**
+	 * Only in CRU
+	 */
+	public final static String RELATIVE_HUMIDITY_PERCENT = "HPER";
 
-    /**
-     * This one is for the service - the resulting weather won't have any spatial interpolation
-     * but contain data for all usable stations, precisely resampled and ready to ship through a
-     * StationData object.
-     *
-     * @throws ThinklabException 
-     */
-    public Weather(Collection<WeatherStation> stations, long start, long end, long step,
-            int maxYearsBack, String[] variables, int maxAcceptableNodataPercentage, boolean adjustData)
-                    throws KlabException {
+	/**
+	 * 
+	 */
+	public final static String SUNSHINE_DURATION_TOTAL_MINUTES = "TSUN";
 
-        int year = Time.getYear(start);
-        ArrayList<WeatherStation> rejected = new ArrayList<>();
+	/**
+	 * 
+	 */
+	public final static String WET_DAYS_IN_PERIOD = "DWPR";
 
-        for (WeatherStation s : stations) {
-            s.setMaxYearsBack(maxYearsBack);
-            try {
-                if (s.hasUsableDataFor(year, PRECIPITATION_MM, MAX_TEMPERATURE_C, MIN_TEMPERATURE_C)) {
+	/**
+	 * CRU mappings:
+	 * 
+	 * <pre>
+	 * cld cloud cover percentage (%) ACMH 
+	* dtr diurnal temperature range degrees Celsius TRAN (new) 
+	* frs frost day frequency days FRSD (new) 
+	* pet potential evapotranspiration millimetres per day PETM (new) 
+	* pre precipitation millimetres per month PRCP 
+	* rhm relative humidity percentage (%) HPER (new) 
+	* ssh sunshine duration hours TSUN (MINUTES!) 
+	* tmp daily mean temperature degrees Celsius TAVG 
+	* tmn monthly average daily minimum temperature degrees Celsius TMIN 
+	* tmx monthly average daily maximum temperature degrees Celsius TMAX 
+	* vap vapour pressure hectopascals (hPa) VPPP (new) 
+	* wet wet day frequency days DWPR 
+	* wnd wind speed metres per second (m/s) AWND
+	 * </pre>
+	 */
 
-                    s.cacheData();
+	// this one will (should) get the first available of the 4 choices.
+	public final static String WIND_SPEED_M_SEC = "AWND";
 
-                    if (!s.hasEnoughDataFor(start, end, maxAcceptableNodataPercentage, PRECIPITATION_MM, MAX_TEMPERATURE_C, MIN_TEMPERATURE_C)) {
-                        /*
-                         * temporarily discard; will get them later if we have no other option.
-                         */
-                        rejected.add(s);
-                    } else {
-                        _stations.add(s);
-                    }
-                }
-            } catch (Throwable e) {
-                // just don't use it.
-            }
-        }
+	public static Set<String> varCatalog = new HashSet<>();
+	public static Set<String> extensiveVars = new HashSet<>();
 
-        if (_stations.size() < MIN_STATIONS) {
-            int needed = Math.min(MIN_STATIONS, rejected.size()) - _stations.size();
-            for (int i = 0; i < needed; i++) {
-                /* TODO mark these somehow */
-                _stations.add(rejected.get(i));
-            }
-        }
+	static {
+		varCatalog.add(PRECIPITATION_MM);
+		varCatalog.add(SNOWFALL_MM);
+		varCatalog.add(SNOWDEPTH_MM);
+		varCatalog.add(MAX_TEMPERATURE_C);
+		varCatalog.add(MIN_TEMPERATURE_C);
+		varCatalog.add(WIND_SPEED_M_SEC);
+		// TODO the rest
+		extensiveVars.add(PRECIPITATION_MM);
+		extensiveVars.add(SNOWFALL_MM);
+	}
 
-        _stationData = new ArrayList<>();
+	/*
+	 * minimum number of stations we'll use before taking those with lots of
+	 * no-data. We will use even one station in the end, this is just to filter out
+	 * the bad ones if there is enough information in others.
+	 */
+	private static final int MIN_STATIONS = 5;
+	List<WeatherStation> _stations = new ArrayList<WeatherStation>();
+	private Collection<Map<String, Object>> _stationData;
 
-        for (WeatherStation ws : _stations) {
+	/**
+	 * This one is for the service - the resulting weather won't have any spatial
+	 * interpolation but contain data for all usable stations, precisely resampled
+	 * and ready to ship through a StationData object.
+	 *
+	 * @throws ThinklabException
+	 */
+	public Weather(Collection<WeatherStation> stations, long start, long end, long step, int maxYearsBack,
+			String[] variables, int maxAcceptableNodataPercentage, boolean adjustData) throws KlabException {
 
-            Map<String, Object> wmap = new HashMap<>();
+		int year = Time.getYear(start);
+		ArrayList<WeatherStation> rejected = new ArrayList<>();
 
-            wmap.put("id", ws.getId());
-            wmap.put("lat", ws.getLatitude());
-            wmap.put("lon", ws.getLongitude());
-            wmap.put("elevation", ws.getElevation());
+		for (WeatherStation s : stations) {
+			s.setMaxYearsBack(maxYearsBack);
+			try {
+				if (s.hasUsableDataFor(year, PRECIPITATION_MM, MAX_TEMPERATURE_C, MIN_TEMPERATURE_C)) {
 
-            for (String var : variables) {
-                List<Double> vdata = new ArrayList<>();
-                for (long current = start; current <= end; current += step) {
-                    vdata.add(getAggregatedData(ws, var, current, current+step));
-                }
-                wmap.put(var, copyData(vdata));
-            }
-            _stationData.add(wmap);
-        }
-    }
+					s.cacheData();
 
-    /**
-     * Return the result of aggregating the daily data between two timepoints. If the first and last day partially
-     * overlap the interval, adjust the values according to their physical nature.
-     * 
-     * @param variable
-     * @param start
-     * @param end
-     * @return
-     * @throws ThinklabException 
-     */
-    public double getAggregatedData(WeatherStation ws, String variable, long start, long end)
-            throws KlabException {
+					if (!s.hasEnoughDataFor(start, end, maxAcceptableNodataPercentage, PRECIPITATION_MM,
+							MAX_TEMPERATURE_C, MIN_TEMPERATURE_C)) {
+						/*
+						 * temporarily discard; will get them later if we have no other option.
+						 */
+						rejected.add(s);
+					} else {
+						_stations.add(s);
+					}
+				}
+			} catch (Throwable e) {
+				// just don't use it.
+			}
+		}
 
-        Interval span = new Interval(start, end);
-        
-        double ret = Double.NaN;
-        double wsum = 0;
-        
-        for (int year : Time.yearsBetween(start, end)) {
-            double[] data = ws.getYearData(variable, year, false, true, true).data.get(year);
-            for (int day : Time.daysBetween(start, end, year)) {
-   
-                double dayData = data[day];
-                
-                if (Double.isNaN(dayData)) {
-                    if (extensiveVars.contains(variable)) {
-                        // no way for extensive variables to be estimated if a value is NaN
-                        return Double.NaN;
-                    } else {
-                        // averaging what we have if intensive
-                        continue;
-                    }
-                }
-                
-                DateTime begDay = Time.dateAt(year, day);
-                Interval daySpan = new Interval(begDay.getMillis(), begDay.plusDays(1)
-                        .getMillis());
-                Interval overlap = span.overlap(daySpan);
-                if (overlap == null) {
-                    continue;
-                }
-                float ratio = (float) (overlap.getEndMillis() - overlap.getStartMillis())
-                        / (float) (daySpan.getEndMillis() - daySpan.getStartMillis());
-                
-                if (Double.isNaN(ret)) {
-                    ret = ratio * dayData;
-                } else {
-                    ret += ratio * dayData;
-                }
-                
-                wsum += ratio;
-            }
-        }
-        
-        if (!Double.isNaN(ret) && wsum > 0 && !extensiveVars.contains(variable)) {
-            ret /= wsum;
-        }
+		if (_stations.size() < MIN_STATIONS) {
+			int needed = Math.min(MIN_STATIONS, rejected.size()) - _stations.size();
+			for (int i = 0; i < needed; i++) {
+				/* TODO mark these somehow */
+				_stations.add(rejected.get(i));
+			}
+		}
 
-        return ret;
+		_stationData = new ArrayList<>();
 
-    }
+		for (WeatherStation ws : _stations) {
 
-    private double[] copyData(List<Double> vdata) {
-        double[] ret = new double[vdata.size()];
-        for (int i = 0; i < vdata.size(); i++) {
-            ret[i] = vdata.get(i);
-        }
-        return ret;
-    }
+			Map<String, Object> wmap = new HashMap<>();
 
-    public Collection<Map<String, Object>> getStationData() {
-        return _stationData;
-    }
+			wmap.put("id", ws.getId());
+			wmap.put("lat", ws.getLatitude());
+			wmap.put("lon", ws.getLongitude());
+			wmap.put("elevation", ws.getElevation());
+
+			for (String var : variables) {
+				List<Double> vdata = new ArrayList<>();
+				for (long current = start; current <= end; current += step) {
+					vdata.add(getAggregatedData(ws, var, current, current + step));
+				}
+				wmap.put(var, copyData(vdata));
+			}
+			_stationData.add(wmap);
+		}
+	}
+
+	/**
+	 * Return the result of aggregating the daily data between two timepoints. If
+	 * the first and last day partially overlap the interval, adjust the values
+	 * according to their physical nature.
+	 * 
+	 * @param variable
+	 * @param start
+	 * @param end
+	 * @return
+	 * @throws ThinklabException
+	 */
+	public double getAggregatedData(WeatherStation ws, String variable, long start, long end) throws KlabException {
+
+		Interval span = new Interval(start, end);
+
+		double ret = Double.NaN;
+		double wsum = 0;
+
+		for (int year : Time.yearsBetween(start, end)) {
+			double[] data = ws.getYearData(variable, year, false, true, true).data.get(year);
+			for (int day : Time.daysBetween(start, end, year)) {
+
+				double dayData = data[day];
+
+				if (Double.isNaN(dayData)) {
+					if (extensiveVars.contains(variable)) {
+						// no way for extensive variables to be estimated if a value is NaN
+						return Double.NaN;
+					} else {
+						// averaging what we have if intensive
+						continue;
+					}
+				}
+
+				DateTime begDay = Time.dateAt(year, day);
+				Interval daySpan = new Interval(begDay.getMillis(), begDay.plusDays(1).getMillis());
+				Interval overlap = span.overlap(daySpan);
+				if (overlap == null) {
+					continue;
+				}
+				float ratio = (float) (overlap.getEndMillis() - overlap.getStartMillis())
+						/ (float) (daySpan.getEndMillis() - daySpan.getStartMillis());
+
+				if (Double.isNaN(ret)) {
+					ret = ratio * dayData;
+				} else {
+					ret += ratio * dayData;
+				}
+
+				wsum += ratio;
+			}
+		}
+
+		if (!Double.isNaN(ret) && wsum > 0 && !extensiveVars.contains(variable)) {
+			ret /= wsum;
+		}
+
+		return ret;
+
+	}
+
+	private double[] copyData(List<Double> vdata) {
+		double[] ret = new double[vdata.size()];
+		for (int i = 0; i < vdata.size(); i++) {
+			ret[i] = vdata.get(i);
+		}
+		return ret;
+	}
+
+	public Collection<Map<String, Object>> getStationData() {
+		return _stationData;
+	}
 
 }

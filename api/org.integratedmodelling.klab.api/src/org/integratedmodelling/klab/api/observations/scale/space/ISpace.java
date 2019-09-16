@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface ISpace extends IExtent {
+public interface ISpace extends IExtent, ISpatial {
 
 	/** Constant <code>MIN_SCALE_RANK=0</code> */
 	int MIN_SCALE_RANK = 0;
@@ -46,15 +46,7 @@ public interface ISpace extends IExtent {
 	 * @return coordinate reference system
 	 */
 	IProjection getProjection();
-
-	/**
-	 * Get the shape of this extent - usually it's the same as getExtent but with
-	 * the additional type constraint.
-	 *
-	 * @return full shape
-	 */
-	IShape getShape();
-
+	
 	/**
 	 * Build a lat/lon descriptor for the extent we represent. This shouldn't really
 	 * be API.

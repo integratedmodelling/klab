@@ -27,6 +27,7 @@
 package org.integratedmodelling.weather.data;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -68,16 +69,25 @@ public enum WeatherFactory {
 	static DB db;
 	static Map<String, double[]> dataMap;
 	// stations with read data (may not be up to date)
-	static Set<String> stationSet;
-	// all stations in database, even with no data yet read 
-	static Set<String>	stationIds;
+	static Set<String> stationWithData;
+	// all stations in database, even with no data yet read
+	static Set<String> stationIds;
 	static Map<String, Integer> nansMap;
 	static Map<String, Long> datasizeMap;
 
 	public static String[] GHCN_URLS = { "https://www1.ncdc.noaa.gov/pub/data/ghcn/daily",
 			"http://150.241.222.1/ghcn" };
 	private CRUReader cruReader;
-	private final static String LAST_UPDATE_PROPERTY = "last.catalog.update";
+
+	private final static String GHNCD_LAST_UPDATE_PROPERTY = "ghncd.catalog.update";
+
+	/**
+	 * If set in org.integratedmodelling.weather.properties, this points to the
+	 * location of an uncompressed and unpacked ghncd_all.tar.gz, which will be used
+	 * only during the initialization of the database.
+	 */
+	public final static String GHNCD_CATALOG_LOCATION = "ghncd.catalog.location";
+	public final static String CRU_CATALOG_LOCATION = "cru.catalog.location";
 
 	/*
 	 * the DB
@@ -102,38 +112,50 @@ public enum WeatherFactory {
 	public static void checkStorage() {
 
 		if (db == null) {
+
 			File dpath = Configuration.INSTANCE.getDataPath("weather");
 			dpath.mkdirs();
-			db = DBMaker.fileDB(new File(dpath + File.separator + "stationdata.dat")).closeOnJvmShutdown().make();
+
+			/**
+			 * Use transactions. Memory mapping for now disabled as f'ing Win makes it
+			 * almost impossible to use correctly.
+			 */
+			db = DBMaker.fileDB(new File(dpath + File.separator + "stationdata.dat")).transactionEnable()
+					/* .fileMmapEnable() */.closeOnJvmShutdown().make();
 
 			dataMap = db.treeMap("datamap", Serializer.STRING, Serializer.DOUBLE_ARRAY).createOrOpen();
 			nansMap = db.treeMap("nansmap", Serializer.STRING, Serializer.INTEGER).createOrOpen();
-			stationSet = db.treeSet("stationset", Serializer.STRING).createOrOpen();
+			stationWithData = db.treeSet("stationset", Serializer.STRING).createOrOpen();
 			stationIds = db.treeSet("stationids", Serializer.STRING).createOrOpen();
 			datasizeMap = db.treeMap("timestamps", Serializer.STRING, Serializer.LONG).createOrOpen();
 		}
 	}
 
 	/**
-	 * Call with the URL (file or http) to the
+	 * Call with the URL (file or http) to the catalog file. Will initialize from
+	 * the local fileset if the GHNCD_CATALOG_LOCATION property is set in the
+	 * component's properties. Returns whether the database is being initialized or
+	 * not.
 	 * 
 	 * @param catalogFile
 	 */
-	public void setupGHCNDStation(URL catalogFile, IMonitor monitor) {
+	public boolean setupGHCNDStation(URL catalogFile, IMonitor monitor) {
+
+		boolean initializing = false;
 
 		checkStorage();
 
 		Logging.INSTANCE.info("Setting up GHCND dataset");
-		
+
 		Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
-		
+
 		try {
 
 			boolean update = true;
 
 			DateTime now = new DateTime();
-			if (properties.getProperty(LAST_UPDATE_PROPERTY) != null) {
-				DateTime then = new DateTime(properties.getProperty(LAST_UPDATE_PROPERTY));
+			if (properties.getProperty(GHNCD_LAST_UPDATE_PROPERTY) != null) {
+				DateTime then = new DateTime(properties.getProperty(GHNCD_LAST_UPDATE_PROPERTY));
 				if (Days.daysBetween(now, then).getDays() < 30) {
 					update = false;
 				}
@@ -141,11 +163,12 @@ public enum WeatherFactory {
 
 			if (!update && wbox.count() < 100000) {
 				update = true;
+				initializing = true;
 			}
 
 			if (update) {
 
-				stationIds.clear();
+//				stationIds.clear();
 
 				Logging.INSTANCE.info("Reading GHCND inventory");
 
@@ -229,7 +252,7 @@ public enum WeatherFactory {
 						}
 
 					} catch (Exception e) {
-						Logging.INSTANCE.error("shitty station: " + ws);
+						Logging.INSTANCE.error("bad station data line for " + ws + ": check newlines");
 						continue;
 					}
 
@@ -242,29 +265,18 @@ public enum WeatherFactory {
 						invLine.reset();
 					}
 
-					stationIds.add(id);
-
 					System.out.println(ws);
 
 				}
 
 				db.commit();
 
-				properties.setProperty(LAST_UPDATE_PROPERTY, now.toString());
+				properties.setProperty(GHNCD_LAST_UPDATE_PROPERTY, now.toString());
 				Extensions.INSTANCE.saveComponentProperties(WeatherComponent.ID);
-				
+
 			} else {
 				Logging.INSTANCE.info("GHCND dataset is up to date");
 			}
-
-			/*
-			 * TODO spawn a spliterator to check each station (groups of 2/4/X threads).
-			 * Each thread should handle a few and they should be staged so they run
-			 * regularly at different times.
-			 * 
-			 * FIXME this sucks because we can't store while things are iterated.
-			 */
-			Logging.INSTANCE.info("Scanning GHCND weather stations for updates...");
 
 			if (wbox.getDatabase() != null) {
 				wbox.getDatabase().deallocateConnection();
@@ -274,6 +286,8 @@ public enum WeatherFactory {
 			// I hate you
 			throw new KlabIOException(e);
 		}
+
+		return initializing;
 
 	}
 
@@ -347,8 +361,9 @@ public enum WeatherFactory {
 		checkStorage();
 		this.cruReader = new CRUReader(repository);
 		this.cruReader.createStations(wbox, monitor);
+		db.commit();
 	}
-	
+
 	public void setupTRRMEvents() {
 		// TODO hostia
 	}
@@ -356,7 +371,7 @@ public enum WeatherFactory {
 	public void setupContributedStations() {
 		// TODO hostia
 	}
-	
+
 	/**
 	 * Compute day length in hours based on day of the year and latitude.
 	 * 
@@ -386,19 +401,56 @@ public enum WeatherFactory {
 		return cruReader;
 	}
 
-	public static void main(String[] args) throws Exception {
+	public void setup() {
 
-		INSTANCE.setupCRUStations(new File("C:\\CRU"), null);
-		INSTANCE.setupGHCNDStation(new URL(GHCN_URLS[0]), null);
-		INSTANCE.setupTRRMEvents();
-		INSTANCE.setupContributedStations();
+		Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
+
+		if (properties.containsKey(CRU_CATALOG_LOCATION)) {
+			setupCRUStations(new File(properties.getProperty(CRU_CATALOG_LOCATION)), null);
+		}
+
+		try {
+			INSTANCE.setupGHCNDStation(new URL(GHCN_URLS[0]), null);
+		} catch (MalformedURLException e1) {
+			// give me a break
+		}
+
+		/**
+		 * This should be in a thread of its own
+		 */
+		setupTRRMEvents();
 		
+		
+		setupContributedStations();
+
+		/**
+		 * Local data are only used at initialization
+		 */
+		if (properties.containsKey(GHNCD_CATALOG_LOCATION)) {
+			WeatherStation.setLocalGHCNDLocation(new File(properties.getProperty(GHNCD_CATALOG_LOCATION)));
+		}
+
+		/**
+		 * This should be timed by a scheduler and split
+		 */
 		for (String id : stationIds) {
 			WeatherStation ws = INSTANCE.wbox.retrieve(id);
-			if (ws.cacheData()) {
-				Logging.INSTANCE.info("Weather station " + ws.getId() + " has updated data");
+			try {
+				if (ws.cacheData()) {
+					Logging.INSTANCE.info("Weather station " + ws.getId() + " has updated data");
+				}
+			} catch (Throwable e) {
+				Logging.INSTANCE.error("Weather station " + ws.getId() + " data read failed: " + e.getMessage());
 			}
 		}
+		
+		// reentrant for repeated execution
+		WeatherStation.setLocalGHCNDLocation(null);
+
+	}
+	
+	public static void main(String[] args) throws Exception {
+		INSTANCE.setup();
 	}
 
 	public long getStationsCount() {

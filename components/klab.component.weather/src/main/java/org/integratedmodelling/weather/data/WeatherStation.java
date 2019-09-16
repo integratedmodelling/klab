@@ -40,12 +40,12 @@ import java.util.Set;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpatial;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -59,9 +59,6 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.URLUtils;
 import org.joda.time.DateTime;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-import org.mapdb.Serializer;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -72,7 +69,7 @@ import com.vividsolutions.jts.geom.Point;
  * 
  * @author Ferd
  */
-public class WeatherStation {
+public class WeatherStation implements ISpatial {
 
 	public class Data {
 
@@ -127,6 +124,8 @@ public class WeatherStation {
 			requireYearData(variable, year);
 		}
 	}
+
+	private static File localGHCNDLocation;
 
 	Map<String, Data> variables = new HashMap<>();
 	Metadata metadata = new Metadata();
@@ -286,18 +285,44 @@ public class WeatherStation {
 
 				try {
 
-					URL dataUrl = new URL(gurl + "/all/" + _id + ".dly");
-					long storedSize = WeatherFactory.datasizeMap.containsKey(_id) ? WeatherFactory.datasizeMap.get(_id) : 0;
-					long size = URLUtils.getFileSize(dataUrl);
-
-					if ((size > 0 && storedSize < size) || !WeatherFactory.stationSet.contains(_id)) {
-						File dataFile = File.createTempFile("station", ".dly");
-						URLUtils.copyChanneled(dataUrl, dataFile);
-						storeGHCNData(dataFile, size);
-						FileUtils.deleteQuietly(dataFile);
-						ret = true;
+					File dataFile = null;
+					boolean isTemporary = false;
+					long size = -1;
+					
+					if (localGHCNDLocation != null && !WeatherFactory.stationWithData.contains(_id)) {
+						dataFile = new File(localGHCNDLocation + File.separator + _id + ".dly");
+						if (dataFile.exists()) {
+							size = dataFile.length();
+						}
 					}
 
+					if (dataFile == null || !dataFile.exists()) {
+						
+						URL dataUrl = new URL(gurl + "/all/" + _id + ".dly");
+						long storedSize = WeatherFactory.datasizeMap.containsKey(_id)
+								? WeatherFactory.datasizeMap.get(_id)
+								: 0;
+								
+						size = URLUtils.getFileSize(dataUrl);
+
+						if ((size > 0 && storedSize < size) || !WeatherFactory.stationWithData.contains(_id)) {
+							dataFile = File.createTempFile("station", ".dly");
+							URLUtils.copyChanneled(dataUrl, dataFile);
+							isTemporary = true;
+						}
+					}
+
+					if (dataFile != null && dataFile.exists()) {
+						storeGHCNData(dataFile, size);
+						if (isTemporary) {
+							FileUtils.deleteQuietly(dataFile);
+						}
+						ret = true;
+					} else {
+						Logging.INSTANCE.error("Cannot access data file for station " + _id);
+					}
+					
+					
 					break;
 				} catch (Throwable e) {
 					// do nothing, go through other URLs
@@ -306,7 +331,7 @@ public class WeatherStation {
 				}
 			}
 
-		} else if (!WeatherFactory.stationSet.contains(_id)) {
+		} else if (!WeatherFactory.stationWithData.contains(_id)) {
 
 			/*
 			 * if this is a CRU station, use CRU strategy
@@ -334,10 +359,11 @@ public class WeatherStation {
 				}
 			}
 
-			WeatherFactory.stationSet.add(_id);
+			WeatherFactory.stationWithData.add(_id);
 			WeatherFactory.datasizeMap.put(_id,
 					WeatherFactory.INSTANCE.getCRUReader().getDataFile(Weather.PRECIPITATION_MM).lastModified());
-
+			WeatherFactory.db.commit();
+			
 			Logging.INSTANCE
 					.info("stored CRU data for " + _id + " (" + _firstKnownYear + " to " + _lastKnownYear + ")");
 		}
@@ -401,11 +427,6 @@ public class WeatherStation {
 	int _firstKnownYear;
 	int _lastKnownYear;
 
-	// for the DB
-	public WeatherStation() {
-		WeatherFactory.checkStorage();
-	}
-
 	/**
 	 * Does not read data and expects to find all data in CRU files.
 	 * 
@@ -432,6 +453,9 @@ public class WeatherStation {
 		for (String var : CRUReader.cruVariables) {
 			_provided.put(var, new Pair<>(startYear, endYear));
 		}
+		
+		WeatherFactory.stationIds.add(_id);
+//		WeatherFactory.db.commit();
 	}
 
 	public WeatherStation(Map<String, Object> data) {
@@ -466,10 +490,10 @@ public class WeatherStation {
 		ret.put("location", _location);
 		return ret;
 	}
-	
+
 	public static Set<String> ids() {
 		WeatherFactory.checkStorage();
-		return WeatherFactory.stationSet;
+		return WeatherFactory.stationIds;
 	}
 
 	/**
@@ -698,9 +722,9 @@ public class WeatherStation {
 				WeatherFactory.nansMap.put(_id + ":" + s, pnans);
 			}
 
-			WeatherFactory.stationSet.add(_id);
+			WeatherFactory.stationIds.add(_id);
+			WeatherFactory.stationWithData.add(_id);
 			WeatherFactory.datasizeMap.put(_id, file.lastModified());
-
 			WeatherFactory.db.commit();
 
 		}
@@ -736,8 +760,11 @@ public class WeatherStation {
 		latitude = lat;
 
 		_location = Shape.create(lon, lat, Projection.getLatLon());
+		
+		WeatherFactory.stationIds.add(_id);
+//		WeatherFactory.db.commit();
+		
 	}
-
 
 	public Point getPoint() {
 		return (Point) _location.getGeometry();
@@ -746,7 +773,7 @@ public class WeatherStation {
 	void storeGHCNData(File file, long datasize) throws KlabException {
 
 		WeatherFactory.checkStorage();
-		
+
 		/*
 		 * set up storage for yearly data as appropriate - we read the whole thing in
 		 * once, then store the years we have. Key for the hash is VAR|YEAR.
@@ -831,7 +858,7 @@ public class WeatherStation {
 			WeatherFactory.dataMap.put(_id + ":" + s, data.get(s));
 			WeatherFactory.nansMap.put(_id + ":" + s, pnans);
 		}
-		WeatherFactory.stationSet.add(_id);
+		WeatherFactory.stationWithData.add(_id);
 		WeatherFactory.datasizeMap.put(_id, datasize);
 		WeatherFactory.db.commit();
 	}
@@ -1284,7 +1311,7 @@ public class WeatherStation {
 			WeatherFactory.dataMap.remove(_id + ":" + s);
 			WeatherFactory.nansMap.remove(_id + ":" + s);
 		}
-		WeatherFactory.stationSet.remove(_id);
+		WeatherFactory.stationWithData.remove(_id);
 		WeatherFactory.db.commit();
 	}
 
@@ -1302,6 +1329,15 @@ public class WeatherStation {
 
 	public String getSource() {
 		return _source;
+	}
+
+	public static void setLocalGHCNDLocation(File file) {
+		localGHCNDLocation = file;
+	}
+
+	@Override
+	public IShape getShape() {
+		return _location;
 	}
 
 }

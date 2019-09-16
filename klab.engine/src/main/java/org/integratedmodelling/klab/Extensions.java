@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.rest.ServicePrototype;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -441,6 +442,12 @@ public enum Extensions implements IExtensionService {
 					cp.load(inp);
 				} catch (Exception e) {
 					throw new KlabIOException(e);
+				}
+			} else {
+				try { 
+					FileUtils.touch(pfile);
+				} catch (IOException e) {
+					// screw it
 				}
 			}
 			componentProperties.put(componentId, cp);

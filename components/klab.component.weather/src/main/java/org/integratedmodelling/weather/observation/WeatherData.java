@@ -20,11 +20,17 @@ import org.integratedmodelling.weather.data.WeatherFactory;
 import org.integratedmodelling.weather.data.WeatherStation;
 import org.joda.time.DateTime;
 
-public class Weather {
+/**
+ * "Client" weather object to assemble k.LAB observations based on Weather data.
+ * 
+ * @author ferdinando.villa
+ *
+ */
+public class WeatherData {
 
 	IScale scale;
 	List<WeatherStation> stations;
-	// ThiessenLocator<WeatherStation> locator;
+	ThiessenLocator<WeatherStation> locator;
 	Map<String, IState> statesForVar = new HashMap<>();
 	IState elevation;
 	String type;
@@ -80,37 +86,29 @@ public class Weather {
 	 * @param stations
 	 * @param monitor
 	 */
-	public Weather(IScale scale, Collection<IState> states, List<WeatherStation> stations, IMonitor monitor) {
+	public WeatherData(IScale scale, IState elevation, Map<String, IState> states, List<WeatherStation> stations,
+			IMonitor monitor) {
 
 		Grid grid = Space.extractGrid(scale);
-		
-//		this.scale = scale;
-//		this.stations = stations;
-//		this.locator = new ThiessenLocator<>(scale, stations);
-//
-//		/*
-//		 * record adjustment factors for available reference maps in each station
-//		 */
-//		for (IState state : states) {
-//
-//			if (state.getObservable().getType().is(GeoNS.ELEVATION)) {
-//				this.elevation = state;
-//				continue;
-//			}
-//
-//			String var = WeatherFactory.getVariableForObservable(state.getObservable().getType());
-//			if (var != null) {
-//
-//				statesForVar.put(var, state);
-//
-//				for (WeatherStation ws : stations) {
-//					int ofs = grid.getOffsetFromWorldCoordinates(ws.getLongitude(), ws.getLatitude());
-//					if (state.getValue(ofs) != null && !Double.isNaN(((Number) (state.getValue(ofs))).doubleValue())) {
-//						ws.refData.put(var, ((Number) (state.getValue(ofs))).doubleValue());
-//					}
+
+		this.scale = scale;
+		this.stations = stations;
+		this.elevation = elevation;
+		this.statesForVar = states;
+		this.locator = new ThiessenLocator<>(scale, stations);
+
+		/*
+		 * record adjustment factors for available reference maps in each station
+		 */
+		for (String var : states.keySet()) {
+
+			for (WeatherStation ws : stations) {
+				long ofs = grid.getOffsetFromWorldCoordinates(ws.getLongitude(), ws.getLatitude());
+//				if (states.get(var).getValue(ofs) != null && !Double.isNaN(((Number) (states.get(var).getValue(ofs))).doubleValue())) {
+//					ws.refData.put(var, ((Number) (state.getValue(ofs))).doubleValue());
 //				}
-//			}
-//		}
+			}
+		}
 	}
 
 	/**
@@ -122,8 +120,8 @@ public class Weather {
 	 * 
 	 * @throws KlabException
 	 */
-	public Weather(IScale scale, int startYear, int endYear, Collection<IState> states, List<WeatherStation> stations,
-			IMonitor monitor) throws KlabException {
+	public WeatherData(IScale scale, int startYear, int endYear, Collection<IState> states,
+			List<WeatherStation> stations, IMonitor monitor) throws KlabException {
 
 //		this.scale = scale;
 //		this.stations = stations;
@@ -245,7 +243,7 @@ public class Weather {
 	 * @param transition
 	 * @throws KlabIOException
 	 */
-	public void defineState(IState state /*, @Nullable ITransition transition */) throws KlabIOException {
+	public void defineState(IState state /* , @Nullable ITransition transition */) throws KlabIOException {
 
 //		String var = WeatherFactory.getVariableForObservable(state.getObservable().getSemantics());
 //
