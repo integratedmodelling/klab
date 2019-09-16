@@ -99,6 +99,7 @@ public class CRUReader {
 	}
 
 	File cruPath;
+	private Pair<DateTime, DateTime> timespan;
 
 	/**
 	 * Scan the path and find all (zipped or not) CRU files for the variables we
@@ -260,17 +261,20 @@ public class CRUReader {
 
 	public Pair<DateTime, DateTime> getTemporalBoundaries() throws KlabException {
 
-		Pair<DateTime, DateTime> ret = new Pair<>();
-		for (String var : variableMap.keySet()) {
-			Pair<DateTime, DateTime> pret = getTemporalBoundaries(var);
-			if (ret.getFirst() == null || pret.getFirst().isBefore(ret.getFirst())) {
-				ret.setFirst(pret.getFirst());
+		if (this.timespan == null) {
+			Pair<DateTime, DateTime> ret = new Pair<>();
+			for (String var : variableMap.keySet()) {
+				Pair<DateTime, DateTime> pret = getTemporalBoundaries(var);
+				if (ret.getFirst() == null || pret.getFirst().isBefore(ret.getFirst())) {
+					ret.setFirst(pret.getFirst());
+				}
+				if (ret.getSecond() == null || pret.getSecond().isAfter(ret.getSecond())) {
+					ret.setSecond(pret.getSecond());
+				}
 			}
-			if (ret.getSecond() == null || pret.getSecond().isAfter(ret.getSecond())) {
-				ret.setSecond(pret.getSecond());
-			}
+			this.timespan = ret;
 		}
-		return ret;
+		return this.timespan;
 	}
 
 	public Pair<DateTime, DateTime> getTemporalBoundaries(String variable) throws KlabException {
@@ -305,8 +309,6 @@ public class CRUReader {
 
 	public Pair<DateTime, DateTime> getTemporalBoundaries(NetcdfFile nc) {
 
-		Pair<DateTime, DateTime> ret = new Pair<>();
-
 		Variable vtime = nc.findVariable("time");
 
 		Array firstTime = null, lastTime = null;
@@ -337,7 +339,7 @@ public class CRUReader {
 		Map<String, double[]> ret = new HashMap<>();
 
 		/*
-		 * find the time start for the year TODO cache!
+		 * find the time start for the year
 		 */
 		Pair<DateTime, DateTime> timespan = getTemporalBoundaries();
 
@@ -497,9 +499,9 @@ public class CRUReader {
 							wbox.store(ws, monitor);
 
 							Logging.INSTANCE.info("CRU station created: " + ws);
+//
+//							WeatherFactory.stationIds.add(ws.getId());
 
-							WeatherFactory.stationIds.add(ws.getId());
-							
 							nStations++;
 						}
 					} catch (IOException | InvalidRangeException e) {

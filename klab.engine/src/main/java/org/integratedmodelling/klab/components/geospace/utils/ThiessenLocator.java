@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpatial;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -54,7 +55,7 @@ import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
  * @author Ferd
  *
  */
-public class ThiessenLocator<T extends IShape> {
+public class ThiessenLocator<T extends ISpatial> {
 
 	List<Pair<Polygon, T>> pairs = new ArrayList<>();
 	short[] index;
@@ -86,7 +87,8 @@ public class ThiessenLocator<T extends IShape> {
 			 */
 			VoronoiDiagramBuilder db = new VoronoiDiagramBuilder();
 			ArrayList<Coordinate> sites = new ArrayList<>();
-			for (IShape s : objects) {
+			for (ISpatial o : objects) {
+				IShape s = o.getShape();
 				Point point = ((Shape) s).getStandardizedGeometry().getCentroid();
 				sites.add(new Coordinate(point.getX(), point.getY()));
 				debug.add(Shape.create(((Shape) s).getStandardizedGeometry(), Projection.getDefault()));
