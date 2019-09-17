@@ -156,7 +156,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		}
 		return ret;
 	}
-
+	
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 		

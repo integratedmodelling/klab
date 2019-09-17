@@ -37,7 +37,6 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	@Override
 	public void getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
-
 		// TODO Auto-generated method stub
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:

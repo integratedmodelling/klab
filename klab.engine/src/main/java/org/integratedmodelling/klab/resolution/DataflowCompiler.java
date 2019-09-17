@@ -150,7 +150,8 @@ public class DataflowCompiler {
 			 * Any mediators still needed between the root observable and the source node
 			 * are added at the end of the final computation.
 			 */
-			if (sources.containsKey(actuator.getName()) && root instanceof Observable) {
+			if (sources.containsKey(actuator.getName()) && root instanceof Observable
+					&& ((Observable) root).getType().is(IKimConcept.Type.QUALITY)) {
 				for (IComputableResource mediator : computeMediators(sources.get(actuator.getName()), node.observable,
 						node.scale)) {
 					actuator.addComputation(mediator);
@@ -779,7 +780,8 @@ public class DataflowCompiler {
 	 * @param iLocator
 	 * @return
 	 */
-	public List<IComputableResource> getModelComputation(Model model, IArtifact.Type targetType, boolean initialization) {
+	public List<IComputableResource> getModelComputation(Model model, IArtifact.Type targetType,
+			boolean initialization) {
 		List<IComputableResource> ret = new ArrayList<>(model.getComputation(initialization));
 		int lastDirectPosition = -1;
 		IArtifact.Type lastDirectType = null;

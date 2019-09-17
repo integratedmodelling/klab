@@ -90,7 +90,7 @@ public class CRUReader {
 		variableMap.put(Weather.POTENTIAL_EVAPOTRANSPIRATION_MM, "pet");
 
 		// we don't know how to interpolate these. Should probably recover them with no
-		// interpolation.
+		// interpolation, or just use Loessen.
 		// variableMap.put(Weather.FROST_DAYS_IN_MONTH, "frs");
 		// variableMap.put(Weather.RELATIVE_HUMIDITY_PERCENT, "rhm");
 		// variableMap.put(Weather.SUNSHINE_DURATION_TOTAL_MINUTES, "ssh");
@@ -367,6 +367,8 @@ public class CRUReader {
 		for (String variable : cruVariables) {
 
 			String varname = variableMap.get(variable);
+			// ACH this opens and closes the file every time - a huge waste of time when run in batch, which is the
+			// normal mode of operation for CRU
 			try (NetcdfFile nc = getFile(variable, year)) {
 				Variable var = nc.findVariable(varname);
 				double[] data = new double[12];
