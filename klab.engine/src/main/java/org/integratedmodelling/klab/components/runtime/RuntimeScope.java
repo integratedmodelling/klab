@@ -424,6 +424,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						.setPrimary(false);
 				dataflow.setModel((Model) model);
 
+//				System.out.println("secondary dataflow for " + obs + ":\n" + dataflow.getKdlCode());
+				
 				// TODO this must be added to the computational strategy and linked to the
 				// original context.
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
@@ -441,6 +443,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale.initialization(), ((Monitor) monitor).get(subtask));
 
+//		for (IState s:ret.getStates()) {
+//			System.out.println("DIOCAN " + s);
+//		}
+		
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
 		}
@@ -1014,7 +1020,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					link(observation, state);
 				}
 				
-				System.out.println("Created "+ observation + " for " + actuator.getObservable());
+//				System.out.println("Created "+ observation + " for " + actuator.getObservable());
 
 			}
 		}

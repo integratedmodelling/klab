@@ -1,23 +1,28 @@
 package org.integratedmodelling.klab.api.data;
 
+import org.integratedmodelling.klab.common.Offset;
+
 /**
  * Locators are topological subdivisions that can be used to locate and subset
- * observations. A locator must come from a geometry and is able to produce the
- * geometry that it locates.
- * 
+ * observations. A locator is a geometry that comes from a geometry that
+ * contains it, and maintains the relationship with the geometry that it
+ * locates.
+ * <p>
  * Any geometry or subset of it can be used as a locator. Scales and extents are
  * also locators and can produce their component locators as appropriate. They
  * can also "relocate" by producing lazy mediators that allow seeing
  * observations through different lenses. When a single extent is used as a
- * locator, it must come from a located scale and will locate all the extents of
- * any remaining others in the scale.
+ * locator, it will leave all the extents of any remaining others in the scale:
+ * if the scale has multiple states for the locator, one or more dimensions in
+ * the located geometry will have multiple states.
  * <p>
  * Numeric offsets are only exposed to communicate with external raw data APIs;
  * within k.LAB code, translation should happen within the implementing classes,
  * and the "conformant" cases where the locator correspond to a simple offset
  * without mediations should be detected and translated as fast as possible.
- * When offsets are needed, the Offset locator can be used as the class in a
- * {@link #as(Class)} request.
+ * When offsets are needed, the {@link Offset} locator can be used as the class
+ * in a {@link #as(Class)} request. All locators should implement at least a
+ * translation to {@link Offset}.
  * <p>
  * Locators can be parsed from a simple string parameters using the syntax
  * below:
@@ -56,8 +61,8 @@ public interface ILocator extends Iterable<ILocator> {
 
 	/**
 	 * Adapt the locator to another with the needed API. If the parameter is the
-	 * class or the type of an extent we want to selec the returned locator may
-	 * only report location information for that extent. For example,
+	 * class or the type of an extent we want to selec the returned locator may only
+	 * report location information for that extent. For example,
 	 * geometry.as(ISpace.class) will return a locator reflecting only the spatial
 	 * dimension. Such partial locators should not be used for further location.
 	 * 

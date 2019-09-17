@@ -51,7 +51,6 @@ import org.integratedmodelling.klab.utils.Range;
 public class Observable implements IObservable {
 
 	protected Concept observable;
-	// protected Concept main;
 	private String name;
 	private String declaration;
 	private boolean isAbstract;
@@ -209,14 +208,6 @@ public class Observable implements IObservable {
 	public void setCurrency(Currency currency) {
 		this.currency = currency;
 	}
-
-	// public void setClassifier(Concept by) {
-	// this.classifier = by;
-	// }
-	//
-	// public void setDownTo(Concept downTo) {
-	// this.downTo = downTo;
-	// }
 
 	@Override
 	public String getDefinition() {

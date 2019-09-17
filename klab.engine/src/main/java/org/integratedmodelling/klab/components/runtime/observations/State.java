@@ -157,13 +157,14 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
-		return null; // TODO FIXME storage.aggregate(geometry, cls);
+		Object o = aggregate(geometry);
+		return Utils.asType(o, cls);
 	}
 
 	@Override
 	public Object aggregate(ILocator... locators) {
 		if (getScale().size() == 1) {
-			return get(getScale()/* .getLocator(0) */, Utils.getClassForType(getType()));
+			return get(getScale().initialization(), Utils.getClassForType(getType()));
 		}
 		if (locators == null) {
 			List<Object> values = new ArrayList<>();

@@ -314,7 +314,12 @@ public class RescalingState extends Observation implements IState {
 			for (CartesianProductIterator it = new CartesianProductIterator(locations); it.hasNext();) {
 				Pair<long[], Double> index = it.next();
 				if (index.getSecond() > 0) {
-					addValue(delegate.get(originalGeometry.at(index.getFirst())), index.getSecond());
+					// FIXIT the ridiculous extended form with the unnecessary cast is due to a likely JVM bug that calls
+					// the locator version of at() instead of the varargs.
+					ILocator loc = originalGeometry.at((long[])index.getFirst());
+					double weight = index.getSecond();
+					Object value = delegate.get(loc);
+					addValue(value, weight);
 				}
 			}
 			return computeAggregation();

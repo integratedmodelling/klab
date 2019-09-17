@@ -34,6 +34,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	// FIXME this is only for debugging, remove when done.
 	private IGeometry geometry;
 
+	// if one value only, just store it here and forget about everything.
+	private boolean isScalar = false;
+	private Object scalarValue = null;
+	
 	/*
 	 * If trivial, we have no time or just one time state, and can contain at most
 	 * one slice.
@@ -130,6 +134,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 	protected AbstractAdaptiveStorage(IGeometry geometry) {
 
+		this.isScalar = geometry.size() == 1;
 		this.geometry = geometry;
 		Dimension time = geometry.getDimension(Type.TIME);
 		if (time == null) {
@@ -182,8 +187,13 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	 */
 	protected abstract void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice);
 
+	@SuppressWarnings("unchecked")
 	public synchronized T get(ILocator locator) {
 
+		if (isScalar) {
+			return (T)scalarValue;
+		}
+		
 		if (slices.isEmpty()) {
 			return null;
 		}
@@ -204,6 +214,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 	public long put(T value, ILocator locator) {
 
+		if (isScalar) {
+			scalarValue = value;
+			return 0;
+		}
+		
 		Offset offsets = locator.as(Offset.class);
 
 		if (offsets.length != geometry.getDimensions().size()) {

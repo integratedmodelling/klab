@@ -1011,7 +1011,7 @@ public class Geometry implements IGeometry {
 		return at(separateTargets(locators));
 	}
 
-	public ILocator at(List<DimensionTarget> targets) {
+	private ILocator at(List<DimensionTarget> targets) {
 
 		if (!hasShape(this)) {
 			throw new IllegalStateException("Geometry has no specified shape: cannot create locators");
