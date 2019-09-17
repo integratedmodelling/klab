@@ -71,8 +71,7 @@ public class EngineViewController {
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public IObservationReference describeObservation(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) Integer childLevel,
-			@RequestParam(required = false) String locator) {
+			@RequestParam(required = false) Integer childLevel, @RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
@@ -90,7 +89,7 @@ public class EngineViewController {
 			loc = Geometry.create(locator);
 			loc = obs.getScale().at(loc);
 		}
-		
+
 		return Observations.INSTANCE.createArtifactDescriptor(obs, parent, loc, childLevel == null ? -1 : childLevel,
 				/* collapseSiblings, */ false);
 	}
@@ -119,7 +118,7 @@ public class EngineViewController {
 			loc = Geometry.create(locator);
 			loc = obs.getScale().at(loc);
 		}
-		
+
 		return Observations.INSTANCE.getStateSummary((IState) obs, loc);
 	}
 
@@ -165,7 +164,7 @@ public class EngineViewController {
 				break;
 			}
 
-			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs.getContext(), loc, 0, false,
+			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs, loc, 0, false,
 					obs instanceof ObservationGroupView ? obs.getId() : null));
 			n++;
 		}

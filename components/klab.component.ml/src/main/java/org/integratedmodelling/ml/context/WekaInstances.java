@@ -268,7 +268,7 @@ public class WekaInstances {
 			if (predictor != null) {
 				IArtifact artifact = context.getArtifact(dependency.getName());
 				if (!(artifact instanceof IState)) {
-					throw new IllegalArgumentException("Weka: predictors must be observations of qualities");
+					throw new IllegalArgumentException("Weka: missing predictor or not a quality: " + dependency.getName());
 				}
 				predictors.add((IState) artifact);
 				annotations.put(((IState) artifact).getObservable().getName(), predictor);
@@ -293,7 +293,7 @@ public class WekaInstances {
 
 					IArtifact artifact = context.getArtifact(dependency.getName());
 					if (!(artifact instanceof ObservationGroup)) {
-						throw new IllegalArgumentException("Weka: archetypes must be observations of objects");
+						throw new IllegalArgumentException("Weka: missing archetype or archetype is not countable");
 					}
 					if (arch.containsKey("min")) {
 						this.predictedMin = arch.get("min", Double.NaN);
