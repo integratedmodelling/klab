@@ -8,7 +8,6 @@ import java.io.Writer;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -190,8 +189,6 @@ public class LicenseManager {
         
         propertiesFromCertificate.remove(KlabCertificate.KEY_EXPIRATION);
         properties.remove(KlabCertificate.KEY_EXPIRATION);
-        System.out.println(properties.toString());
-        System.out.println(propertiesFromCertificate.toString());
         if (propertiesFromCertificate.equals(properties)) {
         	tokenManager.deleteExpiredTokens(username);
             String token = JwtTokenManager.createEngineJwtToken(username);
@@ -293,7 +290,6 @@ public class LicenseManager {
 				hubAuthenticationManager.getHubReference().getId(), Groups,
 				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
 		networkManager.notifyAuthorizedNode(node, hubAuthenticationManager.getHubReference(), true);
-		System.out.println(response.getPublicKey());
 		return response;
 	}
 	

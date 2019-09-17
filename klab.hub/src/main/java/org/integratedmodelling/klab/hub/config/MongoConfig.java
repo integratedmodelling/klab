@@ -38,8 +38,6 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
 	@Override
 	public MongoClient mongoClient() {
-		System.out.println("In the mongo productions config");
 		return new MongoClient(HOSTNAME, PORT);
 	}
-
 }

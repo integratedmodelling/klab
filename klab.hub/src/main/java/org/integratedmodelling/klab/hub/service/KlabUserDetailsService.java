@@ -34,9 +34,6 @@ public class KlabUserDetailsService implements UserDetailsService {
 	@Autowired
 	LdapService ldapService;
 
-	@Autowired
-	OAuth2UserService oAuth2UserService;
-
 	@Override
 	public User loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
 		User user = getUserFromMongo(usernameOrEmail)

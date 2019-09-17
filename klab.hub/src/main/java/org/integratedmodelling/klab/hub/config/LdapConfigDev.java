@@ -21,7 +21,7 @@ public class LdapConfigDev {
     @Bean
     public LdapContextSource contextSource() {
         LdapContextSource contextSource = new LdapContextSource();
-        contextSource.setUrl("localhost");
+        contextSource.setUrl("localhost:12345");
         contextSource.setUserDn("admin");
         contextSource.setPassword("secret");
         contextSource.setBase("dc=integratedmodelling,dc=org");
