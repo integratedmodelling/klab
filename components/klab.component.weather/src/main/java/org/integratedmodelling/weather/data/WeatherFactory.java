@@ -431,18 +431,27 @@ public enum WeatherFactory {
 		}
 
 		/**
-		 * This should be timed by a scheduler and split
+		 * This should be timed by a scheduler and split. Commit every 50 stations for speed.
 		 */
+		int i = 0;
 		for (String id : stationIds) {
 			WeatherStation ws = INSTANCE.wbox.retrieve(id);
 			try {
 				if (ws.cacheData()) {
-					Logging.INSTANCE.info("Weather station " + ws.getId() + " has updated data");
+					Logging.INSTANCE.info("Data for station " + ws.getId() + " updated to " + ws.getLastKnownYear());
 				}
 			} catch (Throwable e) {
 				Logging.INSTANCE.error("Weather station " + ws.getId() + " data read failed: " + e.getMessage());
 			}
+			
+			i++;
+			
+			if ((i % 50) == 0) {
+				db.commit();
+			}
 		}
+		
+		cruReader.finalizeRead();
 		
 		// reentrant for repeated execution
 		WeatherStation.setLocalGHCNDLocation(null);

@@ -251,12 +251,32 @@ public class CRUReader {
 					"CRU data for variable " + variable + " expected in non-existent CRU file " + file);
 		}
 
-		try {
-			return NetcdfFile.open(file.toString());
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
+		return getOpenFile(file);
 
+	}
+
+	Map<File, NetcdfFile> openFiles = new HashMap<>();
+
+	private NetcdfFile getOpenFile(File file) {
+		if (!openFiles.containsKey(file)) {
+			try {
+				NetcdfFile nc = NetcdfFile.open(file.toString());
+				openFiles.put(file, nc);
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
+		return openFiles.get(file);
+	}
+
+	public void finalizeRead() {
+		for (File file : openFiles.keySet()) {
+			try {
+				openFiles.get(file).close();
+			} catch (IOException e) {
+				Logging.INSTANCE.error(e);
+			}
+		}
 	}
 
 	public Pair<DateTime, DateTime> getTemporalBoundaries() throws KlabException {
@@ -328,7 +348,8 @@ public class CRUReader {
 
 	/**
 	 * Read a year of all vars, interpolating from monthly values. Return map of
-	 * double[] with interpolated and corrected data.
+	 * double[] with interpolated and corrected data. Will leave all used Netcdf files
+	 * open - must close after repeated use through {@link #finalizeRead()}.
 	 * 
 	 * @param ws
 	 * @param variables
@@ -366,10 +387,9 @@ public class CRUReader {
 
 		for (String variable : cruVariables) {
 
-			String varname = variableMap.get(variable);
-			// ACH this opens and closes the file every time - a huge waste of time when run in batch, which is the
-			// normal mode of operation for CRU
-			try (NetcdfFile nc = getFile(variable, year)) {
+			try {
+				String varname = variableMap.get(variable);
+				NetcdfFile nc = getFile(variable, year);
 				Variable var = nc.findVariable(varname);
 				double[] data = new double[12];
 				Array value = var.read(new int[] { timeIdx, latIdx, lonIdx }, new int[] { 12, 1, 1 });
@@ -377,8 +397,9 @@ public class CRUReader {
 					data[i] = value.getDouble(i);
 				}
 				monthlyData.put(variable, data);
-			} catch (IOException | InvalidRangeException e) {
-				throw new KlabIOException(e);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 

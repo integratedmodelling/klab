@@ -2,7 +2,6 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +54,7 @@ public enum Authentication implements IAuthenticationService {
 	 */
 	INSTANCE;
 
-	String LOCAL_HUB_URL = "http://127.0.0.1:8284/klab";
+	String LOCAL_HUB_URL = "http://127.0.0.1:8284/hub";
 
 	/**
 	 * Local catalog of all partner identities registered from the network.

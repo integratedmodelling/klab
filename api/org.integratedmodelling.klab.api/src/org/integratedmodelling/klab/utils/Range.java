@@ -427,5 +427,17 @@ public class Range implements IValueMediator {
 		System.out.println(Range.create("[0,]"));
 		System.out.println(Range.create("[,]"));
 	}
+
+	public void include(double d) {
+
+		if (lowerBound == Double.NEGATIVE_INFINITY || lowerBound > d) {
+			lowerBound = d;
+			lowerInfinite = false;
+		}
+		if (upperBound == Double.POSITIVE_INFINITY || upperBound < d) {
+			upperBound = d;
+			upperInfinite = false;
+		}
+	}
 	
 }
