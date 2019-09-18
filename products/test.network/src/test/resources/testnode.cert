@@ -22,7 +22,7 @@ klab.partner.name = Semantic Web of BS, Inc.
 # profile
 klab.partner.email = bs@semanticweb.org
 # URL of authenticating hub
-klab.partner.hub = http://127.0.0.1:8284/klab
+klab.partner.hub = http://127.0.0.1:8284/hub
 # Official URL of this node
 klab.url = http://127.0.0.1:8287/node
 # signature is sent along with certificate and cross-validates 

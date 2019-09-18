@@ -116,7 +116,7 @@ public enum SetupNetwork {
 		}
 
 		while (true) {
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 		}
 	}
 

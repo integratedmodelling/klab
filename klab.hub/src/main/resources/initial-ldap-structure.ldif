@@ -1,0 +1,42 @@
+version: 1
+
+dn: dc=integratedmodelling,dc=org
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+dc: integratedmodelling
+o: integratedmodelling.org
+
+dn: ou=groups,dc=integratedmodelling,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+dn: cn=administrator,ou=groups,dc=integratedmodelling,dc=org
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: administrator
+uniqueMember: cn=admin,dc=integratedmodelling,dc=org
+
+dn: cn=system,ou=groups,dc=integratedmodelling,dc=org
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: system
+uniqueMember: cn=admin,dc=integratedmodelling,dc=org
+
+dn: cn=user,ou=groups,dc=integratedmodelling,dc=org
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: user
+uniqueMember: cn=admin,dc=integratedmodelling,dc=org
+
+dn: cn=data_manager,ou=groups,dc=integratedmodelling,dc=org
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: data_manager
+uniqueMember: cn=admin,dc=integratedmodelling,dc=org
+
+dn: ou=imusers,dc=integratedmodelling,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: imusers

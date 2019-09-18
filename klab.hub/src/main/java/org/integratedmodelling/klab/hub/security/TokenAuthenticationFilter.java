@@ -11,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.models.tokens.AuthenticationToken;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class TokenAuthenticationFilter implements Filter {
             	}
             }
         } catch (Throwable e) {
-           System.out.println("Could not set user authentication in security context " + e.toString());
+          Logging.INSTANCE.error("Could not set user authentication in security context " + e.toString());
         } finally {
         	chain.doFilter(request, response);
 		}

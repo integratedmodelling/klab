@@ -63,6 +63,6 @@ public class NodeAuthenticationResponse {
 	
 	@Override
 	public String toString() {
-		return "EngineAuthenticationResponse [userData=" + userData + "]";
+		return "NodeAuthenticationResponse [userData=" + userData + "]";
 	}
 }
