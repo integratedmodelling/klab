@@ -16,7 +16,7 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 @Profile("production")
 @Configuration
 @ComponentScan(basePackages = {"org.integratedmodelling.klab.hub.*"})
-@EnableLdapRepositories(basePackages = "org.integratedmodelling.klab.hub.**")
+//@EnableLdapRepositories(basePackages = "org.integratedmodelling.klab.hub.repository.UserRepository")
 public class LdapConfig {
     @Value("${ldap.url}")
     private String LDAP_URL;

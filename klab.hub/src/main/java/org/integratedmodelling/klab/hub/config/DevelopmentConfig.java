@@ -4,39 +4,42 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
-import org.integratedmodelling.klab.rest.ObservableReference;
-import org.springframework.context.annotation.Configuration;
+import org.integratedmodelling.klab.hub.service.KlabUserDetailsService;
+import org.integratedmodelling.klab.hub.service.LdapService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.stereotype.Component;
 
 @Profile("development")
-@Configuration
-public class DevelopmentConfig {
+@Component
+public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEvent> {
 	
-	public static final User system = testUser("system", "password", "admin@integratedmodelling.org", "Joe",
+	@Autowired
+	private KlabUserDetailsService klabUserDetailsService;
+	
+	@Autowired
+	LdapService ldapService;
+	
+	private static final User system = testUser("system", "password", "admin@integratedmodelling.org", "Joe",
             "Robot", Role.ROLE_USER, Role.ROLE_ADMINISTRATOR, Role.ROLE_SYSTEM);
 	
-    public static final User hades = testUser("hades", "password", "hades@integratedmodelling.org", "Hades",
+	private static final User hades = testUser("hades", "password", "hades@integratedmodelling.org", "Hades",
             "of Greece", Role.ROLE_USER, Role.ROLE_ADMINISTRATOR);
     
-    public static final User hercules = testUser("hercules", "password", "hercules@integratedmodelling.org",
+	private static final User hercules = testUser("hercules", "password", "hercules@integratedmodelling.org",
             "Hercules", "of Rome", Role.ROLE_USER);
     
-    public static final User achilles_activeMissingLdap = testUser("achilles", "password",
+	private static final User achilles_activeMissingLdap = testUser("achilles", "password",
             "achilles@integratedmodelling.org", "Achilles", "of Greece", Role.ROLE_USER);
     
-    public static final User triton_pendingMissingLdap = testUser("triton", "password",
+	private static final User triton_pendingMissingLdap = testUser("triton", "password",
             "triton@integratedmodelling.org", "Triton", "of Greece", Role.ROLE_USER);
     
-    public static final KlabGroup im = testGroup("im", "worldview", "No_Key", true);
-    
-    public static final KlabGroup aries = testGroup("aries", "ARIESTEAM", "No_Key", false);
-    
-    
-	
     private static User testUser(String username, String password, String email, String firstName, String lastName,
             Role... roles) {
         User result = new User();
@@ -51,17 +54,6 @@ public class DevelopmentConfig {
         return result;
     }
     
-    private static KlabGroup testGroup(String groupname, String description, String sshKey, Boolean worldview) {
-    	KlabGroup group = new KlabGroup();
-    	group.setId(groupname);
-    	group.setDescription(description);
-    	group.setSshKey(sshKey);
-    	List<String> list = Arrays.asList("foo", "bar");
-    	group.setProjectUrls(list);
-    	group.setWorldview(worldview);
-    	return group;
-    }
-    
     static {
         system.addGroups("aries");
         system.addGroups("im");
@@ -72,8 +64,26 @@ public class DevelopmentConfig {
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);
     }
     
-    public List<User> getInitialUsers() {
+    private List<User> getInitialUsers() {
         return new ArrayList<>(Arrays.asList(hercules, hades, system));
     }
+    
+    public void createInitialUsers() {
+    	List<User> users = getInitialUsers();
+    	
+    	for(User user : users) {
+    		try {
+    			klabUserDetailsService.createMongoUser(user, AccountStatus.active);
+    			klabUserDetailsService.createLdapUser(user);
+    		} catch (Exception e) {
+    			System.out.println(e);
+    		}
+    	}
+    }
+
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent arg0) {
+		createInitialUsers();	
+	}
 
 }

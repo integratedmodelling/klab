@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.ldap.repository.config.EnableLdapRepositories;
+//import org.springframework.data.ldap.repository.config.EnableLdapRepositories;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.ldap.DefaultLdapUsernameToDnMapper;
@@ -15,17 +15,16 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 @Profile("development")
 @Configuration
 @ComponentScan(basePackages = {"org.integratedmodelling.klab.hub.*"})
-@EnableLdapRepositories(basePackages = "org.integratedmodelling.klab.hub.**")
+//@EnableLdapRepositories(basePackages = "org.integratedmodelling.klab.hub.repository.UserRepository")
 public class LdapConfigDev {
 	
     @Bean
     public LdapContextSource contextSource() {
         LdapContextSource contextSource = new LdapContextSource();
-        contextSource.setUrl("localhost:12345");
-        contextSource.setUserDn("admin");
-        contextSource.setPassword("secret");
+        contextSource.setUserDn("cn=admin,dc=integratedmodelling,dc=org");
+        contextSource.setPassword("password");
         contextSource.setBase("dc=integratedmodelling,dc=org");
-        contextSource.afterPropertiesSet();
+        contextSource.setUrl("ldap://127.0.0.1:8389");
         return contextSource;
     }
     
@@ -49,4 +48,5 @@ public class LdapConfigDev {
     		}
     	};
     }
+    
 }

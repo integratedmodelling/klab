@@ -119,5 +119,16 @@
 		    <artifactId>mongo-java-server</artifactId>
 		    <version>1.19.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/cz.jirutka.spring/unboundid-spring -->
+		<dependency>
+		    <groupId>cz.jirutka.spring</groupId>
+		    <artifactId>unboundid-spring</artifactId>
+		    <version>1.0</version>
+		</dependency>
+		<dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
 	</dependencies>
 </project>
