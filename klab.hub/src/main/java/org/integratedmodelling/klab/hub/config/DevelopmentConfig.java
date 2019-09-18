@@ -13,12 +13,13 @@ import org.integratedmodelling.klab.hub.service.KlabUserDetailsService;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 @Profile("development")
-@Component
+@Configuration
 public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEvent> {
 	
 	@Autowired
