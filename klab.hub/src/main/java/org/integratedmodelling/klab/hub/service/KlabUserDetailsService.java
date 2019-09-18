@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang.StringUtils;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
@@ -96,8 +97,8 @@ public class KlabUserDetailsService implements UserDetailsService {
 		if(user.getAccountStatus().equals(null)) {
 			user.setAccountStatus(accountStatus);	
 		}
-		System.out.println(user.toString());
 		user = userRepository.save(user);
+		Logging.INSTANCE.info("Created Mongo User: " + user.toString());
 		return user;
 	}
 
@@ -136,8 +137,8 @@ public class KlabUserDetailsService implements UserDetailsService {
 		} catch (Throwable e) {
 			// return success if only LDAP fails - sometimes users aren't activated before
 			// updates happen
-			System.out.println(String.format("Mongo update succeeded but Spring/LDAP user update failed for '%s'.",
-					user.getUsername()));
+			Logging.INSTANCE.warn((String.format("Mongo update succeeded but Spring/LDAP user update failed for '%s'.",
+					user.getUsername())));
 		}
 		return user;
 	}
@@ -145,11 +146,13 @@ public class KlabUserDetailsService implements UserDetailsService {
 	public void createLdapUser(User user) {
 		UserDetails ldapUser = convertUsertoLdapUser(user);
 		ldapService.createUser(ldapUser);
+		Logging.INSTANCE.info("Created Ldap User:" + user.toString());
 	}
 
 	public void updateLdapUser(User user) {
 		UserDetails ldapUser = convertUsertoLdapUser(user);
 		ldapService.updateUser(ldapUser);
+		Logging.INSTANCE.info("Updated Ldap User:" + user.toString());
 	}
 
 	private UserDetails convertUsertoLdapUser(User user) {

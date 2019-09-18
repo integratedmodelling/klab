@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
@@ -76,7 +78,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     			klabUserDetailsService.createMongoUser(user, AccountStatus.active);
     			klabUserDetailsService.createLdapUser(user);
     		} catch (Exception e) {
-    			System.out.println(e);
+    			Logging.INSTANCE.error(e);
     		}
     	}
     }

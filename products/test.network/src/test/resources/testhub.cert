@@ -25,7 +25,7 @@ klab.partner.url = www.integratedbull.org
 # use its user directory and nodes for auth
 # klab.partner.hub = <url>
 # Official URL of this node
-klab.url =  http://127.0.0.1:8284/klab
+klab.url =  http://127.0.0.1:8284/hub
 # signature is sent along with certificate and cross-validates 
 # certificate integrity after decryption
 klab.signature = dc8a541b-4c14-4770-9f9d-82a73f44b97d

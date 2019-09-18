@@ -55,7 +55,6 @@ public class HubAuthenticationManager {
 
 		for (String test : new Reflections(new ResourcesScanner()).getResources(Pattern.compile(".*\\.cert"))) {
 			KlabCertificate certificate = KlabCertificate.createFromClasspath(test);
-			System.out.println(test);
 			if (certificate.isValid()) {
 				if (certificate.getType() == ICertificate.Type.NODE) {
 					nodeCertificates.put(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate);
