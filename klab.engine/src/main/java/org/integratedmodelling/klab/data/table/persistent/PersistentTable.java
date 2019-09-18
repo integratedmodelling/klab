@@ -169,15 +169,11 @@ public class PersistentTable<K, V> implements IPersistentTable<K, V> {
 		}
 		sql += ");";
 		database.execute(sql);
-		return null;
+		return keyGenerator.apply(object);
 	}
 
 	@Override
 	public V retrieve(K id) {
-
-//		if (!database.hasTable(getName())) {
-//			return null;
-//		}
 
 		List<V> ret = new ArrayList<>();
 		String query = "SELECT * FROM " + getName() + " WHERE oid = " + SQL.wrapPOD(id) + ";";

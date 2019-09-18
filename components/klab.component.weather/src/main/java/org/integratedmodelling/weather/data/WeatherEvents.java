@@ -2,14 +2,21 @@ package org.integratedmodelling.weather.data;
 
 import java.text.NumberFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable.PersistentTableBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.weather.WeatherComponent;
 import org.joda.time.DateTime;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -22,7 +29,8 @@ public enum WeatherEvents {
 
 	INSTANCE;
 
-	private final static String TRRM_EVENTS_URL = "C:\\Users\\ferdinando.villa\\Downloads\\All_Precip_1998-2014_TRMM_Standard.nc";
+	public final static String TRMM_EVENTS_LOCATION = "trmm.catalog.location";
+	public final static String TRMM_PRECIPITATION_THRESHOLD = "trmm.precipitation.threshold";
 
 	/*
 	 * the DB
@@ -31,13 +39,10 @@ public enum WeatherEvents {
 
 	private WeatherEvents() {
 		ebox = new PersistentTableBuilder<Long, WeatherEvent>("weatherevents", Long.class, WeatherEvent.class)
-				.column("precipitation_mm", DataType.DOUBLE, true)
-				.column("area_m2", DataType.DOUBLE)
-				.column("start_long", DataType.LONG, true)
-				.column("end_long", DataType.LONG, true)
-				.column("duration_hours", DataType.INT)
-				.column("bounding_box", DataType.SHAPE, true)
-				.build((event) -> {
+				.column("precipitation_mm", DataType.DOUBLE, true).column("id", DataType.LONG, true)
+				.column("area_m2", DataType.DOUBLE).column("start_long", DataType.LONG, true)
+				.column("end_long", DataType.LONG, true).column("duration_hours", DataType.INT)
+				.column("bounding_box", DataType.SHAPE, true).build((event) -> {
 					return event.asData();
 				}, (data) -> {
 					return new WeatherEvent(data);
@@ -46,23 +51,29 @@ public enum WeatherEvents {
 				});
 	}
 
+	public void setup() {
+
+		if (ebox.count() > 1000000) {
+			Logging.INSTANCE.info("Weather event kbox is initialized.");
+		} else {
+
+			Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
+			if (properties.containsKey(TRMM_EVENTS_LOCATION)) {
+				Logging.INSTANCE.info("Initializing weather event kbox from local file.");
+				setup(properties.getProperty(TRMM_EVENTS_LOCATION),
+						Double.parseDouble(properties.getProperty(TRMM_PRECIPITATION_THRESHOLD, "0.1")), null);
+			} else {
+				Logging.INSTANCE.info("Weather event kbox not initialized for lack of source data.");
+			}
+		}
+
+	}
+
 	/**
 	 * Preprocessed events from White, Battisti & Skok dataset processed from TRRM
 	 * data, limited to 1998-2014 at .25 deg resolution.
 	 * <p>
 	 * Time span is integer 3-h increments starting from Jan 1st, 1998.
-	 * <p>
-	 * From https://journals.ametsoc.org/doi/full/10.1175/2010MWR3472.1:
-	 * <p>
-	 * Therefore a domain similar to the domain used in Skok et al. (2009) was
-	 * selected. It encompasses the following area: 30°S–39°N and 120°E–75°W (Fig.
-	 * 1) and included the tropical Pacific as well as parts of the United States,
-	 * Gulf of Mexico, and the Caribbean. The analysis period consists of three
-	 * years and includes times when both datasets are available: 1 January 1998–31
-	 * December 2000. The domain consists of 661 × 273 (TRMM) and 511 × 225 (WRF)
-	 * grid points in 8768 three-hourly time intervals. The availability of TRMM
-	 * data in the Pacific domain was good, nowhere falling below 95% (Fig. 1). Of
-	 * course, the WRF simulation did not have any missing data.
 	 * 
 	 * <pre>
 	 * Drizzle, very small droplets.
@@ -80,17 +91,17 @@ public enum WeatherEvents {
 	 * Violent shower: Greater than 50 mm per hour.
 	 * </pre>
 	 * 
-	 * Suggest: .1 mm for base threshold, use 1mm for flood. 
+	 * Suggest: .1 mm for base threshold, use 1mm for flood.
 	 */
-	public void setup(double threshold) {
+	public void setup(String url, double threshold, IMonitor monitor) {
 
 		int lower = 0;
 		int higher = 0;
-		
+
 		/*
 		 * Open the THREDDS fucker. It's got 65 million events.
 		 */
-		try (NetcdfFile ncfile = NetcdfFile.open(TRRM_EVENTS_URL)) {
+		try (NetcdfFile ncfile = NetcdfFile.open(url)) {
 
 			Dimension events = ncfile.findDimension("events");
 			Variable totalprecip = ncfile.findVariable("totalprecip");
@@ -116,31 +127,22 @@ public enum WeatherEvents {
 			 * Loop; one event per 'row'
 			 */
 			int used = 0;
-			
-			
+
 			for (int n = 0; n < events.getLength(); n++) {
 
 				float totalprecipv = totalprecip.read(new int[] { n }, new int[] { 1 }).getFloat(0);
 				float timespanv = timespan.read(new int[] { n }, new int[] { 1 }).getFloat(0);
 
-				double mmPerHour = totalprecipv/timespanv;
+				double mmPerHour = totalprecipv / timespanv;
 
-				if (mmPerHour >= .25) {
-					lower ++;
-				}
-				
-				if (mmPerHour >= 2) {
-					higher ++;
-				}
-				
 				if (mmPerHour < threshold) {
 					continue;
 				}
 
-				used ++;
-				
+				used++;
+
 				float tstartv = tstart.read(new int[] { n }, new int[] { 1 }).getFloat(0);
-				float spacespanv = timespan.read(new int[] { n }, new int[] { 1 }).getFloat(0);
+				float spacespanv = spacespan.read(new int[] { n }, new int[] { 1 }).getFloat(0);
 				float xminv = xmin.read(new int[] { n }, new int[] { 1 }).getFloat(0);
 				float xmaxv = xmax.read(new int[] { n }, new int[] { 1 }).getFloat(0);
 				float yminv = ymin.read(new int[] { n }, new int[] { 1 }).getFloat(0);
@@ -162,9 +164,23 @@ public enum WeatherEvents {
 				long startTimeMs = start.getMillis() + ((long) tstartv * 3 * 60 * 60 * 1000);
 				long durationMs = (long) timespanv * 60 * 60 * 1000;
 
-				System.out.println(used + "-th (of " + n + ") event at " + longitude + "," + latitude + " went from " + new Date(startTimeMs)
-						+ " to " + new Date(startTimeMs + durationMs) + " dropping " + totalprecipv + " mm of shit"
-						+ " over " + NumberFormat.getInstance().format(spacespanv / 1000000.0) + "km2.\nBounding box is " + boundingBox);
+				Map<String, Object> data = new HashMap<>();
+				data.put("bounding_box", boundingBox);
+				data.put("precipitation_mm", mmPerHour);
+				data.put("area_m2", spacespanv);
+				data.put("start_long", startTimeMs);
+				data.put("end_long", startTimeMs + durationMs);
+				data.put("duration_hours", (long) timespanv);
+				data.put("id", (long) n);
+
+				WeatherEvent event = new WeatherEvent(data);
+				ebox.store(event, monitor);
+
+				System.out.println("#" + used + "/" + n + ": event at " + longitude + "," + latitude + " went from "
+						+ new Date(startTimeMs) + " to " + new Date(startTimeMs + durationMs) + " dropping "
+						+ totalprecipv + " mm of shit" + " over "
+						+ NumberFormat.getInstance().format(spacespanv / 1000000.0) + "km2.\nBounding box is "
+						+ boundingBox);
 
 //				
 //				
@@ -188,12 +204,9 @@ public enum WeatherEvents {
 		} catch (Throwable t) {
 			throw new KlabIOException(t);
 		}
-		
-		
+
 		System.out.println("GOT " + lower + " rain events and " + higher + " flood events");
 	}
-	
-	
 
 	private final static int MIN = 0;
 	private final static int MAX = 1;
@@ -225,7 +238,7 @@ public enum WeatherEvents {
 	}
 
 	public static void main(String[] args) {
-		INSTANCE.setup(0);
+		INSTANCE.setup();
 	}
 
 	/**
