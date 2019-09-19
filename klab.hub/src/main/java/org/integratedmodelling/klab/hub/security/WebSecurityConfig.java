@@ -118,13 +118,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 			.authorizeRequests()
-				.antMatchers("/ui/**", "/signup", "/webjars/**", "/error**", "/oauth2/**","/ui/fonts/**", "/")
-					.permitAll()
 				.regexMatchers("/api/users/.*?(activate|password|groups).*")
 					.permitAll()
 				.antMatchers(HttpMethod.POST, "/api/users")
 					.permitAll()
-				.antMatchers("/signin", "/api/user/checkEmailAvailability", "/api/auth-cert/engine", "/api/auth-cert/node")
+				.antMatchers("/api/auth-cert/engine", "/api/auth-cert/node")
 					.permitAll()
 				.anyRequest()
 					.authenticated()
@@ -143,7 +141,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler);
 				
-		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.antMatcher("/api/**").addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 	}
 
