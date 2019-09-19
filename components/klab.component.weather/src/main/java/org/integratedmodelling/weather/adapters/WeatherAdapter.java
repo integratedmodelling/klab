@@ -6,6 +6,8 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.weather.data.WeatherEvents;
+import org.integratedmodelling.weather.data.WeatherFactory;
 
 public class WeatherAdapter implements IUrnAdapter {
 
@@ -31,8 +33,14 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	@Override
 	public boolean isOnline(Urn urn) {
-		// TODO Auto-generated method stub
-		return true;
+		switch (Services.valueOf(urn.getNamespace())) {
+		case data:
+		case stations:
+			return WeatherFactory.INSTANCE.isOnline();
+		case storms:
+			return WeatherEvents.INSTANCE.isOnline();
+		}
+		return false;
 	}
 
 	@Override

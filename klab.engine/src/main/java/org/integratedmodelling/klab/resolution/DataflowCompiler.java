@@ -193,6 +193,7 @@ public class DataflowCompiler {
 
 			/*
 			 * recover any output states with static initializers
+			 * NB: where expressions and the like are added
 			 */
 			for (int i = 1; i < contextModel.getObservables().size(); i++) {
 				if (((Observable) contextModel.getObservables().get(i)).isResolved()) {

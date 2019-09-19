@@ -32,6 +32,7 @@ public class EngineController {
 	@RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Capabilities capabilities(Principal user) {
+		
 		Capabilities ret = new Capabilities();
 		
 		// synchronized projects

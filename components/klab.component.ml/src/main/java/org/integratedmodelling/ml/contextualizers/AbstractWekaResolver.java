@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
@@ -242,6 +243,12 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
                     .withShape(null);
         }
 
+        /*
+         * FIXME
+         * NB: removing time for now.
+         */
+        geometry = geometry.without(Dimension.Type.TIME);
+        
         StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
         builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
                 .withType(instances.getPredicted().getType()).withParameter("wekaVersion", weka.core.Version.VERSION)

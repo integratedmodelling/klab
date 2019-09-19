@@ -441,7 +441,7 @@ public enum WeatherFactory {
 					Logging.INSTANCE.info("Data for station " + ws.getId() + " updated to " + ws.getLastKnownYear());
 				}
 			} catch (Throwable e) {
-				Logging.INSTANCE.error("Weather station " + ws.getId() + " data read failed: " + e.getMessage());
+				Logging.INSTANCE.error("Weather station " + id + " data read failed: " + e.getMessage());
 			}
 			
 			i++;
@@ -468,6 +468,10 @@ public enum WeatherFactory {
 
 	public IPersistentTable<String, WeatherStation> getDatabase() {
 		return wbox;
+	}
+
+	public boolean isOnline() {
+		return wbox.count() > 100000;
 	}
 
 }

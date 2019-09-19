@@ -60,7 +60,9 @@ public enum WeatherEvents {
 	public void setup() {
 
 		if (ebox.count() > 1000000) {
+			
 			Logging.INSTANCE.info("Weather event kbox is initialized.");
+			
 		} else {
 
 			Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
@@ -289,6 +291,10 @@ public enum WeatherEvents {
 				+ "  BETWEEN start_long AND end_long);";
 
 		return ebox.query(query + ";");
+	}
+
+	public boolean isOnline() {
+		return ebox.count() > 100000;
 	}
 
 }
