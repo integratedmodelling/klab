@@ -1,6 +1,7 @@
 package org.integratedmodelling.weather.data;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,9 +11,11 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable.PersistentTableBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -32,6 +35,9 @@ public enum WeatherEvents {
 	public final static String TRMM_EVENTS_LOCATION = "trmm.catalog.location";
 	public final static String TRMM_PRECIPITATION_THRESHOLD = "trmm.precipitation.threshold";
 
+	DateTime trmmStart = new DateTime(1998, 1, 1, 0, 0, 0);
+	DateTime trmmEnd = new DateTime(2015, 1, 1, 0, 0, 0);
+	
 	/*
 	 * the DB
 	 */
@@ -240,21 +246,49 @@ public enum WeatherEvents {
 	public static void main(String[] args) {
 		INSTANCE.setup();
 	}
-
+	
 	/**
-	 * For now, substitute 2014 to any year after it, and 1998 to any year before
-	 * it.
+	 * For now, substitute 2014 to any year after it, and 1998 to any year before, and adjust intervals 
+	 * so that the same season is covered in the closest year.
 	 * 
 	 * @param scale
 	 * @return
 	 */
 	public Iterable<WeatherEvent> getEvents(IScale scale) {
+		return getEvents(scale, Double.NaN);
+	}
 
-		// space
+	/**
+	 * For now, substitute 2014 to any year after it, and 1998 to any year before, and adjust intervals 
+	 * so that the same season is covered in the closest year.
+	 * 
+	 * @param scale
+	 * @return
+	 */
+	public Iterable<WeatherEvent> getEvents(IScale scale, double minPrecipitation) {
 
-		// time
+		if (scale.getSpace() == null || scale.getTime() == null) {
+			return new ArrayList<>();
+		}
+		
+		Geometry shape = ((Shape) scale.getSpace().getShape()).getStandardizedGeometry();
+		ITimeInstant start = scale.getTime().getStart();
+		ITimeInstant end = scale.getTime().getEnd();
+		
+		if (start == null || end == null || start.equals(end)) {
+			return new ArrayList<>();
+		}
+		
+		String precQuery = "";
+		if (!Double.isNaN(minPrecipitation)) {
+			precQuery = " AND precipitation_mm >= " + minPrecipitation;
+		}
 
-		return ebox.query("");
+		String query = "SELECT * from " + ebox.getName() + " WHERE " + "location && '" + shape + "'" + precQuery + " AND ("
+				+ start.getMillis() + " BETWEEN start_long AND end_long OR " + end.getMillis()
+				+ "  BETWEEN start_long AND end_long);";
+
+		return ebox.query(query + ";");
 	}
 
 }
