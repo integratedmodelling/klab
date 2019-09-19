@@ -32,6 +32,7 @@ public class LicenseController {
 	@PostMapping(value="/engine", produces = "application/json")
 	public ResponseEntity<?> authenticateEngine(@RequestBody EngineAuthenticationRequest request,
 			HttpServletRequest httpRequest) throws IOException, PGPException, DecoderException {
+		System.out.println(httpRequest.getLocalAddr());
 		EngineAuthenticationResponse response = licenseManager.processEngineCert(request, httpRequest.getLocalAddr());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
