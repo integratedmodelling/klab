@@ -160,7 +160,7 @@ public class LicenseManager {
 		return properties;
     }
     
-	public EngineAuthenticationResponse processEngineUser(EngineAuthenticationRequest request) throws IOException, PGPException, DecoderException {
+	public EngineAuthenticationResponse processEngineUser(EngineAuthenticationRequest request, String ip) throws IOException, PGPException, DecoderException {
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
 		EngineUser engineUser = authenticateEngineCert(request);
@@ -302,9 +302,36 @@ public class LicenseManager {
 		case LEGACY:
 			break;
 		case TEST:
+			if (IPUtils.isLocal(ip)) {
+				DateTime now = DateTime.now();
+				DateTime tomorrow = now.plusDays(90);
+				EngineUser engineUser = new EngineUser(request.getUsername(), null);
+				engineUser.setEmailAddress(request.getEmail());
+				IdentityReference userIdentity = new IdentityReference(engineUser.getUsername(), engineUser.getEmailAddress(),
+						now.toString());
+				AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engineUser.getGroups(),
+						tomorrow.toString(), engineUser.getId());
+				Logging.INSTANCE.info("Test Certificate used on Local Hub for " + request.getUsername());
+				return new EngineAuthenticationResponse(authenticatedIdentity, hubAuthenticationManager.getHubReference(),
+						networkManager.getNodes(engineUser.getGroups()));
+			}
 			break;
 		case USER:
-			return processEngineUser(request);
+			if (IPUtils.isLocal(ip)) {
+				DateTime now = DateTime.now();
+				DateTime tomorrow = now.plusDays(90);
+				EngineUser engineUser = new EngineUser(request.getUsername(), null);
+				engineUser.setEmailAddress(request.getEmail());
+				IdentityReference userIdentity = new IdentityReference(engineUser.getUsername(), engineUser.getEmailAddress(),
+						now.toString());
+				AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engineUser.getGroups(),
+						tomorrow.toString(), engineUser.getId());
+				Logging.INSTANCE.info("USER Certificate used on Local Hub for " + request.getUsername());
+				return new EngineAuthenticationResponse(authenticatedIdentity, hubAuthenticationManager.getHubReference(),
+						networkManager.getNodes(engineUser.getGroups()));
+			} else {
+				return processEngineUser(request, ip);
+			}
 		default:
 			break;
 		}
