@@ -719,7 +719,7 @@ public class ModelKbox extends ObservableKbox {
 		boolean first = true;
 
 		for (IObservable obs : model.getObservables()) {
-
+			
 			ModelReference m = new ModelReference();
 
 			m.setId(model.getId());

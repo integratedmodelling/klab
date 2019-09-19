@@ -873,7 +873,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 * add any other outputs from the model, which will be dealt with by the
 		 * contextualizers
 		 */
-		if (actuator.getModel() != null) {
+		if (actuator.getModel() != null && !actuator.getModel().isInstantiator()) {
 			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
 				IObservable output = actuator.getModel().getObservables().get(i);
 				targetObservables.put(output.getName(),
