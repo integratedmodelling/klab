@@ -17,7 +17,7 @@ import net.minidev.json.JSONObject;
 
 @RestController
 @RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-@RequestMapping(value = "api/ldap")
+@RequestMapping(value = "/api/ldap")
 public class LdapController {
 
 	@Autowired
