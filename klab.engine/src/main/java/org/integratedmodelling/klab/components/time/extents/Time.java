@@ -462,8 +462,14 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IExtent at(Object... locators) {
-		if (locators != null && locators.length == 1 && locators[0] instanceof Number
-				&& ((Number) locators[0]).longValue() == 0) {
+		if (locators != null && locators.length == 1 && locators[0] instanceof Number) {
+			long ofs = ((Number) locators[0]).longValue();
+			if (this.size() == 0 && ofs == 0) {
+				return this;
+			} else if (this.size() > ofs) {
+				return getExtent(ofs);
+			}
+			
 			return this;
 		}
 		// TODO locate in grid or scream

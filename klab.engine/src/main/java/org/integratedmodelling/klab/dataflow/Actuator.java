@@ -1177,7 +1177,7 @@ public class Actuator implements IActuator {
 
 			if (isNew) {
 				IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
-						product.getContext(), context.getScale(), 0, isMainObservable || isMain).withTaskId(taskId);
+						product.getContext(), context.getScale().initialization(), 0, isMainObservable || isMain).withTaskId(taskId);
 
 				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 						IMessage.Type.NewObservation, observation));

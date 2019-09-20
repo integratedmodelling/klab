@@ -84,7 +84,7 @@ public class EngineViewController {
 				? ((DirectObservation) obs).getGroup()
 				: obs.getContext();
 
-		ILocator loc = obs.getScale();
+		ILocator loc = obs.getScale().initialization();
 		if (locator != null) {
 			loc = Geometry.create(locator);
 			loc = obs.getScale().at(loc);

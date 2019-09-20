@@ -1376,6 +1376,7 @@ public class Scale implements IScale {
 
 	@Override
 	public IScale initialization() {
+		// WRONG diocan - init is not the first T, it's before it and temporal stuff won't run at init. Back to initialization object?
 		return getTime() == null ? this : at(ITime.class, 0l);
 	}
 

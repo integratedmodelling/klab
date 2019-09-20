@@ -15,7 +15,6 @@
  */
 package org.integratedmodelling.klab.api.observations.scale.space;
 
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 
