@@ -683,7 +683,12 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	private Geometry fix(Geometry jtsGeometry) {
-		if (jtsGeometry instanceof GeometryCollection) {
+		// if geometry is a point or line, buffer return an empty polygon, so we must check it
+		// a double check for a well formed polygon is needed
+		if (jtsGeometry instanceof GeometryCollection && !(jtsGeometry instanceof MultiLineString ||
+				jtsGeometry instanceof LineString ||
+				jtsGeometry instanceof MultiPoint ||
+				jtsGeometry instanceof Point)) {
 			return jtsGeometry.buffer(0);
 		}
 		return jtsGeometry;
