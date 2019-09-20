@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -268,6 +269,11 @@ public class Coverage extends Scale implements ICoverage {
 	private Pair<IExtent, Double> mergeExtent(int i, IExtent other, LogicalConnector how) {
 
 		IExtent orig = extents.get(i);
+		
+		if (orig instanceof ITime && ((ITime)orig).is(ITime.Type.INITIALIZATION)) {
+			return new Pair<>(orig, 1.0);
+		}
+		
 		IExtent current = coverages.get(i).getFirst();
 		double ccover = coverages.get(i).getSecond();
 		double newcover = 0;

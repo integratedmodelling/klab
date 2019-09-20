@@ -89,7 +89,6 @@ public class WekaClassifier {
         List<Item> ret = new ArrayList<>();
 
         try {
-
             instances.getInstances().setClassIndex(0);
             classifier.buildClassifier(instances.getInstances());
             Evaluation eval = new Evaluation(instances.getInstances());

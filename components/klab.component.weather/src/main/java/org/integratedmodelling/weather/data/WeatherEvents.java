@@ -287,7 +287,7 @@ public enum WeatherEvents {
 		}
 
 		String query = "SELECT * from " + ebox.getName() + " WHERE " + "location && '" + shape + "'" + precQuery + " AND ("
-				+ start.getMillis() + " BETWEEN start_long AND end_long OR " + end.getMillis()
+				+ start.getMilliseconds() + " BETWEEN start_long AND end_long OR " + end.getMilliseconds()
 				+ "  BETWEEN start_long AND end_long);";
 
 		return ebox.query(query + ";");

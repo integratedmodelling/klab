@@ -24,7 +24,7 @@ public class Time implements IExpression {
 		ITimeInstant end = null;
 		ITimeDuration step = null;
 		Resolution resolution = null;
-		ITime.Type type = ITime.Type.SPECIFIC;
+		ITime.Type type = ITime.Type.PHYSICAL;
 
 		if (parameters.contains("focus")) {
 
@@ -124,7 +124,7 @@ public class Time implements IExpression {
 				throw new KlabValidationException("real time requires specification of start, end and step");
 			}
 		} else if (parameters.contains("generic") && parameters.get("generic", Boolean.FALSE)) {
-			type = ITime.Type.GENERIC;
+			type = ITime.Type.LOGICAL;
 			if (step != null) {
 				throw new KlabValidationException("generic time must have a focus and cannot have a step");
 			}

@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.time.extents.mediators.TimeIdentity;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.Extent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
@@ -65,7 +66,7 @@ public class Time extends Extent implements ITime {
 
 		@Override
 		public double getMultiplier(ITimeInstant start, ITimeInstant end) {
-			double span = end.getMillis() - start.getMillis();
+			double span = end.getMilliseconds() - start.getMilliseconds();
 			return span / type.getMilliseconds();
 		}
 
@@ -92,9 +93,22 @@ public class Time extends Extent implements ITime {
 		this.step = time.step;
 	}
 
+	public static Time initialization(Scale scale) {
+		Time ret = new Time();
+		ret.extentType = ITime.Type.INITIALIZATION;
+		ret.start = new TimeInstant(0);
+		ret.end = new TimeInstant(0);
+		ret.multiplicity = 1;
+		ret.resolution = new ResolutionImpl(Resolution.Type.YEAR, 0.0);
+		if (scale != null) {
+			ret.setScaleId(scale.getScaleId());
+		}
+		return ret;
+	}
+
 	public static Time create(int year) {
 		Time ret = new Time();
-		ret.extentType = ITime.Type.SPECIFIC;
+		ret.extentType = ITime.Type.PHYSICAL;
 		ret.start = new TimeInstant(year);
 		ret.end = new TimeInstant(new DateTime(year + 1, 1, 1, 0, 0));
 		ret.resolution = new ResolutionImpl(Resolution.Type.YEAR, 1.0);
@@ -103,7 +117,7 @@ public class Time extends Extent implements ITime {
 
 	public static Time create(int startYear, int endYear) {
 		Time ret = new Time();
-		ret.extentType = ITime.Type.SPECIFIC;
+		ret.extentType = ITime.Type.PHYSICAL;
 		ret.start = new TimeInstant(startYear);
 		ret.end = new TimeInstant(endYear);
 		ret.resolution = new ResolutionImpl(Resolution.Type.YEAR, endYear - startYear);
@@ -175,7 +189,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	private Range<Long> getRange() {
-		return Range.closed(start.getMillis(), end.getMillis());
+		return Range.closed(start.getMilliseconds(), end.getMilliseconds());
 	}
 
 	@Override
@@ -186,12 +200,12 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public double getCoveredExtent() {
-		return end.getMillis() - start.getMillis();
+		return end.getMilliseconds() - start.getMilliseconds();
 	}
 
 	@Override
 	public double getCoverage() {
-		return end.getMillis() - start.getMillis();
+		return end.getMilliseconds() - start.getMilliseconds();
 	}
 
 	@Override
@@ -261,7 +275,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public Time collapse() {
-		return create(this.extentType == ITime.Type.GENERIC ? ITime.Type.GENERIC : ITime.Type.SPECIFIC,
+		return create(this.extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL,
 				this.resolution.getType(), resolution.getMultiplier(start, end), start, end, null);
 	}
 
@@ -292,7 +306,7 @@ public class Time extends Extent implements ITime {
 		}
 
 		// should also work for infinite time
-		long newStart = this.start.getMillis() + (this.step.getMilliseconds() * stateIndex);
+		long newStart = this.start.getMilliseconds() + (this.step.getMilliseconds() * stateIndex);
 		long newEnd = newStart + this.step.getMilliseconds();
 
 		// TODO if realtime, we should align with the clock as all these ops cannot
@@ -302,7 +316,7 @@ public class Time extends Extent implements ITime {
 
 		ret.start = new TimeInstant(newStart);
 		ret.end = new TimeInstant(newEnd);
-		ret.extentType = ITime.Type.SPECIFIC;
+		ret.extentType = ITime.Type.PHYSICAL;
 		ret.multiplicity = 1;
 		ret.resolution = resolution(ret.start, ret.end);
 		ret.locatedExtent = this;
@@ -324,7 +338,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public boolean isEmpty() {
-		return start.getMillis() >= end.getMillis();
+		return start.getMilliseconds() >= end.getMilliseconds();
 	}
 
 	@Override
@@ -340,12 +354,29 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public String encode() {
+
 		String ret = "T" + getDimensionality() + "(" + multiplicity + ")";
-		String opt = "{";
-		if (opt.length() > 1) {
-			ret += opt + "}";
+		String args = Geometry.PARAMETER_TIME_REPRESENTATION + "=" + getTimeType();
+
+		if (!this.is(ITime.Type.INITIALIZATION)) {
+			if (start != null) {
+				if (end != null) {
+					args += "," + Geometry.PARAMETER_TIME_PERIOD + "=[" + start.getMilliseconds() + " "
+							+ end.getMilliseconds() + "]";
+				} else {
+					args += "," + Geometry.PARAMETER_TIME_LOCATOR + "=" + start.getMilliseconds();
+				}
+			}
+			if (step != null) {
+				args += "," + Geometry.PARAMETER_TIME_GRIDRESOLUTION + "=" + step.getMilliseconds();
+			}
+			if (resolution != null) {
+				args += "," + Geometry.PARAMETER_TIME_SCOPE + "=" + resolution.getMultiplier();
+				args += "," + Geometry.PARAMETER_TIME_SCOPE_UNIT + "=" + resolution.getType();
+			}
 		}
-		return ret;
+		
+		return ret + "{" + args + "}";
 	}
 
 	@Override
@@ -365,7 +396,7 @@ public class Time extends Extent implements ITime {
 				ret.end = new TimeInstant(new DateTime(merged.upperEndpoint()));
 			}
 
-			ret.extentType = extentType == ITime.Type.GENERIC ? ITime.Type.GENERIC : ITime.Type.SPECIFIC;
+			ret.extentType = extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL;
 			ret.step = null;
 			((ResolutionImpl) ret.resolution).setMultiplier(ret.resolution.getMultiplier(ret.start, ret.end));
 
@@ -412,7 +443,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public boolean isGeneric() {
-		return extentType == ITime.Type.GENERIC;
+		return extentType == ITime.Type.LOGICAL;
 	}
 
 	@Override
@@ -433,16 +464,32 @@ public class Time extends Extent implements ITime {
 
 	public static IExtent create(Dimension dimension) {
 
-		Resolution resolution = null;
+		long[] period = dimension.getParameters().get(Geometry.PARAMETER_TIME_PERIOD, long[].class);
+		String representation = dimension.getParameters().get(Geometry.PARAMETER_TIME_REPRESENTATION, String.class);
+		Double scope = dimension.getParameters().get(Geometry.PARAMETER_TIME_SCOPE, Double.class);
+		String unit = dimension.getParameters().get(Geometry.PARAMETER_TIME_SCOPE_UNIT, String.class);
+		Long locator = dimension.getParameters().get(Geometry.PARAMETER_TIME_LOCATOR, Long.class);
+		Long tstep = dimension.getParameters().get(Geometry.PARAMETER_TIME_GRIDRESOLUTION, Long.class);
+
+		ITime.Type type = representation == null ? null : ITime.Type.valueOf(representation);
+
+		if (type == ITime.Type.INITIALIZATION) {
+			return initialization(null);
+		}
+		
 		TimeInstant start = null;
 		TimeInstant end = null;
-		ITime.Type type = null;
-		ITimeDuration step = null;
+		if (period != null) {
+			start = new TimeInstant(period[0]);
+			end = new TimeInstant(period[1]);
+		} else if (locator != null) {
+			start = new TimeInstant(locator);
+		}
 
-		// TODO
-		System.out.println("FAAAAAAAAAA");
+		Resolution.Type resType = unit == null ? null : Resolution.Type.parse(unit);
+		ITimeDuration step = tstep == null ? null : TimeDuration.create(tstep, resType);
 
-		return create(type, resolution.getType(), resolution.getMultiplier(), start, end, step);
+		return create(type, resType, scope == null ? null : 1.0, start, end, step);
 	}
 
 	@Override
@@ -462,18 +509,35 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IExtent at(Object... locators) {
-		if (locators != null && locators.length == 1 && locators[0] instanceof Number) {
-			long ofs = ((Number) locators[0]).longValue();
-			if (this.size() == 0 && ofs == 0) {
-				return this;
-			} else if (this.size() > ofs) {
-				return getExtent(ofs);
+
+		if (locators != null && locators.length == 1) {
+			if (locators[0] instanceof Number) {
+				long ofs = ((Number) locators[0]).longValue();
+				if (this.size() == 0 && ofs == 0) {
+					return this;
+				} else if (this.size() > ofs) {
+					return getExtent(ofs);
+				}
+			} else if (locators[0] instanceof Time) {
+				if (((Time) locators[0]).is(ITime.Type.INITIALIZATION)) {
+					// initialization but with our scaleId
+					return new Time((Time) locators[0]).withScaleId(getScaleId());
+				}
+				/*
+				 * TODO potential mediation situation
+				 */
 			}
-			
-			return this;
 		}
-		// TODO locate in grid or scream
-		return null;
+
+		throw new KlabException("HOSTIA unhandled time subsetting operation. Call the exorcist.");
+//		
+//		// TODO locate in grid or scream
+//		return null;
+	}
+
+	private IExtent withScaleId(String scaleId) {
+		setScaleId(scaleId);
+		return this;
 	}
 
 }

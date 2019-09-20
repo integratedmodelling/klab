@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -98,6 +99,15 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * @return
 	 */
 	IReport getReport();
+
+	/**
+	 * During a contextualization there normally is a dataflow being run. This will
+	 * only be null only in special situations, e.g. when expressions are passed a
+	 * convenience context in order to be evaluated outside of contextualization.
+	 * 
+	 * @return
+	 */
+	IDataflow<?> getDataflow();
 
 	/**
 	 * Inspect the network graph of the current context, returning all relationships
@@ -209,7 +219,10 @@ public interface IContextualizationScope extends IParameters<String> {
 
 	/**
 	 * Return the geometry for the computation (in k.LAB typically a
-	 * {@link org.integratedmodelling.klab.api.observations.scale.IScale}).
+	 * {@link org.integratedmodelling.klab.api.observations.scale.IScale}). The
+	 * scale is for the CURRENT computation, which may be different from the scale
+	 * of the full resolution. To retrieve the latter, use
+	 * getDataflow().getResolutionScope();
 	 *
 	 * @return the current geometry. Should never be null.
 	 */

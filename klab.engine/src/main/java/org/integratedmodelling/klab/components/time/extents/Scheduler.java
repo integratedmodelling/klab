@@ -74,11 +74,11 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 			return;
 		}
 
-		if (startTime < 0 || startTime > time.getStart().getMillis()) {
-			startTime = time.getStart().getMillis();
+		if (startTime < 0 || startTime > time.getStart().getMilliseconds()) {
+			startTime = time.getStart().getMilliseconds();
 		}
-		if (endTime < 0 || endTime < time.getEnd().getMillis()) {
-			endTime = time.getEnd().getMillis();
+		if (endTime < 0 || endTime < time.getEnd().getMilliseconds()) {
+			endTime = time.getEnd().getMilliseconds();
 		}
 
 		DGraph graph = null;

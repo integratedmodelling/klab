@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
@@ -239,15 +238,17 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
              * default: cover the learning context, using same geometry minus resolution and
              * shape if any.
              */
-            geometry = ((Scale) context.getScale()).asGeometry().withGridResolution(null).withTemporalResolution(null)
-                    .withShape(null);
+			geometry = ((Scale) context.getScale())
+					.asGeometry()/*
+									 * .withGridResolution(null).withTemporalResolution(null) .withShape(null)
+									 */;
         }
 
         /*
          * FIXME
          * NB: removing time for now.
          */
-        geometry = geometry.without(Dimension.Type.TIME);
+//        geometry = geometry.without(Dimension.Type.TIME);
         
         StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
         builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")

@@ -88,6 +88,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	List<AnnotationParameterValue> annotationParameters = new ArrayList<>();
+	private Scale resolutionScale;
 
 	private Dataflow() {
 	}
@@ -429,14 +430,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.description = description;
 	}
 
-	// public boolean wasNotified(IObservation parent) {
-	// boolean ret = notified.contains(parent.getId());
-	// if (!ret) {
-	// notified.add(parent.getId());
-	// }
-	// return ret;
-	// }
-
 	public Dataflow withMetadata(IMetadata metadata) {
 		this.metadata = metadata;
 		return this;
@@ -473,6 +466,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public Collection<IObservation> getConfigurationTargets() {
 		return this.configurationTargets;
+	}
+
+	@Override
+	public IScale getResolutionScale() {
+		if (this.resolutionScale != null && scope != null) {
+			this.resolutionScale = Scale.create(scope.getCoverage().getExtents());
+		}
+		return this.resolutionScale;
 	}
 
 }

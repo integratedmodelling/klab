@@ -1085,7 +1085,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IObservation observation = null;
 
 		if (observable.is(Type.COUNTABLE)) {
-			observation = getObservationGroup(observable, scale);
+			observation = getObservationGroup(observable, getDataflow().getResolutionScale());
 		} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
 			/*
 			 * TODO this should happen when a predicate observation is made explicitly from
@@ -1094,7 +1094,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			 */
 			Logging.INSTANCE.warn("unexpected call to createTarget: check logics");
 		} else {
-			observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
+			observation = DefaultRuntimeProvider.createObservation(observable, getDataflow().getResolutionScale(), this);
 		}
 
 		if (getRootSubject() != null) {

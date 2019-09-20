@@ -209,7 +209,7 @@ public class WeatherStation implements ISpatial {
 	}
 
 	public boolean hasEnoughDataFor(ITime time, int maxNodataPercentage, String... variables) {
-		return hasEnoughDataFor(time.getStart().getMillis(), time.getEnd().getMillis(), maxNodataPercentage, variables);
+		return hasEnoughDataFor(time.getStart().getMilliseconds(), time.getEnd().getMilliseconds(), maxNodataPercentage, variables);
 	}
 
 	/**

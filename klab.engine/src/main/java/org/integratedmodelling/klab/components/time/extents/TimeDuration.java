@@ -61,7 +61,7 @@ public class TimeDuration implements ITimeDuration {
 	}
 
 	public static TimeDuration create(ITimeInstant start, ITimeInstant end, boolean anchor) {
-		Period period = Period.millis((int) (end.getMillis() - start.getMillis()));
+		Period period = Period.millis((int) (end.getMilliseconds() - start.getMilliseconds()));
 		return new TimeDuration(period, anchor ? start : null);
 	}
 
@@ -75,7 +75,7 @@ public class TimeDuration implements ITimeDuration {
 		if (start == null) {
 			return period.toStandardDuration().getMillis();
 		}
-		return ((TimeInstant) start).asDate().plus(this.period).getMillis() - start.getMillis();
+		return ((TimeInstant) start).asDate().plus(this.period).getMillis() - start.getMilliseconds();
 	}
 
 	@Override

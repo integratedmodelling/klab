@@ -150,7 +150,7 @@ public interface ITime extends IExtent {
 				case "mins":
 				case "minute":
 				case "minutes":
-					return Type.MINUTE;				
+					return Type.MINUTE;
 				case "s":
 				case "sec":
 				case "secs":
@@ -160,7 +160,7 @@ public interface ITime extends IExtent {
 				case "ms":
 				case "milliseconds":
 				case "millisecond":
-					return Type.MILLISECOND;				
+					return Type.MILLISECOND;
 				}
 				throw new KlabValidationException("invalid time unit for resolution: " + unit);
 			}
@@ -185,15 +185,20 @@ public interface ITime extends IExtent {
 	static public enum Type {
 
 		/**
+		 * Time before time exists: used internally in contextualizing perdurants.
+		 */
+		INITIALIZATION,
+
+		/**
 		 * Generic focus on a period without temporally locating it but specifying the
 		 * length of the period of interest.
 		 */
-		GENERIC,
+		LOGICAL,
 
 		/**
 		 * Specific time period of any lenght, single multiplicity
 		 */
-		SPECIFIC,
+		PHYSICAL,
 
 		/**
 		 * Time grid, multiplicity N.
@@ -248,9 +253,19 @@ public interface ITime extends IExtent {
 	 */
 	Resolution getResolution();
 
+	/**
+	 * Check the type against the passed one.
+	 * 
+	 * @param type
+	 * @return
+	 */
 	boolean is(Type type);
 
+	/**
+	 * Get the time type.
+	 * 
+	 * @return
+	 */
 	Type getTimeType();
-
 
 }

@@ -31,7 +31,7 @@ public class TimeInstant implements ITimeInstant {
 	}
 
 	@Override
-	public long getMillis() {
+	public long getMilliseconds() {
 		return time.getMillis();
 	}
 

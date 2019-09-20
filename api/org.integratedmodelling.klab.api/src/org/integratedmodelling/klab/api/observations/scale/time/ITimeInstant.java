@@ -28,6 +28,6 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
      *
      * @return a long.
      */
-    long getMillis();
+    long getMilliseconds();
 
 }
