@@ -12,20 +12,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class KlabGroup {
 
 	@Id
-	String id;
+	private String id;
 
-	String description;
+	private String description;
 
-	String sshKey;
-
-	@NotEmpty
-	List<String> projectUrls;
+	private String sshKey;
 
 	@NotEmpty
-	Boolean worldview;
+	private List<String> projectUrls;
 
 	@NotEmpty
-	List<ObservableReference> observables;
+	private Boolean worldview;
+
+	@NotEmpty
+	private List<ObservableReference> observables;
 
 	public String getId() {
 		return id;

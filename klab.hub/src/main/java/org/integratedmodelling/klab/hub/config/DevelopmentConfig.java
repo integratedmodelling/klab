@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
@@ -16,7 +15,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
 
 @Profile("development")
 @Configuration
@@ -42,7 +40,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     
 	private static final User triton_pendingMissingLdap = testUser("triton", "password",
             "triton@integratedmodelling.org", "Triton", "of Greece", Role.ROLE_USER);
-    
+
     private static User testUser(String username, String password, String email, String firstName, String lastName,
             Role... roles) {
         User result = new User();
@@ -73,7 +71,6 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     
     public void createInitialUsers() {
     	List<User> users = getInitialUsers();
-    	
     	for(User user : users) {
     		try {
     			klabUserDetailsService.createMongoUser(user, AccountStatus.active);

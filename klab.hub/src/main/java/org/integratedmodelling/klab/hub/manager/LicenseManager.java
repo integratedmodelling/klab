@@ -164,6 +164,9 @@ public class LicenseManager {
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
 		EngineUser engineUser = authenticateEngineCert(request);
+		ProfileResource profile = klabUserManager.getUserProfile(request.getUsername());
+		engineUser.setEmailAddress(request.getEmail());
+		engineUser.getGroups().addAll(profile.getGroupsList());
 		IdentityReference userIdentity = new IdentityReference(engineUser.getUsername(), engineUser.getEmailAddress(),
 				now.toString());
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engineUser.getGroups(),
@@ -306,6 +309,7 @@ public class LicenseManager {
 				DateTime now = DateTime.now();
 				DateTime tomorrow = now.plusDays(90);
 				EngineUser engineUser = new EngineUser(request.getUsername(), null);
+				engineUser.getGroups().addAll(klabGroupService.getGroupsList());
 				engineUser.setEmailAddress(request.getEmail());
 				IdentityReference userIdentity = new IdentityReference(engineUser.getUsername(), engineUser.getEmailAddress(),
 						now.toString());
@@ -321,6 +325,7 @@ public class LicenseManager {
 				DateTime now = DateTime.now();
 				DateTime tomorrow = now.plusDays(90);
 				EngineUser engineUser = new EngineUser(request.getUsername(), null);
+				engineUser.getGroups().addAll(klabGroupService.getGroupsList());
 				engineUser.setEmailAddress(request.getEmail());
 				IdentityReference userIdentity = new IdentityReference(engineUser.getUsername(), engineUser.getEmailAddress(),
 						now.toString());
