@@ -2,19 +2,27 @@ package org.integratedmodelling.klab.hub.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.GeneratedValue;
+
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.hub.models.KlabNode;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
+import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.KlabUserDetailsService;
 import org.integratedmodelling.klab.hub.service.LdapService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 @Profile("development")
 @Configuration
@@ -22,6 +30,9 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	
 	@Autowired
 	private KlabUserDetailsService klabUserDetailsService;
+	
+	@Autowired
+	private static KlabGroupService klabGroupService;
 	
 	@Autowired
 	LdapService ldapService;
@@ -40,6 +51,9 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     
 	private static final User triton_pendingMissingLdap = testUser("triton", "password",
             "triton@integratedmodelling.org", "Triton", "of Greece", Role.ROLE_USER);
+	
+	private static Collection<String> groups = klabGroupService.getGroupNames();
+	
 
     private static User testUser(String username, String password, String email, String firstName, String lastName,
             Role... roles) {

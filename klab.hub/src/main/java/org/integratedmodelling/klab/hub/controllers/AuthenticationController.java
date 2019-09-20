@@ -5,7 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
-import org.integratedmodelling.klab.hub.manager.LicenseManager;
+import org.integratedmodelling.klab.hub.manager.EngineAuthManager;
+import org.integratedmodelling.klab.hub.manager.NodeAuthManager;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
@@ -21,10 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth-cert")
-public class LicenseController {
+public class AuthenticationController {
 	
 	@Autowired
-	LicenseManager licenseManager;
+	EngineAuthManager engineAuthManager;
+	
+	@Autowired
+	NodeAuthManager nodeAuthManager;
 	
 	@Autowired
 	TokenManager tokenManager;
@@ -33,14 +37,14 @@ public class LicenseController {
 	public ResponseEntity<?> authenticateEngine(@RequestBody EngineAuthenticationRequest request,
 			HttpServletRequest httpRequest) throws IOException, PGPException, DecoderException {
 		System.out.println(httpRequest.getLocalAddr());
-		EngineAuthenticationResponse response = licenseManager.processEngineCert(request, httpRequest.getLocalAddr());
+		EngineAuthenticationResponse response = engineAuthManager.processEngineCert(request, httpRequest.getLocalAddr());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/node", produces = "application/json")
 	public ResponseEntity<?> authenticateNode(@RequestBody NodeAuthenticationRequest request,
 			HttpServletRequest httpRequest) throws Exception {
-		NodeAuthenticationResponse response = licenseManager.processNodeCert(request, httpRequest.getLocalAddr());
+		NodeAuthenticationResponse response = nodeAuthManager.processNodeCert(request, httpRequest.getLocalAddr());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

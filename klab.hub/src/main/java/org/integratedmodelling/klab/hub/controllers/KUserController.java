@@ -152,7 +152,7 @@ public class KUserController {
 	@PreAuthorize("authentication.getPrincipal() == #username")
 	public void generateCertFile(@PathVariable("id") String username, HttpServletResponse response) throws IOException {
 		User user = klabUserManager.getLoggedInUser();
-		byte[] certFileContent = licenseManager.generateEngineCert(user);
+		byte[] certFileContent = licenseManager.generateCert(user);
 		String certFileString = String.format("attachment; filename=%s", licenseManager.get_ENGINE_CERT_FILE_NAME());
 		response.setHeader("Content-disposition", certFileString);
 		response.setContentType("text/plain;charset=utf-8");
