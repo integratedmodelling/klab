@@ -874,7 +874,8 @@ public class Scale implements IScale {
 			List<Pair<Dimension.Type, Object[]>> defs = new ArrayList<>();
 
 			if (t.geometry instanceof IScale) {
-
+				// FIXME CHECK!
+				return (Scale)t.geometry;
 			} else if (t.geometry instanceof IGeometry) {
 
 				// parameters may specify a location

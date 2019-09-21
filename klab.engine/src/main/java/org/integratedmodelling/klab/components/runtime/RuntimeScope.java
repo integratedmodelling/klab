@@ -667,7 +667,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
 
-				IArtifact merging = createTarget(mergingActuator, this.scale, scope, rootSubject);
+				IArtifact merging = createTarget(mergingActuator, this.getDataflow().getResolutionScale(), scope, rootSubject);
 
 				/*
 				 * partition sub-state does not go in the catalog
@@ -688,7 +688,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		} else {
 
 			// save existing target
-			ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
+			ret.target = ret.createTarget((Actuator) actuator, this.getDataflow().getResolutionScale(), scope, rootSubject);
 			if (ret.target != null && this.target != null) {
 				ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 				// ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)
@@ -732,7 +732,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		// save existing target
-		ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
+		ret.target = ret.createTarget((Actuator) actuator, this.getDataflow().getResolutionScale(), scope, rootSubject);
 		if (ret.target != null && this.target != null) {
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
@@ -1074,7 +1074,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IConcept mainObservable = Observables.INSTANCE.getBaseObservable(observable.getType());
 		IObservation ret = groups.get(mainObservable);
 		if (ret == null) {
-			ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this, IArtifact.Type.OBJECT);
+			ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this, observable.getArtifactType());
 			groups.put(mainObservable, (ObservationGroup) ret);
 		}
 		return ret;

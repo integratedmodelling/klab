@@ -169,7 +169,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public RuntimeScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
 			IMonitor monitor) {
 		RuntimeScope ret = new RuntimeScope((Actuator) actuator, scope, scale, monitor);
-		IArtifact target = ret.createTarget((Actuator) actuator, scale, scope, null);
+		// targets are created using the resolution scale, not the time-scalar scale we're running in.
+		IArtifact target = ret.createTarget((Actuator) actuator, scope.getScale(), scope, null);
 		if (target instanceof IDirectObservation) {
 			((ResolutionScope) scope).setContext((IDirectObservation) target);
 		}

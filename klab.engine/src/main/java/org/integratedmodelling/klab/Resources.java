@@ -807,7 +807,7 @@ public enum Resources implements IResourceService {
 		}
 
 		Scale scale = Scale.create(resource.getGeometry());
-		if (forceGrid || resource.getType() != Type.OBJECT) {
+		if (forceGrid || !resource.getType().isCountable()) {
 			scale = scale.adaptForExample();
 		}
 

@@ -415,7 +415,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		}
 
 		SimpleRuntimeScope ret = new SimpleRuntimeScope(this);
-		if (resource.getType() != IArtifact.Type.OBJECT) {
+		if (!resource.getType().isCountable()) {
 			IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale(), this);
 			ret.target = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
 		} else {
@@ -600,7 +600,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public ObservationGroup getObservationGroup(IObservable observable, IScale scale) {
 		// TODO implement the same mechanism as RuntimeContext
-		return new ObservationGroup((Observable) observable, (Scale) scale, this, IArtifact.Type.OBJECT);
+		return new ObservationGroup((Observable) observable, (Scale) scale, this, observable.getArtifactType());
 	}
 
 	@Override

@@ -470,8 +470,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	@Override
 	public IScale getResolutionScale() {
-		if (this.resolutionScale != null && scope != null) {
-			this.resolutionScale = Scale.create(scope.getCoverage().getExtents());
+		if (this.resolutionScale == null && scope != null) {
+			this.resolutionScale = scope.getScale();
 		}
 		return this.resolutionScale;
 	}

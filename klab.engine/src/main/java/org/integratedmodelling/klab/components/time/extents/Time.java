@@ -513,7 +513,7 @@ public class Time extends Extent implements ITime {
 		if (locators != null && locators.length == 1) {
 			if (locators[0] instanceof Number) {
 				long ofs = ((Number) locators[0]).longValue();
-				if (this.size() == 0 && ofs == 0) {
+				if (this.size() == 1 && ofs == 0) {
 					return this;
 				} else if (this.size() > ofs) {
 					return getExtent(ofs);

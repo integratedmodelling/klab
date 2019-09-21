@@ -331,7 +331,7 @@ public class DataflowCompiler {
 				break;
 			case DETECTION:
 			case INSTANTIATION:
-				ret.setType(Type.OBJECT);
+				ret.setType(observable.getArtifactType());
 				break;
 			case QUANTIFICATION:
 				ret.setType(Type.NUMBER);

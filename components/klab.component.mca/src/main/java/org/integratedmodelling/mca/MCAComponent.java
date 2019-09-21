@@ -64,8 +64,7 @@ public class MCAComponent {
 	 * <i>criterion</i> for assessment of <i>finalTarget</i>".
 	 * 
 	 * @param criterionObservable
-	 * @param targetObservable
-	 *            may be null for simple object alternative ranking
+	 * @param targetObservable    may be null for simple object alternative ranking
 	 * @return the finished value concept
 	 */
 	public static IObservable getCriterionValueObservable(IObservable criterionObservable,
@@ -151,7 +150,8 @@ public class MCAComponent {
 	 * @return
 	 */
 	public static boolean extractAssessment(IArtifact target, List<IAlternative> alternatives,
-			Collection<ICriterion> criteria, List<IStakeholder> observers, Method method, IContextualizationScope context) {
+			Collection<ICriterion> criteria, List<IStakeholder> observers, Method method,
+			IContextualizationScope context) {
 		// TODO Auto-generated method stub
 
 		// check out the model for indication of the likely way to go
@@ -164,7 +164,7 @@ public class MCAComponent {
 		List<CriterionDescriptor> criterionDescriptors = new ArrayList<>();
 		Set<IConcept> stakeholderStatedObservables = new HashSet<>();
 
-		if (target instanceof IObservation && target.getType() != IArtifact.Type.OBJECT) {
+		if (target instanceof IObservation && !target.getType().isCountable()) {
 			assessedType = ((IObservation) target).getObservable().getType();
 		}
 

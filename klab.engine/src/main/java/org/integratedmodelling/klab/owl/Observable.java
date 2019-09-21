@@ -418,12 +418,14 @@ public class Observable implements IObservable {
 				return IArtifact.Type.BOOLEAN;
 			} else if (observable.is(Type.QUALITY)) { // don't reorder these!
 				return IArtifact.Type.NUMBER;
+			} else if (observable.is(Type.EVENT)) {
+				return IArtifact.Type.EVENT;
 			} else if (observable.is(Type.COUNTABLE)) {
 				return IArtifact.Type.OBJECT;
 			} else if (observable.is(Type.CONFIGURATION)) {
 				return IArtifact.Type.OBJECT;
 			} else if (observable.is(Type.PROCESS)) {
-				return IArtifact.Type.OBJECT;
+				return IArtifact.Type.PROCESS;
 			} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
 				return IArtifact.Type.VALUE;
 			}

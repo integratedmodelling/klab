@@ -590,7 +590,7 @@ public class Flowchart {
 				computationInputs.add(computationTarget);
 			}
 
-			if (prototype.getType() == IArtifact.Type.OBJECT) {
+			if (prototype.getType().isCountable()) {
 				ret.type = ElementType.INSTANTIATOR;
 			}
 
