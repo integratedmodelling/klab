@@ -1,0 +1,26 @@
+/**
+ * Contextualization annotations to specify time and space constraints in models. Substitutes the
+ * legacy "over space" syntax and frees up 'over time' for just actions.
+ */
+@klab 0.10.0
+@version 0.10.0
+
+annotation time for models
+	"Define extents or other constraints for the time extent that this model will be run at."
+{
+	optional value step 
+		"The resolution when the model must be run on a time grid, with units (e.g. 1.day)."
+	optional value	start 
+		"A k.IM date/time literal specifying the start of the model's time."
+	optional value end
+		"A k.IM date/time literal specifying the end of the model's time."
+}
+
+annotation space for models
+	"Define extents or other constraints for the time extent that this model will be run at."
+{
+	text 'value'
+		"A URN or an explicit WKT shape that will be used as the spatial geometry."
+	optional value grid
+		"A resolution with units (e.g. 1.km) to constrain the spatial resolution."
+}

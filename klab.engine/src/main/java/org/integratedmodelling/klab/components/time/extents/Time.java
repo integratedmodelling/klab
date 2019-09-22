@@ -5,12 +5,14 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimDate;
 import org.integratedmodelling.kim.model.KimQuantity;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
@@ -21,6 +23,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.time.extents.mediators.TimeIdentity;
+import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
@@ -140,6 +143,18 @@ public class Time extends Extent implements ITime {
 			}
 		}
 		return ret;
+	}
+
+	public static Time create(IAnnotation timeAnnotation) {
+
+		if (timeAnnotation.containsKey(IServiceCall.DEFAULT_PARAMETER_NAME)) {
+			if (timeAnnotation.get(IServiceCall.DEFAULT_PARAMETER_NAME) instanceof Integer) {
+				timeAnnotation.put("year", timeAnnotation.get(IServiceCall.DEFAULT_PARAMETER_NAME));
+			}
+		}
+
+		return (Time) new org.integratedmodelling.klab.components.time.services.Time().eval(timeAnnotation,
+				new Expression.Scope(Klab.INSTANCE.getRootMonitor()));
 	}
 
 	public static ITimeInstant instant(KimDate date) {
@@ -375,7 +390,7 @@ public class Time extends Extent implements ITime {
 				args += "," + Geometry.PARAMETER_TIME_SCOPE_UNIT + "=" + resolution.getType();
 			}
 		}
-		
+
 		return ret + "{" + args + "}";
 	}
 
@@ -407,7 +422,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	public String toString() {
-		return "<TIME " + encode() + ">";
+		return "<" + encode() + ">";
 	}
 
 	@Override
@@ -476,7 +491,7 @@ public class Time extends Extent implements ITime {
 		if (type == ITime.Type.INITIALIZATION) {
 			return initialization(null);
 		}
-		
+
 		TimeInstant start = null;
 		TimeInstant end = null;
 		if (period != null) {

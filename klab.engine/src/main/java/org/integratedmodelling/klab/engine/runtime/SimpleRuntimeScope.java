@@ -11,7 +11,6 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -44,7 +43,6 @@ import org.integratedmodelling.klab.components.runtime.observations.Process;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -613,6 +611,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public IObservation getObservationGroupView(Observable observable, IObservation ret) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void scheduleActions(Actuator active) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

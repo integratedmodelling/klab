@@ -222,7 +222,7 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * {@link org.integratedmodelling.klab.api.observations.scale.IScale}). The
 	 * scale is for the CURRENT computation, which may be different from the scale
 	 * of the full resolution. To retrieve the latter, use
-	 * getDataflow().getResolutionScope();
+	 * getDataflow().getResolutionScale();
 	 *
 	 * @return the current geometry. Should never be null.
 	 */

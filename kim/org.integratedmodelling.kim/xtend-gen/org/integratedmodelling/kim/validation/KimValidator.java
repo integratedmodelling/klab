@@ -2059,7 +2059,7 @@ public class KimValidator extends AbstractKimValidator {
     boolean ok = true;
     Namespace ns = KimValidator.getNamespace(statement);
     if (((ns != null) && ns.isWorldviewBound())) {
-      this.error("Concept definitions are not admitted in sidecar files", KimPackage.Literals.CONCEPT_STATEMENT__BODY);
+      this.error("Concept definitions are not admitted in secondary namespaces", KimPackage.Literals.CONCEPT_STATEMENT__BODY);
       ok = false;
     }
     EnumSet<IKimConcept.Type> type = Kim.INSTANCE.getType(statement.getConcept());

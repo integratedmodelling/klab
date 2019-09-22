@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -39,7 +40,7 @@ public class Space implements IExpression {
 			shape = Shape.create(parameters.get("shape", String.class));
 		}
 		if (parameters.containsKey("grid")) {
-			resolution = parseResolution(parameters.get("grid", String.class));
+			resolution = parseResolution(parameters.get("grid"));
 		}
 		if (parameters.containsKey("urn")) {
 			urn = parameters.get("urn", String.class);
@@ -60,7 +61,7 @@ public class Space implements IExpression {
 			if (!Double.isNaN(simplifyFactor)) {
 				ret.getShape().simplify(simplifyFactor);
 			}
-			
+
 		} else if (urn != null) {
 
 			ISpace space = shapeCache.get(urn);
@@ -96,19 +97,25 @@ public class Space implements IExpression {
 	}
 
 	/**
-	 * Parse a string like "1 km" and return the meters in it. Throw an exception if
-	 * this cannot be parsed.
+	 * Parse a string like "1 km" or a k.IM quantity ('1.km') and return the meters in it.
+	 * Throw an exception if this cannot be parsed.
 	 * 
 	 * @param string
 	 * @return the resolution in meters
 	 * @throws KlabValidationException
 	 */
-	public static double parseResolution(String string) throws KlabValidationException {
+	public static double parseResolution(Object spec) throws KlabValidationException {
 
-		Pair<Double, String> pd = MiscUtilities.splitNumberFromString(string);
+		Pair<Double, String> pd = null;
+		if (spec instanceof String) {
+			pd = MiscUtilities.splitNumberFromString((String) spec);
+		} else if (spec instanceof Quantity && ((Quantity) spec).getValue() != null
+				&& ((Quantity) spec).getUnit() != null) {
+			pd = new Pair<>(((Quantity) spec).getValue().doubleValue(), ((Quantity) spec).getUnit().toString());
+		}
 
-		if (pd.getFirst() == null || pd.getSecond() == null)
-			throw new KlabValidationException("wrong resolution specification: " + string);
+		if (pd == null || pd.getFirst() == null || pd.getSecond() == null)
+			throw new KlabValidationException("wrong resolution specification: " + spec);
 
 		IUnit uu = Units.INSTANCE.getUnit(pd.getSecond());
 		IUnit mm = Units.INSTANCE.getUnit("m");

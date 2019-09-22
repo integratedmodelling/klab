@@ -3,9 +3,11 @@ package org.integratedmodelling.klab.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
@@ -27,7 +29,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -42,8 +44,8 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.provenance.IActivity;
-import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -51,6 +53,8 @@ import org.integratedmodelling.klab.api.services.IDocumentationService;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -270,11 +274,11 @@ public class Model extends KimObject implements IModel {
 			mergeGeometry(geometry, monitor);
 		}
 
-		Scale cov =  getCoverage(monitor);
+		Scale cov = getCoverage(monitor);
 		if (cov != null) {
 			mergeGeometry(cov.asGeometry(), monitor);
 		}
-		
+
 		if (geometry == null || geometry.isEmpty()) {
 			geometry = Geometry.scalar();
 		}
@@ -802,8 +806,35 @@ public class Model extends KimObject implements IModel {
 	public Scale getCoverage(IMonitor monitor) throws KlabException {
 
 		if (this.coverage == null) {
+
+			Set<Dimension.Type> dims = new HashSet<>();
+
+			Collection<IExtent> extents = new ArrayList<>();
+			if (behavior != null) {
+				extents.addAll(behavior.getExtents(monitor));
+				for (IExtent extent : extents) {
+					dims.add(extent.getType());
+				}
+			}
+
+			for (IAnnotation annotation : getAnnotations()) {
+				if ("space".equals(annotation.getName())) {
+					if (dims.contains(Dimension.Type.SPACE)) {
+						monitor.error("cannot specify spatial extent in more than one way");
+					} else {
+						extents.add(Space.create(annotation));
+					}
+				} else if ("time".equals(annotation.getName())) {
+					if (dims.contains(Dimension.Type.TIME)) {
+						monitor.error("cannot specify temporal extent in more than one way");
+					} else {
+						extents.add(Time.create(annotation));
+					}
+				}
+			}
+
 			try {
-				this.coverage = Scale.create(behavior == null ? new ArrayList<>() : behavior.getExtents(monitor));
+				this.coverage = Scale.create(extents);
 				if (resourceCoverage != null) {
 					this.coverage = this.coverage.merge(resourceCoverage, LogicalConnector.INTERSECTION);
 				}

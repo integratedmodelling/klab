@@ -1347,4 +1347,17 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		return (T) (chosen.isEmpty() ? null : chosen.iterator().next());
 	}
+
+	@Override
+	public void scheduleActions(Actuator actuator) {
+
+		if (getDataflow().getResolutionScale().getTime() == null) {
+			return;
+		}
+		
+		if (actuator.getModel() != null) {
+			
+		}
+		
+	}
 }

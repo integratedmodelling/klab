@@ -126,24 +126,31 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 							monitor);
 				} else {
 					// instantiating or resolving states: stay in context
-					runtimeContext = ((Subject) context).getRuntimeScope().createChild(scale, actuator, scope,
-							monitor);
+					runtimeContext = ((Subject) context).getRuntimeScope().createChild(scale, actuator, scope, monitor);
 				}
 
 				List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 				int i = 0;
 				for (Actuator active : order) {
+
 					IRuntimeScope ctx = runtimeContext;
 					if (active != actuator) {
 						ctx = runtimeContext.createChild(scale, active, scope, monitor);
 					}
-					if (active.isComputed() || ((Actuator) active).isMerging()) {
-						active.compute(ctx.getTargetArtifact(), ctx);
+
+					if (!actuator.getType().isOccurrent()) {
+
+						if (active.isComputed() || ((Actuator) active).isMerging()) {
+							active.compute(ctx.getTargetArtifact(), ctx);
+						}
+						if (!(monitor.getIdentity().is(IIdentity.Type.TASK)
+								&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
+							((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
+						}
 					}
-					if (!(monitor.getIdentity().is(IIdentity.Type.TASK)
-							&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
-						((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
-					}
+					
+					ctx.scheduleActions(active);
+					
 					i++;
 				}
 
@@ -154,6 +161,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	/**
 	 * TARIK this is the root, created on demand.
+	 * 
 	 * @return
 	 */
 	public ActorSystem getActorSystem() {
@@ -169,7 +177,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public RuntimeScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
 			IMonitor monitor) {
 		RuntimeScope ret = new RuntimeScope((Actuator) actuator, scope, scale, monitor);
-		// targets are created using the resolution scale, not the time-scalar scale we're running in.
+		// targets are created using the resolution scale, not the time-scalar scale
+		// we're running in.
 		IArtifact target = ret.createTarget((Actuator) actuator, scope.getScale(), scope, null);
 		if (target instanceof IDirectObservation) {
 			((ResolutionScope) scope).setContext((IDirectObservation) target);
@@ -248,7 +257,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 
 //		System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " + resolver);
-		
+
 		if (reentrant) {
 			StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
 				if (!context.getMonitor().isInterrupted()) {
@@ -262,14 +271,14 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					break;
 				}
 				data.set(state, resolver.resolve(data.getObservable(),
-						variables.isEmpty() ? ctx : localizeContext(ctx, (IScale)state, self, variables)));
+						variables.isEmpty() ? ctx : localizeContext(ctx, (IScale) state, self, variables)));
 			}
 		}
-		
+
 //		System.err.println("DONE " + data);
 //
 //		Debug.INSTANCE.summarize(data);
-		
+
 		return data;
 	}
 
@@ -331,7 +340,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		} else if (observable.is(Type.QUALITY)) {
 			IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(), scale,
 					context);
-			ret = new State((Observable) observable, (Scale) scale, context, (IDataStorage<?>)storage);
+			ret = new State((Observable) observable, (Scale) scale, context, (IDataStorage<?>) storage);
 
 		} else if (observable.is(Type.CONFIGURATION)) {
 
@@ -401,7 +410,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public IState createState(IObservable observable, IArtifact.Type type, IScale scale,
 			IContextualizationScope context) {
 		IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
-		return new State((Observable) observable, (Scale) scale, (RuntimeScope) context, (IDataStorage<?>)storage);
+		return new State((Observable) observable, (Scale) scale, (RuntimeScope) context, (IDataStorage<?>) storage);
 	}
 
 	@Override

@@ -1626,7 +1626,7 @@ class KimValidator extends AbstractKimValidator {
 		var ok = true
 		var ns = KimValidator.getNamespace(statement);
 		if (ns !== null && ns.isWorldviewBound) {
-			error('Concept definitions are not admitted in sidecar files', KimPackage.Literals.CONCEPT_STATEMENT__BODY)
+			error('Concept definitions are not admitted in secondary namespaces', KimPackage.Literals.CONCEPT_STATEMENT__BODY)
 			ok = false;
 		}
 

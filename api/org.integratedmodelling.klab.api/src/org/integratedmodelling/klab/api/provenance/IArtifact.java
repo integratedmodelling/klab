@@ -187,6 +187,10 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		public boolean isCountable() {
 			return this == EVENT || this == OBJECT;
 		}
+		
+		public boolean isOccurrent() {
+			return this == EVENT || this == PROCESS;
+		}
 
     }
 

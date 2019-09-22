@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
@@ -16,6 +17,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -37,6 +39,7 @@ import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeT
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToGrid;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
+import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
@@ -134,6 +137,32 @@ public class Space extends Extent implements ISpace {
 		Grid grid = Grid.create(shape, xCells, yCells);
 		Space ret = new Space(shape, grid);
 		return ret;
+	}
+
+	/**
+	 * Processes the space annotations used to constrain a model's spatial extent.
+	 * 
+	 * @param spaceAnnotation
+	 * @return
+	 */
+	public static ISpace create(IAnnotation spaceAnnotation) {
+
+		if (spaceAnnotation.containsKey(IServiceCall.DEFAULT_PARAMETER_NAME)) {
+			if (spaceAnnotation.get(IServiceCall.DEFAULT_PARAMETER_NAME) instanceof Integer) {
+				// year (or ms)
+				spaceAnnotation.put("year", spaceAnnotation.get(IServiceCall.DEFAULT_PARAMETER_NAME));
+			} else {
+				String s = spaceAnnotation.get(IServiceCall.DEFAULT_PARAMETER_NAME).toString();
+				if (s.contains(" ")) {
+					spaceAnnotation.put("shape", s);
+				} else {
+					spaceAnnotation.put("urn", s);
+				}
+			}
+		}
+
+		return (ISpace) new org.integratedmodelling.klab.components.geospace.services.Space().eval(spaceAnnotation,
+				new Expression.Scope(Klab.INSTANCE.getRootMonitor()));
 	}
 
 	private Space() {
@@ -819,7 +848,7 @@ public class Space extends Extent implements ISpace {
 		}
 		return ((Space) ext).grid;
 	}
-	
+
 	public static Grid extractGrid(IScale obs) {
 		ISpace ext = obs.getSpace();
 		if (!(ext instanceof Space && ((Space) ext).getGrid() != null)) {
@@ -827,7 +856,7 @@ public class Space extends Extent implements ISpace {
 		}
 		return ((Space) ext).grid;
 	}
-	
+
 	@Override
 	public boolean isGeneric() {
 		return generic;
@@ -905,7 +934,7 @@ public class Space extends Extent implements ISpace {
 		long offset = -1;
 		double[] coordinates = null;
 		long[] offsets = null;
-		
+
 		if (locators != null) {
 			if (locators.length == 1) {
 
@@ -924,9 +953,9 @@ public class Space extends Extent implements ISpace {
 					coordinates = new double[] { ((Number) locators[0]).doubleValue(),
 							((Number) locators[1]).doubleValue() };
 				} else if (locators[0] instanceof Number && locators[1] instanceof Number
-						&& !Utils.isFloatingPoint((Number) locators[0]) && !Utils.isFloatingPoint((Number) locators[1])) {
-					offsets = new long[] { ((Number) locators[0]).longValue(),
-							((Number) locators[1]).longValue() };
+						&& !Utils.isFloatingPoint((Number) locators[0])
+						&& !Utils.isFloatingPoint((Number) locators[1])) {
+					offsets = new long[] { ((Number) locators[0]).longValue(), ((Number) locators[1]).longValue() };
 				}
 			}
 		}
@@ -942,7 +971,7 @@ public class Space extends Extent implements ISpace {
 				} else {
 					return this.grid.getCellAt(coordinates, true);
 				}
-				
+
 			} else if (this.features != null) {
 				if (offset >= 0) {
 					return this.features.getFeature(offset);

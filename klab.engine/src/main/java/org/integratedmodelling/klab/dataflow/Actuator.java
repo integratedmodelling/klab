@@ -257,6 +257,7 @@ public class Actuator implements IActuator {
 	 */
 	public IArtifact compute(IArtifact target, IRuntimeScope runtimeContext) throws KlabException {
 
+		
 		this.currentContext = runtimeContext;
 		this.status.set(1);
 		this.startComputation.set(System.currentTimeMillis());
