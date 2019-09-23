@@ -1,13 +1,16 @@
 package org.integratedmodelling.klab.hub.service.implementation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
+import org.integratedmodelling.klab.rest.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -30,6 +33,7 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
 		if (found.size() == 0) {
 			mongoTemplate.save(group);
+			Logging.INSTANCE.info("Created Mongo Group: " + group.toString());
 		} else {
 			throw new BadRequestException("A group by that name exists with different data.");
 		}
@@ -76,6 +80,24 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 			groupNames.add(group.getId());
 		}
 		return groupNames;
+	}
+
+	@Override
+	public Collection<? extends Group> getGroupsList() {
+		List<Group> listOfGroups = new ArrayList<>();
+		for (KlabGroup grp : mongoTemplate.findAll(KlabGroup.class)) {
+			if(grp != null) {
+				Group group = new Group();
+				group.setId(grp.getId());
+				group.setProjectUrls(grp.getProjectUrls());
+				group.setSshKey(grp.getSshKey());
+				group.setObservables(grp.getObservables());
+				group.setWorldview(grp.getWorldview());
+				group.setDescription(grp.getDescription());
+				listOfGroups.add(group);
+			}
+		}
+		return listOfGroups;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.models.KlabGroup;
+import org.integratedmodelling.klab.rest.Group;
 
 public interface KlabGroupService {
    public abstract void createGroup(String id, KlabGroup group);
@@ -12,4 +13,5 @@ public interface KlabGroupService {
    public abstract Collection<KlabGroup> getGroups();
    public abstract Optional<KlabGroup> getGroup(String id);
    public abstract Collection<String> getGroupNames();
+   public abstract Collection<? extends Group> getGroupsList();
 }
