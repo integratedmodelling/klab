@@ -37,14 +37,14 @@ public class AuthenticationController {
 	public ResponseEntity<?> authenticateEngine(@RequestBody EngineAuthenticationRequest request,
 			HttpServletRequest httpRequest) throws IOException, PGPException, DecoderException {
 		System.out.println(httpRequest.getLocalAddr());
-		EngineAuthenticationResponse response = engineAuthManager.processEngineCert(request, httpRequest.getLocalAddr());
+		EngineAuthenticationResponse response = engineAuthManager.processEngineCert(request, httpRequest.getRemoteAddr());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/node", produces = "application/json")
 	public ResponseEntity<?> authenticateNode(@RequestBody NodeAuthenticationRequest request,
 			HttpServletRequest httpRequest) throws Exception {
-		NodeAuthenticationResponse response = nodeAuthManager.processNodeCert(request, httpRequest.getLocalAddr());
+		NodeAuthenticationResponse response = nodeAuthManager.processNodeCert(request, httpRequest.getRemoteAddr());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

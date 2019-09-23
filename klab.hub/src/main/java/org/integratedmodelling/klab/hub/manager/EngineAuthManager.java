@@ -57,6 +57,7 @@ public class EngineAuthManager {
 				break;	
 			}
 		case USER:
+			System.out.println(ip);
 			if (IPUtils.isLocal(ip)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return processLocalEngineUser(request);
