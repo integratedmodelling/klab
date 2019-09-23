@@ -1,11 +1,19 @@
 package org.integratedmodelling.klab.hub.manager;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
+
+import org.apache.commons.codec.DecoderException;
+import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
+import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
+import org.integratedmodelling.klab.hub.models.KlabNode;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
+import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
@@ -46,16 +54,53 @@ public class NodeAuthManager {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return processLocalNode(request);
 			} else {
-				//return processNode(request);
+				return processNode(request,ip);
 			}
-			break;
 		}
 		return null;
 	}
 
-	private void processNode(NodeAuthenticationRequest request) {
-		// TODO Auto-generated method stub
-		
+	private NodeAuthenticationResponse processNode(NodeAuthenticationRequest request, String ip) {
+		DateTime now = DateTime.now();
+		DateTime tomorrow = now.plusDays(90);
+		INodeIdentity node = authenticateNodeCert(request.getCertificate());
+		node.getUrls().add("http://"+ip+"/node");
+		List<Group> Groups = klabNodeManager.getNodeGroups(node.getName());
+		Logging.INSTANCE.info("authorized node " + node.getName());
+		IdentityReference userIdentity = new IdentityReference(node.getName()
+				,node.getParentIdentity().getEmailAddress(), now.toString());		
+		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
+				Groups, tomorrow.toString(), node.getId());
+		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
+				hubAuthenticationManager.getHubReference().getId(), Groups,
+				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
+		networkManager.notifyAuthorizedNode(node, hubAuthenticationManager.getHubReference(), true);
+		return response;
+	}
+
+	private INodeIdentity authenticateNodeCert(String certificate) {
+		try {
+			Properties certificateProperties = licenseManager.readCertFileContent(certificate);
+			String nodename = certificateProperties.getProperty(KlabCertificate.KEY_NODENAME);
+			String expiryString = certificateProperties.getProperty(KlabCertificate.KEY_EXPIRATION);
+			DateTime expiry = DateTime.parse(expiryString);
+			if (expiry.isBeforeNow()) {
+				String msg = String.format("The cert file submitted for node %s is expired.", nodename);
+				throw new AuthenticationFailedException(msg);
+			}
+			KlabNode node = klabNodeManager.getNode(nodename);
+			Properties properties = licenseManager.getPropertiesString(node);
+			certificateProperties.remove(KlabCertificate.KEY_EXPIRATION);
+	        properties.remove(KlabCertificate.KEY_EXPIRATION);
+	        if (certificateProperties.equals(properties)) {
+	        	INodeIdentity ret = null;
+	    		ret = new Node(hubAuthenticationManager.getHubName() + "." + nodename, hubAuthenticationManager.getPartner());
+	    		return ret;
+	        }
+	        return null;
+		} catch (IOException | PGPException | DecoderException e) {
+			throw new AuthenticationFailedException(e.toString());
+		}
 	}
 
 	private NodeAuthenticationResponse processLocalNode(NodeAuthenticationRequest request) {

@@ -111,7 +111,6 @@ public class EngineAuthManager {
 	            return engineUser;
 	        }
 		} catch (IOException | PGPException | DecoderException e) {
-			// TODO Auto-generated catch block
 			throw new AuthenticationFailedException(e.toString());
 		}
         return null;
