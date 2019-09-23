@@ -37,16 +37,16 @@ public class NodeAuthManager {
 		switch (request.getLevel()) {
 		case TEST:
 			if (IPUtils.isLocal(ip)) {
-				processLocalNode(request);
+				return processLocalNode(request);
 			} else {
 				break;	
 			}
 		default:
 			if (IPUtils.isLocal(ip)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
-				processLocalNode(request);
+				return processLocalNode(request);
 			} else {
-				processNode(request);
+				//return processNode(request);
 			}
 			break;
 		}
@@ -78,7 +78,7 @@ public class NodeAuthManager {
 	private INodeIdentity authenticateLocalNodeCert(String nodeName) {
 		INodeIdentity node = new Node(hubAuthenticationManager.getHubName() + "." + nodeName, hubAuthenticationManager.getPartner());
 		try {
-			node.getUrls().add("http://"+IPUtils.getLocalIp()+"/node");
+			node.getUrls().add("http://"+IPUtils.getLocalIp()+":8287/node");
 		} catch (Exception e) {
 			throw new KlabAuthorizationException(e.toString());
 		}
