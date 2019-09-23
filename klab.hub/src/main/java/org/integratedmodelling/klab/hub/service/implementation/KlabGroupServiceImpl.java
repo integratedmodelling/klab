@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
@@ -32,6 +33,7 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
 		if (found.size() == 0) {
 			mongoTemplate.save(group);
+			Logging.INSTANCE.info("Created Mongo Group: " + group.toString());
 		} else {
 			throw new BadRequestException("A group by that name exists with different data.");
 		}

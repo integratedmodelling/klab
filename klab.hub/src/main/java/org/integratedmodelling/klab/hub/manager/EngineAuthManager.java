@@ -52,16 +52,16 @@ public class EngineAuthManager {
 			break;
 		case TEST:
 			if (IPUtils.isLocal(ip)) {
-				processLocalEngineUser(request);
+				return processLocalEngineUser(request);
 			} else {
 				break;	
 			}
 		case USER:
 			if (IPUtils.isLocal(ip)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
-				processLocalEngineUser(request);
+				return processLocalEngineUser(request);
 			} else {
-				processEngineUser(request);
+				return processEngineUser(request);
 			}
 		default:
 			break;
