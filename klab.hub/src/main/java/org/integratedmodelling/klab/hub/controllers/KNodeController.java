@@ -69,7 +69,7 @@ public class KNodeController {
 	@GetMapping(value= "/{id}", params = "certificate")
 	public void generateNodeCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
 		KlabNode node = klabNodeManager.getNode(id);
-		byte[] certFileContent = licenseManager.generateNodeCert(node);
+		byte[] certFileContent = licenseManager.generateCert(node);
 		String certFileString = String.format("attachment; filename=%s", licenseManager.get_NODE_CERT_FILE_NAME());
 		response.setHeader("Content-disposition", certFileString);
 		response.setContentType("text/plain;charset=utf-8");

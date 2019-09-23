@@ -2,21 +2,24 @@ package org.integratedmodelling.klab.hub.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
+import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.KlabUserDetailsService;
 import org.integratedmodelling.klab.hub.service.LdapService;
+import org.integratedmodelling.klab.utils.FileCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
 
 @Profile("development")
 @Configuration
@@ -24,6 +27,9 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	
 	@Autowired
 	private KlabUserDetailsService klabUserDetailsService;
+	
+	@Autowired
+	private KlabGroupService klabGroupService;
 	
 	@Autowired
 	LdapService ldapService;
@@ -42,7 +48,16 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     
 	private static final User triton_pendingMissingLdap = testUser("triton", "password",
             "triton@integratedmodelling.org", "Triton", "of Greece", Role.ROLE_USER);
-    
+	
+	public KlabGroup testGroups() {
+		Map<String, KlabGroup> groups = new HashMap<>();
+		groups = FileCatalog.create(DevelopmentConfig.class.getClassLoader().getResource("auth/groups.json"), KlabGroup.class);
+		KlabGroup grp = groups.get("IM");
+		klabGroupService.createGroup("IM", grp);
+		System.out.println(grp.toString());
+		return grp;
+	}
+	
     private static User testUser(String username, String password, String email, String firstName, String lastName,
             Role... roles) {
         User result = new User();
@@ -58,12 +73,12 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     }
     
     static {
-        system.addGroups("aries");
-        system.addGroups("im");
-        hades.addGroups("aries");
-        hades.addGroups("im");
-        achilles_activeMissingLdap.addGroups("im");
-        triton_pendingMissingLdap.addGroups("im");
+        system.addGroups("ARIES");
+        system.addGroups("IM");
+        hades.addGroups("ARIES");
+        hades.addGroups("IM");
+        achilles_activeMissingLdap.addGroups("IM");
+        triton_pendingMissingLdap.addGroups("IM");
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);
     }
     
@@ -73,7 +88,6 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     
     public void createInitialUsers() {
     	List<User> users = getInitialUsers();
-    	
     	for(User user : users) {
     		try {
     			klabUserDetailsService.createMongoUser(user, AccountStatus.active);
@@ -83,10 +97,17 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     		}
     	}
     }
+    
+    public void createIntialGroups() {
+		Map<String, KlabGroup> groups = new HashMap<>();
+		groups = FileCatalog.create(DevelopmentConfig.class.getClassLoader().getResource("auth/groups.json"), KlabGroup.class);
+		groups.forEach((k,v)->klabGroupService.createGroup(v.getId(),v));
+    }
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent arg0) {
 		createInitialUsers();	
+		createIntialGroups();
 	}
 
 }
