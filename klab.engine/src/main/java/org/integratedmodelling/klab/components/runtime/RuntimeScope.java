@@ -688,7 +688,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		} else {
 
 			// save existing target
-			ret.target = ret.createTarget((Actuator) actuator, this.getDataflow().getResolutionScale(), scope, rootSubject);
+			ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
 			if (ret.target != null && this.target != null) {
 				ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 				// ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)
@@ -732,7 +732,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		// save existing target
-		ret.target = ret.createTarget((Actuator) actuator, this.getDataflow().getResolutionScale(), scope, rootSubject);
+		ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
 		if (ret.target != null && this.target != null) {
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);

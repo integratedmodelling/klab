@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.clitool.console.commands;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.CliRuntime;
@@ -27,6 +29,15 @@ public class Network implements ICommand {
 				}
 			} else if ("off".equals(arg)) {
 				CliRuntime.INSTANCE.stopNetwork();
+			} else if ("nodes".equals(arg)) {
+				INetworkSessionIdentity network = session.getParentIdentity(INetworkSessionIdentity.class);
+				String ret = "";
+				if (network != null) {
+					for (INodeIdentity node : network.getNodes()) {
+						ret += (ret.isEmpty() ? "" : "\n") + "   " + node.getName() + " at " + node.getUrls();
+					}
+				}
+				return ret;
 			} else {
 				session.getMonitor().error("Network services may only be turned on or off");
 			}
