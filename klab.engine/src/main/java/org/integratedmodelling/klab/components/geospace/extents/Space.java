@@ -62,6 +62,7 @@ public class Space extends Extent implements ISpace {
 	private boolean consistent = false;
 	private String gridSpecs = null;
 	private boolean generic = false;
+	private boolean forceGrid;
 
 	private static Space EMPTY_SPACE = new Space(Shape.empty());
 
@@ -126,6 +127,13 @@ public class Space extends Extent implements ISpace {
 		return ret;
 	}
 
+	public static Space constraint(Shape shape, boolean grid) {
+		Space ret = new Space(shape);
+		ret.consistent = false;
+		ret.forceGrid = true;
+		return ret;
+	}
+	
 	public static Space create(Shape shape, double resolutionInMeters) {
 		Grid grid = Grid.create(shape, resolutionInMeters);
 		Space ret = new Space(shape, grid);
@@ -153,7 +161,9 @@ public class Space extends Extent implements ISpace {
 				spaceAnnotation.put("year", spaceAnnotation.get(IServiceCall.DEFAULT_PARAMETER_NAME));
 			} else {
 				String s = spaceAnnotation.get(IServiceCall.DEFAULT_PARAMETER_NAME).toString();
-				if (s.contains(" ")) {
+				if ("grid".equals(s)) {
+					spaceAnnotation.put("grid", null);
+				} else if (s.contains(" ")) {
 					spaceAnnotation.put("shape", s);
 				} else {
 					spaceAnnotation.put("urn", s);
@@ -244,8 +254,10 @@ public class Space extends Extent implements ISpace {
 
 	private Space(Shape shape) {
 		this.shape = shape;
-		this.projection = shape.getProjection();
-		this.envelope = shape.getEnvelope();
+		if (shape != null) {
+			this.projection = shape.getProjection();
+			this.envelope = shape.getEnvelope();
+		}
 		this.consistent = true;
 	}
 
@@ -718,7 +730,7 @@ public class Space extends Extent implements ISpace {
 			return "s1(" + features.size() + "){proj=" + getProjection().getSimpleSRS() + "," + getEnvelope().encode()
 					+ "}";
 		}
-		return getShape().encode();
+		return shape == null ? (forceGrid ? "S2(0)" : "s1(0)") : getShape().encode();
 	}
 
 	@Override

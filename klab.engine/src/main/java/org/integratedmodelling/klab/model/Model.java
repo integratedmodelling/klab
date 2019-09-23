@@ -819,7 +819,7 @@ public class Model extends KimObject implements IModel {
 
 			for (IAnnotation annotation : getAnnotations()) {
 				if ("space".equals(annotation.getName())) {
-					if (dims.contains(Dimension.Type.SPACE)) {
+					if (dims.contains(Dimension.Type.SPACE)) { 
 						monitor.error("cannot specify spatial extent in more than one way");
 					} else {
 						extents.add(Space.create(annotation));

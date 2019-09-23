@@ -378,8 +378,13 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public String encode() {
+		
+		String prefix = "T";
+		if (partial && step == null) {
+			prefix = "t";
+		}
 
-		String ret = "T" + getDimensionality() + "(" + multiplicity + ")";
+		String ret = prefix + getDimensionality() + "(" + multiplicity + ")";
 		String args = Geometry.PARAMETER_TIME_REPRESENTATION + "=" + getTimeType();
 
 		if (!this.is(ITime.Type.INITIALIZATION)) {

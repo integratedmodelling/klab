@@ -33,6 +33,7 @@ public class Space implements IExpression {
 		String urn = null;
 		Projection projection = null;
 		double simplifyFactor = Double.NaN;
+		boolean gridConstraint = false;
 
 		org.integratedmodelling.klab.components.geospace.extents.Space ret = null;
 
@@ -40,7 +41,12 @@ public class Space implements IExpression {
 			shape = Shape.create(parameters.get("shape", String.class));
 		}
 		if (parameters.containsKey("grid")) {
-			resolution = parseResolution(parameters.get("grid"));
+			if (parameters.get("grid") != null) {
+				resolution = parseResolution(parameters.get("grid"));
+			} else {
+				// it's a constraint
+				gridConstraint = true;
+			}
 		}
 		if (parameters.containsKey("urn")) {
 			urn = parameters.get("urn", String.class);
@@ -93,12 +99,16 @@ public class Space implements IExpression {
 
 		}
 
+		if (ret == null && gridConstraint) {
+			ret = org.integratedmodelling.klab.components.geospace.extents.Space.constraint(shape, true);
+		}
+
 		return ret;
 	}
 
 	/**
-	 * Parse a string like "1 km" or a k.IM quantity ('1.km') and return the meters in it.
-	 * Throw an exception if this cannot be parsed.
+	 * Parse a string like "1 km" or a k.IM quantity ('1.km') and return the meters
+	 * in it. Throw an exception if this cannot be parsed.
 	 * 
 	 * @param string
 	 * @return the resolution in meters
