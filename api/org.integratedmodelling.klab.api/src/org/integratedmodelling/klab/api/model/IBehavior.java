@@ -71,4 +71,20 @@ public interface IBehavior extends Iterable<IAction> {
      * @return whether the behavior contains any actions.
      */
     boolean isEmpty();
+
+    /**
+     * True if space is mentioned (over space), even if no parameters are provided, i.e. the containing model
+     * is required to be in space to be computable but there may be no spatial extent in the scale.
+     * 
+     * @return
+     */
+	boolean isSpatial();
+
+    /**
+     * True if time is mentioned (over time), even if no parameters are provided, i.e. the containing model
+     * is required to be in time to be computable but there may be no temporal extent in the scale.
+     * 
+     * @return
+     */
+	boolean isTemporal();
 }

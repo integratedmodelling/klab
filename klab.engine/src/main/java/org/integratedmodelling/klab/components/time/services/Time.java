@@ -41,9 +41,9 @@ public class Time implements IExpression {
 			}
 
 			if (resolution == null) {
-				throw new KlabValidationException(
-						"wrong specification of temporal focus in time function: expecting a quantity with temporal unit (e.g. 1.year) or a"
-								+ " span description (e.g. 'year', 'month', 'century'...)");
+				throw new KlabValidationException("wrong specification of temporal focus in time function: expecting "
+						+ "a quantity with temporal unit (e.g. 1.year) or a"
+						+ " span description (e.g. 'year', 'month', 'century'...)");
 			}
 		}
 
@@ -80,7 +80,7 @@ public class Time implements IExpression {
 		if (parameters.contains("step")) {
 
 			if (start == null || end == null) {
-				throw new KlabValidationException("a step can only be specified along with both start and end");
+//				throw new KlabValidationException("a step can only be specified along with both start and end");
 			}
 
 			if (parameters.get("step") instanceof IKimQuantity) {

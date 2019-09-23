@@ -11,11 +11,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KeyValuePair;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
@@ -23,6 +25,7 @@ import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -202,6 +205,25 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 
 	public KimServiceCall copy() {
 		return (KimServiceCall) create(this.name, this.parameters);
+	}
+
+	@Override
+	public int getParameterCount() {
+		int n = 0;
+		if (parameters.size() > 0) {
+			for (String s : parameters.keySet()) {
+				if (!s.startsWith("_")) {
+					n++;
+				}
+			}
+		}
+		return n;
+	}
+
+	@Override
+	public IPrototype getPrototype() {
+		IExtensionService exts = Services.INSTANCE.getService(IExtensionService.class);
+		return exts == null ? null : exts.getPrototype(name);
 	}
 
 }

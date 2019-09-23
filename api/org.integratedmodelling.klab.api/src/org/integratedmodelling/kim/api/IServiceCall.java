@@ -34,7 +34,21 @@ public interface IServiceCall extends IKimStatement {
 	 *         naming rules if no names are given.
 	 */
 	Parameters<String> getParameters();
+	
+	/**
+	 * Number of <i>user</i> parameters. May be different from getParameters().size().
+	 * 
+	 * @return
+	 */
+	int getParameterCount();
 
+	/**
+	 * Prototype. May be null if the function is unknown.
+	 * 
+	 * @return
+	 */
+	IPrototype getPrototype();
+	
 	/**
 	 * Return any parameter IDs that were passed with a syntax that defines those
 	 * that can be changed by the user.

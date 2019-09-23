@@ -42,6 +42,7 @@ public class Time extends Extent implements ITime {
 	boolean realtime = false;
 	Resolution resolution;
 	long multiplicity = 1;
+	boolean partial = false;
 
 	private static class ResolutionImpl implements Resolution {
 
@@ -138,8 +139,11 @@ public class Time extends Extent implements ITime {
 		if (ret.step != null) {
 			if (type == ITime.Type.REAL && ret.end == null) {
 				ret.multiplicity = Geometry.INFINITE_SIZE;
-			} else {
+			} else if (start != null && end != null) {
 				ret.multiplicity = (long) (ret.getCoveredExtent() / ret.step.getMilliseconds()) + 1;
+			} else {
+				ret.partial = true;
+				ret.multiplicity = 0;
 			}
 		}
 		return ret;
@@ -278,7 +282,6 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public long[] shape() {
-		// TODO Auto-generated method stub
 		return new long[] { multiplicity };
 	}
 
@@ -290,8 +293,10 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public Time collapse() {
-		return create(this.extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL,
-				this.resolution.getType(), resolution.getMultiplier(start, end), start, end, null);
+		return isConsistent()
+				? create(this.extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL,
+						this.resolution.getType(), resolution.getMultiplier(start, end), start, end, null)
+				: this;
 	}
 
 	@Override
@@ -348,7 +353,11 @@ public class Time extends Extent implements ITime {
 	@Override
 	public boolean isConsistent() {
 		// TODO irregular will need checks
-		return true;
+		return !partial;
+	}
+
+	public void setPartial(boolean b) {
+		this.partial = b;
 	}
 
 	@Override
