@@ -36,10 +36,12 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -365,8 +367,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			Dataflow dataflow = Dataflows.INSTANCE
 					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
 			dataflow.setModel((Model) model);
-			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets).run(scale.initialization(),
-					((Monitor) monitor).get(subtask));
+			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets)
+					.run(scale.initialization(), ((Monitor) monitor).get(subtask));
 		}
 		return ret;
 	}
@@ -425,7 +427,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				dataflow.setModel((Model) model);
 
 //				System.out.println("secondary dataflow for " + obs + ":\n" + dataflow.getKdlCode());
-				
+
 				// TODO this must be added to the computational strategy and linked to the
 				// original context.
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
@@ -441,12 +443,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale.initialization(), ((Monitor) monitor).get(subtask));
+		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale.initialization(),
+				((Monitor) monitor).get(subtask));
 
 //		for (IState s:ret.getStates()) {
 //			System.out.println("DIOCAN " + s);
 //		}
-		
+
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
 		}
@@ -667,7 +670,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
 
-				IArtifact merging = createTarget(mergingActuator, this.getDataflow().getResolutionScale(), scope, rootSubject);
+				IArtifact merging = createTarget(mergingActuator, this.getDataflow().getResolutionScale(), scope,
+						rootSubject);
 
 				/*
 				 * partition sub-state does not go in the catalog
@@ -677,7 +681,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					ret.target = Observations.INSTANCE.getStateView((IState) merging, actuator.getScale(), ret);
 					if (ret.target instanceof RescalingState) {
 						// for debugging
-						((RescalingState)ret.target).setLocalId(actuator.getName());
+						((RescalingState) ret.target).setLocalId(actuator.getName());
 					}
 				} else {
 					ret.target = merging;
@@ -994,7 +998,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				this.observations.put(observation.getId(), observation);
 				if (this.rootSubject == null && observation instanceof ISubject) {
 					this.rootSubject = (ISubject) observation;
-					this.eventBus = new EventBus((Subject)this.rootSubject);
+					this.eventBus = new EventBus((Subject) this.rootSubject);
 				}
 				this.catalog.put(name, observation);
 				this.structure.addVertex(observation);
@@ -1019,13 +1023,12 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				for (IState state : predefinedStates) {
 					link(observation, state);
 				}
-				
+
 //				System.out.println("Created "+ observation + " for " + actuator.getObservable());
 
 			}
 		}
 
-		
 		return preexisting == null ? this.catalog.get(actuator.getName()) : preexisting;
 
 	}
@@ -1035,16 +1038,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		Pair<String, IArtifact> previous = findArtifact(observable);
 		if (previous != null) {
-			return (IObservation)previous.getSecond();
+			return (IObservation) previous.getSecond();
 		}
-		
+
 		IConcept mainObservable = ret.getObservable().getType();
 		if (!mainObservable.equals(observable.getType())) {
 			final Set<IConcept> filtered = new HashSet<>();
 			filtered.addAll(Traits.INSTANCE.getDirectTraits(observable.getType()));
 			filtered.addAll(Roles.INSTANCE.getDirectRoles(observable.getType()));
 			if (!filtered.isEmpty()) {
-				
+
 				ret = new ObservationGroupView((Observable) observable, (ObservationGroup) ret,
 						new Function<IArtifact, Boolean>() {
 							@Override
@@ -1053,7 +1056,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 										&& filtered.containsAll(((DirectObservation) t).getPredicates());
 							}
 						});
-				
+
 				/*
 				 * register the view as a regular observation
 				 */
@@ -1074,7 +1077,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IConcept mainObservable = Observables.INSTANCE.getBaseObservable(observable.getType());
 		IObservation ret = groups.get(mainObservable);
 		if (ret == null) {
-			ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this, observable.getArtifactType());
+			ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this,
+					observable.getArtifactType());
 			groups.put(mainObservable, (ObservationGroup) ret);
 		}
 		return ret;
@@ -1094,7 +1098,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			 */
 			Logging.INSTANCE.warn("unexpected call to createTarget: check logics");
 		} else {
-			observation = DefaultRuntimeProvider.createObservation(observable, getDataflow().getResolutionScale(), this);
+			observation = DefaultRuntimeProvider.createObservation(observable, getDataflow().getResolutionScale(),
+					this);
 		}
 
 		if (getRootSubject() != null) {
@@ -1157,12 +1162,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public Scheduler<?> getScheduler() {
-		if (rootSubject == null || !rootSubject.isSpatiallyDistributed()) {
-			return null;
-		}
-		if (this.scheduler == null) {
-			// TODO create and configure the scheduler
-		}
 		return this.scheduler;
 	}
 
@@ -1354,10 +1353,37 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		if (getDataflow().getResolutionScale().getTime() == null) {
 			return;
 		}
-		
+
 		if (actuator.getModel() != null) {
-			
+			/*
+			 * enqueue contextualizers from actuator according to geometry.
+			 * 
+			 * Sequence in each action:
+			 * 
+			 * 1.
+			 */
 		}
-		
+
+	}
+
+	@Override
+	public IScheduler<?> createScheduler(ITime time) {
+		if (scheduler == null) {
+			scheduler = new Scheduler<IObservation>(time) {
+
+				@Override
+				public long getTime() {
+					// TODO Auto-generated method stub
+					return 0;
+				}
+
+				@Override
+				protected ITime getTime(IObservation object) {
+					return object.getScale().getTime();
+				}
+				
+			};
+		}
+		return scheduler;
 	}
 }

@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
@@ -28,6 +29,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Annotation;
@@ -61,9 +63,16 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private DirectObservation context;
 	private ResolutionScope scope;
 	private boolean primary = true;
-	// private Set<String> notified = new HashSet<>();
 	IDirectObservation relationshipSource;
 	IDirectObservation relationshipTarget;
+
+	/*
+	 * if true, we observe occurrents and we may need to upgrade a generic T context
+	 * to a specific one.
+	 */
+	boolean hasOccurrents = false;
+	// if true, we have one time step and occurrents, so we should autostart
+	boolean autoStartTransitions = false;
 
 	// execution parameters for user modification if running interactively
 	private List<InteractiveParameter> fields = new ArrayList<>();
@@ -194,8 +203,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		for (IActuator actuator : actuators) {
 			try {
 
-				IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, context, monitor)
-						.get();
+				IArtifact data = Klab.INSTANCE.getRuntimeProvider()
+						.compute(actuator, this, scale, scope, context, monitor).get();
 				if (ret == null) {
 					ret = data;
 				} else {
@@ -472,8 +481,35 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public IScale getResolutionScale() {
 		if (this.resolutionScale == null && scope != null) {
 			this.resolutionScale = scope.getScale();
+			if (hasOccurrents && this.resolutionScale.getTime() != null) {
+				ITime time = this.resolutionScale.getTime();
+				if (time.isGeneric() || time.size() == 1) {
+
+					if (time.getStart() == null || time.getEnd() == null) {
+						throw new KlabContextualizationException(
+								"cannot contextualize occurrents (processes and events) without a specified temporal extent");
+					}
+
+					// turn time into a 1-step grid (so size = 2)
+					this.resolutionScale = Scale.substituteExtent(this.resolutionScale,
+							((Time) time).upgradeForOccurrents());
+				}
+
+				// set the dataflow to autostart transitions if we only have one
+				if (this.resolutionScale.getTime().size() == 2) {
+					autoStartTransitions = true;
+				}
+			}
 		}
 		return this.resolutionScale;
+	}
+
+	public void notifyOccurrents() {
+		this.hasOccurrents = true;
+	}
+
+	public boolean isAutoStartTransitions() {
+		return this.autoStartTransitions;
 	}
 
 }

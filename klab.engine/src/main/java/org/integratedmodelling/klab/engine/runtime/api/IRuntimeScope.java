@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.engine.runtime.api;
 import java.util.Collection;
 import java.util.Set;
 
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -13,16 +12,17 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.model.Model;
@@ -338,4 +338,12 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param active
 	 */
 	void scheduleActions(Actuator active);
+
+	/**
+	 * Create a scheduler for the passed temporal extent and keep it for getScheduler() to
+	 * retrieve.
+	 * 
+	 * @return
+	 */
+	IScheduler<?> createScheduler(ITime time);
 }

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.resolution;
+package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,13 +39,14 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.dataflow.Actuator;
-import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.RankedModel;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
+import org.integratedmodelling.klab.resolution.ResolvedArtifact;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;

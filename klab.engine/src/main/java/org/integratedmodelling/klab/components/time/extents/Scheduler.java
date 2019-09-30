@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.time.extents;
 
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import java.util.function.BiConsumer;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelMockTimer;
 import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelTimer;
 import org.integratedmodelling.klab.engine.runtime.scheduling.WaitStrategy;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -61,12 +63,19 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 	protected abstract ITime getTime(T object);
 
 	public Scheduler(ITime time) {
+		Date now = new Date();
 		this.time = time;
 		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
+		this.startTime = time.getStart() == null ? now.getTime() : time.getStart().getMilliseconds();
+		this.timer = this.type == Type.REAL_TIME ? new HashedWheelTimer(this.startTime)
+				: new HashedWheelMockTimer(this.startTime);
+		if (time.getEnd() != null) {
+			this.endTime = time.getEnd().getMilliseconds();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+//	@Override
 	public void merge(T temporalObject, T... requiredAntecedents) {
 
 		ITime time = getTime(temporalObject);
@@ -99,7 +108,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		}
 	}
 
-	@Override
+//	@Override
 	public void start(BiConsumer<T, Long> tickHandler, BiConsumer<T, Long> timingErrorHandler) {
 
 		this.actionHandler = tickHandler;
@@ -179,6 +188,15 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		// TODO schedule all tasks immediately
 	}
 
+	@Override
+	public void start() {
+		if (endTime < 0) {
+			timer.start();
+		} else {
+			timer.startUntil(endTime);
+		}
+	}
+	
 	@Override
 	public void stop() {
 

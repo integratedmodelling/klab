@@ -817,6 +817,9 @@ public class Actuator implements IActuator {
 
 	public void setObservable(Observable observable) {
 		this.observable = observable;
+		if (observable.getArtifactType().isOccurrent()) {
+			this.dataflow.notifyOccurrents();
+		}
 	}
 
 	public INamespace getNamespace() {
@@ -937,16 +940,7 @@ public class Actuator implements IActuator {
 				}
 			}
 		}
-
-		IDataKey ret = null;
-//		for (IActuator actuator : actuators) {
-//			if (((Actuator) actuator).observable.getType().equals(observable.getType())) {
-//				ret = ((Actuator) actuator).findDataKey();
-//				break;
-//			}
-//		}
-		return ret;
-
+		return null;
 	}
 
 	public void setInput(boolean b) {

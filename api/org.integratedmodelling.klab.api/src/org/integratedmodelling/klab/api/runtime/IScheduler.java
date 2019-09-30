@@ -16,32 +16,37 @@ public interface IScheduler<T> {
 		REAL_TIME, MOCK_TIME
 	}
 
+//	/**
+//	 * Merge in an observation indicating another with the same view of time that
+//	 * must be notified before it.
+//	 * 
+//	 * @param temporalObservation
+//	 * @param requiredAntecedents
+//	 *            must have been merged in previously
+//	 * @throws IllegalArgumentException
+//	 *             if requiredAntecedent has not been merged before
+//	 */
+//	void merge(T temporalObject, T... requiredAntecedents);
+//
+//	/**
+//	 * Start the scheduler, passing the function to handle each tick for each
+//	 * observation and the time of expiration of the tick. Exits immediately while
+//	 * the scheduler runs.
+//	 * 
+//	 * @param tickHandler
+//	 *            the function called with the object and the current time at each
+//	 *            matching tick.
+//	 * @param timingErrorHandler
+//	 *            the function called if the tickHandler is called when the previous
+//	 *            time step hasn't finished computing. This can only happen in real
+//	 *            time (the scheduler will wait in mock time).
+//	 */
+//	void start(BiConsumer<T, Long> tickHandler, BiConsumer<T, Long> timingErrorHandler);
+	
 	/**
-	 * Merge in an observation indicating another with the same view of time that
-	 * must be notified before it.
-	 * 
-	 * @param temporalObservation
-	 * @param requiredAntecedents
-	 *            must have been merged in previously
-	 * @throws IllegalArgumentException
-	 *             if requiredAntecedent has not been merged before
+	 * Start scheduling.
 	 */
-	void merge(T temporalObject, T... requiredAntecedents);
-
-	/**
-	 * Start the scheduler, passing the function to handle each tick for each
-	 * observation and the time of expiration of the tick. Exits immediately while
-	 * the scheduler runs.
-	 * 
-	 * @param tickHandler
-	 *            the function called with the object and the current time at each
-	 *            matching tick.
-	 * @param timingErrorHandler
-	 *            the function called if the tickHandler is called when the previous
-	 *            time step hasn't finished computing. This can only happen in real
-	 *            time (the scheduler will wait in mock time).
-	 */
-	void start(BiConsumer<T, Long> tickHandler, BiConsumer<T, Long> timingErrorHandler);
+	void start();
 
 	/**
 	 * Stop the scheduler.
