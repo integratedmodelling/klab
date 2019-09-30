@@ -43,8 +43,10 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.NonReentrant;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
@@ -68,7 +70,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Relationship
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
-import org.integratedmodelling.klab.engine.debugger.Debug;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -105,8 +107,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	private ExecutorService executor = Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
 	@Override
-	public Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope,
-			IDirectObservation context, IMonitor monitor) throws KlabException {
+	public Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
+			IResolutionScope scope, IDirectObservation context, IMonitor monitor) throws KlabException {
 
 		return executor.submit(new Callable<IArtifact>() {
 
@@ -129,6 +131,15 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					runtimeContext = ((Subject) context).getRuntimeScope().createChild(scale, actuator, scope, monitor);
 				}
 
+				/*
+				 * create scheduler if needed
+				 */
+				IScheduler<?> scheduler = null;
+				if (dataflow.getResolutionScale().getTime() != null
+						&& dataflow.getResolutionScale().getTime().size() > 1) {
+					scheduler = runtimeContext.createScheduler(dataflow.getResolutionScale().getTime());
+				}
+
 				List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 				int i = 0;
 				for (Actuator active : order) {
@@ -148,10 +159,18 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 							((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
 						}
 					}
-					
+
 					ctx.scheduleActions(active);
-					
+
 					i++;
+				}
+
+				/*
+				 * auto-start the only transition if we have one and we promoted an extent to a
+				 * temporal grid.
+				 */
+				if (((Dataflow) dataflow).isAutoStartTransitions() && scheduler != null) {
+					runtimeContext.getScheduler().start();
 				}
 
 				return runtimeContext.getTargetArtifact();

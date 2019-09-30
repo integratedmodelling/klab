@@ -378,7 +378,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public String encode() {
-		
+
 		String prefix = "T";
 		if (partial && step == null) {
 			prefix = "t";
@@ -567,6 +567,11 @@ public class Time extends Extent implements ITime {
 	private IExtent withScaleId(String scaleId) {
 		setScaleId(scaleId);
 		return this;
+	}
+
+	public Time upgradeForOccurrents() {
+		return create(ITime.Type.GRID, this.getResolution().getType(), 1.0, this.start, this.end,
+				TimeDuration.create(this.start, this.end, true));
 	}
 
 }

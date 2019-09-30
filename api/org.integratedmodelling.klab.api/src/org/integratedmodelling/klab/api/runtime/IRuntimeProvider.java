@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -51,6 +52,7 @@ public interface IRuntimeProvider {
 	 *
 	 * @param actuator a top-level actuator that has no dependencies on external
 	 *                 ones.
+	 * @param dataflow the dataflow to which the actuator belongs
 	 * @param scale    the scale in which to compute
 	 * @param scope    the resolution scope for the computation
 	 * @param context  the context observation for the computation. Can be null.
@@ -58,8 +60,8 @@ public interface IRuntimeProvider {
 	 * @return a future that is computing the final artifact for the actuator.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope, IDirectObservation context,
-			IMonitor monitor) throws KlabException;
+	Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
+			IResolutionScope scope, IDirectObservation context, IMonitor monitor) throws KlabException;
 
 	/**
 	 * Create an empty runtime context for the dataflow that will build the context
