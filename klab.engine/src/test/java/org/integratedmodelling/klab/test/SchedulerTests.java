@@ -12,8 +12,8 @@ public class SchedulerTests {
 	public void testMocktime() {
 		
 		HashedWheelTimer timer = new HashedWheelMockTimer(20000);
-		timer.scheduleAtFixedRate(()-> System.out.println("at 10 every 5"), 10, 5, TimeUnit.SECONDS);
-		timer.scheduleAtFixedRate(()-> System.out.println("at 0 every 15"), 0, 15, TimeUnit.SECONDS);
+		timer.scheduleAtFixedRate((t)-> System.out.println("at 3 every 1: it's " + t + " seconds"), 3, 1, TimeUnit.SECONDS);
+		timer.scheduleAtFixedRate((t)-> System.out.println("at 1 every 10: it's " + t), 1, 10, TimeUnit.SECONDS);
 		timer.startUntil(400000);
 		
 		while(true) {
@@ -33,8 +33,9 @@ public class SchedulerTests {
 	public void testRealtime() {
 		
 		HashedWheelTimer timer = new HashedWheelTimer();
-		timer.scheduleAtFixedRate(()-> System.out.println("at 3 every 1"), 3, 1, TimeUnit.SECONDS);
-		timer.scheduleAtFixedRate(()-> System.out.println("at 1 every 10"), 1, 10, TimeUnit.SECONDS);
+		timer.scheduleAtFixedRate((t)-> System.out.println("at 3 every 1: it's " + t), 3, 1, TimeUnit.SECONDS);
+		timer.scheduleAtFixedRate((t)-> System.out.println("at 1 every 10: it's " + t), 1, 10, TimeUnit.SECONDS);
+		
 		timer.startUntil(40000000);
 		
 		while(true) {

@@ -1349,34 +1349,17 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public void scheduleActions(Actuator actuator) {
-
-		if (getDataflow().getResolutionScale().getTime() == null) {
-			return;
+		if (scheduler != null) {
+			scheduler.schedule(actuator, this);
 		}
-
-		if (actuator.getModel() != null) {
-			/*
-			 * enqueue contextualizers from actuator according to geometry.
-			 * 
-			 * Sequence in each action:
-			 * 
-			 * 1.
-			 */
-		}
-
 	}
 
 	@Override
 	public IScheduler<?> createScheduler(ITime time) {
+		
 		if (scheduler == null) {
 			scheduler = new Scheduler<IObservation>(time) {
-
-				@Override
-				public long getTime() {
-					// TODO Auto-generated method stub
-					return 0;
-				}
-
+				
 				@Override
 				protected ITime getTime(IObservation object) {
 					return object.getScale().getTime();

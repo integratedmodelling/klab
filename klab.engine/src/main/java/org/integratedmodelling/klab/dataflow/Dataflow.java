@@ -331,8 +331,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				if (!scaleSpecs.isEmpty()) {
 					ret += "@coverage";
 					for (int i = 0; i < scaleSpecs.size(); i++) {
-						ret += " " + scaleSpecs.get(i).getSourceCode()
+						if (scaleSpecs.get(i) != null) {
+							ret += " " + scaleSpecs.get(i).getSourceCode()
 								+ ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
+						}
 					}
 					ret += "\n";
 				}

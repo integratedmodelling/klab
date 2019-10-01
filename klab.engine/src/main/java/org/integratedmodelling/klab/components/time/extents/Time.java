@@ -362,7 +362,8 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public boolean isEmpty() {
-		return start.getMilliseconds() >= end.getMilliseconds();
+		return (start == null && end == null && step == null && resolution == null)
+				|| (start != null && end != null && start.getMilliseconds() >= end.getMilliseconds());
 	}
 
 	@Override

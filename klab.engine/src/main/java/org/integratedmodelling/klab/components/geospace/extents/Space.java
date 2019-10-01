@@ -268,7 +268,7 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public IExtent collapse() {
-		return getShape().copy();
+		return isEmpty() ? this : getShape().copy();
 	}
 
 	@Override
@@ -628,8 +628,10 @@ public class Space extends Extent implements ISpace {
 	@Override
 	public IServiceCall getKimSpecification() {
 		List<Object> args = new ArrayList<>(4);
-		args.add("shape");
-		args.add(shape.toString());
+		if (shape != null) {
+			args.add("shape");
+			args.add(shape.toString());
+		}
 		if (gridSpecs != null) {
 			args.add("grid");
 			args.add(gridSpecs);
