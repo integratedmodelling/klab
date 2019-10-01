@@ -118,6 +118,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 			.authorizeRequests()
+				.antMatchers("/oauth2/**")
+					.permitAll()
 				.regexMatchers("/api/users/.*?(activate|password|groups).*")
 					.permitAll()
 				.antMatchers(HttpMethod.POST, "/api/users")
@@ -142,6 +144,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(oAuth2AuthenticationFailureHandler);
 				
 		http.antMatcher("/api/**").addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.antMatcher("/oauth2/**").addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 	}
 
