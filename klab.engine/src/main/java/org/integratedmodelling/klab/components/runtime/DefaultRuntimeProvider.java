@@ -149,15 +149,16 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 						ctx = runtimeContext.createChild(scale, active, scope, monitor);
 					}
 
-					if (!actuator.getType().isOccurrent()) {
-
-						if (active.isComputed() || ((Actuator) active).isMerging()) {
-							active.compute(ctx.getTargetArtifact(), ctx);
-						}
-						if (!(monitor.getIdentity().is(IIdentity.Type.TASK)
-								&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
-							((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
-						}
+					/*
+					 * this won't actually run the contextualizers unless the observation is a
+					 * perdurant.
+					 */
+					if (active.isComputed() || ((Actuator) active).isMerging()) {
+						active.compute(ctx.getTargetArtifact(), ctx);
+					}
+					if (!(monitor.getIdentity().is(IIdentity.Type.TASK)
+							&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
+						((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
 					}
 
 					ctx.scheduleActions(active);

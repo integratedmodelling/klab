@@ -30,4 +30,18 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
      */
     long getMilliseconds();
 
+    /**
+     * 
+     * @param end
+     * @return
+     */
+	boolean isAfter(ITimeInstant end);
+
+	/**
+	 * 
+	 * @param start
+	 * @return
+	 */
+	boolean isBefore(ITimeInstant start);
+
 }

@@ -112,6 +112,12 @@ public class LookupTable implements ILookupTable {
 		StringBuffer s = new StringBuffer(1024);
 		Object[] values = new Object[variables.size()];
 		
+		Double pop = parameters.get("gdp", Double.class);
+		Double pap = parameters.get("population_density", Double.class);
+		if (pop != null && !Double.isNaN(pop) && pap != null && !Double.isNaN(pap)) {
+			System.out.println("ROAODSI");
+		}
+		
 		for (int i = 0; i < variables.size(); i++) {
 			if (i == searchIndex || variables.get(i).charAt(0) == '*') {
 				continue;

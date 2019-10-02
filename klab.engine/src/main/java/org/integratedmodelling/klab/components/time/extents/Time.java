@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.components.time.extents.mediators.TimeIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -313,7 +314,7 @@ public class Time extends Extent implements ITime {
 	public ITimeDuration getStep() {
 		return step;
 	}
-
+	
 	@Override
 	public IExtent getExtent(long stateIndex) {
 
@@ -555,6 +556,10 @@ public class Time extends Extent implements ITime {
 				}
 				/*
 				 * TODO potential mediation situation
+				 */
+			} else if (locators[0] instanceof ITimeInstant) {
+				/*
+				 * Pick the sub-extent containing the instant
 				 */
 			}
 		}

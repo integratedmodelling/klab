@@ -1,15 +1,22 @@
 package org.integratedmodelling.klab.components.time.extents;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -77,41 +84,102 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		return timer.getCurrentTime();
 	}
 
-	public void schedule(Actuator actuator, IRuntimeScope scope) {
+	public void schedule(final Actuator actuator, final IRuntimeScope scope) {
 
 		/*
 		 * model and individual computables determine the temporal aspects of the
 		 * geometry. By now that should be entirely captured in the model coverage.
 		 */
-		IScale scale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
+		final IScale scale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
 		/*
 		 * overall scale fills in any missing info.
 		 */
-		IScale overall = actuator.getDataflow().getResolutionScale();
+		final IScale overall = actuator.getDataflow().getResolutionScale();
+
+		/*
+		 * should not be the case if we get here at all, but who knows.
+		 */
+		if (overall.getTime() == null || scale.getTime() == null) {
+			return;
+		}
 
 		// save targets that were enqueued here
 		Set<String> targets = new HashSet<>();
 
-		/*
-		 * enqueue actions for all contextualizers that are established to be temporal
-		 */
-		for (Pair<IServiceCall, IContextualizable> resource : actuator.getComputationStrategy()) {
+		ITimeInstant start = scale.getTime().getStart();
+		ITimeInstant end = scale.getTime().getStart();
+		ITimeDuration step = scale.getTime().getStep();
+
+		if (start == null || (overall.getTime().getStart() != null && start.isBefore(overall.getTime().getStart()))) {
+			start = overall.getTime().getStart();
+		}
+		if (end == null || (overall.getTime().getEnd() != null && start.isAfter(overall.getTime().getEnd()))) {
+			end = overall.getTime().getEnd();
+		}
+		if (step == null) {
+			step = overall.getTime().getStep();
+		}
+
+		if (step /* still */ == null) {
+			/*
+			 * nothing can occur, nothing to do (TODO: except maybe finalization)
+			 */
+			return;
 		}
 
 		/*
-		 * any mediators that intersect temporal resources must also be called
+		 * holder for the lists that we include in the contextualizing action
 		 */
-		for (Pair<IServiceCall, IContextualizable> mediator : actuator.getMediationStrategy()) {
-			if (mediator.getSecond().getTarget() == null || targets.contains(mediator.getSecond().getTarget().getName())) {
+		final List<IContextualizer> resources = new ArrayList<>();
+
+		/*
+		 * We have a step and (possibly) a start and an end. Enqueue actions for all
+		 * contextualizers that are established to be temporal...
+//		 */
+//		for (IContextualizer contextualizer : actuator.getComputation()) {
+//
+//			if (contextualizer.getGeometry() != null
+//					&& contextualizer.getGeometry().getDimension(Dimension.Type.TIME) != null) {
+//				resources.add(resource.getSecond());
+//				if (resource.getSecond().getTarget() != null) {
+//					targets.add(resource.getSecond().getTarget().getName());
+//				}
+//			}
+//
+//		}
+
+		/*
+		 * enqueue actions for transition
+		 */
+		timer.scheduleAtFixedRate(new Consumer<Long>() {
+
+			@Override
+			public void accept(Long t) {
+
+				/*
+				 * 1. Turn the millisecond t into the correspondent T extent for the
+				 * observation's scale
+				 */
+				
+
+				/*
+				 * 2. Set the context at() the current time.
+				 */
+
+				/*
+				 * 3. Run all contextualizers in the context; check for signs of life at each
+				 * step.
+				 */
+//				for (IContextualizable ctx : resources) {
+////					actuator.run
+//				}
+				
+				/*
+				 * 4. Notify whatever has changed.
+				 */
 				
 			}
-		}
-
-		/*
-		 * enqueue in order: translation of input T to actuator-specific extent;
-		 * contextualization of current context to given T; call all reactors with the
-		 * scale set to the transition
-		 */
+		}, /* TODO */0, step.getMilliseconds(), TimeUnit.MILLISECONDS);
 
 		System.out.println("HOSTIA");
 	}

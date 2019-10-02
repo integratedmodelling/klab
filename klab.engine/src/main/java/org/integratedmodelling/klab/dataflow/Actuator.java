@@ -83,10 +83,23 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class Actuator implements IActuator {
 
+	/**
+	 * The computation is populated with these at initialization; the computations
+	 * can be recalled at transitions.
+	 */
+	public class Computation {
+		public IContextualizer contextualizer;
+		public IArtifact target;
+		public IObservable observable;
+		public String targetId;
+	}
+
 	// these are part of graphs so they should behave wrt. equality. Adding an ID
 	// for comparison just to ensure that future changes upstream do not affect the
 	// logics.
 	private String _actuatorId = NameGenerator.shortUUID();
+
+	List<Computation> computation = null;
 
 	protected String name;
 	private String alias;
@@ -151,6 +164,10 @@ public class Actuator implements IActuator {
 		computedResources.add(resource);
 		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target);
 		mediationStrategy.add(new Pair<>(serviceCall, resource));
+	}
+
+	public List<Computation> getContextualizers() {
+		return computation;
 	}
 
 	public void addDocumentation(IDocumentation documentation) {
@@ -241,7 +258,9 @@ public class Actuator implements IActuator {
 	}
 
 	/**
-	 * Compute the actuator.
+	 * Compute the actuator. This only gets called once at initialization. Builds
+	 * the contextualization sequence and, if they contextualize perdurants, runs it
+	 * to initialize them.
 	 * 
 	 * @param target         the final artifact being computed. If this actuator
 	 *                       handles an instantiation, the passed target is null and
@@ -257,10 +276,19 @@ public class Actuator implements IActuator {
 	 */
 	public IArtifact compute(IArtifact target, IRuntimeScope runtimeContext) throws KlabException {
 
-		
 		this.currentContext = runtimeContext;
 		this.status.set(1);
 		this.startComputation.set(System.currentTimeMillis());
+
+		/*
+		 * poor-man attempt at reentrancy in case this has to get called more than once
+		 * for any reason later.
+		 */
+		boolean definition = false;
+		if (this.computation == null) {
+			definition = true;
+			this.computation = new ArrayList<>();
+		}
 
 		/*
 		 * The contextualizer chain that implements the computation is specified by
@@ -342,14 +370,28 @@ public class Actuator implements IActuator {
 			}
 
 			/*
-			 * run the contextualizer on its target. This may get a null and instantiate a
-			 * new target artifact.
+			 * run the contextualizer on its target unless we're contextualizing an
+			 * occurrent. This may get a null and instantiate a new target artifact.
 			 */
-			artifactTable.put(targetId,
+			if (!getType().isOccurrent()) {
+				artifactTable.put(targetId,
 					runContextualizer(contextualizer.getFirst(),
 							indirectTarget == null ? this.observable : indirectTarget, contextualizer.getSecond(),
 							artifactTable.get(targetId), context, context.getScale()));
-
+			}
+			
+			/*
+			 * define the computation for any future use.
+			 */
+			if (definition) {
+				Computation step = new Computation();
+				step.contextualizer = contextualizer.getFirst();
+				step.observable = indirectTarget == null ? this.observable : indirectTarget;
+				step.target = artifactTable.get(targetId);
+				step.targetId = targetId;
+				this.computation.add(step);
+			}
+			
 			/*
 			 * if we have produced the artifact (through an instantiator), set it in the
 			 * context.
@@ -521,12 +563,9 @@ public class Actuator implements IActuator {
 			/*
 			 * pass the distributed computation to the runtime provider for possible
 			 * parallelization instead of hard-coding a loop here.
-			 * 
-			 * TODO CHECK THE USE OF AT() - CALLED FROM setupContext already has this
-			 * applied
 			 */
 			ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-					(IState) ret, addParameters(ctx, self, resource), scale/* .at(Time.INITIALIZATION) */);
+					(IState) ret, addParameters(ctx, self, resource), scale);
 
 		} else if (contextualizer instanceof IResolver) {
 			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
@@ -1172,7 +1211,8 @@ public class Actuator implements IActuator {
 
 			if (isNew) {
 				IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
-						product.getContext(), context.getScale().initialization(), 0, isMainObservable || isMain).withTaskId(taskId);
+						product.getContext(), context.getScale().initialization(), 0, isMainObservable || isMain)
+						.withTaskId(taskId);
 
 				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 						IMessage.Type.NewObservation, observation));

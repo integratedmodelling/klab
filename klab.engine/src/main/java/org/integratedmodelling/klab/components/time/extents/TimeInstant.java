@@ -42,5 +42,15 @@ public class TimeInstant implements ITimeInstant {
 	public String toString() {
 		return time.toString();
 	}
+
+	@Override
+	public boolean isAfter(ITimeInstant t) {
+		return this.time.isAfter(((TimeInstant)t).time);
+	}
+
+	@Override
+	public boolean isBefore(ITimeInstant t) {
+		return this.time.isBefore(((TimeInstant)t).time);
+	}
 	
 }
