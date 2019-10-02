@@ -64,7 +64,12 @@ public class KlabNodeServiceImpl implements KlabNodeService{
 	public void deleteNode(String nodename) {
 		Query query = new Query(Criteria.where("node").is(nodename));
 		List<KlabNode> found = mongoTemplate.find(query, KlabNode.class);
-		mongoTemplate.remove(found);
+		if (found.size() == 1) {
+			KlabNode deleteNode = found.get(0);
+			mongoTemplate.remove(deleteNode);
+		} else {
+			throw new BadRequestException("Found more than one node of that name");
+		}
 	}
 
 	@Override
