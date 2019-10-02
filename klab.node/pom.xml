@@ -9,6 +9,26 @@
 	</parent>
 	<artifactId>klab.node</artifactId>
 	<name>k.LAB node server</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot-version}</version>
+				<configuration>
+					<fork>true</fork>
+					<mainClass>org.integratedmodelling.klab.node.NodeApplication</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 
 		<!-- for the embedded Git server <dependency> <groupId>org.eclipse.jetty</groupId> 
