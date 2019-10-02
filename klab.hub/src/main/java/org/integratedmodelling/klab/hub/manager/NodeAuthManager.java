@@ -61,9 +61,11 @@ public class NodeAuthManager {
 	}
 
 	private NodeAuthenticationResponse processNode(NodeAuthenticationRequest request, String ip) {
+		Logging.INSTANCE.info(request.toString());
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
 		INodeIdentity node = authenticateNodeCert(request.getCertificate());
+		Logging.INSTANCE.info(node.getName());
 		node.getUrls().add("http://"+ip+"/node");
 		List<Group> Groups = klabNodeManager.getNodeGroups(node.getName());
 		Logging.INSTANCE.info("authorized node " + node.getName());
