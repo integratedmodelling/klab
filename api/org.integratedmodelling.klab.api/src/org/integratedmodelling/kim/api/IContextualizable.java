@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -31,19 +32,12 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  *
  */
-public interface IComputableResource extends IKimStatement, IDataflowNode {
+public interface IContextualizable extends IKimStatement, IDataflowNode {
 
 	public static enum Type {
-		CLASSIFICATION,
-		SERVICE,
-		LOOKUP_TABLE,
-		RESOURCE,
-		EXPRESSION,
-		CONVERSION,
-		LITERAL,
-		CONDITION
+		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, EXPRESSION, CONVERSION, LITERAL, CONDITION
 	}
-	
+
 	/**
 	 * The data structure describing interactive parameters. It's a javabean with
 	 * only string for values so that it can be easily serialized for communication.
@@ -147,7 +141,7 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 		public void setLabel(String label) {
 			this.label = label;
 		}
-		
+
 		@Override
 		public String toString() {
 			return "InteractiveParameter [id=" + id + ", functionId=" + functionId + ", description=" + description
@@ -179,7 +173,7 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	 * @return
 	 */
 	Type getType();
-	
+
 	/**
 	 * The target observable for this computation; null if the target is the main
 	 * observable in the correspondent actuator. Otherwise the computation affects
@@ -309,7 +303,7 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	 * 
 	 * @return the condition or an empty container.
 	 */
-	IComputableResource getCondition();
+	IContextualizable getCondition();
 
 	/**
 	 * The computation may consist in a mediation of a quantity represented by the
@@ -350,11 +344,18 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	boolean isMediation();
 
 	/**
-	 * This should QUICKLY find out if a resource is available for computation. 
+	 * This should QUICKLY find out if a resource is available for computation.
 	 * 
 	 * @return
 	 */
 	boolean isAvailable();
 
+	/**
+	 * This will return the geometry incarnated by the computable. It should
+	 * normally return a scalar geometry except for resources and services.
+	 * 
+	 * @return the geometry
+	 */
+	IGeometry getGeometry();
 
 }

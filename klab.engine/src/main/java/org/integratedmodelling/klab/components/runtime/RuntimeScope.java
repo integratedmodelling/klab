@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
@@ -888,7 +888,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		/*
 		 * add any target of indirect computations
 		 */
-		for (IComputableResource computation : actuator.getComputation()) {
+		for (IContextualizable computation : actuator.getComputation()) {
 			if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getName()) == null) {
 				targetObservables.put(computation.getTarget().getName(),
 						new Pair<>((Observable) computation.getTarget(), computation.getComputationMode()));

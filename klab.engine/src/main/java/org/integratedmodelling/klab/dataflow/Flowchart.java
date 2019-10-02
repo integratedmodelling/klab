@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -96,7 +96,7 @@ public class Flowchart {
 			}
 		}
 
-		Element(Pair<IServiceCall, IComputableResource> resource) {
+		Element(Pair<IServiceCall, IContextualizable> resource) {
 			this.id = resource.getSecond().getDataflowId();
 			this.type = ElementType.RESOLVER;
 			this.label = Extensions.INSTANCE.getServiceLabel(resource.getFirst());
@@ -297,7 +297,7 @@ public class Flowchart {
 		 * compile mediations for any of the inputs. These will extend the input
 		 * pathways.
 		 */
-		for (Pair<IServiceCall, IComputableResource> actor : actuator.getMediationStrategy()) {
+		for (Pair<IServiceCall, IContextualizable> actor : actuator.getMediationStrategy()) {
 			compileComputation(actor, element, actuator);
 		}
 
@@ -305,14 +305,14 @@ public class Flowchart {
 		 * go down into computations; filter inputs through local names. Track indirect
 		 * targets and 'self' when the input is the same name as the actuator.
 		 */
-		for (Pair<IServiceCall, IComputableResource> actor : actuator.getComputationStrategy()) {
+		for (Pair<IServiceCall, IContextualizable> actor : actuator.getComputationStrategy()) {
 			compileComputation(actor, element, actuator);
 		}
 
 		return element;
 	}
 
-	private Element compileComputation(Pair<IServiceCall, IComputableResource> computation, Element parent,
+	private Element compileComputation(Pair<IServiceCall, IContextualizable> computation, Element parent,
 			Actuator context) {
 
 		Element ret = new Element(computation);
@@ -394,7 +394,7 @@ public class Flowchart {
 				}
 			}
 
-		} else if (computation.getSecond().getType() == IComputableResource.Type.CLASSIFICATION) {
+		} else if (computation.getSecond().getType() == IContextualizable.Type.CLASSIFICATION) {
 
 			// works as a filter. Ignore expressions in classifiers for now.
 			computationInputs.add(computationTarget);
@@ -451,7 +451,7 @@ public class Flowchart {
 
 			ret.type = ElementType.TABLE;
 
-		} else if (computation.getSecond().getType() == IComputableResource.Type.CONVERSION) {
+		} else if (computation.getSecond().getType() == IContextualizable.Type.CONVERSION) {
 
 			if (computation.getSecond().getServiceCall() != null) {
 				ret.label = Extensions.INSTANCE.getServiceLabel(computation.getSecond().getServiceCall());

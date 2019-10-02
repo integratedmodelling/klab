@@ -17,8 +17,7 @@ package org.integratedmodelling.klab.api.resolution;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.kim.api.IContextualizable;
 
 /**
  * The computable interface applies to objects that can contribute computations to a dataflow. If
@@ -28,7 +27,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IComputable {
+public interface IComputationProvider {
 
   /**
    * Return the computations for the passed locator.
@@ -36,6 +35,6 @@ public interface IComputable {
    * @param locator a {@link org.integratedmodelling.klab.api.data.ILocator} object.
    * @return a list of computable resources, possibly empty.
    */
-  List<IComputableResource> getComputation(boolean initialization);
+  List<IContextualizable> getComputation(boolean initialization);
 
 }

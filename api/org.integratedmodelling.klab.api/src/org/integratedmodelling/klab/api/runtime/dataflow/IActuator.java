@@ -17,7 +17,7 @@ package org.integratedmodelling.klab.api.runtime.dataflow;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 // TODO: Auto-generated Javadoc
@@ -80,7 +80,7 @@ public interface IActuator extends IDataflowNode {
 	 *
 	 * @return all computations. Never null, possibly empty.
 	 */
-	List<IComputableResource> getComputation();
+	List<IContextualizable> getComputation();
 
 	/**
 	 * If this actuator is aliased to a different name within the containing

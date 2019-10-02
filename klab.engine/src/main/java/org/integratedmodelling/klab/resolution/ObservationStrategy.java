@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.resolution;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Klab;
@@ -45,7 +45,7 @@ public class ObservationStrategy {
 
 	private List<Observable> observables = new ArrayList<>();
 	private Mode mode;
-	private List<IComputableResource> computation = new ArrayList<>();
+	private List<IContextualizable> computation = new ArrayList<>();
 
 	public ObservationStrategy(Observable observable, Mode mode) {
 		this.mode = mode;
@@ -207,7 +207,7 @@ public class ObservationStrategy {
 
 			ret.add(new ObservationStrategy((Observable) observable, mode));
 
-			List<IComputableResource> computations = new ArrayList<>();
+			List<IContextualizable> computations = new ArrayList<>();
 			IConcept inherent = null;
 
 			if (observable.is(Type.PRESENCE)) {
@@ -282,7 +282,7 @@ public class ObservationStrategy {
 	 * Any necessary computation to apply to the resulting artifact to produce the
 	 * requested observation
 	 */
-	public List<IComputableResource> getComputation() {
+	public List<IContextualizable> getComputation() {
 		return this.computation;
 	}
 

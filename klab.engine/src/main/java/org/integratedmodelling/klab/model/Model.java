@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimModel;
@@ -72,7 +72,7 @@ public class Model extends KimObject implements IModel {
 	private Map<String, IObservable> attributeObservables = new HashMap<>();
 	private Namespace namespace;
 	private Behavior behavior;
-	private List<IComputableResource> resources = new ArrayList<>();
+	private List<IContextualizable> resources = new ArrayList<>();
 	private boolean instantiator;
 	private boolean reinterpreter;
 	private boolean inactive;
@@ -179,7 +179,7 @@ public class Model extends KimObject implements IModel {
 		/*
 		 * all resources after 'using' or further classification/lookup transformations
 		 */
-		for (IComputableResource resource : model.getContextualization()) {
+		for (IContextualizable resource : model.getContextualization()) {
 			try {
 				this.resources.add(validate((ComputableResource) resource, monitor));
 			} catch (Throwable e) {
@@ -250,7 +250,7 @@ public class Model extends KimObject implements IModel {
 		 * EACH output artifact, not that of the context.
 		 */
 
-		for (IComputableResource resource : resources) {
+		for (IContextualizable resource : resources) {
 
 			if (this.observables.get(0).getDescription() == IActivity.Description.CHARACTERIZATION
 					|| this.observables.get(0).getDescription() == IActivity.Description.CLASSIFICATION) {
@@ -301,7 +301,7 @@ public class Model extends KimObject implements IModel {
 		}
 	}
 
-	private boolean isFilter(IComputableResource resource) {
+	private boolean isFilter(IContextualizable resource) {
 		if (resource.getServiceCall() != null) {
 			IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
 			if (prototype != null && prototype.isFilter()) {
@@ -680,7 +680,7 @@ public class Model extends KimObject implements IModel {
 			return false;
 		}
 
-		for (IComputableResource resource : resources) {
+		for (IContextualizable resource : resources) {
 			// TODO TODO this is a temp fix to make the tests run.
 			if (!resource.getInputs().isEmpty()) {
 				return false;
@@ -859,7 +859,7 @@ public class Model extends KimObject implements IModel {
 	 * @return the indirectAdapters for the model at the transition
 	 */
 	@Override
-	public List<IComputableResource> getComputation(boolean initialization) {
+	public List<IContextualizable> getComputation(boolean initialization) {
 
 		List<IAnnotation> parameters = new ArrayList<>();
 		for (IAnnotation annotation : getAnnotations()) {
@@ -868,8 +868,8 @@ public class Model extends KimObject implements IModel {
 			}
 		}
 
-		List<IComputableResource> ret = new ArrayList<>();
-		for (IComputableResource resource : resources) {
+		List<IContextualizable> ret = new ArrayList<>();
+		for (IContextualizable resource : resources) {
 			ComputableResource res = ((ComputableResource) resource).copy();
 			if (parameters.size() > 0) {
 				res.addParameters(parameters);
@@ -878,7 +878,7 @@ public class Model extends KimObject implements IModel {
 		}
 		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggers(initialization)) {
 			for (IAction action : behavior.getActions(trigger)) {
-				for (IComputableResource resource : action.getComputation(initialization)) {
+				for (IContextualizable resource : action.getComputation(initialization)) {
 					ComputableResource res = ((ComputableResource) resource).copy();
 					if (parameters.size() > 0) {
 						res.addParameters(parameters);
@@ -931,7 +931,7 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public List<IComputableResource> getResources() {
+	public List<IContextualizable> getResources() {
 		return resources;
 	}
 

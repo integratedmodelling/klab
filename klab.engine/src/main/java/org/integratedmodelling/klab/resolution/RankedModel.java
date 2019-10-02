@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.Klab;
@@ -229,7 +229,7 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public List<IComputableResource> getComputation(boolean initialization) {
+	public List<IContextualizable> getComputation(boolean initialization) {
 		return getDelegate().getComputation(initialization);
 	}
 
@@ -239,7 +239,7 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public List<IComputableResource> getResources() {
+	public List<IContextualizable> getResources() {
 		return getDelegate().getResources();
 	}
 

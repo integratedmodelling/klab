@@ -96,6 +96,6 @@ public interface IKimAction extends IKimStatement {
      * 
      * @return the computables
      */
-    List<IComputableResource> getComputation();
+    List<IContextualizable> getComputation();
     
 }

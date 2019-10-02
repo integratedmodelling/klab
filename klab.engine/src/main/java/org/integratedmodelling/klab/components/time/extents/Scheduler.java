@@ -1,8 +1,12 @@
 package org.integratedmodelling.klab.components.time.extents;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -11,6 +15,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelMockTimer;
 import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelTimer;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Scheduler for actors in either real or mock time. Akka does not allow the
@@ -55,7 +60,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 //	}
 
 	protected abstract ITime getTime(T object);
-	
+
 	public Scheduler(ITime time) {
 		Date now = new Date();
 		this.overallTime = time;
@@ -67,39 +72,49 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 			this.endTime = time.getEnd().getMilliseconds();
 		}
 	}
-	
-	
+
 	public long getTime() {
 		return timer.getCurrentTime();
 	}
-	
-	
+
 	public void schedule(Actuator actuator, IRuntimeScope scope) {
-		
+
 		/*
-		 * model and individual computables determine the temporal aspects of the geometry. By now
-		 * that should be entirely captured in the model coverage.
+		 * model and individual computables determine the temporal aspects of the
+		 * geometry. By now that should be entirely captured in the model coverage.
 		 */
 		IScale scale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
+		/*
+		 * overall scale fills in any missing info.
+		 */
+		IScale overall = actuator.getDataflow().getResolutionScale();
+
+		// save targets that were enqueued here
+		Set<String> targets = new HashSet<>();
 
 		/*
 		 * enqueue actions for all contextualizers that are established to be temporal
 		 */
+		for (Pair<IServiceCall, IContextualizable> resource : actuator.getComputationStrategy()) {
+		}
 
 		/*
 		 * any mediators that intersect temporal resources must also be called
 		 */
-		
+		for (Pair<IServiceCall, IContextualizable> mediator : actuator.getMediationStrategy()) {
+			if (mediator.getSecond().getTarget() == null || targets.contains(mediator.getSecond().getTarget().getName())) {
+				
+			}
+		}
+
 		/*
-		 * enqueue in order: 
-		 * 	translation of input T to actuator-specific extent; 
-		 *  contextualization of current context to given T;
-		 *  call all reactors with the scale set to the transition
+		 * enqueue in order: translation of input T to actuator-specific extent;
+		 * contextualization of current context to given T; call all reactors with the
+		 * scale set to the transition
 		 */
-		
+
 		System.out.println("HOSTIA");
 	}
-	
 
 //	@SuppressWarnings("unchecked")
 ////	@Override
@@ -223,7 +238,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 			timer.startUntil(endTime);
 		}
 	}
-	
+
 	@Override
 	public void stop() {
 

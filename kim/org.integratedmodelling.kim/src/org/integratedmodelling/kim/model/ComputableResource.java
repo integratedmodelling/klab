@@ -11,11 +11,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.emf.ecore.EObject;
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.kim.Classification;
@@ -26,6 +27,8 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
 import org.integratedmodelling.klab.Services;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
@@ -38,11 +41,12 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class ComputableResource extends KimStatement implements IComputableResource {
+public class ComputableResource extends KimStatement implements IContextualizable {
 
 	private static final long serialVersionUID = -5104679843126238555L;
 
@@ -463,7 +467,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	@Override
-	public IComputableResource getCondition() {
+	public IContextualizable getCondition() {
 		return condition;
 	}
 
@@ -759,6 +763,28 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.originalObservable = originalObservable;
 	}
 
+	@Override
+	public IGeometry getGeometry() {
+		switch(getType()) {
+		case RESOURCE:
+			IResourceService rs = Services.INSTANCE.getService(IResourceService.class);
+			IResource resource = rs == null ? null : rs.resolveResource(this.urn);
+			if (resource != null) {
+				return resource.getGeometry();
+			}
+			break;
+		case SERVICE:
+			IPrototype prototype = this.serviceCall.getPrototype();
+			if (prototype != null) {
+				return prototype.getGeometry();
+			}
+			break;
+		default:
+			break;
+		}
+		return Geometry.scalar();
+	}
+	
 //	public IComputableResource withFilterTarget(IObservable observable) {
 //		this.filterTarget = observable;
 //		return this;

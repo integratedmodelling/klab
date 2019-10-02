@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.StreamSupport;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -206,7 +206,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IServiceCall getServiceCall(IComputableResource resource, IActuator target) {
+	public IServiceCall getServiceCall(IContextualizable resource, IActuator target) {
 
 		IServiceCall ret = null;
 
@@ -399,7 +399,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public List<IComputableResource> getComputation(IObservable availableType, Mode resolutionMode,
+	public List<IContextualizable> getComputation(IObservable availableType, Mode resolutionMode,
 			IObservable desiredObservation) {
 
 		if (availableType.is(Type.COUNTABLE)) {
@@ -419,7 +419,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public void setComputationTargetId(IComputableResource resource, String targetId) {
+	public void setComputationTargetId(IContextualizable resource, String targetId) {
 		if (resource.getServiceCall() != null && resource.getServiceCall().getParameters().containsKey("artifact")) {
 			resource.getServiceCall().getParameters().put("artifact", targetId);
 		}
@@ -440,7 +440,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType) {
+	public IContextualizable getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType) {
 		/*
 		 * At the moment the only admissible cast is NUMBER -> BOOLEAN, although we may
 		 * want some level of text -> X (number, boolean, concept) at some point, maybe
@@ -454,7 +454,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IComputableResource getOperatorResolver(IObservable classifiedObservable, ValueOperator operator,
+	public IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator,
 			Object operand) {
 
 		if (operator == ValueOperator.BY) {

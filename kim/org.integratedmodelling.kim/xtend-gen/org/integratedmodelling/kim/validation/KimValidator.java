@@ -20,8 +20,8 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
-import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IConceptDescriptor;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
@@ -898,7 +898,7 @@ public class KimValidator extends AbstractKimValidator {
         }
         EList<ValueAssignment> _contextualizers_1 = model.getContextualizers();
         for (final ValueAssignment contextualizer_1 : _contextualizers_1) {
-          java.util.List<IComputableResource> _contextualization = descriptor.getContextualization();
+          java.util.List<IContextualizable> _contextualization = descriptor.getContextualization();
           IResolutionScope.Mode _xifexpression_5 = null;
           boolean _isInstantiator = descriptor.isInstantiator();
           if (_isInstantiator) {
@@ -912,7 +912,7 @@ public class KimValidator extends AbstractKimValidator {
         Classification _classification_1 = model.getClassification();
         boolean _tripleNotEquals_6 = (_classification_1 != null);
         if (_tripleNotEquals_6) {
-          java.util.List<IComputableResource> _contextualization_1 = descriptor.getContextualization();
+          java.util.List<IContextualizable> _contextualization_1 = descriptor.getContextualization();
           Classification _classification_2 = model.getClassification();
           boolean _isDiscretization = model.isDiscretization();
           ComputableResource _computableResource_1 = new ComputableResource(_classification_2, _isDiscretization, descriptor);
@@ -921,7 +921,7 @@ public class KimValidator extends AbstractKimValidator {
         Table _lookupTable_1 = model.getLookupTable();
         boolean _tripleNotEquals_7 = (_lookupTable_1 != null);
         if (_tripleNotEquals_7) {
-          java.util.List<IComputableResource> _contextualization_2 = descriptor.getContextualization();
+          java.util.List<IContextualizable> _contextualization_2 = descriptor.getContextualization();
           Table _lookupTable_2 = model.getLookupTable();
           EList<String> _lookupTableArgs_3 = model.getLookupTableArgs();
           ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_2, _lookupTableArgs_3, descriptor);
@@ -933,14 +933,14 @@ public class KimValidator extends AbstractKimValidator {
           Object tobj_1 = ns_1.getSymbolTable().get(model.getLookupTableId());
           EList<String> _lookupTableArgs_4 = model.getLookupTableArgs();
           KimLookupTable table_1 = new KimLookupTable(((IKimTable) tobj_1), _lookupTableArgs_4, null);
-          java.util.List<IComputableResource> _contextualization_3 = descriptor.getContextualization();
+          java.util.List<IContextualizable> _contextualization_3 = descriptor.getContextualization();
           ComputableResource _computableResource_3 = new ComputableResource(table_1, descriptor);
           _contextualization_3.add(_computableResource_3);
         }
         String _classificationProperty = model.getClassificationProperty();
         boolean _tripleNotEquals_9 = (_classificationProperty != null);
         if (_tripleNotEquals_9) {
-          java.util.List<IComputableResource> _contextualization_4 = descriptor.getContextualization();
+          java.util.List<IContextualizable> _contextualization_4 = descriptor.getContextualization();
           String _classificationProperty_1 = model.getClassificationProperty();
           ComputableResource _computableResource_4 = new ComputableResource(descriptor, _classificationProperty_1);
           _contextualization_4.add(_computableResource_4);

@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -31,7 +31,7 @@ public class ClassifyingStateResolver implements IStateResolver, IProcessor, IEx
 		this.classification = classification;
 	}
 
-	public static IServiceCall getServiceCall(IClassification classification, IComputableResource condition, boolean conditionNegated)
+	public static IServiceCall getServiceCall(IClassification classification, IContextualizable condition, boolean conditionNegated)
 			throws KlabValidationException {
 		// TODO handle condition
 		return KimServiceCall.create(FUNCTION_ID, "classification", classification);

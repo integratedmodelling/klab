@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IParameters;
@@ -1317,7 +1317,7 @@ public enum Resources implements IResourceService {
 		getLoader().rescan(true);
 	}
 
-	public IGeometry getGeometry(IComputableResource resource) {
+	public IGeometry getGeometry(IContextualizable resource) {
 		switch (resource.getType()) {
 		case RESOURCE:
 			IResource res = resolveResource(resource.getUrn());
@@ -1344,7 +1344,7 @@ public enum Resources implements IResourceService {
 	 * @param resource
 	 * @return
 	 */
-	public Type getType(IComputableResource resource) {
+	public Type getType(IContextualizable resource) {
 		switch (resource.getType()) {
 		case CLASSIFICATION:
 			return Type.CONCEPT;

@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
+import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Interaction;
 import org.integratedmodelling.klab.Klab;
@@ -76,7 +76,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	// execution parameters for user modification if running interactively
 	private List<InteractiveParameter> fields = new ArrayList<>();
-	private List<Pair<IComputableResource, List<String>>> resources = new ArrayList<>();
+	private List<Pair<IContextualizable, List<String>>> resources = new ArrayList<>();
 	private List<Pair<IAnnotation, List<String>>> annotations = new ArrayList<>();
 	private IMetadata metadata;
 	private Collection<IObservation> configurationTargets;
@@ -156,7 +156,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 					}
 
 					// interactive computations
-					for (IComputableResource computable : actuator.getComputation()) {
+					for (IContextualizable computable : actuator.getComputation()) {
 						List<String> parameterIds = null;
 						for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(computable,
 								actuator.getModel())) {

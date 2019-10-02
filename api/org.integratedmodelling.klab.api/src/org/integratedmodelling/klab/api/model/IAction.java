@@ -17,15 +17,15 @@ package org.integratedmodelling.klab.api.model;
 
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimAction.Type;
-import org.integratedmodelling.klab.api.resolution.IComputable;
+import org.integratedmodelling.klab.api.resolution.IComputationProvider;
 
 /**
- * Action execution is deferred to dataflow through their {@link org.integratedmodelling.klab.api.resolution.IComputableResource} identity.
+ * Action execution is deferred to dataflow through their {@link org.integratedmodelling.klab.api.resolution.IContextualizable} identity.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IAction extends IComputable {
+public interface IAction extends IComputationProvider {
 
   /**
    * <p>getTrigger.</p>

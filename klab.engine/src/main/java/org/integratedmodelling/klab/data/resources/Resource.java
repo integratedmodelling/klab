@@ -59,7 +59,7 @@ import org.integratedmodelling.klab.utils.Utils;
  * used to build {@link IArtifact artifacts}.
  *
  * When a URN is referenced in k.IM, it is turned into a
- * {@link org.integratedmodelling.kim.api.IComputableResource} which is passed
+ * {@link org.integratedmodelling.kim.api.IContextualizable} which is passed
  * to the {@link IRuntimeProvider runtime} and turned into a KDL function call
  * or literal, which encodes their computation or resolution. Executing the KDL
  * call as part of a

@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -49,7 +49,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	IExpression condition = null;
 	Map<String, Object> additionalParameters = null;
 	boolean isScalar;
-	IComputableResource resource = null;
+	IContextualizable resource = null;
 	private static Set<String> prototypeParameters;
 	
 	static {
@@ -74,7 +74,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		}
 	}
 
-	public static IServiceCall getServiceCall(IComputableResource resource, IObservable observable) {
+	public static IServiceCall getServiceCall(IContextualizable resource, IObservable observable) {
 		
 		String functionId = FUNCTION_ID;
 		if (observable.getDescription() == IActivity.Description.CLASSIFICATION) {

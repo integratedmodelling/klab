@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -102,7 +102,7 @@ public class EModel extends EKimObject implements IKimModel, EDocumentable {
         return delegate.getResourceFunction();
     }
 
-    public List<IComputableResource> getContextualization() {
+    public List<IContextualizable> getContextualization() {
         return delegate.getContextualization();
     }
 

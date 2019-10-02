@@ -18,7 +18,7 @@ package org.integratedmodelling.klab.api.runtime;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -88,13 +88,13 @@ public interface IRuntimeProvider {
 	 * Get a service call that, once executed, will turn the passed specification
 	 * for a resource into a suitable contextualizer that runs on this runtime.
 	 *
-	 * @param resource a {@link org.integratedmodelling.kim.api.IComputableResource}
+	 * @param resource a {@link org.integratedmodelling.kim.api.IContextualizable}
 	 *                 object.
 	 * @param actuator the actuator providing the context for the computation.
 	 * 
 	 * @return the service call encoding the resource
 	 */
-	IServiceCall getServiceCall(IComputableResource resource, IActuator actuator);
+	IServiceCall getServiceCall(IContextualizable resource, IActuator actuator);
 
 	/**
 	 * Distribute the computation of the passed state resolver over the passed
@@ -172,7 +172,7 @@ public interface IRuntimeProvider {
 	 *         list will be interpreted as "no computation needed", not as "no
 	 *         strategy found".
 	 */
-	List<IComputableResource> getComputation(IObservable availableType, IResolutionScope.Mode resolutionMode,
+	List<IContextualizable> getComputation(IObservable availableType, IResolutionScope.Mode resolutionMode,
 			IObservable desiredObservation);
 
 	/**
@@ -189,7 +189,7 @@ public interface IRuntimeProvider {
 	 * @param targetType
 	 * @return a resolver or null
 	 */
-	IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
+	IContextualizable getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
 
 	/**
 	 * Return a computation that will apply the passed operator and operand to
@@ -200,7 +200,7 @@ public interface IRuntimeProvider {
 	 * @param operand
 	 * @return
 	 */
-	IComputableResource getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand);
+	IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand);
 
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID
@@ -211,6 +211,6 @@ public interface IRuntimeProvider {
 	 * 
 	 * @param targetId
 	 */
-	void setComputationTargetId(IComputableResource resource, String targetId);
+	void setComputationTargetId(IContextualizable resource, String targetId);
 
 }
