@@ -23,6 +23,14 @@ import org.springframework.web.client.RestTemplate;
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.node.security",
 		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers" })
 public class NodeApplication {
+	
+	private static Node node;
+	
+	public void run(String[] args) {
+		NodeStartupOptions options = new NodeStartupOptions();
+		options.initialize(args);
+		node = Node.start(options);
+	}
 
 	@PreDestroy
 	public void shutdown() {
@@ -60,6 +68,10 @@ public class NodeApplication {
 			}
 		};
 		return tomcat;
+	}
+
+	public static void main(String args[]) {
+		new NodeApplication().run(args);
 	}
 
 }

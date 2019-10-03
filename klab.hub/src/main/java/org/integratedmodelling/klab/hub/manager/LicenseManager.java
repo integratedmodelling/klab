@@ -122,7 +122,7 @@ public class LicenseManager {
 		properties.setProperty(KlabCertificate.KEY_PARTNER_EMAIL, "info@integratedmodelling.org");
 		properties.setProperty(KlabCertificate.KEY_PARTNER_HUB, tokenClickbackConfig.getSiteUrl().toString());
 		properties.setProperty("klab.wordlview", "im");
-		properties.setProperty(KlabCertificate.KEY_URL, "http://127.0.0.1:8287/node");
+		properties.setProperty(KlabCertificate.KEY_URL, node.getUrl());
 		properties.setProperty(KlabCertificate.KEY_CERTIFICATE_TYPE, KlabCertificate.Type.NODE.toString());
 		properties.setProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL, KlabCertificate.Level.INSTITUTIONAL.toString());
 		return properties;
