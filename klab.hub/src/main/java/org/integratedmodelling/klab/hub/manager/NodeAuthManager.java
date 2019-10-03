@@ -67,7 +67,7 @@ public class NodeAuthManager {
 		INodeIdentity node = authenticateNodeCert(request.getCertificate());
 		Logging.INSTANCE.info(node.getName());
 		List<Group> Groups = klabNodeManager.getNodeGroups(request.getNodeName());
-		node.getUrls().add(klabNodeManager.getNode(node.getName()).getUrl());
+		node.getUrls().add(klabNodeManager.getNode(request.getNodeName()).getUrl());
 		Logging.INSTANCE.info("authorized node " + node.getName());
 		IdentityReference userIdentity = new IdentityReference(node.getName()
 				,node.getParentIdentity().getEmailAddress(), now.toString());		
