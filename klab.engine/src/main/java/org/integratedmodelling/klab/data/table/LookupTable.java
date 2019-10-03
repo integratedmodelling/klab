@@ -33,6 +33,13 @@ public class LookupTable implements ILookupTable {
 	Map<IConcept, Integer> key;
 	Map<String, Object> cache = new HashMap<>();
 
+	class RowProxy {
+		int row;
+		RowProxy(int row) {
+			this.row = row;
+		}
+	}
+	
 	public LookupTable(IKimLookupTable lookupTable) {
 
 		this.table = Table.create(lookupTable.getTable());
@@ -111,13 +118,7 @@ public class LookupTable implements ILookupTable {
 
 		StringBuffer s = new StringBuffer(1024);
 		Object[] values = new Object[variables.size()];
-		
-		Double pop = parameters.get("gdp", Double.class);
-		Double pap = parameters.get("population_density", Double.class);
-		if (pop != null && !Double.isNaN(pop) && pap != null && !Double.isNaN(pap)) {
-			System.out.println("ROAODSI");
-		}
-		
+
 		for (int i = 0; i < variables.size(); i++) {
 			if (i == searchIndex || variables.get(i).charAt(0) == '*') {
 				continue;
@@ -131,6 +132,8 @@ public class LookupTable implements ILookupTable {
 		Object ret = cache.get(key);
 		if (ret == null) {
 
+			int rind = 0;
+			boolean storeProxy = false;
 			for (IClassifier[] row : table.getRows()) {
 				boolean ok = true;
 				for (int i = 0; i < variables.size(); i++) {
@@ -143,17 +146,23 @@ public class LookupTable implements ILookupTable {
 					}
 				}
 				if (ok) {
+					if (row[searchIndex].isComputed()) {
+						storeProxy = true;
+					}
 					ret = row[searchIndex].asValue(context);
 					break;
 				}
+				rind ++;
 			}
-			
-			cache.put(key, ret == null ? Optional.empty() : ret);
-			
+
+			cache.put(key, ret == null ? Optional.empty() : (storeProxy ? new RowProxy(rind) : ret));
+
+		} else if (ret instanceof RowProxy) {
+			ret = table.getRows().get(((RowProxy)ret).row)[searchIndex].asValue(context);
 		} else {
 			ret = ret instanceof Optional ? null : ret;
 		}
-		
+
 		return ret;
 	}
 

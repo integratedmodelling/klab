@@ -463,4 +463,9 @@ public class Classifier implements IClassifier {
 	public Type getType() {
 		return type;
 	}
+
+	@Override
+	public boolean isComputed() {
+		return expressionMatch != null;
+	}
 }
