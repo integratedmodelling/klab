@@ -19,6 +19,8 @@ public class KlabNode {
     @Indexed(unique = false)
     String email;
     
+    String url;
+    
     DateTime registrationDate;
     
     DateTime lastNodeConnection;
@@ -43,6 +45,10 @@ public class KlabNode {
 
 	public void setGroups(List<String> groups) {
 		this.groups = groups;
+	}
+
+	public String getUrl() {
+		return this.url;
 	}
 
 }

@@ -98,7 +98,7 @@ public class KlabNodeManager {
 	}
 
 	public void deleteNode(String id) {
-
+		klabNodeService.deleteNode(id);
 	}
 
 	public KlabNode createNode(String id, KlabNode node) {
