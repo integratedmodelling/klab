@@ -44,13 +44,13 @@ public class NodeAuthManager {
 	public NodeAuthenticationResponse processNodeCert(NodeAuthenticationRequest request, String ip) {
 		switch (request.getLevel()) {
 		case TEST:
-			if (IPUtils.isLocal(ip)) {
+			if (IPUtils.isLocalhost(ip)) {
 				return processLocalNode(request);
 			} else {
 				break;	
 			}
 		default:
-			if (IPUtils.isLocal(ip)) {
+			if (IPUtils.isLocalhost(ip)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return processLocalNode(request);
 			} else {
