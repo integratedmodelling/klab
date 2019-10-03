@@ -167,11 +167,11 @@ public class Observer extends KimObject implements IObserver {
 	}
 
 	@Override
-	public List<IContextualizable> getComputation(boolean initialization) {
+	public List<IContextualizable> getComputation() {
 		List<IContextualizable> ret = new ArrayList<>();
-		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggers(initialization)) {
+		for (Trigger trigger : Trigger.values()) {
 			for (IAction action : behavior.getActions(trigger)) {
-				ret.addAll(action.getComputation(initialization));
+				ret.addAll(action.getComputation());
 			}
 		}
 		return ret;

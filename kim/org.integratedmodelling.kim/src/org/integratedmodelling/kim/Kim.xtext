@@ -139,10 +139,10 @@ ActionSpecification:
 	  | 
 		(trigger?='on' (
 				initialization?='definition' | 
-				resolution?='resolution' | 
+//				resolution?='resolution' | 
 				instantiation ?= 'instantiation' | 
 				termination ?='termination' | 
-				stateInitialization ?= 'initialization'| 
+//				stateInitialization ?= 'initialization'| 
 				event=ConceptDeclaration ('in' (anyContextEvent?='context' | (relatedEventContext?='related')) eventContext=ConceptDeclaration)?
 		    ) 
 		    (parameters = List)?
@@ -185,7 +185,7 @@ ComputableValue:
 	null?='unknown';
 	
 ValueExecution returns ValueAssignment:
-	execValue=ExecutableValue ('as' target=LOWERCASE_ID)?
+	execValue=ExecutableValue ('for' target=LOWERCASE_ID)?
 ;
 	
 ExecutableValue returns ComputableValue:

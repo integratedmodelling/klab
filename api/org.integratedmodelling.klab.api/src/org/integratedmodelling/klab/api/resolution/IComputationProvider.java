@@ -20,21 +20,22 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IContextualizable;
 
 /**
- * The computable interface applies to objects that can contribute computations to a dataflow. If
- * so, they must be able to provide a declarative form of the computation as a list of resources
- * that can be turned into KDL actuators.
+ * The computable interface applies to objects that can contribute computations
+ * to a dataflow. If so, they must be able to provide a declarative form of the
+ * computation as a list of resources that can be turned into KDL actuators.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IComputationProvider {
 
-  /**
-   * Return the computations for the passed locator.
-   *
-   * @param locator a {@link org.integratedmodelling.klab.api.data.ILocator} object.
-   * @return a list of computable resources, possibly empty.
-   */
-  List<IContextualizable> getComputation(boolean initialization);
+	/**
+	 * Return the computations for the passed locator.
+	 *
+	 * @return a list of computable resources, possibly empty, including the
+	 *         specific triggers which will depend both on the declaration and the
+	 *         semantic context.
+	 */
+	List<IContextualizable> getComputation();
 
 }

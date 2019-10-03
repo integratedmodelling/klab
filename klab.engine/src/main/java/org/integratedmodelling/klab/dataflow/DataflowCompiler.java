@@ -212,7 +212,7 @@ public class DataflowCompiler {
 			 * recover any instantiation actions
 			 */
 			for (IAction action : contextModel.getBehavior().getActions(Trigger.INSTANTIATION)) {
-				for (IContextualizable resource : action.getComputation(true)) {
+				for (IContextualizable resource : action.getComputation()) {
 					actuator.addComputation(((ComputableResource) resource).copy());
 				}
 			}
@@ -784,7 +784,7 @@ public class DataflowCompiler {
 	 */
 	public List<IContextualizable> getModelComputation(Model model, IArtifact.Type targetType,
 			boolean initialization) {
-		List<IContextualizable> ret = new ArrayList<>(model.getComputation(initialization));
+		List<IContextualizable> ret = new ArrayList<>(model.getComputation());
 		int lastDirectPosition = -1;
 		IArtifact.Type lastDirectType = null;
 		int i = 0;

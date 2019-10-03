@@ -30,7 +30,7 @@ class Action implements IAction {
     }
 
     @Override
-    public List<IContextualizable> getComputation(boolean initialization) {
+    public List<IContextualizable> getComputation() {
 
       return this.delegate.getComputation();
         

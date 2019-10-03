@@ -158,22 +158,23 @@ public class KimBehavior extends KimStatement implements IKimBehavior {
         // default trigger if none is defined but we don't have the 'over' part
         if (!action.isOver()) {
         	// will be overwritten later if necessary
-        	act.setTrigger(Trigger.DEFINITION);
+        	act.setTrigger(Trigger.RESOLUTION);
         }
         
         if (action.isTrigger() || !action.isOver()) {
 
             if (action.isInitialization()) {
                 act.setTrigger(Trigger.DEFINITION);
-            } else if (action.isResolution()) {
-                act.setTrigger(Trigger.RESOLUTION);
-            } else if (action.isTermination()) {
+			} /*
+				 * else if (action.isResolution()) { act.setTrigger(Trigger.RESOLUTION); }
+				 */else if (action.isTermination()) {
                 act.setTrigger(Trigger.TERMINATION);
             } else if (action.isInstantiation()) {
                 act.setTrigger(Trigger.INSTANTIATION);
-            } else if (action.isStateInitialization()) {
-                act.setTrigger(Trigger.STATE_INITIALIZATION);
-            }
+			} /*
+				 * else if (action.isStateInitialization()) {
+				 * act.setTrigger(Trigger.STATE_INITIALIZATION); }
+				 */
 
             IKimConcept onEvent = null;
             if (action.getEvent() != null) {

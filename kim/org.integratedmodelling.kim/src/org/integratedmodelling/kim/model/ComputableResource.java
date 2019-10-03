@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimAction;
+import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimLookupTable;
@@ -70,6 +72,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = null;
 	private Map<String, Object> interactiveParameters;
 	private Type type;
+	private IKimAction.Trigger trigger = IKimAction.Trigger.RESOLUTION;
 
 	/**
 	 * Slot to save a validated resource so that it won't need to be validated
@@ -285,11 +288,12 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	}
 
 	public ComputableResource(ValueAssignment statement, ComputableResource condition, Mode resolutionMode,
-			IKimStatement parent) {
+			IKimStatement parent, Trigger trigger) {
 		super(statement, parent);
 		setFrom(statement, resolutionMode);
 		this.type = Type.CONDITION;
 		this.condition = condition;
+		this.trigger = trigger;
 	}
 
 	public ComputableResource(String urn, Mode resolutionMode) {
@@ -784,13 +788,14 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		}
 		return Geometry.scalar();
 	}
+
+	@Override
+	public Trigger getTrigger() {
+		return this.trigger;
+	}
 	
-//	public IComputableResource withFilterTarget(IObservable observable) {
-//		this.filterTarget = observable;
-//		return this;
-//	}
-//
-//	public IObservable getFilterTarget() {
-//		return this.filterTarget;
-//	}
+	public void setTrigger(Trigger trigger) {
+		this.trigger = trigger;
+	}
+	
 }

@@ -30,11 +30,18 @@ public class Behavior implements IBehavior {
 	boolean temporal;
 
 	public Behavior(IKimBehavior behavior, IActiveKimObject model) {
-		// TODO Auto-generated constructor stub
 		this.statement = behavior;
 		if (behavior != null) {
 			for (IKimAction action : behavior) {
 				actions.add(new Action(action));
+				if (model instanceof Model) {
+					/*
+					 * Fix the trigger according to semantics and role
+					 */
+					if (((Model) model).getObservables().get(0).getArtifactType().isOccurrent()) {
+						// resolution becomes transition
+					}
+				}
 			}
 		}
 	}

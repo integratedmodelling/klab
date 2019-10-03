@@ -229,8 +229,8 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public List<IContextualizable> getComputation(boolean initialization) {
-		return getDelegate().getComputation(initialization);
+	public List<IContextualizable> getComputation() {
+		return getDelegate().getComputation();
 	}
 
 	@Override

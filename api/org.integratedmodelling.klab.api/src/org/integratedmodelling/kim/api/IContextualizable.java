@@ -13,8 +13,8 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflowNode;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
- * A computable resource is a declaration that specifies a processing step for a
- * dataflow. In k.IM this can be represented by:
+ * A contextualizable is the declaration of a resource that can be compiled into
+ * a processing step for a dataflow. In k.IM this can represent:
  * <p>
  * <ul>
  * <li>a literal value;</li>
@@ -26,8 +26,12 @@ import org.integratedmodelling.klab.utils.Pair;
  * currency)</li>
  * </ul>
  * <p>
- * It is the runtime's task to turn any computable resource into a uniform
- * service call, which produces a IContextualizer to be inserted in a dataflow.
+ * Contextualizables have an artifact type and a declared geometry which
+ * determines which phases of a dataflow they apply to.
+ * <p>
+ * It is the runtime's task to turn any computable resource into a uniform k.DL
+ * service call. The call produces a IContextualizer that is inserted in a
+ * dataflow.
  * 
  * @author Ferd
  *
@@ -35,12 +39,14 @@ import org.integratedmodelling.klab.utils.Pair;
 public interface IContextualizable extends IKimStatement, IDataflowNode {
 
 	public static enum Type {
-		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, EXPRESSION, CONVERSION, LITERAL, CONDITION
+		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, EXPRESSION, CONVERSION, LITERAL,
+		/* conditions are currently underspecified */CONDITION
 	}
 
 	/**
 	 * The data structure describing interactive parameters. It's a javabean with
-	 * only string for values so that it can be easily serialized for communication.
+	 * only strings for values, so that it can be easily serialized for
+	 * communication.
 	 * 
 	 * @author ferdinando.villa
 	 *
@@ -166,6 +172,15 @@ public interface IContextualizable extends IKimStatement, IDataflowNode {
 		}
 
 	}
+
+	/**
+	 * Contextualizables carry the trigger that they were declared with. Those that
+	 * represent "default" computables for a model, such as resources, will report
+	 * 
+	 * 
+	 * @return
+	 */
+	IKimAction.Trigger getTrigger();
 
 	/**
 	 * Return the type of the contained resource.

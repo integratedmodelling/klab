@@ -61,10 +61,10 @@ public class KimAction extends KimStatement implements IKimAction {
     }
 
     for (ValueAssignment vass : statement.getAssignments()) {
-      this.computation.add(new ComputableResource(vass, condition, resolutionMode, getParent()));
+      this.computation.add(new ComputableResource(vass, condition, resolutionMode, getParent(), this.trigger));
     }
     for (ValueAssignment vass : statement.getExecuted()) {
-        this.computation.add(new ComputableResource(vass, condition, resolutionMode, getParent()));
+        this.computation.add(new ComputableResource(vass, condition, resolutionMode, getParent(), this.trigger));
       }
 
   }

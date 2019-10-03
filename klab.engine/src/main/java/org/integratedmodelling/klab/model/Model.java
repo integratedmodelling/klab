@@ -859,7 +859,7 @@ public class Model extends KimObject implements IModel {
 	 * @return the indirectAdapters for the model at the transition
 	 */
 	@Override
-	public List<IContextualizable> getComputation(boolean initialization) {
+	public List<IContextualizable> getComputation() {
 
 		List<IAnnotation> parameters = new ArrayList<>();
 		for (IAnnotation annotation : getAnnotations()) {
@@ -876,9 +876,9 @@ public class Model extends KimObject implements IModel {
 			}
 			ret.add(res);
 		}
-		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggers(initialization)) {
+		for (Trigger trigger : Trigger.values()) {
 			for (IAction action : behavior.getActions(trigger)) {
-				for (IContextualizable resource : action.getComputation(initialization)) {
+				for (IContextualizable resource : action.getComputation()) {
 					ComputableResource res = ((ComputableResource) resource).copy();
 					if (parameters.size() > 0) {
 						res.addParameters(parameters);
