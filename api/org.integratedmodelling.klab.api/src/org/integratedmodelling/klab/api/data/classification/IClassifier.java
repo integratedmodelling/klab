@@ -29,10 +29,8 @@ public interface IClassifier {
 	/**
 	 * True if passed object matches the conditions of the classifier.
 	 *
-	 * @param o
-	 *            the o
-	 * @param context
-	 *            the context
+	 * @param o       the o
+	 * @param context the context
 	 * @return True if passed object matches the conditions of the classifier
 	 */
 	public boolean classify(Object o, IContextualizationScope context);
@@ -59,6 +57,14 @@ public interface IClassifier {
 	boolean isInterval();
 
 	/**
+	 * True if the classifier must be computed, passing a context, when
+	 * {@link #asValue(IContextualizationScope)} is called.
+	 * 
+	 * @return true if computed
+	 */
+	boolean isComputed();
+
+	/**
 	 * Source code for k.IM and KDL serialization
 	 * 
 	 * @return parseable source code
@@ -71,8 +77,7 @@ public interface IClassifier {
 	 * it's matching a single one, or possibly a random object among the choices if
 	 * it's in OR.
 	 *
-	 * @param context
-	 *            pass a context for complex evaluations, like expressions
+	 * @param context pass a context for complex evaluations, like expressions
 	 * 
 	 * @return the value this classifier resolves to.
 	 */
