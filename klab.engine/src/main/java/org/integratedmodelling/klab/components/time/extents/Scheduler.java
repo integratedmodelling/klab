@@ -134,8 +134,8 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 
 		/*
 		 * We have a step and (possibly) a start and an end. Enqueue actions for all
-		 * contextualizers that are established to be temporal...
-//		 */
+		 * contextualizers that are established to be temporal... //
+		 */
 //		for (IContextualizer contextualizer : actuator.getComputation()) {
 //
 //			if (contextualizer.getGeometry() != null
@@ -157,27 +157,32 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 			public void accept(Long t) {
 
 				/*
+				 * If target is dead, return
+				 */
+
+				/*
 				 * 1. Turn the millisecond t into the correspondent T extent for the
 				 * observation's scale
 				 */
-				
 
 				/*
-				 * 2. Set the context at() the current time.
+				 * 2. Set the context at() the current time. This will also need to expose any
+				 * affected outputs that move at a different (context) speed through a rescaling
+				 * wrapper.
 				 */
 
 				/*
-				 * 3. Run all contextualizers in the context; check for signs of life at each
-				 * step.
+				 * 3. Run all contextualizers in the context that react to transitions; check
+				 * for signs of life at each step.
 				 */
-//				for (IContextualizable ctx : resources) {
-////					actuator.run
-//				}
-				
+				for (Actuator.Computation computation : actuator.getContextualizers()) {
+//					actuator.runContextualizer....
+				}
+
 				/*
 				 * 4. Notify whatever has changed.
 				 */
-				
+
 			}
 		}, /* TODO */0, step.getMilliseconds(), TimeUnit.MILLISECONDS);
 
