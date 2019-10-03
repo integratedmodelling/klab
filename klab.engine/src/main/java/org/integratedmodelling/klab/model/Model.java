@@ -260,8 +260,7 @@ public class Model extends KimObject implements IModel {
 				}
 			}
 
-			String target = resource.getTarget() == null ? this.observables.get(0).getName()
-					: resource.getTarget().getName();
+			String target = resource.getTargetId() == null ? this.observables.get(0).getName() : resource.getTargetId();
 			IArtifact.Type type = Resources.INSTANCE.getType(resource);
 			IGeometry geometry = Resources.INSTANCE.getGeometry(resource);
 
@@ -819,7 +818,7 @@ public class Model extends KimObject implements IModel {
 
 			for (IAnnotation annotation : getAnnotations()) {
 				if ("space".equals(annotation.getName())) {
-					if (dims.contains(Dimension.Type.SPACE)) { 
+					if (dims.contains(Dimension.Type.SPACE)) {
 						monitor.error("cannot specify spatial extent in more than one way");
 					} else {
 						extents.add(Space.create(annotation));

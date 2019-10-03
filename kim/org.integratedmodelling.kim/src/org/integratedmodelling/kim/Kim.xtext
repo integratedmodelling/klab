@@ -154,7 +154,7 @@ FunctionOrID:
 	function=Function | functionId=(LOWERCASE_ID|NamespaceId);
 
 Action:
-	(change?='change' | set?='set') 
+	(set?='set') 
 		assignments+=ValueAssignment (',' assignments+=ValueAssignment)*
 		(=> ('if' | conditionNegative?='unless') condition=Value)? |
 	integrate?='integrate'  

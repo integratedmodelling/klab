@@ -66,7 +66,6 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getFunctionOrIDAccess().getAlternatives(), "rule__FunctionOrID__Alternatives");
 			builder.put(grammarAccess.getFunctionOrIDAccess().getFunctionIdAlternatives_1_0(), "rule__FunctionOrID__FunctionIdAlternatives_1_0");
 			builder.put(grammarAccess.getActionAccess().getAlternatives(), "rule__Action__Alternatives");
-			builder.put(grammarAccess.getActionAccess().getAlternatives_0_0(), "rule__Action__Alternatives_0_0");
 			builder.put(grammarAccess.getActionAccess().getAlternatives_0_3_0_0(), "rule__Action__Alternatives_0_3_0_0");
 			builder.put(grammarAccess.getActionAccess().getAlternatives_1_3_0_0(), "rule__Action__Alternatives_1_3_0_0");
 			builder.put(grammarAccess.getActionAccess().getDoAlternatives_2_0_0(), "rule__Action__DoAlternatives_2_0_0");
@@ -692,8 +691,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getActionSpecificationAccess().getActionsAssignment_1_2_1(), "rule__ActionSpecification__ActionsAssignment_1_2_1");
 			builder.put(grammarAccess.getFunctionOrIDAccess().getFunctionAssignment_0(), "rule__FunctionOrID__FunctionAssignment_0");
 			builder.put(grammarAccess.getFunctionOrIDAccess().getFunctionIdAssignment_1(), "rule__FunctionOrID__FunctionIdAssignment_1");
-			builder.put(grammarAccess.getActionAccess().getChangeAssignment_0_0_0(), "rule__Action__ChangeAssignment_0_0_0");
-			builder.put(grammarAccess.getActionAccess().getSetAssignment_0_0_1(), "rule__Action__SetAssignment_0_0_1");
+			builder.put(grammarAccess.getActionAccess().getSetAssignment_0_0(), "rule__Action__SetAssignment_0_0");
 			builder.put(grammarAccess.getActionAccess().getAssignmentsAssignment_0_1(), "rule__Action__AssignmentsAssignment_0_1");
 			builder.put(grammarAccess.getActionAccess().getAssignmentsAssignment_0_2_1(), "rule__Action__AssignmentsAssignment_0_2_1");
 			builder.put(grammarAccess.getActionAccess().getConditionNegativeAssignment_0_3_0_0_1(), "rule__Action__ConditionNegativeAssignment_0_3_0_0_1");

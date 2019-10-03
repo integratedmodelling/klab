@@ -5,7 +5,7 @@ import java.util.List;
 public interface IKimAction extends IKimStatement {
 
 	enum Type {
-		SET, CHANGE, INTEGRATE, DO, MOVE, DESTROY
+		SET, INTEGRATE, DO, MOVE, DESTROY
 	};
 
 	/**

@@ -1094,22 +1094,13 @@ public interface KimPackage extends EPackage
   int ACTION = 16;
 
   /**
-   * The feature id for the '<em><b>Change</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION__CHANGE = 0;
-
-  /**
    * The feature id for the '<em><b>Set</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTION__SET = 1;
+  int ACTION__SET = 0;
 
   /**
    * The feature id for the '<em><b>Assignments</b></em>' containment reference list.
@@ -1118,7 +1109,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__ASSIGNMENTS = 2;
+  int ACTION__ASSIGNMENTS = 1;
 
   /**
    * The feature id for the '<em><b>Condition Negative</b></em>' attribute.
@@ -1127,7 +1118,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__CONDITION_NEGATIVE = 3;
+  int ACTION__CONDITION_NEGATIVE = 2;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' containment reference.
@@ -1136,7 +1127,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__CONDITION = 4;
+  int ACTION__CONDITION = 3;
 
   /**
    * The feature id for the '<em><b>Integrate</b></em>' attribute.
@@ -1145,7 +1136,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__INTEGRATE = 5;
+  int ACTION__INTEGRATE = 4;
 
   /**
    * The feature id for the '<em><b>Do</b></em>' attribute.
@@ -1154,7 +1145,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__DO = 6;
+  int ACTION__DO = 5;
 
   /**
    * The feature id for the '<em><b>Executed</b></em>' containment reference list.
@@ -1163,7 +1154,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__EXECUTED = 7;
+  int ACTION__EXECUTED = 6;
 
   /**
    * The feature id for the '<em><b>Move</b></em>' attribute.
@@ -1172,7 +1163,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__MOVE = 8;
+  int ACTION__MOVE = 7;
 
   /**
    * The feature id for the '<em><b>Where</b></em>' containment reference.
@@ -1181,7 +1172,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__WHERE = 9;
+  int ACTION__WHERE = 8;
 
   /**
    * The feature id for the '<em><b>Away</b></em>' attribute.
@@ -1190,7 +1181,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__AWAY = 10;
+  int ACTION__AWAY = 9;
 
   /**
    * The number of structural features of the '<em>Action</em>' class.
@@ -1199,7 +1190,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_FEATURE_COUNT = 11;
+  int ACTION_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ValueAssignmentImpl <em>Value Assignment</em>}' class.
@@ -5486,17 +5477,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EClass getAction();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Action#isChange <em>Change</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Change</em>'.
-   * @see org.integratedmodelling.kim.kim.Action#isChange()
-   * @see #getAction()
-   * @generated
-   */
-  EAttribute getAction_Change();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Action#isSet <em>Set</em>}'.
@@ -9887,14 +9867,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EClass ACTION = eINSTANCE.getAction();
-
-    /**
-     * The meta object literal for the '<em><b>Change</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTION__CHANGE = eINSTANCE.getAction_Change();
 
     /**
      * The meta object literal for the '<em><b>Set</b></em>' attribute feature.

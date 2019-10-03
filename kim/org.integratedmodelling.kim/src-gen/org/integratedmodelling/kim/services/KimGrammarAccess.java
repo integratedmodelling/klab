@@ -1862,11 +1862,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Action");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Alternatives cAlternatives_0_0 = (Alternatives)cGroup_0.eContents().get(0);
-		private final Assignment cChangeAssignment_0_0_0 = (Assignment)cAlternatives_0_0.eContents().get(0);
-		private final Keyword cChangeChangeKeyword_0_0_0_0 = (Keyword)cChangeAssignment_0_0_0.eContents().get(0);
-		private final Assignment cSetAssignment_0_0_1 = (Assignment)cAlternatives_0_0.eContents().get(1);
-		private final Keyword cSetSetKeyword_0_0_1_0 = (Keyword)cSetAssignment_0_0_1.eContents().get(0);
+		private final Assignment cSetAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final Keyword cSetSetKeyword_0_0_0 = (Keyword)cSetAssignment_0_0.eContents().get(0);
 		private final Assignment cAssignmentsAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
 		private final RuleCall cAssignmentsValueAssignmentParserRuleCall_0_1_0 = (RuleCall)cAssignmentsAssignment_0_1.eContents().get(0);
 		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
@@ -1930,39 +1927,30 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cConditionValueParserRuleCall_3_2_0 = (RuleCall)cConditionAssignment_3_2.eContents().get(0);
 		
 		//Action:
-		//	(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
-		//	conditionNegative?='unless') condition=Value)? | integrate?='integrate'
+		//	set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
+		//	condition=Value)? | integrate?='integrate'
 		//	assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
 		//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=>
 		//	('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') =>
 		//	condition=Value?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
-		//conditionNegative?='unless') condition=Value)? | integrate?='integrate' assignments+=ValueAssignment (','
-		//assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless') condition=Value)? | do?=('do' | 'then' |
-		//'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless')
-		//condition=Value)? | move?='move' (where=Value | away?='away') => condition=Value?
+		//set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
+		//condition=Value)? | integrate?='integrate' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if'
+		//| conditionNegative?='unless') condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (','
+		//executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value |
+		//away?='away') => condition=Value?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
-		//conditionNegative?='unless') condition=Value)?
+		//set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
+		//condition=Value)?
 		public Group getGroup_0() { return cGroup_0; }
 		
-		//change?='change' | set?='set'
-		public Alternatives getAlternatives_0_0() { return cAlternatives_0_0; }
-		
-		//change?='change'
-		public Assignment getChangeAssignment_0_0_0() { return cChangeAssignment_0_0_0; }
-		
-		//'change'
-		public Keyword getChangeChangeKeyword_0_0_0_0() { return cChangeChangeKeyword_0_0_0_0; }
-		
 		//set?='set'
-		public Assignment getSetAssignment_0_0_1() { return cSetAssignment_0_0_1; }
+		public Assignment getSetAssignment_0_0() { return cSetAssignment_0_0; }
 		
 		//'set'
-		public Keyword getSetSetKeyword_0_0_1_0() { return cSetSetKeyword_0_0_1_0; }
+		public Keyword getSetSetKeyword_0_0_0() { return cSetSetKeyword_0_0_0; }
 		
 		//assignments+=ValueAssignment
 		public Assignment getAssignmentsAssignment_0_1() { return cAssignmentsAssignment_0_1; }
@@ -10789,8 +10777,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Action:
-	//	(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
-	//	conditionNegative?='unless') condition=Value)? | integrate?='integrate'
+	//	set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
+	//	condition=Value)? | integrate?='integrate'
 	//	assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
 	//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=>
 	//	('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') =>

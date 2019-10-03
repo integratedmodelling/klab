@@ -3259,27 +3259,6 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Action__Alternatives_0_0
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	(
-		{ before(grammarAccess.getActionAccess().getChangeAssignment_0_0_0()); }
-		(rule__Action__ChangeAssignment_0_0_0)
-		{ after(grammarAccess.getActionAccess().getChangeAssignment_0_0_0()); }
-	)
-	|
-	(
-		{ before(grammarAccess.getActionAccess().getSetAssignment_0_0_1()); }
-		(rule__Action__SetAssignment_0_0_1)
-		{ after(grammarAccess.getActionAccess().getSetAssignment_0_0_1()); }
-	)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
 rule__Action__Alternatives_0_3_0_0
 	@init {
 		int stackSize = keepStackSize();
@@ -11626,9 +11605,9 @@ rule__Action__Group_0__0__Impl
 	}
 :
 (
-	{ before(grammarAccess.getActionAccess().getAlternatives_0_0()); }
-	(rule__Action__Alternatives_0_0)
-	{ after(grammarAccess.getActionAccess().getAlternatives_0_0()); }
+	{ before(grammarAccess.getActionAccess().getSetAssignment_0_0()); }
+	(rule__Action__SetAssignment_0_0)
+	{ after(grammarAccess.getActionAccess().getSetAssignment_0_0()); }
 )
 ;
 finally {
@@ -37052,38 +37031,19 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Action__ChangeAssignment_0_0_0
+rule__Action__SetAssignment_0_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getActionAccess().getChangeChangeKeyword_0_0_0_0()); }
+		{ before(grammarAccess.getActionAccess().getSetSetKeyword_0_0_0()); }
 		(
-			{ before(grammarAccess.getActionAccess().getChangeChangeKeyword_0_0_0_0()); }
-			'change'
-			{ after(grammarAccess.getActionAccess().getChangeChangeKeyword_0_0_0_0()); }
-		)
-		{ after(grammarAccess.getActionAccess().getChangeChangeKeyword_0_0_0_0()); }
-	)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__Action__SetAssignment_0_0_1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	(
-		{ before(grammarAccess.getActionAccess().getSetSetKeyword_0_0_1_0()); }
-		(
-			{ before(grammarAccess.getActionAccess().getSetSetKeyword_0_0_1_0()); }
+			{ before(grammarAccess.getActionAccess().getSetSetKeyword_0_0_0()); }
 			'set'
-			{ after(grammarAccess.getActionAccess().getSetSetKeyword_0_0_1_0()); }
+			{ after(grammarAccess.getActionAccess().getSetSetKeyword_0_0_0()); }
 		)
-		{ after(grammarAccess.getActionAccess().getSetSetKeyword_0_0_1_0()); }
+		{ after(grammarAccess.getActionAccess().getSetSetKeyword_0_0_0()); }
 	)
 ;
 finally {

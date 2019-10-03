@@ -797,5 +797,10 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	public void setTrigger(Trigger trigger) {
 		this.trigger = trigger;
 	}
+
+	@Override
+	public String getTargetId() {
+		return this.targetId;
+	}
 	
 }

@@ -190,7 +190,17 @@ public interface IContextualizable extends IKimStatement, IDataflowNode {
 	Type getType();
 
 	/**
-	 * The target observable for this computation; null if the target is the main
+	 * Target ID: if null, the main observable of the model, otherwise another
+	 * observable which must be defined. This is a syntactic property and can be
+	 * accessed outside of a contextualization scope.
+	 * 
+	 * @return the target ID.
+	 */
+	String getTargetId();
+
+	/**
+	 * The target observable for this computation, correspondent to the target ID.
+	 * Accessible only during contextualization. Null if the target is the main
 	 * observable in the correspondent actuator. Otherwise the computation affects
 	 * other artifacts, as in the case of internal dependencies due to indirect
 	 * observables being used in subsequent computation to produce the main one.

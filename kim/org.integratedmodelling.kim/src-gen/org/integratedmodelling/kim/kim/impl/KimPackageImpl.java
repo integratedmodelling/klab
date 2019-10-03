@@ -1613,7 +1613,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getAction_Change()
+  public EAttribute getAction_Set()
   {
     return (EAttribute)actionEClass.getEStructuralFeatures().get(0);
   }
@@ -1624,20 +1624,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getAction_Set()
-  {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EReference getAction_Assignments()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(2);
+    return (EReference)actionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1648,7 +1637,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getAction_ConditionNegative()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1659,7 +1648,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getAction_Condition()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(4);
+    return (EReference)actionEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1670,7 +1659,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getAction_Integrate()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(5);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1681,7 +1670,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getAction_Do()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -1692,7 +1681,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getAction_Executed()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(7);
+    return (EReference)actionEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -1703,7 +1692,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getAction_Move()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1714,7 +1703,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getAction_Where()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(9);
+    return (EReference)actionEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -1725,7 +1714,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getAction_Away()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -5359,7 +5348,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(functionOrIDEClass, FUNCTION_OR_ID__FUNCTION_ID);
 
     actionEClass = createEClass(ACTION);
-    createEAttribute(actionEClass, ACTION__CHANGE);
     createEAttribute(actionEClass, ACTION__SET);
     createEReference(actionEClass, ACTION__ASSIGNMENTS);
     createEAttribute(actionEClass, ACTION__CONDITION_NEGATIVE);
@@ -5874,7 +5862,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getFunctionOrID_FunctionId(), ecorePackage.getEString(), "functionId", null, 0, 1, FunctionOrID.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(actionEClass, Action.class, "Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getAction_Change(), ecorePackage.getEBoolean(), "change", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAction_Set(), ecorePackage.getEBoolean(), "set", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAction_Assignments(), this.getValueAssignment(), null, "assignments", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAction_ConditionNegative(), ecorePackage.getEBoolean(), "conditionNegative", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

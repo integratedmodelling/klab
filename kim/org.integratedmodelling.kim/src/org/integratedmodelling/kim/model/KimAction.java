@@ -40,8 +40,6 @@ public class KimAction extends KimStatement implements IKimAction {
 
     if (statement.isAway()) {
       this.type = Type.DESTROY;
-    } else if (statement.isChange()) {
-      this.type = Type.CHANGE;
     } else if (statement.isDo()) {
       this.type = Type.DO;
     } else if (statement.isIntegrate()) {

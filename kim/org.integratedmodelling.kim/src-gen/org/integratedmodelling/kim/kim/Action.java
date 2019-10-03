@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.Action#isChange <em>Change</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Action#isSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Action#getAssignments <em>Assignments</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Action#isConditionNegative <em>Condition Negative</em>}</li>
@@ -36,28 +35,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Action extends EObject
 {
-  /**
-   * Returns the value of the '<em><b>Change</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Change</em>' attribute.
-   * @see #setChange(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getAction_Change()
-   * @model
-   * @generated
-   */
-  boolean isChange();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Action#isChange <em>Change</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Change</em>' attribute.
-   * @see #isChange()
-   * @generated
-   */
-  void setChange(boolean value);
-
   /**
    * Returns the value of the '<em><b>Set</b></em>' attribute.
    * <!-- begin-user-doc -->
