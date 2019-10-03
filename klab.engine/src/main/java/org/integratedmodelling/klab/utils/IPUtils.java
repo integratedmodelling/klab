@@ -163,6 +163,8 @@ public class IPUtils {
 	static String[] localPatterns = new String[] { "127.0.0.1", "192.168.*.*", "10.*.*.*", "172.16.*.*", "172.17.*.*",
 			"172.18.*.*", "172.19.*.*", "172.20.*.*", "172.21.*.*", "172.22.*.*", "172.23.*.*", "172.24.*.*",
 			"172.25.*.*", "172.26.*.*", "172.27.*.*", "172.28.*.*", "172.29.*.*", "172.30.*.*", "172.31.*.*" };
+	
+	static String[] localhostPatterns = new String [] { "127.0.0.1", "192.168.0.1", "10.0.0.1" };
 
 	/**
 	 * Checks if is local.
@@ -178,6 +180,19 @@ public class IPUtils {
 		}
 		
 		for (String p : localPatterns) {
+			if (checkIPMatching(p, ip)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isLocalhost(String ip) {
+		if (ip.equals("0:0:0:0:0:0:0:1")) {
+			return true;
+		}
+		
+		for (String p : localhostPatterns) {
 			if (checkIPMatching(p, ip)) {
 				return true;
 			}

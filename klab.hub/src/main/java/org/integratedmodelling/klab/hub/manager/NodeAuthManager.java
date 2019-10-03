@@ -44,13 +44,13 @@ public class NodeAuthManager {
 	public NodeAuthenticationResponse processNodeCert(NodeAuthenticationRequest request, String ip) {
 		switch (request.getLevel()) {
 		case TEST:
-			if (IPUtils.isLocal(ip)) {
+			if (IPUtils.isLocalhost(ip)) {
 				return processLocalNode(request);
 			} else {
 				break;	
 			}
 		default:
-			if (IPUtils.isLocal(ip)) {
+			if (IPUtils.isLocalhost(ip)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return processLocalNode(request);
 			} else {
@@ -67,7 +67,7 @@ public class NodeAuthManager {
 		INodeIdentity node = authenticateNodeCert(request.getCertificate());
 		Logging.INSTANCE.info(node.getName());
 		List<Group> Groups = klabNodeManager.getNodeGroups(request.getNodeName());
-		node.getUrls().add(klabNodeManager.getNode(node.getName()).getUrl());
+		node.getUrls().add(klabNodeManager.getNode(request.getNodeName()).getUrl());
 		Logging.INSTANCE.info("authorized node " + node.getName());
 		IdentityReference userIdentity = new IdentityReference(node.getName()
 				,node.getParentIdentity().getEmailAddress(), now.toString());		
