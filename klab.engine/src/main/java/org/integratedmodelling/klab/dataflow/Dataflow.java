@@ -468,8 +468,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public IDirectObservation getRelationshipTarget() {
 		return relationshipTarget;
-	}
-
+	}	
+	
 	public Dataflow withConfigurationTargets(Collection<IObservation> targets) {
 		this.configurationTargets = targets;
 		return this;

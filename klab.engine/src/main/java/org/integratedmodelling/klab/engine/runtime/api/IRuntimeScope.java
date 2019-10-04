@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.runtime.api;
 import java.util.Collection;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -340,10 +341,21 @@ public interface IRuntimeScope extends IContextualizationScope {
 	void scheduleActions(Actuator active);
 
 	/**
-	 * Create a scheduler for the passed temporal extent and keep it for getScheduler() to
-	 * retrieve.
+	 * Create a scheduler for the passed temporal extent and keep it for
+	 * getScheduler() to retrieve.
 	 * 
 	 * @return
 	 */
 	IScheduler<?> createScheduler(ITime time);
+
+	/**
+	 * Set the scale as specified by the passed locator (which should be a scale and
+	 * represent a specific temporal transition) and, according to the target
+	 * observations and their view, wrap any context states so that appropriate
+	 * temporal mediations are in place when an actuator modifies them.
+	 * 
+	 * @param transitionScale
+	 * @return
+	 */
+	IRuntimeScope locate(ILocator transitionScale);
 }

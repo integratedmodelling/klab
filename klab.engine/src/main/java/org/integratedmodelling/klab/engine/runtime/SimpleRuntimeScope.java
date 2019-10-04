@@ -11,6 +11,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -624,6 +625,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public IScheduler<?> createScheduler(ITime time) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IRuntimeScope locate(ILocator transitionScale) {
+		// TODO Auto-generated method stub
+		return this;
 	}
 
 }

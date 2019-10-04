@@ -1,18 +1,18 @@
 package org.integratedmodelling.klab.components.time.extents;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import org.integratedmodelling.kim.api.IContextualizable;
-import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
-import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelMockTimer;
 import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelTimer;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Scheduler for actors in either real or mock time. Akka does not allow the
@@ -128,11 +127,6 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		}
 
 		/*
-		 * holder for the lists that we include in the contextualizing action
-		 */
-		final List<IContextualizer> resources = new ArrayList<>();
-
-		/*
 		 * We have a step and (possibly) a start and an end. Enqueue actions for all
 		 * contextualizers that are established to be temporal... //
 		 */
@@ -148,6 +142,15 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 //
 //		}
 
+		IObservation targetObservation = (IObservation) scope.getTargetArtifact();
+		if (targetObservation.getObservable().is(IKimConcept.Type.PROCESS)
+				|| targetObservation.getObservable().is(IKimConcept.Type.EVENT)
+				|| targetObservation.getObservable().is(IKimConcept.Type.QUALITY)) {
+			targetObservation = scope.getContextObservation();
+		}
+
+		final IDirectObservation target = (IDirectObservation) targetObservation;
+
 		/*
 		 * enqueue actions for transition
 		 */
@@ -159,34 +162,63 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 				/*
 				 * If target is dead, return
 				 */
+				if (!target.isActive()) {
+					return;
+				}
 
 				/*
 				 * 1. Turn the millisecond t into the correspondent T extent for the
 				 * observation's scale
 				 */
+				ITime transition = (ITime) scale.getTime().at(new TimeInstant(t));
 
 				/*
 				 * 2. Set the context at() the current time. This will also need to expose any
 				 * affected outputs that move at a different (context) speed through a rescaling
-				 * wrapper.
+				 * wrapper. Done within the context, which uses its current target to establish
+				 * the specific view of the context.
 				 */
+				ILocator transitionScale = scale.at(transition);
+				IRuntimeScope transitionContext = scope.locate(transitionScale);
 
 				/*
 				 * 3. Run all contextualizers in the context that react to transitions; check
 				 * for signs of life at each step.
 				 */
 				for (Actuator.Computation computation : actuator.getContextualizers()) {
-//					actuator.runContextualizer....
+
+					/*
+					 * pick those that have transition trigger or whose geometry includes time.
+					 */
+					if (computation.resource.getTrigger() == Trigger.TRANSITION
+							|| (computation.resource.getTrigger() == Trigger.RESOLUTION
+									&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null
+									&& scale.getTime().intersects(
+											computation.resource.getGeometry().getDimension(Dimension.Type.TIME)))) {
+
+						actuator.runContextualizer(computation.contextualizer, computation.observable,
+								computation.resource, transitionContext.getArtifact(computation.targetId),
+								transitionContext, (IScale) transitionScale);
+
+						if (!target.isActive()) {
+							break;
+						}
+					}
 				}
 
 				/*
 				 * 4. Notify whatever has changed.
 				 */
+				if (!target.isActive()) {
+					// went missing in action, notify relatives
+				} else {
+					// TODO
+				}
 
 			}
 		}, /* TODO */0, step.getMilliseconds(), TimeUnit.MILLISECONDS);
 
-		System.out.println("HOSTIA");
+		System.out.println("SCHEDULED, HOSTIA");
 	}
 
 //	@SuppressWarnings("unchecked")

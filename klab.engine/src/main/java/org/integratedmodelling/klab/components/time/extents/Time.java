@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.components.time.extents.mediators.TimeIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -209,7 +208,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	private Range<Long> getRange() {
-		return Range.closed(start.getMilliseconds(), end.getMilliseconds());
+		return start != null && end != null ? Range.closed(start.getMilliseconds(), end.getMilliseconds()) : null;
 	}
 
 	@Override
@@ -314,7 +313,7 @@ public class Time extends Extent implements ITime {
 	public ITimeDuration getStep() {
 		return step;
 	}
-	
+
 	@Override
 	public IExtent getExtent(long stateIndex) {
 
@@ -418,13 +417,19 @@ public class Time extends Extent implements ITime {
 			Time ott = (Time) other;
 			Time ret = (Time) copy();
 			if (connector.equals(LogicalConnector.INTERSECTION)) {
-				Range<Long> merged = getRange().intersection(ott.getRange());
-				ret.start = new TimeInstant(new DateTime(merged.lowerEndpoint()));
-				ret.end = new TimeInstant(new DateTime(merged.upperEndpoint()));
+				Range<Long> range = ott.getRange();
+				if (range != null) {
+					Range<Long> merged = getRange().intersection(range);
+					ret.start = new TimeInstant(new DateTime(merged.lowerEndpoint()));
+					ret.end = new TimeInstant(new DateTime(merged.upperEndpoint()));
+				}
 			} else if (connector.equals(LogicalConnector.UNION)) {
-				Range<Long> merged = getRange().span(ott.getRange());
-				ret.start = new TimeInstant(new DateTime(merged.lowerEndpoint()));
-				ret.end = new TimeInstant(new DateTime(merged.upperEndpoint()));
+				Range<Long> range = ott.getRange();
+				if (range != null) {
+					Range<Long> merged = getRange().span(range);
+					ret.start = new TimeInstant(new DateTime(merged.lowerEndpoint()));
+					ret.end = new TimeInstant(new DateTime(merged.upperEndpoint()));
+				}
 			}
 
 			ret.extentType = extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL;
@@ -493,7 +498,7 @@ public class Time extends Extent implements ITime {
 		return null;
 	}
 
-	public static IExtent create(Dimension dimension) {
+	public static Time create(Dimension dimension) {
 
 		long[] period = dimension.getParameters().get(Geometry.PARAMETER_TIME_PERIOD, long[].class);
 		String representation = dimension.getParameters().get(Geometry.PARAMETER_TIME_REPRESENTATION, String.class);
@@ -578,6 +583,12 @@ public class Time extends Extent implements ITime {
 	public Time upgradeForOccurrents() {
 		return create(ITime.Type.GRID, this.getResolution().getType(), 1.0, this.start, this.end,
 				TimeDuration.create(this.start, this.end, true));
+	}
+
+	@Override
+	public boolean intersects(Dimension dimension) {
+		Time time = create(dimension);
+		return time.getRange() == null || intersects(time);
 	}
 
 }

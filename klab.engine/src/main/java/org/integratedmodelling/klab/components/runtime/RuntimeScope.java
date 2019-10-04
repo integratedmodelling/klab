@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -1368,5 +1369,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			};
 		}
 		return scheduler;
+	}
+
+	@Override
+	public IRuntimeScope locate(ILocator transitionScale) {
+		// TODO Auto-generated method stub
+		return this;
 	}
 }

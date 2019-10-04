@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -267,5 +268,16 @@ public interface ITime extends IExtent {
 	 * @return
 	 */
 	Type getTimeType();
+
+	/**
+	 * Needed to check for intersection with resource geometry. Should probably redefine 
+	 * intersects etc. in Geometry.Dimension and specialize, but for now keep the ad-hoc
+	 * redundancy.
+	 * 
+	 * @param dimension, guaranteed to have Type = TIME.
+	 * @return
+	 */
+	boolean intersects(Dimension dimension);
+
 
 }

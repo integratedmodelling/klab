@@ -21,7 +21,11 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 
 /**
- * The Interface IDirectObservation.
+ * The Interface IDirectObservation, i.e. an observation that can be
+ * acknowledged on its own without referencing another. Basically every
+ * observation except qualities (and maybe processes, if so departing from the
+ * BFO 'dependent' inheritance - we may say that processes are not dependent but
+ * their observations are).
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -30,7 +34,7 @@ public abstract interface IDirectObservation extends IObservation, IObjectArtifa
 
 	/**
 	 * <p>
-	 * getName.
+	 * All direct observations have naming dignity.
 	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
@@ -39,14 +43,21 @@ public abstract interface IDirectObservation extends IObservation, IObjectArtifa
 
 	/**
 	 * <p>
-	 * getStates.
+	 * Direct observations may have states of their own.
 	 * </p>
 	 *
 	 * @return a {@link java.util.Collection} object.
 	 */
 	Collection<IState> getStates();
-	
+
 	@Override
 	IDirectObservation at(ILocator locator);
-	
+
+	/**
+	 * Direct observations may die in action.
+	 * 
+	 * @return true if alive, i.e. receiving events from scheduler and context.
+	 */
+	boolean isActive();
+
 }

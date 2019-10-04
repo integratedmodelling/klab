@@ -89,6 +89,7 @@ public class Actuator implements IActuator {
 	 */
 	public class Computation {
 		public IContextualizer contextualizer;
+		public IContextualizable resource;
 		public IArtifact target;
 		public IObservable observable;
 		public String targetId;
@@ -389,6 +390,7 @@ public class Actuator implements IActuator {
 				step.observable = indirectTarget == null ? this.observable : indirectTarget;
 				step.target = artifactTable.get(targetId);
 				step.targetId = targetId;
+				step.resource = contextualizer.getSecond();
 				this.computation.add(step);
 			}
 			
@@ -526,8 +528,8 @@ public class Actuator implements IActuator {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
-			IContextualizable resource, IArtifact ret, IRuntimeScope ctx, IScale scale) throws KlabException {
+	public IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
+			IContextualizable resource, IArtifact ret, IRuntimeScope ctx, IScale scale) {
 
 		if (ctx.getMonitor().isInterrupted()) {
 			return Observation.empty(getObservable(), ctx);

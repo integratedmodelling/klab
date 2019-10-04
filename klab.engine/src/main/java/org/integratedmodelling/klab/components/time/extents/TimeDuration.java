@@ -6,16 +6,17 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.utils.Range;
+import org.joda.time.Duration;
 import org.joda.time.Period;
 
 public class TimeDuration implements ITimeDuration {
 
 	// may be anchored to a start point or not
 	private ITimeInstant start = null;
-	private Period period = null;
+	private Duration period = null;
 	private Resolution.Type resolution = null;
 
-	private TimeDuration(Period period, ITimeInstant start) {
+	private TimeDuration(Duration period, ITimeInstant start) {
 		this.period = period;
 		this.start = start;
 	}
@@ -61,7 +62,7 @@ public class TimeDuration implements ITimeDuration {
 	}
 
 	public static TimeDuration create(ITimeInstant start, ITimeInstant end, boolean anchor) {
-		Period period = Period.millis((int) (end.getMilliseconds() - start.getMilliseconds()));
+		Duration period = new Duration(end.getMilliseconds() - start.getMilliseconds());
 		return new TimeDuration(period, anchor ? start : null);
 	}
 
@@ -73,7 +74,7 @@ public class TimeDuration implements ITimeDuration {
 	@Override
 	public long getMilliseconds() {
 		if (start == null) {
-			return period.toStandardDuration().getMillis();
+			return period.getMillis();
 		}
 		return ((TimeInstant) start).asDate().plus(this.period).getMillis() - start.getMilliseconds();
 	}
@@ -89,7 +90,7 @@ public class TimeDuration implements ITimeDuration {
 		return getMilliseconds() == 0;
 	}
 
-	public Period asPeriod() {
+	public Duration asDuration() {
 		return period;
 	}
 
@@ -116,7 +117,7 @@ public class TimeDuration implements ITimeDuration {
 	public static ITimeDuration create(long milliseconds, Type type) {
 		TimeDuration ret = new TimeDuration();
 		ret.resolution = type;
-		ret.period = new Period(milliseconds);
+		ret.period = new Duration(milliseconds);
 		return ret;
 	}
 
