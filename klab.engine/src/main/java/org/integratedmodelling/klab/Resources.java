@@ -432,7 +432,7 @@ public enum Resources implements IResourceService {
 		/*
 		 * apply any modification from parameters if any
 		 */
-		if (!upar.getSecond().isEmpty()) {
+		if (ret != null && !upar.getSecond().isEmpty()) {
 			ret = ((Resource) ret).applyParameters(upar.getSecond());
 		}
 
