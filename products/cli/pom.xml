@@ -10,23 +10,32 @@
 	<artifactId>cli</artifactId>
 	<build>
 		<plugins>
+			<!-- <plugin> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-maven-plugin</artifactId> 
+				<version>${spring-boot-version}</version> <configuration> <fork>true</fork> 
+				<mainClass>org.integratedmodelling.klab.k.Main</mainClass> </configuration> 
+				<executions> <execution> <goals> <goal>repackage</goal> </goals> </execution> 
+				</executions> </plugin> -->
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot-version}</version>
-				<configuration>
-					<fork>true</fork>
-					<mainClass>org.integratedmodelling.klab.k.Main</mainClass>
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
 						<goals>
-							<goal>repackage</goal>
+							<goal>copy-dependencies</goal>
 						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			<!-- build checksums for the control center to reduce necessary downloads -->
+			<!-- build checksums for the control center to reduce necessary downloads. 
+				All lines following the first will need a lib/ prefix. -->
 			<plugin>
 				<groupId>net.nicoulaj.maven.plugins</groupId>
 				<artifactId>checksum-maven-plugin</artifactId>
@@ -40,12 +49,59 @@
 					</execution>
 				</executions>
 				<configuration>
+					<scopes>
+						<scope>compile</scope>
+					</scopes>
+					<types>
+						<type>jar</type>
+					</types>
 					<algorithms>
 						<algorithm>MD5</algorithm>
 					</algorithms>
+					<!-- <includeRelativePath>true</includeRelativePath> <relativeSubPath>${project.build.directory}</relativeSubPath> -->
 					<transitive>true</transitive>
-					<csvSummary>true</csvSummary>
+					<!-- <individualFiles>false</individualFiles> --><!-- <csvSummary>true</csvSummary> <csvSummaryFile>filelist.txt</csvSummaryFile> -->
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+				<version>1.8.0</version>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<scripts>
+						<script><![CDATA[
+			import java.io.File
+			println "Building filelist.txt..."
+			new File('target/filelist.txt').withWriter { w ->
+				["target/${project.artifactId}-${project.version}.jar.md5",  "target/dependencies-checksums.csv"].each { f ->
+				    new File(f).readLines().each { r -> 
+				      if (!r.startsWith('#'))
+					        w << ( f.endsWith('csv') ? "lib/" : "${project.artifactId}-${project.version}.jar.md5,") << r << '\n'
+					}
+  				}
+			}
+			println "...done."
+          ]]></script>
+					</scripts>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-all</artifactId>
+						<!-- any version of Groovy \>= 1.5.0 should work here -->
+						<version>2.5.8</version>
+						<scope>runtime</scope>
+						<type>pom</type>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<!-- TODO this is meant to make JAI load its SPI stuff but actually prevents 
 				other packages (h2) from initializing. <plugin> <groupId>org.apache.maven.plugins</groupId> 
@@ -59,12 +115,6 @@
 
 	<dependencies>
 
-		<!-- nd4j backend: TODO improve choice
-		<dependency>
-			<groupId>org.nd4j</groupId>
-			<artifactId>nd4j-native-platform</artifactId>
-			<version>${nd4j.version}</version>
-		</dependency>  -->
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.components.cdm</artifactId>
