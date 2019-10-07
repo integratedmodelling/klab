@@ -28,9 +28,9 @@ public enum JreModel {
 
 	public void refresh() {
 
-		haveKlabSetting = ControlCenter.INSTANCE.getProperties().getProperty(ControlCenter.JREDIR_PROPERTY) != null;
-		jreDirectory = new File(ControlCenter.INSTANCE.getProperties().getProperty(ControlCenter.JREDIR_PROPERTY,
-				ControlCenter.INSTANCE.getWorkdir() + File.separator + "jre" + File.separator + "bin"));
+		haveKlabSetting = ControlCenter.getProperties().getProperty(ControlCenter.JREDIR_PROPERTY) != null;
+		jreDirectory = new File(ControlCenter.getProperties().getProperty(ControlCenter.JREDIR_PROPERTY,
+				ControlCenter.getWorkdir() + File.separator + "jre" + File.separator + "bin"));
 		haveSpecifiedJre = jreDirectory.exists();
 		haveJavaHome = System.getenv("JAVA_HOME") != null;
 		if (haveJavaHome) {
@@ -63,7 +63,7 @@ public enum JreModel {
 
 	public void connectLocalJre() {
 		this.jreDirectory = new File(
-				ControlCenter.INSTANCE.getWorkdir() + File.separator + "jre" + File.separator + "bin");
+				ControlCenter.getWorkdir() + File.separator + "jre" + File.separator + "bin");
 		refresh();
 	}
 

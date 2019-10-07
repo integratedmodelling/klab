@@ -34,7 +34,7 @@ public class Settings {
 
 	// General
 	StringProperty welcomeText = new SimpleStringProperty("Hello World");
-	IntegerProperty brightness = new SimpleIntegerProperty(50);
+	BooleanProperty useDevelop = new SimpleBooleanProperty(false);
 	BooleanProperty nightMode = new SimpleBooleanProperty(true);
 
 	// Screen
@@ -108,10 +108,18 @@ public class Settings {
 	public PreferencesFx createPreferences() {
 		return PreferencesFx
 				.of(Settings.class,
-						Category.of("General", Group.of("Greeting", Setting.of("Welcome Text", welcomeText)), Group
-								.of("Display", Setting.of("Brightness", brightness),
-										Setting.of("Night mode", nightMode))),
-						Category.of("Screen")
+						
+						
+						
+						Category.of("Control Center", 
+										Setting.of("Use developer stack", useDevelop),
+										Setting.of("Night mode", nightMode)
+						),
+						
+						
+						
+						
+						Category.of("Paths")
 								.subCategories(Category.of("Scaling & Ordering",
 										Group.of(
 												Setting.of("Scaling", scaling)
@@ -123,9 +131,11 @@ public class Settings {
 												.description("Screen Options"),
 										Group.of(Setting.of("Font Size", fontSize, 6, 36),
 												Setting.of("Line Spacing", lineSpacing, 0, 3, 1)))),
-						Category.of("Favorites", Setting.of("Favorites", favoritesItems, favoritesSelection),
+								
+						Category.of("Account", Setting.of("Favorites", favoritesItems, favoritesSelection),
 								Setting.of("Favorite Number", customControl, customControlProperty)),
-						Category.of("Appearance & Behaviour").subCategories(
+						
+						Category.of("Engine").subCategories(
 								Category.of(
 										"Appearance",
 										Group.of("UI Options", Setting.of("Theme", themesLst, themesObj), Setting

@@ -214,6 +214,27 @@ public class Time extends Extent implements ITime {
 	@Override
 	public IExtent merge(IExtent extent) throws KlabException {
 		// TODO hostia
+		if (extent instanceof ITime) {
+
+			ITime other = (ITime)extent;
+			Time ret = copy();
+			
+			// schiaff in the unknowns
+			if (start == null && other.getStart() != null) {
+				ret.start = other.getStart();
+			}
+			if (end == null && other.getEnd() != null) {
+				ret.end = other.getEnd();
+			}
+			
+			// shouldn't change representation, step and the like
+			if (this.resolution == null) {
+				ret.resolution = other.getResolution();
+			}
+			
+			return ret;
+			
+		}
 		return this;
 	}
 
@@ -563,16 +584,31 @@ public class Time extends Extent implements ITime {
 				 * TODO potential mediation situation
 				 */
 			} else if (locators[0] instanceof ITimeInstant) {
+				
 				/*
 				 * Pick the sub-extent containing the instant
 				 */
+				if (!(start == null || start.isAfter((ITimeInstant) locators[0])
+						|| (end != null && end.isBefore((ITimeInstant) locators[0])))) {
+					
+					if (size() <= 1) {
+						return this;
+					}
+					
+					if (step != null) {
+						long target = ((ITimeInstant) locators[0]).getMilliseconds();
+						long tleft = target - start.getMilliseconds();
+						long n = tleft/step.getMilliseconds();
+						if (n > 0 && n < size()) {
+							return getExtent(n);
+						}
+					}
+				}
 			}
 		}
 
 		throw new KlabException("HOSTIA unhandled time subsetting operation. Call the exorcist.");
-//		
-//		// TODO locate in grid or scream
-//		return null;
+
 	}
 
 	private IExtent withScaleId(String scaleId) {

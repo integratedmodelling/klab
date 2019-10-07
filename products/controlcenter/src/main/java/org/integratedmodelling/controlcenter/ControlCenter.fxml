@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.ControlCenter">
+   <center>
+      <BorderPane prefHeight="380.0" prefWidth="260.0" BorderPane.alignment="CENTER">
+         <bottom>
+            <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" style="-fx-border-color: #ccc; -fx-background-color: #ddd;" BorderPane.alignment="CENTER">
+               <children>
+                  <Button alignment="CENTER" mnemonicParsing="false" textAlignment="CENTER">
+                     <graphic>
+                        <FontIcon fx:id="buttonSettings" iconColor="#747474" iconLiteral="dashicons-admin-tools" onMouseClicked="#buttonSettingsClicked" wrappingWidth="12.685677528381348" />
+                     </graphic>
+                  </Button>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
+               </padding></HBox>
+         </bottom>
+         <top>
+            <VBox BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="4.0" />
+               </BorderPane.margin>
+               <children>
+                  <Separator prefWidth="200.0" />
+                  <HBox prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: #fff;">
+                     <children>
+                        <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/logo_white_64.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets left="1.0" top="2.0" />
+                           </HBox.margin>
+                        </ImageView>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </top>
+         <center>
+            <VBox prefHeight="290.0" prefWidth="260.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Separator prefWidth="200.0" />
+                  <GridPane alignment="CENTER" minHeight="96.0" prefHeight="101.0" prefWidth="260.0">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button alignment="CENTER" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0">
+                           <graphic>
+                              <FontIcon iconColor="#0f9735" iconLiteral="fa-cogs" iconSize="48" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Launch the k.LAB engine" />
+                           </tooltip>
+                        </Button>
+                        <Button maxHeight="64.0" maxWidth="66.0" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="66.0" GridPane.columnIndex="1">
+                           <graphic>
+                              <FontIcon iconColor="#dfb300" iconLiteral="fa-flask" iconSize="38" />
+                           </graphic>
+                        </Button>
+                        <Label text="k.LAB Engine" textFill="#828282" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="Arial" size="11.0" />
+                           </font>
+                        </Label>
+                        <Label text="k.LAB Modeler" textFill="#828282" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="Arial" size="11.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets bottom="4.0" left="30.0" right="30.0" />
+                     </padding>
+                  </GridPane>
+                  <Separator prefWidth="200.0" />
+                  <VBox prefHeight="91.0" prefWidth="260.0" />
+                  <Separator prefWidth="200.0" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" />
+               </children>
+               <BorderPane.margin>
+                  <Insets top="4.0" />
+               </BorderPane.margin>
+            </VBox>
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>

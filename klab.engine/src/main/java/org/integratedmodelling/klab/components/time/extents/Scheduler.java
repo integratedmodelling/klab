@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelMockTimer;
 import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelTimer;
+import org.integratedmodelling.klab.scale.Scale;
 
 /**
  * Scheduler for actors in either real or mock time. Akka does not allow the
@@ -86,22 +87,30 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 	public void schedule(final Actuator actuator, final IRuntimeScope scope) {
 
 		/*
-		 * model and individual computables determine the temporal aspects of the
-		 * geometry. By now that should be entirely captured in the model coverage.
-		 */
-		final IScale scale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
-		/*
 		 * overall scale fills in any missing info.
 		 */
 		final IScale overall = actuator.getDataflow().getResolutionScale();
 
 		/*
+		 * model and individual computables determine the temporal aspects of the
+		 * geometry. By now that should be entirely captured in the model coverage.
+		 */
+		IScale modelScale = actuator.getModel() == null ? null
+				: actuator.getModel().getCoverage(scope.getMonitor());
+
+		/*
 		 * should not be the case if we get here at all, but who knows.
 		 */
-		if (overall.getTime() == null || scale.getTime() == null) {
+		if (overall.getTime() == null || modelScale.getTime() == null) {
 			return;
 		}
 
+		/*
+		 * complete the actuator's scale with the overall one, adding extent boundaries
+		 * and the like but keeping the resolution and representation.
+		 */
+		IScale scale = modelScale.merge(overall);
+		
 		// save targets that were enqueued here
 		Set<String> targets = new HashSet<>();
 
@@ -126,22 +135,6 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 			return;
 		}
 
-		/*
-		 * We have a step and (possibly) a start and an end. Enqueue actions for all
-		 * contextualizers that are established to be temporal... //
-		 */
-//		for (IContextualizer contextualizer : actuator.getComputation()) {
-//
-//			if (contextualizer.getGeometry() != null
-//					&& contextualizer.getGeometry().getDimension(Dimension.Type.TIME) != null) {
-//				resources.add(resource.getSecond());
-//				if (resource.getSecond().getTarget() != null) {
-//					targets.add(resource.getSecond().getTarget().getName());
-//				}
-//			}
-//
-//		}
-
 		IObservation targetObservation = (IObservation) scope.getTargetArtifact();
 		if (targetObservation.getObservable().is(IKimConcept.Type.PROCESS)
 				|| targetObservation.getObservable().is(IKimConcept.Type.EVENT)
@@ -150,6 +143,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		}
 
 		final IDirectObservation target = (IDirectObservation) targetObservation;
+		final long endTime = overall.getTime().getEnd() == null ? -1 : overall.getTime().getEnd().getMilliseconds();
 
 		/*
 		 * enqueue actions for transition
@@ -159,13 +153,19 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 			@Override
 			public void accept(Long t) {
 
+				System.out.println("CHECKING SCHEDULE FOR " + actuator + " at " + new TimeInstant(t));
+				
+				if (endTime > 0 && t > endTime) {
+					return;
+				}
+				
 				/*
 				 * If target is dead, return
 				 */
 				if (!target.isActive()) {
 					return;
 				}
-
+				
 				/*
 				 * 1. Turn the millisecond t into the correspondent T extent for the
 				 * observation's scale
@@ -178,7 +178,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 				 * wrapper. Done within the context, which uses its current target to establish
 				 * the specific view of the context.
 				 */
-				ILocator transitionScale = scale.at(transition);
+				ILocator transitionScale = Scale.substituteExtent(scale, transition);
 				IRuntimeScope transitionContext = scope.locate(transitionScale);
 
 				/*
@@ -187,6 +187,8 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 				 */
 				for (Actuator.Computation computation : actuator.getContextualizers()) {
 
+					System.out.println("    CHECKING COMPUTATION FOR " + computation.resource);
+					
 					/*
 					 * pick those that have transition trigger or whose geometry includes time.
 					 */
@@ -195,6 +197,8 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 									&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null
 									&& scale.getTime().intersects(
 											computation.resource.getGeometry().getDimension(Dimension.Type.TIME)))) {
+
+						System.out.println("    RUNNING " + computation.resource);
 
 						actuator.runContextualizer(computation.contextualizer, computation.observable,
 								computation.resource, transitionContext.getArtifact(computation.targetId),
