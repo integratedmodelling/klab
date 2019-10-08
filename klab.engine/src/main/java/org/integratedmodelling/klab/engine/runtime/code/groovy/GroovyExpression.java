@@ -194,6 +194,13 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 					binding.setVariable(key, value);
 				}
 
+				/*
+				 * use the current context and monitor
+				 * FIXME does nothing
+				 */
+//				binding.setVariable("_c", context);
+//				binding.setVariable("_monitor", context.getMonitor());
+				
 				for (String v : defineIfAbsent) {
 					if (!binding.hasVariable(v)) {
 						binding.setVariable(v, Double.NaN);

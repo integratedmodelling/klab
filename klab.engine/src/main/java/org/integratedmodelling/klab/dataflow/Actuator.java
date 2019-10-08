@@ -168,7 +168,7 @@ public class Actuator implements IActuator {
 	}
 
 	public List<Computation> getContextualizers() {
-		return computation;
+		return computation == null ? new ArrayList<>() : computation;
 	}
 
 	public void addDocumentation(IDocumentation documentation) {

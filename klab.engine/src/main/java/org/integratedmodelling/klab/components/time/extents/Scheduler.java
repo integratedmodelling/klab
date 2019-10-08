@@ -95,8 +95,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		 * model and individual computables determine the temporal aspects of the
 		 * geometry. By now that should be entirely captured in the model coverage.
 		 */
-		IScale modelScale = actuator.getModel() == null ? null
-				: actuator.getModel().getCoverage(scope.getMonitor());
+		IScale modelScale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
 
 		/*
 		 * should not be the case if we get here at all, but who knows.
@@ -110,9 +109,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		 * and the like but keeping the resolution and representation.
 		 */
 		IScale scale = modelScale.merge(overall);
-		
-		// TODO ADAPT FOR EXAMPLE WAS USED - CHECK IF GRIDS AND THE LIKE ARE PORTED
-		
+
 		// save targets that were enqueued here
 		Set<String> targets = new HashSet<>();
 
@@ -155,19 +152,17 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 			@Override
 			public void accept(Long t) {
 
-				System.out.println("CHECKING SCHEDULE FOR " + actuator + " at " + new TimeInstant(t));
-				
 				if (endTime > 0 && t > endTime) {
 					return;
 				}
-				
+
 				/*
 				 * If target is dead, return
 				 */
 				if (!target.isActive()) {
 					return;
 				}
-				
+
 				/*
 				 * 1. Turn the millisecond t into the correspondent T extent for the
 				 * observation's scale
@@ -189,18 +184,17 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 				 */
 				for (Actuator.Computation computation : actuator.getContextualizers()) {
 
-					System.out.println("    CHECKING COMPUTATION FOR " + computation.resource);
-					
 					/*
 					 * pick those that have transition trigger or whose geometry includes time.
+					 * TODO condition should become clear and simple - for now it's nasty.
 					 */
-					if (computation.resource.getTrigger() == Trigger.TRANSITION
-							|| (computation.resource.getTrigger() == Trigger.RESOLUTION
-									&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null
-									&& scale.getTime().intersects(
-											computation.resource.getGeometry().getDimension(Dimension.Type.TIME)))) {
-
-						System.out.println("    RUNNING " + computation.resource);
+					if (computation.resource.getTrigger() == Trigger.TRANSITION || (computation.resource
+							.getTrigger() == Trigger.RESOLUTION
+							&& ((computation.observable.getArtifactType().isOccurrent()
+									&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) == null)
+									|| (computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null
+											&& scale.getTime().intersects(computation.resource.getGeometry()
+													.getDimension(Dimension.Type.TIME)))))) {
 
 						actuator.runContextualizer(computation.contextualizer, computation.observable,
 								computation.resource, transitionContext.getArtifact(computation.targetId),
@@ -224,7 +218,8 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 			}
 		}, /* TODO */0, step.getMilliseconds(), TimeUnit.MILLISECONDS);
 
-		System.out.println("SCHEDULED, HOSTIA");
+		System.out.println("SCHEDULED " + actuator + " to run every " + step.getMilliseconds());
+		
 	}
 
 //	@SuppressWarnings("unchecked")

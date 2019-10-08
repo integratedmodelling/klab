@@ -20,100 +20,104 @@ import java.util.Collection;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
-// TODO: Auto-generated Javadoc
 /**
- * Opaque, minimal interface for a 2D geometry.
+ * Opaque, minimal interface for a 2D geometry pertaining to a physical
+ * continuant or occurrent.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IShape extends IReferenced, ISpace {
 
-    /**
-     * The Enum Type.
-     */
-    public enum Type {
-        EMPTY,
-        POINT,
-        LINESTRING,
-        POLYGON,
-        MULTIPOINT,
-        MULTILINESTRING,
-        MULTIPOLYGON
-    }
+	/**
+	 * The Enum Type.
+	 */
+	public enum Type {
+		EMPTY, POINT, LINESTRING, POLYGON, MULTIPOINT, MULTILINESTRING, MULTIPOLYGON
+	}
 
-    /**
-     * Geometry type
-     *
-     * @return the type
-     */
-    Type getGeometryType();
+	/**
+	 * Geometry type
+	 *
+	 * @return the type
+	 */
+	Type getGeometryType();
 
-    /**
-     * Return a suitable measure of area. Unit must be areal.
-     *
-     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
-     * @return area in passed unit
-     */
-    double getArea(IUnit unit);
+	/**
+	 * Return a suitable measure of area. Unit must be areal.
+	 *
+	 * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit}
+	 *             object.
+	 * @return area in passed unit
+	 */
+	double getArea(IUnit unit);
 
-    /**
-     * Shapes may be empty or inconsistent.
-     *
-     * @return true if not really a shape
-     */
-    boolean isEmpty();
+	/**
+	 * Shapes may be empty or inconsistent.
+	 *
+	 * @return true if not really a shape
+	 */
+	boolean isEmpty();
 
-    /**
-     * Return the shape transformed to the passed projection.
-     *
-     * @param projection a {@link org.integratedmodelling.klab.api.observations.scale.space.IProjection} object.
-     * @return the transformed shape
-     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
-     */
-    IShape transform(IProjection projection) throws KlabValidationException;
+	/**
+	 * Return the shape transformed to the passed projection.
+	 *
+	 * @param projection a
+	 *                   {@link org.integratedmodelling.klab.api.observations.scale.space.IProjection}
+	 *                   object.
+	 * @return the transformed shape
+	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
+	 */
+	IShape transform(IProjection projection) throws KlabValidationException;
 
-    /**
-     * The shape's bounding box
-     *
-     * @return the referenced envelope
-     */
-    IEnvelope getEnvelope();
+	/**
+	 * The shape's bounding box
+	 *
+	 * @return the referenced envelope
+	 */
+	IEnvelope getEnvelope();
 
-    /**
-     * Create a new shape by intersecting this with the passed other.
-     *
-     * @param other a {@link org.integratedmodelling.klab.api.observations.scale.space.IShape} object.
-     * @return the intersection
-     */
-    IShape intersection(IShape other);
+	/**
+	 * Create a new shape by intersecting this with the passed other.
+	 *
+	 * @param other a
+	 *              {@link org.integratedmodelling.klab.api.observations.scale.space.IShape}
+	 *              object.
+	 * @return the intersection
+	 */
+	IShape intersection(IShape other);
 
-    /**
-     * Create a new shape by uniting this with the passed other.
-     *
-     * @param other a {@link org.integratedmodelling.klab.api.observations.scale.space.IShape} object.
-     * @return the union
-     */
-    IShape union(IShape other);
-    
-    /**
-     * Get the boundary for a polygon, the shape itself for points and lines.
-     * @return the boundary
-     */
-    IShape getBoundingExtent();
+	/**
+	 * Create a new shape by uniting this with the passed other.
+	 *
+	 * @param other a
+	 *              {@link org.integratedmodelling.klab.api.observations.scale.space.IShape}
+	 *              object.
+	 * @return the union
+	 */
+	IShape union(IShape other);
 
-    /**
-     * Get the interior holes for a polygon, the empty collection for points and lines.
-     * @return the holes
-     */
-    Collection<IShape> getHoles();
+	/**
+	 * Get the boundary for a polygon, the shape itself for points and lines.
+	 * 
+	 * @return the boundary
+	 */
+	IShape getBoundingExtent();
 
-    /**
-     * Buffer by passed distance in native projection units.
-     * 
-     * @param bdistance
-     * @return a new shape
-     */
+	/**
+	 * Get the interior holes for a polygon, the empty collection for points and
+	 * lines.
+	 * 
+	 * @return the holes
+	 */
+	Collection<IShape> getHoles();
+
+	/**
+	 * Buffer by passed distance in native projection units.
+	 * 
+	 * @param bdistance
+	 * @return a new shape
+	 */
 	IShape buffer(double bdistance);
 
 	/**
@@ -130,10 +134,9 @@ public interface IShape extends IReferenced, ISpace {
 	 * @return
 	 */
 	IShape getCentroid();
-	
+
 	/**
-	 * Get the center x,y coordinates in projection units or in standardized
-	 * units.
+	 * Get the center x,y coordinates in projection units or in standardized units.
 	 * 
 	 * @return
 	 */

@@ -622,12 +622,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IScheduler<?> createScheduler(ITime time) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IRuntimeScope locate(ILocator transitionScale) {
 		// TODO Auto-generated method stub
 		return this;

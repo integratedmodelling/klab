@@ -131,15 +131,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					runtimeContext = ((Subject) context).getRuntimeScope().createChild(scale, actuator, scope, monitor);
 				}
 
-				/*
-				 * create scheduler if needed
-				 */
-				IScheduler<?> scheduler = null;
-				if (dataflow.getResolutionScale().getTime() != null
-						&& dataflow.getResolutionScale().getTime().size() > 1) {
-					scheduler = runtimeContext.createScheduler(dataflow.getResolutionScale().getTime());
-				}
-
 				List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 				int i = 0;
 				for (Actuator active : order) {
@@ -151,7 +142,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 					/*
 					 * this won't actually run the contextualizers unless the observation is a
-					 * perdurant.
+					 * continuant.
 					 */
 					if (active.isComputed() || ((Actuator) active).isMerging()) {
 						active.compute(ctx.getTargetArtifact(), ctx);
@@ -170,7 +161,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				 * auto-start the only transition if we have one and we promoted an extent to a
 				 * temporal grid.
 				 */
-				if (((Dataflow) dataflow).isAutoStartTransitions() && scheduler != null) {
+				if (((Dataflow) dataflow).isAutoStartTransitions() && runtimeContext.getScheduler() != null) {
 					runtimeContext.getScheduler().start();
 				}
 

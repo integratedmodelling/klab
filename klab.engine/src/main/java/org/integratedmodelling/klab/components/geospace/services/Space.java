@@ -7,13 +7,13 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -119,9 +119,9 @@ public class Space implements IExpression {
 		Pair<Double, String> pd = null;
 		if (spec instanceof String) {
 			pd = MiscUtilities.splitNumberFromString((String) spec);
-		} else if (spec instanceof Quantity && ((Quantity) spec).getValue() != null
-				&& ((Quantity) spec).getUnit() != null) {
-			pd = new Pair<>(((Quantity) spec).getValue().doubleValue(), ((Quantity) spec).getUnit().toString());
+		} else if (spec instanceof IQuantity && ((IQuantity) spec).getValue() != null
+				&& ((IQuantity) spec).getUnit() != null) {
+			pd = new Pair<>(((IQuantity) spec).getValue().doubleValue(), ((IQuantity) spec).getUnit().toString());
 		}
 
 		if (pd == null || pd.getFirst() == null || pd.getSecond() == null)

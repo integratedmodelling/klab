@@ -232,6 +232,11 @@ public class Time extends Extent implements ITime {
 				ret.resolution = other.getResolution();
 			}
 			
+			ret.multiplicity = 1;
+			if (ret.start != null && ret.end != null && ret.step != null) {
+				ret.multiplicity = (ret.end.getMilliseconds() - ret.start.getMilliseconds()) / ret.step.getMilliseconds();
+			}
+			
 			return ret;
 			
 		}
@@ -599,7 +604,7 @@ public class Time extends Extent implements ITime {
 						long target = ((ITimeInstant) locators[0]).getMilliseconds();
 						long tleft = target - start.getMilliseconds();
 						long n = tleft/step.getMilliseconds();
-						if (n > 0 && n < size()) {
+						if (n >= 0 && n < size()) {
 							return getExtent(n);
 						}
 					}
@@ -607,7 +612,7 @@ public class Time extends Extent implements ITime {
 			}
 		}
 
-		throw new KlabException("HOSTIA unhandled time subsetting operation. Call the exorcist.");
+		throw new KlabException("HOSTIAK unhandled time subsetting operation. Call the exorcist.");
 
 	}
 

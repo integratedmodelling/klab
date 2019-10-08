@@ -85,7 +85,9 @@ public interface IContextualizationScope extends IParameters<String> {
 
 	/**
 	 * Return the scheduler for the context, null if non-temporal, create it if not
-	 * there if temporal.
+	 * there if temporal. The scheduler must be a singleton for all the actuators
+	 * implied in a contextualization: whichever child creates the scheduler must do
+	 * that in the root node.
 	 * 
 	 * @return a scheduler or null.
 	 */

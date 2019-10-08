@@ -184,6 +184,7 @@ public class Grid extends Area implements IGrid {
 	 */
 	private Grid(Shape shape, double resolutionInMeters) throws KlabException {
 		super(shape);
+		this.linearResolutionMeters = resolutionInMeters;
 		setAdjustedEnvelope(shape, resolutionInMeters);
 		mask = createMask(shape);
 	}
@@ -251,7 +252,7 @@ public class Grid extends Area implements IGrid {
 		public long getLocatedOffset() {
 			return getOffsetInGrid();
 		}
-		
+
 		@Override
 		public long getX() {
 			return x;
@@ -739,6 +740,12 @@ public class Grid extends Area implements IGrid {
 	double xOrigin = 0.0;
 	double yOrigin = 0.0;
 	protected Mask mask = null;
+
+	/*
+	 * this is the original specification as it comes from the API, or computed if
+	 * x/y grid size is requested.
+	 */
+	double linearResolutionMeters;
 
 	/*
 	 * only set in a subgrid of the grid having the parent ID.
@@ -1279,7 +1286,7 @@ public class Grid extends Area implements IGrid {
 	public Cell getCellAt(double[] coordinates, boolean isStandardProjection) {
 		if (isStandardProjection && !Projection.getDefault().equals(getProjection())) {
 			coordinates = getProjection().transformCoordinate(coordinates, Projection.getDefault());
-		}	
+		}
 		long offset = getOffsetFromWorldCoordinates(coordinates[0], coordinates[1]);
 		return getCell(offset);
 	};

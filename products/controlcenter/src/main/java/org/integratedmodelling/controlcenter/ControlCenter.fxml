@@ -22,9 +22,14 @@
          <bottom>
             <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" style="-fx-border-color: #ccc; -fx-background-color: #ddd;" BorderPane.alignment="CENTER">
                <children>
-                  <Button alignment="CENTER" mnemonicParsing="false" textAlignment="CENTER">
+                  <Button mnemonicParsing="false">
                      <graphic>
-                        <FontIcon fx:id="buttonSettings" iconColor="#747474" iconLiteral="dashicons-admin-tools" onMouseClicked="#buttonSettingsClicked" wrappingWidth="12.685677528381348" />
+                        <FontIcon iconColor="#0697ff" iconLiteral="fa-commenting-o" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="buttonSettings" alignment="CENTER" mnemonicParsing="false" onAction="#buttonSettingsClicked" textAlignment="CENTER">
+                     <graphic>
+                        <FontIcon iconColor="#747474" iconLiteral="dashicons-admin-tools" wrappingWidth="12.685677528381348" />
                      </graphic>
                   </Button>
                </children>
@@ -52,6 +57,31 @@
                               <Insets left="1.0" top="2.0" />
                            </HBox.margin>
                         </ImageView>
+                        <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label prefHeight="22.0" prefWidth="157.0" text="k.LAB Control Center" textFill="#4a4a4a">
+                                 <font>
+                                    <Font name="Calibri" size="18.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets top="4.0" />
+                                 </padding>
+                              </Label>
+                              <Separator prefWidth="200.0">
+                                 <padding>
+                                    <Insets left="20.0" />
+                                 </padding>
+                              </Separator>
+                              <Label text="(C) 2019 The Integrated Modelling Partnership" textFill="#797979">
+                                 <font>
+                                    <Font name="Calibri Light" size="10.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets right="4.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </VBox>
                      </children>
                   </HBox>
                </children>
@@ -71,7 +101,7 @@
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button alignment="CENTER" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0">
+                        <Button alignment="CENTER" disable="true" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0">
                            <graphic>
                               <FontIcon iconColor="#0f9735" iconLiteral="fa-cogs" iconSize="48" />
                            </graphic>
@@ -79,7 +109,7 @@
                               <Tooltip text="Launch the k.LAB engine" />
                            </tooltip>
                         </Button>
-                        <Button maxHeight="64.0" maxWidth="66.0" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="66.0" GridPane.columnIndex="1">
+                        <Button disable="true" maxHeight="64.0" maxWidth="66.0" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="66.0" GridPane.columnIndex="1">
                            <graphic>
                               <FontIcon iconColor="#dfb300" iconLiteral="fa-flask" iconSize="38" />
                            </graphic>
@@ -103,7 +133,34 @@
                      </padding>
                   </GridPane>
                   <Separator prefWidth="200.0" />
-                  <VBox prefHeight="91.0" prefWidth="260.0" />
+                  <VBox prefHeight="91.0" prefWidth="260.0">
+                     <children>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="80.0" minWidth="10.0" prefWidth="30.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="196.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="91.0" minWidth="10.0" prefWidth="36.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Download a k.LAB distribution" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font name="System Italic" size="12.0" />
+                                 </font>
+                              </Label>
+                              <FontIcon iconColor="RED" iconLiteral="fa-chain-broken" />
+                              <Button mnemonicParsing="false" GridPane.columnIndex="2">
+                                 <graphic>
+                                    <FontIcon iconColor="#00c5ff" iconLiteral="fa-download" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </GridPane>
+                     </children></VBox>
                   <Separator prefWidth="200.0" />
                   <HBox prefHeight="100.0" prefWidth="200.0" />
                </children>

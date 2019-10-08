@@ -3,16 +3,14 @@ package org.integratedmodelling.controlcenter;
 import java.io.File;
 import java.net.URL;
 import java.util.Properties;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 
 import org.integratedmodelling.controlcenter.settings.Settings;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -25,7 +23,7 @@ public class ControlCenter extends Application {
 	Settings settings = new Settings();
 	
 	@FXML
-	FontIcon buttonSettings;
+	Button buttonSettings;
 
 	public ControlCenter() {
 		// read properties

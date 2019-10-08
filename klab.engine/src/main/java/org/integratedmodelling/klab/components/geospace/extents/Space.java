@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -47,6 +48,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.collections.IterableAdapter;
@@ -133,7 +135,7 @@ public class Space extends Extent implements ISpace {
 		ret.forceGrid = true;
 		return ret;
 	}
-	
+
 	public static Space create(Shape shape, double resolutionInMeters) {
 		Grid grid = Grid.create(shape, resolutionInMeters);
 		Space ret = new Space(shape, grid);
@@ -141,7 +143,7 @@ public class Space extends Extent implements ISpace {
 		return ret;
 	}
 
-	public static Space create(Shape shape, long xCells, long yCells) {
+	private static Space create(Shape shape, long xCells, long yCells) {
 		Grid grid = Grid.create(shape, xCells, yCells);
 		Space ret = new Space(shape, grid);
 		return ret;
@@ -279,9 +281,10 @@ public class Space extends Extent implements ISpace {
 	@Override
 	public IExtent merge(IExtent extent) throws KlabException {
 		if (extent instanceof ISpace) {
-			return Space.createMergedExtent(this, (ISpace) extent);
+			return createMergedExtent(this, (ISpace) extent);
 		}
-		throw new IllegalArgumentException("a Shape cannot merge an extent of type " + extent.getType());
+		throw new IllegalArgumentException("cannot merge spatial extent " + extent.getClass().getCanonicalName()
+				+ "  into " + getClass().getCanonicalName());
 
 	}
 
@@ -660,12 +663,6 @@ public class Space extends Extent implements ISpace {
 		return 2;
 	}
 
-//	@Override
-//	public ISpace at(ILocator locator) {
-//		return null;
-//	}
-
-	// @Override
 	public Iterable<ILocator> over(Type dimension) {
 		if (dimension != Dimension.Type.SPACE) {
 			throw new IllegalArgumentException("cannot iterate a spatial extent over " + dimension);
@@ -684,27 +681,6 @@ public class Space extends Extent implements ISpace {
 		}
 		return shape.shape();
 	}
-
-//	@Override
-//	public long getOffset(ILocator index) {
-//
-//		if (this.grid != null) {
-//			if (index instanceof Cell) {
-//				return this.grid.getOffset((Cell) index);
-//			} else if (index instanceof IndexLocator && ((IndexLocator) index).getCoordinates().length == 2) {
-//				return this.grid.getOffset(((IndexLocator) index).getCoordinates()[0],
-//						((IndexLocator) index).getCoordinates()[1]);
-//			} else if (index instanceof ISpace && ((ISpace) index).getShape().getGeometryType() == IShape.Type.POINT) {
-//				Shape shape = (Shape) ((ISpace) index).getShape().transform(getProjection());
-//				return this.grid.getOffsetFromWorldCoordinates(shape.getJTSGeometry().getCoordinates()[0].x,
-//						shape.getJTSGeometry().getCoordinates()[0].y);
-//			}
-//		} else if (this.features != null) {
-//			// TODO support direct indexing with IndexLocator and point indexing with latlon
-//			// and point coordinates
-//		}
-//		throw new IllegalArgumentException("cannot use " + index + " as a space locator");
-//	}
 
 	@Override
 	public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
@@ -876,37 +852,80 @@ public class Space extends Extent implements ISpace {
 		return generic;
 	}
 
-	public static IExtent createMergedExtent(ISpace destination, ISpace source) {
+	public static IExtent createMergedExtent(ISpace destination, ISpace other) {
 
-		// TODO Auto-generated method stub
-		// if (!(extent instanceof Space)) {
-		// throw new KlabValidationException("space extent cannot merge non-space
-		// extent");
-		// }
-		//
-		// Space ret = new Space(this);
-		// Space oth = (Space) extent;
+		IShape resultShape = destination.getShape();
+		IGrid resultGrid = destination instanceof Space ? ((Space) destination).getGrid() : null;
+		ITessellation resultFeatures = destination instanceof Space ? ((Space) destination).getTessellation() : null;
 
 		/*
-		 * if destination has no extent and source does, add extent to destination if
-		 * source has a grid and destination doesn't, add it to destination's extents
-		 * recheck generic
+		 * add other's shape if destination doesn't have it
+		 */
+		if (resultShape == null) {
+			resultShape = other.getShape();
+		}
+
+		/*
+		 * if destination wants a specific grid and other's is different, take the
+		 * (possibly merged) extent and make it that grid.
+		 */
+		if (resultShape != null) {
+			if (destination instanceof Space && ((Space) destination).forceGrid) {
+
+				if (((Space) destination).gridSpecs == null) {
+
+					if (resultGrid == null) {
+
+						/*
+						 * destination wants any grid and other doesn't have it: make a "default" grid
+						 * using the geographical extent and the configured assumptions.
+						 */
+						double resolution = ((Envelope) resultShape.getEnvelope()).getResolutionForZoomLevel(50, 2)
+								.getFirst();
+						
+						return create((Shape)resultShape, resolution);
+						
+					} else {
+						
+						// what we want is the destination, already fully defined
+						return destination;
+					}
+
+				} else {
+
+					if (resultGrid == null) {
+
+						/*
+						 * make a grid according to specs
+						 */
+						double resolution = org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(((Space) destination).gridSpecs);
+						return create((Shape)resultShape, resolution);
+						
+					} else {
+						
+						/*
+						 * if we have same resolution, keep the grid from the source, otherwise make a
+						 * different one and hope for mediators.
+						 */
+						double resolution = org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(((Space) destination).gridSpecs);
+						if (NumberUtils.equal(((Grid)resultGrid).linearResolutionMeters, resolution)) {
+							return destination;
+						}
+						
+						return create((Shape)resultShape, resolution);
+					}
+				}
+
+			}
+		}
+
+		/*
+		 * TODO tesselations
 		 */
 
 		/*
-		 * TODO figure out mandatory vs. not. These are all false, which probably
-		 * shouldn't be - either pass to merge or be smarter.
+		 * we have no mediation: TODO we should probably fail here.
 		 */
-		// if (oth.grid != null) {
-		// ret.set(oth.grid, force);
-		// } else if (oth.features != null) {
-		// ret.set(oth.features, oth.shape, force);
-		// } else if (oth.shape != null) {
-		// ret.set(oth.shape, force);
-		// } else if (oth.gridResolution > 0.0) {
-		// ret.setGridResolution(oth.gridResolution, force);
-		// }
-		// return ret;
 
 		return destination;
 	}

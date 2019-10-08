@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
@@ -42,7 +44,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -57,6 +58,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.components.time.extents.Scheduler;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.documentation.Report;
@@ -1146,6 +1148,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return rootSubject;
 	}
 
+	private RuntimeScope getRootScope() {
+		RuntimeScope ret = this;
+		while (ret.parent != null) {
+			ret = ret.parent;
+		}
+		return ret;
+	}
+	
 	@Override
 	public IDirectObservation getContextSubject() {
 		return contextSubject;
@@ -1163,7 +1173,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public Scheduler<?> getScheduler() {
-		return this.scheduler;
+		return getRootScope().scheduler;
 	}
 
 	@Override
@@ -1350,25 +1360,37 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public void scheduleActions(Actuator actuator) {
-		if (scheduler != null) {
-			scheduler.schedule(actuator, this);
-		}
-	}
 
-	@Override
-	public IScheduler<?> createScheduler(ITime time) {
+		boolean go = false;
+		for (Computation computation : actuator.getContextualizers()) {
+			if (computation.resource.getTrigger() == Trigger.TRANSITION
+					// TODO next should be removed
+					|| computation.observable.getArtifactType().isOccurrent()
+					|| (computation.resource.getTrigger() == Trigger.RESOLUTION
+							&& computation.resource.getGeometry().getDimension(IGeometry.Dimension.Type.TIME) != null)) {
+				go = true;
+				break;
+			}
+		}
 		
-		if (scheduler == null) {
-			scheduler = new Scheduler<IObservation>(time) {
-				
+		if (!go) {
+			return;
+		}
+
+		RuntimeScope root = getRootScope();
+		
+		if (root.scheduler == null) {
+			root.scheduler = new Scheduler<IObservation>(resolutionScope.getScale().getTime()) {
+
 				@Override
 				protected ITime getTime(IObservation object) {
 					return object.getScale().getTime();
 				}
-				
+
 			};
 		}
-		return scheduler;
+
+		root.scheduler.schedule(actuator, this);
 	}
 
 	@Override

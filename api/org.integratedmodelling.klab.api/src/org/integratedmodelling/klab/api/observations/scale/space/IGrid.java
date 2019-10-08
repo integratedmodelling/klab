@@ -29,14 +29,14 @@ package org.integratedmodelling.klab.api.observations.scale.space;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.common.LogicalConnector;
 
 /**
  * A grid that sits within a space extent to produce Cell sub-extents and
- * locators. The grid itself is not a locator or an extent, it merely incarnates
- * a S2 geometry for it.
+ * locators. The grid itself is not an extent - it merely incarnates a S2
+ * geometry for one - but each Cell, while retaining the dependency on a grid,
+ * is a ISpace.
  * 
  * @author Ferd
  *
@@ -389,6 +389,5 @@ public interface IGrid extends Iterable<Cell> {
 	Cell getCell(long offset);
 
 	IProjection getProjection();
-
 
 }
