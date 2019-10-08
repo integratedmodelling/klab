@@ -111,6 +111,8 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		 */
 		IScale scale = modelScale.merge(overall);
 		
+		// TODO ADAPT FOR EXAMPLE WAS USED - CHECK IF GRIDS AND THE LIKE ARE PORTED
+		
 		// save targets that were enqueued here
 		Set<String> targets = new HashSet<>();
 
