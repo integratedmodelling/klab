@@ -73,8 +73,8 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			Object expression = parameters.get("select");
 			boolean forceScalar = false;
 			if (expression instanceof IKimExpression) {
-				expression = ((IKimExpression) expression).getCode();
 				forceScalar = ((IKimExpression)expression).isForcedScalar();
+				expression = ((IKimExpression) expression).getCode();
 			}
 			this.selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
 					.describe(expression.toString(), expressionContext, forceScalar);
@@ -83,8 +83,8 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			Object expression = parameters.get("aggregate");
 			boolean forceScalar = false;
 			if (expression instanceof IKimExpression) {
-				expression = ((IKimExpression) expression).getCode();
 				forceScalar = ((IKimExpression)expression).isForcedScalar();
+				expression = ((IKimExpression) expression).getCode();
 			}
 			this.valueDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
 					.describe(expression.toString(), expressionContext, forceScalar);

@@ -344,6 +344,10 @@ public enum Authentication implements IAuthenticationService {
 					"wrong certificate for an engine: cannot create identity of type " + certificate.getType());
 		}
 
+		if (ret != null) {
+			registerIdentity(ret);
+		}
+		
 		return ret;
 	}
 

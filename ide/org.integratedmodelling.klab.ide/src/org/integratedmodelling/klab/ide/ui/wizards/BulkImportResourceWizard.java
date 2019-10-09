@@ -81,7 +81,7 @@ public class BulkImportResourceWizard extends Wizard {
 		if (validate(u)) {
 
 			String adapterId = adapter;
-			if (adapter.contains(" ")) {
+			if (adapterId != null && adapter.contains(" ")) {
 				adapterId = adapter.substring(0, adapter.indexOf(' '));
 			}
 			

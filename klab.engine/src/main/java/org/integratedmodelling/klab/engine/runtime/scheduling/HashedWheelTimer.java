@@ -20,6 +20,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import org.integratedmodelling.klab.api.runtime.IScheduler.Synchronicity;
+
 /**
  * Hash Wheel Timer, as per the paper:
  *
@@ -55,6 +57,7 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	private String name;
 	private AtomicBoolean finished = new AtomicBoolean(false);
 	protected AtomicLong currentTime = new AtomicLong();
+	protected Synchronicity synchronicity = Synchronicity.ASYNCHRONOUS;
 
 	/**
 	 * Create a new {@code HashedWheelTimer} using the given with default resolution
@@ -156,6 +159,9 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 							registrations.remove(r);
 						} else if (r.ready()) {
 							
+							/*
+							 * TODO in synchronous mode, wait for each task to finish.
+							 */
 							executor.execute(r);
 							registrations.remove(r);
 

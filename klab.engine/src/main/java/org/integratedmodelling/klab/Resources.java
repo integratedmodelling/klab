@@ -699,7 +699,7 @@ public enum Resources implements IResourceService {
 					}
 				}
 
-				// NB: 
+				// NB: should never be null but it is
 				IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
 				String owner = user == null ? "integratedmodelling.org" : user.getUsername();
 				

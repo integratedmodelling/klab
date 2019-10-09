@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.IScheduler.Synchronicity;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelMockTimer;
@@ -56,6 +57,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 //	private BiConsumer<T, Long> actionHandler;
 //	private BiConsumer<T, Long> errorHandler;
 	private ITime overallTime;
+	private Synchronicity synchronicity = Synchronicity.SYNCHRONOUS;
 
 //	class TreeNode {
 //		TreeNode(T element) {
@@ -82,6 +84,13 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 
 	public long getTime() {
 		return timer.getCurrentTime();
+	}
+
+	
+	
+	@Override
+	public Synchronicity getSynchronicity() {
+		return synchronicity;
 	}
 
 	public void schedule(final Actuator actuator, final IRuntimeScope scope) {

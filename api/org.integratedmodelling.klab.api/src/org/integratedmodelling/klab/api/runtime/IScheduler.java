@@ -16,6 +16,24 @@ public interface IScheduler<T> {
 		REAL_TIME, MOCK_TIME
 	}
 
+	enum Synchronicity {
+		/**
+		 * Fully asynchronous tasks, started on time and left to complete.
+		 */
+		ASYNCHRONOUS,
+
+		/**
+		 * Fully synchronous tasks, only one will run at a time.
+		 */
+		SYNCHRONOUS,
+
+		/**
+		 * Tasks are started without waiting for others to finish, but no task with
+		 * start = t will be started until all tasks with end <= t have finished.
+		 */
+		TIME_SYNCHRONOUS
+	}
+
 //	/**
 //	 * Merge in an observation indicating another with the same view of time that
 //	 * must be notified before it.
@@ -42,7 +60,7 @@ public interface IScheduler<T> {
 //	 *            time (the scheduler will wait in mock time).
 //	 */
 //	void start(BiConsumer<T, Long> tickHandler, BiConsumer<T, Long> timingErrorHandler);
-	
+
 	/**
 	 * Start scheduling.
 	 */
@@ -54,9 +72,18 @@ public interface IScheduler<T> {
 	void stop();
 
 	/**
-	 * Current absolute time. May have to switch to bigint for nanosecond resolution.
+	 * Current absolute time. May have to switch to bigint for nanosecond
+	 * resolution. Only meaningful while running in realtime mode or when full
+	 * synchronicity is enabled.
 	 * 
 	 * @return
 	 */
-    long getTime();
+	long getTime();
+
+	/**
+	 * Get the synchronicity mode. The default mode should be SYNCHRONOUS or TIME_SYNCHRONOUS.
+	 * 
+	 * @return
+	 */
+	public Synchronicity getSynchronicity();
 }
