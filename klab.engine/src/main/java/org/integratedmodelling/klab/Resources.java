@@ -699,7 +699,10 @@ public enum Resources implements IResourceService {
 					}
 				}
 
-				String owner = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername();
+				// NB: 
+				IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
+				String owner = user == null ? "integratedmodelling.org" : user.getUsername();
+				
 
 				IResource resource = builder.withResourceVersion(Version.create("0.0.1"))
 						.withProjectName(project.getName()).withParameters(parameters)

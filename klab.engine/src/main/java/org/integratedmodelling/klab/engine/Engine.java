@@ -96,7 +96,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 	 * A scheduler to periodically check for abandoned sessions and close them
 	 */
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-	
+
 	/**
 	 * Check interval for session expiration in minutes. TODO configure.
 	 */
@@ -184,23 +184,24 @@ public class Engine extends Server implements IEngine, UserDetails {
 				}
 			}
 		}
-		
-        @Override
-        public Future<IMessage> ask(Object... o) {
-            if (o != null && o.length > 0) {
-                IMessageBus bus = Klab.INSTANCE.getMessageBus();
-                if (bus != null) {
-                    if (o.length == 1 && o[0] instanceof IMessage) {
-                        return bus.ask((IMessage) o[0]);
-                    } else if (o.length == 1 && o[0] instanceof INotification) {
-                        return bus.ask(Message.create((INotification) o[0], this.identity.getId()));
-                    } else {
-                        return bus.ask(Message.create(this.identity.getId(), o));
-                    }
-                }
-            }
-            return null;
-        }
+
+		@Override
+		public Future<IMessage> ask(Object... o) {
+			if (o != null && o.length > 0) {
+				IMessageBus bus = Klab.INSTANCE.getMessageBus();
+				if (bus != null) {
+					if (o.length == 1 && o[0] instanceof IMessage) {
+						return bus.ask((IMessage) o[0]);
+					} else if (o.length == 1 && o[0] instanceof INotification) {
+						return bus.ask(Message.create((INotification) o[0], this.identity.getId()));
+					} else {
+						return bus.ask(Message.create(this.identity.getId(), o));
+					}
+				}
+			}
+			return null;
+		}
+
 		@Override
 		public IIdentity getIdentity() {
 			return identity;
@@ -228,8 +229,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 		 * Called to notify the start of any runtime job pertaining to our identity
 		 * (always a {@link IRuntimeIdentity} such as a task or script).
 		 * 
-		 * @param error
-		 *            true for abnormal exit
+		 * @param error true for abnormal exit
 		 */
 		public void notifyEnd(boolean error) {
 			((errorCount > 0 || error) ? System.err : System.out).println(
@@ -306,10 +306,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 	 * it. Return after startup is complete.
 	 * 
 	 * @return a new running engine.
-	 * @throws KlabAuthorizationException
-	 *             if certificate is invalid
-	 * @throws KlabException
-	 *             if startup fails
+	 * @throws KlabAuthorizationException if certificate is invalid
+	 * @throws KlabException              if startup fails
 	 */
 	public static Engine start() {
 		return start(new EngineStartupOptions());
@@ -347,9 +345,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 		}
 
 		System.out.println("\n" + Logo.ENGINE_BANNER);
-		System.out.println(
-				"\nStartup successful: " + Authentication.INSTANCE.getAuthenticatedIdentity(IIdentity.class).getId()
-						+ " v" + Version.CURRENT + " on " + new Date());
+		System.out.println("\nStartup successful: " + ret.getUsername() + " v" + Version.CURRENT + " on " + new Date());
 
 		return ret;
 	}
@@ -413,9 +409,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 	 * <li></li>
 	 * </ul>
 	 * 
-	 * @param options
-	 *            the options read from the command line; a default is provided if
-	 *            no command line was used.
+	 * @param options the options read from the command line; a default is provided
+	 *                if no command line was used.
 	 * 
 	 * @return true if the boot was successful, false otherwise. Exceptions are only
 	 *         thrown in case of bad usage (called before a certificate is read).
@@ -428,7 +423,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			System.out.println(options.usage());
 			System.exit(0);
 		}
-		
+
 		/*
 		 * set up access to the k.IM grammar
 		 */
@@ -483,11 +478,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 */
 			Resources.INSTANCE.initializeLocalWorkspace(options.getWorkspaceLocation(), this.monitor);
 
-	         /*
-             * initialize but do not load the service workspace.
-             */
-            Resources.INSTANCE.initializeServiceWorkspace(options.getServiceLocation(), this.monitor);
-			
+			/*
+			 * initialize but do not load the service workspace.
+			 */
+			Resources.INSTANCE.initializeServiceWorkspace(options.getServiceLocation(), this.monitor);
+
 			/*
 			 * prime and check integrity of kboxes; init listeners for Kim reading
 			 */
@@ -503,18 +498,17 @@ public class Engine extends Server implements IEngine, UserDetails {
 			/*
 			 * TODO hop on the network
 			 */
-			
+
 			/*
 			 * all binary content is now available: scan the classpath for recognized
 			 * extensions
 			 */
 			scanClasspath();
-			
+
 			/*
 			 * sync components and load binary assets
 			 */
 			Resources.INSTANCE.loadComponents(options.getComponentPaths(), this.monitor);
-
 
 			/*
 			 * load component knowledge after all binary content is registered.
@@ -567,11 +561,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 			Authentication.INSTANCE.registerIdentity(this);
 
 			/*
-			 * Load the service workspace last. TODO we may want to reset it
-			 * if the load fails.
+			 * Load the service workspace last. TODO we may want to reset it if the load
+			 * fails.
 			 */
 			Resources.INSTANCE.loadServiceWorkspace(this.monitor);
-			
+
 			/*
 			 * boot time is now
 			 */

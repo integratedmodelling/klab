@@ -80,8 +80,13 @@ public class BulkImportResourceWizard extends Wizard {
 
 		if (validate(u)) {
 
+			String adapterId = adapter;
+			if (adapter.contains(" ")) {
+				adapterId = adapter.substring(0, adapter.indexOf(' '));
+			}
+			
 			ResourceImportRequest request = new ResourceImportRequest();
-			request.setAdapter(adapter);
+			request.setAdapter(adapterId);
 			request.setImportUrl(u);
 			request.setBulkImport(true);
 			request.setProjectName(targetProject.getName());

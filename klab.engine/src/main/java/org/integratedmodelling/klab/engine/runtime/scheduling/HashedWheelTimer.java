@@ -142,6 +142,10 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 			@Override
 			public void run() {
 
+				/*
+				 * TODO stop all if monitor is canceled
+				 */
+				
 				currentTime.set(getInitialTime());
 
 				while (true) {
