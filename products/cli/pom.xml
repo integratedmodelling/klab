@@ -80,11 +80,12 @@
 						<script><![CDATA[
 			import java.io.File
 			println "Building filelist.txt..."
-			new File('target/filelist.txt').withWriter { w ->
-				["target/${project.artifactId}-${project.version}.jar.md5",  "target/dependencies-checksums.csv"].each { f ->
+			def out = project.build.directory
+			new File(out + '/filelist.txt').withWriter { w ->
+				[out + "/${project.artifactId}-${project.version}.jar.md5",  out + "/dependencies-checksums.csv"].each { f ->
 				    new File(f).readLines().each { r -> 
 				      if (!r.startsWith('#'))
-					        w << ( f.endsWith('csv') ? "lib/" : "${project.artifactId}-${project.version}.jar.md5,") << r << '\n'
+					        w << ( f.endsWith('csv') ? "lib/" : "${project.artifactId}-${project.version}.jar,") << r << '\n'
 					}
   				}
 			}
