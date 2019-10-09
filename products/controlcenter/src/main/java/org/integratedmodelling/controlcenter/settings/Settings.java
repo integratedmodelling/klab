@@ -61,6 +61,7 @@ public class Settings {
 	private BooleanProperty deleteTempStorage = new SimpleBooleanProperty(true);
 
 	private StringProperty googleApiKey = new SimpleStringProperty("");
+	private StringProperty authenticationEndpoint = new SimpleStringProperty("");
 
 	/**
 	 * If true, we want to use the develop branch of everything.
@@ -69,6 +70,14 @@ public class Settings {
 	 */
 	public boolean useDevelop() {
 		return useDevelop.get();
+	}
+
+	public File getCertificateFile() {
+		return certFile.get();
+	}
+
+	public String getAuthenticationEndpoint() {
+		return authenticationEndpoint.get();
 	}
 
 	public Settings() {
@@ -166,9 +175,7 @@ public class Settings {
 						Setting.of("Default export path", exportDirectory, true),
 						Setting.of("Default temporary file path", tempDirectory, true)),
 
-				Category.of("Account",
-						Setting.of("Certificate file", certFile, false)
-				),
+				Category.of("Account", Setting.of("Certificate file", certFile, false)),
 
 				Category.of("Engine",
 
@@ -180,27 +187,26 @@ public class Settings {
 
 						Category.of("Runtime"
 
-								
-								), Category.of("Space and time",
-										Group.of("Coverage",
-												Setting.of("Minimum model coverage (0-1: default 0.01)", minModelCoverage, 0.0, 1.0, 2),
-												Setting.of("Minimum coverage improvement (0-1: default 0.2)", minCoverageImprovement, 0.0, 1.0, 2),
-												Setting.of("Minimum total coverage (0-1: default 0.95)", minTotalCoverage, 0.0, 1.0, 2)
-										).description("Context coverage in resolution")
-								), Category.of("Connectivity"),
-						Category.of("External APIs",
-								
+						),
+						Category.of("Space and time", Group.of("Coverage",
+								Setting.of("Minimum model coverage (0-1: default 0.01)", minModelCoverage, 0.0, 1.0, 2),
+								Setting.of("Minimum coverage improvement (0-1: default 0.2)", minCoverageImprovement,
+										0.0, 1.0, 2),
+								Setting.of("Minimum total coverage (0-1: default 0.95)", minTotalCoverage, 0.0, 1.0, 2))
+								.description("Context coverage in resolution")),
+						Category.of("Connectivity"), Category.of("External APIs",
+
 								Setting.of("Google API key", googleApiKey)
 
-								), Category.of("Resources"), Category.of("External APIs")
+						), Category.of("Resources"), Category.of("External APIs")
 
 				),
 
-				Category.of("Expert settings", 
-						Setting.of("Detect and use local hub if available", detectLocalHub),
+				Category.of("Expert settings", Setting.of("Detect and use local hub if available", detectLocalHub),
 						Setting.of("Delete leftover temporary storage on startup", deleteTempStorage),
-						Setting.of("Launch engine with debug service (port 8000)", debugParameters)))
-				
+						Setting.of("Launch engine with debug service (port 8000)", debugParameters),
+						Setting.of("Alt authentication endpoint", authenticationEndpoint)))
+
 				.persistWindowState(false).saveSettings(true).debugHistoryMode(false).buttonsVisibility(true);
 	}
 
@@ -222,4 +228,5 @@ public class Settings {
 		}
 		return new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + ".scratch");
 	}
+
 }

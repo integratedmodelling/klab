@@ -1,12 +1,32 @@
 package org.integratedmodelling.controlcenter.auth;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IAuthentication;
 
 public class Authentication implements IAuthentication {
 
+	Status status = Status.ANONYMOUS;
+	String authenticationEndpoint;
+	String username = "anonymous";
+	String email = "";
+	Date expiration;
+	List<Group> groups = new ArrayList<>();
+	
+	private KlabCertificate certificate;
+
+	public Authentication() {
+		
+		File file = ControlCenter.INSTANCE.getSettings().getCertificateFile();
+		if (file.isFile() && file.canRead()) {
+			this.certificate = new KlabCertificate(file);
+		}
+	}	
+	
 	@Override
 	public String getAuthenticationEndpoint() {
 		// TODO Auto-generated method stub
@@ -33,8 +53,12 @@ public class Authentication implements IAuthentication {
 
 	@Override
 	public List<Group> groups() {
-		// TODO Auto-generated method stub
-		return null;
+		return groups;
+	}
+
+	@Override
+	public Status getStatus() {
+		return status;
 	}
 
 }

@@ -17,6 +17,8 @@ public interface IAuthentication {
 		VALID
 	}
 	
+	Status getStatus();
+	
 	String getAuthenticationEndpoint();
 	
 	String getUsername();

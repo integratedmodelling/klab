@@ -24,6 +24,8 @@ import javafx.stage.Stage;
 public class ControlCenter extends Application {
 
 	public static final String JREDIR_PROPERTY = "klab.directory.jre";
+	public static final String PRODUCTION_BRANCH_PROPERTY = "klab.branch.production";
+	public static final String DEVELOP_BRANCH_PROPERTY = "klab.branch.develop";
 
 	public static ControlCenter INSTANCE;
 	
