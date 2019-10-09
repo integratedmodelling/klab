@@ -30,6 +30,15 @@ public class Product implements IProduct {
 		ECLIPSE
 	}
 
+	private String baseUrl;
+	private String productId;
+
+	public Product(String baseUrl, String productId) {
+		this.baseUrl = baseUrl;
+		this.productId = productId;
+		
+	}
+	
 	@Override
 	public Status getStatus() {
 		return null;

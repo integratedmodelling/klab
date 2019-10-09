@@ -1,14 +1,12 @@
 package org.integratedmodelling.controlcenter.settings;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.dlsc.formsfx.model.structure.Field;
-import com.dlsc.formsfx.model.structure.IntegerField;
-import com.dlsc.formsfx.model.validators.DoubleRangeValidator;
 import com.dlsc.preferencesfx.PreferencesFx;
-import com.dlsc.preferencesfx.formsfx.view.controls.IntegerSliderControl;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
@@ -26,41 +24,52 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 public class Settings {
 
 	public PreferencesFx preferencesFx;
 
-	// General
-	StringProperty welcomeText = new SimpleStringProperty("Hello World");
-	BooleanProperty useDevelop = new SimpleBooleanProperty(false);
-	BooleanProperty nightMode = new SimpleBooleanProperty(true);
+	private ListProperty<String> buildItems = new SimpleListProperty<>(
+			FXCollections.observableArrayList(Arrays.asList("Latest")));
+	private ListProperty<String> parallelismStrategies = new SimpleListProperty<>(
+			FXCollections.observableArrayList(Arrays.asList("Aggressive", "Conservative", "Disabled")));
 
-	// Screen
-	DoubleProperty scaling = new SimpleDoubleProperty(1);
-	StringProperty screenName = new SimpleStringProperty("PreferencesFx Monitor");
+	private BooleanProperty useDevelop = new SimpleBooleanProperty(false);
+	private BooleanProperty detectLocalHub = new SimpleBooleanProperty(false);
+	private BooleanProperty showReleaseNotes = new SimpleBooleanProperty(false);
+	private BooleanProperty updateAutomatically = new SimpleBooleanProperty(false);
+	private IntegerProperty buildsToKeep = new SimpleIntegerProperty(1);
+	private IntegerProperty maxMemory = new SimpleIntegerProperty(2048);
+	private IntegerProperty enginePort = new SimpleIntegerProperty(8283);
+	private ObjectProperty<String> buildSelection = new SimpleObjectProperty<>("Latest");
+	private ObjectProperty<String> parallelismStrategy = new SimpleObjectProperty<>("Conservative");
+	private ObjectProperty<File> workDirectory = new SimpleObjectProperty<>(
+			new File(System.getProperty("user.home") + File.separator + ".klab"));
+	private ObjectProperty<File> workspaceDirectory = new SimpleObjectProperty<>(
+			new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + "workspace"));
+	private ObjectProperty<File> exportDirectory = new SimpleObjectProperty<>(
+			new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + "export"));
+	private ObjectProperty<File> certFile = new SimpleObjectProperty<>(
+			new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + "klab.cert"));
+	private ObjectProperty<File> tempDirectory = new SimpleObjectProperty<>(getTemporaryPath());
 
-	ObservableList<String> resolutionItems = FXCollections
-			.observableArrayList(Arrays.asList("1024x768", "1280x1024", "1440x900", "1920x1080"));
-	ObjectProperty<String> resolutionSelection = new SimpleObjectProperty<>("1024x768");
+	private DoubleProperty minModelCoverage = new SimpleDoubleProperty(0.01);
+	private DoubleProperty minTotalCoverage = new SimpleDoubleProperty(0.95);
+	private DoubleProperty minCoverageImprovement = new SimpleDoubleProperty(0.2);
 
-	ListProperty<String> orientationItems = new SimpleListProperty<>(
-			FXCollections.observableArrayList(Arrays.asList("Vertical", "Horizontal")));
-	ObjectProperty<String> orientationSelection = new SimpleObjectProperty<>("Vertical");
+	private BooleanProperty debugParameters = new SimpleBooleanProperty(false);
+	private BooleanProperty deleteTempStorage = new SimpleBooleanProperty(true);
 
-	IntegerProperty fontSize = new SimpleIntegerProperty(12);
-	DoubleProperty lineSpacing = new SimpleDoubleProperty(1.5);
+	private StringProperty googleApiKey = new SimpleStringProperty("");
 
-	// Favorites
-	ListProperty<String> favoritesItems = new SimpleListProperty<>(FXCollections.observableArrayList(Arrays.asList(
-			"eMovie", "Eboda Phot-O-Shop", "Mikesoft Text", "Mikesoft Numbers", "Mikesoft Present", "IntelliG")));
-	ListProperty<String> favoritesSelection = new SimpleListProperty<>(
-			FXCollections.observableArrayList(Arrays.asList("Eboda Phot-O-Shop", "Mikesoft Text")));
-
-	// Custom Control
-	IntegerProperty customControlProperty = new SimpleIntegerProperty(42);
-	IntegerField customControl = setupCustomControl();
+	/**
+	 * If true, we want to use the develop branch of everything.
+	 * 
+	 * @return
+	 */
+	public boolean useDevelop() {
+		return useDevelop.get();
+	}
 
 	public Settings() {
 		preferencesFx = createPreferences();
@@ -70,176 +79,128 @@ public class Settings {
 		return preferencesFx;
 	}
 
-	private IntegerField setupCustomControl() {
-		return Field.ofIntegerType(customControlProperty).render(new IntegerSliderControl(0, 42));
-	}
-
-	// -------------- Demo --------------
-//  Theme
-	ListProperty<String> themesLst = new SimpleListProperty<>(
-			FXCollections.observableArrayList(newArrayList("IntelliJ", "Darkula", "Windows")));
-	ObjectProperty<String> themesObj = new SimpleObjectProperty<>("IntelliJ");
-
-	// IDE
-	ListProperty<String> ideLst = new SimpleListProperty<>(
-			FXCollections.observableArrayList(newArrayList("Subpixel", "Greyscale", "No Antializing")));
-	ObjectProperty<String> ideObj = new SimpleObjectProperty<>("Subpixel");
-
-	// Editor
-	ListProperty<String> editorLst = new SimpleListProperty<>(
-			FXCollections.observableArrayList(newArrayList("Subpixel", "Greyscale", "No Antializing")));
-	ObjectProperty<String> editorObj = new SimpleObjectProperty<>("Subpixel");
-
-	// Font size
-	ListProperty<String> fontLst = new SimpleListProperty<>(
-			FXCollections.observableArrayList(newArrayList("8", "10", "12", "14", "18", "20", "22", "24", "36", "72")));
-	ObjectProperty<String> fontObj = new SimpleObjectProperty<>("24");
-
-	// Project opening
-	ListProperty<String> projectOpeningLst = new SimpleListProperty<>(FXCollections.observableArrayList(newArrayList(
-			"Open project in new window", "Open project in the same window", "Confirm window to open project in")));
-	ObjectProperty<String> projectOpeningObj = new SimpleObjectProperty<>("Open project in new window");
-
-	// Closing tool window
-	ListProperty<String> closingToolLst = new SimpleListProperty<>(
-			FXCollections.observableArrayList(newArrayList("Terminate process", "Disconnect (if available)", "Ask")));
-	ObjectProperty<String> closingToolObj = new SimpleObjectProperty<>("Ask");
-
+	/*
+	 * // General StringProperty welcomeText = new
+	 * SimpleStringProperty("Hello World"); BooleanProperty nightMode = new
+	 * SimpleBooleanProperty(true);
+	 * 
+	 * // Screen DoubleProperty scaling = new SimpleDoubleProperty(1);
+	 * StringProperty screenName = new
+	 * SimpleStringProperty("PreferencesFx Monitor");
+	 * 
+	 * ObservableList<String> resolutionItems = FXCollections
+	 * .observableArrayList(Arrays.asList("1024x768", "1280x1024", "1440x900",
+	 * "1920x1080")); ObjectProperty<String> resolutionSelection = new
+	 * SimpleObjectProperty<>("1024x768");
+	 * 
+	 * ListProperty<String> orientationItems = new SimpleListProperty<>(
+	 * FXCollections.observableArrayList(Arrays.asList("Vertical", "Horizontal")));
+	 * ObjectProperty<String> orientationSelection = new
+	 * SimpleObjectProperty<>("Vertical");
+	 * 
+	 * IntegerProperty fontSize = new SimpleIntegerProperty(12); DoubleProperty
+	 * lineSpacing = new SimpleDoubleProperty(1.5);
+	 * 
+	 * // Favorites ListProperty<String> favoritesItems = new
+	 * SimpleListProperty<>(FXCollections.observableArrayList(Arrays.asList(
+	 * "eMovie", "Eboda Phot-O-Shop", "Mikesoft Text", "Mikesoft Numbers",
+	 * "Mikesoft Present", "IntelliG"))); ListProperty<String> favoritesSelection =
+	 * new SimpleListProperty<>(
+	 * FXCollections.observableArrayList(Arrays.asList("Eboda Phot-O-Shop",
+	 * "Mikesoft Text")));
+	 * 
+	 * // Custom Control IntegerProperty customControlProperty = new
+	 * SimpleIntegerProperty(42); // IntegerField customControl =
+	 * setupCustomControl();
+	 * 
+	 * 
+	 * private IntegerField setupCustomControl() { return
+	 * Field.ofIntegerType(customControlProperty).render(new IntegerSliderControl(0,
+	 * 42)); }
+	 * 
+	 * // -------------- Demo -------------- // Theme ListProperty<String> themesLst
+	 * = new SimpleListProperty<>(
+	 * FXCollections.observableArrayList(newArrayList("IntelliJ", "Darkula",
+	 * "Windows"))); ObjectProperty<String> themesObj = new
+	 * SimpleObjectProperty<>("IntelliJ");
+	 * 
+	 * // IDE ListProperty<String> ideLst = new SimpleListProperty<>(
+	 * FXCollections.observableArrayList(newArrayList("Subpixel", "Greyscale",
+	 * "No Antializing"))); ObjectProperty<String> ideObj = new
+	 * SimpleObjectProperty<>("Subpixel");
+	 * 
+	 * // Editor ListProperty<String> editorLst = new SimpleListProperty<>(
+	 * FXCollections.observableArrayList(newArrayList("Subpixel", "Greyscale",
+	 * "No Antializing"))); ObjectProperty<String> editorObj = new
+	 * SimpleObjectProperty<>("Subpixel");
+	 * 
+	 * // Font size ListProperty<String> fontLst = new SimpleListProperty<>(
+	 * FXCollections.observableArrayList(newArrayList("8", "10", "12", "14", "18",
+	 * "20", "22", "24", "36", "72"))); ObjectProperty<String> fontObj = new
+	 * SimpleObjectProperty<>("24");
+	 * 
+	 * // Project opening ListProperty<String> projectOpeningLst = new
+	 * SimpleListProperty<>(FXCollections.observableArrayList(newArrayList(
+	 * "Open project in new window", "Open project in the same window",
+	 * "Confirm window to open project in"))); ObjectProperty<String>
+	 * projectOpeningObj = new SimpleObjectProperty<>("Open project in new window");
+	 * 
+	 * // Closing tool window ListProperty<String> closingToolLst = new
+	 * SimpleListProperty<>(
+	 * FXCollections.observableArrayList(newArrayList("Terminate process",
+	 * "Disconnect (if available)", "Ask"))); ObjectProperty<String> closingToolObj
+	 * = new SimpleObjectProperty<>("Ask");
+	 */
 	public PreferencesFx createPreferences() {
-		return PreferencesFx
-				.of(Settings.class,
-						
-						
-						
-						Category.of("Control Center", 
-										Setting.of("Use developer stack", useDevelop),
-										Setting.of("Night mode", nightMode)
-						),
-						
-						
-						
-						
-						Category.of("Paths")
-								.subCategories(Category.of("Scaling & Ordering",
-										Group.of(
-												Setting.of("Scaling", scaling)
-														.validate(DoubleRangeValidator.atLeast(1,
-																"Scaling needs to be at least 1")),
-												Setting.of("Screen name", screenName),
-												Setting.of("Resolution", resolutionItems, resolutionSelection),
-												Setting.of("Orientation", orientationItems, orientationSelection))
-												.description("Screen Options"),
-										Group.of(Setting.of("Font Size", fontSize, 6, 36),
-												Setting.of("Line Spacing", lineSpacing, 0, 3, 1)))),
+
+		return PreferencesFx.of(Settings.class,
+
+				Category.of("Control Center", Setting.of("Use developer stack", useDevelop),
+						Setting.of("Number of builds to keep", buildsToKeep),
+						Setting.of("Show release notes with update", showReleaseNotes),
+						Setting.of("Update automatically", updateAutomatically),
+						Setting.of("Choose the build to launch", buildItems, buildSelection)),
+
+				Category.of("Paths", Setting.of("k.LAB work directory", workDirectory, true),
+						Setting.of("k.LAB project workspace", workspaceDirectory, true),
+						Setting.of("Default export path", exportDirectory, true),
+						Setting.of("Default temporary file path", tempDirectory, true)),
+
+				Category.of("Account",
+						Setting.of("Certificate file", certFile, false)
+				),
+
+				Category.of("Engine",
+
+						Setting.of("Max RAM occupation (MB)", maxMemory, 512, 64000),
+						Setting.of("Engine port (default 8283)", enginePort, 8269, 8299),
+						Setting.of("Parallelism strategy", parallelismStrategies, parallelismStrategy)
+
+				).subCategories(
+
+						Category.of("Runtime"
+
 								
-						Category.of("Account", Setting.of("Favorites", favoritesItems, favoritesSelection),
-								Setting.of("Favorite Number", customControl, customControlProperty)),
-						
-						Category.of("Engine").subCategories(
-								Category.of(
-										"Appearance",
-										Group.of("UI Options", Setting.of("Theme", themesLst, themesObj), Setting
-												.of("Adjust colors for red-green vision defiency "
-														+ "(protanopia, deuteranopia)", new SimpleBooleanProperty()),
-												Setting.of("Override default fonts", new SimpleBooleanProperty()),
-												Setting.of("Cyclic scrolling in list", new SimpleBooleanProperty(true)),
-												Setting.of(
-														"Show icons in quick navigation",
-														new SimpleBooleanProperty(true)),
-												Setting.of(
-														"Automatically position mouse cursor on default button",
-														new SimpleBooleanProperty()),
-												Setting.of("Hide navigation popups on focus loss",
-														new SimpleBooleanProperty(true)),
-												Setting.of(
-														"Drag-n-Drop with ALT pressed only",
-														new SimpleBooleanProperty()),
-												Setting.of(
-														"Tooltip initial delay (ms)", new SimpleIntegerProperty(1200),
-														0, 1200)),
-										Group.of("Antialiasing", Setting.of("IDE", ideLst, ideObj),
-												Setting.of("Editor", editorLst, editorObj)),
-										Group.of("Window Options",
-												Setting.of("Animate windows", new SimpleBooleanProperty(true)),
-												Setting.of("Show memory indicator", new SimpleBooleanProperty()),
-												Setting.of("Disable mnemnonics in menu", new SimpleBooleanProperty()),
-												Setting.of("Disable mnemnonics in controls",
-														new SimpleBooleanProperty()),
-												Setting.of("Display icons in menu items",
-														new SimpleBooleanProperty(true)),
-												Setting.of("Side-by-side layout on the left",
-														new SimpleBooleanProperty()),
-												Setting.of("Smooth scrolling", new SimpleBooleanProperty()),
-												Setting.of("Show tool window bars", new SimpleBooleanProperty(true)),
-												Setting.of("Show tool window numbers", new SimpleBooleanProperty(true)),
-												Setting.of(
-														"Allow merging buttons on dialogs",
-														new SimpleBooleanProperty(true)),
-												Setting.of("Small labels in editor tabs", new SimpleBooleanProperty()),
-												Setting.of("Widescreen tool window layout",
-														new SimpleBooleanProperty()),
-												Setting.of("Side-by-side layout on the right",
-														new SimpleBooleanProperty())),
-										Group.of("Presentation Mode", Setting.of("Font size", fontLst, fontObj))),
-								Category.of("Menus and Toolbars"),
-								Category.of("System Settings", Group.of("Startup / Shutdown",
-										Setting.of("Reopen last project on startup", new SimpleBooleanProperty(true)),
-										Setting.of("Confirm application exit", new SimpleBooleanProperty(true))),
-										Group.of(Setting.of("Project Opening", projectOpeningLst, projectOpeningObj)),
-										Group.of("Synchronization",
-												Setting.of("Synchronize files on frame or editor tab activation",
-														new SimpleBooleanProperty(true)),
-												Setting.of("Save files on frame deactivation",
-														new SimpleBooleanProperty(true)),
-												Setting.of(
-														"Saves files automatically if application is idle for 15 sec.",
-														new SimpleBooleanProperty()),
-												Setting.of("Use safe write (save changes to a temporary file first)",
-														new SimpleBooleanProperty(true))),
-										Group.of("Accessibility",
-												Setting.of("Support screen readers (requires restart)",
-														new SimpleBooleanProperty())),
-										Group.of(Setting.of("On closing Tool Window with Running Process",
-												closingToolLst, closingToolObj)))
-										.subCategories(Category.of("Passwords"), Category.of("HTTP Proxy"),
-												Category.of("Updates"), Category.of("Usage Statistics"),
-												Category.of("Android SDK")),
-								Category.of("File Colors"), Category.of("Scopes"), Category
-										.of("Notifications"),
-								Category.of("Quick Lists"), Category.of("Path Variables")),
-						Category.of("Keymap"),
-						Category.of("Editor")
-								.subCategories(Category.of("General").subCategories(Category.of("Auto Import"),
-										Category.of("Appearance"), Category.of("Breadcrumbs"),
-										Category.of("Code Completion"), Category.of("Code Folding"),
-										Category.of("Console"), Category.of("Editor Tabs"), Category.of("Gutter Icons"),
-										Category.of("Postfix Completion"), Category.of("Smart Keys")),
-										Category.of("Font"), Category.of("Color Scheme"), Category.of("Code Style"),
-										Category.of("Inspections"), Category.of("File and Code Templates"),
-										Category.of("File Encodings"), Category.of("Live Templates"),
-										Category.of("File Types"), Category.of("Android Layout Editor"),
-										Category.of("Copyright").subCategories(
-												Category.of("Copyright Profiles"), Category.of("Formatting")),
-										Category.of("Andoid Data Binding"),
-										Category.of("Emmet").subCategories(Category.of("HTML"), Category.of("CSS"),
-												Category.of("JSX")),
-										Category.of("GUI Designer"), Category.of("Images"), Category.of("Intentions"),
-										Category.of("Language Injections").subCategories(Category.of("Advanced")),
-										Category.of("Spelling"), Category.of("TODO")),
-						Category.of("Plugins"), Category.of("Version Control"),
-						Category.of("Build, Execution, Deployment"), Category.of("Languages & Frameworks"),
-						Category.of("Tools").subCategories(Category.of("Web Browsers"), Category.of("External Tools"),
-								Category.of("Terminal"),
-								Category.of("Database").subCategories(Category.of("Data Views"),
-										Category.of("User Parameters"), Category.of("CSV Formats")),
-								Category.of("SSH Terminal"), Category.of("Diagrams"),
-								Category.of("Diff & Merge").subCategories(Category.of("External Diff Tools")),
-								Category.of("Remote SSH External Tools"), Category.of("Server Certificates"),
-								Category.of("Settings Repository"), Category.of("Startup Tasks"),
-								Category.of("Tasks").subCategories(Category.of("Servers"),
-										Category.of("Time Tracking")),
-								Category.of("Web Services"), Category.of("XPath Viewer")),
-						Category.of("Other Settings"))
+								), Category.of("Space and time",
+										Group.of("Coverage",
+												Setting.of("Minimum model coverage (0-1: default 0.01)", minModelCoverage, 0.0, 1.0, 2),
+												Setting.of("Minimum coverage improvement (0-1: default 0.2)", minCoverageImprovement, 0.0, 1.0, 2),
+												Setting.of("Minimum total coverage (0-1: default 0.95)", minTotalCoverage, 0.0, 1.0, 2)
+										).description("Context coverage in resolution")
+								), Category.of("Connectivity"),
+						Category.of("External APIs",
+								
+								Setting.of("Google API key", googleApiKey)
+
+								), Category.of("Resources"), Category.of("External APIs")
+
+				),
+
+				Category.of("Expert settings", 
+						Setting.of("Detect and use local hub if available", detectLocalHub),
+						Setting.of("Delete leftover temporary storage on startup", deleteTempStorage),
+						Setting.of("Launch engine with debug service (port 8000)", debugParameters)))
+				
 				.persistWindowState(false).saveSettings(true).debugHistoryMode(false).buttonsVisibility(true);
 	}
 
@@ -249,5 +210,16 @@ public class Settings {
 			ret.add(s);
 		}
 		return ret;
+	}
+
+	public static File getTemporaryPath() {
+		try {
+			File temp = File.createTempFile("temp-file-name", ".tmp");
+			String absolutePath = temp.getAbsolutePath();
+			String tempFilePath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+			return new File(tempFilePath);
+		} catch (IOException e) {
+		}
+		return new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + ".scratch");
 	}
 }

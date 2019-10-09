@@ -4,6 +4,10 @@ import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 
+import org.integratedmodelling.controlcenter.api.IProduct;
+import org.integratedmodelling.controlcenter.auth.Authentication;
+import org.integratedmodelling.controlcenter.jre.JreDialog;
+import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -19,10 +23,12 @@ import javafx.stage.Stage;
 
 public class ControlCenter extends Application {
 
-	public static final String JREDIR_PROPERTY = null;
+	public static final String JREDIR_PROPERTY = "klab.directory.jre";
 
+	public static ControlCenter INSTANCE;
+	
 	Properties properties = new Properties();
-	Settings settings = new Settings();
+	Settings settings;
 	
 	@FXML
 	Button buttonSettings;
@@ -38,24 +44,53 @@ public class ControlCenter extends Application {
 
 	@FXML
 	FontIcon downloadIcon;
+
+	private Authentication authentication;
+	private IProduct engineProduct;
+	private IProduct modelerProduct;
+	private IProduct controlCenterProduct;
 	
 	public ControlCenter() {
+		INSTANCE = this;
+		this.settings = new Settings();
 		// read properties
 	}
 	
-	public static File getWorkdir() {
+	public Settings getSettings() {
+		return this.settings;
+	}
+	
+	@FXML
+	private void initialize() {
+		
+		/*
+		 * check Java first
+		 */
+        String concernMessage = JreModel.INSTANCE.concernMessage();
+        if (concernMessage != null) {
+            JreDialog dialog = new JreDialog();
+            dialog.showAndWait();
+            // this won't let us continue unless everything is OK.
+        }
+        
+        /*
+         * read authentication using setting for certificate
+         */
+        this.authentication = new Authentication();
+	}
+	
+	public File getWorkdir() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public static URL getJreDownloadUrl() {
+	public URL getJreDownloadUrl() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public static Properties getProperties() {
-		// TODO Auto-generated method stub
-		return null;
+	public Properties getProperties() {
+		return properties;
 	}
 
 	@FXML

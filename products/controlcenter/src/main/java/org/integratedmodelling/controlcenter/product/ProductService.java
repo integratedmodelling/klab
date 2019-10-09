@@ -12,6 +12,9 @@ public enum ProductService {
 	
 	INSTANCE;
 	
+	public static final String PRODUCT_ENGINE = "cli";
+	public static final String PRODUCT_MODELER = "kmodeler";
+	
 	Map<String, IInstance> localInstances = Collections.synchronizedMap(new HashMap<>());
 	
 	private ProductService() {

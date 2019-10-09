@@ -51,7 +51,7 @@ public class JreDialogController {
 		} catch (IOException e1) {
 			return;
 		}
-		Downloader downloader = new Downloader(ControlCenter.getJreDownloadUrl(), tempOutput, (partial, total) -> {
+		Downloader downloader = new Downloader(ControlCenter.INSTANCE.getJreDownloadUrl(), tempOutput, (partial, total) -> {
 			Platform.runLater(() -> {
 				progress.setProgress((double) partial / (double) total);
 			});
@@ -61,7 +61,7 @@ public class JreDialogController {
 			protected void finish() {
 				try {
 					downloading.set(true);
-					ZipUtils.unzip(tempOutput, ControlCenter.getWorkdir());
+					ZipUtils.unzip(tempOutput, ControlCenter.INSTANCE.getWorkdir());
 					JreModel.INSTANCE.connectLocalJre();
 				} catch (IOException e) {
 					downloading.set(false);
