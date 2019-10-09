@@ -5,12 +5,14 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.integratedmodelling.controlcenter.settings.Settings;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -25,10 +27,20 @@ public class ControlCenter extends Application {
 	@FXML
 	Button buttonSettings;
 
+	@FXML
+	Label certUsername;
+
+	@FXML
+	Label certDescription;
+
+	@FXML
+	Label messageLabel;
+
+	@FXML
+	FontIcon downloadIcon;
+	
 	public ControlCenter() {
 		// read properties
-		
-
 	}
 	
 	public static File getWorkdir() {
@@ -53,13 +65,14 @@ public class ControlCenter extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
+		
 		/*
 		 * if (!System.getProperty("os.arch").contains("64")) { throw new
 		 * RuntimeException("You need a 64 bit architecture to run k.LAB"); }
 		 */
 		try {
 			BorderPane root = (BorderPane) FXMLLoader.load(getClass().getResource("ControlCenter.fxml"));
-			Scene scene = new Scene(root, 260, 380);
+			Scene scene = new Scene(root, 260, 424);
 			primaryStage.setTitle("k.LAB");
 			primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot16.png")));
 			primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot32.png")));

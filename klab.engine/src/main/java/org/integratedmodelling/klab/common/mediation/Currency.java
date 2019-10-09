@@ -94,8 +94,8 @@ public class Currency implements ICurrency {
         this.code = code;
         this.unit = Unit.unitless();
         if (code.contains("/")) {
-            int sp = code.indexOf('/' + 1);
-            String dist = code.substring(sp);
+            int sp = code.indexOf('/');
+            String dist = code.substring(sp+1);
             code = code.substring(0, sp);
             this.unit = this.unit.divide(Unit.create(dist));
         }
