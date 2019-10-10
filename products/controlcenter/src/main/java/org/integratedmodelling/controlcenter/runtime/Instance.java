@@ -5,26 +5,21 @@ import org.integratedmodelling.controlcenter.api.IProduct;
 
 public class Instance implements IInstance {
 
+	private IProduct product;
+
 	public Instance(IProduct product) {
-		// TODO Auto-generated constructor stub
+		this.product = product;
 	}
 
 	@Override
 	public IProduct getProduct() {
-		// TODO Auto-generated method stub
-		return null;
+		return product;
 	}
 
 	@Override
 	public Status getStatus() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean isRunning() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

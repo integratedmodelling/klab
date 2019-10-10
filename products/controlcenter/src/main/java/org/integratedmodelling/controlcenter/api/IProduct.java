@@ -10,11 +10,55 @@ import org.integratedmodelling.klab.utils.OS;
 public interface IProduct {
 
 	public enum Status {
-		UNKNOWN, UNAVAILABLE, UP_TO_DATE, OBSOLETE
+
+		/**
+		 * Status before status is assessed and when offline but with available
+		 * downloaded distributions.
+		 */
+		UNKNOWN,
+
+		/**
+		 * Status when offline or other error has occurred
+		 */
+		UNAVAILABLE,
+
+		/**
+		 * When the latest available build is available locally.
+		 */
+		UP_TO_DATE,
+
+		/**
+		 * When builds are available but there are unsynchronized more recent builds.
+		 */
+		OBSOLETE
+	}
+
+	enum Type {
+
+		UNKNOWN,
+
+		/**
+		 * Jar packaging with bin/, lib/ and a main jar file with a main class in
+		 * properties, OS independent distribution with potential OS-specific
+		 * subcomponents to merge in from subdirs.
+		 */
+		JAR,
+
+		/**
+		 * Installer or binary executable packaging with a directory per supported OS.
+		 */
+		EXE,
+
+		/**
+		 * Eclipse packaging with a zipped or unzipped distribution per supported OS.
+		 */
+		ECLIPSE
 	}
 
 	public final static String PRODUCT_NAME_PROPERTY = "klab.product.name";
 	public final static String PRODUCT_DESCRIPTION_PROPERTY = "klab.product.description";
+	public final static String PRODUCT_AVAILABLE_BUILDS_PROPERTY = "klab.product.builds";
+	public final static String PRODUCT_TYPE_PROPERTY = "klab.product.type";
 
 	public final static String BUILD_VERSION_PROPERTY = "klab.product.build.version";
 	public final static String BUILD_TIME_PROPERTY = "klab.product.build.time";
@@ -36,24 +80,20 @@ public interface IProduct {
 	String getName();
 
 	/**
+	 * Longer description of the product.
+	 * 
+	 * @return
+	 */
+	String getDescription();
+
+	/**
 	 * List of available builds in most recent -> least recent order, so that the
 	 * first element is the most recent.
 	 * 
 	 * @return
 	 */
 	List<Integer> getBuilds();
-
-	/**
-	 * Relative paths (from base URL) and corresponding hashes of all files
-	 * composing the products at the passed build. Paths are slash-separated, start
-	 * at base URL (no leading slash) and include the name of the product.
-	 * 
-	 * @param build
-	 * @param os
-	 * @return
-	 */
-	Map<String, String> getFileHashes(int build, OS os);
-
+	
 	/**
 	 * The contents of the product.properties file in the product directory.
 	 * Non-null values for all the static property names starting with PRODUCT_ in

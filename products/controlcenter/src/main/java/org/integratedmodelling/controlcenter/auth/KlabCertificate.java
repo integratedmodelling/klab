@@ -23,8 +23,6 @@ public class KlabCertificate {
 	// just for info
 	public static final String KEY_EXPIRATION = "klab.validuntil";
 
-	private static final String LEGACY_AUTHENTICATION_ENDPOINT = "https://integratedmodelling.org/collaboration/authentication/cert-file";
-
 	/*
 	 * Keys for user properties in certificates or for set operations.
 	 */
@@ -47,7 +45,8 @@ public class KlabCertificate {
 	private Properties properties = null;
 	private String cause = null;
 	private DateTime expiry;
-	private String worldview = DEFAULT_WORLDVIEW;
+
+	private boolean valid;
 
 	/**
 	 * Property key for username
@@ -68,9 +67,14 @@ public class KlabCertificate {
 	 */
 	KlabCertificate(File file) {
 		this.file = file;
+		this.valid = validate();
 	}
 
 	public boolean isValid() {
+		return this.valid;
+	}
+
+	private boolean validate() {
 
 		if (cause != null) {
 			return false;
@@ -96,6 +100,16 @@ public class KlabCertificate {
 				return false;
 			}
 
+			if (getExpiryDate() == null) {
+				cause = "invalid certificate";
+				return false;
+			}
+			
+			if (getExpiryDate().isBefore(new DateTime())) {
+				cause = "certificate expired";
+				return false;
+			}
+			
 			return true;
 		}
 
@@ -103,7 +117,13 @@ public class KlabCertificate {
 	}
 
 	public DateTime getExpiryDate() {
-		return expiry;
+		if (this.expiry == null) {
+			String td = properties.getProperty(KEY_EXPIRATION);
+			if (td != null) {
+				this.expiry = DateTime.parse(td);
+			}
+		}
+		return this.expiry;
 	}
 
 	/**
@@ -130,6 +150,14 @@ public class KlabCertificate {
 
 	public String getProperty(String property) {
 		return properties == null ? null : properties.getProperty(property);
+	}
+
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public boolean isExpired() {
+		return getExpiryDate() != null && getExpiryDate().isBefore(new DateTime());
 	}
 
 }

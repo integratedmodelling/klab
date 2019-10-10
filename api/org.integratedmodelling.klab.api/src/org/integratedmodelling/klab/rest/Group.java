@@ -8,6 +8,7 @@ public class Group {
 	private String id;
 	private String description;
 	private String sshKey;
+	private String iconUrl;
 	private List<String> projectUrls = new ArrayList<>();
 	private List<ObservableReference> observables = new ArrayList<>();
 	private boolean worldview;
@@ -122,6 +123,14 @@ public class Group {
 
 	public void setWorldview(boolean worldview) {
 		this.worldview = worldview;
+	}
+
+	public String getIconUrl() {
+		return iconUrl;
+	}
+
+	public void setIconUrl(String iconUrl) {
+		this.iconUrl = iconUrl;
 	}
 
 }

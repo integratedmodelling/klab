@@ -1,7 +1,8 @@
 package org.integratedmodelling.controlcenter.api;
 
-import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
 
 public interface IAuthentication {
 
@@ -25,7 +26,7 @@ public interface IAuthentication {
 	
 	String getEmail();
 	
-	Date getExpiration();
+	DateTime getExpiration();
 	
 	List<Group> groups();
 }

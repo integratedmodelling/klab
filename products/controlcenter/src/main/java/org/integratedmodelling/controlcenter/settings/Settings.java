@@ -32,7 +32,7 @@ public class Settings {
 	private ListProperty<String> buildItems = new SimpleListProperty<>(
 			FXCollections.observableArrayList(Arrays.asList("Latest")));
 	private ListProperty<String> parallelismStrategies = new SimpleListProperty<>(
-			FXCollections.observableArrayList(Arrays.asList("Aggressive", "Conservative", "Disabled")));
+			FXCollections.observableArrayList(Arrays.asList("Aggressive", "Standard", "Disabled")));
 
 	private BooleanProperty useDevelop = new SimpleBooleanProperty(false);
 	private BooleanProperty detectLocalHub = new SimpleBooleanProperty(false);
@@ -40,13 +40,28 @@ public class Settings {
 	private BooleanProperty updateAutomatically = new SimpleBooleanProperty(false);
 	private IntegerProperty buildsToKeep = new SimpleIntegerProperty(1);
 	private IntegerProperty maxMemory = new SimpleIntegerProperty(2048);
+	private IntegerProperty sessionIdleMaximum = new SimpleIntegerProperty(90);
+	private IntegerProperty maxLocalSessions = new SimpleIntegerProperty(10);
+	private IntegerProperty maxRemoteSessions = new SimpleIntegerProperty(0);
+	private IntegerProperty maxSessionsPerUser = new SimpleIntegerProperty(3);
 	private IntegerProperty enginePort = new SimpleIntegerProperty(8283);
+	private BooleanProperty useUTMProjection = new SimpleBooleanProperty(false);
+	private BooleanProperty useGeocoding = new SimpleBooleanProperty(true);
+	private IntegerProperty maxPolygonCoordinates = new SimpleIntegerProperty(1000);
+	private IntegerProperty maxPolygonSubdivisions = new SimpleIntegerProperty(2000);
+	private BooleanProperty useNanosecondResolution = new SimpleBooleanProperty(false);
 	private ObjectProperty<String> buildSelection = new SimpleObjectProperty<>("Latest");
-	private ObjectProperty<String> parallelismStrategy = new SimpleObjectProperty<>("Conservative");
+	private ObjectProperty<String> parallelismStrategy = new SimpleObjectProperty<>("Standard");
+	private BooleanProperty useInMemoryStorage = new SimpleBooleanProperty(false);
+	private BooleanProperty resolveModelsFromNetwork = new SimpleBooleanProperty(true);
+	private BooleanProperty resolveObservationsFromNetwork = new SimpleBooleanProperty(false);
+	private BooleanProperty loadRemoteContext = new SimpleBooleanProperty(false);
 	private ObjectProperty<File> workDirectory = new SimpleObjectProperty<>(
 			new File(System.getProperty("user.home") + File.separator + ".klab"));
 	private ObjectProperty<File> workspaceDirectory = new SimpleObjectProperty<>(
 			new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + "workspace"));
+	private ObjectProperty<File> productDirectory = new SimpleObjectProperty<>(
+			new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + "products"));
 	private ObjectProperty<File> exportDirectory = new SimpleObjectProperty<>(
 			new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + "export"));
 	private ObjectProperty<File> certFile = new SimpleObjectProperty<>(
@@ -57,10 +72,14 @@ public class Settings {
 	private DoubleProperty minTotalCoverage = new SimpleDoubleProperty(0.95);
 	private DoubleProperty minCoverageImprovement = new SimpleDoubleProperty(0.2);
 
-	private BooleanProperty debugParameters = new SimpleBooleanProperty(false);
+	private BooleanProperty useDebugParameters = new SimpleBooleanProperty(false);
 	private BooleanProperty deleteTempStorage = new SimpleBooleanProperty(true);
 
 	private StringProperty googleApiKey = new SimpleStringProperty("");
+	private StringProperty bingApiKey = new SimpleStringProperty("");
+	private StringProperty mapboxLayerURL = new SimpleStringProperty("");
+	private StringProperty mapboxLayerName = new SimpleStringProperty("");
+	private StringProperty mapboxLayerAttribution = new SimpleStringProperty("");
 	private StringProperty authenticationEndpoint = new SimpleStringProperty("");
 
 	/**
@@ -74,6 +93,18 @@ public class Settings {
 
 	public File getCertificateFile() {
 		return certFile.get();
+	}
+
+	public File getWorkDirectory() {
+		return workDirectory.get();
+	}
+
+	public File getExportDirectory() {
+		return workDirectory.get();
+	}
+
+	public File getProductDirectory() {
+		return productDirectory.get();
 	}
 
 	public String getAuthenticationEndpoint() {
@@ -171,6 +202,7 @@ public class Settings {
 						Setting.of("Choose the build to launch", buildItems, buildSelection)),
 
 				Category.of("Paths", Setting.of("k.LAB work directory", workDirectory, true),
+						Setting.of("Binary products path", productDirectory, true),
 						Setting.of("k.LAB project workspace", workspaceDirectory, true),
 						Setting.of("Default export path", exportDirectory, true),
 						Setting.of("Default temporary file path", tempDirectory, true)),
@@ -179,33 +211,56 @@ public class Settings {
 
 				Category.of("Engine",
 
-						Setting.of("Max RAM occupation (MB)", maxMemory, 512, 64000),
-						Setting.of("Engine port (default 8283)", enginePort, 8269, 8299),
-						Setting.of("Parallelism strategy", parallelismStrategies, parallelismStrategy)
+						Setting.of("Max RAM occupation (MB)", maxMemory),
+						Setting.of("Engine port (default 8283)", enginePort)
 
 				).subCategories(
 
-						Category.of("Runtime"
-
-						),
+						Category.of("Runtime",
+								Setting.of("Minutes idle before session disposal (0 = never)", sessionIdleMaximum),
+								Setting.of("Maximum concurrent local sessions", maxLocalSessions),
+								Setting.of("Maximum remote sessions", maxRemoteSessions),
+								Setting.of("Maximum concurrent sessions per user", maxSessionsPerUser),
+								Setting.of("Parallelism strategy", parallelismStrategies, parallelismStrategy)),
 						Category.of("Space and time", Group.of("Coverage",
 								Setting.of("Minimum model coverage (0-1: default 0.01)", minModelCoverage, 0.0, 1.0, 2),
 								Setting.of("Minimum coverage improvement (0-1: default 0.2)", minCoverageImprovement,
 										0.0, 1.0, 2),
 								Setting.of("Minimum total coverage (0-1: default 0.95)", minTotalCoverage, 0.0, 1.0, 2))
-								.description("Context coverage in resolution")),
-						Category.of("Connectivity"), Category.of("External APIs",
+								.description("Context coverage in resolution"),
+								Group.of("Spatial visualization and projection",
+										Setting.of("Use geocoding for names", useGeocoding),
+										Setting.of("Use UTM projection for location", useUTMProjection),
+										Setting.of("Maximum number of visualized coordinates", maxPolygonCoordinates),
+										Setting.of("Maximum subdivisions of the diagonal", maxPolygonSubdivisions)),
+								Group.of("Temporal precision",
+										Setting.of("Use nanosecond resolution", useNanosecondResolution))),
+						Category.of("Connectivity",
+						
+								Setting.of("Resolve models from k.LAB network", resolveModelsFromNetwork),
+								Setting.of("Resolve observations from k.LAB network", resolveObservationsFromNetwork),
+								Setting.of("Allow setting remote contexts from URN", loadRemoteContext)
 
-								Setting.of("Google API key", googleApiKey)
+						), Category.of("External APIs",
 
-						), Category.of("Resources"), Category.of("External APIs")
+								Group.of("Google Maps", 
+										Setting.of("Google API key", googleApiKey)),
+								Group.of("Bing Maps", 
+										Setting.of("Bing API key", bingApiKey)),
+								Group.of("Custom MapBox layer",
+										Setting.of("Name", mapboxLayerName),
+										Setting.of("URL", mapboxLayerURL),
+										Setting.of("Attribution", mapboxLayerAttribution))
+
+						), Category.of("Resources")
 
 				),
 
 				Category.of("Expert settings", Setting.of("Detect and use local hub if available", detectLocalHub),
 						Setting.of("Delete leftover temporary storage on startup", deleteTempStorage),
-						Setting.of("Launch engine with debug service (port 8000)", debugParameters),
-						Setting.of("Alt authentication endpoint", authenticationEndpoint)))
+						Setting.of("Use in-memory storage (debug only!)", useInMemoryStorage),
+						Setting.of("Remote debug engine configuration (port 8000)", useDebugParameters),
+						Setting.of("Alternate authentication endpoint", authenticationEndpoint)))
 
 				.persistWindowState(false).saveSettings(true).debugHistoryMode(false).buttonsVisibility(true);
 	}

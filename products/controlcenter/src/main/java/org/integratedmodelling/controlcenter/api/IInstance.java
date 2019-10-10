@@ -26,7 +26,6 @@ public interface IInstance {
 	 */
 	Status getStatus();
 
-	boolean isRunning();
 
 	/**
 	 * Start the instance, returning immediately. A true return value means that the
