@@ -7,6 +7,7 @@
 			"https://bitbucket.org/integratedmodelling/im.git",
 			"https://bitbucket.org/integratedmodelling/im.aries.git"
 		],
+        "iconUrl: "http://integratedmodelling.org/dev/statics/logos/k.lab.png"
 		"observables": [],
 		"worldview": true
 	},
@@ -14,6 +15,7 @@
 		"id": "ARIES",
 		"description": "ARIES (ARtificial Intelligence for Ecosystem Services)",
 		"sshKey": null,
+        "iconUrl: "http://integratedmodelling.org/dev/statics/logos/ARIES.png"
 		"worldview": false,
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/im.data.global.git",
