@@ -170,6 +170,7 @@ public class ProfileResource implements OAuth2User{
 				group.setSshKey(grp.getSshKey());
 				group.setObservables(grp.getObservables());
 				group.setWorldview(grp.getWorldview());
+				group.setIconUrl(grp.getIconUrl());
 				listOfGroups.add(group);
 			}
 		}
@@ -206,6 +207,7 @@ public class ProfileResource implements OAuth2User{
 			if(grp != null) {
 				KlabGroup group = new KlabGroup();
 				group.setId(grp.getId());
+				group.setIconUrl(grp.getIconUrl());
 				safeGroups.add(group);
 			}
 		}
