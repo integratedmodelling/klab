@@ -201,8 +201,14 @@ public class EngineViewController {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
 
-		ILocator loc = obs.getScale();
+		ILocator loc = obs.getScale().initialization();
 		if (locator != null) {
+			/*
+			 * NB: TEMPORARY! must send the T dimension locator if the context is temporal.
+			 */
+			if (obs.getScale().getTime() != null && !locator.toLowerCase().startsWith("t")) {
+				locator = "T1(1){time=0}" + locator; // + obs.getScale().getTime().getStart().getMilliseconds() + "}" + locator;
+			}
 			loc = Geometry.create(locator);
 			loc = obs.getScale().at(loc);
 		}

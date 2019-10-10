@@ -975,22 +975,13 @@ public interface KimPackage extends EPackage
   int ACTION_SPECIFICATION__INITIALIZATION = 5;
 
   /**
-   * The feature id for the '<em><b>Resolution</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION_SPECIFICATION__RESOLUTION = 6;
-
-  /**
    * The feature id for the '<em><b>Instantiation</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__INSTANTIATION = 7;
+  int ACTION_SPECIFICATION__INSTANTIATION = 6;
 
   /**
    * The feature id for the '<em><b>Termination</b></em>' attribute.
@@ -999,16 +990,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__TERMINATION = 8;
-
-  /**
-   * The feature id for the '<em><b>State Initialization</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION_SPECIFICATION__STATE_INITIALIZATION = 9;
+  int ACTION_SPECIFICATION__TERMINATION = 7;
 
   /**
    * The feature id for the '<em><b>Event</b></em>' containment reference.
@@ -1017,7 +999,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__EVENT = 10;
+  int ACTION_SPECIFICATION__EVENT = 8;
 
   /**
    * The feature id for the '<em><b>Any Context Event</b></em>' attribute.
@@ -1026,7 +1008,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__ANY_CONTEXT_EVENT = 11;
+  int ACTION_SPECIFICATION__ANY_CONTEXT_EVENT = 9;
 
   /**
    * The feature id for the '<em><b>Related Event Context</b></em>' attribute.
@@ -1035,7 +1017,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__RELATED_EVENT_CONTEXT = 12;
+  int ACTION_SPECIFICATION__RELATED_EVENT_CONTEXT = 10;
 
   /**
    * The feature id for the '<em><b>Event Context</b></em>' containment reference.
@@ -1044,7 +1026,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__EVENT_CONTEXT = 13;
+  int ACTION_SPECIFICATION__EVENT_CONTEXT = 11;
 
   /**
    * The feature id for the '<em><b>Parameters</b></em>' containment reference.
@@ -1053,7 +1035,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__PARAMETERS = 14;
+  int ACTION_SPECIFICATION__PARAMETERS = 12;
 
   /**
    * The number of structural features of the '<em>Action Specification</em>' class.
@@ -1062,7 +1044,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION_FEATURE_COUNT = 15;
+  int ACTION_SPECIFICATION_FEATURE_COUNT = 13;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.FunctionOrIDImpl <em>Function Or ID</em>}' class.
@@ -1112,22 +1094,13 @@ public interface KimPackage extends EPackage
   int ACTION = 16;
 
   /**
-   * The feature id for the '<em><b>Change</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION__CHANGE = 0;
-
-  /**
    * The feature id for the '<em><b>Set</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTION__SET = 1;
+  int ACTION__SET = 0;
 
   /**
    * The feature id for the '<em><b>Assignments</b></em>' containment reference list.
@@ -1136,7 +1109,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__ASSIGNMENTS = 2;
+  int ACTION__ASSIGNMENTS = 1;
 
   /**
    * The feature id for the '<em><b>Condition Negative</b></em>' attribute.
@@ -1145,7 +1118,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__CONDITION_NEGATIVE = 3;
+  int ACTION__CONDITION_NEGATIVE = 2;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' containment reference.
@@ -1154,7 +1127,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__CONDITION = 4;
+  int ACTION__CONDITION = 3;
 
   /**
    * The feature id for the '<em><b>Integrate</b></em>' attribute.
@@ -1163,7 +1136,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__INTEGRATE = 5;
+  int ACTION__INTEGRATE = 4;
 
   /**
    * The feature id for the '<em><b>Do</b></em>' attribute.
@@ -1172,7 +1145,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__DO = 6;
+  int ACTION__DO = 5;
 
   /**
    * The feature id for the '<em><b>Executed</b></em>' containment reference list.
@@ -1181,7 +1154,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__EXECUTED = 7;
+  int ACTION__EXECUTED = 6;
 
   /**
    * The feature id for the '<em><b>Move</b></em>' attribute.
@@ -1190,7 +1163,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__MOVE = 8;
+  int ACTION__MOVE = 7;
 
   /**
    * The feature id for the '<em><b>Where</b></em>' containment reference.
@@ -1199,7 +1172,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__WHERE = 9;
+  int ACTION__WHERE = 8;
 
   /**
    * The feature id for the '<em><b>Away</b></em>' attribute.
@@ -1208,7 +1181,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__AWAY = 10;
+  int ACTION__AWAY = 9;
 
   /**
    * The number of structural features of the '<em>Action</em>' class.
@@ -1217,7 +1190,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_FEATURE_COUNT = 11;
+  int ACTION_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ValueAssignmentImpl <em>Value Assignment</em>}' class.
@@ -4180,22 +4153,13 @@ public interface KimPackage extends EPackage
   int CURRENCY__YEAR = 1;
 
   /**
-   * The feature id for the '<em><b>Connectors</b></em>' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CURRENCY__CONNECTORS = 2;
-
-  /**
    * The feature id for the '<em><b>Units</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CURRENCY__UNITS = 3;
+  int CURRENCY__UNITS = 2;
 
   /**
    * The number of structural features of the '<em>Currency</em>' class.
@@ -4204,7 +4168,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CURRENCY_FEATURE_COUNT = 4;
+  int CURRENCY_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.NumberImpl <em>Number</em>}' class.
@@ -5387,17 +5351,6 @@ public interface KimPackage extends EPackage
   EAttribute getActionSpecification_Initialization();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ActionSpecification#isResolution <em>Resolution</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Resolution</em>'.
-   * @see org.integratedmodelling.kim.kim.ActionSpecification#isResolution()
-   * @see #getActionSpecification()
-   * @generated
-   */
-  EAttribute getActionSpecification_Resolution();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ActionSpecification#isInstantiation <em>Instantiation</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5418,17 +5371,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getActionSpecification_Termination();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ActionSpecification#isStateInitialization <em>State Initialization</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>State Initialization</em>'.
-   * @see org.integratedmodelling.kim.kim.ActionSpecification#isStateInitialization()
-   * @see #getActionSpecification()
-   * @generated
-   */
-  EAttribute getActionSpecification_StateInitialization();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ActionSpecification#getEvent <em>Event</em>}'.
@@ -5526,17 +5468,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EClass getAction();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Action#isChange <em>Change</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Change</em>'.
-   * @see org.integratedmodelling.kim.kim.Action#isChange()
-   * @see #getAction()
-   * @generated
-   */
-  EAttribute getAction_Change();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Action#isSet <em>Set</em>}'.
@@ -8815,17 +8746,6 @@ public interface KimPackage extends EPackage
   EAttribute getCurrency_Year();
 
   /**
-   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.Currency#getConnectors <em>Connectors</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute list '<em>Connectors</em>'.
-   * @see org.integratedmodelling.kim.kim.Currency#getConnectors()
-   * @see #getCurrency()
-   * @generated
-   */
-  EAttribute getCurrency_Connectors();
-
-  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Currency#getUnits <em>Units</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -9837,14 +9757,6 @@ public interface KimPackage extends EPackage
     EAttribute ACTION_SPECIFICATION__INITIALIZATION = eINSTANCE.getActionSpecification_Initialization();
 
     /**
-     * The meta object literal for the '<em><b>Resolution</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTION_SPECIFICATION__RESOLUTION = eINSTANCE.getActionSpecification_Resolution();
-
-    /**
      * The meta object literal for the '<em><b>Instantiation</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -9859,14 +9771,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute ACTION_SPECIFICATION__TERMINATION = eINSTANCE.getActionSpecification_Termination();
-
-    /**
-     * The meta object literal for the '<em><b>State Initialization</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTION_SPECIFICATION__STATE_INITIALIZATION = eINSTANCE.getActionSpecification_StateInitialization();
 
     /**
      * The meta object literal for the '<em><b>Event</b></em>' containment reference feature.
@@ -9943,14 +9847,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EClass ACTION = eINSTANCE.getAction();
-
-    /**
-     * The meta object literal for the '<em><b>Change</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTION__CHANGE = eINSTANCE.getAction_Change();
 
     /**
      * The meta object literal for the '<em><b>Set</b></em>' attribute feature.
@@ -12429,14 +12325,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CURRENCY__YEAR = eINSTANCE.getCurrency_Year();
-
-    /**
-     * The meta object literal for the '<em><b>Connectors</b></em>' attribute list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CURRENCY__CONNECTORS = eINSTANCE.getCurrency_Connectors();
 
     /**
      * The meta object literal for the '<em><b>Units</b></em>' containment reference list feature.

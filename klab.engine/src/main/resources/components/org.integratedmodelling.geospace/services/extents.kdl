@@ -12,10 +12,9 @@ spatialextent space
 		 is 'EPSG:4326')."
 	    default ""
 	
-	optional text grid 
-		"A string specifying the linear resolution of the desired grid as a number with length
-		 units. Example: '1 km'."
-		default ""
+	optional value grid 
+		"The linear resolution of the desired grid as a number with length units. Example: 1.km. A string 
+		 like '1 km' can also be passed."
 		
 	optional text urn
 		"A URN (or a string specifying one) that will return at least one spatial object, whose

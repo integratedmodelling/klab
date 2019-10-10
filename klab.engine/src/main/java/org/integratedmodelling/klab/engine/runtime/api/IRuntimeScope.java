@@ -13,16 +13,18 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
@@ -302,8 +304,8 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * This will create a main group using the main observable after stripping any
 	 * attributes or predicates. If the group was created before, its 'new' flag
 	 * (TBD) will have been set to false so that the notifier knows whether to send
-	 * the full group data or a change notification. If the observable has additional
-	 * predicates, it will then return a view that filters only those.
+	 * the full group data or a change notification. If the observable has
+	 * additional predicates, it will then return a view that filters only those.
 	 * 
 	 * @param observable
 	 * @param scale
@@ -328,4 +330,24 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	IObservation getObservationGroupView(Observable observable, IObservation ret);
+
+	/**
+	 * Schedule all the needed actions for this actuator. Called at initialization
+	 * after the actuator has computed its initial conditions (first thing if the
+	 * actuator observes an occurrent).
+	 * 
+	 * @param active
+	 */
+	void scheduleActions(Actuator active);
+
+	/**
+	 * Set the scale as specified by the passed locator (which should be a scale and
+	 * represent a specific temporal transition) and, according to the target
+	 * observations and their view, wrap any context states so that appropriate
+	 * temporal mediations are in place when an actuator modifies them.
+	 * 
+	 * @param transitionScale
+	 * @return
+	 */
+	IRuntimeScope locate(ILocator transitionScale);
 }

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.resolution;
+package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
@@ -38,15 +37,15 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
-import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.dataflow.Actuator;
-import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.RankedModel;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
+import org.integratedmodelling.klab.resolution.ResolvedArtifact;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -152,7 +151,7 @@ public class DataflowCompiler {
 			 */
 			if (sources.containsKey(actuator.getName()) && root instanceof Observable
 					&& ((Observable) root).getType().is(IKimConcept.Type.QUALITY)) {
-				for (IComputableResource mediator : computeMediators(sources.get(actuator.getName()), node.observable,
+				for (IContextualizable mediator : computeMediators(sources.get(actuator.getName()), node.observable,
 						node.scale)) {
 					actuator.addComputation(mediator);
 				}
@@ -211,7 +210,7 @@ public class DataflowCompiler {
 			 * recover any instantiation actions
 			 */
 			for (IAction action : contextModel.getBehavior().getActions(Trigger.INSTANTIATION)) {
-				for (IComputableResource resource : action.getComputation(true)) {
+				for (IContextualizable resource : action.getComputation()) {
 					actuator.addComputation(((ComputableResource) resource).copy());
 				}
 			}
@@ -331,7 +330,7 @@ public class DataflowCompiler {
 				break;
 			case DETECTION:
 			case INSTANTIATION:
-				ret.setType(Type.OBJECT);
+				ret.setType(observable.getArtifactType());
 				break;
 			case QUANTIFICATION:
 				ret.setType(Type.NUMBER);
@@ -449,7 +448,7 @@ public class DataflowCompiler {
 			if (!generated.contains(theModel)) {
 
 				generated.add(theModel);
-				for (IComputableResource resource : getModelComputation(model, ret.getType(), true)) {
+				for (IContextualizable resource : getModelComputation(model, ret.getType(), true)) {
 					ret.addComputation(resource);
 				}
 
@@ -501,7 +500,7 @@ public class DataflowCompiler {
 						ret.getActuators().add(achild);
 						recordUnits(achild, chosenUnits);
 						if (sources.containsKey(achild.getName())) {
-							for (IComputableResource mediator : computeMediators(sources.get(achild.getName()),
+							for (IContextualizable mediator : computeMediators(sources.get(achild.getName()),
 									achild.getObservable(), scale)) {
 								ret.addMediation(mediator, achild);
 							}
@@ -781,13 +780,13 @@ public class DataflowCompiler {
 	 * @param iLocator
 	 * @return
 	 */
-	public List<IComputableResource> getModelComputation(Model model, IArtifact.Type targetType,
+	public List<IContextualizable> getModelComputation(Model model, IArtifact.Type targetType,
 			boolean initialization) {
-		List<IComputableResource> ret = new ArrayList<>(model.getComputation(initialization));
+		List<IContextualizable> ret = new ArrayList<>(model.getComputation());
 		int lastDirectPosition = -1;
 		IArtifact.Type lastDirectType = null;
 		int i = 0;
-		for (IComputableResource resource : ret) {
+		for (IContextualizable resource : ret) {
 			if (((ComputableResource) resource).getTarget() == null) {
 				Type resType = getResourceType(resource);
 				if (resType != null && resType != Type.VOID) {
@@ -799,7 +798,7 @@ public class DataflowCompiler {
 		}
 
 		if (lastDirectType != null && lastDirectType != targetType && lastDirectType != IArtifact.Type.VALUE) {
-			IComputableResource cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType,
+			IContextualizable cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType,
 					targetType);
 			if (cast != null) {
 				ret.add(lastDirectPosition + 1, cast);
@@ -808,7 +807,7 @@ public class DataflowCompiler {
 		return ret;
 	}
 
-	private Type getResourceType(IComputableResource resource) {
+	private Type getResourceType(IContextualizable resource) {
 
 		if (resource.getClassification() != null || resource.getAccordingTo() != null) {
 			return Type.CONCEPT;
@@ -911,7 +910,7 @@ public class DataflowCompiler {
 	 * @param chosenUnits
 	 * @return
 	 */
-	public List<IComputableResource> computeMediators(Observable from, Observable to, IScale scale) {
+	public List<IContextualizable> computeMediators(Observable from, Observable to, IScale scale) {
 
 		if (OWL.INSTANCE.isSemantic(from)) {
 			if (!((Observable) to).canResolve((Observable) from)) {
@@ -925,7 +924,7 @@ public class DataflowCompiler {
 			throw new IllegalStateException("Observables need units but have none: " + from + " mediating to " + to);
 		}
 
-		List<IComputableResource> ret = new ArrayList<>();
+		List<IContextualizable> ret = new ArrayList<>();
 		IObservable current = from;
 
 		if (current.getType().equals(to.getType())) {

@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.clitool.console.commands.model;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
@@ -52,7 +52,7 @@ public class Compute implements ICommand {
 					}
 				}
 			}
-			for (IComputableResource computation : strategy.getComputation()) {
+			for (IContextualizable computation : strategy.getComputation()) {
 				ret += spacer + "   Compute " + computation.getServiceCall() + "\n";
 			}
 		}

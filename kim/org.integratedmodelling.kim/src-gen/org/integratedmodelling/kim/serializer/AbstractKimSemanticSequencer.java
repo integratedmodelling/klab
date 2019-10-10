@@ -363,10 +363,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 trigger?='on' 
 	 *                 (
 	 *                     initialization?='definition' | 
-	 *                     resolution?='resolution' | 
 	 *                     instantiation?='instantiation' | 
 	 *                     termination?='termination' | 
-	 *                     stateInitialization?='initialization' | 
 	 *                     (event=ConceptDeclaration ((anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?)
 	 *                 ) 
 	 *                 parameters=List?
@@ -387,7 +385,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *
 	 * Constraint:
 	 *     (
-	 *         ((change?='change' | set?='set') assignments+=ValueAssignment assignments+=ValueAssignment* (conditionNegative?='unless'? condition=Value)?) | 
+	 *         (set?='set' assignments+=ValueAssignment assignments+=ValueAssignment* (conditionNegative?='unless'? condition=Value)?) | 
 	 *         (integrate?='integrate' assignments+=ValueAssignment assignments+=ValueAssignment* (conditionNegative?='unless'? condition=Value)?) | 
 	 *         ((do?='do' | do?='then' | do?='finally') executed+=ValueExecution executed+=ValueExecution* (conditionNegative?='unless'? condition=Value)?) | 
 	 *         (move?='move' (where=Value | away?='away') condition=Value?)
@@ -506,16 +504,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Metadata | 
 	 *                         properties+=PropertyStatement
 	 *                     )? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
+	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         alias?='equals'? 
@@ -680,10 +678,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 caused=SimpleConceptDeclaration | 
 	 *                 during=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -711,10 +709,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 caused=SimpleConceptDeclaration | 
 	 *                 during=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -853,7 +851,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     Currency returns Currency
 	 *
 	 * Constraint:
-	 *     (id=UPPERCASE_ID year=INT (connectors+=UnitOp units+=UnitElement)*)
+	 *     (id=UPPERCASE_ID year=INT units+=UnitElement*)
 	 */
 	protected void sequence_Currency(ISerializationContext context, Currency semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

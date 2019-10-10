@@ -1405,7 +1405,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActionSpecification_Resolution()
+  public EAttribute getActionSpecification_Instantiation()
   {
     return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(6);
   }
@@ -1415,7 +1415,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActionSpecification_Instantiation()
+  public EAttribute getActionSpecification_Termination()
   {
     return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(7);
   }
@@ -1425,29 +1425,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActionSpecification_Termination()
-  {
-    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(8);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getActionSpecification_StateInitialization()
-  {
-    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(9);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getActionSpecification_Event()
   {
-    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(10);
+    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -1457,7 +1437,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getActionSpecification_AnyContextEvent()
   {
-    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -1467,7 +1447,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getActionSpecification_RelatedEventContext()
   {
-    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -1477,7 +1457,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getActionSpecification_EventContext()
   {
-    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(13);
+    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -1487,7 +1467,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getActionSpecification_Parameters()
   {
-    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(14);
+    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -1535,7 +1515,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAction_Change()
+  public EAttribute getAction_Set()
   {
     return (EAttribute)actionEClass.getEStructuralFeatures().get(0);
   }
@@ -1545,19 +1525,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAction_Set()
-  {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getAction_Assignments()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(2);
+    return (EReference)actionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1567,7 +1537,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getAction_ConditionNegative()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1577,7 +1547,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getAction_Condition()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(4);
+    return (EReference)actionEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1587,7 +1557,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getAction_Integrate()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(5);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1597,7 +1567,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getAction_Do()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -1607,7 +1577,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getAction_Executed()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(7);
+    return (EReference)actionEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -1617,7 +1587,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getAction_Move()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1627,7 +1597,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getAction_Where()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(9);
+    return (EReference)actionEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -1637,7 +1607,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getAction_Away()
   {
-    return (EAttribute)actionEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -4555,19 +4525,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCurrency_Connectors()
-  {
-    return (EAttribute)currencyEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getCurrency_Units()
   {
-    return (EReference)currencyEClass.getEStructuralFeatures().get(3);
+    return (EReference)currencyEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -4940,10 +4900,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(actionSpecificationEClass, ACTION_SPECIFICATION__ACTIONS);
     createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__TRIGGER);
     createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__INITIALIZATION);
-    createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__RESOLUTION);
     createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__INSTANTIATION);
     createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__TERMINATION);
-    createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__STATE_INITIALIZATION);
     createEReference(actionSpecificationEClass, ACTION_SPECIFICATION__EVENT);
     createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__ANY_CONTEXT_EVENT);
     createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__RELATED_EVENT_CONTEXT);
@@ -4955,7 +4913,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(functionOrIDEClass, FUNCTION_OR_ID__FUNCTION_ID);
 
     actionEClass = createEClass(ACTION);
-    createEAttribute(actionEClass, ACTION__CHANGE);
     createEAttribute(actionEClass, ACTION__SET);
     createEReference(actionEClass, ACTION__ASSIGNMENTS);
     createEAttribute(actionEClass, ACTION__CONDITION_NEGATIVE);
@@ -5292,7 +5249,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     currencyEClass = createEClass(CURRENCY);
     createEAttribute(currencyEClass, CURRENCY__ID);
     createEAttribute(currencyEClass, CURRENCY__YEAR);
-    createEAttribute(currencyEClass, CURRENCY__CONNECTORS);
     createEReference(currencyEClass, CURRENCY__UNITS);
 
     numberEClass = createEClass(NUMBER);
@@ -5457,10 +5413,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getActionSpecification_Actions(), this.getAction(), null, "actions", null, 0, -1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActionSpecification_Trigger(), ecorePackage.getEBoolean(), "trigger", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActionSpecification_Initialization(), ecorePackage.getEBoolean(), "initialization", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getActionSpecification_Resolution(), ecorePackage.getEBoolean(), "resolution", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActionSpecification_Instantiation(), ecorePackage.getEBoolean(), "instantiation", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActionSpecification_Termination(), ecorePackage.getEBoolean(), "termination", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getActionSpecification_StateInitialization(), ecorePackage.getEBoolean(), "stateInitialization", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActionSpecification_Event(), this.getConceptDeclaration(), null, "event", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActionSpecification_AnyContextEvent(), ecorePackage.getEBoolean(), "anyContextEvent", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActionSpecification_RelatedEventContext(), ecorePackage.getEBoolean(), "relatedEventContext", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -5472,7 +5426,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getFunctionOrID_FunctionId(), ecorePackage.getEString(), "functionId", null, 0, 1, FunctionOrID.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(actionEClass, Action.class, "Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getAction_Change(), ecorePackage.getEBoolean(), "change", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAction_Set(), ecorePackage.getEBoolean(), "set", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAction_Assignments(), this.getValueAssignment(), null, "assignments", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAction_ConditionNegative(), ecorePackage.getEBoolean(), "conditionNegative", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -5809,7 +5762,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEClass(currencyEClass, Currency.class, "Currency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getCurrency_Id(), ecorePackage.getEString(), "id", null, 0, 1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCurrency_Year(), ecorePackage.getEInt(), "year", null, 0, 1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCurrency_Connectors(), this.getUnitOp(), "connectors", null, 0, -1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getCurrency_Units(), this.getUnitElement(), null, "units", null, 0, -1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(numberEClass, org.integratedmodelling.kim.kim.Number.class, "Number", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

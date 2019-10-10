@@ -8,7 +8,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
@@ -124,7 +124,7 @@ public enum DataflowDocumentation {
 	 * @param resource
 	 * @return
 	 */
-	public String getDocumentation(Element element, Pair<IServiceCall, IComputableResource> resource) {
+	public String getDocumentation(Element element, Pair<IServiceCall, IContextualizable> resource) {
 
 		String templateId = null;
 		Object content = ((ComputableResource) resource.getSecond()).getValidatedResource(Object.class);
@@ -169,7 +169,7 @@ public enum DataflowDocumentation {
 		return null;
 	}
 
-	private VelocityContext getContext(Pair<IServiceCall, IComputableResource> resource) {
+	private VelocityContext getContext(Pair<IServiceCall, IContextualizable> resource) {
 
 		Object content = ((ComputableResource) resource.getSecond()).getValidatedResource(Object.class);
 

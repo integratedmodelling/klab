@@ -78,9 +78,16 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
          */
         CONCEPT,
         /**
-         * Contextualizes processes
+         * Contextualizes processes, an occurrent so the resolution only 
+         * happens at transitions and not at initialization. Contextualizers must
+         * have T geometry.
          */
         PROCESS,
+        /**
+         * The other occurrent, this time an instantiator. Instantiators must have
+         * T geometry and only run at transitions.
+         */
+        EVENT,
         /**
          * Instantiates or contextualizes objects, according to arity.
          */
@@ -176,6 +183,14 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
             // TODO probably needs improvement
             return false;
         }
+
+		public boolean isCountable() {
+			return this == EVENT || this == OBJECT;
+		}
+		
+		public boolean isOccurrent() {
+			return this == EVENT || this == PROCESS;
+		}
 
     }
 

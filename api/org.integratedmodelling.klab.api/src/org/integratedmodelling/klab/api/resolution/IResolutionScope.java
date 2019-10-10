@@ -21,6 +21,8 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
@@ -78,6 +80,14 @@ public interface IResolutionScope {
 	public enum Scope {
 		OBSERVABLE, OBSERVER, MODEL
 	}
+	
+	/**
+	 * Available after resolution, this is the entire scale covered by all the actuators and
+	 * models compiled in, bounded by the context.
+	 * 
+	 * @return
+	 */
+	IScale getScale();
 
 	/**
 	 * IDs of any scenarios we're resolving into. These are set in the root scope

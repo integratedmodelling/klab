@@ -1032,10 +1032,13 @@ public enum OWL {
 		case OBJECT:
 			qualityType = Type.SUBJECT;
 			break;
+		case EVENT:
+			qualityType = Type.EVENT;
+			break;
 		default:
 			throw new IllegalArgumentException("wrong type passed for non-semantic peer generation: " + type);
 		}
-		EnumSet<Type> identity = type == IArtifact.Type.OBJECT
+		EnumSet<Type> identity = type.isCountable()
 				? EnumSet.of(Type.SUBJECT, Type.OBSERVABLE, Type.DIRECT_OBSERVABLE, Type.COUNTABLE)
 				: EnumSet.of(Type.QUALITY, Type.OBSERVABLE, qualityType);
 

@@ -20,6 +20,22 @@ public class Quantity {
 	
 	private Quantity() {}
 	
+	public IUnit getUnit() {
+		return unit;
+	}
+	
+	public Number getValue() {
+		return value;
+	}
+	
+	public ICurrency getCurrency() {
+		return currency;
+	}
+	
+	public Range getRange() {
+		return range;
+	}
+	
 	public static Quantity create(Number value, IUnit unit) {
 		Quantity ret = new Quantity();
 		ret.value = value;

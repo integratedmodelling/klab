@@ -392,8 +392,8 @@ public class ModelKbox extends ObservableKbox {
 		boolean checkBoundaries = false;
 		if (time != null && checkBoundaries) {
 			ret = "(timestart == -1 AND timeend == -1) OR (";
-			long start = time.getStart() == null ? -1 : time.getStart().getMillis();
-			long end = time.getEnd() == null ? -1 : time.getEnd().getMillis();
+			long start = time.getStart() == null ? -1 : time.getStart().getMilliseconds();
+			long end = time.getEnd() == null ? -1 : time.getEnd().getMilliseconds();
 			if (start > 0 && end > 0) {
 				ret += "timestart >= " + start + " AND timeend <= " + end;
 			} else if (start > 0) {
@@ -705,10 +705,10 @@ public class ModelKbox extends ObservableKbox {
 				timeExtent = (ITime) ((AbstractExtent) scale.getTime()).getExtent();
 				if (timeExtent != null) {
 					if (timeExtent.getStart() != null) {
-						timeStart = timeExtent.getStart().getMillis();
+						timeStart = timeExtent.getStart().getMilliseconds();
 					}
 					if (timeExtent.getEnd() != null) {
-						timeEnd = timeExtent.getEnd().getMillis();
+						timeEnd = timeExtent.getEnd().getMilliseconds();
 					}
 					timeMultiplicity = scale.getTime().size();
 				}

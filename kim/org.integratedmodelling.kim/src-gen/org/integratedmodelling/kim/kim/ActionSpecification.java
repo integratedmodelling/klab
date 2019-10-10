@@ -23,10 +23,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isTrigger <em>Trigger</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isInitialization <em>Initialization</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isResolution <em>Resolution</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isInstantiation <em>Instantiation</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isTermination <em>Termination</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isStateInitialization <em>State Initialization</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#getEvent <em>Event</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isAnyContextEvent <em>Any Context Event</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isRelatedEventContext <em>Related Event Context</em>}</li>
@@ -177,32 +175,6 @@ public interface ActionSpecification extends EObject
   void setInitialization(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Resolution</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Resolution</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Resolution</em>' attribute.
-   * @see #setResolution(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getActionSpecification_Resolution()
-   * @model
-   * @generated
-   */
-  boolean isResolution();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ActionSpecification#isResolution <em>Resolution</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Resolution</em>' attribute.
-   * @see #isResolution()
-   * @generated
-   */
-  void setResolution(boolean value);
-
-  /**
    * Returns the value of the '<em><b>Instantiation</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
@@ -253,32 +225,6 @@ public interface ActionSpecification extends EObject
    * @generated
    */
   void setTermination(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>State Initialization</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>State Initialization</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>State Initialization</em>' attribute.
-   * @see #setStateInitialization(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getActionSpecification_StateInitialization()
-   * @model
-   * @generated
-   */
-  boolean isStateInitialization();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ActionSpecification#isStateInitialization <em>State Initialization</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>State Initialization</em>' attribute.
-   * @see #isStateInitialization()
-   * @generated
-   */
-  void setStateInitialization(boolean value);
 
   /**
    * Returns the value of the '<em><b>Event</b></em>' containment reference.

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
+import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 
 public class UserInputRequest {
 

@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.utils.Triple;
 public abstract class DirectObservation extends Observation implements IDirectObservation {
 
 	String name;
+	private boolean active = true;
 
 	// contains the IDs of any subjective observations that we have made.
 	private Set<String> subjectivelyObserved = new HashSet<>();
@@ -149,15 +150,6 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 		// TODO Auto-generated method stub
 		return false;
 	}
-//
-//	public IConcept nextPredicateToResolve() {
-//		IConcept ret = null;
-//		if (!predicatesToResolve.isEmpty()) {
-//			ret = predicatesToResolve.iterator().next();
-//			predicatesToResolve.remove(ret);
-//		}
-//		return ret;
-//	}
 
 	/**
 	 * The set of IDs of any subjective observation that contain this as an
@@ -172,6 +164,15 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	@Override
 	public Collection<IArtifact> getChildArtifacts() {
 		return getRuntimeScope().getChildArtifactsOf(this);
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

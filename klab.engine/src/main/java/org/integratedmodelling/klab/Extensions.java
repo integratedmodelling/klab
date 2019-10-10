@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -305,7 +305,7 @@ public enum Extensions implements IExtensionService {
 	 * @param context
 	 * @return
 	 */
-	public boolean callAsCondition(IComputableResource condition, IContextualizationScope context) {
+	public boolean callAsCondition(IContextualizable condition, IContextualizationScope context) {
 		if (condition.getLiteral() != null) {
 			if (condition.getLiteral() instanceof Boolean) {
 				return (Boolean) condition.getLiteral();

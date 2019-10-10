@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IParameters;
@@ -432,7 +432,7 @@ public enum Resources implements IResourceService {
 		/*
 		 * apply any modification from parameters if any
 		 */
-		if (!upar.getSecond().isEmpty()) {
+		if (ret != null && !upar.getSecond().isEmpty()) {
 			ret = ((Resource) ret).applyParameters(upar.getSecond());
 		}
 
@@ -699,7 +699,10 @@ public enum Resources implements IResourceService {
 					}
 				}
 
-				String owner = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername();
+				// NB: should never be null but it is
+				IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
+				String owner = user == null ? "integratedmodelling.org" : user.getUsername();
+				
 
 				IResource resource = builder.withResourceVersion(Version.create("0.0.1"))
 						.withProjectName(project.getName()).withParameters(parameters)
@@ -807,7 +810,7 @@ public enum Resources implements IResourceService {
 		}
 
 		Scale scale = Scale.create(resource.getGeometry());
-		if (forceGrid || resource.getType() != Type.OBJECT) {
+		if (forceGrid || !resource.getType().isCountable()) {
 			scale = scale.adaptForExample();
 		}
 
@@ -1317,7 +1320,7 @@ public enum Resources implements IResourceService {
 		getLoader().rescan(true);
 	}
 
-	public IGeometry getGeometry(IComputableResource resource) {
+	public IGeometry getGeometry(IContextualizable resource) {
 		switch (resource.getType()) {
 		case RESOURCE:
 			IResource res = resolveResource(resource.getUrn());
@@ -1344,7 +1347,7 @@ public enum Resources implements IResourceService {
 	 * @param resource
 	 * @return
 	 */
-	public Type getType(IComputableResource resource) {
+	public Type getType(IContextualizable resource) {
 		switch (resource.getType()) {
 		case CLASSIFICATION:
 			return Type.CONCEPT;

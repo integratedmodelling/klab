@@ -54,4 +54,7 @@ message KlabData {
 	// these two should be in a oneof , but no joy there.
 	repeated Object objects = 5;
 	State state = 6;
+	
+	// if this is true, we just sent a byte to say that time has passed but the data are as before.
+	boolean noChange = 7;
 }

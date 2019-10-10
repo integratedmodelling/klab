@@ -90,7 +90,7 @@ public enum Time implements ITimeService {
 					"generic extent of type " + resolution + " are not supported at the moment");
 		}
 
-		return org.integratedmodelling.klab.components.time.extents.Time.create(Type.GENERIC, resolution, 1,
+		return org.integratedmodelling.klab.components.time.extents.Time.create(Type.LOGICAL, resolution, 1,
 				new TimeInstant(begin), new TimeInstant(end), null);
 	}
 

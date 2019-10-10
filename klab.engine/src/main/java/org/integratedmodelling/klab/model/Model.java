@@ -3,11 +3,13 @@ package org.integratedmodelling.klab.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimModel;
@@ -27,7 +29,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -42,8 +44,8 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.provenance.IActivity;
-import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -51,6 +53,8 @@ import org.integratedmodelling.klab.api.services.IDocumentationService;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -68,7 +72,7 @@ public class Model extends KimObject implements IModel {
 	private Map<String, IObservable> attributeObservables = new HashMap<>();
 	private Namespace namespace;
 	private Behavior behavior;
-	private List<IComputableResource> resources = new ArrayList<>();
+	private List<IContextualizable> resources = new ArrayList<>();
 	private boolean instantiator;
 	private boolean reinterpreter;
 	private boolean inactive;
@@ -175,7 +179,7 @@ public class Model extends KimObject implements IModel {
 		/*
 		 * all resources after 'using' or further classification/lookup transformations
 		 */
-		for (IComputableResource resource : model.getContextualization()) {
+		for (IContextualizable resource : model.getContextualization()) {
 			try {
 				this.resources.add(validate((ComputableResource) resource, monitor));
 			} catch (Throwable e) {
@@ -246,7 +250,7 @@ public class Model extends KimObject implements IModel {
 		 * EACH output artifact, not that of the context.
 		 */
 
-		for (IComputableResource resource : resources) {
+		for (IContextualizable resource : resources) {
 
 			if (this.observables.get(0).getDescription() == IActivity.Description.CHARACTERIZATION
 					|| this.observables.get(0).getDescription() == IActivity.Description.CLASSIFICATION) {
@@ -256,8 +260,7 @@ public class Model extends KimObject implements IModel {
 				}
 			}
 
-			String target = resource.getTarget() == null ? this.observables.get(0).getName()
-					: resource.getTarget().getName();
+			String target = resource.getTargetId() == null ? this.observables.get(0).getName() : resource.getTargetId();
 			IArtifact.Type type = Resources.INSTANCE.getType(resource);
 			IGeometry geometry = Resources.INSTANCE.getGeometry(resource);
 
@@ -270,11 +273,11 @@ public class Model extends KimObject implements IModel {
 			mergeGeometry(geometry, monitor);
 		}
 
-		Scale cov =  getCoverage(monitor);
+		Scale cov = getCoverage(monitor);
 		if (cov != null) {
 			mergeGeometry(cov.asGeometry(), monitor);
 		}
-		
+
 		if (geometry == null || geometry.isEmpty()) {
 			geometry = Geometry.scalar();
 		}
@@ -297,7 +300,7 @@ public class Model extends KimObject implements IModel {
 		}
 	}
 
-	private boolean isFilter(IComputableResource resource) {
+	private boolean isFilter(IContextualizable resource) {
 		if (resource.getServiceCall() != null) {
 			IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
 			if (prototype != null && prototype.isFilter()) {
@@ -676,7 +679,7 @@ public class Model extends KimObject implements IModel {
 			return false;
 		}
 
-		for (IComputableResource resource : resources) {
+		for (IContextualizable resource : resources) {
 			// TODO TODO this is a temp fix to make the tests run.
 			if (!resource.getInputs().isEmpty()) {
 				return false;
@@ -802,8 +805,35 @@ public class Model extends KimObject implements IModel {
 	public Scale getCoverage(IMonitor monitor) throws KlabException {
 
 		if (this.coverage == null) {
+
+			Set<Dimension.Type> dims = new HashSet<>();
+
+			Collection<IExtent> extents = new ArrayList<>();
+			if (behavior != null) {
+				extents.addAll(behavior.getExtents(monitor));
+				for (IExtent extent : extents) {
+					dims.add(extent.getType());
+				}
+			}
+
+			for (IAnnotation annotation : getAnnotations()) {
+				if ("space".equals(annotation.getName())) {
+					if (dims.contains(Dimension.Type.SPACE)) {
+						monitor.error("cannot specify spatial extent in more than one way");
+					} else {
+						extents.add(Space.create(annotation));
+					}
+				} else if ("time".equals(annotation.getName())) {
+					if (dims.contains(Dimension.Type.TIME)) {
+						monitor.error("cannot specify temporal extent in more than one way");
+					} else {
+						extents.add(Time.create(annotation));
+					}
+				}
+			}
+
 			try {
-				this.coverage = Scale.create(behavior == null ? new ArrayList<>() : behavior.getExtents(monitor));
+				this.coverage = Scale.create(extents);
 				if (resourceCoverage != null) {
 					this.coverage = this.coverage.merge(resourceCoverage, LogicalConnector.INTERSECTION);
 				}
@@ -828,7 +858,7 @@ public class Model extends KimObject implements IModel {
 	 * @return the indirectAdapters for the model at the transition
 	 */
 	@Override
-	public List<IComputableResource> getComputation(boolean initialization) {
+	public List<IContextualizable> getComputation() {
 
 		List<IAnnotation> parameters = new ArrayList<>();
 		for (IAnnotation annotation : getAnnotations()) {
@@ -837,17 +867,17 @@ public class Model extends KimObject implements IModel {
 			}
 		}
 
-		List<IComputableResource> ret = new ArrayList<>();
-		for (IComputableResource resource : resources) {
+		List<IContextualizable> ret = new ArrayList<>();
+		for (IContextualizable resource : resources) {
 			ComputableResource res = ((ComputableResource) resource).copy();
 			if (parameters.size() > 0) {
 				res.addParameters(parameters);
 			}
 			ret.add(res);
 		}
-		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggers(initialization)) {
+		for (Trigger trigger : Trigger.values()) {
 			for (IAction action : behavior.getActions(trigger)) {
-				for (IComputableResource resource : action.getComputation(initialization)) {
+				for (IContextualizable resource : action.getComputation()) {
 					ComputableResource res = ((ComputableResource) resource).copy();
 					if (parameters.size() > 0) {
 						res.addParameters(parameters);
@@ -900,7 +930,7 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public List<IComputableResource> getResources() {
+	public List<IContextualizable> getResources() {
 		return resources;
 	}
 

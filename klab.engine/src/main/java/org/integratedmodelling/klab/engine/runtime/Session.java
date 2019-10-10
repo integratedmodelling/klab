@@ -586,6 +586,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					}
 				}.start();
 			}
+			
 		} else if (type == IMessage.Type.ImportIntoResource) {
 
 			IResource resource = Resources.INSTANCE.resolveResource(request.getTargetResourceUrn());

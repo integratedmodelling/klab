@@ -33,7 +33,6 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionImpl#isChange <em>Change</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionImpl#isSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionImpl#getAssignments <em>Assignments</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionImpl#isConditionNegative <em>Condition Negative</em>}</li>
@@ -50,26 +49,6 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
  */
 public class ActionImpl extends MinimalEObjectImpl.Container implements Action
 {
-  /**
-   * The default value of the '{@link #isChange() <em>Change</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isChange()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean CHANGE_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isChange() <em>Change</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isChange()
-   * @generated
-   * @ordered
-   */
-  protected boolean change = CHANGE_EDEFAULT;
-
   /**
    * The default value of the '{@link #isSet() <em>Set</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -249,29 +228,6 @@ public class ActionImpl extends MinimalEObjectImpl.Container implements Action
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.ACTION;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public boolean isChange()
-  {
-    return change;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setChange(boolean newChange)
-  {
-    boolean oldChange = change;
-    change = newChange;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.ACTION__CHANGE, oldChange, change));
   }
 
   /**
@@ -568,8 +524,6 @@ public class ActionImpl extends MinimalEObjectImpl.Container implements Action
   {
     switch (featureID)
     {
-      case KimPackage.ACTION__CHANGE:
-        return isChange();
       case KimPackage.ACTION__SET:
         return isSet();
       case KimPackage.ACTION__ASSIGNMENTS:
@@ -605,9 +559,6 @@ public class ActionImpl extends MinimalEObjectImpl.Container implements Action
   {
     switch (featureID)
     {
-      case KimPackage.ACTION__CHANGE:
-        setChange((Boolean)newValue);
-        return;
       case KimPackage.ACTION__SET:
         setSet((Boolean)newValue);
         return;
@@ -654,9 +605,6 @@ public class ActionImpl extends MinimalEObjectImpl.Container implements Action
   {
     switch (featureID)
     {
-      case KimPackage.ACTION__CHANGE:
-        setChange(CHANGE_EDEFAULT);
-        return;
       case KimPackage.ACTION__SET:
         setSet(SET_EDEFAULT);
         return;
@@ -701,8 +649,6 @@ public class ActionImpl extends MinimalEObjectImpl.Container implements Action
   {
     switch (featureID)
     {
-      case KimPackage.ACTION__CHANGE:
-        return change != CHANGE_EDEFAULT;
       case KimPackage.ACTION__SET:
         return set != SET_EDEFAULT;
       case KimPackage.ACTION__ASSIGNMENTS:
@@ -738,9 +684,7 @@ public class ActionImpl extends MinimalEObjectImpl.Container implements Action
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (change: ");
-    result.append(change);
-    result.append(", set: ");
+    result.append(" (set: ");
     result.append(set);
     result.append(", conditionNegative: ");
     result.append(conditionNegative);

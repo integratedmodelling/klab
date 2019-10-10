@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.model;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimAction.Type;
@@ -30,7 +30,7 @@ class Action implements IAction {
     }
 
     @Override
-    public List<IComputableResource> getComputation(boolean initialization) {
+    public List<IContextualizable> getComputation() {
 
       return this.delegate.getComputation();
         

@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.resolution.IComputable;
+import org.integratedmodelling.klab.api.resolution.IComputationProvider;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 
 /**
@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
  * @author Ferd
  * @version $Id: $Id
  */
-public interface IObserver extends IActiveKimObject, INamespaceQualified, IResolvable, IComputable {
+public interface IObserver extends IActiveKimObject, INamespaceQualified, IResolvable, IComputationProvider {
 
     /**
      * The concept this observes, a direct observable.

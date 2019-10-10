@@ -325,7 +325,7 @@ public class TimeEditor extends Composite {
 //			stepResolution = null;
 			break;
 		case "Generic":
-			timeType = Type.GENERIC;
+			timeType = Type.LOGICAL;
 			time_scope.setEnabled(true);
 			time_scope_multiplier.setEnabled(true);
 			time_start.setEnabled(false);
@@ -335,7 +335,7 @@ public class TimeEditor extends Composite {
 //			stepResolution = null;
 			break;
 		case "Specific":
-			timeType = Type.SPECIFIC;
+			timeType = Type.PHYSICAL;
 			time_scope.setEnabled(true);
 			time_scope_multiplier.setEnabled(true);
 			time_start.setEnabled(true);
@@ -381,7 +381,7 @@ public class TimeEditor extends Composite {
 			return null;
 		}
 		switch (timeType) {
-		case GENERIC:
+		case LOGICAL:
 			ret = "\u03C4" + "1";
 			break;
 		case GRID:
@@ -391,7 +391,7 @@ public class TimeEditor extends Composite {
 				ret += "(\u221E)";
 			}
 			break;
-		case SPECIFIC:
+		case PHYSICAL:
 			ret = "t1";
 			break;
 		default:

@@ -8,7 +8,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * {@link IArtifact artifacts}.
  * 
  * When a URN is referenced in k.IM, it is turned into a
- * {@link IComputableResource} which is passed to the {@link IRuntimeProvider
+ * {@link IContextualizable} which is passed to the {@link IRuntimeProvider
  * runtime} and turned into a KDL function call or literal, which encodes their
  * computation or resolution. Executing the KDL call as part of a
  * {@link IDataflow} builds the {@link IArtifact}.

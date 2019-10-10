@@ -16,6 +16,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.ICertificate.Type;
+import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
@@ -151,9 +152,15 @@ public enum Authentication implements IAuthenticationService {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IIdentity> T getAuthenticatedIdentity(Class<T> type) {
-		return Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(type);
+		for (IIdentity id : identities.values()) {
+			if (type.isAssignableFrom(id.getClass())) {
+				return (T)id;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -337,6 +344,10 @@ public enum Authentication implements IAuthenticationService {
 					"wrong certificate for an engine: cannot create identity of type " + certificate.getType());
 		}
 
+		if (ret != null) {
+			registerIdentity(ret);
+		}
+		
 		return ret;
 	}
 

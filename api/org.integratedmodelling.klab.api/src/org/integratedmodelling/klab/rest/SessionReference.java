@@ -10,6 +10,7 @@ public class SessionReference {
 	private long timeLastJoined;
 	private long timeRetrieved;
 	private long timeLastActivity;
+	private String baseHelpUrl;
 	private IdentityReference owner;
 	Map<String, ObservationReference> rootObservations = new HashMap<>();
 
@@ -67,6 +68,14 @@ public class SessionReference {
 
 	public void setOwner(IdentityReference owner) {
 		this.owner = owner;
+	}
+
+	public String getBaseHelpUrl() {
+		return baseHelpUrl;
+	}
+
+	public void setBaseHelpUrl(String baseHelpUrl) {
+		this.baseHelpUrl = baseHelpUrl;
 	}
 
 }

@@ -105,7 +105,7 @@ public class TestRunner implements Annotations.Handler {
 	}
 
 	@Override
-	public Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception {
+	public Object process(IKimObject target, IParameters<String> arguments, IMonitor monitor) throws Exception {
 
 		// switch monitor for a test monitor that also logs and summarizes
 		monitor = new TestMonitor(monitor);

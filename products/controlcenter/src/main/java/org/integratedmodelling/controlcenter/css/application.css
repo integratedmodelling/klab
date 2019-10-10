@@ -1,0 +1,21 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+#pane{
+    -fx-background-image: url("logo_white_256.png");
+    -fx-background-repeat: stretch;   
+    /* -fx-background-size: 900 506;*/
+    -fx-background-position: top left;
+    /* -fx-effect: dropshadow(three-pass-box, black, 30, 0.5, 0, 0); */
+    /* -fx-font-size: 11px;  Find a solution for mac and linux align problems */
+}
+
+#round-button {
+    -fx-background-color: #fff;
+    -fx-background-radius: 16em;
+    -fx-background-insets: 0;
+    -fx-min-width: 24px; 
+    -fx-min-height: 24px;
+    -fx-max-width: 24px;
+    -fx-max-height: 24px;
+    -fx-cursor: hand;
+    /* -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.1) , 2, 0.0 , 0 , 1); */
+}

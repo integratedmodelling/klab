@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.Currency#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Currency#getYear <em>Year</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Currency#getConnectors <em>Connectors</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Currency#getUnits <em>Units</em>}</li>
  * </ul>
  *
@@ -80,24 +79,6 @@ public interface Currency extends EObject
    * @generated
    */
   void setYear(int value);
-
-  /**
-   * Returns the value of the '<em><b>Connectors</b></em>' attribute list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.UnitOp}.
-   * The literals are from the enumeration {@link org.integratedmodelling.kim.kim.UnitOp}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Connectors</em>' attribute list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Connectors</em>' attribute list.
-   * @see org.integratedmodelling.kim.kim.UnitOp
-   * @see org.integratedmodelling.kim.kim.KimPackage#getCurrency_Connectors()
-   * @model unique="false"
-   * @generated
-   */
-  EList<UnitOp> getConnectors();
 
   /**
    * Returns the value of the '<em><b>Units</b></em>' containment reference list.

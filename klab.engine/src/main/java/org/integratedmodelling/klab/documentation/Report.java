@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Extensions;
@@ -134,7 +134,7 @@ public class Report implements IReport {
     }
 
     // @Override
-    public void include(IComputableResource resource) {
+    public void include(IContextualizable resource) {
 
         if (resource.getUrn() != null) {
             resources.add(Resources.INSTANCE.resolveResource(resource.getUrn()));

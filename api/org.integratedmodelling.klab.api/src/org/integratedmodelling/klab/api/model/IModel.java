@@ -19,13 +19,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.resolution.IComputable;
+import org.integratedmodelling.klab.api.resolution.IComputationProvider;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 
 /**
@@ -44,7 +44,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable, IComputable {
+public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable, IComputationProvider {
 
 
 	/**
@@ -76,7 +76,7 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @return the resources that this model provides semantics for. Possibly empty,
 	 *         never null.
 	 */
-	List<IComputableResource> getResources();
+	List<IContextualizable> getResources();
 
 	/**
 	 * The asserted semantics for any observation needed in order to produce

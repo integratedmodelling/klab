@@ -10,7 +10,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
@@ -19,6 +20,8 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -36,6 +39,7 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -54,6 +58,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.components.time.extents.Scheduler;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.documentation.Report;
@@ -365,8 +370,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			Dataflow dataflow = Dataflows.INSTANCE
 					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
 			dataflow.setModel((Model) model);
-			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets).run(scale.initialization(),
-					((Monitor) monitor).get(subtask));
+			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets)
+					.run(scale.initialization(), ((Monitor) monitor).get(subtask));
 		}
 		return ret;
 	}
@@ -425,7 +430,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				dataflow.setModel((Model) model);
 
 //				System.out.println("secondary dataflow for " + obs + ":\n" + dataflow.getKdlCode());
-				
+
 				// TODO this must be added to the computational strategy and linked to the
 				// original context.
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
@@ -441,12 +446,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale.initialization(), ((Monitor) monitor).get(subtask));
+		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale.initialization(),
+				((Monitor) monitor).get(subtask));
 
 //		for (IState s:ret.getStates()) {
 //			System.out.println("DIOCAN " + s);
 //		}
-		
+
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
 		}
@@ -667,7 +673,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
 
-				IArtifact merging = createTarget(mergingActuator, this.scale, scope, rootSubject);
+				IArtifact merging = createTarget(mergingActuator, this.getDataflow().getResolutionScale(), scope,
+						rootSubject);
 
 				/*
 				 * partition sub-state does not go in the catalog
@@ -677,7 +684,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					ret.target = Observations.INSTANCE.getStateView((IState) merging, actuator.getScale(), ret);
 					if (ret.target instanceof RescalingState) {
 						// for debugging
-						((RescalingState)ret.target).setLocalId(actuator.getName());
+						((RescalingState) ret.target).setLocalId(actuator.getName());
 					}
 				} else {
 					ret.target = merging;
@@ -884,7 +891,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		/*
 		 * add any target of indirect computations
 		 */
-		for (IComputableResource computation : actuator.getComputation()) {
+		for (IContextualizable computation : actuator.getComputation()) {
 			if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getName()) == null) {
 				targetObservables.put(computation.getTarget().getName(),
 						new Pair<>((Observable) computation.getTarget(), computation.getComputationMode()));
@@ -994,7 +1001,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				this.observations.put(observation.getId(), observation);
 				if (this.rootSubject == null && observation instanceof ISubject) {
 					this.rootSubject = (ISubject) observation;
-					this.eventBus = new EventBus((Subject)this.rootSubject);
+					this.eventBus = new EventBus((Subject) this.rootSubject);
 				}
 				this.catalog.put(name, observation);
 				this.structure.addVertex(observation);
@@ -1019,13 +1026,12 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				for (IState state : predefinedStates) {
 					link(observation, state);
 				}
-				
+
 //				System.out.println("Created "+ observation + " for " + actuator.getObservable());
 
 			}
 		}
 
-		
 		return preexisting == null ? this.catalog.get(actuator.getName()) : preexisting;
 
 	}
@@ -1035,16 +1041,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		Pair<String, IArtifact> previous = findArtifact(observable);
 		if (previous != null) {
-			return (IObservation)previous.getSecond();
+			return (IObservation) previous.getSecond();
 		}
-		
+
 		IConcept mainObservable = ret.getObservable().getType();
 		if (!mainObservable.equals(observable.getType())) {
 			final Set<IConcept> filtered = new HashSet<>();
 			filtered.addAll(Traits.INSTANCE.getDirectTraits(observable.getType()));
 			filtered.addAll(Roles.INSTANCE.getDirectRoles(observable.getType()));
 			if (!filtered.isEmpty()) {
-				
+
 				ret = new ObservationGroupView((Observable) observable, (ObservationGroup) ret,
 						new Function<IArtifact, Boolean>() {
 							@Override
@@ -1053,7 +1059,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 										&& filtered.containsAll(((DirectObservation) t).getPredicates());
 							}
 						});
-				
+
 				/*
 				 * register the view as a regular observation
 				 */
@@ -1074,7 +1080,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IConcept mainObservable = Observables.INSTANCE.getBaseObservable(observable.getType());
 		IObservation ret = groups.get(mainObservable);
 		if (ret == null) {
-			ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this, IArtifact.Type.OBJECT);
+			ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this,
+					observable.getArtifactType());
 			groups.put(mainObservable, (ObservationGroup) ret);
 		}
 		return ret;
@@ -1085,7 +1092,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IObservation observation = null;
 
 		if (observable.is(Type.COUNTABLE)) {
-			observation = getObservationGroup(observable, scale);
+			observation = getObservationGroup(observable, getDataflow().getResolutionScale());
 		} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
 			/*
 			 * TODO this should happen when a predicate observation is made explicitly from
@@ -1094,7 +1101,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			 */
 			Logging.INSTANCE.warn("unexpected call to createTarget: check logics");
 		} else {
-			observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
+			observation = DefaultRuntimeProvider.createObservation(observable, getDataflow().getResolutionScale(),
+					this);
 		}
 
 		if (getRootSubject() != null) {
@@ -1140,6 +1148,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return rootSubject;
 	}
 
+	private RuntimeScope getRootScope() {
+		RuntimeScope ret = this;
+		while (ret.parent != null) {
+			ret = ret.parent;
+		}
+		return ret;
+	}
+	
 	@Override
 	public IDirectObservation getContextSubject() {
 		return contextSubject;
@@ -1157,13 +1173,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public Scheduler<?> getScheduler() {
-		if (rootSubject == null || !rootSubject.isSpatiallyDistributed()) {
-			return null;
-		}
-		if (this.scheduler == null) {
-			// TODO create and configure the scheduler
-		}
-		return this.scheduler;
+		return getRootScope().scheduler;
 	}
 
 	@Override
@@ -1346,5 +1356,46 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		return (T) (chosen.isEmpty() ? null : chosen.iterator().next());
+	}
+
+	@Override
+	public void scheduleActions(Actuator actuator) {
+
+		boolean go = false;
+		for (Computation computation : actuator.getContextualizers()) {
+			if (computation.resource.getTrigger() == Trigger.TRANSITION
+					// TODO next should be removed
+					|| computation.observable.getArtifactType().isOccurrent()
+					|| (computation.resource.getTrigger() == Trigger.RESOLUTION
+							&& computation.resource.getGeometry().getDimension(IGeometry.Dimension.Type.TIME) != null)) {
+				go = true;
+				break;
+			}
+		}
+		
+		if (!go) {
+			return;
+		}
+
+		RuntimeScope root = getRootScope();
+		
+		if (root.scheduler == null) {
+			root.scheduler = new Scheduler<IObservation>(resolutionScope.getScale().getTime()) {
+
+				@Override
+				protected ITime getTime(IObservation object) {
+					return object.getScale().getTime();
+				}
+
+			};
+		}
+
+		root.scheduler.schedule(actuator, this);
+	}
+
+	@Override
+	public IRuntimeScope locate(ILocator transitionScale) {
+		// TODO Auto-generated method stub
+		return this;
 	}
 }

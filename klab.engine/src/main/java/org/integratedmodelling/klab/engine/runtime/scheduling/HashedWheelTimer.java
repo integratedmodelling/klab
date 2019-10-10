@@ -3,11 +3,24 @@ package org.integratedmodelling.klab.engine.runtime.scheduling;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+
+import org.integratedmodelling.klab.api.runtime.IScheduler.Synchronicity;
 
 /**
  * Hash Wheel Timer, as per the paper:
@@ -43,6 +56,8 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	private volatile int cursor = 0;
 	private String name;
 	private AtomicBoolean finished = new AtomicBoolean(false);
+	protected AtomicLong currentTime = new AtomicLong();
+	protected Synchronicity synchronicity = Synchronicity.ASYNCHRONOUS;
 
 	/**
 	 * Create a new {@code HashedWheelTimer} using the given with default resolution
@@ -130,7 +145,11 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 			@Override
 			public void run() {
 
-				long deadline = getInitialTime();
+				/*
+				 * TODO stop all if monitor is canceled
+				 */
+				
+				currentTime.set(getInitialTime());
 
 				while (true) {
 					// TODO: consider extracting processing until deadline for test purposes
@@ -140,6 +159,9 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 							registrations.remove(r);
 						} else if (r.ready()) {
 							
+							/*
+							 * TODO in synchronous mode, wait for each task to finish.
+							 */
 							executor.execute(r);
 							registrations.remove(r);
 
@@ -151,15 +173,15 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 						}
 					}
 
-					deadline += resolution;
+					currentTime.set(currentTime.get() + resolution);
 					
-					if (endTime >= 0 && deadline > endTime) {
+					if (endTime >= 0 && currentTime.get() > endTime) {
 						finished.set(true);
 						return;
 					}
 					
 					try {
-						waitStrategy.waitUntil(deadline);
+						waitStrategy.waitUntil(currentTime.get());
 					} catch (InterruptedException e) {
 						return;
 					}
@@ -207,6 +229,17 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 		return scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), callable);
 	}
 
+//	@Override
+	public ScheduledFuture<?> scheduleAtFixedRate(Consumer<Long> runnable, long initialDelay, long period, TimeUnit unit) {
+		return scheduleFixedRate(TimeUnit.NANOSECONDS.convert(period, unit),
+				TimeUnit.NANOSECONDS.convert(initialDelay, unit), constantlyNull(new Runnable() {
+					@Override
+					public void run() {
+						runnable.accept(unit.convert(currentTime.get(), TimeUnit.NANOSECONDS));
+					}
+				}));
+	}
+	
 	@Override
 	public ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long initialDelay, long period, TimeUnit unit) {
 		return scheduleFixedRate(TimeUnit.NANOSECONDS.convert(period, unit),
@@ -501,11 +534,11 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 		return cursor % wheelSize;
 	}
 
-	private void assertRunning() {
-		if (this.loop.isTerminated()) {
-			throw new IllegalStateException("Timer is not running");
-		}
-	}
+//	private void assertRunning() {
+//		if (this.loop.isTerminated()) {
+//			throw new IllegalStateException("Timer is not running");
+//		}
+//	}
 
 	private static void isTrue(boolean expression, String message) {
 		if (!expression) {
@@ -518,6 +551,14 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 			r.run();
 			return null;
 		};
+	}
+
+	/**
+	 * In ms
+	 * @return
+	 */
+	public long getCurrentTime() {
+		return TimeUnit.MILLISECONDS.convert(currentTime.get(), TimeUnit.NANOSECONDS);
 	}
 
 }

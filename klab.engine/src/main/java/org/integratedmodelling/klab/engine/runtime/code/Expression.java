@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -207,6 +208,12 @@ public abstract class Expression implements IExpression {
 
 	@Override
 	public <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDataflow<?> getDataflow() {
 		// TODO Auto-generated method stub
 		return null;
 	}

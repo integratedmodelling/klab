@@ -17,14 +17,12 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.UnitElement;
-import org.integratedmodelling.kim.kim.UnitOp;
 
 /**
  * <!-- begin-user-doc -->
@@ -36,7 +34,6 @@ import org.integratedmodelling.kim.kim.UnitOp;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.CurrencyImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.CurrencyImpl#getYear <em>Year</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.CurrencyImpl#getConnectors <em>Connectors</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.CurrencyImpl#getUnits <em>Units</em>}</li>
  * </ul>
  *
@@ -83,16 +80,6 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
    * @ordered
    */
   protected int year = YEAR_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getConnectors() <em>Connectors</em>}' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getConnectors()
-   * @generated
-   * @ordered
-   */
-  protected EList<UnitOp> connectors;
 
   /**
    * The cached value of the '{@link #getUnits() <em>Units</em>}' containment reference list.
@@ -176,20 +163,6 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<UnitOp> getConnectors()
-  {
-    if (connectors == null)
-    {
-      connectors = new EDataTypeEList<UnitOp>(UnitOp.class, this, KimPackage.CURRENCY__CONNECTORS);
-    }
-    return connectors;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EList<UnitElement> getUnits()
   {
     if (units == null)
@@ -229,8 +202,6 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
         return getId();
       case KimPackage.CURRENCY__YEAR:
         return getYear();
-      case KimPackage.CURRENCY__CONNECTORS:
-        return getConnectors();
       case KimPackage.CURRENCY__UNITS:
         return getUnits();
     }
@@ -253,10 +224,6 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
         return;
       case KimPackage.CURRENCY__YEAR:
         setYear((Integer)newValue);
-        return;
-      case KimPackage.CURRENCY__CONNECTORS:
-        getConnectors().clear();
-        getConnectors().addAll((Collection<? extends UnitOp>)newValue);
         return;
       case KimPackage.CURRENCY__UNITS:
         getUnits().clear();
@@ -282,9 +249,6 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
       case KimPackage.CURRENCY__YEAR:
         setYear(YEAR_EDEFAULT);
         return;
-      case KimPackage.CURRENCY__CONNECTORS:
-        getConnectors().clear();
-        return;
       case KimPackage.CURRENCY__UNITS:
         getUnits().clear();
         return;
@@ -306,8 +270,6 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KimPackage.CURRENCY__YEAR:
         return year != YEAR_EDEFAULT;
-      case KimPackage.CURRENCY__CONNECTORS:
-        return connectors != null && !connectors.isEmpty();
       case KimPackage.CURRENCY__UNITS:
         return units != null && !units.isEmpty();
     }
@@ -329,8 +291,6 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
     result.append(id);
     result.append(", year: ");
     result.append(year);
-    result.append(", connectors: ");
-    result.append(connectors);
     result.append(')');
     return result.toString();
   }

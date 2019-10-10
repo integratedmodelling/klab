@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.Dataflows;
@@ -167,11 +167,11 @@ public class Observer extends KimObject implements IObserver {
 	}
 
 	@Override
-	public List<IComputableResource> getComputation(boolean initialization) {
-		List<IComputableResource> ret = new ArrayList<>();
-		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggers(initialization)) {
+	public List<IContextualizable> getComputation() {
+		List<IContextualizable> ret = new ArrayList<>();
+		for (Trigger trigger : Trigger.values()) {
 			for (IAction action : behavior.getActions(trigger)) {
-				ret.addAll(action.getComputation(initialization));
+				ret.addAll(action.getComputation());
 			}
 		}
 		return ret;

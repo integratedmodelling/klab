@@ -521,7 +521,8 @@ public class Shape extends AbstractExtent implements IShape {
 		if (how == LogicalConnector.UNION) {
 			return create(shapeGeometry.union(shape.transform(this.projection).getJTSGeometry()), this.projection);
 		} else if (how == LogicalConnector.INTERSECTION) {
-			return create(shapeGeometry.intersection(shape.transform(this.projection).getJTSGeometry()), this.projection);
+			return create(shapeGeometry.intersection(shape.transform(this.projection).getJTSGeometry()),
+					this.projection);
 		} else if (how == LogicalConnector.EXCLUSION) {
 			return create(shapeGeometry.difference(shape.transform(this.projection).getJTSGeometry()), this.projection);
 		}
@@ -607,7 +608,7 @@ public class Shape extends AbstractExtent implements IShape {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ILocator> T as(Class<T> cls) {
-		return null; //(T) envelope.asLocator();
+		return null; // (T) envelope.asLocator();
 	}
 
 	@Override
@@ -683,12 +684,12 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	private Geometry fix(Geometry jtsGeometry) {
-		// if geometry is a point or line, buffer return an empty polygon, so we must check it
+		// if geometry is a point or line, buffer return an empty polygon, so we must
+		// check it
 		// a double check for a well formed polygon is needed
-		if (jtsGeometry instanceof GeometryCollection && !(jtsGeometry instanceof MultiLineString ||
-				jtsGeometry instanceof LineString ||
-				jtsGeometry instanceof MultiPoint ||
-				jtsGeometry instanceof Point)) {
+		if (jtsGeometry instanceof GeometryCollection
+				&& !(jtsGeometry instanceof MultiLineString || jtsGeometry instanceof LineString
+						|| jtsGeometry instanceof MultiPoint || jtsGeometry instanceof Point)) {
 			return jtsGeometry.buffer(0);
 		}
 		return jtsGeometry;
@@ -765,8 +766,6 @@ public class Shape extends AbstractExtent implements IShape {
 		return new double[] { centroid.getCoordinate().x, centroid.getCoordinate().y };
 	}
 
-	
-	
 	@Override
 	public boolean isGeneric() {
 		return false;
@@ -790,11 +789,11 @@ public class Shape extends AbstractExtent implements IShape {
 			((Graphics2D) g).draw(polyShape);
 		}
 	}
-	
-    @Override
-    public ExtentDimension getExtentDimension() {
-        return ExtentDimension.AREAL;
-    }
+
+	@Override
+	public ExtentDimension getExtentDimension() {
+		return ExtentDimension.AREAL;
+	}
 
 	@Override
 	public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {

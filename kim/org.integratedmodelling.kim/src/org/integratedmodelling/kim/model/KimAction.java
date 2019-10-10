@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimActiveStatement;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -22,7 +22,7 @@ public class KimAction extends KimStatement implements IKimAction {
   Type type;
   Trigger trigger;
   String targetStateId;
-  List<IComputableResource> computation = new ArrayList<>();
+  List<IContextualizable> computation = new ArrayList<>();
   String language;
   List<IKimConcept> triggeringEvents = new ArrayList<>();
 
@@ -40,8 +40,6 @@ public class KimAction extends KimStatement implements IKimAction {
 
     if (statement.isAway()) {
       this.type = Type.DESTROY;
-    } else if (statement.isChange()) {
-      this.type = Type.CHANGE;
     } else if (statement.isDo()) {
       this.type = Type.DO;
     } else if (statement.isIntegrate()) {
@@ -61,10 +59,10 @@ public class KimAction extends KimStatement implements IKimAction {
     }
 
     for (ValueAssignment vass : statement.getAssignments()) {
-      this.computation.add(new ComputableResource(vass, condition, resolutionMode, getParent()));
+      this.computation.add(new ComputableResource(vass, condition, resolutionMode, getParent(), this.trigger));
     }
     for (ValueAssignment vass : statement.getExecuted()) {
-        this.computation.add(new ComputableResource(vass, condition, resolutionMode, getParent()));
+        this.computation.add(new ComputableResource(vass, condition, resolutionMode, getParent(), this.trigger));
       }
 
   }
@@ -116,7 +114,7 @@ public class KimAction extends KimStatement implements IKimAction {
   }
 
   @Override
-  public List<IComputableResource> getComputation() {
+  public List<IContextualizable> getComputation() {
     return computation;
   }
 

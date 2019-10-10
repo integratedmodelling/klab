@@ -81,10 +81,13 @@ Parameter:
 	name=LOWERCASE_ID value=Value (docstring=STRING)?;
 
 ACTOR:
-	// countable, so always a dataflow for direct object instantiation. Resolvers for single objects or processes are void.
-	'object' |
+	// countable, so always a dataflow for direct object instantiation. Resolvers for single objects are inside the instantiation
+	// actuator and void
+	'object' | 'event' |
 	// any acceptable quality type, for declarations only
 	'value' |
+	// process and event are the two endurants, for which contextualizers are only run at transitions
+	'process' |
 	// all the next are in quality scope; number type is handled internally
 	'number' | 'concept' | 'boolean' | 'text' | 'list' |
 	// specialized functions that produce extents

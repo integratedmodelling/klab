@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.utils.Utils;
  * @author Ferd
  *
  */
-public class Annotation extends Parameters<Object> implements IAnnotation {
+public class Annotation extends Parameters<String> implements IAnnotation {
 
 	String name;
 	IKimAnnotation statement;
@@ -34,7 +34,10 @@ public class Annotation extends Parameters<Object> implements IAnnotation {
 		this.name = statement.getName();
 		this.statement = statement;
 		this.interactiveParameters.addAll(statement.getInteractiveParameters());
-		this.putAll(KimValidator.compileMapLiteral(statement.getParameters()));
+		Map<Object, Object> map = KimValidator.compileMapLiteral(statement.getParameters());
+		for (Object key : map.keySet()) {
+			this.put(key.toString(), map.get(key));
+		}
 	}
 
 	public Annotation copy() {

@@ -27,7 +27,6 @@ import java.util.Set;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FileUtils.
  *

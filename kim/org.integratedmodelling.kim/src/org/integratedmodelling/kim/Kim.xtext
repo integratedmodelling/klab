@@ -139,10 +139,10 @@ ActionSpecification:
 	  | 
 		(trigger?='on' (
 				initialization?='definition' | 
-				resolution?='resolution' | 
+//				resolution?='resolution' | 
 				instantiation ?= 'instantiation' | 
 				termination ?='termination' | 
-				stateInitialization ?= 'initialization'| 
+//				stateInitialization ?= 'initialization'| 
 				event=ConceptDeclaration ('in' (anyContextEvent?='context' | (relatedEventContext?='related')) eventContext=ConceptDeclaration)?
 		    ) 
 		    (parameters = List)?
@@ -154,7 +154,7 @@ FunctionOrID:
 	function=Function | functionId=(LOWERCASE_ID|NamespaceId);
 
 Action:
-	(change?='change' | set?='set') 
+	(set?='set') 
 		assignments+=ValueAssignment (',' assignments+=ValueAssignment)*
 		(=> ('if' | conditionNegative?='unless') condition=Value)? |
 	integrate?='integrate'  
@@ -185,7 +185,7 @@ ComputableValue:
 	null?='unknown';
 	
 ValueExecution returns ValueAssignment:
-	execValue=ExecutableValue ('as' target=LOWERCASE_ID)?
+	execValue=ExecutableValue ('for' target=LOWERCASE_ID)?
 ;
 	
 ExecutableValue returns ComputableValue:
@@ -966,7 +966,7 @@ Unit:
 	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
 
 Currency:
-	id=UPPERCASE_ID ('@' year=INT) (=> (connectors+=UnitOp) (units+=UnitElement))*;
+	id=UPPERCASE_ID ('@' year=INT) (=> '/' (units+=UnitElement))*;
 
 Number:
 	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;

@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
@@ -44,7 +45,6 @@ import org.integratedmodelling.klab.components.runtime.observations.Process;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -415,7 +415,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		}
 
 		SimpleRuntimeScope ret = new SimpleRuntimeScope(this);
-		if (resource.getType() != IArtifact.Type.OBJECT) {
+		if (!resource.getType().isCountable()) {
 			IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale(), this);
 			ret.target = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
 		} else {
@@ -600,7 +600,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public ObservationGroup getObservationGroup(IObservable observable, IScale scale) {
 		// TODO implement the same mechanism as RuntimeContext
-		return new ObservationGroup((Observable) observable, (Scale) scale, this, IArtifact.Type.OBJECT);
+		return new ObservationGroup((Observable) observable, (Scale) scale, this, observable.getArtifactType());
 	}
 
 	@Override
@@ -613,6 +613,18 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public IObservation getObservationGroupView(Observable observable, IObservation ret) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void scheduleActions(Actuator active) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IRuntimeScope locate(ILocator transitionScale) {
+		// TODO Auto-generated method stub
+		return this;
 	}
 
 }

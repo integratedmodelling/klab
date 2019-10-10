@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimModel;
@@ -53,7 +53,7 @@ public class KimModel extends KimStatement implements IKimModel {
 	private Object inlineValue;
 
 	// contextualizer/processing given after 'using'
-	private List<IComputableResource> contextualization = new ArrayList<>();
+	private List<IContextualizable> contextualization = new ArrayList<>();
 
 	// private Map<String, Object> parameters = new HashMap<>();
 
@@ -207,7 +207,7 @@ public class KimModel extends KimStatement implements IKimModel {
 	}
 
 	@Override
-	public List<IComputableResource> getContextualization() {
+	public List<IContextualizable> getContextualization() {
 		return contextualization;
 	}
 
@@ -231,7 +231,7 @@ public class KimModel extends KimStatement implements IKimModel {
 		if (reinterpretingRole != null) {
 			reinterpretingRole.visit(visitor);
 		}
-		for (IComputableResource resource : getContextualization()) {
+		for (IContextualizable resource : getContextualization()) {
 			resource.visit(visitor);
 		}
 	}

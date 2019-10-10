@@ -18,7 +18,7 @@ package org.integratedmodelling.klab.api.runtime;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -51,6 +52,7 @@ public interface IRuntimeProvider {
 	 *
 	 * @param actuator a top-level actuator that has no dependencies on external
 	 *                 ones.
+	 * @param dataflow the dataflow to which the actuator belongs
 	 * @param scale    the scale in which to compute
 	 * @param scope    the resolution scope for the computation
 	 * @param context  the context observation for the computation. Can be null.
@@ -58,8 +60,8 @@ public interface IRuntimeProvider {
 	 * @return a future that is computing the final artifact for the actuator.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope, IDirectObservation context,
-			IMonitor monitor) throws KlabException;
+	Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
+			IResolutionScope scope, IDirectObservation context, IMonitor monitor) throws KlabException;
 
 	/**
 	 * Create an empty runtime context for the dataflow that will build the context
@@ -86,13 +88,13 @@ public interface IRuntimeProvider {
 	 * Get a service call that, once executed, will turn the passed specification
 	 * for a resource into a suitable contextualizer that runs on this runtime.
 	 *
-	 * @param resource a {@link org.integratedmodelling.kim.api.IComputableResource}
+	 * @param resource a {@link org.integratedmodelling.kim.api.IContextualizable}
 	 *                 object.
 	 * @param actuator the actuator providing the context for the computation.
 	 * 
 	 * @return the service call encoding the resource
 	 */
-	IServiceCall getServiceCall(IComputableResource resource, IActuator actuator);
+	IServiceCall getServiceCall(IContextualizable resource, IActuator actuator);
 
 	/**
 	 * Distribute the computation of the passed state resolver over the passed
@@ -170,7 +172,7 @@ public interface IRuntimeProvider {
 	 *         list will be interpreted as "no computation needed", not as "no
 	 *         strategy found".
 	 */
-	List<IComputableResource> getComputation(IObservable availableType, IResolutionScope.Mode resolutionMode,
+	List<IContextualizable> getComputation(IObservable availableType, IResolutionScope.Mode resolutionMode,
 			IObservable desiredObservation);
 
 	/**
@@ -187,7 +189,7 @@ public interface IRuntimeProvider {
 	 * @param targetType
 	 * @return a resolver or null
 	 */
-	IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
+	IContextualizable getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
 
 	/**
 	 * Return a computation that will apply the passed operator and operand to
@@ -198,7 +200,7 @@ public interface IRuntimeProvider {
 	 * @param operand
 	 * @return
 	 */
-	IComputableResource getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand);
+	IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand);
 
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID
@@ -209,6 +211,6 @@ public interface IRuntimeProvider {
 	 * 
 	 * @param targetId
 	 */
-	void setComputationTargetId(IComputableResource resource, String targetId);
+	void setComputationTargetId(IContextualizable resource, String targetId);
 
 }

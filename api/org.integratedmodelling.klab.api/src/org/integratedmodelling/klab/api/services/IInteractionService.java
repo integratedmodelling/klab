@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
 
-import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
+import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.klab.api.model.IModel;
 
 /**
@@ -15,6 +15,6 @@ import org.integratedmodelling.klab.api.model.IModel;
  */
 public interface IInteractionService {
 
-	Collection<InteractiveParameter> getInteractiveParameters(IComputableResource computable, IModel model);
+	Collection<InteractiveParameter> getInteractiveParameters(IContextualizable computable, IModel model);
 
 }

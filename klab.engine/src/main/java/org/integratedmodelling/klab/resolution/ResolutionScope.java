@@ -1059,4 +1059,9 @@ public class ResolutionScope implements IResolutionScope {
 		return ret;
 	}
 
+	@Override
+	public Scale getScale() {
+		return Scale.create(getCoverage().getExtents());
+	}
+
 }

@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import org.eclipse.emf.ecore.EObject;
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -28,7 +28,7 @@ public class LiteralStateResolver implements IStateResolver, IExpression {
 		this.value = value;
 	}
 
-	public static IServiceCall getServiceCall(Object literal, IComputableResource condition, boolean conditionNegated) {
+	public static IServiceCall getServiceCall(Object literal, IContextualizable condition, boolean conditionNegated) {
 		// TODO handle condition
 		return new LiteralFunction(literal);
 	}

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane stylesheets="@css/application.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.ControlCenter">
+   <center>
+      <BorderPane prefHeight="424.0" prefWidth="260.0" BorderPane.alignment="CENTER">
+         <bottom>
+            <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" style="-fx-border-color: #ccc; -fx-background-color: #ddd;" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button id="round-button" mnemonicParsing="false" stylesheets="@css/application.css">
+                           <graphic>
+                              <FontIcon iconColor="#11bd11" iconLiteral="dashicons-admin-site-alt" />
+                           </graphic>
+                        </Button>
+                        <Button id="round-button" mnemonicParsing="false">
+                           <graphic>
+                              <FontIcon iconColor="#676767" iconLiteral="dashicons-admin-links" />
+                           </graphic>
+                        </Button>
+                        <Label fx:id="messageLabel" textFill="#646464">
+                           <font>
+                              <Font name="System Italic" size="11.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="2.0" top="4.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Button id="round-button" mnemonicParsing="false">
+                     <graphic>
+                        <FontIcon iconColor="#0697ff" iconLiteral="fa-commenting-o" />
+                     </graphic>
+                  </Button>
+                  <Button id="round-button" fx:id="buttonSettings" alignment="CENTER" mnemonicParsing="false" onAction="#buttonSettingsClicked" textAlignment="CENTER">
+                     <graphic>
+                        <FontIcon iconColor="#747474" iconLiteral="dashicons-admin-tools" wrappingWidth="12.685677528381348" />
+                     </graphic>
+                  </Button>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
+               </padding></HBox>
+         </bottom>
+         <top>
+            <VBox BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="4.0" />
+               </BorderPane.margin>
+               <children>
+                  <Separator prefWidth="200.0" />
+                  <HBox prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: #fff;">
+                     <children>
+                        <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/logo_white_64.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets left="1.0" top="2.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label prefHeight="26.0" prefWidth="207.0" text="k.LAB Control Center v1.1" textFill="#4a4a4a" VBox.vgrow="ALWAYS">
+                                 <font>
+                                    <Font name="Calibri" size="18.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="4.0" top="4.0" />
+                                 </padding>
+                              </Label>
+                              <Separator prefWidth="200.0">
+                                 <padding>
+                                    <Insets left="4.0" right="20.0" />
+                                 </padding>
+                              </Separator>
+                              <Label text="© 2019 Integrated Modelling Partnership" textFill="#797979">
+                                 <font>
+                                    <Font name="Calibri Light" size="11.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="4.0" right="4.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </top>
+         <center>
+            <VBox prefHeight="290.0" prefWidth="260.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Separator prefWidth="200.0" />
+                  <GridPane alignment="CENTER" minHeight="96.0" prefHeight="101.0" prefWidth="260.0">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button alignment="CENTER" disable="true" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0">
+                           <graphic>
+                              <FontIcon iconColor="#0f9735" iconLiteral="fa-cogs" iconSize="48" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Launch the k.LAB engine" />
+                           </tooltip>
+                        </Button>
+                        <Button disable="true" maxHeight="64.0" maxWidth="66.0" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="66.0" GridPane.columnIndex="1">
+                           <graphic>
+                              <FontIcon iconColor="#dfb300" iconLiteral="fa-flask" iconSize="38" />
+                           </graphic>
+                        </Button>
+                        <Label text="k.LAB Engine" textFill="#828282" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="Arial" size="11.0" />
+                           </font>
+                        </Label>
+                        <Label text="k.LAB Modeler" textFill="#828282" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="Arial" size="11.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets bottom="4.0" left="30.0" right="30.0" />
+                     </padding>
+                  </GridPane>
+                  <Separator blendMode="DARKEN" prefWidth="200.0" />
+                  <VBox prefHeight="91.0" prefWidth="260.0">
+                     <children>
+                        <GridPane minHeight="120.0">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="80.0" minWidth="10.0" prefWidth="30.0" />
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="196.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="91.0" minWidth="10.0" prefWidth="36.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="35.19998779296875" minHeight="10.0" prefHeight="35.19998779296875" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="40.60001220703125" minHeight="10.0" prefHeight="40.60001220703125" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <VBox alignment="CENTER" GridPane.columnIndex="1">
+                                 <children>
+                                    <Label text="Download k.LAB">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="V0.10.1 build 233 available" textFill="#777777">
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <FontIcon fx:id="downloadIcon" iconColor="RED" iconLiteral="fa-cloud-download" iconSize="18" />
+                              <Button id="round-button" mnemonicParsing="false" GridPane.columnIndex="2">
+                                 <graphic>
+                                    <FontIcon iconColor="#0073c5" iconLiteral="fa-download" />
+                                 </graphic>
+                              </Button>
+                              <StackPane prefHeight="97.0" prefWidth="260.0" style="-fx-border-color: #ccc; -fx-background-color: #ddd;" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+                           </children>
+                        </GridPane>
+                     </children></VBox>
+                  <Separator prefWidth="200.0" />
+                  <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox fx:id="certificateArea" alignment="CENTER" prefHeight="94.0" prefWidth="165.0" style="-fx-border-color: #ccc;" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="k.LAB user:" />
+                              <Label fx:id="certUsername" alignment="CENTER" graphicTextGap="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="163.0" text="Not certified" textFill="#f23a01">
+                                 <font>
+                                    <Font name="Calibri" size="24.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="2.0" right="2.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets top="-2.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label fx:id="certDescription" text="Drop a certificate file here" textFill="#6f6f6f">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                              <Hyperlink text="🡆 k.LAB Hub" />
+                           </children>
+                        </VBox>
+                        <GridPane alignment="CENTER" prefHeight="94.0" prefWidth="86.0" style="-fx-background-color: #ddd;">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <padding>
+                              <Insets left="4.0" />
+                           </padding>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                     </padding></HBox>
+               </children>
+               <BorderPane.margin>
+                  <Insets top="4.0" />
+               </BorderPane.margin>
+            </VBox>
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>

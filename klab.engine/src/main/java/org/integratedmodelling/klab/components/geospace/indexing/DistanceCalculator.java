@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -51,7 +50,7 @@ public class DistanceCalculator {
 					"cannot add geometries to a distance calculator after the first distance has been computed");
 		}
 		if (observation.getScale().getSpace() != null) {
-			exts.add(((Shape) observation.getScale().getSpace()).getJTSGeometry());
+			exts.add(((Shape) observation.getScale().getSpace().getShape()).getJTSGeometry());
 			isEmpty = false;
 		}
 	}

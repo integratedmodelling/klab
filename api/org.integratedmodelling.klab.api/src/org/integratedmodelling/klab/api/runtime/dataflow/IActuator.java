@@ -17,90 +17,104 @@ package org.integratedmodelling.klab.api.runtime.dataflow;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 // TODO: Auto-generated Javadoc
 /**
- * Each node in a dataflow is an actuator. Compared to other workflow systems (e.g. Ptolemy), an
- * actuator is a composite actor; the individual actors are represented by k.LAB
- * {@link org.integratedmodelling.kim.api.IServiceCall}s.
+ * Each node in a dataflow is an actuator. Compared to other workflow systems
+ * (e.g. Ptolemy), an actuator is a composite actor; the individual actors are
+ * represented by k.LAB {@link org.integratedmodelling.kim.api.IServiceCall}s.
  *
- * Some actuators may be references, corresponding to "input ports" in other workflow systems. In a
- * k.LAB computation, references are always resolved and the implementing which case the original
- * actuator will always be serialized before any references to it.
+ * Some actuators may be references, corresponding to "input ports" in other
+ * workflow systems. In a k.LAB computation, references are always resolved and
+ * the implementing which case the original actuator will always be serialized
+ * before any references to it.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IActuator extends IDataflowNode {
 
-    /**
-     * All actuators have a name. References may provide a different name for the same actuator.
-     *
-     * @return the name
-     */
-    String getName();
+	/**
+	 * All actuators have a name. References may provide a different name for the
+	 * same actuator.
+	 *
+	 * @return the name
+	 */
+	String getName();
 
-    /**
-     * All child actuators in order of declaration.
-     *
-     * @return all the internal actuators in order of declaration.
-     */
-    public List<IActuator> getActuators();
+	/**
+	 * Each actuator has a type, for the kind of observation it produces. Pure
+	 * resolvers are void. Actuators whose type defines an occurrent are not run at
+	 * initialization.
+	 * 
+	 * @return
+	 */
+	IArtifact.Type getType();
 
-    /**
-     * Return the subset of actuators that reference others in the same dataflow.
-     *
-     * @return all imported actuators
-     */
-    List<IActuator> getInputs();
+	/**
+	 * All child actuators in order of declaration.
+	 *
+	 * @return all the internal actuators in order of declaration.
+	 */
+	public List<IActuator> getActuators();
 
-    /**
-     * Return all actuators that have been declared as exported.
-     *
-     * @return all exported actuators
-     */
-    List<IActuator> getOutputs();
+	/**
+	 * Return the subset of actuators that reference others in the same dataflow.
+	 *
+	 * @return all imported actuators
+	 */
+	List<IActuator> getInputs();
 
-    /**
-     * Return the list of all computations in this actuator, or an empty list. Should always be empty
-     * if the actuator is a reference to another.
-     *
-     * @return all computations. Never null, possibly empty.
-     */
-    List<IComputableResource> getComputation();
+	/**
+	 * Return all actuators that have been declared as exported.
+	 *
+	 * @return all exported actuators
+	 */
+	List<IActuator> getOutputs();
 
-    /**
-     * If this actuator is aliased to a different name within the containing actuator, return the
-     * alias.
-     *
-     * @return the alias or null
-     */
-    String getAlias();
+	/**
+	 * Return the list of all computations in this actuator, or an empty list.
+	 * Should always be empty if the actuator is a reference to another.
+	 *
+	 * @return all computations. Never null, possibly empty.
+	 */
+	List<IContextualizable> getComputation();
 
-    /**
-     * If true, this actuator represents a named input that will need to be connected 
-     * to an artifact from the computation context.
-     * 
-     * @return
-     */
-    boolean isInput();
-    
-    /**
-     * If true, this actuator is a filter for an artifact, modifying the same artifact (and
-     * potentially returning a new one, or the same). It must have a first 'import' parameter
-     * and its return type will match that of the filtered input.
-     *  
-     * @return
-     */
-    boolean isFilter();
-    
-    /**
-     * True if this actuator computes anything. Used when building dependencies (a computed actuator depends on
-     * its children, which can otherwise be executed in parallel).
-     *
-     * @return a boolean.
-     */
-    boolean isComputed();
+	/**
+	 * If this actuator is aliased to a different name within the containing
+	 * actuator, return the alias.
+	 *
+	 * @return the alias or null
+	 */
+	String getAlias();
+
+	/**
+	 * If true, this actuator represents a named input that will need to be
+	 * connected to an artifact from the computation context.
+	 * 
+	 * @return
+	 */
+	boolean isInput();
+
+	/**
+	 * If true, this actuator is a filter for an artifact, modifying the same
+	 * artifact (and potentially returning a new one, or the same). It must have a
+	 * first 'import' parameter and its return type will match that of the filtered
+	 * input.
+	 * 
+	 * @return
+	 */
+	boolean isFilter();
+
+	/**
+	 * True if this actuator computes anything. Used when building dependencies (a
+	 * computed actuator depends on its children, which can otherwise be executed in
+	 * parallel).
+	 *
+	 * @return a boolean.
+	 */
+	boolean isComputed();
 
 }

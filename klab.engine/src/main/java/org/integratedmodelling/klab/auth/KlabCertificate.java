@@ -34,12 +34,12 @@ public class KlabCertificate implements ICertificate {
 	// just for info
 	public static final String KEY_EXPIRATION = "klab.validuntil";
 
-	private static final String LEGACY_AUTHENTICATION_ENDPOINT = "https://integratedmodelling.org/collaboration/authentication/cert-file";
+	private static final String LEGACY_AUTHENTICATION_ENDPOINT = 
+			"https://integratedmodelling.org/collaboration/authentication/cert-file";
 
 	// TODO just store a URL and handle uniformly
 	private File file = null;
 	private String resource = null;
-
 	private Properties properties = null;
 	private String cause = null;
 	private DateTime expiry;
@@ -59,14 +59,13 @@ public class KlabCertificate implements ICertificate {
 
 	static final String DEFAULT_WORLDVIEW = "im";
 
-	static final String DEFAULT_WORLDVIEW_REPOSITORIES = "https://bitbucket.org/integratedmodelling/im.git,https://bitbucket.org/integratedmodelling/im.aries.git";
+	static final String DEFAULT_WORLDVIEW_REPOSITORIES = 		"https://bitbucket.org/integratedmodelling/im.git,https://bitbucket.org/integratedmodelling/im.aries.git";
 
 	/**
 	 * Create a new certificate from a file. Check isValid() on the resulting
 	 * certificate.
 	 * 
-	 * @param file
-	 *            the certificate file
+	 * @param file the certificate file
 	 * @return a certificate read from the passed file
 	 */
 	public static ICertificate createFromFile(File file) {
@@ -211,7 +210,8 @@ public class KlabCertificate implements ICertificate {
 					 * Default hub address. TODO must be https. Blank or no response will try a
 					 * local test hub before going offline.
 					 */
-					this.properties.setProperty(KlabCertificate.KEY_PARTNER_HUB, "http://www.integratedmodelling.org/klab");
+					this.properties.setProperty(KlabCertificate.KEY_PARTNER_HUB,
+							"http://www.integratedmodelling.org/klab");
 
 					File out = new File(Configuration.INSTANCE.getDataPath() + File.separator
 							+ ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);

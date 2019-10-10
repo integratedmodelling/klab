@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
+import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -105,7 +105,7 @@ public enum Interaction implements IInteractionService {
 	}
 
 	@Override
-	public Collection<InteractiveParameter> getInteractiveParameters(IComputableResource computable, IModel model) {
+	public Collection<InteractiveParameter> getInteractiveParameters(IContextualizable computable, IModel model) {
 		List<InteractiveParameter> ret = new ArrayList<>();
 		if (computable.getServiceCall() != null) {
 			for (String id : computable.getServiceCall().getInteractiveParameters()) {
@@ -151,7 +151,7 @@ public enum Interaction implements IInteractionService {
 	 *         returned, the user has asked to cancel the run.
 	 */
 	public Collection<Triple<String, String, String>> submitParameters(
-			List<Pair<IComputableResource, List<String>>> resources, List<InteractiveParameter> fields,
+			List<Pair<IContextualizable, List<String>>> resources, List<InteractiveParameter> fields,
 			ISession session) {
 
 		UserInputRequest request = new UserInputRequest();
@@ -186,7 +186,7 @@ public enum Interaction implements IInteractionService {
 					if (keys[0].startsWith("ann")) {
 						ret.add(new Triple<>(keys[0], keys[2], response.getValues().get(value)));
 					} else {
-						for (Pair<IComputableResource, List<String>> resource : resources) {
+						for (Pair<IContextualizable, List<String>> resource : resources) {
 							if (((ComputableResource) resource.getFirst()).getId().equals(keys[0])) {
 								((ComputableResource) resource.getFirst()).setInteractiveParameter(keys[2],
 										parseValue(response.getValues().get(value), keys[2], resource.getFirst()));
@@ -203,7 +203,7 @@ public enum Interaction implements IInteractionService {
 		return ret;
 	}
 
-	private Object parseValue(Object value, String key, IComputableResource resource) {
+	private Object parseValue(Object value, String key, IContextualizable resource) {
 		boolean found = false;
 		if (resource.getServiceCall() != null) {
 			Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());

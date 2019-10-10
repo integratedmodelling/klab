@@ -24,7 +24,7 @@ package org.integratedmodelling.klab.api.documentation;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Template;
 import org.integratedmodelling.klab.api.model.IModel;

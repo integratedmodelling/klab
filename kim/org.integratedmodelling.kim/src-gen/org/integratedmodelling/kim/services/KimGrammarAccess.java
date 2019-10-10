@@ -1625,26 +1625,22 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives_1_0_1 = (Alternatives)cGroup_1_0.eContents().get(1);
 		private final Assignment cInitializationAssignment_1_0_1_0 = (Assignment)cAlternatives_1_0_1.eContents().get(0);
 		private final Keyword cInitializationDefinitionKeyword_1_0_1_0_0 = (Keyword)cInitializationAssignment_1_0_1_0.eContents().get(0);
-		private final Assignment cResolutionAssignment_1_0_1_1 = (Assignment)cAlternatives_1_0_1.eContents().get(1);
-		private final Keyword cResolutionResolutionKeyword_1_0_1_1_0 = (Keyword)cResolutionAssignment_1_0_1_1.eContents().get(0);
-		private final Assignment cInstantiationAssignment_1_0_1_2 = (Assignment)cAlternatives_1_0_1.eContents().get(2);
-		private final Keyword cInstantiationInstantiationKeyword_1_0_1_2_0 = (Keyword)cInstantiationAssignment_1_0_1_2.eContents().get(0);
-		private final Assignment cTerminationAssignment_1_0_1_3 = (Assignment)cAlternatives_1_0_1.eContents().get(3);
-		private final Keyword cTerminationTerminationKeyword_1_0_1_3_0 = (Keyword)cTerminationAssignment_1_0_1_3.eContents().get(0);
-		private final Assignment cStateInitializationAssignment_1_0_1_4 = (Assignment)cAlternatives_1_0_1.eContents().get(4);
-		private final Keyword cStateInitializationInitializationKeyword_1_0_1_4_0 = (Keyword)cStateInitializationAssignment_1_0_1_4.eContents().get(0);
-		private final Group cGroup_1_0_1_5 = (Group)cAlternatives_1_0_1.eContents().get(5);
-		private final Assignment cEventAssignment_1_0_1_5_0 = (Assignment)cGroup_1_0_1_5.eContents().get(0);
-		private final RuleCall cEventConceptDeclarationParserRuleCall_1_0_1_5_0_0 = (RuleCall)cEventAssignment_1_0_1_5_0.eContents().get(0);
-		private final Group cGroup_1_0_1_5_1 = (Group)cGroup_1_0_1_5.eContents().get(1);
-		private final Keyword cInKeyword_1_0_1_5_1_0 = (Keyword)cGroup_1_0_1_5_1.eContents().get(0);
-		private final Alternatives cAlternatives_1_0_1_5_1_1 = (Alternatives)cGroup_1_0_1_5_1.eContents().get(1);
-		private final Assignment cAnyContextEventAssignment_1_0_1_5_1_1_0 = (Assignment)cAlternatives_1_0_1_5_1_1.eContents().get(0);
-		private final Keyword cAnyContextEventContextKeyword_1_0_1_5_1_1_0_0 = (Keyword)cAnyContextEventAssignment_1_0_1_5_1_1_0.eContents().get(0);
-		private final Assignment cRelatedEventContextAssignment_1_0_1_5_1_1_1 = (Assignment)cAlternatives_1_0_1_5_1_1.eContents().get(1);
-		private final Keyword cRelatedEventContextRelatedKeyword_1_0_1_5_1_1_1_0 = (Keyword)cRelatedEventContextAssignment_1_0_1_5_1_1_1.eContents().get(0);
-		private final Assignment cEventContextAssignment_1_0_1_5_1_2 = (Assignment)cGroup_1_0_1_5_1.eContents().get(2);
-		private final RuleCall cEventContextConceptDeclarationParserRuleCall_1_0_1_5_1_2_0 = (RuleCall)cEventContextAssignment_1_0_1_5_1_2.eContents().get(0);
+		private final Assignment cInstantiationAssignment_1_0_1_1 = (Assignment)cAlternatives_1_0_1.eContents().get(1);
+		private final Keyword cInstantiationInstantiationKeyword_1_0_1_1_0 = (Keyword)cInstantiationAssignment_1_0_1_1.eContents().get(0);
+		private final Assignment cTerminationAssignment_1_0_1_2 = (Assignment)cAlternatives_1_0_1.eContents().get(2);
+		private final Keyword cTerminationTerminationKeyword_1_0_1_2_0 = (Keyword)cTerminationAssignment_1_0_1_2.eContents().get(0);
+		private final Group cGroup_1_0_1_3 = (Group)cAlternatives_1_0_1.eContents().get(3);
+		private final Assignment cEventAssignment_1_0_1_3_0 = (Assignment)cGroup_1_0_1_3.eContents().get(0);
+		private final RuleCall cEventConceptDeclarationParserRuleCall_1_0_1_3_0_0 = (RuleCall)cEventAssignment_1_0_1_3_0.eContents().get(0);
+		private final Group cGroup_1_0_1_3_1 = (Group)cGroup_1_0_1_3.eContents().get(1);
+		private final Keyword cInKeyword_1_0_1_3_1_0 = (Keyword)cGroup_1_0_1_3_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_0_1_3_1_1 = (Alternatives)cGroup_1_0_1_3_1.eContents().get(1);
+		private final Assignment cAnyContextEventAssignment_1_0_1_3_1_1_0 = (Assignment)cAlternatives_1_0_1_3_1_1.eContents().get(0);
+		private final Keyword cAnyContextEventContextKeyword_1_0_1_3_1_1_0_0 = (Keyword)cAnyContextEventAssignment_1_0_1_3_1_1_0.eContents().get(0);
+		private final Assignment cRelatedEventContextAssignment_1_0_1_3_1_1_1 = (Assignment)cAlternatives_1_0_1_3_1_1.eContents().get(1);
+		private final Keyword cRelatedEventContextRelatedKeyword_1_0_1_3_1_1_1_0 = (Keyword)cRelatedEventContextAssignment_1_0_1_3_1_1_1.eContents().get(0);
+		private final Assignment cEventContextAssignment_1_0_1_3_1_2 = (Assignment)cGroup_1_0_1_3_1.eContents().get(2);
+		private final RuleCall cEventContextConceptDeclarationParserRuleCall_1_0_1_3_1_2_0 = (RuleCall)cEventContextAssignment_1_0_1_3_1_2.eContents().get(0);
 		private final Assignment cParametersAssignment_1_0_2 = (Assignment)cGroup_1_0.eContents().get(2);
 		private final RuleCall cParametersListParserRuleCall_1_0_2_0 = (RuleCall)cParametersAssignment_1_0_2.eContents().get(0);
 		private final Assignment cActionsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
@@ -1657,17 +1653,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ActionSpecification:
 		//	integrated?='aggregated'? over?='over'
 		//	domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ',' actions+=Action)*)?
-		//	| (trigger?='on' (initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
-		//	termination?='termination' | stateInitialization?='initialization' | event=ConceptDeclaration ('in'
-		//	(anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?) parameters=List?)?
+		//	| (trigger?='on' (initialization?='definition' | instantiation?='instantiation' | termination?='termination' |
+		//	event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related')
+		//	eventContext=ConceptDeclaration)?) parameters=List?)?
 		//	actions+=Action (=> ',' actions+=Action)*;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//integrated?='aggregated'? over?='over' domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ','
-		//actions+=Action)*)? | (trigger?='on' (initialization?='definition' | resolution?='resolution' |
-		//instantiation?='instantiation' | termination?='termination' | stateInitialization?='initialization' |
-		//event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related')
-		//eventContext=ConceptDeclaration)?) parameters=List?)? actions+=Action (=> ',' actions+=Action)*
+		//actions+=Action)*)? | (trigger?='on' (initialization?='definition' | instantiation?='instantiation' |
+		//termination?='termination' | event=ConceptDeclaration ('in' (anyContextEvent?='context' |
+		//relatedEventContext?='related') eventContext=ConceptDeclaration)?) parameters=List?)? actions+=Action (=> ','
+		//actions+=Action)*
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//integrated?='aggregated'? over?='over' domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ','
@@ -1725,15 +1721,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Action
 		public RuleCall getActionsActionParserRuleCall_0_4_1_1_0() { return cActionsActionParserRuleCall_0_4_1_1_0; }
 		
-		//(trigger?='on' (initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
-		//termination?='termination' | stateInitialization?='initialization' | event=ConceptDeclaration ('in'
-		//(anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?) parameters=List?)?
-		//actions+=Action (=> ',' actions+=Action)*
+		//(trigger?='on' (initialization?='definition' | instantiation?='instantiation' | termination?='termination' |
+		//event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related')
+		//eventContext=ConceptDeclaration)?) parameters=List?)? actions+=Action (=> ',' actions+=Action)*
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//(trigger?='on' (initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
-		//termination?='termination' | stateInitialization?='initialization' | event=ConceptDeclaration ('in'
-		//(anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?) parameters=List?)?
+		//(trigger?='on' (initialization?='definition' | instantiation?='instantiation' | termination?='termination' |
+		//event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related')
+		//eventContext=ConceptDeclaration)?) parameters=List?)?
 		public Group getGroup_1_0() { return cGroup_1_0; }
 		
 		//trigger?='on'
@@ -1742,9 +1737,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'on'
 		public Keyword getTriggerOnKeyword_1_0_0_0() { return cTriggerOnKeyword_1_0_0_0; }
 		
-		//initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' | termination?='termination' |
-		//stateInitialization?='initialization' | event=ConceptDeclaration ('in' (anyContextEvent?='context' |
-		//relatedEventContext?='related') eventContext=ConceptDeclaration)?
+		//initialization?='definition' | instantiation?='instantiation' | termination?='termination' | event=ConceptDeclaration
+		//('in' (anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?
 		public Alternatives getAlternatives_1_0_1() { return cAlternatives_1_0_1; }
 		
 		//initialization?='definition'
@@ -1753,66 +1747,57 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'definition'
 		public Keyword getInitializationDefinitionKeyword_1_0_1_0_0() { return cInitializationDefinitionKeyword_1_0_1_0_0; }
 		
-		//resolution?='resolution'
-		public Assignment getResolutionAssignment_1_0_1_1() { return cResolutionAssignment_1_0_1_1; }
-		
-		//'resolution'
-		public Keyword getResolutionResolutionKeyword_1_0_1_1_0() { return cResolutionResolutionKeyword_1_0_1_1_0; }
-		
+		////				resolution?='resolution' | 
 		//instantiation?='instantiation'
-		public Assignment getInstantiationAssignment_1_0_1_2() { return cInstantiationAssignment_1_0_1_2; }
+		public Assignment getInstantiationAssignment_1_0_1_1() { return cInstantiationAssignment_1_0_1_1; }
 		
 		//'instantiation'
-		public Keyword getInstantiationInstantiationKeyword_1_0_1_2_0() { return cInstantiationInstantiationKeyword_1_0_1_2_0; }
+		public Keyword getInstantiationInstantiationKeyword_1_0_1_1_0() { return cInstantiationInstantiationKeyword_1_0_1_1_0; }
 		
 		//termination?='termination'
-		public Assignment getTerminationAssignment_1_0_1_3() { return cTerminationAssignment_1_0_1_3; }
+		public Assignment getTerminationAssignment_1_0_1_2() { return cTerminationAssignment_1_0_1_2; }
 		
 		//'termination'
-		public Keyword getTerminationTerminationKeyword_1_0_1_3_0() { return cTerminationTerminationKeyword_1_0_1_3_0; }
+		public Keyword getTerminationTerminationKeyword_1_0_1_2_0() { return cTerminationTerminationKeyword_1_0_1_2_0; }
 		
-		//stateInitialization?='initialization'
-		public Assignment getStateInitializationAssignment_1_0_1_4() { return cStateInitializationAssignment_1_0_1_4; }
-		
-		//'initialization'
-		public Keyword getStateInitializationInitializationKeyword_1_0_1_4_0() { return cStateInitializationInitializationKeyword_1_0_1_4_0; }
-		
+		////				stateInitialization ?= 'initialization'| 
 		//event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related')
 		//eventContext=ConceptDeclaration)?
-		public Group getGroup_1_0_1_5() { return cGroup_1_0_1_5; }
+		public Group getGroup_1_0_1_3() { return cGroup_1_0_1_3; }
 		
+		////				stateInitialization ?= 'initialization'| 
 		//event=ConceptDeclaration
-		public Assignment getEventAssignment_1_0_1_5_0() { return cEventAssignment_1_0_1_5_0; }
+		public Assignment getEventAssignment_1_0_1_3_0() { return cEventAssignment_1_0_1_3_0; }
 		
 		//ConceptDeclaration
-		public RuleCall getEventConceptDeclarationParserRuleCall_1_0_1_5_0_0() { return cEventConceptDeclarationParserRuleCall_1_0_1_5_0_0; }
+		public RuleCall getEventConceptDeclarationParserRuleCall_1_0_1_3_0_0() { return cEventConceptDeclarationParserRuleCall_1_0_1_3_0_0; }
 		
 		//('in' (anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?
-		public Group getGroup_1_0_1_5_1() { return cGroup_1_0_1_5_1; }
+		public Group getGroup_1_0_1_3_1() { return cGroup_1_0_1_3_1; }
 		
 		//'in'
-		public Keyword getInKeyword_1_0_1_5_1_0() { return cInKeyword_1_0_1_5_1_0; }
+		public Keyword getInKeyword_1_0_1_3_1_0() { return cInKeyword_1_0_1_3_1_0; }
 		
 		//anyContextEvent?='context' | relatedEventContext?='related'
-		public Alternatives getAlternatives_1_0_1_5_1_1() { return cAlternatives_1_0_1_5_1_1; }
+		public Alternatives getAlternatives_1_0_1_3_1_1() { return cAlternatives_1_0_1_3_1_1; }
 		
 		//anyContextEvent?='context'
-		public Assignment getAnyContextEventAssignment_1_0_1_5_1_1_0() { return cAnyContextEventAssignment_1_0_1_5_1_1_0; }
+		public Assignment getAnyContextEventAssignment_1_0_1_3_1_1_0() { return cAnyContextEventAssignment_1_0_1_3_1_1_0; }
 		
 		//'context'
-		public Keyword getAnyContextEventContextKeyword_1_0_1_5_1_1_0_0() { return cAnyContextEventContextKeyword_1_0_1_5_1_1_0_0; }
+		public Keyword getAnyContextEventContextKeyword_1_0_1_3_1_1_0_0() { return cAnyContextEventContextKeyword_1_0_1_3_1_1_0_0; }
 		
 		//relatedEventContext?='related'
-		public Assignment getRelatedEventContextAssignment_1_0_1_5_1_1_1() { return cRelatedEventContextAssignment_1_0_1_5_1_1_1; }
+		public Assignment getRelatedEventContextAssignment_1_0_1_3_1_1_1() { return cRelatedEventContextAssignment_1_0_1_3_1_1_1; }
 		
 		//'related'
-		public Keyword getRelatedEventContextRelatedKeyword_1_0_1_5_1_1_1_0() { return cRelatedEventContextRelatedKeyword_1_0_1_5_1_1_1_0; }
+		public Keyword getRelatedEventContextRelatedKeyword_1_0_1_3_1_1_1_0() { return cRelatedEventContextRelatedKeyword_1_0_1_3_1_1_1_0; }
 		
 		//eventContext=ConceptDeclaration
-		public Assignment getEventContextAssignment_1_0_1_5_1_2() { return cEventContextAssignment_1_0_1_5_1_2; }
+		public Assignment getEventContextAssignment_1_0_1_3_1_2() { return cEventContextAssignment_1_0_1_3_1_2; }
 		
 		//ConceptDeclaration
-		public RuleCall getEventContextConceptDeclarationParserRuleCall_1_0_1_5_1_2_0() { return cEventContextConceptDeclarationParserRuleCall_1_0_1_5_1_2_0; }
+		public RuleCall getEventContextConceptDeclarationParserRuleCall_1_0_1_3_1_2_0() { return cEventContextConceptDeclarationParserRuleCall_1_0_1_3_1_2_0; }
 		
 		//parameters=List?
 		public Assignment getParametersAssignment_1_0_2() { return cParametersAssignment_1_0_2; }
@@ -1877,11 +1862,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Action");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Alternatives cAlternatives_0_0 = (Alternatives)cGroup_0.eContents().get(0);
-		private final Assignment cChangeAssignment_0_0_0 = (Assignment)cAlternatives_0_0.eContents().get(0);
-		private final Keyword cChangeChangeKeyword_0_0_0_0 = (Keyword)cChangeAssignment_0_0_0.eContents().get(0);
-		private final Assignment cSetAssignment_0_0_1 = (Assignment)cAlternatives_0_0.eContents().get(1);
-		private final Keyword cSetSetKeyword_0_0_1_0 = (Keyword)cSetAssignment_0_0_1.eContents().get(0);
+		private final Assignment cSetAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final Keyword cSetSetKeyword_0_0_0 = (Keyword)cSetAssignment_0_0.eContents().get(0);
 		private final Assignment cAssignmentsAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
 		private final RuleCall cAssignmentsValueAssignmentParserRuleCall_0_1_0 = (RuleCall)cAssignmentsAssignment_0_1.eContents().get(0);
 		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
@@ -1945,39 +1927,30 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cConditionValueParserRuleCall_3_2_0 = (RuleCall)cConditionAssignment_3_2.eContents().get(0);
 		
 		//Action:
-		//	(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
-		//	conditionNegative?='unless') condition=Value)? | integrate?='integrate'
+		//	set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
+		//	condition=Value)? | integrate?='integrate'
 		//	assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
 		//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=>
 		//	('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') =>
 		//	condition=Value?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
-		//conditionNegative?='unless') condition=Value)? | integrate?='integrate' assignments+=ValueAssignment (','
-		//assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless') condition=Value)? | do?=('do' | 'then' |
-		//'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless')
-		//condition=Value)? | move?='move' (where=Value | away?='away') => condition=Value?
+		//set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
+		//condition=Value)? | integrate?='integrate' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if'
+		//| conditionNegative?='unless') condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (','
+		//executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value |
+		//away?='away') => condition=Value?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
-		//conditionNegative?='unless') condition=Value)?
+		//set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
+		//condition=Value)?
 		public Group getGroup_0() { return cGroup_0; }
 		
-		//change?='change' | set?='set'
-		public Alternatives getAlternatives_0_0() { return cAlternatives_0_0; }
-		
-		//change?='change'
-		public Assignment getChangeAssignment_0_0_0() { return cChangeAssignment_0_0_0; }
-		
-		//'change'
-		public Keyword getChangeChangeKeyword_0_0_0_0() { return cChangeChangeKeyword_0_0_0_0; }
-		
 		//set?='set'
-		public Assignment getSetAssignment_0_0_1() { return cSetAssignment_0_0_1; }
+		public Assignment getSetAssignment_0_0() { return cSetAssignment_0_0; }
 		
 		//'set'
-		public Keyword getSetSetKeyword_0_0_1_0() { return cSetSetKeyword_0_0_1_0; }
+		public Keyword getSetSetKeyword_0_0_0() { return cSetSetKeyword_0_0_0; }
 		
 		//assignments+=ValueAssignment
 		public Assignment getAssignmentsAssignment_0_1() { return cAssignmentsAssignment_0_1; }
@@ -2317,15 +2290,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cExecValueAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cExecValueExecutableValueParserRuleCall_0_0 = (RuleCall)cExecValueAssignment_0.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cAsKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Keyword cForKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
 		private final Assignment cTargetAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cTargetLOWERCASE_IDTerminalRuleCall_1_1_0 = (RuleCall)cTargetAssignment_1_1.eContents().get(0);
 		
 		//ValueExecution ValueAssignment:
-		//	execValue=ExecutableValue ('as' target=LOWERCASE_ID)?;
+		//	execValue=ExecutableValue ('for' target=LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//execValue=ExecutableValue ('as' target=LOWERCASE_ID)?
+		//execValue=ExecutableValue ('for' target=LOWERCASE_ID)?
 		public Group getGroup() { return cGroup; }
 		
 		//execValue=ExecutableValue
@@ -2334,11 +2307,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ExecutableValue
 		public RuleCall getExecValueExecutableValueParserRuleCall_0_0() { return cExecValueExecutableValueParserRuleCall_0_0; }
 		
-		//('as' target=LOWERCASE_ID)?
+		//('for' target=LOWERCASE_ID)?
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//'as'
-		public Keyword getAsKeyword_1_0() { return cAsKeyword_1_0; }
+		//'for'
+		public Keyword getForKeyword_1_0() { return cForKeyword_1_0; }
 		
 		//target=LOWERCASE_ID
 		public Assignment getTargetAssignment_1_1() { return cTargetAssignment_1_1; }
@@ -9696,17 +9669,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cYearAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cYearINTTerminalRuleCall_1_1_0 = (RuleCall)cYearAssignment_1_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
-		private final Group cGroup_2_0 = (Group)cGroup_2.eContents().get(0);
-		private final Assignment cConnectorsAssignment_2_0_0 = (Assignment)cGroup_2_0.eContents().get(0);
-		private final RuleCall cConnectorsUnitOpEnumRuleCall_2_0_0_0 = (RuleCall)cConnectorsAssignment_2_0_0.eContents().get(0);
+		private final Keyword cSolidusKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
 		private final Assignment cUnitsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
 		private final RuleCall cUnitsUnitElementParserRuleCall_2_1_0 = (RuleCall)cUnitsAssignment_2_1.eContents().get(0);
 		
 		//Currency:
-		//	id=UPPERCASE_ID ('@' year=INT) (=> (connectors+=UnitOp) units+=UnitElement)*;
+		//	id=UPPERCASE_ID ('@' year=INT) (=> '/' units+=UnitElement)*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//id=UPPERCASE_ID ('@' year=INT) (=> (connectors+=UnitOp) units+=UnitElement)*
+		//id=UPPERCASE_ID ('@' year=INT) (=> '/' units+=UnitElement)*
 		public Group getGroup() { return cGroup; }
 		
 		//id=UPPERCASE_ID
@@ -9727,17 +9698,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//INT
 		public RuleCall getYearINTTerminalRuleCall_1_1_0() { return cYearINTTerminalRuleCall_1_1_0; }
 		
-		//(=> (connectors+=UnitOp) units+=UnitElement)*
+		//(=> '/' units+=UnitElement)*
 		public Group getGroup_2() { return cGroup_2; }
 		
-		//=> (connectors+=UnitOp)
-		public Group getGroup_2_0() { return cGroup_2_0; }
-		
-		//connectors+=UnitOp
-		public Assignment getConnectorsAssignment_2_0_0() { return cConnectorsAssignment_2_0_0; }
-		
-		//UnitOp
-		public RuleCall getConnectorsUnitOpEnumRuleCall_2_0_0_0() { return cConnectorsUnitOpEnumRuleCall_2_0_0_0; }
+		//=> '/'
+		public Keyword getSolidusKeyword_2_0() { return cSolidusKeyword_2_0; }
 		
 		//units+=UnitElement
 		public Assignment getUnitsAssignment_2_1() { return cUnitsAssignment_2_1; }
@@ -10781,9 +10746,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//ActionSpecification:
 	//	integrated?='aggregated'? over?='over'
 	//	domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ',' actions+=Action)*)?
-	//	| (trigger?='on' (initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
-	//	termination?='termination' | stateInitialization?='initialization' | event=ConceptDeclaration ('in'
-	//	(anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?) parameters=List?)?
+	//	| (trigger?='on' (initialization?='definition' | instantiation?='instantiation' | termination?='termination' |
+	//	event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related')
+	//	eventContext=ConceptDeclaration)?) parameters=List?)?
 	//	actions+=Action (=> ',' actions+=Action)*;
 	public ActionSpecificationElements getActionSpecificationAccess() {
 		return pActionSpecification;
@@ -10804,8 +10769,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Action:
-	//	(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
-	//	conditionNegative?='unless') condition=Value)? | integrate?='integrate'
+	//	set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
+	//	condition=Value)? | integrate?='integrate'
 	//	assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
 	//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=>
 	//	('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') =>
@@ -10843,7 +10808,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ValueExecution ValueAssignment:
-	//	execValue=ExecutableValue ('as' target=LOWERCASE_ID)?;
+	//	execValue=ExecutableValue ('for' target=LOWERCASE_ID)?;
 	public ValueExecutionElements getValueExecutionAccess() {
 		return pValueExecution;
 	}
@@ -11748,7 +11713,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Currency:
-	//	id=UPPERCASE_ID ('@' year=INT) (=> (connectors+=UnitOp) units+=UnitElement)*;
+	//	id=UPPERCASE_ID ('@' year=INT) (=> '/' units+=UnitElement)*;
 	public CurrencyElements getCurrencyAccess() {
 		return pCurrency;
 	}

@@ -17,7 +17,7 @@ import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
-import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.kim.Model;
@@ -227,7 +227,7 @@ public enum Models implements IModelService {
 		if (!(model instanceof IModel)) {
 			return false;
 		}
-		for (IComputableResource resource : ((IModel) model).getResources()) {
+		for (IContextualizable resource : ((IModel) model).getResources()) {
 			if (!resource.isAvailable()) {
 				return false;
 			}

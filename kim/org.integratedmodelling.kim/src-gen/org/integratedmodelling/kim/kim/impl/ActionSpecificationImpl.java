@@ -41,10 +41,8 @@ import org.integratedmodelling.kim.kim.List;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isTrigger <em>Trigger</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isInitialization <em>Initialization</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isResolution <em>Resolution</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isInstantiation <em>Instantiation</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isTermination <em>Termination</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isStateInitialization <em>State Initialization</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#getEvent <em>Event</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isAnyContextEvent <em>Any Context Event</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isRelatedEventContext <em>Related Event Context</em>}</li>
@@ -157,26 +155,6 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
   protected boolean initialization = INITIALIZATION_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isResolution() <em>Resolution</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isResolution()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean RESOLUTION_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isResolution() <em>Resolution</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isResolution()
-   * @generated
-   * @ordered
-   */
-  protected boolean resolution = RESOLUTION_EDEFAULT;
-
-  /**
    * The default value of the '{@link #isInstantiation() <em>Instantiation</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -215,26 +193,6 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected boolean termination = TERMINATION_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isStateInitialization() <em>State Initialization</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isStateInitialization()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean STATE_INITIALIZATION_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isStateInitialization() <em>State Initialization</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isStateInitialization()
-   * @generated
-   * @ordered
-   */
-  protected boolean stateInitialization = STATE_INITIALIZATION_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getEvent() <em>Event</em>}' containment reference.
@@ -452,29 +410,6 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isResolution()
-  {
-    return resolution;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setResolution(boolean newResolution)
-  {
-    boolean oldResolution = resolution;
-    resolution = newResolution;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.ACTION_SPECIFICATION__RESOLUTION, oldResolution, resolution));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public boolean isInstantiation()
   {
     return instantiation;
@@ -514,29 +449,6 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
     termination = newTermination;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.ACTION_SPECIFICATION__TERMINATION, oldTermination, termination));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public boolean isStateInitialization()
-  {
-    return stateInitialization;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setStateInitialization(boolean newStateInitialization)
-  {
-    boolean oldStateInitialization = stateInitialization;
-    stateInitialization = newStateInitialization;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.ACTION_SPECIFICATION__STATE_INITIALIZATION, oldStateInitialization, stateInitialization));
   }
 
   /**
@@ -775,14 +687,10 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
         return isTrigger();
       case KimPackage.ACTION_SPECIFICATION__INITIALIZATION:
         return isInitialization();
-      case KimPackage.ACTION_SPECIFICATION__RESOLUTION:
-        return isResolution();
       case KimPackage.ACTION_SPECIFICATION__INSTANTIATION:
         return isInstantiation();
       case KimPackage.ACTION_SPECIFICATION__TERMINATION:
         return isTermination();
-      case KimPackage.ACTION_SPECIFICATION__STATE_INITIALIZATION:
-        return isStateInitialization();
       case KimPackage.ACTION_SPECIFICATION__EVENT:
         return getEvent();
       case KimPackage.ACTION_SPECIFICATION__ANY_CONTEXT_EVENT:
@@ -828,17 +736,11 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.ACTION_SPECIFICATION__INITIALIZATION:
         setInitialization((Boolean)newValue);
         return;
-      case KimPackage.ACTION_SPECIFICATION__RESOLUTION:
-        setResolution((Boolean)newValue);
-        return;
       case KimPackage.ACTION_SPECIFICATION__INSTANTIATION:
         setInstantiation((Boolean)newValue);
         return;
       case KimPackage.ACTION_SPECIFICATION__TERMINATION:
         setTermination((Boolean)newValue);
-        return;
-      case KimPackage.ACTION_SPECIFICATION__STATE_INITIALIZATION:
-        setStateInitialization((Boolean)newValue);
         return;
       case KimPackage.ACTION_SPECIFICATION__EVENT:
         setEvent((ConceptDeclaration)newValue);
@@ -887,17 +789,11 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.ACTION_SPECIFICATION__INITIALIZATION:
         setInitialization(INITIALIZATION_EDEFAULT);
         return;
-      case KimPackage.ACTION_SPECIFICATION__RESOLUTION:
-        setResolution(RESOLUTION_EDEFAULT);
-        return;
       case KimPackage.ACTION_SPECIFICATION__INSTANTIATION:
         setInstantiation(INSTANTIATION_EDEFAULT);
         return;
       case KimPackage.ACTION_SPECIFICATION__TERMINATION:
         setTermination(TERMINATION_EDEFAULT);
-        return;
-      case KimPackage.ACTION_SPECIFICATION__STATE_INITIALIZATION:
-        setStateInitialization(STATE_INITIALIZATION_EDEFAULT);
         return;
       case KimPackage.ACTION_SPECIFICATION__EVENT:
         setEvent((ConceptDeclaration)null);
@@ -940,14 +836,10 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
         return trigger != TRIGGER_EDEFAULT;
       case KimPackage.ACTION_SPECIFICATION__INITIALIZATION:
         return initialization != INITIALIZATION_EDEFAULT;
-      case KimPackage.ACTION_SPECIFICATION__RESOLUTION:
-        return resolution != RESOLUTION_EDEFAULT;
       case KimPackage.ACTION_SPECIFICATION__INSTANTIATION:
         return instantiation != INSTANTIATION_EDEFAULT;
       case KimPackage.ACTION_SPECIFICATION__TERMINATION:
         return termination != TERMINATION_EDEFAULT;
-      case KimPackage.ACTION_SPECIFICATION__STATE_INITIALIZATION:
-        return stateInitialization != STATE_INITIALIZATION_EDEFAULT;
       case KimPackage.ACTION_SPECIFICATION__EVENT:
         return event != null;
       case KimPackage.ACTION_SPECIFICATION__ANY_CONTEXT_EVENT:
@@ -981,14 +873,10 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
     result.append(trigger);
     result.append(", initialization: ");
     result.append(initialization);
-    result.append(", resolution: ");
-    result.append(resolution);
     result.append(", instantiation: ");
     result.append(instantiation);
     result.append(", termination: ");
     result.append(termination);
-    result.append(", stateInitialization: ");
-    result.append(stateInitialization);
     result.append(", anyContextEvent: ");
     result.append(anyContextEvent);
     result.append(", relatedEventContext: ");

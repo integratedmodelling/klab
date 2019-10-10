@@ -402,9 +402,8 @@ public enum Observations implements IObservationService {
 				ret.getMetadata().put("Grid size",
 						grid.getCellCount() + " (" + grid.getXCells() + " x " + grid.getYCells() + ") cells");
 				ret.getMetadata().put("Cell size",
-						NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
-								+ NumberFormat.getInstance().format(grid.getCellHeight()) + " "
-								+ grid.getProjection().getUnits());
+						NumberFormat.getInstance().format(grid.getCell(0).getStandardizedWidth()) + " x "
+								+ NumberFormat.getInstance().format(grid.getCell(0).getStandardizedWidth()) + " m");
 			}
 
 			/*
@@ -574,7 +573,8 @@ public enum Observations implements IObservationService {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
 		observable.setOptional(true);
-		Observer ret = new Observer((Shape)shape, observable, Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
+		Observer ret = new Observer((Shape) shape, observable,
+				Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
 		ret.getMetadata().putAll(metadata);
 		return ret;
 	}
