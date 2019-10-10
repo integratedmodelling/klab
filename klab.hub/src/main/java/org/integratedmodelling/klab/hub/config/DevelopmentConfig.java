@@ -49,15 +49,6 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	private static final User triton_pendingMissingLdap = testUser("triton", "password",
             "triton@integratedmodelling.org", "Triton", "of Greece", Role.ROLE_USER);
 	
-	public KlabGroup testGroups() {
-		Map<String, KlabGroup> groups = new HashMap<>();
-		groups = FileCatalog.create(DevelopmentConfig.class.getClassLoader().getResource("auth/groups.json"), KlabGroup.class);
-		KlabGroup grp = groups.get("IM");
-		klabGroupService.createGroup("IM", grp);
-		System.out.println(grp.toString());
-		return grp;
-	}
-	
     private static User testUser(String username, String password, String email, String firstName, String lastName,
             Role... roles) {
         User result = new User();
