@@ -200,7 +200,7 @@
                      <children>
                         <VBox fx:id="certificateArea" alignment="CENTER" prefHeight="94.0" prefWidth="165.0" style="-fx-border-color: #ccc;" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label text="k.LAB user:" />
+                              <Label fx:id="certContentLabel" text="k.LAB user:" />
                               <Label fx:id="certUsername" alignment="CENTER" graphicTextGap="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="163.0" text="Not certified" textFill="#f23a01">
                                  <font>
                                     <Font name="Calibri" size="24.0" />

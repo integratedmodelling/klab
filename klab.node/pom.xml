@@ -45,13 +45,6 @@
 			<version>${klab.version}</version>
 		</dependency>
 
-		<!-- protobuf runtime -->
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>3.0.0-beta-3</version>
-		</dependency>
-
 		<!-- unzip uploaded resources -->
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>

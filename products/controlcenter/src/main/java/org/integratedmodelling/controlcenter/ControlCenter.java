@@ -28,6 +28,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import kong.unirest.JacksonObjectMapper;
 import kong.unirest.Unirest;
@@ -47,6 +48,9 @@ public class ControlCenter extends Application {
 	@FXML
 	Button buttonSettings;
 
+	@FXML
+	Label certContentLabel;
+	
 	@FXML
 	Label certUsername;
 
@@ -149,8 +153,45 @@ public class ControlCenter extends Application {
 
 
 	public void setupAuthenticationUI() {
-		// TODO Auto-generated method stub
+		switch (this.authentication.getStatus()) {
+		case ANONYMOUS:
+			certContentLabel.setText("No certificate");
+			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+			certUsername.setText("Anonymous");
+			certUsername.setTextFill(Paint.valueOf("#bbbbbb"));
+			certDescription.setText("Drop a certificate file here");
+			break;
+		case EXPIRED:
+			certContentLabel.setText("Certificate expired!");
+			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+			certUsername.setText(this.authentication.getUsername());
+			certUsername.setTextFill(Paint.valueOf("#f23a01"));
+			certDescription.setText("Expired " + this.authentication.getExpiration());			
+			break;
+		case INVALID:
+			certContentLabel.setText("Invalid certificate!");
+			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+			certUsername.setText(this.authentication.getUsername());
+			certUsername.setTextFill(Paint.valueOf("#f23a01"));
+			certDescription.setText("Drop a valid certificate here");
+		case OFFLINE:
+			certContentLabel.setText("System is offline");
+			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+			certUsername.setText(this.authentication.getUsername());
+			certUsername.setTextFill(Paint.valueOf("#bbbbbb"));
+			certDescription.setText("Try again later");
+			break;
+		case VALID:
+			certContentLabel.setText("Certificate is valid");
+			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+			certUsername.setText(this.authentication.getUsername());
+			certUsername.setTextFill(Paint.valueOf("#f23a01"));
+			certDescription.setText("Expires " + this.authentication.getExpiration());				
+			break;
+		default:
+			break;
 		
+		}
 	}
 	
 	/**
