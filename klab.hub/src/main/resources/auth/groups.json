@@ -11,6 +11,17 @@
 		"observables": [],
 		"worldview": true
 	},
+    "ALICE" : {
+        "id": "ALICE",
+        "description": "Improving the management of Atlantic Landscapes: accounting for biodiversity and ecosystem services",
+		"projectUrls": [
+			"https://bitbucket.org/integratedmodelling/alice.sandbox.git"
+		],
+        "iconUrl": "http://integratedmodelling.org/dev/statics/logos/ALICE.png",
+		"observables": [],
+		"worldview": false
+
+    },
 	"ARIES": {
 		"id": "ARIES",
 		"description": "ARIES (ARtificial Intelligence for Ecosystem Services)",
