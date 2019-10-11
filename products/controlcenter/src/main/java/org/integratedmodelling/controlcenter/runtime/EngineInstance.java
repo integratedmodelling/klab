@@ -1,11 +1,11 @@
 package org.integratedmodelling.controlcenter.runtime;
 
-import org.integratedmodelling.controlcenter.api.IProduct;
 import org.integratedmodelling.controlcenter.product.Instance;
+import org.integratedmodelling.controlcenter.product.Product;
 
 public class EngineInstance extends Instance {
 
-	public EngineInstance(IProduct product) {
+	public EngineInstance(Product product) {
 		super(product);
 	}
 

@@ -111,6 +111,10 @@ public class Settings {
 	public File getProductDirectory() {
 		return productDirectory.get();
 	}
+	
+	public String getChosenBuild() {
+		return buildSelection.get();
+	}
 
 	public String getAuthenticationEndpoint() {
 		return authenticationEndpoint.get();

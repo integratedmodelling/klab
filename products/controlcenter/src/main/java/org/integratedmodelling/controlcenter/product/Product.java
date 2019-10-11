@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 
 public class Product implements IProduct {
 
-	class Build {
+	public class Build {
 		
 		int id;
 		String url;
@@ -117,10 +117,27 @@ public class Product implements IProduct {
 	public Version getBuildVersion(int build) {
 		return builds.get(build).version;
 	}
+	
+	@Override
+	public boolean isInstalled(int build) {
+		return builds.get(build) != null && builds.get(build).locallyAvailable; 
+	}
+
+	@Override
+	public boolean isAvailable(int build) {
+		return builds.get(build) != null && builds.get(build).remotelyAvailable; 
+	}
 
 	@Override
 	public String getDescription() {
 		return description;
 	}
 	
+	public File getLocalWorkspace() {
+		return localWorkspace;
+	}
+	
+	public Build getBuild(int build) {
+		return builds.get(build);
+	}
 }

@@ -1,5 +1,9 @@
 package org.integratedmodelling.controlcenter.api;
 
+import java.util.List;
+
+import org.integratedmodelling.controlcenter.product.Distribution;
+
 /**
  * The local instance of a product.
  * 
@@ -18,7 +22,7 @@ public interface IInstance {
 	 * @return
 	 */
 	IProduct getProduct();
-
+	
 	/**
 	 * The current status of the instance.
 	 * 
@@ -26,7 +30,24 @@ public interface IInstance {
 	 */
 	Status getStatus();
 
+	/**
+	 * Get all the builds available on the local machine. The list may
+	 * differ from those available from the network.
+	 * 
+	 * @return
+	 */
+	List<Integer> getInstalledBuilds();
 
+	/**
+	 * Download if necessary, using the previous build to pre-populate to minimize
+	 * the download size. If a listener is passed, use it to notify all events.
+	 * 
+	 * @param build
+	 * @param listener
+	 * @return
+	 */
+	Distribution download(int build, Distribution.SyncListener listener);
+	
 	/**
 	 * Start the instance, returning immediately. A true return value means that the
 	 * instance has been started correctly and is either in WAITING, RUNNING or

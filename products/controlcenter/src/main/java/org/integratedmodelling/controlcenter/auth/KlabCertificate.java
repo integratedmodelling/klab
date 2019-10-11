@@ -105,7 +105,7 @@ public class KlabCertificate {
 				return false;
 			}
 			
-			if (getExpiryDate().isBefore(new DateTime())) {
+			if (getExpiryDate().isBefore(DateTime.now())) {
 				cause = "certificate expired";
 				return false;
 			}
@@ -157,7 +157,7 @@ public class KlabCertificate {
 	}
 
 	public boolean isExpired() {
-		return getExpiryDate() != null && getExpiryDate().isBefore(new DateTime());
+		return getExpiryDate() != null && getExpiryDate().isBefore(DateTime.now());
 	}
 
 }

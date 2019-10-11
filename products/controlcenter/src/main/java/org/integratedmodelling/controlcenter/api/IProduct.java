@@ -128,4 +128,20 @@ public interface IProduct {
 	 */
 	Status getStatus();
 
+	/**
+	 * True if build is locally available
+	 * 
+	 * @param build
+	 * @return
+	 */
+	boolean isInstalled(int build);
+
+	/**
+	 * True if build is remotely available
+	 * 
+	 * @param build
+	 * @return
+	 */
+	boolean isAvailable(int build);
+
 }

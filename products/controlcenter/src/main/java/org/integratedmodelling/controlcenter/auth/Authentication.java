@@ -128,7 +128,7 @@ public class Authentication implements IAuthentication {
 						this.groups.add(g);
 					}
 
-					status = this.expiration.isBefore(new DateTime()) ? Status.EXPIRED : Status.VALID;
+					status = this.expiration.isBefore(DateTime.now()) ? Status.EXPIRED : Status.VALID;
 				}
 
 			}

@@ -2,10 +2,17 @@ package org.integratedmodelling.controlcenter;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.integratedmodelling.controlcenter.api.IAuthentication.Group;
 import org.integratedmodelling.controlcenter.api.IAuthentication.Status;
@@ -13,23 +20,27 @@ import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.auth.Authentication;
 import org.integratedmodelling.controlcenter.jre.JreDialog;
 import org.integratedmodelling.controlcenter.jre.JreModel;
+import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
 import org.integratedmodelling.controlcenter.product.ProductService;
+import org.integratedmodelling.controlcenter.product.ProductService.BuildStatus;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.klab.utils.BrowserUtils;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -45,6 +56,11 @@ import kong.unirest.Unirest;
 
 public class ControlCenter extends Application {
 
+	public static final String COLOR_GREEN = "#28c41d";
+	public static final String COLOR_LIGHT_GREY = "#bbbbbb";
+	public static final String COLOR_RED = "#f23a01";
+	public static final String COLOR_YELLOW = "#dfb300";
+
 	public static final String JREDIR_PROPERTY = "klab.directory.jre";
 	public static final String PRODUCTION_BRANCH_PROPERTY = "klab.branch.production";
 	public static final String DEVELOP_BRANCH_PROPERTY = "klab.branch.develop";
@@ -54,6 +70,7 @@ public class ControlCenter extends Application {
 
 	Properties properties = new Properties();
 	Settings settings;
+	AtomicBoolean downloadViewShown = new AtomicBoolean(false);
 
 	@FXML
 	Button buttonSettings;
@@ -132,7 +149,23 @@ public class ControlCenter extends Application {
 		this.settings.getWorkDirectory().mkdirs();
 		try (InputStream input = new FileInputStream(
 				new File(this.settings.getWorkDirectory() + File.separator + "klab.properties"))) {
+			properties.load(input);
+		} catch (Exception e) {
+			// no properties and that's it
+		}
+	}
 
+	/**
+	 * Called by settings when workDirectory is validated but not yet accepted as
+	 * settings value.
+	 * 
+	 * @param workDirectory
+	 */
+	public void changeWorkDirectory(File workDirectory) {
+
+		properties.clear();
+		try (InputStream input = new FileInputStream(new File(workDirectory + File.separator + "klab.properties"))) {
+			properties.load(input);
 		} catch (Exception e) {
 			// no properties and that's it
 		}
@@ -221,36 +254,36 @@ public class ControlCenter extends Application {
 			switch (this.authentication.getStatus()) {
 			case ANONYMOUS:
 				certContentLabel.setText("No certificate");
-				certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+				certContentLabel.setTextFill(Paint.valueOf(COLOR_RED));
 				certUsername.setText("Anonymous");
-				certUsername.setTextFill(Paint.valueOf("#bbbbbb"));
+				certUsername.setTextFill(Paint.valueOf(COLOR_LIGHT_GREY));
 				certDescription.setText("Drop a certificate file here");
 				break;
 			case EXPIRED:
 				certContentLabel.setText("Certificate expired!");
-				certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+				certContentLabel.setTextFill(Paint.valueOf(COLOR_RED));
 				certUsername.setText(this.authentication.getUsername());
-				certUsername.setTextFill(Paint.valueOf("#f23a01"));
+				certUsername.setTextFill(Paint.valueOf(COLOR_RED));
 				certDescription.setText("Expired " + this.authentication.getExpiration());
 				break;
 			case INVALID:
 				certContentLabel.setText("Invalid certificate!");
-				certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+				certContentLabel.setTextFill(Paint.valueOf(COLOR_RED));
 				certUsername.setText(this.authentication.getUsername());
-				certUsername.setTextFill(Paint.valueOf("#f23a01"));
+				certUsername.setTextFill(Paint.valueOf(COLOR_RED));
 				certDescription.setText("Drop a valid certificate here");
 			case OFFLINE:
 				certContentLabel.setText("System is offline");
-				certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+				certContentLabel.setTextFill(Paint.valueOf(COLOR_RED));
 				certUsername.setText(this.authentication.getUsername());
-				certUsername.setTextFill(Paint.valueOf("#bbbbbb"));
+				certUsername.setTextFill(Paint.valueOf(COLOR_LIGHT_GREY));
 				certDescription.setText("Check network connection");
 				break;
 			case VALID:
 				certContentLabel.setText("Certificate is valid");
 				certContentLabel.setTextFill(Paint.valueOf("#666666"));
 				certUsername.setText(this.authentication.getUsername());
-				certUsername.setTextFill(Paint.valueOf("#28c41d"));
+				certUsername.setTextFill(Paint.valueOf(COLOR_GREEN));
 				certDescription.setText(
 						"Expires " + this.authentication.getExpiration().toString(DateTimeFormat.mediumDate()));
 				break;
@@ -265,6 +298,7 @@ public class ControlCenter extends Application {
 					int rowIndex = i / 3;
 					Image groupImage = new Image(group.iconUrl, 24, 24, false, false);
 					ImageView groupIcon = new ImageView(groupImage);
+					groupIcon.setPickOnBounds(true);
 					this.groupIconArea.add(groupIcon, columnIndex, rowIndex);
 					Tooltip.install(groupIcon, new Tooltip(group.description));
 					i++;
@@ -280,6 +314,69 @@ public class ControlCenter extends Application {
 	public void setupUI() {
 		// TODO Auto-generated method stub
 
+		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
+
+		if (engine != null && bs != null) {
+
+			if (bs.latest < 0) {
+
+				/*
+				 * no k.LAB
+				 */
+				downloadButton.setDisable(true);
+				engineHeader.setText("Download k.LAB");
+				engineHeaderDetail.setText("Network is inaccessible");
+
+			} else {
+
+				boolean usingLatest = bs.chosen != bs.latest;
+				boolean haveLatest = bs.installed.contains(bs.latest);
+
+				/*
+				 * using an older one or nothing installed
+				 */
+				if (!haveLatest) {
+					downloadButton.setDisable(false);
+					engineHeader.setText("Download k.LAB");
+					engineHeaderDetail.setText("Build " + engine.getProduct().getBuildVersion(bs.latest) + "."
+							+ bs.latest + " is available");
+					engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
+				} else {
+					downloadButton.setDisable(true);
+					engineHeader.setText("k.LAB is up to date");
+					if (usingLatest) {
+						engineHeaderDetail.setText("Latest build " + engine.getProduct().getBuildVersion(bs.latest)
+								+ "." + bs.latest + " is installed");
+						engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_GREEN));
+					} else if (bs.chosen > 0) {
+						engineHeaderDetail.setText("Obsolete build " + bs.chosen + " is selected");
+						engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
+					}
+				}
+			}
+
+			if (!downloadViewShown.get()) {
+
+				switch (engine.getStatus()) {
+				case STOPPED:
+				case ERROR:
+				case WAITING:
+					engineMessageArea.setVisible(true);
+					engineRuntimeArea.setVisible(false);
+					downloadProgressArea.setVisible(false);
+					break;
+				case RUNNING:
+					engineMessageArea.setVisible(false);
+					engineRuntimeArea.setVisible(true);
+					downloadProgressArea.setVisible(false);
+					break;
+				default:
+					break;
+
+				}
+			}
+
+		}
 	}
 
 	public File getWorkdir() {
@@ -296,6 +393,17 @@ public class ControlCenter extends Application {
 
 	public Properties getProperties() {
 		return properties;
+	}
+
+	public void setProperty(String property, String value) {
+
+		properties.setProperty(property, value);
+		try (OutputStream input = new FileOutputStream(
+				new File(this.settings.getWorkDirectory() + File.separator + "klab.properties"))) {
+			properties.store(input, "Written by k.LAB Control Center on " + DateTime.now());
+		} catch (Exception e) {
+			// no properties and that's it
+		}
 	}
 
 	public void message(String message) {
@@ -318,6 +426,126 @@ public class ControlCenter extends Application {
 		if (this.authentication != null) {
 			BrowserUtils.startBrowser(this.authentication.getAuthenticationEndpoint());
 		}
+	}
+
+	@FXML
+	public void downloadButtonClicked() {
+
+		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
+
+		if (!bs.installed.contains(bs.latest)) {
+
+			if (!downloadViewShown.get()) {
+
+				new Thread() {
+
+					@Override
+					public void run() {
+
+						downloadViewShown.set(true);
+
+						Platform.runLater(() -> {
+							engineMessageArea.setVisible(false);
+							engineRuntimeArea.setVisible(false);
+							downloadProgressArea.setVisible(true);
+							engineHeaderDetail.setText("Downloading build " + bs.latest);
+						});
+
+						ExecutorService executor = Executors.newFixedThreadPool(2);
+						Future<Boolean> etask = executor.submit(new Callable<Boolean>() {
+							@Override
+							public Boolean call() throws Exception {
+								return engine.download(bs.latest, new SyncListener() {
+
+									int total;
+									int sofar = 0;
+
+									@Override
+									public void transferFinished() {
+									}
+
+									@Override
+									public void notifyFileProgress(String file, long bytesSoFar, long totalBytes) {
+										Platform.runLater(() -> {
+											engineProgressBarDetail
+													.setProgress((double) bytesSoFar / (double) totalBytes);
+											engineProgressLabelDetail
+													.setText((bytesSoFar / 1024) + "/" + (totalBytes / 1024) + " kB");
+										});
+									}
+
+									@Override
+									public void notifyDownloadCount(int downloadFilecount, int deleteFileCount) {
+										this.total = downloadFilecount;
+									}
+
+									@Override
+									public void beforeDownload(String file) {
+										sofar++;
+										Platform.runLater(() -> {
+											engineProgressBarOverall.setProgress((double) sofar / (double) total);
+											engineProgressLabelTotal.setText("#" + sofar + " of " + total);
+											engineCurrentFileLabel.setText(file);
+										});
+									}
+
+									@Override
+									public void beforeDelete(File localFile) {
+									}
+
+								}).isComplete();
+							}
+						});
+
+						Future<Boolean> mtask = executor.submit(new Callable<Boolean>() {
+							@Override
+							public Boolean call() throws Exception {
+								return modeler.download(bs.latest, new SyncListener() {
+
+									@Override
+									public void transferFinished() {
+									}
+
+									@Override
+									public void notifyFileProgress(String file, long bytesSoFar, long totalBytes) {
+									}
+
+									@Override
+									public void notifyDownloadCount(int downloadFilecount, int deleteFileCount) {
+									}
+
+									@Override
+									public void beforeDownload(String file) {
+									}
+
+									@Override
+									public void beforeDelete(File localFile) {
+									}
+
+								}).isComplete();
+							}
+						});
+
+						/*
+						 * wait until done and reset UI to new situation
+						 */
+						while (!(mtask.isDone() && etask.isDone())) {
+							try {
+								Thread.sleep(300);
+							} catch (InterruptedException e) {
+							}
+						}
+
+						downloadViewShown.set(false);
+						
+						Platform.runLater(() -> setupUI());
+					}
+
+				}.start();
+
+			}
+		}
+
 	}
 
 	/*

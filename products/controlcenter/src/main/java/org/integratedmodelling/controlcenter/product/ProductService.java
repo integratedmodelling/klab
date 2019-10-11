@@ -1,10 +1,11 @@
 package org.integratedmodelling.controlcenter.product;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IInstance;
@@ -28,6 +29,32 @@ public enum ProductService {
 	private Map<String, IInstance> localInstances = Collections.synchronizedMap(new HashMap<>());
 	private String currentBranch = null;
 	private File binaryWorkspace;
+
+	/**
+	 * Set to an existing engine build number ONLY when user selects the build from
+	 * the runtime chooser (in the CP). Chosen build in settings does not affect
+	 * this one and is overridden by it.
+	 */
+	private int chosenBuild = -1;
+
+	public static class BuildStatus {
+		/**
+		 * latest available online, -1 if unknown or nothing available.
+		 */
+		public int latest = -1;
+
+		/**
+		 * all installed.
+		 */
+		public List<Integer> installed = new ArrayList<>();
+
+		/**
+		 * chosen build for execution, -1 if nothing is installed. User may have chosen
+		 * an earlier build either in settings (persisted) or at runtime (not
+		 * persisted).
+		 */
+		public int chosen = -1;
+	}
 
 	private ProductService() {
 
@@ -55,6 +82,52 @@ public enum ProductService {
 	}
 
 	/**
+	 * Status of the entire system, using the engine build as representative of the
+	 * modeler's as well. Integrates any choice made at runtime re: which build to
+	 * use within the available builds.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public BuildStatus getBuildStatus() {
+		
+		BuildStatus ret = new BuildStatus();
+		IInstance engine = getInstance(PRODUCT_ENGINE);
+		
+		if (engine != null) {
+
+			ret.installed.addAll(engine.getInstalledBuilds());
+			if (engine.getProduct().getBuilds().size() > 0) {
+				ret.latest = engine.getProduct().getBuilds().get(0);
+			}
+		}
+
+		if (chosenBuild >= 0 && ret.installed.contains(chosenBuild)) {
+			ret.chosen = chosenBuild;
+		} else {
+
+			/*
+			 * check settings first
+			 */
+			boolean done = false;
+			String chosen = ControlCenter.INSTANCE.getSettings().getChosenBuild();
+			if (!"Latest".equals(chosen)) {
+				int n = Integer.parseInt(chosen);
+				if (n >= 0 && ret.installed.contains(n)) {
+					ret.chosen = n;
+					done = true;
+				}
+			}
+
+			if (!done && ret.installed.size() > 0) {
+				ret.chosen = ret.installed.get(0);
+			}
+		}
+
+		return ret;
+	}
+
+	/**
 	 * Call at beginning and when the branch settings is changed, followed by
 	 * ControlCenter.INSTANCE.setupUI().
 	 * 
@@ -62,7 +135,7 @@ public enum ProductService {
 	 */
 	public void initialize(String branch) {
 		for (String productId : products) {
-			IProduct product = new Product(KLAB_REPOSITORY_BASE_URL + "/" + branch, productId,
+			Product product = new Product(KLAB_REPOSITORY_BASE_URL + "/" + branch, productId,
 					new File(this.binaryWorkspace + File.separator + branch));
 			localInstances.put(productId, new Instance(product));
 		}
