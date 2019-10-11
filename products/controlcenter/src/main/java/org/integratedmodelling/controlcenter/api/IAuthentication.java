@@ -6,8 +6,10 @@ import org.joda.time.DateTime;
 
 public interface IAuthentication {
 
-	public interface Group {
-		
+	public class Group {
+		public String name;
+		public String description;
+		public String iconUrl;
 	}
 	
 	enum Status {
@@ -28,5 +30,5 @@ public interface IAuthentication {
 	
 	DateTime getExpiration();
 	
-	List<Group> groups();
+	List<Group> getGroups();
 }

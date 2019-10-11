@@ -1,4 +1,4 @@
-package org.integratedmodelling.controlcenter.runtime;
+package org.integratedmodelling.controlcenter.product;
 
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;

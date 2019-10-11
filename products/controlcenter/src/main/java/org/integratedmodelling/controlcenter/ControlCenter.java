@@ -7,6 +7,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
+import org.integratedmodelling.controlcenter.api.IAuthentication.Group;
+import org.integratedmodelling.controlcenter.api.IAuthentication.Status;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.auth.Authentication;
 import org.integratedmodelling.controlcenter.jre.JreDialog;
@@ -22,13 +24,19 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
@@ -67,6 +75,48 @@ public class ControlCenter extends Application {
 
 	@FXML
 	VBox certificateArea;
+
+	@FXML
+	GridPane groupIconArea;
+
+	@FXML
+	Button downloadButton;
+
+	// the next three are in a stackpane and only one must be visible at a time
+	@FXML
+	VBox engineMessageArea;
+	@FXML
+	VBox downloadProgressArea;
+	@FXML
+	GridPane engineRuntimeArea;
+
+	@FXML
+	Label installedVersionLabel;
+	@FXML
+	Label engineMessageDetail;
+	@FXML
+	FontIcon engineMessageIcon;
+	@FXML
+	Label engineHeaderDetail;
+	@FXML
+	Label engineHeader;
+
+	// the next are all the progress bars and labels that compose the download
+	// status panel
+	@FXML
+	Label engineProgressLabelTotal;
+	@FXML
+	Label engineProgressLabelDetail;
+	@FXML
+	Label engineCurrentFileLabel;
+	@FXML
+	Label modelerProgressLabel;
+	@FXML
+	ProgressBar engineProgressBarOverall;
+	@FXML
+	ProgressBar engineProgressBarDetail;
+	@FXML
+	ProgressBar modelerProgressBar;
 
 	private Authentication authentication;
 	private IInstance engine;
@@ -125,7 +175,6 @@ public class ControlCenter extends Application {
 			@Override
 			public void handle(DragEvent event) {
 				if (/* event.getGestureSource() != dropCertificate && */ event.getDragboard().hasFiles()) {
-					System.out.println("CIAPI ISTÉS");
 					event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 				}
 				event.consume();
@@ -140,22 +189,30 @@ public class ControlCenter extends Application {
 				boolean success = false;
 				if (db.hasFiles()) {
 					authentication.readCertificate(db.getFiles().get(0));
+					if (authentication.getStatus() == Status.VALID) {
+						authentication.installCertificate(db.getFiles().get(0));
+					}
 					success = true;
 				}
 				event.setDropCompleted(success);
 				event.consume();
 			}
 		});
-		
+
 		/*
 		 * setup auth UI
 		 */
 		setupAuthenticationUI();
-		
+
 		/*
 		 * setup UI
 		 */
 		setupUI();
+
+		/*
+		 * enable settings callbacks
+		 */
+		this.settings.setActionReady(true);
 
 	}
 
@@ -194,12 +251,27 @@ public class ControlCenter extends Application {
 				certContentLabel.setTextFill(Paint.valueOf("#666666"));
 				certUsername.setText(this.authentication.getUsername());
 				certUsername.setTextFill(Paint.valueOf("#28c41d"));
-				certDescription.setText("Expires " + this.authentication.getExpiration().toString(DateTimeFormat.mediumDate()));
+				certDescription.setText(
+						"Expires " + this.authentication.getExpiration().toString(DateTimeFormat.mediumDate()));
 				break;
 			default:
 				break;
 			}
+
+			int i = 0;
+			for (Group group : this.authentication.getGroups()) {
+				if (group.iconUrl != null && i < 9) {
+					int columnIndex = i % 3;
+					int rowIndex = i / 3;
+					Image groupImage = new Image(group.iconUrl, 24, 24, false, false);
+					ImageView groupIcon = new ImageView(groupImage);
+					this.groupIconArea.add(groupIcon, columnIndex, rowIndex);
+					Tooltip.install(groupIcon, new Tooltip(group.description));
+					i++;
+				}
+			}
 		}
+
 	}
 
 	/**
@@ -247,10 +319,9 @@ public class ControlCenter extends Application {
 			BrowserUtils.startBrowser(this.authentication.getAuthenticationEndpoint());
 		}
 	}
-	
+
 	/*
 	 * -----------------------------------------------------------------------------
-	 * ---
 	 */
 
 	@Override
@@ -280,6 +351,14 @@ public class ControlCenter extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
+	}
+
+	public void errorAlert(String string) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Runtime error");
+		alert.setHeaderText("An unexpected error occurred:");
+		alert.setContentText(string);
+		alert.showAndWait();
 	}
 
 }

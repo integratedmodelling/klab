@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
@@ -194,12 +195,12 @@
                            <children>
                               <VBox alignment="CENTER" GridPane.columnIndex="1">
                                  <children>
-                                    <Label text="Download k.LAB">
+                                    <Label fx:id="engineHeader" text="Download k.LAB">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label text="V0.10.1 build 233 available" textFill="#777777">
+                                    <Label fx:id="engineHeaderDetail" text="V0.10.1 build 233 available" textFill="#777777">
                                        <font>
                                           <Font size="10.0" />
                                        </font>
@@ -212,18 +213,109 @@
                                     <FontIcon fx:id="downloadIcon" iconColor="RED" iconLiteral="fa-cloud-download" iconSize="18" />
                                  </children>
                               </StackPane>
-                              <Button id="round-button" mnemonicParsing="false" GridPane.columnIndex="2">
+                              <Button id="round-button" fx:id="downloadButton" mnemonicParsing="false" GridPane.columnIndex="2">
                                  <graphic>
                                     <FontIcon iconColor="#0073c5" iconLiteral="fa-download" />
                                  </graphic>
                               </Button>
                               <StackPane prefHeight="97.0" prefWidth="260.0" style="-fx-border-color: #ccc; -fx-background-color: #ddd;" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2">
                                  <children>
-                                    <Label text="No k.LAB is installed" textFill="#696969">
-                                       <font>
-                                          <Font name="Calibri" size="24.0" />
-                                       </font>
-                                    </Label>
+                                    <VBox fx:id="engineMessageArea" alignment="CENTER">
+                                       <children>
+                                          <HBox alignment="CENTER">
+                                             <children>
+                                                <FontIcon fx:id="engineMessageIcon" iconColor="#ffea00" iconLiteral="dashicons-warning" iconSize="32">
+                                                   <HBox.margin>
+                                                      <Insets right="12.0" />
+                                                   </HBox.margin>
+                                                </FontIcon>
+                                                <VBox>
+                                                   <children>
+                                                      <Label fx:id="installedVersionLabel" text="k.LAB is not installed" textFill="#696969">
+                                                         <font>
+                                                            <Font name="Calibri" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="engineMessageDetail" alignment="CENTER" contentDisplay="CENTER" text="Click the download button to install" textFill="#7f7f7f">
+                                                         <font>
+                                                            <Font size="10.0" />
+                                                         </font></Label>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox fx:id="downloadProgressArea" prefHeight="200.0" prefWidth="100.0" visible="false">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT">
+                                             <children>
+                                                <ProgressBar fx:id="engineProgressBarOverall" maxHeight="10.0" minHeight="10.0" prefHeight="10.0" prefWidth="200.0" progress="0.0" />
+                                                <Label fx:id="engineProgressLabelTotal" textFill="#797979">
+                                                   <font>
+                                                      <Font size="10.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets left="3.0" />
+                                                   </padding>
+                                                </Label>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="3.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT">
+                                             <children>
+                                                <ProgressBar fx:id="engineProgressBarDetail" maxHeight="6.0" minHeight="6.0" prefHeight="6.0" prefWidth="200.0" progress="0.0" />
+                                                <Label fx:id="engineProgressLabelDetail" textFill="#777777">
+                                                   <font>
+                                                      <Font size="10.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets left="3.0" />
+                                                   </padding>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <Label fx:id="engineCurrentFileLabel" textFill="#797777">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox alignment="CENTER_LEFT">
+                                             <children>
+                                                <ProgressBar fx:id="modelerProgressBar" maxHeight="10.0" minHeight="10.0" prefHeight="10.0" prefWidth="200.0" progress="0.0" />
+                                                <Label fx:id="modelerProgressLabel" textFill="#797979">
+                                                   <font>
+                                                      <Font size="10.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets left="3.0" />
+                                                   </padding>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <Label text="k.Modeler distribution" textFill="#717171">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <padding>
+                                          <Insets left="3.0" />
+                                       </padding>
+                                    </VBox>
+                                    <GridPane fx:id="engineRuntimeArea" visible="false">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                    </GridPane>
                                  </children></StackPane>
                            </children>
                         </GridPane>
@@ -253,7 +345,7 @@
                               <Hyperlink onAction="#launchHubSite" text="🡆 k.LAB Hub" />
                            </children>
                         </VBox>
-                        <GridPane alignment="CENTER" prefHeight="94.0" prefWidth="86.0" style="-fx-background-color: #ddd;">
+                        <GridPane fx:id="groupIconArea" alignment="CENTER" prefHeight="94.0" prefWidth="86.0" style="-fx-background-color: #ddd;">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
