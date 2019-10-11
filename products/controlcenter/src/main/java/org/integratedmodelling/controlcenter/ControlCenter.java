@@ -329,7 +329,7 @@ public class ControlCenter extends Application {
 
 			} else {
 
-				boolean usingLatest = bs.chosen != bs.latest;
+				boolean usingLatest = bs.chosen == bs.latest;
 				boolean haveLatest = bs.installed.contains(bs.latest);
 
 				/*
