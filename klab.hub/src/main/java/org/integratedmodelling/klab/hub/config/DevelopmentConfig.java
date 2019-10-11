@@ -66,6 +66,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     static {
         system.addGroups("ARIES");
         system.addGroups("IM");
+        system.addGroups("ALICE");
         hades.addGroups("ARIES");
         hades.addGroups("IM");
         achilles_activeMissingLdap.addGroups("IM");

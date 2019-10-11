@@ -261,6 +261,9 @@ public class TokenManager {
 	private void setPasswordAndSendVerificationEmail(String newPassword) {
 		// The user will have logged in via PasswordChangeClickbackToken or
 		// username/password.
+		if(newPassword.length() < 8 || newPassword.length() > 24 || newPassword.contains(" ")) {
+			throw new BadRequestException("Password not accepted");
+		}
 		User persistedUser = klabUserManager.getLoggedInUser();
 		if (persistedUser == null) {
 			throw new BadRequestException("Could not find a user with the token that was submitted.");
