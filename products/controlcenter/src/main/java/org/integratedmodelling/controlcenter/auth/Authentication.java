@@ -92,6 +92,9 @@ public class Authentication implements IAuthentication {
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), ICertificate.Level.USER);
 
+		/*
+		 * worst-case scenario, using only info from pbysical certificate
+		 */
 		status = certificate.isExpired() ? Status.EXPIRED : (certificate.isValid() ? Status.OFFLINE : Status.INVALID);
 
 		try {
@@ -116,7 +119,7 @@ public class Authentication implements IAuthentication {
 					this.authorization = response.getJSONObject("userData").getString("token");
 
 					for (Object group : response.getJSONObject("userData").getJSONArray("groups")) {
-						System.out.println("GROUP " + ((JSONObject) group).getString("id"));
+						System.out.println("GROUP " + ((JSONObject) group).toString(0));
 					}
 
 					status = this.expiration.isBefore(new DateTime()) ? Status.EXPIRED : Status.VALID;

@@ -13,6 +13,8 @@ import org.integratedmodelling.controlcenter.jre.JreDialog;
 import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.ProductService;
 import org.integratedmodelling.controlcenter.settings.Settings;
+import org.integratedmodelling.klab.utils.BrowserUtils;
+import org.joda.time.format.DateTimeFormat;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import javafx.application.Application;
@@ -50,7 +52,7 @@ public class ControlCenter extends Application {
 
 	@FXML
 	Label certContentLabel;
-	
+
 	@FXML
 	Label certUsername;
 
@@ -65,7 +67,7 @@ public class ControlCenter extends Application {
 
 	@FXML
 	VBox certificateArea;
-	
+
 	private Authentication authentication;
 	private IInstance engine;
 	private IInstance modeler;
@@ -74,7 +76,7 @@ public class ControlCenter extends Application {
 	public ControlCenter() {
 
 		Unirest.config().setObjectMapper(new JacksonObjectMapper());
-		
+
 		INSTANCE = this;
 		this.settings = new Settings();
 		this.settings.getWorkDirectory().mkdirs();
@@ -118,88 +120,94 @@ public class ControlCenter extends Application {
 		/*
 		 * setup event handlers
 		 */
-        certificateArea.setOnDragOver(new EventHandler<DragEvent>() {
+		certificateArea.setOnDragOver(new EventHandler<DragEvent>() {
 
-            @Override
-            public void handle(DragEvent event) {
+			@Override
+			public void handle(DragEvent event) {
 				if (/* event.getGestureSource() != dropCertificate && */ event.getDragboard().hasFiles()) {
 					System.out.println("CIAPI ISTÉS");
-                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
-                event.consume();
-            }
-        });
+					event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+				}
+				event.consume();
+			}
+		});
 
-        certificateArea.setOnDragDropped(new EventHandler<DragEvent>() {
+		certificateArea.setOnDragDropped(new EventHandler<DragEvent>() {
 
-            @Override
-            public void handle(DragEvent event) {
-                Dragboard db = event.getDragboard();
-                boolean success = false;
-                if (db.hasFiles()) {
-                    authentication.readCertificate(db.getFiles().get(0));
-                    success = true;
-                }
-                event.setDropCompleted(success);
-                event.consume();
-            }
-        });
+			@Override
+			public void handle(DragEvent event) {
+				Dragboard db = event.getDragboard();
+				boolean success = false;
+				if (db.hasFiles()) {
+					authentication.readCertificate(db.getFiles().get(0));
+					success = true;
+				}
+				event.setDropCompleted(success);
+				event.consume();
+			}
+		});
+		
+		/*
+		 * setup auth UI
+		 */
+		setupAuthenticationUI();
+		
 		/*
 		 * setup UI
 		 */
 		setupUI();
-		
-	}
 
+	}
 
 	public void setupAuthenticationUI() {
-		switch (this.authentication.getStatus()) {
-		case ANONYMOUS:
-			certContentLabel.setText("No certificate");
-			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
-			certUsername.setText("Anonymous");
-			certUsername.setTextFill(Paint.valueOf("#bbbbbb"));
-			certDescription.setText("Drop a certificate file here");
-			break;
-		case EXPIRED:
-			certContentLabel.setText("Certificate expired!");
-			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
-			certUsername.setText(this.authentication.getUsername());
-			certUsername.setTextFill(Paint.valueOf("#f23a01"));
-			certDescription.setText("Expired " + this.authentication.getExpiration());			
-			break;
-		case INVALID:
-			certContentLabel.setText("Invalid certificate!");
-			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
-			certUsername.setText(this.authentication.getUsername());
-			certUsername.setTextFill(Paint.valueOf("#f23a01"));
-			certDescription.setText("Drop a valid certificate here");
-		case OFFLINE:
-			certContentLabel.setText("System is offline");
-			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
-			certUsername.setText(this.authentication.getUsername());
-			certUsername.setTextFill(Paint.valueOf("#bbbbbb"));
-			certDescription.setText("Try again later");
-			break;
-		case VALID:
-			certContentLabel.setText("Certificate is valid");
-			certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
-			certUsername.setText(this.authentication.getUsername());
-			certUsername.setTextFill(Paint.valueOf("#f23a01"));
-			certDescription.setText("Expires " + this.authentication.getExpiration());				
-			break;
-		default:
-			break;
-		
+		if (this.authentication != null) {
+			switch (this.authentication.getStatus()) {
+			case ANONYMOUS:
+				certContentLabel.setText("No certificate");
+				certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+				certUsername.setText("Anonymous");
+				certUsername.setTextFill(Paint.valueOf("#bbbbbb"));
+				certDescription.setText("Drop a certificate file here");
+				break;
+			case EXPIRED:
+				certContentLabel.setText("Certificate expired!");
+				certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+				certUsername.setText(this.authentication.getUsername());
+				certUsername.setTextFill(Paint.valueOf("#f23a01"));
+				certDescription.setText("Expired " + this.authentication.getExpiration());
+				break;
+			case INVALID:
+				certContentLabel.setText("Invalid certificate!");
+				certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+				certUsername.setText(this.authentication.getUsername());
+				certUsername.setTextFill(Paint.valueOf("#f23a01"));
+				certDescription.setText("Drop a valid certificate here");
+			case OFFLINE:
+				certContentLabel.setText("System is offline");
+				certContentLabel.setTextFill(Paint.valueOf("#f23a01"));
+				certUsername.setText(this.authentication.getUsername());
+				certUsername.setTextFill(Paint.valueOf("#bbbbbb"));
+				certDescription.setText("Check network connection");
+				break;
+			case VALID:
+				certContentLabel.setText("Certificate is valid");
+				certContentLabel.setTextFill(Paint.valueOf("#666666"));
+				certUsername.setText(this.authentication.getUsername());
+				certUsername.setTextFill(Paint.valueOf("#28c41d"));
+				certDescription.setText("Expires " + this.authentication.getExpiration().toString(DateTimeFormat.mediumDate()));
+				break;
+			default:
+				break;
+			}
 		}
 	}
-	
+
 	/**
 	 * Reentrant UI setup, to be called as needed.
 	 */
 	public void setupUI() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public File getWorkdir() {
@@ -221,7 +229,7 @@ public class ControlCenter extends Application {
 	public void message(String message) {
 		messageLabel.setText(message == null ? "" : message);
 	}
-	
+
 	/*
 	 * -----------------------------------------------------------------------------
 	 * UI callbacks
@@ -233,6 +241,13 @@ public class ControlCenter extends Application {
 		settings.getPreferences().show();
 	}
 
+	@FXML
+	public void launchHubSite() {
+		if (this.authentication != null) {
+			BrowserUtils.startBrowser(this.authentication.getAuthenticationEndpoint());
+		}
+	}
+	
 	/*
 	 * -----------------------------------------------------------------------------
 	 * ---
@@ -266,6 +281,5 @@ public class ControlCenter extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
-
 
 }

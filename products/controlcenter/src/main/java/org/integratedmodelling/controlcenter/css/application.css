@@ -12,10 +12,10 @@
     -fx-background-color: #fff;
     -fx-background-radius: 16em;
     -fx-background-insets: 0;
-    -fx-min-width: 24px; 
-    -fx-min-height: 24px;
-    -fx-max-width: 24px;
-    -fx-max-height: 24px;
+    -fx-min-width: 22px; 
+    -fx-min-height: 22px;
+    -fx-max-width: 22px;
+    -fx-max-height: 22px;
     -fx-cursor: hand;
     /* -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.1) , 2, 0.0 , 0 , 1); */
 }

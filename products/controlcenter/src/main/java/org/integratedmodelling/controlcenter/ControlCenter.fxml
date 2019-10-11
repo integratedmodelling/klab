@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
@@ -35,6 +36,9 @@
                            <graphic>
                               <FontIcon iconColor="#676767" iconLiteral="dashicons-admin-links" />
                            </graphic>
+                           <HBox.margin>
+                              <Insets left="2.0" />
+                           </HBox.margin>
                         </Button>
                         <Label fx:id="messageLabel" textFill="#646464">
                            <font>
@@ -45,16 +49,33 @@
                            </HBox.margin>
                         </Label>
                      </children>
+                     <padding>
+                        <Insets top="2.0" />
+                     </padding>
                   </HBox>
+                  <Button id="round-button" mnemonicParsing="false">
+                     <graphic>
+                        <FontIcon iconColor="#5f9ed2" iconLiteral="fa-legal" />
+                     </graphic>
+                     <HBox.margin>
+                        <Insets right="2.0" />
+                     </HBox.margin>
+                  </Button>
                   <Button id="round-button" mnemonicParsing="false">
                      <graphic>
                         <FontIcon iconColor="#0697ff" iconLiteral="fa-commenting-o" />
                      </graphic>
+                     <HBox.margin>
+                        <Insets right="2.0" />
+                     </HBox.margin>
                   </Button>
                   <Button id="round-button" fx:id="buttonSettings" alignment="CENTER" mnemonicParsing="false" onAction="#buttonSettingsClicked" textAlignment="CENTER">
                      <graphic>
                         <FontIcon iconColor="#747474" iconLiteral="dashicons-admin-tools" wrappingWidth="12.685677528381348" />
                      </graphic>
+                     <padding>
+                        <Insets right="2.0" />
+                     </padding>
                   </Button>
                </children>
                <opaqueInsets>
@@ -163,7 +184,7 @@
                           <columnConstraints>
                             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="80.0" minWidth="10.0" prefWidth="30.0" />
                             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="196.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="91.0" minWidth="10.0" prefWidth="36.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="91.0" minWidth="10.0" prefWidth="36.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="35.19998779296875" minHeight="10.0" prefHeight="35.19998779296875" vgrow="SOMETIMES" />
@@ -185,13 +206,25 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <FontIcon fx:id="downloadIcon" iconColor="RED" iconLiteral="fa-cloud-download" iconSize="18" />
+                              <StackPane>
+                                 <children>
+                                    <ChoiceBox id="round-button" prefWidth="150.0" visible="false" />
+                                    <FontIcon fx:id="downloadIcon" iconColor="RED" iconLiteral="fa-cloud-download" iconSize="18" />
+                                 </children>
+                              </StackPane>
                               <Button id="round-button" mnemonicParsing="false" GridPane.columnIndex="2">
                                  <graphic>
                                     <FontIcon iconColor="#0073c5" iconLiteral="fa-download" />
                                  </graphic>
                               </Button>
-                              <StackPane prefHeight="97.0" prefWidth="260.0" style="-fx-border-color: #ccc; -fx-background-color: #ddd;" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+                              <StackPane prefHeight="97.0" prefWidth="260.0" style="-fx-border-color: #ccc; -fx-background-color: #ddd;" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2">
+                                 <children>
+                                    <Label text="No k.LAB is installed" textFill="#696969">
+                                       <font>
+                                          <Font name="Calibri" size="24.0" />
+                                       </font>
+                                    </Label>
+                                 </children></StackPane>
                            </children>
                         </GridPane>
                      </children></VBox>
@@ -217,7 +250,7 @@
                                     <Font size="11.0" />
                                  </font>
                               </Label>
-                              <Hyperlink text="🡆 k.LAB Hub" />
+                              <Hyperlink onAction="#launchHubSite" text="🡆 k.LAB Hub" />
                            </children>
                         </VBox>
                         <GridPane alignment="CENTER" prefHeight="94.0" prefWidth="86.0" style="-fx-background-color: #ddd;">
