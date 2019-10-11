@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.manager;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.Role;
@@ -84,6 +85,20 @@ public class KlabUserManager {
 	
 	public void deleteUser(String username) {
 		klabUserDetailsService.deleteUser(username);
+	}
+
+	public void updateUsersGroups(Set<String> usernames, Set<String> groupnames) {
+		for(String username : usernames) {
+			User user = klabUserDetailsService.loadUserByUsername(username);
+			Collection<String> userGroups = user.getGroups();
+			for(String group : groupnames) {
+				if(!userGroups.contains(group)) {
+					userGroups.add(group);
+				}
+			}
+			user.setGroups(userGroups);
+			klabUserDetailsService.updateUser(user);
+		}
 	}
 
 }

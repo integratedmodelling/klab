@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.hub.models.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
+import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -116,7 +117,7 @@ public class KUserController {
 	}
 	
 	@PostMapping("/{id}")
-	@PreAuthorize("authentication.getPrincipal() == #username")
+	@PreAuthorize("authentication.getPrincipal() == #username" )
 	public ResponseEntity<?> updateUserProfile(@PathVariable("id") String username, @RequestBody UpdateUserRequest updateRequest) {
 		klabUserManager.updateUserProfile(updateRequest.getProfile());
 		ProfileResource profile = klabUserManager.getLoggedInUserProfile().getSafeProfile();
@@ -171,6 +172,15 @@ public class KUserController {
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(allUsersJson);
+	}
+	
+	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
+	@PostMapping(value = "", produces = "application/json", params="updateUsersGroups")
+	public ResponseEntity<?> updateUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
+		klabUserManager.updateUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.body("Updated Succesful");
 	}
 	
 	@RequestMapping("/me")
