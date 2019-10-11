@@ -1,9 +1,11 @@
 package org.integratedmodelling.controlcenter.auth;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IAuthentication;
 import org.integratedmodelling.klab.api.API;
@@ -64,7 +66,7 @@ public class Authentication implements IAuthentication {
 	}
 
 	@Override
-	public List<Group> groups() {
+	public List<Group> getGroups() {
 		return groups;
 	}
 
@@ -119,7 +121,11 @@ public class Authentication implements IAuthentication {
 					this.authorization = response.getJSONObject("userData").getString("token");
 
 					for (Object group : response.getJSONObject("userData").getJSONArray("groups")) {
-						System.out.println("GROUP " + ((JSONObject) group).toString(0));
+						Group g = new Group();
+						g.name = ((JSONObject)group).getString("id");
+						g.iconUrl = ((JSONObject)group).getString("iconUrl");
+						g.description = g.name + " user group";
+						this.groups.add(g);
 					}
 
 					status = this.expiration.isBefore(new DateTime()) ? Status.EXPIRED : Status.VALID;
@@ -131,6 +137,40 @@ public class Authentication implements IAuthentication {
 			// just leave the status as is
 		}
 
+	}
+
+	public String getAuthorization() {
+		return authorization;
+	}
+
+	public void installCertificate(File file) {
+		
+		/*
+		 * take configured filename as the one to overwrite; if existing, make a backup in
+		 * same directory
+		 */
+		File certfile = ControlCenter.INSTANCE.getSettings().getCertificateFile();
+		if (certfile == null) {
+			certfile = new File(ControlCenter.INSTANCE.getWorkdir() + File.separator + "klab.cert");
+		}
+		if (certfile.exists()) {
+			File backup = new File(certfile + ".bak");
+			int i = 1;
+			while (backup.exists()) {
+				backup = new File(certfile + ".bak." + i++);
+			}
+			try {
+				FileUtils.copyFile(certfile, backup);
+			} catch (IOException e) {
+				// screw it
+			}
+		}
+		
+		try {
+			FileUtils.copyFile(file, certfile);
+		} catch (IOException e) {
+			ControlCenter.INSTANCE.errorAlert("Unexpected error copying certificate file");
+		}
 	}
 
 }

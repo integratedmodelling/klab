@@ -9,7 +9,6 @@ import java.util.concurrent.Future;
 import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;
-import org.integratedmodelling.controlcenter.runtime.Instance;
 
 public enum ProductService {
 

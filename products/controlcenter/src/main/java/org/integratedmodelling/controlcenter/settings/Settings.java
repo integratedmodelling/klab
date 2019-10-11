@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
+import com.dlsc.formsfx.model.validators.CustomValidator;
 import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
@@ -26,6 +29,8 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 
 public class Settings {
+
+	private boolean actionReady = false;
 
 	public PreferencesFx preferencesFx;
 
@@ -117,6 +122,24 @@ public class Settings {
 
 	public PreferencesFx getPreferences() {
 		return preferencesFx;
+	}
+
+	/*
+	 * trick to attach immediate actions to settings changes
+	 */
+	public static class Action<T> extends CustomValidator<T> {
+
+		protected Action(Consumer<T> action) {
+			super(new Predicate<T>() {
+
+				@Override
+				public boolean test(T t) {
+					action.accept(t);
+					return true;
+				}
+			}, null);
+		}
+
 	}
 
 	/*
@@ -240,6 +263,9 @@ public class Settings {
 								Setting.of("Resolve models from k.LAB network", resolveModelsFromNetwork),
 								Setting.of("Resolve observations from k.LAB network", resolveObservationsFromNetwork),
 								Setting.of("Allow setting remote contexts from URN", loadRemoteContext)
+									.validate(new Action<Boolean>((b) -> {  
+										 if (isActionReady()) System.out.println("porcoddio e' " + b); 
+									  } ))
 
 						), Category.of("External APIs",
 
@@ -282,6 +308,14 @@ public class Settings {
 		} catch (IOException e) {
 		}
 		return new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + ".scratch");
+	}
+
+	public boolean isActionReady() {
+		return actionReady;
+	}
+
+	public void setActionReady(boolean actionReady) {
+		this.actionReady = actionReady;
 	}
 
 }
