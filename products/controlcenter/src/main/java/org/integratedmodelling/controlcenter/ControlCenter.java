@@ -24,6 +24,7 @@ import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
 import org.integratedmodelling.controlcenter.product.ProductService;
 import org.integratedmodelling.controlcenter.product.ProductService.BuildStatus;
 import org.integratedmodelling.controlcenter.settings.Settings;
+import org.integratedmodelling.controlcenter.utils.TimerService;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -31,6 +32,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -51,6 +53,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import kong.unirest.JacksonObjectMapper;
 import kong.unirest.Unirest;
 
@@ -60,6 +63,7 @@ public class ControlCenter extends Application {
 	public static final String COLOR_LIGHT_GREY = "#bbbbbb";
 	public static final String COLOR_RED = "#f23a01";
 	public static final String COLOR_YELLOW = "#dfb300";
+	public static final String COLOR_BLUE = "#0073c5";
 
 	public static final String JREDIR_PROPERTY = "klab.directory.jre";
 	public static final String PRODUCTION_BRANCH_PROPERTY = "klab.branch.production";
@@ -99,6 +103,30 @@ public class ControlCenter extends Application {
 	@FXML
 	Button downloadButton;
 
+	@FXML
+	Button engineRunButton;
+
+	@FXML
+	Button modelerRunButton;
+	
+	@FXML
+	Button launchExplorerButton;
+
+	@FXML
+	Button copyExplorerLinkButton;
+
+	@FXML
+	Button showEULAButton;
+	
+	@FXML
+	Button supportButton;
+
+	@FXML
+	VBox engineDownloadMonitor;
+
+	@FXML
+	VBox modelerDownloadMonitor;
+	
 	// the next three are in a stackpane and only one must be visible at a time
 	@FXML
 	VBox engineMessageArea;
@@ -127,6 +155,8 @@ public class ControlCenter extends Application {
 	@FXML
 	Label engineCurrentFileLabel;
 	@FXML
+	Label modelerCurrentFileLabel;
+	@FXML
 	Label modelerProgressLabel;
 	@FXML
 	ProgressBar engineProgressBarOverall;
@@ -134,11 +164,16 @@ public class ControlCenter extends Application {
 	ProgressBar engineProgressBarDetail;
 	@FXML
 	ProgressBar modelerProgressBar;
+	@FXML
+	ProgressBar modelerProgressBarDetail;
+	@FXML
+	Label modelerProgressLabelDetail;
 
 	private Authentication authentication;
 	private IInstance engine;
 	private IInstance modeler;
 	private IInstance controlCenter;
+	private TimerService updateService;
 
 	public ControlCenter() {
 
@@ -247,6 +282,11 @@ public class ControlCenter extends Application {
 		 */
 		this.settings.setActionReady(true);
 
+		/*
+		 * start polling for updates
+		 */
+		pollForUpdates();
+
 	}
 
 	public void setupAuthenticationUI() {
@@ -326,11 +366,14 @@ public class ControlCenter extends Application {
 				downloadButton.setDisable(true);
 				engineHeader.setText("Download k.LAB");
 				engineHeaderDetail.setText("Network is inaccessible");
+				engineMessageIcon.setIconLiteral("dashicons-warning");
+				engineMessageIcon.setIconColor(Paint.valueOf(COLOR_RED));
 
 			} else {
 
 				boolean usingLatest = bs.chosen == bs.latest;
 				boolean haveLatest = bs.installed.contains(bs.latest);
+				boolean haveAny = bs.installed.size() > 0;
 
 				/*
 				 * using an older one or nothing installed
@@ -341,6 +384,11 @@ public class ControlCenter extends Application {
 					engineHeaderDetail.setText("Build " + engine.getProduct().getBuildVersion(bs.latest) + "."
 							+ bs.latest + " is available");
 					engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
+					engineMessageIcon.setIconLiteral(haveAny ? "dashicons-warning" : "fa-download");
+					installedVersionLabel.setText(haveAny ? "k.LAB upgrade available" : "k.LAB is not installed");
+					engineMessageIcon.setIconColor(Paint.valueOf(haveAny ? COLOR_YELLOW : COLOR_BLUE));
+					engineMessageDetail.setText(
+							haveAny ? "Please upgrade as soon as possible" : "Click the download button to install");
 				} else {
 					downloadButton.setDisable(true);
 					engineHeader.setText("k.LAB is up to date");
@@ -348,11 +396,23 @@ public class ControlCenter extends Application {
 						engineHeaderDetail.setText("Latest build " + engine.getProduct().getBuildVersion(bs.latest)
 								+ "." + bs.latest + " is installed");
 						engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_GREEN));
+						installedVersionLabel.setText("k.LAB is up to date");
+						engineMessageIcon.setIconLiteral("dashicons-yes-alt");
+						engineMessageIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
+						engineMessageDetail.setText("No action needed");
 					} else if (bs.chosen > 0) {
 						engineHeaderDetail.setText("Obsolete build " + bs.chosen + " is selected");
+						installedVersionLabel.setText("k.LAB upgrade available");
+						engineMessageIcon.setIconLiteral("dashicons-warning");
 						engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
+						engineMessageIcon.setIconColor(Paint.valueOf(COLOR_YELLOW));
+						engineMessageDetail.setText("System may not work as expected");
 					}
 				}
+
+				engineRunButton.setDisable(!haveAny);
+				modelerRunButton.setDisable(!haveAny);
+
 			}
 
 			if (!downloadViewShown.get()) {
@@ -448,7 +508,7 @@ public class ControlCenter extends Application {
 							engineMessageArea.setVisible(false);
 							engineRuntimeArea.setVisible(false);
 							downloadProgressArea.setVisible(true);
-							engineHeaderDetail.setText("Downloading build " + bs.latest);
+							engineHeaderDetail.setText("Downloading build " + bs.latest + "...");
 						});
 
 						ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -493,6 +553,18 @@ public class ControlCenter extends Application {
 									public void beforeDelete(File localFile) {
 									}
 
+									@Override
+									public void notifyDownloadPreparationStart() {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void notifyDownloadPreparationEnd() {
+										// TODO Auto-generated method stub
+
+									}
+
 								}).isComplete();
 							}
 						});
@@ -522,6 +594,16 @@ public class ControlCenter extends Application {
 									public void beforeDelete(File localFile) {
 									}
 
+									@Override
+									public void notifyDownloadPreparationStart() {
+										// TODO Auto-generated method stub
+									}
+
+									@Override
+									public void notifyDownloadPreparationEnd() {
+										// TODO Auto-generated method stub
+									}
+
 								}).isComplete();
 							}
 						});
@@ -537,7 +619,7 @@ public class ControlCenter extends Application {
 						}
 
 						downloadViewShown.set(false);
-						
+
 						Platform.runLater(() -> setupUI());
 					}
 
@@ -552,6 +634,50 @@ public class ControlCenter extends Application {
 	 * -----------------------------------------------------------------------------
 	 */
 
+	/**
+	 * Start or restart the update service. Should be called after settings are 
+	 * saved.
+	 */
+	public void pollForUpdates() {
+
+		if (this.updateService != null) {
+			this.updateService.cancel();
+		}
+		
+		this.updateService = new TimerService();
+		this.updateService.setPeriod(Duration.minutes(getSettings().getProductUpdateInterval()));
+		this.updateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent t) {
+				Platform.runLater(() -> checkForUpdates());
+			}
+		});
+		this.updateService.start();
+	}
+
+	public synchronized void checkForUpdates() {
+		
+		messageLabel.setText("Checking for updates...");
+		if (checkForCCUpdates()) {
+			System.exit(0);
+		}
+		ProductService.INSTANCE.initialize();
+		setupUI();
+		messageLabel.setText("");
+	}
+
+	/**
+	 * If there is a new CC update, alert and ask if we should download; if so,
+	 * download in modal window, [launch installer] and return true, which will
+	 * terminate the application.
+	 * 
+	 * @return
+	 */
+	private synchronized boolean checkForCCUpdates() {
+		// TODO
+		return false;
+	}
+
 	@Override
 	public void start(Stage primaryStage) {
 
@@ -561,7 +687,7 @@ public class ControlCenter extends Application {
 		 */
 		try {
 			BorderPane root = (BorderPane) FXMLLoader.load(getClass().getResource("ControlCenter.fxml"));
-			Scene scene = new Scene(root, 260, 424);
+			Scene scene = new Scene(root, 260, 450);
 			primaryStage.setTitle("k.LAB");
 			primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot16.png")));
 			primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot32.png")));

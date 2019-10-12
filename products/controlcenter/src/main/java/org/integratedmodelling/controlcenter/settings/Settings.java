@@ -41,10 +41,15 @@ public class Settings {
 
 	private BooleanProperty useDevelop = new SimpleBooleanProperty(false);
 	private BooleanProperty detectLocalHub = new SimpleBooleanProperty(false);
-	private BooleanProperty showReleaseNotes = new SimpleBooleanProperty(false);
+	private BooleanProperty checkForCCUpdates = new SimpleBooleanProperty(true);
+	private BooleanProperty resetAllBuilds = new SimpleBooleanProperty(false);
+	private BooleanProperty resetAllBuildsButLatest = new SimpleBooleanProperty(false);
 	private BooleanProperty updateAutomatically = new SimpleBooleanProperty(false);
+	private BooleanProperty resetKnowledge = new SimpleBooleanProperty(false);
+	private BooleanProperty resetModelerWorkspace = new SimpleBooleanProperty(false);
 	private IntegerProperty buildsToKeep = new SimpleIntegerProperty(1);
 	private IntegerProperty maxMemory = new SimpleIntegerProperty(2048);
+	private IntegerProperty checkIntervalKlabUpdates = new SimpleIntegerProperty(1);
 	private IntegerProperty sessionIdleMaximum = new SimpleIntegerProperty(90);
 	private IntegerProperty maxLocalSessions = new SimpleIntegerProperty(10);
 	private IntegerProperty maxRemoteSessions = new SimpleIntegerProperty(0);
@@ -52,6 +57,10 @@ public class Settings {
 	private IntegerProperty enginePort = new SimpleIntegerProperty(8283);
 	private BooleanProperty useUTMProjection = new SimpleBooleanProperty(false);
 	private BooleanProperty useGeocoding = new SimpleBooleanProperty(true);
+	private IntegerProperty localResourceValidationInterval = new SimpleIntegerProperty(10);
+	private IntegerProperty publicResourceValidationInterval = new SimpleIntegerProperty(10);
+	private BooleanProperty revalidatePublicResources = new SimpleBooleanProperty(false);
+	private BooleanProperty revalidateLocalResources = new SimpleBooleanProperty(false);
 	private IntegerProperty maxPolygonCoordinates = new SimpleIntegerProperty(1000);
 	private IntegerProperty maxPolygonSubdivisions = new SimpleIntegerProperty(2000);
 	private BooleanProperty useNanosecondResolution = new SimpleBooleanProperty(false);
@@ -59,6 +68,8 @@ public class Settings {
 	private ObjectProperty<String> parallelismStrategy = new SimpleObjectProperty<>("Standard");
 	private BooleanProperty useInMemoryStorage = new SimpleBooleanProperty(false);
 	private BooleanProperty resolveModelsFromNetwork = new SimpleBooleanProperty(true);
+	private BooleanProperty visualizeResolutionGraphs = new SimpleBooleanProperty(false);
+	private BooleanProperty visualizeSpatialDebuggingAids = new SimpleBooleanProperty(false);
 	private BooleanProperty resolveObservationsFromNetwork = new SimpleBooleanProperty(false);
 	private BooleanProperty loadRemoteContext = new SimpleBooleanProperty(false);
 	private ObjectProperty<File> workDirectory = new SimpleObjectProperty<>(
@@ -111,13 +122,17 @@ public class Settings {
 	public File getProductDirectory() {
 		return productDirectory.get();
 	}
-	
+
 	public String getChosenBuild() {
 		return buildSelection.get();
 	}
 
 	public String getAuthenticationEndpoint() {
 		return authenticationEndpoint.get();
+	}
+
+	public int getProductUpdateInterval() {
+		return checkIntervalKlabUpdates.get();
 	}
 
 	public Settings() {
@@ -222,11 +237,16 @@ public class Settings {
 
 		return PreferencesFx.of(Settings.class,
 
-				Category.of("Control Center", Setting.of("Use developer stack", useDevelop),
-						Setting.of("Number of builds to keep", buildsToKeep),
-						Setting.of("Show release notes with update", showReleaseNotes),
-						Setting.of("Update automatically", updateAutomatically),
-						Setting.of("Choose the build to launch", buildItems, buildSelection)),
+				Category.of("Control Center",
+						Group.of("General preferences", Setting.of("Use developer stack", useDevelop),
+								Setting.of("Number of builds to keep", buildsToKeep),
+								Setting.of("Check for Control Center updates on launch", checkForCCUpdates),
+								Setting.of("Check interval for k.LAB updates (minutes)", checkIntervalKlabUpdates),
+								Setting.of("Update k.LAB automatically", updateAutomatically)),
+						Group.of("Installed k.LAB distributions",
+								Setting.of("Choose the build to launch", buildItems, buildSelection),
+								Setting.of("Delete all builds except latest", resetAllBuildsButLatest),
+								Setting.of("Delete all builds installed", resetAllBuilds))),
 
 				Category.of("Paths", Setting.of("k.LAB work directory", workDirectory, true),
 						Setting.of("Binary products path", productDirectory, true),
@@ -263,34 +283,46 @@ public class Settings {
 								Group.of("Temporal precision",
 										Setting.of("Use nanosecond resolution", useNanosecondResolution))),
 						Category.of("Connectivity",
-						
+
 								Setting.of("Resolve models from k.LAB network", resolveModelsFromNetwork),
 								Setting.of("Resolve observations from k.LAB network", resolveObservationsFromNetwork),
 								Setting.of("Allow setting remote contexts from URN", loadRemoteContext)
-									.validate(new Action<Boolean>((b) -> {  
-										 if (isActionReady()) System.out.println("porcoddio e' " + b); 
-									  } ))
+										.validate(new Action<Boolean>((b) -> {
+											if (isActionReady())
+												System.out.println("porcoddio e' " + b);
+										}))
 
 						), Category.of("External APIs",
 
-								Group.of("Google Maps", 
-										Setting.of("Google API key", googleApiKey)),
-								Group.of("Bing Maps", 
-										Setting.of("Bing API key", bingApiKey)),
-								Group.of("Custom MapBox layer",
-										Setting.of("Name", mapboxLayerName),
+								Group.of("Google Maps", Setting.of("Google API key", googleApiKey)),
+								Group.of("Bing Maps", Setting.of("Bing API key", bingApiKey)),
+								Group.of("Custom MapBox layer", Setting.of("Name", mapboxLayerName),
 										Setting.of("URL", mapboxLayerURL),
 										Setting.of("Attribution", mapboxLayerAttribution))
 
-						), Category.of("Resources")
+						), Category.of("Resources",
+								Group.of("Resource validation",
+										Setting.of("Local resource validation interval (minutes)", localResourceValidationInterval),
+										Setting.of("Public resource validation interval (minutes)", publicResourceValidationInterval),
+										Setting.of("Revalidate local resources now", revalidateLocalResources),
+										Setting.of("Revalidate public resources now", revalidatePublicResources))		
+						)
 
 				),
 
-				Category.of("Expert settings", Setting.of("Detect and use local hub if available", detectLocalHub),
-						Setting.of("Delete leftover temporary storage on startup", deleteTempStorage),
-						Setting.of("Use in-memory storage (debug only!)", useInMemoryStorage),
-						Setting.of("Remote debug engine configuration (port 8000)", useDebugParameters),
-						Setting.of("Alternate authentication endpoint", authenticationEndpoint)))
+				Category.of("Expert settings",
+						Group.of("Cached knowledge",
+								Setting.of("Reset synchronized knowledge (requires restart)", resetKnowledge),
+								Setting.of("Reset k.Modeler workspace (requires restart)", resetModelerWorkspace)),
+						Group.of("Testing settings",
+								Setting.of("Delete leftover temporary storage on startup", deleteTempStorage),
+								Setting.of("Alternate authentication endpoint", authenticationEndpoint)),
+						Group.of("Debugging settings",
+								Setting.of("Detect and use local hub if available", detectLocalHub),
+								Setting.of("Use in-memory storage (debug only!)", useInMemoryStorage),
+								Setting.of("Visualize resolution graphs", visualizeResolutionGraphs),
+								Setting.of("Visualize spatial debugging aids", visualizeSpatialDebuggingAids),
+								Setting.of("Remote debug engine configuration (port 8000)", useDebugParameters))))
 
 				.persistWindowState(false).saveSettings(true).debugHistoryMode(false).buttonsVisibility(true);
 	}

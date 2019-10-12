@@ -37,7 +37,12 @@ public class Product implements IProduct {
 			this.distribution = new Distribution(this.url, this.workspace);
 			try (InputStream in = new URL(this.url + "/build.properties").openStream()) {
 				this.properties.load(in);
-				this.version = Version.create(this.properties.getProperty(BUILD_VERSION_PROPERTY));
+				String ver = this.properties.getProperty(BUILD_VERSION_PROPERTY);
+				if (ver.endsWith("-SNAPSHOT")) {
+					// keep it short, users won't care
+					ver = ver.substring(0, ver.lastIndexOf("-SNAPSHOT"));
+				}
+				this.version = Version.create(ver);
 				this.time = DateFormat.getInstance().parse(this.properties.getProperty(BUILD_TIME_PROPERTY));
 			} catch (Exception e) {
 				this.remotelyAvailable = false;

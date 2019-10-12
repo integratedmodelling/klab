@@ -91,6 +91,19 @@ public class Distribution {
 		 */
 		void beforeDownload(String file);
 
+		/**
+		 * This is only called when preparing an incremental update from a previous
+		 * distribution, which can run relatively long.
+		 */
+		void notifyDownloadPreparationStart();
+		
+		/**
+		 * This is only called when preparing an incremental update from a previous
+		 * distribution, which can run relatively long.
+		 */
+		void notifyDownloadPreparationEnd();
+
+		
 		void notifyFileProgress(String file, long bytesSoFar, long totalBytes);
 
 		/**
@@ -255,7 +268,7 @@ public class Distribution {
 				listener.beforeDownload(f);
 			}
 			try {
-				
+
 				new Downloader(new URL(remoteURL + "/" + f), getDestinationFile(f), (sofar, total) -> {
 					if (listener != null) {
 						listener.notifyFileProgress(f, sofar, total);
@@ -356,6 +369,18 @@ public class Distribution {
 			@Override
 			public void notifyFileProgress(String file, long bytesSoFar, long totalBytes) {
 				System.out.println("   " + file + ": " + bytesSoFar + "/" + totalBytes);
+			}
+
+			@Override
+			public void notifyDownloadPreparationStart() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void notifyDownloadPreparationEnd() {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 

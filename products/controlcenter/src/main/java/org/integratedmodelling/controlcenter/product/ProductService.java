@@ -10,6 +10,8 @@ import java.util.Map;
 import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;
+import org.integratedmodelling.controlcenter.runtime.EngineInstance;
+import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
 
 public enum ProductService {
 
@@ -57,28 +59,10 @@ public enum ProductService {
 	}
 
 	private ProductService() {
-
-		/*
-		 * initialize properties
-		 */
-		this.currentBranch = ControlCenter.INSTANCE.getProperties()
-				.getProperty(ControlCenter.PRODUCTION_BRANCH_PROPERTY, PRODUCTION_BRANCH);
-		if (ControlCenter.INSTANCE.getSettings().useDevelop()) {
-			this.currentBranch = ControlCenter.INSTANCE.getProperties()
-					.getProperty(ControlCenter.DEVELOP_BRANCH_PROPERTY, DEVELOP_BRANCH);
-		}
-
-		this.binaryWorkspace = ControlCenter.INSTANCE.getSettings().getProductDirectory();
-
 		/*
 		 * synchronize local products
 		 */
-		initialize(this.currentBranch);
-
-	}
-
-	public void setToBranch(String branch) {
-		initialize(branch);
+		initialize();
 	}
 
 	/**
@@ -133,11 +117,37 @@ public enum ProductService {
 	 * 
 	 * @param branch
 	 */
-	public void initialize(String branch) {
+	public void initialize() {
+		
+		/*
+		 * initialize properties
+		 */
+		this.currentBranch = ControlCenter.INSTANCE.getProperties()
+				.getProperty(ControlCenter.PRODUCTION_BRANCH_PROPERTY, PRODUCTION_BRANCH);
+		if (ControlCenter.INSTANCE.getSettings().useDevelop()) {
+			this.currentBranch = ControlCenter.INSTANCE.getProperties()
+					.getProperty(ControlCenter.DEVELOP_BRANCH_PROPERTY, DEVELOP_BRANCH);
+		}
+
+		this.binaryWorkspace = ControlCenter.INSTANCE.getSettings().getProductDirectory();
+		
 		for (String productId : products) {
-			Product product = new Product(KLAB_REPOSITORY_BASE_URL + "/" + branch, productId,
-					new File(this.binaryWorkspace + File.separator + branch));
-			localInstances.put(productId, new Instance(product));
+			Product product = new Product(KLAB_REPOSITORY_BASE_URL + "/" + this.currentBranch, productId,
+					new File(this.binaryWorkspace + File.separator + this.currentBranch));
+
+			IInstance instance = null;
+			
+			switch (productId) {
+			case PRODUCT_ENGINE:
+				instance = new EngineInstance(product);
+				break;
+			case PRODUCT_MODELER:
+				instance = new ModelerInstance(product);
+				break;
+			default:
+				instance = new Instance(product);
+			}
+			localInstances.put(productId, instance);
 		}
 	}
 

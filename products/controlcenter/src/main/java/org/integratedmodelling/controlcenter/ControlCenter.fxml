@@ -20,20 +20,20 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane stylesheets="@css/application.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.ControlCenter">
+<BorderPane stylesheets="@css/application.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.ControlCenter">
    <center>
-      <BorderPane prefHeight="424.0" prefWidth="260.0" BorderPane.alignment="CENTER">
+      <BorderPane prefHeight="450.0" prefWidth="260.0" BorderPane.alignment="CENTER">
          <bottom>
             <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" style="-fx-border-color: #ccc; -fx-background-color: #ddd;" BorderPane.alignment="CENTER">
                <children>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Button id="round-button" mnemonicParsing="false" stylesheets="@css/application.css">
+                        <Button id="round-button" fx:id="launchExplorerButton" disable="true" mnemonicParsing="false" stylesheets="@css/application.css">
                            <graphic>
                               <FontIcon iconColor="#11bd11" iconLiteral="dashicons-admin-site-alt" />
                            </graphic>
                         </Button>
-                        <Button id="round-button" mnemonicParsing="false">
+                        <Button id="round-button" fx:id="copyExplorerLinkButton" disable="true" mnemonicParsing="false">
                            <graphic>
                               <FontIcon iconColor="#676767" iconLiteral="dashicons-admin-links" />
                            </graphic>
@@ -54,7 +54,7 @@
                         <Insets top="2.0" />
                      </padding>
                   </HBox>
-                  <Button id="round-button" mnemonicParsing="false">
+                  <Button id="round-button" fx:id="showEULAButton" mnemonicParsing="false">
                      <graphic>
                         <FontIcon iconColor="#5f9ed2" iconLiteral="fa-legal" />
                      </graphic>
@@ -62,7 +62,7 @@
                         <Insets right="2.0" />
                      </HBox.margin>
                   </Button>
-                  <Button id="round-button" mnemonicParsing="false">
+                  <Button id="round-button" fx:id="supportButton" mnemonicParsing="false">
                      <graphic>
                         <FontIcon iconColor="#0697ff" iconLiteral="fa-commenting-o" />
                      </graphic>
@@ -147,7 +147,7 @@
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button alignment="CENTER" disable="true" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0">
+                        <Button fx:id="engineRunButton" alignment="CENTER" disable="true" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0">
                            <graphic>
                               <FontIcon iconColor="#0f9735" iconLiteral="fa-cogs" iconSize="48" />
                            </graphic>
@@ -155,7 +155,7 @@
                               <Tooltip text="Launch the k.LAB engine" />
                            </tooltip>
                         </Button>
-                        <Button disable="true" maxHeight="64.0" maxWidth="66.0" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="66.0" GridPane.columnIndex="1">
+                        <Button fx:id="modelerRunButton" disable="true" maxHeight="64.0" maxWidth="66.0" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="66.0" GridPane.columnIndex="1">
                            <graphic>
                               <FontIcon iconColor="#dfb300" iconLiteral="fa-flask" iconSize="38" />
                            </graphic>
@@ -181,7 +181,7 @@
                   <Separator blendMode="DARKEN" prefWidth="200.0" />
                   <VBox prefHeight="91.0" prefWidth="260.0">
                      <children>
-                        <GridPane minHeight="120.0">
+                        <GridPane minHeight="140.0">
                           <columnConstraints>
                             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="80.0" minWidth="10.0" prefWidth="30.0" />
                             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="196.0" />
@@ -220,7 +220,7 @@
                               </Button>
                               <StackPane prefHeight="97.0" prefWidth="260.0" style="-fx-border-color: #ccc; -fx-background-color: #ddd;" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2">
                                  <children>
-                                    <VBox fx:id="engineMessageArea" alignment="CENTER">
+                                    <VBox fx:id="engineMessageArea" alignment="CENTER" prefWidth="258.0">
                                        <children>
                                           <HBox alignment="CENTER">
                                              <children>
@@ -248,58 +248,79 @@
                                     </VBox>
                                     <VBox fx:id="downloadProgressArea" prefHeight="200.0" prefWidth="100.0" visible="false">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT">
+                                          <VBox fx:id="engineDownloadMonitor">
                                              <children>
-                                                <ProgressBar fx:id="engineProgressBarOverall" maxHeight="12.0" minHeight="10.0" prefHeight="10.0" prefWidth="160.0" progress="0.0" />
-                                                <Label fx:id="engineProgressLabelTotal" textFill="#797979">
+                                                <HBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <ProgressBar fx:id="engineProgressBarOverall" maxHeight="12.0" minHeight="10.0" prefHeight="10.0" prefWidth="160.0" progress="0.0" style="-fx-text-box-border: #28c41d; -fx-background-insets: 0;" />
+                                                      <Label fx:id="engineProgressLabelTotal" text="Copying local files" textFill="#797979">
+                                                         <font>
+                                                            <Font size="10.0" />
+                                                         </font>
+                                                         <padding>
+                                                            <Insets left="3.0" />
+                                                         </padding>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <ProgressBar fx:id="engineProgressBarDetail" maxHeight="8.0" minHeight="6.0" prefHeight="6.0" prefWidth="160.0" progress="0.0" style="-fx-text-box-border: #28c41d; -fx-background-insets: 0;" />
+                                                      <Label fx:id="engineProgressLabelDetail" text="please wait..." textFill="#777777">
+                                                         <font>
+                                                            <Font size="10.0" />
+                                                         </font>
+                                                         <padding>
+                                                            <Insets left="3.0" />
+                                                         </padding>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <Label fx:id="engineCurrentFileLabel" text="Preparing k.Engine distribution...." textFill="#797777">
                                                    <font>
                                                       <Font size="10.0" />
                                                    </font>
-                                                   <padding>
-                                                      <Insets left="3.0" />
-                                                   </padding>
                                                 </Label>
                                              </children>
                                              <VBox.margin>
-                                                <Insets top="3.0" />
+                                                <Insets top="6.0" />
                                              </VBox.margin>
-                                          </HBox>
-                                          <HBox alignment="CENTER_LEFT">
+                                          </VBox>
+                                          <VBox fx:id="modelerDownloadMonitor">
                                              <children>
-                                                <ProgressBar fx:id="engineProgressBarDetail" maxHeight="8.0" minHeight="6.0" prefHeight="6.0" prefWidth="160.0" progress="0.0" />
-                                                <Label fx:id="engineProgressLabelDetail" textFill="#777777">
+                                                <HBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <ProgressBar fx:id="modelerProgressBar" maxHeight="12.0" minHeight="10.0" prefHeight="10.0" prefWidth="160.0" progress="0.0" style="-fx-text-box-border: #dfb300; -fx-background-insets: 0;" />
+                                                      <Label fx:id="modelerProgressLabel" text="Copying local files" textFill="#797979">
+                                                         <font>
+                                                            <Font size="10.0" />
+                                                         </font>
+                                                         <padding>
+                                                            <Insets left="3.0" />
+                                                         </padding>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <ProgressBar fx:id="modelerProgressBarDetail" maxHeight="8.0" minHeight="6.0" prefHeight="6.0" prefWidth="160.0" progress="0.0" style="-fx-text-box-border: #dfb300; -fx-background-insets: 0;" />
+                                                      <Label fx:id="modelerProgressLabelDetail" text="please wait..." textFill="#777777">
+                                                         <font>
+                                                            <Font size="10.0" />
+                                                         </font>
+                                                         <padding>
+                                                            <Insets left="3.0" />
+                                                         </padding>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <Label fx:id="modelerCurrentFileLabel" text="Preparing k.Modeler distribution...." textFill="#717171">
                                                    <font>
                                                       <Font size="10.0" />
                                                    </font>
-                                                   <padding>
-                                                      <Insets left="3.0" />
-                                                   </padding>
                                                 </Label>
                                              </children>
-                                          </HBox>
-                                          <Label fx:id="engineCurrentFileLabel" textFill="#797777">
-                                             <font>
-                                                <Font size="10.0" />
-                                             </font>
-                                          </Label>
-                                          <HBox alignment="CENTER_LEFT">
-                                             <children>
-                                                <ProgressBar fx:id="modelerProgressBar" maxHeight="12.0" minHeight="10.0" prefHeight="10.0" prefWidth="160.0" progress="0.0" />
-                                                <Label fx:id="modelerProgressLabel" textFill="#797979">
-                                                   <font>
-                                                      <Font size="10.0" />
-                                                   </font>
-                                                   <padding>
-                                                      <Insets left="3.0" />
-                                                   </padding>
-                                                </Label>
-                                             </children>
-                                          </HBox>
-                                          <Label text="k.Modeler distribution" textFill="#717171">
-                                             <font>
-                                                <Font size="10.0" />
-                                             </font>
-                                          </Label>
+                                          </VBox>
                                        </children>
                                        <padding>
                                           <Insets left="3.0" />
