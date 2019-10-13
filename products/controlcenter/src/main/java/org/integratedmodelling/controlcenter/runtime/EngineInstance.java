@@ -68,6 +68,10 @@ public class EngineInstance extends Instance {
 			ret = null;
 		}
 
+		if (ret != null) {
+			ret.addArgument("-network");
+		}
+		
 		return ret;
 	}
 
