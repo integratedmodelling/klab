@@ -1,6 +1,7 @@
 package org.integratedmodelling.controlcenter.api;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.controlcenter.product.Distribution;
 
@@ -55,9 +56,11 @@ public interface IInstance {
 	 * that the instance could not be started, because of a corrupted product or
 	 * some other issue.
 	 * 
+	 * @param listener 
+	 * 
 	 * @return
 	 */
-	boolean start();
+	boolean start(int build, Consumer<Status> listener);
 
 	/**
 	 * Stop the instance, returning immediately. The instance after this is called

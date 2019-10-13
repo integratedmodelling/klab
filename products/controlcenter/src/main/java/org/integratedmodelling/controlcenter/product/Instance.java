@@ -3,19 +3,27 @@ package org.integratedmodelling.controlcenter.product;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.io.FileUtils;
-import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
 import org.integratedmodelling.controlcenter.product.Product.Build;
 
-public class Instance implements IInstance {
+public abstract class Instance implements IInstance {
 
-	private Product product;
-	private Status status = Status.STOPPED;
+	protected Product product;
+	protected AtomicReference<Status> status = new AtomicReference<>(Status.STOPPED);
+	protected DefaultExecutor executor;
 
 	public Instance(Product product) {
 		this.product = product;
@@ -28,13 +36,68 @@ public class Instance implements IInstance {
 
 	@Override
 	public Status getStatus() {
-		return status;
+		return status.get();
 	}
 
+	protected abstract CommandLine getCommandLine(int build);
+
+	protected File getWorkingDirectory(int build) {
+		return product.getBuild(build).workspace;
+	}
+
+	protected abstract boolean isRunning();
+	
 	@Override
-	public boolean start() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean start(int build, Consumer<Status> listener) {
+
+		CommandLine cmdLine = getCommandLine(build);
+		
+		/*
+		 * assume error was reported
+		 */
+		if (cmdLine == null) {
+			return false;
+		}
+
+		this.executor = new DefaultExecutor();
+		this.executor.setWorkingDirectory(getWorkingDirectory(build));
+
+		Map<String, String> env = new HashMap<>();
+		env.putAll(System.getenv());
+
+		status.set(Status.WAITING);
+		if (listener != null) {
+			listener.accept(status.get());
+		}
+
+		final Consumer<Status> fhandler = listener;
+
+		try {
+			this.executor.execute(cmdLine, env, new ExecuteResultHandler() {
+
+				@Override
+				public void onProcessFailed(ExecuteException arg0) {
+					arg0.printStackTrace();
+					status.set(Status.ERROR);
+					if (fhandler != null) {
+						fhandler.accept(status.get());
+					}
+				}
+
+				@Override
+				public void onProcessComplete(int arg0) {
+					status.set(Status.STOPPED);
+					if (fhandler != null) {
+						fhandler.accept(status.get());
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			status.set(Status.ERROR);
+		}
+
+		return true;
 	}
 
 	@Override
@@ -66,7 +129,7 @@ public class Instance implements IInstance {
 
 		Build build = this.product.getBuild(buildNumber);
 		if (build != null) {
-			
+
 			int previous = -1;
 			for (int n : getInstalledBuilds()) {
 				if (n < buildNumber) {
@@ -74,11 +137,10 @@ public class Instance implements IInstance {
 					break;
 				}
 			}
-			
+
 			if (previous > 0) {
 				/*
-				 * preload the worspace with the previous distribution for incremental
-				 * download.
+				 * preload the worspace with the previous distribution for incremental download.
 				 */
 				File previousWorkspace = new File(this.product.getLocalWorkspace() + File.separator + previous);
 				if (previousWorkspace.isDirectory()) {
@@ -90,8 +152,8 @@ public class Instance implements IInstance {
 					}
 				}
 			}
-			
-			Distribution ret = new Distribution(build.url, build.workspace);
+
+			Distribution ret = new Distribution(build.getDownloadUrl(), build.workspace);
 			ret.setListener(listener);
 			ret.sync();
 			return ret;

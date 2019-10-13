@@ -28,23 +28,26 @@ package org.integratedmodelling.klab.utils;
 
 public enum OS {
 
-    WIN,
-    MACOS,
-    UNIX;
+	WIN, MACOS, UNIX;
 
-    public static OS get() {
+	public static OS get() {
 
-        String osd = System.getProperty("os.name").toLowerCase();
-        OS ret = null;
-        // TODO ALL these checks need careful checking
-        if (osd.contains("windows")) {
-            ret = OS.WIN;
-        } else if (osd.contains("mac")) {
-            ret = OS.MACOS;
-        } else if (osd.contains("linux") || osd.contains("unix")) {
-            ret = OS.UNIX;
-        }
+		String osd = System.getProperty("os.name").toLowerCase();
+		OS ret = null;
+		// TODO ALL these checks need careful checking
+		if (osd.contains("windows")) {
+			ret = OS.WIN;
+		} else if (osd.contains("mac")) {
+			ret = OS.MACOS;
+		} else if (osd.contains("linux") || osd.contains("unix")) {
+			ret = OS.UNIX;
+		}
 
-        return ret;
-    }
+		return ret;
+	}
+
+	public String getClasspathSeparator() {
+		return this == WIN ? ";" : ":";
+	}
+
 }

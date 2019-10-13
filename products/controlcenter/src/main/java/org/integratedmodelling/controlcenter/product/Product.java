@@ -14,20 +14,22 @@ import java.util.Properties;
 import org.integratedmodelling.controlcenter.api.IProduct;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.OS;
 
 public class Product implements IProduct {
 
 	public class Build {
 		
+		private String url;
+
 		int id;
-		String url;
 		Distribution distribution;
-		File workspace;
-		Properties properties = new Properties();
-		Version version = null;
-		Date time;
-		boolean locallyAvailable = false;
-		boolean remotelyAvailable = true;
+		public File workspace;
+		public Properties properties = new Properties();
+		public Version version = null;
+		public Date time;
+		public boolean locallyAvailable = false;
+		public boolean remotelyAvailable = true;
 		
 		Build(int n) {
 			
@@ -51,6 +53,10 @@ public class Product implements IProduct {
 				this.locallyAvailable = true;
 			}
 		}
+		
+		public String getDownloadUrl() {
+			return osSpecific ? (url + "/" + OS.get().toString().toLowerCase()) : url;
+		}
 	}
 
 	private Status status = Status.UNKNOWN;
@@ -63,6 +69,7 @@ public class Product implements IProduct {
 	private List<Integer> buildIds = new ArrayList<>();
 	private Map<Integer, Build> builds = new HashMap<>();
 	private File localWorkspace;
+	boolean osSpecific = false;
 
 	public Product(String baseUrl, String productId, File ws) {
 
@@ -78,6 +85,7 @@ public class Product implements IProduct {
 			properties.load(in);
 			this.name = properties.getProperty(PRODUCT_NAME_PROPERTY, productId);
 			this.description = properties.getProperty(PRODUCT_DESCRIPTION_PROPERTY, "No description provided");
+			this.osSpecific = Boolean.parseBoolean(properties.getProperty(PRODUCT_OSSPECIFIC_PROPERTY, "false"));
 			this.type = Type.valueOf(properties.getProperty(PRODUCT_TYPE_PROPERTY, "UNKNOWN"));
 			for (int b : NumberUtils.intArrayFromString(properties.getProperty(PRODUCT_AVAILABLE_BUILDS_PROPERTY, ""), ",")) {
 				buildIds.add(b);
@@ -144,5 +152,15 @@ public class Product implements IProduct {
 	
 	public Build getBuild(int build) {
 		return builds.get(build);
+	}
+
+	@Override
+	public boolean isOsSpecific() {
+		return osSpecific;
+	}
+
+	@Override
+	public Type getType() {
+		return type;
 	}
 }

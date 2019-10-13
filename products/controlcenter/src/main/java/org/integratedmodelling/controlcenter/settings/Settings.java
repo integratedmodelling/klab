@@ -39,6 +39,7 @@ public class Settings {
 	private ListProperty<String> parallelismStrategies = new SimpleListProperty<>(
 			FXCollections.observableArrayList(Arrays.asList("Aggressive", "Standard", "Disabled")));
 
+	private BooleanProperty startWithCLI = new SimpleBooleanProperty(true);
 	private BooleanProperty useDevelop = new SimpleBooleanProperty(false);
 	private BooleanProperty detectLocalHub = new SimpleBooleanProperty(false);
 	private BooleanProperty checkForCCUpdates = new SimpleBooleanProperty(true);
@@ -64,7 +65,6 @@ public class Settings {
 	private IntegerProperty maxPolygonCoordinates = new SimpleIntegerProperty(1000);
 	private IntegerProperty maxPolygonSubdivisions = new SimpleIntegerProperty(2000);
 	private BooleanProperty useNanosecondResolution = new SimpleBooleanProperty(false);
-	private ObjectProperty<String> buildSelection = new SimpleObjectProperty<>("Latest");
 	private ObjectProperty<String> parallelismStrategy = new SimpleObjectProperty<>("Standard");
 	private BooleanProperty useInMemoryStorage = new SimpleBooleanProperty(false);
 	private BooleanProperty resolveModelsFromNetwork = new SimpleBooleanProperty(true);
@@ -123,16 +123,24 @@ public class Settings {
 		return productDirectory.get();
 	}
 
-	public String getChosenBuild() {
-		return buildSelection.get();
-	}
-
 	public String getAuthenticationEndpoint() {
 		return authenticationEndpoint.get();
 	}
 
 	public int getProductUpdateInterval() {
 		return checkIntervalKlabUpdates.get();
+	}
+	
+	public int getMaxEngineMemory() {
+		return maxMemory.get();
+	}
+
+	public boolean useDebug() {
+		return useDebugParameters.get();
+	}
+	
+	public int getEnginePort() {
+		return enginePort.get();
 	}
 
 	public Settings() {
@@ -244,7 +252,6 @@ public class Settings {
 								Setting.of("Check interval for k.LAB updates (minutes)", checkIntervalKlabUpdates),
 								Setting.of("Update k.LAB automatically", updateAutomatically)),
 						Group.of("Installed k.LAB distributions",
-								Setting.of("Choose the build to launch", buildItems, buildSelection),
 								Setting.of("Delete all builds except latest", resetAllBuildsButLatest),
 								Setting.of("Delete all builds installed", resetAllBuilds))),
 
@@ -258,6 +265,7 @@ public class Settings {
 
 				Category.of("Engine",
 
+						Setting.of("Start with command window", startWithCLI),
 						Setting.of("Max RAM occupation (MB)", maxMemory),
 						Setting.of("Engine port (default 8283)", enginePort)
 

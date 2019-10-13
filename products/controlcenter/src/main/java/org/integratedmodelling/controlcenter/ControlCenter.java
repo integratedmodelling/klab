@@ -32,6 +32,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -40,6 +42,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
@@ -108,7 +111,7 @@ public class ControlCenter extends Application {
 
 	@FXML
 	Button modelerRunButton;
-	
+
 	@FXML
 	Button launchExplorerButton;
 
@@ -117,7 +120,7 @@ public class ControlCenter extends Application {
 
 	@FXML
 	Button showEULAButton;
-	
+
 	@FXML
 	Button supportButton;
 
@@ -126,7 +129,7 @@ public class ControlCenter extends Application {
 
 	@FXML
 	VBox modelerDownloadMonitor;
-	
+
 	// the next three are in a stackpane and only one must be visible at a time
 	@FXML
 	VBox engineMessageArea;
@@ -157,17 +160,19 @@ public class ControlCenter extends Application {
 	@FXML
 	Label modelerCurrentFileLabel;
 	@FXML
-	Label modelerProgressLabel;
+	Label modelerProgressLabelTotal;
 	@FXML
 	ProgressBar engineProgressBarOverall;
 	@FXML
 	ProgressBar engineProgressBarDetail;
 	@FXML
-	ProgressBar modelerProgressBar;
+	ProgressBar modelerProgressBarOverall;
 	@FXML
 	ProgressBar modelerProgressBarDetail;
 	@FXML
 	Label modelerProgressLabelDetail;
+	@FXML
+	ChoiceBox<String> buildChoiceBox;
 
 	private Authentication authentication;
 	private IInstance engine;
@@ -227,6 +232,17 @@ public class ControlCenter extends Application {
 		 * read authentication using setting for certificate
 		 */
 		this.authentication = new Authentication();
+
+		/*
+		 * set up listeners
+		 */
+		buildChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				chooseBuild(newValue.intValue());
+			}
+		});
 
 		/*
 		 * retrieve instances
@@ -352,11 +368,21 @@ public class ControlCenter extends Application {
 	 * Reentrant UI setup, to be called as needed.
 	 */
 	public void setupUI() {
-		// TODO Auto-generated method stub
+
+		/*
+		 * setup choices of builds
+		 */
+		buildChoiceBox.getItems().clear();
 
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 
 		if (engine != null && bs != null) {
+
+			boolean first = true;
+			for (int build : engine.getProduct().getBuilds()) {
+				buildChoiceBox.getItems().add("Build " + build + (first ? " (latest)" : ""));
+				first = false;
+			}
 
 			if (bs.latest < 0) {
 
@@ -364,55 +390,81 @@ public class ControlCenter extends Application {
 				 * no k.LAB
 				 */
 				downloadButton.setDisable(true);
-				engineHeader.setText("Download k.LAB");
-				engineHeaderDetail.setText("Network is inaccessible");
+
+				if (!downloadViewShown.get()) {
+					engineHeader.setText("Download k.LAB");
+					engineHeaderDetail.setText("Network is inaccessible");
+				}
 				engineMessageIcon.setIconLiteral("dashicons-warning");
 				engineMessageIcon.setIconColor(Paint.valueOf(COLOR_RED));
 
 			} else {
 
 				boolean usingLatest = bs.chosen == bs.latest;
-				boolean haveLatest = bs.installed.contains(bs.latest);
+				boolean haveChosen = bs.installed.contains(bs.chosen);
+//				boolean haveLatest = bs.installed.contains(bs.latest);
 				boolean haveAny = bs.installed.size() > 0;
+
+				buildChoiceBox.setVisible(haveAny);
+				downloadIcon.setVisible(!haveAny);
 
 				/*
 				 * using an older one or nothing installed
 				 */
-				if (!haveLatest) {
+				if (!haveChosen) {
 					downloadButton.setDisable(false);
-					engineHeader.setText("Download k.LAB");
-					engineHeaderDetail.setText("Build " + engine.getProduct().getBuildVersion(bs.latest) + "."
-							+ bs.latest + " is available");
-					engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
-					engineMessageIcon.setIconLiteral(haveAny ? "dashicons-warning" : "fa-download");
-					installedVersionLabel.setText(haveAny ? "k.LAB upgrade available" : "k.LAB is not installed");
-					engineMessageIcon.setIconColor(Paint.valueOf(haveAny ? COLOR_YELLOW : COLOR_BLUE));
+
+					if (!downloadViewShown.get()) {
+						engineHeader.setText("Download k.LAB");
+						engineHeaderDetail.setText("Build " + engine.getProduct().getBuildVersion(bs.chosen) + "."
+								+ bs.latest + " is available");
+						engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
+					}
+
+					engineMessageIcon.setIconLiteral("fa-download");
+					installedVersionLabel
+							.setText(haveAny ? ("Build " + bs.chosen + " not installed") : "k.LAB is not installed");
+					engineMessageIcon.setIconColor(Paint.valueOf(usingLatest ? COLOR_BLUE : COLOR_YELLOW));
 					engineMessageDetail.setText(
-							haveAny ? "Please upgrade as soon as possible" : "Click the download button to install");
+							usingLatest ? "Click the download button to install" : "Please upgrade when possible");
 				} else {
 					downloadButton.setDisable(true);
-					engineHeader.setText("k.LAB is up to date");
+
+					if (!downloadViewShown.get()) {
+						engineHeader.setText("k.LAB is up to date");
+					}
+
 					if (usingLatest) {
-						engineHeaderDetail.setText("Latest build " + engine.getProduct().getBuildVersion(bs.latest)
-								+ "." + bs.latest + " is installed");
-						engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_GREEN));
+
+						if (!downloadViewShown.get()) {
+							engineHeaderDetail.setText("Latest build " + engine.getProduct().getBuildVersion(bs.latest)
+									+ "." + bs.latest + " is installed");
+							engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_GREEN));
+						}
+
 						installedVersionLabel.setText("k.LAB is up to date");
 						engineMessageIcon.setIconLiteral("dashicons-yes-alt");
 						engineMessageIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
 						engineMessageDetail.setText("No action needed");
+
 					} else if (bs.chosen > 0) {
-						engineHeaderDetail.setText("Obsolete build " + bs.chosen + " is selected");
+
+						if (!downloadViewShown.get()) {
+							engineHeaderDetail.setText("Obsolete build " + bs.chosen + " is selected");
+							engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
+						}
+
 						installedVersionLabel.setText("k.LAB upgrade available");
 						engineMessageIcon.setIconLiteral("dashicons-warning");
-						engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
 						engineMessageIcon.setIconColor(Paint.valueOf(COLOR_YELLOW));
 						engineMessageDetail.setText("System may not work as expected");
 					}
 				}
 
-				engineRunButton.setDisable(!haveAny);
-				modelerRunButton.setDisable(!haveAny);
-
+				if (!downloadViewShown.get()) {
+					engineRunButton.setDisable(!haveChosen);
+					modelerRunButton.setDisable(!haveChosen);
+				}
 			}
 
 			if (!downloadViewShown.get()) {
@@ -489,11 +541,31 @@ public class ControlCenter extends Application {
 	}
 
 	@FXML
+	public void runEngine() {
+		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
+		if (engine.getStatus() == IInstance.Status.STOPPED) {
+			engine.start(bs.chosen, (status) -> System.out.println("DIOCAN " + status));
+		} else if (engine.getStatus() == IInstance.Status.RUNNING) {
+			engine.stop();
+		}
+	}
+	
+	@FXML
+	public void runModeler() {
+		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
+		if (modeler.getStatus() == IInstance.Status.STOPPED) {
+			modeler.start(bs.chosen, (status) -> System.out.println("DIOCUL" + status));
+		} else if (modeler.getStatus() == IInstance.Status.RUNNING) {
+			modeler.stop();
+		}
+	}
+	
+	@FXML
 	public void downloadButtonClicked() {
 
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 
-		if (!bs.installed.contains(bs.latest)) {
+		if (!bs.installed.contains(bs.chosen)) {
 
 			if (!downloadViewShown.get()) {
 
@@ -505,23 +577,27 @@ public class ControlCenter extends Application {
 						downloadViewShown.set(true);
 
 						Platform.runLater(() -> {
+							downloadButton.setDisable(true);
 							engineMessageArea.setVisible(false);
 							engineRuntimeArea.setVisible(false);
 							downloadProgressArea.setVisible(true);
-							engineHeaderDetail.setText("Downloading build " + bs.latest + "...");
+							engineHeaderDetail.setText("Downloading build " + bs.chosen + "...");
 						});
 
 						ExecutorService executor = Executors.newFixedThreadPool(2);
 						Future<Boolean> etask = executor.submit(new Callable<Boolean>() {
 							@Override
 							public Boolean call() throws Exception {
-								return engine.download(bs.latest, new SyncListener() {
+								return engine.download(bs.chosen, new SyncListener() {
 
 									int total;
 									int sofar = 0;
 
 									@Override
 									public void transferFinished() {
+										Platform.runLater(() -> {
+											engineCurrentFileLabel.setText("k.Engine download complete");
+										});
 									}
 
 									@Override
@@ -572,22 +648,41 @@ public class ControlCenter extends Application {
 						Future<Boolean> mtask = executor.submit(new Callable<Boolean>() {
 							@Override
 							public Boolean call() throws Exception {
-								return modeler.download(bs.latest, new SyncListener() {
+								return modeler.download(bs.chosen, new SyncListener() {
+
+									int total;
+									int sofar = 0;
 
 									@Override
 									public void transferFinished() {
+										Platform.runLater(() -> {
+											modelerCurrentFileLabel.setText("k.Modeler download complete");
+										});
 									}
 
 									@Override
 									public void notifyFileProgress(String file, long bytesSoFar, long totalBytes) {
+										Platform.runLater(() -> {
+											modelerProgressBarDetail
+													.setProgress((double) bytesSoFar / (double) totalBytes);
+											modelerProgressLabelDetail
+													.setText((bytesSoFar / 1024) + "/" + (totalBytes / 1024) + " kB");
+										});
 									}
 
 									@Override
 									public void notifyDownloadCount(int downloadFilecount, int deleteFileCount) {
+										this.total = downloadFilecount;
 									}
 
 									@Override
 									public void beforeDownload(String file) {
+										sofar++;
+										Platform.runLater(() -> {
+											modelerProgressBarOverall.setProgress((double) sofar / (double) total);
+											modelerProgressLabelTotal.setText("#" + sofar + " of " + total);
+											modelerCurrentFileLabel.setText(file);
+										});
 									}
 
 									@Override
@@ -597,11 +692,13 @@ public class ControlCenter extends Application {
 									@Override
 									public void notifyDownloadPreparationStart() {
 										// TODO Auto-generated method stub
+
 									}
 
 									@Override
 									public void notifyDownloadPreparationEnd() {
 										// TODO Auto-generated method stub
+
 									}
 
 								}).isComplete();
@@ -630,12 +727,19 @@ public class ControlCenter extends Application {
 
 	}
 
+	private void chooseBuild(int n) {
+		if (n >= 0 && this.engine != null) {
+			ProductService.INSTANCE.setChosenBuild(engine.getProduct().getBuilds().get(n));
+			setupUI();
+		}
+	}
+
 	/*
 	 * -----------------------------------------------------------------------------
 	 */
 
 	/**
-	 * Start or restart the update service. Should be called after settings are 
+	 * Start or restart the update service. Should be called after settings are
 	 * saved.
 	 */
 	public void pollForUpdates() {
@@ -643,7 +747,7 @@ public class ControlCenter extends Application {
 		if (this.updateService != null) {
 			this.updateService.cancel();
 		}
-		
+
 		this.updateService = new TimerService();
 		this.updateService.setPeriod(Duration.minutes(getSettings().getProductUpdateInterval()));
 		this.updateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -656,7 +760,7 @@ public class ControlCenter extends Application {
 	}
 
 	public synchronized void checkForUpdates() {
-		
+
 		messageLabel.setText("Checking for updates...");
 		if (checkForCCUpdates()) {
 			System.exit(0);

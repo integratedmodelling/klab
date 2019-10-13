@@ -11,6 +11,7 @@ import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;
 import org.integratedmodelling.controlcenter.runtime.EngineInstance;
+import org.integratedmodelling.controlcenter.runtime.InstallerInstance;
 import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
 
 public enum ProductService {
@@ -74,10 +75,10 @@ public enum ProductService {
 	 *
 	 */
 	public BuildStatus getBuildStatus() {
-		
+
 		BuildStatus ret = new BuildStatus();
 		IInstance engine = getInstance(PRODUCT_ENGINE);
-		
+
 		if (engine != null) {
 
 			ret.installed.addAll(engine.getInstalledBuilds());
@@ -86,26 +87,10 @@ public enum ProductService {
 			}
 		}
 
-		if (chosenBuild >= 0 && ret.installed.contains(chosenBuild)) {
+		if (chosenBuild >= 0) {
 			ret.chosen = chosenBuild;
 		} else {
-
-			/*
-			 * check settings first
-			 */
-			boolean done = false;
-			String chosen = ControlCenter.INSTANCE.getSettings().getChosenBuild();
-			if (!"Latest".equals(chosen)) {
-				int n = Integer.parseInt(chosen);
-				if (n >= 0 && ret.installed.contains(n)) {
-					ret.chosen = n;
-					done = true;
-				}
-			}
-
-			if (!done && ret.installed.size() > 0) {
-				ret.chosen = ret.installed.get(0);
-			}
+			ret.chosen = ret.latest;
 		}
 
 		return ret;
@@ -118,7 +103,7 @@ public enum ProductService {
 	 * @param branch
 	 */
 	public void initialize() {
-		
+
 		/*
 		 * initialize properties
 		 */
@@ -130,13 +115,13 @@ public enum ProductService {
 		}
 
 		this.binaryWorkspace = ControlCenter.INSTANCE.getSettings().getProductDirectory();
-		
+
 		for (String productId : products) {
 			Product product = new Product(KLAB_REPOSITORY_BASE_URL + "/" + this.currentBranch, productId,
 					new File(this.binaryWorkspace + File.separator + this.currentBranch));
 
 			IInstance instance = null;
-			
+
 			switch (productId) {
 			case PRODUCT_ENGINE:
 				instance = new EngineInstance(product);
@@ -145,7 +130,7 @@ public enum ProductService {
 				instance = new ModelerInstance(product);
 				break;
 			default:
-				instance = new Instance(product);
+				instance = new InstallerInstance(product);
 			}
 			localInstances.put(productId, instance);
 		}
@@ -169,6 +154,10 @@ public enum ProductService {
 	 */
 	public IInstance getInstance(String id) {
 		return localInstances.get(id);
+	}
+
+	public void setChosenBuild(Integer build) {
+		this.chosenBuild = build;
 	}
 
 }

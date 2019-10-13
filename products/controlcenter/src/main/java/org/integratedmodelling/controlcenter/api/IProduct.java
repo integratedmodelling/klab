@@ -45,9 +45,14 @@ public interface IProduct {
 		JAR,
 
 		/**
-		 * Installer or binary executable packaging with a directory per supported OS.
+		 * Installer executable packaging.
 		 */
-		EXE,
+		INSTALLER_EXECUTABLE,
+
+		/**
+		 * Direct executable packaging.
+		 */
+		DIRECT_EXE,
 
 		/**
 		 * Eclipse packaging with a zipped or unzipped distribution per supported OS.
@@ -59,8 +64,10 @@ public interface IProduct {
 	public final static String PRODUCT_DESCRIPTION_PROPERTY = "klab.product.description";
 	public final static String PRODUCT_AVAILABLE_BUILDS_PROPERTY = "klab.product.builds";
 	public final static String PRODUCT_TYPE_PROPERTY = "klab.product.type";
+	public final static String PRODUCT_OSSPECIFIC_PROPERTY = "klab.product.osspecific";
 
 	public final static String BUILD_VERSION_PROPERTY = "klab.product.build.version";
+	public final static String BUILD_MAINCLASS_PROPERTY = "klab.product.build.main";
 	public final static String BUILD_TIME_PROPERTY = "klab.product.build.time";
 
 	/**
@@ -70,6 +77,22 @@ public interface IProduct {
 	 * @return product ID
 	 */
 	String getId();
+
+	/**
+	 * True if a different distribution is needed per supported operating system.
+	 * The {@link OS} enum is used to characterize the OS.
+	 * 
+	 * @return
+	 */
+	boolean isOsSpecific();
+
+	/**
+	 * Get the type of product. The type enum is of course limited to the current
+	 * usage and should be expanded as needed.
+	 * 
+	 * @return
+	 */
+	Type getType();
 
 	/**
 	 * Name of product is the user-readable name, potentially with more words but
@@ -93,7 +116,7 @@ public interface IProduct {
 	 * @return
 	 */
 	List<Integer> getBuilds();
-	
+
 	/**
 	 * The contents of the product.properties file in the product directory.
 	 * Non-null values for all the static property names starting with PRODUCT_ in

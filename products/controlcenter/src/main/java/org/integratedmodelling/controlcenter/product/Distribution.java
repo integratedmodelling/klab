@@ -96,14 +96,13 @@ public class Distribution {
 		 * distribution, which can run relatively long.
 		 */
 		void notifyDownloadPreparationStart();
-		
+
 		/**
 		 * This is only called when preparing an incremental update from a previous
 		 * distribution, which can run relatively long.
 		 */
 		void notifyDownloadPreparationEnd();
 
-		
 		void notifyFileProgress(String file, long bytesSoFar, long totalBytes);
 
 		/**
@@ -145,23 +144,36 @@ public class Distribution {
 
 		map.clear();
 
+		/*
+		 * type 0 = "hash filename" (built by md5sum); type 1 = "file,hash" (built by
+		 * Maven process). Checked on the first valid line only.
+		 */
+		int type = -1;
+
 		if (f.exists() && f.isFile()) {
 			try {
 				for (String s : FileUtils.readLines(f)) {
 
 					s = s.trim();
 
-					if (s.isEmpty())
+					if (s.isEmpty() || s.startsWith("#")) {
 						continue;
+					}
 
-					String[] ss = s.split(",");
-					String checksum = ss[1];
-					String file = ss[0];
+					if (type < 0) {
+						type = s.contains(",") ? 1 : 0; 
+					}
+					
+					String[] ss = type == 0 ? s.split("\\s+") : s.split(",");
+					String checksum = type == 0 ? ss[0] : ss[1];
+					String file = type == 0 ? ss[1] : ss[0];
 
-					if (file.startsWith("."))
+					if (file.startsWith(".")) {
 						file = file.substring(1);
-					if (file.startsWith("/"))
+					}
+					if (file.startsWith("/")) {
 						file = file.substring(1);
+					}
 
 					if (file.isEmpty())
 						continue;
@@ -374,13 +386,13 @@ public class Distribution {
 			@Override
 			public void notifyDownloadPreparationStart() {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void notifyDownloadPreparationEnd() {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 

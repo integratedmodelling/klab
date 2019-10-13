@@ -4,10 +4,11 @@ import org.apache.commons.exec.CommandLine;
 import org.integratedmodelling.controlcenter.product.Instance;
 import org.integratedmodelling.controlcenter.product.Product;
 
-public class ModelerInstance extends Instance {
+public class InstallerInstance extends Instance {
 
-	public ModelerInstance(Product product) {
+	public InstallerInstance(Product product) {
 		super(product);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -18,7 +19,6 @@ public class ModelerInstance extends Instance {
 
 	@Override
 	protected boolean isRunning() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
