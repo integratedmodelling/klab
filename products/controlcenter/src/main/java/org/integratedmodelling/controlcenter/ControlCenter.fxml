@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -23,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane stylesheets="@css/application.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.ControlCenter">
+<BorderPane stylesheets="@css/application.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.ControlCenter">
    <center>
       <BorderPane prefHeight="450.0" prefWidth="260.0" BorderPane.alignment="CENTER">
          <bottom>
@@ -313,7 +312,7 @@
                                           <Insets left="3.0" />
                                        </padding>
                                     </VBox>
-                                    <GridPane fx:id="engineRuntimeArea">
+                                    <GridPane fx:id="engineRuntimeArea" visible="false">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                         <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
@@ -325,7 +324,7 @@
                                        <children>
                                           <LineChart fx:id="loadChart" alternativeRowFillVisible="false" animated="false" axisSortingPolicy="NONE" createSymbols="false" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendVisible="false" maxHeight="51.0" maxWidth="128.0" minHeight="51.0" minWidth="128.0" prefHeight="51.0" prefWidth="128.0" titleSide="BOTTOM" verticalGridLinesVisible="false" verticalZeroLineVisible="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                                              <xAxis>
-                                                <CategoryAxis animated="false" autoRanging="false" gapStartAndEnd="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+                                                <NumberAxis animated="false" autoRanging="false" forceZeroInRange="false" minorTickVisible="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
                                              </xAxis>
                                              <yAxis>
                                                 <NumberAxis animated="false" forceZeroInRange="false" minorTickVisible="false" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
@@ -333,7 +332,7 @@
                                           </LineChart>
                                           <LineChart fx:id="memoryChart" alternativeRowFillVisible="false" createSymbols="false" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendVisible="false" maxHeight="51.0" maxWidth="128.0" minHeight="51.0" minWidth="128.0" prefHeight="51.0" prefWidth="128.0" verticalGridLinesVisible="false" verticalZeroLineVisible="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                                             <xAxis>
-                                              <CategoryAxis gapStartAndEnd="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+                                              <NumberAxis forceZeroInRange="false" minorTickVisible="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
                                             </xAxis>
                                             <yAxis>
                                               <NumberAxis forceZeroInRange="false" minorTickVisible="false" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />

@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.Timer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -15,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.integratedmodelling.controlcenter.api.IAuthentication.Group;
 import org.integratedmodelling.controlcenter.api.IAuthentication.Status;
 import org.integratedmodelling.controlcenter.api.IInstance;
@@ -24,7 +26,6 @@ import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
 import org.integratedmodelling.controlcenter.product.ProductService;
 import org.integratedmodelling.controlcenter.product.ProductService.BuildStatus;
-import org.integratedmodelling.controlcenter.runtime.EngineInstance;
 import org.integratedmodelling.controlcenter.runtime.EngineInstance.EngineInfo;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
@@ -40,12 +41,14 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -202,9 +205,9 @@ public class ControlCenter extends Application {
 	@FXML
 	Label loadLabel;
 	@FXML
-	LineChart<?,?> memoryChart;
+	LineChart<Number, Number> memoryChart;
 	@FXML
-	LineChart<?,?> loadChart;
+	LineChart<Number, Number> loadChart;
 
 	private Authentication authentication;
 	private IInstance engine;
@@ -865,13 +868,39 @@ public class ControlCenter extends Application {
 			.appendSuffix(" h ").appendMinutes().printZeroAlways().appendSuffix(" min ").appendSeconds()
 			.appendSuffix(" sec").toFormatter();
 
-	public void updateEngineStatus(EngineInfo engineInfo) {
-		
+	Queue<Long> memValues = new CircularFifoQueue<Long>(50);
+	Queue<Long> loadValues = new CircularFifoQueue<Long>(50);
+	Queue<Long> times = new CircularFifoQueue<Long>(50);
+
+	public synchronized void updateEngineStatus(EngineInfo engineInfo) {
+
 		if (engineInfo != null) {
+
+			times.add(System.currentTimeMillis());
+			memValues.add(engineInfo.totalMemory - engineInfo.freeMemory);
+			// TODO
+			loadValues.add(engineInfo.totalMemory - engineInfo.freeMemory);
+
+			XYChart.Series<Number, Number> memData = new XYChart.Series<Number, Number>();
+			XYChart.Series<Number, Number> loadData = new XYChart.Series<Number, Number>();
+
+			Long[] t = times.toArray(new Long[times.size()]);
+			Long[] m = memValues.toArray(new Long[times.size()]);
+			Long[] l = loadValues.toArray(new Long[times.size()]);
+			for (int i = 0; i < times.size(); i++) {
+				memData.getData().add(new XYChart.Data<Number, Number>(t[i], m[i]));
+				loadData.getData().add(new XYChart.Data<Number, Number>(t[i], l[i]));
+			}
+
 			Platform.runLater(() -> {
+				
 				memoryLabel.setText(engineInfo.freeMemory + "/" + engineInfo.totalMemory + " Mb free");
 				uptimeLabel.setText(yearsAndMonths.print(new Period(engineInfo.upTime)));
 				sessionsLabel.setText(engineInfo.activeSessions + " of " + getSettings().getMaxSessions());
+				memoryChart.getData().clear();
+				loadChart.getData().clear();
+				memoryChart.getData().add(memData);
+				loadChart.getData().add(loadData);
 			});
 		}
 	}
