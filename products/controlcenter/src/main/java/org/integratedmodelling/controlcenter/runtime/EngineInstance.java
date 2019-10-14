@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -15,12 +14,9 @@ import org.integratedmodelling.controlcenter.api.IProduct;
 import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Instance;
 import org.integratedmodelling.controlcenter.product.Product;
-import org.integratedmodelling.controlcenter.utils.TimerService;
+import org.integratedmodelling.controlcenter.runtime.EngineInstance.EngineInfo;
 import org.integratedmodelling.klab.utils.OS;
 
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
-import javafx.util.Duration;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -49,10 +45,13 @@ public class EngineInstance extends Instance {
 		public long totalMemory;
 		public long freeMemory;
 		public int processorCount;
+		public int activeSessions = 1;
+		public int totalSessions;
 	}
 
 	public EngineInstance(Product product) {
 		super(product);
+		this.instancePort = ControlCenter.INSTANCE.getSettings().getEnginePort();
 	}
 
 	protected String getInstanceUrl() {
@@ -162,6 +161,7 @@ public class EngineInstance extends Instance {
 			@Override
 			public void run() {
 
+				
 				IInstance.Status prev = getStatus();
 
 				try {
@@ -180,8 +180,9 @@ public class EngineInstance extends Instance {
 						info.processorCount = node.getInt("processorCount");
 						info.engineId = node.get("engineId").toString();
 						engineInfo.set(info);
+						ControlCenter.INSTANCE.updateEngineStatus(engineInfo.get());
 					} else {
-						status.set(Status.STOPPED);
+//						status.set(Status.STOPPED);
 						online.set(false);
 					}
 				} catch (UnirestException e) {
@@ -199,5 +200,9 @@ public class EngineInstance extends Instance {
 
 		}, 0, POLL_INTERVAL_SECONDS * 1000);
 
+	}
+	
+	public EngineInfo getInfo() {
+		return engineInfo.get();
 	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.controlcenter.product.Distribution;
+import org.integratedmodelling.controlcenter.runtime.EngineInstance.EngineInfo;
 
 /**
  * The local instance of a product.
@@ -14,7 +15,7 @@ import org.integratedmodelling.controlcenter.product.Distribution;
 public interface IInstance {
 
 	enum Status {
-		RUNNING, STOPPED, WAITING, ERROR
+		UNKNOWN, RUNNING, STOPPED, WAITING, ERROR
 	}
 
 	/**

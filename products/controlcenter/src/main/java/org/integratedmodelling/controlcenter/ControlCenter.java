@@ -24,11 +24,16 @@ import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
 import org.integratedmodelling.controlcenter.product.ProductService;
 import org.integratedmodelling.controlcenter.product.ProductService.BuildStatus;
+import org.integratedmodelling.controlcenter.runtime.EngineInstance;
+import org.integratedmodelling.controlcenter.runtime.EngineInstance.EngineInfo;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import javafx.application.Application;
@@ -40,6 +45,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -81,6 +87,9 @@ public class ControlCenter extends Application {
 	private Settings settings;
 	private AtomicBoolean downloadViewShown = new AtomicBoolean(false);
 	private AtomicBoolean runtimeViewShown = new AtomicBoolean(false);
+	private AtomicBoolean engineStarting = new AtomicBoolean(false);
+	private AtomicBoolean engineRunning = new AtomicBoolean(false);
+	private AtomicBoolean modelerStarting = new AtomicBoolean(false);
 
 	@FXML
 	Button buttonSettings;
@@ -176,6 +185,26 @@ public class ControlCenter extends Application {
 	Label modelerProgressLabelDetail;
 	@FXML
 	ChoiceBox<String> buildChoiceBox;
+	@FXML
+	FontIcon engineButtonIcon;
+	@FXML
+	FontIcon modelerButtonIcon;
+	@FXML
+	Tooltip engineRunTooltip;
+	@FXML
+	Tooltip modelerRunTooltip;
+	@FXML
+	Label memoryLabel;
+	@FXML
+	Label sessionsLabel;
+	@FXML
+	Label uptimeLabel;
+	@FXML
+	Label loadLabel;
+	@FXML
+	LineChart memoryChart;
+	@FXML
+	LineChart loadChart;
 
 	private Authentication authentication;
 	private IInstance engine;
@@ -213,7 +242,7 @@ public class ControlCenter extends Application {
 			// no properties and that's it
 		}
 	}
-	
+
 	public Timer getTimer() {
 		return timer;
 	}
@@ -313,13 +342,89 @@ public class ControlCenter extends Application {
 		/*
 		 * start monitoring engine and modeler
 		 */
-		this.engine.pollStatus((status)-> { 
-			System.out.println("CAZZO ENGINE STATUS NOW " + status);
+		this.engine.pollStatus((status) -> {
+			Platform.runLater(new Runnable() {
+
+				@Override
+				public void run() {
+
+					switch (status) {
+					case ERROR:
+						engineStarting.set(false);
+						engineRunning.set(false);
+						engineRunButton.setDisable(false);
+						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
+						engineRunTooltip.setText("Click to restart the engine");
+						break;
+					case RUNNING:
+						engineStarting.set(false);
+						engineRunning.set(true);
+						engineRunButton.setDisable(false);
+						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_RED));
+						engineRunTooltip.setText("Click to stop the engine");
+						break;
+					case STOPPED:
+						engineStarting.set(false);
+						engineRunning.set(false);
+						engineRunButton.setDisable(false);
+						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
+						engineRunTooltip.setText("Click to start the engine");
+						break;
+					case WAITING:
+						engineStarting.set(true);
+						engineRunning.set(false);
+						engineRunButton.setDisable(true);
+						break;
+					default:
+						break;
+					}
+
+					setupUI();
+				}
+			});
+
 		});
-		this.modeler.pollStatus((status)-> {
-			System.out.println("CAZZO MODELER STATUS NOW " + status);
+
+		this.modeler.pollStatus((status) -> {
+
+			Platform.runLater(new Runnable() {
+
+				@Override
+				public void run() {
+
+					switch (status) {
+					case ERROR:
+						modelerStarting.set(false);
+						modelerRunButton.setDisable(false);
+						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_YELLOW));
+						modelerRunTooltip.setText("Click to restart k.Modeler");
+						break;
+					case RUNNING:
+						modelerStarting.set(false);
+						modelerRunButton.setDisable(false);
+						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_RED));
+						modelerRunTooltip.setText("Click to stop k.Modeler");
+						break;
+					case STOPPED:
+						modelerStarting.set(false);
+						modelerRunButton.setDisable(false);
+						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_YELLOW));
+						modelerRunTooltip.setText("Click to start k.Modeler");
+						break;
+					case WAITING:
+						modelerStarting.set(true);
+						modelerRunButton.setDisable(true);
+						break;
+					default:
+						break;
+					}
+
+					setupUI();
+				}
+			});
+
 		});
-		
+
 	}
 
 	public void setupAuthenticationUI() {
@@ -560,23 +665,23 @@ public class ControlCenter extends Application {
 	@FXML
 	public void runEngine() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
-		if (engine.getStatus() == IInstance.Status.STOPPED) {
+		if (engine.getStatus() != IInstance.Status.RUNNING) {
 			engine.start(bs.chosen);
-		} else if (engine.getStatus() == IInstance.Status.RUNNING) {
+		} else {
 			engine.stop();
 		}
 	}
-	
+
 	@FXML
 	public void runModeler() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
-		if (modeler.getStatus() == IInstance.Status.STOPPED) {
+		if (modeler.getStatus() != IInstance.Status.RUNNING) {
 			modeler.start(bs.chosen);
-		} else if (modeler.getStatus() == IInstance.Status.RUNNING) {
+		} else {
 			modeler.stop();
 		}
 	}
-	
+
 	@FXML
 	public void downloadButtonClicked() {
 
@@ -755,6 +860,22 @@ public class ControlCenter extends Application {
 	 * -----------------------------------------------------------------------------
 	 */
 
+	private static PeriodFormatter yearsAndMonths = new PeriodFormatterBuilder().printZeroNever().appendYears()
+			.appendSuffix(" y ").appendMonths().appendSuffix(" m ").appendDays().appendSuffix(" d ").appendHours()
+			.appendSuffix(" h ").appendMinutes().printZeroAlways().appendSuffix(" min ").appendSeconds()
+			.appendSuffix(" sec").toFormatter();
+
+	public void updateEngineStatus(EngineInfo engineInfo) {
+		
+		if (engineInfo != null) {
+			Platform.runLater(() -> {
+				memoryLabel.setText(engineInfo.freeMemory + "/" + engineInfo.totalMemory + " Mb free");
+				uptimeLabel.setText(yearsAndMonths.print(new Period(engineInfo.upTime)));
+				sessionsLabel.setText(engineInfo.activeSessions + " of " + getSettings().getMaxSessions());
+			});
+		}
+	}
+
 	/**
 	 * Start or restart the update service. Should be called after settings are
 	 * saved.
@@ -775,7 +896,7 @@ public class ControlCenter extends Application {
 		});
 		this.updateService.start();
 	}
-	
+
 	public synchronized void checkForUpdates() {
 
 		messageLabel.setText("Checking for updates...");

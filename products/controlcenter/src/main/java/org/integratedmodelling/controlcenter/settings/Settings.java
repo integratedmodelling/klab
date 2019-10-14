@@ -362,4 +362,8 @@ public class Settings {
 		this.actionReady = actionReady;
 	}
 
+	public int getMaxSessions() {
+		return maxLocalSessions.get();
+	}
+
 }

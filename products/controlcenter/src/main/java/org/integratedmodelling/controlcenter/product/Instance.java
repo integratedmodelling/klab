@@ -22,7 +22,7 @@ import org.integratedmodelling.controlcenter.product.Product.Build;
 public abstract class Instance implements IInstance {
 
 	protected Product product;
-	protected AtomicReference<Status> status = new AtomicReference<>(Status.STOPPED);
+	protected AtomicReference<Status> status = new AtomicReference<>(Status.UNKNOWN);
 	protected DefaultExecutor executor;
 	protected Consumer<Status> statusHandler;
 
@@ -53,6 +53,8 @@ public abstract class Instance implements IInstance {
 
 		CommandLine cmdLine = getCommandLine(build);
 		
+		System.out.println("START CALLED");
+		
 		/*
 		 * assume error was reported
 		 */
@@ -68,6 +70,7 @@ public abstract class Instance implements IInstance {
 
 		status.set(Status.WAITING);
 		if (this.statusHandler != null) {
+			System.out.println("ACCEPTING WAITING STATIS");
 			this.statusHandler.accept(status.get());
 		}
 
