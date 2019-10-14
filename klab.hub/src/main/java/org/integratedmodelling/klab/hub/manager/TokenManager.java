@@ -278,8 +278,13 @@ public class TokenManager {
 			}
 			persistedUser.setPasswordHash(passwordEncoder.encode((newPassword)));
 			klabUserDetailsService.updateUser(persistedUser);
-			// send an email notifying the user their password was changed
-			emailManager.sendPasswordChangeConfirmation(persistedUser.getEmail());
+			try {
+				// send an email notifying the user their password was changed
+				emailManager.sendPasswordChangeConfirmation(persistedUser.getEmail());
+			} catch (Exception e) {
+				// some problem sending mail, we override the exception to inform front end part
+				throw new BadRequestException("Error sending email", e);
+			}
 		}
 	}
 	
