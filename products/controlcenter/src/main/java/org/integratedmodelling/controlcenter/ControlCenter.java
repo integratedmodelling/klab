@@ -202,9 +202,9 @@ public class ControlCenter extends Application {
 	@FXML
 	Label loadLabel;
 	@FXML
-	LineChart memoryChart;
+	LineChart<?,?> memoryChart;
 	@FXML
-	LineChart loadChart;
+	LineChart<?,?> loadChart;
 
 	private Authentication authentication;
 	private IInstance engine;
