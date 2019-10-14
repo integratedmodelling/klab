@@ -22,4 +22,8 @@ public class TimerService extends ScheduledService<Integer> {
 			}
 		};
 	}
+
+	public void setCount(int n) {
+		count.set(n);
+	}
 }

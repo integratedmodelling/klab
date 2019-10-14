@@ -2,18 +2,30 @@ package org.integratedmodelling.controlcenter.runtime;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.apache.commons.exec.CommandLine;
 import org.integratedmodelling.controlcenter.ControlCenter;
+import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;
 import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Instance;
 import org.integratedmodelling.controlcenter.product.Product;
+import org.integratedmodelling.controlcenter.utils.TimerService;
 import org.integratedmodelling.klab.utils.OS;
 
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+import javafx.util.Duration;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
+import kong.unirest.json.JSONObject;
 
 public class EngineInstance extends Instance {
 
@@ -21,20 +33,33 @@ public class EngineInstance extends Instance {
 	 * For now, no setting for this one.
 	 */
 	static final int debugPort = 8000;
+	private static final int POLL_INTERVAL_SECONDS = 3;
 	int instancePort;
 	int njars;
 	int ndirs;
 	AtomicBoolean online = new AtomicBoolean(false);
+	AtomicReference<EngineInfo> engineInfo = new AtomicReference<>();
+
+	public class EngineInfo {
+		public String engineId;
+		public String sessionId;
+		public long upTime;
+		public long bootTime;
+		public long engineTime;
+		public long totalMemory;
+		public long freeMemory;
+		public int processorCount;
+	}
 
 	public EngineInstance(Product product) {
 		super(product);
 	}
 
-	protected String engineUrl() {
+	protected String getInstanceUrl() {
 		return "http://127.0.0.1:" + instancePort + "/modeler";
 	}
 
-	protected String engineUrl(String fragment) {
+	protected String getInstanceUrl(String fragment) {
 		return "http://127.0.0.1:" + instancePort + "/modeler" + fragment;
 	}
 
@@ -71,7 +96,7 @@ public class EngineInstance extends Instance {
 		if (ret != null) {
 			ret.addArgument("-network");
 		}
-		
+
 		return ret;
 	}
 
@@ -102,7 +127,7 @@ public class EngineInstance extends Instance {
 	public boolean stop() {
 		if (online.get()) {
 			try {
-				Unirest.get(engineUrl("/engine/admin/shutdown")).asString();
+				Unirest.get(getInstanceUrl("/engine/admin/shutdown")).asString();
 			} catch (UnirestException e) {
 				return false;
 			}
@@ -125,5 +150,54 @@ public class EngineInstance extends Instance {
 			ret.add("-server");
 		}
 		return ret.toArray(new String[ret.size()]);
+	}
+
+	@Override
+	public void pollStatus(Consumer<Status> listener) {
+
+		this.statusHandler = listener;
+
+		ControlCenter.INSTANCE.getTimer().schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+
+				IInstance.Status prev = getStatus();
+
+				try {
+					HttpResponse<JsonNode> response = Unirest.get(getInstanceUrl("/ping")).asJson();
+					if (response.getStatus() == 200) {
+						status.set(Status.RUNNING);
+						online.set(true);
+						JSONObject node = response.getBody().getObject();
+						EngineInfo info = new EngineInfo();
+						info.totalMemory = node.getLong("totalMemory");
+						info.freeMemory = node.getLong("freeMemory");
+						info.bootTime = node.getLong("bootTime");
+						info.engineTime = node.getLong("requestTime");
+						info.upTime = node.getLong("uptime");
+						info.sessionId = node.get("localSessionId").toString();
+						info.processorCount = node.getInt("processorCount");
+						info.engineId = node.get("engineId").toString();
+						engineInfo.set(info);
+					} else {
+						status.set(Status.STOPPED);
+						online.set(false);
+					}
+				} catch (UnirestException e) {
+					// org.apache.http.conn.HttpHostConnectException on engine off OR starting -
+					// just keep previous status unless it was running
+					if (status.get() == Status.RUNNING) {
+						status.set(Status.STOPPED);
+					}
+				}
+
+				if (status.get() != prev && statusHandler != null) {
+					statusHandler.accept(status.get());
+				}
+			}
+
+		}, 0, POLL_INTERVAL_SECONDS * 1000);
+
 	}
 }

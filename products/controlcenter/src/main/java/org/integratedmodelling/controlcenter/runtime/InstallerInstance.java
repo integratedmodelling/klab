@@ -1,5 +1,7 @@
 package org.integratedmodelling.controlcenter.runtime;
 
+import java.util.function.Consumer;
+
 import org.apache.commons.exec.CommandLine;
 import org.integratedmodelling.controlcenter.product.Instance;
 import org.integratedmodelling.controlcenter.product.Product;
@@ -22,4 +24,8 @@ public class InstallerInstance extends Instance {
 		return false;
 	}
 
+	@Override
+	public void pollStatus(Consumer<Status> listener) {
+	}
+	
 }

@@ -60,7 +60,7 @@ public interface IInstance {
 	 * 
 	 * @return
 	 */
-	boolean start(int build, Consumer<Status> listener);
+	boolean start(int build);
 
 	/**
 	 * Stop the instance, returning immediately. The instance after this is called
@@ -71,5 +71,13 @@ public interface IInstance {
 	 * @return
 	 */
 	boolean stop();
+	
+	/**
+	 * Start listening for changes in status. Can be called at any time. For now 
+	 * there is no corresponding stop() method.
+	 * 
+	 * @param listener
+	 */
+	void pollStatus(Consumer<Status> listener);
 
 }

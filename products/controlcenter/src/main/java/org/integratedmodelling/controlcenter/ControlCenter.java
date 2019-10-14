@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.Timer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,9 +76,11 @@ public class ControlCenter extends Application {
 
 	public static ControlCenter INSTANCE;
 
-	Properties properties = new Properties();
-	Settings settings;
-	AtomicBoolean downloadViewShown = new AtomicBoolean(false);
+	private Timer timer = new Timer();
+	private Properties properties = new Properties();
+	private Settings settings;
+	private AtomicBoolean downloadViewShown = new AtomicBoolean(false);
+	private AtomicBoolean runtimeViewShown = new AtomicBoolean(false);
 
 	@FXML
 	Button buttonSettings;
@@ -210,6 +213,10 @@ public class ControlCenter extends Application {
 			// no properties and that's it
 		}
 	}
+	
+	public Timer getTimer() {
+		return timer;
+	}
 
 	public Settings getSettings() {
 		return this.settings;
@@ -303,6 +310,16 @@ public class ControlCenter extends Application {
 		 */
 		pollForUpdates();
 
+		/*
+		 * start monitoring engine and modeler
+		 */
+		this.engine.pollStatus((status)-> { 
+			System.out.println("CAZZO ENGINE STATUS NOW " + status);
+		});
+		this.modeler.pollStatus((status)-> {
+			System.out.println("CAZZO MODELER STATUS NOW " + status);
+		});
+		
 	}
 
 	public void setupAuthenticationUI() {
@@ -544,7 +561,7 @@ public class ControlCenter extends Application {
 	public void runEngine() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (engine.getStatus() == IInstance.Status.STOPPED) {
-			engine.start(bs.chosen, (status) -> System.out.println("DIOCAN " + status));
+			engine.start(bs.chosen);
 		} else if (engine.getStatus() == IInstance.Status.RUNNING) {
 			engine.stop();
 		}
@@ -554,7 +571,7 @@ public class ControlCenter extends Application {
 	public void runModeler() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (modeler.getStatus() == IInstance.Status.STOPPED) {
-			modeler.start(bs.chosen, (status) -> System.out.println("DIOCUL" + status));
+			modeler.start(bs.chosen);
 		} else if (modeler.getStatus() == IInstance.Status.RUNNING) {
 			modeler.stop();
 		}
@@ -758,7 +775,7 @@ public class ControlCenter extends Application {
 		});
 		this.updateService.start();
 	}
-
+	
 	public synchronized void checkForUpdates() {
 
 		messageLabel.setText("Checking for updates...");

@@ -24,6 +24,7 @@ public abstract class Instance implements IInstance {
 	protected Product product;
 	protected AtomicReference<Status> status = new AtomicReference<>(Status.STOPPED);
 	protected DefaultExecutor executor;
+	protected Consumer<Status> statusHandler;
 
 	public Instance(Product product) {
 		this.product = product;
@@ -48,7 +49,7 @@ public abstract class Instance implements IInstance {
 	protected abstract boolean isRunning();
 	
 	@Override
-	public boolean start(int build, Consumer<Status> listener) {
+	public boolean start(int build) {
 
 		CommandLine cmdLine = getCommandLine(build);
 		
@@ -66,11 +67,9 @@ public abstract class Instance implements IInstance {
 		env.putAll(System.getenv());
 
 		status.set(Status.WAITING);
-		if (listener != null) {
-			listener.accept(status.get());
+		if (this.statusHandler != null) {
+			this.statusHandler.accept(status.get());
 		}
-
-		final Consumer<Status> fhandler = listener;
 
 		try {
 			this.executor.execute(cmdLine, env, new ExecuteResultHandler() {
@@ -79,16 +78,16 @@ public abstract class Instance implements IInstance {
 				public void onProcessFailed(ExecuteException arg0) {
 					arg0.printStackTrace();
 					status.set(Status.ERROR);
-					if (fhandler != null) {
-						fhandler.accept(status.get());
+					if (statusHandler != null) {
+						statusHandler.accept(status.get());
 					}
 				}
 
 				@Override
 				public void onProcessComplete(int arg0) {
 					status.set(Status.STOPPED);
-					if (fhandler != null) {
-						fhandler.accept(status.get());
+					if (statusHandler != null) {
+						statusHandler.accept(status.get());
 					}
 				}
 			});
