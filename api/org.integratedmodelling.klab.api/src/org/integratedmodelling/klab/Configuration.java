@@ -179,8 +179,8 @@ public enum Configuration implements IConfigurationService {
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean isDebuggingEnabled() {
-		return getProperties().getProperty(KLAB_DEBUG, "false").equals("true");
+	public boolean isDebugResolutionRanks() {
+		return getProperties().getProperty(KLAB_DEBUG_RESOLUTION_RANKS, "false").equals("true");
 	}
 
 	/** {@inheritDoc} */

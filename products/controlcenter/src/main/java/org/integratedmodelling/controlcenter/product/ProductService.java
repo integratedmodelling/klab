@@ -97,8 +97,7 @@ public enum ProductService {
 	}
 
 	/**
-	 * Call at beginning and when the branch settings is changed, followed by
-	 * ControlCenter.INSTANCE.setupUI().
+	 * Call at beginning.
 	 * 
 	 * @param branch
 	 */
@@ -135,7 +134,41 @@ public enum ProductService {
 			localInstances.put(productId, instance);
 		}
 	}
+	
+	public boolean switchBranch(String branch) {
 
+		if (this.currentBranch.equals(branch)) {
+			return false;
+		}
+		
+		this.currentBranch = branch;
+		this.binaryWorkspace = ControlCenter.INSTANCE.getSettings().getProductDirectory();
+
+		localInstances.clear();
+		
+		for (String productId : products) {
+			
+			Product product = new Product(KLAB_REPOSITORY_BASE_URL + "/" + this.currentBranch, productId,
+					new File(this.binaryWorkspace + File.separator + this.currentBranch));
+
+			IInstance instance = null;
+
+			switch (productId) {
+			case PRODUCT_ENGINE:
+				instance = new EngineInstance(product);
+				break;
+			case PRODUCT_MODELER:
+				instance = new ModelerInstance(product);
+				break;
+			default:
+				instance = new InstallerInstance(product);
+			}
+			localInstances.put(productId, instance);
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * Return a product, which may be locally unavailable and needs syncronization.
 	 * 

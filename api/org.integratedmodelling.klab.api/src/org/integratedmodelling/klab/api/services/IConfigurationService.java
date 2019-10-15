@@ -37,57 +37,16 @@ public interface IConfigurationService {
     public static final int DEFAULT_HUB_PORT = 8284;
     public static final int DEFAULT_NODE_PORT = 8287;
 
-    /** The Constant KLAB_CLIENT_PROJECTS. */
-    public static final String KLAB_CLIENT_PROJECTS = "klab.client.workspace";
-
-    /** The Constant KLAB_OFFLINE. */
     public static final String KLAB_OFFLINE = "klab.offline";
-
-    /** The Constant KLAB_USE_CONTEXT_QUALITIES. */
-    public static final String KLAB_USE_CONTEXT_QUALITIES = "klab.use.context.qualities";
-
-    /** The Constant KLAB_EXPORT_PATH. */
     public static final String KLAB_EXPORT_PATH = "klab.export.path";
-
-    /** The Constant KLAB_REASONING. */
-    public static final String KLAB_REASONING = "klab.reasoning";
-
-    /** The Constant KLAB_DEBUG. */
-    public static final String KLAB_DEBUG = "klab.debug";
-
-    /**
-     * Set to false to store the kbox on disk if the model base is large and doesn't change. Startup
-     * and search time will be affected but RAM footprint will be smaller.
-     */
+    public static final String KLAB_DEBUG_RESOLUTION_RANKS = "klab.debugging.resolution.ranks";
+    public static final String KLAB_DEBUG_RESOLUTION_GRAPH = "klab.debugging.resolution.graph";
+    public static final String KLAB_DEBUG_RESOLUTION_DFLOW = "klab.debugging.resolution.dflow";
     public static final String KLAB_USE_IN_MEMORY_DATABASE = "klab.database.inmemory";
-    public static final String KLAB_PARALLELIZE_CONTEXTUALIZATION = "klab.computation.parallel";
-    public static final String KLAB_USE_IN_MEMORY_STORAGE = "klab.storage.inmemory";
-    
-    /** The Constant CERTFILE_PROPERTY. */
+	public static final String KLAB_PARALLELIZE_CONTEXTUALIZATION = "klab.computation.parallel";
+	public static final String KLAB_USE_IN_MEMORY_STORAGE = "klab.storage.inmemory";
     public static final String CERTFILE_PROPERTY = "klab.certificate";
-
-    /** The Constant KLAB_SOURCE_DISTRIBUTION. */
-    public static final String KLAB_SOURCE_DISTRIBUTION = "thinklab.source.distribution";
-
-    /** The Constant KLAB_CONNECTION_TIMEOUT. */
     public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
-
-    /*
-     * these properties can be set to define what states to store during
-     * contextualization when the defaults are inadequate. They're mostly
-     * unsupported at this time.
-     */
-    /** The Constant KLAB_STORE_RAW_DATA. */
-    public static final String KLAB_STORE_RAW_DATA = "klab.store.raw";
-
-    /** The Constant KLAB_STORE_INTERMEDIATE_DATA. */
-    public static final String KLAB_STORE_INTERMEDIATE_DATA = "klab.store.intermediate";
-
-    /** The Constant KLAB_STORE_CONDITIONAL_DATA. */
-    public static final String KLAB_STORE_CONDITIONAL_DATA = "klab.store.conditional";
-
-    /** The Constant KLAB_STORE_MEDIATED_DATA. */
-    public static final String KLAB_STORE_MEDIATED_DATA = "klab.store.mediated";
 
     /**
      * Minutes after which a session times out. Default 60.
@@ -109,41 +68,10 @@ public interface IConfigurationService {
      */
     public static final String KLAB_WORK_DIRECTORY = "klab.work.directory";
 
-    /**
-     * Points to a comma-separated list of directories where components are loaded
-     * from their Maven development tree.
-     */
-    public static final String KLAB_LOCAL_COMPONENTS = "klab.local.components";
-
-    /** The Constant KLAB_ENGINE_CERTIFICATE. */
     public static final String KLAB_ENGINE_CERTIFICATE = "klab.engine.certificate";
-
-    /** The Constant KLAB_ENGINE_DATADIR. */
-    public static final String KLAB_ENGINE_DATADIR = "klab.engine.datadir";
-
-    /** The Constant KLAB_ENGINE_DEBUG_PORT. */
-    public static final String KLAB_ENGINE_DEBUG_PORT = "klab.engine.debugPort";
-
-    /** The Constant KLAB_ENGINE_USE_DEBUG. */
-    public static final String KLAB_ENGINE_USE_DEBUG = "klab.engine.useDebug";
-
-    /** The Constant KLAB_ENGINE_KLAB_DEBUG. */
-    public static final String KLAB_ENGINE_KLAB_DEBUG = "klab.engine.klabDebug";
 
     /** The Constant KLAB_ENGINE_USE_DEVELOPER_NETWORK. */
     public static final String KLAB_ENGINE_USE_DEVELOPER_NETWORK = "klab.engine.useDeveloperNetwork";
-
-    /** The Constant KLAB_ENGINE_USE_LOCAL_INSTALLATION. */
-    public static final String KLAB_ENGINE_USE_LOCAL_INSTALLATION = "klab.engine.useLocalInstallation";
-
-    /** The Constant KLAB_ENGINE_SHUTDOWN_ON_EXIT. */
-    public static final String KLAB_ENGINE_SHUTDOWN_ON_EXIT = "klab.engine.shutdownOnExit";
-
-    /** The Constant KLAB_ENGINE_UPGRADE_AUTOMATICALLY. */
-    public static final String KLAB_ENGINE_UPGRADE_AUTOMATICALLY = "klab.engine.upgradeAutomatically";
-
-    /** The Constant KLAB_ENGINE_LAUNCH_AUTOMATICALLY. */
-    public static final String KLAB_ENGINE_LAUNCH_AUTOMATICALLY = "klab.engine.launchAutomatically";
 
     /**
      * Class to choose to create storage - used only to disambiguate if > 1 storage
@@ -205,7 +133,7 @@ public interface IConfigurationService {
      *
      * @return debugging mode
      */
-    boolean isDebuggingEnabled();
+    boolean isDebugResolutionRanks();
 
     /**
      * <p>

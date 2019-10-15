@@ -17,8 +17,29 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>8.8.3</version>
 				<configuration>
-					<mainClass>org.integratedmodelling.klab.launcher.Main</mainClass>
+					<mainClass>org.integratedmodelling.controlcenter.ControlCenter</mainClass>
+					<vendor>The Integrated Modelling Partnership</vendor>
+					<appName>klab</appName>
+					<nativeReleaseVersion>1.1</nativeReleaseVersion>
+					<verbose>true</verbose>
 				</configuration>
+				<executions>
+					<execution>
+						<!-- required before build-native -->
+						<id>create-jfxjar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build-jar</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>create-native</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build-native</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<pluginManagement>

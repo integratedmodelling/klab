@@ -75,7 +75,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 				}
 				sorted = true;
 
-				if (Configuration.INSTANCE.isDebuggingEnabled()) {
+				if (Configuration.INSTANCE.isDebugResolutionRanks()) {
 					if (modelData.size() > 0) {
 						monitor.debug("---- SCORES " + (cached ? " (from cached models)" : "") + "------");
 						int n = 1;

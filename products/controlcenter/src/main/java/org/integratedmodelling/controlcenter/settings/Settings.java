@@ -6,7 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
+
+import org.integratedmodelling.controlcenter.ControlCenter;
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 
 import com.dlsc.formsfx.model.validators.CustomValidator;
 import com.dlsc.preferencesfx.PreferencesFx;
@@ -55,7 +60,7 @@ public class Settings {
 	private IntegerProperty maxLocalSessions = new SimpleIntegerProperty(10);
 	private IntegerProperty maxRemoteSessions = new SimpleIntegerProperty(0);
 	private IntegerProperty maxSessionsPerUser = new SimpleIntegerProperty(3);
-	private IntegerProperty enginePort = new SimpleIntegerProperty(8283);
+	private IntegerProperty enginePort = new SimpleIntegerProperty(IConfigurationService.DEFAULT_ENGINE_PORT);
 	private BooleanProperty useUTMProjection = new SimpleBooleanProperty(false);
 	private BooleanProperty useGeocoding = new SimpleBooleanProperty(true);
 	private IntegerProperty localResourceValidationInterval = new SimpleIntegerProperty(10);
@@ -178,87 +183,62 @@ public class Settings {
 	}
 
 	/*
-	 * // General StringProperty welcomeText = new
-	 * SimpleStringProperty("Hello World"); BooleanProperty nightMode = new
-	 * SimpleBooleanProperty(true);
-	 * 
-	 * // Screen DoubleProperty scaling = new SimpleDoubleProperty(1);
-	 * StringProperty screenName = new
-	 * SimpleStringProperty("PreferencesFx Monitor");
-	 * 
-	 * ObservableList<String> resolutionItems = FXCollections
-	 * .observableArrayList(Arrays.asList("1024x768", "1280x1024", "1440x900",
-	 * "1920x1080")); ObjectProperty<String> resolutionSelection = new
-	 * SimpleObjectProperty<>("1024x768");
-	 * 
-	 * ListProperty<String> orientationItems = new SimpleListProperty<>(
-	 * FXCollections.observableArrayList(Arrays.asList("Vertical", "Horizontal")));
-	 * ObjectProperty<String> orientationSelection = new
-	 * SimpleObjectProperty<>("Vertical");
-	 * 
-	 * IntegerProperty fontSize = new SimpleIntegerProperty(12); DoubleProperty
-	 * lineSpacing = new SimpleDoubleProperty(1.5);
-	 * 
-	 * // Favorites ListProperty<String> favoritesItems = new
-	 * SimpleListProperty<>(FXCollections.observableArrayList(Arrays.asList(
-	 * "eMovie", "Eboda Phot-O-Shop", "Mikesoft Text", "Mikesoft Numbers",
-	 * "Mikesoft Present", "IntelliG"))); ListProperty<String> favoritesSelection =
-	 * new SimpleListProperty<>(
-	 * FXCollections.observableArrayList(Arrays.asList("Eboda Phot-O-Shop",
-	 * "Mikesoft Text")));
-	 * 
-	 * // Custom Control IntegerProperty customControlProperty = new
-	 * SimpleIntegerProperty(42); // IntegerField customControl =
-	 * setupCustomControl();
-	 * 
-	 * 
-	 * private IntegerField setupCustomControl() { return
-	 * Field.ofIntegerType(customControlProperty).render(new IntegerSliderControl(0,
-	 * 42)); }
-	 * 
-	 * // -------------- Demo -------------- // Theme ListProperty<String> themesLst
-	 * = new SimpleListProperty<>(
-	 * FXCollections.observableArrayList(newArrayList("IntelliJ", "Darkula",
-	 * "Windows"))); ObjectProperty<String> themesObj = new
-	 * SimpleObjectProperty<>("IntelliJ");
-	 * 
-	 * // IDE ListProperty<String> ideLst = new SimpleListProperty<>(
-	 * FXCollections.observableArrayList(newArrayList("Subpixel", "Greyscale",
-	 * "No Antializing"))); ObjectProperty<String> ideObj = new
-	 * SimpleObjectProperty<>("Subpixel");
-	 * 
-	 * // Editor ListProperty<String> editorLst = new SimpleListProperty<>(
-	 * FXCollections.observableArrayList(newArrayList("Subpixel", "Greyscale",
-	 * "No Antializing"))); ObjectProperty<String> editorObj = new
-	 * SimpleObjectProperty<>("Subpixel");
-	 * 
-	 * // Font size ListProperty<String> fontLst = new SimpleListProperty<>(
-	 * FXCollections.observableArrayList(newArrayList("8", "10", "12", "14", "18",
-	 * "20", "22", "24", "36", "72"))); ObjectProperty<String> fontObj = new
-	 * SimpleObjectProperty<>("24");
-	 * 
-	 * // Project opening ListProperty<String> projectOpeningLst = new
-	 * SimpleListProperty<>(FXCollections.observableArrayList(newArrayList(
-	 * "Open project in new window", "Open project in the same window",
-	 * "Confirm window to open project in"))); ObjectProperty<String>
-	 * projectOpeningObj = new SimpleObjectProperty<>("Open project in new window");
-	 * 
-	 * // Closing tool window ListProperty<String> closingToolLst = new
-	 * SimpleListProperty<>(
-	 * FXCollections.observableArrayList(newArrayList("Terminate process",
-	 * "Disconnect (if available)", "Ask"))); ObjectProperty<String> closingToolObj
-	 * = new SimpleObjectProperty<>("Ask");
+	 * Actions that tie a setting to a k.LAB property in the property file.
 	 */
+	public static class PropertyAction<T> extends CustomValidator<T> {
+
+		protected PropertyAction(String klabProperty) {
+			super(new Predicate<T>() {
+				@Override
+				public boolean test(T t) {
+					Configuration.INSTANCE.getProperties().setProperty(klabProperty, t.toString());
+					Configuration.INSTANCE.save();
+					return true;
+				}
+			}, null);
+		}
+		
+		protected PropertyAction(String klabProperty, Consumer<T> action) {
+			super(new Predicate<T>() {
+				@Override
+				public boolean test(T t) {
+					Configuration.INSTANCE.getProperties().setProperty(klabProperty, t.toString());
+					Configuration.INSTANCE.save();
+					action.accept(t);
+					return true;
+				}
+			}, null);
+		}
+
+		protected PropertyAction(String klabProperty, Consumer<T> action, Function<T, Boolean> validator) {
+			super(new Predicate<T>() {
+				@Override
+				public boolean test(T t) {
+					if (validator.apply(t)) {
+						Configuration.INSTANCE.getProperties().setProperty(klabProperty, t.toString());
+						Configuration.INSTANCE.save();
+						action.accept(t);
+						return true;
+					}
+					return false;
+				}
+			}, null);
+		}
+
+	}
+
 	public PreferencesFx createPreferences() {
 
 		return PreferencesFx.of(Settings.class,
 
-				Category.of("Control Center",
-						Group.of("General preferences", Setting.of("Use developer stack", useDevelop),
-								Setting.of("Number of builds to keep", buildsToKeep),
-								Setting.of("Check for Control Center updates on launch", checkForCCUpdates),
-								Setting.of("Check interval for k.LAB updates (minutes)", checkIntervalKlabUpdates),
-								Setting.of("Update k.LAB automatically", updateAutomatically)),
+				Category.of("Control Center", Group.of("General preferences",
+						Setting.of("Use developer stack", useDevelop).validate(new Action<Boolean>((b) -> {
+							if (isActionReady())
+								ControlCenter.INSTANCE.changeStack(b);
+						})), Setting.of("Number of builds to keep", buildsToKeep),
+						Setting.of("Check for Control Center updates on launch", checkForCCUpdates),
+						Setting.of("Check interval for k.LAB updates (minutes)", checkIntervalKlabUpdates),
+						Setting.of("Update k.LAB automatically", updateAutomatically)),
 						Group.of("Installed k.LAB distributions",
 								Setting.of("Delete all builds except latest", resetAllBuildsButLatest),
 								Setting.of("Delete all builds installed", resetAllBuilds))),

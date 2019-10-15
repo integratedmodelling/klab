@@ -1,5 +1,6 @@
 package org.integratedmodelling.controlcenter.api;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -166,5 +167,13 @@ public interface IProduct {
 	 * @return
 	 */
 	boolean isAvailable(int build);
+
+	/**
+	 * Date of deployment of build.
+	 * 
+	 * @param build
+	 * @return
+	 */
+	Date getBuildDate(int build);
 
 }

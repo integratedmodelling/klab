@@ -87,6 +87,8 @@ public class ControlCenter extends Application {
 	public static final String PRODUCTION_BRANCH_PROPERTY = "klab.branch.production";
 	public static final String DEVELOP_BRANCH_PROPERTY = "klab.branch.develop";
 	private static final String DEFAULT_JRE_DOWNLOAD_URL = "http://www.integratedmodelling.org/downloads";
+	private static final String IM_EULA_URL = "http://integratedmodelling.org/statics/terms/terms.html";
+	private static final String IM_SUPPORT_URL = "https://integratedmodelling.org/confluence/questions";
 
 	public static ControlCenter INSTANCE;
 
@@ -361,6 +363,8 @@ public class ControlCenter extends Application {
 						engineStarting.set(false);
 						engineRunning.set(false);
 						engineRunButton.setDisable(false);
+						buttonSettings.setDisable(false);
+						buildChoiceBox.setDisable(false);
 						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
 						engineRunTooltip.setText("Click to restart the engine");
 						launchExplorerButton.setDisable(true);
@@ -370,6 +374,8 @@ public class ControlCenter extends Application {
 						engineStarting.set(false);
 						engineRunning.set(true);
 						engineRunButton.setDisable(false);
+						buttonSettings.setDisable(true);
+						buildChoiceBox.setDisable(true);
 						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
 						engineRunTooltip.setText("Click to stop the engine");
 						if (engine.getInfo().sessionId != null) {
@@ -381,6 +387,8 @@ public class ControlCenter extends Application {
 						engineStarting.set(false);
 						engineRunning.set(false);
 						engineRunButton.setDisable(false);
+						buttonSettings.setDisable(false);
+						buildChoiceBox.setDisable(false);
 						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
 						engineRunTooltip.setText("Click to start the engine");
 						launchExplorerButton.setDisable(true);
@@ -390,6 +398,8 @@ public class ControlCenter extends Application {
 						engineStarting.set(true);
 						engineRunning.set(false);
 						engineRunButton.setDisable(true);
+						buttonSettings.setDisable(true);
+						buildChoiceBox.setDisable(true);
 						launchExplorerButton.setDisable(true);
 						copyExplorerLinkButton.setDisable(true);
 						break;
@@ -552,8 +562,11 @@ public class ControlCenter extends Application {
 				 * using an older one or nothing installed
 				 */
 				if (!haveChosen) {
-					downloadButton.setDisable(false);
 
+					if (!engineRunning.get()) {
+						downloadButton.setDisable(false);
+					}
+					
 					if (!downloadViewShown.get()) {
 						engineHeader.setText("Download k.LAB");
 						engineHeaderDetail.setText("Build " + engine.getProduct().getBuildVersion(bs.chosen) + "."
@@ -568,6 +581,7 @@ public class ControlCenter extends Application {
 					engineMessageDetail.setText(
 							usingLatest ? "Click the download button to install" : "Please upgrade when possible");
 				} else {
+					
 					downloadButton.setDisable(true);
 
 					if (!downloadViewShown.get()) {
@@ -603,7 +617,7 @@ public class ControlCenter extends Application {
 
 				if (!downloadViewShown.get()) {
 					if (!engineStarting.get()) {
-						engineRunButton.setDisable(!haveChosen);
+						engineRunButton.setDisable(!haveChosen && !engineRunning.get());
 					}
 					if (!modelerStarting.get()) {
 						modelerRunButton.setDisable(!haveChosen);
@@ -688,7 +702,6 @@ public class ControlCenter extends Application {
 	public void runEngine() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (engine.getStatus() != IInstance.Status.RUNNING) {
-			engineRunButton.setDisable(true);
 			engine.start(bs.chosen);
 		} else {
 			engine.stop();
@@ -699,7 +712,6 @@ public class ControlCenter extends Application {
 	public void runModeler() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (modeler.getStatus() != IInstance.Status.RUNNING) {
-			modelerRunButton.setDisable(true);
 			modeler.start(bs.chosen);
 		} else {
 			modeler.stop();
@@ -709,6 +721,16 @@ public class ControlCenter extends Application {
 	@FXML
 	public void launchExplorer() {
 		BrowserUtils.startBrowser(engine.getExplorerUrl());
+	}
+
+	@FXML
+	public void showEULA() {
+		BrowserUtils.startBrowser(IM_EULA_URL);
+	}
+
+	@FXML
+	public void launchSupport() {
+		BrowserUtils.startBrowser(IM_SUPPORT_URL);
 	}
 
 	@FXML
@@ -872,6 +894,13 @@ public class ControlCenter extends Application {
 							}
 						}
 
+						Platform.runLater(() -> {
+							downloadButton.setDisable(false);
+							engineMessageArea.setVisible(true);
+							engineRuntimeArea.setVisible(false);
+							downloadProgressArea.setVisible(false);
+						});
+						
 						downloadViewShown.set(false);
 
 						Platform.runLater(() -> setupUI());
@@ -983,19 +1012,18 @@ public class ControlCenter extends Application {
 	 * @return
 	 */
 	private synchronized boolean checkForCCUpdates() {
-		// TODO
+
+		if (this.controlCenter != null) {
+		}
+		
 		return false;
 	}
 
 	@Override
 	public void start(Stage primaryStage) {
-
-		/*
-		 * if (!System.getProperty("os.arch").contains("64")) { throw new
-		 * RuntimeException("You need a 64 bit architecture to run k.LAB"); }
-		 */
 		try {
-			BorderPane root = (BorderPane) FXMLLoader.load(getClass().getResource("ControlCenter.fxml"));
+			URL resource = getClass().getResource("ControlCenter.fxml");
+			BorderPane root = (BorderPane) FXMLLoader.load(resource);
 			Scene scene = new Scene(root, 260, 450);
 			primaryStage.setTitle("k.LAB");
 			primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot16.png")));
@@ -1025,6 +1053,31 @@ public class ControlCenter extends Application {
 		alert.setHeaderText("An unexpected error occurred:");
 		alert.setContentText(string);
 		alert.showAndWait();
+	}
+	
+	public void infoAlert(String string) {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Information message");
+//		alert.setHeaderText("Information");
+		alert.setContentText(string);
+		alert.showAndWait();
+	}
+
+
+	/*
+	 * Instant reactions to settings changed
+	 * -----------------------------------------------------
+	 */
+	public void changeStack(boolean isDevelop) {
+		
+		if (ProductService.INSTANCE
+				.switchBranch(isDevelop ? ProductService.DEVELOP_BRANCH : ProductService.PRODUCTION_BRANCH)) {
+			this.engine = (EngineInstance) ProductService.INSTANCE.getInstance(ProductService.PRODUCT_ENGINE);
+			this.modeler = (ModelerInstance) ProductService.INSTANCE.getInstance(ProductService.PRODUCT_MODELER);
+			this.controlCenter = ProductService.INSTANCE.getInstance(ProductService.PRODUCT_CONTROL_CENTER);
+
+			Platform.runLater(() -> setupUI());
+		}
 	}
 
 }

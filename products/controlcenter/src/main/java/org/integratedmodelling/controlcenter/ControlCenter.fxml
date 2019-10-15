@@ -62,7 +62,7 @@
                         <Insets top="2.0" />
                      </padding>
                   </HBox>
-                  <Button id="round-button" fx:id="showEULAButton" mnemonicParsing="false">
+                  <Button id="round-button" fx:id="showEULAButton" mnemonicParsing="false" onAction="#showEULA">
                      <graphic>
                         <FontIcon iconColor="#5f9ed2" iconLiteral="fa-legal" />
                      </graphic>
@@ -73,7 +73,7 @@
                         <Tooltip text="End user license agreement (opens browser)" />
                      </tooltip>
                   </Button>
-                  <Button id="round-button" fx:id="supportButton" mnemonicParsing="false">
+                  <Button id="round-button" fx:id="supportButton" mnemonicParsing="false" onAction="#launchSupport">
                      <graphic>
                         <FontIcon iconColor="#0697ff" iconLiteral="fa-commenting-o" />
                      </graphic>

@@ -130,7 +130,12 @@ public class Product implements IProduct {
 	public Version getBuildVersion(int build) {
 		return builds.get(build).version;
 	}
-	
+
+	@Override
+	public Date getBuildDate(int build) {
+		return builds.get(build).time;
+	}
+
 	@Override
 	public boolean isInstalled(int build) {
 		return builds.get(build) != null && builds.get(build).locallyAvailable; 

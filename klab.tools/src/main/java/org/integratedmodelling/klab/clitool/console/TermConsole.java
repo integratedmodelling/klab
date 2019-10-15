@@ -136,7 +136,7 @@ public class TermConsole implements IConsole {
                     String buildInfo = "";
                     if (!Version.VERSION_BUILD.equals("VERSION_BUILD")) {
                         buildInfo = " build " + Version.VERSION_BUILD + " (" + Version.VERSION_BRANCH + " "
-                                + Version.VERSION_DATE + ")";
+                                + Version.VERSION_DATE + " @" + Version.VERSION_COMMIT + ")";
                     }
                     terminal = new DragonConsoleFrame("k.LAB v" + Version.CURRENT
                             + buildInfo, false, new CommandHistory());
