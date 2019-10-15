@@ -130,7 +130,7 @@ public class Settings {
 	public int getProductUpdateInterval() {
 		return checkIntervalKlabUpdates.get();
 	}
-	
+
 	public int getMaxEngineMemory() {
 		return maxMemory.get();
 	}
@@ -138,9 +138,17 @@ public class Settings {
 	public boolean useDebug() {
 		return useDebugParameters.get();
 	}
-	
+
 	public int getEnginePort() {
 		return enginePort.get();
+	}
+
+	public int getMaxSessions() {
+		return maxLocalSessions.get();
+	}
+
+	public File getKlabWorkspace() {
+		return workspaceDirectory.get();
 	}
 
 	public Settings() {
@@ -308,13 +316,15 @@ public class Settings {
 										Setting.of("URL", mapboxLayerURL),
 										Setting.of("Attribution", mapboxLayerAttribution))
 
-						), Category.of("Resources",
+						),
+						Category.of("Resources",
 								Group.of("Resource validation",
-										Setting.of("Local resource validation interval (minutes)", localResourceValidationInterval),
-										Setting.of("Public resource validation interval (minutes)", publicResourceValidationInterval),
+										Setting.of("Local resource validation interval (minutes)",
+												localResourceValidationInterval),
+										Setting.of("Public resource validation interval (minutes)",
+												publicResourceValidationInterval),
 										Setting.of("Revalidate local resources now", revalidateLocalResources),
-										Setting.of("Revalidate public resources now", revalidatePublicResources))		
-						)
+										Setting.of("Revalidate public resources now", revalidatePublicResources)))
 
 				),
 
@@ -360,10 +370,6 @@ public class Settings {
 
 	public void setActionReady(boolean actionReady) {
 		this.actionReady = actionReady;
-	}
-
-	public int getMaxSessions() {
-		return maxLocalSessions.get();
 	}
 
 }

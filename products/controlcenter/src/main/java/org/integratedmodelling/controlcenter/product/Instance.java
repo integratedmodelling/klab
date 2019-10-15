@@ -1,5 +1,6 @@
 package org.integratedmodelling.controlcenter.product;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,10 +15,13 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.io.FileUtils;
+import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
 import org.integratedmodelling.controlcenter.product.Product.Build;
+import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
+import org.integratedmodelling.klab.utils.OS;
 
 public abstract class Instance implements IInstance {
 
@@ -47,14 +51,24 @@ public abstract class Instance implements IInstance {
 	}
 
 	protected abstract boolean isRunning();
-	
+
 	@Override
 	public boolean start(int build) {
 
+		if (this instanceof ModelerInstance && OS.get() == OS.MACOS) {
+			// we need to use Desktop, so no way to know if it is closed, we don't touch the
+			// status
+			try {
+				Desktop.getDesktop().open(((ModelerInstance)this).getExecutable(build));
+			} catch (Throwable e) {
+				ControlCenter.INSTANCE.errorAlert("Could not launch the Eclipse product. Please launch it manually in "
+						+ product.getLocalWorkspace());
+			}
+			return true;
+		}
+
 		CommandLine cmdLine = getCommandLine(build);
-		
-		System.out.println("START CALLED");
-		
+
 		/*
 		 * assume error was reported
 		 */
@@ -70,7 +84,6 @@ public abstract class Instance implements IInstance {
 
 		status.set(Status.WAITING);
 		if (this.statusHandler != null) {
-			System.out.println("ACCEPTING WAITING STATIS");
 			this.statusHandler.accept(status.get());
 		}
 
@@ -88,10 +101,10 @@ public abstract class Instance implements IInstance {
 
 				@Override
 				public void onProcessComplete(int arg0) {
-					status.set(Status.STOPPED);
-					if (statusHandler != null) {
-						statusHandler.accept(status.get());
-					}
+//					status.set(Status.STOPPED);
+//					if (statusHandler != null) {
+//						statusHandler.accept(status.get());
+//					}
 				}
 			});
 		} catch (Exception e) {
@@ -104,7 +117,7 @@ public abstract class Instance implements IInstance {
 
 	@Override
 	public boolean stop() {
-		// TODO Auto-generated method stub
+		// does nothing - override
 		return false;
 	}
 

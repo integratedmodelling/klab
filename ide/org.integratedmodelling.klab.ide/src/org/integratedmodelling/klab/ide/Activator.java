@@ -256,7 +256,7 @@ public class Activator extends AbstractUIPlugin {
 		/*
 		 * ensure we can be stopped by an external controller
 		 */
-		new StopMonitor(5).start(5);
+		new FileBasedMonitor(5).start(5);
 		
 		this.engineStatusMonitor.start(relayId);
 

@@ -1,5 +1,8 @@
 package org.integratedmodelling.controlcenter;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,7 +29,9 @@ import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
 import org.integratedmodelling.controlcenter.product.ProductService;
 import org.integratedmodelling.controlcenter.product.ProductService.BuildStatus;
+import org.integratedmodelling.controlcenter.runtime.EngineInstance;
 import org.integratedmodelling.controlcenter.runtime.EngineInstance.EngineInfo;
+import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
 import org.integratedmodelling.klab.utils.BrowserUtils;
@@ -41,7 +46,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -73,6 +77,7 @@ import kong.unirest.Unirest;
 public class ControlCenter extends Application {
 
 	public static final String COLOR_GREEN = "#28c41d";
+	public static final String COLOR_BLACK = "#000000";
 	public static final String COLOR_LIGHT_GREY = "#bbbbbb";
 	public static final String COLOR_RED = "#f23a01";
 	public static final String COLOR_YELLOW = "#dfb300";
@@ -210,8 +215,8 @@ public class ControlCenter extends Application {
 	LineChart<Number, Number> loadChart;
 
 	private Authentication authentication;
-	private IInstance engine;
-	private IInstance modeler;
+	private EngineInstance engine;
+	private ModelerInstance modeler;
 	private IInstance controlCenter;
 	private TimerService updateService;
 
@@ -286,8 +291,8 @@ public class ControlCenter extends Application {
 		/*
 		 * retrieve instances
 		 */
-		this.engine = ProductService.INSTANCE.getInstance(ProductService.PRODUCT_ENGINE);
-		this.modeler = ProductService.INSTANCE.getInstance(ProductService.PRODUCT_MODELER);
+		this.engine = (EngineInstance) ProductService.INSTANCE.getInstance(ProductService.PRODUCT_ENGINE);
+		this.modeler = (ModelerInstance) ProductService.INSTANCE.getInstance(ProductService.PRODUCT_MODELER);
 		this.controlCenter = ProductService.INSTANCE.getInstance(ProductService.PRODUCT_CONTROL_CENTER);
 
 		/*
@@ -356,27 +361,37 @@ public class ControlCenter extends Application {
 						engineStarting.set(false);
 						engineRunning.set(false);
 						engineRunButton.setDisable(false);
-						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
+						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
 						engineRunTooltip.setText("Click to restart the engine");
+						launchExplorerButton.setDisable(true);
+						copyExplorerLinkButton.setDisable(true);
 						break;
 					case RUNNING:
 						engineStarting.set(false);
 						engineRunning.set(true);
 						engineRunButton.setDisable(false);
-						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_RED));
+						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
 						engineRunTooltip.setText("Click to stop the engine");
+						if (engine.getInfo().sessionId != null) {
+							launchExplorerButton.setDisable(false);
+							copyExplorerLinkButton.setDisable(false);
+						}
 						break;
 					case STOPPED:
 						engineStarting.set(false);
 						engineRunning.set(false);
 						engineRunButton.setDisable(false);
-						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
+						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
 						engineRunTooltip.setText("Click to start the engine");
+						launchExplorerButton.setDisable(true);
+						copyExplorerLinkButton.setDisable(true);
 						break;
 					case WAITING:
 						engineStarting.set(true);
 						engineRunning.set(false);
 						engineRunButton.setDisable(true);
+						launchExplorerButton.setDisable(true);
+						copyExplorerLinkButton.setDisable(true);
 						break;
 					default:
 						break;
@@ -399,19 +414,19 @@ public class ControlCenter extends Application {
 					case ERROR:
 						modelerStarting.set(false);
 						modelerRunButton.setDisable(false);
-						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_YELLOW));
+						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
 						modelerRunTooltip.setText("Click to restart k.Modeler");
 						break;
 					case RUNNING:
 						modelerStarting.set(false);
 						modelerRunButton.setDisable(false);
-						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_RED));
+						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
 						modelerRunTooltip.setText("Click to stop k.Modeler");
 						break;
 					case STOPPED:
 						modelerStarting.set(false);
 						modelerRunButton.setDisable(false);
-						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_YELLOW));
+						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
 						modelerRunTooltip.setText("Click to start k.Modeler");
 						break;
 					case WAITING:
@@ -587,8 +602,12 @@ public class ControlCenter extends Application {
 				}
 
 				if (!downloadViewShown.get()) {
-					engineRunButton.setDisable(!haveChosen);
-					modelerRunButton.setDisable(!haveChosen);
+					if (!engineStarting.get()) {
+						engineRunButton.setDisable(!haveChosen);
+					}
+					if (!modelerStarting.get()) {
+						modelerRunButton.setDisable(!haveChosen);
+					}
 				}
 			}
 
@@ -669,6 +688,7 @@ public class ControlCenter extends Application {
 	public void runEngine() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (engine.getStatus() != IInstance.Status.RUNNING) {
+			engineRunButton.setDisable(true);
 			engine.start(bs.chosen);
 		} else {
 			engine.stop();
@@ -679,10 +699,22 @@ public class ControlCenter extends Application {
 	public void runModeler() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (modeler.getStatus() != IInstance.Status.RUNNING) {
+			modelerRunButton.setDisable(true);
 			modeler.start(bs.chosen);
 		} else {
 			modeler.stop();
 		}
+	}
+
+	@FXML
+	public void launchExplorer() {
+		BrowserUtils.startBrowser(engine.getExplorerUrl());
+	}
+
+	@FXML
+	public void copyExplorerLink() {
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(new StringSelection(engine.getExplorerUrl()), null);
 	}
 
 	@FXML
@@ -868,9 +900,9 @@ public class ControlCenter extends Application {
 			.appendSuffix(" h ").appendMinutes().printZeroAlways().appendSuffix(" min ").appendSeconds()
 			.appendSuffix(" sec").toFormatter();
 
-	Queue<Long> memValues = new CircularFifoQueue<Long>(50);
-	Queue<Long> loadValues = new CircularFifoQueue<Long>(50);
-	Queue<Long> times = new CircularFifoQueue<Long>(50);
+	Queue<Long> memValues = new CircularFifoQueue<Long>(100);
+	Queue<Long> loadValues = new CircularFifoQueue<Long>(100);
+	Queue<Long> times = new CircularFifoQueue<Long>(100);
 
 	public synchronized void updateEngineStatus(EngineInfo engineInfo) {
 
@@ -893,14 +925,20 @@ public class ControlCenter extends Application {
 			}
 
 			Platform.runLater(() -> {
-				
-				memoryLabel.setText(engineInfo.freeMemory + "/" + engineInfo.totalMemory + " Mb free");
+
+				memoryLabel.setText(
+						(engineInfo.totalMemory - engineInfo.freeMemory) + "/" + engineInfo.totalMemory + " Mb");
+
 				uptimeLabel.setText(yearsAndMonths.print(new Period(engineInfo.upTime)));
 				sessionsLabel.setText(engineInfo.activeSessions + " of " + getSettings().getMaxSessions());
+				memoryChart.setAnimated(false);
+				loadChart.setAnimated(false);
 				memoryChart.getData().clear();
 				loadChart.getData().clear();
 				memoryChart.getData().add(memData);
+				memData.getNode().setStyle("-fx-stroke: green; -fx-stroke-width: 1px;");
 				loadChart.getData().add(loadData);
+				loadData.getNode().setStyle("-fx-stroke: red; -fx-stroke-width: 1px;");
 			});
 		}
 	}
@@ -967,7 +1005,10 @@ public class ControlCenter extends Application {
 			scene.getStylesheets().add(getClass().getResource("css/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
-
+			primaryStage.setOnCloseRequest(e -> {
+				Platform.exit();
+				System.exit(0);
+			});
 		} catch (Exception e) {
 			// va be'
 			e.printStackTrace();

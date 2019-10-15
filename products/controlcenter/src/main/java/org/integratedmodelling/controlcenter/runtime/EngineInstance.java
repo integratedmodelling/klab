@@ -61,6 +61,10 @@ public class EngineInstance extends Instance {
 	protected String getInstanceUrl(String fragment) {
 		return "http://127.0.0.1:" + instancePort + "/modeler" + fragment;
 	}
+	
+	public String getExplorerUrl() {
+		return getInstanceUrl("/ui/viewer") + "?session=" + engineInfo.get().sessionId;
+	}
 
 	@Override
 	protected CommandLine getCommandLine(int build) {
@@ -161,7 +165,6 @@ public class EngineInstance extends Instance {
 			@Override
 			public void run() {
 
-				
 				IInstance.Status prev = getStatus();
 
 				try {
@@ -176,13 +179,14 @@ public class EngineInstance extends Instance {
 						info.bootTime = node.getLong("bootTime");
 						info.engineTime = node.getLong("requestTime");
 						info.upTime = node.getLong("uptime");
-						info.sessionId = node.get("localSessionId").toString();
+						info.sessionId = node.get("localSessionId") == null ? null
+								: node.get("localSessionId").toString();
 						info.processorCount = node.getInt("processorCount");
-						info.engineId = node.get("engineId").toString();
+						info.engineId = node.get("engineId") == null ? null : node.get("engineId").toString();
 						engineInfo.set(info);
 						ControlCenter.INSTANCE.updateEngineStatus(engineInfo.get());
-					} else {
-//						status.set(Status.STOPPED);
+					} else if (status.get() == Status.RUNNING) {
+						status.set(Status.STOPPED);
 						online.set(false);
 					}
 				} catch (UnirestException e) {
@@ -201,7 +205,7 @@ public class EngineInstance extends Instance {
 		}, 0, POLL_INTERVAL_SECONDS * 1000);
 
 	}
-	
+
 	public EngineInfo getInfo() {
 		return engineInfo.get();
 	}
