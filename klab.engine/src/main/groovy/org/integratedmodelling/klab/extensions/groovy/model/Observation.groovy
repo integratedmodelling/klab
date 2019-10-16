@@ -7,6 +7,8 @@ import org.integratedmodelling.klab.api.knowledge.IConcept
 import org.integratedmodelling.klab.api.knowledge.ISemantic
 import org.integratedmodelling.klab.api.model.IModel
 import org.integratedmodelling.klab.api.observations.IObservation
+import org.integratedmodelling.klab.api.observations.scale.IScale
+import org.integratedmodelling.klab.api.observations.scale.time.ITime
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
 import org.integratedmodelling.klab.engine.runtime.code.groovy.Wrapper
 
@@ -28,6 +30,15 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
             this.model = binding.getVariable("_model");
         }
     }
+	
+	protected IScale getTransitionScale() {
+		ITime scopeTime = getScope().getScale().getTime();
+		org.integratedmodelling.klab.scale.Scale ret = (org.integratedmodelling.klab.scale.Scale)unwrap().getScale();
+		if (scopeTime != null && ret.getTime() != null && ret.getTime().size() > 1) {
+			return ret.at(scopeTime);
+		}
+		return ret;
+	}
 
     
 	def isa(Object o) {

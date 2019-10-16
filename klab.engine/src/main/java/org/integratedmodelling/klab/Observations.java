@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
+import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -196,7 +197,7 @@ public enum Observations implements IObservationService {
 			}
 			ret.setHistogram(histogram.build());
 		}
-
+		
 		return ret;
 	}
 

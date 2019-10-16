@@ -4,6 +4,8 @@ import org.integratedmodelling.klab.Observations
 import org.integratedmodelling.klab.api.data.ILocator
 import org.integratedmodelling.klab.api.knowledge.IConcept
 import org.integratedmodelling.klab.api.observations.IState
+import org.integratedmodelling.klab.api.observations.scale.IScale
+import org.integratedmodelling.klab.api.observations.scale.time.ITime
 import org.integratedmodelling.klab.api.provenance.IArtifact
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException
 import org.integratedmodelling.klab.exceptions.KlabValidationException
@@ -30,7 +32,7 @@ class State extends Observation<IState> {
 
 	private StateSummary getStateSummary() {
 		if (summary == null) {
-			summary = Observations.INSTANCE.getStateSummary(unwrap(), getScope().getScale());
+			summary = Observations.INSTANCE.getStateSummary(unwrap(), getTransitionScale());
 		}
 		return summary;
 	}
@@ -44,7 +46,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : getScope().getScale()) {
+				for (ILocator locator : getTransitionScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = summary.getRange().get(1) - d + summary.getRange().get(0);
@@ -60,7 +62,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : getScope().getScale()) {
+				for (ILocator locator : getTransitionScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));
