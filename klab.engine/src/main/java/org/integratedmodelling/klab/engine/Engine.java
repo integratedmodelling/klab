@@ -424,6 +424,9 @@ public class Engine extends Server implements IEngine, UserDetails {
 			System.exit(0);
 		}
 
+		Logging.INSTANCE.info("k.LAB v" + Version.CURRENT + " build " + Version.VERSION_BUILD + " @"
+				+ Version.VERSION_COMMIT + " booting...");
+
 		/*
 		 * set up access to the k.IM grammar
 		 */
@@ -560,7 +563,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			this.authorities.add(new SimpleGrantedAuthority(Roles.ENGINE));
 			Authentication.INSTANCE.registerIdentity(this);
 			Logging.INSTANCE.info("Engine authenticated and registered");
-			
+
 			/*
 			 * Load the service workspace last. TODO we may want to reset it if the load
 			 * fails.

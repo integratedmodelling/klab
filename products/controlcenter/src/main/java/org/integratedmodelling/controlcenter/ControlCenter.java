@@ -736,6 +736,7 @@ public class ControlCenter extends Application {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (engine.getStatus() != IInstance.Status.RUNNING) {
 			engineStarting.set(true);
+			engineRunButton.setDisable(true);
 			engine.start(bs.chosen);
 		} else {
 			engine.stop();
@@ -749,6 +750,7 @@ public class ControlCenter extends Application {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (modeler.getStatus() != IInstance.Status.RUNNING) {
 			modelerStarting.set(true);
+			modelerRunButton.setDisable(true);
 			modeler.start(bs.chosen);
 		} else {
 			modeler.stop();

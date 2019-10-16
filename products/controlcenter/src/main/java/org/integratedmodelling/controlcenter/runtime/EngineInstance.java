@@ -184,7 +184,7 @@ public class EngineInstance extends Instance {
 						info.processorCount = node.getInt("processorCount");
 						info.engineId = node.get("engineId") == null ? null : node.get("engineId").toString();
 						engineInfo.set(info);
-						ControlCenter.INSTANCE.updateEngineStatus(engineInfo.get());
+						ControlCenter.INSTANCE.updateEngineStatus(info);
 					} else if (status.get() == Status.RUNNING) {
 						status.set(Status.STOPPED);
 						online.set(false);
