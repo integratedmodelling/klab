@@ -17,6 +17,8 @@ public class ObservableReference {
 	private String description;
 	private IKimConcept.Type semantics;
 	private boolean separator;
+	private String state;
+	private String extendedDescription;
 
 	public String getObservable() {
 		return observable;
@@ -56,6 +58,22 @@ public class ObservableReference {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getExtendedDescription() {
+		return extendedDescription;
+	}
+
+	public void setExtendedDescription(String extendedDescription) {
+		this.extendedDescription = extendedDescription;
 	}
 
 }

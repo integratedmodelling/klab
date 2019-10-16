@@ -27,6 +27,14 @@ public class SearchMatch {
 		CURRENCY
 	};
 	
+	public static enum States {
+		FORTHCOMING,
+		EXPERIMENTAL,
+		NEW,
+		STABLE,
+		BETA,
+	}
+	
 	private String name;
 	private String id;
 	private String description;
@@ -35,7 +43,8 @@ public class SearchMatch {
 	private Set<IKimConcept.Type> semanticType = EnumSet.noneOf(IKimConcept.Type.class);
 	private IIndexingService.Match.Type matchType;
 	private TokenClass nextTokenClass = TokenClass.TOKEN;
-	
+	private String state;
+	private String extendedDescription;
 	// these correspond to beginning and end of concept definition in parenthesis.
 	private boolean openGroup;
 	private boolean closeGroup;
@@ -53,6 +62,21 @@ public class SearchMatch {
 	 * @param matchType
 	 */
 	public SearchMatch(String matchId, String matchName, String matchDescription, IKimConcept.Type semanticType) {
+		this(matchId, matchName, matchDescription, semanticType, null, null);
+	}
+	
+	/**
+	 * Add a pre-defined match, which is set in groups and modified only by user history and
+	 * preferences.
+	 * 
+	 * @param matchId
+	 * @param matchName
+	 * @param matchDescription
+	 * @param semanticType
+	 * @param state
+	 * @param extendedDescription
+	 */
+	public SearchMatch(String matchId, String matchName, String matchDescription, IKimConcept.Type semanticType, String state, String extendedDescription) {
 		this.mainSemanticType = semanticType;
 		if (semanticType != null) {
 			this.semanticType.add(semanticType);
@@ -61,6 +85,8 @@ public class SearchMatch {
 		this.id = matchId;
 		this.name = matchName;
 		this.description = matchDescription;
+		this.setState(state);
+		this.setExtendedDescription(extendedDescription);
 	}
 
 	/**
@@ -167,6 +193,22 @@ public class SearchMatch {
 
 	public void setNextTokenClass(TokenClass nextTokenClass) {
 		this.nextTokenClass = nextTokenClass;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getExtendedDescription() {
+		return extendedDescription;
+	}
+
+	public void setExtendedDescription(String extendedDescription) {
+		this.extendedDescription = extendedDescription;
 	}
 
 }

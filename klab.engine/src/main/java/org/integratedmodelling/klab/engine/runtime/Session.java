@@ -773,7 +773,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 						for (ObservableReference observable : Authentication.INSTANCE
 								.getDefaultObservables(Session.this)) {
 							SearchMatch match = new SearchMatch(observable.getObservable(), observable.getLabel(),
-									observable.getDescription(), observable.getSemantics());
+									observable.getDescription(), observable.getSemantics(),
+									observable.getState(), observable.getExtendedDescription());
 							match.setIndex(i++);
 							response.getMatches().add(match);
 							matches.add(new org.integratedmodelling.klab.engine.indexing.SearchMatch(match));
