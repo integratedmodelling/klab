@@ -27,6 +27,7 @@ import org.integratedmodelling.controlcenter.auth.Authentication;
 import org.integratedmodelling.controlcenter.jre.JreDialog;
 import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
+import org.integratedmodelling.controlcenter.product.Instance;
 import org.integratedmodelling.controlcenter.product.ProductService;
 import org.integratedmodelling.controlcenter.product.ProductService.BuildStatus;
 import org.integratedmodelling.controlcenter.runtime.EngineInstance;
@@ -79,6 +80,7 @@ public class ControlCenter extends Application {
 	public static final String COLOR_GREEN = "#28c41d";
 	public static final String COLOR_BLACK = "#000000";
 	public static final String COLOR_LIGHT_GREY = "#bbbbbb";
+	public static final String COLOR_DARK_GREY = "#888888";
 	public static final String COLOR_RED = "#f23a01";
 	public static final String COLOR_YELLOW = "#dfb300";
 	public static final String COLOR_BLUE = "#0073c5";
@@ -383,7 +385,7 @@ public class ControlCenter extends Application {
 						buildChoiceBox.setDisable(true);
 						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
 						engineRunTooltip.setText("Click to stop the engine");
-						if (engine.getInfo().sessionId != null) {
+						if (engine.getInfo() != null && engine.getInfo().sessionId != null) {
 							launchExplorerButton.setDisable(false);
 							copyExplorerLinkButton.setDisable(false);
 						}
@@ -545,93 +547,97 @@ public class ControlCenter extends Application {
 				first = false;
 			}
 
-			if (bs.latest < 0) {
+			if (!engineStarting.get() && !engineError.get()) {
 
-				/*
-				 * no k.LAB
-				 */
-				downloadButton.setDisable(true);
+				if (bs.latest < 0) {
 
-				if (!downloadViewShown.get()) {
-					engineHeader.setText("Download k.LAB");
-					engineHeaderDetail.setText("Network is inaccessible");
-				}
-				engineMessageIcon.setIconLiteral("dashicons-warning");
-				engineMessageIcon.setIconColor(Paint.valueOf(COLOR_RED));
-
-			} else {
-
-				boolean usingLatest = bs.chosen == bs.latest;
-				boolean haveChosen = bs.installed.contains(bs.chosen);
-//				boolean haveLatest = bs.installed.contains(bs.latest);
-				boolean haveAny = bs.installed.size() > 0;
-
-				buildChoiceBox.setVisible(haveAny);
-				downloadIcon.setVisible(!haveAny);
-
-				/*
-				 * using an older one or nothing installed
-				 */
-				if (!haveChosen) {
-
-					if (!engineRunning.get()) {
-						downloadButton.setDisable(false);
-					}
-					
-					if (!downloadViewShown.get()) {
-						engineHeader.setText("Download k.LAB");
-						engineHeaderDetail.setText("Build " + engine.getProduct().getBuildVersion(bs.chosen) + "."
-								+ bs.latest + " is available");
-						engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
-					}
-
-					engineMessageIcon.setIconLiteral("fa-download");
-					installedVersionLabel
-							.setText(haveAny ? ("Build " + bs.chosen + " not installed") : "k.LAB is not installed");
-					engineMessageIcon.setIconColor(Paint.valueOf(usingLatest ? COLOR_BLUE : COLOR_YELLOW));
-					engineMessageDetail.setText(
-							usingLatest ? "Click the download button to install" : "Please upgrade when possible");
-				} else {
-					
+					/*
+					 * no k.LAB
+					 */
 					downloadButton.setDisable(true);
 
 					if (!downloadViewShown.get()) {
-						engineHeader.setText("k.LAB is up to date");
+						engineHeader.setText("Download k.LAB");
+						engineHeaderDetail.setText("Network is inaccessible");
 					}
+					engineMessageIcon.setIconLiteral("dashicons-warning");
+					engineMessageIcon.setIconColor(Paint.valueOf(COLOR_RED));
 
-					if (usingLatest) {
+				} else {
 
-						if (!downloadViewShown.get()) {
-							engineHeaderDetail.setText("Latest build " + engine.getProduct().getBuildVersion(bs.latest)
-									+ "." + bs.latest + " is installed");
-							engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_GREEN));
+					boolean usingLatest = bs.chosen == bs.latest;
+					boolean haveChosen = bs.installed.contains(bs.chosen);
+//				boolean haveLatest = bs.installed.contains(bs.latest);
+					boolean haveAny = bs.installed.size() > 0;
+
+					buildChoiceBox.setVisible(haveAny);
+					downloadIcon.setVisible(!haveAny);
+
+					/*
+					 * using an older one or nothing installed
+					 */
+					if (!haveChosen) {
+
+						if (!engineRunning.get()) {
+							downloadButton.setDisable(false);
 						}
 
-						installedVersionLabel.setText("k.LAB is up to date");
-						engineMessageIcon.setIconLiteral("dashicons-yes-alt");
-						engineMessageIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
-						engineMessageDetail.setText("No action needed");
-
-					} else if (bs.chosen > 0) {
-
 						if (!downloadViewShown.get()) {
-							engineHeaderDetail.setText("Obsolete build " + bs.chosen + " is selected");
+							engineHeader.setText("Download k.LAB");
+							engineHeaderDetail.setText("Build " + engine.getProduct().getBuildVersion(bs.chosen) + "."
+									+ bs.latest + " is available");
 							engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
 						}
 
-						installedVersionLabel.setText("k.LAB upgrade available");
-						engineMessageIcon.setIconLiteral("dashicons-warning");
-						engineMessageIcon.setIconColor(Paint.valueOf(COLOR_YELLOW));
-						engineMessageDetail.setText("System may not work as expected");
-					}
-				}
+						engineMessageIcon.setIconLiteral("fa-download");
+						installedVersionLabel.setText(
+								haveAny ? ("Build " + bs.chosen + " not installed") : "k.LAB is not installed");
+						engineMessageIcon.setIconColor(Paint.valueOf(usingLatest ? COLOR_BLUE : COLOR_YELLOW));
+						engineMessageDetail.setText(
+								usingLatest ? "Click the download button to install" : "Please upgrade when possible");
+					} else {
 
-				if (!downloadViewShown.get()) {
-					if (!engineStarting.get()) {
-						engineRunButton.setDisable(!haveChosen && !engineRunning.get());
+						downloadButton.setDisable(true);
+
+						if (!downloadViewShown.get()) {
+							engineHeader.setText("k.LAB is up to date");
+						}
+
+						if (usingLatest) {
+
+							if (!downloadViewShown.get()) {
+								engineHeaderDetail
+										.setText("Latest build " + engine.getProduct().getBuildVersion(bs.latest) + "."
+												+ bs.latest + " is installed");
+								engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_GREEN));
+							}
+
+							installedVersionLabel.setText("k.LAB is up to date");
+							engineMessageIcon.setIconLiteral("dashicons-yes-alt");
+							engineMessageIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
+							engineMessageDetail.setText("No action needed");
+
+						} else if (bs.chosen > 0) {
+
+							if (!downloadViewShown.get()) {
+								engineHeaderDetail.setText("Obsolete build " + bs.chosen + " is selected");
+								engineHeaderDetail.setTextFill(Paint.valueOf(COLOR_YELLOW));
+							}
+
+							installedVersionLabel.setText("k.LAB upgrade available");
+							engineMessageIcon.setIconLiteral("dashicons-warning");
+							engineMessageIcon.setIconColor(Paint.valueOf(COLOR_YELLOW));
+							engineMessageDetail.setText("System may not work as expected");
+						}
 					}
-					if (!modelerStarting.get()) {
-						modelerRunButton.setDisable(!haveChosen && !modelerRunning.get());
+
+					if (!downloadViewShown.get()) {
+						if (!engineStarting.get()) {
+							engineRunButton.setDisable(!haveChosen && !engineRunning.get());
+						}
+						if (!modelerStarting.get()) {
+							modelerRunButton.setDisable(!haveChosen && !modelerRunning.get());
+						}
 					}
 				}
 			}
@@ -640,8 +646,24 @@ public class ControlCenter extends Application {
 
 				switch (engine.getStatus()) {
 				case STOPPED:
+					engineMessageArea.setVisible(true);
+					engineRuntimeArea.setVisible(false);
+					downloadProgressArea.setVisible(false);
+					break;
 				case ERROR:
+					installedVersionLabel.setText("k.LAB failed to start");
+					engineMessageIcon.setIconLiteral("dashicons-dismiss");
+					engineMessageIcon.setIconColor(Paint.valueOf(COLOR_RED));
+					engineMessageDetail.setText("Click the error icon to dismiss");
+					engineMessageArea.setVisible(true);
+					engineRuntimeArea.setVisible(false);
+					downloadProgressArea.setVisible(false);
+					break;
 				case WAITING:
+					installedVersionLabel.setText("k.LAB is launching");
+					engineMessageIcon.setIconLiteral("fa-hourglass-2");
+					engineMessageIcon.setIconColor(Paint.valueOf(COLOR_DARK_GREY));
+					engineMessageDetail.setText("Please wait for engine to start");
 					engineMessageArea.setVisible(true);
 					engineRuntimeArea.setVisible(false);
 					downloadProgressArea.setVisible(false);
@@ -713,20 +735,28 @@ public class ControlCenter extends Application {
 	public void runEngine() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (engine.getStatus() != IInstance.Status.RUNNING) {
+			engineStarting.set(true);
+			engineRunButton.setDisable(true);
 			engine.start(bs.chosen);
 		} else {
 			engine.stop();
 		}
+
+		setupUI();
 	}
 
 	@FXML
 	public void runModeler() {
 		BuildStatus bs = ProductService.INSTANCE.getBuildStatus();
 		if (modeler.getStatus() != IInstance.Status.RUNNING) {
+			modelerStarting.set(true);
+			modelerRunButton.setDisable(true);
 			modeler.start(bs.chosen);
 		} else {
 			modeler.stop();
 		}
+
+		setupUI();
 	}
 
 	@FXML
@@ -911,7 +941,7 @@ public class ControlCenter extends Application {
 							engineRuntimeArea.setVisible(false);
 							downloadProgressArea.setVisible(false);
 						});
-						
+
 						downloadViewShown.set(false);
 
 						Platform.runLater(() -> setupUI());
@@ -952,6 +982,11 @@ public class ControlCenter extends Application {
 			memValues.add(engineInfo.totalMemory - engineInfo.freeMemory);
 			// TODO
 			loadValues.add(engineInfo.totalMemory - engineInfo.freeMemory);
+
+			if (engineInfo.sessionId != null) {
+				launchExplorerButton.setDisable(false);
+				copyExplorerLinkButton.setDisable(false);
+			}
 
 			XYChart.Series<Number, Number> memData = new XYChart.Series<Number, Number>();
 			XYChart.Series<Number, Number> loadData = new XYChart.Series<Number, Number>();
@@ -1011,8 +1046,12 @@ public class ControlCenter extends Application {
 			System.exit(0);
 		}
 		ProductService.INSTANCE.initialize();
-		setupUI();
+		this.engine.setProduct(ProductService.INSTANCE.getProduct(ProductService.PRODUCT_ENGINE));
+		this.modeler.setProduct(ProductService.INSTANCE.getProduct(ProductService.PRODUCT_MODELER));
+		((Instance) this.controlCenter)
+				.setProduct(ProductService.INSTANCE.getProduct(ProductService.PRODUCT_CONTROL_CENTER));
 		messageLabel.setText("");
+		setupUI();
 	}
 
 	/**
@@ -1026,7 +1065,7 @@ public class ControlCenter extends Application {
 
 		if (this.controlCenter != null) {
 		}
-		
+
 		return false;
 	}
 
@@ -1065,7 +1104,7 @@ public class ControlCenter extends Application {
 		alert.setContentText(string);
 		alert.showAndWait();
 	}
-	
+
 	public void infoAlert(String string) {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Information message");
@@ -1074,19 +1113,17 @@ public class ControlCenter extends Application {
 		alert.showAndWait();
 	}
 
-
 	/*
 	 * Instant reactions to settings changed
 	 * -----------------------------------------------------
 	 */
 	public void changeStack(boolean isDevelop) {
-		
+
 		if (ProductService.INSTANCE
 				.switchBranch(isDevelop ? ProductService.DEVELOP_BRANCH : ProductService.PRODUCTION_BRANCH)) {
 			this.engine = (EngineInstance) ProductService.INSTANCE.getInstance(ProductService.PRODUCT_ENGINE);
 			this.modeler = (ModelerInstance) ProductService.INSTANCE.getInstance(ProductService.PRODUCT_MODELER);
 			this.controlCenter = ProductService.INSTANCE.getInstance(ProductService.PRODUCT_CONTROL_CENTER);
-
 			Platform.runLater(() -> setupUI());
 		}
 	}

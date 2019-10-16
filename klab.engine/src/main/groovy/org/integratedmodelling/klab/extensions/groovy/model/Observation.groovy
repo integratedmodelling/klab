@@ -103,16 +103,6 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
                 o.unwrap().context == unwrap().context;
     }
 
-    /*
-     * internal use
-     */
-    //    protected ILocator getTransition() {
-    //        if (binding.hasVariable('_transition')) {
-    //            return binding.getVariable('_transition');
-    //        }
-    //        return null;
-    //    }
-
     IMonitor getMonitor() {
         Object o = binding.getVariable("_monitor");
         if (o instanceof IMonitor) {

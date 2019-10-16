@@ -116,6 +116,7 @@ public enum ProductService {
 		this.binaryWorkspace = ControlCenter.INSTANCE.getSettings().getProductDirectory();
 
 		for (String productId : products) {
+			
 			Product product = new Product(KLAB_REPOSITORY_BASE_URL + "/" + this.currentBranch, productId,
 					new File(this.binaryWorkspace + File.separator + this.currentBranch));
 
