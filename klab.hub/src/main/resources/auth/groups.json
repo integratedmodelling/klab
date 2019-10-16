@@ -40,40 +40,46 @@
 			{
 				"separator": true,
 				"description": "",
-				"label": "Carbon storage"
+				"label": "Carbon storage" 
 			},
 			{
 				"separator": false,
 				"label": "Organic Carbon Mass",
 				"observable": "chemistry:Organic chemistry:Carbon im:Mass",
 				"description": "The total amount of stored carbon originating from ecosystem processes. Includes organic matter in the soil, roots and aerial vegetation.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "FORTHCOMING",
+				"extendedDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi convallis sagittis est. Vivamus interdum sodales tincidunt. Ut sed placerat nisi. Quisque eget felis in mi efficitur tristique. Etiam aliquam lacus eget convallis gravida. Nullam rutrum pharetra nisl, at ultrices magna laoreet nec. Quisque nec tortor sit amet erat tempus lacinia nec et mauris. Fusce ipsum lectus, fringilla condimentum mollis id, eleifend in erat. Suspendisse in lorem eros. Nullam at sapien eget orci molestie tempus. Donec eleifend rutrum ante et semper. Quisque et sollicitudin turpis. Duis tincidunt tortor ut neque vulputate condimentum. Etiam ultrices, erat nec tincidunt porttitor, arcu eros congue neque, a tempor quam sapien sit amet felis. Proin a dui nec orci laoreet malesuada. Pellentesque vitae metus orci. Morbi ac ligula diam. Duis efficitur nec nibh sed convallis. Praesent at viverra tellus. Nulla at felis vel tellus aliquam viverra. In nec fringilla lorem. Suspendisse magna augue, hendrerit mattis ultrices aliquam, lobortis a massa. Donec elementum neque nec ante egestas sollicitudin. Mauris porttitor libero sed elit semper, ut vestibulum tortor mollis. Ut consectetur, arcu euismod laoreet sollicitudin, neque dui ultrices tellus, id feugiat ligula nulla vulputate quam. Integer ipsum felis, iaculis vitae lectus eget, ullamcorper elementum ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam rhoncus ut odio in porttitor. Duis sapien dui, iaculis faucibus tristique quis, ultricies sed mauris."
+				
 			},
 			{
 				"separator": false,
 				"label": "Vegetation Carbon Mass",
 				"observable": "ecology:Vegetation chemistry:Carbon im:Mass",
 				"description": "The total amount of stored carbon in vegetation, including roots and aerial parts.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "EXPERIMENTAL"
 			},
 			{
 				"separator": true,
 				"description": "",
-				"label": "Pollination"
+				"state": "Pollination"
 			},
 			{
 				"separator": false,
 				"label": "Net value of Pollination",
 				"observable": "im:Net value of ecology:Pollination",
 				"description": "The net value of pollination, showing the balance between demand and actual provision in each point of the landscape.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "NEW"
 			},
 			{
 				"separator": false,
 				"label": "Occurrence of Pollinator Insects",
 				"observable": "occurrence of agriculture:Pollinator biology:Insect",
 				"description": "The likelihood of finding pollinator insects in each point, composed of a wheather and a landscape component.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},
 			{
 				"separator": false,
@@ -87,7 +93,8 @@
 				"label": "Landscape suitability for Pollinator Insects",
 				"observable": "occurrence of agriculture:Pollinator biology:Insect caused by ecology:Landscape",
 				"description": "The landscape-related component of the likelihood of finding pollinator insects in each point.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "BETA"
 			},
 			{
 				"separator": true,
@@ -101,7 +108,7 @@
 				"description": "The proportion of the precipitation volume that has a chance of causing a flood due to the morphological characteristics of the terrain.",
 				"semantics": "QUALITY"
 			},
-{
+			{
 				"separator": false,
 				"label": "Avoided precipitation runoff attributable to vegetation",
 				"observable": "im:Differential hydrology:RunoffWaterVolume caused by ecology:Vegetation",
