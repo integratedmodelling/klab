@@ -33,6 +33,13 @@ void cd
 	class org.integratedmodelling.klab.clitool.console.commands.Cd
 }
 
+void cd
+	"Print version and build information"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.Info
+}
+
+
 void ls
 	"List the files in the current work directory"
 {
