@@ -38,6 +38,10 @@ public abstract class Instance implements IInstance {
 	public IProduct getProduct() {
 		return product;
 	}
+	
+	public void setProduct(IProduct product) {
+		this.product = (Product)product;
+	}
 
 	@Override
 	public Status getStatus() {
