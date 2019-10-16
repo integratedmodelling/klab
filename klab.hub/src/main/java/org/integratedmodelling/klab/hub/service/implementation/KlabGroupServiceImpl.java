@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
@@ -52,7 +53,13 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 	public void deleteGroup(String id) {
 		Query query = new Query(Criteria.where("id").is(id));
 		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
-		mongoTemplate.remove(found);
+		if (found.size() == 1) {
+			Optional<KlabGroup> group = Optional.of(found.get(0));
+			mongoTemplate.remove(group);
+			Logging.INSTANCE.info("Deleted Mongo Group: " + group.toString());
+		} else {
+			throw new BadRequestException("More than One Group was found.");
+		}
 	}
 
 	@Override
