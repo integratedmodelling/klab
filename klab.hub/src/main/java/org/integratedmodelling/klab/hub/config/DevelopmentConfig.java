@@ -34,7 +34,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	@Autowired
 	LdapService ldapService;
 	
-	private static final User system = testUser("system", "password", "admin@integratedmodelling.org", "Joe",
+	private static final User system = testUser("system", "password", "test.bc3@integratedmodelling.org", "Joe",
             "Robot", Role.ROLE_USER, Role.ROLE_ADMINISTRATOR, Role.ROLE_SYSTEM);
 	
 	private static final User hades = testUser("hades", "password", "hades@integratedmodelling.org", "Hades",

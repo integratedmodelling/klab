@@ -33,6 +33,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HttpHeaders;
@@ -106,48 +107,44 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-			.cors()
-				.and()
-			.csrf()
-				.disable()
+	http
+		.cors()
+			.and()
+		.csrf()
+			.disable()
 			.exceptionHandling()
-				.authenticationEntryPoint(unauthorizedHandler)
-				.and()
-			.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-			.authorizeRequests()
-				.antMatchers("/oauth2/**")
-					.permitAll()
-				.regexMatchers("/api/users/.*?(activate|password|groups).*")
-					.permitAll()
-				.antMatchers(HttpMethod.POST, "/api/users")
-					.permitAll()
-				.antMatchers("/api/auth-cert/engine", "/api/auth-cert/node")
-					.permitAll()
-				.anyRequest()
-					.authenticated()
-				.and()
-            .oauth2Login()
-            	.authorizationEndpoint()
-            		.baseUri("/oauth2/authorize")
-            		.authorizationRequestRepository(cookieAuthorizationRequestRepository())
-            		.and()
-                .redirectionEndpoint()
-            		.baseUri("/oauth2/callback/*")
-                	.and()
-                .userInfoEndpoint()
-                	.userService(oAuth2UserService)
-                	.and()
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailureHandler);
-				
-		http.antMatcher("/api/**").addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-		http.antMatcher("/oauth2/**").addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+			.authenticationEntryPoint(unauthorizedHandler)
+			.and()
+		.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+		.authorizeRequests()
+			.regexMatchers("/api/users/.*?(activate|password|groups).*")
+			.permitAll()
+			.antMatchers(HttpMethod.POST, "/api/users")
+			.permitAll()
+			.antMatchers("/api/auth-cert/engine", "/api/auth-cert/node")
+			.permitAll()
+			.anyRequest()
+			.authenticated()
+			.and()
+		.oauth2Login()
+			.authorizationEndpoint()
+			.baseUri("/oauth2/authorize")
+			.authorizationRequestRepository(cookieAuthorizationRequestRepository())
+			.and()
+		.redirectionEndpoint()
+			.baseUri("/oauth2/callback/*")
+			.and()
+		.userInfoEndpoint()
+			.userService(oAuth2UserService)
+			.and()
+		.successHandler(oAuth2AuthenticationSuccessHandler)
+		.failureHandler(oAuth2AuthenticationFailureHandler);
 
+		http.cors().and().csrf().disable().antMatcher("/api/**").addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
-
+	/*
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
@@ -167,5 +164,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
+	}
+	*/
+	@Bean
+	public CorsFilter corsFilter() {
+		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		final CorsConfiguration config = new CorsConfiguration();
+		config.setAllowCredentials(true);
+		config.setAllowedOrigins(ImmutableList.of(
+				"https://integratedmodelling.org",
+				"http://localhost:8080",
+				"https://localhost:8080",
+				"http://localhost:8284",
+				"https://localhost:8284"));
+		config.setAllowedHeaders(Collections.singletonList("*"));
+		config.addExposedHeader("Content-disposition");
+		config.addExposedHeader(HttpHeaders.LOCATION);
+		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH", "HEAD"));
+		source.registerCorsConfiguration("/**", config);
+		return new CorsFilter(source);
 	}
 }
