@@ -123,7 +123,7 @@ public class Authentication implements IAuthentication {
 					for (Object group : response.getJSONObject("userData").getJSONArray("groups")) {
 						Group g = new Group();
 						g.name = ((JSONObject)group).getString("id");
-						g.iconUrl = ((JSONObject)group).getString("iconUrl");
+						g.iconUrl = ((JSONObject)group).has("iconUrl") ? ((JSONObject)group).getString("iconUrl") : null;
 						g.description = g.name + " user group";
 						this.groups.add(g);
 					}

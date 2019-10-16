@@ -100,6 +100,8 @@ public class ControlCenter extends Application {
 	private AtomicBoolean engineStarting = new AtomicBoolean(false);
 	private AtomicBoolean engineRunning = new AtomicBoolean(false);
 	private AtomicBoolean modelerStarting = new AtomicBoolean(false);
+	private AtomicBoolean modelerRunning = new AtomicBoolean(false);
+	private AtomicBoolean engineError = new AtomicBoolean(false);
 
 	@FXML
 	Button buttonSettings;
@@ -363,6 +365,8 @@ public class ControlCenter extends Application {
 						engineStarting.set(false);
 						engineRunning.set(false);
 						engineRunButton.setDisable(false);
+						engineError.set(true);
+						downloadButton.setDisable(false);
 						buttonSettings.setDisable(false);
 						buildChoiceBox.setDisable(false);
 						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
@@ -375,6 +379,7 @@ public class ControlCenter extends Application {
 						engineRunning.set(true);
 						engineRunButton.setDisable(false);
 						buttonSettings.setDisable(true);
+						downloadButton.setDisable(true);
 						buildChoiceBox.setDisable(true);
 						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
 						engineRunTooltip.setText("Click to stop the engine");
@@ -389,6 +394,7 @@ public class ControlCenter extends Application {
 						engineRunButton.setDisable(false);
 						buttonSettings.setDisable(false);
 						buildChoiceBox.setDisable(false);
+						downloadButton.setDisable(false);
 						engineButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
 						engineRunTooltip.setText("Click to start the engine");
 						launchExplorerButton.setDisable(true);
@@ -399,6 +405,7 @@ public class ControlCenter extends Application {
 						engineRunning.set(false);
 						engineRunButton.setDisable(true);
 						buttonSettings.setDisable(true);
+						downloadButton.setDisable(true);
 						buildChoiceBox.setDisable(true);
 						launchExplorerButton.setDisable(true);
 						copyExplorerLinkButton.setDisable(true);
@@ -423,24 +430,28 @@ public class ControlCenter extends Application {
 					switch (status) {
 					case ERROR:
 						modelerStarting.set(false);
+						modelerRunning.set(false);
 						modelerRunButton.setDisable(false);
 						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
 						modelerRunTooltip.setText("Click to restart k.Modeler");
 						break;
 					case RUNNING:
 						modelerStarting.set(false);
+						modelerRunning.set(true);
 						modelerRunButton.setDisable(false);
 						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_GREEN));
 						modelerRunTooltip.setText("Click to stop k.Modeler");
 						break;
 					case STOPPED:
 						modelerStarting.set(false);
+						modelerRunning.set(false);
 						modelerRunButton.setDisable(false);
 						modelerButtonIcon.setIconColor(Paint.valueOf(COLOR_BLACK));
 						modelerRunTooltip.setText("Click to start k.Modeler");
 						break;
 					case WAITING:
 						modelerStarting.set(true);
+						modelerRunning.set(false);
 						modelerRunButton.setDisable(true);
 						break;
 					default:
@@ -620,7 +631,7 @@ public class ControlCenter extends Application {
 						engineRunButton.setDisable(!haveChosen && !engineRunning.get());
 					}
 					if (!modelerStarting.get()) {
-						modelerRunButton.setDisable(!haveChosen);
+						modelerRunButton.setDisable(!haveChosen && !modelerRunning.get());
 					}
 				}
 			}
