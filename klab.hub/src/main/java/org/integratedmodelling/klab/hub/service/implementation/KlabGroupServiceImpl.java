@@ -33,7 +33,7 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 		Query query = new Query(Criteria.where("id").is(id));
 		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
 		if (found.size() == 0) {
-			mongoTemplate.save(found.get(0));
+			mongoTemplate.save(group);
 			Logging.INSTANCE.info("Created Mongo Group: " + group.toString());
 		} else {
 			throw new BadRequestException("A group by that name exists with different data.");
