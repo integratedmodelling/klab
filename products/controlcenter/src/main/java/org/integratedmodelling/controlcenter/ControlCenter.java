@@ -26,6 +26,7 @@ import org.integratedmodelling.controlcenter.api.IAuthentication.Group;
 import org.integratedmodelling.controlcenter.api.IAuthentication.Status;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.auth.Authentication;
+import org.integratedmodelling.controlcenter.dialogs.Update;
 import org.integratedmodelling.controlcenter.jre.JreDialog;
 import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
@@ -282,7 +283,7 @@ public class ControlCenter extends Application {
 			dialog.showAndWait();
 			// this won't let us continue unless everything is OK.
 		}
-
+		
 		/*
 		 * read authentication using setting for certificate
 		 */
@@ -1077,7 +1078,7 @@ public class ControlCenter extends Application {
 							.getBuildDate(this.controlCenter.getProduct().getBuilds().get(0));
 					
 					if (available.isAfter(installed)) {
-						new UpdateDialog().showAndWait();
+						Update.show();
 					}
 				} catch (Throwable e) {
 					// just return false
