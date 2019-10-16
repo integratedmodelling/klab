@@ -26,6 +26,11 @@ public class ModelerInstance extends Instance {
 		if (OS.get() == OS.MACOS) {
 			return new File(product.getLocalWorkspace() + File.separator + build + File.separator + "kmodeler.app");
 		}
+		if (OS.get() == OS.UNIX) {
+			File file = new File(product.getLocalWorkspace() + File.separator + build + File.separator + "k.Modeler");
+			file.setExecutable(true);
+			return file;
+		}
 		return new File(product.getLocalWorkspace() + File.separator + build + File.separator + "k.Modeler"
 				+ (OS.get() == OS.WIN ? ".exe" : ""));
 	}
