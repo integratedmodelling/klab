@@ -3,9 +3,7 @@ package org.integratedmodelling.controlcenter.product;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +13,7 @@ import org.integratedmodelling.controlcenter.api.IProduct;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.OS;
+import org.joda.time.DateTime;
 
 public class Product implements IProduct {
 
@@ -27,7 +26,7 @@ public class Product implements IProduct {
 		public File workspace;
 		public Properties properties = new Properties();
 		public Version version = null;
-		public Date time;
+		public DateTime time;
 		public boolean locallyAvailable = false;
 		public boolean remotelyAvailable = true;
 		
@@ -45,7 +44,7 @@ public class Product implements IProduct {
 					ver = ver.substring(0, ver.lastIndexOf("-SNAPSHOT"));
 				}
 				this.version = Version.create(ver);
-				this.time = DateFormat.getInstance().parse(this.properties.getProperty(BUILD_TIME_PROPERTY));
+				this.time = new DateTime(this.properties.getProperty(BUILD_TIME_PROPERTY));
 			} catch (Exception e) {
 				this.remotelyAvailable = false;
 			}
@@ -132,7 +131,7 @@ public class Product implements IProduct {
 	}
 
 	@Override
-	public Date getBuildDate(int build) {
+	public DateTime getBuildDate(int build) {
 		return builds.get(build).time;
 	}
 
