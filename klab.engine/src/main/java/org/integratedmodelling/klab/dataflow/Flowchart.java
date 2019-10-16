@@ -653,6 +653,14 @@ public class Flowchart {
 			}
 			types.put(act.getAlias(), Observables.INSTANCE.getObservableType(((Actuator) act).getObservable(), true));
 		}
+		if (context.getModel() != null) {
+			for (IObservable dependency : context.getModel().getDependencies()) {
+				if (dependency.is(IKimConcept.Type.QUALITY)) {
+					stateAliases.add(dependency.getName());
+					types.put(dependency.getName(), Observables.INSTANCE.getObservableType(dependency, true));
+				}
+			}
+		}
 		Descriptor descriptor = Extensions.INSTANCE.getLanguageProcessor(explang).describe(expcode, new Context() {
 
 			@Override

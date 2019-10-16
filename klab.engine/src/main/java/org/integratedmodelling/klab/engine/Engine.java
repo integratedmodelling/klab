@@ -559,7 +559,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 */
 			this.authorities.add(new SimpleGrantedAuthority(Roles.ENGINE));
 			Authentication.INSTANCE.registerIdentity(this);
-
+			Logging.INSTANCE.info("Engine authenticated and registered");
+			
 			/*
 			 * Load the service workspace last. TODO we may want to reset it if the load
 			 * fails.

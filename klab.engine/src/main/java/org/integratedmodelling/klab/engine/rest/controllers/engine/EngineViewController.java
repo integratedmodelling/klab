@@ -234,6 +234,13 @@ public class EngineViewController {
 			} else if (format == GeometryType.COLORMAP) {
 
 				StateSummary summary = Observations.INSTANCE.getStateSummary((IState) obs, loc);
+				if (summary.getColormap() == null) {
+					/*
+					 * force rendering before images are made. Adding the colormap to the
+					 * state summary is a side effect.
+					 */
+					Renderer.INSTANCE.getRasterSymbolizer((IState) obs, loc);
+				}
 				if (summary.getColormap() != null) {
 					response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 					response.getWriter().write(JsonUtils.printAsJson(summary.getColormap()));

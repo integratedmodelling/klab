@@ -201,6 +201,8 @@ public class Scale implements IScale {
 				this.time = (ITime) ext;
 			}
 		}
+		
+		sort();
 
 	}
 
@@ -229,6 +231,8 @@ public class Scale implements IScale {
 				this.time = (ITime) newExt;
 			}
 		}
+		
+		sort();
 	}
 
 	/**
@@ -379,7 +383,7 @@ public class Scale implements IScale {
 		return getSpace() != null && getSpace().size() > 1;
 	}
 
-	protected void sort() {
+	protected Scale sort() {
 
 		ArrayList<IExtent> order = new ArrayList<>(extents);
 
@@ -445,6 +449,8 @@ public class Scale implements IScale {
 		cursor.defineDimensions(dims);
 		extents = order;
 		geometry = null;
+		
+		return this;
 	}
 
 	@Override
@@ -951,7 +957,7 @@ public class Scale implements IScale {
 			scale = ret;
 		}
 
-		return scale;
+		return scale.sort();
 	}
 
 	public Scale minus(Type extent) {
@@ -1388,6 +1394,15 @@ public class Scale implements IScale {
 	public boolean is(String string) {
 		return asGeometry().is(string);
 	}
-
+	
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Scale && ((Scale)o).asGeometry().equals(asGeometry());
+	}
+	
+	@Override
+	public int hashCode() {
+		return asGeometry().hashCode();
+	}
 
 }
