@@ -212,9 +212,90 @@
 				"semantics": "QUALITY",
 				"state": "BETA",
 				"extendedDescription": "A spatial multi-criteria analysis based on supply values from 5 ecosystem services: carbon storage, sediment regulation, flood regulation, pollination and outdoor recreation. The algorithm is a concordance analysis that interprets the outputs of the models through the lenses of importance weights supplied by stakeholders. The analysis runs with equal weights, but default values can be changed by the user at runtime if the EXplorer is in interactive mode."
-			
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Biomass Supply"
+			},
+            {
+				"separator": false,
+				"label": "Maize Crop Yield",
+				"observable": "im:Theoretical agriculture:Maize agriculture:Yield",
+				"description": "The tannual potential maize yield, in kilograms per hectare.",
+				"semantics": "QUALITY",
+				"state": "EXPERIMENTAL",
+				"extendedDescription": "Warning: this model assumes that all the land classified as agricultural vegetation is devoted to maize."
+			},
+			{
+				"separator": false,
+				"label": "Wood Biomass Harvest",
+				"observable": "im:Theoretical ecology:Biomass of ecology:TreeVegetation ecology:Community",
+				"description": "The annual potential wood biomass harvest, in cubic meters per hectare.",
+				"semantics": "QUALITY",
+				"state": "EXPERIMENTAL",
+				"extendedDescription": "This model runs a Bayesian Network learned from data in geographical context between the Atlantic and the Mediterranean coasts in Wetsern Europe. Its extrapolation to other regions should thus be done cautiously."
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Non-Timber Forest ES Monetary Valuation"
+			},
+			{
+				"separator": false,
+				"label": "Monetary Value of Water from Forests",
+				"observable": "im:Potential value of hydrology:WaterVolume caused by landcover:Forest earth:Region",
+				"description": "Monetary value of water services, in 2013 USD (PPP)",
+				"semantics": "QUALITY",
+				"state": "NEW",
+				"extendedDescription": "This model is based on a regression function of the monetary value of water services, implemented to demonstrate spatially explicit meta-analyses."
+			},
+			{
+				"separator": false,
+				"label": "Monetary Value of Non-Wood Forest Products",
+				"observable": "im:Potential value of value of not infrastructure.incubation:Timber ecology:Biomass caused by landcover:Forest earth:Region",
+				"description": "Monetary value of non-wood forest products, in 2013 USD (PPP)",
+				"semantics": "QUALITY",
+				"state": "NEW",
+				"extendedDescription": "This model is based on a regression function of the monetary value of non-wood forest products, implemented to demonstrate spatially explicit meta-analyses."
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Hydrology"
+			},
+			{
+				"separator": false,
+				"label": "Quick-flow Water Volume",
+				"observable": "",
+				"description": "Land surface runoff occurring during or shortly after rain events",
+				"semantics": "QUALITY",
+				"state": "FORTHCOMING",
+				"extendedDescription": "Quick-flow, representing the generation of streamflow with watershed residence times of hours to days, is a function of the amount of rain runs off from the land surface quickly versus infiltrating into the soil. In the simplest version without customization, the runoff is determined with a curve number (CN)-based approach, by using event-based meteorological data and CN lookup tables based on hydrological soil groups and land-use-land-cover (LULC) types. The model computes the monthly runoff by assuming an exponential distribution of daily precipitation depths on days with rain."
+			},
+			{
+			    "separator": false,
+				"label": "Base-flow Water Volume",
+				"observable": "",
+				"description": "Subsurface base-flow occurring during dry weather",
+				"semantics": "QUALITY",
+				"state": "FORTHCOMING",
+				"extendedDescription": "Base-flow, defined as the generation of streamflow with watershed residence times of months to years, is a function of the amount of flow leaving the pixel and of the relative contribution to recharge of this pixel. It derives from the proportion of the cumulative base-flow leaving pixels, with respect to the available recharge to the upstream cumulative recharge."
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Fire"
+			},
+			{
+			    "separator": false,
+				"label": "Probability of Wildfire Ignition ",
+				"observable": "",
+				"description": "The risk of fire ignition based on social and biophisical drivers",
+				"semantics": "QUALITY",
+				"state": "FORTHCOMING",
+				"extendedDescription": "A spatially distributed machine learning model trained with historical wildfire ignition data"
 			}
-
 		]
 	}
 }
