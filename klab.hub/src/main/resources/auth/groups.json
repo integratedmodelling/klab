@@ -48,9 +48,7 @@
 				"observable": "chemistry:Organic chemistry:Carbon im:Mass",
 				"description": "The total amount of stored carbon originating from ecosystem processes. Includes organic matter in the soil, roots and aerial vegetation.",
 				"semantics": "QUALITY",
-				"state": "FORTHCOMING",
-				"extendedDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi convallis sagittis est. Vivamus interdum sodales tincidunt. Ut sed placerat nisi. Quisque eget felis in mi efficitur tristique. Etiam aliquam lacus eget convallis gravida. Nullam rutrum pharetra nisl, at ultrices magna laoreet nec. Quisque nec tortor sit amet erat tempus lacinia nec et mauris. Fusce ipsum lectus, fringilla condimentum mollis id, eleifend in erat. Suspendisse in lorem eros. Nullam at sapien eget orci molestie tempus. Donec eleifend rutrum ante et semper. Quisque et sollicitudin turpis. Duis tincidunt tortor ut neque vulputate condimentum. Etiam ultrices, erat nec tincidunt porttitor, arcu eros congue neque, a tempor quam sapien sit amet felis. Proin a dui nec orci laoreet malesuada. Pellentesque vitae metus orci. Morbi ac ligula diam. Duis efficitur nec nibh sed convallis. Praesent at viverra tellus. Nulla at felis vel tellus aliquam viverra. In nec fringilla lorem. Suspendisse magna augue, hendrerit mattis ultrices aliquam, lobortis a massa. Donec elementum neque nec ante egestas sollicitudin. Mauris porttitor libero sed elit semper, ut vestibulum tortor mollis. Ut consectetur, arcu euismod laoreet sollicitudin, neque dui ultrices tellus, id feugiat ligula nulla vulputate quam. Integer ipsum felis, iaculis vitae lectus eget, ullamcorper elementum ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam rhoncus ut odio in porttitor. Duis sapien dui, iaculis faucibus tristique quis, ultricies sed mauris."
-				
+				"state": "STABLE"
 			},
 			{
 				"separator": false,
@@ -58,7 +56,7 @@
 				"observable": "ecology:Vegetation chemistry:Carbon im:Mass",
 				"description": "The total amount of stored carbon in vegetation, including roots and aerial parts.",
 				"semantics": "QUALITY",
-				"state": "EXPERIMENTAL"
+				"state": "STABLE"
 			},
 			{
 				"separator": true,
@@ -71,7 +69,7 @@
 				"observable": "im:Net value of ecology:Pollination",
 				"description": "The net value of pollination, showing the balance between demand and actual provision in each point of the landscape.",
 				"semantics": "QUALITY",
-				"state": "NEW"
+				"state": "STABLE"
 			},
 			{
 				"separator": false,
@@ -86,7 +84,8 @@
 				"label": "Weather suitability for Pollinator Insects",
 				"observable": "occurrence of agriculture:Pollinator biology:Insect caused by earth:Weather",
 				"description": "The weather-related component of the likelihood of finding pollinator insects in each point.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},
 			{
 				"separator": false,
@@ -94,7 +93,7 @@
 				"observable": "occurrence of agriculture:Pollinator biology:Insect caused by ecology:Landscape",
 				"description": "The landscape-related component of the likelihood of finding pollinator insects in each point.",
 				"semantics": "QUALITY",
-				"state": "BETA"
+				"state": "STABLE"
 			},
 			{
 				"separator": true,
@@ -103,37 +102,36 @@
 			},
 			{
 				"separator": false,
-				"label": "Proportion of precipitation potentially causing flood",
+				"label": "Proneness to flooding",
 				"observable": "im:Potential proportion of earth:PrecipitationVolume causing earth:Flood",
-				"description": "The proportion of the precipitation volume that has a chance of causing a flood due to the morphological characteristics of the terrain.",
-				"semantics": "QUALITY"
-			},
-			{
-				"separator": false,
-				"label": "Avoided precipitation runoff attributable to vegetation",
-				"observable": "im:Differential hydrology:RunoffWaterVolume caused by ecology:Vegetation",
-				"description": "The difference between the precipitation runoff that would be seen if vegetation was not present and the actual runoff.",
-				"semantics": "QUALITY"
+				"description": "The flood hazard based on topographic wetness index, precipitation and temperature",
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},			{
 				"separator": false,
 				"label": "Potential value of FloodRegulation",
 				"observable": "im:Potential value of es:FloodRegulation",
 				"description": "The potential for flood regulation offered by the natural features in each point, considering their effect on areas downstream.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "BETA",
+				"extendedDescription": "Warning: This observable depends on runoff water volume, which can only be calculated at the watershed scale. For this reason the system will delineate the main watershed within the current context, and then divide the sub-catchment areas and specify the watershed outlet for each sub-catchment."
 			},
 			{
 				"separator": false,
 				"label": "Demanded value of FloodRegulation",
 				"observable": "ses:Demanded value of es:FloodRegulation",
 				"description": "The demand component for the flood regulation service, based on the presence of humans or infrastructural assets in flood-prone areas.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "EXPERIMENTAL"
 			},
 			{
 				"separator": false,
 				"label": "Value of flood regulation",
 				"observable": "value of es:FloodRegulation",
 				"description": "The overall value of flood regulation in each point, combining the potential supply with the demand in the area.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "BETA",
+				"extendedDescription": "Warning: This observable depends on runoff water volume, which can only be calculated at the watershed scale. For this reason the system will delineate the main watershed within the current context, and then divide the sub-catchment areas and specify the watershed outlet for each sub-catchment."
 			},
 			{
 				"separator": true,
@@ -145,35 +143,40 @@
 				"label": "Value of Outdoor Recreation",
 				"observable": "value of behavior:Outdoor behavior:Recreation",
 				"description": "The accrued value of outdoor recreation, combining supply and demand in each cell through a Cobb-Douglas function.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},
 			{
 				"separator": false,
 				"label": "Net value of Outdoor Recreation",
 				"observable": "im:Net value of behavior:Outdoor behavior:Recreation",
 				"description": "The difference between the supply and demand of outdoor recreation in each cell.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},
 			{
 				"separator": false,
 				"label": "Demanded value of Outdoor Recreation",
 				"observable": "ses:Demanded value of behavior:Outdoor behavior:Recreation",
 				"description": "The demand for outdoors recreation based on population density and travel time to attractive natural areas.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},
 			{
 				"separator": false,
 				"label": "Potential Value of Outdoor Recreation",
 				"observable": "im:Potential value of behavior:Outdoor behavior:Recreation",
 				"description": "The Recreation Opportunity Spectrum, or the potential value based on natural attractiveness and accessibility of each cell.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},
 			{
 				"separator": false,
 				"label": "Theoretical value of Outdoor Recreation",
 				"observable": "im:Theoretical value of behavior:Outdoor behavior:Recreation",
 				"description": "The theoretical value for outdoor recreation based on natural values alone, without considering accessibility.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},
 			{
 				"separator": true,
@@ -185,14 +188,16 @@
 				"label": "Retained Soil Mass caused by Vegetation",
 				"observable": "im:Retained soil:Soil im:Mass caused by ecology:Vegetation",
 				"description": "The retained sediment mass due to the effect of vegetation, in tons per hectare.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},
 			{
 				"separator": false,
 				"label": "Potential Removed Soil Mass",
 				"observable": "im:Potential (im:Removed soil:Soil im:Mass)",
 				"description": "The result of applying the Revised Universal Soil Loss equation, representing total sediment loss.",
-				"semantics": "QUALITY"
+				"semantics": "QUALITY",
+				"state": "STABLE"
 			},
 			{
 				"separator": true,
@@ -204,14 +209,10 @@
 				"label": "Combined value of ecosystem services supply",
 				"observable": "im:Potential value of ses:EcosystemBenefitFlow im:Process",
 				"description": "A user-prioritized multiple criteria ranking of the region of interest according to the provision of ecosystem services.",
-				"semantics": "QUALITY"
-			},
-			{
-				"separator": false,
-				"label": "Ecosystem services hotspots",
-				"observable": "earth:Region with im:Relevant value of ses:EcosystemBenefitFlow im:Process",
-				"description": "Delineate regions with elevated combined value of ecosystem services provision, computed by clustering areas of high ES value.",
-				"semantics": "SUBJECT"
+				"semantics": "QUALITY",
+				"state": "BETA",
+				"extendedDescription": "A spatial multi-criteria analysis based on supply values from 5 ecosystem services: carbon storage, sediment regulation, flood regulation, pollination and outdoor recreation. The algorithm is a concordance analysis that interprets the outputs of the models through the lenses of importance weights supplied by stakeholders. The analysis runs with equal weights, but default values can be changed by the user at runtime if the EXplorer is in interactive mode."
+			
 			}
 
 		]
