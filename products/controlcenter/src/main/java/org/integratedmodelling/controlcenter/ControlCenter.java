@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Timer;
@@ -24,6 +26,7 @@ import org.integratedmodelling.controlcenter.api.IAuthentication.Group;
 import org.integratedmodelling.controlcenter.api.IAuthentication.Status;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.auth.Authentication;
+import org.integratedmodelling.controlcenter.dialogs.Update;
 import org.integratedmodelling.controlcenter.jre.JreDialog;
 import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
@@ -35,6 +38,7 @@ import org.integratedmodelling.controlcenter.runtime.EngineInstance.EngineInfo;
 import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -91,6 +95,9 @@ public class ControlCenter extends Application {
 	private static final String DEFAULT_JRE_DOWNLOAD_URL = "http://www.integratedmodelling.org/downloads";
 	private static final String IM_EULA_URL = "http://integratedmodelling.org/statics/terms/terms.html";
 	private static final String IM_SUPPORT_URL = "https://integratedmodelling.org/confluence/questions";
+
+	private static final String CONTROLCENTER_DATE_PROPERTY = "klab.controlcenter.latest";
+	private boolean ccUpdateShown = false;
 
 	public static ControlCenter INSTANCE;
 
@@ -277,7 +284,7 @@ public class ControlCenter extends Application {
 			dialog.showAndWait();
 			// this won't let us continue unless everything is OK.
 		}
-
+		
 		/*
 		 * read authentication using setting for certificate
 		 */
@@ -1063,7 +1070,38 @@ public class ControlCenter extends Application {
 	 */
 	private synchronized boolean checkForCCUpdates() {
 
-		if (this.controlCenter != null) {
+		if (this.ccUpdateShown) {
+			/*
+			 * once is enough.
+			 */
+			return false;
+		}
+		
+		if (this.controlCenter != null && this.controlCenter.getProduct().getBuilds().size() > 0) {
+			String existing = Configuration.INSTANCE.getProperties().getProperty(CONTROLCENTER_DATE_PROPERTY);
+			if (existing != null) {
+				try {
+					DateTime installed = new DateTime(existing);
+					DateTime available = this.controlCenter.getProduct()
+							.getBuildDate(this.controlCenter.getProduct().getBuilds().get(0));
+					
+					if (available.isAfter(installed)) {
+						this.ccUpdateShown = true;
+						Update.show();
+					}
+				} catch (Throwable e) {
+					// just return false
+				}
+			} else {
+				
+				// first download, assume we're getting the latest from a website link.
+				DateTime available = this.controlCenter.getProduct()
+						.getBuildDate(this.controlCenter.getProduct().getBuilds().get(0));
+				if (available != null) {
+					Configuration.INSTANCE.getProperties().setProperty(CONTROLCENTER_DATE_PROPERTY, available.toString());
+					Configuration.INSTANCE.save();
+				}
+			}
 		}
 
 		return false;

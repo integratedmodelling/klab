@@ -1,11 +1,11 @@
 package org.integratedmodelling.controlcenter.api;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.utils.OS;
+import org.joda.time.DateTime;
 
 public interface IProduct {
 
@@ -173,6 +173,6 @@ public interface IProduct {
 	 * @param build
 	 * @return
 	 */
-	Date getBuildDate(int build);
+	DateTime getBuildDate(int build);
 
 }

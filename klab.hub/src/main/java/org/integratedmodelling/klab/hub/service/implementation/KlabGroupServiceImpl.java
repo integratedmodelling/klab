@@ -54,9 +54,8 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 		Query query = new Query(Criteria.where("id").is(id));
 		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
 		if (found.size() == 1) {
-			Optional<KlabGroup> group = Optional.of(found.get(0));
-			mongoTemplate.remove(group);
-			Logging.INSTANCE.info("Deleted Mongo Group: " + group.toString());
+			mongoTemplate.remove(found.get(0));
+			Logging.INSTANCE.info("Deleted Mongo Group: " + id);
 		} else {
 			throw new BadRequestException("More than One Group was found.");
 		}
