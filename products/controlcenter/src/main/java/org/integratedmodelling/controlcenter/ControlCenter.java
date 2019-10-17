@@ -40,6 +40,7 @@ import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.utils.BrowserUtils;
+import org.integratedmodelling.klab.utils.OS;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -695,7 +696,10 @@ public class ControlCenter extends Application {
 
 	public URL getJreDownloadUrl() {
 		try {
-			return new URL(properties.getProperty(JREDIR_PROPERTY, DEFAULT_JRE_DOWNLOAD_URL));
+			String osInfix = OS.get() == OS.WIN ? "win" : OS.get() == OS.UNIX ? "linux" : "mac";
+			return new URL(properties.getProperty(JREDIR_PROPERTY,
+			DEFAULT_JRE_DOWNLOAD_URL + "/jre18_" + osInfix + ".zip"));
+			// return new URL(properties.getProperty(JREDIR_PROPERTY, DEFAULT_JRE_DOWNLOAD_URL));
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
