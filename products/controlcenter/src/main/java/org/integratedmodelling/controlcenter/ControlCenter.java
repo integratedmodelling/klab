@@ -97,6 +97,7 @@ public class ControlCenter extends Application {
 	private static final String IM_SUPPORT_URL = "https://integratedmodelling.org/confluence/questions";
 
 	private static final String CONTROLCENTER_DATE_PROPERTY = "klab.controlcenter.latest";
+	private boolean ccUpdateShown = false;
 
 	public static ControlCenter INSTANCE;
 
@@ -1069,6 +1070,13 @@ public class ControlCenter extends Application {
 	 */
 	private synchronized boolean checkForCCUpdates() {
 
+		if (this.ccUpdateShown) {
+			/*
+			 * once is enough.
+			 */
+			return false;
+		}
+		
 		if (this.controlCenter != null && this.controlCenter.getProduct().getBuilds().size() > 0) {
 			String existing = Configuration.INSTANCE.getProperties().getProperty(CONTROLCENTER_DATE_PROPERTY);
 			if (existing != null) {
@@ -1078,6 +1086,7 @@ public class ControlCenter extends Application {
 							.getBuildDate(this.controlCenter.getProduct().getBuilds().get(0));
 					
 					if (available.isAfter(installed)) {
+						this.ccUpdateShown = true;
 						Update.show();
 					}
 				} catch (Throwable e) {

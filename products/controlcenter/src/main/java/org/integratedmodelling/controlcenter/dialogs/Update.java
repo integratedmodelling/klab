@@ -17,7 +17,7 @@ public class Update extends AnchorPane {
 			loader.setRoot(this);
 			Parent root = loader.load();
 		    Stage stage = new Stage();
-		    stage.setScene(new Scene(root, 442, 198));
+		    stage.setScene(new Scene(root, 480, 198));
 		    stage.show();
 		} catch (IOException e) {
 			e.printStackTrace();

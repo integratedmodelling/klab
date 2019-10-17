@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="198.0" prefWidth="442.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.dialogs.UpdateDialog">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="206.0" prefWidth="480.0" type="AnchorPane" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.dialogs.UpdateDialog">
    <children>
       <FontIcon iconColor="RED" iconLiteral="dashicons-warning" iconSize="32" layoutX="24.0" layoutY="61.0" />
       <Label layoutX="65.0" layoutY="34.0" text="A k.LAB Control Center update is available">
@@ -15,9 +15,9 @@
             <Font name="Arial" size="18.0" />
          </font>
       </Label>
-      <Label layoutX="64.0" layoutY="61.0" prefHeight="76.0" prefWidth="342.0" text="For k.LAB to work smoothly, it is important that the Control Center is up to date. Please exit the Control Center now and proceed to the web site to download the updated software. If you must continue, please update at your earliest convenience." wrapText="true" />
-      <Button fx:id="continueButton" layoutX="332.0" layoutY="155.0" mnemonicParsing="false" onAction="#handleContinue" text="Continue" />
-      <Button layoutX="260.0" layoutY="155.0" mnemonicParsing="false" onAction="#handleExit" prefHeight="26.0" prefWidth="65.0" text="Exit" />
-      <Hyperlink layoutX="65.0" layoutY="156.0" onAction="#openDownloadSite" text="🡆 k.LAB download page" />
+      <Label layoutX="56.0" layoutY="56.0" prefHeight="86.0" prefWidth="390.0" text="For k.LAB to work smoothly, it is important that the Control Center is up to date. Please exit the Control Center and visit the web site to download the updated software. If you must continue, update at your earliest convenience." wrapText="true" />
+      <Button fx:id="continueButton" layoutX="342.0" layoutY="155.0" mnemonicParsing="false" onAction="#handleContinue" text="Continue" />
+      <Button layoutX="267.0" layoutY="154.0" mnemonicParsing="false" onAction="#handleExit" prefHeight="26.0" prefWidth="65.0" text="Exit" />
+      <Hyperlink layoutX="56.0" layoutY="156.0" onAction="#openDownloadSite" text="🡆 k.LAB download page" />
    </children>
 </fx:root>
