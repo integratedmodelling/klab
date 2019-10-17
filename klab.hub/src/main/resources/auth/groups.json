@@ -61,7 +61,7 @@
 			{
 				"separator": true,
 				"description": "",
-				"state": "Pollination"
+				"label ": "Pollination"
 			},
 			{
 				"separator": false,
