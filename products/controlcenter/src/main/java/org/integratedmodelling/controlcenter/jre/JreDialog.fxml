@@ -11,7 +11,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="242.0" prefWidth="421.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.klab.launcher.JreDialogController">
+<AnchorPane prefHeight="242.0" prefWidth="421.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.jre.JreDialogController">
    <children>
       <DialogPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <Label fx:id="message" layoutX="37.0" layoutY="89.0" prefHeight="79.0" prefWidth="353.0" textFill="#000000d6" wrapText="true">
