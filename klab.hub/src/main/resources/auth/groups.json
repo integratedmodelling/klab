@@ -320,7 +320,7 @@
 			},
 			{
 			    "separator": false,
-				"label": "Effect of climate on vegetation growth.",
+				"label": "Effect of climate on vegetation growth",
 				"observable": "",
 				"description": "An index quantifying the influence of climatic factors on vegetation growth",
 				"semantics": "PROCESS",
