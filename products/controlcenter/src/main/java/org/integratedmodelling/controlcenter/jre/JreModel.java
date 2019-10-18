@@ -2,6 +2,7 @@ package org.integratedmodelling.controlcenter.jre;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import org.integratedmodelling.controlcenter.ControlCenter;
@@ -25,19 +26,42 @@ public enum JreModel {
 	private JreModel() {
 		refresh();
 	}
-
+	
 	public void refresh() {
-
-		haveKlabSetting = ControlCenter.INSTANCE.getProperties().getProperty(ControlCenter.JREDIR_PROPERTY) != null;
-		jreDirectory = new File(ControlCenter.INSTANCE.getProperties().getProperty(ControlCenter.JREDIR_PROPERTY,
-				ControlCenter.INSTANCE.getWorkdir() + File.separator + "jre" + File.separator + "bin"));
-		haveSpecifiedJre = jreDirectory.exists();
-		haveJavaHome = System.getenv("JAVA_HOME") != null;
-		if (haveJavaHome) {
-			isPublicJavaOk = new File(System.getenv("JAVA_HOME") + File.separator + "jre" + File.separator + "bin")
-					.isDirectory();
-			if (!haveSpecifiedJre) {
-				jreDirectory = new File(System.getenv("JAVA_HOME") + File.separator + "jre" + File.separator + "bin");
+		Properties properties = ControlCenter.INSTANCE.getProperties();
+		// try to find klab settings
+		haveKlabSetting = properties.getProperty(ControlCenter.JREDIR_PROPERTY) != null;
+		// if is a refresh with a jre setted, we don't want to change it
+		if (jreDirectory == null) {
+			// is not a refresh
+			jreDirectory = new File(
+					properties.getProperty(ControlCenter.JREDIR_PROPERTY, ControlCenter.INSTANCE.getWorkdir() + File.separator + "jre" + File.separator + "bin"));
+		}
+		haveSpecifiedJre = jreDirectory.exists() && jreDirectory.isDirectory();
+		if (haveSpecifiedJre) {
+			// if jre is detected, we don't need to check the public java
+			isPublicJavaOk = true;
+		} else {
+			// try to find a solution using the $JAVA_HOME or the java.home system property
+			String javaHome = System.getenv("JAVA_HOME");
+			/*
+			if ((javaHome = System.getenv("JAVA_HOME")) == null) {
+				javaHome = System.getProperty("java.home");
+			}
+			*/
+			if (haveJavaHome = javaHome != null) {
+				// try to find bin directory
+				// before if is JRE...
+				String binPath = javaHome + File.separator + "bin";
+				isPublicJavaOk = new File(binPath).isDirectory();
+				if (!isPublicJavaOk) {
+					// ...else if is JDK, we search jre/bin directory
+					binPath = javaHome + File.separator + "jre" + File.separator + "bin";
+					isPublicJavaOk = new File(binPath).isDirectory();
+				}
+				if (!haveSpecifiedJre) {
+					jreDirectory = new File(binPath);
+				}
 			}
 		}
 	}
@@ -49,7 +73,7 @@ public enum JreModel {
 		if (haveKlabSetting && !haveSpecifiedJre) {
 			ret = "Your k.LAB settings specify a JRE that does not seem to exist.";
 		} else if (haveJavaHome && !isPublicJavaOk) {
-			ret = "Your JAVA_HOME environmental variable seems to point to a non-existing installation.";
+			ret = "Your java executable does not seem to be standard distribution.";
 		} else if (jreDirectory == null || !haveJavaHome && !haveSpecifiedJre) {
 			ret = "You don't seem to have Java installed.";
 		}
