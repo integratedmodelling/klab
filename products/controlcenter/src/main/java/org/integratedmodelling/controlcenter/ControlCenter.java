@@ -13,8 +13,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Timer;
@@ -101,6 +99,8 @@ public class ControlCenter extends Application {
 	private static final String IM_SUPPORT_URL = "https://integratedmodelling.org/confluence/questions";
 
 	private static final String CONTROLCENTER_DATE_PROPERTY = "klab.controlcenter.latest";
+	private static final String CONTROLCENTER_TIMESTAMP_PROPERTY = "klab.controlcenter.timestamp";
+	
 	private boolean ccUpdateShown = false;
 
 	public static ControlCenter INSTANCE;
@@ -1110,10 +1110,15 @@ public class ControlCenter extends Application {
 	 * If there is a new CC update, alert and ask if we should download; if so,
 	 * download in modal window, [launch installer] and return true, which will
 	 * terminate the application.
-	 * 
+	 *
 	 * @return
 	 */
 	private synchronized boolean checkForCCUpdates() {
+
+		if (Timestamp.BUILD_TIMESTAMP.startsWith("@")) {
+			// not an official build.
+			return false;
+		}
 
 		if (this.ccUpdateShown) {
 			/*
@@ -1121,16 +1126,49 @@ public class ControlCenter extends Application {
 			 */
 			return false;
 		}
-		
+
+		// look for the timestamp of the previous run of the control center.
+		// previouslyRunTimestamp = -1 if an official
+		// build was never run or >0 if so.
+		DateTime timestamp = DateTime.parse(Timestamp.BUILD_TIMESTAMP.replace(' ', 'T') + ":00");
+		String savedTimestamp = Configuration.INSTANCE.getProperties().getProperty(CONTROLCENTER_TIMESTAMP_PROPERTY);
+		Long previouslyRunTimestamp = savedTimestamp == null ? -1 : Long.parseLong(savedTimestamp);
+		Long currentInstanceTimestamp = timestamp.getMillis();
+
+		// save the timestamp of the instance currently being run for next time.
+		Configuration.INSTANCE.getProperties().setProperty(CONTROLCENTER_TIMESTAMP_PROPERTY,
+				"" + currentInstanceTimestamp);
+		Configuration.INSTANCE.save();
+
 		if (this.controlCenter != null && this.controlCenter.getProduct().getBuilds().size() > 0) {
+
 			String existing = Configuration.INSTANCE.getProperties().getProperty(CONTROLCENTER_DATE_PROPERTY);
 			if (existing != null) {
 				try {
 					DateTime installed = new DateTime(existing);
 					DateTime available = this.controlCenter.getProduct()
 							.getBuildDate(this.controlCenter.getProduct().getBuilds().get(0));
-					
+
 					if (available.isAfter(installed)) {
+
+						/*
+						 * the date of the last build we installed is higher, but the user may have
+						 * updated, in which case we need to update the date. We use the timestamps to
+						 * check; no timestamp = -1 so the test still works.
+						 */
+
+						boolean haveUpdatedAlready = currentInstanceTimestamp > previouslyRunTimestamp;
+
+						if (haveUpdatedAlready) {
+							// the new build is the one we have. Save the remote date to detect any next
+							// update later without checks and
+							// return false
+							Configuration.INSTANCE.getProperties().setProperty(CONTROLCENTER_DATE_PROPERTY,
+									available.toString());
+							Configuration.INSTANCE.save();
+							return false;
+						}
+
 						this.ccUpdateShown = true;
 						Update.show();
 					}
@@ -1138,12 +1176,13 @@ public class ControlCenter extends Application {
 					// just return false
 				}
 			} else {
-				
+
 				// first download, assume we're getting the latest from a website link.
 				DateTime available = this.controlCenter.getProduct()
 						.getBuildDate(this.controlCenter.getProduct().getBuilds().get(0));
 				if (available != null) {
-					Configuration.INSTANCE.getProperties().setProperty(CONTROLCENTER_DATE_PROPERTY, available.toString());
+					Configuration.INSTANCE.getProperties().setProperty(CONTROLCENTER_DATE_PROPERTY,
+							available.toString());
 					Configuration.INSTANCE.save();
 				}
 			}
