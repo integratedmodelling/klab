@@ -1093,7 +1093,6 @@ public class ControlCenter extends Application {
 
 	public synchronized void checkForUpdates() {
 
-		messageLabel.setText("Checking for updates...");
 		if (checkForCCUpdates()) {
 			System.exit(0);
 		}
@@ -1102,7 +1101,6 @@ public class ControlCenter extends Application {
 		this.modeler.setProduct(ProductService.INSTANCE.getProduct(ProductService.PRODUCT_MODELER));
 		((Instance) this.controlCenter)
 				.setProduct(ProductService.INSTANCE.getProduct(ProductService.PRODUCT_CONTROL_CENTER));
-		messageLabel.setText("");
 		setupUI();
 	}
 
