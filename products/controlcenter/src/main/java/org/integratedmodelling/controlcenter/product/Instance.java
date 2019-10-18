@@ -3,6 +3,8 @@ package org.integratedmodelling.controlcenter.product;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;
+import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
 import org.integratedmodelling.controlcenter.product.Product.Build;
 import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
@@ -63,10 +66,12 @@ public abstract class Instance implements IInstance {
 			// we need to use Desktop, so no way to know if it is closed, we don't touch the
 			// status
 			try {
-				Desktop.getDesktop().open(((ModelerInstance)this).getExecutable(build));
+            	File executable = ((ModelerInstance)this).getExecutable(build);
+				Desktop.getDesktop().open(executable);
 			} catch (Throwable e) {
 				ControlCenter.INSTANCE.errorAlert("Could not launch the Eclipse product. Please launch it manually in "
 						+ product.getLocalWorkspace());
+				return false;
 			}
 			return true;
 		}

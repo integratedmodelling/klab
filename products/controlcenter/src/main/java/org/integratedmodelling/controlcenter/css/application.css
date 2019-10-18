@@ -1,11 +1,7 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
-#pane{
-    -fx-background-image: url("logo_white_256.png");
-    -fx-background-repeat: stretch;   
-    /* -fx-background-size: 900 506;*/
-    -fx-background-position: top left;
-    /* -fx-effect: dropshadow(three-pass-box, black, 30, 0.5, 0, 0); */
-    /* -fx-font-size: 11px;  Find a solution for mac and linux align problems */
+#main-pane{
+    -fx-font-family: "Abyssinica SIL";
+    -fx-font-size: 14px;
 }
 
 #round-button {

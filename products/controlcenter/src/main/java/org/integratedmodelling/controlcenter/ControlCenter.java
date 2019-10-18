@@ -6,12 +6,13 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
-import java.util.Date;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Timer;
@@ -40,6 +41,7 @@ import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.utils.BrowserUtils;
+import org.integratedmodelling.klab.utils.OS;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -97,6 +99,8 @@ public class ControlCenter extends Application {
 	private static final String IM_SUPPORT_URL = "https://integratedmodelling.org/confluence/questions";
 
 	private static final String CONTROLCENTER_DATE_PROPERTY = "klab.controlcenter.latest";
+	private static final String CONTROLCENTER_TIMESTAMP_PROPERTY = "klab.controlcenter.timestamp";
+	
 	private boolean ccUpdateShown = false;
 
 	public static ControlCenter INSTANCE;
@@ -695,11 +699,18 @@ public class ControlCenter extends Application {
 
 	public URL getJreDownloadUrl() {
 		try {
-			return new URL(properties.getProperty(JREDIR_PROPERTY, DEFAULT_JRE_DOWNLOAD_URL));
+			String osInfix = OS.get() == OS.WIN ? "win" : OS.get() == OS.UNIX ? "linux" : "mac";
+			return new URL(properties.getProperty(JREDIR_PROPERTY,
+			DEFAULT_JRE_DOWNLOAD_URL + "/jre18_" + osInfix + ".zip"));
+			// return new URL(properties.getProperty(JREDIR_PROPERTY, DEFAULT_JRE_DOWNLOAD_URL));
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public File getLocalJREDirectory() {
+    	return new File(ControlCenter.INSTANCE.getWorkdir() + File.separator + "jre" + File.separator + "bin" + File.separator + "java");
+    }
 
 	public Properties getProperties() {
 		return properties;
@@ -758,7 +769,9 @@ public class ControlCenter extends Application {
 		if (modeler.getStatus() != IInstance.Status.RUNNING) {
 			modelerStarting.set(true);
 			modelerRunButton.setDisable(true);
-			modeler.start(bs.chosen);
+			if (!modeler.start(bs.chosen)) {
+				modelerRunButton.setDisable(false);
+			}
 		} else {
 			modeler.stop();
 		}
@@ -882,7 +895,39 @@ public class ControlCenter extends Application {
 
 									@Override
 									public void transferFinished() {
-										Platform.runLater(() -> {
+										File ini;
+										String executablePath = modeler.getExecutable(bs.chosen).getPath();
+										// we need to add execution flag in linux and mac
+										// we add thing in ini file and need to change name in mac and linux
+										if (OS.get() == OS.UNIX) {
+											modeler.getExecutable(bs.chosen).setExecutable(true);
+											ini = new File(executablePath + "k.Modeler.ini");
+						                	new File(executablePath + "k.ini").renameTo(ini);
+						                } else if (OS.get() == OS.MACOS) {
+						                	File realExecutable = new File(executablePath+"/Contents/MacOS/k.Modeler");
+											realExecutable.setExecutable(true);
+											ini = new File(executablePath+"/Contents/Eclipse/k.Modeler.ini"); 
+						                	new File(executablePath+"/Contents/Eclipse/k.ini").renameTo(ini);
+						                } else {
+						                	ini = new File(executablePath + "k.Modeler.ini");
+						                }
+						                if (!ini.exists()) {
+						                	// TODO: better error management
+						                	System.err.println("Problems with INI file");
+						                } else {
+						                	// add JRE and startup options to init parameters
+						                	String options = "-vm\n"
+						                        + JreModel.INSTANCE.getJavaExecutable() + "\n"
+						                        + "-vmargs\n"
+						                        + "-Xms512m\n-Xmx2048m";
+						                	try {
+						                		Files.write(ini.toPath(), options.getBytes(), StandardOpenOption.APPEND);
+											} catch (IOException e) {
+												// this is very strange
+												System.err.println("Error put content to ini file");
+											}
+						                }
+						                Platform.runLater(() -> {
 											modelerCurrentFileLabel.setText("k.Modeler download complete");
 										});
 									}
@@ -1048,7 +1093,6 @@ public class ControlCenter extends Application {
 
 	public synchronized void checkForUpdates() {
 
-		messageLabel.setText("Checking for updates...");
 		if (checkForCCUpdates()) {
 			System.exit(0);
 		}
@@ -1057,7 +1101,6 @@ public class ControlCenter extends Application {
 		this.modeler.setProduct(ProductService.INSTANCE.getProduct(ProductService.PRODUCT_MODELER));
 		((Instance) this.controlCenter)
 				.setProduct(ProductService.INSTANCE.getProduct(ProductService.PRODUCT_CONTROL_CENTER));
-		messageLabel.setText("");
 		setupUI();
 	}
 
@@ -1065,10 +1108,15 @@ public class ControlCenter extends Application {
 	 * If there is a new CC update, alert and ask if we should download; if so,
 	 * download in modal window, [launch installer] and return true, which will
 	 * terminate the application.
-	 * 
+	 *
 	 * @return
 	 */
 	private synchronized boolean checkForCCUpdates() {
+
+		if (Timestamp.BUILD_TIMESTAMP.startsWith("@")) {
+			// not an official build.
+			return false;
+		}
 
 		if (this.ccUpdateShown) {
 			/*
@@ -1076,16 +1124,49 @@ public class ControlCenter extends Application {
 			 */
 			return false;
 		}
-		
+
+		// look for the timestamp of the previous run of the control center.
+		// previouslyRunTimestamp = -1 if an official
+		// build was never run or >0 if so.
+		DateTime timestamp = DateTime.parse(Timestamp.BUILD_TIMESTAMP.replace(' ', 'T') + ":00");
+		String savedTimestamp = Configuration.INSTANCE.getProperties().getProperty(CONTROLCENTER_TIMESTAMP_PROPERTY);
+		Long previouslyRunTimestamp = savedTimestamp == null ? -1 : Long.parseLong(savedTimestamp);
+		Long currentInstanceTimestamp = timestamp.getMillis();
+
+		// save the timestamp of the instance currently being run for next time.
+		Configuration.INSTANCE.getProperties().setProperty(CONTROLCENTER_TIMESTAMP_PROPERTY,
+				"" + currentInstanceTimestamp);
+		Configuration.INSTANCE.save();
+
 		if (this.controlCenter != null && this.controlCenter.getProduct().getBuilds().size() > 0) {
+
 			String existing = Configuration.INSTANCE.getProperties().getProperty(CONTROLCENTER_DATE_PROPERTY);
 			if (existing != null) {
 				try {
 					DateTime installed = new DateTime(existing);
 					DateTime available = this.controlCenter.getProduct()
 							.getBuildDate(this.controlCenter.getProduct().getBuilds().get(0));
-					
+
 					if (available.isAfter(installed)) {
+
+						/*
+						 * the date of the last build we installed is higher, but the user may have
+						 * updated, in which case we need to update the date. We use the timestamps to
+						 * check; no timestamp = -1 so the test still works.
+						 */
+
+						boolean haveUpdatedAlready = currentInstanceTimestamp > previouslyRunTimestamp;
+
+						if (haveUpdatedAlready) {
+							// the new build is the one we have. Save the remote date to detect any next
+							// update later without checks and
+							// return false
+							Configuration.INSTANCE.getProperties().setProperty(CONTROLCENTER_DATE_PROPERTY,
+									available.toString());
+							Configuration.INSTANCE.save();
+							return false;
+						}
+
 						this.ccUpdateShown = true;
 						Update.show();
 					}
@@ -1093,12 +1174,13 @@ public class ControlCenter extends Application {
 					// just return false
 				}
 			} else {
-				
+
 				// first download, assume we're getting the latest from a website link.
 				DateTime available = this.controlCenter.getProduct()
 						.getBuildDate(this.controlCenter.getProduct().getBuilds().get(0));
 				if (available != null) {
-					Configuration.INSTANCE.getProperties().setProperty(CONTROLCENTER_DATE_PROPERTY, available.toString());
+					Configuration.INSTANCE.getProperties().setProperty(CONTROLCENTER_DATE_PROPERTY,
+							available.toString());
 					Configuration.INSTANCE.save();
 				}
 			}
