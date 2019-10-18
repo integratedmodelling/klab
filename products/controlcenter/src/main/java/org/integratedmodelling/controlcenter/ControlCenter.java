@@ -6,10 +6,13 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Properties;
@@ -704,6 +707,10 @@ public class ControlCenter extends Application {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public File getLocalJREDirectory() {
+    	return new File(ControlCenter.INSTANCE.getWorkdir() + File.separator + "jre" + File.separator + "bin" + File.separator + "java");
+    }
 
 	public Properties getProperties() {
 		return properties;
@@ -762,7 +769,9 @@ public class ControlCenter extends Application {
 		if (modeler.getStatus() != IInstance.Status.RUNNING) {
 			modelerStarting.set(true);
 			modelerRunButton.setDisable(true);
-			modeler.start(bs.chosen);
+			if (!modeler.start(bs.chosen)) {
+				modelerRunButton.setDisable(false);
+			}
 		} else {
 			modeler.stop();
 		}
@@ -886,7 +895,39 @@ public class ControlCenter extends Application {
 
 									@Override
 									public void transferFinished() {
-										Platform.runLater(() -> {
+										File ini;
+										String executablePath = modeler.getExecutable(bs.chosen).getPath();
+										// we need to add execution flag in linux and mac
+										// we add thing in ini file and need to change name in mac and linux
+										if (OS.get() == OS.UNIX) {
+											modeler.getExecutable(bs.chosen).setExecutable(true);
+											ini = new File(executablePath + "k.Modeler.ini");
+						                	new File(executablePath + "k.ini").renameTo(ini);
+						                } else if (OS.get() == OS.MACOS) {
+						                	File realExecutable = new File(executablePath+"/Contents/MacOS/k.Modeler");
+											realExecutable.setExecutable(true);
+											ini = new File(executablePath+"/Contents/Eclipse/k.Modeler.ini"); 
+						                	new File(executablePath+"/Contents/Eclipse/k.ini").renameTo(ini);
+						                } else {
+						                	ini = new File(executablePath + "k.Modeler.ini");
+						                }
+						                if (!ini.exists()) {
+						                	// TODO: better error management
+						                	System.err.println("Problems with INI file");
+						                } else {
+						                	// add JRE and startup options to init parameters
+						                	String options = "-vm\n"
+						                        + JreModel.INSTANCE.getJavaExecutable() + "\n"
+						                        + "-vmargs\n"
+						                        + "-Xms512m\n-Xmx2048m";
+						                	try {
+						                		Files.write(ini.toPath(), options.getBytes(), StandardOpenOption.APPEND);
+											} catch (IOException e) {
+												// this is very strange
+												System.err.println("Error put content to ini file");
+											}
+						                }
+						                Platform.runLater(() -> {
 											modelerCurrentFileLabel.setText("k.Modeler download complete");
 										});
 									}

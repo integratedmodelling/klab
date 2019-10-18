@@ -62,6 +62,8 @@ public class JreDialogController {
 				try {
 					downloading.set(true);
 					ZipUtils.unzip(tempOutput, ControlCenter.INSTANCE.getWorkdir());
+					// needed in OS. ZIP doesn't store permissions
+					ControlCenter.INSTANCE.getLocalJREDirectory().setExecutable(true);
 					JreModel.INSTANCE.connectLocalJre();
 				} catch (IOException e) {
 					downloading.set(false);
