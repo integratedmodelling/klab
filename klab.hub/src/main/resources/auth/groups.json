@@ -114,7 +114,7 @@
 				"description": "The potential for flood regulation offered by the natural features in each point, considering their effect on areas downstream.",
 				"semantics": "QUALITY",
 				"state": "BETA",
-				"extendedDescription": "Warning: This observable depends on runoff water volume, which can only be calculated at the watershed scale. For this reason the system will delineate the main watershed within the current context, and then divide the sub-catchment areas and specify the watershed outlet for each sub-catchment."
+				"extendedDescription": "The current strategy for this observable is only for demonstration: runoff, which must be calculated in individual watersheds, is computed by delineating the largest watershed within the user context; this calculation may create wrong watersheds in contexts that do not contain an entire one. In addition, the runoff calculation uses annual rainfall data and applies the curve number method, which is meant for individual storm events. As a result the runoff figures are underestimated. The results should only be seen as demonstrational while we implement event-driven, dynamic behavior."
 			},
 			{
 				"separator": false,
@@ -131,7 +131,7 @@
 				"description": "The overall value of flood regulation in each point, combining the potential supply with the demand in the area.",
 				"semantics": "QUALITY",
 				"state": "BETA",
-				"extendedDescription": "Warning: This observable depends on runoff water volume, which can only be calculated at the watershed scale. For this reason the system will delineate the main watershed within the current context, and then divide the sub-catchment areas and specify the watershed outlet for each sub-catchment."
+				"extendedDescription": "The current strategy for this observable is only for demonstration: runoff, which must be calculated in individual watersheds, is computed by delineating the largest watershed within the user context; this calculation may create wrong watersheds in contexts that do not contain an entire one. In addition, the runoff calculation uses annual rainfall data and applies the curve number method, which is meant for individual storm events. As a result the runoff figures are underestimated. The results should only be seen as demonstrational while we implement event-driven, dynamic behavior."
 			},
 			{
 				"separator": true,
@@ -211,7 +211,7 @@
 				"description": "A user-prioritized multiple criteria ranking of the region of interest according to the provision of ecosystem services.",
 				"semantics": "QUALITY",
 				"state": "BETA",
-				"extendedDescription": "A spatial multi-criteria analysis based on supply values from 5 ecosystem services: carbon storage, sediment regulation, flood regulation, pollination and outdoor recreation. The algorithm is a concordance analysis that interprets the outputs of the models through the lenses of importance weights supplied by stakeholders. The analysis runs with equal weights, but default values can be changed by the user at runtime if the EXplorer is in interactive mode."
+				"extendedDescription": "A spatial multi-criteria analysis based on supply values from 5 ecosystem services: carbon storage, sediment regulation, flood regulation, pollination and outdoor recreation. The algorithm is a concordance analysis that interprets the outputs of the models through the lenses of importance weights supplied by stakeholders. The analysis runs with equal weights, but default values can be changed by the user at runtime if the Explorer is in interactive mode. As we still lack value models for water supply and other important ES, the results should be seen as demonstrational only. Also, adding different viewpoints does not currently allow for direct comparison between them, an important feature that will be added along with scenarios in the near future."
 			},
 			{
 				"separator": true,
@@ -225,7 +225,7 @@
 				"description": "The tannual potential maize yield, in kilograms per hectare.",
 				"semantics": "QUALITY",
 				"state": "EXPERIMENTAL",
-				"extendedDescription": "Warning: this model assumes that all the land classified as agricultural vegetation is devoted to maize."
+				"extendedDescription": "In the current state, the only model available for this observable (a data-driven, Bayesian network model trained on actual data) assumes that all the land classified as agricultural vegetation is devoted to maize. Its results are therefore only demonstrational."
 			},
 			{
 				"separator": false,
@@ -234,7 +234,7 @@
 				"description": "The annual potential wood biomass harvest, in cubic meters per hectare.",
 				"semantics": "QUALITY",
 				"state": "EXPERIMENTAL",
-				"extendedDescription": "This model runs a Bayesian Network learned from data in geographical context between the Atlantic and the Mediterranean coasts in Wetsern Europe. Its extrapolation to other regions should thus be done cautiously."
+				"extendedDescription": "The level of potential tree biomass is computed using information about tree species, topography, soil and climate. This model is implemented as a Bayesian network learned from data in a geographical context between the Atlantic and the Mediterranean coasts in Wetsern Europe. Its extrapolation to other regions should be done cautiously."
 			},
 			{
 				"separator": true,
@@ -248,7 +248,7 @@
 				"description": "Monetary value of water services, in 2013 USD (PPP)",
 				"semantics": "QUALITY",
 				"state": "NEW",
-				"extendedDescription": "This model is based on a regression function of the monetary value of water services, implemented to demonstrate spatially explicit meta-analyses."
+				"extendedDescription": "This model is based on a regression function of the monetary value of water services, implemented to demonstrate spatially explicit meta-analyses. Its results should be treated as experimental for the time being."
 			},
 			{
 				"separator": false,
@@ -257,30 +257,39 @@
 				"description": "Monetary value of non-wood forest products, in 2013 USD (PPP)",
 				"semantics": "QUALITY",
 				"state": "NEW",
-				"extendedDescription": "This model is based on a regression function of the monetary value of non-wood forest products, implemented to demonstrate spatially explicit meta-analyses."
+				"extendedDescription": "This model is based on a regression function of the monetary value of non-wood forest products, implemented to demonstrate spatially explicit meta-analyses.  Its result should be treated as experimental for the time being."
 			},
 			{
 				"separator": true,
 				"description": "",
-				"label": "Hydrology"
+				"label": "Water services"
 			},
 			{
 				"separator": false,
-				"label": "Quick-flow Water Volume",
+				"label": "Potential Value of Water Supply",
 				"observable": "",
-				"description": "Land surface runoff occurring during or shortly after rain events",
+				"description": "Values related to the hydrological cycle and its usages in a region",
 				"semantics": "QUALITY",
 				"state": "FORTHCOMING",
-				"extendedDescription": "Quick-flow, representing the generation of streamflow with watershed residence times of hours to days, is a function of the amount of rain runs off from the land surface quickly versus infiltrating into the soil. In the simplest version without customization, the runoff is determined with a curve number (CN)-based approach, by using event-based meteorological data and CN lookup tables based on hydrological soil groups and land-use-land-cover (LULC) types. The model computes the monthly runoff by assuming an exponential distribution of daily precipitation depths on days with rain."
+				"extendedDescription": "A water supply model will be made available soon. The supply part will compute the hydrological cycle in the time frame of reference by aggregating the hydrological outcomes of individual storm events, taken from a self-updating database. The demand part will estimate the most important uses from agriculture, urban and industrial uses. These models will be implemented in different ways to adapt to different temporal contexts of interest, and run after automatically delineating watersheds."
+			},
+			{
+				"separator": false,
+				"label": "Quickflow Water Volume",
+				"observable": "",
+				"description": "Land surface runoff occurring during or shortly after rain events",
+				"semantics": "PROCESS",
+				"state": "FORTHCOMING",
+				"extendedDescription": "Quickflow, representing the generation of streamflow with watershed residence times of hours to days, is a function of the amount of rain runs off from the land surface quickly versus infiltrating into the soil. In the simplest version without customization, the runoff is determined with a curve number (CN)-based approach, by using event-based meteorological data and CN lookup tables based on hydrological soil groups and land-use-land-cover (LULC) types. The model will aggregate runoff from storm events (using a user-defined temporal subdivision) by assuming an exponential distribution of daily precipitation depths on days with rain. Both an event-based and a temporally-explicit model for this observable, selected according to the choice of context, will come online in 2020 as a part of the ARIES water strategy."
 			},
 			{
 			    "separator": false,
-				"label": "Base-flow Water Volume",
+				"label": "Baseflow Water Volume",
 				"observable": "",
-				"description": "Subsurface base-flow occurring during dry weather",
-				"semantics": "QUALITY",
+				"description": "Subsurface baseflow occurring during dry weather",
+				"semantics": "PROCESS",
 				"state": "FORTHCOMING",
-				"extendedDescription": "Base-flow, defined as the generation of streamflow with watershed residence times of months to years, is a function of the amount of flow leaving the pixel and of the relative contribution to recharge of this pixel. It derives from the proportion of the cumulative base-flow leaving pixels, with respect to the available recharge to the upstream cumulative recharge."
+				"extendedDescription": "Baseflow, defined as the generation of streamflow with watershed residence times of months to years, is a function of the amount of flow leaving a cell and of the relative contribution to recharge of this cell. It derives from the proportion of the cumulative baseflow leaving raster cells, with respect to the available recharge to the upstream cumulative recharge. Both an event-based and a temporally-explicit model for this observable, selected according to the choice of context, will come online in 2020 as a part of the ARIES water strategy."
 			},
 			{
 				"separator": true,
@@ -289,12 +298,70 @@
 			},
 			{
 			    "separator": false,
-				"label": "Probability of Wildfire Ignition ",
+				"label": "Probability of Wildfire Ignition",
 				"observable": "",
 				"description": "The risk of fire ignition based on social and biophisical drivers",
 				"semantics": "QUALITY",
 				"state": "FORTHCOMING",
-				"extendedDescription": "A spatially distributed machine learning model trained with historical wildfire ignition data"
+				"extendedDescription": "The probability of wildfire ignition model will use the strategy in Prestemon, 2013 and Oliveira, 2011 to  compute the interaction of different social and biophysical drivers to produce a wildfire ignition for each cell. The first incarnation of this model, coming online in early 2020, will be a machine-learned model trained to historical wildfire ignition data."
+			},
+			{
+			    "separator": false,
+				"label": "Probability of Wildfire Propagation",
+				"observable": "",
+				"description": "The risk of fire propagation based on social and biophysical drivers",
+				"semantics": "QUALITY",
+				"state": "FORTHCOMING"
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Grasslands and Livestock"
+			},
+			{
+			    "separator": false,
+				"label": "Effect of climate on vegetation growth.",
+				"observable": "",
+				"description": "An index quantifying the influence of climatic factors on vegetation growth",
+				"semantics": "PROCESS",
+				"state": "FORTHCOMING",
+				"extendedDescription": "A dynamic model estimating the likelihood that climatic factors (temperature, radiation and humidity) affect daily vegetation growth. This spatially distributed model, inspired by the PUERTO Model developed by Juan Busqué, will come online in 2020"
+			},
+			{
+			    "separator": false,
+				"label": "Growth rate of aerial vegetation parts",
+				"observable": "",
+				"description": "Daily growth of the aerial part of the vegetation in g/m^2",
+				"semantics": "PROCESS",
+				"state": "FORTHCOMING",
+				"extendedDescription": "A dynamic model estimating the growth of the aerial part of the vegetation calculated from the potential growth of each type of plant, according to  context and  climatic factors limiting growth, inspired by the PUERTO Model developed by Juan Busqué, will come online in 2020"
+			},
+			{
+			    "separator": false,
+				"label": "Growth rate of vegetation roots",
+				"observable": "",
+				"description": "Daily growth of the root part of the vegetation in g/m^2",
+				"semantics": "PROCESS",
+				"state": "FORTHCOMING",
+				"extendedDescription": "A dynamic model estimating the growth of the root part of the vegetation calculated from the potential growth of each type of plant, according to  context and  climatic factors limiting growth, inspired by the PUERTO Model developed by Juan Busqué, will come online in 2020"
+			},
+			{
+			    "separator": false,
+				"label": "Livestock biomass dynamics",
+				"observable": "",
+				"description": "Daily change in livestock weight",
+				"semantics": "PROCESS",
+				"state": "FORTHCOMING",
+				"extendedDescription": "A dynamic model estimating the change in livestock weight in an area, according to the available feed and energy expenditure for essential needs, computing meat production for the chosen temporal context, will come online in 2020."
+			},
+			{
+			    "separator": false,
+				"label": "Subsurface Nitrogen Leaching",
+				"observable": "",
+				"description": "Nitrogen leaching to subsurface drainage water from livestock and fertilizers",
+				"semantics": "PROCESS",
+				"state": "FORTHCOMING",
+				"extendedDescription": "A dynamic model estimating the total accumulated nitrogen from livestock and from addition of fertilizers that cannot be absorbed by vegetation and flow into groundwater will come online in 2020."
 			}
 		]
 	}
