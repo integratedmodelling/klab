@@ -175,9 +175,27 @@ public class KUserController {
 	}
 	
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	@PostMapping(value = "", produces = "application/json", params="updateUsersGroups")
-	public ResponseEntity<?> updateUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
-		klabUserManager.updateUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
+	@PostMapping(value = "", produces = "application/json", params="addUsersGroups")
+	public ResponseEntity<?> addUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
+		klabUserManager.addUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.body("Updated Succesful");
+	}
+	
+	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
+	@PostMapping(value = "", produces = "application/json", params="removeUsersGroups")
+	public ResponseEntity<?> removeUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
+		klabUserManager.removeUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.body("Updated Succesful");
+	}
+	
+	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
+	@PostMapping(value = "", produces = "application/json", params="setUsersGroups")
+	public ResponseEntity<?> setUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
+		klabUserManager.setUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body("Updated Succesful");

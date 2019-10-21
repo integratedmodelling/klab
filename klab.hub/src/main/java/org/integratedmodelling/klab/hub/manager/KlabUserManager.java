@@ -87,7 +87,7 @@ public class KlabUserManager {
 		klabUserDetailsService.deleteUser(username);
 	}
 
-	public void updateUsersGroups(Set<String> usernames, Set<String> groupnames) {
+	public void addUsersGroups(Set<String> usernames, Set<String> groupnames) {
 		for(String username : usernames) {
 			User user = klabUserDetailsService.loadUserByUsername(username);
 			Collection<String> userGroups = user.getGroups();
@@ -101,4 +101,25 @@ public class KlabUserManager {
 		}
 	}
 
+	public void setUsersGroups(Set<String> usernames, Set<String> groupnames) {
+		for(String username : usernames) {
+			User user = klabUserDetailsService.loadUserByUsername(username);
+			user.setGroups(groupnames);
+			klabUserDetailsService.updateUser(user);
+		}
+	}
+	
+	public void removeUsersGroups(Set<String> usernames, Set<String> groupnames) {
+		for(String username : usernames) {
+			User user = klabUserDetailsService.loadUserByUsername(username);
+			Collection<String> userGroups = user.getGroups();
+			for(String group : groupnames) {
+				if(userGroups.contains(group)) {
+					userGroups.remove(group);
+				}
+			}
+			user.setGroups(userGroups);
+			klabUserDetailsService.updateUser(user);
+		}
+	}
 }
