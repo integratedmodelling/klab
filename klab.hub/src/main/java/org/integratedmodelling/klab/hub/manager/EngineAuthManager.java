@@ -51,13 +51,12 @@ public class EngineAuthManager {
 		case LEGACY:
 			break;
 		case TEST:
-			if (IPUtils.isLocalhost(ip)) {
+			if (IPUtils.isLocal(ip)) {
 				return processLocalEngineUser(request);
 			} else {
 				break;	
 			}
 		case USER:
-			System.out.println(ip);
 			if (IPUtils.isLocalhost(ip)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return processLocalEngineUser(request);
