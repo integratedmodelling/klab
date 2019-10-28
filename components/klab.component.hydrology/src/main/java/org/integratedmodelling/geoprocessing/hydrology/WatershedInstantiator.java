@@ -6,6 +6,7 @@ import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hortonmachine.gears.utils.features.FeatureUtilities;
 import org.hortonmachine.hmachine.modules.demmanipulation.wateroutlet.OmsExtractBasin;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
@@ -70,7 +71,8 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
+			throws KlabException {
 
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Grid grid = Space.extractGrid(context.getContextObservation());
@@ -102,7 +104,7 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 
 			// again, would be great but a long-standing JAI bug makes it throw an NPE when
 			// inside a jar.
-			ebasin.doVector = false;
+			ebasin.doVector = true;
 
 			try {
 				ebasin.process();
@@ -125,24 +127,25 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 				}
 			}
 
-			for (IShape shape : extractor.extractShapes(ebasin.outBasin, Extensions.INSTANCE
-					.compileExpression("value == 1.0", context.getExpressionContext(), Extensions.DEFAULT_EXPRESSION_LANGUAGE, false), context)) {
-				ret.add(context.newObservation(semantics, "watershed_of_" + ((IDirectObservation) artifact).getName(),
-						Scale.substituteExtent(context.getScale(), shape), /* TODO send useful metadata */null));
-			}
+//			for (IShape shape : extractor
+//					.extractShapes(
+//							ebasin.outBasin, Extensions.INSTANCE.compileExpression("value == 1.0",
+//									context.getExpressionContext(), Extensions.DEFAULT_EXPRESSION_LANGUAGE, false),
+//							context)) {
+//				ret.add(context.newObservation(semantics, "watershed_of_" + ((IDirectObservation) artifact).getName(),
+//						Scale.substituteExtent(context.getScale(), shape), /* TODO send useful metadata */null));
+//			}
 
 			// adios - come back when JAI bug is addressed. Sad as the above is a lot
 			// slower.
-			// if (ebasin.outVectorBasin != null && ebasin.outVectorBasin.size() > 0) {
-			//
-			// List<com.vividsolutions.jts.geom.Geometry> geoms = FeatureUtilities
-			// .featureCollectionToGeometriesList(ebasin.outVectorBasin, false, null);
-			// Shape shape = Shape.create(geoms,
-			// context.getScale().getSpace().getProjection());
-			// ret.add(context.newObservation(semantics, "watershed_of_" +
-			// ((IDirectObservation) artifact).getName(),
-			// Scale.substituteExtent(context.getScale(), shape)));
-			// }
+			if (ebasin.outVectorBasin != null && ebasin.outVectorBasin.size() > 0) {
+
+				List<com.vividsolutions.jts.geom.Geometry> geoms = FeatureUtilities
+						.featureCollectionToGeometriesList(ebasin.outVectorBasin, false, null);
+				Shape shape = Shape.create(geoms, context.getScale().getSpace().getProjection());
+				ret.add(context.newObservation(semantics, "watershed_of_" + ((IDirectObservation) artifact).getName(),
+						Scale.substituteExtent(context.getScale(), shape), /* TODO send useful metadata */null));
+			}
 
 		}
 
