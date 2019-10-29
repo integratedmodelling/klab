@@ -21,5 +21,6 @@
 <!--   	<module>klab.component.renjin</module>
  -->  	<module>klab.component.weather</module>
   	<module>klab.component.landcover</module>
+  	<module>klab.component.noisemodelling</module>
   </modules>
 </project>

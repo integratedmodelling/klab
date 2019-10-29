@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.components.geospace.processing;
+package org.integratedmodelling.geoprocessing.algorithms;
 
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
@@ -57,10 +57,8 @@ import ij.process.ImageProcessor;
 /**
  * 
  * @author ferdinando.villa
- * @deprecated as much slower than native JAI vectorizer. Keep for situations where native
- * code can't be run (e.g. when SPI calls are made and a Spring jar breaks them).
  */
-public class PolygonInstantiator implements IExpression, IInstantiator {
+public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 
 	Descriptor exprDescriptor = null;
 	private IGrid grid;
@@ -74,7 +72,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 	// TODO
 	private boolean ignoreHoles;
 
-	public PolygonInstantiator() {
+	public PolygonInstantiatorJAI() {
 	}
 
 	/**
@@ -85,11 +83,11 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 	 * 
 	 * @param grid
 	 */
-	public PolygonInstantiator(IGrid grid) {
+	public PolygonInstantiatorJAI(IGrid grid) {
 		this.grid = grid;
 	}
 
-	public PolygonInstantiator(IParameters<String> parameters, IContextualizationScope context)
+	public PolygonInstantiatorJAI(IParameters<String> parameters, IContextualizationScope context)
 			throws KlabValidationException {
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
@@ -153,9 +151,6 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 			sourceStates.add(sourceState);
 		}
 
-		// build mask
-		ImagePlus image = IJ.createImage("blobs", "8-bit black", (int) grid.getXCells(), (int) grid.getYCells(), 1);
-		ImageProcessor imp = image.getProcessor();
 		boolean warned = false;
 		Parameters<String> parameters = new Parameters<>();
 
@@ -185,26 +180,26 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 				warned = true;
 			}
 
-			imp.set((int) cell.getX(), (int) cell.getY(), ((Boolean) o) ? 0 : 255);
+//			imp.set((int) cell.getX(), (int) cell.getY(), ((Boolean) o) ? 0 : 255);
 		}
 
 		// build blobs
 		String baseName = Observables.INSTANCE.getDisplayName(semantics);
-		ManyBlobs blobs = new ManyBlobs(image);
-		blobs.findConnectedComponents();
+//		ManyBlobs blobs = new ManyBlobs(image);
+//		blobs.findConnectedComponents();
 		int created = 0;
 		int skipped = 0;
-		for (Blob blob : blobs) {
-			Shape shape = getShape(blob);
-			if (shape != null) {
-				Scale instanceScale = Scale.createLike(context.getScale(), shape);
-				ret.add(context.newObservation(semantics, baseName + "_" + (created + 1), instanceScale,
-						/* TODO send useful metadata */null));
-				created++;
-			} else {
-				skipped++;
-			}
-		}
+//		for (Blob blob : blobs) {
+//			Shape shape = getShape(blob);
+//			if (shape != null) {
+//				Scale instanceScale = Scale.createLike(context.getScale(), shape);
+//				ret.add(context.newObservation(semantics, baseName + "_" + (created + 1), instanceScale,
+//						/* TODO send useful metadata */null));
+//				created++;
+//			} else {
+//				skipped++;
+//			}
+//		}
 
 		context.getMonitor().info("feature extractor: built " + created + " observations of type " + semantics);
 		if (skipped > 0) {
@@ -215,62 +210,62 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 		return ret;
 	}
 
-	private Shape getShape(Blob blob) {
-
-		/*
-		 * TODO apply filters, if any, and cull unsuitable candidates.
-		 */
-
-		Geometry polygon = null;
-		if (blob.getOuterContour().npoints < 4) {
-			if (this.createPointFeatures) {
-				polygon = getPolygon(blob.getCenterOfGravity());
-			}
-		} else {
-
-			/*
-			 * create spatial context
-			 */
-			LinearRing shell = getLinearRing(blob.getOuterContour());
-			if (shell == null) {
-				return null;
-			}
-
-			/*
-			 * safest strategy - allows holes that overlap the perimeter
-			 */
-			polygon = new Polygon(shell, null, gfact);
-			polygon = polygon.buffer(0);
-			if (this.computeConvexHull) {
-				polygon = polygon.convexHull();
-			}
-
-			if (!this.ignoreHoles) {
-				for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
-					Geometry h = new Polygon(hole, null, gfact);
-					h = h.buffer(0);
-					polygon = polygon.difference(h);
-				}
-			}
-		}
-
-		/*
-		 * clip to context shape
-		 */
-		if (polygon != null) {
-			polygon = polygon.intersection(boundingBox.getJTSGeometry());
-		}
-
-		if (polygon == null || polygon.isEmpty()) {
-			return null;
-		}
-
-		return Shape.create(polygon, this.grid.getProjection());
-	}
+//	private Shape getShape(Blob blob) {
+//
+//		/*
+//		 * TODO apply filters, if any, and cull unsuitable candidates.
+//		 */
+//
+//		Geometry polygon = null;
+//		if (blob.getOuterContour().npoints < 4) {
+//			if (this.createPointFeatures) {
+//				polygon = getPolygon(blob.getCenterOfGravity());
+//			}
+//		} else {
+//
+//			/*
+//			 * create spatial context
+//			 */
+//			LinearRing shell = getLinearRing(blob.getOuterContour());
+//			if (shell == null) {
+//				return null;
+//			}
+//
+//			/*
+//			 * safest strategy - allows holes that overlap the perimeter
+//			 */
+//			polygon = new Polygon(shell, null, gfact);
+//			polygon = polygon.buffer(0);
+//			if (this.computeConvexHull) {
+//				polygon = polygon.convexHull();
+//			}
+//
+//			if (!this.ignoreHoles) {
+//				for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
+//					Geometry h = new Polygon(hole, null, gfact);
+//					h = h.buffer(0);
+//					polygon = polygon.difference(h);
+//				}
+//			}
+//		}
+//
+//		/*
+//		 * clip to context shape
+//		 */
+//		if (polygon != null) {
+//			polygon = polygon.intersection(boundingBox.getJTSGeometry());
+//		}
+//
+//		if (polygon == null || polygon.isEmpty()) {
+//			return null;
+//		}
+//
+//		return Shape.create(polygon, this.grid.getProjection());
+//	}
 
 	@Override
 	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new PolygonInstantiator(parameters, context);
+		return new PolygonInstantiatorJAI(parameters, context);
 	}
 
 //	@Override
@@ -279,184 +274,184 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 //		return null;
 //	}
 
-	private LinearRing[] getLinearRings(List<java.awt.Polygon> rings) {
-		ArrayList<LinearRing> ret = new ArrayList<>();
-		for (java.awt.Polygon p : rings) {
-			LinearRing ring = getLinearRing(p);
-			if (p != null) {
-				ret.add(ring);
-			}
-		}
-		return ret.toArray(new LinearRing[ret.size()]);
-	}
-
-	private Geometry getPoint(Point2D point2d) {
-
-		int x = (int) point2d.getX();
-		int y = (int) point2d.getY();
-		double[] xy = grid.getCoordinates(grid.getOffset(x, y));
-		return gfact.createPoint(new Coordinate(xy[0], xy[1]));
-	}
-
-	private Geometry getPolygon(Point2D point2d) {
-
-		int x = (int) point2d.getX();
-		int y = (int) point2d.getY();
-		return ((Shape) ((Grid) grid).getCell(grid.getOffset(x, y)).getShape()).getJTSGeometry();
-	}
-
-	private LinearRing getLinearRing(java.awt.Polygon p) {
-
-		if (p.npoints < 4) {
-			return null;
-		}
-
-		ArrayList<Coordinate> coords = new ArrayList<>();
-		for (int i = 0; i < p.npoints; i++) {
-
-			int x = p.xpoints[i];
-			int y = p.ypoints[i];
-
-			double[] xy = grid.getCoordinates(grid.getOffset(x, y));
-			coords.add(new Coordinate(xy[0], xy[1]));
-		}
-
-		return new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[coords.size()])), gfact);
-	}
+//	private LinearRing[] getLinearRings(List<java.awt.Polygon> rings) {
+//		ArrayList<LinearRing> ret = new ArrayList<>();
+//		for (java.awt.Polygon p : rings) {
+//			LinearRing ring = getLinearRing(p);
+//			if (p != null) {
+//				ret.add(ring);
+//			}
+//		}
+//		return ret.toArray(new LinearRing[ret.size()]);
+//	}
+//
+//	private Geometry getPoint(Point2D point2d) {
+//
+//		int x = (int) point2d.getX();
+//		int y = (int) point2d.getY();
+//		double[] xy = grid.getCoordinates(grid.getOffset(x, y));
+//		return gfact.createPoint(new Coordinate(xy[0], xy[1]));
+//	}
+//
+//	private Geometry getPolygon(Point2D point2d) {
+//
+//		int x = (int) point2d.getX();
+//		int y = (int) point2d.getY();
+//		return ((Shape) ((Grid) grid).getCell(grid.getOffset(x, y)).getShape()).getJTSGeometry();
+//	}
+//
+//	private LinearRing getLinearRing(java.awt.Polygon p) {
+//
+//		if (p.npoints < 4) {
+//			return null;
+//		}
+//
+//		ArrayList<Coordinate> coords = new ArrayList<>();
+//		for (int i = 0; i < p.npoints; i++) {
+//
+//			int x = p.xpoints[i];
+//			int y = p.ypoints[i];
+//
+//			double[] xy = grid.getCoordinates(grid.getOffset(x, y));
+//			coords.add(new Coordinate(xy[0], xy[1]));
+//		}
+//
+//		return new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[coords.size()])), gfact);
+//	}
 
 	@Override
 	public IArtifact.Type getType() {
 		return IArtifact.Type.OBJECT;
 	}
 
-	public Collection<IShape> extractShapes(GridCoverage2D state, IExpression selector, IContextualizationScope context) {
+//	public Collection<IShape> extractShapes(GridCoverage2D state, IExpression selector, IContextualizationScope context) {
+//
+//		List<IShape> ret = new ArrayList<>();
+//
+//		RenderedImage raster = state.getRenderedImage();
+//		ImagePlus image = IJ.createImage("blobs", "8-bit black", raster.getWidth(), raster.getHeight(), 1);
+//		ImageProcessor imp = image.getProcessor();
+//
+//		RandomIter itera = RandomIterFactory.create(raster, null);
+//
+//		for (int x = 0; x < raster.getWidth(); x++) {
+//			for (int y = 0; y < raster.getHeight(); y++) {
+//				double value = itera.getSampleDouble(x, y, 0);
+//				Object on = selector.eval(Parameters.create("value", value), context);
+//				imp.set(x, y, on instanceof Boolean && ((Boolean) on) ? 0 : 255);
+//			}
+//		}
+//
+//		ManyBlobs blobs = new ManyBlobs(image);
+//		blobs.findConnectedComponents();
+//
+//		for (Blob blob : blobs) {
+//
+//			Geometry polygon = null;
+//			if (blob.getOuterContour().npoints < 4) {
+//				if (createPointFeatures) {
+//					polygon = getPoint(blob.getCenterOfGravity());
+//				}
+//			} else {
+//				/*
+//				 * create spatial context
+//				 */
+//				LinearRing shell = getLinearRing(blob.getOuterContour());
+//				if (shell == null) {
+//					continue;
+//				}
+//
+//				/*
+//				 * safest strategy - allows holes that overlap the perimeter
+//				 */
+//				polygon = new Polygon(shell, null, gfact);
+//				polygon = polygon.buffer(0);
+//				if (computeConvexHull) {
+//					polygon = polygon.convexHull();
+//				}
+//
+//				if (!ignoreHoles) {
+//					for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
+//						Geometry h = new Polygon(hole, null, gfact);
+//						h = h.buffer(0);
+//						polygon = polygon.difference(h);
+//					}
+//				}
+//
+//				if (polygon == null || polygon.isEmpty()) {
+//					continue;
+//				}
+//
+//				ret.add(Shape.create(polygon, grid.getProjection()));
+//
+//			}
+//		}
+//
+//		return ret;
+//	}
 
-		List<IShape> ret = new ArrayList<>();
-
-		RenderedImage raster = state.getRenderedImage();
-		ImagePlus image = IJ.createImage("blobs", "8-bit black", raster.getWidth(), raster.getHeight(), 1);
-		ImageProcessor imp = image.getProcessor();
-
-		RandomIter itera = RandomIterFactory.create(raster, null);
-
-		for (int x = 0; x < raster.getWidth(); x++) {
-			for (int y = 0; y < raster.getHeight(); y++) {
-				double value = itera.getSampleDouble(x, y, 0);
-				Object on = selector.eval(Parameters.create("value", value), context);
-				imp.set(x, y, on instanceof Boolean && ((Boolean) on) ? 0 : 255);
-			}
-		}
-
-		ManyBlobs blobs = new ManyBlobs(image);
-		blobs.findConnectedComponents();
-
-		for (Blob blob : blobs) {
-
-			Geometry polygon = null;
-			if (blob.getOuterContour().npoints < 4) {
-				if (createPointFeatures) {
-					polygon = getPoint(blob.getCenterOfGravity());
-				}
-			} else {
-				/*
-				 * create spatial context
-				 */
-				LinearRing shell = getLinearRing(blob.getOuterContour());
-				if (shell == null) {
-					continue;
-				}
-
-				/*
-				 * safest strategy - allows holes that overlap the perimeter
-				 */
-				polygon = new Polygon(shell, null, gfact);
-				polygon = polygon.buffer(0);
-				if (computeConvexHull) {
-					polygon = polygon.convexHull();
-				}
-
-				if (!ignoreHoles) {
-					for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
-						Geometry h = new Polygon(hole, null, gfact);
-						h = h.buffer(0);
-						polygon = polygon.difference(h);
-					}
-				}
-
-				if (polygon == null || polygon.isEmpty()) {
-					continue;
-				}
-
-				ret.add(Shape.create(polygon, grid.getProjection()));
-
-			}
-		}
-
-		return ret;
-	}
-
-	public Collection<IShape> extractShapes(IState state, IExpression selector, IMonitor monitor) {
-
-		List<IShape> ret = new ArrayList<>();
-
-		grid = Space.extractGrid(state);
-		ImagePlus image = IJ.createImage("blobs", "8-bit black", (int) grid.getXCells(), (int) grid.getYCells(), 1);
-		ImageProcessor imp = image.getProcessor();
-
-		for (Cell cell : grid) {
-			Object value = state.get(cell);
-			Object on = selector.eval(Parameters.create("value", value), GroovyExpression.emptyContext(monitor));
-			if (on instanceof Boolean && ((Boolean) on)) {
-				imp.set((int) cell.getX(), (int) cell.getY(), 255);
-			}
-		}
-
-		ManyBlobs blobs = new ManyBlobs(image);
-		blobs.findConnectedComponents();
-
-		for (Blob blob : blobs) {
-
-			Geometry polygon = null;
-			if (blob.getOuterContour().npoints < 4) {
-				if (createPointFeatures) {
-					polygon = getPoint(blob.getCenterOfGravity());
-				}
-			} else {
-				/*
-				 * create spatial context
-				 */
-				LinearRing shell = getLinearRing(blob.getOuterContour());
-				if (shell == null) {
-					continue;
-				}
-
-				/*
-				 * safest strategy - allows holes that overlap the perimeter
-				 */
-				polygon = new Polygon(shell, null, gfact);
-				polygon = polygon.buffer(0);
-				if (computeConvexHull) {
-					polygon = polygon.convexHull();
-				}
-
-				if (!ignoreHoles) {
-					for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
-						Geometry h = new Polygon(hole, null, gfact);
-						h = h.buffer(0);
-						polygon = polygon.difference(h);
-					}
-				}
-
-				if (polygon == null || polygon.isEmpty()) {
-					continue;
-				}
-
-				ret.add(Shape.create(polygon, grid.getProjection()));
-
-			}
-		}
-
-		return ret;
-	}
+//	public Collection<IShape> extractShapes(IState state, IExpression selector, IMonitor monitor) {
+//
+//		List<IShape> ret = new ArrayList<>();
+//
+//		grid = Space.extractGrid(state);
+//		ImagePlus image = IJ.createImage("blobs", "8-bit black", (int) grid.getXCells(), (int) grid.getYCells(), 1);
+//		ImageProcessor imp = image.getProcessor();
+//
+//		for (Cell cell : grid) {
+//			Object value = state.get(cell);
+//			Object on = selector.eval(Parameters.create("value", value), GroovyExpression.emptyContext(monitor));
+//			if (on instanceof Boolean && ((Boolean) on)) {
+//				imp.set((int) cell.getX(), (int) cell.getY(), 255);
+//			}
+//		}
+//
+//		ManyBlobs blobs = new ManyBlobs(image);
+//		blobs.findConnectedComponents();
+//
+//		for (Blob blob : blobs) {
+//
+//			Geometry polygon = null;
+//			if (blob.getOuterContour().npoints < 4) {
+//				if (createPointFeatures) {
+//					polygon = getPoint(blob.getCenterOfGravity());
+//				}
+//			} else {
+//				/*
+//				 * create spatial context
+//				 */
+//				LinearRing shell = getLinearRing(blob.getOuterContour());
+//				if (shell == null) {
+//					continue;
+//				}
+//
+//				/*
+//				 * safest strategy - allows holes that overlap the perimeter
+//				 */
+//				polygon = new Polygon(shell, null, gfact);
+//				polygon = polygon.buffer(0);
+//				if (computeConvexHull) {
+//					polygon = polygon.convexHull();
+//				}
+//
+//				if (!ignoreHoles) {
+//					for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
+//						Geometry h = new Polygon(hole, null, gfact);
+//						h = h.buffer(0);
+//						polygon = polygon.difference(h);
+//					}
+//				}
+//
+//				if (polygon == null || polygon.isEmpty()) {
+//					continue;
+//				}
+//
+//				ret.add(Shape.create(polygon, grid.getProjection()));
+//
+//			}
+//		}
+//
+//		return ret;
+//	}
 
 }

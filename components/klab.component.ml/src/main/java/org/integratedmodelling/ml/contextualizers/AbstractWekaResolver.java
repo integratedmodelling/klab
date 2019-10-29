@@ -202,7 +202,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
     private IResource buildResource(WekaInstances instances, IContextualizationScope context) {
 
         if (resourceId == null) {
-            resourceId = NameGenerator.newName("weka");
+            resourceId = "weka" + NameGenerator.shortUUID();
         }
 
         IProject project = context.getModel().getNamespace().getProject();
