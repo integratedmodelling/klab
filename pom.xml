@@ -102,8 +102,6 @@
 		<h2gis.version>1.5.0</h2gis.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-
-		<nd4j.version>1.0.0-beta3</nd4j.version>
 		<tycho-version>1.0.0</tycho-version>
 		<xtextVersion>2.18.0</xtextVersion>
 		<mweVersion>2.10.0</mweVersion>
