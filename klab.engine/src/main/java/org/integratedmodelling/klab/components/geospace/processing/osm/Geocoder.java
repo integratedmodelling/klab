@@ -3,10 +3,8 @@ package org.integratedmodelling.klab.components.geospace.processing.osm;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
@@ -27,10 +25,6 @@ import de.topobyte.osm4j.core.model.iface.OsmNode;
 import de.topobyte.osm4j.core.model.iface.OsmRelation;
 import de.topobyte.osm4j.core.model.iface.OsmWay;
 import de.topobyte.osm4j.core.model.util.OsmModelUtil;
-import de.topobyte.osm4j.core.resolve.EntityFinder;
-import de.topobyte.osm4j.core.resolve.EntityFinders;
-import de.topobyte.osm4j.core.resolve.EntityNotFoundException;
-import de.topobyte.osm4j.core.resolve.EntityNotFoundStrategy;
 import de.topobyte.osm4j.geometry.GeometryBuilder;
 import de.topobyte.osm4j.geometry.MissingEntitiesStrategy;
 import de.topobyte.osm4j.geometry.MissingWayNodeStrategy;
@@ -45,6 +39,12 @@ public enum Geocoder {
 	public final static String GEOMETRY_FIELD = "the_geom";
 
 	Client client = Client.create();
+	/*
+	 * Fast client is used for nominating service, we don't want to wait too much for it.
+	 * TODO implement an asynchronous way to update context information
+	 */
+	Client fastClient = Client.createCustomTimeoutClient(2000);
+	
 	Client universal = Client.createUniversalJSON();
 
 	// TODO use ours
@@ -181,14 +181,13 @@ public enum Geocoder {
 
 
 	public String geocode(IEnvelope envelope) {
-
 		IEnvelope env = envelope.transform(Projection.getLatLon(), true);
 		String url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + env.getCenterCoordinates()[1]
 				+ "&lon=" + env.getCenterCoordinates()[0] + "&zoom=" + env.getScaleRank();
 
 		String ret = null;
 		try {
-			Map<?, ?> res = client.get(url, Map.class);
+			Map<?, ?> res = fastClient.get(url, Map.class);
 			if (res != null && res.containsKey("display_name")) {
 				ret = res.get("display_name").toString();
 			} else if (res != null && res.containsKey("name")) {

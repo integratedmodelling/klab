@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
@@ -98,6 +99,13 @@ public class Client extends RestTemplate {
 
 	private static ClientHttpRequestFactory factory;
 
+	public static Client createCustomTimeoutClient(int timeout) {
+		HttpComponentsClientHttpRequestFactory custom =  new HttpComponentsClientHttpRequestFactory();
+		custom.setReadTimeout(timeout);
+		custom.setConnectTimeout(timeout);
+		return new Client(custom);
+	}
+	
 	public static Client create() {
 
 		if (factory == null) {
