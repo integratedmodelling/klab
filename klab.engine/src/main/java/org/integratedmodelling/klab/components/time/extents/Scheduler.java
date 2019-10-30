@@ -87,6 +87,24 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 	}
 
 	
+	public void waitUntilEnd() {
+
+		if (endTime < 0) {
+			throw new IllegalStateException("Scheduler has no set endtime: can't wait until end");
+		}
+		
+		for (;;) {
+			if (timer.getCurrentTime() >= endTime) {
+				return;
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// poh
+			}
+		}
+	}
+	
 	
 	@Override
 	public Synchronicity getSynchronicity() {
@@ -345,6 +363,14 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 //		// TODO schedule all tasks immediately
 //	}
 
+	@Override
+	public void run() {
+		start();
+		if (endTime > 0) {
+			waitUntilEnd();
+		}
+	}
+	
 	@Override
 	public void start() {
 		if (endTime < 0) {

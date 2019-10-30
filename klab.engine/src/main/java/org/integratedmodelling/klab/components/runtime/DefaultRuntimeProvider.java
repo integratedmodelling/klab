@@ -162,7 +162,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				 * temporal grid.
 				 */
 				if (((Dataflow) dataflow).isAutoStartTransitions() && runtimeContext.getScheduler() != null) {
-					runtimeContext.getScheduler().start();
+					runtimeContext.getScheduler().run();
 				}
 
 				return runtimeContext.getTargetArtifact();

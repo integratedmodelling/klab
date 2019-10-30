@@ -86,4 +86,9 @@ public interface IScheduler<T> {
 	 * @return
 	 */
 	public Synchronicity getSynchronicity();
+
+	/**
+	 * Start, run to completion (if possible) and return.
+	 */
+	void run();
 }
