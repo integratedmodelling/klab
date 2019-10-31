@@ -432,21 +432,6 @@
 			<version>1.4.9</version>
 		</dependency>
 
-		<!-- default storage based on ND4J, API only; engine packages provide their 
-			own dependency for physical storage -->
-		<dependency>
-			<groupId>org.nd4j</groupId>
-			<artifactId>nd4j-api</artifactId>
-			<version>${nd4j.version}</version>
-		</dependency>
-		<!-- native ND4J in test scope only: production engines choose their implementation -->
-		<dependency>
-			<groupId>org.nd4j</groupId>
-			<artifactId>nd4j-native-platform</artifactId>
-			<version>${nd4j.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
 			but Spring shouldn't be needed in the embedded engine and the API is better 
 			here. -->
