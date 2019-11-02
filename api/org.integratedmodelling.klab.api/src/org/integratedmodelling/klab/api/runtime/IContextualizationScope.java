@@ -91,7 +91,7 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * 
 	 * @return a scheduler or null.
 	 */
-	IScheduler<?> getScheduler();
+	IScheduler getScheduler();
 
 	/**
 	 * There is one report per root context. Actuators will add sections to it as

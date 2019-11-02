@@ -121,4 +121,10 @@ public class TimeDuration implements ITimeDuration {
 		return ret;
 	}
 
+	@Override
+	public boolean isRegular() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

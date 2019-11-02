@@ -1396,6 +1396,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public IRuntimeScope locate(ILocator transitionScale) {
 		// TODO Auto-generated method stub
-		return this;
+		RuntimeScope ret = new RuntimeScope(this);
+		/*
+		 * TODO wrap all temporal states into a temporal rescaling state
+		 */
+		ret.scale = (Scale)transitionScale;
+		return ret;
 	}
 }

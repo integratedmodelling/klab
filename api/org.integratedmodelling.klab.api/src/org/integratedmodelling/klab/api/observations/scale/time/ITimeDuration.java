@@ -25,36 +25,38 @@ import org.integratedmodelling.klab.api.data.utils.IPair;
  */
 public interface ITimeDuration extends Comparable<ITimeDuration> {
 
-    /**
-     * number of milliseconds in this duration. It might be a bit too implementation-specific, but for now I'm
-     * leaving it as-is because it's a good interface to describe the one implementation that currently exists
-     * (DurationValue)
-     *
-     * @return duration in milliseconds
-     */
-    long getMilliseconds();
+	/**
+	 * number of milliseconds in this duration. It might be a bit too
+	 * implementation-specific, but for now I'm leaving it as-is because it's a good
+	 * interface to describe the one implementation that currently exists
+	 * (DurationValue)
+	 *
+	 * @return duration in milliseconds
+	 * @throws IllegalStateException if duration is irregular and not anchored.
+	 */
+	long getMilliseconds();
 
-    /**
-     * Return a new period anchored to the passed instant.
-     * 
-     * @param instant
-     * @return
-     */
-    ITimeDuration anchor(ITimeInstant instant);
-    
-    /**
-     * True if the period is anchored to a start time.
-     * 
-     * @return
-     */
-    boolean isAnchored();
-    
-    /**
-     * Get start time, or null if not anchored.
-     * 
-     * @return
-     */
-    ITimeInstant getStart();
+	/**
+	 * Return a new period anchored to the passed instant.
+	 * 
+	 * @param instant
+	 * @return
+	 */
+	ITimeDuration anchor(ITimeInstant instant);
+
+	/**
+	 * True if the period is anchored to a start time.
+	 * 
+	 * @return
+	 */
+	boolean isAnchored();
+
+	/**
+	 * Get start time, or null if not anchored.
+	 * 
+	 * @return
+	 */
+	ITimeInstant getStart();
 
 	/**
 	 * Return the natural resolution for something whose time is expressed in this
@@ -63,25 +65,32 @@ public interface ITimeDuration extends Comparable<ITimeDuration> {
 	 * @return
 	 */
 	ITime.Resolution.Type getResolution();
-	
-	
-	
-    /**
-     * Localize a duration to an extent starting at the current moment
-     * using the same resolution that was implied in the generating
-     * text. For example, if the duration was one year, localize to the
-     * current year (jan 1st to dec 31st). Return the start and end points
-     * of the extent.
-     *
-     * @return localization
-     */
-    IPair<ITimeInstant, ITimeInstant> localize();
 
-    /**
-     * True for a no-duration duration.
-     * 
-     * @return
-     */
+	/**
+	 * If false, this is defined in a logical way but the actual duration is
+	 * contextual to the anchored period. So calling {@link #getMilliseconds()}
+	 * throws an exception if the period isn't anchored. This is the case of months
+	 * and anything that has months in its lineage.
+	 * 
+	 * @return
+	 */
+	boolean isRegular();
+
+	/**
+	 * Localize a duration to an extent starting at the current moment using the
+	 * same resolution that was implied in the generating text. For example, if the
+	 * duration was one year, localize to the current year (jan 1st to dec 31st).
+	 * Return the start and end points of the extent.
+	 *
+	 * @return localization
+	 */
+	IPair<ITimeInstant, ITimeInstant> localize();
+
+	/**
+	 * True for a no-duration duration.
+	 * 
+	 * @return
+	 */
 	boolean isEmpty();
 
 }

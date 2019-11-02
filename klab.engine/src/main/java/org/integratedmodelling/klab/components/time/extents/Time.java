@@ -612,7 +612,7 @@ public class Time extends Extent implements ITime {
 			}
 		}
 
-		throw new KlabException("HOSTIAK unhandled time subsetting operation. Call the exorcist.");
+		throw new KlabException("HOSTIA unhandled time subsetting operation. Call the exorcist.");
 
 	}
 

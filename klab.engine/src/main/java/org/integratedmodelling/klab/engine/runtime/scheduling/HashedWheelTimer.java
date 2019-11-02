@@ -19,8 +19,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.integratedmodelling.klab.api.runtime.IScheduler.Synchronicity;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * Hash Wheel Timer, as per the paper:
@@ -49,8 +51,8 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	private final Set<Registration<?>>[] wheel;
 	private final int wheelSize;
 	private final long resolution;
-	private  ExecutorService loop;
-	private  ExecutorService executor;
+	private ExecutorService loop;
+	private ExecutorService executor;
 	private final WaitStrategy waitStrategy;
 
 	private volatile int cursor = 0;
@@ -71,8 +73,7 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	 * Create a new {@code HashedWheelTimer} using the given timer resolution. All
 	 * times will rounded up to the closest multiple of this resolution.
 	 *
-	 * @param resolution
-	 *            the resolution of this timer, in NANOSECONDS
+	 * @param resolution the resolution of this timer, in NANOSECONDS
 	 */
 	public HashedWheelTimer(long resolution) {
 		this(resolution, DEFAULT_WHEEL_SIZE, new WaitStrategy.SleepWait());
@@ -83,14 +84,11 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	 * wheelSize. All times will rounded up to the closest multiple of this
 	 * resolution.
 	 *
-	 * @param res
-	 *            resolution of this timer in NANOSECONDS
-	 * @param wheelSize
-	 *            size of the Ring Buffer supporting the Timer, the larger the
-	 *            wheel, the less the lookup time is for sparse timeouts. Sane
-	 *            default is 512.
-	 * @param waitStrategy
-	 *            strategy for waiting for the next tick
+	 * @param res          resolution of this timer in NANOSECONDS
+	 * @param wheelSize    size of the Ring Buffer supporting the Timer, the larger
+	 *                     the wheel, the less the lookup time is for sparse
+	 *                     timeouts. Sane default is 512.
+	 * @param waitStrategy strategy for waiting for the next tick
 	 */
 	public HashedWheelTimer(long res, int wheelSize, WaitStrategy waitStrategy) {
 		this(DEFAULT_TIMER_NAME, res, wheelSize, waitStrategy, Executors.newFixedThreadPool(1));
@@ -101,18 +99,13 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	 * wheelSize. All times will rounded up to the closest multiple of this
 	 * resolution.
 	 *
-	 * @param name
-	 *            name for daemon thread factory to be displayed
-	 * @param res
-	 *            resolution of this timer in NANOSECONDS
-	 * @param wheelSize
-	 *            size of the Ring Buffer supporting the Timer, the larger the
-	 *            wheel, the less the lookup time is for sparse timeouts. Sane
-	 *            default is 512.
-	 * @param strategy
-	 *            strategy for waiting for the next tick
-	 * @param exec
-	 *            Executor instance to submit tasks to
+	 * @param name      name for daemon thread factory to be displayed
+	 * @param res       resolution of this timer in NANOSECONDS
+	 * @param wheelSize size of the Ring Buffer supporting the Timer, the larger the
+	 *                  wheel, the less the lookup time is for sparse timeouts. Sane
+	 *                  default is 512.
+	 * @param strategy  strategy for waiting for the next tick
+	 * @param exec      Executor instance to submit tasks to
 	 */
 	@SuppressWarnings("unchecked")
 	public HashedWheelTimer(String name, long res, int wheelSize, WaitStrategy strategy, ExecutorService exec) {
@@ -132,36 +125,29 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	public void start() {
 		startUntil(-1);
 	}
-	
+
 	public boolean isFinished() {
 		return finished.get();
 	}
-	
+
 	public void startUntil(long endTimeMs) {
-		
+
 		long endTime = endTimeMs < 0 ? -1 : TimeUnit.MILLISECONDS.toNanos(endTimeMs);
-		
+
 		final Runnable loopRunnable = new Runnable() {
 			@Override
 			public void run() {
 
-				/*
-				 * TODO stop all if monitor is canceled
-				 */
-				
-				currentTime.set(getInitialTime());
+				long deadline = getInitialTime();
 
 				while (true) {
-					// TODO: consider extracting processing until deadline for test purposes
+					
 					Set<Registration<?>> registrations = wheel[cursor];
 					for (Registration<?> r : registrations) {
 						if (r.isCancelled()) {
 							registrations.remove(r);
 						} else if (r.ready()) {
 							
-							/*
-							 * TODO in synchronous mode, wait for each task to finish.
-							 */
 							executor.execute(r);
 							registrations.remove(r);
 
@@ -173,26 +159,69 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 						}
 					}
 
-					currentTime.set(currentTime.get() + resolution);
+					deadline += resolution;
 					
-					if (endTime >= 0 && currentTime.get() > endTime) {
+					if (endTime >= 0 && deadline > endTime) {
 						finished.set(true);
 						return;
 					}
 					
 					try {
-						waitStrategy.waitUntil(currentTime.get());
+						waitStrategy.waitUntil(deadline);
 					} catch (InterruptedException e) {
 						return;
 					}
 
 					cursor = (cursor + 1) % wheelSize;
+//				
+//				/*
+//				 * TODO stop all if monitor is canceled
+//				 */
+//
+//				currentTime.set(getInitialTime());
+//
+//				while (true) {
+//					// TODO: consider extracting processing until deadline for test purposes
+//					Set<Registration<?>> registrations = wheel[cursor];
+//					for (Registration<?> r : registrations) {
+//						if (r.isCancelled()) {
+//							registrations.remove(r);
+//						} else if (r.ready()) {
+//
+//							/*
+//							 * TODO in synchronous mode, wait for each task to finish.
+//							 */
+//							executor.execute(r);
+//							registrations.remove(r);
+//
+//							if (!r.isCancelAfterUse()) {
+//								reschedule(r);
+//							}
+//						} else {
+//							r.decrement();
+//						}
+//					}
+//
+//					currentTime.set(currentTime.get() + resolution);
+//
+//					if (endTime >= 0 && currentTime.get() > endTime) {
+//						finished.set(true);
+//						return;
+//					}
+//
+//					try {
+//						waitStrategy.waitUntil(currentTime.get());
+//					} catch (InterruptedException e) {
+//						return;
+//					}
+//
+//					cursor = (cursor + 1) % wheelSize;
 				}
 			}
 		};
 
 		this.loop = Executors.newSingleThreadExecutor(new ThreadFactory() {
-			
+
 			AtomicInteger i = new AtomicInteger();
 
 			@Override
@@ -204,7 +233,7 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 		});
 		this.loop.submit(loopRunnable);
 	}
-	
+
 	/**
 	 * Override this to provide a different starting point than now.
 	 * 
@@ -226,20 +255,32 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 
 	@Override
 	public <V> ScheduledFuture<V> schedule(Callable<V> callable, long period, TimeUnit timeUnit) {
-		return scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), callable);
+		return scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), new Function<Long, V>() {
+
+			@Override
+			public V apply(Long t) {
+				try {
+					return callable.call();
+				} catch (Exception e) {
+					throw new KlabException(e);
+				}
+			}});
+
 	}
 
 //	@Override
-	public ScheduledFuture<?> scheduleAtFixedRate(Consumer<Long> runnable, long initialDelay, long period, TimeUnit unit) {
+	public <T> ScheduledFuture<T> scheduleAtFixedRate(Consumer<Long> runnable, long initialDelay, long period,
+			TimeUnit unit) {
 		return scheduleFixedRate(TimeUnit.NANOSECONDS.convert(period, unit),
-				TimeUnit.NANOSECONDS.convert(initialDelay, unit), constantlyNull(new Runnable() {
+				TimeUnit.NANOSECONDS.convert(initialDelay, unit), new Function<Long, T>() {
 					@Override
-					public void run() {
-						runnable.accept(unit.convert(currentTime.get(), TimeUnit.NANOSECONDS));
+					public T apply(Long l) {
+						runnable.accept(unit.convert(l, TimeUnit.NANOSECONDS));
+						return null;
 					}
-				}));
+				});
 	}
-	
+
 	@Override
 	public ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long initialDelay, long period, TimeUnit unit) {
 		return scheduleFixedRate(TimeUnit.NANOSECONDS.convert(period, unit),
@@ -330,12 +371,9 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	 * execution until after <code>period</code> has elapsed since last time it was
 	 * invoked. <code>delegate</code> will be called most once <code>period</code>.
 	 *
-	 * @param delegate
-	 *            delegate runnable to be wrapped
-	 * @param period
-	 *            given time period
-	 * @param timeUnit
-	 *            unit of the period
+	 * @param delegate delegate runnable to be wrapped
+	 * @param period   given time period
+	 * @param timeUnit unit of the period
 	 * @return wrapped runnable
 	 */
 	public Runnable debounce(Runnable delegate, long period, TimeUnit timeUnit) {
@@ -345,9 +383,9 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 			@Override
 			public void run() {
 				ScheduledFuture<?> future = reg.getAndSet(
-						scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), new Callable<Object>() {
+						scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), new Function<Long, Object>() {
 							@Override
-							public Object call() throws Exception {
+							public Object apply(Long l) {
 								delegate.run();
 								return null;
 							}
@@ -364,12 +402,9 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	 * execution until after <code>period</code> has elapsed since last time it was
 	 * invoked. <code>delegate</code> will be called most once <code>period</code>.
 	 *
-	 * @param delegate
-	 *            delegate consumer to be wrapped
-	 * @param period
-	 *            given time period
-	 * @param timeUnit
-	 *            unit of the period
+	 * @param delegate delegate consumer to be wrapped
+	 * @param period   given time period
+	 * @param timeUnit unit of the period
 	 * @return wrapped runnable
 	 */
 	public <T> Consumer<T> debounce(Consumer<T> delegate, long period, TimeUnit timeUnit) {
@@ -378,10 +413,10 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 		return new Consumer<T>() {
 			@Override
 			public void accept(T t) {
-				ScheduledFuture<T> future = reg
-						.getAndSet(scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), new Callable<T>() {
+				ScheduledFuture<T> future = reg.getAndSet(
+						scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), new Function<Long, T>() {
 							@Override
-							public T call() throws Exception {
+							public T apply(Long l) {
 								delegate.accept(t);
 								return t;
 							}
@@ -400,12 +435,9 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	 * terms of it's "left bound" (first time it's called within the current
 	 * period).
 	 *
-	 * @param delegate
-	 *            delegate runnable to be called
-	 * @param period
-	 *            period to be elapsed between the runs
-	 * @param timeUnit
-	 *            unit of the period
+	 * @param delegate delegate runnable to be called
+	 * @param period   period to be elapsed between the runs
+	 * @param timeUnit unit of the period
 	 * @return wrapped runnable
 	 */
 	public Runnable throttle(Runnable delegate, long period, TimeUnit timeUnit) {
@@ -415,9 +447,10 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 			@Override
 			public void run() {
 				if (alreadyWaiting.compareAndSet(false, true)) {
-					scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), new Callable<Object>() {
+					scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), new Function<Long, Object>() {
+
 						@Override
-						public Object call() throws Exception {
+						public Object apply(Long t) {
 							delegate.run();
 							alreadyWaiting.compareAndSet(true, false);
 							return null;
@@ -435,12 +468,9 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	 * terms of it's "left bound" (first time it's called within the current
 	 * period).
 	 *
-	 * @param delegate
-	 *            delegate consumer to be called
-	 * @param period
-	 *            period to be elapsed between the runs
-	 * @param timeUnit
-	 *            unit of the period
+	 * @param delegate delegate consumer to be called
+	 * @param period   period to be elapsed between the runs
+	 * @param timeUnit unit of the period
 	 * @return wrapped runnable
 	 */
 	public <T> Consumer<T> throttle(Consumer<T> delegate, long period, TimeUnit timeUnit) {
@@ -452,9 +482,9 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 			public void accept(T val) {
 				lastValue.set(val);
 				if (alreadyWaiting.compareAndSet(false, true)) {
-					scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), new Callable<Object>() {
+					scheduleOneShot(TimeUnit.NANOSECONDS.convert(period, timeUnit), new Function<Long, T>() {
 						@Override
-						public Object call() throws Exception {
+						public T apply(Long arg0) {
 							delegate.accept(lastValue.getAndSet(null));
 							alreadyWaiting.compareAndSet(true, false);
 							return null;
@@ -471,7 +501,7 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	 * INTERNALS
 	 */
 
-	private <V> Registration<V> scheduleOneShot(long firstDelay, Callable<V> callable) {
+	private <V> Registration<V> scheduleOneShot(long firstDelay, Function<Long, V> callable) {
 //		assertRunning();
 		isTrue(firstDelay >= resolution, "Cannot schedule tasks for amount of time less than timer precision.");
 		int firstFireOffset = (int) (firstDelay / resolution);
@@ -490,8 +520,8 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 		return r;
 	}
 
-	private <V> Registration<V> scheduleFixedRate(long recurringTimeout, long firstDelay, Callable<V> callable) {
-//		assertRunning();
+	private <V> Registration<V> scheduleFixedRate(long recurringTimeout, long firstDelay, Function<Long, V> callable) {
+
 		isTrue(recurringTimeout >= resolution, "Cannot schedule tasks for amount of time less than timer precision.");
 
 		int offset = (int) (recurringTimeout / resolution);
@@ -505,9 +535,8 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 		return r;
 	}
 
-	private <V> Registration<V> scheduleFixedDelay(long recurringTimeout, long firstDelay, Callable<V> callable) {
-/*		assertRunning();
-*/		
+	private <V> Registration<V> scheduleFixedDelay(long recurringTimeout, long firstDelay, Function<Long, V> callable) {
+
 		isTrue(recurringTimeout >= resolution, "Cannot schedule tasks for amount of time less than timer precision.");
 
 		int offset = (int) (recurringTimeout / resolution);
@@ -546,8 +575,8 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 		}
 	}
 
-	private static Callable<?> constantlyNull(Runnable r) {
-		return () -> {
+	private static Function<Long, ?> constantlyNull(Runnable r) {
+		return (l) -> {
 			r.run();
 			return null;
 		};
@@ -555,6 +584,7 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 
 	/**
 	 * In ms
+	 * 
 	 * @return
 	 */
 	public long getCurrentTime() {

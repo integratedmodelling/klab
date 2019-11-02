@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.api.runtime;
 
-import java.util.function.BiConsumer;
-
 /**
  * An observation-specific scheduler that can run temporal transitions over a
  * set of differently scaled observations in mock time or in real time, ensuring
@@ -10,7 +8,7 @@ import java.util.function.BiConsumer;
  * @author ferdinando.villa
  *
  */
-public interface IScheduler<T> {
+public interface IScheduler {
 
 	enum Type {
 		REAL_TIME, MOCK_TIME

@@ -1,20 +1,21 @@
 package org.integratedmodelling.klab.engine.runtime.scheduling;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 
 class OneShotRegistration<T> extends CompletableFuture<T> implements Registration<T> {
 
-	private final Callable<T> callable;
+	private final Function<Long,T> callable;
 	protected volatile int rounds; // rounds is only visible to one thread
 	protected volatile Status status;
 
 	private final long delay;
-
-	public OneShotRegistration(int rounds, Callable<T> callable, long delay) {
+	protected long current;
+	
+	public OneShotRegistration(int rounds, Function<Long,T> callable, long delay) {
 		this.rounds = rounds;
 		this.status = Status.READY;
 		this.callable = callable;
@@ -72,7 +73,8 @@ class OneShotRegistration<T> extends CompletableFuture<T> implements Registratio
 	@Override
 	public void run() {
 		try {
-			this.complete(callable.call());
+			this.complete(callable.apply(current));
+			current += delay;
 		} catch (Exception e) {
 			throw new KlabContextualizationException(e);
 		}

@@ -1,10 +1,13 @@
 package org.integratedmodelling.klab.components.time.extents;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -20,8 +23,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelMockTimer;
-import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelTimer;
 import org.integratedmodelling.klab.scale.Scale;
 
 /**
@@ -31,58 +32,41 @@ import org.integratedmodelling.klab.scale.Scale;
  * @author ferdinando.villa
  *
  */
-public abstract class Scheduler<T> implements IScheduler {
+public abstract class Scheduler2 implements IScheduler {
 
-//	class DGraph extends DefaultDirectedGraph<T, DefaultEdge> {
-//
-//		public DGraph(T observation) {
-//			super(DefaultEdge.class);
-//			addVertex(observation);
-//		}
-//
-//		/**
-//		 * 
-//		 */
-//		private static final long serialVersionUID = -7193783283781551257L;
-//
-//	}
-
-	private HashedWheelTimer timer;
+//	private HashedWheelTimer timer;
 	private Type type;
-//	private Map<Long, DGraph> reactors = new HashMap<>();
 	private long startTime = -1;
 	private long endTime = -1;
-//	private long interval = -1;
-//	private BiConsumer<T, Long> actionHandler;
-//	private BiConsumer<T, Long> errorHandler;
-	private ITime overallTime;
 	private Synchronicity synchronicity = Synchronicity.SYNCHRONOUS;
+	private ITime overallTime; 
+	
+	/*
+	 * Period of all subscribed actuators, to compute resolution.
+	 */
+	Set<Long> periods = new HashSet<>();
+	class Registration {
+		ITime time;
+		Consumer<Long> action;
+	}
+	
+	private List<Registration> registrations = new ArrayList<>();
+	
+	public static final long DEFAULT_RESOLUTION = TimeUnit.NANOSECONDS.convert(10, TimeUnit.MILLISECONDS);
+	public static final int DEFAULT_WHEEL_SIZE = 512;
+	protected static final String DEFAULT_TIMER_NAME = "hashed-wheel-timer";
 
-//	class TreeNode {
-//		TreeNode(T element) {
-//			this.element = element;
-//		}
-//
-//		T element;
-//		Deque<T> prerequisites = new LinkedList<>();
-//	}
-
-	protected abstract ITime getTime(T object);
-
-	public Scheduler(ITime time) {
+	private Set<Registration>[] wheel;
+	private int wheelSize = 0;
+	
+	public Scheduler2(ITime time) {
 		Date now = new Date();
 		this.overallTime = time;
 		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
 		this.startTime = time.getStart() == null ? now.getTime() : time.getStart().getMilliseconds();
-		this.timer = this.type == Type.REAL_TIME ? new HashedWheelTimer(this.startTime)
-				: new HashedWheelMockTimer(this.startTime);
 		if (time.getEnd() != null) {
 			this.endTime = time.getEnd().getMilliseconds();
 		}
-	}
-
-	public long getTime() {
-		return timer.getCurrentTime();
 	}
 
 	
@@ -93,9 +77,9 @@ public abstract class Scheduler<T> implements IScheduler {
 		}
 		
 		for (;;) {
-			if (timer.getCurrentTime() >= endTime) {
-				return;
-			}
+//			if (timer.getCurrentTime() >= endTime) {
+//				return;
+//			}
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -110,6 +94,21 @@ public abstract class Scheduler<T> implements IScheduler {
 		return synchronicity;
 	}
 
+//	private <V> Registration<V> scheduleFixedRate(long recurringTimeout, long firstDelay, Function<Long, V> callable) {
+//
+//		isTrue(recurringTimeout >= resolution, "Cannot schedule tasks for amount of time less than timer precision.");
+//
+//		int offset = (int) (recurringTimeout / resolution);
+//		int rounds = offset / wheelSize;
+//
+//		int firstFireOffset = (int) (firstDelay / resolution);
+//		int firstFireRounds = firstFireOffset / wheelSize;
+//
+//		Registration<V> r = new FixedRateRegistration<>(firstFireRounds, callable, recurringTimeout, rounds, offset);
+//		wheel[idx(cursor + firstFireOffset + 1)].add(r);
+//		return r;
+//	}
+	
 	public void schedule(final Actuator actuator, final IRuntimeScope scope) {
 
 		/*
@@ -170,10 +169,10 @@ public abstract class Scheduler<T> implements IScheduler {
 		final IDirectObservation target = (IDirectObservation) targetObservation;
 		final long endTime = overall.getTime().getEnd() == null ? -1 : overall.getTime().getEnd().getMilliseconds();
 
-		/*
-		 * enqueue actions for transition
-		 */
-		timer.scheduleAtFixedRate(new Consumer<Long>() {
+		Registration registration = new Registration();
+		
+		registration.time = scale.getTime();
+		registration.action = new Consumer<Long>() {
 
 			@Override
 			public void accept(Long t) {
@@ -242,125 +241,14 @@ public abstract class Scheduler<T> implements IScheduler {
 				}
 
 			}
-		}, /* TODO */0, step.getMilliseconds(), TimeUnit.MILLISECONDS);
+		};
+		
+		registrations.add(registration);
+		
 
 		System.out.println("SCHEDULED " + actuator + " to run every " + step.getMilliseconds());
 		
 	}
-
-//	@SuppressWarnings("unchecked")
-////	@Override
-//	public void merge(T temporalObject, T... requiredAntecedents) {
-//
-//		ITime time = getTime(temporalObject);
-//		if (time == null || time.getStep().isEmpty()) {
-//			return;
-//		}
-//
-//		if (startTime < 0 || startTime > time.getStart().getMilliseconds()) {
-//			startTime = time.getStart().getMilliseconds();
-//		}
-//		if (endTime < 0 || endTime < time.getEnd().getMilliseconds()) {
-//			endTime = time.getEnd().getMilliseconds();
-//		}
-//
-//		DGraph graph = null;
-//		if (reactors.containsKey(time.getStep().getMilliseconds())) {
-//			(graph = reactors.get(time.getStep().getMilliseconds())).addVertex(temporalObject);
-//		} else {
-//			reactors.put(time.getStep().getMilliseconds(), (graph = new DGraph(temporalObject)));
-//		}
-//
-//		if (requiredAntecedents != null) {
-//			for (T antecedent : requiredAntecedents) {
-//
-//				// must have same period and phase
-//
-//				graph.addVertex(antecedent);
-//				graph.addEdge(antecedent, temporalObject);
-//			}
-//		}
-//	}
-//
-////	@Override
-//	public void start(BiConsumer<T, Long> tickHandler, BiConsumer<T, Long> timingErrorHandler) {
-//
-//		this.actionHandler = tickHandler;
-//		this.errorHandler = timingErrorHandler;
-//
-//		if (timer != null) {
-//			throw new IllegalStateException("a scheduler can only be started once");
-//		}
-//
-//		long[] spans = new long[reactors.size()];
-//		int i = 0;
-//		for (Long l : reactors.keySet()) {
-//			spans[i++] = l;
-//		}
-//		this.interval = NumberUtils.lcm(spans);
-//
-//		if (type == Type.REAL_TIME) {
-//			// for logging
-//			startTime = System.currentTimeMillis();
-//		}
-//
-//		// adjust the start time to start in phase with the interval (CHECK)
-//		long remainder = startTime % interval;
-//		if (remainder != 0) {
-//			startTime -= (interval - remainder);
-//		}
-//
-//		timer = new HashedWheelTimer(
-//				type == Type.MOCK_TIME ? TimeUnit.NANOSECONDS.convert(interval, TimeUnit.MILLISECONDS)
-//						: TimeUnit.MILLISECONDS.toNanos(10),
-//				512, type == Type.MOCK_TIME ? new WaitStrategy() {
-//					@Override
-//					public void waitUntil(long deadlineNanoseconds) throws InterruptedException {
-//						// TODO sleep if necessary until the current time hasn't been reached by all
-//						// observations
-//					}
-//				} : new WaitStrategy.SleepWait());
-//
-//		/*
-//		 * schedule the main task at the smallest interval
-//		 */
-//		timer.scheduleWithFixedDelay(() -> {
-//			handleTick();
-//		}, 0, interval, TimeUnit.MILLISECONDS);
-//	}
-//
-//	private void handleTick() {
-//		this.startTime += this.interval;
-//		for (Long key : reactors.keySet()) {
-//			if ((this.startTime % key) == 0) {
-//				callReactors(reactors.get(key));
-//			}
-//		}
-//	}
-
-//	private void callReactors(DGraph graph) {
-//
-//		/*
-//		 * TODO check that previous executor has finished and wait (if mock time) or
-//		 * throw a specific exception (real time) for all the actors that have not
-//		 * finished computing, unless configured otherwise, so that it can be caught and
-//		 * the actor can be deactivated.
-//		 */
-//
-//		// call all nodes concurrently, each calling its antecedents in order. The same
-//		// antecedent
-//		// could be in more than one node and should only be called once.
-//		// NO must use an actual dependency graph
-////		for (TreeNode node : list) {
-////			if (getTime(node.element).getStart().getMillis() >= (this.startTime - this.interval)) {
-////				// TODO use topological sort. Should be able to enqueue groups in dependency
-////				// order as soon as all deps are done.
-////				System.out.println("Calling for " + this.startTime + ": " + node.element);
-////			}
-////		}
-//
-//		// TODO schedule all tasks immediately
-//	}
 
 	@Override
 	public void run() {
@@ -372,24 +260,24 @@ public abstract class Scheduler<T> implements IScheduler {
 	
 	@Override
 	public void start() {
-		if (endTime < 0) {
-			timer.start();
-		} else {
-			timer.startUntil(endTime);
-		}
+//		if (endTime < 0) {
+//			timer.start();
+//		} else {
+//			timer.startUntil(endTime);
+//		}
 	}
 
 	@Override
 	public void stop() {
 
-		if (timer != null) {
-			timer.shutdownNow();
-			try {
-				timer.awaitTermination(1, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				Logging.INSTANCE.error(e);
-			}
-		}
+//		if (timer != null) {
+//			timer.shutdownNow();
+//			try {
+//				timer.awaitTermination(1, TimeUnit.SECONDS);
+//			} catch (InterruptedException e) {
+//				Logging.INSTANCE.error(e);
+//			}
+//		}
 	}
 
 }
