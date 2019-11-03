@@ -39,26 +39,119 @@ public abstract class Scheduler2 implements IScheduler {
 	private long startTime = -1;
 	private long endTime = -1;
 	private Synchronicity synchronicity = Synchronicity.SYNCHRONOUS;
-	private ITime overallTime; 
-	
+	private ITime overallTime;
+
 	/*
 	 * Period of all subscribed actuators, to compute resolution.
 	 */
 	Set<Long> periods = new HashSet<>();
+
 	class Registration {
-		ITime time;
+
+		Actuator actuator;
+		IDirectObservation target;
+		IScale scale;
 		Consumer<Long> action;
+		long tIndex = 0;
+		long endTime;
+		IRuntimeScope scope;
+		
+		/*
+		 * Used to sort by milliseconds from beginning of slot time so that temporal
+		 * sequence is respected.
+		 */
+		long deltaFromSlotTime;
+		
+		public Registration(Actuator actuator, IDirectObservation target, IScale scale, IRuntimeScope scope, long endtime) {
+			
+			this.actuator = actuator;
+			this.scale = scale;
+			this.target = target;
+			this.endTime = endtime;
+			this.scope = scope;
+			
+			action = new Consumer<Long>() {
+
+				@Override
+				public void accept(Long t) {
+
+					if (endTime > 0 && t > endTime) {
+						return;
+					}
+
+					/*
+					 * If target is dead, return
+					 */
+					if (!target.isActive()) {
+						return;
+					}
+
+					/*
+					 * 1. Turn the millisecond t into the correspondent T extent for the
+					 * observation's scale
+					 */
+					ITime transition = (ITime) scale.getTime().at(new TimeInstant(t));
+
+					/*
+					 * 2. Set the context at() the current time. This will also need to expose any
+					 * affected outputs that move at a different (context) speed through a rescaling
+					 * wrapper. Done within the context, which uses its current target to establish
+					 * the specific view of the context.
+					 */
+					ILocator transitionScale = Scale.substituteExtent(scale, transition);
+					IRuntimeScope transitionContext = scope.locate(transitionScale);
+
+					/*
+					 * 3. Run all contextualizers in the context that react to transitions; check
+					 * for signs of life at each step.
+					 */
+					for (Actuator.Computation computation : actuator.getContextualizers()) {
+
+						/*
+						 * pick those that have transition trigger or whose geometry includes time. TODO
+						 * condition should become clear and simple - for now it's nasty.
+						 */
+						if (computation.resource.getTrigger() == Trigger.TRANSITION || (computation.resource
+								.getTrigger() == Trigger.RESOLUTION
+								&& ((computation.observable.getArtifactType().isOccurrent()
+										&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) == null)
+										|| (computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null
+												&& scale.getTime().intersects(computation.resource.getGeometry()
+														.getDimension(Dimension.Type.TIME)))))) {
+
+							actuator.runContextualizer(computation.contextualizer, computation.observable,
+									computation.resource, transitionContext.getArtifact(computation.targetId),
+									transitionContext, (IScale) transitionScale);
+
+							if (!target.isActive()) {
+								break;
+							}
+						}
+					}
+
+					/*
+					 * 4. Notify whatever has changed.
+					 */
+					if (!target.isActive()) {
+						// went missing in action, notify relatives
+					} else {
+						// TODO
+					}
+
+				}
+			};
+		}
 	}
-	
+
 	private List<Registration> registrations = new ArrayList<>();
-	
+
 	public static final long DEFAULT_RESOLUTION = TimeUnit.NANOSECONDS.convert(10, TimeUnit.MILLISECONDS);
 	public static final int DEFAULT_WHEEL_SIZE = 512;
 	protected static final String DEFAULT_TIMER_NAME = "hashed-wheel-timer";
 
 	private Set<Registration>[] wheel;
 	private int wheelSize = 0;
-	
+
 	public Scheduler2(ITime time) {
 		Date now = new Date();
 		this.overallTime = time;
@@ -69,13 +162,12 @@ public abstract class Scheduler2 implements IScheduler {
 		}
 	}
 
-	
 	public void waitUntilEnd() {
 
 		if (endTime < 0) {
 			throw new IllegalStateException("Scheduler has no set endtime: can't wait until end");
 		}
-		
+
 		for (;;) {
 //			if (timer.getCurrentTime() >= endTime) {
 //				return;
@@ -87,8 +179,7 @@ public abstract class Scheduler2 implements IScheduler {
 			}
 		}
 	}
-	
-	
+
 	@Override
 	public Synchronicity getSynchronicity() {
 		return synchronicity;
@@ -108,7 +199,7 @@ public abstract class Scheduler2 implements IScheduler {
 //		wheel[idx(cursor + firstFireOffset + 1)].add(r);
 //		return r;
 //	}
-	
+
 	public void schedule(final Actuator actuator, final IRuntimeScope scope) {
 
 		/*
@@ -169,97 +260,49 @@ public abstract class Scheduler2 implements IScheduler {
 		final IDirectObservation target = (IDirectObservation) targetObservation;
 		final long endTime = overall.getTime().getEnd() == null ? -1 : overall.getTime().getEnd().getMilliseconds();
 
-		Registration registration = new Registration();
-		
-		registration.time = scale.getTime();
-		registration.action = new Consumer<Long>() {
-
-			@Override
-			public void accept(Long t) {
-
-				if (endTime > 0 && t > endTime) {
-					return;
-				}
-
-				/*
-				 * If target is dead, return
-				 */
-				if (!target.isActive()) {
-					return;
-				}
-
-				/*
-				 * 1. Turn the millisecond t into the correspondent T extent for the
-				 * observation's scale
-				 */
-				ITime transition = (ITime) scale.getTime().at(new TimeInstant(t));
-
-				/*
-				 * 2. Set the context at() the current time. This will also need to expose any
-				 * affected outputs that move at a different (context) speed through a rescaling
-				 * wrapper. Done within the context, which uses its current target to establish
-				 * the specific view of the context.
-				 */
-				ILocator transitionScale = Scale.substituteExtent(scale, transition);
-				IRuntimeScope transitionContext = scope.locate(transitionScale);
-
-				/*
-				 * 3. Run all contextualizers in the context that react to transitions; check
-				 * for signs of life at each step.
-				 */
-				for (Actuator.Computation computation : actuator.getContextualizers()) {
-
-					/*
-					 * pick those that have transition trigger or whose geometry includes time.
-					 * TODO condition should become clear and simple - for now it's nasty.
-					 */
-					if (computation.resource.getTrigger() == Trigger.TRANSITION || (computation.resource
-							.getTrigger() == Trigger.RESOLUTION
-							&& ((computation.observable.getArtifactType().isOccurrent()
-									&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) == null)
-									|| (computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null
-											&& scale.getTime().intersects(computation.resource.getGeometry()
-													.getDimension(Dimension.Type.TIME)))))) {
-
-						actuator.runContextualizer(computation.contextualizer, computation.observable,
-								computation.resource, transitionContext.getArtifact(computation.targetId),
-								transitionContext, (IScale) transitionScale);
-
-						if (!target.isActive()) {
-							break;
-						}
-					}
-				}
-
-				/*
-				 * 4. Notify whatever has changed.
-				 */
-				if (!target.isActive()) {
-					// went missing in action, notify relatives
-				} else {
-					// TODO
-				}
-
-			}
-		};
-		
-		registrations.add(registration);
-		
+		registrations.add(new Registration(actuator, target, scale, scope, endTime));
 
 		System.out.println("SCHEDULED " + actuator + " to run every " + step.getMilliseconds());
-		
+
 	}
 
+	public void schedule() {
+		
+		long longest;
+		long resolution;
+		List<Long> periods = new ArrayList<>();
+		
+		/*
+		 * figure out the MCD resolution
+		 */
+		for (Registration registration : registrations) {
+		
+			
+			
+		}
+		
+		
+		/*
+		 * wheel size must accommodate the longest interval @the chosen resolution
+		 */
+		
+	}
+	
 	@Override
 	public void run() {
-		start();
+		
+		schedule();
+
 		if (endTime > 0) {
 			waitUntilEnd();
 		}
 	}
-	
+
 	@Override
 	public void start() {
+		
+		// TODO run run() in a thread
+		
 //		if (endTime < 0) {
 //			timer.start();
 //		} else {

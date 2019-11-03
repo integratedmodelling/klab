@@ -26,17 +26,6 @@ import org.integratedmodelling.klab.api.data.utils.IPair;
 public interface ITimeDuration extends Comparable<ITimeDuration> {
 
 	/**
-	 * number of milliseconds in this duration. It might be a bit too
-	 * implementation-specific, but for now I'm leaving it as-is because it's a good
-	 * interface to describe the one implementation that currently exists
-	 * (DurationValue)
-	 *
-	 * @return duration in milliseconds
-	 * @throws IllegalStateException if duration is irregular and not anchored.
-	 */
-	long getMilliseconds();
-
-	/**
 	 * Return a new period anchored to the passed instant.
 	 * 
 	 * @param instant
@@ -75,6 +64,35 @@ public interface ITimeDuration extends Comparable<ITimeDuration> {
 	 * @return
 	 */
 	boolean isRegular();
+
+	/**
+	 * number of milliseconds in this duration. It might be a bit too
+	 * implementation-specific, but for now I'm leaving it as-is because it's a good
+	 * interface to describe the one implementation that currently exists
+	 * (DurationValue)
+	 *
+	 * @return duration in milliseconds
+	 * @throws IllegalStateException if duration is irregular and not anchored.
+	 */
+	long getMilliseconds();
+
+	/**
+	 * number of milliseconds of the maximum duration if irregular, the same as
+	 * getMilliseconds() otherwise.
+	 *
+	 * @return max duration in milliseconds
+	 * @throws IllegalStateException if duration is irregular and not anchored.
+	 */
+	long getMaxMilliseconds();
+
+	/**
+	 * number of milliseconds of the maximum common divisor of the possible
+	 * durations if irregular, the same as getMilliseconds() otherwise.
+	 *
+	 * @return largest common duration in milliseconds
+	 * @throws IllegalStateException if duration is irregular and not anchored.
+	 */
+	long getCommonDivisorMilliseconds();
 
 	/**
 	 * Localize a duration to an extent starting at the current moment using the

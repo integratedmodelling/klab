@@ -15,6 +15,7 @@ public class TimeDuration implements ITimeDuration {
 	private ITimeInstant start = null;
 	private Duration period = null;
 	private Resolution.Type resolution = null;
+	boolean regular = true;
 
 	private TimeDuration(Duration period, ITimeInstant start) {
 		this.period = period;
@@ -124,7 +125,19 @@ public class TimeDuration implements ITimeDuration {
 	@Override
 	public boolean isRegular() {
 		// TODO Auto-generated method stub
-		return false;
+		return regular;
+	}
+
+	@Override
+	public long getMaxMilliseconds() {
+		// TODO Auto-generated method stub
+		return regular ? getMilliseconds() : 0;
+	}
+
+	@Override
+	public long getCommonDivisorMilliseconds() {
+		// TODO Auto-generated method stub
+		return regular ? getMilliseconds() : 0;
 	}
 
 }
