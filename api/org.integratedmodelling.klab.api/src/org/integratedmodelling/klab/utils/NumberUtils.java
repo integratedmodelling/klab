@@ -30,8 +30,7 @@ public class NumberUtils {
 	/**
 	 * Separate unit.
 	 *
-	 * @param o
-	 *            the o
+	 * @param o the o
 	 * @return the pair
 	 */
 	public static Pair<Double, String> separateUnit(Object o) {
@@ -68,7 +67,7 @@ public class NumberUtils {
 	public static boolean encodesLong(String s) {
 		return INTEGER_PATTERN.matcher(s).matches();
 	}
-	
+
 	public static boolean encodesInteger(String s) {
 		return INTEGER_PATTERN.matcher(s).matches();
 	}
@@ -341,6 +340,15 @@ public class NumberUtils {
 		return ret;
 	}
 
+	public static long[] longArrayFromCollection(List<Number> vals) {
+		long[] ret = new long[vals.size()];
+		int i = 0;
+		for (Number d : vals) {
+			ret[i++] = d.longValue();
+		}
+		return ret;
+	}
+
 	/**
 	 * Index of largest number in double array
 	 * 
@@ -391,5 +399,21 @@ public class NumberUtils {
 
 	public static boolean isOdd(int x) {
 		return x % 2 != 0;
+	}
+
+	public static int nextPowerOf2(int n)
+	{
+		// decrement n (to handle cases when n itself is a power of 2)
+		n--;
+
+		// Set all bits after the last set bit
+		n |= n >> 1;
+		n |= n >> 2;
+		n |= n >> 4;
+		n |= n >> 8;
+		n |= n >> 16;
+
+		// increment n and return
+		return ++n;
 	}
 }

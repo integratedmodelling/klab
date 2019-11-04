@@ -63,7 +63,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
     protected Observation(Observable observable, Scale scale, IRuntimeScope context) {
         super(scale, context);
         this.observable = observable;
-        this.setCreationTime(context.getScheduler() != null ? context.getScheduler().getTime() : timestamp);
+		this.setCreationTime(/* context.getScheduler() != null ? context.getScheduler().getTime() : */ timestamp);
         this.setExitTime(-1);
     }
 

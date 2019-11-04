@@ -39,11 +39,11 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -55,7 +55,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.components.time.extents.Scheduler;
+import org.integratedmodelling.klab.components.time.extents.Scheduler2;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Computation;
@@ -112,7 +112,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	ISubject rootSubject;
 	IDirectObservation contextSubject;
 	Map<String, IObservation> observations;
-	Scheduler<?> scheduler;
+	IScheduler scheduler;
 	IReport report;
 	ContextualizationStrategy contextualizationStrategy;
 	// set only by the actuator, relevant only in instantiators with attributes
@@ -1172,7 +1172,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public Scheduler<?> getScheduler() {
+	public IScheduler getScheduler() {
 		return getRootScope().scheduler;
 	}
 
@@ -1380,17 +1380,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		RuntimeScope root = getRootScope();
 		
 		if (root.scheduler == null) {
-			root.scheduler = new Scheduler<IObservation>(resolutionScope.getScale().getTime()) {
-
-				@Override
-				protected ITime getTime(IObservation object) {
-					return object.getScale().getTime();
-				}
-
-			};
+			root.scheduler = new Scheduler2(resolutionScope.getScale().getTime(), monitor);
 		}
 
-		root.scheduler.schedule(actuator, this);
+		((Scheduler2)root.scheduler).schedule(actuator, this);
 	}
 
 	@Override

@@ -70,15 +70,6 @@ public interface IScheduler {
 	void stop();
 
 	/**
-	 * Current absolute time. May have to switch to bigint for nanosecond
-	 * resolution. Only meaningful while running in realtime mode or when full
-	 * synchronicity is enabled.
-	 * 
-	 * @return
-	 */
-	long getTime();
-
-	/**
 	 * Get the synchronicity mode. The default mode should be SYNCHRONOUS or TIME_SYNCHRONOUS.
 	 * 
 	 * @return

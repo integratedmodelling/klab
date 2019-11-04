@@ -49,323 +49,313 @@ import weka.core.Instance;
 
 public abstract class AbstractWekaResolver<T extends Classifier> implements IResolver<IState>, IDocumentationProvider {
 
-    protected WekaClassifier classifier = null;
-    protected WekaOptions options;
-    private IServiceCall classDiscretizer;
-    String instancesExport = null;
-    String rawInstancesExport = null;
-    protected int MIN_INSTANCES_FOR_TRAINING = 5;
-    protected boolean predictionIsProbabilistic;
-    private boolean admitsNodata;
-    private String resourceId = null;
-    private String learnedGeometry = null;
-    private List<IDocumentationProvider.Item> documentation = new ArrayList<>();
+	protected WekaClassifier classifier = null;
+	protected WekaOptions options;
+	private IServiceCall classDiscretizer;
+	String instancesExport = null;
+	String rawInstancesExport = null;
+	protected int MIN_INSTANCES_FOR_TRAINING = 5;
+	protected boolean predictionIsProbabilistic;
+	private boolean admitsNodata;
+	private String resourceId = null;
+	private String learnedGeometry = null;
+	private List<IDocumentationProvider.Item> documentation = new ArrayList<>();
 
-    protected AbstractWekaResolver() {
-    }
+	protected AbstractWekaResolver() {
+	}
 
-    protected AbstractWekaResolver(Class<T> cls,
-            IParameters<String> parameters,
-            boolean requiresDiscretization,
-            boolean predictionIsProbabilistic,
-            boolean admitsNodata) {
-        this.options = new WekaOptions(cls, parameters);
-        this.classifier = new WekaClassifier(cls, this.options, predictionIsProbabilistic);
-        this.classDiscretizer = parameters.get("discretization", IServiceCall.class);
-        this.instancesExport = parameters.get("instances", String.class);
-        this.rawInstancesExport = parameters.get("rawinstances", String.class);
-        this.admitsNodata = admitsNodata;
-        this.resourceId = parameters.get("resource", String.class);
-        this.learnedGeometry = parameters.get("geometry", String.class);
-    }
+	protected AbstractWekaResolver(Class<T> cls, IParameters<String> parameters, boolean requiresDiscretization,
+			boolean predictionIsProbabilistic, boolean admitsNodata) {
+		this.options = new WekaOptions(cls, parameters);
+		this.classifier = new WekaClassifier(cls, this.options, predictionIsProbabilistic);
+		this.classDiscretizer = parameters.get("discretization", IServiceCall.class);
+		this.instancesExport = parameters.get("instances", String.class);
+		this.rawInstancesExport = parameters.get("rawinstances", String.class);
+		this.admitsNodata = admitsNodata;
+		this.resourceId = parameters.get("resource", String.class);
+		this.learnedGeometry = parameters.get("geometry", String.class);
+	}
 
-    @Override
-    public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
+	@Override
+	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
-        /*
-         * check if we're asking for uncertainty
-         */
-        IState uncertainty = null;
-        for (int i = 1; i < context.getModel().getObservables().size(); i++) {
-            IObservable obs = context.getModel().getObservables().get(i);
-            if (obs.getType().is(Type.UNCERTAINTY)
-                    && ret.getObservable().getType().is(Observables.INSTANCE.getInherentType(obs.getType()))) {
-                uncertainty = context.getArtifact(obs.getName(), IState.class);
-            }
-        }
+		/*
+		 * check if we're asking for uncertainty
+		 */
+		IState uncertainty = null;
+		for (int i = 1; i < context.getModel().getObservables().size(); i++) {
+			IObservable obs = context.getModel().getObservables().get(i);
+			if (obs.getType().is(Type.UNCERTAINTY)
+					&& ret.getObservable().getType().is(Observables.INSTANCE.getInherentType(obs.getType()))) {
+				uncertainty = context.getArtifact(obs.getName(), IState.class);
+			}
+		}
 
-        WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeScope) context, true,
-                admitsNodata, classDiscretizer);
+		WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeScope) context, true,
+				admitsNodata, classDiscretizer);
 
-        if (instances.getInstances().isEmpty()) {
-            context.getMonitor().warn("No instances in training set: cannot train Weka classifier");
-            return ret;
-        }
+		if (instances.getInstances().isEmpty()) {
+			context.getMonitor().warn("No instances in training set: cannot train Weka classifier");
+			return ret;
+		}
 
-        if (instances.getInstances().size() < MIN_INSTANCES_FOR_TRAINING) {
-            context.getMonitor().warn("Not enough instances in training set: cannot train Weka classifier");
-            return ret;
-        }
+		if (instances.getInstances().size() < MIN_INSTANCES_FOR_TRAINING) {
+			context.getMonitor().warn("Not enough instances in training set: cannot train Weka classifier");
+			return ret;
+		}
 
-        /*
-         * Any exports requested
-         */
-        if (instancesExport != null) {
-            File export = Configuration.INSTANCE.getExportFile(instancesExport);
-            instances.export(export, false);
-            context.getMonitor().info("Weka: training set exported to " + export);
-        }
-        if (rawInstancesExport != null) {
-            File export = Configuration.INSTANCE.getExportFile(rawInstancesExport);
-            instances.export(export, true);
-            context.getMonitor().info("Weka: untransformed training set exported to " + export);
-        }
+		/*
+		 * Any exports requested
+		 */
+		if (instancesExport != null) {
+			File export = Configuration.INSTANCE.getExportFile(instancesExport);
+			instances.export(export, false);
+			context.getMonitor().info("Weka: training set exported to " + export);
+		}
+		if (rawInstancesExport != null) {
+			File export = Configuration.INSTANCE.getExportFile(rawInstancesExport);
+			instances.export(export, true);
+			context.getMonitor().info("Weka: untransformed training set exported to " + export);
+		}
 
-        /*
-         * Do the training
-         */
-        context.getMonitor().info("Start training " + classifier + " classifier on " + instances.size() + " instances");
-        documentation.addAll(classifier.train(instances));
-        context.getMonitor().info("Training completed successfully.");
+		/*
+		 * Do the training
+		 */
+		context.getMonitor().info("Start training " + classifier + " classifier on " + instances.size() + " instances");
+		documentation.addAll(classifier.train(instances));
+		context.getMonitor().info("Training completed successfully.");
 
-        /*
-         * Produce the result using the classifier.
-         */
-        for (ILocator locator : ret.getScale()) {
+		/*
+		 * Produce the result using the classifier.
+		 */
+		for (ILocator locator : ret.getScale()) {
 
-            Instance instance = instances.getInstance(locator);
-            if (instance != null) {
-                setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret, uncertainty);
-            }
-        }
+			Instance instance = instances.getInstance(locator);
+			if (instance != null) {
+				setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret, uncertainty);
+			}
+		}
 
-        /*
-         * Export the resource if requested, including all discretization parameters to
-         * reconstruct the filters.
-         */
-        IResource resource = null;
-        if (context.getModel().isLearning() || resourceId != null) {
-            resource = buildResource(instances, context);
-        }
+		/*
+		 * Export the resource if requested, including all discretization parameters to
+		 * reconstruct the filters.
+		 */
+		IResource resource = null;
+		if (context.getModel().isLearning() || resourceId != null) {
+			resource = buildResource(instances, context);
+			context.getMonitor().info("local resource '" + resource.getUrn() + "' contains the learned model");
+		}
 
-        /*
-         * Produce the model if requested
-         */
-        if (context.getModel().isLearning() && resource != null) {
-            // our main output is a model artifact
-        }
+		return ret;
+	}
 
-        return ret;
-    }
+	private void setValue(WekaInstances instances, ILocator locator, Object prediction, IState target,
+			@Nullable IState uncertainty) {
 
-    private void setValue(WekaInstances instances, ILocator locator, Object prediction, IState target,
-            @Nullable IState uncertainty) {
+		if (prediction instanceof double[]) {
 
-        if (prediction instanceof double[]) {
+			// predicted state must be discretized
+			// FIXME this could be a categorical state without discretization
+			EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(
+					instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
 
-            // predicted state must be discretized
-            // FIXME this could be a categorical state without discretization
-            EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(
-                    instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
+			if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
+				target.set(locator, distribution.getNumericalMean());
+			} else {
+				// find the most likely class
+				int val = NumberUtils.indexOfLargest((double[]) prediction);
+				if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
+					target.set(locator, val == 0 ? Boolean.FALSE : Boolean.TRUE);
+				} else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
+					target.set(locator, target.getDataKey().lookup(val));
+				}
+			}
 
-            if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
-                target.set(locator, distribution.getNumericalMean());
-            } else {
-                // find the most likely class
-                int val = NumberUtils.indexOfLargest((double[]) prediction);
-                if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
-                    target.set(locator, val == 0 ? Boolean.FALSE : Boolean.TRUE);
-                } else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
-                    target.set(locator, target.getDataKey().lookup(val));
-                }
-            }
+			if (uncertainty != null) {
+				// TODO categorical distribution should use Shannon - redo with original
+				// distribution
+				uncertainty.set(locator,
+						Math.sqrt(distribution.getNumericalVariance()) / distribution.getNumericalMean());
+			}
 
-            if (uncertainty != null) {
-                // TODO categorical distribution should use Shannon - redo with original
-                // distribution
-                uncertainty.set(locator,
-                        Math.sqrt(distribution.getNumericalVariance()) / distribution.getNumericalMean());
-            }
+		} else {
+			if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
+				target.set(locator, prediction);
+			} else if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
+				target.set(locator, ((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE);
+			} else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
+				target.set(locator, target.getDataKey().lookup(((Number) prediction).intValue()));
+			}
 
-        } else {
-            if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
-                target.set(locator, prediction);
-            } else if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
-                target.set(locator, ((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE);
-            } else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
-                target.set(locator, target.getDataKey().lookup(((Number) prediction).intValue()));
-            }
+		}
+	}
 
-        }
-    }
+	private IResource buildResource(WekaInstances instances, IContextualizationScope context) {
 
-    private IResource buildResource(WekaInstances instances, IContextualizationScope context) {
+		if (resourceId == null) {
+			resourceId = "weka" + NameGenerator.shortUUID();
+		}
 
-        if (resourceId == null) {
-            resourceId = "weka" + NameGenerator.shortUUID();
-        }
+		IProject project = context.getModel().getNamespace().getProject();
+		if (project == null) {
+			throw new IllegalStateException("Weka: cannot write a resource from a model that is not part of a project");
+		}
 
-        IProject project = context.getModel().getNamespace().getProject();
-        if (project == null) {
-            throw new IllegalStateException("Weka: cannot write a resource from a model that is not part of a project");
-        }
-
-        /*
-         * Geometry will be the coverage of the dataflow or, if global, S2T1 reflecting
-         * the extents in the training context.
-         */
-        Scale scale = ((Scale) ((IRuntimeScope) context).getDataflow().getCoverage());
-        Geometry geometry = null;
-        if (learnedGeometry != null) {
-            if ("coverage".equals(learnedGeometry)) {
-                if (scale != null) {
-                    geometry = scale.asGeometry();
-                } else {
-                    GeometryBuilder gb = Geometry.builder();
-                    if (context.getScale().getSpace() != null) {
-                        gb.space().generic();
-                    }
-                    if (context.getScale().getTime() != null) {
-                        gb.time().generic();
-                    }
-                    geometry = gb.build();
-                }
-            } else {
-                geometry = Geometry.create(learnedGeometry);
-            }
-        } else {
-            /*
-             * default: cover the learning context, using same geometry minus resolution and
-             * shape if any.
-             */
+		/*
+		 * Geometry will be the coverage of the dataflow or, if global, S2T1 reflecting
+		 * the extents in the training context.
+		 */
+		Scale scale = ((Scale) ((IRuntimeScope) context).getDataflow().getCoverage());
+		Geometry geometry = null;
+		if (learnedGeometry != null) {
+			if ("coverage".equals(learnedGeometry)) {
+				if (scale != null) {
+					geometry = scale.asGeometry();
+				} else {
+					GeometryBuilder gb = Geometry.builder();
+					if (context.getScale().getSpace() != null) {
+						gb.space().generic();
+					}
+					if (context.getScale().getTime() != null) {
+						gb.time().generic();
+					}
+					geometry = gb.build();
+				}
+			} else {
+				geometry = Geometry.create(learnedGeometry);
+			}
+		} else {
+			/*
+			 * default: cover the learning context, using same geometry minus resolution and
+			 * shape if any.
+			 */
 			geometry = ((Scale) context.getScale())
 					.asGeometry()/*
 									 * .withGridResolution(null).withTemporalResolution(null) .withShape(null)
 									 */;
-        }
+		}
 
-        /*
-         * FIXME
-         * NB: removing time for now.
-         */
+		/*
+		 * FIXME NB: removing time for now.
+		 */
 //        geometry = geometry.without(Dimension.Type.TIME);
-        
-        StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
-        builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
-                .withType(instances.getPredicted().getType()).withParameter("wekaVersion", weka.core.Version.VERSION)
-                .withParameter("model", context.getModel().getName()).withParameter("submitNodata", "true")
-                .withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
-                .withParameter("classifier.options", classifier.getOptions().toString())
-                .withParameter("classifier.probabilistic", classifier.isPredictionProbabilistic() ? "true" : "false");
 
-        int i = 1;
-        for (Attribute attribute : instances.getAttributes()) {
+		StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
+		builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
+				.withType(instances.getPredicted().getType()).withParameter("wekaVersion", weka.core.Version.VERSION)
+				.withParameter("model", context.getModel().getName()).withParameter("submitNodata", "true")
+				.withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
+				.withParameter("classifier.options", classifier.getOptions().toString())
+				.withParameter("classifier.probabilistic", classifier.isPredictionProbabilistic() ? "true" : "false");
 
-            boolean predicted = false;
+		int i = 1;
+		for (Attribute attribute : instances.getAttributes()) {
 
-            if (attribute.name().equals(instances.getPredicted().getObservable().getName())) {
-                predicted = true;
-            }
+			boolean predicted = false;
 
-            IState state = predicted ? instances.getPredicted() : instances.getPredictor(attribute.name());
-            StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
-            if (!predicted) {
-                builder.withParameter("predictor." + attribute.name() + ".index", i).withDependency(attribute.name(),
-                        state.getType(), true, true);
-            } else {
-                builder.withParameter("predicted.index", i);
-            }
+			if (attribute.name().equals(instances.getPredicted().getObservable().getName())) {
+				predicted = true;
+			}
 
-            builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
-                    "[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
+			IState state = predicted ? instances.getPredicted() : instances.getPredictor(attribute.name());
+			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
+			if (!predicted) {
+				builder.withParameter("predictor." + attribute.name() + ".index", i).withDependency(attribute.name(),
+						state.getType(), true, true);
+			} else {
+				builder.withParameter("predicted.index", i);
+			}
 
-            DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
-            if (descriptor != null) {
-                try {
+			builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+					"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
 
-                    File discretizer = File.createTempFile("d_" + attribute.name(), ".bin");
-                    descriptor.export(discretizer);
-                    builder.addFile(discretizer);
-                    double[] cutpoints = descriptor.getDiscretizationBreakpoints();
+			DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
+			if (descriptor != null) {
+				try {
 
-                    if (predicted) {
-                        builder.withParameter("predicted.discretizer", descriptor.getJavaClass())
-                                .withParameter("predicted.discretizer.file", MiscUtilities.getFileName(discretizer))
-                                .withParameter("predicted.name", attribute.name())
-                                .withParameter("predicted.discretizer.options", descriptor.getOptions());
+					File discretizer = File.createTempFile("d_" + attribute.name(), ".bin");
+					descriptor.export(discretizer);
+					builder.addFile(discretizer);
+					double[] cutpoints = descriptor.getDiscretizationBreakpoints();
 
-                        if (cutpoints != null) {
-                            builder.withParameter("predicted.discretizer.cutpoints", Arrays.toString(cutpoints));
-                        }
+					if (predicted) {
+						builder.withParameter("predicted.discretizer", descriptor.getJavaClass())
+								.withParameter("predicted.discretizer.file", MiscUtilities.getFileName(discretizer))
+								.withParameter("predicted.name", attribute.name())
+								.withParameter("predicted.discretizer.options", descriptor.getOptions());
 
-                        // TODO encode data key
+						if (cutpoints != null) {
+							builder.withParameter("predicted.discretizer.cutpoints", Arrays.toString(cutpoints));
+						}
 
-                    } else {
+						// TODO encode data key
 
-                        builder.withParameter("predictor." + attribute.name() + ".discretizer",
-                                descriptor.getJavaClass())
-                                .withParameter("predictor." + attribute.name() + ".discretizer.file",
-                                        MiscUtilities.getFileName(discretizer))
-                                .withParameter("predictor." + attribute.name() + ".discretizer.options",
-                                        descriptor.getOptions());
+					} else {
 
-                        if (cutpoints != null) {
-                            builder.withParameter("predictor." + attribute.name() + ".discretizer.cutpoints",
-                                    Arrays.toString(cutpoints));
-                        }
+						builder.withParameter("predictor." + attribute.name() + ".discretizer",
+								descriptor.getJavaClass())
+								.withParameter("predictor." + attribute.name() + ".discretizer.file",
+										MiscUtilities.getFileName(discretizer))
+								.withParameter("predictor." + attribute.name() + ".discretizer.options",
+										descriptor.getOptions());
 
-                        // TODO encode data key
+						if (cutpoints != null) {
+							builder.withParameter("predictor." + attribute.name() + ".discretizer.cutpoints",
+									Arrays.toString(cutpoints));
+						}
 
-                    }
+						// TODO encode data key
 
-                } catch (IOException e) {
-                    throw new KlabIOException(e);
-                }
-            }
+					}
 
-            i++;
-        }
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
 
-        try
+			i++;
+		}
 
-        {
+		try
 
-            context.getMonitor().info("exporting " + resourceId + " resource in project " + project.getName());
+		{
 
-            File dataset = File.createTempFile("instances", ".arff");
-            File dataraw = File.createTempFile("rawinstances", ".arff");
-            File clmodel = File.createTempFile("classifier", ".bin");
+			context.getMonitor().info("exporting " + resourceId + " resource in project " + project.getName());
 
-            instances.export(dataset, false);
-            instances.export(dataraw, true);
-            classifier.export(clmodel);
+			File dataset = File.createTempFile("instances", ".arff");
+			File dataraw = File.createTempFile("rawinstances", ".arff");
+			File clmodel = File.createTempFile("classifier", ".bin");
 
-            builder.addFile(dataset).addFile(dataraw).addFile(clmodel)
-                    .withParameter("classifier.file", MiscUtilities.getFileName(clmodel))
-                    .withParameter("instances.file", MiscUtilities.getFileName(dataset))
-                    .withParameter("instances.file.raw", MiscUtilities.getFileName(dataraw));
+			instances.export(dataset, false);
+			instances.export(dataraw, true);
+			classifier.export(clmodel);
 
-            /*
-             * TODO add all metadata including those about the training, execution,
-             * validation etc.
-             * 
-             * TODO include source code of learned model in resources. Needs to predict the
-             * URN in the wrong place - ask it to the StandaloneBuilder so it's consistent.
-             */
+			builder.addFile(dataset).addFile(dataraw).addFile(clmodel)
+					.withParameter("classifier.file", MiscUtilities.getFileName(clmodel))
+					.withParameter("instances.file", MiscUtilities.getFileName(dataset))
+					.withParameter("instances.file.raw", MiscUtilities.getFileName(dataraw));
 
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
+			/*
+			 * TODO add all metadata including those about the training, execution,
+			 * validation etc.
+			 * 
+			 * TODO include source code of learned model in resources. Needs to predict the
+			 * URN in the wrong place - ask it to the StandaloneBuilder so it's consistent.
+			 */
 
-        /*
-         * build the resource using the session to notify clients.
-         */
-        return builder.build(context.getMonitor().getIdentity().getParentIdentity(ISession.class));
-    }
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
 
-    @Override
-    public Collection<Item> getDocumentation() {
-        return documentation;
-    }
+		/*
+		 * build the resource using the session to notify clients.
+		 */
+		return builder.build(context.getMonitor().getIdentity().getParentIdentity(ISession.class));
+	}
+
+	@Override
+	public Collection<Item> getDocumentation() {
+		return documentation;
+	}
 
 }
