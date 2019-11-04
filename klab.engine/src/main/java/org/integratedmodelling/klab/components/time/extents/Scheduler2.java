@@ -164,6 +164,10 @@ public class Scheduler2 implements IScheduler {
 
 			System.out.println("Running at " + new Date(time));
 			
+			if (new Date(time).toString().startsWith("Sat Jan 30")) {
+				System.out.println("ZPZPPZ");
+			}
+			
 			// run the action; if synchronous, run in current thread and return when
 			// finished
 			if (synchronicity == Synchronicity.SYNCHRONOUS) {

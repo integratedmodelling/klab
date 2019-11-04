@@ -186,7 +186,6 @@ public class KlabController {
         ISession session = Authentication.INSTANCE.getIdentity(sessionId, ISession.class);
         IObservation obs = session.getObservation(observation);
 
-
 		ILocator loc = obs.getScale();
 		if (locator != null) {
 			loc = Geometry.create(locator);
