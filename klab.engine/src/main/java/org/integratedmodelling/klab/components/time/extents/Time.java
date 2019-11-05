@@ -615,6 +615,10 @@ public class Time extends Extent implements ITime {
 		throw new KlabException("HOSTIA unhandled time subsetting operation. Call the exorcist.");
 
 	}
+	
+	public String describe() {
+		return "[" + this.start + " - " + this.end + "]";
+	}
 
 	private IExtent withScaleId(String scaleId) {
 		setScaleId(scaleId);

@@ -476,6 +476,13 @@ public class Engine extends Server implements IEngine, UserDetails {
 			Kim.INSTANCE.addNotifier(new KimNotifier(this.monitor));
 
 			/*
+			 * register instance now before loading projects have a chance to screw up the
+			 * boot. This should be later but there are still issues with non-responding
+			 * resources that make a functioning engine not register.
+			 */
+			Authentication.INSTANCE.registerIdentity(this);
+
+			/*
 			 * initialize but do not load the local workspace, so that we can later override
 			 * the worldview if we have some worldview projects in the workspace.
 			 */
@@ -561,7 +568,6 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * establish engine authority
 			 */
 			this.authorities.add(new SimpleGrantedAuthority(Roles.ENGINE));
-			Authentication.INSTANCE.registerIdentity(this);
 			Logging.INSTANCE.info("Engine authenticated and registered");
 
 			/*

@@ -200,6 +200,11 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 				binding.setVariable("_c", context);
 				binding.setVariable("_monitor", context.getMonitor());
 				
+				IRuntimeScope scope = (IRuntimeScope)context;
+				if (scope.getScale().getTime() != null) {
+					binding.setVariable("_jtime", scope.getScale().getTime());
+				}
+				
 				for (String v : defineIfAbsent) {
 					if (!binding.hasVariable(v)) {
 						binding.setVariable(v, Double.NaN);

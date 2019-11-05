@@ -1,14 +1,20 @@
 package org.integratedmodelling.klab.components.time.extents;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -18,11 +24,14 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelMockTimer;
-import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelTimer;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.NumberUtils;
+import org.joda.time.DateTime;
 
 /**
  * Scheduler for actors in either real or mock time. Akka does not allow the
@@ -31,80 +40,192 @@ import org.integratedmodelling.klab.scale.Scale;
  * @author ferdinando.villa
  *
  */
-public abstract class Scheduler<T> implements IScheduler {
+public class Scheduler implements IScheduler {
 
-//	class DGraph extends DefaultDirectedGraph<T, DefaultEdge> {
-//
-//		public DGraph(T observation) {
-//			super(DefaultEdge.class);
-//			addVertex(observation);
-//		}
-//
-//		/**
-//		 * 
-//		 */
-//		private static final long serialVersionUID = -7193783283781551257L;
-//
-//	}
-
-	private HashedWheelTimer timer;
 	private Type type;
-//	private Map<Long, DGraph> reactors = new HashMap<>();
 	private long startTime = -1;
 	private long endTime = -1;
-//	private long interval = -1;
-//	private BiConsumer<T, Long> actionHandler;
-//	private BiConsumer<T, Long> errorHandler;
-	private ITime overallTime;
 	private Synchronicity synchronicity = Synchronicity.SYNCHRONOUS;
+	private AtomicBoolean stopped = new AtomicBoolean(false);
+	private int cursor = 0;
+	private ExecutorService executor;
+	private WaitStrategy waitStrategy;
+	private AtomicLong regId = new AtomicLong(0);
 
-//	class TreeNode {
-//		TreeNode(T element) {
-//			this.element = element;
+	/*
+	 * Period of all subscribed actuators, to compute resolution.
+	 */
+	Set<Long> periods = new HashSet<>();
+
+	class Registration implements Comparable<Registration> {
+
+		long id = regId.incrementAndGet();
+
+		Actuator actuator;
+		IDirectObservation target;
+		IScale scale;
+		Consumer<Long> action;
+		long tIndex = 0;
+		long endTime;
+		IRuntimeScope scope;
+		// rounds around the wheel; ready to fire when rounds == 0
+		int rounds;
+
+		// if time is irregular, we compute this in advance and store here to avoid
+		// wasting time
+		// doing it again later.
+		ITime transition;
+		/*
+		 * Used to sort by milliseconds from beginning of slot time so that temporal
+		 * sequence is respected.
+		 */
+		long delayInSlot;
+
+		public Registration(Actuator actuator, IDirectObservation target, IScale scale, IRuntimeScope scope,
+				long endtime) {
+
+			this.actuator = actuator;
+			this.scale = scale;
+			this.target = target;
+			this.endTime = endtime;
+			this.scope = scope;
+
+			action = new Consumer<Long>() {
+
+				@Override
+				public void accept(Long t) {
+
+					if (endTime > 0 && t > endTime) {
+						return;
+					}
+
+					/*
+					 * If target is dead, return
+					 */
+					if (!target.isActive()) {
+						return;
+					}
+
+//					/*
+//					 * 1. Turn the millisecond t into the correspondent T extent for the
+//					 * observation's scale
+//					 */
+//					ITime transition = (ITime) scale.getTime().at(new TimeInstant(t));
+
+					/*
+					 * 2. Set the context at() the current time. This will also need to expose any
+					 * affected outputs that move at a different (context) speed through a rescaling
+					 * wrapper. Done within the context, which uses its current target to establish
+					 * the specific view of the context.
+					 */
+					ILocator transitionScale = Scale.substituteExtent(scale, transition);
+					IRuntimeScope transitionContext = scope.locate(transitionScale);
+
+					/*
+					 * 3. Run all contextualizers in the context that react to transitions; check
+					 * for signs of life at each step.
+					 */
+					for (Actuator.Computation computation : actuator.getContextualizers()) {
+
+						/*
+						 * pick those that have transition trigger or whose geometry includes time. TODO
+						 * condition should become clear and simple - for now it's nasty.
+						 */
+						if (computation.resource.getTrigger() == Trigger.TRANSITION || (computation.resource
+								.getTrigger() == Trigger.RESOLUTION
+								&& ((computation.observable.getArtifactType().isOccurrent()
+										&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) == null)
+										|| (computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null
+												&& scale.getTime().intersects(computation.resource.getGeometry()
+														.getDimension(Dimension.Type.TIME)))))) {
+
+							actuator.runContextualizer(computation.contextualizer, computation.observable,
+									computation.resource, transitionContext.getArtifact(computation.targetId),
+									transitionContext, (IScale) transitionScale);
+
+							if (!target.isActive()) {
+								break;
+							}
+						}
+					}
+
+					/*
+					 * 4. Notify whatever has changed.
+					 */
+					if (!target.isActive()) {
+						// went missing in action, notify relatives
+					} else {
+						// TODO
+					}
+
+				}
+			};
+		}
+
+		public void run(long time) {
+
+//			System.out.println("Running at " + new Date(time));
+
+			// run the action; if synchronous, run in current thread and return when
+			// finished
+			if (synchronicity == Synchronicity.SYNCHRONOUS) {
+//				System.out.println("   " + transition + " FOR " + actuator);
+				action.accept(time);
+			} else if (synchronicity == Synchronicity.ASYNCHRONOUS) {
+				throw new KlabUnimplementedException("asynchronous scheduling not implemented");
+			} else if (synchronicity == Synchronicity.TIME_SYNCHRONOUS) {
+				throw new KlabUnimplementedException("time-synchronous scheduling not implemented");
+			}
+
+		}
+
+//		private Scheduler getEnclosingInstance() {
+//			return Scheduler.this;
 //		}
-//
-//		T element;
-//		Deque<T> prerequisites = new LinkedList<>();
-//	}
 
-	protected abstract ITime getTime(T object);
+		@Override
+		public int compareTo(Registration o) {
+			if (o.id == id) {
+				return 0;
+			}
+			if (delayInSlot == o.delayInSlot) {
+				/*
+				 * order of registration if running at same time. Without this, the concurrent
+				 * set won't include the registration.
+				 */
+				return Long.compare(id, o.id);
+			}
+			return Long.compare(delayInSlot, o.delayInSlot);
+		}
+	}
 
-	public Scheduler(ITime time) {
+	private List<Registration> registrations = new ArrayList<>();
+
+	public static final long DEFAULT_RESOLUTION = TimeUnit.NANOSECONDS.convert(10, TimeUnit.MILLISECONDS);
+	public static final int DEFAULT_WHEEL_SIZE = 512;
+	public static final int MAX_HASH_WHEEL_SIZE = 2048;
+
+	private Set<Registration>[] wheel;
+	private int wheelSize = 0;
+	private IMonitor monitor;
+	private long resolution;
+
+	public Scheduler(ITime time, IMonitor monitor) {
 		Date now = new Date();
-		this.overallTime = time;
+		this.monitor = monitor;
 		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
-		this.startTime = time.getStart() == null ? now.getTime() : time.getStart().getMilliseconds();
-		this.timer = this.type == Type.REAL_TIME ? new HashedWheelTimer(this.startTime)
-				: new HashedWheelMockTimer(this.startTime);
+		this.startTime = time.getStart() == null ? 0 : time.getStart().getMilliseconds();
 		if (time.getEnd() != null) {
 			this.endTime = time.getEnd().getMilliseconds();
 		}
-	}
-
-	public long getTime() {
-		return timer.getCurrentTime();
-	}
-
-	
-	public void waitUntilEnd() {
-
-		if (endTime < 0) {
-			throw new IllegalStateException("Scheduler has no set endtime: can't wait until end");
-		}
-		
-		for (;;) {
-			if (timer.getCurrentTime() >= endTime) {
-				return;
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// poh
+		if (this.type == Type.REAL_TIME) {
+			this.waitStrategy = new WaitStrategy.YieldingWait();
+			if (this.startTime > 0 && now.getTime() > this.startTime) {
+				this.startTime = 0;
 			}
 		}
 	}
-	
-	
+
 	@Override
 	public Synchronicity getSynchronicity() {
 		return synchronicity;
@@ -135,9 +256,6 @@ public abstract class Scheduler<T> implements IScheduler {
 		 * and the like but keeping the resolution and representation.
 		 */
 		IScale scale = modelScale.merge(overall);
-
-		// save targets that were enqueued here
-		Set<String> targets = new HashSet<>();
 
 		ITimeInstant start = scale.getTime().getStart();
 		ITimeInstant end = scale.getTime().getStart();
@@ -170,226 +288,177 @@ public abstract class Scheduler<T> implements IScheduler {
 		final IDirectObservation target = (IDirectObservation) targetObservation;
 		final long endTime = overall.getTime().getEnd() == null ? -1 : overall.getTime().getEnd().getMilliseconds();
 
-		/*
-		 * enqueue actions for transition
-		 */
-		timer.scheduleAtFixedRate(new Consumer<Long>() {
+		registrations.add(new Registration(actuator, target, scale, scope, endTime));
 
-			@Override
-			public void accept(Long t) {
+//		System.out.println("SCHEDULED " + actuator + " to run every " + step.getMilliseconds());
 
-				if (endTime > 0 && t > endTime) {
-					return;
-				}
-
-				/*
-				 * If target is dead, return
-				 */
-				if (!target.isActive()) {
-					return;
-				}
-
-				/*
-				 * 1. Turn the millisecond t into the correspondent T extent for the
-				 * observation's scale
-				 */
-				ITime transition = (ITime) scale.getTime().at(new TimeInstant(t));
-
-				/*
-				 * 2. Set the context at() the current time. This will also need to expose any
-				 * affected outputs that move at a different (context) speed through a rescaling
-				 * wrapper. Done within the context, which uses its current target to establish
-				 * the specific view of the context.
-				 */
-				ILocator transitionScale = Scale.substituteExtent(scale, transition);
-				IRuntimeScope transitionContext = scope.locate(transitionScale);
-
-				/*
-				 * 3. Run all contextualizers in the context that react to transitions; check
-				 * for signs of life at each step.
-				 */
-				for (Actuator.Computation computation : actuator.getContextualizers()) {
-
-					/*
-					 * pick those that have transition trigger or whose geometry includes time.
-					 * TODO condition should become clear and simple - for now it's nasty.
-					 */
-					if (computation.resource.getTrigger() == Trigger.TRANSITION || (computation.resource
-							.getTrigger() == Trigger.RESOLUTION
-							&& ((computation.observable.getArtifactType().isOccurrent()
-									&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) == null)
-									|| (computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null
-											&& scale.getTime().intersects(computation.resource.getGeometry()
-													.getDimension(Dimension.Type.TIME)))))) {
-
-						actuator.runContextualizer(computation.contextualizer, computation.observable,
-								computation.resource, transitionContext.getArtifact(computation.targetId),
-								transitionContext, (IScale) transitionScale);
-
-						if (!target.isActive()) {
-							break;
-						}
-					}
-				}
-
-				/*
-				 * 4. Notify whatever has changed.
-				 */
-				if (!target.isActive()) {
-					// went missing in action, notify relatives
-				} else {
-					// TODO
-				}
-
-			}
-		}, /* TODO */0, step.getMilliseconds(), TimeUnit.MILLISECONDS);
-
-		System.out.println("SCHEDULED " + actuator + " to run every " + step.getMilliseconds());
-		
 	}
 
-//	@SuppressWarnings("unchecked")
-////	@Override
-//	public void merge(T temporalObject, T... requiredAntecedents) {
-//
-//		ITime time = getTime(temporalObject);
-//		if (time == null || time.getStep().isEmpty()) {
-//			return;
-//		}
-//
-//		if (startTime < 0 || startTime > time.getStart().getMilliseconds()) {
-//			startTime = time.getStart().getMilliseconds();
-//		}
-//		if (endTime < 0 || endTime < time.getEnd().getMilliseconds()) {
-//			endTime = time.getEnd().getMilliseconds();
-//		}
-//
-//		DGraph graph = null;
-//		if (reactors.containsKey(time.getStep().getMilliseconds())) {
-//			(graph = reactors.get(time.getStep().getMilliseconds())).addVertex(temporalObject);
-//		} else {
-//			reactors.put(time.getStep().getMilliseconds(), (graph = new DGraph(temporalObject)));
-//		}
-//
-//		if (requiredAntecedents != null) {
-//			for (T antecedent : requiredAntecedents) {
-//
-//				// must have same period and phase
-//
-//				graph.addVertex(antecedent);
-//				graph.addEdge(antecedent, temporalObject);
-//			}
-//		}
-//	}
-//
-////	@Override
-//	public void start(BiConsumer<T, Long> tickHandler, BiConsumer<T, Long> timingErrorHandler) {
-//
-//		this.actionHandler = tickHandler;
-//		this.errorHandler = timingErrorHandler;
-//
-//		if (timer != null) {
-//			throw new IllegalStateException("a scheduler can only be started once");
-//		}
-//
-//		long[] spans = new long[reactors.size()];
-//		int i = 0;
-//		for (Long l : reactors.keySet()) {
-//			spans[i++] = l;
-//		}
-//		this.interval = NumberUtils.lcm(spans);
-//
-//		if (type == Type.REAL_TIME) {
-//			// for logging
-//			startTime = System.currentTimeMillis();
-//		}
-//
-//		// adjust the start time to start in phase with the interval (CHECK)
-//		long remainder = startTime % interval;
-//		if (remainder != 0) {
-//			startTime -= (interval - remainder);
-//		}
-//
-//		timer = new HashedWheelTimer(
-//				type == Type.MOCK_TIME ? TimeUnit.NANOSECONDS.convert(interval, TimeUnit.MILLISECONDS)
-//						: TimeUnit.MILLISECONDS.toNanos(10),
-//				512, type == Type.MOCK_TIME ? new WaitStrategy() {
-//					@Override
-//					public void waitUntil(long deadlineNanoseconds) throws InterruptedException {
-//						// TODO sleep if necessary until the current time hasn't been reached by all
-//						// observations
-//					}
-//				} : new WaitStrategy.SleepWait());
-//
-//		/*
-//		 * schedule the main task at the smallest interval
-//		 */
-//		timer.scheduleWithFixedDelay(() -> {
-//			handleTick();
-//		}, 0, interval, TimeUnit.MILLISECONDS);
-//	}
-//
-//	private void handleTick() {
-//		this.startTime += this.interval;
-//		for (Long key : reactors.keySet()) {
-//			if ((this.startTime % key) == 0) {
-//				callReactors(reactors.get(key));
-//			}
-//		}
-//	}
+	/*
+	 * one-shot scheduling, re-entrant
+	 */
+	@SuppressWarnings("unchecked")
+	public void schedule() {
 
-//	private void callReactors(DGraph graph) {
-//
-//		/*
-//		 * TODO check that previous executor has finished and wait (if mock time) or
-//		 * throw a specific exception (real time) for all the actors that have not
-//		 * finished computing, unless configured otherwise, so that it can be caught and
-//		 * the actor can be deactivated.
-//		 */
-//
-//		// call all nodes concurrently, each calling its antecedents in order. The same
-//		// antecedent
-//		// could be in more than one node and should only be called once.
-//		// NO must use an actual dependency graph
-////		for (TreeNode node : list) {
-////			if (getTime(node.element).getStart().getMillis() >= (this.startTime - this.interval)) {
-////				// TODO use topological sort. Should be able to enqueue groups in dependency
-////				// order as soon as all deps are done.
-////				System.out.println("Calling for " + this.startTime + ": " + node.element);
-////			}
-////		}
-//
-//		// TODO schedule all tasks immediately
-//	}
+		long longest = 0;
+		List<Number> periods = new ArrayList<>();
+
+		/*
+		 * figure out the MCD resolution
+		 */
+		for (Registration registration : registrations) {
+			periods.add(registration.scale.getTime().getStep().getCommonDivisorMilliseconds());
+			if (longest < registration.scale.getTime().getStep().getMaxMilliseconds()) {
+				longest = registration.scale.getTime().getStep().getMaxMilliseconds();
+			}
+		}
+
+		this.resolution = NumberUtils.gcd(NumberUtils.longArrayFromCollection(periods));
+
+		/*
+		 * wheel size should accommodate the longest interval @the chosen resolution,
+		 * but we cap it at MAX_HASH_WHEEL_SIZE. Keep it in powers of 2 for predictable
+		 * performance and geek factor.
+		 */
+		this.wheelSize = Math.min(NumberUtils.nextPowerOf2((int) (longest / resolution)), MAX_HASH_WHEEL_SIZE);
+		monitor.debug(
+				"created scheduler hash wheel of size " + this.wheelSize + " for resolution = " + this.resolution);
+		this.wheel = new Set[this.wheelSize];
+
+		/*
+		 * now for the actual scheduling of the first step
+		 */
+		for (Registration registration : this.registrations) {
+			reschedule(registration, startTime, true);
+		}
+
+	}
 
 	@Override
 	public void run() {
-		start();
-		if (endTime > 0) {
-			waitUntilEnd();
+
+		schedule();
+
+		if (startTime == 0 && type == Type.REAL_TIME) {
+			startTime = DateTime.now().getMillis();
+		}
+
+		long time = startTime;
+		while (true) {
+
+			// fence with checks
+			if (stopped.get() || (time + resolution) > endTime) {
+				break;
+			}
+
+			if (this.wheel[cursor] != null && !this.wheel[cursor].isEmpty()) {
+
+//				System.out.println("---- Running slot " + cursor + " -------------------");
+
+				List<Registration> regs = new ArrayList<>(this.wheel[cursor]);
+				this.wheel[cursor].clear();
+
+				long delay = 0;
+				for (Registration registration : regs) {
+					if (registration.rounds == 0) {
+						
+						if (type == Type.REAL_TIME && registration.delayInSlot > delay) {
+							waitStrategy.waitUntil(time + delay);
+							delay += registration.delayInSlot;
+						}
+						
+						registration.run(time + registration.delayInSlot);
+						reschedule(registration, time + resolution, false);
+					
+					} else {
+						registration.rounds--;
+						this.wheel[cursor].add(registration);
+					}
+				}
+			}
+
+			cursor = (cursor + 1) % wheelSize;
+			time += resolution;
+
+			if (waitStrategy != null) {
+				waitStrategy.waitUntil(time);
+			}
+
+			// check again
+			if (stopped.get() || (time + resolution) > endTime) {
+				break;
+			}
 		}
 	}
-	
+
+	private void reschedule(Registration registration, long startTime, boolean first) {
+
+		if (stopped.get()) {
+			return;
+		}
+
+		if (registration.scale.getTime().size() != IGeometry.INFINITE_SIZE
+				&& registration.tIndex >= registration.scale.getTime().size()) {
+			return;
+		}
+
+		/*
+		 * schedule only the first shot, will reschedule itself at execution. Choose the
+		 * slot and set the offset from the beginning.
+		 */
+//		long start = startTime;
+//		if (registration.scale.getTime().getStart() != null) {
+//			start = registration.scale.getTime().getStart().getMilliseconds();
+//			if (start < startTime) {
+//				start = startTime;
+//			}
+//		}
+
+		long stepSize = registration.scale.getTime().getStep().getMilliseconds();
+		ITime step = ((ITime) ((Extent) registration.scale.getTime()).getExtent(registration.tIndex++));
+		if (!registration.scale.getTime().isRegular()) {
+			stepSize = step.getEnd().getMilliseconds() - step.getStart().getMilliseconds();
+		}
+		// store for efficiency when running
+		registration.transition = step;
+
+		// remove a millisecond to stay to the right edge of our slot
+		stepSize--;
+
+		// how many slots we span in the wheel
+		int span = (int) (stepSize / resolution);
+		// how many rounds we need to take before it's our turn
+		registration.rounds = span / wheelSize;
+		// milliseconds left to wait once in our own slot
+		registration.delayInSlot = (startTime + stepSize) % resolution;
+
+		int slot = (cursor + span + (first ? 0 : 1)) % wheelSize;
+
+		if (this.wheel[slot] == null) {
+			this.wheel[slot] = new ConcurrentSkipListSet<Registration>();
+		}
+
+		this.wheel[slot].add(registration);
+
+//		System.out.println("   Rescheduled " + registration.actuator + " in slot " + slot + " after " + registration.rounds + " rounds");
+
+	}
+
 	@Override
 	public void start() {
-		if (endTime < 0) {
-			timer.start();
-		} else {
-			timer.startUntil(endTime);
-		}
+		new Thread() {
+			@Override
+			public void run() {
+				Scheduler.this.run();
+			}
+		}.start();
 	}
 
 	@Override
 	public void stop() {
-
-		if (timer != null) {
-			timer.shutdownNow();
-			try {
-				timer.awaitTermination(1, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				Logging.INSTANCE.error(e);
-			}
+		this.stopped.set(true);
+		if (executor != null && !executor.isTerminated()) {
+			executor.shutdownNow();
 		}
 	}
-
 }

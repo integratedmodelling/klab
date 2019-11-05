@@ -55,7 +55,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.components.time.extents.Scheduler2;
+import org.integratedmodelling.klab.components.time.extents.Scheduler;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Computation;
@@ -1380,10 +1380,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		RuntimeScope root = getRootScope();
 		
 		if (root.scheduler == null) {
-			root.scheduler = new Scheduler2(resolutionScope.getScale().getTime(), monitor);
+			root.scheduler = new Scheduler(resolutionScope.getScale().getTime(), monitor);
 		}
 
-		((Scheduler2)root.scheduler).schedule(actuator, this);
+		((Scheduler)root.scheduler).schedule(actuator, this);
 	}
 
 	@Override
