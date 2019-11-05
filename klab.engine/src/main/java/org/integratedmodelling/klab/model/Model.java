@@ -132,9 +132,15 @@ public class Model extends KimObject implements IModel {
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
 
+		IConcept context = null;
 		for (IKimObservable observable : model.getObservables()) {
 
 			Observable obs = Observables.INSTANCE.declare(observable, monitor);
+
+			if (context == null) {
+				context = obs.is(Type.DIRECT_OBSERVABLE) ? obs.getType()
+						: Observables.INSTANCE.getContextType(obs.getType());
+			}
 
 			if (observable.hasAttributeIdentifier()) {
 				attributeObservables.put(observable.getValue().toString(), obs);
@@ -144,7 +150,24 @@ public class Model extends KimObject implements IModel {
 		}
 
 		for (IKimObservable dependency : model.getDependencies()) {
-			dependencies.add(Observables.INSTANCE.declare(dependency, monitor));
+			Observable dep = Observables.INSTANCE.declare(dependency, monitor);
+			if (context != null) {
+				if (this.instantiator) {
+					/*
+					 * we cannot know the context of resolution beforehand, so it will be
+					 * contextualized at query time.
+					 */
+					dep.setMustContextualizeAtResolution(true);
+				} else {
+					try {
+						dep = Observables.INSTANCE.contextualizeTo(dep, context, monitor);
+					} catch (Throwable e) {
+						monitor.error(e, dependency);
+						setErrors(true);
+					}
+				}
+			}
+			dependencies.add(dep);
 		}
 
 		/*

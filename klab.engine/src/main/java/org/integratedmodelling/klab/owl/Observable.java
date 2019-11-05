@@ -100,6 +100,7 @@ public class Observable implements IObservable {
 	 * this is only for debugging
 	 */
 	transient String originatingModelId;
+	private boolean mustContextualize;
 
 	Observable(Concept concept) {
 		this.observable = concept;
@@ -147,6 +148,7 @@ public class Observable implements IObservable {
 		this.fluidUnits = observable.fluidUnits;
 		this.originatingModelId = observable.originatingModelId;
 		this.filteredObservable = observable.filteredObservable;
+		this.mustContextualize = observable.mustContextualize;
 	}
 
 	@Override
@@ -244,7 +246,8 @@ public class Observable implements IObservable {
 				observationType = IActivity.Description.SIMULATION;
 			} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
 				boolean distributed = Observables.INSTANCE.hasDistributedInherency(observable);
-				observationType = distributed ? IActivity.Description.CLASSIFICATION : IActivity.Description.CHARACTERIZATION;
+				observationType = distributed ? IActivity.Description.CLASSIFICATION
+						: IActivity.Description.CHARACTERIZATION;
 			}
 		}
 		return observationType;
@@ -687,6 +690,23 @@ public class Observable implements IObservable {
 
 	public IConcept getTargetPredicate() {
 		return this.targetPredicate;
+	}
+
+	public void setMustContextualizeAtResolution(boolean b) {
+		this.mustContextualize = b;
+	}
+	
+	/**
+	 * Return true only when the observable is a dependency of an instantiator,
+	 * which is resolved within the context of resolution. In these situations the
+	 * context for the observable cannot be resolved at model parsing, so it must be
+	 * done when used.
+	 * 
+	 * @return true if observable needs context but the model cannot establish which
+	 *         context at declaration time.
+	 */
+	public boolean mustContextualizeAtResolution() {
+		return mustContextualize;
 	}
 
 }

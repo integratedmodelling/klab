@@ -65,6 +65,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private String name;
 	private IObservable filteredObservable;
 	private IConcept targetPredicate;
+	private boolean mustContextualize = false;
 	
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
@@ -119,7 +120,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.goal = Observables.INSTANCE.getDirectGoalType(observable.getType());
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
-
+		this.mustContextualize = observable.mustContextualizeAtResolution();
+		
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			this.roles.add(role);
 		}
@@ -159,6 +161,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.monitor = other.monitor;
 		this.valueOperators.addAll(other.valueOperators);
 		this.filteredObservable = other.filteredObservable;
+		this.mustContextualize = other.mustContextualize;
 
 		checkTrivial();
 	}
@@ -1851,6 +1854,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.setTargetPredicate(targetPredicate);
 		ret.setfilteredObservable(filteredObservable);
 		ret.setOptional(this.optional);
+		ret.setMustContextualizeAtResolution(mustContextualize);
 		
 		return ret;
 	}

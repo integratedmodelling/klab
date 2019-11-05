@@ -80,6 +80,21 @@ public interface ITime extends IExtent {
 				return rank;
 			}
 
+			public boolean isRegular() {
+				switch (this) {
+				case DAY:
+				case HOUR:
+				case MILLISECOND:
+				case MINUTE:
+				case SECOND:
+				case WEEK:
+					return true;
+				default:
+					break;
+				}
+				return false;
+			}
+			
 			public long getMilliseconds() {
 				switch (this) {
 				case MILLISECOND:

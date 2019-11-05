@@ -191,8 +191,8 @@ public class DataflowCompiler {
 		if (contextModel != null && contextModel.isInstantiator() && actuator.getMode() == Mode.RESOLUTION) {
 
 			/*
-			 * recover any output states with static initializers
-			 * NB: where expressions and the like are added
+			 * recover any output states with static initializers NB: where expressions and
+			 * the like are added
 			 */
 			for (int i = 1; i < contextModel.getObservables().size(); i++) {
 				if (((Observable) contextModel.getObservables().get(i)).isResolved()) {
@@ -485,6 +485,12 @@ public class DataflowCompiler {
 				// collect units from dependent models to ensure consistency across unspecified
 				// ones
 				Map<String, IUnit> chosenUnits = new HashMap<>();
+
+				/*
+				 * FIXME dependencies that are resolved by secondary outputs of instantiators
+				 * should be skipped after ensuring that the primary observable of the
+				 * instantiator is compiled in.
+				 */
 
 				for (Node child : sortChildren()) {
 
@@ -780,8 +786,7 @@ public class DataflowCompiler {
 	 * @param iLocator
 	 * @return
 	 */
-	public List<IContextualizable> getModelComputation(Model model, IArtifact.Type targetType,
-			boolean initialization) {
+	public List<IContextualizable> getModelComputation(Model model, IArtifact.Type targetType, boolean initialization) {
 		List<IContextualizable> ret = new ArrayList<>(model.getComputation());
 		int lastDirectPosition = -1;
 		IArtifact.Type lastDirectType = null;
@@ -798,8 +803,7 @@ public class DataflowCompiler {
 		}
 
 		if (lastDirectType != null && lastDirectType != targetType && lastDirectType != IArtifact.Type.VALUE) {
-			IContextualizable cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType,
-					targetType);
+			IContextualizable cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType, targetType);
 			if (cast != null) {
 				ret.add(lastDirectPosition + 1, cast);
 			}
