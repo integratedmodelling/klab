@@ -158,7 +158,7 @@ public class ModelKbox extends ObservableKbox {
 		// Contextualize the observable if needed
 		if (context.getContext() != null && ((Observable) observable).mustContextualizeAtResolution()) {
 			observable = Observables.INSTANCE.contextualizeTo(observable,
-					context.getContext().getObservable().getType(), context.getMonitor());
+					context.getContext().getObservable().getType(), true, context.getMonitor());
 		}
 
 		Pair<Scale, Set<IRankedModel>> preResolved = context.isCaching() ? null

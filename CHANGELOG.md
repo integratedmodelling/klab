@@ -34,6 +34,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Implementation of 'klab:osm:' open street maps URNs and search service using OSMNames
   linked to free-text search.
 - Stubs for event instantiators in space/time.
+- Observations with occurrents promote the temporal context from generic/specific to grid.
+  Temporal logics straightened out and better understood.
+- Lots of additional subtlety in the contextualization of dependencies and secondary 
+  observables. In general, contextualization is done as soon as possible, i.e. in model 
+  declarations according to the model type. Instantiators are the only ones where dependencies are 
+  contextualized to the context at resolution time, as the context cannot be known in
+  advance. Context is always validated but only assigned to dependencies when the primary observable
+  has *explicit* ('within') contextualization.
+- Reset the build count from 200 and align the codebase to the new hub and node architecture.
 ### Changed
 - Resources can be "granular", i.e. composed of multiple resources with individual 
   geometry that give the full resource geometry when merged. Mostly unimplemented.

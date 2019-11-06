@@ -21,7 +21,6 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
@@ -133,13 +132,18 @@ public class Model extends KimObject implements IModel {
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
 
 		IConcept context = null;
+		boolean explicitContext = false;
+		boolean first = true;
+		
 		for (IKimObservable observable : model.getObservables()) {
 
 			Observable obs = Observables.INSTANCE.declare(observable, monitor);
 
-			if (context == null) {
+			if (first) {
 				context = obs.is(Type.DIRECT_OBSERVABLE) ? obs.getType()
 						: Observables.INSTANCE.getContextType(obs.getType());
+				explicitContext = context != null && context.equals(Observables.INSTANCE.getDirectContextType(obs.getType()));
+				first = false;
 			}
 
 			if (observable.hasAttributeIdentifier()) {
@@ -153,14 +157,16 @@ public class Model extends KimObject implements IModel {
 			Observable dep = Observables.INSTANCE.declare(dependency, monitor);
 			if (context != null) {
 				if (this.instantiator) {
+					
 					/*
 					 * we cannot know the context of resolution beforehand, so it will be
 					 * contextualized at query time.
 					 */
 					dep.setMustContextualizeAtResolution(true);
+
 				} else {
 					try {
-						dep = Observables.INSTANCE.contextualizeTo(dep, context, monitor);
+						dep = Observables.INSTANCE.contextualizeTo(dep, context, explicitContext, monitor);
 					} catch (Throwable e) {
 						monitor.error(e, dependency);
 						setErrors(true);

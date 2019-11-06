@@ -696,7 +696,7 @@ public enum Observables implements IObservableService {
 	}
 
 	@Override
-	public Observable contextualizeTo(IObservable observable, IConcept newContext, IMonitor monitor) {
+	public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor) {
 
 		IConcept originalContext = observable.getContext();
 		if (originalContext != null && originalContext.equals(newContext)) {
@@ -712,10 +712,10 @@ public enum Observables implements IObservableService {
 		 * Direct observables can be contextualized to anything and to nothing, so just
 		 * check compatibility.
 		 */
-		if (observable.is(Type.DIRECT_OBSERVABLE)) {
+		if (!isExplicit || observable.is(Type.DIRECT_OBSERVABLE)) {
 			return (Observable) observable;
 		}
-
+		
 		return (Observable) new ObservableBuilder((Observable) observable, monitor).within(newContext)
 				.buildObservable();
 	}

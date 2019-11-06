@@ -18,12 +18,14 @@ import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -487,12 +489,27 @@ public class DataflowCompiler {
 				Map<String, IUnit> chosenUnits = new HashMap<>();
 
 				/*
-				 * FIXME dependencies that are resolved by secondary outputs of instantiators
-				 * should be skipped after ensuring that the primary observable of the
-				 * instantiator is compiled in.
+				 * the dataflow won't compile actuators for the dependencies of a directly
+				 * contextualized observable model (model xxxx within yyyy) unless they must be
+				 * resolved from the context. So if the resolution graph contains the
+				 * dependencies with the same EXPLICIT "within" that is also explicit in the
+				 * primary observable, these have been resolved from an instantiator and they do
+				 * not need to be compiled in.
 				 */
+				IConcept directContext = Observables.INSTANCE.getDirectContextType(this.observable.getType());
 
 				for (Node child : sortChildren()) {
+
+					IConcept childContext = Observables.INSTANCE.getDirectContextType(child.observable.getType());
+
+					if (directContext != null && directContext.equals(childContext)) {
+						/*
+						 * can only be resolved through the instantiator of the object. TODO we should
+						 * ensure that a dependency for the primary observable is included, in the
+						 * ObservableReasoner of course.
+						 */
+						continue;
+					}
 
 					// this may be a new actuator or a reference to an existing one.
 					Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);

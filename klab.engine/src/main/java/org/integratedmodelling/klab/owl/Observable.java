@@ -695,7 +695,7 @@ public class Observable implements IObservable {
 	public void setMustContextualizeAtResolution(boolean b) {
 		this.mustContextualize = b;
 	}
-	
+
 	/**
 	 * Return true only when the observable is a dependency of an instantiator,
 	 * which is resolved within the context of resolution. In these situations the

@@ -322,7 +322,11 @@ public interface IObservableService {
 	 * 
 	 * @param observable
 	 * @param newContext
+	 * @param isExplicit true if newContext is given explicitly in the observable.
+	 *                   If not, contextualization should not happen and the
+	 *                   observable returned inaltered, but compatibility should
+	 *                   still be checked.
 	 * @return the recontextualized observable
 	 */
-	IObservable contextualizeTo(IObservable observable, IConcept newContext, IMonitor monitor);
+	IObservable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor);
 }

@@ -66,7 +66,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IObservable filteredObservable;
 	private IConcept targetPredicate;
 	private boolean mustContextualize = false;
-	
+
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
 	private List<IConcept> removed = new ArrayList<>();
@@ -121,7 +121,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 		this.mustContextualize = observable.mustContextualizeAtResolution();
-		
+
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			this.roles.add(role);
 		}
@@ -180,7 +180,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		isTrivial = false;
 		return this;
 	}
-	
+
 	@Override
 	public Builder optional(boolean optional) {
 		this.optional = optional;
@@ -655,11 +655,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * Turn a concept into its assessment if it's not already one, implementing the
 	 * corresponding semantic operator.
 	 * 
-	 * @param concept
-	 *            the untransformed concept
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public static Concept makeAssessment(IConcept concept, boolean addDefinition) {
@@ -702,11 +700,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * implementing the corresponding semantic operator. Also makes the original
 	 * concept the numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeCount(IConcept concept, boolean addDefinition) {
@@ -758,11 +754,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * Turn a concept into the distance from it if it's not already one,
 	 * implementing the corresponding semantic operator.
 	 * 
-	 * @param concept
-	 *            the untransformed concept
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeDistance(IConcept concept, boolean addDefinition) {
@@ -807,11 +801,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makePresence(IConcept concept, boolean addDefinition) {
@@ -857,11 +849,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * already one, implementing the corresponding semantic operator. Also makes the
 	 * original concept the numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be a direct observable.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be a direct observable.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeOccurrence(IConcept concept, boolean addDefinition) {
@@ -908,11 +898,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * one, implementing the corresponding semantic operator. Also makes the
 	 * original concept the numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be any observable.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be any observable.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeObservability(IConcept concept, boolean addDefinition) {
@@ -957,11 +945,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be an event.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be an event.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeMagnitude(IConcept concept, boolean addDefinition) {
@@ -1000,17 +986,15 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		return ontology.getConcept(conceptId);
 	}
-	
+
 	/**
 	 * Turn a concept into its probability if it's not already one, implementing the
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be an event.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be an event.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeLevel(IConcept concept, boolean addDefinition) {
@@ -1050,17 +1034,14 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-
 	/**
 	 * Turn a concept into its probability if it's not already one, implementing the
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be an event.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be an event.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeProbability(IConcept concept, boolean addDefinition) {
@@ -1105,11 +1086,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeUncertainty(IConcept concept, boolean addDefinition) {
@@ -1813,13 +1792,12 @@ public class ObservableBuilder implements IObservable.Builder {
 
 			ValueOperator valueOperator = op.getFirst();
 			Object valueOperand = op.getSecond();
-			
+
 			ret.setDeclaration(ret.getDeclaration() + " " + valueOperator.declaration);
 			if (name == null) {
 				ret.setName(ret.getName() + "_" + valueOperator.textForm);
 			}
 
-			
 			if (valueOperand instanceof IConcept) {
 
 				ret.setDeclaration(ret.getDeclaration() + " " + ((IConcept) valueOperand).getDefinition());
@@ -1842,7 +1820,7 @@ public class ObservableBuilder implements IObservable.Builder {
 					}
 				}
 			}
-			
+
 			ret.getValueOperators().add(new Pair<>(valueOperator, valueOperand));
 
 		}
@@ -1850,12 +1828,12 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (name != null) {
 			ret.setName(name);
 		}
-		
+
 		ret.setTargetPredicate(targetPredicate);
 		ret.setfilteredObservable(filteredObservable);
 		ret.setOptional(this.optional);
 		ret.setMustContextualizeAtResolution(mustContextualize);
-		
+
 		return ret;
 	}
 
@@ -1876,7 +1854,6 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.name = name;
 		return this;
 	}
-
 
 	@Override
 	public Builder withDistributedInherency(boolean ofEach) {
