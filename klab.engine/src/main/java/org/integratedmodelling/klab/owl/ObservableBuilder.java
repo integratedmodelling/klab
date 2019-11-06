@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.SemanticType;
@@ -74,6 +75,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private List<KlabValidationException> errors = new ArrayList<>();
 	private IUnit unit;
 	private ICurrency currency;
+	private List<IAnnotation> annotations = new ArrayList<>();
 
 	private boolean isTrivial = true;
 	private boolean distributedInherency = false;
@@ -83,6 +85,14 @@ public class ObservableBuilder implements IObservable.Builder {
 	// withDeclaration() and the
 	// builder is merely building it.
 	private boolean declarationIsComplete = false;
+
+	public static ObservableBuilder getBuilder(IObservable observable, IMonitor monitor) {
+		return new ObservableBuilder((Observable)observable, monitor);
+	}
+	
+	public static ObservableBuilder getBuilder(IConcept concept) {
+		return new ObservableBuilder(concept);
+	}
 
 	public ObservableBuilder(Concept main, Ontology ontology) {
 		this.main = main;
@@ -121,6 +131,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 		this.mustContextualize = observable.mustContextualizeAtResolution();
+		
+		this.annotations.addAll(observable.getAnnotations());
 
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			this.roles.add(role);
@@ -162,7 +174,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.valueOperators.addAll(other.valueOperators);
 		this.filteredObservable = other.filteredObservable;
 		this.mustContextualize = other.mustContextualize;
-
+		this.annotations.addAll(other.annotations);
+		
 		checkTrivial();
 	}
 
@@ -1833,7 +1846,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.setfilteredObservable(filteredObservable);
 		ret.setOptional(this.optional);
 		ret.setMustContextualizeAtResolution(mustContextualize);
-
+		ret.getAnnotations().addAll(annotations);
+		
 		return ret;
 	}
 
