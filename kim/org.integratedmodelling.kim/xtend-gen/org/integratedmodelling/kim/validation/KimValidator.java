@@ -1918,109 +1918,120 @@ public class KimValidator extends AbstractKimValidator {
                 }
                 operator.add(IKimConcept.Type.DISTANCE);
               } else {
-                boolean _isMagnitude = concept.isMagnitude();
-                if (_isMagnitude) {
-                  int _size = Kim.intersection(flags, IKimConcept.CONTINUOUS_QUALITY_TYPES).size();
-                  boolean _equals = (_size == 0);
-                  if (_equals) {
-                    this.error("Magnitudes can only be observed for quantifiable qualities", concept.getConcept(), null, 
+                boolean _isChange = concept.isChange();
+                if (_isChange) {
+                  boolean _contains_3 = flags.contains(IKimConcept.Type.QUALITY);
+                  boolean _not_4 = (!_contains_3);
+                  if (_not_4) {
+                    this.error("Change processes can only be defined for qualities", concept.getConcept(), null, 
                       KimPackage.CONCEPT__CONCEPT);
                   }
-                  operator.add(IKimConcept.Type.MAGNITUDE);
-                  operator.add(IKimConcept.Type.SUBJECTIVE);
+                  operator.add(IKimConcept.Type.CHANGE);
                 } else {
-                  boolean _isType = concept.isType();
-                  if (_isType) {
-                    boolean _contains_3 = flags.contains(IKimConcept.Type.TRAIT);
-                    if (_contains_3) {
-                      boolean _contains_4 = flags.contains(IKimConcept.Type.ABSTRACT);
-                      boolean _not_4 = (!_contains_4);
-                      if (_not_4) {
-                        this.error("Types of traits can only be referenced for abstract traits", concept.getConcept(), null, 
-                          KimPackage.CONCEPT__CONCEPT);
-                      }
-                    } else {
-                      boolean _contains_5 = flags.contains(IKimConcept.Type.QUALITY);
-                      if (_contains_5) {
-                        this.error("Qualities cannot be further categorized", concept.getConcept(), null, 
-                          KimPackage.CONCEPT__CONCEPT);
-                      }
+                  boolean _isMagnitude = concept.isMagnitude();
+                  if (_isMagnitude) {
+                    int _size = Kim.intersection(flags, IKimConcept.CONTINUOUS_QUALITY_TYPES).size();
+                    boolean _equals = (_size == 0);
+                    if (_equals) {
+                      this.error("Magnitudes can only be observed for quantifiable qualities", concept.getConcept(), null, 
+                        KimPackage.CONCEPT__CONCEPT);
                     }
-                    operator.add(IKimConcept.Type.CLASS);
+                    operator.add(IKimConcept.Type.MAGNITUDE);
+                    operator.add(IKimConcept.Type.SUBJECTIVE);
                   } else {
-                    boolean _isObservability = concept.isObservability();
-                    if (_isObservability) {
-                      operator.add(IKimConcept.Type.OBSERVABILITY);
-                    } else {
-                      if ((concept.isOccurrence() || concept.isPresence())) {
-                        boolean _contains_6 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
-                        boolean _not_5 = (!_contains_6);
+                    boolean _isType = concept.isType();
+                    if (_isType) {
+                      boolean _contains_4 = flags.contains(IKimConcept.Type.TRAIT);
+                      if (_contains_4) {
+                        boolean _contains_5 = flags.contains(IKimConcept.Type.ABSTRACT);
+                        boolean _not_5 = (!_contains_5);
                         if (_not_5) {
-                          String _xifexpression_1 = null;
-                          boolean _isOccurrence = concept.isOccurrence();
-                          if (_isOccurrence) {
-                            _xifexpression_1 = "Occurrence";
-                          } else {
-                            _xifexpression_1 = "Presence";
-                          }
-                          String _plus_5 = (_xifexpression_1 + 
-                            " can only be assessed for direct observables (subjects, events, processes and relationships)");
-                          this.error(_plus_5, 
-                            concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
-                        }
-                        boolean _isOccurrence_1 = concept.isOccurrence();
-                        if (_isOccurrence_1) {
-                          operator.add(IKimConcept.Type.OCCURRENCE);
-                          operator.add(IKimConcept.Type.PROBABILITY);
-                        } else {
-                          operator.add(IKimConcept.Type.PRESENCE);
+                          this.error("Types of traits can only be referenced for abstract traits", concept.getConcept(), null, 
+                            KimPackage.CONCEPT__CONCEPT);
                         }
                       } else {
-                        boolean _isProbability = concept.isProbability();
-                        if (_isProbability) {
-                          boolean _contains_7 = flags.contains(IKimConcept.Type.EVENT);
+                        boolean _contains_6 = flags.contains(IKimConcept.Type.QUALITY);
+                        if (_contains_6) {
+                          this.error("Qualities cannot be further categorized", concept.getConcept(), null, 
+                            KimPackage.CONCEPT__CONCEPT);
+                        }
+                      }
+                      operator.add(IKimConcept.Type.CLASS);
+                    } else {
+                      boolean _isObservability = concept.isObservability();
+                      if (_isObservability) {
+                        operator.add(IKimConcept.Type.OBSERVABILITY);
+                      } else {
+                        if ((concept.isOccurrence() || concept.isPresence())) {
+                          boolean _contains_7 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
                           boolean _not_6 = (!_contains_7);
                           if (_not_6) {
-                            String _xifexpression_2 = null;
-                            boolean _contains_8 = flags.contains(
-                              IKimConcept.Type.DIRECT_OBSERVABLE);
-                            if (_contains_8) {
-                              _xifexpression_2 = "; use occurrence for probability of presence";
+                            String _xifexpression_1 = null;
+                            boolean _isOccurrence = concept.isOccurrence();
+                            if (_isOccurrence) {
+                              _xifexpression_1 = "Occurrence";
                             } else {
-                              _xifexpression_2 = "";
+                              _xifexpression_1 = "Presence";
                             }
-                            String _plus_6 = ("Probability only applies to events" + _xifexpression_2);
-                            this.error(_plus_6, 
+                            String _plus_5 = (_xifexpression_1 + 
+                              " can only be assessed for direct observables (subjects, events, processes and relationships)");
+                            this.error(_plus_5, 
                               concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
                           }
-                          operator.add(IKimConcept.Type.PROBABILITY);
-                        } else {
-                          boolean _isProportion = concept.isProportion();
-                          if (_isProportion) {
-                            operator.add(IKimConcept.Type.PROPORTION);
+                          boolean _isOccurrence_1 = concept.isOccurrence();
+                          if (_isOccurrence_1) {
+                            operator.add(IKimConcept.Type.OCCURRENCE);
+                            operator.add(IKimConcept.Type.PROBABILITY);
                           } else {
-                            boolean _isRatio = concept.isRatio();
-                            if (_isRatio) {
-                              operator.add(IKimConcept.Type.RATIO);
-                            } else {
-                              boolean _isValue = concept.isValue();
-                              if (_isValue) {
-                                operator.add(IKimConcept.Type.VALUE);
-                                boolean _isMonetary = concept.isMonetary();
-                                if (_isMonetary) {
-                                  operator.add(IKimConcept.Type.MONETARY);
-                                }
+                            operator.add(IKimConcept.Type.PRESENCE);
+                          }
+                        } else {
+                          boolean _isProbability = concept.isProbability();
+                          if (_isProbability) {
+                            boolean _contains_8 = flags.contains(IKimConcept.Type.EVENT);
+                            boolean _not_7 = (!_contains_8);
+                            if (_not_7) {
+                              String _xifexpression_2 = null;
+                              boolean _contains_9 = flags.contains(
+                                IKimConcept.Type.DIRECT_OBSERVABLE);
+                              if (_contains_9) {
+                                _xifexpression_2 = "; use occurrence for probability of presence";
                               } else {
-                                boolean _isUncertainty = concept.isUncertainty();
-                                if (_isUncertainty) {
-                                  boolean _contains_9 = flags.contains(IKimConcept.Type.QUALITY);
-                                  boolean _not_7 = (!_contains_9);
-                                  if (_not_7) {
-                                    this.error(
-                                      "Uncertainty is associated to qualities. Use probability or occurrence for other observables", 
-                                      concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
+                                _xifexpression_2 = "";
+                              }
+                              String _plus_6 = ("Probability only applies to events" + _xifexpression_2);
+                              this.error(_plus_6, 
+                                concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
+                            }
+                            operator.add(IKimConcept.Type.PROBABILITY);
+                          } else {
+                            boolean _isProportion = concept.isProportion();
+                            if (_isProportion) {
+                              operator.add(IKimConcept.Type.PROPORTION);
+                            } else {
+                              boolean _isRatio = concept.isRatio();
+                              if (_isRatio) {
+                                operator.add(IKimConcept.Type.RATIO);
+                              } else {
+                                boolean _isValue = concept.isValue();
+                                if (_isValue) {
+                                  operator.add(IKimConcept.Type.VALUE);
+                                  boolean _isMonetary = concept.isMonetary();
+                                  if (_isMonetary) {
+                                    operator.add(IKimConcept.Type.MONETARY);
                                   }
-                                  operator.add(IKimConcept.Type.UNCERTAINTY);
+                                } else {
+                                  boolean _isUncertainty = concept.isUncertainty();
+                                  if (_isUncertainty) {
+                                    boolean _contains_10 = flags.contains(IKimConcept.Type.QUALITY);
+                                    boolean _not_8 = (!_contains_10);
+                                    if (_not_8) {
+                                      this.error(
+                                        "Uncertainty is associated to qualities. Use probability or occurrence for other observables", 
+                                        concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
+                                    }
+                                    operator.add(IKimConcept.Type.UNCERTAINTY);
+                                  }
                                 }
                               }
                             }
@@ -2033,15 +2044,15 @@ public class KimValidator extends AbstractKimValidator {
               }
             }
             boolean _isEmpty_2 = operator.isEmpty();
-            boolean _not_8 = (!_isEmpty_2);
-            if (_not_8) {
-              ret = Kim.INSTANCE.makeQuality(ret, operator.<IKimConcept.Type>toArray(new IKimConcept.Type[operator.size()]));
-              boolean _contains_10 = flags.contains(IKimConcept.Type.MACRO);
-              if (_contains_10) {
+            boolean _not_9 = (!_isEmpty_2);
+            if (_not_9) {
+              ret = Kim.INSTANCE.applyOperator(ret, operator.<IKimConcept.Type>toArray(new IKimConcept.Type[operator.size()]));
+              boolean _contains_11 = flags.contains(IKimConcept.Type.MACRO);
+              if (_contains_11) {
                 ret.add(IKimConcept.Type.MACRO);
               }
-              boolean _contains_11 = flags.contains(IKimConcept.Type.SUBJECTIVE);
-              if (_contains_11) {
+              boolean _contains_12 = flags.contains(IKimConcept.Type.SUBJECTIVE);
+              if (_contains_12) {
                 ret.add(IKimConcept.Type.SUBJECTIVE);
               }
             }

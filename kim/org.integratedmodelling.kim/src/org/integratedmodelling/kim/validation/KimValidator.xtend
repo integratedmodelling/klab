@@ -1534,6 +1534,12 @@ class KimValidator extends AbstractKimValidator {
 							KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.DISTANCE)
+				} else if (concept.isChange) {
+					if (!flags.contains(Type.QUALITY)) {
+						error("Change processes can only be defined for qualities", concept.concept, null,
+							KimPackage.CONCEPT__CONCEPT)
+					}
+					operator.add(Type.CHANGE)
 				} else if (concept.isMagnitude) {
 					if (Kim.intersection(flags, IKimConcept.CONTINUOUS_QUALITY_TYPES).size() == 0) {
 						error("Magnitudes can only be observed for quantifiable qualities", concept.concept, null,
@@ -1599,7 +1605,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 				if (!operator.isEmpty) {
-					ret = Kim.INSTANCE.makeQuality(ret, operator.toArray(newArrayOfSize(operator.size())))
+					ret = Kim.INSTANCE.applyOperator(ret, operator.toArray(newArrayOfSize(operator.size())))
 					if (flags.contains(Type.MACRO)) {
 						ret.add(Type.MACRO)
 					}

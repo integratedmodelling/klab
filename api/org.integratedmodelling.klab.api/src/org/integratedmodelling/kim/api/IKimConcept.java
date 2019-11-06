@@ -327,8 +327,12 @@ public interface IKimConcept extends IKimStatement {
 		 * Makes an attribute a rescaling transformation, which does not preserve
 		 * observation semantics
 		 */
-		RESCALING;
-
+		RESCALING,
+		/**
+		 * A process that defines the change of its inherent quality.
+		 */
+		CHANGE;
+		
 		boolean isNumeric() {
 			return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);
 		}

@@ -326,6 +326,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			case ASSESSMENT:
 				reset(makeAssessment(argument, false));
 				break;
+			case CHANGE:
+				reset(makeChange(argument, false));
+				break;
 			case COUNT:
 				reset(makeCount(argument, false));
 				break;
@@ -663,6 +666,51 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder withTrait(Collection<IConcept> concepts) {
 		return withTrait(concepts.toArray(new IConcept[concepts.size()]));
 	}
+	
+	/**
+	 * Turn a concept into its change if it's not already one, implementing the
+	 * corresponding semantic operator.
+	 * 
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
+	 * @return the transformed concept
+	 */
+	public static Concept makeChange(IConcept concept, boolean addDefinition) {
+
+		String cName = getCleanId(concept) + "Change";
+
+		if (!concept.is(Type.QUALITY)) {
+			return null;
+		}
+
+		String definition = UnarySemanticOperator.CHANGE.declaration[0] + " " + concept.getDefinition();
+		Ontology ontology = (Ontology) concept.getOntology();
+		String conceptId = ontology.getIdForDefinition(definition);
+
+		if (conceptId == null) {
+
+			conceptId = ontology.createIdForDefinition(definition);
+
+			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.CHANGE.name());
+
+			ArrayList<IAxiom> ax = new ArrayList<>();
+			ax.add(Axiom.ClassAssertion(conceptId, newType));
+			ax.add(Axiom.SubClass(NS.CORE_CHANGE, conceptId));
+			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+
+			if (addDefinition) {
+				ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+			}
+			ontology.define(ax);
+			IConcept ret = ontology.getConcept(conceptId);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
+		}
+
+		return ontology.getConcept(conceptId);
+	}
+
 
 	/**
 	 * Turn a concept into its assessment if it's not already one, implementing the

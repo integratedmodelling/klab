@@ -588,6 +588,15 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#Change -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Change">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Process"/>
+        <rdfs:comment>A process that is inherent to a quality, causing its states to change in time.</rdfs:comment>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#Charge -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Charge">

@@ -836,12 +836,19 @@ public enum Kim {
 		return false;
 	}
 
-	public EnumSet<Type> makeQuality(EnumSet<Type> original, Type... quality) {
+	public EnumSet<Type> applyOperator(EnumSet<Type> original, Type... quality) {
+
+		if (quality.length == 1 && quality[0] == Type.CHANGE) {
+			// not a quality, just ignore everything
+			return getType(UnarySemanticOperator.CHANGE);
+		}
 
 		// remove any direct observable flags, add the one specified and quality
 		EnumSet<Type> ret = EnumSet.copyOf(original);
 		ret.removeAll(IKimConcept.DIRECT_OBSERVABLE_TYPES);
 		ret.removeAll(IKimConcept.ALL_TRAIT_TYPES);
+		
+		
 		for (Type t : quality) {
 			ret.add(t);
 			if (t == Type.DISTANCE) {
@@ -877,6 +884,8 @@ public enum Kim {
 			return getType("magnitude");
 		case LEVEL:
 			return getType("level");
+		case CHANGE:
+			return getType("change");
 		case MONETARY_VALUE:
 			return getType("money");
 		case OBSERVABILITY:
@@ -1012,6 +1021,8 @@ public enum Kim {
 			return EnumSet.of(Type.DISTANCE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "process":
 			return EnumSet.of(Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
+		case "change":
+			return EnumSet.of(Type.CHANGE, Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
 		case "agent":
 			return EnumSet.of(Type.AGENT, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "event":

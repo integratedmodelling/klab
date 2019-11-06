@@ -664,11 +664,14 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		} else if (declaration.isLevel()) {
 			observationType = UnarySemanticOperator.LEVEL;
 			operator = Type.CLASS;
+		} else if (declaration.isChange()) {
+			observationType = UnarySemanticOperator.CHANGE;
+			operator = Type.CHANGE;
 		}
 
 		if (operator != null) {
 			this.argumentType = this.type;
-			this.type = Kim.INSTANCE.makeQuality(type, operator);
+			this.type = Kim.INSTANCE.applyOperator(type, operator);
 		}
 
 		return type;
