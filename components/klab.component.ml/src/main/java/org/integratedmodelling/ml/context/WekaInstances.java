@@ -530,12 +530,12 @@ public class WekaInstances {
 				Object[] instanceValues = new Object[predictors.size() + 1];
 				double instanceWeight = 1;
 
-				for (IState state : ((IDirectObservation) object).getStates()) {
-					System.out.println("STATE: " + state.getObservable());
-				}
-				for (IObservable state : predictors) {
-					System.out.println("OBSER: " + state);
-				}
+//				for (IState state : ((IDirectObservation) object).getStates()) {
+//					System.out.println("STATE: " + state.getObservable());
+//				}
+//				for (IObservable state : predictors) {
+//					System.out.println("OBSER: " + state);
+//				}
 
 				if (stateIndex == null) {
 
@@ -634,7 +634,9 @@ public class WekaInstances {
 		}
 
 		int i = 2;
-		for (IObservable predictor : getPredictorObservables()) {
+		for (IObservable predictor : predictors) {
+			
+			
 			IAnnotation annotation = annotations.get(predictor.getName());
 			if (predictor.getArtifactType() == Type.NUMBER) {
 				try {

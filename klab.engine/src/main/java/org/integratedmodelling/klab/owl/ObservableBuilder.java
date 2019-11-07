@@ -468,8 +468,24 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	@Override
 	public Builder without(ObservableRole... roles) {
+		
 		KimConcept newDeclaration = this.declaration.removeComponents(roles);
-		return new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration));
+		ObservableBuilder ret = new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration));
+
+		/*
+		 * copy the rest
+		 */
+		ret.unit = unit;
+		ret.currency = currency;
+		ret.valueOperators.addAll(valueOperators);
+		ret.name = name;
+		ret.targetPredicate = targetPredicate;
+		ret.filteredObservable = filteredObservable;
+		ret.optional = this.optional;
+		ret.mustContextualize = mustContextualize;
+		ret.annotations.addAll(annotations);
+		
+		return ret;
 	}
 
 	@Override
