@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.ComponentRole;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
@@ -471,7 +471,7 @@ public enum KimKnowledgeProcessor {
 		if (concept.getContext() != null) {
 			IConcept c = declareInternal(concept.getContext(), ontology, monitor);
 			if (c != null) {
-				if (ComponentRole.CONTEXT.equals(concept.getDistributedInherent())) {
+				if (ObservableRole.CONTEXT.equals(concept.getDistributedInherent())) {
 					builder.of(c);
 				} else {
 					builder.within(c);
@@ -499,7 +499,7 @@ public enum KimKnowledgeProcessor {
 		if (concept.getMotivation() != null) {
 			IConcept c = declareInternal(concept.getMotivation(), ontology, monitor);
 			if (c != null) {
-				if (ComponentRole.GOAL.equals(concept.getDistributedInherent())) {
+				if (ObservableRole.GOAL.equals(concept.getDistributedInherent())) {
 					builder.of(c);
 				} else {
 					builder.withGoal(c);

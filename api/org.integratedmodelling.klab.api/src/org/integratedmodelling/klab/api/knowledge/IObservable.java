@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.ComponentRole;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -310,7 +310,7 @@ public interface IObservable extends ISemantic, IResolvable {
 		 * @param roles
 		 * @return
 		 */
-		Builder without(ComponentRole... roles);
+		Builder without(ObservableRole... roles);
 
 	}
 

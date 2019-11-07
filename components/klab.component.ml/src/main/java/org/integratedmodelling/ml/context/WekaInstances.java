@@ -15,7 +15,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.api.IKimConcept.ComponentRole;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.utils.KimUtils;
 import org.integratedmodelling.klab.Extensions;
@@ -282,11 +282,14 @@ public class WekaInstances {
 
 		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
 		if (this.explicitContext != null) {
-			/* we learn the quality in its context so remove */
+			/*
+			 * we learn the quality in its context so remove.
+			 * FIXME this removes units although it shouldn't.
+			 */
 			this.predictedObservable = ObservableBuilder.getBuilder(this.predictedObservable, context.getMonitor())
-					.without(ComponentRole.CONTEXT).buildObservable();
+					.without(ObservableRole.CONTEXT).buildObservable();
 		}
-		
+
 		for (IObservable dependency : model.getDependencies()) {
 
 			IAnnotation predictor = KimUtils.findAnnotation(dependency.getAnnotations(),
@@ -482,7 +485,7 @@ public class WekaInstances {
 					 * remove the inherency before storing
 					 */
 					this.predictors.add(ObservableBuilder.getBuilder(predictor, context.getMonitor())
-							.without(ComponentRole.CONTEXT).buildObservable());
+							.without(ObservableRole.CONTEXT).buildObservable());
 				}
 			}
 			for (IState state : predictorStates) {
@@ -543,7 +546,7 @@ public class WekaInstances {
 					for (IState state : ((IDirectObservation) object).getStates()) {
 
 						if (state.getObservable().equals(predictedObservable)) {
-							stateIndex.put(state.getObservable().getName(), 0);
+							stateIndex.put(predictedObservable.getName(), 0);
 							missing.remove(predictedObservable.getName());
 						} else {
 							int i = 1;

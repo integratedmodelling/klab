@@ -11,7 +11,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.ComponentRole;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -467,7 +467,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	@Override
-	public Builder without(ComponentRole... roles) {
+	public Builder without(ObservableRole... roles) {
 		KimConcept newDeclaration = this.declaration.removeComponents(roles);
 		return new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration));
 	}
@@ -481,60 +481,60 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder without(IConcept... concepts) {
 
 		ObservableBuilder ret = new ObservableBuilder(this);
-		List<ComponentRole> removedRoles = new ArrayList<>();
+		List<ObservableRole> removedRoles = new ArrayList<>();
 		for (IConcept concept : concepts) {
 			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithout(ret.traits,
 					concept);
 			ret.traits = new ArrayList<>(tdelta.getFirst());
 			ret.removed.addAll(tdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.TRAIT);
+				removedRoles.add(ObservableRole.TRAIT);
 			}
 			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithout(ret.roles, concept);
 			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.ROLE);
+				removedRoles.add(ObservableRole.ROLE);
 			}
 			if (ret.context != null && ret.context.equals(concept)) {
 				ret.context = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CONTEXT);
+				removedRoles.add(ObservableRole.CONTEXT);
 			}
 			if (ret.inherent != null && ret.inherent.equals(concept)) {
 				ret.inherent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.INHERENT);
+				removedRoles.add(ObservableRole.INHERENT);
 			}
 			if (ret.adjacent != null && ret.adjacent.equals(concept)) {
 				ret.adjacent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.ADJACENT);
+				removedRoles.add(ObservableRole.ADJACENT);
 			}
 			if (ret.caused != null && ret.caused.equals(concept)) {
 				ret.caused = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CAUSED);
+				removedRoles.add(ObservableRole.CAUSED);
 			}
 			if (ret.causant != null && ret.causant.equals(concept)) {
 				ret.causant = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CAUSANT);
+				removedRoles.add(ObservableRole.CAUSANT);
 			}
 			if (ret.compresent != null && ret.compresent.equals(concept)) {
 				ret.compresent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.COMPRESENT);
+				removedRoles.add(ObservableRole.COMPRESENT);
 			}
 			if (ret.goal != null && ret.goal.equals(concept)) {
 				ret.goal = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.GOAL);
+				removedRoles.add(ObservableRole.GOAL);
 			}
 			if (ret.cooccurrent != null && ret.cooccurrent.equals(concept)) {
 				ret.cooccurrent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.COOCCURRENT);
+				removedRoles.add(ObservableRole.COOCCURRENT);
 			}
 		}
 		if (ret.removed.size() > 0) {
@@ -554,61 +554,61 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder withoutAny(IKimConcept.Type... concepts) {
 
 		ObservableBuilder ret = new ObservableBuilder(this);
-		List<ComponentRole> removedRoles = new ArrayList<>();
+		List<ObservableRole> removedRoles = new ArrayList<>();
 		for (IKimConcept.Type concept : concepts) {
 			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(ret.traits,
 					concept);
 			ret.traits = new ArrayList<>(tdelta.getFirst());
 			ret.removed.addAll(tdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.TRAIT);
+				removedRoles.add(ObservableRole.TRAIT);
 			}
 			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(ret.roles,
 					concept);
 			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.ROLE);
+				removedRoles.add(ObservableRole.ROLE);
 			}
 			if (ret.context != null && ret.context.is(concept)) {
 				ret.removed.add(ret.context);
 				ret.context = null;
-				removedRoles.add(ComponentRole.CONTEXT);
+				removedRoles.add(ObservableRole.CONTEXT);
 			}
 			if (ret.inherent != null && ret.inherent.is(concept)) {
 				ret.removed.add(ret.inherent);
 				ret.inherent = null;
-				removedRoles.add(ComponentRole.INHERENT);
+				removedRoles.add(ObservableRole.INHERENT);
 			}
 			if (ret.adjacent != null && ret.adjacent.is(concept)) {
 				ret.removed.add(ret.adjacent);
 				ret.adjacent = null;
-				removedRoles.add(ComponentRole.ADJACENT);
+				removedRoles.add(ObservableRole.ADJACENT);
 			}
 			if (ret.caused != null && ret.caused.is(concept)) {
 				ret.removed.add(ret.caused);
 				ret.caused = null;
-				removedRoles.add(ComponentRole.CAUSED);
+				removedRoles.add(ObservableRole.CAUSED);
 			}
 			if (ret.causant != null && ret.causant.is(concept)) {
 				ret.removed.add(ret.causant);
 				ret.causant = null;
-				removedRoles.add(ComponentRole.CAUSANT);
+				removedRoles.add(ObservableRole.CAUSANT);
 			}
 			if (ret.compresent != null && ret.compresent.is(concept)) {
 				ret.removed.add(ret.compresent);
 				ret.compresent = null;
-				removedRoles.add(ComponentRole.COMPRESENT);
+				removedRoles.add(ObservableRole.COMPRESENT);
 			}
 			if (ret.goal != null && ret.goal.is(concept)) {
 				ret.removed.add(ret.goal);
 				ret.goal = null;
-				removedRoles.add(ComponentRole.GOAL);
+				removedRoles.add(ObservableRole.GOAL);
 			}
 			if (ret.cooccurrent != null && ret.cooccurrent.is(concept)) {
 				ret.removed.add(ret.cooccurrent);
 				ret.cooccurrent = null;
-				removedRoles.add(ComponentRole.COOCCURRENT);
+				removedRoles.add(ObservableRole.COOCCURRENT);
 			}
 		}
 		if (ret.removed.size() > 0) {
@@ -629,61 +629,61 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder withoutAny(IConcept... concepts) {
 
 		ObservableBuilder ret = new ObservableBuilder(this);
-		List<ComponentRole> removedRoles = new ArrayList<>();
+		List<ObservableRole> removedRoles = new ArrayList<>();
 		for (IConcept concept : concepts) {
 			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(ret.traits,
 					concept);
 			ret.traits = new ArrayList<>(tdelta.getFirst());
 			ret.removed.addAll(tdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.TRAIT);
+				removedRoles.add(ObservableRole.TRAIT);
 			}
 			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(ret.roles,
 					concept);
 			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.ROLE);
+				removedRoles.add(ObservableRole.ROLE);
 			}
 			if (ret.context != null && ret.context.is(concept)) {
 				ret.context = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CONTEXT);
+				removedRoles.add(ObservableRole.CONTEXT);
 			}
 			if (ret.inherent != null && ret.inherent.is(concept)) {
 				ret.inherent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.INHERENT);
+				removedRoles.add(ObservableRole.INHERENT);
 			}
 			if (ret.adjacent != null && ret.adjacent.is(concept)) {
 				ret.adjacent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.ADJACENT);
+				removedRoles.add(ObservableRole.ADJACENT);
 			}
 			if (ret.caused != null && ret.caused.is(concept)) {
 				ret.caused = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CAUSED);
+				removedRoles.add(ObservableRole.CAUSED);
 			}
 			if (ret.causant != null && ret.causant.is(concept)) {
 				ret.causant = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CAUSANT);
+				removedRoles.add(ObservableRole.CAUSANT);
 			}
 			if (ret.compresent != null && ret.compresent.is(concept)) {
 				ret.compresent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.COMPRESENT);
+				removedRoles.add(ObservableRole.COMPRESENT);
 			}
 			if (ret.goal != null && ret.goal.is(concept)) {
 				ret.goal = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.GOAL);
+				removedRoles.add(ObservableRole.GOAL);
 			}
 			if (ret.cooccurrent != null && ret.cooccurrent.is(concept)) {
 				ret.cooccurrent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.COOCCURRENT);
+				removedRoles.add(ObservableRole.COOCCURRENT);
 			}
 		}
 		if (ret.removed.size() > 0) {

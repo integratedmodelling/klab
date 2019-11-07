@@ -514,7 +514,7 @@ public class KimValidator extends AbstractKimValidator {
               KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
           }
           if ((((obsIdx == 0) && (observable.getMain() != null)) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE)))) {
-            IKimConcept.ComponentRole _distributedInherent = observable.getMain().getDistributedInherent();
+            IKimConcept.ObservableRole _distributedInherent = observable.getMain().getDistributedInherent();
             boolean _tripleNotEquals = (_distributedInherent != null);
             hasDistributedAttributeObservable = _tripleNotEquals;
           }
@@ -658,7 +658,7 @@ public class KimValidator extends AbstractKimValidator {
                 KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
               ok = false;
             } else {
-              IKimConcept.ComponentRole _distributedInherent = observable.getMain().getDistributedInherent();
+              IKimConcept.ObservableRole _distributedInherent = observable.getMain().getDistributedInherent();
               boolean _tripleNotEquals_4 = (_distributedInherent != null);
               if (_tripleNotEquals_4) {
                 this.error("Distributed inherency (of each, for each, within each) are only allowed as main observables", 

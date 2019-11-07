@@ -111,7 +111,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	 * if any component was declared as the distributed inherent ('of each'), this
 	 * returns the correspondent component role.
 	 */
-	private ComponentRole distributedInherent = null;
+	private ObservableRole distributedInherent = null;
 
 	/**
 	 * True if any concepts in the declaration are templated
@@ -257,11 +257,11 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		ret.type = observable.type;
 
 		if (declaration.isDistributedOfInherency()) {
-			ret.distributedInherent = ComponentRole.INHERENT;
+			ret.distributedInherent = ObservableRole.INHERENT;
 		} else if (declaration.isDistributedForInherency()) {
-			ret.distributedInherent = ComponentRole.GOAL;
+			ret.distributedInherent = ObservableRole.GOAL;
 		} else if (declaration.isDistributedWithinInherency()) {
-			ret.distributedInherent = ComponentRole.CONTEXT;
+			ret.distributedInherent = ObservableRole.CONTEXT;
 		}
 
 		ConceptDeclaration inherency = declaration.getInherency();
@@ -1147,11 +1147,11 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		return ret;
 	}
 	
-	public KimConcept removeComponents(ComponentRole... roles) {
+	public KimConcept removeComponents(ObservableRole... roles) {
 
 		KimConcept ret = new KimConcept(this);
 
-		for (ComponentRole role : roles) {
+		for (ObservableRole role : roles) {
 
 			switch (role) {
 			case ADJACENT:
@@ -1192,14 +1192,14 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		return ret;
 	}
 
-	public KimConcept removeComponents(List<String> declarations, List<ComponentRole> roles) {
+	public KimConcept removeComponents(List<String> declarations, List<ObservableRole> roles) {
 
 		KimConcept ret = new KimConcept(this);
 
 		for (int i = 0; i < declarations.size(); i++) {
 
 			String declaration = declarations.get(i);
-			ComponentRole role = roles.get(i);
+			ObservableRole role = roles.get(i);
 
 			switch (role) {
 			case ADJACENT:
@@ -1333,7 +1333,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	}
 
 	@Override
-	public ComponentRole getDistributedInherent() {
+	public ObservableRole getDistributedInherent() {
 		return distributedInherent;
 	}
 
