@@ -13,6 +13,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
@@ -44,6 +45,7 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
@@ -326,13 +328,23 @@ public class DataflowCompiler {
 			ret.setName(observable.getReferenceName());
 			ret.setAlias(observable.getName());
 
-			if (Observables.INSTANCE.getDirectContextType(observable.getType()) != null && models.size() > 0
-					&& models.iterator().next().model.isLearning()) {
-				/*
-				 * A learning model for a directly inherent attribute will create a void
-				 * actuator - no state should be generated in the context.
-				 */
-				ret.setType(Type.VOID);
+			if (Observables.INSTANCE.getDirectContextType(observable.getType()) != null) {
+				if (models.size() > 0 && models.iterator().next().model.isLearning()) {
+					/*
+					 * A learning model for a directly inherent quality will create a void actuator
+					 * - no state should be generated in the context.
+					 */
+					ret.setType(Type.VOID);
+				} else {
+					/*
+					 * if not learning, we remove the inherency in the dataflow as it was needed to
+					 * resolve the inherent observable, but the model is run in an object's context
+					 * and we don't maintain the inherency when the semantics is local to the
+					 * object.
+					 */
+					this.observable = (Observable) ObservableBuilder.getBuilder(this.observable, monitor)
+							.without(ObservableRole.CONTEXT).buildObservable();
+				}
 			} else {
 
 				switch (observable.getDescription()) {
