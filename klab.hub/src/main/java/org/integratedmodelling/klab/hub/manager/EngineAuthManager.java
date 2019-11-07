@@ -104,6 +104,7 @@ public class EngineAuthManager {
 	        	tokenManager.deleteExpiredTokens(username);
 	            String token = jwtTokenManager.createEngineJwtToken(username);
 	            ProfileResource profile = klabUserManager.getUserProfile(username);
+	            klabUserManager.updateLastEngineConnection(profile.getUsername());
 	            EngineUser engineUser = new EngineUser(username, null);
 	            engineUser.setEmailAddress(email);
 	            engineUser.setToken(token);
@@ -139,6 +140,7 @@ public class EngineAuthManager {
         }
         tokenManager.deleteExpiredTokens(username);
         ProfileResource profile = klabUserManager.getUserProfile(username);
+        klabUserManager.updateLastEngineConnection(profile.getUsername());
         EngineUser engineUser = new EngineUser(username, null);
         engineUser.setEmailAddress(profile.getEmail());
         engineUser.setToken(token);
