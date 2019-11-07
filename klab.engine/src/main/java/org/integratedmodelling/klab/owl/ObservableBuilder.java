@@ -87,9 +87,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	private boolean declarationIsComplete = false;
 
 	public static ObservableBuilder getBuilder(IObservable observable, IMonitor monitor) {
-		return new ObservableBuilder((Observable)observable, monitor);
+		return new ObservableBuilder((Observable) observable, monitor);
 	}
-	
+
 	public static ObservableBuilder getBuilder(IConcept concept) {
 		return new ObservableBuilder(concept);
 	}
@@ -107,6 +107,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.declaration = Concepts.INSTANCE.getDeclaration(main);
 		this.type = ((Concept) main).type;
 	}
+	
+	public ObservableBuilder(IConcept main, IMonitor monitor) {
+		this(main);
+		this.monitor = monitor;
+	}
 
 	/**
 	 * Copies all info from the first level of specification of the passed
@@ -117,6 +122,11 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * @param observable
 	 */
 	public ObservableBuilder(Observable observable, IMonitor monitor) {
+
+		/*
+		 * TODO the operator should be separated based on the type, and added back when
+		 * reconstructing.
+		 */
 
 		this.main = (Concept) Observables.INSTANCE.getCoreObservable(observable.getType());
 		this.type = this.main.getTypeSet();
@@ -131,7 +141,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 		this.mustContextualize = observable.mustContextualizeAtResolution();
-		
+
 		this.annotations.addAll(observable.getAnnotations());
 
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
@@ -151,6 +161,50 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.valueOperators.addAll(observable.getValueOperators());
 		this.monitor = monitor;
 		this.filteredObservable = observable.getFilteredObservable();
+	}
+
+	public String computeDeclaration() {
+
+		StringBuffer ret = new StringBuffer(512);
+
+		for (IConcept role : roles) {
+			ret.append(role + " ");
+		}
+		for (IConcept trait : traits) {
+			ret.append(trait + " ");
+		}
+
+		ret.append(main + " ");
+
+		if (this.inherent != null) {
+
+		}
+		if (this.context != null) {
+
+		}
+		if (this.causant != null) {
+
+		}
+		if (this.caused != null) {
+
+		}
+		if (this.compresent != null) {
+
+		}
+		if (this.adjacent != null) {
+
+		}
+		if (this.goal != null) {
+
+		}
+		if (this.context != null) {
+
+		}
+		if (this.context != null) {
+
+		}
+
+		return ret.toString().trim();
 	}
 
 	public ObservableBuilder(ObservableBuilder other) {
@@ -175,7 +229,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.filteredObservable = other.filteredObservable;
 		this.mustContextualize = other.mustContextualize;
 		this.annotations.addAll(other.annotations);
-		
+
 		checkTrivial();
 	}
 
@@ -410,6 +464,12 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder without(Collection<IConcept> concepts) {
 		return without(concepts.toArray(new IConcept[concepts.size()]));
+	}
+
+	@Override
+	public Builder without(ComponentRole... roles) {
+		KimConcept newDeclaration = this.declaration.removeComponents(roles);
+		return new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration));
 	}
 
 	@Override
@@ -666,7 +726,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder withTrait(Collection<IConcept> concepts) {
 		return withTrait(concepts.toArray(new IConcept[concepts.size()]));
 	}
-	
+
 	/**
 	 * Turn a concept into its change if it's not already one, implementing the
 	 * corresponding semantic operator.
@@ -710,7 +770,6 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		return ontology.getConcept(conceptId);
 	}
-
 
 	/**
 	 * Turn a concept into its assessment if it's not already one, implementing the
@@ -1895,7 +1954,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.setOptional(this.optional);
 		ret.setMustContextualizeAtResolution(mustContextualize);
 		ret.getAnnotations().addAll(annotations);
-		
+
 		return ret;
 	}
 

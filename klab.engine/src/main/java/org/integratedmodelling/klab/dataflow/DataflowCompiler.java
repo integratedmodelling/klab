@@ -326,29 +326,39 @@ public class DataflowCompiler {
 			ret.setName(observable.getReferenceName());
 			ret.setAlias(observable.getName());
 
-			switch (observable.getDescription()) {
-			case CATEGORIZATION:
-				ret.setType(Type.CONCEPT);
-				break;
-			case DETECTION:
-			case INSTANTIATION:
-				ret.setType(observable.getArtifactType());
-				break;
-			case QUANTIFICATION:
-				ret.setType(Type.NUMBER);
-				break;
-			case SIMULATION:
-				ret.setType(Type.PROCESS);
-				break;
-			case VERIFICATION:
-				ret.setType(Type.BOOLEAN);
-				break;
-			case CHARACTERIZATION:
-			case CLASSIFICATION:
+			if (Observables.INSTANCE.getDirectContextType(observable.getType()) != null && models.size() > 0
+					&& models.iterator().next().model.isLearning()) {
+				/*
+				 * A learning model for a directly inherent attribute will create a void
+				 * actuator - no state should be generated in the context.
+				 */
 				ret.setType(Type.VOID);
-				break;
-			default:
-				break;
+			} else {
+
+				switch (observable.getDescription()) {
+				case CATEGORIZATION:
+					ret.setType(Type.CONCEPT);
+					break;
+				case DETECTION:
+				case INSTANTIATION:
+					ret.setType(observable.getArtifactType());
+					break;
+				case QUANTIFICATION:
+					ret.setType(Type.NUMBER);
+					break;
+				case SIMULATION:
+					ret.setType(Type.PROCESS);
+					break;
+				case VERIFICATION:
+					ret.setType(Type.BOOLEAN);
+					break;
+				case CHARACTERIZATION:
+				case CLASSIFICATION:
+					ret.setType(Type.VOID);
+					break;
+				default:
+					break;
+				}
 			}
 
 			if (observer != null) {

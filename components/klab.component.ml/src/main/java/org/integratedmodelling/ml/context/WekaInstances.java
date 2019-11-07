@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.IKimConcept.ComponentRole;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.utils.KimUtils;
 import org.integratedmodelling.klab.Extensions;
@@ -58,7 +59,9 @@ import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 public class WekaInstances {
 
 	private static final int MAX_ALLOWED_NODATA = 2;
-	private IState predicted = null;
+
+	private IObservable predictedObservable = null;
+	private IState predictedState = null;
 	/*
 	 * we either have state predictor states (i.e. distributed over the context,
 	 * checked after recontextualizing to the archetype) or predictorObservables (in
@@ -93,15 +96,6 @@ public class WekaInstances {
 		Range exclude = null;
 	}
 
-	// if (specification.getParameters().containsKey("include")) {
-	// descriptor.setInclude(specification.getParameters().get("include",
-	// Range.class));
-	// }
-	// if (specification.getParameters().containsKey("exclude")) {
-	// descriptor.setExclude(specification.getParameters().get("exclude",
-	// Range.class));
-	// }
-
 	/**
 	 * These also end up in the resource parameters, tagged as discretizer.attribute
 	 * = javaclass/options. Constructors and toString() method allow rebuilding the
@@ -118,12 +112,6 @@ public class WekaInstances {
 		private Range include;
 		private Range exclude;
 		private int index;
-
-		// public DiscretizerDescriptor(String parameter) {
-		// int n = parameter.indexOf('/');
-		// this.javaClass = parameter.substring(0, n);
-		// this.options = parameter.substring(n + 1);
-		// }
 
 		public DiscretizerDescriptor(String javaClass, String options, int index) {
 			this.javaClass = javaClass;
@@ -248,7 +236,7 @@ public class WekaInstances {
 	 * Call ONLY first and ONLY in encoders when attributes are not defined.
 	 */
 	public void setPredicted(String name, IState state, @Nullable Filter discretizer) {
-		this.predicted = state;
+		this.predictedState = state;
 		this.attributes.set(0, getAttribute(state));
 		if (discretizer != null) {
 			discretizers.put(name, new DiscretizerDescriptor(discretizer));
@@ -273,19 +261,32 @@ public class WekaInstances {
 		}
 	}
 
-	// for use in learning models
+	// for use in learning models that produce a state (i.e. the learned quality is
+	// within the context)
 	public WekaInstances(IState predicted, IModel model, IRuntimeScope context, boolean mustDiscretize,
 			boolean admitsNodata, IServiceCall classDiscretizer) {
+		this(predicted.getObservable(), model, context, mustDiscretize, admitsNodata, classDiscretizer);
+		this.predictedState = predicted;
+	}
 
-		this.predicted = predicted;
-		this.name = predicted.getObservable().getName();
+	// for use in learning models
+	public WekaInstances(IObservable predicted, IModel model, IRuntimeScope context, boolean mustDiscretize,
+			boolean admitsNodata, IServiceCall classDiscretizer) {
+
+		this.predictedObservable = predicted;
+		this.name = predicted.getName();
 		this.context = context;
 		this.requiresDiscretization = mustDiscretize;
 		this.classDiscretizer = classDiscretizer;
 		this.admitsNodata = admitsNodata;
 
-		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getObservable().getType());
-
+		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
+		if (this.explicitContext != null) {
+			/* we learn the quality in its context so remove */
+			this.predictedObservable = ObservableBuilder.getBuilder(this.predictedObservable, context.getMonitor())
+					.without(ComponentRole.CONTEXT).buildObservable();
+		}
+		
 		for (IObservable dependency : model.getDependencies()) {
 
 			IAnnotation predictor = KimUtils.findAnnotation(dependency.getAnnotations(),
@@ -293,8 +294,7 @@ public class WekaInstances {
 
 			if (predictor != null) {
 
-				IConcept predictorContext = Observables.INSTANCE
-						.getDirectContextType(predicted.getObservable().getType());
+				IConcept predictorContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
 
 				if (this.explicitContext != null && this.explicitContext.equals(predictorContext)) {
 
@@ -372,7 +372,7 @@ public class WekaInstances {
 
 					// the artifact range is for the predicted variable, not for the archetype
 					// observation
-					ranges.put(predicted.getObservable().getName(), rng);
+					ranges.put(predicted.getName(), rng);
 				}
 			}
 		}
@@ -414,7 +414,7 @@ public class WekaInstances {
 
 		if (this.attributes == null) {
 			this.attributes = new ArrayList<>();
-			this.attributes.add(getAttribute(predicted));
+			this.attributes.add(getAttribute(predictedState));
 			for (IState var : predictorStates) {
 				this.attributes.add(getAttribute(var));
 			}
@@ -430,8 +430,8 @@ public class WekaInstances {
 		return discretizers.get(attribute);
 	}
 
-	public IState getPredicted() {
-		return predicted;
+	public IState getPredictedState() {
+		return predictedState;
 	}
 
 	public IState getPredictor(String attributeName) {
@@ -481,8 +481,8 @@ public class WekaInstances {
 					/*
 					 * remove the inherency before storing
 					 */
-					this.predictors.add(ObservableBuilder.getBuilder(predictor, context.getMonitor()).within(null)
-							.buildObservable());
+					this.predictors.add(ObservableBuilder.getBuilder(predictor, context.getMonitor())
+							.without(ComponentRole.CONTEXT).buildObservable());
 				}
 			}
 			for (IState state : predictorStates) {
@@ -498,7 +498,7 @@ public class WekaInstances {
 		if (this.archetypes.isEmpty()) {
 			throw new IllegalStateException("Weka: cannot build training set without at least one archetype");
 		}
-		
+
 		// this ensures we can just use this.predictors afterwards.
 		if (getPredictorObservables().size() < 1) {
 			throw new IllegalStateException("Weka: not enough predictors to build a training set");
@@ -512,7 +512,7 @@ public class WekaInstances {
 
 		// for later reporting
 		Set<String> pnames = new HashSet<>();
-		pnames.add(predicted.getObservable().getName());
+		pnames.add(predictedObservable.getName());
 		for (IObservable predictor : predictors) {
 			pnames.add(predictor.getName());
 		}
@@ -527,6 +527,13 @@ public class WekaInstances {
 				Object[] instanceValues = new Object[predictors.size() + 1];
 				double instanceWeight = 1;
 
+				for (IState state : ((IDirectObservation) object).getStates()) {
+					System.out.println("STATE: " + state.getObservable());
+				}
+				for (IObservable state : predictors) {
+					System.out.println("OBSER: " + state);
+				}
+
 				if (stateIndex == null) {
 
 					// build map of predicted/observable name to index in instance. We use one
@@ -535,18 +542,18 @@ public class WekaInstances {
 
 					for (IState state : ((IDirectObservation) object).getStates()) {
 
-						if (state.getObservable().equals(predicted.getObservable())) {
+						if (state.getObservable().equals(predictedObservable)) {
 							stateIndex.put(state.getObservable().getName(), 0);
-							missing.remove(predicted.getObservable().getName());
+							missing.remove(predictedObservable.getName());
 						} else {
 							int i = 1;
 							for (IObservable predictor : predictors) {
 								if (state.getObservable().equals(predictor)) {
 									stateIndex.put(predictor.getName(), i);
-									missing.remove(predicted.getObservable().getName());
+									missing.remove(predictor.getName());
 								} else if (weightObservable != null && state.getObservable().is(weightObservable)) {
 									instanceWeight = state.aggregate(((IObservation) object).getScale(), Double.class);
-									missing.remove(predicted.getObservable().getName());
+									missing.remove(predictor.getName());
 								}
 								i++;
 							}
@@ -564,8 +571,7 @@ public class WekaInstances {
 
 				boolean ignore = false;
 				for (IState state : ((IDirectObservation) object).getStates()) {
-					
-					// NO must still match the observables
+
 					if (stateIndex.containsKey(state.getObservable().getName())) {
 						Object o = state.aggregate(((IObservation) object).getScale(),
 								Utils.getClassForType(state.getObservable().getArtifactType()));
@@ -617,7 +623,7 @@ public class WekaInstances {
 		if (requiresDiscretization || this.classDiscretizer != null) {
 			try {
 				this.instances = Filter.useFilter(this.instances,
-						buildDiscretization(classDiscretizer, predicted.getObservable(), 1));
+						buildDiscretization(classDiscretizer, predictedObservable, 1));
 			} catch (Exception e) {
 				throw new IllegalStateException(
 						"Weka: error during discretization of class attribute: " + e.getMessage());
@@ -697,7 +703,7 @@ public class WekaInstances {
 					return null;
 				}
 			} else {
-				IState state = i == 0 ? predicted : predictorStates.get(i - 1);
+				IState state = i == 0 ? predictedState : predictorStates.get(i - 1);
 				if (state.getObservable().getArtifactType() == Type.BOOLEAN) {
 					ret[i] = instanceValues[i] instanceof Boolean ? (((Boolean) instanceValues[i]) ? 1 : 0) : 0;
 				} else if (state.getObservable().getArtifactType() == Type.CONCEPT) {
@@ -716,7 +722,7 @@ public class WekaInstances {
 		 * define any limits that are not already defined; don't allow the specified
 		 * min/max to specify a narrower interval than the value spread.
 		 */
-		if (predicted.getObservable().getArtifactType() == Type.NUMBER && !Double.isNaN(ret[0])) {
+		if (predictedObservable.getArtifactType() == Type.NUMBER && !Double.isNaN(ret[0])) {
 			if (Double.isNaN(predictedMin) || predictedMin > ret[0]) {
 				predictedMin = ret[0];
 			}
@@ -820,7 +826,7 @@ public class WekaInstances {
 
 		// go through the discretizers
 		for (String obs : discretizers.keySet()) {
-			if (!obs.equals(predicted.getObservable().getName())) {
+			if (!obs.equals(predictedObservable.getName())) {
 				try {
 					Filter discretizer = discretizers.get(obs).getDiscretizer();
 					if (!discretizer.input(ret)) {
@@ -859,7 +865,7 @@ public class WekaInstances {
 	public Discretization getPredictedDiscretization() {
 
 		if (this.predictedDiscretization == null) {
-			DiscretizerDescriptor filter = discretizers.get(predicted.getObservable().getName());
+			DiscretizerDescriptor filter = discretizers.get(predictedState.getObservable().getName());
 			if (filter == null) {
 				throw new IllegalStateException(
 						"Weka: cannot interpret a distribution if the predicted variable is not discretized.");

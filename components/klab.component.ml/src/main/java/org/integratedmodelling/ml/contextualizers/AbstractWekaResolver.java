@@ -242,7 +242,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 		StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
 		builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
-				.withType(instances.getPredicted().getType()).withParameter("wekaVersion", weka.core.Version.VERSION)
+				.withType(instances.getPredictedState().getType()).withParameter("wekaVersion", weka.core.Version.VERSION)
 				.withParameter("model", context.getModel().getName()).withParameter("submitNodata", "true")
 				.withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
 				.withParameter("classifier.options", classifier.getOptions().toString())
@@ -253,11 +253,11 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 			boolean predicted = false;
 
-			if (attribute.name().equals(instances.getPredicted().getObservable().getName())) {
+			if (attribute.name().equals(instances.getPredictedState().getObservable().getName())) {
 				predicted = true;
 			}
 
-			IState state = predicted ? instances.getPredicted() : instances.getPredictor(attribute.name());
+			IState state = predicted ? instances.getPredictedState() : instances.getPredictor(attribute.name());
 			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 			if (!predicted) {
 				builder.withParameter("predictor." + attribute.name() + ".index", i).withDependency(attribute.name(),

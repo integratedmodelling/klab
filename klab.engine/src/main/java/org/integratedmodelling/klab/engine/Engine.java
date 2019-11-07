@@ -82,7 +82,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	private ICertificate certificate;
 	private String name;
-	private Date bootTime;
+	// start with a non-null boot time to avoid exceptions at ping() during boot, then redefine after
+	private Date bootTime = new Date();
 	private Monitor monitor;
 	// owner identity may be a IKlabUserIdentity (engines) or INodeIdentity (nodes)
 	private IIdentity owner = null;

@@ -642,6 +642,9 @@ void init_iter(void) {
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+/**
+ * Compute the fucking regression. Probabilities go in fucking mat_co.
+ */
 void calc_reg(void) {
 	int i, j, k, m, reg, nl, dum, temploc;
 	float temp, temp2;
@@ -682,7 +685,13 @@ void calc_reg(void) {
 		}
 	}
 
-	/* just calculate the probability as determined by the regression equations, put in mat_co */
+	/* just calculate the probability as determined by the regression equations, put in mat_co
+	 *
+	 * i = covertype
+	 * j = row    (uth)
+	 * k = column (ugh)
+	 *
+	 *  */
 
 	if ((metamod == 0) || (influence > 0)) {
 		for (i = 0; i < rncov; i++) {
@@ -952,6 +961,9 @@ void alloc_sort(void) {
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+/*
+ * THIS ONE seems to be the useful one to look at
+ */
 void autonomous_change(void) {
 	int i, j, k, oldcov, tempallow, countbottom;
 //        int tempyear,tempreg;

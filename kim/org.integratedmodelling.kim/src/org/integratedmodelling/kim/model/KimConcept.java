@@ -1146,6 +1146,51 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		}
 		return ret;
 	}
+	
+	public KimConcept removeComponents(ComponentRole... roles) {
+
+		KimConcept ret = new KimConcept(this);
+
+		for (ComponentRole role : roles) {
+
+			switch (role) {
+			case ADJACENT:
+				ret.adjacent = null;
+				break;
+			case CAUSANT:
+				ret.causant = null;
+				break;
+			case CAUSED:
+				ret.caused = null;
+				break;
+			case COMPRESENT:
+				ret.compresent = null;
+				break;
+			case CONTEXT:
+				ret.context = null;
+				break;
+			case COOCCURRENT:
+				ret.cooccurrent = null;
+				break;
+			case GOAL:
+				ret.motivation = null;
+				break;
+			case INHERENT:
+				ret.inherent = null;
+				break;
+			case ROLE:
+				ret.roles.clear();
+				break;
+			case TRAIT:
+				ret.traits.clear();
+				break;
+			default:
+				break;
+			}
+		}
+
+		return ret;
+	}
 
 	public KimConcept removeComponents(List<String> declarations, List<ComponentRole> roles) {
 
