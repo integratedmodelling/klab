@@ -160,6 +160,14 @@ public class ProfileResource implements OAuth2User{
 		this.lastLogin = lastLogin;
 	}
 
+	public DateTime getLastEngineConnection() {
+		return lastEngineConnection;
+	}
+
+	public void setLastEngineConnection(DateTime lastEngineConnection) {
+		this.lastEngineConnection = lastEngineConnection;
+	}
+
 	public List<Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
 		for (KlabGroup grp : this.getGroups()) {
