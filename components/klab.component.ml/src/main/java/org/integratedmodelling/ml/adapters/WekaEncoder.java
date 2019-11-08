@@ -79,7 +79,7 @@ public class WekaEncoder implements IResourceEncoder {
 		}
 
 		Range prange = Range.create(resource.getParameters().get("predicted.range", String.class));
-		instances.setPredicted(context.getTargetName(), predictedState, discretizer);
+		instances.setPredicted(context.getTargetName(), predictedState.getObservable(), predictedState, discretizer);
 		instances.setPredictedRange(prange);
 		
 		/*
@@ -112,7 +112,7 @@ public class WekaEncoder implements IResourceEncoder {
 			int index = Integer.parseInt(
 					resource.getParameters().get("predictor." + dependency.getName() + ".index").toString()) - 2;
 
-			instances.addPredictor(dependency.getName(), state, index, discretizer);
+			instances.addPredictor(dependency.getName(), state.getObservable(), state, index, discretizer);
 
 			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 			Range original = Range

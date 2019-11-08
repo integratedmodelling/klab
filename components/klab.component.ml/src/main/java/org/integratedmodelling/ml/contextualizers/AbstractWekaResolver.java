@@ -126,13 +126,16 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		context.getMonitor().info("Training completed successfully.");
 
 		/*
-		 * Produce the result using the classifier.
+		 * Produce the result using the classifier. FIXME this should be
+		 * "!ret.isVoid()".
 		 */
-		for (ILocator locator : ret.getScale()) {
+		if (instances.predictedIsDistributed()) {
+			for (ILocator locator : ret.getScale()) {
 
-			Instance instance = instances.getInstance(locator);
-			if (instance != null) {
-				setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret, uncertainty);
+				Instance instance = instances.getInstance(locator);
+				if (instance != null) {
+					setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret, uncertainty);
+				}
 			}
 		}
 
@@ -242,7 +245,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 		StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
 		builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
-				.withType(instances.getPredictedState().getType()).withParameter("wekaVersion", weka.core.Version.VERSION)
+				.withType(instances.getPredictedState().getType())
+				.withParameter("wekaVersion", weka.core.Version.VERSION)
 				.withParameter("model", context.getModel().getName()).withParameter("submitNodata", "true")
 				.withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
 				.withParameter("classifier.options", classifier.getOptions().toString())
@@ -253,21 +257,38 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 			boolean predicted = false;
 
-			if (attribute.name().equals(instances.getPredictedState().getObservable().getName())) {
+			if (attribute.name().equals(instances.getPredictedObservable().getName())) {
 				predicted = true;
 			}
 
 			IState state = predicted ? instances.getPredictedState() : instances.getPredictor(attribute.name());
-			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
-			if (!predicted) {
-				builder.withParameter("predictor." + attribute.name() + ".index", i).withDependency(attribute.name(),
-						state.getType(), true, true);
-			} else {
-				builder.withParameter("predicted.index", i);
-			}
+			if (state != null) {
+				StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
+				if (!predicted) {
+					builder.withParameter("predictor." + attribute.name() + ".index", i)
+							.withDependency(attribute.name(), state.getType(), true, true);
+				} else {
+					builder.withParameter("predicted.index", i);
+				}
 
-			builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
-					"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
+				builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
+			} else {
+				
+				IObservable observable = predicted ? instances.getPredictedObservable()
+						: instances.getPredictorObservable(attribute.name());
+				if (!predicted) {
+					builder.withParameter("predictor." + attribute.name() + ".index", i)
+							.withDependency(attribute.name(), observable.getArtifactType(), true, true);
+				} else {
+					builder.withParameter("predicted.index", i);
+				}
+
+				// TODO! Use ranges from training
+//				builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+//						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
+
+			}
 
 			DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
 			if (descriptor != null) {
