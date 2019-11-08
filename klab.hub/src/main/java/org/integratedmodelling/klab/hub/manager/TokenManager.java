@@ -40,6 +40,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -240,7 +241,7 @@ public class TokenManager {
 			.orElseThrow(IllegalArgumentException::new);
 		//lets login to the security context
 		SecurityContextHolder.getContext().setAuthentication(activationToken);
-		//activate 
+		//verify account 
 		verifyAccount();
 		//deleteToken(tokenString);
 		
@@ -260,7 +261,7 @@ public class TokenManager {
 			throw new AuthenticationFailedException("The token submitted was not valid for activating an account.");
 		}
 		// this will also verify that the account started in pendingActivation
-		klabUserDetailsService.activateUser(klabUserManager.getLoggedInUsername());
+		klabUserDetailsService.verifyUser(klabUserManager.getLoggedInUsername());
 	}
 	
 	
@@ -295,17 +296,23 @@ public class TokenManager {
 		User persistedUser = klabUserManager.getLoggedInUser();
 		if (persistedUser == null) {
 			throw new BadRequestException("Could not find a user with the token that was submitted.");
-		} else if (!AccountStatus.active.equals(persistedUser.getAccountStatus())) {
-			throw new BadRequestException("An active user could not be found with the token that was submitted.");
+		}
+		AccountStatus status = persistedUser.getAccountStatus();
+		if (!status.equals(AccountStatus.active) & !status.equals(AccountStatus.verified)) {
+			throw new BadRequestException("An verified or active user could not be found with the token that was submitted.");
 		} else {
 			// in case the user is changing their password to solve a broken state (i.e.
 			// Mongo but no LDAP)
 			// this will prevent the missing LDAP record from breaking the process
 			if (!klabUserDetailsService.ldapUserExists(persistedUser.getUsername())) {
 				klabUserDetailsService.createLdapUser(persistedUser);
+				persistedUser.setPasswordHash(passwordEncoder.encode((newPassword)));
+				klabUserDetailsService.updateUser(persistedUser);
+				klabUserDetailsService.activateUser(persistedUser.getUsername());
+			} else {
+				persistedUser.setPasswordHash(passwordEncoder.encode((newPassword)));
+				klabUserDetailsService.updateUser(persistedUser);
 			}
-			persistedUser.setPasswordHash(passwordEncoder.encode((newPassword)));
-			klabUserDetailsService.updateUser(persistedUser);
 			try {
 				// send an email notifying the user their password was changed
 				emailManager.sendPasswordChangeConfirmation(persistedUser.getEmail());
@@ -431,15 +438,21 @@ public class TokenManager {
 	}
 
 	public void sendLostPasswordToken(String username) {
-		User user = klabUserDetailsService.loadUserByUsername(username);
-		if (user != null) {
-			if(klabUserDetailsService.ldapUserExists(user.getUsername())) {
-				LostPasswordClickbackToken token = createlostPasswordClickbackToken(username);
-				emailManager.sendLostPasswordEmail(username, token.getCallbackUrl());
-			} else {
-				ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
-				emailManager.sendNewUser(user.getEmail(), username, clickbackToken.getCallbackUrl());
+		try {
+			User user = klabUserDetailsService.loadUserByUsername(username);
+			if (user != null) {
+				if(klabUserDetailsService.ldapUserExists(user.getUsername())) {
+					LostPasswordClickbackToken token = createlostPasswordClickbackToken(username);
+					emailManager.sendLostPasswordEmail(username, token.getCallbackUrl());
+				} else {
+					ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
+					emailManager.sendNewUser(user.getEmail(), username, clickbackToken.getCallbackUrl());
+				}
 			}
+		} catch (UsernameNotFoundException e) {
+			throw new KlabException("Username was not found");
+		} catch (MessagingException e) {
+			throw new KlabException("There was a problem sending the Lost Password Email.  Contact System Admin.");
 		}
 	}
 

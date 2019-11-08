@@ -10,7 +10,6 @@ import javax.mail.internet.MimeMessage.RecipientType;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
-import org.integratedmodelling.klab.hub.models.tokens.LostPasswordClickbackToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -105,11 +104,11 @@ public class EmailManager {
     	sendFromMainEmailAddress(email, subject, msg);
     }
 
-	public void sendLostPasswordEmail(String email, URL clickbackUrl) {
+	public void sendLostPasswordEmail(String email, URL clickbackUrl) throws MessagingException {
 		String subject = "New Password Request for you Integrated Modelling Account";
 		String msg = String.format(
-				"You have requested a new password for your Integrated Modelling Account"
-				,
+				"You have requested a new password for your Integrated Modelling Account" +
+						"Please click the following link: %s",
 				clickbackUrl);
 		sendFromMainEmailAddress(email, subject, msg);
 		

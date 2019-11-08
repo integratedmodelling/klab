@@ -117,9 +117,23 @@ public class KlabUserDetailsService implements UserDetailsService {
 		if (AccountStatus.active.equals(user.getAccountStatus())) {
 			// if already active, return silently (don't want a repeat-click to overwrite a
 			// changed password)
-		} else if (AccountStatus.pendingActivation.equals(user.getAccountStatus())) {
+		} else if (AccountStatus.verified.equals(user.getAccountStatus())) {
 			// update the account status and create the LDAP user
 			user.setAccountStatus(AccountStatus.active);
+			userRepository.save(user);
+		} else {
+			throw new BadRequestException("Account was not in a valid state for activation.");
+		}
+	}
+	
+	public void verifyUser(String username) {
+		User user = loadUserByUsername(username);
+		if (AccountStatus.verified.equals(user.getAccountStatus())) {
+			// if already active, return silently (don't want a repeat-click to overwrite a
+			// changed password)
+		} else if (AccountStatus.pendingActivation.equals(user.getAccountStatus())) {
+			// update the account status and create the LDAP user
+			user.setAccountStatus(AccountStatus.verified);
 			userRepository.save(user);
 		} else {
 			throw new BadRequestException("Account was not in a valid state for activation.");
