@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.hub.models.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.InviteUserClickbackToken;
+import org.integratedmodelling.klab.hub.models.tokens.NewUserClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.VerifyEmailClickbackToken;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
@@ -82,6 +83,22 @@ public class TokenManager {
 			// (shouldn't get here though)
 			throw new KlabAuthorizationException("Unable to get token constructor method.", e);
 		}
+		result.setCallbackUrl(tokenClickbackConfig);
+		result.setAuthenticated(true);
+		tokenRepository.save(result);
+		return result;
+	}
+	
+	public ClickbackToken createClickbackToken(String username, String parentToken, Class<? extends ClickbackToken> tokenType) {
+		ClickbackToken result = null;
+		try {
+			result = tokenType.getConstructor(String.class).newInstance(username);
+		} catch (Exception e) {
+			// mainly this is to throw RuntimeException instead of a checked exception
+			// (shouldn't get here though)
+			throw new KlabAuthorizationException("Unable to get token constructor method.", e);
+		}
+		result.setParetToken(parentToken);
 		result.setCallbackUrl(tokenClickbackConfig);
 		result.setAuthenticated(true);
 		tokenRepository.save(result);
@@ -219,12 +236,12 @@ public class TokenManager {
 		SecurityContextHolder.getContext().setAuthentication(activationToken);
 		//activate 
 		verifyAccount();
-		deleteToken(tokenString);
+		//deleteToken(tokenString);
 		
 		if(klabUserManager.getLoggedInUser().getProvider() == null) {
-			return createClickbackToken(klabUserManager.getLoggedInUsername(), ChangePasswordClickbackToken.class);
+			return createClickbackToken(klabUserManager.getLoggedInUsername(), tokenString, NewUserClickbackToken.class);
 		} else {
-			activationToken.setDetails("Deleted");
+			activationToken.setDetails("Error");
 			return activationToken;
 		}
 	}
@@ -246,13 +263,18 @@ public class TokenManager {
 		ClickbackToken changePasswordToken = tokenRepository
 				.findByTokenString(tokenString)
 				.map(ClickbackToken.class::cast)
-				.filter(token -> token.getClickbackAction().equals(ClickbackAction.password))
+				.filter(token -> (token.getClickbackAction().equals(ClickbackAction.password) |
+						token.getClickbackAction().equals(ClickbackAction.newUser)))
 				.filter(token -> token.getPrincipal().equals(userId))
 				.filter(token -> !token.isExpired())
 				.orElseThrow(IllegalArgumentException::new);
 		//lets login
 		SecurityContextHolder.getContext().setAuthentication(changePasswordToken);
 		setPasswordAndSendVerificationEmail(newPassword);
+		deleteToken(tokenString);
+		if (changePasswordToken.getClickbackAction().equals(ClickbackAction.newUser)) {
+			deleteToken(changePasswordToken.getParetToken());
+		}
 		changePasswordToken.setDetails("Deleted");
 		return changePasswordToken;
 	}

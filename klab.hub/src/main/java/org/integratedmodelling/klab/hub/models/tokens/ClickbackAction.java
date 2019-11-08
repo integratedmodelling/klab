@@ -8,8 +8,10 @@ public enum ClickbackAction {
     groups(
     		TokenType.groups),
     invite(
-    		TokenType.invite);
-
+    		TokenType.invite),
+    newUser(
+    		TokenType.newUser);
+    
     private final TokenType tokenType;
 
     public TokenType getTokenType() {

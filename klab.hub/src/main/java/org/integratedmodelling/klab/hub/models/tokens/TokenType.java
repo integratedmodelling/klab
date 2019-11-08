@@ -12,7 +12,9 @@ public enum TokenType {
     groups(
     		GroupsClickbackToken.class),
 	invite(
-			InviteUserClickbackToken.class);
+			InviteUserClickbackToken.class),
+	newUser(
+			NewUserClickbackToken.class);
 
     private final Class<? extends AuthenticationToken> clazz;
 
