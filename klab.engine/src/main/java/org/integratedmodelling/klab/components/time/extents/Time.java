@@ -43,6 +43,7 @@ public class Time extends Extent implements ITime {
 	Resolution resolution;
 	long multiplicity = 1;
 	boolean partial = false;
+	boolean regular = true;
 
 	private static class ResolutionImpl implements Resolution {
 
@@ -360,6 +361,7 @@ public class Time extends Extent implements ITime {
 
 		Time ret = copy();
 
+		ret.step = null;
 		ret.start = new TimeInstant(newStart);
 		ret.end = new TimeInstant(newEnd);
 		ret.extentType = ITime.Type.PHYSICAL;
