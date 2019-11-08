@@ -105,9 +105,12 @@ public class EmailManager {
     	sendFromMainEmailAddress(email, subject, msg);
     }
 
-	public void sendLostPasswordEmail(String email, URL url) {
+	public void sendLostPasswordEmail(String email, URL clickbackUrl) {
 		String subject = "New Password Request for you Integrated Modelling Account";
-		String msg = String.format(format, args);
+		String msg = String.format(
+				"You have requested a new password for your Integrated Modelling Account"
+				,
+				clickbackUrl);
 		sendFromMainEmailAddress(email, subject, msg);
 		
 	}

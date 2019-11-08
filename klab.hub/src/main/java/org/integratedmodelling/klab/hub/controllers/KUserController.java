@@ -99,6 +99,12 @@ public class KUserController {
 		return new ResponseEntity<>("Sent email to system adminstrator requesting additional groups",HttpStatus.OK);
 	}
 	
+	@GetMapping(value="/{id}", produces = "application/json", params="lostPassword")
+	public ResponseEntity<?> lostPasswordResponse(@PathVariable("id") String username) {
+		tokenManager.sendLostPasswordToken(username);
+		return new ResponseEntity<>("Sent email to user " + username + " address",HttpStatus.OK);
+	}
+	
 	@GetMapping(value = "/{id}", produces = "application/json", params="password")
 	@PreAuthorize("authentication.getPrincipal() == #username")
 	public ResponseEntity<?> requestNewPasswordResponse(@PathVariable("id") String username) {
