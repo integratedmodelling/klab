@@ -329,6 +329,20 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope context) {
+		return createObservation(observable, scale, context, false);
+	}
+
+	/**
+	 * 
+	 * @param observable
+	 * @param scale
+	 * @param context
+	 * @param createArchetype if true, create an archetype. TODO support for
+	 *                        non-qualities.
+	 * @return
+	 */
+	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope context,
+			boolean createArchetype) {
 
 		boolean createActors = observable.is(Type.COUNTABLE) && scale.getTime() != null && scale.getTime().size() > 1;
 		Activity activity = null;
@@ -349,10 +363,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			throw new KlabInternalErrorException(
 					"createObservation() does not create relationships: use createRelationship()");
 		} else if (observable.is(Type.QUALITY)) {
-			IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(), scale,
-					context);
-			ret = new State((Observable) observable, (Scale) scale, context, (IDataStorage<?>) storage);
-
+			if (createArchetype) {
+				ret = State.newArchetype((Observable) observable, (Scale) scale, context);
+			} else {
+				IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(),
+						scale, context);
+				ret = new State((Observable) observable, (Scale) scale, context, (IDataStorage<?>) storage);
+			}
 		} else if (observable.is(Type.CONFIGURATION)) {
 
 			ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(observable.getName(),

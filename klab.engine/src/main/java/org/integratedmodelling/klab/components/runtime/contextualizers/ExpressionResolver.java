@@ -33,8 +33,8 @@ import org.integratedmodelling.klab.utils.Utils;
  * expression returns a different artifact, that substitutes the previous
  * artifact.
  * 
- * TODO if the expression terminates the artifact, that must be handled by 
- * the caller.
+ * TODO if the expression terminates the artifact, that must be handled by the
+ * caller.
  * 
  * @author Ferd
  *
@@ -42,7 +42,7 @@ import org.integratedmodelling.klab.utils.Utils;
 public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.exec";
-	
+
 	Descriptor expressionDescriptor;
 	Descriptor conditionDescriptor;
 	IExpression expression = null;
@@ -51,14 +51,14 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	boolean isScalar;
 	IContextualizable resource = null;
 	private static Set<String> prototypeParameters;
-	
+
 	static {
-	    prototypeParameters = new HashSet<>();
-	    prototypeParameters.add("unlesscondition");
-        prototypeParameters.add("ifcondition");
-        prototypeParameters.add("code");
+		prototypeParameters = new HashSet<>();
+		prototypeParameters.add("unlesscondition");
+		prototypeParameters.add("ifcondition");
+		prototypeParameters.add("code");
 	}
-	
+
 	// don't remove - only used as expression
 	public ExpressionResolver() {
 	}
@@ -75,14 +75,14 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	}
 
 	public static IServiceCall getServiceCall(IContextualizable resource, IObservable observable) {
-		
+
 		String functionId = FUNCTION_ID;
 		if (observable.getDescription() == IActivity.Description.CLASSIFICATION) {
 			functionId = ExpressionClassifier.ID;
 		} else if (observable.getDescription() == IActivity.Description.CHARACTERIZATION) {
 			functionId = ExpressionCharacterizer.ID;
 		}
-		
+
 		IServiceCall ret = KimServiceCall.create(functionId);
 		ret.getParameters().put("code", resource.getExpression());
 		if (resource.getExpression().isForcedScalar()) {
@@ -91,7 +91,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		if (resource.getCondition() != null) {
 			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition", resource.getCondition());
 		}
-		
+
 		return ret;
 	}
 
@@ -114,18 +114,18 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		}
 
 		for (String key : parameters.keySet()) {
-		    if (!key.startsWith("_") && !prototypeParameters.contains(key)) {
-		        if (additionalParameters == null) {
-		            additionalParameters = new HashMap<>();
-		        }
-		        additionalParameters.put(key, parameters.get(key));
-		    }
+			if (!key.startsWith("_") && !prototypeParameters.contains(key)) {
+				if (additionalParameters == null) {
+					additionalParameters = new HashMap<>();
+				}
+				additionalParameters.put(key, parameters.get(key));
+			}
 		}
-		
+
 		/**
 		 * If we're computing a quality and there is any scalar usage of the known
-		 * non-scalar quantities, create a distributed state resolver.
-		 * Do the analysis even if scalar evaluation has been forced.
+		 * non-scalar quantities, create a distributed state resolver. Do the analysis
+		 * even if scalar evaluation has been forced.
 		 */
 		boolean scalar = false;
 		if (context.getArtifactType() == Type.QUALITY) {
@@ -150,23 +150,21 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	private Set<String> getDistributedStateIds(IContextualizationScope context) {
 		Set<String> ret = new HashSet<>();
 		for (Pair<String, IState> state : context.getArtifacts(IState.class)) {
-			if (!state.getSecond().isConstant()) {
-				ret.add(state.getFirst());
-			}
+			ret.add(state.getFirst());
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
-		
-	    IParameters<String> parameters = context;
-	    if (additionalParameters != null) {
-	        parameters = new Parameters<String>();
-	        parameters.putAll(context);
-	        parameters.putAll(additionalParameters);
-	    }
-	    
+
+		IParameters<String> parameters = context;
+		if (additionalParameters != null) {
+			parameters = new Parameters<String>();
+			parameters.putAll(context);
+			parameters.putAll(additionalParameters);
+		}
+
 		if (this.expression == null) {
 			this.expression = expressionDescriptor.compile();
 			if (conditionDescriptor != null) {
@@ -183,7 +181,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 			if (o instanceof IDataArtifact) {
 				ret = (IDataArtifact) o;
 			} else if (Utils.isPOD(o) && ret instanceof State) {
-				((State)ret).distributeScalar(o);
+				((State) ret).distributeScalar(o);
 			}
 		}
 		return ret;

@@ -35,6 +35,7 @@ public abstract class Artifact implements IArtifact {
 	List<IAnnotation> annotations = new ArrayList<>();
 	private Activity generator;
 	private Map<Class<?>, Object> peers = new HashMap<>();
+	private boolean archetype;
 	
 	/*
 	 * all observation data in a group share the same list; the pre-build object is
@@ -228,6 +229,15 @@ public abstract class Artifact implements IArtifact {
 
 	public String getGeneratorActivityId() {
 		return this.generatorActivityId;
+	}
+
+	@Override
+	public boolean isArchetype() {
+		return archetype;
+	}
+
+	public void setArchetype(boolean archetype) {
+		this.archetype = archetype;
 	}
 
 }

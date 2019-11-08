@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.DataIterator;
@@ -49,6 +48,15 @@ public class State extends Observation implements IState, IKeyHolder {
 	ITable<Number> table;
 	IMetadata metadata = new Metadata();
 
+	public static State newArchetype(Observable observable, Scale scale, IRuntimeScope context) {
+		return new State(observable, scale, context);
+	}
+	
+	private State(Observable observable, Scale scale, IRuntimeScope context) {
+		super(observable, scale, context);
+		this.setArchetype(true);
+	}
+	
 	public State(Observable observable, Scale scale, IRuntimeScope context, IDataStorage<?> data) {
 		super(observable, scale, context);
 		this.storage = data;
@@ -56,14 +64,9 @@ public class State extends Observation implements IState, IKeyHolder {
 	}
 
 	@Override
-	public boolean isConstant() {
-		return false;
-	}
-
-	@Override
 	public IState as(IArtifact.Type type) {
 
-		if (type == storage.getType() || type == IArtifact.Type.VALUE) {
+		if (isArchetype() || type == storage.getType() || type == IArtifact.Type.VALUE) {
 			return this;
 		}
 
@@ -100,7 +103,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public IArtifact.Type getType() {
-		return storage.getType();
+		return isArchetype() ? IArtifact.Type.VOID : storage.getType();
 	}
 
 	@Override

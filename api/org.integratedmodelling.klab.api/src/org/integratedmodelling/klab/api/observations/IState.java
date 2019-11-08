@@ -37,14 +37,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 public interface IState extends IObservation, IDataArtifact {
 
 	/**
-	 * True if the state has the same value overall independent of scale. Used to
-	 * optimize visualization, computation and storage.
-	 *
-	 * @return true if constant
-	 */
-	boolean isConstant();
-
-	/**
 	 * If this is called with a type different from the original one returned by
 	 * {@link #getType()}, an additional layer of storage is created and a
 	 * corresponding state view is returned, preserving the mapping so that calling

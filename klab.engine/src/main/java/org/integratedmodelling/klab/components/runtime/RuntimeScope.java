@@ -79,6 +79,7 @@ import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -866,14 +867,20 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	public IArtifact createTarget(Actuator actuator, IScale scale, IResolutionScope scope,
 			IDirectObservation rootSubject) {
 
-		Map<String, Pair<Observable, Mode>> targetObservables = new HashMap<>();
+		/*
+		 * support map: the fields are observable, mode, and a boolean that is true if the
+		 * actuator is void, meaning an archetype should be created instead of a true
+		 * observation. So far this only happens with contextual quality learning models.
+		 */
+		Map<String, Triple<Observable, Mode, Boolean>> targetObservables = new HashMap<>();
 
 		if (this.catalog.get(actuator.getName()) != null) {
 			return this.catalog.get(actuator.getName());
 		}
 
 		if (/* this.catalog.get(actuator.getName()) == null && */ !actuator.isPartition()) {
-			targetObservables.put(actuator.getName(), new Pair<>(actuator.getObservable(), actuator.getMode()));
+			targetObservables.put(actuator.getName(), new Triple<>(actuator.getObservable(), actuator.getMode(),
+					actuator.getType() == IArtifact.Type.VOID));
 		}
 
 		/*
@@ -884,7 +891,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
 				IObservable output = actuator.getModel().getObservables().get(i);
 				targetObservables.put(output.getName(),
-						new Pair<>((Observable) output, output.getDescription().getResolutionMode()));
+						new Triple<>((Observable) output, output.getDescription().getResolutionMode(), false));
 			}
 		}
 
@@ -894,7 +901,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		for (IContextualizable computation : actuator.getComputation()) {
 			if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getName()) == null) {
 				targetObservables.put(computation.getTarget().getName(),
-						new Pair<>((Observable) computation.getTarget(), computation.getComputationMode()));
+						new Triple<>((Observable) computation.getTarget(), computation.getComputationMode(), false));
 			}
 		}
 
@@ -907,7 +914,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		for (String name : targetObservables.keySet()) {
 
-			Pair<Observable, Mode> op = targetObservables.get(name);
+			Triple<Observable, Mode, Boolean> op = targetObservables.get(name);
 			Observable observable = op.getFirst();
 			Mode mode = op.getSecond();
 
@@ -933,7 +940,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							actuator.getDataflow().getRelationshipSource(),
 							actuator.getDataflow().getRelationshipTarget(), this);
 				} else {
-					observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
+					observation = DefaultRuntimeProvider.createObservation(observable, scale, this, op.getThird());
 				}
 
 				if (getRootSubject() != null) {
@@ -1155,7 +1162,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public IDirectObservation getContextSubject() {
 		return contextSubject;
@@ -1366,24 +1373,24 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			if (computation.resource.getTrigger() == Trigger.TRANSITION
 					// TODO next should be removed
 					|| computation.observable.getArtifactType().isOccurrent()
-					|| (computation.resource.getTrigger() == Trigger.RESOLUTION
-							&& computation.resource.getGeometry().getDimension(IGeometry.Dimension.Type.TIME) != null)) {
+					|| (computation.resource.getTrigger() == Trigger.RESOLUTION && computation.resource.getGeometry()
+							.getDimension(IGeometry.Dimension.Type.TIME) != null)) {
 				go = true;
 				break;
 			}
 		}
-		
+
 		if (!go) {
 			return;
 		}
 
 		RuntimeScope root = getRootScope();
-		
+
 		if (root.scheduler == null) {
 			root.scheduler = new Scheduler(resolutionScope.getScale().getTime(), monitor);
 		}
 
-		((Scheduler)root.scheduler).schedule(actuator, this);
+		((Scheduler) root.scheduler).schedule(actuator, this);
 	}
 
 	@Override
@@ -1393,7 +1400,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		/*
 		 * TODO wrap all temporal states into a temporal rescaling state
 		 */
-		ret.scale = (Scale)transitionScale;
+		ret.scale = (Scale) transitionScale;
 		return ret;
 	}
 }

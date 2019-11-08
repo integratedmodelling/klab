@@ -42,6 +42,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   contextualized to the context at resolution time, as the context cannot be known in
   advance. Context is always validated but only assigned to dependencies when the primary observable
   has *explicit* ('within') contextualization.
+- Learning models now learn contextual qualities properly and create an "archetype" state that does
+  not end up in the context or in the notifications, so that the API of the contextualizer does not
+  change.
 - Reset the build count from 200 and align the codebase to the new hub and node architecture.
 ### Changed
 - Resources can be "granular", i.e. composed of multiple resources with individual 

@@ -404,7 +404,7 @@ public class Actuator implements IActuator {
 				context.setData(indirectTarget.getName(), artifactTable.get(targetId));
 			}
 
-			if (model != null && !input && !artifacts.contains(ret)) {
+			if (model != null && !input && !artifacts.contains(ret)&& !ret.isArchetype()) {
 				artifacts.add(ret);
 				if (ret instanceof IObservation && !(ret instanceof StateLayer)) {
 					// ACH creates problems later
@@ -1182,7 +1182,7 @@ public class Actuator implements IActuator {
 		ISession session = context.getMonitor().getIdentity().getParentIdentity(ISession.class);
 
 		if (this.products.isEmpty()) {
-			if (context.getArtifact(this.name) != null) {
+			if (context.getArtifact(this.name) != null && !context.getArtifact(this.name).isArchetype()) {
 				this.products.add((IObservation) context.getArtifact(this.name));
 			}
 		}
@@ -1197,6 +1197,10 @@ public class Actuator implements IActuator {
 
 		for (IObservation product : products) {
 
+			if (product.isArchetype()) {
+				continue;
+			}
+			
 			boolean isNew = true;
 			if (product instanceof ObservationGroup) {
 				isNew = ((ObservationGroup) product).isNew();

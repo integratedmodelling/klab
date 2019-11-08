@@ -125,11 +125,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		documentation.addAll(classifier.train(instances));
 		context.getMonitor().info("Training completed successfully.");
 
-		/*
-		 * Produce the result using the classifier. FIXME this should be
-		 * "!ret.isVoid()".
-		 */
-		if (instances.predictedIsDistributed()) {
+		if (!ret.isArchetype()) {
 			for (ILocator locator : ret.getScale()) {
 
 				Instance instance = instances.getInstance(locator);
@@ -245,7 +241,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 		StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
 		builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
-				.withType(instances.getPredictedState().getType())
+				.withType(instances.getPredictedObservable().getArtifactType())
 				.withParameter("wekaVersion", weka.core.Version.VERSION)
 				.withParameter("model", context.getModel().getName()).withParameter("submitNodata", "true")
 				.withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
@@ -262,7 +258,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 			}
 
 			IState state = predicted ? instances.getPredictedState() : instances.getPredictor(attribute.name());
-			if (state != null) {
+			if (state != null && !state.isArchetype()) {
 				StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 				if (!predicted) {
 					builder.withParameter("predictor." + attribute.name() + ".index", i)

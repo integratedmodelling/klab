@@ -202,10 +202,6 @@ public class RescalingState extends Observation implements IState {
 		return offset;
 	}
 
-	public boolean isConstant() {
-		return false;
-	}
-
 	private void map(ILocator locator, List<IScaleMediator> mediators, Object value) {
 
 		Propagator propagator = new Propagator();
