@@ -28,8 +28,8 @@ public abstract class ClickbackToken extends AuthenticationToken {
         super(username);
         expiration = DateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
     }
-
-    @Override
+    
+	@Override
     public Collection<GrantedAuthority> getAuthorities() {
         return ROLES;
     }

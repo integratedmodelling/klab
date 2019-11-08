@@ -59,14 +59,13 @@ public class KUserController {
 
 	@GetMapping(value= "/{id}", produces = "application/json", params="activate")
 	public ResponseEntity<?> activateResponse(@PathVariable("id") String userId, @RequestParam("activate") String tokenString) throws URISyntaxException {
-		ClickbackToken verificationToken = (ClickbackToken) tokenManager
+		ClickbackToken newUserToken = (ClickbackToken) tokenManager
 				.handleVerificationToken(userId, tokenString);
 		ProfileResource profile = klabUserManager.getLoggedInUserProfile();
 		JSONObject clickback = new JSONObject();	
-		if(verificationToken.getClickbackAction().equals(ClickbackAction.password)) {
+		if(newUserToken.getClickbackAction().equals(ClickbackAction.newUser)) {
 			HttpHeaders headers = new HttpHeaders();
-			ChangePasswordClickbackToken token = tokenManager.createNewPasswordClickbackToken(userId);
-			clickback.appendField("clickback", token.getTokenString());
+			clickback.appendField("clickback", newUserToken.getTokenString());
 			clickback.appendField("profile", profile.getSafeProfile());
 			return new ResponseEntity<JSONObject>(clickback, headers, HttpStatus.CREATED);
 		} else {
