@@ -10,6 +10,7 @@ import javax.mail.internet.MimeMessage.RecipientType;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.models.tokens.LostPasswordClickbackToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -92,7 +93,7 @@ public class EmailManager {
     }
     
     public void sendInviteWithGroupsEmail(String email, URL clickbackUrl) throws MessagingException {
-    	String Subject = "Join the Integrated Modelling Team";
+    	String subject = "Join the Integrated Modelling Team";
     	String msg = String.format(
     			"We would like to welcome you into the Integrated Modelling team." +
     					"  If you would like to continue your work with us please click the attached link." +  
@@ -101,8 +102,15 @@ public class EmailManager {
     					"forward to working with you!" + 
     					"\n\n Please click the following link: %s",
     			clickbackUrl);
-    	sendFromMainEmailAddress(email, Subject, msg);
+    	sendFromMainEmailAddress(email, subject, msg);
     }
+
+	public void sendLostPasswordEmail(String email, URL url) {
+		String subject = "New Password Request for you Integrated Modelling Account";
+		String msg = String.format(format, args);
+		sendFromMainEmailAddress(email, subject, msg);
+		
+	}
 
     
 }

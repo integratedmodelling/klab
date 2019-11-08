@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.hub.models.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.InviteUserClickbackToken;
+import org.integratedmodelling.klab.hub.models.tokens.LostPasswordClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.NewUserClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.VerifyEmailClickbackToken;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
@@ -221,6 +222,11 @@ public class TokenManager {
 	
 	public ChangePasswordClickbackToken createNewPasswordClickbackToken(String username) {
 		ChangePasswordClickbackToken token = (ChangePasswordClickbackToken) createClickbackToken(username, ChangePasswordClickbackToken.class);
+		return token;
+	}
+	
+	public LostPasswordClickbackToken createlostPasswordClickbackToken(String username) {
+		LostPasswordClickbackToken token = (LostPasswordClickbackToken) createClickbackToken(username, LostPasswordClickbackToken.class);
 		return token;
 	}
 	
@@ -422,6 +428,19 @@ public class TokenManager {
 		klabUserDetailsService.updateUser(user);
 		deleteToken(tokenString);
 		return inviteClickToken;
+	}
+
+	public void sendLostPasswordToken(String username) {
+		User user = klabUserDetailsService.loadUserByUsername(username);
+		if (user != null) {
+			if(klabUserDetailsService.ldapUserExists(user.getUsername())) {
+				LostPasswordClickbackToken token = createlostPasswordClickbackToken(username);
+				emailManager.sendLostPasswordEmail(username, token.getCallbackUrl());
+			} else {
+				ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
+				emailManager.sendNewUser(user.getEmail(), username, clickbackToken.getCallbackUrl());
+			}
+		}
 	}
 
 }
