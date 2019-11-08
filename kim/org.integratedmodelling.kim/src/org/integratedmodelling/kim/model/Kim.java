@@ -848,7 +848,6 @@ public enum Kim {
 		ret.removeAll(IKimConcept.DIRECT_OBSERVABLE_TYPES);
 		ret.removeAll(IKimConcept.ALL_TRAIT_TYPES);
 		
-		
 		for (Type t : quality) {
 			ret.add(t);
 			if (t == Type.DISTANCE) {
