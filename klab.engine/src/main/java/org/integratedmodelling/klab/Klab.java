@@ -524,8 +524,8 @@ public enum Klab implements IRuntimeService {
         // List<ComponentReference> dynamicComponents = new ArrayList<>();
         // long refreshFrequencyMillis = 0;
         // int loadFactor = 0;
-        if (rootIdentity instanceof Engine) {
-            IUserIdentity uid = ((Engine) rootIdentity).getDefaultEngineUser();
+        IUserIdentity uid = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
+        if (uid != null) {
             ret.setOwner(new IdentityReference(uid.getUsername(), uid.getEmailAddress(), uid.getLastLogin()
                     .toString()));
         }
