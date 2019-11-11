@@ -648,7 +648,7 @@ ConceptStatementBody:
 
 		('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
 
-//		(restrictions+=RestrictionStatement*) &
+		('implies' implications+=Implication (',' implications+=Implication)*)? &
 	
 		('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
 
@@ -659,6 +659,15 @@ ConceptStatementBody:
 		(properties+=PropertyStatement*) 
 	
 	)
+;
+
+Implication:
+	(quantifier=Quantification)? concept=ConceptDeclaration 
+	     (('as' target=ConceptDeclaration)? & ('within' context=ConceptDeclaration)?)?
+;
+
+Quantification: {Quantification}
+	(only?='only' | (exactly?='exactly' | 'at' (atLeast?='least' | atMost?='most'))? cardinality=INT ('or' orMore?='more')? )? 
 ;
 
 PropertyStatement:
