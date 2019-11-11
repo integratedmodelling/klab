@@ -38,10 +38,7 @@ public class KlabUserDetailsService implements UserDetailsService {
 	@Override
 	public User loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
 		User user = getUserFromMongo(usernameOrEmail)
-				.orElse(null);
-		if(user == null) {
-			return user;
-		}
+				.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 		Set<Role> roles = new HashSet<>();
 		
 		getLdapUser(usernameOrEmail)
