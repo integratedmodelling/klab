@@ -194,6 +194,8 @@ public class TokenManager {
 				ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
 				emailManager.sendNewUser(email, username, clickbackToken.getCallbackUrl());
 				return clickbackToken;
+			} else {
+				throw new TokenGenerationException("User exists");
 			}
 		} else {
 			User newUser = new User();
@@ -204,7 +206,7 @@ public class TokenManager {
 			try {
 				klabUserDetailsService.createMongoUser(newUser);
 			} catch (UserExistsException | UserEmailExistsException e) {
-				throw new BadRequestException(e.getMessage(), e);
+				throw new TokenGenerationException(e.getMessage(), e);
 			}
 		}
 
