@@ -178,7 +178,12 @@ public class TokenManager {
 	}
 
 	public ClickbackToken createNewUser(String username, String email) throws TokenGenerationException {
-		User user = klabUserDetailsService.loadUserByUsername(username);
+		User user = null;
+		try {
+			user = klabUserDetailsService.loadUserByUsername(username);
+		} catch (UsernameNotFoundException e) {
+			// nothing to do
+		}
 		if (user != null) {
 			if (AccountStatus.pendingActivation.equals(user.getAccountStatus()) 
 					&& user.getEmail().equals(email)) {
@@ -392,13 +397,17 @@ public class TokenManager {
 	}
 	
 	public void inviteNewUserWithGroups(String email, List<String> groups) throws MessagingException {
-		User user = klabUserDetailsService.loadUserByUsername(email);
-		if (user != null) {
+		User user = null;
+		try {
+			user = klabUserDetailsService.loadUserByUsername(email);
 			if (!AccountStatus.pendingActivation.equals(user.getAccountStatus())
 					|| !email.equals(user.getEmail())) {
 				throw new BadRequestException("An account with this username already exists.\n");
 			}
-		} else {
+		} catch (UsernameNotFoundException e) {
+			// nothing to do
+		}
+		if (user != null) {
 			sendInviteUserClickbackToken(email, groups);
 		}
 	}
