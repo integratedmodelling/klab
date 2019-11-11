@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.manager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.KlabUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,6 +45,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 //Maybe make a service for the tokens, which the manager can call
 //this may make it easier to follow
@@ -177,10 +180,15 @@ public class TokenManager {
 	public ClickbackToken createNewUser(String username, String email) throws TokenGenerationException {
 		User user = klabUserDetailsService.loadUserByUsername(username);
 		if (user != null) {
-			if (!AccountStatus.pendingActivation.equals(user.getAccountStatus())
-					|| !email.equals(user.getEmail())) {
-				throw new BadRequestException("An account with this username already exists.\n"
-						+ "If you are re-sending a registration email, please use the same email address as before.");
+			if (AccountStatus.pendingActivation.equals(user.getAccountStatus()) 
+					&& user.getEmail().equals(email)) {
+				List<AuthenticationToken> oldTokens  = tokenRepository.findByUsername(username);
+				for(AuthenticationToken token: oldTokens) {
+					tokenRepository.delete(token);
+				}
+				ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
+				emailManager.sendNewUser(email, username, clickbackToken.getCallbackUrl());
+				return clickbackToken;
 			}
 		} else {
 			User newUser = new User();
@@ -442,15 +450,18 @@ public class TokenManager {
 			User user = klabUserDetailsService.loadUserByUsername(username);
 			if (user != null) {
 				if(klabUserDetailsService.ldapUserExists(user.getUsername())) {
-					LostPasswordClickbackToken token = createlostPasswordClickbackToken(username);
-					emailManager.sendLostPasswordEmail(username, token.getCallbackUrl());
+					ClickbackToken clickbackToken = createClickbackToken(username, LostPasswordClickbackToken.class);
+					emailManager.sendLostPasswordEmail(user.getEmail(), clickbackToken.getCallbackUrl());
 				} else {
 					ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
 					emailManager.sendNewUser(user.getEmail(), username, clickbackToken.getCallbackUrl());
 				}
+			} else {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+				//throw new KlabException("Username was not found");
 			}
 		} catch (UsernameNotFoundException e) {
-			throw new KlabException("Username was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
 		} catch (MessagingException e) {
 			throw new KlabException("There was a problem sending the Lost Password Email.  Contact System Admin.");
 		}
