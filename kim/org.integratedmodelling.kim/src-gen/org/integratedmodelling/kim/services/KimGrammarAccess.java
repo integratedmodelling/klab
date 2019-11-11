@@ -7277,23 +7277,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cQuantifierQuantificationParserRuleCall_0_0 = (RuleCall)cQuantifierAssignment_0.eContents().get(0);
 		private final Assignment cConceptAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cConceptConceptDeclarationParserRuleCall_1_0 = (RuleCall)cConceptAssignment_1.eContents().get(0);
-		private final UnorderedGroup cUnorderedGroup_2 = (UnorderedGroup)cGroup.eContents().get(2);
-		private final Group cGroup_2_0 = (Group)cUnorderedGroup_2.eContents().get(0);
-		private final Keyword cAsKeyword_2_0_0 = (Keyword)cGroup_2_0.eContents().get(0);
-		private final Assignment cTargetAssignment_2_0_1 = (Assignment)cGroup_2_0.eContents().get(1);
-		private final RuleCall cTargetConceptDeclarationParserRuleCall_2_0_1_0 = (RuleCall)cTargetAssignment_2_0_1.eContents().get(0);
-		private final Group cGroup_2_1 = (Group)cUnorderedGroup_2.eContents().get(1);
-		private final Keyword cWithinKeyword_2_1_0 = (Keyword)cGroup_2_1.eContents().get(0);
-		private final Assignment cContextAssignment_2_1_1 = (Assignment)cGroup_2_1.eContents().get(1);
-		private final RuleCall cContextConceptDeclarationParserRuleCall_2_1_1_0 = (RuleCall)cContextAssignment_2_1_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cAsKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cTargetAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cTargetConceptDeclarationParserRuleCall_2_1_0 = (RuleCall)cTargetAssignment_2_1.eContents().get(0);
 		
 		//Implication:
-		//	quantifier=Quantification? concept=ConceptDeclaration (('as' target=ConceptDeclaration)? & ('within'
-		//	context=ConceptDeclaration)?)?;
+		//	quantifier=Quantification? concept=ConceptDeclaration ('as' target=ConceptDeclaration)?
+		//	/* & ('within' context=ConceptDeclaration)?)?  */;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//quantifier=Quantification? concept=ConceptDeclaration (('as' target=ConceptDeclaration)? & ('within'
-		//context=ConceptDeclaration)?)?
+		//quantifier=Quantification? concept=ConceptDeclaration ('as' target=ConceptDeclaration)?
 		public Group getGroup() { return cGroup; }
 		
 		//quantifier=Quantification?
@@ -7308,32 +7302,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ConceptDeclaration
 		public RuleCall getConceptConceptDeclarationParserRuleCall_1_0() { return cConceptConceptDeclarationParserRuleCall_1_0; }
 		
-		//(('as' target=ConceptDeclaration)? & ('within' context=ConceptDeclaration)?)?
-		public UnorderedGroup getUnorderedGroup_2() { return cUnorderedGroup_2; }
-		
 		//('as' target=ConceptDeclaration)?
-		public Group getGroup_2_0() { return cGroup_2_0; }
+		public Group getGroup_2() { return cGroup_2; }
 		
 		//'as'
-		public Keyword getAsKeyword_2_0_0() { return cAsKeyword_2_0_0; }
+		public Keyword getAsKeyword_2_0() { return cAsKeyword_2_0; }
 		
 		//target=ConceptDeclaration
-		public Assignment getTargetAssignment_2_0_1() { return cTargetAssignment_2_0_1; }
+		public Assignment getTargetAssignment_2_1() { return cTargetAssignment_2_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getTargetConceptDeclarationParserRuleCall_2_0_1_0() { return cTargetConceptDeclarationParserRuleCall_2_0_1_0; }
-		
-		//('within' context=ConceptDeclaration)?
-		public Group getGroup_2_1() { return cGroup_2_1; }
-		
-		//'within'
-		public Keyword getWithinKeyword_2_1_0() { return cWithinKeyword_2_1_0; }
-		
-		//context=ConceptDeclaration
-		public Assignment getContextAssignment_2_1_1() { return cContextAssignment_2_1_1; }
-		
-		//ConceptDeclaration
-		public RuleCall getContextConceptDeclarationParserRuleCall_2_1_1_0() { return cContextConceptDeclarationParserRuleCall_2_1_1_0; }
+		public RuleCall getTargetConceptDeclarationParserRuleCall_2_1_0() { return cTargetConceptDeclarationParserRuleCall_2_1_0; }
 	}
 	public class QuantificationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Quantification");
@@ -11481,8 +11460,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Implication:
-	//	quantifier=Quantification? concept=ConceptDeclaration (('as' target=ConceptDeclaration)? & ('within'
-	//	context=ConceptDeclaration)?)?;
+	//	quantifier=Quantification? concept=ConceptDeclaration ('as' target=ConceptDeclaration)?
+	//	/* & ('within' context=ConceptDeclaration)?)?  */;
 	public ImplicationElements getImplicationAccess() {
 		return pImplication;
 	}

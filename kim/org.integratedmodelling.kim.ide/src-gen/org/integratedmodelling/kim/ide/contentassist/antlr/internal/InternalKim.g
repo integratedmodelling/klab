@@ -26899,9 +26899,9 @@ rule__Implication__Group__2__Impl
 	}
 :
 (
-	{ before(grammarAccess.getImplicationAccess().getUnorderedGroup_2()); }
-	(rule__Implication__UnorderedGroup_2)?
-	{ after(grammarAccess.getImplicationAccess().getUnorderedGroup_2()); }
+	{ before(grammarAccess.getImplicationAccess().getGroup_2()); }
+	(rule__Implication__Group_2__0)?
+	{ after(grammarAccess.getImplicationAccess().getGroup_2()); }
 )
 ;
 finally {
@@ -26909,107 +26909,53 @@ finally {
 }
 
 
-rule__Implication__Group_2_0__0
+rule__Implication__Group_2__0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
-	rule__Implication__Group_2_0__0__Impl
-	rule__Implication__Group_2_0__1
+	rule__Implication__Group_2__0__Impl
+	rule__Implication__Group_2__1
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Implication__Group_2_0__0__Impl
+rule__Implication__Group_2__0__Impl
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 (
-	{ before(grammarAccess.getImplicationAccess().getAsKeyword_2_0_0()); }
+	{ before(grammarAccess.getImplicationAccess().getAsKeyword_2_0()); }
 	'as'
-	{ after(grammarAccess.getImplicationAccess().getAsKeyword_2_0_0()); }
+	{ after(grammarAccess.getImplicationAccess().getAsKeyword_2_0()); }
 )
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Implication__Group_2_0__1
+rule__Implication__Group_2__1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
-	rule__Implication__Group_2_0__1__Impl
+	rule__Implication__Group_2__1__Impl
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Implication__Group_2_0__1__Impl
+rule__Implication__Group_2__1__Impl
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 (
-	{ before(grammarAccess.getImplicationAccess().getTargetAssignment_2_0_1()); }
-	(rule__Implication__TargetAssignment_2_0_1)
-	{ after(grammarAccess.getImplicationAccess().getTargetAssignment_2_0_1()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-
-rule__Implication__Group_2_1__0
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__Implication__Group_2_1__0__Impl
-	rule__Implication__Group_2_1__1
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__Implication__Group_2_1__0__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getImplicationAccess().getWithinKeyword_2_1_0()); }
-	'within'
-	{ after(grammarAccess.getImplicationAccess().getWithinKeyword_2_1_0()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__Implication__Group_2_1__1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__Implication__Group_2_1__1__Impl
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__Implication__Group_2_1__1__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getImplicationAccess().getContextAssignment_2_1_1()); }
-	(rule__Implication__ContextAssignment_2_1_1)
-	{ after(grammarAccess.getImplicationAccess().getContextAssignment_2_1_1()); }
+	{ before(grammarAccess.getImplicationAccess().getTargetAssignment_2_1()); }
+	(rule__Implication__TargetAssignment_2_1)
+	{ after(grammarAccess.getImplicationAccess().getTargetAssignment_2_1()); }
 )
 ;
 finally {
@@ -35337,89 +35283,6 @@ finally {
 }
 
 
-rule__Implication__UnorderedGroup_2
-	@init {
-		int stackSize = keepStackSize();
-		getUnorderedGroupHelper().enter(grammarAccess.getImplicationAccess().getUnorderedGroup_2());
-	}
-:
-	rule__Implication__UnorderedGroup_2__0
-	?
-;
-finally {
-	getUnorderedGroupHelper().leave(grammarAccess.getImplicationAccess().getUnorderedGroup_2());
-	restoreStackSize(stackSize);
-}
-
-rule__Implication__UnorderedGroup_2__Impl
-	@init {
-		int stackSize = keepStackSize();
-		boolean selected = false;
-	}
-:
-		(
-		( 
-			{getUnorderedGroupHelper().canSelect(grammarAccess.getImplicationAccess().getUnorderedGroup_2(), 0)}?=>(
-				{
-					getUnorderedGroupHelper().select(grammarAccess.getImplicationAccess().getUnorderedGroup_2(), 0);
-				}
-				{
-					selected = true;
-				}
-				(
-					{ before(grammarAccess.getImplicationAccess().getGroup_2_0()); }
-					(rule__Implication__Group_2_0__0)
-					{ after(grammarAccess.getImplicationAccess().getGroup_2_0()); }
-				)
-			)
-		)|
-		( 
-			{getUnorderedGroupHelper().canSelect(grammarAccess.getImplicationAccess().getUnorderedGroup_2(), 1)}?=>(
-				{
-					getUnorderedGroupHelper().select(grammarAccess.getImplicationAccess().getUnorderedGroup_2(), 1);
-				}
-				{
-					selected = true;
-				}
-				(
-					{ before(grammarAccess.getImplicationAccess().getGroup_2_1()); }
-					(rule__Implication__Group_2_1__0)
-					{ after(grammarAccess.getImplicationAccess().getGroup_2_1()); }
-				)
-			)
-		)
-		)
-;
-finally {
-	if (selected)
-		getUnorderedGroupHelper().returnFromSelection(grammarAccess.getImplicationAccess().getUnorderedGroup_2());
-	restoreStackSize(stackSize);
-}
-
-rule__Implication__UnorderedGroup_2__0
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__Implication__UnorderedGroup_2__Impl
-	rule__Implication__UnorderedGroup_2__1?
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__Implication__UnorderedGroup_2__1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__Implication__UnorderedGroup_2__Impl
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-
 rule__SimpleObservableSemantics__UnorderedGroup_1
 	@init {
 		int stackSize = keepStackSize();
@@ -42941,30 +42804,15 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Implication__TargetAssignment_2_0_1
+rule__Implication__TargetAssignment_2_1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getImplicationAccess().getTargetConceptDeclarationParserRuleCall_2_0_1_0()); }
+		{ before(grammarAccess.getImplicationAccess().getTargetConceptDeclarationParserRuleCall_2_1_0()); }
 		ruleConceptDeclaration
-		{ after(grammarAccess.getImplicationAccess().getTargetConceptDeclarationParserRuleCall_2_0_1_0()); }
-	)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__Implication__ContextAssignment_2_1_1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	(
-		{ before(grammarAccess.getImplicationAccess().getContextConceptDeclarationParserRuleCall_2_1_1_0()); }
-		ruleConceptDeclaration
-		{ after(grammarAccess.getImplicationAccess().getContextConceptDeclarationParserRuleCall_2_1_1_0()); }
+		{ after(grammarAccess.getImplicationAccess().getTargetConceptDeclarationParserRuleCall_2_1_0()); }
 	)
 ;
 finally {

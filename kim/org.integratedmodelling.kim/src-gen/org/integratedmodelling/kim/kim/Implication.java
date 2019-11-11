@@ -18,7 +18,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Implication#getQuantifier <em>Quantifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Implication#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Implication#getTarget <em>Target</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Implication#getContext <em>Context</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getImplication()
@@ -92,27 +91,5 @@ public interface Implication extends EObject
    * @generated
    */
   void setTarget(ConceptDeclaration value);
-
-  /**
-   * Returns the value of the '<em><b>Context</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Context</em>' containment reference.
-   * @see #setContext(ConceptDeclaration)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getImplication_Context()
-   * @model containment="true"
-   * @generated
-   */
-  ConceptDeclaration getContext();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Implication#getContext <em>Context</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Context</em>' containment reference.
-   * @see #getContext()
-   * @generated
-   */
-  void setContext(ConceptDeclaration value);
 
 } // Implication

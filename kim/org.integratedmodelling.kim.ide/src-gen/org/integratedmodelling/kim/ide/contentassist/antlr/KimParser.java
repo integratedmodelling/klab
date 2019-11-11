@@ -491,8 +491,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptStatementBodyAccess().getGroup_3_22(), "rule__ConceptStatementBody__Group_3_22__0");
 			builder.put(grammarAccess.getConceptStatementBodyAccess().getGroup_3_23(), "rule__ConceptStatementBody__Group_3_23__0");
 			builder.put(grammarAccess.getImplicationAccess().getGroup(), "rule__Implication__Group__0");
-			builder.put(grammarAccess.getImplicationAccess().getGroup_2_0(), "rule__Implication__Group_2_0__0");
-			builder.put(grammarAccess.getImplicationAccess().getGroup_2_1(), "rule__Implication__Group_2_1__0");
+			builder.put(grammarAccess.getImplicationAccess().getGroup_2(), "rule__Implication__Group_2__0");
 			builder.put(grammarAccess.getQuantificationAccess().getGroup(), "rule__Quantification__Group__0");
 			builder.put(grammarAccess.getQuantificationAccess().getGroup_1_1(), "rule__Quantification__Group_1_1__0");
 			builder.put(grammarAccess.getQuantificationAccess().getGroup_1_1_0_1(), "rule__Quantification__Group_1_1_0_1__0");
@@ -1019,8 +1018,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptStatementBodyAccess().getPropertiesAssignment_3_24(), "rule__ConceptStatementBody__PropertiesAssignment_3_24");
 			builder.put(grammarAccess.getImplicationAccess().getQuantifierAssignment_0(), "rule__Implication__QuantifierAssignment_0");
 			builder.put(grammarAccess.getImplicationAccess().getConceptAssignment_1(), "rule__Implication__ConceptAssignment_1");
-			builder.put(grammarAccess.getImplicationAccess().getTargetAssignment_2_0_1(), "rule__Implication__TargetAssignment_2_0_1");
-			builder.put(grammarAccess.getImplicationAccess().getContextAssignment_2_1_1(), "rule__Implication__ContextAssignment_2_1_1");
+			builder.put(grammarAccess.getImplicationAccess().getTargetAssignment_2_1(), "rule__Implication__TargetAssignment_2_1");
 			builder.put(grammarAccess.getQuantificationAccess().getOnlyAssignment_1_0(), "rule__Quantification__OnlyAssignment_1_0");
 			builder.put(grammarAccess.getQuantificationAccess().getExactlyAssignment_1_1_0_0(), "rule__Quantification__ExactlyAssignment_1_1_0_0");
 			builder.put(grammarAccess.getQuantificationAccess().getAtLeastAssignment_1_1_0_1_1_0(), "rule__Quantification__AtLeastAssignment_1_1_0_1_1_0");
@@ -1199,7 +1197,6 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), "rule__ConceptDeclaration__UnorderedGroup_1");
 			builder.put(grammarAccess.getConceptStatementAccess().getUnorderedGroup_1(), "rule__ConceptStatement__UnorderedGroup_1");
 			builder.put(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), "rule__ConceptStatementBody__UnorderedGroup_3");
-			builder.put(grammarAccess.getImplicationAccess().getUnorderedGroup_2(), "rule__Implication__UnorderedGroup_2");
 			builder.put(grammarAccess.getSimpleObservableSemanticsAccess().getUnorderedGroup_1(), "rule__SimpleObservableSemantics__UnorderedGroup_1");
 			builder.put(grammarAccess.getDependencyObservableSemanticsAccess().getUnorderedGroup_3(), "rule__DependencyObservableSemantics__UnorderedGroup_3");
 			builder.put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getUnorderedGroup_3(), "rule__AlternativeDependencyObservableSemantics__UnorderedGroup_3");

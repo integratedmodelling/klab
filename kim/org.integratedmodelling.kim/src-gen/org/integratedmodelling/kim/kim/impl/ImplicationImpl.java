@@ -29,7 +29,6 @@ import org.integratedmodelling.kim.kim.Quantification;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ImplicationImpl#getQuantifier <em>Quantifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ImplicationImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ImplicationImpl#getTarget <em>Target</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ImplicationImpl#getContext <em>Context</em>}</li>
  * </ul>
  *
  * @generated
@@ -65,16 +64,6 @@ public class ImplicationImpl extends MinimalEObjectImpl.Container implements Imp
    * @ordered
    */
   protected ConceptDeclaration target;
-
-  /**
-   * The cached value of the '{@link #getContext() <em>Context</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getContext()
-   * @generated
-   * @ordered
-   */
-  protected ConceptDeclaration context;
 
   /**
    * <!-- begin-user-doc -->
@@ -253,56 +242,6 @@ public class ImplicationImpl extends MinimalEObjectImpl.Container implements Imp
    * @generated
    */
   @Override
-  public ConceptDeclaration getContext()
-  {
-    return context;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetContext(ConceptDeclaration newContext, NotificationChain msgs)
-  {
-    ConceptDeclaration oldContext = context;
-    context = newContext;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.IMPLICATION__CONTEXT, oldContext, newContext);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setContext(ConceptDeclaration newContext)
-  {
-    if (newContext != context)
-    {
-      NotificationChain msgs = null;
-      if (context != null)
-        msgs = ((InternalEObject)context).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.IMPLICATION__CONTEXT, null, msgs);
-      if (newContext != null)
-        msgs = ((InternalEObject)newContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.IMPLICATION__CONTEXT, null, msgs);
-      msgs = basicSetContext(newContext, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.IMPLICATION__CONTEXT, newContext, newContext));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -313,8 +252,6 @@ public class ImplicationImpl extends MinimalEObjectImpl.Container implements Imp
         return basicSetConcept(null, msgs);
       case KimPackage.IMPLICATION__TARGET:
         return basicSetTarget(null, msgs);
-      case KimPackage.IMPLICATION__CONTEXT:
-        return basicSetContext(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -335,8 +272,6 @@ public class ImplicationImpl extends MinimalEObjectImpl.Container implements Imp
         return getConcept();
       case KimPackage.IMPLICATION__TARGET:
         return getTarget();
-      case KimPackage.IMPLICATION__CONTEXT:
-        return getContext();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -359,9 +294,6 @@ public class ImplicationImpl extends MinimalEObjectImpl.Container implements Imp
         return;
       case KimPackage.IMPLICATION__TARGET:
         setTarget((ConceptDeclaration)newValue);
-        return;
-      case KimPackage.IMPLICATION__CONTEXT:
-        setContext((ConceptDeclaration)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -386,9 +318,6 @@ public class ImplicationImpl extends MinimalEObjectImpl.Container implements Imp
       case KimPackage.IMPLICATION__TARGET:
         setTarget((ConceptDeclaration)null);
         return;
-      case KimPackage.IMPLICATION__CONTEXT:
-        setContext((ConceptDeclaration)null);
-        return;
     }
     super.eUnset(featureID);
   }
@@ -409,8 +338,6 @@ public class ImplicationImpl extends MinimalEObjectImpl.Container implements Imp
         return concept != null;
       case KimPackage.IMPLICATION__TARGET:
         return target != null;
-      case KimPackage.IMPLICATION__CONTEXT:
-        return context != null;
     }
     return super.eIsSet(featureID);
   }

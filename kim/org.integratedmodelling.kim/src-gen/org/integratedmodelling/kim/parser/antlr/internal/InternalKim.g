@@ -12587,26 +12587,16 @@ finally {
 }
 
 // Entry rule entryRuleImplication
-entryRuleImplication returns [EObject current=null]@init {
-	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
-	grammarAccess.getImplicationAccess().getUnorderedGroup_2()
-	);
-}:
+entryRuleImplication returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getImplicationRule()); }
 	iv_ruleImplication=ruleImplication
 	{ $current=$iv_ruleImplication.current; }
 	EOF;
-finally {
-	myUnorderedGroupState.restore();
-}
 
 // Rule Implication
 ruleImplication returns [EObject current=null]
 @init {
 	enterRule();
-	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
-	grammarAccess.getImplicationAccess().getUnorderedGroup_2()
-	);
 }
 @after {
 	leaveRule();
@@ -12651,92 +12641,32 @@ ruleImplication returns [EObject current=null]
 			)
 		)
 		(
+			otherlv_2='as'
+			{
+				newLeafNode(otherlv_2, grammarAccess.getImplicationAccess().getAsKeyword_2_0());
+			}
 			(
-				{ 
-				  getUnorderedGroupHelper().enter(grammarAccess.getImplicationAccess().getUnorderedGroup_2());
-				}
 				(
-					(
-			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getImplicationAccess().getUnorderedGroup_2(), 0)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getImplicationAccess().getUnorderedGroup_2(), 0);
+						newCompositeNode(grammarAccess.getImplicationAccess().getTargetConceptDeclarationParserRuleCall_2_1_0());
 					}
-								({true}?=>(otherlv_3='as'
-								{
-									newLeafNode(otherlv_3, grammarAccess.getImplicationAccess().getAsKeyword_2_0_0());
-								}
-								(
-									(
-										{
-											newCompositeNode(grammarAccess.getImplicationAccess().getTargetConceptDeclarationParserRuleCall_2_0_1_0());
-										}
-										lv_target_4_0=ruleConceptDeclaration
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getImplicationRule());
-											}
-											set(
-												$current,
-												"target",
-												lv_target_4_0,
-												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
-											afterParserOrEnumRuleCall();
-										}
-									)
-								)
-								))
-					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getImplicationAccess().getUnorderedGroup_2());
-					}
-				)
-			)|
-			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getImplicationAccess().getUnorderedGroup_2(), 1)}?=>(
+					lv_target_3_0=ruleConceptDeclaration
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getImplicationAccess().getUnorderedGroup_2(), 1);
-					}
-								({true}?=>(otherlv_5='within'
-								{
-									newLeafNode(otherlv_5, grammarAccess.getImplicationAccess().getWithinKeyword_2_1_0());
-								}
-								(
-									(
-										{
-											newCompositeNode(grammarAccess.getImplicationAccess().getContextConceptDeclarationParserRuleCall_2_1_1_0());
-										}
-										lv_context_6_0=ruleConceptDeclaration
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getImplicationRule());
-											}
-											set(
-												$current,
-												"context",
-												lv_context_6_0,
-												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
-											afterParserOrEnumRuleCall();
-										}
-									)
-								)
-								))
-					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getImplicationAccess().getUnorderedGroup_2());
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getImplicationRule());
+						}
+						set(
+							$current,
+							"target",
+							lv_target_3_0,
+							"org.integratedmodelling.kim.Kim.ConceptDeclaration");
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-					)*
-				)
-			)
-				{ 
-				  getUnorderedGroupHelper().leave(grammarAccess.getImplicationAccess().getUnorderedGroup_2());
-				}
 		)?
 	)
 ;
-finally {
-	myUnorderedGroupState.restore();
-}
 
 // Entry rule entryRuleQuantification
 entryRuleQuantification returns [EObject current=null]:

@@ -663,7 +663,7 @@ ConceptStatementBody:
 
 Implication:
 	(quantifier=Quantification)? concept=ConceptDeclaration 
-	     (('as' target=ConceptDeclaration)? & ('within' context=ConceptDeclaration)?)?
+	     /*(*/('as' target=ConceptDeclaration)? /* & ('within' context=ConceptDeclaration)?)?  */
 ;
 
 Quantification: {Quantification}

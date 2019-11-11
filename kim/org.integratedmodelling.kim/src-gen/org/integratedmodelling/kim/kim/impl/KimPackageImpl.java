@@ -4038,17 +4038,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getImplication_Context()
-  {
-    return (EReference)implicationEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EClass getQuantification()
   {
     return quantificationEClass;
@@ -5743,7 +5732,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(implicationEClass, IMPLICATION__QUANTIFIER);
     createEReference(implicationEClass, IMPLICATION__CONCEPT);
     createEReference(implicationEClass, IMPLICATION__TARGET);
-    createEReference(implicationEClass, IMPLICATION__CONTEXT);
 
     quantificationEClass = createEClass(QUANTIFICATION);
     createEAttribute(quantificationEClass, QUANTIFICATION__ONLY);
@@ -6272,7 +6260,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getImplication_Quantifier(), this.getQuantification(), null, "quantifier", null, 0, 1, Implication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getImplication_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, Implication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getImplication_Target(), this.getConceptDeclaration(), null, "target", null, 0, 1, Implication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getImplication_Context(), this.getConceptDeclaration(), null, "context", null, 0, 1, Implication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(quantificationEClass, Quantification.class, "Quantification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getQuantification_Only(), ecorePackage.getEBoolean(), "only", null, 0, 1, Quantification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
