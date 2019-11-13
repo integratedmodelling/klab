@@ -32,11 +32,15 @@ import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.InviteUserClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.NewUserClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.VerifyEmailClickbackToken;
+import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,6 +49,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import net.minidev.json.JSONObject;
 
 //Maybe make a service for the tokens, which the manager can call
 //this may make it easier to follow
@@ -134,24 +140,20 @@ public class TokenManager {
 		return token;
 	}
 
-	public AuthenticationToken authenticate(String username, String password) {
+	public AuthenticationToken getAuthenticationToken(String username, String password) {
 		AuthenticationToken result = null;
-		try {
-			Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
-			Authentication authResult = authenticationManager.authenticate(authRequest);
-			if (!authResult.isAuthenticated()) {
-				String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
-				throw new KlabException(msg) {
-					private static final long serialVersionUID = -8517575154826926750L;
-				};
-			} else {
-				deleteExpiredTokens(username);
-				result = createAuthenticationToken(username, AuthenticationToken.class);
-				SecurityContextHolder.getContext().setAuthentication(result);
-				klabUserManager.updateLastLogin(username);
-			}
-		} catch (AuthenticationException e) {
-			throw new AuthenticationFailedException("Username or Password incorrect");
+		Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
+		Authentication authResult = authenticationManager.authenticate(authRequest);
+		if (!authResult.isAuthenticated()) {
+			String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
+			throw new KlabException(msg) {
+				private static final long serialVersionUID = -8517575154826926750L;
+			};
+		} else {
+			deleteExpiredTokens(username);
+			result = createAuthenticationToken(username, AuthenticationToken.class);
+			SecurityContextHolder.getContext().setAuthentication(result);
+			klabUserManager.updateLastLogin(username);
 		}
 		return result;
 	}
@@ -437,6 +439,17 @@ public class TokenManager {
 		klabUserManager.updateKlabUser(user);
 		deleteToken(tokenString);
 		return inviteClickToken;
+	}
+
+	public LoginResponse authenticate(String username, String password) {
+		try {
+			AuthenticationToken token = getAuthenticationToken(username, password);
+			ProfileResource profile = klabUserManager.getLoggedInUserProfile();
+			LoginResponse loginResponse = new LoginResponse(token, profile);
+			return loginResponse;
+		} catch (AuthenticationException e) {
+			return new LoginResponse();
+		}
 	}
 
 }

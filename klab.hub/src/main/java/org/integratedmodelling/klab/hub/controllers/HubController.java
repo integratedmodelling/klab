@@ -2,20 +2,16 @@ package org.integratedmodelling.klab.hub.controllers;
 
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.mail.MessagingException;
 
 import org.integratedmodelling.klab.hub.config.LoggingConfig;
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
-import org.integratedmodelling.klab.hub.models.ProfileResource;
-import org.integratedmodelling.klab.hub.models.tokens.AuthenticationToken;
-import org.integratedmodelling.klab.hub.payload.InviteRequest;
+import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.SignupRequest;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +19,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import net.minidev.json.JSONObject;
 
 @RestController
 public class HubController {
@@ -40,14 +34,8 @@ public class HubController {
 	
 	@PostMapping("/signin")
 	public ResponseEntity<?> loginResponse(@RequestBody UserAuthenticationRequest request) {
-		AuthenticationToken token = tokenManager.authenticate(request.getUsername(),request.getPassword());
-		ProfileResource profile = klabUserManager.getLoggedInUserProfile();		
-		JSONObject resp = new JSONObject();
-		resp.appendField("Profile", profile.getSafeProfile());
-		resp.appendField("Authentication", token);
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authentication", token.getTokenString());
-		return new ResponseEntity<JSONObject>(resp, headers, HttpStatus.OK);
+		LoginResponse response = tokenManager.authenticate(request.getUsername(), request.getPassword());
+		return response.getResponse();
 	}
 	
 	@PostMapping("/signup")
