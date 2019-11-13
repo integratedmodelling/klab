@@ -38,8 +38,10 @@ import org.integratedmodelling.klab.hub.service.LdapService;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -148,9 +150,8 @@ public class TokenManager {
 				SecurityContextHolder.getContext().setAuthentication(result);
 				klabUserManager.updateLastLogin(username);
 			}
-		} catch (KlabException e) {
-			String msg = "Login failed for user: " + username;
-			throw new KlabException(msg, e);
+		} catch (AuthenticationException e) {
+			throw new AuthenticationFailedException("Username or Password incorrect");
 		}
 		return result;
 	}
