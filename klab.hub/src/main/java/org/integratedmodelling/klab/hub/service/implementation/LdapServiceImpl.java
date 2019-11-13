@@ -67,7 +67,7 @@ public class LdapServiceImpl implements LdapService{
 		List<Object> personByEmail = ldapTemplate.search(userEmailQuery, new UserAttributesMapper());
 		
 		if (!personByEmail.equals(personByName)) {
-			throw new BadRequestException("Username or email address already in user");
+			throw new BadRequestException("Username or email address already in use.");
 		} 
 		
 		if (personByEmail.isEmpty() && personByName.isEmpty()) {

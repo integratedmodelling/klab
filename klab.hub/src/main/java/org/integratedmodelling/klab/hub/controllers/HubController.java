@@ -74,11 +74,4 @@ public class HubController {
 		return new ResponseEntity<String>("Added groups to user", HttpStatus.CREATED);
 	}
 	
-	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	@PostMapping(value="/invite", produces = "application/json")
-	public ResponseEntity<?> inviteUserResponse(@RequestBody InviteRequest request) throws MessagingException {
-		tokenManager.inviteNewUserWithGroups(request.getEmail(), request.getGroups());
-		return new ResponseEntity<String>("Invite Sent.", HttpStatus.CREATED);
-	}
-	
 }

@@ -13,6 +13,7 @@ import javax.mail.MessagingException;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
@@ -244,7 +245,7 @@ public class TokenManager {
 			.map(ClickbackToken.class::cast)
 			.filter(token -> token.getClickbackAction().equals(ClickbackAction.activate))
 			.filter(token -> token.getPrincipal().equals(userId))
-			.orElseThrow(IllegalArgumentException::new);
+			.orElseThrow(() -> new ActivationTokenFailedException("Activation Token no longer active"));
 		//lets login to the security context
 		SecurityContextHolder.getContext().setAuthentication(activationToken);
 		//activate 

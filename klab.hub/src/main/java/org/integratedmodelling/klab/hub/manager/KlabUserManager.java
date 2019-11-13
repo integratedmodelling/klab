@@ -57,8 +57,12 @@ public class KlabUserManager implements UserDetailsService{
 	@Autowired
 	KlabGroupRepository groupRepository;
 	
+	
 	@Override
 	public User loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+		//UserDetailsService has this method and we leverage that.  Our function will also search
+		//the mongo database for any record that matches case ignored instances of the username
+		//or the email.
 		User user = userService.getUserFromMongo(usernameOrEmail)
 				.orElse(null);
 		if(user == null) {
@@ -91,6 +95,7 @@ public class KlabUserManager implements UserDetailsService{
 		String result = "-unauthenticated user-";
 		try {
 			Object principal = getLoggedInAuthentication().getPrincipal();
+			getLoggedInAuthentication().getDetails();
 			result = principal.toString();
 		} catch (Throwable e) {
 		}
