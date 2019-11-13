@@ -65,19 +65,20 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
         result.setAccountStatus(AccountStatus.active);
         result.setFirstName(firstName);
         result.setLastName(lastName);
-        result.setRegistrationDate(generateRandomDate());
+        result.setRegistrationDate(generateRandomDate(null));
+        result.setLastLogin(generateRandomDate(result.getRegistrationDate()));
         return result;
     }
     
-    private static final DateTime generateRandomDate() {
+    private static final DateTime generateRandomDate(DateTime from) {
     	GregorianCalendar gc = new GregorianCalendar();
-        int year = randBetween(2015, 2019);
+        int year = randBetween(from != null ? from.getYear() : 2015, 2019);
         gc.set(Calendar.YEAR, year);
-        int dayOfYear = randBetween(1, gc.getActualMaximum(Calendar.DAY_OF_YEAR));
+        int dayOfYear = randBetween(from != null ? from.getDayOfYear() : 1, gc.getActualMaximum(Calendar.DAY_OF_YEAR));
         gc.set(Calendar.DAY_OF_YEAR, dayOfYear);
-        int hour = randBetween(0, 23);
+        int hour = randBetween(from != null ? from.getHourOfDay() : 0, 23);
         gc.set(Calendar.HOUR_OF_DAY, hour);
-        int minute = randBetween(0,60);
+        int minute = randBetween(from != null ? from.getMinuteOfHour() : 0, 60);
         gc.set(Calendar.MINUTE, minute);
         return new DateTime(gc);
     }
@@ -105,6 +106,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     		if (x <= 5) {
     			u.setAccountStatus(AccountStatus.pendingActivation);
     		}
+    		
     		initialUsers.add(u);
     	}
         system.addGroups("ARIES");

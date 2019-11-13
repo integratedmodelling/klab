@@ -347,9 +347,21 @@ public class User implements UserDetails{
 	public void setRegistrationDate(DateTime date) {
         registrationDate = date;
     }
+	
+	public DateTime getRegistrationDate() {
+        return registrationDate;
+    }
 
     public void setLastLogin() {
         lastLogin = DateTime.now();
+    }
+    
+    public void setLastLogin(DateTime date) {
+        lastLogin = date;
+    }
+    
+    public DateTime getLastLogin() {
+    	return lastLogin;
     }
 
     public void setLastEngineConnection() {
