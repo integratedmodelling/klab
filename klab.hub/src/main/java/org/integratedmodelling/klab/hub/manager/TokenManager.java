@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.ChangePasswordTokenFailedException;
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
@@ -284,7 +285,7 @@ public class TokenManager {
 						token.getClickbackAction().equals(ClickbackAction.newUser)))
 				.filter(token -> token.getPrincipal().equals(userId))
 				.filter(token -> !token.isExpired())
-				.orElseThrow(IllegalArgumentException::new);
+				.orElseThrow(()->new ChangePasswordTokenFailedException("Token inactive.  Make another request for changing user password"));
 		//lets login
 		SecurityContextHolder.getContext().setAuthentication(changePasswordToken);
 		setPasswordAndSendVerificationEmail(newPassword);
