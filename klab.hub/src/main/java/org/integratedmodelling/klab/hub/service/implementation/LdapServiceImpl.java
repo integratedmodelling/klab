@@ -2,25 +2,35 @@ package org.integratedmodelling.klab.hub.service.implementation;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.naming.Name;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.models.User;
+import org.integratedmodelling.klab.hub.models.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.AbstractContextMapper;
+import org.springframework.ldap.query.LdapQuery;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.ldap.userdetails.InetOrgPerson;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 
 import net.minidev.json.JSONObject;
 
@@ -33,19 +43,38 @@ public class LdapServiceImpl implements LdapService{
 	@Autowired
 	private LdapUserDetailsManager ldapUserDetailsManager;
 
-	@Override
 	public List<JSONObject> findAllGroups() {
 		return ldapTemplate.search(query().where("objectclass").is("groupOfUniqueNames"), new GroupContextMapper());
 	}
 
-	@Override
 	public List<String> findAllUsers() {
 		return ldapTemplate.search(query().where("objectclass").is("person"), new AttributesMapper<String>() {
 			public String mapFromAttributes(Attributes attrs) throws NamingException {
-
-				return attrs.get("cn").get().toString();
+				return attrs.getAll().toString();
 			}
 		});
+	}
+	
+	public boolean userExists(String username, String email) {
+		LdapQuery userNameQuery = query()
+				.where("objectclass").is("person")
+				.and("uid").is(username);
+		List<Object> personByName = ldapTemplate.search(userNameQuery, new UserAttributesMapper());
+		
+		LdapQuery userEmailQuery = query()
+				.where("objectclass").is("person")
+				.and("mail").is(email);
+		List<Object> personByEmail = ldapTemplate.search(userEmailQuery, new UserAttributesMapper());
+		
+		if (!personByEmail.equals(personByName)) {
+			throw new BadRequestException("Username or email address already in user");
+		} 
+		
+		if (personByEmail.isEmpty() && personByName.isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	private static class GroupContextMapper extends AbstractContextMapper<JSONObject> {
@@ -64,32 +93,40 @@ public class LdapServiceImpl implements LdapService{
 		}
 	}
 
-	@Override
 	public Optional<UserDetails> getUserByCn(String cn) {
 			Optional<UserDetails> user = Optional.of(ldapUserDetailsManager.loadUserByUsername(cn));
 			return user;
 	}
 
-	@Override
 	public void updateUser(UserDetails user) {
 		ldapUserDetailsManager.updateUser(user);
 	}
 	
-	@Override
 	public void deleteUser(String username) {
 		ldapUserDetailsManager.deleteUser(username);
 	}
 	
-	@Override
 	public void createUser(UserDetails user) {
 		ldapUserDetailsManager.createUser(user);
 	}
 
-	@Override
 	public Name buildDn(String username ) {
 	    return LdapNameBuilder.newInstance()
 	            .add("ou", "imusers")
 	            .add("uid", username)    
 	            .build();
+	}
+	
+	private class UserAttributesMapper implements AttributesMapper<Object> {
+		public HashMap<String, String> mapFromAttributes(Attributes attributes) throws NamingException {
+			HashMap<String, String> userAttributes = new HashMap<String, String>();
+			try {
+				userAttributes.put("uid", attributes.get("uid").get().toString());
+				userAttributes.put("mail", attributes.get("mail").get().toString());
+			} catch (NamingException e){
+				return new HashMap<String, String>();
+			}
+			return userAttributes;
+		}
 	}
 }

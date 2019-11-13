@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
-import org.integratedmodelling.klab.hub.service.KlabUserDetailsService;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEvent> {
 	
 	@Autowired
-	private KlabUserDetailsService klabUserDetailsService;
+	private KlabUserManager KlabUserManager;
 	
 	@Autowired
 	private KlabGroupService klabGroupService;
@@ -82,8 +82,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     	List<User> users = getInitialUsers();
     	for(User user : users) {
     		try {
-    			klabUserDetailsService.createMongoUser(user, AccountStatus.active);
-    			klabUserDetailsService.createLdapUser(user);
+    			KlabUserManager.createKlabUser(user, AccountStatus.active);
     		} catch (Exception e) {
     			Logging.INSTANCE.error(e);
     		}
