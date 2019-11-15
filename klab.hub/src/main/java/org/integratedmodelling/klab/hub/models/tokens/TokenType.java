@@ -14,7 +14,9 @@ public enum TokenType {
 	invite(
 			InviteUserClickbackToken.class),
 	newUser(
-			NewUserClickbackToken.class);
+			NewUserClickbackToken.class),
+	lostPassword(
+			LostPasswordClickbackToken.class);
 
     private final Class<? extends AuthenticationToken> clazz;
 

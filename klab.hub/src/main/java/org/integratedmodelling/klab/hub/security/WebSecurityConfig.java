@@ -118,7 +118,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 		.authorizeRequests()
-			.regexMatchers("/api/users/.*?(activate|password|groups).*")
+			.regexMatchers("/api/users/.*?(activate|password|lostPassword|groups).*")
 			.permitAll()
 			.antMatchers(HttpMethod.POST, "/api/users")
 			.permitAll()

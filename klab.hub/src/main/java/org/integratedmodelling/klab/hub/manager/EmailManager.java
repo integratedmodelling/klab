@@ -92,7 +92,7 @@ public class EmailManager {
     }
     
     public void sendInviteWithGroupsEmail(String email, URL clickbackUrl) throws MessagingException {
-    	String Subject = "Join the Integrated Modelling Team";
+    	String subject = "Join the Integrated Modelling Team";
     	String msg = String.format(
     			"We would like to welcome you into the Integrated Modelling team." +
     					"  If you would like to continue your work with us please click the attached link." +  
@@ -101,8 +101,18 @@ public class EmailManager {
     					"forward to working with you!" + 
     					"\n\n Please click the following link: %s",
     			clickbackUrl);
-    	sendFromMainEmailAddress(email, Subject, msg);
+    	sendFromMainEmailAddress(email, subject, msg);
     }
+
+	public void sendLostPasswordEmail(String email, URL clickbackUrl) throws MessagingException {
+		String subject = "New Password Request for you Integrated Modelling Account";
+		String msg = String.format(
+				"You have requested a new password for your Integrated Modelling Account" +
+						"Please click the following link: %s",
+				clickbackUrl);
+		sendFromMainEmailAddress(email, subject, msg);
+		
+	}
 
     
 }

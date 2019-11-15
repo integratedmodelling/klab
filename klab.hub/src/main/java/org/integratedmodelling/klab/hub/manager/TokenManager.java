@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.manager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.integratedmodelling.klab.hub.models.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.InviteUserClickbackToken;
+import org.integratedmodelling.klab.hub.models.tokens.LostPasswordClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.NewUserClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.VerifyEmailClickbackToken;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
@@ -39,17 +41,17 @@ import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import net.minidev.json.JSONObject;
 
@@ -207,7 +209,7 @@ public class TokenManager {
 			try {
 				klabUserManager.createPendingKlabUser(newUser);
 			} catch (UserExistsException | UserEmailExistsException e) {
-				throw new BadRequestException(e.getMessage(), e);
+				throw new TokenGenerationException(e.getMessage(), e);
 			}
 		}
 
@@ -242,6 +244,11 @@ public class TokenManager {
 		return token;
 	}
 	
+	public LostPasswordClickbackToken createlostPasswordClickbackToken(String username) {
+		LostPasswordClickbackToken token = (LostPasswordClickbackToken) createClickbackToken(username, LostPasswordClickbackToken.class);
+		return token;
+	}
+	
 	public ClickbackToken handleVerificationToken(String userId, String tokenString) {
 		//lets only find a clickback token that invited the user
 		ClickbackToken activationToken = tokenRepository
@@ -252,7 +259,7 @@ public class TokenManager {
 			.orElseThrow(() -> new ActivationTokenFailedException("Activation Token no longer active"));
 		//lets login to the security context
 		SecurityContextHolder.getContext().setAuthentication(activationToken);
-		//activate 
+		//verify account 
 		verifyAccount();
 		//deleteToken(tokenString);
 		
@@ -307,12 +314,23 @@ public class TokenManager {
 		User persistedUser = klabUserManager.getLoggedInUser();
 		if (persistedUser == null) {
 			throw new BadRequestException("Could not find a user with the token that was submitted.");
-		} else if (!AccountStatus.active.equals(persistedUser.getAccountStatus())) {
-			throw new BadRequestException("An active user could not be found with the token that was submitted.");
+		}
+		AccountStatus status = persistedUser.getAccountStatus();
+		if (!status.equals(AccountStatus.active) & !status.equals(AccountStatus.verified)) {
+			throw new BadRequestException("An verified or active user could not be found with the token that was submitted.");
 		} else {
 			// in case the user is changing their password to solve a broken state (i.e.
 			// Mongo but no LDAP)
 			// this will prevent the missing LDAP record from breaking the process
+			if (!klabUserManager.ldapUserExists(persistedUser.getUsername(), persistedUser.getEmail())) {
+				klabUserManager.createLdapUser(persistedUser);
+				persistedUser.setPasswordHash(passwordEncoder.encode(newPassword));
+				klabUserManager.updateKlabUser(persistedUser);
+				klabUserManager.activateUser(persistedUser.getUsername());
+			} else {
+				persistedUser.setPasswordHash(passwordEncoder.encode((newPassword)));
+				klabUserManager.updateKlabUser(persistedUser);
+			}
 			if (!klabUserManager.ldapUserExists(persistedUser.getUsername(),persistedUser.getEmail())) {
 				klabUserManager.createLdapUser(persistedUser);
 			}
@@ -327,6 +345,7 @@ public class TokenManager {
 			}
 		}
 	}
+		
 	
 	public AuthenticationToken createAuthenticationToken(String username,
 			Class<? extends AuthenticationToken> tokenType) {
@@ -395,7 +414,8 @@ public class TokenManager {
 					|| !email.equals(user.getEmail())) {
 				throw new BadRequestException("An account with this username already exists.\n");
 			}
-		} else {
+		} 
+		if (user != null) {
 			sendInviteUserClickbackToken(email, groups);
 		}
 	}
@@ -440,6 +460,28 @@ public class TokenManager {
 		klabUserManager.updateKlabUser(user);
 		deleteToken(tokenString);
 		return inviteClickToken;
+	}
+
+	public void sendLostPasswordToken(String username) {
+		try {
+			User user = klabUserManager.loadUserByUsername(username);
+			if (user != null) {
+				if(klabUserManager.ldapUserExists(user.getUsername(), user.getEmail())) {
+					ClickbackToken clickbackToken = createClickbackToken(username, LostPasswordClickbackToken.class);
+					emailManager.sendLostPasswordEmail(user.getEmail(), clickbackToken.getCallbackUrl());
+				} else {
+					ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
+					emailManager.sendNewUser(user.getEmail(), username, clickbackToken.getCallbackUrl());
+				}
+			} else {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+				//throw new KlabException("Username was not found");
+			}
+		} catch (UsernameNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+		} catch (MessagingException e) {
+			throw new KlabException("There was a problem sending the Lost Password Email.  Contact System Admin.");
+		}
 	}
 
 	public LoginResponse authenticate(String username, String password) {
