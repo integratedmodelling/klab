@@ -6737,6 +6737,36 @@ ruleValueOperator returns [EObject current=null]
 				}
 			)
 		)
+		    |
+		(
+			(
+				lv_averaged_10_0='averaged'
+				{
+					newLeafNode(lv_averaged_10_0, grammarAccess.getValueOperatorAccess().getAveragedAveragedKeyword_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getValueOperatorRule());
+					}
+					setWithLastConsumed($current, "averaged", lv_averaged_10_0, "averaged");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_summed_11_0='summed'
+				{
+					newLeafNode(lv_summed_11_0, grammarAccess.getValueOperatorAccess().getSummedSummedKeyword_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getValueOperatorRule());
+					}
+					setWithLastConsumed($current, "summed", lv_summed_11_0, "summed");
+				}
+			)
+		)
 	)
 ;
 

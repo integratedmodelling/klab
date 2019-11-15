@@ -4060,6 +4060,18 @@ rule__ValueOperator__Alternatives
 		(rule__ValueOperator__TotalAssignment_1)
 		{ after(grammarAccess.getValueOperatorAccess().getTotalAssignment_1()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getValueOperatorAccess().getAveragedAssignment_2()); }
+		(rule__ValueOperator__AveragedAssignment_2)
+		{ after(grammarAccess.getValueOperatorAccess().getAveragedAssignment_2()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValueOperatorAccess().getSummedAssignment_3()); }
+		(rule__ValueOperator__SummedAssignment_3)
+		{ after(grammarAccess.getValueOperatorAccess().getSummedAssignment_3()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -39417,6 +39429,44 @@ rule__ValueOperator__TotalAssignment_1
 			{ after(grammarAccess.getValueOperatorAccess().getTotalTotalKeyword_1_0()); }
 		)
 		{ after(grammarAccess.getValueOperatorAccess().getTotalTotalKeyword_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ValueOperator__AveragedAssignment_2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getValueOperatorAccess().getAveragedAveragedKeyword_2_0()); }
+		(
+			{ before(grammarAccess.getValueOperatorAccess().getAveragedAveragedKeyword_2_0()); }
+			'averaged'
+			{ after(grammarAccess.getValueOperatorAccess().getAveragedAveragedKeyword_2_0()); }
+		)
+		{ after(grammarAccess.getValueOperatorAccess().getAveragedAveragedKeyword_2_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ValueOperator__SummedAssignment_3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getValueOperatorAccess().getSummedSummedKeyword_3_0()); }
+		(
+			{ before(grammarAccess.getValueOperatorAccess().getSummedSummedKeyword_3_0()); }
+			'summed'
+			{ after(grammarAccess.getValueOperatorAccess().getSummedSummedKeyword_3_0()); }
+		)
+		{ after(grammarAccess.getValueOperatorAccess().getSummedSummedKeyword_3_0()); }
 	)
 ;
 finally {

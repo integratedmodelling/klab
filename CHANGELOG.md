@@ -29,6 +29,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Added
 - New 'level of' operator to allow easy modeling of orderings (on SB's suggestion).
+- New 'change in' operator creating the process that changes a quality (with its
+  initial value as dependency in models).
+- New 'summed' and 'averaged' modifiers in value operators to force aggregations to
+  produce sums or averages independent of semantics.
 - API to support 'universal URNs' with 'klab' as node name, resolved entirely by the
   engine using IUrnResolver. 
 - Implementation of 'klab:osm:' open street maps URNs and search service using OSMNames

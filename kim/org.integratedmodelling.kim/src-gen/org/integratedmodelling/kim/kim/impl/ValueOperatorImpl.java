@@ -34,6 +34,8 @@ import org.integratedmodelling.kim.kim.ValueOperator;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getComparisonConcept <em>Comparison Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getComparisonObservable <em>Comparison Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getTotal <em>Total</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getAveraged <em>Averaged</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl#getSummed <em>Summed</em>}</li>
  * </ul>
  *
  * @generated
@@ -139,6 +141,46 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
    * @ordered
    */
   protected String total = TOTAL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getAveraged() <em>Averaged</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAveraged()
+   * @generated
+   * @ordered
+   */
+  protected static final String AVERAGED_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getAveraged() <em>Averaged</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAveraged()
+   * @generated
+   * @ordered
+   */
+  protected String averaged = AVERAGED_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getSummed() <em>Summed</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSummed()
+   * @generated
+   * @ordered
+   */
+  protected static final String SUMMED_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getSummed() <em>Summed</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSummed()
+   * @generated
+   * @ordered
+   */
+  protected String summed = SUMMED_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -442,6 +484,56 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
    * @generated
    */
   @Override
+  public String getAveraged()
+  {
+    return averaged;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setAveraged(String newAveraged)
+  {
+    String oldAveraged = averaged;
+    averaged = newAveraged;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE_OPERATOR__AVERAGED, oldAveraged, averaged));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getSummed()
+  {
+    return summed;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setSummed(String newSummed)
+  {
+    String oldSummed = summed;
+    summed = newSummed;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE_OPERATOR__SUMMED, oldSummed, summed));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -482,6 +574,10 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
         return getComparisonObservable();
       case KimPackage.VALUE_OPERATOR__TOTAL:
         return getTotal();
+      case KimPackage.VALUE_OPERATOR__AVERAGED:
+        return getAveraged();
+      case KimPackage.VALUE_OPERATOR__SUMMED:
+        return getSummed();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -516,6 +612,12 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
         return;
       case KimPackage.VALUE_OPERATOR__TOTAL:
         setTotal((String)newValue);
+        return;
+      case KimPackage.VALUE_OPERATOR__AVERAGED:
+        setAveraged((String)newValue);
+        return;
+      case KimPackage.VALUE_OPERATOR__SUMMED:
+        setSummed((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -552,6 +654,12 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
       case KimPackage.VALUE_OPERATOR__TOTAL:
         setTotal(TOTAL_EDEFAULT);
         return;
+      case KimPackage.VALUE_OPERATOR__AVERAGED:
+        setAveraged(AVERAGED_EDEFAULT);
+        return;
+      case KimPackage.VALUE_OPERATOR__SUMMED:
+        setSummed(SUMMED_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -580,6 +688,10 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
         return comparisonObservable != null;
       case KimPackage.VALUE_OPERATOR__TOTAL:
         return TOTAL_EDEFAULT == null ? total != null : !TOTAL_EDEFAULT.equals(total);
+      case KimPackage.VALUE_OPERATOR__AVERAGED:
+        return AVERAGED_EDEFAULT == null ? averaged != null : !AVERAGED_EDEFAULT.equals(averaged);
+      case KimPackage.VALUE_OPERATOR__SUMMED:
+        return SUMMED_EDEFAULT == null ? summed != null : !SUMMED_EDEFAULT.equals(summed);
     }
     return super.eIsSet(featureID);
   }
@@ -601,6 +713,10 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
     result.append(downTo);
     result.append(", total: ");
     result.append(total);
+    result.append(", averaged: ");
+    result.append(averaged);
+    result.append(", summed: ");
+    result.append(summed);
     result.append(')');
     return result.toString();
   }

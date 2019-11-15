@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.kim.api.IContextualizable;
@@ -200,7 +201,8 @@ public interface IRuntimeProvider {
 	 * @param operand
 	 * @return
 	 */
-	IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand);
+	IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand,
+			Set<ValueOperator> modifiers);
 
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID

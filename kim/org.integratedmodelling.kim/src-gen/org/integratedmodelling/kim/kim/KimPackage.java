@@ -1985,13 +1985,31 @@ public interface KimPackage extends EPackage
   int VALUE_OPERATOR__TOTAL = 6;
 
   /**
+   * The feature id for the '<em><b>Averaged</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__AVERAGED = 7;
+
+  /**
+   * The feature id for the '<em><b>Summed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__SUMMED = 8;
+
+  /**
    * The number of structural features of the '<em>Value Operator</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE_OPERATOR_FEATURE_COUNT = 7;
+  int VALUE_OPERATOR_FEATURE_COUNT = 9;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DependencyImpl <em>Dependency</em>}' class.
@@ -6577,6 +6595,28 @@ public interface KimPackage extends EPackage
   EAttribute getValueOperator_Total();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ValueOperator#getAveraged <em>Averaged</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Averaged</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator#getAveraged()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_Averaged();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ValueOperator#getSummed <em>Summed</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Summed</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator#getSummed()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_Summed();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Dependency <em>Dependency</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10855,6 +10895,22 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute VALUE_OPERATOR__TOTAL = eINSTANCE.getValueOperator_Total();
+
+    /**
+     * The meta object literal for the '<em><b>Averaged</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__AVERAGED = eINSTANCE.getValueOperator_Averaged();
+
+    /**
+     * The meta object literal for the '<em><b>Summed</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__SUMMED = eINSTANCE.getValueOperator_Summed();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.DependencyImpl <em>Dependency</em>}' class.

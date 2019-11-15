@@ -807,6 +807,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2(), "rule__ValueOperator__ComparisonConceptAssignment_0_1_2");
 			builder.put(grammarAccess.getValueOperatorAccess().getComparisonObservableAssignment_0_1_3_1(), "rule__ValueOperator__ComparisonObservableAssignment_0_1_3_1");
 			builder.put(grammarAccess.getValueOperatorAccess().getTotalAssignment_1(), "rule__ValueOperator__TotalAssignment_1");
+			builder.put(grammarAccess.getValueOperatorAccess().getAveragedAssignment_2(), "rule__ValueOperator__AveragedAssignment_2");
+			builder.put(grammarAccess.getValueOperatorAccess().getSummedAssignment_3(), "rule__ValueOperator__SummedAssignment_3");
 			builder.put(grammarAccess.getAnnotatedObservableSemanticsAccess().getAnnotationsAssignment_0(), "rule__AnnotatedObservableSemantics__AnnotationsAssignment_0");
 			builder.put(grammarAccess.getAnnotatedObservableSemanticsAccess().getValueAssignment_1_0(), "rule__AnnotatedObservableSemantics__ValueAssignment_1_0");
 			builder.put(grammarAccess.getAnnotatedObservableSemanticsAccess().getGenericAssignment_2(), "rule__AnnotatedObservableSemantics__GenericAssignment_2");

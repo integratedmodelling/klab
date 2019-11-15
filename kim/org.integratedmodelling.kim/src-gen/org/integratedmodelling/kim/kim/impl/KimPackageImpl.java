@@ -2608,6 +2608,28 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EAttribute getValueOperator_Averaged()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getValueOperator_Summed()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getDependency()
   {
     return dependencyEClass;
@@ -5594,6 +5616,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(valueOperatorEClass, VALUE_OPERATOR__COMPARISON_CONCEPT);
     createEReference(valueOperatorEClass, VALUE_OPERATOR__COMPARISON_OBSERVABLE);
     createEAttribute(valueOperatorEClass, VALUE_OPERATOR__TOTAL);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__AVERAGED);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__SUMMED);
 
     dependencyEClass = createEClass(DEPENDENCY);
     createEReference(dependencyEClass, DEPENDENCY__ANNOTATIONS);
@@ -6122,6 +6146,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getValueOperator_ComparisonConcept(), this.getConceptDeclaration(), null, "comparisonConcept", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValueOperator_ComparisonObservable(), this.getObservableSemantics(), null, "comparisonObservable", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValueOperator_Total(), ecorePackage.getEString(), "total", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValueOperator_Averaged(), ecorePackage.getEString(), "averaged", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValueOperator_Summed(), ecorePackage.getEString(), "summed", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dependencyEClass, Dependency.class, "Dependency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getDependency_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
