@@ -1,10 +1,12 @@
 package org.integratedmodelling.klab.hub.models;
 
 import javax.persistence.GeneratedValue;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -18,7 +20,11 @@ public class EmailTemplate {
     String id;
 
     @Indexed(unique = true)
+    @NotNull
     String name;
+    
+    @DBRef
+    User author;
     
     @Pattern(regexp = Constraints.EMAIL_PATTERN)
     String sender;

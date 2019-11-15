@@ -1,26 +1,25 @@
 package org.integratedmodelling.klab.hub.service.implementation;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.models.EmailTemplate;
+import org.integratedmodelling.klab.hub.models.User;
+import org.integratedmodelling.klab.hub.repository.EmailTemplateRepository;
 import org.integratedmodelling.klab.hub.service.EmailTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailTemplateServiceImpl implements EmailTemplateService {
 	
 	private final MongoTemplate mongoTemplate;
+	
+	@Autowired
+	EmailTemplateRepository emailTemplateRepository;
 	
     @Autowired
     public EmailTemplateServiceImpl(MongoTemplate mongoTemplate) {
@@ -35,9 +34,8 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 	@Override
 	public void updateEmailTemplate(String id, EmailTemplate emailTemplate) {
-		Query query = new Query(Criteria.where("id").is(id));
-		List<EmailTemplate> found = mongoTemplate.find(query, EmailTemplate.class);
-		if (found.size() == 1) {
+		Optional<EmailTemplate> existingEmailTemplate = emailTemplateRepository.findById(id);
+		if (existingEmailTemplate.isPresent()) {
 			mongoTemplate.save(emailTemplate);
 		} else {
 			Logging.INSTANCE.warn("Email template with this id doesn't exists, no modifications");
@@ -46,16 +44,12 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 	@Override
 	public void deleteEmailTemplate(String id) {
-		Query query = new Query(Criteria.where("id").is(id));
-		List<EmailTemplate> found = mongoTemplate.find(query, EmailTemplate.class);
-		if (found.size() == 0) {
-			Logging.INSTANCE.warn("Email template with this id doesn't exists, no deletions");
-		}
-		if (found.size() == 1) {
-			mongoTemplate.remove(found.get(0));
-			Logging.INSTANCE.info("Deleted Mongo Email Template: " + found.get(0).getName());
+		Optional<EmailTemplate> emailTemplate = emailTemplateRepository.findById(id);
+		if (emailTemplate.isPresent()) {
+			mongoTemplate.remove(emailTemplate);
+			Logging.INSTANCE.info("Deleted Mongo Email Template: " + emailTemplate.get().getName());
 		} else {
-			throw new BadRequestException("More than One Email Template was found.");
+			Logging.INSTANCE.warn("Email template with this id doesn't exists, no deletions");
 		}
 	}
 
@@ -66,29 +60,32 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 	@Override
 	public Optional<EmailTemplate> getEmailTemplate(String id) {
-		Query query = new Query(Criteria.where("id").is(id));
-		List<EmailTemplate> found = mongoTemplate.find(query, EmailTemplate.class);
-		if (found.size() == 1) {
-			Optional<EmailTemplate> emailTemplate = Optional.of(found.get(0));
-			return emailTemplate;
-		}
-		Optional<EmailTemplate> emptyEmailTemplate = Optional.empty();
-		return emptyEmailTemplate;
+		return emailTemplateRepository.findById(id);
+		
 	}
 	
 	@Override
 	public Collection<EmailTemplate> getEmailTemplatesByName(String name) {
-		Query query = new Query(Criteria.where("name").is(name));
-		return mongoTemplate.find(query, EmailTemplate.class);
+		return emailTemplateRepository.findByName(name);
 	}
 
 	@Override
 	public Collection<String> getEmailTemplateNames() {
-		Collection<EmailTemplate> emailTemplates = mongoTemplate.findAll(EmailTemplate.class);
+		Collection<EmailTemplate> emailTemplates = emailTemplateRepository.findAll();
 		Collection<String> emailTemplateNames = new HashSet<>();
 		for(EmailTemplate emailTemplate: emailTemplates) {
 			emailTemplateNames.add(emailTemplate.getId());
 		}
 		return emailTemplateNames;
+	}
+
+	@Override
+	public Collection<EmailTemplate> getEmailTemplatesByAuthor(String username) {
+		return emailTemplateRepository.findByAuthor(username);
+	}
+
+	@Override
+	public Collection<EmailTemplate> getEmailTemplatesByAuthor(User user) {
+		return emailTemplateRepository.findByAuthor(user);
 	}
 }
