@@ -868,9 +868,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			IDirectObservation rootSubject) {
 
 		/*
-		 * support map: the fields are observable, mode, and a boolean that is true if the
-		 * actuator is void, meaning an archetype should be created instead of a true
-		 * observation. So far this only happens with contextual quality learning models.
+		 * support map: the fields are observable, mode, and a boolean that is true if
+		 * the actuator is void, meaning an archetype should be created instead of a
+		 * true observation. So far this only happens with contextual quality learning
+		 * models.
 		 */
 		Map<String, Triple<Observable, Mode, Boolean>> targetObservables = new HashMap<>();
 
@@ -981,10 +982,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							RuntimeScope p = getParentWithTarget(rootSubject);
 							IArtifact artifact = p.findArtifactByObservableName(attr);
 							if (artifact == null) {
-								artifact = p
-										.findArtifact(
-												actuator.getDataflow().getModel().getAttributeObservables().get(attr))
-										.getSecond();
+								Pair<String, IArtifact> art = p.findArtifact(
+										actuator.getDataflow().getModel().getAttributeObservables().get(attr));
+								artifact = art == null ? null : art.getSecond();
 							}
 							if (artifact instanceof IState) {
 								// observable may be different or use data reduction traits
