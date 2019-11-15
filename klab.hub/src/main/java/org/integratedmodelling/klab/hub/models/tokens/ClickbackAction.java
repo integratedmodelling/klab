@@ -10,7 +10,9 @@ public enum ClickbackAction {
     invite(
     		TokenType.invite),
     newUser(
-    		TokenType.newUser);
+    		TokenType.newUser),
+    lostPassword(
+    		TokenType.lostPassword);
     
     private final TokenType tokenType;
 

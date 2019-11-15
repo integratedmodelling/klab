@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.config.BeanIds;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2AuthenticationFailureHandler;
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2AuthenticationSuccessHandler;
-import org.integratedmodelling.klab.hub.service.KlabUserDetailsService;
 import org.integratedmodelling.klab.hub.service.OAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +31,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -44,7 +43,7 @@ import com.google.common.net.HttpHeaders;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	KlabUserDetailsService klabUserDetailsService;
+	KlabUserManager klabUserManager;
 
 	@Autowired
 	private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -96,7 +95,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(klabUserDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(klabUserManager).passwordEncoder(passwordEncoder());
 	}
 
 	//This should be changed to something like Bcrypt, but 
@@ -119,7 +118,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 		.authorizeRequests()
-			.regexMatchers("/api/users/.*?(activate|password|groups).*")
+			.regexMatchers("/api/users/.*?(activate|password|lostPassword|groups).*")
 			.permitAll()
 			.antMatchers(HttpMethod.POST, "/api/users")
 			.permitAll()

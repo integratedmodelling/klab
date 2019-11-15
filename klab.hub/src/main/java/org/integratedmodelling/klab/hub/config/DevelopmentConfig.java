@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
-import org.integratedmodelling.klab.hub.service.KlabUserDetailsService;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.joda.time.DateTime;
@@ -31,7 +30,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEvent> {
 	
 	@Autowired
-	private KlabUserDetailsService klabUserDetailsService;
+	private KlabUserManager KlabUserManager;
 	
 	@Autowired
 	private KlabGroupService klabGroupService;
@@ -156,14 +155,13 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     	List<User> users = getInitialUsers();
     	for(User user : users) {
     		try {
-    			klabUserDetailsService.createMongoUser(user, AccountStatus.active);
-    			klabUserDetailsService.createLdapUser(user);
+    			KlabUserManager.createKlabUser(user, AccountStatus.active);
     			if (user.getLastLogin() != null) {
     				int x = (int)(Math.random()*100+1);
     				if (x>=5) // less than 5% not connected
     					user.setLastEngineConnection(generateRandomDate(user.getLastLogin()));
     			}
-    			klabUserDetailsService.updateUser(user);
+    			KlabUserManager.updateKlabUser(user);
     		} catch (Exception e) {
     			Logging.INSTANCE.error(e);
     		}

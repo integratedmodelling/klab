@@ -55,7 +55,7 @@ public class KUserController {
 	KlabUserManager klabUserManager;
 	
 	@Autowired
-	private UserRepository repository;
+	private UserRepository userRepository;
 
 	@GetMapping(value= "/{id}", produces = "application/json", params="activate")
 	public ResponseEntity<?> activateResponse(@PathVariable("id") String userId, @RequestParam("activate") String tokenString) throws URISyntaxException {
@@ -99,6 +99,12 @@ public class KUserController {
 		return new ResponseEntity<>("Sent email to system adminstrator requesting additional groups",HttpStatus.OK);
 	}
 	
+	@GetMapping(value="/{id}", produces = "application/json", params="lostPassword")
+	public ResponseEntity<?> lostPasswordResponse(@PathVariable("id") String username) {
+		tokenManager.sendLostPasswordToken(username);
+		return new ResponseEntity<>("Sent email to user " + username + " address",HttpStatus.OK);
+	}
+	
 	@GetMapping(value = "/{id}", produces = "application/json", params="password")
 	@PreAuthorize("authentication.getPrincipal() == #username")
 	public ResponseEntity<?> requestNewPasswordResponse(@PathVariable("id") String username) {
@@ -126,7 +132,7 @@ public class KUserController {
 	@GetMapping(value = "/{id}", produces = "application/json")
 	@PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public JSONObject getUserById(@PathVariable("id") String id) {
-		Optional<User> user = repository.findByUsernameIgnoreCase(id);
+		Optional<User> user = userRepository.findByUsernameIgnoreCase(id);
 		if (user.isPresent()) {
 			JSONObject Response = new JSONObject();
 			Response.put("User", user.get());
@@ -165,7 +171,7 @@ public class KUserController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	@GetMapping(value = "", produces = "application/json")
 	public ResponseEntity<?> getAllUsers() {
-		List<User> users = repository.findAll();
+		List<User> users = userRepository.findAll();
 		JSONObject allUsersJson = new JSONObject();
 		allUsersJson.put("Users", users);
 		return ResponseEntity

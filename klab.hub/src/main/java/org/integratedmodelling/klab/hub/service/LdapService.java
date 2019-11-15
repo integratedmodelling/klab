@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.naming.Name;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import net.minidev.json.JSONObject;
 
@@ -16,4 +15,5 @@ public interface LdapService {
 	public abstract void deleteUser(String username);
 	public abstract void createUser(UserDetails user);
 	public abstract Name buildDn(String username );
+	public abstract boolean userExists(String username, String email);
 }
