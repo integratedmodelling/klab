@@ -966,14 +966,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						if (metadata != null) {
 							/* state specs may be in metadata from resource attributes */
 							Object obj = metadata.getCaseInsensitive(attr);
-							if (obj != null) {
+//							if (obj != null) {
 								IState state = (IState) DefaultRuntimeProvider.createObservation(
 										actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale,
 										this);
 								((State) state).distributeScalar(obj);
 								predefinedStates.add(state);
 								done = true;
-							}
+//							}
 						}
 
 						if (!done) {
