@@ -3,12 +3,10 @@ package org.integratedmodelling.klab.engine.resources;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.klab.Concepts;
@@ -85,6 +83,7 @@ public class CoreOntology extends AbstractWorkspace {
 		coreConceptIds.put(Type.DISTANCE, NS.CORE_DISTANCE);
 		coreConceptIds.put(Type.RATIO, NS.CORE_RATIO);
 		coreConceptIds.put(Type.VALUE, NS.CORE_VALUE);
+		coreConceptIds.put(Type.CHANGE, NS.CORE_CHANGE);
 		coreConceptIds.put(Type.OCCURRENCE, NS.CORE_OCCURRENCE);
 		coreConceptIds.put(Type.PRESENCE, NS.CORE_PRESENCE);
 		coreConceptIds.put(Type.EXTENT, NS.CORE_EXTENT);
@@ -157,19 +156,34 @@ public class CoreOntology extends AbstractWorkspace {
 		// annotation property that specifies the base SI unit for a physical property
 		public static final String SI_UNIT_PROPERTY = "observation:unit";
 
-		// im ontology annotations affecting the ranking system. Used as key in
-		// maps, so
-		// they don't depend on the ontology being in the system.
+		/*
+		 * Annotations affecting the ranking system. Used as keys in maps, so they don't
+		 * depend on the ontology being in the system.
+		 */
 		public static final String LEXICAL_SCOPE = "im:lexical-scope";
 		public static final String TRAIT_CONCORDANCE = "im:trait-concordance";
 		public static final String SEMANTIC_DISTANCE = "im:semantic-concordance";
-		public static final String SCALE_COVERAGE = "im:scale-coverage";
-		public static final String SCALE_SPECIFICITY = "im:scale-specificity";
+
 		public static final String INHERENCY = "im:inherency";
 		public static final String EVIDENCE = "im:evidence";
 		public static final String NETWORK_REMOTENESS = "im:network-remoteness";
-		public static final String SCALE_COHERENCY = "im:scale-coherency";
 		public static final String SUBJECTIVE_CONCORDANCE = "im:subjective-concordance";
+
+		// Scale criteria are an aggregation of time + space (and potentially others)
+		public static final String SCALE_COVERAGE = "im:scale-coverage";
+		public static final String SCALE_SPECIFICITY = "im:scale-specificity";
+		public static final String SCALE_COHERENCY = "im:scale-coherency";
+
+		/*
+		 * using space and time explicitly should be alternative to using scale
+		 * criteria. All are computed anyway and can be used together if wished.
+		 */
+		public static final String SPACE_COVERAGE = "im:space-coverage";
+		public static final String SPACE_SPECIFICITY = "im:space-specificity";
+		public static final String SPACE_COHERENCY = "im:space-coherency";
+		public static final String TIME_COVERAGE = "im:time-coverage";
+		public static final String TIME_SPECIFICITY = "im:time-specificity";
+		public static final String TIME_COHERENCY = "im:time-coherency";
 
 		// only annotation used for subjective ranking in the default behavior
 		public static final String RELIABILITY = "im:reliability";

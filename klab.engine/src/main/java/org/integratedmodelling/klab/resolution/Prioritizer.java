@@ -215,6 +215,18 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
             return computeLexicalScope(model, context);
         } else if (cr.equals(NS.SEMANTIC_DISTANCE)) {
             return computeSemanticDistance(model, context);
+        } else if (cr.equals(NS.SPACE_COHERENCY)) {
+            // return computeSemanticDistance(model, context);
+        } else if (cr.equals(NS.SPACE_COVERAGE)) {
+            // return computeSemanticDistance(model, context);
+        } else if (cr.equals(NS.SPACE_SPECIFICITY)) {
+            // return computeSemanticDistance(model, context);
+        } else if (cr.equals(NS.TIME_COHERENCY)) {
+            // return computeSemanticDistance(model, context);
+        } else if (cr.equals(NS.TIME_COVERAGE)) {
+            // return computeSemanticDistance(model, context);
+        } else if (cr.equals(NS.TIME_SPECIFICITY)) {
+            // return computeSemanticDistance(model, context);
         }
 
         return 0;
@@ -268,6 +280,20 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
      *  50-26 closer to same namespace as context 
      *  25 = in same project as context 
      *  0 = non-private in other visible namespace
+     *  
+     *  TODO #3 should use a hierarchy criterion: something in namespace xxxx.yyyy is
+     *  satisfied preferentially by something in namespace xxxx unless criteria 1 or 2 are
+     *  satisfied.
+     *  
+     *  From the docs (still not implemented as such):
+     *  
+     * 1. Scenario
+	 * 2. Private in same namespace
+	 * 3. Public in same namespace
+	 * 4. Public in parent namespace (in order of distance)
+	 * 5. Project private in same project
+	 * 6. Public local or cached
+	 * 7. Public from the network
      */
     public double computeLexicalScope(ModelReference model, ResolutionScope context) {
 

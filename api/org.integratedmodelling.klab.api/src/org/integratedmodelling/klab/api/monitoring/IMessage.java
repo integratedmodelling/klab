@@ -281,7 +281,7 @@ public interface IMessage {
 		/*
 		 * --- ResourceLifecycle-class types, F->B
 		 */
-		ImportResource, DeleteResource, UpdateResource, ValidateResource, PreviewResource, CopyResource, MoveResource, CreateResource, ImportIntoResource,
+		ImportResource, DeleteResource, UpdateResource, ValidateResource, PreviewResource, CopyResource, MoveResource, CreateResource, ImportIntoResource, ResourceOperation,
 
 		/*
 		 * --- ResourceLifecycle-class types, B->F

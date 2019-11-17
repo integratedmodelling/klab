@@ -74,6 +74,7 @@ import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.rest.ResourceOperationRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
 import org.integratedmodelling.klab.utils.Path;
@@ -84,6 +85,8 @@ import org.integratedmodelling.klab.utils.Utils;
 public class ResourceEditor extends ViewPart {
 
 	public static final String ID = "org.integratedmodelling.klab.ide.views.ResourceEditor";
+
+	private static final String REVALIDATE_RESOURCE_ACTION = "Revalidate resource";
 
 	private Label urnLabel;
 	private Composite mapHolder;
@@ -123,13 +126,15 @@ public class ResourceEditor extends ViewPart {
 	private StyledText references;
 	private StyledText notes;
 	private TimeEditor timeEditor;
-
+	private String selectedOperation = null;
 	private TableViewerColumn tableViewerColumn_3D;
 	private Label messageLabel;
 	private Table outputTable;
 	private TableViewer outputViewer;
 
 	private Geometry geometry = null;
+
+	private Button executeActionButton;
 
 	public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -407,7 +412,7 @@ public class ResourceEditor extends ViewPart {
 		}
 
 		this.timeEditor.setTo(this.geometry.getDimension(Type.TIME));
-		
+
 		// TODO errors! They are not contained in the resource.
 		// this.isPublishable.setSelection(false);
 		// this.unpublishableReason.setText(string == null ? "" : string);
@@ -702,11 +707,26 @@ public class ResourceEditor extends ViewPart {
 			lblOperations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 			lblOperations.setText("Operations:");
 
-			Combo combo = new Combo(composite_3, SWT.READ_ONLY);
-			combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			Combo actionChooser = new Combo(composite_3, SWT.READ_ONLY);
+			actionChooser.add(REVALIDATE_RESOURCE_ACTION);
+			actionChooser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			actionChooser.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					selectedOperation = actionChooser.getText();
+					executeActionButton.setEnabled(true);
+				}
+			});
 
-			Button btnNewButton_3 = new Button(composite_3, SWT.NONE);
-			btnNewButton_3.setText("Execute");
+			executeActionButton = new Button(composite_3, SWT.NONE);
+			executeActionButton.setText("Execute");
+			executeActionButton.setEnabled(false);
+			executeActionButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					executeSelectedOperation();
+				}
+			});
 
 			Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
 			lblNewLabel_4
@@ -1082,6 +1102,15 @@ public class ResourceEditor extends ViewPart {
 		createActions();
 		initializeToolBar();
 		initializeMenu();
+	}
+
+	protected void executeSelectedOperation() {
+		if (resource != null && resource.getUrn() != null && selectedOperation != null) {
+			ResourceOperationRequest request = new ResourceOperationRequest();
+			request.setUrn(resource.getUrn());
+			request.setOperation(selectedOperation);
+			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request);
+		}
 	}
 
 	private void save() {
