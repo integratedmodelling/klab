@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.models.EmailTemplate;
-import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.repository.EmailTemplateRepository;
 import org.integratedmodelling.klab.hub.service.EmailTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,12 +79,8 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 	}
 
 	@Override
-	public Collection<EmailTemplate> getEmailTemplatesByAuthor(String username) {
-		return emailTemplateRepository.findByAuthor(username);
+	public Collection<EmailTemplate> getEmailTemplatesByAuthorUsername(String username) {
+		return emailTemplateRepository.findByAuthorUsername(username);
 	}
 
-	@Override
-	public Collection<EmailTemplate> getEmailTemplatesByAuthor(User user) {
-		return emailTemplateRepository.findByAuthor(user);
-	}
 }

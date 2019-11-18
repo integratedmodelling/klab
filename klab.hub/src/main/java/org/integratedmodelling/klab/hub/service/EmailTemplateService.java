@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.models.EmailTemplate;
-import org.integratedmodelling.klab.hub.models.User;
 
 /**
  * The email template service
@@ -57,14 +56,7 @@ public interface EmailTemplateService {
 	 * @param username the username of author
 	 * @return a collection of email templates with 0 or more elements
 	 */
-	public Collection<EmailTemplate> getEmailTemplatesByAuthor(String username);
-	
-	/**
-	 * Return all the templates made by an author
-	 * @param usern the User object of author
-	 * @return a collection of email templates with 0 or more elements
-	 */
-	public Collection<EmailTemplate> getEmailTemplatesByAuthor(User user);
+	public Collection<EmailTemplate> getEmailTemplatesByAuthorUsername(String username);
 	
 	/**
 	 * Return all the names of actual email templates

@@ -1,35 +1,40 @@
 package org.integratedmodelling.klab.hub.models;
 
 import javax.persistence.GeneratedValue;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Model for email templates
  * @author Enrico Girotto
  */
-@Document(collection = "Email")
+@Document(collection = "EmailTemplates")
+@CompoundIndexes({
+    @CompoundIndex(name = "email_template_unique_index",
+                   unique = true,
+                   def = "{'name' : 1, 'authorUsername' : 1}")
+})
 public class EmailTemplate {
 
 	@Id @GeneratedValue
     String id;
 
-    @Indexed(unique = true)
-    @NotNull
+	@NotNull
     String name;
     
-    @DBRef
-    User author;
+    @NotNull
+    String authorUsername;
     
-    @Pattern(regexp = Constraints.EMAIL_PATTERN)
+    @Email
     String sender;
     
-    @Pattern(regexp = Constraints.EMAIL_PATTERN)
+    @Email
     String[] recipients;
     
     String subject;
@@ -71,6 +76,20 @@ public class EmailTemplate {
 		this.name = name;
 	}
 
+    /**
+	 * @return the author username
+	 */
+	public String getAuthorUsername() {
+		return authorUsername;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setAuthorUsername(String authorUsername) {
+		this.authorUsername = authorUsername;
+	}
+	
 	/**
 	 * @return the sender
 	 */
