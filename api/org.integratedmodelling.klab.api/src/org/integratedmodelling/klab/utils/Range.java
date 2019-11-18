@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.utils;
 
+import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 
 public class Range implements IValueMediator {
 
@@ -72,12 +74,13 @@ public class Range implements IValueMediator {
 	public void parse(String s) {
 
 		/*
-		 * OK, can't do it with StreamTokenizer as the silly thing does not read scientific notation.
+		 * OK, can't do it with StreamTokenizer as the silly thing does not read
+		 * scientific notation.
 		 */
-		
+
 		lowerInfinite = false;
 		upperInfinite = false;
-		
+
 		s = s.trim();
 		if (s.startsWith("(")) {
 			lowerExclusive = true;
@@ -89,10 +92,10 @@ public class Range implements IValueMediator {
 
 		if (s.endsWith(")")) {
 			upperExclusive = true;
-			s = s.substring(0, s.length()-1);
+			s = s.substring(0, s.length() - 1);
 		} else if (s.endsWith("]")) {
 			upperExclusive = false;
-			s = s.substring(0, s.length()-1);
+			s = s.substring(0, s.length() - 1);
 		}
 
 		String upper = null;
@@ -104,19 +107,19 @@ public class Range implements IValueMediator {
 		}
 		if (s.endsWith(",")) {
 			upperInfinite = true;
-			lower = s.substring(0,s.length()-1).trim();
+			lower = s.substring(0, s.length() - 1).trim();
 		}
 		if (!s.startsWith(",") && !s.endsWith(",")) {
-			
+
 			if (!s.contains(",")) {
 				throw new IllegalArgumentException("invalid interval syntax: " + s);
 			}
-			
+
 			String[] ss = s.split(",");
 			lowerBound = Double.valueOf(ss[0].trim());
 			upperBound = Double.valueOf(ss[1].trim());
 		} else {
-		
+
 			if (upper != null && !upper.isEmpty()) {
 				upperBound = Double.valueOf(upper);
 			}
@@ -366,6 +369,47 @@ public class Range implements IValueMediator {
 	}
 
 	/**
+	 * This form admits Number, ITimeInstant and Date. Also admits nulls to mean
+	 * infinite in the corresponding direction.
+	 * 
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public static Range create(Object from, Object to) {
+
+		boolean leftInfinite = from == null;
+		boolean rightInfinite = to == null;
+		double a = Double.NaN;
+		double b = Double.NaN;
+
+		if (!leftInfinite) {
+			if (from instanceof Number) {
+				a = ((Number) from).doubleValue();
+			} else if (from instanceof ITimeInstant) {
+				a = ((ITimeInstant) from).getMilliseconds();
+			} else if (from instanceof Date) {
+				a = ((Date) from).getTime();
+			} else {
+				throw new IllegalArgumentException("Cannot make a range: left limit unrecognized: " + from);
+			}
+		}
+		if (!rightInfinite) {
+			if (to instanceof Number) {
+				b = ((Number) to).doubleValue();
+			} else if (to instanceof ITimeInstant) {
+				b = ((ITimeInstant) to).getMilliseconds();
+			} else if (to instanceof Date) {
+				b = ((Date) to).getTime();
+			} else {
+				throw new IllegalArgumentException("Cannot make a range: right limit unrecognized: " + to);
+			}
+		}
+
+		return new Range(leftInfinite ? null : a, rightInfinite ? null : b, false, true);
+	}
+
+	/**
 	 * Stretch one of the ends so that the passed value is the midpoint. If the
 	 * midpoint isn't in the range, return self.
 	 * 
@@ -413,6 +457,20 @@ public class Range implements IValueMediator {
 		return true;
 	}
 
+	/**
+	 * Return a [0-1] double representing how much this interval excludes of the
+	 * other. Deals with infinity correctly.
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public double exclusionOf(Range other) {
+		/*
+		 * Compute overlap
+		 */
+		return 0.0;
+	}
+
 	public boolean isWithin(double n) {
 		boolean left = lowerExclusive ? n > lowerBound : n >= lowerBound;
 		boolean right = upperExclusive ? n < upperBound : n <= upperBound;
@@ -439,5 +497,5 @@ public class Range implements IValueMediator {
 			upperInfinite = false;
 		}
 	}
-	
+
 }

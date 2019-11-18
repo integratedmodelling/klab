@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -216,17 +217,17 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		} else if (cr.equals(NS.SEMANTIC_DISTANCE)) {
 			return computeSemanticDistance(model, context);
 		} else if (cr.equals(NS.SPACE_COHERENCY)) {
-			 return computeSpaceCoherency(model, context);
+			return computeSpaceCoherency(model, context);
 		} else if (cr.equals(NS.SPACE_COVERAGE)) {
-			 return computeSpaceCoverage(model, context);
+			return computeSpaceCoverage(model, context);
 		} else if (cr.equals(NS.SPACE_SPECIFICITY)) {
-			 return computeSpaceSpecificity(model, context);
+			return computeSpaceSpecificity(model, context);
 		} else if (cr.equals(NS.TIME_COHERENCY)) {
-			 return computeTimeCoherency(model, context);
+			return computeTimeCoherency(model, context);
 		} else if (cr.equals(NS.TIME_COVERAGE)) {
-			 return computeTimeCoverage(model, context);
+			return computeTimeCoverage(model, context);
 		} else if (cr.equals(NS.TIME_SPECIFICITY)) {
-			 return computeTimeSpecificity(model, context);
+			return computeTimeSpecificity(model, context);
 		}
 
 		return 0;
@@ -243,7 +244,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 	private double computeTimeCoherency(ModelReference model, ResolutionScope context) {
 		return computeTemporalCriteria(model, context)[2];
 	}
-	
+
 	private double computeSpaceSpecificity(ModelReference model, ResolutionScope context) {
 		return computeSpatialCriteria(model, context)[1];
 	}
@@ -497,7 +498,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		return idxss.get(model);
 
 	}
-	
+
 	private double[] computeSpatialCriteria(ModelReference model, ResolutionScope context) {
 		double[] ret = new double[] { -1, -1, -1 };
 		if (model.getShape() != null) {
@@ -520,12 +521,33 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 
 		double[] ret = new double[] { -1, -1, -1 };
 		ITime time = scope.getCoverage().getTime();
-		
+
 		/*
 		 * coverage: if non-grid, 100 for covered, 75 - [0-25] for partially covered, 50
 		 * - [0-25] distance if covered in infinite tail from or to a single-point
-		 * beginning or end. If grid, covered
+		 * beginning or end. If grid, covered.
 		 */
+		if (time.size() > 1) {
+
+		} else {
+
+			Range mrange = Range.create(model.getTimeStart() == -1 ? null : model.getTimeStart(),
+					model.getTimeEnd() == -1 ? null : model.getTimeEnd());
+			Range crange = Range.create(time.getStart(), time.getEnd());
+			
+			double d = mrange.exclusionOf(crange);
+
+			if (d == 1 ) {
+				ret[0] = 0;
+			} else if (d == 0) {
+				ret[0] = 100;
+			} else if (mrange.isBounded()) {
+				ret[0] = 75 - (25 - (d * 25));
+			} else {
+				ret[0] = 50 - (49 - (d * 49));
+			}
+			
+		}
 
 		/*
 		 * specificity differs by resolution type (even if generic) and is corrected by
