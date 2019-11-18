@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,7 +21,6 @@ import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
-import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,8 +34,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import net.minidev.json.JSONObject;
 
 @RestController
@@ -53,9 +48,6 @@ public class KUserController {
 	
 	@Autowired
 	KlabUserManager klabUserManager;
-	
-	@Autowired
-	private UserRepository userRepository;
 
 	@GetMapping(value= "/{id}", produces = "application/json", params="activate")
 	public ResponseEntity<?> activateResponse(@PathVariable("id") String userId, @RequestParam("activate") String tokenString) throws URISyntaxException {
@@ -165,7 +157,7 @@ public class KUserController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	@GetMapping(value = "", produces = "application/json")
 	public ResponseEntity<?> getAllUsers() {
-		List<User> users = userRepository.findAll();
+		List<User> users = klabUserManager.findAllMongoUsers();
 		JSONObject allUsersJson = new JSONObject();
 		allUsersJson.put("Users", users);
 		return ResponseEntity

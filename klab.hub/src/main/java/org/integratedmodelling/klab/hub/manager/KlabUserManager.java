@@ -263,4 +263,8 @@ public class KlabUserManager implements UserDetailsService{
 	public boolean mongUserExists(String username, String email) {
 		return userService.userExists(username, email);
 	}
+
+	public List<User> findAllMongoUsers() {
+		return userService.getAllMongoUsers();
+	}
 }
