@@ -1130,11 +1130,11 @@ public class ResourceEditor extends ViewPart {
 
 	private void swapDimension(String timeSpec) {
 		setDirty(true);
-		Geometry tgeo = Geometry.create(timeSpec);
+		Geometry tgeo = timeSpec == null ? null : Geometry.create(timeSpec);
 		if (this.geometry == null) {
 			this.geometry = tgeo;
 		} else {
-			this.geometry = this.geometry.override(tgeo);
+			this.geometry = tgeo == null ? this.geometry.without(Type.TIME) : this.geometry.override(tgeo);
 		}
 		this.geometryDefinition.setText(this.geometry.toString());
 	}

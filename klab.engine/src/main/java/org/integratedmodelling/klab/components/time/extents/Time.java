@@ -71,6 +71,9 @@ public class Time extends Extent implements ITime {
 
 		@Override
 		public double getMultiplier(ITimeInstant start, ITimeInstant end) {
+			if (start == null || end == null) {
+				return multiplier;
+			}
 			double span = end.getMilliseconds() - start.getMilliseconds();
 			return span / type.getMilliseconds();
 		}
@@ -534,15 +537,17 @@ public class Time extends Extent implements ITime {
 		String unit = dimension.getParameters().get(Geometry.PARAMETER_TIME_SCOPE_UNIT, String.class);
 		Long locator = dimension.getParameters().get(Geometry.PARAMETER_TIME_LOCATOR, Long.class);
 		Long tstep = dimension.getParameters().get(Geometry.PARAMETER_TIME_GRIDRESOLUTION, Long.class);
+		Long tstart = dimension.getParameters().get(Geometry.PARAMETER_TIME_START, Long.class);
+		Long tend = dimension.getParameters().get(Geometry.PARAMETER_TIME_END, Long.class);
 
-		ITime.Type type = representation == null ? null : ITime.Type.valueOf(representation);
+		ITime.Type type = representation == null ? null : ITime.Type.valueOf(representation.toUpperCase());
 
 		if (type == ITime.Type.INITIALIZATION) {
 			return initialization(null);
 		}
 
-		TimeInstant start = null;
-		TimeInstant end = null;
+		TimeInstant start = tstart == null ? null : new TimeInstant(tstart);
+		TimeInstant end = tend == null ? null : new TimeInstant(tend);
 		if (period != null) {
 			start = new TimeInstant(period[0]);
 			end = new TimeInstant(period[1]);

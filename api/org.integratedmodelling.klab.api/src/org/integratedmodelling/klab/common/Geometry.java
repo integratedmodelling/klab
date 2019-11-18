@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.common;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -329,8 +330,18 @@ public class Geometry implements IGeometry {
 			return "*";
 		}
 
+		// put time first
+		List<Dimension> dims = new ArrayList<>(dimensions);
+		dims.sort(new Comparator<Dimension>() {
+
+			@Override
+			public int compare(Dimension o1, Dimension o2) {
+				return o1.getType() == Type.TIME ? -1 : 0;
+			}
+		});
+		
 		String ret = granularity == Granularity.MULTIPLE ? "#" : "";
-		for (Dimension dim : dimensions) {
+		for (Dimension dim : dims) {
 			ret += dim.getType() == Type.SPACE ? (dim.isGeneric() ? "\u03c3" : (dim.isRegular() ? "S" : "s"))
 					: (dim.getType() == Type.TIME ? (dim.isGeneric() ? "\u03c4" : (dim.isRegular() ? "T" : "t"))
 							: /* TODO others */ "");
