@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.klab.hub.exception.OAuth2AuthenticationProcessingException;
+import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.models.AuthProvider;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.Role;
@@ -28,7 +29,7 @@ import org.integratedmodelling.klab.hub.models.User.AccountStatus;
 public class OAuth2UserService extends DefaultOAuth2UserService {
 	
 	@Autowired
-	private KlabUserDetailsService klabUserDetailsService;
+	private KlabUserManager klabUserManager;
 	
     @Autowired
     protected ObjectMapper objectMapper;
@@ -53,7 +54,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         //lets check to see if the user exists in our database, we may have a problem with duplicated email addresses
         //how can we respond to an email check for example when an engine and a user are both using the same email address? who do I match?
         //We need to indicate where this verification comes from, ldap, google, or whatever.  
-        Optional<User> userOptional = Optional.ofNullable(klabUserDetailsService.loadUserByUsername(oAuth2UserInfo.getEmail()));
+        Optional<User> userOptional = Optional.ofNullable(klabUserManager.loadUserByUsername(oAuth2UserInfo.getEmail()));
         User user;
         if(userOptional.isPresent()) {
         	user = userOptional.get();
@@ -81,14 +82,13 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         user.setFirstName(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setUsername(oAuth2UserInfo.getEmail());
-        user.setAccountStatus(AccountStatus.active);
         user.setRoles(roles);
-        user = klabUserDetailsService.createMongoUser(user);
+        user = klabUserManager.createOAuthKlabUser(user);
         return user;
     }
     
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         existingUser.setFirstName(oAuth2UserInfo.getName());
-        return klabUserDetailsService.updateUser(existingUser);
+        return klabUserManager.updateKlabUser(existingUser);
     }
 }
