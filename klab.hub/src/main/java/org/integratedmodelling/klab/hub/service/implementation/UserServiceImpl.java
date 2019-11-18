@@ -129,4 +129,14 @@ public class UserServiceImpl implements UserService{
     	return userRepository.findAll();
     }
 
+	public boolean userExists(String username, String email) {
+		boolean usernameExist =  usernameExists(username);
+		boolean emailExist =  emailExists(email);
+		if (usernameExist | emailExist) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }

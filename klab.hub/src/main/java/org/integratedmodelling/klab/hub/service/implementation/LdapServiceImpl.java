@@ -9,14 +9,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.naming.Name;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.models.User;
-import org.integratedmodelling.klab.hub.models.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.AttributesMapper;
@@ -26,11 +22,8 @@ import org.springframework.ldap.core.support.AbstractContextMapper;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.ldap.userdetails.InetOrgPerson;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 
 import net.minidev.json.JSONObject;
 

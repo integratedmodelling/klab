@@ -92,30 +92,31 @@ public class KUserController {
 		return new ResponseEntity<>(profile,HttpStatus.CREATED);
 	}
 	
-	@GetMapping(value= "/{id}", produces = "application/json", params="requestGroups")
+	@PostMapping(value= "/{id}", produces = "application/json", params="requestGroups")
 	@PreAuthorize("authentication.getPrincipal() == #username")
 	public ResponseEntity<?> requestGroupsResponse(@PathVariable("id") String username, @RequestParam("requestGroups") List<String> groups) {
 		tokenManager.sendGroupClickbackToken(username, groups);
-		return new ResponseEntity<>("Sent email to system adminstrator requesting additional groups",HttpStatus.OK);
+		return new ResponseEntity<>("Sent email to system adminstrator requesting additional groups",HttpStatus.CREATED);
 	}
 	
-	@GetMapping(value="/{id}", produces = "application/json", params="lostPassword")
+	@PostMapping(value="/{id}", produces = "application/json", params="lostPassword")
 	public ResponseEntity<?> lostPasswordResponse(@PathVariable("id") String username) {
 		tokenManager.sendLostPasswordToken(username);
 		return new ResponseEntity<>("Sent email to user " + username + " address",HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/{id}", produces = "application/json", params="password")
+	@PostMapping(value = "/{id}", produces = "application/json", params="requestNewPassword")
 	@PreAuthorize("authentication.getPrincipal() == #username")
 	public ResponseEntity<?> requestNewPasswordResponse(@PathVariable("id") String username) {
 		ChangePasswordClickbackToken token = tokenManager.createNewPasswordClickbackToken(username);
-		JSONObject clickback = new JSONObject();	
+		JSONObject clickback = new JSONObject();
+		clickback.appendField("user", username);
 		clickback.appendField("clickback", token.getTokenString());
 		return new ResponseEntity<>(clickback, HttpStatus.CREATED);
 	}
 	
-	@PostMapping(value = "/{id}", produces = "application/json", params="password")
-	public ResponseEntity<?> handlePasswordChange(@PathVariable("id") String username, @RequestParam("password") String token,
+	@PostMapping(value = "/{id}", produces = "application/json", params="setPassword")
+	public ResponseEntity<?> handlePasswordChange(@PathVariable("id") String username, @RequestParam("setPassword") String token,
 			@RequestBody PasswordChangeRequest passwordRequest) throws IOException, URISyntaxException {
 		tokenManager.handleChangePasswordToken(username, token, passwordRequest.newPassword);
 		return new ResponseEntity<String>("Set new password",HttpStatus.CREATED);
@@ -126,24 +127,17 @@ public class KUserController {
 	public ResponseEntity<?> updateUserProfile(@PathVariable("id") String username, @RequestBody UpdateUserRequest updateRequest) {
 		klabUserManager.updateUserProfile(updateRequest.getProfile());
 		ProfileResource profile = klabUserManager.getLoggedInUserProfile().getSafeProfile();
-		return new ResponseEntity<>(profile,HttpStatus.OK);
+		return new ResponseEntity<>(profile,HttpStatus.NO_CONTENT);
 	}
 	
 	@GetMapping(value = "/{id}", produces = "application/json")
 	@PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
-	public JSONObject getUserById(@PathVariable("id") String id) {
-		Optional<User> user = userRepository.findByUsernameIgnoreCase(id);
-		if (user.isPresent()) {
-			JSONObject Response = new JSONObject();
-			Response.put("User", user.get());
-			return Response;
-		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-		}
+	public ProfileResource getUserById(@PathVariable("id") String username) {
+		return klabUserManager.getLoggedInUserProfile().getSafeProfile();
 	}
 	
 	@DeleteMapping(value= "/{id}", produces = "application/json")
-	@PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
+	@PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> deleteUser(@PathVariable("id") String username) {
 		klabUserManager.deleteUser(username);
     	JSONObject resp = new JSONObject();

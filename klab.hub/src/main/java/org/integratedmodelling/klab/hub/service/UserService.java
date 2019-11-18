@@ -21,4 +21,5 @@ public interface UserService {
     public abstract User setUserGroups(String username, Set<String> groupnames);
     public abstract User removeUserGroups(String username, Set<String> groupnames);
     public abstract List<User> getAllMongoUsers();
+	public abstract boolean userExists(String username, String email);
 }
