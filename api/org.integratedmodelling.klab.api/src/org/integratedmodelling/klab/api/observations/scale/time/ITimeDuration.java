@@ -110,5 +110,12 @@ public interface ITimeDuration extends Comparable<ITimeDuration> {
 	 * @return
 	 */
 	boolean isEmpty();
+	
+	/**
+	 * Return a re-parseable specification, either in milliseconds or (if irregular) 
+	 * as a Kim unit specification.
+	 * @return
+	 */
+	String getSpecification();
 
 }

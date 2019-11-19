@@ -1,10 +1,14 @@
 package org.integratedmodelling.klab.components.time.extents;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimDate;
 import org.integratedmodelling.kim.model.KimQuantity;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
@@ -494,8 +498,30 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IServiceCall getKimSpecification() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Object> args = new ArrayList<>();
+		if (step != null) {
+			args.add("step");
+			args.add(step.getSpecification());
+		}
+		if (start != null) {
+			args.add("start");
+			args.add(start.getSpecification());
+		}
+		if (end != null) {
+			args.add("start");
+			args.add(start.getSpecification());
+		}
+		
+		if (resolution != null) {
+			args.add("resolution");
+			args.add(resolution.getMultiplier() + "." + resolution.getType().name());
+		}
+		
+		args.add("type");
+		args.add(extentType.name());
+
+		return new KimServiceCall("time", args.toArray());
 	}
 
 	@Override

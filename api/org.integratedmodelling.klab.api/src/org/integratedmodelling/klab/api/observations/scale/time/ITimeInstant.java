@@ -44,4 +44,11 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
 	 */
 	boolean isBefore(ITimeInstant start);
 
+	/**
+	 * Return a re-parseable Kim specification.
+	 * 
+	 * @return
+	 */
+	String getSpecification();
+
 }

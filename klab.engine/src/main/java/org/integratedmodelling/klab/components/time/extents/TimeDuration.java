@@ -135,4 +135,10 @@ public class TimeDuration implements ITimeDuration {
 		return regular ? getMilliseconds() : 0;
 	}
 
+	@Override
+	public String getSpecification() {
+		// TODO Auto-generated method stub
+		return "todo";
+	}
+
 }

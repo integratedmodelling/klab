@@ -315,11 +315,11 @@ public class Range implements IValueMediator {
 	}
 
 	public double getWidth() {
-		return upperBound - lowerBound;
+		return isBounded() ? upperBound - lowerBound : Double.NaN;
 	}
 
 	public double getMidpoint() {
-		return lowerBound + (upperBound - lowerBound) / 2;
+		return isBounded() ? (lowerBound + (upperBound - lowerBound) / 2) : Double.NaN;
 	}
 
 	@Override
@@ -459,16 +459,31 @@ public class Range implements IValueMediator {
 
 	/**
 	 * Return a [0-1] double representing how much this interval excludes of the
-	 * other. Deals with infinity correctly.
+	 * other. Will compute the missing parts on each side, normalize to the extent
+	 * of the range, and add them in the output, dealing with infinity
+	 * appropriately.
 	 * 
 	 * @param other
 	 * @return
 	 */
 	public double exclusionOf(Range other) {
-		/*
-		 * Compute overlap
-		 */
-		return 0.0;
+
+		double leftExclusion = 0;
+		if (lowerBound != Double.NEGATIVE_INFINITY && lowerBound > other.lowerBound) {
+			leftExclusion = other.lowerBound - lowerBound;
+		}
+		double rightExclusion = 0;
+		if (upperBound != Double.POSITIVE_INFINITY && other.upperBound < upperBound) {
+			rightExclusion = upperBound - other.upperBound;
+		}
+
+		double size = leftExclusion + rightExclusion;
+		if (size == 0) {
+			return 0;
+		}
+
+		return leftExclusion / size + rightExclusion / size;
+
 	}
 
 	public boolean isWithin(double n) {
@@ -496,6 +511,19 @@ public class Range implements IValueMediator {
 			upperBound = d;
 			upperInfinite = false;
 		}
+	}
+
+	/**
+	 * A reference point in the interval, i.e. the midpoint if bounded, any boundary
+	 * point that is not infinity if not, and NaN if infinite.
+	 * 
+	 * @return
+	 */
+	public double getFocalPoint() {
+
+		return isBounded() ? getMidpoint()
+				: lowerBound != Double.NEGATIVE_INFINITY ? lowerBound
+						: (upperBound == Double.POSITIVE_INFINITY ? Double.NaN : upperBound);
 	}
 
 }

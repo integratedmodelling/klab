@@ -796,7 +796,17 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public IObservable getSemantics(String identifier) {
-		return semantics.get(identifier);
+		IObservable ret = semantics.get(identifier);
+		if (ret == null) {
+			// this catches partitions
+			for (IObservable obs : semantics.values()) {
+				if (identifier.equals(obs.getName())) {
+					ret = obs;
+					break;
+				}
+			}
+		}
+		return ret;
 	}
 
 	@Override

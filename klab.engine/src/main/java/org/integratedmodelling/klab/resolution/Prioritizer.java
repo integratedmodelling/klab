@@ -522,6 +522,10 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		double[] ret = new double[] { -1, -1, -1 };
 		ITime time = scope.getCoverage().getTime();
 
+		Range mrange = Range.create(model.getTimeStart() == -1 ? null : model.getTimeStart(),
+				model.getTimeEnd() == -1 ? null : model.getTimeEnd());
+		Range crange = Range.create(time.getStart(), time.getEnd());
+
 		/*
 		 * coverage: if non-grid, 100 for covered, 75 - [0-25] for partially covered, 50
 		 * - [0-25] distance if covered in infinite tail from or to a single-point
@@ -531,13 +535,9 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 
 		} else {
 
-			Range mrange = Range.create(model.getTimeStart() == -1 ? null : model.getTimeStart(),
-					model.getTimeEnd() == -1 ? null : model.getTimeEnd());
-			Range crange = Range.create(time.getStart(), time.getEnd());
-			
 			double d = mrange.exclusionOf(crange);
 
-			if (d == 1 ) {
+			if (d == 1) {
 				ret[0] = 0;
 			} else if (d == 0) {
 				ret[0] = 100;
@@ -546,13 +546,54 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 			} else {
 				ret[0] = 50 - (49 - (d * 49));
 			}
-			
+
 		}
 
 		/*
 		 * specificity differs by resolution type (even if generic) and is corrected by
-		 * the order of magnitude of the nearest multiplier.
+		 * the order of magnitude of the nearest multiplier. If the context is
+		 * universal, return 50.
 		 */
+
+		if (crange.isBounded()) {
+
+			double focalPointModel = mrange.getFocalPoint();
+			double focalPointContext = crange.getFocalPoint();
+
+			if (time.size() > 1) {
+
+				if (Double.isNaN(focalPointModel)) {
+					ret[1] = 0;
+				} else {
+					if (mrange.contains(crange)) {
+						ret[1] = 100;
+					} else {
+						ret[1] = 100 * (mrange.getWidth()/crange.getWidth());
+						if (ret[1] > 100) {
+							ret[1] = 100;
+						}
+					}
+				}
+				
+			} else if (Double.isNaN(focalPointModel)) {
+				ret[1] = 25;
+			} else {
+
+				double distanceFactor = (focalPointModel > focalPointContext) ? (focalPointModel - focalPointContext)
+						: (focalPointContext - focalPointModel);
+				distanceFactor /= (time.getResolution().getType().getMilliseconds()
+						* time.getResolution().getMultiplier());
+
+				if (distanceFactor > 50) {
+					distanceFactor = 50;
+				}
+
+				ret[1] = 100 - 50 * (distanceFactor / 50);
+			}
+
+		} else {
+			ret[1] = 50;
+		}
 
 		/*
 		 * resolution: if non-grid, 100 for identical, 75 - ([0-25] distance factor) for
