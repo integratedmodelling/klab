@@ -205,6 +205,29 @@ public class Model extends KimObject implements IModel {
 			}
 		}
 
+		if (model.isResourceMerger()) {
+			// turn all resources into a merged one, after validation
+			List<IResource> ress = new ArrayList<>();
+			for (IContextualizable r : resources) {
+				String urn = ((ComputableResource)r).getUrn();
+				if (urn == null) {
+					monitor.error("Cannot use anything but URNs in a 'merging' clause", getStatement());
+					setErrors(true);
+				}
+				ress.add(Resources.INSTANCE.resolveResource(urn));
+			}
+			try {
+				this.resources.clear();
+				IResource resource = Resources.INSTANCE.createMergedTemporalResource(ress);
+				if (resource != null) {
+					this.resources.add(new ComputableResource(resource.getUrn(), Mode.RESOLUTION));
+				}
+			} catch (Throwable e) {
+				monitor.error("Model has resource validation errors", getStatement());
+				setErrors(true);
+			}
+		}
+		
 		/*
 		 * all resources after 'using' or further classification/lookup transformations
 		 */
