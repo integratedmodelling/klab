@@ -26,6 +26,9 @@ public class EmailConfig {
     @Value("${email.replyable.general.emailaddress}")
     private String EMAIL_REPLYABLE_GENERAL;
 
+    @Value("${email.replyable.support.emailaddress}")
+    private String EMAIL_REPLYABLE_SUPPORT;
+    
     @Value("${email.replyable.admin.emailaddress}")
     private String EMAIL_REPLYABLE_ADMIN;
 
@@ -50,12 +53,21 @@ public class EmailConfig {
         return EMAIL_REPLYABLE_GENERAL;
     }
 
+    public String replyableSupportEmailAddress() {
+        return EMAIL_REPLYABLE_SUPPORT;
+    }
+    
     public String replyableAdminEmailAddress() {
         return EMAIL_REPLYABLE_ADMIN;
     }
 
     public String noreplyEmailAddress() {
         return EMAIL_NOREPLY;
+    }
+    
+    public String[] getAuthorizedEmailAddresses() {
+    	String[] addresses = { replyableGeneralEmailAddress(), replyableSupportEmailAddress(), replyableAdminEmailAddress(), noreplyEmailAddress() };
+    	return addresses;
     }
 
 }

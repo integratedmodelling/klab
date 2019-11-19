@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.models.EmailTemplate;
 import org.integratedmodelling.klab.hub.models.User;
@@ -38,10 +39,18 @@ public class EmailTemplatesController {
 	
 	@Autowired
 	KlabUserManager klabUserManager;
+	
+	@Autowired
+    private EmailConfig emailConfig;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<Object> getEmailTemplates() {
 		return new ResponseEntity<>(emailTemplateService.getEmailTemplates(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "", method = RequestMethod.GET, params="senders")
+	public ResponseEntity<Object> getAuthorizedSenders() {
+		return new ResponseEntity<>(emailConfig.getAuthorizedEmailAddresses(), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "", method = RequestMethod.GET, params="names")

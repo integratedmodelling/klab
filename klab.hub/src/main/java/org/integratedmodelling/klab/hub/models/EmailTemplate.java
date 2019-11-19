@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.hub.models;
 import javax.persistence.GeneratedValue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
