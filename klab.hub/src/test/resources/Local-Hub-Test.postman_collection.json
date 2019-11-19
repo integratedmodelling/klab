@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a1cb3ce7-416f-44e7-b8ee-54742c580caa",
+		"_postman_id": "6218e270-b3ff-4ab2-aa45-10241a2be659",
 		"name": "Local Hub Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -33,7 +33,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"system\",\n\t\"email\": \"test.bc3@integratedmodelling.org\"\n}"
+					"raw": "{\n\t\"username\": \"system\",\n\t\"email\": \"foot-around-26@inboxkitten.com\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8284/hub/signup",
@@ -78,7 +78,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"system\",\n\t\"email\": \"test.bc@integratedmodelling.org\"\n}"
+					"raw": "{\n\t\"username\": \"system\",\n\t\"email\": \"foot-around-26@inboxkitten.com\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8284/hub/signup",
@@ -150,7 +150,10 @@
 						"exec": [
 							"pm.test(\"Status code is 201\", function () {",
 							"    pm.response.to.have.status(201);",
-							"});"
+							"});",
+							"",
+							"",
+							"setTimeout(function(){ }, 10000);"
 						],
 						"type": "text/javascript"
 					}
@@ -160,7 +163,8 @@
 					"script": {
 						"id": "a89127c4-97c3-47cd-b9fa-1200b98f52af",
 						"exec": [
-							"pm.globals.set(\"mailslurp_Id\", \"13f814c3-4e69-4eb3-88a5-acd899ba88ff\");"
+							"pm.globals.set(\"User_Name\", \"foot-around-26\");",
+							"pm.globals.set(\"User_Email\", \"foot-around-26@inboxkitten.com\");"
 						],
 						"type": "text/javascript"
 					}
@@ -178,7 +182,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"testUser\",\n\t\"email\": \"{{mailslurp_Id}}@mailslurp.com\"\n}"
+					"raw": "{\n\t\"username\": \"{{User_Name}}\",\n\t\"email\": \"{{User_Email}}\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8284/hub/signup",
@@ -196,7 +200,7 @@
 			"response": []
 		},
 		{
-			"name": "Get User Activation Token from MailSlurp",
+			"name": "Get Recent Email Token",
 			"event": [
 				{
 					"listen": "test",
@@ -208,7 +212,88 @@
 							"});",
 							"",
 							"pm.test(\"Get Our tokens\", function () {",
-							"    const body = pm.response.json().body;",
+							"    const msg = pm.response.json()[0];",
+							"    const msgSplit = msg.storage.url.split(\"//\")[1];",
+							"    const path = msgSplit.split(\".\")[0]",
+							"    pm.globals.set(\"Email_Key\", msg.storage.key);",
+							"    pm.globals.set(\"URL_Path\", path);",
+							"    //const paramsString = matches.split('?')[1];",
+							"    // const eachParamArray = paramsString.split('&');",
+							"    // var params = {};",
+							"    // eachParamArray.forEach((param) => {",
+							"    //     const key = param.split('=')[0];",
+							"    //     const value = param.split('=')[1];",
+							"    //     Object.assign(params, {[key]: value});",
+							"    // });",
+							"    // console.log(params);",
+							"    // pm.globals.set(\"Activate_Token_1\", params.token);",
+							"    // pm.globals.set(\"Activate_User\", params.user);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0aa4f1b6-25fa-4934-8f5a-f8488f241927",
+						"exec": [
+							"//setTimeout(function(){}, 10000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "4169695003fec6d7440466c1fb03c4e6ed740dead09c8853d75cb0a141997b91",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://inboxkitten.com/api/v1/mail/list?recipient={{User_Name}}",
+					"protocol": "https",
+					"host": [
+						"inboxkitten",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"mail",
+						"list"
+					],
+					"query": [
+						{
+							"key": "recipient",
+							"value": "{{User_Name}}"
+						}
+					]
+				},
+				"description": "Go get the email and the token."
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Activation Token from Mail Kitten",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4e909a7c-0e15-4557-884e-f026dd48a144",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Get Our tokens\", function () {",
+							"    const body = pm.response.text();",
 							"    var matches = body.match(/\\bhttps?:\\/\\/\\S+/gi)[0];",
 							"    const paramsString = matches.split('?')[1];",
 							"    const eachParamArray = paramsString.split('&');",
@@ -220,9 +305,18 @@
 							"    });",
 							"    console.log(params);",
 							"    pm.globals.set(\"Activate_Token_1\", params.token);",
-							"    pm.globals.set(\"Activate_User\", params.user);",
 							"});",
 							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "d6aabdd3-7c1d-4c27-a73b-a42745c5c4b8",
+						"exec": [
 							""
 						],
 						"type": "text/javascript"
@@ -239,71 +333,22 @@
 					}
 				],
 				"url": {
-					"raw": "https://api.mailslurp.com/waitForLatestEmail?inboxId=13f814c3-4e69-4eb3-88a5-acd899ba88ff",
+					"raw": "https://inboxkitten.com/api/v1/mail/getHtml?mailKey={{URL_Path}}-{{Email_Key}}",
 					"protocol": "https",
 					"host": [
-						"api",
-						"mailslurp",
+						"inboxkitten",
 						"com"
 					],
 					"path": [
-						"",
-						"waitForLatestEmail"
-					],
-					"query": [
-						{
-							"key": "inboxId",
-							"value": "13f814c3-4e69-4eb3-88a5-acd899ba88ff"
-						}
-					]
-				},
-				"description": "Go get the email and the token."
-			},
-			"response": []
-		},
-		{
-			"name": "Clean out MailSlurp Inbox",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "4e909a7c-0e15-4557-884e-f026dd48a144",
-						"exec": [
-							"pm.test(\"response is ok\", function () {",
-							"    pm.response.to.have.status(204);",
-							"});",
-							"",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "x-api-key",
-						"type": "text",
-						"value": "4169695003fec6d7440466c1fb03c4e6ed740dead09c8853d75cb0a141997b91"
-					}
-				],
-				"url": {
-					"raw": "https://api.mailslurp.com/emptyInbox?inboxId=13f814c3-4e69-4eb3-88a5-acd899ba88ff",
-					"protocol": "https",
-					"host": [
 						"api",
-						"mailslurp",
-						"com"
-					],
-					"path": [
-						"",
-						"emptyInbox"
+						"v1",
+						"mail",
+						"getHtml"
 					],
 					"query": [
 						{
-							"key": "inboxId",
-							"value": "13f814c3-4e69-4eb3-88a5-acd899ba88ff"
+							"key": "mailKey",
+							"value": "{{URL_Path}}-{{Email_Key}}"
 						}
 					]
 				},
@@ -319,7 +364,17 @@
 					"script": {
 						"id": "ea0e735e-2d6d-4410-817a-f58bcf40ee82",
 						"exec": [
-							"console.log(pm.globals.get(\"Activate_User\"));"
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "c332301d-baf6-4685-96df-c117646e21f7",
+						"exec": [
+							"setTimeout(function(){ }, 10000);"
 						],
 						"type": "text/javascript"
 					}
@@ -337,7 +392,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"{{Activate_User}}\",\n\t\"email\": \"{{mailslurp_Id}}@mailslurp.com\"\n}"
+					"raw": "{\n\t\"username\": \"{{User_Name}}\",\n\t\"email\": \"{{User_Email}}\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8284/hub/signup",
@@ -355,7 +410,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Second User Activation Token from MailSlurp",
+			"name": "Get Recent Email Token",
 			"event": [
 				{
 					"listen": "test",
@@ -367,7 +422,96 @@
 							"});",
 							"",
 							"pm.test(\"Get Our tokens\", function () {",
-							"    const body = pm.response.json().body;",
+							"    const msg = pm.response.json()[0];",
+							"    const msgSplit = msg.storage.url.split(\"//\")[1];",
+							"    const path = msgSplit.split(\".\")[0]",
+							"    pm.globals.set(\"Email_Key\", msg.storage.key);",
+							"    pm.globals.set(\"URL_Path\", path);",
+							"    // const body = pm.response.json();",
+							"    // var cutOff = Math.round((new Date() / 1000) - 20000);",
+							"    // var messageTimestamps = [];",
+							"    // body.forEach( function (o) {",
+							"    //     messageTimestamps.push((Math.round(o.timestamp)) > cutOff);",
+							"    // })",
+							"    // var msg = body[messageTimestamps.indexOf(true)];",
+							"    // pm.globals.set(\"Email_Key\", msg.storage.key);",
+							"    //const paramsString = matches.split('?')[1];",
+							"    // const eachParamArray = paramsString.split('&');",
+							"    // var params = {};",
+							"    // eachParamArray.forEach((param) => {",
+							"    //     const key = param.split('=')[0];",
+							"    //     const value = param.split('=')[1];",
+							"    //     Object.assign(params, {[key]: value});",
+							"    // });",
+							"    // console.log(params);",
+							"    // pm.globals.set(\"Activate_Token_1\", params.token);",
+							"    // pm.globals.set(\"Activate_User\", params.user);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0aa4f1b6-25fa-4934-8f5a-f8488f241927",
+						"exec": [
+							"setTimeout(function(){ }, 10000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "4169695003fec6d7440466c1fb03c4e6ed740dead09c8853d75cb0a141997b91",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://inboxkitten.com/api/v1/mail/list?recipient={{User_Name}}",
+					"protocol": "https",
+					"host": [
+						"inboxkitten",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"mail",
+						"list"
+					],
+					"query": [
+						{
+							"key": "recipient",
+							"value": "{{User_Name}}"
+						}
+					]
+				},
+				"description": "Go get the email and the token."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Second User Activation Token from Mail Kitten",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4e909a7c-0e15-4557-884e-f026dd48a144",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Get Our tokens\", function () {",
+							"    const body = pm.response.text();",
 							"    var matches = body.match(/\\bhttps?:\\/\\/\\S+/gi)[0];",
 							"    const paramsString = matches.split('?')[1];",
 							"    const eachParamArray = paramsString.split('&');",
@@ -379,9 +523,7 @@
 							"    });",
 							"    console.log(params);",
 							"    pm.globals.set(\"Activate_Token_2\", params.token);",
-							"});",
-							"",
-							""
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -397,72 +539,22 @@
 					}
 				],
 				"url": {
-					"raw": "https://api.mailslurp.com/waitForLatestEmail?inboxId=13f814c3-4e69-4eb3-88a5-acd899ba88ff",
+					"raw": "https://inboxkitten.com/api/v1/mail/getHtml?mailKey={{URL_Path}}-{{Email_Key}}",
 					"protocol": "https",
 					"host": [
-						"api",
-						"mailslurp",
+						"inboxkitten",
 						"com"
 					],
 					"path": [
-						"",
-						"waitForLatestEmail"
-					],
-					"query": [
-						{
-							"key": "inboxId",
-							"value": "13f814c3-4e69-4eb3-88a5-acd899ba88ff"
-						}
-					]
-				},
-				"description": "Go get the email and the token."
-			},
-			"response": []
-		},
-		{
-			"name": "Clean out MailSlurp Inbox Copy",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "4e909a7c-0e15-4557-884e-f026dd48a144",
-						"exec": [
-							"pm.test(\"response is ok\", function () {",
-							"    pm.response.to.have.status(204);",
-							"});",
-							"",
-							"",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "x-api-key",
-						"value": "4169695003fec6d7440466c1fb03c4e6ed740dead09c8853d75cb0a141997b91",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "https://api.mailslurp.com/emptyInbox?inboxId=13f814c3-4e69-4eb3-88a5-acd899ba88ff",
-					"protocol": "https",
-					"host": [
 						"api",
-						"mailslurp",
-						"com"
-					],
-					"path": [
-						"",
-						"emptyInbox"
+						"v1",
+						"mail",
+						"getHtml"
 					],
 					"query": [
 						{
-							"key": "inboxId",
-							"value": "13f814c3-4e69-4eb3-88a5-acd899ba88ff"
+							"key": "mailKey",
+							"value": "{{URL_Path}}-{{Email_Key}}"
 						}
 					]
 				},
@@ -476,7 +568,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8284/hub/api/users/{{Activate_User}}?activate={{Activate_Token_1}}",
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}?activate={{Activate_Token_1}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -486,7 +578,7 @@
 						"hub",
 						"api",
 						"users",
-						"{{Activate_User}}"
+						"{{User_Name}}"
 					],
 					"query": [
 						{
@@ -523,7 +615,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8284/hub/api/users/{{Activate_User}}?activate={{Activate_Token_2}}",
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}?activate={{Activate_Token_2}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -533,7 +625,7 @@
 						"hub",
 						"api",
 						"users",
-						"{{Activate_User}}"
+						"{{User_Name}}"
 					],
 					"query": [
 						{
@@ -573,7 +665,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"{{Activate_User}}\",\n\t\"email\": \"{{mailslurp_Id}}@mailslurp.com\"\n}"
+					"raw": "{\n\t\"username\": \"{{User_Name}}\",\n\t\"email\": \"{{User_Email}}\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8284/hub/signup",
@@ -615,7 +707,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8284/hub/api/users/{{Activate_User}}?activate={{Activate_Token_2}}",
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}?activate={{Activate_Token_2}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -625,7 +717,7 @@
 						"hub",
 						"api",
 						"users",
-						"{{Activate_User}}"
+						"{{User_Name}}"
 					],
 					"query": [
 						{
@@ -668,7 +760,7 @@
 					"raw": "{\n\t\"newPassword\": \"testPassword\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8284/hub/api/users/{{Activate_User}}?password={{New_Password_Token_2}}",
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}?setPassword={{New_Password_Token_2}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -678,11 +770,11 @@
 						"hub",
 						"api",
 						"users",
-						"{{Activate_User}}"
+						"{{User_Name}}"
 					],
 					"query": [
 						{
-							"key": "password",
+							"key": "setPassword",
 							"value": "{{New_Password_Token_2}}"
 						}
 					]
@@ -698,8 +790,8 @@
 					"script": {
 						"id": "70334fcd-99d5-4bf0-ae5f-78e6c49ffb9c",
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(400);",
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -721,7 +813,7 @@
 					"raw": "{\n\t\"newPassword\": \"testPassword\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8284/hub/api/users/{{Activate_User}}?password={{New_Password_Token_2}}",
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}?password={{New_Password_Token_2}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -731,7 +823,7 @@
 						"hub",
 						"api",
 						"users",
-						"{{Activate_User}}"
+						"{{User_Name}}"
 					],
 					"query": [
 						{
@@ -771,12 +863,51 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"{{Activate_User}}\",\n\t\"password\": \"testpass\" \n\t\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
+					"raw": "{\n\t\"username\": \"{{User_Name}}\",\n\t\"password\": \"testpass\" \n\t\n}"
+				},
+				"url": {
+					"raw": "localhost:8284/hub/signin",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login New User, Bad Username",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fa6df08c-57a5-4e00-9673-8be6958e7418",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
 					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"{{User_Name}}1\",\n\t\"password\": \"testpass\" \n\t\n}"
 				},
 				"url": {
 					"raw": "localhost:8284/hub/signin",
@@ -816,7 +947,8 @@
 							"",
 							"pm.test(\"Get api_key\", function () {",
 							"    var token = pm.response.json().Authentication.tokenString;",
-							"    pm.globals.set(\"api_key\", \"token\");",
+							"    console.log(token);",
+							"    pm.globals.set(\"api_key\", token);",
 							"});",
 							""
 						],
@@ -836,12 +968,1045 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"{{Activate_User}}\",\n\t\"password\": \"testPassword\" \n\t\n}",
+					"raw": "{\n\t\"username\": \"{{User_Name}}\",\n\t\"password\": \"testPassword\" \n\t\n}"
+				},
+				"url": {
+					"raw": "localhost:8284/hub/signin",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get New User by Username",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d5840d-2734-47c1-807f-1204c132ef9c",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authentication",
+						"type": "text",
+						"value": "{{api_key}}"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"users",
+						"{{User_Name}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get New User me endpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d5840d-2734-47c1-807f-1204c132ef9c",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authentication",
+						"type": "text",
+						"value": "{{api_key}}"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8284/hub/api/users/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New User Get Group names",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d5840d-2734-47c1-807f-1204c132ef9c",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    var groups = pm.response.json().Groups;",
+							"    console.log(groups)",
+							"    pm.globals.set(\"Groups\", groups);",
+							"    pm.expect(pm.response.text()).to.include(\"Groups\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authentication",
+						"type": "text",
+						"value": "{{api_key}}"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8284/hub/api/groups?names",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"groups"
+					],
+					"query": [
+						{
+							"key": "names",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New User Get Raw Groups (Forbidden)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d5840d-2734-47c1-807f-1204c132ef9c",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authentication",
+						"type": "text",
+						"value": "{{api_key}}"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8284/hub/api/groups",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"groups"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New User Request All Groups",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d5840d-2734-47c1-807f-1204c132ef9c",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8a0583bb-c490-42da-83ac-cf7caca5adaf",
+						"exec": [
+							"setTimeout(function(){}, 10000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authentication",
+						"type": "text",
+						"value": "{{api_key}}"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}?requestGroups={{Groups}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"users",
+						"{{User_Name}}"
+					],
+					"query": [
+						{
+							"key": "requestGroups",
+							"value": "{{Groups}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Recent Email Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4e909a7c-0e15-4557-884e-f026dd48a144",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Get Our tokens\", function () {",
+							"    const msg = pm.response.json()[0];",
+							"    const msgSplit = msg.storage.url.split(\"//\")[1];",
+							"    const path = msgSplit.split(\".\")[0]",
+							"    pm.globals.set(\"Email_Key\", msg.storage.key);",
+							"    pm.globals.set(\"URL_Path\", path);",
+							"    //const paramsString = matches.split('?')[1];",
+							"    // const eachParamArray = paramsString.split('&');",
+							"    // var params = {};",
+							"    // eachParamArray.forEach((param) => {",
+							"    //     const key = param.split('=')[0];",
+							"    //     const value = param.split('=')[1];",
+							"    //     Object.assign(params, {[key]: value});",
+							"    // });",
+							"    // console.log(params);",
+							"    // pm.globals.set(\"Activate_Token_1\", params.token);",
+							"    // pm.globals.set(\"Activate_User\", params.user);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0aa4f1b6-25fa-4934-8f5a-f8488f241927",
+						"exec": [
+							"setTimeout(function(){}, 15000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "4169695003fec6d7440466c1fb03c4e6ed740dead09c8853d75cb0a141997b91",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://inboxkitten.com/api/v1/mail/list?recipient={{User_Name}}",
+					"protocol": "https",
+					"host": [
+						"inboxkitten",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"mail",
+						"list"
+					],
+					"query": [
+						{
+							"key": "recipient",
+							"value": "{{User_Name}}"
+						}
+					]
+				},
+				"description": "Go get the email and the token."
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Groups Request from Mail Kitten",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4e909a7c-0e15-4557-884e-f026dd48a144",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Get Our tokens\", function () {",
+							"    const body = pm.response.text().body;",
+							"    var matches = body.match(/\\bhttps?:\\/\\/\\S+/gi)[0];",
+							"    const paramsString = matches.split('?')[1];",
+							"    const eachParamArray = paramsString.split('&');",
+							"    var params = {};",
+							"    eachParamArray.forEach((param) => {",
+							"        const key = param.split('=')[0];",
+							"        const value = param.split('=')[1];",
+							"        Object.assign(params, {[key]: value});",
+							"    });",
+							"    console.log(params);",
+							"    pm.globals.set(\"Groups_Request_Token\", params.token);",
+							"    pm.globals.set(\"Groups_Request_Groups\", params.addGroups);",
+							"    pm.globals.set(\"Groups_Request_User\", params.user);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "4169695003fec6d7440466c1fb03c4e6ed740dead09c8853d75cb0a141997b91"
+					}
+				],
+				"url": {
+					"raw": "https://inboxkitten.com/api/v1/mail/getHtml?mailKey={{URL_Path}}-{{Email_Key}}",
+					"protocol": "https",
+					"host": [
+						"inboxkitten",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"mail",
+						"getHtml"
+					],
+					"query": [
+						{
+							"key": "mailKey",
+							"value": "{{URL_Path}}-{{Email_Key}}"
+						}
+					]
+				},
+				"description": "Go get the email and the token."
+			},
+			"response": []
+		},
+		{
+			"name": "System set new groups with token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "674bf2eb-5f62-47c6-96c5-7e37e96ea1d8",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8284/hub/api/users/{{Groups_Request_User}}?addGroups={{Groups_Request_Groups}}&groups={{Groups_Request_Token}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"users",
+						"{{Groups_Request_User}}"
+					],
+					"query": [
+						{
+							"key": "addGroups",
+							"value": "{{Groups_Request_Groups}}"
+						},
+						{
+							"key": "groups",
+							"value": "{{Groups_Request_Token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Resend System set new groups with token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4af92e2d-30f2-4cb4-90be-08fc8051c272",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8284/hub/api/users/{{Groups_Request_User}}?addGroups={{Groups_Request_Groups}}&groups={{Groups_Request_Token}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"users",
+						"{{Groups_Request_User}}"
+					],
+					"query": [
+						{
+							"key": "addGroups",
+							"value": "{{Groups_Request_Groups}}"
+						},
+						{
+							"key": "groups",
+							"value": "{{Groups_Request_Token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change New User Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d5840d-2734-47c1-807f-1204c132ef9c",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"clickback\");",
+							"    var token = pm.response.json().clickback;",
+							"    pm.globals.set(\"New_Password_Token\", token);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authentication",
+						"type": "text",
+						"value": "{{api_key}}"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}?requestNewPassword",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"users",
+						"{{User_Name}}"
+					],
+					"query": [
+						{
+							"key": "requestNewPassword",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send New User Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d5840d-2734-47c1-807f-1204c132ef9c",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authentication",
+						"type": "text",
+						"value": "{{api_key}}"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"newPassword\": \"testPassword2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
+				},
+				"url": {
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}?setPassword={{New_Password_Token}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"users",
+						"{{User_Name}}"
+					],
+					"query": [
+						{
+							"key": "setPassword",
+							"value": "{{New_Password_Token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login New User with New Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fa6df08c-57a5-4e00-9673-8be6958e7418",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches strings\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Profile\");",
+							"    pm.expect(pm.response.text()).to.include(\"Authentication\");",
+							"    pm.expect(pm.response.text()).to.include(\"tokenString\");",
+							"});",
+							"pm.test(\"Test Account Status\", function () {",
+							"    var status = pm.response.json().Profile.accountStatus;",
+							"    pm.expect(status).to.eql(\"active\");",
+							"});",
+							"",
+							"pm.test(\"Get api_key\", function () {",
+							"    var token = pm.response.json().Authentication.tokenString;",
+							"    console.log(token);",
+							"    pm.globals.set(\"api_key\", token);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"{{User_Name}}\",\n\t\"password\": \"testPassword2\" \n\t\n}"
+				},
+				"url": {
+					"raw": "localhost:8284/hub/signin",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New User Lost Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d5840d-2734-47c1-807f-1204c132ef9c",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Sent email to user\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authentication",
+						"type": "text",
+						"value": "{{api_key}}"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8284/hub/api/users/{{User_Name}}?lostPassword",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"users",
+						"{{User_Name}}"
+					],
+					"query": [
+						{
+							"key": "lostPassword",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Recent Email Token Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4e909a7c-0e15-4557-884e-f026dd48a144",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Get Our tokens\", function () {",
+							"    const msg = pm.response.json()[0];",
+							"    const msgSplit = msg.storage.url.split(\"//\")[1];",
+							"    const path = msgSplit.split(\".\")[0]",
+							"    pm.globals.set(\"Email_Key\", msg.storage.key);",
+							"    pm.globals.set(\"URL_Path\", path);",
+							"    //const paramsString = matches.split('?')[1];",
+							"    // const eachParamArray = paramsString.split('&');",
+							"    // var params = {};",
+							"    // eachParamArray.forEach((param) => {",
+							"    //     const key = param.split('=')[0];",
+							"    //     const value = param.split('=')[1];",
+							"    //     Object.assign(params, {[key]: value});",
+							"    // });",
+							"    // console.log(params);",
+							"    // pm.globals.set(\"Activate_Token_1\", params.token);",
+							"    // pm.globals.set(\"Activate_User\", params.user);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0aa4f1b6-25fa-4934-8f5a-f8488f241927",
+						"exec": [
+							"setTimeout(function(){}, 10000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "4169695003fec6d7440466c1fb03c4e6ed740dead09c8853d75cb0a141997b91",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://inboxkitten.com/api/v1/mail/list?recipient={{User_Name}}",
+					"protocol": "https",
+					"host": [
+						"inboxkitten",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"mail",
+						"list"
+					],
+					"query": [
+						{
+							"key": "recipient",
+							"value": "{{User_Name}}"
+						}
+					]
+				},
+				"description": "Go get the email and the token."
+			},
+			"response": []
+		},
+		{
+			"name": "Get New User Lost Password Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4e909a7c-0e15-4557-884e-f026dd48a144",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Get Our tokens\", function () {",
+							"    const body = pm.response.text();",
+							"    var matches = body.match(/\\bhttps?:\\/\\/\\S+/gi)[0];",
+							"    const paramsString = matches.split('?')[1];",
+							"    const eachParamArray = paramsString.split('&');",
+							"    var params = {};",
+							"    eachParamArray.forEach((param) => {",
+							"        const key = param.split('=')[0];",
+							"        const value = param.split('=')[1];",
+							"        Object.assign(params, {[key]: value});",
+							"    });",
+							"    console.log(params);",
+							"    pm.globals.set(\"Lost_Password_Token\", params.token);",
+							"    pm.globals.set(\"Lost_Password_User\", params.user);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"type": "text",
+						"value": "4169695003fec6d7440466c1fb03c4e6ed740dead09c8853d75cb0a141997b91"
+					}
+				],
+				"url": {
+					"raw": "https://inboxkitten.com/api/v1/mail/getHtml?mailKey={{URL_Path}}-{{Email_Key}}",
+					"protocol": "https",
+					"host": [
+						"inboxkitten",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"mail",
+						"getHtml"
+					],
+					"query": [
+						{
+							"key": "mailKey",
+							"value": "{{URL_Path}}-{{Email_Key}}"
+						}
+					]
+				},
+				"description": "Go get the email and the token."
+			},
+			"response": []
+		},
+		{
+			"name": "Send Lost Password Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d5840d-2734-47c1-807f-1204c132ef9c",
+						"exec": [
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authentication",
+						"type": "text",
+						"value": "{{api_key}}"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"newPassword\": \"testPassword3\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8284/hub/api/users/{{Lost_Password_User}}?setPassword={{Lost_Password_Token}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8284",
+					"path": [
+						"hub",
+						"api",
+						"users",
+						"{{Lost_Password_User}}"
+					],
+					"query": [
+						{
+							"key": "setPassword",
+							"value": "{{Lost_Password_Token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login New User with New Password 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fa6df08c-57a5-4e00-9673-8be6958e7418",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches strings\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Profile\");",
+							"    pm.expect(pm.response.text()).to.include(\"Authentication\");",
+							"    pm.expect(pm.response.text()).to.include(\"tokenString\");",
+							"});",
+							"pm.test(\"Test Account Status\", function () {",
+							"    var status = pm.response.json().Profile.accountStatus;",
+							"    pm.expect(status).to.eql(\"active\");",
+							"});",
+							"",
+							"pm.test(\"Get api_key\", function () {",
+							"    var token = pm.response.json().Authentication.tokenString;",
+							"    console.log(token);",
+							"    pm.globals.set(\"api_key\", token);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"{{Lost_Password_User}}\",\n\t\"password\": \"testPassword3\" \n\t\n}"
 				},
 				"url": {
 					"raw": "localhost:8284/hub/signin",
@@ -857,6 +2022,5 @@
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

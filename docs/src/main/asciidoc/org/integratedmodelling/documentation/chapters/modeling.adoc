@@ -56,9 +56,19 @@ URNs may also include a _version_ and _parameters_ after the first four elements
 === Learning models
 
 [#modeling-scoping]
-=== Scope
+=== Scoping
 
 If any k.LAB model could use any other k.LAB model on the network to satisfy its dependencies, and contribute its observable to any model made by any user without discrimination, it would be very difficult to ensure proper results. 
+
+Model choice:
+
+1. Scenario
+2. Private in same namespace
+3. Public in same namespace
+4. Public in parent namespace (in order of distance)
+5. Project private in same project
+6. Public local or cached
+7. Public from the network
 
 === What does the work: contextualizers
 

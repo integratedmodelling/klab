@@ -478,19 +478,19 @@ public class TimeEditor extends Composite {
 		} else {
 
 			ret += "{";
-			ret += "type=" + timeType.name().toLowerCase();
+			ret += "ttype=" + timeType.name().toLowerCase();
 			if (resolution != null) {
-				ret += ",resolution=" + resolution.name().toLowerCase();
+				ret += ",tunit=" + resolution.name().toLowerCase();
 			}
 
 			if (start != null) {
-				ret += ",start=" + start.getTime();
+				ret += ",tstart=" + start.getTime();
 			}
 			if (end != null) {
-				ret += ",end=" + end.getTime();
+				ret += ",tend=" + end.getTime();
 			}
 			if (step > 0) {
-				ret += ",step=" + step;
+				ret += ",tstep=" + step;
 			}
 
 			ret += "}";

@@ -22,6 +22,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonObservable <em>Comparison Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getTotal <em>Total</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getAveraged <em>Averaged</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ValueOperator#getSummed <em>Summed</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getValueOperator()
@@ -183,5 +185,49 @@ public interface ValueOperator extends EObject
    * @generated
    */
   void setTotal(String value);
+
+  /**
+   * Returns the value of the '<em><b>Averaged</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Averaged</em>' attribute.
+   * @see #setAveraged(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValueOperator_Averaged()
+   * @model
+   * @generated
+   */
+  String getAveraged();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ValueOperator#getAveraged <em>Averaged</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Averaged</em>' attribute.
+   * @see #getAveraged()
+   * @generated
+   */
+  void setAveraged(String value);
+
+  /**
+   * Returns the value of the '<em><b>Summed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Summed</em>' attribute.
+   * @see #setSummed(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValueOperator_Summed()
+   * @model
+   * @generated
+   */
+  String getSummed();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ValueOperator#getSummed <em>Summed</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Summed</em>' attribute.
+   * @see #getSummed()
+   * @generated
+   */
+  void setSummed(String value);
 
 } // ValueOperator

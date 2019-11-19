@@ -228,6 +228,16 @@ public class Geometry implements IGeometry {
 	public static final String PARAMETER_TIME_GRIDRESOLUTION = "tgrid";
 
 	/**
+	 * time period as a long
+	 */
+	public static final String PARAMETER_TIME_START = "tstart";
+	
+	/**
+	 * time period as a long
+	 */
+	public static final String PARAMETER_TIME_END = "tend";
+	
+	/**
 	 * Time representation: one of generic, specific, grid or real.
 	 */
 	public static final String PARAMETER_TIME_REPRESENTATION = "ttype";

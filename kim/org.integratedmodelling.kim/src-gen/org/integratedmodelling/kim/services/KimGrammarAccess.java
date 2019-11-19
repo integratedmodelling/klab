@@ -3783,14 +3783,20 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightParenthesisKeyword_0_1_3_2 = (Keyword)cGroup_0_1_3.eContents().get(2);
 		private final Assignment cTotalAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
 		private final Keyword cTotalTotalKeyword_1_0 = (Keyword)cTotalAssignment_1.eContents().get(0);
+		private final Assignment cAveragedAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
+		private final Keyword cAveragedAveragedKeyword_2_0 = (Keyword)cAveragedAssignment_2.eContents().get(0);
+		private final Assignment cSummedAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
+		private final Keyword cSummedSummedKeyword_3_0 = (Keyword)cSummedAssignment_3.eContents().get(0);
 		
 		//ValueOperator:
 		//	(modifier=VALUE_OPERATOR | downTo='down' 'to') (comparisonValue=Number | comparisonQuantity=Quantity |
-		//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')') | total='total';
+		//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')') | total='total' |
+		//	averaged='averaged' | summed='summed';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(modifier=VALUE_OPERATOR | downTo='down' 'to') (comparisonValue=Number | comparisonQuantity=Quantity |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')') | total='total'
+		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')') | total='total' |
+		//averaged='averaged' | summed='summed'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//(modifier=VALUE_OPERATOR | downTo='down' 'to') (comparisonValue=Number | comparisonQuantity=Quantity |
@@ -3860,6 +3866,18 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//'total'
 		public Keyword getTotalTotalKeyword_1_0() { return cTotalTotalKeyword_1_0; }
+		
+		//averaged='averaged'
+		public Assignment getAveragedAssignment_2() { return cAveragedAssignment_2; }
+		
+		//'averaged'
+		public Keyword getAveragedAveragedKeyword_2_0() { return cAveragedAveragedKeyword_2_0; }
+		
+		//summed='summed'
+		public Assignment getSummedAssignment_3() { return cSummedAssignment_3; }
+		
+		//'summed'
+		public Keyword getSummedSummedKeyword_3_0() { return cSummedSummedKeyword_3_0; }
 	}
 	public class AnnotatedObservableSemanticsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.AnnotatedObservableSemantics");
@@ -11225,7 +11243,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//ValueOperator:
 	//	(modifier=VALUE_OPERATOR | downTo='down' 'to') (comparisonValue=Number | comparisonQuantity=Quantity |
-	//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')') | total='total';
+	//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')') | total='total' |
+	//	averaged='averaged' | summed='summed';
 	public ValueOperatorElements getValueOperatorAccess() {
 		return pValueOperator;
 	}

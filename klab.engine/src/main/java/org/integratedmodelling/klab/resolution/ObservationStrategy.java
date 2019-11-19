@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.resolution;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -145,9 +147,21 @@ public class ObservationStrategy {
 
 			ObservationStrategy alternative = new ObservationStrategy(target, mode);
 
+			
+			// separate modifiers 
+			Set<ValueOperator> modifiers = new HashSet<>();
+			List<Pair<ValueOperator, Object>> ops = new ArrayList<>();
 			for (Pair<ValueOperator, Object> operator : operators) {
+				if (operator.getFirst().isModifier) {
+					modifiers.add(operator.getFirst());
+				} else {
+					ops.add(operator);
+				}
+			}
+				
+			for (Pair<ValueOperator, Object> operator : ops) {
 				alternative.computation.add(Klab.INSTANCE.getRuntimeProvider().getOperatorResolver(target,
-						operator.getFirst(), operator.getSecond()));
+						operator.getFirst(), operator.getSecond(), modifiers));
 			}
 
 			ret.add(alternative);

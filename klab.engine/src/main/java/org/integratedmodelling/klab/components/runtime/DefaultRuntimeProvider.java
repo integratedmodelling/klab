@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.runtime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,7 +44,6 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
-import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.NonReentrant;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -464,7 +464,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator,
-			Object operand) {
+			Object operand, Set<ValueOperator> modifiers) {
 
 		if (operator == ValueOperator.BY) {
 
@@ -475,11 +475,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			IConcept aggregator = (IConcept) operand;
 			if (aggregator.is(Type.CLASS) || aggregator.is(Type.TRAIT) || aggregator.is(Type.PRESENCE)) {
 				return new ComputableResource(
-						CategoryClassificationResolver.getServiceCall(classifiedObservable, aggregator),
+						CategoryClassificationResolver.getServiceCall(classifiedObservable, aggregator, modifiers),
 						Mode.RESOLUTION);
 			} else if (aggregator.is(Type.COUNTABLE)) {
 				return new ComputableResource(
-						ObjectClassificationResolver.getServiceCall(classifiedObservable, aggregator), Mode.RESOLUTION);
+						ObjectClassificationResolver.getServiceCall(classifiedObservable, aggregator, modifiers),
+						Mode.RESOLUTION);
 			}
 		}
 		return new ComputableResource(ValueOperatorResolver.getServiceCall(classifiedObservable, operator, operand),

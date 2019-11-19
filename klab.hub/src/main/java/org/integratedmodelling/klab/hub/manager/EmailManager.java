@@ -7,10 +7,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
-import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.exception.SendEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
@@ -60,8 +61,8 @@ public class EmailManager {
 			message.setSubject(subject);
 			message.setText(msg);
 			mailSender.send(message);
-    	} catch (MessagingException e) {
-    		throw new KlabException("[send]: Unable to send email");
+    	} catch (MessagingException | MailException e) {
+    		throw new SendEmailException("[send]: Unable to send email.  Plase check email address and message");
 		}
     }
 
@@ -108,7 +109,7 @@ public class EmailManager {
 		String subject = "New Password Request for you Integrated Modelling Account";
 		String msg = String.format(
 				"You have requested a new password for your Integrated Modelling Account" +
-						"Please click the following link: %s",
+						"Please click the following link: %s \n\n",
 				clickbackUrl);
 		sendFromMainEmailAddress(email, subject, msg);
 		

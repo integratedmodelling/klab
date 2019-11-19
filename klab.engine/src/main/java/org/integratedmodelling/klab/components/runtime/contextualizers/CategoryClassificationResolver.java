@@ -6,15 +6,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -39,24 +40,31 @@ public class CategoryClassificationResolver
 	IConcept classifier;
 	List<IDocumentationProvider.Item> docTags = new ArrayList<>();
 
+	private Set<ValueOperator> modifiers;
+
 	// don't remove - only used as expression
 	public CategoryClassificationResolver() {
 	}
 
-	public CategoryClassificationResolver(IArtifact classified, IConcept classifier) {
+	@SuppressWarnings("unchecked")
+	public CategoryClassificationResolver(IArtifact classified, IConcept classifier, Object modifiers) {
 		this.classified = classified;
 		this.classifier = classifier;
+		if (modifiers instanceof Set) {
+			this.modifiers = (Set<ValueOperator>) modifiers;
+		}
 	}
 
-	public static IServiceCall getServiceCall(IObservable classified, IConcept classifier)
+	public static IServiceCall getServiceCall(IObservable classified, IConcept classifier, Set<ValueOperator> modifiers)
 			throws KlabValidationException {
-		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "classifier", classifier);
+		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "classifier", classifier,
+				"modifiers", modifiers);
 	}
 
 	@Override
 	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		return new CategoryClassificationResolver(context.getArtifact(parameters.get("artifact", String.class)),
-				parameters.get("classifier", IConcept.class));
+				parameters.get("classifier", IConcept.class), parameters.get("modifiers"));
 	}
 
 	@Override
@@ -65,8 +73,8 @@ public class CategoryClassificationResolver
 		Map<Object, Double> cache = new HashMap<>();
 		Map<Object, Long> count = new HashMap<>();
 
-		IArtifact classfc = ((IRuntimeScope)context).getArtifact(classifier, IArtifact.class);
-		
+		IArtifact classfc = ((IRuntimeScope) context).getArtifact(classifier, IArtifact.class);
+
 		if (!(classified instanceof IState) || !(classfc instanceof IState)) {
 			throw new IllegalArgumentException(
 					"Category classification is not possible: state for " + classifier + " not found or not a state");
@@ -97,7 +105,7 @@ public class CategoryClassificationResolver
 			count.put(sclas, cnt + 1);
 		}
 
-		if (!isExtensive) {
+		if ((!isExtensive && !modifiers.contains(ValueOperator.SUMMED)) || modifiers.contains(ValueOperator.AVERAGED)) {
 			for (Object key : cache.keySet()) {
 				cache.put(key, cache.get(key) / count.get(key));
 			}

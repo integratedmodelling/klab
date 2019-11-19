@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ch.qos.logback.core.subst.Token;
 import net.minidev.json.JSONObject;
 
 @RestController
@@ -62,7 +61,6 @@ public class SystemController {
 		return new ResponseEntity<JSONObject>(resp, HttpStatus.OK);
 	}
 	
-	@RolesAllowed({"ROLE_SYSTEM" })
 	@PostMapping(value="/invite", produces = "application/json")
 	public ResponseEntity<?> inviteUserResponse(@RequestBody InviteRequest request) throws MessagingException {
 		tokenManager.inviteNewUserWithGroups(request.getEmail(), request.getGroups());

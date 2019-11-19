@@ -6,10 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-
-import javax.naming.NameNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.klab.Logging;
@@ -262,5 +259,12 @@ public class KlabUserManager implements UserDetailsService{
 	public boolean ldapUserExists(String username, String email) {
 		return ldapService.userExists(username, email);
 	}
+	
+	public boolean mongUserExists(String username, String email) {
+		return userService.userExists(username, email);
+	}
 
+	public List<User> findAllMongoUsers() {
+		return userService.getAllMongoUsers();
+	}
 }
