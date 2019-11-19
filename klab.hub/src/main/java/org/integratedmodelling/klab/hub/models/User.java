@@ -79,6 +79,7 @@ public class User implements UserDetails{
         deleted,
         expired,
         pendingActivation,
+        verified,
     };
 
     // @Transient prevents the password from being stored in Mongo.

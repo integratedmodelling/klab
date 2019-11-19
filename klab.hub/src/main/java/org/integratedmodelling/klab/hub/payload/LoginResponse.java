@@ -1,44 +1,46 @@
 package org.integratedmodelling.klab.hub.payload;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.integratedmodelling.klab.hub.models.ProfileResource;
-import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.tokens.AuthenticationToken;
-import org.joda.time.DateTime;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import net.minidev.json.JSONObject;
 
 public class LoginResponse {
-    public String username;
-
-    public String authToken;
-
-    public DateTime expiration;
-
-    public ProfileResource profile;
-
-    public Collection<Role> roles;
-
-    public LoginResponse(AuthenticationToken token, ProfileResource profile) {
-        username = token.getPrincipal();
-        authToken = token.getCredentials();
-        expiration = token.getExpiration();
-        this.profile = profile;
-        Collection<GrantedAuthority> authorities = token.getAuthorities();
-        roles = new ArrayList<>(authorities.size());
-        for (GrantedAuthority authority : authorities) {
-            roles.add((Role) authority);
-        }
-    }
-
+	
+	private AuthenticationToken token;
+	private ProfileResource profile;
+	
+	public LoginResponse(AuthenticationToken token, ProfileResource profile) {
+		this.token = token;
+		this.profile = profile;
+	}
+	
     public LoginResponse() {
         // Jackson JSON mapping requires a no-arg constructor
     }
-
-    @Override
-    public String toString() {
-        return String.format("[%s|%s]", username, authToken);
+    
+	public ResponseEntity<JSONObject> success() {
+		JSONObject resp = new JSONObject();
+		resp.appendField("Profile", profile.getSafeProfile());
+		resp.appendField("Authentication", token);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authentication", token.getTokenString());
+		return new ResponseEntity<JSONObject>(resp, headers, HttpStatus.OK);
     }
-
+	
+	public ResponseEntity<JSONObject> failure() {
+		JSONObject resp = new JSONObject();
+		resp.appendField("Message", "Username or password not found");
+		return new ResponseEntity<JSONObject>(resp, HttpStatus.FORBIDDEN);
+    }
+	
+	public ResponseEntity<JSONObject> getResponse() {
+		if(this.token != null & this.profile != null) {
+			return success();
+		} else {
+			return failure();
+		}
+	}
 }
