@@ -1447,7 +1447,7 @@ public enum Kim {
 		if (model == null && StringUtil.countMatches(string, ":") >= 3) {
 			// URN - TODO support it: add a new KimModel that only observers the URN.
 		}
-		return model == null ? null : (KimObservable) model.getObservables().get(0);
+		return model == null || model.getObservables().size() == 0 ? null : (KimObservable) model.getObservables().get(0);
 	}
 
 	public KimObservable createNonSemanticObservable(String type, String name) {
