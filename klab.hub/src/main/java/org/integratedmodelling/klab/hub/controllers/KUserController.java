@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.tokens.ChangePasswordClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
+import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -138,6 +140,14 @@ public class KUserController {
     	return ResponseEntity
   			  .status(HttpStatus.OK)
   			  .body(resp);
+	}
+	
+	@PostMapping(value ="/{id}", produces="application/json", params="logout")
+	@PreAuthorize("authentication.getPrincipal() == #username")
+	public ResponseEntity<?> logout(@PathVariable("id") String username,
+			@RequestHeader("Authentication") String token) {
+		LogoutResponse resp = tokenManager.logout(username, token);
+		return resp.getResponse();
 	}
 	
 	@GetMapping(value= "/{id}", params = "certificate")
