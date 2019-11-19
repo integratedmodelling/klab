@@ -54,7 +54,7 @@ ModelBodyStatement:
 		 ( (name=LOWERCASE_ID | (observables+=AnnotatedObservableSemantics (',' observables+=AnnotatedObservableSemantics)*)))
 		 (docstring=STRING)?
 		 ('observing' dependencies+=Dependency (',' dependencies+=Dependency)* )?
-		 ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+		 (('using' | merging?='merging') contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		 (('classified' | discretization?='discretized') (('into' classification=Classification) | ('according' 'to' classificationProperty=PropertyId)))?
 	     // arg ? means result field, arg * means ignore column. If not given, will match self in the first column and result in last, ignoring anything in between
 		 ('lookup' 

@@ -37,6 +37,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_1_0(), "rule__ModelBodyStatement__Alternatives_1_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_3_0(), "rule__ModelBodyStatement__BooleanAlternatives_1_0_3_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_2(), "rule__ModelBodyStatement__Alternatives_2");
+			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_5_0(), "rule__ModelBodyStatement__Alternatives_5_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6_0(), "rule__ModelBodyStatement__Alternatives_6_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6_1(), "rule__ModelBodyStatement__Alternatives_6_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getLookupTableArgsAlternatives_7_1_1_0(), "rule__ModelBodyStatement__LookupTableArgsAlternatives_7_1_1_0");
@@ -613,6 +614,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelBodyStatementAccess().getDocstringAssignment_3(), "rule__ModelBodyStatement__DocstringAssignment_3");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getDependenciesAssignment_4_1(), "rule__ModelBodyStatement__DependenciesAssignment_4_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getDependenciesAssignment_4_2_1(), "rule__ModelBodyStatement__DependenciesAssignment_4_2_1");
+			builder.put(grammarAccess.getModelBodyStatementAccess().getMergingAssignment_5_0_1(), "rule__ModelBodyStatement__MergingAssignment_5_0_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getContextualizersAssignment_5_1(), "rule__ModelBodyStatement__ContextualizersAssignment_5_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getContextualizersAssignment_5_2_1(), "rule__ModelBodyStatement__ContextualizersAssignment_5_2_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getDiscretizationAssignment_6_0_1(), "rule__ModelBodyStatement__DiscretizationAssignment_6_0_1");

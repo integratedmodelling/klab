@@ -2508,6 +2508,27 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__ModelBodyStatement__Alternatives_5_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getModelBodyStatementAccess().getUsingKeyword_5_0_0()); }
+		'using'
+		{ after(grammarAccess.getModelBodyStatementAccess().getUsingKeyword_5_0_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getModelBodyStatementAccess().getMergingAssignment_5_0_1()); }
+		(rule__ModelBodyStatement__MergingAssignment_5_0_1)
+		{ after(grammarAccess.getModelBodyStatementAccess().getMergingAssignment_5_0_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__ModelBodyStatement__Alternatives_6_0
 	@init {
 		int stackSize = keepStackSize();
@@ -8862,9 +8883,9 @@ rule__ModelBodyStatement__Group_5__0__Impl
 	}
 :
 (
-	{ before(grammarAccess.getModelBodyStatementAccess().getUsingKeyword_5_0()); }
-	'using'
-	{ after(grammarAccess.getModelBodyStatementAccess().getUsingKeyword_5_0()); }
+	{ before(grammarAccess.getModelBodyStatementAccess().getAlternatives_5_0()); }
+	(rule__ModelBodyStatement__Alternatives_5_0)
+	{ after(grammarAccess.getModelBodyStatementAccess().getAlternatives_5_0()); }
 )
 ;
 finally {
@@ -36319,6 +36340,25 @@ rule__ModelBodyStatement__DependenciesAssignment_4_2_1
 		{ before(grammarAccess.getModelBodyStatementAccess().getDependenciesDependencyParserRuleCall_4_2_1_0()); }
 		ruleDependency
 		{ after(grammarAccess.getModelBodyStatementAccess().getDependenciesDependencyParserRuleCall_4_2_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ModelBodyStatement__MergingAssignment_5_0_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getModelBodyStatementAccess().getMergingMergingKeyword_5_0_1_0()); }
+		(
+			{ before(grammarAccess.getModelBodyStatementAccess().getMergingMergingKeyword_5_0_1_0()); }
+			'merging'
+			{ after(grammarAccess.getModelBodyStatementAccess().getMergingMergingKeyword_5_0_1_0()); }
+		)
+		{ after(grammarAccess.getModelBodyStatementAccess().getMergingMergingKeyword_5_0_1_0()); }
 	)
 ;
 finally {

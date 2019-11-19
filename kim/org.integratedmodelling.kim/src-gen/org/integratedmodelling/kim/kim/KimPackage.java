@@ -417,13 +417,22 @@ public interface KimPackage extends EPackage
   int MODEL_BODY_STATEMENT__DEPENDENCIES = 9;
 
   /**
+   * The feature id for the '<em><b>Merging</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_BODY_STATEMENT__MERGING = 10;
+
+  /**
    * The feature id for the '<em><b>Contextualizers</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__CONTEXTUALIZERS = 10;
+  int MODEL_BODY_STATEMENT__CONTEXTUALIZERS = 11;
 
   /**
    * The feature id for the '<em><b>Discretization</b></em>' attribute.
@@ -432,7 +441,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__DISCRETIZATION = 11;
+  int MODEL_BODY_STATEMENT__DISCRETIZATION = 12;
 
   /**
    * The feature id for the '<em><b>Classification</b></em>' containment reference.
@@ -441,7 +450,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__CLASSIFICATION = 12;
+  int MODEL_BODY_STATEMENT__CLASSIFICATION = 13;
 
   /**
    * The feature id for the '<em><b>Classification Property</b></em>' attribute.
@@ -450,7 +459,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY = 13;
+  int MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY = 14;
 
   /**
    * The feature id for the '<em><b>Lookup Table Args</b></em>' attribute list.
@@ -459,7 +468,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS = 14;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS = 15;
 
   /**
    * The feature id for the '<em><b>Lookup Table</b></em>' containment reference.
@@ -468,7 +477,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__LOOKUP_TABLE = 15;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE = 16;
 
   /**
    * The feature id for the '<em><b>Lookup Table Id</b></em>' attribute.
@@ -477,7 +486,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = 16;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = 17;
 
   /**
    * The feature id for the '<em><b>Actions</b></em>' containment reference list.
@@ -486,7 +495,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__ACTIONS = 17;
+  int MODEL_BODY_STATEMENT__ACTIONS = 18;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -495,7 +504,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__METADATA = 18;
+  int MODEL_BODY_STATEMENT__METADATA = 19;
 
   /**
    * The number of structural features of the '<em>Model Body Statement</em>' class.
@@ -504,7 +513,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 19;
+  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 20;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ClassificationImpl <em>Classification</em>}' class.
@@ -4941,6 +4950,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getModelBodyStatement_Dependencies();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isMerging <em>Merging</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Merging</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#isMerging()
+   * @see #getModelBodyStatement()
+   * @generated
+   */
+  EAttribute getModelBodyStatement_Merging();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getContextualizers <em>Contextualizers</em>}'.
@@ -9639,6 +9659,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference MODEL_BODY_STATEMENT__DEPENDENCIES = eINSTANCE.getModelBodyStatement_Dependencies();
+
+    /**
+     * The meta object literal for the '<em><b>Merging</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MODEL_BODY_STATEMENT__MERGING = eINSTANCE.getModelBodyStatement_Merging();
 
     /**
      * The meta object literal for the '<em><b>Contextualizers</b></em>' containment reference list feature.

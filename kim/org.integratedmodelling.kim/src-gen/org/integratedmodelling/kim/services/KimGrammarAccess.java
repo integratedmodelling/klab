@@ -367,7 +367,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cDependenciesAssignment_4_2_1 = (Assignment)cGroup_4_2.eContents().get(1);
 		private final RuleCall cDependenciesDependencyParserRuleCall_4_2_1_0 = (RuleCall)cDependenciesAssignment_4_2_1.eContents().get(0);
 		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
-		private final Keyword cUsingKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Alternatives cAlternatives_5_0 = (Alternatives)cGroup_5.eContents().get(0);
+		private final Keyword cUsingKeyword_5_0_0 = (Keyword)cAlternatives_5_0.eContents().get(0);
+		private final Assignment cMergingAssignment_5_0_1 = (Assignment)cAlternatives_5_0.eContents().get(1);
+		private final Keyword cMergingMergingKeyword_5_0_1_0 = (Keyword)cMergingAssignment_5_0_1.eContents().get(0);
 		private final Assignment cContextualizersAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
 		private final RuleCall cContextualizersValueExecutionParserRuleCall_5_1_0 = (RuleCall)cContextualizersAssignment_5_1.eContents().get(0);
 		private final Group cGroup_5_2 = (Group)cGroup_5.eContents().get(2);
@@ -424,10 +427,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	concept=SimpleObservableSemantics)
 		//	'as')? (name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (','
 		//	observables+=AnnotatedObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
-		//	dependencies+=Dependency)*)? ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
-		//	(('classified' | discretization?='discretized') ('into' classification=Classification | 'according' 'to'
-		//	classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
-		//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
+		//	dependencies+=Dependency)*)? (('using' | merging?='merging') contextualizers+=ValueExecution (','
+		//	contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
+		//	classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
+		//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
 		//	'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
 		//	actions+=ActionSpecification* ('metadata' metadata=Metadata)?;
 		@Override public ParserRule getRule() { return rule; }
@@ -435,11 +438,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
 		//concept=SimpleObservableSemantics) 'as')? (name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (','
 		//observables+=AnnotatedObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
-		//dependencies+=Dependency)*)? ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
-		//(('classified' | discretization?='discretized') ('into' classification=Classification | 'according' 'to'
-		//classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
-		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
-		//actions+=ActionSpecification* ('metadata' metadata=Metadata)?
+		//dependencies+=Dependency)*)? (('using' | merging?='merging') contextualizers+=ValueExecution (','
+		//contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
+		//classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
+		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into'
+		//(lookupTable=Table | lookupTableId=UPPERCASE_ID))? actions+=ActionSpecification* ('metadata' metadata=Metadata)?
 		public Group getGroup() { return cGroup; }
 		
 		//instantiator?='each'?
@@ -573,11 +576,20 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Dependency
 		public RuleCall getDependenciesDependencyParserRuleCall_4_2_1_0() { return cDependenciesDependencyParserRuleCall_4_2_1_0; }
 		
-		//('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+		//(('using' | merging?='merging') contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		public Group getGroup_5() { return cGroup_5; }
 		
+		//'using' | merging?='merging'
+		public Alternatives getAlternatives_5_0() { return cAlternatives_5_0; }
+		
 		//'using'
-		public Keyword getUsingKeyword_5_0() { return cUsingKeyword_5_0; }
+		public Keyword getUsingKeyword_5_0_0() { return cUsingKeyword_5_0_0; }
+		
+		//merging?='merging'
+		public Assignment getMergingAssignment_5_0_1() { return cMergingAssignment_5_0_1; }
+		
+		//'merging'
+		public Keyword getMergingMergingKeyword_5_0_1_0() { return cMergingMergingKeyword_5_0_1_0; }
 		
 		//contextualizers+=ValueExecution
 		public Assignment getContextualizersAssignment_5_1() { return cContextualizersAssignment_5_1; }
@@ -10865,10 +10877,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	concept=SimpleObservableSemantics)
 	//	'as')? (name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (','
 	//	observables+=AnnotatedObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
-	//	dependencies+=Dependency)*)? ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
-	//	(('classified' | discretization?='discretized') ('into' classification=Classification | 'according' 'to'
-	//	classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
-	//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
+	//	dependencies+=Dependency)*)? (('using' | merging?='merging') contextualizers+=ValueExecution (','
+	//	contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
+	//	classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
+	//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
 	//	'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
 	//	actions+=ActionSpecification* ('metadata' metadata=Metadata)?;
 	public ModelBodyStatementElements getModelBodyStatementAccess() {
