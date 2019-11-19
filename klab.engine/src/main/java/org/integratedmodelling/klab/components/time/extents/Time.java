@@ -33,9 +33,8 @@ import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.DateTime;
-
-import com.google.common.collect.Range;
 
 public class Time extends Extent implements ITime {
 
@@ -215,8 +214,8 @@ public class Time extends Extent implements ITime {
 		return resolution.getType().getRank();
 	}
 
-	private Range<Long> getRange() {
-		return start != null && end != null ? Range.closed(start.getMilliseconds(), end.getMilliseconds()) : null;
+	private Range getRange() {
+		return Range.create(start, end);
 	}
 
 	@Override
@@ -224,9 +223,9 @@ public class Time extends Extent implements ITime {
 		// TODO hostia
 		if (extent instanceof ITime) {
 
-			ITime other = (ITime)extent;
+			ITime other = (ITime) extent;
 			Time ret = copy();
-			
+
 			// schiaff in the unknowns
 			if (start == null && other.getStart() != null) {
 				ret.start = other.getStart();
@@ -234,19 +233,20 @@ public class Time extends Extent implements ITime {
 			if (end == null && other.getEnd() != null) {
 				ret.end = other.getEnd();
 			}
-			
+
 			// shouldn't change representation, step and the like
 			if (this.resolution == null) {
 				ret.resolution = other.getResolution();
 			}
-			
+
 			ret.multiplicity = 1;
 			if (ret.start != null && ret.end != null && ret.step != null) {
-				ret.multiplicity = (ret.end.getMilliseconds() - ret.start.getMilliseconds()) / ret.step.getMilliseconds();
+				ret.multiplicity = (ret.end.getMilliseconds() - ret.start.getMilliseconds())
+						/ ret.step.getMilliseconds();
 			}
-			
+
 			return ret;
-			
+
 		}
 		return this;
 	}
@@ -291,7 +291,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public boolean contains(IExtent o) throws KlabException {
-		return o instanceof Time ? getRange().encloses(((Time) o).getRange()) : false;
+		return o instanceof Time ? getRange().contains(((Time) o).getRange()) : false;
 	}
 
 	@Override
@@ -301,7 +301,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public boolean intersects(IExtent o) throws KlabException {
-		return o instanceof Time ? getRange().intersection(((Time) o).getRange()).isEmpty() : false;
+		return o instanceof Time ? getRange().intersection(((Time) o).getRange()) == null : false;
 	}
 
 	@Override
@@ -451,25 +451,36 @@ public class Time extends Extent implements ITime {
 
 			Time ott = (Time) other;
 			Time ret = (Time) copy();
-			if (connector.equals(LogicalConnector.INTERSECTION)) {
-				Range<Long> range = ott.getRange();
-				if (range != null) {
-					Range<Long> merged = getRange().intersection(range);
-					ret.start = new TimeInstant(new DateTime(merged.lowerEndpoint()));
-					ret.end = new TimeInstant(new DateTime(merged.upperEndpoint()));
-				}
-			} else if (connector.equals(LogicalConnector.UNION)) {
-				Range<Long> range = ott.getRange();
-				if (range != null) {
-					Range<Long> merged = getRange().span(range);
-					ret.start = new TimeInstant(new DateTime(merged.lowerEndpoint()));
-					ret.end = new TimeInstant(new DateTime(merged.upperEndpoint()));
-				}
-			}
 
-			ret.extentType = extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL;
-			ret.step = null;
-			((ResolutionImpl) ret.resolution).setMultiplier(ret.resolution.getMultiplier(ret.start, ret.end));
+			/*
+			 * CHECK only intersecting if we're merging grid with grid. Otherwise if we get
+			 * here we have accepted the passed extent as candidate, so we just let it have
+			 * no effect on the coverage.
+			 */
+			if (ott.size() > 1 && ret.size() > 1) {
+				if (connector.equals(LogicalConnector.INTERSECTION)) {
+					Range range = ott.getRange();
+					if (range != null) {
+						Range merged = getRange().intersection(range);
+						ret.start = new TimeInstant(new DateTime((long) merged.getLowerBound()));
+						ret.end = new TimeInstant(new DateTime((long) merged.getUpperBound()));
+					}
+				} else if (connector.equals(LogicalConnector.UNION)) {
+					Range range = ott.getRange();
+					if (range != null) {
+						Range merged = getRange().span(range);
+						ret.start = new TimeInstant(new DateTime((long) merged.getLowerBound()));
+						ret.end = new TimeInstant(new DateTime((long) merged.getUpperBound()));
+					}
+				}
+
+				ret.extentType = extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL;
+				ret.step = null;
+				((ResolutionImpl) ret.resolution).setMultiplier(ret.resolution.getMultiplier(ret.start, ret.end));
+
+			} else {
+				return ret;
+			}
 
 			return ret;
 		}
@@ -498,7 +509,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public IServiceCall getKimSpecification() {
-		
+
 		List<Object> args = new ArrayList<>();
 		if (step != null) {
 			args.add("step");
@@ -512,12 +523,12 @@ public class Time extends Extent implements ITime {
 			args.add("start");
 			args.add(start.getSpecification());
 		}
-		
+
 		if (resolution != null) {
 			args.add("resolution");
 			args.add(resolution.getMultiplier() + "." + resolution.getType().name());
 		}
-		
+
 		args.add("type");
 		args.add(extentType.name());
 
@@ -622,21 +633,21 @@ public class Time extends Extent implements ITime {
 				 * TODO potential mediation situation
 				 */
 			} else if (locators[0] instanceof ITimeInstant) {
-				
+
 				/*
 				 * Pick the sub-extent containing the instant
 				 */
 				if (!(start == null || start.isAfter((ITimeInstant) locators[0])
 						|| (end != null && end.isBefore((ITimeInstant) locators[0])))) {
-					
+
 					if (size() <= 1) {
 						return this;
 					}
-					
+
 					if (step != null) {
 						long target = ((ITimeInstant) locators[0]).getMilliseconds();
 						long tleft = target - start.getMilliseconds();
-						long n = tleft/step.getMilliseconds();
+						long n = tleft / step.getMilliseconds();
 						if (n >= 0 && n < size()) {
 							return getExtent(n);
 						}
@@ -648,7 +659,7 @@ public class Time extends Extent implements ITime {
 		throw new KlabException("HOSTIA unhandled time subsetting operation. Call the exorcist.");
 
 	}
-	
+
 	public String describe() {
 		return "[" + this.start + " - " + this.end + "]";
 	}

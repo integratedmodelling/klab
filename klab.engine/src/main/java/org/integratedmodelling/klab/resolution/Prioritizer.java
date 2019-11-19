@@ -538,7 +538,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 			double d = mrange.exclusionOf(crange);
 
 			if (d == 1) {
-				ret[0] = 0;
+				ret[0] = 1; // very least but we don't reject
 			} else if (d == 0) {
 				ret[0] = 100;
 			} else if (mrange.isBounded()) {

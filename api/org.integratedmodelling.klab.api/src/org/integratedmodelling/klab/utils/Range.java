@@ -50,6 +50,12 @@ public class Range implements IValueMediator {
 		if (!(upperInfinite = (right == null)))
 			upperBound = right;
 
+		if (lowerBound > upperBound) {
+			double s = lowerBound;
+			lowerBound = upperBound;
+			upperBound = s;
+		}
+		
 		lowerExclusive = leftExclusive;
 		upperExclusive = rightExclusive;
 	}
@@ -407,6 +413,51 @@ public class Range implements IValueMediator {
 		}
 
 		return new Range(leftInfinite ? null : a, rightInfinite ? null : b, false, true);
+	}
+
+	public Range intersection(Range other) {
+		int lowerCmp = Double.compare(lowerBound, other.lowerBound);
+		int upperCmp = Double.compare(upperBound, other.upperBound);
+		if (lowerCmp >= 0 && upperCmp <= 0) {
+			return this;
+		} else if (lowerCmp <= 0 && upperCmp >= 0) {
+			return other;
+		} else {
+			double newLower = (lowerCmp >= 0) ? lowerBound : other.lowerBound;
+			double newUpper = (upperCmp <= 0) ? upperBound : other.upperBound;
+			return create(newLower, newUpper);
+		}
+	}
+
+	/**
+	 * Returns the minimal range that {@linkplain #encloses encloses} both this
+	 * range and {@code
+	 * other}. For example, the span of {@code [1..3]} and {@code (5..7)} is
+	 * {@code [1..7)}.
+	 *
+	 * <p>
+	 * <i>If</i> the input ranges are {@linkplain #isConnected connected}, the
+	 * returned range can also be called their <i>union</i>. If they are not, note
+	 * that the span might contain values that are not contained in either input
+	 * range.
+	 *
+	 * <p>
+	 * Like {@link #intersection(Range) intersection}, this operation is
+	 * commutative, associative and idempotent. Unlike it, it is always well-defined
+	 * for any two input ranges.
+	 */
+	public Range span(Range other) {
+		int lowerCmp = Double.compare(lowerBound, other.lowerBound);
+		int upperCmp = Double.compare(upperBound, other.upperBound);
+		if (lowerCmp <= 0 && upperCmp >= 0) {
+			return this;
+		} else if (lowerCmp >= 0 && upperCmp <= 0) {
+			return other;
+		} else {
+			double newLower = (lowerCmp <= 0) ? lowerBound : other.lowerBound;
+			double newUpper = (upperCmp >= 0) ? upperBound : other.upperBound;
+			return create(newLower, newUpper);
+		}
 	}
 
 	/**
