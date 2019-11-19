@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.hub.models.tokens.LostPasswordClickbackToken
 import org.integratedmodelling.klab.hub.models.tokens.NewUserClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.VerifyEmailClickbackToken;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
+import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
@@ -507,6 +508,21 @@ public class TokenManager {
 			return loginResponse;
 		} catch (AuthenticationException e) {
 			return new LoginResponse();
+		}
+	}
+	
+	public LogoutResponse logout(String username, String token) {
+		try {
+			User user = klabUserManager.getLoggedInUser();
+			if (user.getUsername().equals(username)) {
+				deleteToken(token);
+				LogoutResponse resp = new LogoutResponse(username);
+				return resp;
+			} else {
+				return new LogoutResponse();
+			}
+		} catch  (UsernameNotFoundException e){
+			return new LogoutResponse();
 		}
 	}
 
