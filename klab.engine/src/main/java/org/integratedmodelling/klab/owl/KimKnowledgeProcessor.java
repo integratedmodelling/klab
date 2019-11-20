@@ -263,6 +263,16 @@ public enum KimKnowledgeProcessor {
 			}
 		}
 
+		// TODO all the rest
+		for (IKimConcept affected : ((KimConceptStatement) concept).getQualitiesAffected()) {
+			IConcept quality = declare(affected, namespace.getOntology(), monitor);
+			if (quality == null) {
+				monitor.error("inherited " + affected.getName() + " does not identify known concepts", affected);
+				return null;
+			}
+			OWL.INSTANCE.restrictSome(main, Concepts.p(NS.AFFECTS_PROPERTY), quality, namespace.getOntology());
+		}
+
 		for (ApplicableConcept link : concept.getSubjectsLinked()) {
 			if (link.getOriginalObservable() == null && link.getSource() != null) {
 				// relationship source->target
@@ -360,7 +370,7 @@ public enum KimKnowledgeProcessor {
 						+ ((IKimConcept) operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
 
 			} else if (operator.getSecond() instanceof IKimObservable) {
-				
+
 				operand = declare((IKimObservable) operator.getSecond(), (Ontology) declarationOntology, monitor);
 				declaration += " (" + operator.getSecond() + ")";
 				ret.setReferenceName(
@@ -377,37 +387,6 @@ public enum KimKnowledgeProcessor {
 
 			ret.getValueOperators().add(new Pair<>(operator.getFirst(), operand));
 		}
-
-		// if (concept.getClassifier() != null) {
-		//
-		// IKimConcept modifier = concept.getClassifier();
-		//
-		// Concept by = declareInternal(modifier, (Ontology) declarationOntology,
-		// monitor);
-		// declaration += " by " + by;
-		//
-		// if (by == null) {
-		// monitor.error("unknown concept in 'by' clause: " + modifier.getDefinition());
-		// return null;
-		// }
-		//
-		// Concept downTo = null;
-		//
-		// if (concept.getDownTo() != null) {
-		// downTo = declareInternal(concept.getDownTo(), (Ontology) declarationOntology,
-		// monitor);
-		// declaration += " down to " + by;
-		// }
-		//
-		// ret.setClassifier(by);
-		// ret.setReferenceName(ret.getReferenceName() + "_by_" +
-		// modifier.getCodeName().replaceAll("\\-", "_"));
-		// ret.setDownTo(downTo);
-		// if (downTo != null) {
-		// ret.setReferenceName(ret.getReferenceName() + "_down_to_" +
-		// concept.getDownTo().getCodeName().replaceAll("\\-", "_"));
-		// }
-		// }
 
 		ret.setDeclaration(declaration);
 
@@ -427,9 +406,9 @@ public enum KimKnowledgeProcessor {
 	/**
 	 * 
 	 * @param concept
-	 * @param declarationNamespace
-	 *            the namespace where derived concepts will be put if declaring them
-	 *            in the original ontologies causes loss of referential integrity.
+	 * @param declarationNamespace the namespace where derived concepts will be put
+	 *                             if declaring them in the original ontologies
+	 *                             causes loss of referential integrity.
 	 * @param monitor
 	 * @return
 	 */

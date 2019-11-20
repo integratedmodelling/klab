@@ -36,6 +36,7 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#isNull <em>Null</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#getModel <em>Model</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#isConditionNegated <em>Condition Negated</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#getCondition <em>Condition</em>}</li>
  * </ul>
@@ -173,6 +174,26 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected String urn = URN_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getModel() <em>Model</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getModel()
+   * @generated
+   * @ordered
+   */
+  protected static final String MODEL_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getModel() <em>Model</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getModel()
+   * @generated
+   * @ordered
+   */
+  protected String model = MODEL_EDEFAULT;
 
   /**
    * The default value of the '{@link #isConditionNegated() <em>Condition Negated</em>}' attribute.
@@ -506,6 +527,31 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
    * @generated
    */
   @Override
+  public String getModel()
+  {
+    return model;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setModel(String newModel)
+  {
+    String oldModel = model;
+    model = newModel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.COMPUTABLE_VALUE__MODEL, oldModel, model));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public boolean isConditionNegated()
   {
     return conditionNegated;
@@ -623,6 +669,8 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
         return isNull();
       case KimPackage.COMPUTABLE_VALUE__URN:
         return getUrn();
+      case KimPackage.COMPUTABLE_VALUE__MODEL:
+        return getModel();
       case KimPackage.COMPUTABLE_VALUE__CONDITION_NEGATED:
         return isConditionNegated();
       case KimPackage.COMPUTABLE_VALUE__CONDITION:
@@ -664,6 +712,9 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
         return;
       case KimPackage.COMPUTABLE_VALUE__URN:
         setUrn((String)newValue);
+        return;
+      case KimPackage.COMPUTABLE_VALUE__MODEL:
+        setModel((String)newValue);
         return;
       case KimPackage.COMPUTABLE_VALUE__CONDITION_NEGATED:
         setConditionNegated((Boolean)newValue);
@@ -709,6 +760,9 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
       case KimPackage.COMPUTABLE_VALUE__URN:
         setUrn(URN_EDEFAULT);
         return;
+      case KimPackage.COMPUTABLE_VALUE__MODEL:
+        setModel(MODEL_EDEFAULT);
+        return;
       case KimPackage.COMPUTABLE_VALUE__CONDITION_NEGATED:
         setConditionNegated(CONDITION_NEGATED_EDEFAULT);
         return;
@@ -745,6 +799,8 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
         return null_ != NULL_EDEFAULT;
       case KimPackage.COMPUTABLE_VALUE__URN:
         return URN_EDEFAULT == null ? urn != null : !URN_EDEFAULT.equals(urn);
+      case KimPackage.COMPUTABLE_VALUE__MODEL:
+        return MODEL_EDEFAULT == null ? model != null : !MODEL_EDEFAULT.equals(model);
       case KimPackage.COMPUTABLE_VALUE__CONDITION_NEGATED:
         return conditionNegated != CONDITION_NEGATED_EDEFAULT;
       case KimPackage.COMPUTABLE_VALUE__CONDITION:
@@ -774,6 +830,8 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
     result.append(null_);
     result.append(", urn: ");
     result.append(urn);
+    result.append(", model: ");
+    result.append(model);
     result.append(", conditionNegated: ");
     result.append(conditionNegated);
     result.append(')');

@@ -296,6 +296,16 @@ public enum Observables implements IObservableService {
 		return OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(getDescriptionProperty(type)));
 	}
 
+	/**
+	 * Get all qualities affected by a process
+	 * 
+	 * @param process
+	 * @return
+	 */
+	public Collection<IConcept> getAffectedQualities(IConcept process) {
+		return OWL.INSTANCE.getRestrictedClasses(process, Concepts.p(NS.AFFECTS_PROPERTY));
+	}
+	
 	private String getDescriptionProperty(DescriptionType type) {
 		String ret = null;
 		switch (type) {

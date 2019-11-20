@@ -73,7 +73,8 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	private Map<String, Object> interactiveParameters;
 	private Type type;
 	private IKimAction.Trigger trigger = IKimAction.Trigger.RESOLUTION;
-
+	// if true, this computes a single value to be added to the expression context later.
+	private boolean variable;
 	/**
 	 * Slot to save a validated resource so that it won't need to be validated
 	 * twice. Shouldn't be serialized.
@@ -801,6 +802,15 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	@Override
 	public String getTargetId() {
 		return this.targetId;
+	}
+
+	@Override
+	public boolean isVariable() {
+		return variable;
+	}
+
+	public void setVariable(boolean variable) {
+		this.variable = variable;
 	}
 	
 }

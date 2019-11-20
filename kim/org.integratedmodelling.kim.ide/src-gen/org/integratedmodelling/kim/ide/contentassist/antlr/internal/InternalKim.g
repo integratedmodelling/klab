@@ -3562,6 +3562,12 @@ rule__ExecutableValue__Alternatives_0
 		(rule__ExecutableValue__UrnAssignment_0_2)
 		{ after(grammarAccess.getExecutableValueAccess().getUrnAssignment_0_2()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getExecutableValueAccess().getModelAssignment_0_3()); }
+		(rule__ExecutableValue__ModelAssignment_0_3)
+		{ after(grammarAccess.getExecutableValueAccess().getModelAssignment_0_3()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -38401,6 +38407,21 @@ rule__ExecutableValue__UrnAssignment_0_2
 		{ before(grammarAccess.getExecutableValueAccess().getUrnAlternatives_0_2_0()); }
 		(rule__ExecutableValue__UrnAlternatives_0_2_0)
 		{ after(grammarAccess.getExecutableValueAccess().getUrnAlternatives_0_2_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ExecutableValue__ModelAssignment_0_3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getExecutableValueAccess().getModelPathParserRuleCall_0_3_0()); }
+		rulePath
+		{ after(grammarAccess.getExecutableValueAccess().getModelPathParserRuleCall_0_3_0()); }
 	)
 ;
 finally {

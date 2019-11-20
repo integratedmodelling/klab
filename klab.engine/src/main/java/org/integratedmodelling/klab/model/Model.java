@@ -243,6 +243,19 @@ public class Model extends KimObject implements IModel {
 		this.behavior = new Behavior(model.getBehavior(), this);
 
 		/*
+		 * post-process the actions so that any accessory variable is tagged as such
+		 */
+		for (IAction action : this.behavior) {
+			for (IContextualizable ct : action.getComputation()) {
+				if (ct.getTargetId() != null) {
+					/*
+					 * check if this is an output or affected quality
+					 */
+				}
+			}
+		}
+		
+		/*
 		 * validate typechain, units and final result vs. observable artifact type -
 		 * AFTER the behavior has been processed!
 		 */

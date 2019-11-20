@@ -383,4 +383,12 @@ public interface IContextualizable extends IKimStatement, IDataflowNode {
 	 */
 	IGeometry getGeometry();
 
+	/**
+	 * If true, this defines an accessory variable rather than a dependency. The targetId is
+	 * the name of the variable.
+	 * 
+	 * @return
+	 */
+	boolean isVariable();
+
 }

@@ -192,7 +192,8 @@ ExecutableValue returns ComputableValue:
 	(
 		function=Function |
 		expr=EXPR ('in' language=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID))? |
-		urn=(UrnId|STRING)
+		urn=(UrnId|STRING) |
+		model=Path
 	) (('if'|conditionNegated?='unless') condition=Value)?
 ;
 

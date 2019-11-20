@@ -2351,6 +2351,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cUrnAlternatives_0_2_0 = (Alternatives)cUrnAssignment_0_2.eContents().get(0);
 		private final RuleCall cUrnUrnIdParserRuleCall_0_2_0_0 = (RuleCall)cUrnAlternatives_0_2_0.eContents().get(0);
 		private final RuleCall cUrnSTRINGTerminalRuleCall_0_2_0_1 = (RuleCall)cUrnAlternatives_0_2_0.eContents().get(1);
+		private final Assignment cModelAssignment_0_3 = (Assignment)cAlternatives_0.eContents().get(3);
+		private final RuleCall cModelPathParserRuleCall_0_3_0 = (RuleCall)cModelAssignment_0_3.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Alternatives cAlternatives_1_0 = (Alternatives)cGroup_1.eContents().get(0);
 		private final Keyword cIfKeyword_1_0_0 = (Keyword)cAlternatives_1_0.eContents().get(0);
@@ -2360,15 +2362,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cConditionValueParserRuleCall_1_1_0 = (RuleCall)cConditionAssignment_1_1.eContents().get(0);
 		
 		//ExecutableValue ComputableValue:
-		//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING))
-		//	(('if' | conditionNegated?='unless') condition=Value)?;
+		//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING) |
+		//	model=Path) (('if' | conditionNegated?='unless') condition=Value)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING))
-		//(('if' | conditionNegated?='unless') condition=Value)?
+		//(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING) |
+		//model=Path) (('if' | conditionNegated?='unless') condition=Value)?
 		public Group getGroup() { return cGroup; }
 		
-		//function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING)
+		//function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING) |
+		//model=Path
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
 		//function=Function
@@ -2418,6 +2421,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//STRING
 		public RuleCall getUrnSTRINGTerminalRuleCall_0_2_0_1() { return cUrnSTRINGTerminalRuleCall_0_2_0_1; }
+		
+		//model=Path
+		public Assignment getModelAssignment_0_3() { return cModelAssignment_0_3; }
+		
+		//Path
+		public RuleCall getModelPathParserRuleCall_0_3_0() { return cModelPathParserRuleCall_0_3_0; }
 		
 		//(('if' | conditionNegated?='unless') condition=Value)?
 		public Group getGroup_1() { return cGroup_1; }
@@ -11078,8 +11087,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ExecutableValue ComputableValue:
-	//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING))
-	//	(('if' | conditionNegated?='unless') condition=Value)?;
+	//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING) |
+	//	model=Path) (('if' | conditionNegated?='unless') condition=Value)?;
 	public ExecutableValueElements getExecutableValueAccess() {
 		return pExecutableValue;
 	}

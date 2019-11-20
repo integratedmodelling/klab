@@ -741,6 +741,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getExecutableValueAccess().getExprAssignment_0_1_0(), "rule__ExecutableValue__ExprAssignment_0_1_0");
 			builder.put(grammarAccess.getExecutableValueAccess().getLanguageAssignment_0_1_1_1(), "rule__ExecutableValue__LanguageAssignment_0_1_1_1");
 			builder.put(grammarAccess.getExecutableValueAccess().getUrnAssignment_0_2(), "rule__ExecutableValue__UrnAssignment_0_2");
+			builder.put(grammarAccess.getExecutableValueAccess().getModelAssignment_0_3(), "rule__ExecutableValue__ModelAssignment_0_3");
 			builder.put(grammarAccess.getExecutableValueAccess().getConditionNegatedAssignment_1_0_1(), "rule__ExecutableValue__ConditionNegatedAssignment_1_0_1");
 			builder.put(grammarAccess.getExecutableValueAccess().getConditionAssignment_1_1(), "rule__ExecutableValue__ConditionAssignment_1_1");
 			builder.put(grammarAccess.getNamespaceAccess().getAnnotationsAssignment_0_0(), "rule__Namespace__AnnotationsAssignment_0_0");

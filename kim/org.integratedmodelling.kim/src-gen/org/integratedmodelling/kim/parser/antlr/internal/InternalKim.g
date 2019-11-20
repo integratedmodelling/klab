@@ -4225,19 +4225,39 @@ ruleExecutableValue returns [EObject current=null]
 					)
 				)
 			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getExecutableValueAccess().getModelPathParserRuleCall_0_3_0());
+					}
+					lv_model_5_0=rulePath
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getExecutableValueRule());
+						}
+						set(
+							$current,
+							"model",
+							lv_model_5_0,
+							"org.integratedmodelling.kim.Kim.Path");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
 		)
 		(
 			(
-				otherlv_5='if'
+				otherlv_6='if'
 				{
-					newLeafNode(otherlv_5, grammarAccess.getExecutableValueAccess().getIfKeyword_1_0_0());
+					newLeafNode(otherlv_6, grammarAccess.getExecutableValueAccess().getIfKeyword_1_0_0());
 				}
 				    |
 				(
 					(
-						lv_conditionNegated_6_0='unless'
+						lv_conditionNegated_7_0='unless'
 						{
-							newLeafNode(lv_conditionNegated_6_0, grammarAccess.getExecutableValueAccess().getConditionNegatedUnlessKeyword_1_0_1_0());
+							newLeafNode(lv_conditionNegated_7_0, grammarAccess.getExecutableValueAccess().getConditionNegatedUnlessKeyword_1_0_1_0());
 						}
 						{
 							if ($current==null) {
@@ -4253,7 +4273,7 @@ ruleExecutableValue returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getExecutableValueAccess().getConditionValueParserRuleCall_1_1_0());
 					}
-					lv_condition_7_0=ruleValue
+					lv_condition_8_0=ruleValue
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getExecutableValueRule());
@@ -4261,7 +4281,7 @@ ruleExecutableValue returns [EObject current=null]
 						set(
 							$current,
 							"condition",
-							lv_condition_7_0,
+							lv_condition_8_0,
 							"org.integratedmodelling.kim.Kim.Value");
 						afterParserOrEnumRuleCall();
 					}

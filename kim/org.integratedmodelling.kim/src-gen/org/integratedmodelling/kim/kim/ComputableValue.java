@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#isNull <em>Null</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#getModel <em>Model</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#isConditionNegated <em>Condition Negated</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#getCondition <em>Condition</em>}</li>
  * </ul>
@@ -208,6 +209,28 @@ public interface ComputableValue extends EObject
    * @generated
    */
   void setUrn(String value);
+
+  /**
+   * Returns the value of the '<em><b>Model</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Model</em>' attribute.
+   * @see #setModel(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getComputableValue_Model()
+   * @model
+   * @generated
+   */
+  String getModel();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ComputableValue#getModel <em>Model</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Model</em>' attribute.
+   * @see #getModel()
+   * @generated
+   */
+  void setModel(String value);
 
   /**
    * Returns the value of the '<em><b>Condition Negated</b></em>' attribute.
