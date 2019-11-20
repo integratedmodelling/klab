@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IActiveKimObject;
 import org.integratedmodelling.klab.api.model.IBehavior;
@@ -38,7 +39,8 @@ public class Behavior implements IBehavior {
 					/*
 					 * Fix the trigger according to semantics and role
 					 */
-					if (((Model) model).getObservables().get(0).getArtifactType().isOccurrent()) {
+					List<IObservable> observables = ((Model) model).getObservables();
+					if (observables.size() > 0 && observables.get(0).getArtifactType().isOccurrent()) {
 						// resolution becomes transition
 					}
 				}
