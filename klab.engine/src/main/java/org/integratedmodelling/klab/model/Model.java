@@ -140,7 +140,7 @@ public class Model extends KimObject implements IModel {
 			Observable obs = Observables.INSTANCE.declare(observable, monitor);
 
 			if (first) {
-				context = obs.is(Type.DIRECT_OBSERVABLE) ? obs.getType()
+				context = obs.is(Type.COUNTABLE) ? obs.getType()
 						: Observables.INSTANCE.getContextType(obs.getType());
 				explicitContext = context != null && context.equals(Observables.INSTANCE.getDirectContextType(obs.getType()));
 				first = false;

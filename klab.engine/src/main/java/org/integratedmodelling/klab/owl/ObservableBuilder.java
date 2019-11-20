@@ -107,7 +107,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.declaration = Concepts.INSTANCE.getDeclaration(main);
 		this.type = ((Concept) main).type;
 	}
-	
+
 	public ObservableBuilder(IConcept main, IMonitor monitor) {
 		this(main);
 		this.monitor = monitor;
@@ -468,7 +468,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	@Override
 	public Builder without(ObservableRole... roles) {
-		
+
 		KimConcept newDeclaration = this.declaration.removeComponents(roles);
 		ObservableBuilder ret = new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration));
 
@@ -484,7 +484,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.optional = this.optional;
 		ret.mustContextualize = mustContextualize;
 		ret.annotations.addAll(annotations);
-		
+
 		return ret;
 	}
 
@@ -752,7 +752,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeChange(IConcept concept, boolean addDefinition) {
+	public Concept makeChange(IConcept concept, boolean addDefinition) {
 
 		String cName = getCleanId(concept) + "Change";
 
@@ -763,6 +763,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		String definition = UnarySemanticOperator.CHANGE.declaration[0] + " " + concept.getDefinition();
 		Ontology ontology = (Ontology) concept.getOntology();
 		String conceptId = ontology.getIdForDefinition(definition);
+		IConcept context = Observables.INSTANCE.getContextType(concept);
 
 		if (conceptId == null) {
 
@@ -780,8 +781,18 @@ public class ObservableBuilder implements IObservable.Builder {
 				ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
 			}
 			ontology.define(ax);
+
 			IConcept ret = ontology.getConcept(conceptId);
+
 			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
+
+			/*
+			 * context of the change is the context of the quality it describes
+			 */
+			if (context != null) {
+				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
+			}
+
 		}
 
 		return ontology.getConcept(conceptId);
@@ -789,14 +800,14 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	/**
 	 * Turn a concept into its assessment if it's not already one, implementing the
-	 * corresponding semantic operator.
+	 * corresponding semantic operator (legacy and eventually, probably, deprecated)
 	 * 
 	 * @param concept       the untransformed concept
 	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
 	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeAssessment(IConcept concept, boolean addDefinition) {
+	public Concept makeAssessment(IConcept concept, boolean addDefinition) {
 
 		String cName = getCleanId(concept) + "Assessment";
 
