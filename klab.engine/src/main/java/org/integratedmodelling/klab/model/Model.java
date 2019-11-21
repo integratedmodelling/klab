@@ -134,15 +134,15 @@ public class Model extends KimObject implements IModel {
 		IConcept context = null;
 		boolean explicitContext = false;
 		boolean first = true;
-		
+
 		for (IKimObservable observable : model.getObservables()) {
 
 			Observable obs = Observables.INSTANCE.declare(observable, monitor);
 
 			if (first) {
-				context = obs.is(Type.COUNTABLE) ? obs.getType()
-						: Observables.INSTANCE.getContextType(obs.getType());
-				explicitContext = context != null && context.equals(Observables.INSTANCE.getDirectContextType(obs.getType()));
+				context = obs.is(Type.COUNTABLE) ? obs.getType() : Observables.INSTANCE.getContextType(obs.getType());
+				explicitContext = context != null
+						&& context.equals(Observables.INSTANCE.getDirectContextType(obs.getType()));
 				first = false;
 			}
 
@@ -157,7 +157,7 @@ public class Model extends KimObject implements IModel {
 			Observable dep = Observables.INSTANCE.declare(dependency, monitor);
 			if (context != null) {
 				if (this.instantiator) {
-					
+
 					/*
 					 * we cannot know the context of resolution beforehand, so it will be
 					 * contextualized at query time.
@@ -209,7 +209,7 @@ public class Model extends KimObject implements IModel {
 			// turn all resources into a merged one, after validation
 			List<IResource> ress = new ArrayList<>();
 			for (IContextualizable r : resources) {
-				String urn = ((ComputableResource)r).getUrn();
+				String urn = ((ComputableResource) r).getUrn();
 				if (urn == null) {
 					monitor.error("Cannot use anything but URNs in a 'merging' clause", getStatement());
 					setErrors(true);
@@ -227,7 +227,7 @@ public class Model extends KimObject implements IModel {
 				setErrors(true);
 			}
 		}
-		
+
 		/*
 		 * all resources after 'using' or further classification/lookup transformations
 		 */
@@ -248,13 +248,16 @@ public class Model extends KimObject implements IModel {
 		for (IAction action : this.behavior) {
 			for (IContextualizable ct : action.getComputation()) {
 				if (ct.getTargetId() != null) {
-					/*
-					 * check if this is an output or affected quality
-					 */
+					if (isKnownDependency(ct.getTargetId())) {
+						monitor.error("Cannot target an action to dependency " + ct.getTargetId()
+								+ ": dependencies are read-only in models", getStatement());
+					} else {
+						((ComputableResource) ct).setVariable(!isKnownObservable(ct.getTargetId()));
+					}
 				}
 			}
 		}
-		
+
 		/*
 		 * validate typechain, units and final result vs. observable artifact type -
 		 * AFTER the behavior has been processed!
@@ -266,7 +269,7 @@ public class Model extends KimObject implements IModel {
 		 */
 
 		/*
-		 * validate all action
+		 * validate all actions
 		 */
 		for (IAction action : this.behavior) {
 			validateAction(action, monitor);
@@ -287,6 +290,37 @@ public class Model extends KimObject implements IModel {
 			getMetadata().put(IMetadata.DC_COMMENT, model.getDocstring());
 		}
 
+	}
+
+	public boolean isKnownDependency(String targetId) {
+		for (IObservable observable : dependencies) {
+			if (targetId.equals(observable.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isKnownObservable(String targetId) {
+
+		for (IObservable observable : observables) {
+			if (targetId.equals(observable.getName())) {
+				return true;
+			}
+		}
+
+		if (getMainObservable() != null && getMainObservable().is(Type.CHANGE)) {
+			IObservable iho = Observable.promote(Observables.INSTANCE.getInherentType(getMainObservable().getType()));
+			if (targetId.equals(iho.getName())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private IObservable getMainObservable() {
+		return observables.size() > 0 && observables.get(0) != null ? observables.get(0) : null;
 	}
 
 	private void validateTypechain(IMonitor monitor) {
@@ -581,6 +615,11 @@ public class Model extends KimObject implements IModel {
 	 */
 	private ComputableResource validate(ComputableResource resource, IMonitor monitor) {
 
+		if (resource.isVariable()) {
+			// these are just fine as they are
+			return resource;
+		}
+		
 		if (resource.getClassification() != null) {
 
 			resource.setValidatedResource(new Classification(resource.getClassification()));

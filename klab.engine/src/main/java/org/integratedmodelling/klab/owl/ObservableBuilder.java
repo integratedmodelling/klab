@@ -787,7 +787,8 @@ public class ObservableBuilder implements IObservable.Builder {
 			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
 
 			/*
-			 * context of the change is the context of the quality it describes
+			 * context of the change is the same context as the quality it describes - FIXME this shouldn't be
+			 * needed as the inherency is an alternative place to look for context.
 			 */
 			if (context != null) {
 				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);

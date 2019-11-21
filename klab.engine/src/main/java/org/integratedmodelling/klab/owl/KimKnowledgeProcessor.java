@@ -263,11 +263,11 @@ public enum KimKnowledgeProcessor {
 			}
 		}
 
-		// TODO all the rest
+		// TODO all the rest: creates, ....
 		for (IKimConcept affected : ((KimConceptStatement) concept).getQualitiesAffected()) {
 			IConcept quality = declare(affected, namespace.getOntology(), monitor);
 			if (quality == null) {
-				monitor.error("inherited " + affected.getName() + " does not identify known concepts", affected);
+				monitor.error("affected " + affected.getName() + " does not identify known concepts", affected);
 				return null;
 			}
 			OWL.INSTANCE.restrictSome(main, Concepts.p(NS.AFFECTS_PROPERTY), quality, namespace.getOntology());

@@ -202,6 +202,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 		IServiceCall ret = null;
 
+		if (resource.isVariable()) {
+			// TODO return a simple evaluator for either a literal or an expression.
+		}
+		
 		if (resource.getServiceCall() != null) {
 			if (resource.getCondition() != null) {
 				ret = ConditionalContextualizer.getServiceCall(resource);

@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -633,6 +634,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ret.actuator = actuator;
 		if (this.target instanceof IDirectObservation) {
 			ret.contextSubject = (IDirectObservation) this.target;
+			if (ret.contextSubject instanceof IProcess) {
+				ret.contextSubject = getParentOf(ret.contextSubject);
+			}
 		} else if (ret.contextSubject == null) {
 			// this only happens when the father is root.
 			ret.contextSubject = rootSubject;

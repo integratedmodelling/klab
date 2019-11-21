@@ -313,6 +313,21 @@ public class Actuator implements IActuator {
 
 			IServiceCall function = service.getFirst();
 
+			/*
+			 * determine the actual target of the action
+			 */
+			IArtifact actualTarget = target;
+			String targetId = service.getSecond().getTargetId();
+			if (targetId != null) {
+				if (service.getSecond().isVariable()) {
+					// TODO a variable should only be an expression or a literal, and not be translated at all. Its
+					// execution should set a symbol table in the context. So service.getFirst() should be a special
+					// invoker for variables, like klab.runtime.valueof(literal = '' | expression = '')
+				} else {
+					
+				}
+			}
+			
 			if (((ComputableResource) service.getSecond()).getModifiedParameters() != null) {
 				function.getParameters().putAll(((ComputableResource) service.getSecond()).getModifiedParameters());
 			}

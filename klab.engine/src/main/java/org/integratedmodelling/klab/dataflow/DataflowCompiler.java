@@ -328,7 +328,14 @@ public class DataflowCompiler {
 			ret.setName(observable.getReferenceName());
 			ret.setAlias(observable.getName());
 
-			if (Observables.INSTANCE.getDirectContextType(observable.getType()) != null) {
+			/*
+			 * FIXME this condition is silly; also there will be more problems due to this
+			 * check. It should check for an ADDED inherency stored in the observable along
+			 * with the original observable, rather than playing with the concept as is, as
+			 * it's hard to know where the inherency was assigned.
+			 */
+			if (!observable.is(IKimConcept.Type.CHANGE)
+					&& Observables.INSTANCE.getDirectContextType(observable.getType()) != null) {
 				if (models.size() > 0 && models.iterator().next().model.isLearning()) {
 					/*
 					 * A learning model for a directly inherent quality will create a void actuator

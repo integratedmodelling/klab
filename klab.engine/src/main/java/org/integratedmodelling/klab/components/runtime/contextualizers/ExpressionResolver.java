@@ -126,6 +126,9 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		 * If we're computing a quality and there is any scalar usage of the known
 		 * non-scalar quantities, create a distributed state resolver. Do the analysis
 		 * even if scalar evaluation has been forced.
+		 * 
+		 * FIXME this shouldn't use the artifact type from the context but that for the TARGET, which 
+		 * may be different if we are using a 'set xxx to []' action.
 		 */
 		boolean scalar = false;
 		if (context.getArtifactType() == Type.QUALITY) {
