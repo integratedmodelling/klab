@@ -10,7 +10,7 @@ public class CreateGroupTask extends Task{
 	KlabGroup group;
 	
 	public CreateGroupTask(String requestee) {
-		super(requestee);
+		super(requestee, TaskType.createGroup);
 	}
 
 	public KlabGroup getGroup() {

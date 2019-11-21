@@ -27,11 +27,16 @@ public class Task {
 	
     @Enumerated(EnumType.STRING)
     TaskStatus status;
+    
+    @NotEmpty
+    @Enumerated
+    TaskType type;
 	
     DateTime expirationDate;
     
-    public Task(String requestee) {
+    public Task(String requestee, TaskType type) {
     	this.requestee = requestee;
+    	this.type = type;
     }
 
 	public String getId() {
@@ -89,5 +94,12 @@ public class Task {
 	public void setRoleRequirement(Role role) {
 		this.roleRequirement = role;
 	}
-    
+
+	public TaskType getType() {
+		return type;
+	}
+
+	public void setType(TaskType type) {
+		this.type = type;
+	}
 }

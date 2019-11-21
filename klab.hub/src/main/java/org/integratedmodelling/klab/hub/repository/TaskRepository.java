@@ -20,6 +20,6 @@ public interface TaskRepository extends MongoRepository<Task, ObjectId>{
 	
 	List<Task> findByStatus(TaskStatus status);
 	
-	@Query(value="{ '_class' : 'org.integratedmodelling.klab.hub.models.tasks.GroupRequestTask', 'token' : ?0 }")
+	@Query(value="{ '_class' : 'GroupRequestTask', 'token' : ?0 }")
 	Optional<Task> findGroupRequestByToken(ClickbackToken token);
 }
