@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
@@ -122,7 +123,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	Set<String> notifiedObservations;
 	Map<IConcept, ObservationGroup> groups;
 	Map<String, Object> symbolTable = new HashMap<>();
-	
+
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
 
@@ -230,7 +231,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			ret.target = createTarget(indirectTarget);
 		}
 		ret.target = catalog.get(ret.targetName);
-		
+
 		/*
 		 * this is the only one where the symbol table is kept.
 		 */
@@ -987,12 +988,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							/* state specs may be in metadata from resource attributes */
 							Object obj = metadata.getCaseInsensitive(attr);
 //							if (obj != null) {
-								IState state = (IState) DefaultRuntimeProvider.createObservation(
-										actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale,
-										this);
-								((State) state).distributeScalar(obj);
-								predefinedStates.add(state);
-								done = true;
+							IState state = (IState) DefaultRuntimeProvider.createObservation(
+									actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale, this);
+							((State) state).distributeScalar(obj);
+							predefinedStates.add(state);
+							done = true;
 //							}
 						}
 
@@ -1389,47 +1389,53 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	public void scheduleActions(Actuator actuator) {
 
 		/*
-		 * Should be scheduled if:
-		 *    1. NOT 'on definition' (always);
-		 *    2. 'over time' (any situation) OR
-		 *    3.   direct/indirect target is occurrent OR
-		 *    4.   resource has temporal dimension (any type) OR
-		 *    5.   actuator's target is occurrent and computation's target is affected by it.
+		 * Only occurrents occur.
 		 */
-		
-		List<Computation> schedule = new ArrayList<>();
-		for (Computation computation : actuator.getContextualizers()) {
-			
-			/*
-			 * nothing meant for initialization should be scheduled.
-			 */
-			if (computation.resource.getTrigger() == Trigger.DEFINITION) {
-				continue;
+		boolean isOccurrent = actuator.getType().isOccurrent();
+		if (isOccurrent) {
+
+			List<Computation> schedule = new ArrayList<>();
+			for (Computation computation : actuator.getContextualizers()) {
+
+				/*
+				 * nothing meant for initialization should be scheduled.
+				 */
+				if (computation.resource.getTrigger() == Trigger.DEFINITION) {
+					continue;
+				}
+
+				/*
+				 * conditions for scheduling
+				 */
+				boolean isTransition = computation.resource.getTrigger() == Trigger.DEFINITION;
+
+				/*
+				 * null target == aux variable, occur at will.
+				 */
+				boolean targetOccurs = computation.target == null || computation.target.getType().isOccurrent()
+						|| (isOccurrent
+								&& Observables.INSTANCE.isAffectedBy(computation.observable, actuator.getObservable()))
+						|| (computation.target != null
+								&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null);
+
+				if (isTransition || targetOccurs) {
+					schedule.add(computation);
+				}
 			}
-			
-			/*
-			 * TODO revise as above
-			 */
-			if (computation.resource.getTrigger() == Trigger.TRANSITION
-					// TODO next should be removed
-					|| computation.observable.getArtifactType().isOccurrent()
-					|| (computation.resource.getTrigger() == Trigger.RESOLUTION && computation.resource.getGeometry()
-							.getDimension(IGeometry.Dimension.Type.TIME) != null)) {
-				schedule.add(computation);
+
+			if (schedule.isEmpty()) {
+				return;
 			}
+
+			RuntimeScope root = getRootScope();
+
+			if (root.scheduler == null) {
+				root.scheduler = new Scheduler(resolutionScope.getScale().getTime(), monitor);
+			}
+
+			((Scheduler) root.scheduler).schedule(actuator, schedule, this);
 		}
 
-		if (schedule.isEmpty()) {
-			return;
-		}
-
-		RuntimeScope root = getRootScope();
-
-		if (root.scheduler == null) {
-			root.scheduler = new Scheduler(resolutionScope.getScale().getTime(), monitor);
-		}
-
-		((Scheduler) root.scheduler).schedule(actuator, schedule, this);
 	}
 
 	@Override

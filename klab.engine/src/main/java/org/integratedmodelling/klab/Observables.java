@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -756,6 +757,22 @@ public enum Observables implements IObservableService {
 	 */
 	public boolean hasDistributedInherency(IConcept candidate) {
 		return candidate.getMetadata().get(NS.INHERENCY_IS_DISTRIBUTED, " false").equals("true");
+	}
+
+	/**
+	 * True if affecting affects affecting.
+	 * 
+	 * @param affected
+	 * @param affecting
+	 * @return true if.
+	 */
+	public boolean isAffectedBy(ISemantic affected, ISemantic affecting) {
+		for (IConcept c : getAffectedQualities(affecting.getType())) {
+			if (affected.getType().is(c)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
