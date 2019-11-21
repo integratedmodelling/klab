@@ -29,7 +29,6 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
@@ -89,7 +88,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	Graph<IArtifact, Relationship> network;
 	ISubject rootSubject;
 	Map<String, IObservable> semantics;
-
+	Map<String, Object> symbolTable = new HashMap<>();
+	
 	public SimpleRuntimeScope(Actuator actuator) {
 		this.observable = actuator.getObservable();
 		this.scale = actuator.getDataflow().getScale();
@@ -625,6 +625,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public IRuntimeScope locate(ILocator transitionScale) {
 		// TODO Auto-generated method stub
 		return this;
+	}
+
+	@Override
+	public Map<String, Object> getSymbolTable() {
+		return symbolTable;
 	}
 
 }

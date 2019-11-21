@@ -121,7 +121,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	IModel model;
 	Set<String> notifiedObservations;
 	Map<IConcept, ObservationGroup> groups;
-
+	Map<String, Object> symbolTable = new HashMap<>();
+	
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
 
@@ -229,6 +230,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			ret.target = createTarget(indirectTarget);
 		}
 		ret.target = catalog.get(ret.targetName);
+		
+		/*
+		 * this is the only one where the symbol table is kept.
+		 */
+		ret.symbolTable.putAll(symbolTable);
 
 		return ret;
 	}
@@ -1382,19 +1388,38 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void scheduleActions(Actuator actuator) {
 
-		boolean go = false;
+		/*
+		 * Should be scheduled if:
+		 *    1. NOT 'on definition' (always);
+		 *    2. 'over time' (any situation) OR
+		 *    3.   direct/indirect target is occurrent OR
+		 *    4.   resource has temporal dimension (any type) OR
+		 *    5.   actuator's target is occurrent and computation's target is affected by it.
+		 */
+		
+		List<Computation> schedule = new ArrayList<>();
 		for (Computation computation : actuator.getContextualizers()) {
+			
+			/*
+			 * nothing meant for initialization should be scheduled.
+			 */
+			if (computation.resource.getTrigger() == Trigger.DEFINITION) {
+				continue;
+			}
+			
+			/*
+			 * TODO revise as above
+			 */
 			if (computation.resource.getTrigger() == Trigger.TRANSITION
 					// TODO next should be removed
 					|| computation.observable.getArtifactType().isOccurrent()
 					|| (computation.resource.getTrigger() == Trigger.RESOLUTION && computation.resource.getGeometry()
 							.getDimension(IGeometry.Dimension.Type.TIME) != null)) {
-				go = true;
-				break;
+				schedule.add(computation);
 			}
 		}
 
-		if (!go) {
+		if (schedule.isEmpty()) {
 			return;
 		}
 
@@ -1404,7 +1429,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			root.scheduler = new Scheduler(resolutionScope.getScale().getTime(), monitor);
 		}
 
-		((Scheduler) root.scheduler).schedule(actuator, this);
+		((Scheduler) root.scheduler).schedule(actuator, schedule, this);
 	}
 
 	@Override
@@ -1416,5 +1441,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 */
 		ret.scale = (Scale) transitionScale;
 		return ret;
+	}
+
+	@Override
+	public Map<String, Object> getSymbolTable() {
+		return symbolTable;
 	}
 }

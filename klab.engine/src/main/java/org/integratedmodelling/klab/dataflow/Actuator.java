@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
+import org.integratedmodelling.klab.api.model.contextualization.IEvaluator;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IPredicateClassifier;
 import org.integratedmodelling.klab.api.model.contextualization.IPredicateResolver;
@@ -312,21 +313,6 @@ public class Actuator implements IActuator {
 			}
 
 			IServiceCall function = service.getFirst();
-
-			/*
-			 * determine the actual target of the action
-			 */
-			IArtifact actualTarget = target;
-			String targetId = service.getSecond().getTargetId();
-			if (targetId != null) {
-				if (service.getSecond().isVariable()) {
-					// TODO a variable should only be an expression or a literal, and not be translated at all. Its
-					// execution should set a symbol table in the context. So service.getFirst() should be a special
-					// invoker for variables, like klab.runtime.valueof(literal = '' | expression = '')
-				} else {
-					
-				}
-			}
 			
 			if (((ComputableResource) service.getSecond()).getModifiedParameters() != null) {
 				function.getParameters().putAll(((ComputableResource) service.getSecond()).getModifiedParameters());
@@ -363,21 +349,28 @@ public class Actuator implements IActuator {
 		for (Pair<IContextualizer, IContextualizable> contextualizer : computation) {
 
 			/*
-			 * FIXME: this keeps reusing the same ctx, which is probably wrong as it holds
-			 * parameters from all computations (although they're overwritten so it's only a
-			 * problem if one uses defaults that a previous one provides with a different
-			 * meaning).
+			 * Aux variables are computed and recorded, that's it.
 			 */
-			IObservable indirectTarget = contextualizer.getSecond().getTarget();
+			if (contextualizer.getFirst() instanceof IEvaluator) {
+				ctx.getSymbolTable().put(contextualizer.getSecond().getTargetId(), (((IEvaluator)contextualizer.getFirst()).evaluate(ctx)));
+				continue;
+			}
+			
+			IObservable indirectTarget = null;
+
+			if (contextualizer.getSecond().getTargetId() != null) {
+				IArtifact indirect = ctx.getArtifact(contextualizer.getSecond().getTargetId());
+				if (indirect instanceof IObservation) {
+					indirectTarget = ((IObservation)indirect).getObservable();
+				} else {
+					throw new IllegalStateException("cannot find indirect target observation " + contextualizer.getSecond().getTargetId());
+				}
+			}
 			String targetId = "self_";
 			IRuntimeScope context = ctx;
 
 			if (indirectTarget != null) {
 				targetId = indirectTarget.getName();
-				/*
-				 * TODO check if we should do this even for the normal target, so we don't carry
-				 * previous parameters around.
-				 */
 				context = context.createChild(indirectTarget);
 			}
 
