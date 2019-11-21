@@ -127,7 +127,7 @@ public class KUserController {
 	@GetMapping(value = "/{id}", produces = "application/json")
 	@PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ProfileResource getUserById(@PathVariable("id") String username) {
-		return klabUserManager.getLoggedInUserProfile().getSafeProfile();
+		return klabUserManager.getUserProfile(username).getSafeProfile();
 	}
 	
 	@DeleteMapping(value= "/{id}", produces = "application/json")

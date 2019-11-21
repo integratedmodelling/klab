@@ -21,8 +21,10 @@ import org.integratedmodelling.klab.hub.exception.GroupRequestTokenFailedExcepti
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
+import org.integratedmodelling.klab.hub.models.Task;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.Role;
+import org.integratedmodelling.klab.hub.models.TaskStatus;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
 import org.integratedmodelling.klab.hub.models.tokens.ActivateAccountClickbackToken;
@@ -38,6 +40,7 @@ import org.integratedmodelling.klab.hub.models.tokens.VerifyEmailClickbackToken;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
+import org.integratedmodelling.klab.hub.service.TaskService;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +72,9 @@ public class TokenManager {
 	
 	@Autowired
 	private KlabGroupService klabGroupService;
+	
+	@Autowired
+	private TaskService adminTaskService;
 
 	@Autowired
 	private EmailManager emailManager;
@@ -387,13 +393,16 @@ public class TokenManager {
 
 	public GroupsClickbackToken createGroupsClickbackToken(String username, List<String> groups) {
 		GroupsClickbackToken token = (GroupsClickbackToken) createClickbackToken(username,GroupsClickbackToken.class);
+		token.setGroups(groups);
 		token.setCallbackUrl(tokenClickbackConfig);
+		tokenRepository.save(token);
 		return token;
 	}
 	
 	public void sendGroupClickbackToken(String username, List<String> groups) {
 		GroupsClickbackToken token = createGroupsClickbackToken(username, groups);
 		String grpString = groups.stream().collect(Collectors.joining(","));
+		adminTaskService.createTask(username, token);
 		URL clickbackWithGroups;
 		try {
 			clickbackWithGroups = new URL(
@@ -450,10 +459,12 @@ public class TokenManager {
 		Collection<String> available = klabGroupService.getGroupNames();
 		//groups.addAll(user.getGroups());
 		if(!available.containsAll(groups)) {
-			throw new KlabException("A Group was included that does not exist in the database");
+			throw new BadRequestException("A Group was included that does not exist in the database");
 		}
 		user.setGroups(groups);
 		klabUserManager.updateKlabUser(user);
+		Task task = adminTaskService.getTaskByToken(groupsClickbackToken);
+		adminTaskService.changeTaskStatus(task.getId(), TaskStatus.acceptedEmail);
 		deleteToken(tokenString);
 		return groupsClickbackToken;
 	}
