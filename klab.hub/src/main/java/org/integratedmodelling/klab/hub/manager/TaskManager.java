@@ -7,8 +7,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 
-import org.integratedmodelling.klab.hub.models.Task;
-import org.integratedmodelling.klab.hub.models.TaskStatus;
+import org.integratedmodelling.klab.hub.models.tasks.GroupRequestTask;
+import org.integratedmodelling.klab.hub.models.tasks.Task;
+import org.integratedmodelling.klab.hub.models.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
@@ -44,8 +45,9 @@ public class TaskManager {
 	private Task acceptTask(String taskId, HttpServletRequest request) {
 		Task task = adminTaskService.getTask(taskId);
 		if(request.isUserInRole(task.getRoleRequirement())) {
-			ClickbackToken token = task.getToken();
-			if (token.getClass().equals(GroupsClickbackToken.class)) {
+			if(task.getClass().equals(GroupRequestTask.class)) {
+				GroupRequestTask taskRequest =  (GroupRequestTask) task;
+				ClickbackToken token = taskRequest.getToken();
 				Task updatedTask = acceptGroupsRequest((GroupsClickbackToken) token, task);
 				return updatedTask;
 			} else {
@@ -66,8 +68,14 @@ public class TaskManager {
 	private Task denyTask(String taskId, HttpServletRequest request) {
 		Task task = adminTaskService.getTask(taskId);
 		if(request.isUserInRole(task.getRoleRequirement())) {
-			tokenRepository.delete(task.getToken());
-			return adminTaskService.changeTaskStatus(task.getId(), TaskStatus.denied);
+			if(task.getClass().equals(GroupRequestTask.class)) {
+				GroupRequestTask taskRequest =  (GroupRequestTask) task;
+				ClickbackToken token = taskRequest.getToken();
+				tokenRepository.delete(token);
+				return adminTaskService.changeTaskStatus(task.getId(), TaskStatus.denied);
+			} else {
+				return task;
+			}
 		} else {
 			throw new BadRequestException("Task above paygrade");
 		}

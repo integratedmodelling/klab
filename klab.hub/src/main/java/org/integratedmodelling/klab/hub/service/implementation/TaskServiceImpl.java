@@ -1,15 +1,17 @@
 package org.integratedmodelling.klab.hub.service.implementation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 
-import org.integratedmodelling.klab.hub.models.Task;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.models.Role;
-import org.integratedmodelling.klab.hub.models.TaskStatus;
+import org.integratedmodelling.klab.hub.models.tasks.Task;
+import org.integratedmodelling.klab.hub.models.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
-import org.integratedmodelling.klab.hub.repository.AdminTaskRepository;
+import org.integratedmodelling.klab.hub.repository.TaskRepository;
 import org.integratedmodelling.klab.hub.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,40 +20,45 @@ import org.springframework.stereotype.Service;
 public class TaskServiceImpl implements TaskService{
 	
 	@Autowired
-	AdminTaskRepository adminTaskRepository;
+	TaskRepository taskRepository;
 
 	@Override
-	public void createTask(String requestee, ClickbackToken token) {
-		Task task = new Task();
-		task.setRequestee(requestee);
-		task.setToken(token);
+	public Task createTask(String requestee, Class<? extends Task> taskType) {
+		Task task = null;
+		try {
+			task = taskType.getConstructor(String.class).newInstance(requestee);
+		} catch (Exception e) {
+			throw new KlabAuthorizationException("Unable to get token constructor method.", e);
+		}
 		task.setIssued();
 		task.setStatus(TaskStatus.pending);
-		task.setExpirationDate(token.getExpiration());
 		task.setRoleRequirement(Role.ROLE_ADMINISTRATOR);
-		adminTaskRepository.save(task);
+		return task;
 	}
 	
 	@Override
-	public void createTask(String requestee, ClickbackToken token, Role roleRequirement) {
-		Task task = new Task();
+	public Task createTask(String requestee, Class<? extends Task> taskType, Role roleRequirement) {
+		Task task = null;
+		try {
+			task = taskType.getConstructor(String.class).newInstance(requestee);
+		} catch (Exception e) {
+			throw new KlabAuthorizationException("Unable to get token constructor method.", e);
+		}
 		task.setRequestee(requestee);
-		task.setToken(token);
 		task.setIssued();
 		task.setStatus(TaskStatus.pending);
-		task.setExpirationDate(token.getExpiration());
 		task.setRoleRequirement(roleRequirement);
-		adminTaskRepository.save(task);
+		return task;
 	}
 
 	@Override
 	public Task changeTaskStatus(String id, TaskStatus status) {
-		Optional<Task> task = adminTaskRepository.findById(id);
+		Optional<Task> task = taskRepository.findById(id);
 		if(task.isPresent()) {
 			Task updatedTask = task.get();
 			updatedTask.setStatus(status);
 			updatedTask.setClosed();
-			adminTaskRepository.save(updatedTask);
+			taskRepository.save(updatedTask);
 			return updatedTask;
 		} else {
 			throw new BadRequestException(String.format("Task by %s id, does not exist", id));
@@ -60,10 +67,10 @@ public class TaskServiceImpl implements TaskService{
 
 	@Override
 	public void deleteTask(String id) {
-		Optional<Task> task = adminTaskRepository.findById(id);
+		Optional<Task> task = taskRepository.findById(id);
 		if(task.isPresent()) {
 			Task updatedTask = task.get();
-			adminTaskRepository.delete(updatedTask);
+			taskRepository.delete(updatedTask);
 		} else {
 			throw new BadRequestException(String.format("Task by %s id, does not exist", id));
 		}
@@ -71,12 +78,12 @@ public class TaskServiceImpl implements TaskService{
 
 	@Override
 	public List<Task> getTasks() {
-		return adminTaskRepository.findAll();
+		return taskRepository.findAll();
 	}
 
 	@Override
 	public Task getTask(String id) {
-		Optional<Task> task = adminTaskRepository.findById(id);
+		Optional<Task> task = taskRepository.findById(id);
 		if(task.isPresent()) {
 			return task.get();
 		} else {
@@ -86,16 +93,21 @@ public class TaskServiceImpl implements TaskService{
 
 	@Override
 	public List<Task> getPendingTasks() {
-		return adminTaskRepository.findByStatus(TaskStatus.pending);
+		return taskRepository.findByStatus(TaskStatus.pending);
 	}
 
 	@Override
-	public Task getTaskByToken(ClickbackToken token) {
-		Optional<Task> task = adminTaskRepository.findByToken(token);
-		if(task.isPresent()) {
+	public Task saveTask(Task task) {
+		return taskRepository.save(task);
+	}
+
+	@Override
+	public Task getGroupRequestTaskByToken(ClickbackToken token) {
+		Optional<Task> task = taskRepository.findGroupRequestByToken(token);
+		if (task.isPresent()) {
 			return task.get();
 		} else {
-			throw new BadRequestException(String.format("Task by that token does not exist"));
+			throw new BadRequestException(String.format("Group Reqest Task with this token does not exist"));
 		}
 	}
 

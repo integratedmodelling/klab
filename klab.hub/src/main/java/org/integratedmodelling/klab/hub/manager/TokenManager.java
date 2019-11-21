@@ -21,12 +21,13 @@ import org.integratedmodelling.klab.hub.exception.GroupRequestTokenFailedExcepti
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
-import org.integratedmodelling.klab.hub.models.Task;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.Role;
-import org.integratedmodelling.klab.hub.models.TaskStatus;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
+import org.integratedmodelling.klab.hub.models.tasks.GroupRequestTask;
+import org.integratedmodelling.klab.hub.models.tasks.Task;
+import org.integratedmodelling.klab.hub.models.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.models.tokens.ActivateAccountClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.AuthenticationToken;
 import org.integratedmodelling.klab.hub.models.tokens.ChangePasswordClickbackToken;
@@ -402,7 +403,9 @@ public class TokenManager {
 	public void sendGroupClickbackToken(String username, List<String> groups) {
 		GroupsClickbackToken token = createGroupsClickbackToken(username, groups);
 		String grpString = groups.stream().collect(Collectors.joining(","));
-		adminTaskService.createTask(username, token);
+		GroupRequestTask task = (GroupRequestTask) adminTaskService.createTask(username, GroupRequestTask.class);
+		task.setToken(token);
+		adminTaskService.saveTask(task);
 		URL clickbackWithGroups;
 		try {
 			clickbackWithGroups = new URL(
@@ -463,7 +466,7 @@ public class TokenManager {
 		}
 		user.setGroups(groups);
 		klabUserManager.updateKlabUser(user);
-		Task task = adminTaskService.getTaskByToken(groupsClickbackToken);
+		Task task = adminTaskService.getGroupRequestTaskByToken(groupsClickbackToken);
 		adminTaskService.changeTaskStatus(task.getId(), TaskStatus.acceptedEmail);
 		deleteToken(tokenString);
 		return groupsClickbackToken;

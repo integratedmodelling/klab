@@ -1,15 +1,15 @@
-package org.integratedmodelling.klab.hub.models;
+package org.integratedmodelling.klab.hub.models.tasks;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 
-import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
+import org.integratedmodelling.klab.hub.models.Role;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "AdminTasks")
+@Document(collection = "Tasks")
 public class Task {
 
 	@Id
@@ -17,9 +17,6 @@ public class Task {
 	
 	@NotEmpty
 	String requestee;
-	
-	@NotEmpty
-	ClickbackToken token;
 	
     DateTime issued;
     
@@ -32,6 +29,10 @@ public class Task {
     TaskStatus status;
 	
     DateTime expirationDate;
+    
+    public Task(String requestee) {
+    	this.requestee = requestee;
+    }
 
 	public String getId() {
 		return id;
@@ -47,14 +48,6 @@ public class Task {
 
 	public void setRequestee(String requestee) {
 		this.requestee = requestee;
-	}
-
-	public ClickbackToken getToken() {
-		return token;
-	}
-
-	public void setToken(ClickbackToken token) {
-		this.token = token;
 	}
 
 	public DateTime getIssued() {
