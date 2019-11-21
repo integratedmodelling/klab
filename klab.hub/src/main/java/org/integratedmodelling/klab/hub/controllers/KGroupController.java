@@ -20,7 +20,7 @@ import net.minidev.json.JSONObject;
 
 @RestController
 @RequestMapping("/api/groups")
-@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
+@RolesAllowed({"ROLE_SYSTEM" })
 public class KGroupController {
 
 	@Autowired
