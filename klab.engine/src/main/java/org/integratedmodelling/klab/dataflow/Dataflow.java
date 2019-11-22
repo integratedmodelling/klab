@@ -109,6 +109,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
+		/*
+		 * we need the initialization scale for the dataflow but we must create
+		 * our targets with the overall scale. Problem is, occurrent actuators
+		 * must create their states using their own resolution if any is specified.
+		 */
+		
 		if (actuators.size() == 0) {
 			if (scope.getResolvedArtifact() != null) {
 				return scope.getResolvedArtifact().getArtifact();

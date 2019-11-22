@@ -103,7 +103,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 													dataflow.getKdlCode(), contextualizationStrategy.getElkGraph())));
 							/*
 							 * make a copy of the coverage so that we ensure it's a scale, behaving properly
-							 * at merge.
+							 * at merge. FIXME this must be the entire scale now - each actuator creates its
+							 * artifacts, then initialization is handled when computing.
 							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy().initialization(), monitor);
 
