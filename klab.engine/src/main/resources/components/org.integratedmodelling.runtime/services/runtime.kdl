@@ -29,7 +29,6 @@ export value exec
 		default "groovy"
 		
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver
-
 }
 
 export value literal
@@ -41,7 +40,24 @@ export value literal
 		"The value to be contextualized"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
+}
 
+export value evaluate
+	"Evaluate a literal or an expression in the context, producing an arbitrary value."
+{
+	optional object literal
+		"The value to be returned"
+
+	optional value expression code
+		"The expression to be executed"
+				
+	optional boolean expression ifcondition 
+		"A condition to check before executing the code" 
+
+	optional boolean expression unlesscondition 
+		"A negative conditions to check before executing the code" 
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.Evaluator
 }
 
 filter number convert

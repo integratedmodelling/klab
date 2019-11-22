@@ -44,6 +44,7 @@ public class TimeEditor extends Composite {
 	private Composite stepWidget;
 	private Combo time_step;
 	private CLabel message;
+	private Combo time_type;
 
 	/**
 	 * Pass one to the constructor to be notified of any changes that result in a
@@ -75,7 +76,7 @@ public class TimeEditor extends Composite {
 		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel.setText("Type");
 
-		Combo time_type = new Combo(grpTime, SWT.READ_ONLY);
+		time_type = new Combo(grpTime, SWT.READ_ONLY);
 		time_type.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -120,6 +121,7 @@ public class TimeEditor extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				scopeResolution = setResolution(time_scope.getText().toUpperCase());
+				System.out.println("scopeResolution is " + scopeResolution);
 				modified();
 			}
 		});
@@ -238,18 +240,25 @@ public class TimeEditor extends Composite {
 
 	public void setTo(Dimension time) {
 		if (time == null) {
-			
+			timeType = null;
+			scopeResolution = stepResolution = null;
+			time_end.setText("");
+			time_start.setText("");
+			time_step_multiplier.setText("");
+			time_step.select(3);
+			time_scope.select(3);
+			time_type.select(0);
 		} else {
-			
+			// TODO!
 		}
 	}
-	
+
 	protected void modified() {
 		String geometry = getGeometry();
 		if (listener != null) {
-			if (geometry != null) {
+//			if (geometry != null) {
 				listener.onValidModification(geometry);
-			}
+//			}
 		}
 		/*
 		 * TODO set colors for text and fields based on validity
@@ -432,6 +441,7 @@ public class TimeEditor extends Composite {
 		long step = -1;
 		long divs = -1;
 		Resolution.Type resolution = null;
+		double resolutionMultiplier = 1;
 
 		if (start != null && end != null) {
 			long diff = end.getTime() - start.getTime();
@@ -441,18 +451,20 @@ public class TimeEditor extends Composite {
 		}
 
 		String stepDesc = null;
-		if (error == null && stepResolution != null && time_step.isEnabled()
-				&& !time_step_multiplier.getText().trim().isEmpty()) {
-			resolution = stepResolution;
+		boolean haveStep = start != null && end != null && time_step.isEnabled()
+				&& !time_step_multiplier.getText().trim().isEmpty();
+		if (error == null && stepResolution != null) {
+			resolution = haveStep ? stepResolution : scopeResolution;
 			long len = -1;
 			try {
-				len = Long.parseLong(time_step_multiplier.getText());
-				len *= stepResolution.getMilliseconds();
+				resolutionMultiplier = Double.parseDouble(time_scope_multiplier.getText().trim());
+				len = (long) (resolutionMultiplier * stepResolution.getMilliseconds());
 			} catch (Throwable t) {
-				error = "Timestep is not an integer";
+				error = "Time scope multiplier is not a number";
 			}
 
-			if (error == null && start != null && end != null) {
+			if (error == null && start != null && end != null && time_step.isEnabled()
+					&& !time_step_multiplier.getText().trim().isEmpty()) {
 				// must be divisible
 				long diff = end.getTime() - start.getTime();
 				if (diff <= len) {
@@ -471,16 +483,17 @@ public class TimeEditor extends Composite {
 		}
 
 		if (error != null) {
-			
+
 			this.message.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 			this.message.setText(error);
-			
+
 		} else {
 
 			ret += "{";
 			ret += "ttype=" + timeType.name().toLowerCase();
 			if (resolution != null) {
 				ret += ",tunit=" + resolution.name().toLowerCase();
+				ret += ",tscope=" + resolutionMultiplier;
 			}
 
 			if (start != null) {
@@ -499,7 +512,7 @@ public class TimeEditor extends Composite {
 		if (listener != null && error == null) {
 			listener.onValidModification(ret);
 		}
-		
+
 		return error != null ? null : ret;
 	}
 

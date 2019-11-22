@@ -51,6 +51,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getObservables <em>Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getDependencies <em>Dependencies</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isMerging <em>Merging</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getContextualizers <em>Contextualizers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isDiscretization <em>Discretization</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getClassification <em>Classification</em>}</li>
@@ -205,6 +206,26 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected EList<Dependency> dependencies;
+
+  /**
+   * The default value of the '{@link #isMerging() <em>Merging</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMerging()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean MERGING_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isMerging() <em>Merging</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMerging()
+   * @generated
+   * @ordered
+   */
+  protected boolean merging = MERGING_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getContextualizers() <em>Contextualizers</em>}' containment reference list.
@@ -648,6 +669,31 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    */
   @Override
+  public boolean isMerging()
+  {
+    return merging;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMerging(boolean newMerging)
+  {
+    boolean oldMerging = merging;
+    merging = newMerging;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__MERGING, oldMerging, merging));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<ValueAssignment> getContextualizers()
   {
     if (contextualizers == null)
@@ -978,6 +1024,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return getDocstring();
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         return getDependencies();
+      case KimPackage.MODEL_BODY_STATEMENT__MERGING:
+        return isMerging();
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         return getContextualizers();
       case KimPackage.MODEL_BODY_STATEMENT__DISCRETIZATION:
@@ -1043,6 +1091,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         getDependencies().clear();
         getDependencies().addAll((Collection<? extends Dependency>)newValue);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__MERGING:
+        setMerging((Boolean)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         getContextualizers().clear();
@@ -1118,6 +1169,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         getDependencies().clear();
         return;
+      case KimPackage.MODEL_BODY_STATEMENT__MERGING:
+        setMerging(MERGING_EDEFAULT);
+        return;
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         getContextualizers().clear();
         return;
@@ -1179,6 +1233,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return DOCSTRING_EDEFAULT == null ? docstring != null : !DOCSTRING_EDEFAULT.equals(docstring);
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         return dependencies != null && !dependencies.isEmpty();
+      case KimPackage.MODEL_BODY_STATEMENT__MERGING:
+        return merging != MERGING_EDEFAULT;
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         return contextualizers != null && !contextualizers.isEmpty();
       case KimPackage.MODEL_BODY_STATEMENT__DISCRETIZATION:
@@ -1220,6 +1276,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     result.append(name);
     result.append(", docstring: ");
     result.append(docstring);
+    result.append(", merging: ");
+    result.append(merging);
     result.append(", discretization: ");
     result.append(discretization);
     result.append(", classificationProperty: ");

@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
+import org.integratedmodelling.klab.api.model.contextualization.IEvaluator;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IPredicateClassifier;
 import org.integratedmodelling.klab.api.model.contextualization.IPredicateResolver;
@@ -312,12 +313,19 @@ public class Actuator implements IActuator {
 			}
 
 			IServiceCall function = service.getFirst();
-
+			
 			if (((ComputableResource) service.getSecond()).getModifiedParameters() != null) {
 				function.getParameters().putAll(((ComputableResource) service.getSecond()).getModifiedParameters());
 			}
+			
+			if (service.getSecond().getTargetId() != null) {
+				IObservable observable = ctx.getSemantics(service.getSecond().getTargetId());
+				if (observable != null) {
+					function.getParameters().put(Extensions.TARGET_OBSERVABLE_PARAMETER, observable);
+				}
+			}
 
-			Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), ctx);
+			Object contextualizer = Extensions.INSTANCE.callFunction(function, ctx);
 			if (contextualizer == null) {
 				// this happens when a condition isn't met, so it's legal.
 				continue;
@@ -348,21 +356,28 @@ public class Actuator implements IActuator {
 		for (Pair<IContextualizer, IContextualizable> contextualizer : computation) {
 
 			/*
-			 * FIXME: this keeps reusing the same ctx, which is probably wrong as it holds
-			 * parameters from all computations (although they're overwritten so it's only a
-			 * problem if one uses defaults that a previous one provides with a different
-			 * meaning).
+			 * Aux variables are computed and recorded, that's it.
 			 */
-			IObservable indirectTarget = contextualizer.getSecond().getTarget();
+			if (contextualizer.getFirst() instanceof IEvaluator) {
+				ctx.getSymbolTable().put(contextualizer.getSecond().getTargetId(), (((IEvaluator)contextualizer.getFirst()).evaluate(ctx)));
+				continue;
+			}
+			
+			IObservable indirectTarget = null;
+
+			if (contextualizer.getSecond().getTargetId() != null) {
+				IArtifact indirect = ctx.getArtifact(contextualizer.getSecond().getTargetId());
+				if (indirect instanceof IObservation) {
+					indirectTarget = ((IObservation)indirect).getObservable();
+				} else {
+					throw new IllegalStateException("cannot find indirect target observation " + contextualizer.getSecond().getTargetId());
+				}
+			}
 			String targetId = "self_";
 			IRuntimeScope context = ctx;
 
 			if (indirectTarget != null) {
 				targetId = indirectTarget.getName();
-				/*
-				 * TODO check if we should do this even for the normal target, so we don't carry
-				 * previous parameters around.
-				 */
 				context = context.createChild(indirectTarget);
 			}
 
@@ -376,11 +391,11 @@ public class Actuator implements IActuator {
 			 */
 			if (!getType().isOccurrent()) {
 				artifactTable.put(targetId,
-					runContextualizer(contextualizer.getFirst(),
-							indirectTarget == null ? this.observable : indirectTarget, contextualizer.getSecond(),
-							artifactTable.get(targetId), context, context.getScale()));
+						runContextualizer(contextualizer.getFirst(),
+								indirectTarget == null ? this.observable : indirectTarget, contextualizer.getSecond(),
+								artifactTable.get(targetId), context, context.getScale()));
 			}
-			
+
 			/*
 			 * define the computation for any future use.
 			 */
@@ -393,7 +408,7 @@ public class Actuator implements IActuator {
 				step.resource = contextualizer.getSecond();
 				this.computation.add(step);
 			}
-			
+
 			/*
 			 * if we have produced the artifact (through an instantiator), set it in the
 			 * context.
@@ -404,7 +419,7 @@ public class Actuator implements IActuator {
 				context.setData(indirectTarget.getName(), artifactTable.get(targetId));
 			}
 
-			if (model != null && !input && !artifacts.contains(ret)&& !ret.isArchetype()) {
+			if (model != null && !input && !artifacts.contains(ret) && !ret.isArchetype()) {
 				artifacts.add(ret);
 				if (ret instanceof IObservation && !(ret instanceof StateLayer)) {
 					// ACH creates problems later
@@ -805,12 +820,17 @@ public class Actuator implements IActuator {
 						+ (nout < mediationStrategy.size() - 1 || computationStrategy.size() > 0 ? "," : "") + "\n";
 				nout++;
 			}
+			
 			for (int i = 0; i < computationStrategy.size(); i++) {
 				ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     "))) : ofs + "     ")
+						+ (computationStrategy.get(i).getSecond()
+								.isVariable() ? (computationStrategy.get(i).getSecond().getTargetId() + " <- ") : "")
 						+ computationStrategy.get(i).getFirst().getSourceCode()
 						+ ((computationStrategy.get(i).getSecond().getTarget() == null
-								|| computationStrategy.get(i).getSecond().getTarget().equals(observable)) ? ""
-										: (" as " + computationStrategy.get(i).getSecond().getTarget().getName()))
+								|| computationStrategy.get(i).getSecond().isVariable()
+								|| computationStrategy.get(i).getSecond().getTarget().equals(observable)) 
+										? ""
+										: (" >> " + computationStrategy.get(i).getSecond().getTarget().getName()))
 						+ (nout < computationStrategy.size() - 1 ? "," : "") + "\n";
 				nout++;
 			}
@@ -1200,7 +1220,7 @@ public class Actuator implements IActuator {
 			if (product.isArchetype()) {
 				continue;
 			}
-			
+
 			boolean isNew = true;
 			if (product instanceof ObservationGroup) {
 				isNew = ((ObservationGroup) product).isNew();

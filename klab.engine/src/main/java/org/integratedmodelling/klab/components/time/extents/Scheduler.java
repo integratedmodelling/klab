@@ -62,6 +62,7 @@ public class Scheduler implements IScheduler {
 		long id = regId.incrementAndGet();
 
 		Actuator actuator;
+		List<Actuator.Computation> computations;
 		IDirectObservation target;
 		IScale scale;
 		Consumer<Long> action;
@@ -81,14 +82,15 @@ public class Scheduler implements IScheduler {
 		 */
 		long delayInSlot;
 
-		public Registration(Actuator actuator, IDirectObservation target, IScale scale, IRuntimeScope scope,
-				long endtime) {
+		public Registration(Actuator actuator, List<Actuator.Computation> computation, IDirectObservation target,
+				IScale scale, IRuntimeScope scope, long endtime) {
 
 			this.actuator = actuator;
 			this.scale = scale;
 			this.target = target;
 			this.endTime = endtime;
 			this.scope = scope;
+			this.computations = computation;
 
 			action = new Consumer<Long>() {
 
@@ -123,29 +125,16 @@ public class Scheduler implements IScheduler {
 
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
-					 * for signs of life at each step.
+					 * for signs of life at each step. Anything enqueued here is active so no
+					 * further check is necessary.
 					 */
-					for (Actuator.Computation computation : actuator.getContextualizers()) {
+					for (Actuator.Computation computation : computations) {
 
-						/*
-						 * pick those that have transition trigger or whose geometry includes time. TODO
-						 * condition should become clear and simple - for now it's nasty.
-						 */
-						if (computation.resource.getTrigger() == Trigger.TRANSITION || (computation.resource
-								.getTrigger() == Trigger.RESOLUTION
-								&& ((computation.observable.getArtifactType().isOccurrent()
-										&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) == null)
-										|| (computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null
-												&& scale.getTime().intersects(computation.resource.getGeometry()
-														.getDimension(Dimension.Type.TIME)))))) {
+						actuator.runContextualizer(computation.contextualizer, computation.observable,
+								computation.resource, computation.target, transitionContext, (IScale) transitionScale);
 
-							actuator.runContextualizer(computation.contextualizer, computation.observable,
-									computation.resource, transitionContext.getArtifact(computation.targetId),
-									transitionContext, (IScale) transitionScale);
-
-							if (!target.isActive()) {
-								break;
-							}
+						if (!target.isActive()) {
+							break;
 						}
 					}
 
@@ -153,7 +142,7 @@ public class Scheduler implements IScheduler {
 					 * 4. Notify whatever has changed.
 					 */
 					if (!target.isActive()) {
-						// went missing in action, notify relatives
+						// TODO target went MIA - notify relatives
 					} else {
 						// TODO
 					}
@@ -231,7 +220,8 @@ public class Scheduler implements IScheduler {
 		return synchronicity;
 	}
 
-	public void schedule(final Actuator actuator, final IRuntimeScope scope) {
+	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations,
+			final IRuntimeScope scope) {
 
 		/*
 		 * overall scale fills in any missing info.
@@ -288,7 +278,7 @@ public class Scheduler implements IScheduler {
 		final IDirectObservation target = (IDirectObservation) targetObservation;
 		final long endTime = overall.getTime().getEnd() == null ? -1 : overall.getTime().getEnd().getMilliseconds();
 
-		registrations.add(new Registration(actuator, target, scale, scope, endTime));
+		registrations.add(new Registration(actuator, computations, target, scale, scope, endTime));
 
 //		System.out.println("SCHEDULED " + actuator + " to run every " + step.getMilliseconds());
 
@@ -361,15 +351,15 @@ public class Scheduler implements IScheduler {
 				long delay = 0;
 				for (Registration registration : regs) {
 					if (registration.rounds == 0) {
-						
+
 						if (type == Type.REAL_TIME && registration.delayInSlot > delay) {
 							waitStrategy.waitUntil(time + delay);
 							delay += registration.delayInSlot;
 						}
-						
+
 						registration.run(time + registration.delayInSlot);
 						reschedule(registration, time + resolution, false);
-					
+
 					} else {
 						registration.rounds--;
 						this.wheel[cursor].add(registration);

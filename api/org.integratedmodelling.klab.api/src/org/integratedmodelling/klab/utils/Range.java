@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.utils;
 
+import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 
 public class Range implements IValueMediator {
 
@@ -48,6 +50,12 @@ public class Range implements IValueMediator {
 		if (!(upperInfinite = (right == null)))
 			upperBound = right;
 
+		if (lowerBound > upperBound) {
+			double s = lowerBound;
+			lowerBound = upperBound;
+			upperBound = s;
+		}
+		
 		lowerExclusive = leftExclusive;
 		upperExclusive = rightExclusive;
 	}
@@ -72,12 +80,13 @@ public class Range implements IValueMediator {
 	public void parse(String s) {
 
 		/*
-		 * OK, can't do it with StreamTokenizer as the silly thing does not read scientific notation.
+		 * OK, can't do it with StreamTokenizer as the silly thing does not read
+		 * scientific notation.
 		 */
-		
+
 		lowerInfinite = false;
 		upperInfinite = false;
-		
+
 		s = s.trim();
 		if (s.startsWith("(")) {
 			lowerExclusive = true;
@@ -89,10 +98,10 @@ public class Range implements IValueMediator {
 
 		if (s.endsWith(")")) {
 			upperExclusive = true;
-			s = s.substring(0, s.length()-1);
+			s = s.substring(0, s.length() - 1);
 		} else if (s.endsWith("]")) {
 			upperExclusive = false;
-			s = s.substring(0, s.length()-1);
+			s = s.substring(0, s.length() - 1);
 		}
 
 		String upper = null;
@@ -104,19 +113,19 @@ public class Range implements IValueMediator {
 		}
 		if (s.endsWith(",")) {
 			upperInfinite = true;
-			lower = s.substring(0,s.length()-1).trim();
+			lower = s.substring(0, s.length() - 1).trim();
 		}
 		if (!s.startsWith(",") && !s.endsWith(",")) {
-			
+
 			if (!s.contains(",")) {
 				throw new IllegalArgumentException("invalid interval syntax: " + s);
 			}
-			
+
 			String[] ss = s.split(",");
 			lowerBound = Double.valueOf(ss[0].trim());
 			upperBound = Double.valueOf(ss[1].trim());
 		} else {
-		
+
 			if (upper != null && !upper.isEmpty()) {
 				upperBound = Double.valueOf(upper);
 			}
@@ -312,11 +321,11 @@ public class Range implements IValueMediator {
 	}
 
 	public double getWidth() {
-		return upperBound - lowerBound;
+		return isBounded() ? upperBound - lowerBound : Double.NaN;
 	}
 
 	public double getMidpoint() {
-		return lowerBound + (upperBound - lowerBound) / 2;
+		return isBounded() ? (lowerBound + (upperBound - lowerBound) / 2) : Double.NaN;
 	}
 
 	@Override
@@ -363,6 +372,92 @@ public class Range implements IValueMediator {
 
 	public static Range create(String string) {
 		return new Range(string);
+	}
+
+	/**
+	 * This form admits Number, ITimeInstant and Date. Also admits nulls to mean
+	 * infinite in the corresponding direction.
+	 * 
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public static Range create(Object from, Object to) {
+
+		boolean leftInfinite = from == null;
+		boolean rightInfinite = to == null;
+		double a = Double.NaN;
+		double b = Double.NaN;
+
+		if (!leftInfinite) {
+			if (from instanceof Number) {
+				a = ((Number) from).doubleValue();
+			} else if (from instanceof ITimeInstant) {
+				a = ((ITimeInstant) from).getMilliseconds();
+			} else if (from instanceof Date) {
+				a = ((Date) from).getTime();
+			} else {
+				throw new IllegalArgumentException("Cannot make a range: left limit unrecognized: " + from);
+			}
+		}
+		if (!rightInfinite) {
+			if (to instanceof Number) {
+				b = ((Number) to).doubleValue();
+			} else if (to instanceof ITimeInstant) {
+				b = ((ITimeInstant) to).getMilliseconds();
+			} else if (to instanceof Date) {
+				b = ((Date) to).getTime();
+			} else {
+				throw new IllegalArgumentException("Cannot make a range: right limit unrecognized: " + to);
+			}
+		}
+
+		return new Range(leftInfinite ? null : a, rightInfinite ? null : b, false, true);
+	}
+
+	public Range intersection(Range other) {
+		int lowerCmp = Double.compare(lowerBound, other.lowerBound);
+		int upperCmp = Double.compare(upperBound, other.upperBound);
+		if (lowerCmp >= 0 && upperCmp <= 0) {
+			return this;
+		} else if (lowerCmp <= 0 && upperCmp >= 0) {
+			return other;
+		} else {
+			double newLower = (lowerCmp >= 0) ? lowerBound : other.lowerBound;
+			double newUpper = (upperCmp <= 0) ? upperBound : other.upperBound;
+			return create(newLower, newUpper);
+		}
+	}
+
+	/**
+	 * Returns the minimal range that {@linkplain #encloses encloses} both this
+	 * range and {@code
+	 * other}. For example, the span of {@code [1..3]} and {@code (5..7)} is
+	 * {@code [1..7)}.
+	 *
+	 * <p>
+	 * <i>If</i> the input ranges are {@linkplain #isConnected connected}, the
+	 * returned range can also be called their <i>union</i>. If they are not, note
+	 * that the span might contain values that are not contained in either input
+	 * range.
+	 *
+	 * <p>
+	 * Like {@link #intersection(Range) intersection}, this operation is
+	 * commutative, associative and idempotent. Unlike it, it is always well-defined
+	 * for any two input ranges.
+	 */
+	public Range span(Range other) {
+		int lowerCmp = Double.compare(lowerBound, other.lowerBound);
+		int upperCmp = Double.compare(upperBound, other.upperBound);
+		if (lowerCmp <= 0 && upperCmp >= 0) {
+			return this;
+		} else if (lowerCmp >= 0 && upperCmp <= 0) {
+			return other;
+		} else {
+			double newLower = (lowerCmp <= 0) ? lowerBound : other.lowerBound;
+			double newUpper = (upperCmp >= 0) ? upperBound : other.upperBound;
+			return create(newLower, newUpper);
+		}
 	}
 
 	/**
@@ -413,6 +508,35 @@ public class Range implements IValueMediator {
 		return true;
 	}
 
+	/**
+	 * Return a [0-1] double representing how much this interval excludes of the
+	 * other. Will compute the missing parts on each side, normalize to the extent
+	 * of the range, and add them in the output, dealing with infinity
+	 * appropriately.
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public double exclusionOf(Range other) {
+
+		double leftExclusion = 0;
+		if (lowerBound != Double.NEGATIVE_INFINITY && lowerBound > other.lowerBound) {
+			leftExclusion = other.lowerBound - lowerBound;
+		}
+		double rightExclusion = 0;
+		if (upperBound != Double.POSITIVE_INFINITY && other.upperBound < upperBound) {
+			rightExclusion = upperBound - other.upperBound;
+		}
+
+		double size = leftExclusion + rightExclusion;
+		if (size == 0) {
+			return 0;
+		}
+
+		return leftExclusion / size + rightExclusion / size;
+
+	}
+
 	public boolean isWithin(double n) {
 		boolean left = lowerExclusive ? n > lowerBound : n >= lowerBound;
 		boolean right = upperExclusive ? n < upperBound : n <= upperBound;
@@ -439,5 +563,18 @@ public class Range implements IValueMediator {
 			upperInfinite = false;
 		}
 	}
-	
+
+	/**
+	 * A reference point in the interval, i.e. the midpoint if bounded, any boundary
+	 * point that is not infinity if not, and NaN if infinite.
+	 * 
+	 * @return
+	 */
+	public double getFocalPoint() {
+
+		return isBounded() ? getMidpoint()
+				: lowerBound != Double.NEGATIVE_INFINITY ? lowerBound
+						: (upperBound == Double.POSITIVE_INFINITY ? Double.NaN : upperBound);
+	}
+
 }

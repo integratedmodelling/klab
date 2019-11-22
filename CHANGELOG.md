@@ -29,10 +29,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Added
 - New 'level of' operator to allow easy modeling of orderings (on SB's suggestion).
-- New 'change in' operator creating the process that changes a quality (with its
-  initial value as dependency in models).
+- New 'change in' operator creating the process that changes a quality. The process
+  is inherent to the quality, automatically "affects" it, and a dependency is 
+  added to models to set the initial value.
 - New 'summed' and 'averaged' modifiers in value operators to force aggregations to
-  produce sums or averages independent of semantics.
+  produce sums or averages independent of semantics. "Total" should work the same
+  way.
 - API to support 'universal URNs' with 'klab' as node name, resolved entirely by the
   engine using IUrnResolver. 
 - Implementation of 'klab:osm:' open street maps URNs and search service using OSMNames
@@ -50,6 +52,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   not end up in the context or in the notifications, so that the API of the contextualizer does not
   change.
 - Reset the build count from 200 and align the codebase to the new hub and node architecture.
+- Now understanding 'set xxx to []' with an unknown xxx (not an output and not the implied
+  inherent for change processes) as "variables" that will be computed and become available in
+  subsequent actions. Using new IContextualizer#isVariable API.
+- Syntactic support for 'merging <model|resource>....' instead of 'using' ... in models, reserved
+  to change models that can string together compatible temporal resources or models.
+- Straighten out and clean up k.DL for targeting computations: xxx <- contextualizer() for
+  variables, xxx >> mediator() for mediators, and contextualizer() >> xxx for targeting 
+  alternative outputs.
 ### Changed
 - Resources can be "granular", i.e. composed of multiple resources with individual 
   geometry that give the full resource geometry when merged. Mostly unimplemented.

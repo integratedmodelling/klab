@@ -92,6 +92,17 @@ public class ObservationStrategy {
 			}
 		}
 
+		/*
+		 * If we're observing change in a quality, ensure we have the initial value as a
+		 * dependency.
+		 */
+		if (observable.is(Type.CHANGE)) {
+			IConcept dep = observable.getInherentType();
+			if (((Model) model).findDependency(dep) == null) {
+				ret.add(new ObservationStrategy(Observable.promote(dep), Mode.RESOLUTION));
+			}
+		}
+
 		/**
 		 * Add dependencies for anything mentioned in operators if needed
 		 */
@@ -147,8 +158,7 @@ public class ObservationStrategy {
 
 			ObservationStrategy alternative = new ObservationStrategy(target, mode);
 
-			
-			// separate modifiers 
+			// separate modifiers
 			Set<ValueOperator> modifiers = new HashSet<>();
 			List<Pair<ValueOperator, Object>> ops = new ArrayList<>();
 			for (Pair<ValueOperator, Object> operator : operators) {
@@ -158,7 +168,7 @@ public class ObservationStrategy {
 					ops.add(operator);
 				}
 			}
-				
+
 			for (Pair<ValueOperator, Object> operator : ops) {
 				alternative.computation.add(Klab.INSTANCE.getRuntimeProvider().getOperatorResolver(target,
 						operator.getFirst(), operator.getSecond(), modifiers));

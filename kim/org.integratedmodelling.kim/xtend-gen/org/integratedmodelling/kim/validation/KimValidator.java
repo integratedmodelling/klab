@@ -2855,6 +2855,22 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED);
         ok = false;
       } else {
+        int i_6 = 0;
+        EList<ConceptDeclaration> _qualitiesAffected = concept.getQualitiesAffected();
+        for (final ConceptDeclaration decl_2 : _qualitiesAffected) {
+          {
+            KimConcept quality = Kim.INSTANCE.declareConcept(decl_2);
+            boolean _is = quality.is(IKimConcept.Type.QUALITY);
+            boolean _not_10 = (!_is);
+            if (_not_10) {
+              this.error(
+                "only quality types can be affected by a process", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i_6);
+            } else {
+              ret.getQualitiesAffected().add(quality);
+            }
+            i_6++;
+          }
+        }
       }
     }
     Metadata _metadata = concept.getMetadata();

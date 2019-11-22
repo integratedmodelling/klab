@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getObservables <em>Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDependencies <em>Dependencies</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isMerging <em>Merging</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getContextualizers <em>Contextualizers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isDiscretization <em>Discretization</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getClassification <em>Classification</em>}</li>
@@ -233,6 +234,28 @@ public interface ModelBodyStatement extends EObject
    * @generated
    */
   EList<Dependency> getDependencies();
+
+  /**
+   * Returns the value of the '<em><b>Merging</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Merging</em>' attribute.
+   * @see #setMerging(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Merging()
+   * @model
+   * @generated
+   */
+  boolean isMerging();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isMerging <em>Merging</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Merging</em>' attribute.
+   * @see #isMerging()
+   * @generated
+   */
+  void setMerging(boolean value);
 
   /**
    * Returns the value of the '<em><b>Contextualizers</b></em>' containment reference list.

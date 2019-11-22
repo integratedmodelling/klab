@@ -270,7 +270,15 @@ public enum Types implements ITypeService {
 			Object o = m.get(metadataEncodingProperty);
 
 			if (o != null && !(o instanceof Double && Double.isNaN((Double) o))) {
-				ret.addClassifier(Classifier.create(o), (IConcept) c);
+				if (o instanceof List) {
+					
+					for (Object oo : ((List<?>)o)) {
+						ret.addClassifier(Classifier.create(oo), (IConcept) c);
+					}
+					
+				} else {
+					ret.addClassifier(Classifier.create(o), (IConcept) c);
+				}
 			}
 		}
 

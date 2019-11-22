@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -220,6 +221,10 @@ public enum Observables implements IObservableService {
 	 * and processes, context is found in 'applies to'. If the context is not
 	 * specified but there is an inherent concept, the context of the inherent, if
 	 * any, is returned.
+	 * <p>
+	 * This one returns either the explicitly set context or the implied one,
+	 * ensuring that {@link #getDirectContextType(IConcept)} can work correctly
+	 * using only the directly stated context.
 	 * 
 	 * @param concept
 	 * @return the context type, or null.
@@ -280,6 +285,7 @@ public enum Observables implements IObservableService {
 		return ret;
 	}
 
+	
 	public Collection<IConcept> getDescribedQualities(IConcept configuration) {
 		List<IConcept> ret = new ArrayList<>();
 		ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.DESCRIBES_QUALITY_PROPERTY)));
@@ -294,6 +300,16 @@ public enum Observables implements IObservableService {
 
 	public Collection<IConcept> getDescribedQualities(IConcept configuration, DescriptionType type) {
 		return OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(getDescriptionProperty(type)));
+	}
+
+	/**
+	 * Get all qualities affected by a process
+	 * 
+	 * @param process
+	 * @return
+	 */
+	public Collection<IConcept> getAffectedQualities(IConcept process) {
+		return OWL.INSTANCE.getRestrictedClasses(process, Concepts.p(NS.AFFECTS_PROPERTY));
 	}
 
 	private String getDescriptionProperty(DescriptionType type) {
@@ -696,7 +712,8 @@ public enum Observables implements IObservableService {
 	}
 
 	@Override
-	public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor) {
+	public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit,
+			IMonitor monitor) {
 
 		IConcept originalContext = observable.getContext();
 		if (originalContext != null && originalContext.equals(newContext)) {
@@ -715,7 +732,7 @@ public enum Observables implements IObservableService {
 		if (!isExplicit || observable.is(Type.DIRECT_OBSERVABLE)) {
 			return (Observable) observable;
 		}
-		
+
 		return (Observable) new ObservableBuilder((Observable) observable, monitor).within(newContext)
 				.buildObservable();
 	}
@@ -740,6 +757,22 @@ public enum Observables implements IObservableService {
 	 */
 	public boolean hasDistributedInherency(IConcept candidate) {
 		return candidate.getMetadata().get(NS.INHERENCY_IS_DISTRIBUTED, " false").equals("true");
+	}
+
+	/**
+	 * True if affecting affects affecting.
+	 * 
+	 * @param affected
+	 * @param affecting
+	 * @return true if.
+	 */
+	public boolean isAffectedBy(ISemantic affected, ISemantic affecting) {
+		for (IConcept c : getAffectedQualities(affecting.getType())) {
+			if (affected.getType().is(c)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

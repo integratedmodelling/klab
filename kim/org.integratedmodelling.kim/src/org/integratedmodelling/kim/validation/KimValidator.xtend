@@ -2267,6 +2267,19 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				// TODO process affects quality; deliberative agents can affect states of subject types.
+				var i = 0
+				for (decl : concept.qualitiesAffected) {
+					var quality = Kim.INSTANCE.declareConcept(decl)
+					if (!quality.is(Type.QUALITY)) {
+						error(
+							"only quality types can be affected by a process",
+							concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i)
+					} else {
+						ret.qualitiesAffected.add(quality)
+					}
+					i++
+				}
+
 			}
 		}
 

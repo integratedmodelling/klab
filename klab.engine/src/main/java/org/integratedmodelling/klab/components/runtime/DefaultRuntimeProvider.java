@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.CastingSt
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.Evaluator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
@@ -202,7 +203,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 		IServiceCall ret = null;
 
-		if (resource.getServiceCall() != null) {
+		if (resource.isVariable()) {
+			ret = Evaluator.getServiceCall(resource);
+		} else if (resource.getServiceCall() != null) {
 			if (resource.getCondition() != null) {
 				ret = ConditionalContextualizer.getServiceCall(resource);
 			} else {

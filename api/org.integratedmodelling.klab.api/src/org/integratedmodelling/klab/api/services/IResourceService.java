@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -114,8 +115,7 @@ public interface IResourceService {
 	/**
 	 * Resolve the passed URN to a resource.
 	 *
-	 * @param urn
-	 *            the
+	 * @param urn the
 	 * @return a resource
 	 * @throws org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException
 	 * @throws org.integratedmodelling.klab.exceptions.KlabAuthorizationException
@@ -166,35 +166,31 @@ public interface IResourceService {
 	 * a reviewed repository, modifies the major version to make them 1.x.b or
 	 * anything higher than the initial version.
 	 * 
-	 * @param resourceId
-	 *            the ID for the resource, which will be part of the URN and must be
-	 *            unique within a project.
-	 * @param file
-	 *            a {@link java.io.File} object. May be null if userData contain all
-	 *            relevant info. The local path of the file (starting at the project
-	 *            folder, inclusive) is stored in metadata and checked in case of
-	 *            redefinition, so that the URN is versioned rather than recreated.
-	 * @param userData
-	 *            user data. May be empty (if all that's needed is the file). Must
-	 *            contain a suitable id if the file is null. These are used to
-	 *            define URN parameters at the discretion of the adapter.
-	 * @param project
-	 *            the project for the resource. Can't be null. All local resources
-	 *            are project-local; only public resources are visible globally.
-	 * @param adapterType
-	 *            pass null to interrogate all adapters and choose the first fitting
-	 *            adapter. Must be passed if file is null.
-	 * @param update
-	 *            if true, allow updating of the resource every time this is called.
-	 *            Otherwise just create if absent or update when the timestamp on
-	 *            the resource is older than that of the file.
-	 * @param asynchronous
-	 *            if true, spawn a validator thread and return a proxy for the
-	 *            resource without blocking.
-	 * @param monitor
-	 *            a
-	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
-	 *            object.
+	 * @param resourceId   the ID for the resource, which will be part of the URN
+	 *                     and must be unique within a project.
+	 * @param file         a {@link java.io.File} object. May be null if userData
+	 *                     contain all relevant info. The local path of the file
+	 *                     (starting at the project folder, inclusive) is stored in
+	 *                     metadata and checked in case of redefinition, so that the
+	 *                     URN is versioned rather than recreated.
+	 * @param userData     user data. May be empty (if all that's needed is the
+	 *                     file). Must contain a suitable id if the file is null.
+	 *                     These are used to define URN parameters at the discretion
+	 *                     of the adapter.
+	 * @param project      the project for the resource. Can't be null. All local
+	 *                     resources are project-local; only public resources are
+	 *                     visible globally.
+	 * @param adapterType  pass null to interrogate all adapters and choose the
+	 *                     first fitting adapter. Must be passed if file is null.
+	 * @param update       if true, allow updating of the resource every time this
+	 *                     is called. Otherwise just create if absent or update when
+	 *                     the timestamp on the resource is older than that of the
+	 *                     file.
+	 * @param asynchronous if true, spawn a validator thread and return a proxy for
+	 *                     the resource without blocking.
+	 * @param monitor      a
+	 *                     {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *                     object.
 	 * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
 	 *         with a local URN if successful.
 	 */
@@ -254,8 +250,7 @@ public interface IResourceService {
 	 * model, local or remote, in the latter case triggering any necessary
 	 * synchronization with the network.
 	 *
-	 * @param urn
-	 *            a {@link java.lang.String} object.
+	 * @param urn a {@link java.lang.String} object.
 	 * @return the model object corresponding to the urn, or null if not found.
 	 */
 	IKimObject getModelObject(String urn);
@@ -264,12 +259,10 @@ public interface IResourceService {
 	 * Retrieve a resolvable object identified by a URN, promoting any resource that
 	 * is not directly resolvable to the correspondent resolvable when possible.
 	 *
-	 * @param urn
-	 *            either a formal URN or one of the abbreviated forms recognized in
-	 *            k.IM (such as a concept identifier)
-	 * @param scale
-	 *            scale of resolution, used to attribute proper default units to
-	 *            extensive observables when they are created from concepts.
+	 * @param urn   either a formal URN or one of the abbreviated forms recognized
+	 *              in k.IM (such as a concept identifier)
+	 * @param scale scale of resolution, used to attribute proper default units to
+	 *              extensive observables when they are created from concepts.
 	 * @return a resolvable resource, or null if nothing can be found.
 	 */
 	IResolvable getResolvableResource(String urn, IScale scale);
@@ -303,5 +296,15 @@ public interface IResourceService {
 	 * @return true if resource can be used right away
 	 */
 	boolean isResourceOnline(String urn);
+
+	/**
+	 * Create a merged temporal resource from several temporally-explicit,
+	 * homogeneous resources. The geometry will have intersected space and
+	 * intelligently unioned time.
+	 * 
+	 * @param resources
+	 * @return a temporal resource with the merged geometry.
+	 */
+	IResource createMergedTemporalResource(List<IResource> resources);
 
 }

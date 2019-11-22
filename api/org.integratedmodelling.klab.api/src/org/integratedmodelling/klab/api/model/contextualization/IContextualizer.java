@@ -48,22 +48,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  */
 public abstract interface IContextualizer {
 
-//    /**
-//     * Contextualizers can be linked to a geometry, which is set in the
-//     * corresponding function prototype. The geometry defines the intrinsic notion of extent, 
-//     * coinciding with the <b>output</b> of the
-//     * contextualizer; the input's geometry is assumed the same as the output unless the
-//     * contextualizer is a transforming contextualizer. The output geometry and establishes how the
-//     * contextualizer is evaluated in time and whether it is applicable to a
-//     * specific type of scale. Geometries along a computational chain must be
-//     * compatible and propagate to the models, so they can be used during resolution
-//     * to choose or rank models for the scale of contextualization.
-//     *
-//     * @return the geometry. A contextualizer that reports a null geometry is a
-//     *         mediator and must be able to take any input geometry for its type.
-//     */
-//    IGeometry getGeometry();
-//
     /**
      * Contextualizers can expose a type so that an artifact chain can be established
      * when intermediate computations of different types are required for an

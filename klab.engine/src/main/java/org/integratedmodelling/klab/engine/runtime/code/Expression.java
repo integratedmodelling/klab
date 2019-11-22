@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.runtime.code;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -107,16 +108,6 @@ public abstract class Expression implements IExpression {
       return null;
     }
 
-//    @Override
-//    public Collection<String> getInputs() {
-//      return new HashSet<>();
-//    }
-//
-//    @Override
-//    public Collection<String> getOutputs() {
-//      return new HashSet<>();
-//    }
-
     @Override
     public IObservable getSemantics(String identifier) {
       return null;
@@ -214,6 +205,12 @@ public abstract class Expression implements IExpression {
 
 	@Override
 	public IDataflow<?> getDataflow() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getSymbolTable() {
 		// TODO Auto-generated method stub
 		return null;
 	}

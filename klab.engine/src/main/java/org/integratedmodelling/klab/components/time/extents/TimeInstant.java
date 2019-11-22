@@ -52,5 +52,11 @@ public class TimeInstant implements ITimeInstant {
 	public boolean isBefore(ITimeInstant t) {
 		return this.time.isBefore(((TimeInstant)t).time);
 	}
+
+	@Override
+	public String getSpecification() {
+		// TODO Auto-generated method stub
+		return "todo";
+	}
 	
 }
