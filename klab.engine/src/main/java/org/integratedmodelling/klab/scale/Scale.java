@@ -1407,8 +1407,43 @@ public class Scale implements IScale {
 
 	@Override
 	public IScale harmonize(IScale scale, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return this;
+		
+		if (scale == this || scale.isEmpty() || hasEqualExtents(scale)) {
+			return this;
+		}
+
+		if (scale instanceof Scale) {
+
+			Scale other = (Scale) scale;
+			Scale ret = new Scale();
+			ArrayList<IExtent> common = new ArrayList<>();
+			HashSet<Dimension.Type> commonConcepts = new HashSet<>();
+
+			for (IExtent e : extents) {
+				if (other.getDimension(e.getType()) != null) {
+					common.add(e);
+					commonConcepts.add(e.getType());
+				} else {
+					ret.mergeExtent(e);
+				}
+			}
+
+			for (IExtent e : other.getExtents()) {
+				if (ret.getDimension(e.getType()) == null && !commonConcepts.contains(e.getType())) {
+					ret.mergeExtent(e);
+				}
+			}
+
+			for (IExtent e : common) {
+				IExtent oext = other.getDimension(e.getType());
+				IExtent merged = (IExtent) e.harmonize(oext, monitor);
+				ret.mergeExtent(merged);
+			}
+			
+			return ret;
+		}
+
+		throw new IllegalArgumentException("Scale harmonize() called with a non-scale parameter");
 	}
 
 }
