@@ -1,12 +1,10 @@
 package org.integratedmodelling.klab.hub.service.implementation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ws.rs.BadRequestException;
-
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.tasks.Task;
 import org.integratedmodelling.klab.hub.models.tasks.TaskStatus;

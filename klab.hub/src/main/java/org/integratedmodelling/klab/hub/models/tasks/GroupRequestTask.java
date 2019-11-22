@@ -1,14 +1,13 @@
 package org.integratedmodelling.klab.hub.models.tasks;
 
-import javax.validation.constraints.NotEmpty;
-
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
 
 @TypeAlias("GroupRequestTask")
 public class GroupRequestTask extends Task{
-	
-	@NotEmpty
+
+	@Reference
 	ClickbackToken token;
 	
     public GroupRequestTask(String requestee) {

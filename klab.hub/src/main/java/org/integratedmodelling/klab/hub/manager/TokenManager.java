@@ -75,7 +75,7 @@ public class TokenManager {
 	private KlabGroupService klabGroupService;
 	
 	@Autowired
-	private TaskService adminTaskService;
+	private TaskService taskService;
 
 	@Autowired
 	private EmailManager emailManager;
@@ -403,9 +403,9 @@ public class TokenManager {
 	public void sendGroupClickbackToken(String username, List<String> groups) {
 		GroupsClickbackToken token = createGroupsClickbackToken(username, groups);
 		String grpString = groups.stream().collect(Collectors.joining(","));
-		GroupRequestTask task = (GroupRequestTask) adminTaskService.createTask(username, GroupRequestTask.class);
+		GroupRequestTask task = (GroupRequestTask) taskService.createTask(username, GroupRequestTask.class);
 		task.setToken(token);
-		adminTaskService.saveTask(task);
+		taskService.saveTask(task);
 		URL clickbackWithGroups;
 		try {
 			clickbackWithGroups = new URL(
@@ -466,8 +466,8 @@ public class TokenManager {
 		}
 		user.setGroups(groups);
 		klabUserManager.updateKlabUser(user);
-		Task task = adminTaskService.getGroupRequestTaskByToken(groupsClickbackToken);
-		adminTaskService.changeTaskStatus(task.getId(), TaskStatus.acceptedEmail);
+		Task task = taskService.getGroupRequestTaskByToken(groupsClickbackToken);
+		taskService.changeTaskStatus(task.getId(), TaskStatus.acceptedEmail);
 		deleteToken(tokenString);
 		return groupsClickbackToken;
 	}

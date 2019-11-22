@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.controllers;
 import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.manager.TaskManager;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,14 @@ import net.minidev.json.JSONObject;
 
 @RestController
 @RequestMapping("/api/groups")
-@RolesAllowed({"ROLE_SYSTEM" })
+@RolesAllowed({"ROLE_SYSTEM", "ROLE_ADMINISTRATOR"})
 public class KGroupController {
 
 	@Autowired
 	KlabGroupService klabGroupService;
+	
+	@Autowired
+	TaskManager taskManager;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<Object> getGroups() {
@@ -40,12 +44,14 @@ public class KGroupController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> updateGroup(@PathVariable("id") String id, @RequestBody KlabGroup group) {
 		klabGroupService.updateGroup(id, group);
 		return new ResponseEntity<>("The group has been updated successsfully", HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> delete(@PathVariable("id") String id) {
 		klabGroupService.deleteGroup(id);
 		return new ResponseEntity<>("The Groups has been deleted successsfully", HttpStatus.OK);
@@ -58,6 +64,7 @@ public class KGroupController {
 	}
 	
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
+	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> createGroup(@RequestBody KlabGroup group) {
 		klabGroupService.createGroup(group.getId(), group);
 		return new ResponseEntity<>(group, HttpStatus.CREATED);

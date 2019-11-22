@@ -1,12 +1,13 @@
 package org.integratedmodelling.klab.hub.models.tasks;
 
-import javax.validation.constraints.NotEmpty;
-
 import org.integratedmodelling.klab.hub.models.KlabGroup;
+import org.springframework.data.annotation.Reference;
+import org.springframework.data.annotation.TypeAlias;
 
+@TypeAlias("CreateGroupTask")
 public class CreateGroupTask extends Task{
 
-	@NotEmpty
+	@Reference
 	KlabGroup group;
 	
 	public CreateGroupTask(String requestee) {

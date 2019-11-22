@@ -7,12 +7,17 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 
+import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
+import org.integratedmodelling.klab.hub.models.KlabGroup;
+import org.integratedmodelling.klab.hub.models.Role;
+import org.integratedmodelling.klab.hub.models.tasks.CreateGroupTask;
 import org.integratedmodelling.klab.hub.models.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.models.tasks.Task;
 import org.integratedmodelling.klab.hub.models.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
+import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.TaskService;
 import org.integratedmodelling.klab.hub.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +27,7 @@ import org.springframework.stereotype.Component;
 public class TaskManager {
 	
 	@Autowired
-	TaskService adminTaskService;
+	TaskService taskService;
 	
 	@Autowired
 	TokenRepository tokenRepository;
@@ -30,8 +35,11 @@ public class TaskManager {
 	@Autowired
 	UserService userService;
 	
+	@Autowired
+	KlabGroupService klabGroupService;
+	
 	public List<Task> getTasks() {
-		return adminTaskService.getTasks();
+		return taskService.getTasks();
 	}
 
 	public Task taskDecision(String taskId, Boolean decision, HttpServletRequest request) {
@@ -43,18 +51,22 @@ public class TaskManager {
 	}
 
 	private Task acceptTask(String taskId, HttpServletRequest request) {
-		Task task = adminTaskService.getTask(taskId);
+		Task task = taskService.getTask(taskId);
 		if(request.isUserInRole(task.getRoleRequirement())) {
 			if(task.getClass().equals(GroupRequestTask.class)) {
 				GroupRequestTask taskRequest =  (GroupRequestTask) task;
 				ClickbackToken token = taskRequest.getToken();
-				Task updatedTask = acceptGroupsRequest((GroupsClickbackToken) token, task);
-				return updatedTask;
-			} else {
+				return acceptGroupsRequest((GroupsClickbackToken) token, task);
+			} 
+			if(task.getClass().equals(CreateGroupTask.class)) {
+				CreateGroupTask taskRequest = (CreateGroupTask) task;
+				return acceptCreateGroupRequest(taskRequest);
+			}
+			else {
 				return task;
 			}
 		} else {
-			throw new BadRequestException("Task above paygrade");
+			throw new AuthenticationFailedException("Task above paygrade");
 		}
 	}
 
@@ -62,17 +74,17 @@ public class TaskManager {
 		Set<String> groups = token.getGroups().stream().collect(Collectors.toSet());
 		userService.addUserGroups(token.getName(), groups);
 		tokenRepository.delete(token);
-		return adminTaskService.changeTaskStatus(task.getId(), TaskStatus.acceptedTask);
+		return taskService.changeTaskStatus(task.getId(), TaskStatus.acceptedTask);
 	}
 	
 	private Task denyTask(String taskId, HttpServletRequest request) {
-		Task task = adminTaskService.getTask(taskId);
+		Task task = taskService.getTask(taskId);
 		if(request.isUserInRole(task.getRoleRequirement())) {
 			if(task.getClass().equals(GroupRequestTask.class)) {
 				GroupRequestTask taskRequest =  (GroupRequestTask) task;
 				ClickbackToken token = taskRequest.getToken();
 				tokenRepository.delete(token);
-				return adminTaskService.changeTaskStatus(task.getId(), TaskStatus.denied);
+				return taskService.changeTaskStatus(task.getId(), TaskStatus.denied);
 			} else {
 				return task;
 			}
@@ -82,7 +94,23 @@ public class TaskManager {
 	}
 
 	public Task getTask(String taskId) {
-		return adminTaskService.getTask(taskId);
-	}	
+		return taskService.getTask(taskId);
+	}
+
+	public CreateGroupTask createGroupTask(String username, KlabGroup group) {
+		if (!klabGroupService.getGroupNames().contains(group.getId())) {
+			CreateGroupTask task = (CreateGroupTask) taskService.createTask(username, CreateGroupTask.class, Role.ROLE_SYSTEM);
+			task.setGroup(group);
+			taskService.saveTask(task);
+			return task;
+		} else {
+			throw new BadRequestException("Requested group already in groups");
+		}
+	}
+	
+	private Task acceptCreateGroupRequest(CreateGroupTask task) {
+		klabGroupService.createGroup(task.getGroup().getId(), task.getGroup());
+		return taskService.changeTaskStatus(task.getId(), TaskStatus.acceptedTask);
+	}
 
 }
