@@ -131,6 +131,10 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	    			u.setLastLogin(null);
 	    		}
     		}
+    		x = (int)(Math.random()*100+1);
+    		if (x<=20) {
+    			u.setSendUpdates(false);
+    		}
     		initialUsers.add(u);
     	}
         system.addGroups("ARIES");

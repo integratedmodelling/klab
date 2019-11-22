@@ -27,20 +27,16 @@ public class EmailConfig {
 
     @Value("${email.replyable.general.emailaddress}")
     private String EMAIL_REPLYABLE_GENERAL;
-    private String EMAIL_REPLYABLE_GENERAL_KEY = "general";
-
+    
     @Value("${email.replyable.support.emailaddress}")
     private String EMAIL_REPLYABLE_SUPPORT;
-    private String EMAIL_REPLYABLE_SUPPORT_KEY = "support";
-    
+        
     @Value("${email.replyable.admin.emailaddress}")
     private String EMAIL_REPLYABLE_ADMIN;
-    private String EMAIL_REPLYABLE_ADMIN_KEY = "admin";
-
+    
     @Value("${email.noreply.emailaddress}")
     private String EMAIL_NOREPLY;
-    private String EMAIL_NOREPLY_KEY = "noreplay";
-
+    
     @Bean
     public JavaMailSender getEmailSender() {
         JavaMailSenderImpl result = new JavaMailSenderImpl();
@@ -71,14 +67,8 @@ public class EmailConfig {
         return EMAIL_NOREPLY;
     }
     
-    public Map<String, String> getAuthorizedEmailAddresses() {
-    	HashMap<String, String> addresses = new HashMap<String, String>(4);
-    	addresses.put(EMAIL_REPLYABLE_GENERAL_KEY, EMAIL_REPLYABLE_GENERAL);
-    	addresses.put(EMAIL_REPLYABLE_SUPPORT_KEY, EMAIL_REPLYABLE_SUPPORT);
-    	addresses.put(EMAIL_REPLYABLE_ADMIN_KEY, EMAIL_REPLYABLE_ADMIN);
-    	addresses.put(EMAIL_NOREPLY_KEY, EMAIL_NOREPLY);
-    	// { replyableGeneralEmailAddress(), replyableSupportEmailAddress(), replyableAdminEmailAddress(), noreplyEmailAddress() };
-    	return addresses;
+    public String[] getAuthorizedEmailAddresses() {
+    	return new String[] { replyableGeneralEmailAddress(), replyableSupportEmailAddress(), replyableAdminEmailAddress(), noreplyEmailAddress() };
     }
 
 }
