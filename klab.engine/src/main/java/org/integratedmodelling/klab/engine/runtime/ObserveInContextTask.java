@@ -118,7 +118,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving properly
 						// at merge.
-						IArtifact result = dataflow.run(scope.getCoverage().copy().initialization(), monitor);
+						IArtifact result = dataflow.run(scope.getCoverage(), monitor);
 						if (result instanceof IObservation) {
 							ret = (IObservation) result;
 						} else {

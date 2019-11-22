@@ -110,11 +110,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
 		/*
-		 * we need the initialization scale for the dataflow but we must create
-		 * our targets with the overall scale. Problem is, occurrent actuators
-		 * must create their states using their own resolution if any is specified.
+		 * we need the initialization scale for the dataflow but we must create our
+		 * targets with the overall scale. Problem is, occurrent actuators must create
+		 * their states using their own resolution if any is specified.
 		 */
-		
 		if (actuators.size() == 0) {
 			if (scope.getResolvedArtifact() != null) {
 				return scope.getResolvedArtifact().getArtifact();
@@ -202,8 +201,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 
 		/*
-		 * Children at the dataflow level run in parallel, so have the runtime start
-		 * futures for each child and chain the results when they come.
+		 * Initialization run, which will also schedule any further temporal actions.
+		 * This is normally just one actuator. Children at the dataflow level could run
+		 * in parallel, so have the runtime start futures for each child and chain the
+		 * results when they come. This scenario is not possible at the moment so we
+		 * spare the trouble of coding it in.
 		 */
 		IArtifact ret = null;
 		for (IActuator actuator : actuators) {
@@ -339,7 +341,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 					for (int i = 0; i < scaleSpecs.size(); i++) {
 						if (scaleSpecs.get(i) != null) {
 							ret += " " + scaleSpecs.get(i).getSourceCode()
-								+ ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
+									+ ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
 						}
 					}
 					ret += "\n";
@@ -474,8 +476,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public IDirectObservation getRelationshipTarget() {
 		return relationshipTarget;
-	}	
-	
+	}
+
 	public Dataflow withConfigurationTargets(Collection<IObservation> targets) {
 		this.configurationTargets = targets;
 		return this;

@@ -1243,7 +1243,7 @@ public class Scale implements IScale {
 	@Override
 	public Scale merge(IScale scale) {
 
-		if (scale == this || hasEqualExtents(scale)) {
+		if (scale == this || scale.isEmpty() || hasEqualExtents(scale)) {
 			return this;
 		}
 
@@ -1403,6 +1403,12 @@ public class Scale implements IScale {
 	@Override
 	public int hashCode() {
 		return asGeometry().hashCode();
+	}
+
+	@Override
+	public IScale harmonize(IScale scale, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return this;
 	}
 
 }

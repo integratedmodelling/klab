@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 
 /**
@@ -93,14 +94,27 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
 
 	/**
 	 * Merge in another scale to complete what is incomplete in this one. This is
-	 * done recursively during resolution to establish the final scale for a
-	 * dataflow. Allows specifications with partially specified extents (where
-	 * {@link #isGeneric()} returns true) to inform the scale of the final
-	 * contextualization.
+	 * done recursively during resolution to establish the final scale of
+	 * contextualization for a dataflow. Allows specifications with partially
+	 * specified extents (where {@link #isGeneric()} returns true) to inform the
+	 * scale of the final contextualization.
 	 * 
 	 * @param scale
 	 */
 	public IScale merge(IScale scale);
+
+	/**
+	 * Equivalent of {@link #merge(IScale)} but called at runtime before
+	 * computation, to ensure that any constraints set in the model are represented
+	 * in the scale of computation. If {@link #merge(IScale)} builds the
+	 * <i>overall</i> scale of <i>contextualization</i>, this builds the
+	 * <i>specific</i> scale of <i>computation</i> for a single model's scope.
+	 * 
+	 * @param scale
+	 * @param monitor
+	 * @return
+	 */
+	public IScale harmonize(IScale scale, IMonitor monitor);
 
 	/**
 	 * {@inheritDoc}
@@ -129,13 +143,13 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
 	 *                                            this scale
 	 */
 	long[] shape(Type dimension);
-	
+
 	/**
-	 * Return the scale at the beginning of time, or the scale itself if there is
-	 * no time at all.
+	 * Return the scale at the beginning of time, or the scale itself if there is no
+	 * time at all.
 	 */
 	IScale initialization();
-	
+
 	/**
 	 * Return a scale optimized for iterating along the dimensions passed here (use
 	 * the same call logics as in {@link IGeometry#at(Object...)}}. At worst the

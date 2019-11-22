@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
@@ -1021,6 +1022,12 @@ public class Space extends Extent implements ISpace {
 	@Override
 	public double[] getStandardizedCentroid() {
 		return getShape().getCenter(true);
+	}
+
+	@Override
+	public IExtent harmonize(IExtent extent, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return this;
 	}
 
 }
