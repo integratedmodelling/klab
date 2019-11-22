@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.hub.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,15 +27,19 @@ public class EmailConfig {
 
     @Value("${email.replyable.general.emailaddress}")
     private String EMAIL_REPLYABLE_GENERAL;
+    private String EMAIL_REPLYABLE_GENERAL_KEY = "general";
 
     @Value("${email.replyable.support.emailaddress}")
     private String EMAIL_REPLYABLE_SUPPORT;
+    private String EMAIL_REPLYABLE_SUPPORT_KEY = "support";
     
     @Value("${email.replyable.admin.emailaddress}")
     private String EMAIL_REPLYABLE_ADMIN;
+    private String EMAIL_REPLYABLE_ADMIN_KEY = "admin";
 
     @Value("${email.noreply.emailaddress}")
     private String EMAIL_NOREPLY;
+    private String EMAIL_NOREPLY_KEY = "noreplay";
 
     @Bean
     public JavaMailSender getEmailSender() {
@@ -65,8 +71,13 @@ public class EmailConfig {
         return EMAIL_NOREPLY;
     }
     
-    public String[] getAuthorizedEmailAddresses() {
-    	String[] addresses = { replyableGeneralEmailAddress(), replyableSupportEmailAddress(), replyableAdminEmailAddress(), noreplyEmailAddress() };
+    public Map<String, String> getAuthorizedEmailAddresses() {
+    	HashMap<String, String> addresses = new HashMap<String, String>(4);
+    	addresses.put(EMAIL_REPLYABLE_GENERAL_KEY, EMAIL_REPLYABLE_GENERAL);
+    	addresses.put(EMAIL_REPLYABLE_SUPPORT_KEY, EMAIL_REPLYABLE_SUPPORT);
+    	addresses.put(EMAIL_REPLYABLE_ADMIN_KEY, EMAIL_REPLYABLE_ADMIN);
+    	addresses.put(EMAIL_NOREPLY_KEY, EMAIL_NOREPLY);
+    	// { replyableGeneralEmailAddress(), replyableSupportEmailAddress(), replyableAdminEmailAddress(), noreplyEmailAddress() };
     	return addresses;
     }
 
