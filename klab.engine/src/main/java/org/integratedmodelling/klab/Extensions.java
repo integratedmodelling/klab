@@ -64,7 +64,16 @@ public enum Extensions implements IExtensionService {
 	 */
 	INSTANCE;
 
+	/**
+	 * Each known function parsed from k.IM gets its prototype as a hidden parameter.
+	 */
 	public static final String PROTOTYPE_PARAMETER = "__prototype";
+
+	/**
+	 * Passed to contextualizer-creating functions so that they know if the contextualizer is
+	 * being targeted to an observable other than the main one.
+	 */
+	public static final String TARGET_OBSERVABLE_PARAMETER = "__targetObservable";
 
 	Map<String, IComponent> components = Collections.synchronizedMap(new HashMap<>());
 	Map<String, Prototype> prototypes = Collections.synchronizedMap(new HashMap<>());

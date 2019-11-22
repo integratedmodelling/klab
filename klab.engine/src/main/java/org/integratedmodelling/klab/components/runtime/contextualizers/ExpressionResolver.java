@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
@@ -123,15 +124,23 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		}
 
 		/**
+		 * Determine what we are computing. It will be the target artifact but the model
+		 * may be computing an action directed to a secondary observable, which we
+		 * should find in the call as a hidden parameter.
+		 */
+		Type targetType = context.getArtifactType();
+		if (parameters.containsKey(Extensions.TARGET_OBSERVABLE_PARAMETER)) {
+			targetType = Observables.INSTANCE
+					.getObservableType(parameters.get(Extensions.TARGET_OBSERVABLE_PARAMETER, IObservable.class), true);
+		}
+
+		/**
 		 * If we're computing a quality and there is any scalar usage of the known
 		 * non-scalar quantities, create a distributed state resolver. Do the analysis
 		 * even if scalar evaluation has been forced.
-		 * 
-		 * FIXME this shouldn't use the artifact type from the context but that for the TARGET, which 
-		 * may be different if we are using a 'set xxx to []' action.
 		 */
 		boolean scalar = false;
-		if (context.getArtifactType() == Type.QUALITY) {
+		if (targetType == Type.QUALITY) {
 			Collection<String> distributedStateIds = getDistributedStateIds(context);
 			distributedStateIds.add("self");
 			scalar = descriptor.isScalar(distributedStateIds);

@@ -317,8 +317,15 @@ public class Actuator implements IActuator {
 			if (((ComputableResource) service.getSecond()).getModifiedParameters() != null) {
 				function.getParameters().putAll(((ComputableResource) service.getSecond()).getModifiedParameters());
 			}
+			
+			if (service.getSecond().getTargetId() != null) {
+				IObservable observable = ctx.getSemantics(service.getSecond().getTargetId());
+				if (observable != null) {
+					function.getParameters().put(Extensions.TARGET_OBSERVABLE_PARAMETER, observable);
+				}
+			}
 
-			Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), ctx);
+			Object contextualizer = Extensions.INSTANCE.callFunction(function, ctx);
 			if (contextualizer == null) {
 				// this happens when a condition isn't met, so it's legal.
 				continue;
