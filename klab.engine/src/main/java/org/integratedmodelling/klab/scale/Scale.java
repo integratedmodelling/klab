@@ -186,10 +186,18 @@ public class Scale implements IScale {
 	 * TODO if this' extents are pre-located, the offset is still 0-n relative to
 	 * the LOCATED offset, so it must be adjusted.
 	 * 
-	 * @param offset
+	 * @param offset the 0-n offset for an iteration, always moving from 0 to the
+	 *               state count in the current localization.
 	 */
 	public void setLocatorsTo(long offset) {
 
+		/*
+		 * SO: allocate a vector of offsets, initialize at -1. Go up the originalScale
+		 * until it's null, setting each offset to the linearOffset of the located one in it. 
+		 * The resulting cursor will locate the root-level extents.
+		 * 
+		 */
+		
 		this.originalScaleOffset = offset;
 		this.locatedOffsets = this.originalScale.cursor.getElementIndexes(offset);
 		this.extents.clear();
@@ -204,7 +212,7 @@ public class Scale implements IScale {
 				this.time = (ITime) ext;
 			}
 		}
-		
+
 		sort();
 
 	}
@@ -234,7 +242,7 @@ public class Scale implements IScale {
 				this.time = (ITime) newExt;
 			}
 		}
-		
+
 		sort();
 	}
 
@@ -453,7 +461,7 @@ public class Scale implements IScale {
 		}
 		cursor.defineDimensions(dims);
 		geometry = null;
-		
+
 		return this;
 	}
 
@@ -885,7 +893,7 @@ public class Scale implements IScale {
 
 			if (t.geometry instanceof IScale) {
 				// FIXME CHECK!
-				return (Scale)t.geometry;
+				return (Scale) t.geometry;
 			} else if (t.geometry instanceof IGeometry) {
 
 				// parameters may specify a location
@@ -978,9 +986,9 @@ public class Scale implements IScale {
 	public long getOffset(ILocator index) {
 
 		if (index instanceof Offset) {
-			return ((Offset)index).linear;
+			return ((Offset) index).linear;
 		}
-		
+
 		if (index instanceof Geometry) {
 			index = Scale.create((IGeometry) index);
 		}
@@ -1354,15 +1362,15 @@ public class Scale implements IScale {
 	public class GridOffsetScanner implements Iterable<Offset> {
 
 		ThreadLocal<Offset> shuttle = new ThreadLocal<>();
-		
+
 		class It implements Iterator<Offset> {
-			
+
 			int offset = 0;
 
 			It() {
 				shuttle.set(Offset.create("0", minus(Dimension.Type.TIME)));
 			}
-			
+
 			@Override
 			public boolean hasNext() {
 				return offset < space.size();
@@ -1377,7 +1385,7 @@ public class Scale implements IScale {
 			}
 
 		}
-		
+
 		@Override
 		public Iterator<Offset> iterator() {
 			return new It();
@@ -1387,7 +1395,7 @@ public class Scale implements IScale {
 
 	@Override
 	public IScale initialization() {
-		return getTime() == null ? this : at(Time.initialization(this));
+		return getTime() == null ? this : at(Time.initialization(getTime()));
 	}
 
 	public static IScale empty() {
@@ -1398,12 +1406,12 @@ public class Scale implements IScale {
 	public boolean is(String string) {
 		return asGeometry().is(string);
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
-		return o instanceof Scale && ((Scale)o).asGeometry().equals(asGeometry());
+		return o instanceof Scale && ((Scale) o).asGeometry().equals(asGeometry());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return asGeometry().hashCode();
@@ -1411,7 +1419,7 @@ public class Scale implements IScale {
 
 	@Override
 	public IScale adopt(IScale scale, IMonitor monitor) {
-		
+
 		if (scale == this || scale.isEmpty() || hasEqualExtents(scale)) {
 			return this;
 		}
@@ -1443,7 +1451,7 @@ public class Scale implements IScale {
 				IExtent merged = (IExtent) e.adopt(oext, monitor);
 				ret.mergeExtent(merged);
 			}
-			
+
 			return ret;
 		}
 

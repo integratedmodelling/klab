@@ -109,7 +109,7 @@ public class Time extends Extent implements ITime {
 		this.step = time.step;
 	}
 
-	public static Time initialization(Scale scale) {
+	private static Time initialization(Scale scale) {
 		Time ret = new Time();
 		ret.extentType = ITime.Type.INITIALIZATION;
 		ret.start = new TimeInstant(0);
@@ -122,8 +122,8 @@ public class Time extends Extent implements ITime {
 		return ret;
 	}
 
-	public static Time initialization(Time time) {
-		Time ret = new Time(time);
+	public static Time initialization(ITime time) {
+		Time ret = new Time((Time)time);
 		ret.extentType = ITime.Type.INITIALIZATION;
 		ret.multiplicity = 1;
 		ret.locatedOffsets = new long[] { 0 };
