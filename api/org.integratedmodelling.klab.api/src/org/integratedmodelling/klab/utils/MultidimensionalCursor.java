@@ -277,6 +277,7 @@ public class MultidimensionalCursor {
                 this.extents.add(ii);
         }
         return initializeStrides();
+        
     }
 
     /**

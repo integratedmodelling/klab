@@ -1440,7 +1440,7 @@ public class Actuator implements IActuator {
 			if (this.model != null) {
 				IScale modelScale = model.getCoverage(monitor);
 				if (!modelScale.isEmpty()) {
-					this.runtimeScale = scale.harmonize(modelScale, monitor);
+					this.runtimeScale = scale.adopt(modelScale, monitor);
 				}
 			}
 		}

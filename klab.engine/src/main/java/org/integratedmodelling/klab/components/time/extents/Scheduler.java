@@ -108,19 +108,13 @@ public class Scheduler implements IScheduler {
 						return;
 					}
 
-//					/*
-//					 * 1. Turn the millisecond t into the correspondent T extent for the
-//					 * observation's scale
-//					 */
-//					ITime transition = (ITime) scale.getTime().at(new TimeInstant(t));
-
 					/*
 					 * 2. Set the context at() the current time. This will also need to expose any
 					 * affected outputs that move at a different (context) speed through a rescaling
 					 * wrapper. Done within the context, which uses its current target to establish
 					 * the specific view of the context.
 					 */
-					ILocator transitionScale = Scale.substituteExtent(scale, transition);
+					ILocator transitionScale = scale.at(transition);
 					IRuntimeScope transitionContext = scope.locate(transitionScale);
 
 					/*
@@ -405,7 +399,7 @@ public class Scheduler implements IScheduler {
 //		}
 
 		long stepSize = registration.scale.getTime().getStep().getMilliseconds();
-		ITime step = ((ITime) ((Extent) registration.scale.getTime()).getExtent(registration.tIndex++));
+		ITime step = ((ITime) ((Extent) registration.scale.getTime()).getExtent(++registration.tIndex));
 		if (!registration.scale.getTime().isRegular()) {
 			stepSize = step.getEnd().getMilliseconds() - step.getStart().getMilliseconds();
 		}

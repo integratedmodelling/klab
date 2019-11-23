@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.time.extents;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
@@ -48,6 +49,9 @@ public class Time extends Extent implements ITime {
 	long multiplicity = 1;
 	boolean partial = false;
 	boolean regular = true;
+	long __id = nextId.incrementAndGet();
+
+	private static AtomicLong nextId = new AtomicLong(Long.MIN_VALUE);
 
 	private static class ResolutionImpl implements Resolution {
 
@@ -115,6 +119,15 @@ public class Time extends Extent implements ITime {
 		if (scale != null) {
 			ret.setScaleId(scale.getScaleId());
 		}
+		return ret;
+	}
+
+	public static Time initialization(Time time) {
+		Time ret = new Time(time);
+		ret.extentType = ITime.Type.INITIALIZATION;
+		ret.multiplicity = 1;
+		ret.locatedOffsets = new long[] { 0 };
+		ret.locatedLinearOffset = 0;
 		return ret;
 	}
 
@@ -278,9 +291,9 @@ public class Time extends Extent implements ITime {
 	@Override
 	public <T extends ILocator> T as(Class<T> cls) {
 //		if (Long.class.isAssignableFrom(cls)) {
-//			return (T) Long.valueOf(locatedOffset < 0 ? 0 : locatedOffset);
+//			return (T) Long.valueOf(getLocatedOffset() < 0 ? 0 : getLocatedOffset());
 //		} else if (Long[].class.isAssignableFrom(cls)) {
-//			return (T) new Long[] { locatedOffset < 0 ? 0l : locatedOffset };
+//			return (T) new Long[] { getLocatedOffset() < 0 ? 0l : getLocatedOffset() };
 //		} // TODO
 		return null;
 	}
@@ -360,24 +373,38 @@ public class Time extends Extent implements ITime {
 			return this;
 		}
 
-		// should also work for infinite time
-		long newStart = this.start.getMilliseconds() + (this.step.getMilliseconds() * stateIndex);
-		long newEnd = newStart + this.step.getMilliseconds();
+		Time ret = null;
 
-		// TODO if realtime, we should align with the clock as all these ops cannot
-		// guarantee synchronicity
+		if (stateIndex == 0) {
+			ret = initialization(this);
+		} else {
 
-		Time ret = copy();
+			// we're a grid, the state we use is
+			stateIndex--;
 
-		ret.step = null;
-		ret.start = new TimeInstant(newStart);
-		ret.end = new TimeInstant(newEnd);
-		ret.extentType = ITime.Type.PHYSICAL;
-		ret.multiplicity = 1;
-		ret.resolution = resolution(ret.start, ret.end);
-		ret.locatedExtent = this;
-		ret.locatedOffsets = new long[] { stateIndex };
+			// should also work for infinite time
+			long newStart = this.start.getMilliseconds() + (this.step.getMilliseconds() * stateIndex);
+			long newEnd = newStart + this.step.getMilliseconds();
 
+			// TODO if realtime, we should align with the clock as all these ops cannot
+			// guarantee synchronicity
+
+			ret = copy();
+
+			ret.step = null;
+			ret.start = new TimeInstant(newStart);
+			ret.end = new TimeInstant(newEnd);
+			ret.extentType = ITime.Type.PHYSICAL;
+			ret.multiplicity = 1;
+			ret.resolution = resolution(ret.start, ret.end);
+			ret.locatedExtent = this;
+			ret.locatedOffsets = new long[] { stateIndex + 1 };
+			ret.locatedLinearOffset = stateIndex + 1;
+		}
+		
+		// remember lineage to speed up location of conformant extents
+		ret.__id = this.__id;
+		
 		return ret;
 	}
 
@@ -581,7 +608,7 @@ public class Time extends Extent implements ITime {
 		ITime.Type type = representation == null ? null : ITime.Type.valueOf(representation.toUpperCase());
 
 		if (type == ITime.Type.INITIALIZATION) {
-			return initialization(null);
+			return initialization((Scale) null);
 		}
 
 		TimeInstant start = tstart == null ? null : new TimeInstant(tstart);
@@ -629,6 +656,8 @@ public class Time extends Extent implements ITime {
 				if (((Time) locators[0]).is(ITime.Type.INITIALIZATION)) {
 					// initialization but with our scaleId
 					return new Time((Time) locators[0]).withScaleId(getScaleId());
+				} else if (((Time)locators[0]).__id == this.__id) {
+					return (IExtent) locators[0];
 				}
 				/*
 				 * TODO potential mediation situation
@@ -682,8 +711,19 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public IExtent harmonize(IExtent extent, IMonitor monitor) {
-		// TODO Auto-generated method stub
+	public IExtent adopt(IExtent extent, IMonitor monitor) {
+		/*
+		 * TODO for now just adopt resolution and only from incomplete extents. This
+		 * should be enough for dynamic models to work.
+		 */
+		if (extent instanceof Time) {
+			Time other = (Time) extent;
+			if (other.getStep() != null) {
+				return create(ITime.Type.GRID, other.getResolution().getType(), other.getResolution().getMultiplier(),
+						getStart() == null ? other.getStart() : getStart(),
+						getEnd() == null ? other.getEnd() : getEnd(), other.getStep());
+			}
+		}
 		return this;
 	}
 

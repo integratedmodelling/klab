@@ -73,7 +73,7 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 	 * @param extent
 	 * @return
 	 */
-	IExtent harmonize(IExtent extent, IMonitor monitor);
+	IExtent adopt(IExtent extent, IMonitor monitor);
 
 	/**
 	 * Locate the extent and return another with the original located extent and

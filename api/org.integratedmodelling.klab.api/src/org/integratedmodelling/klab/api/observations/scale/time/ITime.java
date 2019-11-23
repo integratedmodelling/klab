@@ -15,12 +15,7 @@
  */
 package org.integratedmodelling.klab.api.observations.scale.time;
 
-import java.util.Collections;
-import java.util.Iterator;
-
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 

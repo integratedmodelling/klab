@@ -183,6 +183,9 @@ public class Scale implements IScale {
 	 * Call ONLY on a scale locator created with the above constructor, to reset the
 	 * offsets to the passed one.
 	 * 
+	 * TODO if this' extents are pre-located, the offset is still 0-n relative to
+	 * the LOCATED offset, so it must be adjusted.
+	 * 
 	 * @param offset
 	 */
 	public void setLocatorsTo(long offset) {
@@ -439,6 +442,8 @@ public class Scale implements IScale {
 			throw new KlabInternalErrorException("internal error: infinite dimension is not the first in scale");
 		}
 
+		extents = order;
+
 		// recompute strided offsets for quick extent access
 		cursor = new MultidimensionalCursor();
 		long[] dims = new long[isInfiniteTime ? extents.size() - 1 : extents.size()];
@@ -447,7 +452,6 @@ public class Scale implements IScale {
 			dims[n++] = extents.get(i).size();
 		}
 		cursor.defineDimensions(dims);
-		extents = order;
 		geometry = null;
 		
 		return this;
@@ -1406,7 +1410,7 @@ public class Scale implements IScale {
 	}
 
 	@Override
-	public IScale harmonize(IScale scale, IMonitor monitor) {
+	public IScale adopt(IScale scale, IMonitor monitor) {
 		
 		if (scale == this || scale.isEmpty() || hasEqualExtents(scale)) {
 			return this;
@@ -1436,7 +1440,7 @@ public class Scale implements IScale {
 
 			for (IExtent e : common) {
 				IExtent oext = other.getDimension(e.getType());
-				IExtent merged = (IExtent) e.harmonize(oext, monitor);
+				IExtent merged = (IExtent) e.adopt(oext, monitor);
 				ret.mergeExtent(merged);
 			}
 			

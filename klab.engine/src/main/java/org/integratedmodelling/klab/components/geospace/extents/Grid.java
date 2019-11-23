@@ -732,7 +732,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IExtent harmonize(IExtent extent, IMonitor monitor) {
+		public IExtent adopt(IExtent extent, IMonitor monitor) {
 			// TODO Auto-generated method stub
 			return this;
 		}
