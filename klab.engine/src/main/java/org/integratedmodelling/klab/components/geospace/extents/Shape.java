@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToFeatures;
@@ -828,6 +829,12 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public boolean isCovered(long stateIndex) {
 		return true; // stateIndex == 0;
+	}
+
+	@Override
+	public IExtent adopt(IExtent extent, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return this;
 	}
 
 }
