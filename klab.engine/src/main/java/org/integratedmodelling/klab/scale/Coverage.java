@@ -329,7 +329,7 @@ public class Coverage extends Scale implements ICoverage {
 			}
 			
 		} else {
-			throw new IllegalArgumentException("cannot merge a coverage with another using operation: " + how);
+			// throw new IllegalArgumentException("cannot merge a coverage with another using operation: " + how);
 		}
 
 		// return the original, let gain untouched

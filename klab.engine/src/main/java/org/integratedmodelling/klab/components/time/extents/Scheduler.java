@@ -12,24 +12,26 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
-import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Extent;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.joda.time.DateTime;
 
@@ -117,6 +119,8 @@ public class Scheduler implements IScheduler {
 					ILocator transitionScale = scale.at(transition);
 					IRuntimeScope transitionContext = scope.locate(transitionScale);
 
+					Set<IObservation> changed = new HashSet<>();
+
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
 					 * for signs of life at each step. Anything enqueued here is active so no
@@ -127,8 +131,19 @@ public class Scheduler implements IScheduler {
 						actuator.runContextualizer(computation.contextualizer, computation.observable,
 								computation.resource, computation.target, transitionContext, (IScale) transitionScale);
 
-						if (!target.isActive()) {
+						if (computation.target instanceof IDirectObservation
+								&& !((IDirectObservation) computation.target).isActive()) {
+							changed.add((IObservation) computation.target);
+							// TODO if in group, group has changed too
 							break;
+						}
+
+						/*
+						 * report only states for now - must become discriminating and intelligent. If
+						 * in folder
+						 */
+						if (computation.target instanceof IState /* TODO check if changes happened independent of type */) {
+							changed.add((IObservation) computation.target);
 						}
 					}
 
@@ -138,7 +153,26 @@ public class Scheduler implements IScheduler {
 					if (!target.isActive()) {
 						// TODO target went MIA - notify relatives
 					} else {
-						// TODO
+
+						for (IObservation observation : changed) {
+							
+							ObservationChange change = new ObservationChange();
+							change.setContextId(scope.getRootSubject().getId());
+							change.setId(observation.getId());
+							change.setTimestamp(t);
+						
+							// TODO fill in
+							if (observation instanceof IState) {
+								change.setNewValues(true);
+							} else if (observation instanceof IDirectObservation && !((IDirectObservation)observation).isActive()) {
+								change.setTerminated(true);
+							}
+							
+							ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+							session.getMonitor()
+									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+											IMessage.Type.ModifiedObservation, change));
+						}
 					}
 
 				}

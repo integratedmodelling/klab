@@ -7,6 +7,8 @@ import org.integratedmodelling.klab.utils.Triple;
 public class ObservationChange {
 
 	private String id;
+	private String contextId;
+	private long timestamp;
 
 	// each new attribute gets Semantics, Label and Description
 	private List<Triple<String, String, String>> newAttributes;
@@ -88,6 +90,22 @@ public class ObservationChange {
 
 	public void setNewMainStatus(boolean newMainStatus) {
 		this.newMainStatus = newMainStatus;
+	}
+
+	public String getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(String contextId) {
+		this.contextId = contextId;
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 
 
