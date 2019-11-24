@@ -167,6 +167,7 @@ public class Time extends Extent implements ITime {
 				ret.multiplicity = 0;
 			}
 		}
+		
 		return ret;
 	}
 
@@ -256,7 +257,7 @@ public class Time extends Extent implements ITime {
 			ret.multiplicity = 1;
 			if (ret.start != null && ret.end != null && ret.step != null) {
 				ret.multiplicity = (ret.end.getMilliseconds() - ret.start.getMilliseconds())
-						/ ret.step.getMilliseconds();
+						/ ret.step.getMilliseconds() + 1;
 			}
 
 			return ret;

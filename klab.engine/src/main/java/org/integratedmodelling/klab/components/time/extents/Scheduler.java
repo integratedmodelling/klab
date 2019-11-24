@@ -382,7 +382,7 @@ public class Scheduler implements IScheduler {
 		}
 
 		if (registration.scale.getTime().size() != IGeometry.INFINITE_SIZE
-				&& registration.tIndex >= registration.scale.getTime().size()) {
+				&& (registration.tIndex + 1) >= (registration.scale.getTime().size())) {
 			return;
 		}
 

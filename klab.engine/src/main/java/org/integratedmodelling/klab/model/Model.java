@@ -446,6 +446,7 @@ public class Model extends KimObject implements IModel {
 						"Cannot establish base unit for " + observable.getName()
 								+ ": remove the unit or any transformations that do not preserve observation semantics",
 						observable);
+				baseUnit = Units.INSTANCE.getDefaultUnitFor(observable);
 				setErrors(true);
 				return;
 			}

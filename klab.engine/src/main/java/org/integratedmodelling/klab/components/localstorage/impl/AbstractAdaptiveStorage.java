@@ -221,10 +221,6 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		
 		Offset offsets = locator.as(Offset.class);
 
-		if (offsets.pos[0] > 0) {
-			System.out.println("HOHOHOH");
-		}
-		
 		if (offsets.length != geometry.getDimensions().size()) {
 			throw new KlabInternalErrorException(
 					"locator has different dimensionality than observation: should never happen");
