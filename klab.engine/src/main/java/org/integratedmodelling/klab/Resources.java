@@ -1380,7 +1380,7 @@ public enum Resources implements IResourceService {
 	}
 	
 	@Override
-	public IResource createMergedTemporalResource(List<IResource> resources) {
+	public IResource createMergedTemporalResource(List<String> resources) {
 		return null;
 	}
 

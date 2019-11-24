@@ -207,14 +207,14 @@ public class Model extends KimObject implements IModel {
 
 		if (model.isResourceMerger()) {
 			// turn all resources into a merged one, after validation
-			List<IResource> ress = new ArrayList<>();
-			for (IContextualizable r : resources) {
+			List<String> ress = new ArrayList<>();
+			for (IContextualizable r : model.getContextualization()) {
 				String urn = ((ComputableResource) r).getUrn();
 				if (urn == null) {
 					monitor.error("Cannot use anything but URNs in a 'merging' clause", getStatement());
 					setErrors(true);
 				}
-				ress.add(Resources.INSTANCE.resolveResource(urn));
+				ress.add(urn);
 			}
 			try {
 				this.resources.clear();
@@ -226,20 +226,21 @@ public class Model extends KimObject implements IModel {
 				monitor.error("Model has resource validation errors", getStatement());
 				setErrors(true);
 			}
-		}
+		} else {
 
-		/*
-		 * all resources after 'using' or further classification/lookup transformations
-		 */
-		for (IContextualizable resource : model.getContextualization()) {
-			try {
-				this.resources.add(validate((ComputableResource) resource, monitor));
-			} catch (Throwable e) {
-				monitor.error("Model has resource validation errors", getStatement());
-				setErrors(true);
+			/*
+			 * all resources after 'using' or further classification/lookup transformations
+			 */
+			for (IContextualizable resource : model.getContextualization()) {
+				try {
+					this.resources.add(validate((ComputableResource) resource, monitor));
+				} catch (Throwable e) {
+					monitor.error("Model has resource validation errors", getStatement());
+					setErrors(true);
+				}
 			}
 		}
-
+		
 		this.behavior = new Behavior(model.getBehavior(), this);
 
 		/*
@@ -620,7 +621,7 @@ public class Model extends KimObject implements IModel {
 			// these are just fine as they are
 			return resource;
 		}
-		
+
 		if (resource.getClassification() != null) {
 
 			resource.setValidatedResource(new Classification(resource.getClassification()));
