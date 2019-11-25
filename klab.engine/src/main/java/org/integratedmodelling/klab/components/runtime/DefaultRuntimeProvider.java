@@ -119,26 +119,39 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				boolean switchContext = ((Actuator) actuator).getObservable().getType().is(Type.COUNTABLE)
 						&& scope.getMode() == Mode.RESOLUTION;
 
+				/*
+				 * We get the overall scale, which we merge with the actuator's. This ensures
+				 * that scale constraints at the model level are dealt with before own artifacts
+				 * are created.
+				 */
+				IScale actuatorScale = actuator.mergeScale(scale, monitor);
+
 				IRuntimeScope runtimeContext = null;
 				if (context == null) {
 					// new context
-					runtimeContext = createRuntimeContext(actuator, scope, scale, monitor);
+					runtimeContext = createRuntimeContext(actuator, scope, actuatorScale, monitor);
 				} else if (switchContext) {
 					// new catalog, new scale, context subject is in the scope
-					runtimeContext = ((Subject) context).getRuntimeScope().createContext(scale, actuator, scope,
+					runtimeContext = ((Subject) context).getRuntimeScope().createContext(actuatorScale, actuator, scope,
 							monitor);
 				} else {
 					// instantiating or resolving states: stay in context
-					runtimeContext = ((Subject) context).getRuntimeScope().createChild(scale, actuator, scope, monitor);
+					runtimeContext = ((Subject) context).getRuntimeScope().createChild(actuatorScale, actuator, scope,
+							monitor);
 				}
 
 				List<Actuator> order = ((Actuator) actuator).dependencyOrder();
+
+				// must merge in any constraints from the model before calling this.
+				IScale initializationScale = ((Scale) actuatorScale).copy().initialization();
+
 				int i = 0;
 				for (Actuator active : order) {
 
 					IRuntimeScope ctx = runtimeContext;
 					if (active != actuator) {
-						ctx = runtimeContext.createChild(scale, active, scope, monitor);
+						ctx = runtimeContext.createChild(actuatorScale, active, scope, monitor)
+								.locate(initializationScale);
 					}
 
 					/*

@@ -356,6 +356,10 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value));
 			this.type = Type.LITERAL;
 			// this.type = Utils.getArtifactType(this.literal.getClass());
+		} else if (value.getModel() != null) {
+			// only accepted when merging
+			this.urn = value.getModel();
+			this.type = Type.RESOURCE;
 		}
 
 		this.language = value.getLanguage();

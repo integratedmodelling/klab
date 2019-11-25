@@ -305,6 +305,6 @@ public interface IResourceService {
 	 * @param resources
 	 * @return a temporal resource with the merged geometry.
 	 */
-	IResource createMergedTemporalResource(List<IResource> resources);
+	IResource createMergedTemporalResource(List<String> resources);
 
 }

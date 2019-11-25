@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -48,7 +49,7 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 	 * {@link #isGeneric()} returns true) to inform the scale of the final
 	 * contextualization. This should build conformant extents, i.e. only offset
 	 * mediation should be necessary to address either topology.
-	 * 
+	 * <p>
 	 * When another extent is merged into this and both specify extent and/or
 	 * resolution, our extent takes over the other's while resolution is negotiated
 	 * to match the other's. The only situation when our extent changes is when it
@@ -57,6 +58,22 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 	 * @param extent
 	 */
 	IExtent merge(IExtent extent);
+
+	/**
+	 * A different merge operation than {@link #merge(IExtent)}. While
+	 * {@link #merge(IExtent)} builds an overall extent and emphasize conformancy,
+	 * this one needs to inherit any missing specification from the incoming extent
+	 * without changing the overall extent but possibly changing the internal
+	 * representation. It is only used before computation to ensure that a model's
+	 * extent constraints are represented in the calculations. Conflicting extents
+	 * (e.g. both the incoming and this have resolutions and they're different)
+	 * should be resolved with a warning (the resolver should not create such
+	 * pairing in the first place) in favor of the incoming specification.
+	 * 
+	 * @param extent
+	 * @return
+	 */
+	IExtent adopt(IExtent extent, IMonitor monitor);
 
 	/**
 	 * Locate the extent and return another with the original located extent and

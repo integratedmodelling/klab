@@ -115,7 +115,6 @@ public class Offset implements ILocator {
 			throw new IllegalStateException(geometry.getDimensions().size()
 					+ "-dimensional geometry cannot be initialized with offsets of length " + pos.length);
 		}
-
 	}
 
 	public Offset(IGrid.Cell cell) {

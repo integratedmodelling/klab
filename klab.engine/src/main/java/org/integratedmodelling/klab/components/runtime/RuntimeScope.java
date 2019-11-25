@@ -1440,12 +1440,15 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public IRuntimeScope locate(ILocator transitionScale) {
-		// TODO Auto-generated method stub
+
 		RuntimeScope ret = new RuntimeScope(this);
-		/*
-		 * TODO wrap all temporal states into a temporal rescaling state
-		 */
 		ret.scale = (Scale) transitionScale;
+
+		/*
+		 * TODO wrap all temporal states into a temporal rescaling state - works both to
+		 * subset and to aggregate
+		 */
+
 		return ret;
 	}
 

@@ -730,6 +730,12 @@ public class Grid extends Area implements IGrid {
 		public boolean isCovered(long stateIndex) {
 			return true; // stateIndex == 0;
 		}
+
+		@Override
+		public IExtent adopt(IExtent extent, IMonitor monitor) {
+			// TODO Auto-generated method stub
+			return this;
+		}
 	}
 
 	Shape shape;
