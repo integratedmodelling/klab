@@ -44,6 +44,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.NonReentrant;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -56,8 +57,6 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.Evaluator
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
-import org.integratedmodelling.klab.components.runtime.contextualizers.MergedUrnInstantiator;
-import org.integratedmodelling.klab.components.runtime.contextualizers.MergedUrnResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ObjectClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
@@ -65,6 +64,8 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.ValueOper
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnInstantiator;
+import org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.wrappers.ConditionalContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -214,7 +215,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IServiceCall getServiceCall(IContextualizable resource, IActuator target) {
+	public IServiceCall getServiceCall(IContextualizable resource, IObservable observable, ISession session) {
 
 		IServiceCall ret = null;
 
@@ -233,7 +234,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				ret = UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
 			}
 		} else if (resource.getExpression() != null) {
-			ret = ExpressionResolver.getServiceCall(resource, ((Actuator) target).getObservable());
+			ret = ExpressionResolver.getServiceCall(resource, observable);
 		} else if (resource.getLiteral() != null) {
 			ret = LiteralStateResolver.getServiceCall(resource.getLiteral(), resource.getCondition(),
 					resource.isNegated());
@@ -249,7 +250,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					resource.getCondition(), resource.isNegated());
 		} else if (resource.getAccordingTo() != null) {
 			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(
-					((Actuator) target).getObservable().getType(), resource.getAccordingTo());
+					observable.getType(), resource.getAccordingTo());
 			ret = ClassifyingStateResolver.getServiceCall(classification, resource.getCondition(),
 					resource.isNegated());
 		} else if (resource.getLookupTable() != null) {
@@ -266,14 +267,14 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
 		}
 
-		if (((ComputableResource) resource).getExternalParameters() != null) {
+		if (((ComputableResource) resource).getExternalParameters() != null && session != null) {
 			/*
 			 * add model-based parameters that are non-interactive, or all if not in
 			 * interactive mode. Interactive parameters in interactive mode are already
 			 * there.
 			 */
 			for (IAnnotation annotation : ((ComputableResource) resource).getExternalParameters()) {
-				if (!((Actuator) target).getSession().isInteractive() || !annotation.get("interact", Boolean.FALSE)) {
+				if (!session.isInteractive() || !annotation.get("interact", Boolean.FALSE)) {
 					ret.getParameters().put(annotation.get("name", String.class), annotation.get("default"));
 				}
 			}

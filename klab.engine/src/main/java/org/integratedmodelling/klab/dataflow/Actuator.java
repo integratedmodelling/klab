@@ -157,7 +157,7 @@ public class Actuator implements IActuator {
 	public void addComputation(IContextualizable resource) {
 		((ComputableResource) resource).setOriginalObservable(this.observable);
 		computedResources.add(resource);
-		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, this);
+		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, observable, session);
 		computationStrategy.add(new Pair<>(serviceCall, resource));
 	}
 
@@ -165,7 +165,7 @@ public class Actuator implements IActuator {
 		((ComputableResource) resource).setTargetId(target.getAlias() == null ? target.getName() : target.getAlias());
 		((ComputableResource) resource).setMediation(true);
 		computedResources.add(resource);
-		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target);
+		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target.observable, session);
 		mediationStrategy.add(new Pair<>(serviceCall, resource));
 	}
 

@@ -620,6 +620,10 @@ public class Model extends KimObject implements IModel {
 			return resource;
 		}
 
+		/*
+		 * TODO IF MULTIPLE URNS, MUST INTERCEPT RESOURCECOVERAGE!!!!!
+		 */
+		
 		if (resource.getClassification() != null) {
 
 			resource.setValidatedResource(new Classification(resource.getClassification()));
