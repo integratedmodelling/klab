@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.hub.config;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +35,11 @@ public class EmailConfig {
     @Value("${email.noreply.emailaddress}")
     private String EMAIL_NOREPLY;
     
+    public enum EmailType {
+    	TEXT,
+    	HTML
+    }
+    
     @Bean
     public JavaMailSender getEmailSender() {
         JavaMailSenderImpl result = new JavaMailSenderImpl();
@@ -50,6 +53,7 @@ public class EmailConfig {
         result.setJavaMailProperties(javaMailProperties);
         return result;
     }
+    
 
     public String replyableGeneralEmailAddress() {
         return EMAIL_REPLYABLE_GENERAL;

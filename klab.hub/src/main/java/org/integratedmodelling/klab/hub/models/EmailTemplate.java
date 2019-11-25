@@ -4,6 +4,7 @@ import javax.persistence.GeneratedValue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
+import org.integratedmodelling.klab.hub.config.EmailConfig.EmailType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
@@ -41,11 +42,6 @@ public class EmailTemplate {
     String content;
         
     EmailType type = EmailType.HTML;
-    
-    enum EmailType {
-    	TEXT,
-    	HTML
-    }
 
 	/**
 	 * @return the id
