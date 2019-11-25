@@ -218,10 +218,8 @@ public class Model extends KimObject implements IModel {
 			}
 			try {
 				this.resources.clear();
-				IResource resource = Resources.INSTANCE.createMergedTemporalResource(ress);
-				if (resource != null) {
-					this.resources.add(new ComputableResource(resource.getUrn(), Mode.RESOLUTION));
-				}
+				this.resources.add(new ComputableResource(ress, getMainObservable() == null ? Mode.RESOLUTION
+						: getMainObservable().is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
 			} catch (Throwable e) {
 				monitor.error("Model has resource validation errors", getStatement());
 				setErrors(true);
@@ -240,7 +238,7 @@ public class Model extends KimObject implements IModel {
 				}
 			}
 		}
-		
+
 		this.behavior = new Behavior(model.getBehavior(), this);
 
 		/*

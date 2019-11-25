@@ -56,6 +56,8 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.Evaluator
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.MergedUrnInstantiator;
+import org.integratedmodelling.klab.components.runtime.contextualizers.MergedUrnResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ObjectClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
@@ -254,6 +256,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			ret = LookupStateResolver.getServiceCall(
 					((ComputableResource) resource).getValidatedResource(ILookupTable.class), resource.getCondition(),
 					resource.isNegated());
+		} else if (resource.getMergedUrns() != null) {
+			if (resource.getComputationMode() == Mode.INSTANTIATION) {
+				ret = MergedUrnInstantiator.getServiceCall(resource.getMergedUrns());
+			} else {
+				ret = MergedUrnResolver.getServiceCall(resource.getMergedUrns());
+			}
 		} else {
 			throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
 		}

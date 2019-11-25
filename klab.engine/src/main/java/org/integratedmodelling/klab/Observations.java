@@ -197,7 +197,7 @@ public enum Observations implements IObservationService {
 			}
 			ret.setHistogram(histogram.build());
 		}
-		
+
 		return ret;
 	}
 
@@ -263,14 +263,6 @@ public enum Observations implements IObservationService {
 		} else if (((Observation) observation).isMain()) {
 			ret.setMain(true);
 		}
-
-		// HM probably not- a descriptor is a descriptor, only states and children
-		// should be different. Locator is only used
-		// for the summary we ask later, and defaults to the full scale of the
-		// observation.
-//		if (locator != null) {
-//			observation = observation.at(locator);
-//		}
 
 		ISubject rootSubject = ((Observation) observation).getRuntimeScope().getRootSubject();
 		if (rootSubject != null) {
@@ -364,8 +356,15 @@ public enum Observations implements IObservationService {
 				scaleReference.setSpaceScale(scaleRank);
 			}
 			if (time != null) {
-				// TODO time
+
+				scaleReference.setTimeScale(time.getScaleRank());
+				scaleReference.setStart(time.getStart() == null ? 0 : time.getStart().getMilliseconds());
+				scaleReference.setEnd(time.getEnd() == null ? 0 : time.getEnd().getMilliseconds());
+				scaleReference.setTimeResolutionDescription(time.getResolution() == null ? null
+						: time.getResolution().getMultiplier() + " "
+								+ StringUtils.capitalize(time.getResolution().getType().name()));
 			}
+
 			ret.setScaleReference(scaleReference);
 		}
 

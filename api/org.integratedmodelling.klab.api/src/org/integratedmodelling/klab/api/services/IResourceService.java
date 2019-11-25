@@ -297,14 +297,4 @@ public interface IResourceService {
 	 */
 	boolean isResourceOnline(String urn);
 
-	/**
-	 * Create a merged temporal resource from several temporally-explicit,
-	 * homogeneous resources. The geometry will have intersected space and
-	 * intelligently unioned time.
-	 * 
-	 * @param resources
-	 * @return a temporal resource with the merged geometry.
-	 */
-	IResource createMergedTemporalResource(List<String> resources);
-
 }

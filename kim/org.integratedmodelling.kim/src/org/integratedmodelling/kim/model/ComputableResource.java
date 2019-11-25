@@ -102,9 +102,16 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 
 	private List<IAnnotation> externalParameters;
 
-//	// send this from the observable to ensure that we can find the filter target if
-//	// we specify a filter.
-//	private IObservable filterTarget;
+	private List<String> mergedUrns;
+
+	@Override
+	public List<String> getMergedUrns() {
+		return mergedUrns;
+	}
+
+	public void setMergedUrns(List<String> mergedUrns) {
+		this.mergedUrns = mergedUrns;
+	}
 
 	public ComputableResource copy() {
 		ComputableResource ret = new ComputableResource(getEObject(), getParent());
@@ -126,6 +133,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		ret.target = this.target;
 		ret.targetId = this.targetId;
 		ret.copy = true;
+		ret.mergedUrns = this.mergedUrns;
 		ret.interactiveParameters = this.interactiveParameters;
 		ret.externalParameters = this.externalParameters;
 		// ret.type = this.type;
@@ -280,6 +288,11 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value));
 		}
 		this.resolutionMode = Mode.RESOLUTION;
+	}
+	
+	public ComputableResource(List<String> mergedUrns, Mode mode) {
+		this.mergedUrns = mergedUrns;
+		this.resolutionMode = mode;
 	}
 
 	public ComputableResource(IValueMediator from, IValueMediator to) {
