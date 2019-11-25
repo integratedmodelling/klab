@@ -1,12 +1,16 @@
 package org.integratedmodelling.klab.hub.service.implementation;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.hub.models.GroupEntry;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
@@ -16,6 +20,8 @@ import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import akka.routing.Group;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -72,37 +78,72 @@ public class UserServiceImpl implements UserService{
 		}
 	}
 	
-	public User addUserGroups(String username, Set<String> groupnames) {
+	public User addUserGroupEntries(String username, Set<GroupEntry> newGroupEntries) {
 		User user = getUserFromMongo(username).get();
-		Collection<String> userGroups = user.getGroups();
-		for(String group : groupnames) {
-			if(!userGroups.contains(group)) {
-				userGroups.add(group);
+		
+		Set<GroupEntry> groupEntries = user.getGroups();
+		
+		List<String> groupsList = getEntryNames(groupEntries);
+		
+		List<String> newGroupsList = getEntryNames(newGroupEntries);
+		
+		for (String groupName : newGroupsList) {
+			if(groupsList.contains(groupName)) {
+				
+				GroupEntry userGrpEntry = groupEntries.stream()
+						.filter(e -> e.getGroupName().equals(groupName))
+						.findFirst()
+						.get();
+				
+				GroupEntry newGrpEntry = newGroupEntries.stream()
+						.filter(e -> e.getGroupName().equals(groupName))
+						.findFirst()
+						.get();
+				
+				if(userGrpEntry.getExperation() !=null) {
+					if (!userGrpEntry.getExperation().isAfter(newGrpEntry.getExperation())) {
+						groupEntries.remove(userGrpEntry);
+						groupEntries.add(newGrpEntry);
+					}
 				}
+				
+			} else {
+				GroupEntry newGrpEntry = newGroupEntries.stream()
+						.filter(e -> e.getGroupName().equals(groupName))
+						.findFirst()
+						.get();
+				groupEntries.add(newGrpEntry);
+			}
 		}
-		user.setGroups(userGroups);
+		user.setGroups(groupEntries);
 		updateUser(user);
 		return user;
 	}
 
-	public User setUserGroups(String username, Set<String> groupnames) {
+	public User setUserGroupEntries(String username, Set<GroupEntry> groupEntries) {
 		User user = getUserFromMongo(username).get();
-		user.setGroups(groupnames);
+		user.setGroups(groupEntries);
 		updateUser(user);
 		return user;
 	}
 	
-	public User removeUserGroups(String username, Set<String> groupnames) {
+	public User removeUserGroupEntries(String username, Set<String> groupnames) {
 		User user = getUserFromMongo(username).get();
-			Collection<String> userGroups = user.getGroups();
-			for(String group : groupnames) {
-				if(userGroups.contains(group)) {
-					userGroups.remove(group);
-				}
+		Set<GroupEntry> groupEntries = user.getGroups();
+		List<String> groupsList = getEntryNames(groupEntries);
+		for(String name : groupnames) {
+			if(groupsList.contains(name)) {
+				GroupEntry userGrpEntry = groupEntries.stream()
+						.filter(e -> e.getGroupName().equals(name))
+						.findFirst()
+						.get();
+				
+				groupEntries.remove(userGrpEntry);
 			}
-			user.setGroups(userGroups);
-			updateUser(user);
-			return user;
+		}
+		user.setGroups(groupEntries);
+		updateUser(user);
+		return user;
 	}
 
 	public User updateUser(User user) {
@@ -137,6 +178,12 @@ public class UserServiceImpl implements UserService{
 		} else {
 			return false;
 		}
+	}
+	
+	private List<String> getEntryNames(Set<GroupEntry> entries) {
+		return entries.stream()
+				.map(grpEntry -> grpEntry.getGroupName())
+				.collect(Collectors.toList());
 	}
 
 }

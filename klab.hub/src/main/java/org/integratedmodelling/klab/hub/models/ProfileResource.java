@@ -176,7 +176,7 @@ public class ProfileResource implements OAuth2User{
 				group.setId(grp.getId());
 				group.setProjectUrls(grp.getProjectUrls());
 				group.setSshKey(grp.getSshKey());
-				group.setObservables(grp.getObservables());
+				group.setObservables(grp.getObservableReferences());
 				group.setWorldview(grp.getWorldview());
 				group.setIconUrl(grp.getIconUrl());
 				listOfGroups.add(group);

@@ -51,7 +51,7 @@ public class KlabNodeManager {
 				group.setId(klabGroup.getId());
 				group.setProjectUrls(klabGroup.getProjectUrls());
 				group.setSshKey(klabGroup.getSshKey());
-				group.setObservables(klabGroup.getObservables());
+				group.setObservables(klabGroup.getObservableReferences());
 				group.setWorldview(klabGroup.getWorldview());
 				listOfGroups.add(group);
 			}
@@ -67,7 +67,7 @@ public class KlabNodeManager {
 				group.setId(klabGroup.getId());
 				group.setProjectUrls(klabGroup.getProjectUrls());
 				group.setSshKey(klabGroup.getSshKey());
-				group.setObservables(klabGroup.getObservables());
+				group.setObservables(klabGroup.getObservableReferences());
 				group.setWorldview(klabGroup.getWorldview());
 				listOfGroups.add(group);
 			}

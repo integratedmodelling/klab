@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
@@ -97,7 +96,7 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 				group.setId(grp.getId());
 				group.setProjectUrls(grp.getProjectUrls());
 				group.setSshKey(grp.getSshKey());
-				group.setObservables(grp.getObservables());
+				group.setObservables(grp.getObservableReferences());
 				group.setWorldview(grp.getWorldview());
 				group.setDescription(grp.getDescription());
 				listOfGroups.add(group);

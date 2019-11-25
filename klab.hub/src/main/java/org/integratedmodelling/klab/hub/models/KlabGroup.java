@@ -1,11 +1,16 @@
 package org.integratedmodelling.klab.hub.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "KlabGroups")
@@ -24,10 +29,16 @@ public class KlabGroup {
 	@NotEmpty
 	private Boolean worldview;
 
-	@NotEmpty
-	private List<ObservableReference> observables;
+	@Reference
+	private List<Observable> observables;
 	
 	private String iconUrl;
+	
+    @Enumerated(EnumType.STRING)
+    Role roleRequirement;
+    
+    @DBRef
+    private List<KlabGroup> dependsOn;
 
 	public String getId() {
 		return id;
@@ -69,11 +80,11 @@ public class KlabGroup {
 		this.worldview = worldview;
 	}
 
-	public List<ObservableReference> getObservables() {
+	public List<Observable> getObservables() {
 		return observables;
 	}
 
-	public void setObservables(List<ObservableReference> observables) {
+	public void setObservables(List<Observable> observables) {
 		this.observables = observables;
 	}
 	
@@ -90,6 +101,22 @@ public class KlabGroup {
 
 	public void setIconUrl(String iconUrl) {
 		this.iconUrl = iconUrl;
+	}
+
+	public Role getRoleRequirement() {
+		return roleRequirement;
+	}
+
+	public void setRoleRequirement(Role roleRequirement) {
+		this.roleRequirement = roleRequirement;
+	}
+	
+	public List<ObservableReference> getObservableReferences() {
+		List<ObservableReference> observableList = new ArrayList<>();
+		for (Observable obs : observables) {
+			observableList.add(obs.getObservableReference());
+		}
+		return observableList;
 	}
 
 }

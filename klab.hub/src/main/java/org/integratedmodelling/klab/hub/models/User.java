@@ -23,7 +23,7 @@ public class User implements UserDetails{
 
     private static final long serialVersionUID = -6213593655742083476L;
 
-    @Id @GeneratedValue
+    @Id 
     String id;
 
     @Indexed(unique = true)
@@ -67,7 +67,7 @@ public class User implements UserDetails{
 
     final Set<Role> roles = new HashSet<>(); // LDAP security roles
 
-    final Set<String> groups = new HashSet<>(); // research groups, etc. in web tool
+    final Set<GroupEntry> groups = new HashSet<>(); // research groups, etc. in web tool
 
     final Set<String> applications = new HashSet<>();
 
@@ -209,20 +209,20 @@ public class User implements UserDetails{
         this.roles.addAll(roles);
     }
 
-    public void addGroups(String... groups) {
+    public void addGroups(GroupEntry... groups) {
         addGroups(Arrays.asList(groups));
     }
 
-    public void addGroups(List<String> groups) {
+    public void addGroups(List<GroupEntry> groups) {
         this.groups.addAll(groups);
     }
 
-    public void setGroups(Collection<String> groups) {
+    public void setGroups(Collection<GroupEntry> groups) {
         this.groups.clear();
         this.groups.addAll(groups);
     }
 
-    public Set<String> getGroups() {
+    public Set<GroupEntry> getGroups() {
         return new HashSet<>(groups);
     }
 
@@ -296,7 +296,7 @@ public class User implements UserDetails{
         serverUrl = resource.serverUrl;
     }
 
-    public boolean userGroupsOverlapWith(HashSet<String> groups) {
+    public boolean userGroupsOverlapWith(HashSet<GroupEntry> groups) {
         if (groups == null) {
             // force this to be checked by set intersection, rather than instantly failing (preserves logic)
             groups = new HashSet<>();
@@ -306,7 +306,7 @@ public class User implements UserDetails{
             return true;
         }
 
-        Set<String> setIntersection = getGroups(); // returns a copy
+        Set<GroupEntry> setIntersection = getGroups(); // returns a copy
         setIntersection.retainAll(groups);
         if (setIntersection.size() > 0) {
             return true;

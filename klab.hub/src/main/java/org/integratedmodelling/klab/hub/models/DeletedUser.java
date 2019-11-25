@@ -35,7 +35,7 @@ public class DeletedUser implements UserDetails {
     
     AccountStatus accountStatus = AccountStatus.deleted;
 
-	Set<String> groups = new HashSet<>();
+	Set<GroupEntry> groups = new HashSet<>();
 
     public String getId() {
 		return id;
@@ -81,7 +81,7 @@ public class DeletedUser implements UserDetails {
 		this.deletionDate = new DateTime();
 	}
 
-	public Set<String> getGroups() {
+	public Set<GroupEntry> getGroups() {
 		return groups;
 	}
 
@@ -89,7 +89,7 @@ public class DeletedUser implements UserDetails {
 		this.username = username;
 	}
 	
-    public void setGroups(Collection<String> groups) {
+    public void setGroups(Collection<GroupEntry> groups) {
         this.groups.clear();
         this.groups.addAll(groups);
     }

@@ -4,8 +4,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
@@ -21,6 +23,7 @@ import org.integratedmodelling.klab.hub.exception.GroupRequestTokenFailedExcepti
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
+import org.integratedmodelling.klab.hub.models.GroupEntry;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
@@ -464,7 +467,12 @@ public class TokenManager {
 		if(!available.containsAll(groups)) {
 			throw new BadRequestException("A Group was included that does not exist in the database");
 		}
-		user.setGroups(groups);
+		Set<GroupEntry> groupEntries = new HashSet<>();
+		for (String group : groups) {
+			GroupEntry grp = new GroupEntry(group);
+			groupEntries.add(grp);
+		}
+		user.setGroups(groupEntries);
 		klabUserManager.updateKlabUser(user);
 		Task task = taskService.getGroupRequestTaskByToken(groupsClickbackToken);
 		taskService.changeTaskStatus(task.getId(), TaskStatus.acceptedEmail);
@@ -486,7 +494,12 @@ public class TokenManager {
 		if(!available.containsAll(groups)) {
 			throw new KlabException("A Group was included that does not exist in the database");
 		}
-		user.setGroups(groups);
+		Set<GroupEntry> groupEntries = new HashSet<>();
+		for (String group : groups) {
+			GroupEntry grp = new GroupEntry(group);
+			groupEntries.add(grp);
+		}
+		user.setGroups(groupEntries);
 		klabUserManager.updateKlabUser(user);
 		deleteToken(tokenString);
 		return inviteClickToken;
