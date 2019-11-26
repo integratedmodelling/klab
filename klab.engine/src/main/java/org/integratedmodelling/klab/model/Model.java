@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -76,6 +77,7 @@ public class Model extends KimObject implements IModel {
 	private boolean reinterpreter;
 	private boolean inactive;
 	private boolean learning;
+	private boolean merger;
 
 	/*
 	 * the geometry implicitly declared for the project, gathered from the resources
@@ -128,6 +130,7 @@ public class Model extends KimObject implements IModel {
 		this.scope = model.getScope();
 		this.setErrors(model.isErrors());
 		this.setInactive(model.isInactive());
+		this.merger = model.isResourceMerger();
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
 
@@ -205,8 +208,22 @@ public class Model extends KimObject implements IModel {
 			}
 		}
 
-		if (model.isResourceMerger()) {
-			// turn all resources into a merged one, after validation
+		if (model.isResourceMerger() && getMainObservable() != null) {
+
+			if (!getMainObservable().is(Type.CHANGE)) {
+				// TODO may remove, should be prevented by validator.
+				throw new IllegalStateException("illegal 'merging' clause in a model that does not observe change");
+			}
+			
+			/**
+			 * It's a change model: add the inherent observable as an output if not there
+			 */
+			IObservable inherent = findOutput(getMainObservable().getInherentType());
+			if (inherent == null) {
+				inherent = Observable.promote(getMainObservable().getInherentType());
+				observables.add(inherent);
+			}
+
 			List<String> ress = new ArrayList<>();
 			for (IContextualizable r : model.getContextualization()) {
 				String urn = ((ComputableResource) r).getUrn();
@@ -218,12 +235,13 @@ public class Model extends KimObject implements IModel {
 			}
 			try {
 				this.resources.clear();
-				this.resources.add(new ComputableResource(ress, getMainObservable() == null ? Mode.RESOLUTION
-						: getMainObservable().is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+				this.resources.add(new ComputableResource(ress,
+						inherent.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
 			} catch (Throwable e) {
 				monitor.error("Model has resource validation errors", getStatement());
 				setErrors(true);
 			}
+			
 		} else {
 
 			/*
@@ -620,10 +638,6 @@ public class Model extends KimObject implements IModel {
 			return resource;
 		}
 
-		/*
-		 * TODO IF MULTIPLE URNS, MUST INTERCEPT RESOURCECOVERAGE!!!!!
-		 */
-		
 		if (resource.getClassification() != null) {
 
 			resource.setValidatedResource(new Classification(resource.getClassification()));
@@ -685,6 +699,37 @@ public class Model extends KimObject implements IModel {
 						resource.getServiceCall());
 				setErrors(true);
 			}
+		} else if (resource.getMergedUrns() != null) {
+
+			// intersect resource coverage
+			Scale rscale = null;
+			for (String murn : resource.getMergedUrns()) {
+				if (murn.contains(":")) {
+					IResource res = Resources.INSTANCE.resolveResource(murn);
+					if (res == null) {
+						// monitor.send(new CompileNo);
+						this.setInactive(true);
+					} else {
+						rscale = Scale.create(res.getGeometry());
+					}
+				} else {
+					IKimObject obj = Resources.INSTANCE.getModelObject(murn);
+					if (obj instanceof Model) {
+						rscale = ((Model) obj).getCoverage(monitor);
+					}
+				}
+
+				if (rscale != null) {
+					if (this.resourceCoverage == null) {
+						this.resourceCoverage = rscale;
+					} else {
+						this.resourceCoverage = this.resourceCoverage.merge(rscale, LogicalConnector.INTERSECTION);
+					}
+				} else {
+					monitor.error("unknown resource or model " + murn + " in merging statement", getStatement());
+				}
+			}
+
 		}
 
 		return resource;
@@ -730,6 +775,36 @@ public class Model extends KimObject implements IModel {
 		for (IObservable dependency : dependencies) {
 			if (((Observable) concept).canResolve((Observable) dependency)) {
 				return dependency;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find an output by equating observables. Uses resolves == 0 for the check.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public IObservable findOutput(IObservable concept) {
+		for (IObservable observable : observables) {
+			if (((Observable) concept).canResolve((Observable) observable)) {
+				return observable;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find an output by concept. Uses resolves == 0 for the check.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public IObservable findOutput(IConcept concept) {
+		for (IObservable output : observables) {
+			if (output.getType().resolves(concept) == 0) {
+				return output;
 			}
 		}
 		return null;
@@ -1073,6 +1148,18 @@ public class Model extends KimObject implements IModel {
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
+	}
+
+	@Override
+	public boolean isResourceMerger() {
+		return merger;
+	}
+
+	/**
+	 * @param merger the merger to set
+	 */
+	public void setMerger(boolean merger) {
+		this.merger = merger;
 	}
 
 }

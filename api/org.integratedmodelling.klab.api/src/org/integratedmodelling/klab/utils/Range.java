@@ -160,14 +160,14 @@ public class Range implements IValueMediator {
 	}
 
 	public void setLowerBound(Double lowerBound) {
-		lowerInfinite = lowerBound == null;
+		lowerInfinite = lowerBound == null || lowerBound == Double.NEGATIVE_INFINITY;
 		if (lowerBound != null) {
 			this.lowerBound = lowerBound;
 		}
 	}
 
 	public void setUpperBound(Double upperBound) {
-		upperInfinite = upperBound == null;
+		upperInfinite = upperBound == null || upperBound == Double.POSITIVE_INFINITY;
 		if (upperBound != null) {
 			this.upperBound = upperBound;
 		}

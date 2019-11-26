@@ -211,10 +211,10 @@ export value timeseries
 	label 'Extract data from URNs'
 {
 	
-	list resources
-		"A time-keyed map of function calls to compute to produce the time-sensitive outputs"
+	list urns
+		"URNs of the models and resources to merge temporally"
 				
-	class org.integratedmodelling.klab.components.runtime.contextualizers.MergedUrnResolver
+	class org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnResolver
 }
 
 export object instantiate
@@ -234,10 +234,10 @@ export object timechooser
 	label 'Extract objects from URN'
 {
 	
-	list resources
-		"A time-keyed map of function calls to compute to produce the time-sensitive outputs"
+	list urns
+		"URNs of the models and resources to merge temporally"
 				
-	class org.integratedmodelling.klab.components.runtime.contextualizers.MergedUrnInstantiator
+	class org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnInstantiator
 
 }
 

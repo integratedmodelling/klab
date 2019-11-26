@@ -98,7 +98,7 @@ public class ObservationStrategy {
 		 */
 		if (observable.is(Type.CHANGE)) {
 			IConcept dep = observable.getInherentType();
-			if (((Model) model).findDependency(dep) == null) {
+			if (((Model) model).findDependency(dep) == null && ((Model) model).findOutput(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep), Mode.RESOLUTION));
 			}
 		}

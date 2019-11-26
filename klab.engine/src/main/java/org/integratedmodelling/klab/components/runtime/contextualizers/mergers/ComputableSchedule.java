@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
@@ -47,6 +48,7 @@ public class ComputableSchedule {
 		for (String urn : urns) {
 
 			Range tindex = new Range();
+			
 			List<Pair<IServiceCall, IContextualizer>> computation = new ArrayList<>();
 
 			if (urn.contains(":")) {
@@ -56,7 +58,11 @@ public class ComputableSchedule {
 
 				if (time != null) {
 			
-					// TODO set range
+					Number start = time.getParameters().get(Geometry.PARAMETER_TIME_START, Number.class);
+					Number end = time.getParameters().get(Geometry.PARAMETER_TIME_END, Number.class);
+					
+					tindex.setLowerBound(start == null ? null : start.doubleValue());
+					tindex.setUpperBound(end == null ? null : end.doubleValue());
 					
 					computation.add(new Pair<IServiceCall, IContextualizer>(runtime.getServiceCall(
 							new ComputableResource(urn,
@@ -74,7 +80,11 @@ public class ComputableSchedule {
 
 					IGeometry.Dimension time = ((IModel) model).getGeometry().getDimension(Dimension.Type.TIME);
 
-					// TODO set range
+					Number start = time.getParameters().get(Geometry.PARAMETER_TIME_START, Number.class);
+					Number end = time.getParameters().get(Geometry.PARAMETER_TIME_END, Number.class);
+					
+					tindex.setLowerBound(start == null ? null : start.doubleValue());
+					tindex.setUpperBound(end == null ? null : end.doubleValue());
 					
 					if (time != null) {
 
@@ -94,14 +104,26 @@ public class ComputableSchedule {
 
 		List<IContextualizer> ret = new ArrayList<>();
 
+		Range focal = new Range();
+		focal.setLowerBound(time.getStart() == null ? null : (double)time.getStart().getMilliseconds());
+		focal.setUpperBound(time.getEnd() == null ? null : (double)time.getEnd().getMilliseconds());
+
 		/*
-		 * choose the closest schedule that's not after time
+		 * choose the closest schedule that's not after our focal time
 		 */
 		Range chosenRange = null;
 		List<Pair<IServiceCall, IContextualizer>> chosenStrategy = null;
 		
 		for (Pair<Range, List<Pair<IServiceCall, IContextualizer>>> strategy : schedule) {
-			// TODO strategy is: OK if range covers/intersects; if another is there already, trumps if it starts later.
+			if (strategy.getFirst().contains(focal)) {
+				if (chosenRange != null) {
+					if (chosenRange.getLowerBound() >= strategy.getFirst().getLowerBound()) {
+						continue;
+					}
+				}
+				chosenRange = strategy.getFirst();
+				chosenStrategy = strategy.getSecond();
+			}
 		}
 
 		if (chosenStrategy == null) {

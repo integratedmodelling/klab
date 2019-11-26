@@ -758,6 +758,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 				type = Type.CONDITION;
 			} else if (this.urn != null) {
 				type = Type.RESOURCE;
+			} else if (this.mergedUrns != null) {
+				// TODO check
+				type = Type.RESOURCE;
 			}
 		}
 

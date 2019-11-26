@@ -46,7 +46,6 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
  */
 public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable, IComputationProvider {
 
-
 	/**
 	 * Return the semantics of all observables we are observing. The first in the
 	 * list is the actual observable and must exist; the others are expected
@@ -105,9 +104,9 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * {@link org.integratedmodelling.klab.api.knowledge.IObservable#getLocalName()}
 	 * may be different as the same observation could come from a different model.
 	 *
-	 * @param observable
-	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
-	 *            object.
+	 * @param observable a
+	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
+	 *                   object.
 	 * @return the name with which the passed observable (or one compatible with it)
 	 *         is known in this model. If the observable isn't found in the model,
 	 *         this method should return the passed observable's local name, not
@@ -217,5 +216,15 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @return the implicit geometry from the resources, or null.
 	 */
 	IGeometry getGeometry();
+
+	/**
+	 * If true, this model uses the 'merging' clause to merge resources or other
+	 * models into a change model for the inherent observable. Such models have the
+	 * same observable as an output instead of a dependency, as normal change models
+	 * do.
+	 * 
+	 * @return
+	 */
+	boolean isResourceMerger();
 
 }
