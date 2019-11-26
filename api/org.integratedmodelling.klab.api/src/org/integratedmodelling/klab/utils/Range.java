@@ -528,12 +528,14 @@ public class Range implements IValueMediator {
 			rightExclusion = upperBound - other.upperBound;
 		}
 
-		double size = leftExclusion + rightExclusion;
+		double size = other.isBounded() ? other.getWidth() : (leftExclusion + rightExclusion);
 		if (size == 0) {
 			return 0;
 		}
+		
+		System.out.println("OOIU");
 
-		return leftExclusion / size + rightExclusion / size;
+		return Math.abs(leftExclusion / size) + Math.abs(rightExclusion / size);
 
 	}
 

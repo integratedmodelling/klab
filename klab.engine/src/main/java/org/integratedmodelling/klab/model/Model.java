@@ -214,7 +214,7 @@ public class Model extends KimObject implements IModel {
 				// TODO may remove, should be prevented by validator.
 				throw new IllegalStateException("illegal 'merging' clause in a model that does not observe change");
 			}
-			
+
 			/**
 			 * It's a change model: add the inherent observable as an output if not there
 			 */
@@ -235,13 +235,14 @@ public class Model extends KimObject implements IModel {
 			}
 			try {
 				this.resources.clear();
-				this.resources.add(new ComputableResource(ress,
-						inherent.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+				this.resources.add(
+						new ComputableResource(ress, inherent.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION,
+								inherent.getArtifactType()));
 			} catch (Throwable e) {
 				monitor.error("Model has resource validation errors", getStatement());
 				setErrors(true);
 			}
-			
+
 		} else {
 
 			/*
@@ -729,7 +730,10 @@ public class Model extends KimObject implements IModel {
 					monitor.error("unknown resource or model " + murn + " in merging statement", getStatement());
 				}
 			}
-
+			
+			// set it in the resource so we have it
+			resource.setMergedGeometry(this.resourceCoverage.getGeometry());
+			
 		}
 
 		return resource;

@@ -93,7 +93,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	// actuator the resource is used in).
 	private IObservable originalObservable;
 	private boolean copy = false;
-
+	
 	/**
 	 * If not empty, this is the first of a chain (which cannot be hierarchical).
 	 * For now this only happens with URNs.
@@ -102,7 +102,10 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 
 	private List<IAnnotation> externalParameters;
 
+	// these set from the outside if the resource is a merge of others
 	private List<String> mergedUrns;
+	private IGeometry mergedGeometry;
+	private IArtifact.Type mergedType;
 
 	@Override
 	public List<String> getMergedUrns() {
@@ -134,6 +137,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		ret.targetId = this.targetId;
 		ret.copy = true;
 		ret.mergedUrns = this.mergedUrns;
+		ret.mergedType = this.mergedType;
 		ret.interactiveParameters = this.interactiveParameters;
 		ret.externalParameters = this.externalParameters;
 		// ret.type = this.type;
@@ -290,8 +294,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		this.resolutionMode = Mode.RESOLUTION;
 	}
 	
-	public ComputableResource(List<String> mergedUrns, Mode mode) {
+	public ComputableResource(List<String> mergedUrns, Mode mode, IArtifact.Type type) {
 		this.mergedUrns = mergedUrns;
+		this.mergedType = type;
 		this.resolutionMode = mode;
 	}
 
@@ -377,17 +382,6 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 
 		this.language = value.getLanguage();
 	}
-
-	// private String removeDelimiters(String string) {
-	// String expr = string.trim();
-	// if (expr.startsWith("[")) {
-	// expr = expr.substring(1);
-	// }
-	// if (expr.endsWith("]")) {
-	// expr = expr.substring(0, expr.length() - 1);
-	// }
-	// return expr;
-	// }
 
 	@Override
 	public IObservable getTarget() {
@@ -759,8 +753,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 			} else if (this.urn != null) {
 				type = Type.RESOURCE;
 			} else if (this.mergedUrns != null) {
-				// TODO check
-				type = Type.RESOURCE;
+				type = Type.MERGED_RESOURCES;
 			}
 		}
 
@@ -790,6 +783,11 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 
 	@Override
 	public IGeometry getGeometry() {
+		
+		if (this.mergedGeometry != null) {
+			return this.mergedGeometry;
+		}
+		
 		switch(getType()) {
 		case RESOURCE:
 			IResourceService rs = Services.INSTANCE.getService(IResourceService.class);
@@ -831,6 +829,10 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 
 	public void setVariable(boolean variable) {
 		this.variable = variable;
+	}
+	
+	public void setMergedGeometry(IGeometry geometry) {
+		this.mergedGeometry = geometry;
 	}
 	
 }

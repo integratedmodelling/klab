@@ -7,15 +7,19 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class MergedUrnResolver implements IExpression, IResolver<IArtifact> {
 
@@ -23,6 +27,9 @@ public class MergedUrnResolver implements IExpression, IResolver<IArtifact> {
 
 	private List<String> urns;
 	private Type type;
+	private ComputableSchedule schedule;
+
+	private IState targetState;
 
 	// don't remove - only used as expression
 	public MergedUrnResolver() {
@@ -41,25 +48,30 @@ public class MergedUrnResolver implements IExpression, IResolver<IArtifact> {
 	@Override
 	public IArtifact resolve(IArtifact observation, IContextualizationScope context) {
 
-		if (!(observation instanceof IState)) {
-			throw new IllegalArgumentException("Cannot run a merged resolver on a non-state");
+		if (this.schedule == null) {
+
+			IConcept inherent = ((IObservation) observation).getObservable().getInherentType();
+			Pair<String, IArtifact> target = ((IRuntimeScope) context).findArtifact(Observable.promote(inherent));
+
+			if (target == null || !(target.getSecond() instanceof IState)) {
+				throw new IllegalArgumentException("Cannot run a merging resolver on a non-state");
+			}
+
+			this.targetState = (IState) target.getSecond();
+			this.schedule = new ComputableSchedule(context.getTargetSemantics(), (IRuntimeScope) context);
+			schedule.add(urns);
 		}
 
-		IState ret = (IState) observation;
+		IState target = this.targetState;
+		
+		for (IContextualizer contextualizer : this.schedule.getComputation(context.getScale().getTime(), context)) {
 
-		ComputableSchedule schedule = new ComputableSchedule(context.getTargetSemantics(), (IRuntimeScope) context);
-		schedule.add(urns);
-
-		for (IContextualizer contextualizer : schedule.getComputation(context.getScale().getTime(), context)) {
-
-			if (ret instanceof IState) {
-				/*
-				 * Establish the container for the output: switch the storage in the state to
-				 * the type needed in the compute chain, creating a layer if necessary. This is
-				 * the layer to WRITE INTO.
-				 */
-				ret = ((IState) ret).as(contextualizer.getType());
-			}
+			/*
+			 * Establish the container for the output: switch the storage in the state to
+			 * the type needed in the compute chain, creating a layer if necessary. This is
+			 * the layer to WRITE INTO.
+			 */
+			target = this.targetState.as(contextualizer.getType());
 
 			if (contextualizer instanceof IStateResolver) {
 
@@ -67,15 +79,15 @@ public class MergedUrnResolver implements IExpression, IResolver<IArtifact> {
 				 * pass the distributed computation to the runtime provider for possible
 				 * parallelization instead of hard-coding a loop here.
 				 */
-				ret = (IState) Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-						(IState) ret, context, context.getScale());
+				target = (IState) Klab.INSTANCE.getRuntimeProvider().distributeComputation(
+						(IStateResolver) contextualizer, target, context, context.getScale());
 
 			} else if (contextualizer instanceof IResolver) {
-				ret = (IState) ((IResolver<IArtifact>) contextualizer).resolve(ret, context);
+				target = (IState) ((IResolver<IArtifact>) contextualizer).resolve(target, context);
 			}
 		}
 
-		return ret;
+		return this.targetState;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -1347,6 +1347,7 @@ public enum Resources implements IResourceService {
 	 * @return
 	 */
 	public Type getType(IContextualizable resource) {
+		
 		switch (resource.getType()) {
 		case CLASSIFICATION:
 			return Type.CONCEPT;

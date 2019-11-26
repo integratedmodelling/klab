@@ -39,7 +39,7 @@ import org.integratedmodelling.klab.utils.Pair;
 public interface IContextualizable extends IKimStatement, IDataflowNode {
 
 	public static enum Type {
-		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, EXPRESSION, CONVERSION, LITERAL,
+		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, MERGED_RESOURCES, EXPRESSION, CONVERSION, LITERAL,
 		/* conditions are currently underspecified */CONDITION
 	}
 
