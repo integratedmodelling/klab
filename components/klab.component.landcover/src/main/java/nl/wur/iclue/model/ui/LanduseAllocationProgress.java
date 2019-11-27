@@ -6,6 +6,10 @@ import nl.alterra.shared.rasterdata.RasterData;
 import nl.wur.iclue.model.demand.DemandValidators;
 import nl.wur.iclue.parameter.Landuses;
 
+/**
+ * 
+ * @deprecated UI-specific
+ */
 public class LanduseAllocationProgress extends Component {
 
 	public LanduseAllocationProgress(Landuses landuses) {

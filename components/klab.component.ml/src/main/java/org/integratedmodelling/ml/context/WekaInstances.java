@@ -78,7 +78,7 @@ public class WekaInstances {
 	 * demand when getPredictorObservables() is called.
 	 */
 	private List<IObservable> predictors = null;
-
+	private IState distributedArchetype = null;
 	private List<ObservationGroup> archetypes = new ArrayList<>();
 	private boolean requiresDiscretization = false;
 	private Instances rawInstances, instances;
@@ -361,16 +361,31 @@ public class WekaInstances {
 				if (arch != null) {
 
 					IArtifact artifact = context.getArtifact(dependency.getName());
-					if (!(artifact instanceof ObservationGroup)) {
+
+					if (artifact instanceof IState) {
+						if (this.distributedArchetype != null) {
+							throw new IllegalArgumentException(
+									"Weka: only one archetype is admitted if a distributed state is used");
+						}
+						this.distributedArchetype = (IState) artifact;
+						if (this.distributedArchetype.getObservable().getArtifactType() != predicted
+								.getArtifactType()) {
+							throw new IllegalStateException(
+									"Weka: cannot use " + this.distributedArchetype.getObservable().getType()
+											+ " as an archetype for " + predicted.getType() + ": incompatible types");
+						}
+					} else if (!(artifact instanceof ObservationGroup)) {
 						throw new IllegalArgumentException("Weka: missing archetype or archetype is not countable");
+					} else {
+						this.archetypes.add((ObservationGroup) artifact);
 					}
+
 					if (arch.containsKey("min")) {
 						this.predictedMin = arch.get("min", Double.NaN);
 					}
 					if (arch.containsKey("max")) {
 						this.predictedMax = arch.get("max", Double.NaN);
 					}
-					this.archetypes.add((ObservationGroup) artifact);
 					if (arch.containsKey("weight")) {
 						this.weightObservable = arch.get("weight", IConcept.class);
 						attributeWeights.put(((ObservationGroup) artifact).getObservable().getName(), 1.0);
@@ -463,7 +478,7 @@ public class WekaInstances {
 	}
 
 	/**
-	 * May return null if predictors are not states in the context but in 
+	 * May return null if predictors are not states in the context but in
 	 * instantiated objects.
 	 * 
 	 * @param attributeName
@@ -492,7 +507,7 @@ public class WekaInstances {
 		}
 		return null;
 	}
-	
+
 	private Attribute getAttribute(IObservable observable, IState state) {
 
 		Attribute ret = null;
@@ -569,6 +584,10 @@ public class WekaInstances {
 			pnames.add(predictor.getName());
 		}
 
+		/*
+		 * TODO support a distributed archetype using sample and select
+		 */
+		
 		for (ObservationGroup archetype : archetypes) {
 
 			for (IArtifact object : archetype) {

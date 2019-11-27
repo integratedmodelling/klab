@@ -1,26 +1,34 @@
 package nl.alterra.shared.rasterdata;
 
+/**
+ * FV: I believe this is a set of cells in the same location. Should just
+ * store a locator and be local to the raster stack.
+ */
 public class CellStack {
-
-	public CellStack(int length) {
-		// TODO Auto-generated constructor stub
-	}
 
 	public Number[] inputValues;
 
+	private int rowIndex;
+	private int columnIndex;
+	
+	public CellStack(int length) {
+		this.inputValues = new Number[length];
+	}
+	
 	public int getColumnIndex() {
-		// TODO Auto-generated method stub
-		return 0;
+		return rowIndex;
 	}
 
 	public int getRowIndex() {
-		// TODO Auto-generated method stub
-		return 0;
+		return columnIndex;
 	}
 
 	public void setColumnIndex(int columnIndex) {
-		// TODO Auto-generated method stub
-		
+		this.columnIndex = columnIndex;
+	}
+
+	public void setRowIndex(int columnIndex) {
+		this.rowIndex = columnIndex;
 	}
 
 }
