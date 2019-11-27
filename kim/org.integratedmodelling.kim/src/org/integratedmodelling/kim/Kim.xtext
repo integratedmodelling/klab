@@ -121,6 +121,8 @@ TableClassifier returns ClassifierRHS:
 	(boolean='true' | boolean='false') | 
 	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
 	num=Number | 
+	quantity=Quantity |
+	date=Date |
 	'in' set=List | 
 	string=STRING | 
 	concept=ConceptDeclaration | 

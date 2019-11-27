@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.resolution.Prioritizer;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -48,7 +49,7 @@ public class ComputableSchedule {
 		for (String urn : urns) {
 
 			Range tindex = new Range();
-			
+
 			List<Pair<IServiceCall, IContextualizer>> computation = new ArrayList<>();
 
 			if (urn.contains(":")) {
@@ -57,19 +58,19 @@ public class ComputableSchedule {
 				IGeometry.Dimension time = resource.getGeometry().getDimension(Dimension.Type.TIME);
 
 				if (time != null) {
-			
+
 					Number start = time.getParameters().get(Geometry.PARAMETER_TIME_START, Number.class);
 					Number end = time.getParameters().get(Geometry.PARAMETER_TIME_END, Number.class);
-					
+
 					tindex.setLowerBound(start == null ? null : start.doubleValue());
 					tindex.setUpperBound(end == null ? null : end.doubleValue());
-					
+
 					computation.add(new Pair<IServiceCall, IContextualizer>(runtime.getServiceCall(
 							new ComputableResource(urn,
 									observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION),
 							observable, session), null));
 				}
-				
+
 			} else {
 
 				/*
@@ -82,10 +83,10 @@ public class ComputableSchedule {
 
 					Number start = time.getParameters().get(Geometry.PARAMETER_TIME_START, Number.class);
 					Number end = time.getParameters().get(Geometry.PARAMETER_TIME_END, Number.class);
-					
+
 					tindex.setLowerBound(start == null ? null : start.doubleValue());
 					tindex.setUpperBound(end == null ? null : end.doubleValue());
-					
+
 					if (time != null) {
 
 						for (IContextualizable c : ((IModel) model).getComputation()) {
@@ -103,25 +104,26 @@ public class ComputableSchedule {
 	public List<IContextualizer> getComputation(ITime time, IContextualizationScope scope) {
 
 		List<IContextualizer> ret = new ArrayList<>();
-
-		Range focal = new Range();
-		focal.setLowerBound(time.getStart() == null ? null : (double)time.getStart().getMilliseconds());
-		focal.setUpperBound(time.getEnd() == null ? null : (double)time.getEnd().getMilliseconds());
-
-		/*
-		 * choose the closest schedule that's not after our focal time
-		 */
-		Range chosenRange = null;
 		List<Pair<IServiceCall, IContextualizer>> chosenStrategy = null;
+		double specificity = 0;
+
+		System.out.println("Choosing for " + time.getStart());
 		
 		for (Pair<Range, List<Pair<IServiceCall, IContextualizer>>> strategy : schedule) {
-			if (strategy.getFirst().contains(focal)) {
-				if (chosenRange != null) {
-					if (chosenRange.getLowerBound() >= strategy.getFirst().getLowerBound()) {
+
+			double[] criteria = Prioritizer.computeTemporalCriteria((long) strategy.getFirst().getLowerBound(),
+					(long) strategy.getFirst().getUpperBound(), time);
+
+			/*
+			 * leave a small coverage margin to avoid potentially painful anal retention
+			 */
+			if (criteria[0] > .95) {
+				if (specificity > 0) {
+					if (criteria[1] < specificity) {
 						continue;
 					}
 				}
-				chosenRange = strategy.getFirst();
+				specificity = criteria[1];
 				chosenStrategy = strategy.getSecond();
 			}
 		}

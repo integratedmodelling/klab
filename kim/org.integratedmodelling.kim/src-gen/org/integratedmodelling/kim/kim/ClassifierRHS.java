@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#isStar <em>Star</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getId <em>Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getQuantity <em>Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#isAnything <em>Anything</em>}</li>
  * </ul>
@@ -361,6 +362,28 @@ public interface ClassifierRHS extends EObject
    * @generated
    */
   void setId(String value);
+
+  /**
+   * Returns the value of the '<em><b>Quantity</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Quantity</em>' containment reference.
+   * @see #setQuantity(Quantity)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getClassifierRHS_Quantity()
+   * @model containment="true"
+   * @generated
+   */
+  Quantity getQuantity();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getQuantity <em>Quantity</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Quantity</em>' containment reference.
+   * @see #getQuantity()
+   * @generated
+   */
+  void setQuantity(Quantity value);
 
   /**
    * Returns the value of the '<em><b>Expr</b></em>' attribute.

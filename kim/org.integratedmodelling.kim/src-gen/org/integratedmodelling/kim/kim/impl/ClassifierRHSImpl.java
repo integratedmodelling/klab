@@ -24,6 +24,7 @@ import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
+import org.integratedmodelling.kim.kim.Quantity;
 import org.integratedmodelling.kim.kim.REL_OPERATOR;
 
 /**
@@ -49,6 +50,7 @@ import org.integratedmodelling.kim.kim.REL_OPERATOR;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#isStar <em>Star</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getQuantity <em>Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#isAnything <em>Anything</em>}</li>
  * </ul>
@@ -276,6 +278,16 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @ordered
    */
   protected String id = ID_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getQuantity() <em>Quantity</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getQuantity()
+   * @generated
+   * @ordered
+   */
+  protected Quantity quantity;
 
   /**
    * The default value of the '{@link #getExpr() <em>Expr</em>}' attribute.
@@ -884,6 +896,56 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @generated
    */
   @Override
+  public Quantity getQuantity()
+  {
+    return quantity;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetQuantity(Quantity newQuantity, NotificationChain msgs)
+  {
+    Quantity oldQuantity = quantity;
+    quantity = newQuantity;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CLASSIFIER_RHS__QUANTITY, oldQuantity, newQuantity);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setQuantity(Quantity newQuantity)
+  {
+    if (newQuantity != quantity)
+    {
+      NotificationChain msgs = null;
+      if (quantity != null)
+        msgs = ((InternalEObject)quantity).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CLASSIFIER_RHS__QUANTITY, null, msgs);
+      if (newQuantity != null)
+        msgs = ((InternalEObject)newQuantity).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CLASSIFIER_RHS__QUANTITY, null, msgs);
+      msgs = basicSetQuantity(newQuantity, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CLASSIFIER_RHS__QUANTITY, newQuantity, newQuantity));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getExpr()
   {
     return expr;
@@ -954,6 +1016,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return basicSetOp(null, msgs);
       case KimPackage.CLASSIFIER_RHS__EXPRESSION:
         return basicSetExpression(null, msgs);
+      case KimPackage.CLASSIFIER_RHS__QUANTITY:
+        return basicSetQuantity(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -998,6 +1062,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return isStar();
       case KimPackage.CLASSIFIER_RHS__ID:
         return getId();
+      case KimPackage.CLASSIFIER_RHS__QUANTITY:
+        return getQuantity();
       case KimPackage.CLASSIFIER_RHS__EXPR:
         return getExpr();
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
@@ -1062,6 +1128,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return;
       case KimPackage.CLASSIFIER_RHS__ID:
         setId((String)newValue);
+        return;
+      case KimPackage.CLASSIFIER_RHS__QUANTITY:
+        setQuantity((Quantity)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__EXPR:
         setExpr((String)newValue);
@@ -1128,6 +1197,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KimPackage.CLASSIFIER_RHS__ID:
         setId(ID_EDEFAULT);
         return;
+      case KimPackage.CLASSIFIER_RHS__QUANTITY:
+        setQuantity((Quantity)null);
+        return;
       case KimPackage.CLASSIFIER_RHS__EXPR:
         setExpr(EXPR_EDEFAULT);
         return;
@@ -1178,6 +1250,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return star != STAR_EDEFAULT;
       case KimPackage.CLASSIFIER_RHS__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+      case KimPackage.CLASSIFIER_RHS__QUANTITY:
+        return quantity != null;
       case KimPackage.CLASSIFIER_RHS__EXPR:
         return EXPR_EDEFAULT == null ? expr != null : !EXPR_EDEFAULT.equals(expr);
       case KimPackage.CLASSIFIER_RHS__ANYTHING:

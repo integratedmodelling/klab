@@ -532,8 +532,6 @@ public class Range implements IValueMediator {
 		if (size == 0) {
 			return 0;
 		}
-		
-		System.out.println("OOIU");
 
 		return Math.abs(leftExclusion / size) + Math.abs(rightExclusion / size);
 

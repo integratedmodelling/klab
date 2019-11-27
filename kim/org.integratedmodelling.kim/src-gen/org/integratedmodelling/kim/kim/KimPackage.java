@@ -744,13 +744,22 @@ public interface KimPackage extends EPackage
   int CLASSIFIER_RHS__ID = 14;
 
   /**
+   * The feature id for the '<em><b>Quantity</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER_RHS__QUANTITY = 15;
+
+  /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__EXPR = 15;
+  int CLASSIFIER_RHS__EXPR = 16;
 
   /**
    * The feature id for the '<em><b>Anything</b></em>' attribute.
@@ -759,7 +768,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__ANYTHING = 16;
+  int CLASSIFIER_RHS__ANYTHING = 17;
 
   /**
    * The number of structural features of the '<em>Classifier RHS</em>' class.
@@ -768,7 +777,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS_FEATURE_COUNT = 17;
+  int CLASSIFIER_RHS_FEATURE_COUNT = 18;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UrnImpl <em>Urn</em>}' class.
@@ -5319,6 +5328,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getClassifierRHS_Id();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getQuantity <em>Quantity</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Quantity</em>'.
+   * @see org.integratedmodelling.kim.kim.ClassifierRHS#getQuantity()
+   * @see #getClassifierRHS()
+   * @generated
+   */
+  EReference getClassifierRHS_Quantity();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getExpr <em>Expr</em>}'.
@@ -9949,6 +9969,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CLASSIFIER_RHS__ID = eINSTANCE.getClassifierRHS_Id();
+
+    /**
+     * The meta object literal for the '<em><b>Quantity</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CLASSIFIER_RHS__QUANTITY = eINSTANCE.getClassifierRHS_Quantity();
 
     /**
      * The meta object literal for the '<em><b>Expr</b></em>' attribute feature.

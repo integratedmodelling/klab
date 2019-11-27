@@ -1,0 +1,35 @@
+/**
+ * Interface contextualizers for various standard geoprocessing operations.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace klab.landcover
+
+@xor(demand, demandarea)
+export process clue
+	"An implementation of the general principles of the CLUE land cover change model 
+	 for the k.LAB environment."
+	label 'Landcover change'
+{
+	optional text suitability
+		"URN of a learned suitability prediction model" 
+
+	optional text change
+		"URN of a learned change prediction model" 
+
+	optional list elasticities
+		""
+		
+	optional list transitions 
+		""
+	
+	optional list demand
+		""
+		
+	optional list demandarea
+		""
+	
+	geometry S2
+	
+	class org.integratedmodelling.landcover.clue.services.ClueResolver
+}

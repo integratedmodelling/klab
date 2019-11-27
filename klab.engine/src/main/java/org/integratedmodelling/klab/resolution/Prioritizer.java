@@ -521,13 +521,22 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		return ret;
 	}
 
-	private double[] computeTemporalCriteria(ModelReference model, ResolutionScope scope) {
+	/**
+	 * Temporal criteria are 0: coverage; 1: specificity; 2: coherency. The latter
+	 * is not active at this time (will be -1).
+	 * <p>
+	 * Made static and public so that contextualizers can use it.
+	 * 
+	 * @param modelStart
+	 * @param modelEnd
+	 * @param time
+	 * @return
+	 */
+	public static double[] computeTemporalCriteria(long modelStart, long modelEnd, ITime time) {
 
 		double[] ret = new double[] { -1, -1, -1 };
-		ITime time = scope.getCoverage().getTime();
 
-		Range mrange = Range.create(model.getTimeStart() == -1 ? null : model.getTimeStart(),
-				model.getTimeEnd() == -1 ? null : model.getTimeEnd());
+		Range mrange = Range.create(modelStart == -1 ? null : modelStart, modelEnd == -1 ? null : modelEnd);
 		Range crange = Range.create(time.getStart(), time.getEnd());
 
 		/*
@@ -606,6 +615,10 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		 */
 
 		return ret;
+	}
+
+	private double[] computeTemporalCriteria(ModelReference model, ResolutionScope scope) {
+		return computeTemporalCriteria(model.getTimeStart(), model.getTimeEnd(), scope.getCoverage().getTime());
 	}
 
 	private double getMin(double a, double b) {

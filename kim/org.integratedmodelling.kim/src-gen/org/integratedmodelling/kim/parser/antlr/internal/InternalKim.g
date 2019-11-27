@@ -2667,16 +2667,36 @@ ruleTableClassifier returns [EObject current=null]
 		)
 		    |
 		(
-			otherlv_10='in'
+			(
+				{
+					newCompositeNode(grammarAccess.getTableClassifierAccess().getQuantityQuantityParserRuleCall_3_0());
+				}
+				lv_quantity_10_0=ruleQuantity
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
+					}
+					set(
+						$current,
+						"quantity",
+						lv_quantity_10_0,
+						"org.integratedmodelling.kim.Kim.Quantity");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			otherlv_11='in'
 			{
-				newLeafNode(otherlv_10, grammarAccess.getTableClassifierAccess().getInKeyword_3_0());
+				newLeafNode(otherlv_11, grammarAccess.getTableClassifierAccess().getInKeyword_4_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getTableClassifierAccess().getSetListParserRuleCall_3_1_0());
+						newCompositeNode(grammarAccess.getTableClassifierAccess().getSetListParserRuleCall_4_1_0());
 					}
-					lv_set_11_0=ruleList
+					lv_set_12_0=ruleList
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
@@ -2684,7 +2704,7 @@ ruleTableClassifier returns [EObject current=null]
 						set(
 							$current,
 							"set",
-							lv_set_11_0,
+							lv_set_12_0,
 							"org.integratedmodelling.kim.Kim.List");
 						afterParserOrEnumRuleCall();
 					}
@@ -2694,9 +2714,9 @@ ruleTableClassifier returns [EObject current=null]
 		    |
 		(
 			(
-				lv_string_12_0=RULE_STRING
+				lv_string_13_0=RULE_STRING
 				{
-					newLeafNode(lv_string_12_0, grammarAccess.getTableClassifierAccess().getStringSTRINGTerminalRuleCall_4_0());
+					newLeafNode(lv_string_13_0, grammarAccess.getTableClassifierAccess().getStringSTRINGTerminalRuleCall_5_0());
 				}
 				{
 					if ($current==null) {
@@ -2705,7 +2725,7 @@ ruleTableClassifier returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"string",
-						lv_string_12_0,
+						lv_string_13_0,
 						"org.eclipse.xtext.common.Terminals.STRING");
 				}
 			)
@@ -2714,9 +2734,9 @@ ruleTableClassifier returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getTableClassifierAccess().getConceptConceptDeclarationParserRuleCall_5_0());
+					newCompositeNode(grammarAccess.getTableClassifierAccess().getConceptConceptDeclarationParserRuleCall_6_0());
 				}
-				lv_concept_13_0=ruleConceptDeclaration
+				lv_concept_14_0=ruleConceptDeclaration
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
@@ -2724,7 +2744,7 @@ ruleTableClassifier returns [EObject current=null]
 					set(
 						$current,
 						"concept",
-						lv_concept_13_0,
+						lv_concept_14_0,
 						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
@@ -2735,9 +2755,9 @@ ruleTableClassifier returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getTableClassifierAccess().getOpREL_OPERATORParserRuleCall_6_0_0());
+						newCompositeNode(grammarAccess.getTableClassifierAccess().getOpREL_OPERATORParserRuleCall_7_0_0());
 					}
-					lv_op_14_0=ruleREL_OPERATOR
+					lv_op_15_0=ruleREL_OPERATOR
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
@@ -2745,7 +2765,7 @@ ruleTableClassifier returns [EObject current=null]
 						set(
 							$current,
 							"op",
-							lv_op_14_0,
+							lv_op_15_0,
 							"org.integratedmodelling.kim.Kim.REL_OPERATOR");
 						afterParserOrEnumRuleCall();
 					}
@@ -2754,9 +2774,9 @@ ruleTableClassifier returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getTableClassifierAccess().getExpressionNumberParserRuleCall_6_1_0());
+						newCompositeNode(grammarAccess.getTableClassifierAccess().getExpressionNumberParserRuleCall_7_1_0());
 					}
-					lv_expression_15_0=ruleNumber
+					lv_expression_16_0=ruleNumber
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
@@ -2764,7 +2784,7 @@ ruleTableClassifier returns [EObject current=null]
 						set(
 							$current,
 							"expression",
-							lv_expression_15_0,
+							lv_expression_16_0,
 							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
@@ -2774,9 +2794,9 @@ ruleTableClassifier returns [EObject current=null]
 		    |
 		(
 			(
-				lv_expr_16_0=RULE_EXPR
+				lv_expr_17_0=RULE_EXPR
 				{
-					newLeafNode(lv_expr_16_0, grammarAccess.getTableClassifierAccess().getExprEXPRTerminalRuleCall_7_0());
+					newLeafNode(lv_expr_17_0, grammarAccess.getTableClassifierAccess().getExprEXPRTerminalRuleCall_8_0());
 				}
 				{
 					if ($current==null) {
@@ -2785,7 +2805,7 @@ ruleTableClassifier returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"expr",
-						lv_expr_16_0,
+						lv_expr_17_0,
 						"org.integratedmodelling.kim.Kim.EXPR");
 				}
 			)
@@ -2793,24 +2813,24 @@ ruleTableClassifier returns [EObject current=null]
 		    |
 		(
 			(
-				lv_nodata_17_0='unknown'
+				lv_nodata_18_0='unknown'
 				{
-					newLeafNode(lv_nodata_17_0, grammarAccess.getTableClassifierAccess().getNodataUnknownKeyword_8_0());
+					newLeafNode(lv_nodata_18_0, grammarAccess.getTableClassifierAccess().getNodataUnknownKeyword_9_0());
 				}
 				{
 					if ($current==null) {
 						$current = createModelElement(grammarAccess.getTableClassifierRule());
 					}
-					setWithLastConsumed($current, "nodata", lv_nodata_17_0, "unknown");
+					setWithLastConsumed($current, "nodata", lv_nodata_18_0, "unknown");
 				}
 			)
 		)
 		    |
 		(
 			(
-				lv_star_18_0='*'
+				lv_star_19_0='*'
 				{
-					newLeafNode(lv_star_18_0, grammarAccess.getTableClassifierAccess().getStarAsteriskKeyword_9_0());
+					newLeafNode(lv_star_19_0, grammarAccess.getTableClassifierAccess().getStarAsteriskKeyword_10_0());
 				}
 				{
 					if ($current==null) {
@@ -2823,9 +2843,9 @@ ruleTableClassifier returns [EObject current=null]
 		    |
 		(
 			(
-				lv_anything_19_0='#'
+				lv_anything_20_0='#'
 				{
-					newLeafNode(lv_anything_19_0, grammarAccess.getTableClassifierAccess().getAnythingNumberSignKeyword_10_0());
+					newLeafNode(lv_anything_20_0, grammarAccess.getTableClassifierAccess().getAnythingNumberSignKeyword_11_0());
 				}
 				{
 					if ($current==null) {
