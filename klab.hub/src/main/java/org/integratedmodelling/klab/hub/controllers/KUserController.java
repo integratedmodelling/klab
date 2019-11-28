@@ -88,8 +88,8 @@ public class KUserController {
 	
 	@PostMapping(value= "/{id}", produces = "application/json", params="requestGroups")
 	@PreAuthorize("authentication.getPrincipal() == #username")
-	public ResponseEntity<?> requestGroupsResponse(@PathVariable("id") String username, @RequestParam("requestGroups") List<String> groups) {
-		tokenManager.sendGroupClickbackToken(username, groups);
+	public ResponseEntity<?> requestGroupsResponse(@PathVariable("id") String username, @RequestParam("requestGroups") List<String> groupNames) {
+		tokenManager.sendGroupClickbackToken(username, groupNames);
 		return new ResponseEntity<>("Sent email to system adminstrator requesting additional groups",HttpStatus.CREATED);
 	}
 	

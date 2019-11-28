@@ -1,11 +1,8 @@
 package org.integratedmodelling.klab.hub.service.implementation;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.Logging;
@@ -20,8 +17,6 @@ import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import akka.routing.Group;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -83,9 +78,9 @@ public class UserServiceImpl implements UserService{
 		
 		Set<GroupEntry> groupEntries = user.getGroups();
 		
-		List<String> groupsList = getEntryNames(groupEntries);
+		Set<String> groupsList = getGroupEntryNames(groupEntries);
 		
-		List<String> newGroupsList = getEntryNames(newGroupEntries);
+		Set<String> newGroupsList = getGroupEntryNames(newGroupEntries);
 		
 		for (String groupName : newGroupsList) {
 			if(groupsList.contains(groupName)) {
@@ -130,7 +125,7 @@ public class UserServiceImpl implements UserService{
 	public User removeUserGroupEntries(String username, Set<String> groupnames) {
 		User user = getUserFromMongo(username).get();
 		Set<GroupEntry> groupEntries = user.getGroups();
-		List<String> groupsList = getEntryNames(groupEntries);
+		Set<String> groupsList = getGroupEntryNames(groupEntries);
 		for(String name : groupnames) {
 			if(groupsList.contains(name)) {
 				GroupEntry userGrpEntry = groupEntries.stream()
@@ -180,10 +175,10 @@ public class UserServiceImpl implements UserService{
 		}
 	}
 	
-	private List<String> getEntryNames(Set<GroupEntry> entries) {
+	public Set<String> getGroupEntryNames(Set<GroupEntry> entries) {
 		return entries.stream()
 				.map(grpEntry -> grpEntry.getGroupName())
-				.collect(Collectors.toList());
+				.collect(Collectors.toSet());
 	}
 
 }

@@ -4,18 +4,18 @@ import org.joda.time.DateTime;
 
 public class GroupEntry {
 	
-	private String groupName;
+	private KlabGroup group;
 	private DateTime experation;
 	private DateTime inception;
 	
-	public GroupEntry(String groupName, DateTime experation) {
-		this.groupName = groupName;
+	public GroupEntry(KlabGroup group, DateTime experation) {
+		this.group = group;
 		this.experation = experation;
 		setInception();
 	}
 	
-	public GroupEntry(String groupName) {
-		this.groupName = groupName;
+	public GroupEntry(KlabGroup group) {
+		this.group = group;
 		this.experation = null;
 	}
 	
@@ -25,7 +25,7 @@ public class GroupEntry {
 	}
 
 	public String getGroupName() {
-		return groupName;
+		return group.getId();
 	}
 
 	public DateTime getExperation() {

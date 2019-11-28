@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
 import org.integratedmodelling.klab.hub.models.DeletedUser;
+import org.integratedmodelling.klab.hub.models.GroupEntry;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.Role;
@@ -196,21 +197,21 @@ public class KlabUserManager implements UserDetailsService{
 		return user;
 	}
 
-	public void addUsersGroups(Set<String> usernames, Set<String> groupnames) {
+	public void addUsersGroups(Set<String> usernames, Set<GroupEntry> groupEntries) {
 		for (String username : usernames) {
-			userService.addUserGroups(username, groupnames);
+			userService.addUserGroupEntries(username, groupEntries);
 		}
 	}
 
 	public void removeUsersGroups(Set<String> usernames, Set<String> groupnames) {
 		for (String username : usernames) {
-			userService.removeUserGroups(username, groupnames);
+			userService.removeUserGroupEntries(username, groupnames);
 		}
 	}
 
-	public void setUsersGroups(Set<String> usernames, Set<String> groupnames) {
+	public void setUsersGroups(Set<String> usernames, Set<GroupEntry> groupEntries) {
 		for (String username : usernames) {
-			userService.setUserGroups(username, groupnames);
+			userService.setUserGroupEntries(username, groupEntries);
 		}
 	}
 

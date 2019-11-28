@@ -3,12 +3,13 @@ package org.integratedmodelling.klab.hub.models.tokens;
 import java.util.List;
 
 import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.models.GroupEntry;
 
 public class GroupsClickbackToken extends ClickbackToken {
 
     private static final long serialVersionUID = -6813740740798681807L;
         
-    List<String> groups;
+    List<GroupEntry> groups;
 
 	public GroupsClickbackToken(String username) {
         super(username);
@@ -24,11 +25,11 @@ public class GroupsClickbackToken extends ClickbackToken {
         return ClickbackAction.groups;
     }
 
-	public List<String> getGroups() {
+	public List<GroupEntry> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(List<String> groups) {
+	public void setGroups(List<GroupEntry> groups) {
 		this.groups = groups;
 	}
     

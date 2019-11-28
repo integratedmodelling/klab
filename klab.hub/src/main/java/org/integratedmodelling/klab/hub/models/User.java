@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -67,6 +68,7 @@ public class User implements UserDetails{
 
     final Set<Role> roles = new HashSet<>(); // LDAP security roles
 
+    @Reference
     final Set<GroupEntry> groups = new HashSet<>(); // research groups, etc. in web tool
 
     final Set<String> applications = new HashSet<>();

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
+import org.integratedmodelling.klab.hub.models.GroupEntry;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.tasks.CreateGroupTask;
@@ -71,8 +72,8 @@ public class TaskManager {
 	}
 
 	private Task acceptGroupsRequest(GroupsClickbackToken token, Task task) {
-		Set<String> groups = token.getGroups().stream().collect(Collectors.toSet());
-		userService.addUserGroups(token.getName(), groups);
+		Set<GroupEntry> groups = token.getGroups().stream().collect(Collectors.toSet());
+		userService.addUserGroupEntries(token.getName(), groups);
 		tokenRepository.delete(token);
 		return taskService.changeTaskStatus(task.getId(), TaskStatus.acceptedTask);
 	}

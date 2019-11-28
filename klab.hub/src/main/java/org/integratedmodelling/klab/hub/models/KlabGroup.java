@@ -10,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "KlabGroups")
@@ -18,6 +18,9 @@ public class KlabGroup {
 
 	@Id
 	private String id;
+	
+	@Indexed(unique = true)
+	private String groupName;
 
 	private String description;
 
@@ -37,8 +40,7 @@ public class KlabGroup {
     @Enumerated(EnumType.STRING)
     Role roleRequirement;
     
-    @DBRef
-    private List<KlabGroup> dependsOn;
+    private List<String> dependsOn;
 
 	public String getId() {
 		return id;
@@ -119,4 +121,21 @@ public class KlabGroup {
 		return observableList;
 	}
 
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public List<String> getDependsOn() {
+		return dependsOn;
+	}
+
+	public void setDependsOn(List<String> dependsOn) {
+		this.dependsOn = dependsOn;
+	}
+	
+	
 }

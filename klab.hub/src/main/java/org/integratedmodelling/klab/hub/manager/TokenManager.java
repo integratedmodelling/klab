@@ -395,7 +395,7 @@ public class TokenManager {
 		return result;
 	}
 
-	public GroupsClickbackToken createGroupsClickbackToken(String username, List<String> groups) {
+	public GroupsClickbackToken createGroupsClickbackToken(String username, List<GroupEntry> groups) {
 		GroupsClickbackToken token = (GroupsClickbackToken) createClickbackToken(username,GroupsClickbackToken.class);
 		token.setGroups(groups);
 		token.setCallbackUrl(tokenClickbackConfig);
@@ -403,9 +403,12 @@ public class TokenManager {
 		return token;
 	}
 	
-	public void sendGroupClickbackToken(String username, List<String> groups) {
+	public void sendGroupClickbackToken(String username, List<String> groupNames) {
+		
 		GroupsClickbackToken token = createGroupsClickbackToken(username, groups);
-		String grpString = groups.stream().collect(Collectors.joining(","));
+		String grpString = groups.stream()
+				.map(grpEntry -> grpEntry.getGroupName())
+				.collect(Collectors.joining(","));
 		GroupRequestTask task = (GroupRequestTask) taskService.createTask(username, GroupRequestTask.class);
 		task.setToken(token);
 		taskService.saveTask(task);
