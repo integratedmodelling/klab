@@ -730,10 +730,10 @@ public class Model extends KimObject implements IModel {
 					monitor.error("unknown resource or model " + murn + " in merging statement", getStatement());
 				}
 			}
-			
+
 			// set it in the resource so we have it
 			resource.setMergedGeometry(this.resourceCoverage.getGeometry());
-			
+
 		}
 
 		return resource;
@@ -995,31 +995,31 @@ public class Model extends KimObject implements IModel {
 
 			Set<Dimension.Type> dims = new HashSet<>();
 
-			Collection<IExtent> extents = new ArrayList<>();
-			if (behavior != null) {
-				extents.addAll(behavior.getExtents(monitor));
-				for (IExtent extent : extents) {
-					dims.add(extent.getType());
-				}
-			}
-
-			for (IAnnotation annotation : getAnnotations()) {
-				if ("space".equals(annotation.getName())) {
-					if (dims.contains(Dimension.Type.SPACE)) {
-						monitor.error("cannot specify spatial extent in more than one way");
-					} else {
-						extents.add(Space.create(annotation));
-					}
-				} else if ("time".equals(annotation.getName())) {
-					if (dims.contains(Dimension.Type.TIME)) {
-						monitor.error("cannot specify temporal extent in more than one way");
-					} else {
-						extents.add(Time.create(annotation));
-					}
-				}
-			}
-
 			try {
+				Collection<IExtent> extents = new ArrayList<>();
+				if (behavior != null) {
+					extents.addAll(behavior.getExtents(monitor));
+					for (IExtent extent : extents) {
+						dims.add(extent.getType());
+					}
+				}
+
+				for (IAnnotation annotation : getAnnotations()) {
+					if ("space".equals(annotation.getName())) {
+						if (dims.contains(Dimension.Type.SPACE)) {
+							monitor.error("cannot specify spatial extent in more than one way");
+						} else {
+							extents.add(Space.create(annotation));
+						}
+					} else if ("time".equals(annotation.getName())) {
+						if (dims.contains(Dimension.Type.TIME)) {
+							monitor.error("cannot specify temporal extent in more than one way");
+						} else {
+							extents.add(Time.create(annotation));
+						}
+					}
+				}
+
 				this.coverage = Scale.create(extents);
 				if (resourceCoverage != null) {
 					this.coverage = this.coverage.merge(resourceCoverage, LogicalConnector.INTERSECTION);

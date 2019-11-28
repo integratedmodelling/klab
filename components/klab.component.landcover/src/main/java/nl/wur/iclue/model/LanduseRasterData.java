@@ -41,7 +41,7 @@ public class LanduseRasterData {
     
     public LanduseRasterData(RasterData baselineLanduseMap, Landuses landuses) {
         this.landuseMap = baselineLanduseMap;
-        this.ageMap = createIntialAgeMap(baselineLanduseMap, landuses);
+        this.ageMap = createInitialAgeMap(baselineLanduseMap, landuses);
     }
 
     public RasterData getLanduseMap() {
@@ -60,7 +60,7 @@ public class LanduseRasterData {
      * @param landuses, to retrieve initial ages 
      * @return 
      */
-    public static RasterData createIntialAgeMap(RasterData baselineLanduseMap, Landuses landuses) {
+    public static RasterData createInitialAgeMap(RasterData baselineLanduseMap, Landuses landuses) {
         RasterDataStack mapStack = RasterDataFactory.createStack();
         mapStack.addInput(baselineLanduseMap); int LANDUSE_INDEX = 0;
         RasterData initialAgeMap = mapStack.addOutput(true);

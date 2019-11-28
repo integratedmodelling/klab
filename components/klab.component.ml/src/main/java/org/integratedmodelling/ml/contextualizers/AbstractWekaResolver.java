@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
@@ -61,6 +62,9 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 	private String learnedGeometry = null;
 	private List<IDocumentationProvider.Item> documentation = new ArrayList<>();
 
+	private IKimExpression selector;
+	private double selectFraction = Double.NaN;
+	
 	protected AbstractWekaResolver() {
 	}
 
@@ -74,6 +78,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		this.admitsNodata = admitsNodata;
 		this.resourceId = parameters.get("resource", String.class);
 		this.learnedGeometry = parameters.get("geometry", String.class);
+		this.selector = parameters.get("select", IKimExpression.class);
+		this.selectFraction = parameters.get("sample", this.selector == null ? Double.NaN : 1.0);
 	}
 
 	@Override
@@ -90,9 +96,9 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 				uncertainty = context.getArtifact(obs.getName(), IState.class);
 			}
 		}
-
+		
 		WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeScope) context, true,
-				admitsNodata, classDiscretizer);
+				admitsNodata, classDiscretizer, selector, selectFraction);
 
 		if (instances.getInstances().isEmpty()) {
 			context.getMonitor().warn("No instances in training set: cannot train Weka classifier");

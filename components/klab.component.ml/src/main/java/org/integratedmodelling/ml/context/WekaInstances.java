@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.utils.KimUtils;
@@ -23,6 +24,8 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -38,11 +41,12 @@ import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Utils;
-import org.integratedmodelling.ml.MLComponent;
 
 import com.google.common.collect.Lists;
 
@@ -91,6 +95,11 @@ public class WekaInstances {
 	private Map<String, DiscretizerDescriptor> discretizers = new HashMap<>();
 	private Map<String, Ranges> ranges = new HashMap<>();
 	private ReplaceMissingValues missingValuesFilter = new ReplaceMissingValues();
+
+	// these are for distributed archetypes
+	private double selectFraction = Double.NaN;
+	IKimExpression selector = null;
+	Descriptor selectorDescriptor = null;
 
 	class Ranges {
 		Range include = null;
@@ -269,14 +278,15 @@ public class WekaInstances {
 	// for use in learning models that produce a state (i.e. the learned quality is
 	// within the context)
 	public WekaInstances(IState predicted, IModel model, IRuntimeScope context, boolean mustDiscretize,
-			boolean admitsNodata, IServiceCall classDiscretizer) {
-		this(predicted.getObservable(), model, context, mustDiscretize, admitsNodata, classDiscretizer);
+			boolean admitsNodata, IServiceCall classDiscretizer, IKimExpression selector, double selectFraction) {
+		this(predicted.getObservable(), model, context, mustDiscretize, admitsNodata, classDiscretizer, selector,
+				selectFraction);
 		this.predictedState = predicted;
 	}
 
 	// for use in learning models
 	public WekaInstances(IObservable predicted, IModel model, IRuntimeScope context, boolean mustDiscretize,
-			boolean admitsNodata, IServiceCall classDiscretizer) {
+			boolean admitsNodata, IServiceCall classDiscretizer, IKimExpression selector, double selectFraction) {
 
 		this.predictedObservable = predicted;
 		this.name = predicted.getName();
@@ -284,6 +294,15 @@ public class WekaInstances {
 		this.requiresDiscretization = mustDiscretize;
 		this.classDiscretizer = classDiscretizer;
 		this.admitsNodata = admitsNodata;
+		this.selector = selector;
+		this.selectFraction = selectFraction;
+
+		if (this.selector != null) {
+			this.selectorDescriptor = Extensions.INSTANCE
+					.getLanguageProcessor(selector.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
+							: selector.getLanguage())
+					.describe(this.selector.getCode(), context.getExpressionContext(), false);
+		}
 
 		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
 		if (this.explicitContext != null) {
@@ -296,8 +315,7 @@ public class WekaInstances {
 
 		for (IObservable dependency : model.getDependencies()) {
 
-			IAnnotation predictor = KimUtils.findAnnotation(dependency.getAnnotations(),
-					MLComponent.PREDICTOR_ANNOTATION);
+			IAnnotation predictor = KimUtils.findAnnotation(dependency.getAnnotations(), IModel.PREDICTOR_ANNOTATION);
 
 			if (predictor != null) {
 
@@ -355,8 +373,7 @@ public class WekaInstances {
 
 			} else {
 
-				IAnnotation arch = KimUtils.findAnnotation(dependency.getAnnotations(),
-						MLComponent.ARCHETYPE_ANNOTATION);
+				IAnnotation arch = KimUtils.findAnnotation(dependency.getAnnotations(), IModel.ARCHETYPE_ANNOTATION);
 
 				if (arch != null) {
 
@@ -585,9 +602,114 @@ public class WekaInstances {
 		}
 
 		/*
-		 * TODO support a distributed archetype using sample and select
+		 * support a distributed archetype using sample and select
 		 */
-		
+		if (distributedArchetype != null && !Double.isNaN(this.selectFraction)) {
+
+			ILanguageExpression expression = null;
+			List<IState> sourceStates = new ArrayList<>();
+			Map<IState, String> stateIdentifiers = new HashMap<>();
+
+			if (selector != null && selectorDescriptor != null) {
+				// check inputs and see if the expr is worth anything in this context
+				for (String input : selectorDescriptor.getIdentifiers()) {
+					if (selectorDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
+						IState state = context.getArtifact(input, IState.class);
+						sourceStates.add(state);
+						stateIdentifiers.put(state, input);
+					}
+				}
+				// if (sourceStates.isEmpty()) {
+				// throw new KlabResourceNotFoundException(
+				// "feature extractor: the selection expression does not reference any known
+				// state");
+				// }
+				expression = selectorDescriptor.compile();
+			}
+
+			if (this.selectFraction > 0) {
+
+				Parameters<String> parameters = new Parameters<>();
+				boolean warned = false;
+				for (ILocator locator : distributedArchetype.getScale()) {
+
+					boolean sample = true;
+					if (this.selectFraction < 1) {
+						sample = Math.random() >= this.selectFraction;
+					}
+
+					Object[] instanceValues = new Object[predictors.size() + 1];
+					double instanceWeight = 1;
+
+					if (sample) {
+
+						
+						if (expression != null) {
+
+							parameters.clear();
+							for (IState state : sourceStates) {
+								Object o = state.get(locator, Object.class);
+								parameters.put(stateIdentifiers.get(state), o);
+							}
+
+							Object o = expression.eval(parameters, context);
+							if (o == null) {
+								o = Boolean.FALSE;
+							}
+							if (!(o instanceof Boolean)) {
+								throw new KlabValidationException(
+										"distributed training: selector must return true/false");
+							}
+
+							sample = (Boolean) o;
+
+						} else if (!warned) {
+							context.getMonitor()
+									.warn("point extractor: no input: specify either select or select fraction");
+							warned = true;
+						}
+
+					}
+
+					if (/* still */ sample) {
+
+						Object value = distributedArchetype.get(locator);
+						if (!Observations.INSTANCE.isNodata(value)) {
+
+							// TODO ranges!
+							
+							instanceValues[0] = value;
+							int i = 1;
+							for (IState predictor : predictorStates) {
+								value = predictor.get(locator);
+
+								// TODO ranges!
+								
+								if (Observations.INSTANCE.isNodata(value)) {
+									sample = false;
+								}
+								instanceValues[i++] = value;
+							}
+
+						} else {
+							sample = false;
+						}
+
+						if (/* still */ sample) {
+							double[] values = mapValuesToDoubles(instanceValues);
+							if (values != null) {
+								rawInstances.add(new DenseInstance(instanceWeight, values));
+							} else {
+								skipped++;
+							}
+						} else {
+							skipped ++;
+						}
+					}
+				}
+			}
+		}
+
 		for (ObservationGroup archetype : archetypes) {
 
 			for (IArtifact object : archetype) {
@@ -597,13 +719,6 @@ public class WekaInstances {
 
 				Object[] instanceValues = new Object[predictors.size() + 1];
 				double instanceWeight = 1;
-
-//				for (IState state : ((IDirectObservation) object).getStates()) {
-//					System.out.println("STATE: " + state.getObservable());
-//				}
-//				for (IObservable state : predictors) {
-//					System.out.println("OBSER: " + state);
-//				}
 
 				if (stateIndex == null) {
 

@@ -34,7 +34,7 @@ import nl.alterra.shared.datakind.Clazz;
  * @author Johnny te Roller, Peter Verweij
  */
 public class Parameters {
-//    private static final String ERROR_DEVIATION_OUT_OF_RANGE = "Cannot set demand deviation. Value must be bigger or equal to 0 and is: %d";
+
 	public static final int UNDEFINED = -1;
 
 	private Landuses landuses = null;

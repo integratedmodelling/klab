@@ -47,6 +47,17 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable, IComputationProvider {
 
 	/**
+	 * Annotation marking the predictor in learning models.
+	 */
+	public static final String PREDICTOR_ANNOTATION = "predictor";
+
+	/**
+	 * Annotation marking the archetype in learning models. If missing, the
+	 * archetype is created from the observable.
+	 */
+	public static final String ARCHETYPE_ANNOTATION = "archetype";
+
+	/**
 	 * Return the semantics of all observables we are observing. The first in the
 	 * list is the actual observable and must exist; the others are expected
 	 * side-effects of observing the first, which must be connected to semantics

@@ -30,6 +30,10 @@ public class Annotation extends Parameters<String> implements IAnnotation {
 	String id = "ann" + NameGenerator.shortUUID();
 	Set<String> interactiveParameters = new HashSet<>();
 
+	protected Annotation(String s) {
+		this.name = s;
+	}
+	
 	public Annotation(IKimAnnotation statement) {
 		this.name = statement.getName();
 		this.statement = statement;
@@ -42,6 +46,13 @@ public class Annotation extends Parameters<String> implements IAnnotation {
 
 	public Annotation copy() {
 		return new Annotation(this.statement);
+	}
+	
+	public static Annotation create(String name, Object...objects) {
+		Parameters<String> p = Parameters.create(objects);
+		Annotation ret = new Annotation(name);
+		ret.putAll(p);
+		return ret;
 	}
 
 	/**

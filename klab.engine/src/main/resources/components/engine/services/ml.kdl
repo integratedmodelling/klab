@@ -1,12 +1,13 @@
 /**
- * Annotations that drive learning models in k.LAB
+ * Annotations that drive learning models in k.LAB. These are generically used in all learning 
+ * processes, so they are in the main distribution.
  */
 @klab 0.10.0
 @version 0.10.0
 
 annotation predictor for dependencies
-	"Tags a dependency as a predictor for a WEKA contextualizer. Allows specifying discretization and other filters through
-	 WEKA->k.LAB function mapping."
+	"Tags a dependency as a predictor for a contextualizer. Allows specifying discretization and other filters through
+	 k.LAB function mapping."
 {
 	optional value 'value'
 		"A default ID to use for the predictor. Specify as 'id' if there are other parameters."
@@ -30,7 +31,8 @@ annotation predictor for dependencies
 }
 
 annotation archetype for dependencies
-	""
+	"Tags a dependency as the archetype to learn from. If there is no archetype, the main observable is 
+	 added as a dependency."
 {
 	optional number min
 		"If set, overrides the minimum predictable value in the discretization for predicted numeric qualities. Allows
@@ -45,7 +47,7 @@ annotation archetype for dependencies
 	optional concept weight
 		"If specified, defines an observable for a quality to use as weight for each instance created from
 		 the archetype. Instance weights are used by Weka in ways that depend on the classifier chosen."
-		 
+	 
 	optional range include 
 		"If specified, only values of the predicted variable inside the specified range will become valid
 		 training instances. This only works with numeric values."
