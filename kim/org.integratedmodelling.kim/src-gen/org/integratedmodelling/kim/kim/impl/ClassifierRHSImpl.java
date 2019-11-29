@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
 import org.integratedmodelling.kim.kim.Quantity;
@@ -51,6 +52,7 @@ import org.integratedmodelling.kim.kim.REL_OPERATOR;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#isStar <em>Star</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#isAnything <em>Anything</em>}</li>
  * </ul>
@@ -288,6 +290,16 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @ordered
    */
   protected Quantity quantity;
+
+  /**
+   * The cached value of the '{@link #getDate() <em>Date</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDate()
+   * @generated
+   * @ordered
+   */
+  protected Date date;
 
   /**
    * The default value of the '{@link #getExpr() <em>Expr</em>}' attribute.
@@ -946,6 +958,56 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @generated
    */
   @Override
+  public Date getDate()
+  {
+    return date;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetDate(Date newDate, NotificationChain msgs)
+  {
+    Date oldDate = date;
+    date = newDate;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CLASSIFIER_RHS__DATE, oldDate, newDate);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDate(Date newDate)
+  {
+    if (newDate != date)
+    {
+      NotificationChain msgs = null;
+      if (date != null)
+        msgs = ((InternalEObject)date).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CLASSIFIER_RHS__DATE, null, msgs);
+      if (newDate != null)
+        msgs = ((InternalEObject)newDate).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CLASSIFIER_RHS__DATE, null, msgs);
+      msgs = basicSetDate(newDate, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CLASSIFIER_RHS__DATE, newDate, newDate));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getExpr()
   {
     return expr;
@@ -1018,6 +1080,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return basicSetExpression(null, msgs);
       case KimPackage.CLASSIFIER_RHS__QUANTITY:
         return basicSetQuantity(null, msgs);
+      case KimPackage.CLASSIFIER_RHS__DATE:
+        return basicSetDate(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -1064,6 +1128,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return getId();
       case KimPackage.CLASSIFIER_RHS__QUANTITY:
         return getQuantity();
+      case KimPackage.CLASSIFIER_RHS__DATE:
+        return getDate();
       case KimPackage.CLASSIFIER_RHS__EXPR:
         return getExpr();
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
@@ -1131,6 +1197,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return;
       case KimPackage.CLASSIFIER_RHS__QUANTITY:
         setQuantity((Quantity)newValue);
+        return;
+      case KimPackage.CLASSIFIER_RHS__DATE:
+        setDate((Date)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__EXPR:
         setExpr((String)newValue);
@@ -1200,6 +1269,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KimPackage.CLASSIFIER_RHS__QUANTITY:
         setQuantity((Quantity)null);
         return;
+      case KimPackage.CLASSIFIER_RHS__DATE:
+        setDate((Date)null);
+        return;
       case KimPackage.CLASSIFIER_RHS__EXPR:
         setExpr(EXPR_EDEFAULT);
         return;
@@ -1252,6 +1324,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KimPackage.CLASSIFIER_RHS__QUANTITY:
         return quantity != null;
+      case KimPackage.CLASSIFIER_RHS__DATE:
+        return date != null;
       case KimPackage.CLASSIFIER_RHS__EXPR:
         return EXPR_EDEFAULT == null ? expr != null : !EXPR_EDEFAULT.equals(expr);
       case KimPackage.CLASSIFIER_RHS__ANYTHING:

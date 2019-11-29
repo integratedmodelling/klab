@@ -1310,9 +1310,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EReference getClassifierRHS_Date()
+  {
+    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getClassifierRHS_Expr()
   {
-    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(16);
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -1323,7 +1334,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getClassifierRHS_Anything()
   {
-    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(17);
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -5514,6 +5525,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__STAR);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__ID);
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__QUANTITY);
+    createEReference(classifierRHSEClass, CLASSIFIER_RHS__DATE);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__EXPR);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__ANYTHING);
 
@@ -6047,6 +6059,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getClassifierRHS_Star(), ecorePackage.getEBoolean(), "star", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_Id(), ecorePackage.getEString(), "id", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifierRHS_Quantity(), this.getQuantity(), null, "quantity", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getClassifierRHS_Date(), this.getDate(), null, "date", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_Expr(), ecorePackage.getEString(), "expr", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_Anything(), ecorePackage.getEBoolean(), "anything", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

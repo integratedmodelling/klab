@@ -753,13 +753,22 @@ public interface KimPackage extends EPackage
   int CLASSIFIER_RHS__QUANTITY = 15;
 
   /**
+   * The feature id for the '<em><b>Date</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER_RHS__DATE = 16;
+
+  /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__EXPR = 16;
+  int CLASSIFIER_RHS__EXPR = 17;
 
   /**
    * The feature id for the '<em><b>Anything</b></em>' attribute.
@@ -768,7 +777,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__ANYTHING = 17;
+  int CLASSIFIER_RHS__ANYTHING = 18;
 
   /**
    * The number of structural features of the '<em>Classifier RHS</em>' class.
@@ -777,7 +786,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS_FEATURE_COUNT = 18;
+  int CLASSIFIER_RHS_FEATURE_COUNT = 19;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UrnImpl <em>Urn</em>}' class.
@@ -5339,6 +5348,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getClassifierRHS_Quantity();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getDate <em>Date</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Date</em>'.
+   * @see org.integratedmodelling.kim.kim.ClassifierRHS#getDate()
+   * @see #getClassifierRHS()
+   * @generated
+   */
+  EReference getClassifierRHS_Date();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getExpr <em>Expr</em>}'.
@@ -9977,6 +9997,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CLASSIFIER_RHS__QUANTITY = eINSTANCE.getClassifierRHS_Quantity();
+
+    /**
+     * The meta object literal for the '<em><b>Date</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CLASSIFIER_RHS__DATE = eINSTANCE.getClassifierRHS_Date();
 
     /**
      * The meta object literal for the '<em><b>Expr</b></em>' attribute feature.

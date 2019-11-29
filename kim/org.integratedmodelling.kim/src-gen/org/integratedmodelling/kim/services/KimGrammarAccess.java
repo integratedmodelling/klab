@@ -1451,37 +1451,39 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNumNumberParserRuleCall_2_0 = (RuleCall)cNumAssignment_2.eContents().get(0);
 		private final Assignment cQuantityAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
 		private final RuleCall cQuantityQuantityParserRuleCall_3_0 = (RuleCall)cQuantityAssignment_3.eContents().get(0);
-		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
-		private final Keyword cInKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cSetAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cSetListParserRuleCall_4_1_0 = (RuleCall)cSetAssignment_4_1.eContents().get(0);
-		private final Assignment cStringAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
-		private final RuleCall cStringSTRINGTerminalRuleCall_5_0 = (RuleCall)cStringAssignment_5.eContents().get(0);
-		private final Assignment cConceptAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
-		private final RuleCall cConceptConceptDeclarationParserRuleCall_6_0 = (RuleCall)cConceptAssignment_6.eContents().get(0);
-		private final Group cGroup_7 = (Group)cAlternatives.eContents().get(7);
-		private final Assignment cOpAssignment_7_0 = (Assignment)cGroup_7.eContents().get(0);
-		private final RuleCall cOpREL_OPERATORParserRuleCall_7_0_0 = (RuleCall)cOpAssignment_7_0.eContents().get(0);
-		private final Assignment cExpressionAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
-		private final RuleCall cExpressionNumberParserRuleCall_7_1_0 = (RuleCall)cExpressionAssignment_7_1.eContents().get(0);
-		private final Assignment cExprAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
-		private final RuleCall cExprEXPRTerminalRuleCall_8_0 = (RuleCall)cExprAssignment_8.eContents().get(0);
-		private final Assignment cNodataAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
-		private final Keyword cNodataUnknownKeyword_9_0 = (Keyword)cNodataAssignment_9.eContents().get(0);
-		private final Assignment cStarAssignment_10 = (Assignment)cAlternatives.eContents().get(10);
-		private final Keyword cStarAsteriskKeyword_10_0 = (Keyword)cStarAssignment_10.eContents().get(0);
-		private final Assignment cAnythingAssignment_11 = (Assignment)cAlternatives.eContents().get(11);
-		private final Keyword cAnythingNumberSignKeyword_11_0 = (Keyword)cAnythingAssignment_11.eContents().get(0);
+		private final Assignment cDateAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
+		private final RuleCall cDateDateParserRuleCall_4_0 = (RuleCall)cDateAssignment_4.eContents().get(0);
+		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
+		private final Keyword cInKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cSetAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cSetListParserRuleCall_5_1_0 = (RuleCall)cSetAssignment_5_1.eContents().get(0);
+		private final Assignment cStringAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
+		private final RuleCall cStringSTRINGTerminalRuleCall_6_0 = (RuleCall)cStringAssignment_6.eContents().get(0);
+		private final Assignment cConceptAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
+		private final RuleCall cConceptConceptDeclarationParserRuleCall_7_0 = (RuleCall)cConceptAssignment_7.eContents().get(0);
+		private final Group cGroup_8 = (Group)cAlternatives.eContents().get(8);
+		private final Assignment cOpAssignment_8_0 = (Assignment)cGroup_8.eContents().get(0);
+		private final RuleCall cOpREL_OPERATORParserRuleCall_8_0_0 = (RuleCall)cOpAssignment_8_0.eContents().get(0);
+		private final Assignment cExpressionAssignment_8_1 = (Assignment)cGroup_8.eContents().get(1);
+		private final RuleCall cExpressionNumberParserRuleCall_8_1_0 = (RuleCall)cExpressionAssignment_8_1.eContents().get(0);
+		private final Assignment cExprAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
+		private final RuleCall cExprEXPRTerminalRuleCall_9_0 = (RuleCall)cExprAssignment_9.eContents().get(0);
+		private final Assignment cNodataAssignment_10 = (Assignment)cAlternatives.eContents().get(10);
+		private final Keyword cNodataUnknownKeyword_10_0 = (Keyword)cNodataAssignment_10.eContents().get(0);
+		private final Assignment cStarAssignment_11 = (Assignment)cAlternatives.eContents().get(11);
+		private final Keyword cStarAsteriskKeyword_11_0 = (Keyword)cStarAssignment_11.eContents().get(0);
+		private final Assignment cAnythingAssignment_12 = (Assignment)cAlternatives.eContents().get(12);
+		private final Keyword cAnythingNumberSignKeyword_12_0 = (Keyword)cAnythingAssignment_12.eContents().get(0);
 		
 		//TableClassifier ClassifierRHS:
 		//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-		//	(rightLimit='inclusive' | 'exclusive')? | num=Number | quantity=Quantity |
+		//	(rightLimit='inclusive' | 'exclusive')? | num=Number | quantity=Quantity | date=Date |
 		//	'in' set=List | string=STRING | concept=ConceptDeclaration | op=REL_OPERATOR expression=Number | expr=EXPR |
 		//	nodata='unknown' | star?='*' | anything?='#';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-		//(rightLimit='inclusive' | 'exclusive')? | num=Number | quantity=Quantity | 'in' set=List | string=STRING |
+		//(rightLimit='inclusive' | 'exclusive')? | num=Number | quantity=Quantity | date=Date | 'in' set=List | string=STRING |
 		//concept=ConceptDeclaration | op=REL_OPERATOR expression=Number | expr=EXPR | nodata='unknown' | star?='*' |
 		//anything?='#'
 		public Alternatives getAlternatives() { return cAlternatives; }
@@ -1555,68 +1557,74 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Quantity
 		public RuleCall getQuantityQuantityParserRuleCall_3_0() { return cQuantityQuantityParserRuleCall_3_0; }
 		
+		//date=Date
+		public Assignment getDateAssignment_4() { return cDateAssignment_4; }
+		
+		//Date
+		public RuleCall getDateDateParserRuleCall_4_0() { return cDateDateParserRuleCall_4_0; }
+		
 		//'in' set=List
-		public Group getGroup_4() { return cGroup_4; }
+		public Group getGroup_5() { return cGroup_5; }
 		
 		//'in'
-		public Keyword getInKeyword_4_0() { return cInKeyword_4_0; }
+		public Keyword getInKeyword_5_0() { return cInKeyword_5_0; }
 		
 		//set=List
-		public Assignment getSetAssignment_4_1() { return cSetAssignment_4_1; }
+		public Assignment getSetAssignment_5_1() { return cSetAssignment_5_1; }
 		
 		//List
-		public RuleCall getSetListParserRuleCall_4_1_0() { return cSetListParserRuleCall_4_1_0; }
+		public RuleCall getSetListParserRuleCall_5_1_0() { return cSetListParserRuleCall_5_1_0; }
 		
 		//string=STRING
-		public Assignment getStringAssignment_5() { return cStringAssignment_5; }
+		public Assignment getStringAssignment_6() { return cStringAssignment_6; }
 		
 		//STRING
-		public RuleCall getStringSTRINGTerminalRuleCall_5_0() { return cStringSTRINGTerminalRuleCall_5_0; }
+		public RuleCall getStringSTRINGTerminalRuleCall_6_0() { return cStringSTRINGTerminalRuleCall_6_0; }
 		
 		//concept=ConceptDeclaration
-		public Assignment getConceptAssignment_6() { return cConceptAssignment_6; }
+		public Assignment getConceptAssignment_7() { return cConceptAssignment_7; }
 		
 		//ConceptDeclaration
-		public RuleCall getConceptConceptDeclarationParserRuleCall_6_0() { return cConceptConceptDeclarationParserRuleCall_6_0; }
+		public RuleCall getConceptConceptDeclarationParserRuleCall_7_0() { return cConceptConceptDeclarationParserRuleCall_7_0; }
 		
 		//op=REL_OPERATOR expression=Number
-		public Group getGroup_7() { return cGroup_7; }
+		public Group getGroup_8() { return cGroup_8; }
 		
 		//op=REL_OPERATOR
-		public Assignment getOpAssignment_7_0() { return cOpAssignment_7_0; }
+		public Assignment getOpAssignment_8_0() { return cOpAssignment_8_0; }
 		
 		//REL_OPERATOR
-		public RuleCall getOpREL_OPERATORParserRuleCall_7_0_0() { return cOpREL_OPERATORParserRuleCall_7_0_0; }
+		public RuleCall getOpREL_OPERATORParserRuleCall_8_0_0() { return cOpREL_OPERATORParserRuleCall_8_0_0; }
 		
 		//expression=Number
-		public Assignment getExpressionAssignment_7_1() { return cExpressionAssignment_7_1; }
+		public Assignment getExpressionAssignment_8_1() { return cExpressionAssignment_8_1; }
 		
 		//Number
-		public RuleCall getExpressionNumberParserRuleCall_7_1_0() { return cExpressionNumberParserRuleCall_7_1_0; }
+		public RuleCall getExpressionNumberParserRuleCall_8_1_0() { return cExpressionNumberParserRuleCall_8_1_0; }
 		
 		//expr=EXPR
-		public Assignment getExprAssignment_8() { return cExprAssignment_8; }
+		public Assignment getExprAssignment_9() { return cExprAssignment_9; }
 		
 		//EXPR
-		public RuleCall getExprEXPRTerminalRuleCall_8_0() { return cExprEXPRTerminalRuleCall_8_0; }
+		public RuleCall getExprEXPRTerminalRuleCall_9_0() { return cExprEXPRTerminalRuleCall_9_0; }
 		
 		//nodata='unknown'
-		public Assignment getNodataAssignment_9() { return cNodataAssignment_9; }
+		public Assignment getNodataAssignment_10() { return cNodataAssignment_10; }
 		
 		//'unknown'
-		public Keyword getNodataUnknownKeyword_9_0() { return cNodataUnknownKeyword_9_0; }
+		public Keyword getNodataUnknownKeyword_10_0() { return cNodataUnknownKeyword_10_0; }
 		
 		//star?='*'
-		public Assignment getStarAssignment_10() { return cStarAssignment_10; }
+		public Assignment getStarAssignment_11() { return cStarAssignment_11; }
 		
 		//'*'
-		public Keyword getStarAsteriskKeyword_10_0() { return cStarAsteriskKeyword_10_0; }
+		public Keyword getStarAsteriskKeyword_11_0() { return cStarAsteriskKeyword_11_0; }
 		
 		//anything?='#'
-		public Assignment getAnythingAssignment_11() { return cAnythingAssignment_11; }
+		public Assignment getAnythingAssignment_12() { return cAnythingAssignment_12; }
 		
 		//'#'
-		public Keyword getAnythingNumberSignKeyword_11_0() { return cAnythingNumberSignKeyword_11_0; }
+		public Keyword getAnythingNumberSignKeyword_12_0() { return cAnythingNumberSignKeyword_12_0; }
 	}
 	public class ActionSpecificationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ActionSpecification");
@@ -11010,7 +11018,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//TableClassifier ClassifierRHS:
 	//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-	//	(rightLimit='inclusive' | 'exclusive')? | num=Number | quantity=Quantity |
+	//	(rightLimit='inclusive' | 'exclusive')? | num=Number | quantity=Quantity | date=Date |
 	//	'in' set=List | string=STRING | concept=ConceptDeclaration | op=REL_OPERATOR expression=Number | expr=EXPR |
 	//	nodata='unknown' | star?='*' | anything?='#';
 	public TableClassifierElements getTableClassifierAccess() {

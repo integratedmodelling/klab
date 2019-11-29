@@ -147,7 +147,7 @@ public class Landuses implements Iterable<Landuse> {
     public class Landuse {
         private final Category category;
         private EaseOfChange easeOfChange = EaseOfChange.CANNOT_CHANGE;
-        private int initalAge = 0;
+        private int initialAge = 0;
 
         private Landuse(Category category) {
             this.category = category;
@@ -194,11 +194,11 @@ public class Landuses implements Iterable<Landuse> {
         }
         
         public int getInitialAge() {
-            return initalAge;
+            return initialAge;
         }
         
         public Landuse setInitialAge(int age) {
-            this.initalAge = age;
+            this.initialAge = age;
             return this;
         }
         

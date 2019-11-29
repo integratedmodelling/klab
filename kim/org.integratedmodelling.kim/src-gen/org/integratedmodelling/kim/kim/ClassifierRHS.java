@@ -33,6 +33,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#isStar <em>Star</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#isAnything <em>Anything</em>}</li>
  * </ul>
@@ -384,6 +385,28 @@ public interface ClassifierRHS extends EObject
    * @generated
    */
   void setQuantity(Quantity value);
+
+  /**
+   * Returns the value of the '<em><b>Date</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Date</em>' containment reference.
+   * @see #setDate(Date)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getClassifierRHS_Date()
+   * @model containment="true"
+   * @generated
+   */
+  Date getDate();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getDate <em>Date</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Date</em>' containment reference.
+   * @see #getDate()
+   * @generated
+   */
+  void setDate(Date value);
 
   /**
    * Returns the value of the '<em><b>Expr</b></em>' attribute.
