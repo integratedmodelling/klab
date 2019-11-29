@@ -736,6 +736,14 @@ public class Grid extends Area implements IGrid {
 			// TODO Auto-generated method stub
 			return this;
 		}
+
+		@Override
+		public IExtent getExtent(long stateIndex) {
+			if (stateIndex != 0) {
+				throw new IllegalArgumentException("cannot access state #" + stateIndex + " in a Cell");
+			}
+			return this;
+		}
 	}
 
 	Shape shape;

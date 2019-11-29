@@ -51,12 +51,12 @@ public class State extends Observation implements IState, IKeyHolder {
 	public static State newArchetype(Observable observable, Scale scale, IRuntimeScope context) {
 		return new State(observable, scale, context);
 	}
-	
+
 	private State(Observable observable, Scale scale, IRuntimeScope context) {
 		super(observable, scale, context);
 		this.setArchetype(true);
 	}
-	
+
 	public State(Observable observable, Scale scale, IRuntimeScope context, IDataStorage<?> data) {
 		super(observable, scale, context);
 		this.storage = data;
@@ -130,8 +130,26 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public IState at(ILocator locator) {
-		Scale scale = (Scale)getScale().at(locator);
-		return scale.isConformant(getScale()) ? this : new RescalingState(this, (Scale) scale, getRuntimeScope());
+
+		/*
+		 * if the locator is a scale, should not modify it at all, otherwise locate the
+		 * scale to the passed object.
+		 */
+		Scale scale = (Scale) getScale().at(locator);
+
+		/*
+		 * if the located scale is conformant (i.e. points to whole dimensions or unique
+		 * points on them), return a located instance of this, otherwise create a rescaled
+		 * instance.
+		 */
+		return scale.isConformant(getScale()) 
+				? locate(this, scale)
+				: new RescalingState(this, (Scale) scale, getRuntimeScope());
+	}
+
+	private IState locate(State state, Scale scale) {
+		// TODO Auto-generated method stub
+		return state;
 	}
 
 	@Override
