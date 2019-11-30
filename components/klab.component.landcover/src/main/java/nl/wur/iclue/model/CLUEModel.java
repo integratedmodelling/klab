@@ -128,9 +128,7 @@ public class CLUEModel {
 					Log.log(Level.INFO, String.format(LOG_ALLOCATION_STARTED, year), null);
 
 					// allocate NEW land uses based on land uses in PREVIOUS year
-					LanduseRasterData previousLanduseAndAge = projections.createRasterData(year - 1);// new
-																										// LanduseRasterData(previousLanduseMap,
-																										// previousAgeMap);
+					LanduseRasterData previousLanduseAndAge = projections.createRasterData(year - 1);
 					DemandValidators validators = DemandFactory.create(params, administrativeUnit, year);
 					logDemands(previousLanduseAndAge.getLanduseMap(), validators);
 

@@ -246,6 +246,7 @@ public class Grid extends Area implements IGrid {
 			this.x = x;
 			this.y = y;
 			this.locatedOffsets = new long[] { x, y };
+			this.locatedLinearOffset = Grid.this.getOffset(x, y);
 		}
 
 		@Override

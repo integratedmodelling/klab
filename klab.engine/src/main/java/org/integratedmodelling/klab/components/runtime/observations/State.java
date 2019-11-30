@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.DataIterator;
+import org.integratedmodelling.klab.data.storage.LocatedState;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -132,24 +133,19 @@ public class State extends Observation implements IState, IKeyHolder {
 	public IState at(ILocator locator) {
 
 		/*
-		 * if the locator is a scale, should not modify it at all, otherwise locate the
-		 * scale to the passed object.
+		 * if the locator is a scale, this should not modify it at all, otherwise locate
+		 * the scale to the passed object.
 		 */
 		Scale scale = (Scale) getScale().at(locator);
 
 		/*
 		 * if the located scale is conformant (i.e. points to whole dimensions or unique
-		 * points on them), return a located instance of this, otherwise create a rescaled
-		 * instance.
+		 * points on them), return a located instance of this, otherwise create a
+		 * rescaled instance.
 		 */
 		return scale.isConformant(getScale()) 
-				? locate(this, scale)
+				? new LocatedState(this, (Scale) scale, getRuntimeScope())
 				: new RescalingState(this, (Scale) scale, getRuntimeScope());
-	}
-
-	private IState locate(State state, Scale scale) {
-		// TODO Auto-generated method stub
-		return state;
 	}
 
 	@Override

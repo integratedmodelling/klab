@@ -148,6 +148,10 @@ public class Scale implements IScale {
 	protected Scale() {
 	}
 
+	public Scale getParentScale() {
+		return parentScale;
+	}
+	
 	protected Scale(Collection<IExtent> extents) {
 		for (IExtent e : extents) {
 			mergeExtent(e);
@@ -1545,7 +1549,11 @@ public class Scale implements IScale {
 			return ret;
 		}
 
-		throw new IllegalArgumentException("Scale harmonize() called with a non-scale parameter");
+		throw new IllegalArgumentException("Scale adopt() called with a non-scale parameter");
+	}
+
+	public long[] getLocatedOffsets() {
+		return locatedOffsets;
 	}
 
 }
