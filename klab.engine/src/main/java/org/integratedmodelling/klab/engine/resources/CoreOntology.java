@@ -336,6 +336,7 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String CORE_INTERACTIVE_AGENT = "observation:InteractiveAgent";
 		public static final String CORE_UNCERTAINTY = "observation:Uncertainty";
 		public static final String CORE_OBSERVABILITY_TRAIT = "observation:Observability";
+		public static final String CORE_PREDICTED_ATTRIBUTE = "observation:Predicted";
 		public static final String CORE_ABSENCE_TRAIT = "observation:Absence";
 		public static final String CORE_EXTENT = "observation:Extent";
 		public static final String CORE_OBSERVATION_TRANSFORMATION = "observation:ObservationTransformation";

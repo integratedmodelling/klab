@@ -20,6 +20,7 @@ import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Extensions;
@@ -57,8 +58,10 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
+import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
@@ -177,6 +180,31 @@ public class Model extends KimObject implements IModel {
 				}
 			}
 			dependencies.add(dep);
+		}
+
+		/*
+		 * if this is a learning model without an archetype, add it as the dependency
+		 * with the annotation and add the core "predicted" attribute to the output.
+		 */
+		if (isLearning() && getMainObservable() != null) {
+
+			boolean hasArchetype = false;
+			for (IObservable dependency : dependencies) {
+				if ((hasArchetype = Annotations.INSTANCE.hasAnnotation(dependency, IModel.ARCHETYPE_ANNOTATION))) {
+					break;
+				}
+			}
+
+			if (!hasArchetype) {
+				Observable obsdep = (Observable) new ObservableBuilder((Observable) getMainObservable(), monitor)
+						.withTrait(Resources.INSTANCE.getWorldview()
+								.getCoreConcept(Concepts.c(CoreOntology.NS.CORE_PREDICTED_ATTRIBUTE)))
+						.buildObservable();
+				observables.set(0, obsdep);
+				Observable newobs = new Observable((Observable) getMainObservable());
+				newobs.getAnnotations().add(Annotation.create("archetype"));
+				dependencies.add(newobs);
+			}
 		}
 
 		/*

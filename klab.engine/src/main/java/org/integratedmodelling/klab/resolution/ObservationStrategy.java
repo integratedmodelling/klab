@@ -105,26 +105,6 @@ public class ObservationStrategy {
 			}
 		}
 		
-		/*
-		 * if this is a learning model without an archetype, add it as the dependency with the
-		 * annotation.
-		 */
-		if (model.isLearning()) {
-			
-			boolean hasArchetype = false;
-			for (IObservable dependency : model.getDependencies()) {
-				if ((hasArchetype = Annotations.INSTANCE.hasAnnotation(dependency, IModel.ARCHETYPE_ANNOTATION))) {
-					break;
-				}
-			}
-			
-			if (!hasArchetype) {
-				Observable newdep = new Observable((Observable)model.getObservables().get(0));
-				observable.getAnnotations().add(Annotation.create("archetype"));
-				ret.add(new ObservationStrategy(newdep, observable.getDescription().getResolutionMode()));
-			}
-		}
-
 		/**
 		 * Add dependencies for anything mentioned in operators if needed
 		 */
