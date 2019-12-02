@@ -28,6 +28,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- Learning models without an archetype will use the main observable as a dependency and change the main observable to its "predicted" version using the worldview core concept for predicted, now in the observation ontology. This allows faster and easier specification of simple learners. Distributed learned qualities now offers a sample (fraction) and a select (points for sampling) option in the Weka contextualizers.
+- Archetype and predictor annotations are now part of the main engine instead of the ML component.
+- Indexing of states based on temporal geometries working in visualization API. 
 - New 'level of' operator to allow easy modeling of orderings (on SB's suggestion).
 - New 'change in' operator creating the process that changes a quality. The process
   is inherent to the quality, automatically "affects" it, and a dependency is 

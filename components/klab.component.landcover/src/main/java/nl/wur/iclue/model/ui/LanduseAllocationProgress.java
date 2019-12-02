@@ -8,7 +8,7 @@ import nl.wur.iclue.parameter.Landuses;
 
 /**
  * 
- * @deprecated UI-specific
+ * TODO remove  
  */
 public class LanduseAllocationProgress extends Component {
 

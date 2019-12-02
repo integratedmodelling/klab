@@ -1,4 +1,4 @@
-﻿///*
+///*
 // * Copyright 2015 Alterra, Wageningen UR
 // * 
 // * Licensed under the EUPL, Version 1.1 or – as soon they

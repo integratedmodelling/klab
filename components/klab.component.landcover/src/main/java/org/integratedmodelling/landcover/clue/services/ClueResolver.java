@@ -26,6 +26,7 @@ public class ClueResolver implements IResolver<IState> {
 		if (clue == null) {
 			this.clue = new CLUEModel(new KlabCLUEParameters(context), context.getMonitor());
 		}
+		
 		return null;
 	}
 
