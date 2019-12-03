@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.components.localstorage.LocalStorageComponent;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -129,7 +130,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 
 		if (storage == null) {
 			try {
-				this.file = new File(Configuration.INSTANCE.getTemporaryDataDirectory() + File.separator + "ktmp_"
+				this.file = new File(Configuration.INSTANCE.getTemporaryDataDirectory() + File.separator + LocalStorageComponent.FILE_PREFIX
 						+ NameGenerator.shortUUID() + ".dat");
 				this.file.deleteOnExit();
 				this.storage = new RandomAccessFile(this.file, "rw");

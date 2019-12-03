@@ -285,7 +285,8 @@ public enum Configuration implements IConfigurationService {
 		return System.getProperty("forceResourcesOnline") != null;
 	}
 
-	public String getTemporaryDataDirectory() {
-		return getProperties().getProperty(KLAB_TEMPORARY_DATA_DIRECTORY, System.getProperty("java.io.tmpdir"));
+	public File getTemporaryDataDirectory() {
+		return new File(
+				getProperties().getProperty(KLAB_TEMPORARY_DATA_DIRECTORY, System.getProperty("java.io.tmpdir")));
 	}
 }
