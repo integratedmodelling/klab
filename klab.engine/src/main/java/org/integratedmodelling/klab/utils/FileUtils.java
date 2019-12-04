@@ -35,81 +35,82 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
  */
 public class FileUtils extends org.apache.commons.io.FileUtils {
 
-    /**
-     * Create a md5sum file digest for a directory in a directory.
-     *
-     * @param directory the directory
-     * @param fileName the file name
-     * @throws KlabException the klab exception
-     */
-    public static void createMD5Digest(File directory, String fileName) throws KlabException {
+	/**
+	 * Create a md5sum file digest for a directory in a directory.
+	 *
+	 * @param directory the directory
+	 * @param fileName  the file name
+	 * @throws KlabException the klab exception
+	 */
+	public static void createMD5Digest(File directory, String fileName) throws KlabException {
 
-        if (!directory.exists() || !directory.canWrite() || !directory.isDirectory()) {
-            return;
-        }
+		if (!directory.exists() || !directory.canWrite() || !directory.isDirectory()) {
+			return;
+		}
 
-        List<String> digest = new ArrayList<>();
-        addFilesToMD5Digest(directory, digest, ".");
+		List<String> digest = new ArrayList<>();
+		addFilesToMD5Digest(directory, digest, ".");
 
-        try {
-            writeLines(new File(directory + File.separator + fileName), digest);
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
-    }
+		try {
+			writeLines(new File(directory + File.separator + fileName), digest);
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
 
-    private static void addFilesToMD5Digest(File directory, List<String> digest, String pathPrefix)
-            throws KlabException {
+	private static void addFilesToMD5Digest(File directory, List<String> digest, String pathPrefix)
+			throws KlabException {
 
-        for (File f : directory.listFiles()) {
+		for (File f : directory.listFiles()) {
 
-            if (f.isDirectory()) {
-                addFilesToMD5Digest(f, digest, pathPrefix + "/" + MiscUtilities.getFileName(f.toString()));
-            } else {
-                try (FileInputStream fis = new FileInputStream(f)) {
-                    String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
-                    digest.add(md5 + "  " + pathPrefix + "/" + MiscUtilities.getFileName(f.toString()));
-                } catch (IOException e) {
-                    throw new KlabIOException(e);
-                }
-            }
-        }
-    }
+			if (f.isDirectory()) {
+				addFilesToMD5Digest(f, digest, pathPrefix + "/" + MiscUtilities.getFileName(f.toString()));
+			} else {
+				try (FileInputStream fis = new FileInputStream(f)) {
+					String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
+					digest.add(md5 + "  " + pathPrefix + "/" + MiscUtilities.getFileName(f.toString()));
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
+		}
+	}
 
-    /**
-     * Assume file contains a path and defines a file in it, and ensure that all directories up to
-     * last file name exist.
-     *
-     * @param file the file
-     */
-    public static void makeDirsUpToFile(File file) {
-        String path = MiscUtilities.getFilePath(file.toString());
-        if (!path.isEmpty()) {
-            new File(path).mkdirs();
-        }
-    }
+	/**
+	 * Assume file contains a path and defines a file in it, and ensure that all
+	 * directories up to last file name exist.
+	 *
+	 * @param file the file
+	 */
+	public static void makeDirsUpToFile(File file) {
+		String path = MiscUtilities.getFilePath(file.toString());
+		if (!path.isEmpty()) {
+			new File(path).mkdirs();
+		}
+	}
 
-    /**
-     * Given a file and a set of extensions, return a collection containing the original 
-     * file plus any other file having any of the passed extensions and the same name as
-     * the original, after ensuring that it exists alongside the original.
-     * 
-     * @param original
-     * @param extensions
-     * @return the original file and all sidecar files
-     */
-    public static Collection<File> getSidecarFiles(File original, Collection<String> extensions) {
-        Set<File> ret = new HashSet<>();
-        ret.add(original);
-        String base = MiscUtilities.getFilePath(original.toString()) + File.separator
-                + MiscUtilities.getFileBaseName(original);
-        for (String extension : extensions) {
-            File sidecar = new File(base + "." + extension);
-            if (sidecar.exists() && sidecar.isFile()) {
-                ret.add(sidecar);
-            }
-        }
-        return ret;
-    }
+	/**
+	 * Given a file and a set of extensions, return a collection containing the
+	 * original file plus any other file having any of the passed extensions and the
+	 * same name as the original, after ensuring that it exists alongside the
+	 * original.
+	 * 
+	 * @param original
+	 * @param extensions
+	 * @return the original file and all sidecar files
+	 */
+	public static Collection<File> getSidecarFiles(File original, Collection<String> extensions) {
+		Set<File> ret = new HashSet<>();
+		ret.add(original);
+		String base = MiscUtilities.getFilePath(original.toString()) + File.separator
+				+ MiscUtilities.getFileBaseName(original);
+		for (String extension : extensions) {
+			File sidecar = new File(base + "." + extension);
+			if (sidecar.exists() && sidecar.isFile()) {
+				ret.add(sidecar);
+			}
+		}
+		return ret;
+	}
 
 }

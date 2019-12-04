@@ -1,9 +1,14 @@
 package org.integratedmodelling.klab.components.localstorage;
 
+import java.io.File;
+
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -13,9 +18,12 @@ import org.integratedmodelling.klab.components.localstorage.debug.KeyedDebugStor
 import org.integratedmodelling.klab.components.localstorage.debug.MemoryBackedAdaptiveStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.KeyedStorage;
 import org.integratedmodelling.klab.data.storage.FileMappedStorage;
+import org.integratedmodelling.klab.utils.FileUtils;
 
 @Component(id = "org.integratedmodelling.storage.local", version = Version.CURRENT)
 public class LocalStorageComponent implements IStorageProvider {
+
+	public static final String FILE_PREFIX = "ktmp_";
 
 	private enum Stype {
 		MEMORY, ADAPTIVE_MEMORY, ADAPTIVE_FILEMAPPED
@@ -27,6 +35,29 @@ public class LocalStorageComponent implements IStorageProvider {
 		// TODO Auto-generated constructor stub
 		// TODO install reaper for any temporary/leftover storage
 		// TODO link stype to configuration
+	}
+
+	/**
+	 * Remove ALL the temporary files created, stale or not. Only call at boot and
+	 * in non-persistent situations.
+	 * 
+	 * @return
+	 */
+	@Initialize
+	public long initialize() {
+		long ret = 0;
+		for (File f : Configuration.INSTANCE.getTemporaryDataDirectory().listFiles()) {
+			if (f.toString().startsWith(FILE_PREFIX)) {
+				ret += f.length();
+				FileUtils.deleteQuietly(f);
+			}
+		}
+
+		if (ret > 0) {
+			Logging.INSTANCE.info("Removed " + (ret / FileUtils.ONE_MB) + " MB of stale storage");
+		}
+		
+		return ret;
 	}
 
 	@Override

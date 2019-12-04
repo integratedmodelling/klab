@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.validation.KimNotification;
@@ -52,6 +53,7 @@ import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.UserIdentity;
+import org.integratedmodelling.klab.components.localstorage.LocalStorageComponent;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
@@ -82,7 +84,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	private ICertificate certificate;
 	private String name;
-	// start with a non-null boot time to avoid exceptions at ping() during boot, then redefine after
+	// start with a non-null boot time to avoid exceptions at ping() during boot,
+	// then redefine after
 	private Date bootTime = new Date();
 	private Monitor monitor;
 	// owner identity may be a IKlabUserIdentity (engines) or INodeIdentity (nodes)
@@ -427,7 +430,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		Logging.INSTANCE.info("k.LAB v" + Version.CURRENT + " build " + Version.VERSION_BUILD + " @"
 				+ Version.VERSION_COMMIT + " booting...");
-
+		
 		/*
 		 * set up access to the k.IM grammar
 		 */
