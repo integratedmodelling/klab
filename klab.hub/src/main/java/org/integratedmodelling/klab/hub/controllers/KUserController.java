@@ -5,12 +5,16 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.manager.LicenseManager;
+import org.integratedmodelling.klab.hub.manager.TaskManager;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.Role;
@@ -41,6 +45,9 @@ import net.minidev.json.JSONObject;
 @RestController
 @RequestMapping("/api/users")
 public class KUserController {
+	
+	@Autowired
+	TaskManager taskManager;
 
 	@Autowired
 	TokenManager tokenManager;
@@ -71,8 +78,8 @@ public class KUserController {
 	public ResponseEntity<?> activateResponse(
 			@PathVariable("id") String userId,
 			@RequestParam("groups") String tokenString,
-			@RequestParam("addGroups") List<String> groups)  {
-		tokenManager.handleGroupsClickbackToken(userId, tokenString, groups);
+			@RequestParam("addGroups") Set<String> groups)  {
+		tokenManager.handleGroupsClickbackToken(tokenString, groups);
 		ProfileResource profile = klabUserManager.getLoggedInUserProfile().getSafeProfile();
 		return new ResponseEntity<>(profile,HttpStatus.CREATED);
 	}
@@ -88,8 +95,11 @@ public class KUserController {
 	
 	@PostMapping(value= "/{id}", produces = "application/json", params="requestGroups")
 	@PreAuthorize("authentication.getPrincipal() == #username")
-	public ResponseEntity<?> requestGroupsResponse(@PathVariable("id") String username, @RequestParam("requestGroups") List<String> groupNames) {
-		tokenManager.sendGroupClickbackToken(username, groupNames);
+	public ResponseEntity<?> requestGroupsResponse(
+			@PathVariable("id") String username,
+			@RequestParam("requestGroups") List<String> groupNames,
+			HttpServletRequest request) {
+		taskManager.userRequestGroupsTask(username, groupNames, request);
 		return new ResponseEntity<>("Sent email to system adminstrator requesting additional groups",HttpStatus.CREATED);
 	}
 	
@@ -178,7 +188,7 @@ public class KUserController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	@PostMapping(value = "", produces = "application/json", params="addUsersGroups")
 	public ResponseEntity<?> addUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
-		klabUserManager.addUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
+		klabUserManager.addUsersGroupsFromNames(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body("Updated Succesful");
@@ -196,7 +206,7 @@ public class KUserController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	@PostMapping(value = "", produces = "application/json", params="setUsersGroups")
 	public ResponseEntity<?> setUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
-		klabUserManager.setUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
+		klabUserManager.setUsersGroupsFromNames(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body("Updated Succesful");

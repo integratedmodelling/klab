@@ -8,7 +8,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.integratedmodelling.klab.hub.config.EmailConfig;
-import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.exception.SendEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
@@ -24,31 +24,31 @@ public class EmailManager {
     private EmailConfig emailConfig;
 
     @Autowired
-    private TokenClickbackConfig tokenClickbackConfig;
+    private LinkConfig linkConfig;
     
     @Autowired
     private JavaMailSender mailSender;
     
     
     public void sendVerifyEmailClickback(String to, URL clickbackUrl) throws MessagingException {
-        String subject = String.format("Email verify for %s", tokenClickbackConfig.getSiteName());
+        String subject = String.format("Email verify for %s", linkConfig.getSiteName());
         String msg = String.format(
                 "To verify this email address for %s, click on the following link: %s\n\n"
                         + "If the link does not work, try copying and pasting it into your browser.\n\n"
                         + "If you did not request that this email be used for this site, "
                         + "please let us know by replying to this email.",
-                        tokenClickbackConfig.getSiteName(), clickbackUrl);
+                        linkConfig.getSiteName(), clickbackUrl);
         //logger.info("Sending email verification email to " + to + "...");
         send(emailConfig.replyableAdminEmailAddress(), to, subject, msg);
     }
 
 	public void sendPasswordChangeConfirmation(String to) {
-        String subject = String.format("Your password for %s has been changed", tokenClickbackConfig.getSiteName());
+        String subject = String.format("Your password for %s has been changed", linkConfig.getSiteName());
         String msg = String.format(
                 "Your password for %s has been changed.\n\n"
                         + "If you did not initiate this password change, then you should reset your password as soon as possible.\n\n"
                         + "Log in at: %s/#%s",
-                tokenClickbackConfig.getSiteName(), tokenClickbackConfig.getSiteUrl(), LOGIN_ROUTE);
+                        linkConfig.getSiteName(), linkConfig.getSiteUrl(), LOGIN_ROUTE);
         //logger.info("Sending password change confirmation email to " + to + "...");
 		send(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
 	}
@@ -67,12 +67,12 @@ public class EmailManager {
     }
 
     public void sendNewUser(String to, String username, URL clickbackUrl) {
-        String subject = String.format("Welcome to %s!", tokenClickbackConfig.getSiteName());
+        String subject = String.format("Welcome to %s!", linkConfig.getSiteName());
         String msg = String.format(
                 "You have successfully registered at %s. Your username is %s."
                         + "\n\nTo activate your account, click on the following link: %s"
                         + "\n\nIf you did not create an account here, please let us know by replying to this email.",
-                        tokenClickbackConfig.getSiteName(), username, clickbackUrl.toExternalForm());
+                        linkConfig.getSiteName(), username, clickbackUrl.toExternalForm());
         //logger.info("Sending new user email to " + to + "...");
         send(emailConfig.replyableAdminEmailAddress(), to, subject, msg);
     }

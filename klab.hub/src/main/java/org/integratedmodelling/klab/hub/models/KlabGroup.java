@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.validation.constraints.NotEmpty;
 
 import org.integratedmodelling.klab.rest.ObservableReference;
@@ -16,7 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "KlabGroups")
 public class KlabGroup {
 
-	@Id
+	@Id @GeneratedValue
 	private String id;
 	
 	@Indexed(unique = true)
@@ -44,10 +45,6 @@ public class KlabGroup {
 
 	public String getId() {
 		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getDescription() {

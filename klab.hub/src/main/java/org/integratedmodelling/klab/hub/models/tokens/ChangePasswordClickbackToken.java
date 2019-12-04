@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.models.tokens;
 
-import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.config.LinkConfig;
 
 public class ChangePasswordClickbackToken extends ClickbackToken {
 
@@ -11,7 +11,7 @@ public class ChangePasswordClickbackToken extends ClickbackToken {
     }
 
     @Override
-    public String getSuccessUrl(TokenClickbackConfig tokenClickbackConfig) {
+    public String getSuccessUrl(LinkConfig tokenClickbackConfig) {
         return null;
     }
 

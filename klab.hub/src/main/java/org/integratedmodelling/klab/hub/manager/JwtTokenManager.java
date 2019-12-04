@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
+import org.integratedmodelling.klab.hub.models.GroupEntry;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
+import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.Group;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -24,23 +26,19 @@ public class JwtTokenManager {
 	
 	@Autowired
 	private HubAuthenticationManager hubAuthenticationManager;
-	
-	@Autowired
-	private KlabUserManager klabUserManager;
 
-	public String createEngineJwtToken(String username) {
-		ProfileResource profile = klabUserManager.getUserProfile(username);
+	public String createEngineJwtToken(User user) {
 		JwtClaims claims = new JwtClaims();
 		claims.setIssuer(hubAuthenticationManager.getHubReference().getId());
-		claims.setSubject(profile.getUsername());
+		claims.setSubject(user.getUsername());
 		claims.setAudience(ENGINE_AUDIENCE);
 		claims.setIssuedAtToNow();
 		claims.setExpirationTimeMinutesInTheFuture(60 * 24 * EXPIRATION_DAYS);
 		claims.setGeneratedJwtId();
 		
 		List<String> roleStrings = new ArrayList<>();
-		for (Group role : profile.getGroupsList()) {
-			roleStrings.add(role.getId());
+		for (GroupEntry role : user.getGroups()) {
+			roleStrings.add(role.getGroupName());
 		}
 		
 		JsonWebSignature jws = new JsonWebSignature();
@@ -54,7 +52,7 @@ public class JwtTokenManager {
 		} catch (JoseException e) {
 			token = null;
 			Logging.INSTANCE
-					.error(String.format("Failed to generate JWT token string for user '%s': ", profile.getUsername()), e);
+					.error(String.format("Failed to generate JWT token string for user '%s': ", user.getUsername()), e);
 		}
 		return token;
 	}

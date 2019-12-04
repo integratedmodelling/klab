@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.controllers;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 
@@ -48,7 +48,7 @@ public class HubController {
 	public ResponseEntity<?> signupGroupsResponse(
 			@RequestBody SignupRequest request,
 			@RequestParam("groups") String tokenString,
-			@RequestParam("addGroups") List<String> groups) {
+			@RequestParam("addGroups") Set<String> groups) {
 		tokenManager.createNewUserWithGroups(request.getUsername(), request.getEmail(), tokenString, groups);
 		return new ResponseEntity<String>("Please Check your email for account verification email.", HttpStatus.CREATED);
 	}
@@ -57,7 +57,7 @@ public class HubController {
 	public ResponseEntity<?> signupGroupsAuthResponse(
 			@RequestParam("token") String tokenString,
 			@RequestParam("groups") String groupToken,
-			@RequestParam("addGroups") List<String> groups) {
+			@RequestParam("addGroups") Set<String> groups) {
 		tokenManager.updateOAuthUserWithGroups(tokenString, groupToken, groups);
 		return new ResponseEntity<String>("Added groups to user", HttpStatus.CREATED);
 	}

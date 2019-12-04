@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 
 @Document(collection="Users")
 public class User implements UserDetails{

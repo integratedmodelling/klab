@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.models;
 
-public enum ObservableLabel {
+public enum ObservableState {
 	FORTHCOMING,
 	EXPERIMENTAL,
 	NEW,

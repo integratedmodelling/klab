@@ -6,7 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.tokens.AuthenticationToken;
@@ -28,7 +28,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     TokenManager tokenManager;
     
     @Autowired
-    TokenClickbackConfig tokenClickbackConfig;
+    LinkConfig tokenClickbackConfig;
 	
     @Autowired
     OAuth2AuthenticationSuccessHandler(MappingJackson2HttpMessageConverter messageConverter) {

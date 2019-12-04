@@ -214,7 +214,7 @@ public class ProfileResource implements OAuth2User{
 		for (KlabGroup grp : cleanedProfile.getGroups()) {
 			if(grp != null) {
 				KlabGroup group = new KlabGroup();
-				group.setId(grp.getId());
+				group.setGroupName(grp.getId());
 				group.setIconUrl(grp.getIconUrl());
 				safeGroups.add(group);
 			}

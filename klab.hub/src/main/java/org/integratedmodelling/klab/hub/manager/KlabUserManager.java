@@ -7,10 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.models.DeletedUser;
 import org.integratedmodelling.klab.hub.models.GroupEntry;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
@@ -19,8 +18,9 @@ import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
 import org.integratedmodelling.klab.hub.repository.DeletedUserRepository;
-import org.integratedmodelling.klab.hub.repository.KlabGroupRepository;
 import org.integratedmodelling.klab.hub.service.UserService;
+import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -50,11 +50,13 @@ public class KlabUserManager implements UserDetailsService{
     protected ObjectMapper objectMapper;
     
     @Autowired
-    TokenClickbackConfig tokenClickbackConfig;
+    LinkConfig linkConfig;
     
 	@Autowired
-	KlabGroupRepository groupRepository;
+	KlabGroupService klabGroupService;
 	
+	@Autowired
+	TaskManager taskManager;
 	
 	@Override
 	public User loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
@@ -137,14 +139,12 @@ public class KlabUserManager implements UserDetailsService{
 		return profile;
 	}
 
-	public void updateLastLogin(String username) {
-		User user = loadUserByUsername(username);
+	public void updateLastLogin(User user) {
 		user.setLastLogin();
 		userService.updateUser(user);
 	}
 
-	public void updateLastEngineConnection(String username) {
-		User user = loadUserByUsername(username);
+	public void updateLastEngineConnection(User user) {
 		user.setLastEngineConnection();
 		userService.updateUser(user);
 	}
@@ -241,7 +241,7 @@ public class KlabUserManager implements UserDetailsService{
 	
     public void decorate(User user) {
         if (user.getServerUrl() == null) {
-            user.setServerUrl(tokenClickbackConfig.getEngineUrl().toExternalForm());
+            user.setServerUrl(linkConfig.getEngineUrl().toExternalForm());
         }
     }
     
@@ -250,8 +250,9 @@ public class KlabUserManager implements UserDetailsService{
     	ProfileResource profielResource = objectMapper.convertValue(user, ProfileResource.class);
     	List<KlabGroup> kGroups = new ArrayList<>();
     	for (KlabGroup group : profielResource.getGroups()) {
-    		group = groupRepository.findById(group.getId());
-    		kGroups.add(group);
+    		klabGroupService
+    			.getGroup(group.getId())
+    			.ifPresent(g -> kGroups.add(g));
     	}
     	profielResource.setGroups(kGroups);
     	return profielResource;
@@ -267,5 +268,66 @@ public class KlabUserManager implements UserDetailsService{
 
 	public List<User> findAllMongoUsers() {
 		return userService.getAllMongoUsers();
+	}
+	
+	public List<Group> getUsersGroupsList(User user) {
+		List<Group> listOfGroups = new ArrayList<>();
+		for (GroupEntry groupEntry : user.getGroups()) {
+			if(groupEntry != null && !groupEntry.isExpired()) {
+				Group group = new Group();
+				klabGroupService
+					.getGroup(groupEntry.getGroupName())
+					.ifPresent(groupFromDB -> {
+						group.setId(groupFromDB.getId());
+						group.setProjectUrls(groupFromDB.getProjectUrls());
+						group.setSshKey(groupFromDB.getSshKey());
+						group.setObservables(groupFromDB.getObservableReferences());
+						group.setWorldview(groupFromDB.getWorldview());
+						group.setIconUrl(groupFromDB.getIconUrl());
+						listOfGroups.add(group);
+					});
+			}
+		}
+		return listOfGroups;
+	}
+
+	public void setUsersGroupsFromNames(Set<String> usernames, Set<String> groupnames) {
+		Set<GroupEntry> groupEntries = new HashSet<>();
+		for (String name : groupnames) {
+			klabGroupService
+				.getGroup(name)
+				.ifPresent(grp -> groupEntries.add(new GroupEntry(grp)));
+		}
+		setUsersGroups(usernames, groupEntries);
+	}
+	
+	public void setUserGroupsFromNames(String username, Set<String> groupnames) {
+		Set<GroupEntry> groupEntries = new HashSet<>();
+		for (String name : groupnames) {
+			klabGroupService
+				.getGroup(name)
+				.ifPresent(grp -> groupEntries.add(new GroupEntry(grp)));
+		}
+		userService.setUserGroupEntries(username, groupEntries);
+	}
+
+	public void addUsersGroupsFromNames(Set<String> usernames, Set<String> groupnames) {
+		Set<GroupEntry> groupEntries = new HashSet<>();
+		for (String name : groupnames) {
+			klabGroupService
+				.getGroup(name)
+				.ifPresent(grp -> groupEntries.add(new GroupEntry(grp)));
+		}
+		addUsersGroups(usernames, groupEntries);
+	}
+	
+	public void addUserGroupsFromNames(String username, Set<String> groupnames) {
+		Set<GroupEntry> groupEntries = new HashSet<>();
+		for (String name : groupnames) {
+			klabGroupService
+				.getGroup(name)
+				.ifPresent(grp -> groupEntries.add(new GroupEntry(grp)));
+		}
+		userService.addUserGroupEntries(username, groupEntries);
 	}
 }

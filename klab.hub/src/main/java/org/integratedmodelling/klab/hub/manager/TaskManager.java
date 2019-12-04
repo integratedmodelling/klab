@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.manager;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ public class TaskManager {
 	
 	@Autowired
 	KlabGroupService klabGroupService;
+	
 	
 	public List<Task> getTasks() {
 		return taskService.getTasks();
@@ -112,6 +114,27 @@ public class TaskManager {
 	private Task acceptCreateGroupRequest(CreateGroupTask task) {
 		klabGroupService.createGroup(task.getGroup().getId(), task.getGroup());
 		return taskService.changeTaskStatus(task.getId(), TaskStatus.acceptedTask);
+	}
+
+	public void userRequestGroupsTask(String username, List<String> groupNames, HttpServletRequest request) {
+		Set<GroupEntry> optIn = new HashSet<GroupEntry>();
+		Set<GroupEntry> requestGroups = new HashSet<GroupEntry>();
+		if(!klabGroupService.groupsExists(groupNames)) {
+			throw new BadRequestException("A requested Group does not exist.");
+		}
+		
+		for (String groupName : groupNames) {
+			klabGroupService
+				.getGroup(groupName)
+				.filter(group -> request.isUserInRole(group.getRoleRequirement().toString()))
+				.ifPresent(group -> optIn.add(new GroupEntry(group)));
+			
+			klabGroupService.getGroup(groupName)
+				.filter(group -> !request.isUserInRole(group.getRoleRequirement().toString()))
+				.ifPresent(group -> requestGroups.add(new GroupEntry(group)));
+		}
+		userService.addUserGroupEntries(username, optIn);
+		
 	}
 
 }

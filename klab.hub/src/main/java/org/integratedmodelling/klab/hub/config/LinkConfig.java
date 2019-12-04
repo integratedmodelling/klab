@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class TokenClickbackConfig {
+public class LinkConfig {
 	
     @Value("${site.fullname}")
     private String SITE_FULLNAME;

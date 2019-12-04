@@ -7,10 +7,9 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
+import org.integratedmodelling.klab.hub.models.GroupEntry;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
@@ -89,7 +88,11 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
         return start + (int)Math.round(Math.random() * (end - start));
     }
     
-    static {
+    
+    private List<User> getInitialUsers() {
+		GroupEntry im = new GroupEntry(klabGroupService.getGroup("IM").get());
+		GroupEntry aries = new GroupEntry(klabGroupService.getGroup("ARIES").get());
+		GroupEntry alice = new GroupEntry(klabGroupService.getGroup("ALICE").get());
     	for (int i = 0; i<100; i++) {
     		User u = testUser("User-"+i, "password", "user-"+i+"@integratedmodelling.org", "Name"+i, "Last"+i, Role.ROLE_USER);
     		int x = (int)(Math.random()*100+1);
@@ -101,8 +104,8 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     			u.addRoles(Role.ROLE_DATA_MANAGER); // less than 7% are data manager
     		x = (int)(Math.random()*100+1);
     		if (x <= 80) {
-    			u.addGroups("IM", "ARIES"); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
-    			String[] groups = {"ALICE", "OTHER", "KLAB"}; // and other random group assignment 
+    			u.addGroups(im, aries, alice); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
+    			GroupEntry[] groups = {im, alice, aries}; // and other random group assignment 
         		for (int j = 0; j<groups.length; j++) {
         			x = (int)(Math.random()*100+1);
             		if (x <= 33) {
@@ -112,7 +115,8 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
         		x = (int)(Math.random()*100+1);
         		if (x < 22) {
         			for (int j = 0; j<=x; j++) {
-        				u.addGroups("GROUP "+j); // multiple groups
+        				//u.addGroups("GROUP "+j); // multiple groups
+        				//add back something in the future
         			}
         		}
     		}
@@ -133,22 +137,19 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     		}
     		initialUsers.add(u);
     	}
-        system.addGroups("ARIES");
-        system.addGroups("IM");
-        system.addGroups("ALICE");
-        hades.addGroups("ARIES");
-        hades.addGroups("IM");
-        achilles_activeMissingLdap.addGroups("IM");
-        triton_pendingMissingLdap.addGroups("IM");
+        system.addGroups(aries);
+        system.addGroups(im);
+        system.addGroups(alice);
+        hades.addGroups(aries);
+        hades.addGroups(im);
+        achilles_activeMissingLdap.addGroups(im);
+        triton_pendingMissingLdap.addGroups(aries);
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);
         initialUsers.add(system);
         initialUsers.add(hades);
         initialUsers.add(achilles_activeMissingLdap);
         initialUsers.add(triton_pendingMissingLdap);
-    }
-    
-    private List<User> getInitialUsers() {
-        return new ArrayList<>(initialUsers);
+        return initialUsers;
     }
     
     public void createInitialUsers() {
@@ -171,13 +172,13 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     public void createIntialGroups() {
 		Map<String, KlabGroup> groups = new HashMap<>();
 		groups = FileCatalog.create(DevelopmentConfig.class.getClassLoader().getResource("auth/groups.json"), KlabGroup.class);
-		groups.forEach((k,v)->klabGroupService.createGroup(v.getId(),v));
+		groups.forEach((k,v)->klabGroupService.createGroup(v.getGroupName(),v));
     }
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent arg0) {
-		createInitialUsers();
 		createIntialGroups();
+		createInitialUsers();
 	}
 
 }

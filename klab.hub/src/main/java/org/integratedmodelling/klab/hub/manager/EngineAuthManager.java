@@ -102,9 +102,9 @@ public class EngineAuthManager {
 	        properties.remove(KlabCertificate.KEY_EXPIRATION);
 	        if (propertiesFromCertificate.equals(properties)) {
 	        	tokenManager.deleteExpiredTokens(username);
-	            String token = jwtTokenManager.createEngineJwtToken(username);
+	            String token = jwtTokenManager.createEngineJwtToken(user);
 	            ProfileResource profile = klabUserManager.getUserProfile(username);
-	            klabUserManager.updateLastEngineConnection(profile.getUsername());
+	            klabUserManager.updateLastEngineConnection(user);
 	            EngineUser engineUser = new EngineUser(username, null);
 	            engineUser.setEmailAddress(email);
 	            engineUser.setToken(token);
@@ -131,20 +131,20 @@ public class EngineAuthManager {
 	}
 
 	private EngineUser authenticateLocalEngineCert(String username) {
+		User user = klabUserManager.getUser(username);
         String token = null;
         if (username.equals("system") ) {
-        	token = jwtTokenManager.createEngineJwtToken(username);
+        	token = jwtTokenManager.createEngineJwtToken(user);
         } else {
         	username = "hades";
-        	token = jwtTokenManager.createEngineJwtToken(username);
+        	token = jwtTokenManager.createEngineJwtToken(user);
         }
         tokenManager.deleteExpiredTokens(username);
-        ProfileResource profile = klabUserManager.getUserProfile(username);
-        klabUserManager.updateLastEngineConnection(profile.getUsername());
+        klabUserManager.updateLastEngineConnection(user);
         EngineUser engineUser = new EngineUser(username, null);
-        engineUser.setEmailAddress(profile.getEmail());
+        engineUser.setEmailAddress(user.getEmail());
         engineUser.setToken(token);
-        engineUser.getGroups().addAll(profile.getGroupsList());
+        engineUser.getGroups().addAll(klabUserManager.getUsersGroupsList(user));
         return engineUser;
 	}
 }

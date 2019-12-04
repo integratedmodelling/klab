@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.hub.models.tokens;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.models.GroupEntry;
 
 public class GroupsClickbackToken extends ClickbackToken {
@@ -16,7 +16,7 @@ public class GroupsClickbackToken extends ClickbackToken {
     }
 
     @Override
-    public String getSuccessUrl(TokenClickbackConfig tokenClickbackConfig) {
+    public String getSuccessUrl(LinkConfig tokenClickbackConfig) {
         return null;
     }
 

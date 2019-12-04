@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
-import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.joda.time.DateTime;
 
@@ -41,7 +41,7 @@ public abstract class ClickbackToken extends AuthenticationToken {
     /**
      * override this for token types that can hit server clickback URLs directly (i.e. GET from email click)
      */
-    public void setCallbackUrl(TokenClickbackConfig tokenClickbackConfig) {
+    public void setCallbackUrl(LinkConfig tokenClickbackConfig) {
     	setCallbackUrl(tokenClickbackConfig.getFrontendCallbackUrl(getPrincipal(), getClickbackAction(), getTokenString()));
     }
 
@@ -56,7 +56,7 @@ public abstract class ClickbackToken extends AuthenticationToken {
     public abstract ClickbackAction getClickbackAction();
 
 
-    public String getSuccessUrl(TokenClickbackConfig tokenClickbackConfig) {
+    public String getSuccessUrl(LinkConfig tokenClickbackConfig) {
         return tokenClickbackConfig.getSiteUrl().toString();
     }
 }

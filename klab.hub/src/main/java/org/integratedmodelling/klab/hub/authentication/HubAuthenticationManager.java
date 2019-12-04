@@ -9,14 +9,12 @@ import org.integratedmodelling.klab.api.hub.IHubStartupOptions;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
-import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.joda.time.DateTime;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,12 +37,6 @@ public class HubAuthenticationManager {
 
 	// set after authentication
 	HubReference hubReference;
-
-	@Autowired
-	NetworkManager networkManager;
-	
-	@Autowired
-	GroupManager groupManager;
 
 	String hubName;
 

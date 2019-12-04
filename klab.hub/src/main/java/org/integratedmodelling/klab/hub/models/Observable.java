@@ -20,8 +20,7 @@ public class Observable {
 	@NotBlank
 	private String observable;
 	
-	@Enumerated(EnumType.STRING)
-	private ObservableLabel label;
+	private String label;
 	
 	@Enumerated(EnumType.STRING)
 	@NotBlank
@@ -31,7 +30,8 @@ public class Observable {
 	
 	private boolean separator;
 	
-	private String state;
+	@Enumerated(EnumType.STRING)
+	private ObservableState state;
 	
 	private String extendedDescription;
 
@@ -41,14 +41,6 @@ public class Observable {
 
 	public void setObservable(String observable) {
 		this.observable = observable;
-	}
-
-	public ObservableLabel getLabel() {
-		return label;
-	}
-
-	public void setLabel(ObservableLabel label) {
-		this.label = label;
 	}
 
 	public IKimConcept.Type getSemantics() {
@@ -75,14 +67,6 @@ public class Observable {
 		this.separator = separator;
 	}
 
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
 	public String getExtendedDescription() {
 		return extendedDescription;
 	}
@@ -97,13 +81,29 @@ public class Observable {
 
 	public ObservableReference getObservableReference() {
 		ObservableReference obs = new ObservableReference();
-		obs.setLabel(this.label.toString());
+		obs.setLabel(this.label);
 		obs.setObservable(this.observable);
 		obs.setSemantics(this.semantics);
 		obs.setExtendedDescription(this.extendedDescription);
 		obs.setDescription(this.description);
 		obs.setSeparator(this.separator);
-		obs.setState(this.state);
+		obs.setState(this.state.toString());
 		return obs;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public ObservableState getState() {
+		return state;
+	}
+
+	public void setState(ObservableState state) {
+		this.state = state;
 	}
 }

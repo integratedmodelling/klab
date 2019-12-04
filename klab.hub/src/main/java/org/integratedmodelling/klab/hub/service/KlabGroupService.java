@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.models.KlabGroup;
@@ -14,4 +15,6 @@ public interface KlabGroupService {
    public abstract Optional<KlabGroup> getGroup(String id);
    public abstract Collection<String> getGroupNames();
    public abstract Collection<? extends Group> getGroupsList();
+   public abstract boolean groupsExists(List<String> groupNames);
+   public abstract boolean groupExists(String groupName);
 }

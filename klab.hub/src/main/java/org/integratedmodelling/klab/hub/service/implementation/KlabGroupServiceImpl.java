@@ -29,7 +29,7 @@ public class KlabGroupServiceImpl implements KlabGroupService {
     
 	@Override
 	public void createGroup(String id, KlabGroup group) {
-		Query query = new Query(Criteria.where("id").is(id));
+		Query query = new Query(Criteria.where("groupName").is(id));
 		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
 		if (found.size() == 0) {
 			mongoTemplate.save(group);
@@ -66,8 +66,8 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 	}
 
 	@Override
-	public Optional<KlabGroup> getGroup(String id) {
-		Query query = new Query(Criteria.where("id").is(id));
+	public Optional<KlabGroup> getGroup(String groupName) {
+		Query query = new Query(Criteria.where("groupName").is(groupName));
 		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
 		if (found.size() == 1) {
 			Optional<KlabGroup> group = Optional.of(found.get(0));
@@ -103,6 +103,16 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 			}
 		}
 		return listOfGroups;
+	}
+
+	@Override
+	public boolean groupsExists(List<String> groupNames) {
+		return getGroupNames().containsAll(groupNames);
+	}
+
+	@Override
+	public boolean groupExists(String groupName) {
+		return getGroupNames().contains(groupName);
 	}
 
 }
