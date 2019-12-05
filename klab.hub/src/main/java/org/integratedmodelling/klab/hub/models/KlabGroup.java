@@ -17,7 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "KlabGroups")
 public class KlabGroup {
 
-	@Id @GeneratedValue
+	@Id
 	private String id;
 	
 	@Indexed(unique = true)
@@ -46,6 +46,10 @@ public class KlabGroup {
 	public String getId() {
 		return id;
 	}
+	
+    public void setId(String id) {
+        this.id = id;
+    }
 
 	public String getDescription() {
 		return description;

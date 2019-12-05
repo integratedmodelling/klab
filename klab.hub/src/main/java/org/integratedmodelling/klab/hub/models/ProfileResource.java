@@ -50,7 +50,7 @@ public class ProfileResource implements OAuth2User{
 
     public List<Role> roles = new ArrayList<>(); // LDAP security roles or OAuth
 
-    public List<KlabGroup> groups = new ArrayList<>(); // research groups, etc. in web tool
+    public List<GroupEntry> groups = new ArrayList<>(); // research groups, etc. in web tool
 
     public boolean sendUpdates;
 
@@ -106,11 +106,11 @@ public class ProfileResource implements OAuth2User{
 		this.username = username;
 	}
 	
-    public List<KlabGroup> getGroups() {
+    public List<GroupEntry> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(List<KlabGroup> groups) {
+	public void setGroups(List<GroupEntry> groups) {
 		this.groups = groups;
 	}
 
@@ -170,15 +170,16 @@ public class ProfileResource implements OAuth2User{
 
 	public List<Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
-		for (KlabGroup grp : this.getGroups()) {
+		for (GroupEntry grp : this.getGroups()) {
 			if(grp != null) {
 				Group group = new Group();
-				group.setId(grp.getId());
-				group.setProjectUrls(grp.getProjectUrls());
-				group.setSshKey(grp.getSshKey());
-				group.setObservables(grp.getObservableReferences());
-				group.setWorldview(grp.getWorldview());
-				group.setIconUrl(grp.getIconUrl());
+				KlabGroup kGroup = grp.getGroup();
+				group.setId(kGroup.getGroupName());
+				group.setProjectUrls(kGroup.getProjectUrls());
+				group.setSshKey(kGroup.getSshKey());
+				group.setObservables(kGroup.getObservableReferences());
+				group.setWorldview(kGroup.getWorldview());
+				group.setIconUrl(kGroup.getIconUrl());
 				listOfGroups.add(group);
 			}
 		}
@@ -210,13 +211,16 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.Token = Token;
 		cleanedProfile.username = username;
 		
-		List<KlabGroup> safeGroups = new ArrayList<>();
-		for (KlabGroup grp : cleanedProfile.getGroups()) {
-			if(grp != null) {
-				KlabGroup group = new KlabGroup();
-				group.setGroupName(grp.getId());
-				group.setIconUrl(grp.getIconUrl());
-				safeGroups.add(group);
+		List<GroupEntry> safeGroups = new ArrayList<>();
+		for (GroupEntry entry : cleanedProfile.getGroups()) {
+			if(entry != null) {
+				KlabGroup cleanGroup = new KlabGroup();
+				KlabGroup unsafeGroup = entry.getGroup();
+				cleanGroup.setIconUrl(unsafeGroup.getIconUrl());
+				cleanGroup.setGroupName(unsafeGroup.getGroupName());
+				cleanGroup.setDependsOn(unsafeGroup.getDependsOn());
+				entry.setGroup(cleanGroup);
+				safeGroups.add(entry);
 			}
 		}
 		cleanedProfile.groups = safeGroups;

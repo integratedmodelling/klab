@@ -5,11 +5,9 @@ import java.util.List;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
-import org.integratedmodelling.klab.hub.models.GroupEntry;
-import org.integratedmodelling.klab.hub.models.ProfileResource;
+import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
-import org.integratedmodelling.klab.rest.Group;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -37,8 +35,8 @@ public class JwtTokenManager {
 		claims.setGeneratedJwtId();
 		
 		List<String> roleStrings = new ArrayList<>();
-		for (GroupEntry role : user.getGroups()) {
-			roleStrings.add(role.getGroupName());
+		for (Role role : user.getAuthorities()) {
+			roleStrings.add(role.toString());
 		}
 		
 		JsonWebSignature jws = new JsonWebSignature();

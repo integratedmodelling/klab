@@ -117,7 +117,7 @@ public class TaskManager {
 	}
 
 	public void userRequestGroupsTask(String username, List<String> groupNames, HttpServletRequest request) {
-		Set<GroupEntry> optIn = new HashSet<GroupEntry>();
+		Set<GroupEntry> optIn = new HashSet<>();
 		Set<GroupEntry> requestGroups = new HashSet<GroupEntry>();
 		if(!klabGroupService.groupsExists(groupNames)) {
 			throw new BadRequestException("A requested Group does not exist.");
@@ -134,7 +134,7 @@ public class TaskManager {
 				.ifPresent(group -> requestGroups.add(new GroupEntry(group)));
 		}
 		userService.addUserGroupEntries(username, optIn);
-		
+		//TODO
 	}
 
 }

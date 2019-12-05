@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService{
 	public User addUserGroupEntries(String username, Set<GroupEntry> newGroupEntries) {
 		User user = getUserFromMongo(username).get();
 		
-		Set<GroupEntry> groupEntries = user.getGroups();
+		Set<GroupEntry> groupEntries = user.getGroupEntries();
 		
 		Set<String> groupsList = getGroupEntryNames(groupEntries);
 		
@@ -110,21 +110,21 @@ public class UserServiceImpl implements UserService{
 				groupEntries.add(newGrpEntry);
 			}
 		}
-		user.setGroups(groupEntries);
+		user.setGroupEntries(groupEntries);
 		updateUser(user);
 		return user;
 	}
 
 	public User setUserGroupEntries(String username, Set<GroupEntry> groupEntries) {
 		User user = getUserFromMongo(username).get();
-		user.setGroups(groupEntries);
+		user.setGroupEntries(groupEntries);
 		updateUser(user);
 		return user;
 	}
 	
 	public User removeUserGroupEntries(String username, Set<String> groupnames) {
 		User user = getUserFromMongo(username).get();
-		Set<GroupEntry> groupEntries = user.getGroups();
+		Set<GroupEntry> groupEntries = user.getGroupEntries();
 		Set<String> groupsList = getGroupEntryNames(groupEntries);
 		for(String name : groupnames) {
 			if(groupsList.contains(name)) {
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService{
 				groupEntries.remove(userGrpEntry);
 			}
 		}
-		user.setGroups(groupEntries);
+		user.setGroupEntries(groupEntries);
 		updateUser(user);
 		return user;
 	}

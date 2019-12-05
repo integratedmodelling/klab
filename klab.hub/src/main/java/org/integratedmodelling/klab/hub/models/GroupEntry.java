@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.hub.models;
 
 import org.joda.time.DateTime;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class GroupEntry {
 	
+	@DBRef
 	private KlabGroup group;
 	private DateTime experation;
 	private DateTime inception;
@@ -17,6 +19,10 @@ public class GroupEntry {
 	public GroupEntry(KlabGroup group) {
 		this.group = group;
 		this.experation = null;
+		setInception();
+	}
+	
+	public GroupEntry() {
 	}
 	
 	
@@ -45,5 +51,12 @@ public class GroupEntry {
 		expires.isAfterNow();
 		return true;
 	}
+
+	public KlabGroup getGroup() {
+		return group;
+	}
 	
+	public void setGroup(KlabGroup group) {
+		this.group = group;
+	}
 }

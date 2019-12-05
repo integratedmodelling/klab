@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.hub.models;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -68,7 +67,7 @@ public class User implements UserDetails{
     final Set<Role> roles = new HashSet<>(); // LDAP security roles
 
     @Reference
-    final Set<GroupEntry> groups = new HashSet<>(); // research groups, etc. in web tool
+    private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
 
     final Set<String> applications = new HashSet<>();
 
@@ -90,14 +89,14 @@ public class User implements UserDetails{
 
     // TODO reference this from a AbstractSecurityInterceptor for DataSource object security.
     // see "secure object" references at http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle
-    public boolean hasAnyGroups(Set<KlabGroup> groups) {
-        for (KlabGroup group : groups) {
-            if (groups.contains(group)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    public boolean hasAnyGroups(Set<KlabGroup> groups) {
+//        for (KlabGroup group : groups) {
+//            if (groups.contains(group)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     public String getId() {
         return id;
@@ -210,21 +209,20 @@ public class User implements UserDetails{
         this.roles.addAll(roles);
     }
 
-    public void addGroups(GroupEntry... groups) {
-        addGroups(Arrays.asList(groups));
+    public void addGroupEntries(GroupEntry... groups) {
+        this.groupEntries.addAll(Arrays.asList(groups));
     }
 
-    public void addGroups(List<GroupEntry> groups) {
-        this.groups.addAll(groups);
+    public void addGroupEntries(Set<GroupEntry> groups) {
+        this.groupEntries.addAll(groups);
     }
 
-    public void setGroups(Collection<GroupEntry> groups) {
-        this.groups.clear();
-        this.groups.addAll(groups);
+    public void setGroupEntries(Set<GroupEntry> groups) {
+        this.groupEntries = groups;
     }
 
-    public Set<GroupEntry> getGroups() {
-        return new HashSet<>(groups);
+    public Set<GroupEntry> getGroupEntries() {
+        return groupEntries;
     }
 
     public Set<String> getApplications() {
@@ -307,9 +305,9 @@ public class User implements UserDetails{
             return true;
         }
 
-        Set<GroupEntry> setIntersection = getGroups(); // returns a copy
-        setIntersection.retainAll(groups);
-        if (setIntersection.size() > 0) {
+        Set<GroupEntry> list = getGroupEntries(); // returns a copy
+        list.retainAll(groups);
+        if (list.size() > 0) {
             return true;
         }
 

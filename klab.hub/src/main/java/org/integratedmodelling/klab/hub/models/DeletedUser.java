@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.hub.models;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
@@ -35,7 +37,7 @@ public class DeletedUser implements UserDetails {
     
     AccountStatus accountStatus = AccountStatus.deleted;
 
-	Set<GroupEntry> groups = new HashSet<>();
+	List<GroupEntry> groups = new ArrayList<GroupEntry>();
 
     public String getId() {
 		return id;
@@ -81,7 +83,7 @@ public class DeletedUser implements UserDetails {
 		this.deletionDate = new DateTime();
 	}
 
-	public Set<GroupEntry> getGroups() {
+	public List<GroupEntry> getGroups() {
 		return groups;
 	}
 

@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -82,9 +81,6 @@ public class TokenManager {
 
 	@Autowired
 	private EmailManager emailManager;
-	
-	@Autowired
-	LicenseManager licenseManager;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -245,14 +241,14 @@ public class TokenManager {
 		return clickbackToken;
 	}
 
-	public ClickbackToken createNewUserWithGroups(String username, String email, String tokenString, Set<String> groups) {
+	public ClickbackToken createNewUserWithGroups(String username, String email, String tokenString, List<String> groups) {
 		ClickbackToken token = createNewUser(username, email);
 		handleInviteClickbackToken(tokenString, groups);
 		return token;		
 	}
 	
 	public AuthenticationToken updateOAuthUserWithGroups(String tokenString, String groupToken,
-			Set<String> groups) {
+			List<String> groups) {
 		AuthenticationToken token = handleToken(tokenString);
 		handleInviteClickbackToken(groupToken, groups);
 		return token;
@@ -472,14 +468,14 @@ public class TokenManager {
 		if(!available.containsAll(groups)) {
 			throw new BadRequestException("A Group was included that does not exist in the database");
 		}
-		klabUserManager.addUserGroupsFromNames(user.getUsername(), groups);
+		klabUserManager.addUserGroupsFromNames(user.getUsername(), groups, null);
 		Task task = taskService.getGroupRequestTaskByToken(groupsClickbackToken);
 		taskService.changeTaskStatus(task.getId(), TaskStatus.acceptedEmail);
 		deleteToken(tokenString);
 		return groupsClickbackToken;
 	}
 	
-	public ClickbackToken handleInviteClickbackToken(String tokenString, Set<String> groups) {
+	public ClickbackToken handleInviteClickbackToken(String tokenString, List<String> groups) {
 		ClickbackToken inviteClickToken = tokenRepository
 				.findByTokenString(tokenString)
 				.map(ClickbackToken.class::cast)
@@ -488,7 +484,7 @@ public class TokenManager {
 		SecurityContextHolder.getContext().setAuthentication(inviteClickToken);
 		klabUserManager.getLoggedInAuthentication();
 		User user = klabUserManager.getLoggedInUser();
-		klabUserManager.setUserGroupsFromNames(user.getUsername(), groups);
+		klabUserManager.setUserGroupsFromNames(user.getUsername(), groups, null);
 		deleteToken(tokenString);
 		return inviteClickToken;
 	}

@@ -1,12 +1,10 @@
 package org.integratedmodelling.klab.hub.controllers;
 
-import java.util.Set;
-
+import java.util.List;
 import javax.mail.MessagingException;
 
 import org.integratedmodelling.klab.hub.config.LoggingConfig;
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
-import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.SignupRequest;
@@ -27,9 +25,6 @@ public class HubController {
 	TokenManager tokenManager;
 	
 	@Autowired
-	KlabUserManager klabUserManager;
-	
-	@Autowired
 	LoggingConfig loggingConfig;
 	
 	@PostMapping("/signin")
@@ -48,7 +43,7 @@ public class HubController {
 	public ResponseEntity<?> signupGroupsResponse(
 			@RequestBody SignupRequest request,
 			@RequestParam("groups") String tokenString,
-			@RequestParam("addGroups") Set<String> groups) {
+			@RequestParam("addGroups") List<String> groups) {
 		tokenManager.createNewUserWithGroups(request.getUsername(), request.getEmail(), tokenString, groups);
 		return new ResponseEntity<String>("Please Check your email for account verification email.", HttpStatus.CREATED);
 	}
@@ -57,7 +52,7 @@ public class HubController {
 	public ResponseEntity<?> signupGroupsAuthResponse(
 			@RequestParam("token") String tokenString,
 			@RequestParam("groups") String groupToken,
-			@RequestParam("addGroups") Set<String> groups) {
+			@RequestParam("addGroups") List<String> groups) {
 		tokenManager.updateOAuthUserWithGroups(tokenString, groupToken, groups);
 		return new ResponseEntity<String>("Added groups to user", HttpStatus.CREATED);
 	}
