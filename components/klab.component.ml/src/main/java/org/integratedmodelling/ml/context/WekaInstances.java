@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -433,6 +434,14 @@ public class WekaInstances {
 				}
 			}
 		}
+
+		/*
+		 * Use the archetype's datakey if the predicted state needs one.
+		 */
+		if (distributedArchetype != null && predictedState != null && distributedArchetype.getDataKey() != null
+				&& predictedState.getDataKey() == null) {
+			((State)predictedState).setDataKey(distributedArchetype.getDataKey());
+		}
 	}
 
 	/**
@@ -590,7 +599,7 @@ public class WekaInstances {
 
 	private void build() {
 
-		if (this.archetypes.isEmpty()) {
+		if (this.archetypes.isEmpty() && distributedArchetype == null) {
 			throw new IllegalStateException("Weka: cannot build training set without at least one archetype");
 		}
 

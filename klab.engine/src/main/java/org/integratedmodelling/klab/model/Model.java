@@ -196,14 +196,25 @@ public class Model extends KimObject implements IModel {
 			}
 
 			if (!hasArchetype) {
-				Observable obsdep = (Observable) new ObservableBuilder((Observable) getMainObservable(), monitor)
+				
+				Observable origin = (Observable) getMainObservable();
+				Observable obsdep = (Observable) new ObservableBuilder(origin, monitor)
 						.withTrait(Resources.INSTANCE.getWorldview()
 								.getCoreConcept(Concepts.c(CoreOntology.NS.CORE_PREDICTED_ATTRIBUTE)))
 						.buildObservable();
+				
 				observables.set(0, obsdep);
-				Observable newobs = new Observable((Observable) getMainObservable());
-				newobs.getAnnotations().add(Annotation.create("archetype"));
-				dependencies.add(newobs);
+
+				if (findDependency(origin) != null) {
+					origin = (Observable)findDependency(origin);
+				} else {
+					dependencies.add(origin);
+				}
+				
+				if (origin.getAnnotations() == null) {
+					origin.setAnnotations(new ArrayList<IAnnotation>());
+				}
+				origin.getAnnotations().add(Annotation.create("archetype"));
 			}
 		}
 

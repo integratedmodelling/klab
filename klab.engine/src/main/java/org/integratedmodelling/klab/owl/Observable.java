@@ -709,4 +709,8 @@ public class Observable implements IObservable {
 		return mustContextualize;
 	}
 
+	public void setAnnotations(List<IAnnotation> list) {
+		this.annotations = list;
+	}
+
 }
