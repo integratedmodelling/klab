@@ -1413,6 +1413,13 @@ public class Actuator implements IActuator {
 		return false;
 	}
 
+	public void resetScales() {
+		this.runtimeScale = null;
+		for (IActuator actuator : actuators) {
+			((Actuator)actuator).resetScales();
+		}
+	}
+	
 	/**
 	 * The name of the observable of the model that generated this. If it's a
 	 * multi-model partitioning actuator, keep the name of the observable.

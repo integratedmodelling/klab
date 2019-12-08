@@ -391,6 +391,17 @@ public class WekaInstances {
 									"Weka: cannot use " + this.distributedArchetype.getObservable().getType()
 											+ " as an archetype for " + predicted.getType() + ": incompatible types");
 						}
+
+						if (Double.isNaN(selectFraction)) {
+							if (selector == null) {
+								context.getMonitor().info(
+										"Selecting default 5% of states for distributed state without explicit selector");
+								selectFraction = .05;
+							} else {
+								selectFraction = 1;
+							}
+						}
+
 					} else if (!(artifact instanceof ObservationGroup)) {
 						throw new IllegalArgumentException("Weka: missing archetype or archetype is not countable");
 					} else {
@@ -643,7 +654,6 @@ public class WekaInstances {
 
 					if (sample) {
 
-						
 						if (expression != null) {
 
 							parameters.clear();
@@ -677,14 +687,14 @@ public class WekaInstances {
 						if (!Observations.INSTANCE.isNodata(value)) {
 
 							// TODO ranges!
-							
+
 							instanceValues[0] = value;
 							int i = 1;
 							for (IState predictor : predictorStates) {
 								value = predictor.get(locator);
 
 								// TODO ranges!
-								
+
 								if (Observations.INSTANCE.isNodata(value)) {
 									sample = false;
 								}
@@ -703,7 +713,7 @@ public class WekaInstances {
 								skipped++;
 							}
 						} else {
-							skipped ++;
+							skipped++;
 						}
 					}
 				}

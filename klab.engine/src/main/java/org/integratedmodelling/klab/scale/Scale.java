@@ -713,6 +713,15 @@ public class Scale implements IScale {
 		return true;
 	}
 
+	public IExtent getExtent(Dimension.Type type) {
+		for (IExtent e : extents) {
+			if (e.getType() == type) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
 	/*
 	 * true if the passed scale has the same extents as we do.
 	 */

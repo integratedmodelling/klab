@@ -106,9 +106,19 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.session = session;
 	}
 
+	/**
+	 * If the dataflow is reused more than once, this must be called before any
+	 * repeated execution.
+	 */
+	public void reset() {
+		resetScales();
+	}
+
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
+		reset();
+		
 		/*
 		 * we need the initialization scale for the dataflow but we must create our
 		 * targets with the overall scale. Problem is, occurrent actuators must create
