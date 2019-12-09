@@ -64,13 +64,19 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 	private IKimExpression selector;
 	private double selectFraction = Double.NaN;
-	
+	protected IObservable targetObservable;
+
 	protected AbstractWekaResolver() {
 	}
 
-	protected AbstractWekaResolver(Class<T> cls, IParameters<String> parameters, boolean requiresDiscretization,
-			boolean predictionIsProbabilistic, boolean admitsNodata) {
+	public IArtifact.Type getType() {
+		return targetObservable.getArtifactType();
+	}
+
+	protected AbstractWekaResolver(Class<T> cls, IParameters<String> parameters, IObservable observable,
+			boolean requiresDiscretization, boolean predictionIsProbabilistic, boolean admitsNodata) {
 		this.options = new WekaOptions(cls, parameters);
+		this.targetObservable = observable;
 		this.classifier = new WekaClassifier(cls, this.options, predictionIsProbabilistic);
 		this.classDiscretizer = parameters.get("discretization", IServiceCall.class);
 		this.instancesExport = parameters.get("instances", String.class);
@@ -96,7 +102,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 				uncertainty = context.getArtifact(obs.getName(), IState.class);
 			}
 		}
-		
+
 		WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeScope) context, true,
 				admitsNodata, classDiscretizer, selector, selectFraction);
 
@@ -159,10 +165,12 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 		if (prediction instanceof double[]) {
 
-			// predicted state must be discretized
-			// FIXME this could be a categorical state without discretization
-			EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(
-					instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
+			// predicted state must be discretized unless it's not numeric
+			EnumeratedRealDistribution distribution = null;
+			if (target.getObservable().getArtifactType().isNumeric()) {
+				distribution = new EnumeratedRealDistribution(instances.getPredictedDiscretization().getMidpoints(),
+						(double[]) prediction);
+			}
 
 			if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
 				target.set(locator, distribution.getNumericalMean());
@@ -276,7 +284,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 				builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
 						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
 			} else {
-				
+
 				IObservable observable = predicted ? instances.getPredictedObservable()
 						: instances.getPredictorObservable(attribute.name());
 				if (!predicted) {

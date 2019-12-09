@@ -393,13 +393,13 @@ public class WekaInstances {
 											+ " as an archetype for " + predicted.getType() + ": incompatible types");
 						}
 
-						if (Double.isNaN(selectFraction)) {
+						if (Double.isNaN(this.selectFraction)) {
 							if (selector == null) {
 								context.getMonitor().info(
 										"Selecting default 5% of states for distributed state without explicit selector");
-								selectFraction = .05;
+								this.selectFraction = .05;
 							} else {
-								selectFraction = 1;
+								this.selectFraction = 1;
 							}
 						}
 
@@ -433,14 +433,6 @@ public class WekaInstances {
 					ranges.put(predictedObservable.getName(), rng);
 				}
 			}
-		}
-
-		/*
-		 * Use the archetype's datakey if the predicted state needs one.
-		 */
-		if (distributedArchetype != null && predictedState != null && distributedArchetype.getDataKey() != null
-				&& predictedState.getDataKey() == null) {
-			((State)predictedState).setDataKey(distributedArchetype.getDataKey());
 		}
 	}
 
@@ -598,6 +590,14 @@ public class WekaInstances {
 	}
 
 	private void build() {
+
+		/*
+		 * Use the archetype's datakey for the predicted state if we have a distributed
+		 * archetype, to ensure we have the same mappings.
+		 */
+		if (distributedArchetype != null && predictedState != null && distributedArchetype.getDataKey() != null) {
+			((State) predictedState).setDataKey(distributedArchetype.getDataKey());
+		}
 
 		if (this.archetypes.isEmpty() && distributedArchetype == null) {
 			throw new IllegalStateException("Weka: cannot build training set without at least one archetype");

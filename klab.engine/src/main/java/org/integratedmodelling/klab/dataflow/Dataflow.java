@@ -111,6 +111,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * repeated execution.
 	 */
 	public void reset() {
+		this.resolutionScale = null;
 		resetScales();
 	}
 
@@ -530,6 +531,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public boolean isAutoStartTransitions() {
 		return this.autoStartTransitions;
+	}
+
+	public Dataflow withScopeScale(IScale scale) {
+		if (this.scope != null) {
+			this.scope = this.scope.rescale(scale);
+		}
+		return this;
 	}
 
 }

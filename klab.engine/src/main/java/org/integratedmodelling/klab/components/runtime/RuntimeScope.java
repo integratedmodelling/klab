@@ -455,7 +455,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale.initialization(),
+		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
 				((Monitor) monitor).get(subtask));
 
 //		for (IState s:ret.getStates()) {
