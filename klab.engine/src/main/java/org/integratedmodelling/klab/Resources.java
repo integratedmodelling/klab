@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -57,6 +58,7 @@ import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
+import org.integratedmodelling.klab.data.resources.ResourceCalculator;
 import org.integratedmodelling.klab.data.storage.FutureResource;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
 import org.integratedmodelling.klab.engine.Engine;
@@ -404,7 +406,23 @@ public enum Resources implements IResourceService {
 	public final static String MODEL_URN_PREFIX = Urns.KLAB_URN_PREFIX + "models:";
 
 	@Override
-	public IResource resolveResource(String urn) throws KlabResourceNotFoundException, KlabAuthorizationException {
+	public IResource resolveResource(String urn, IProject project) {
+
+		boolean isLocalName = urn.indexOf(':') < 0;
+		
+		if (isLocalName && project == null) {
+			throw new IllegalArgumentException("local resource name passed without a project");
+		}
+		
+		if (project == null || !isLocalName) {
+			return resolveResource(urn);
+		}
+		
+		return project.getLocalResource(urn);
+	}
+
+	@Override
+	public IResource resolveResource(String urn) {
 
 		IResource ret = null;
 		Pair<String, Map<String, String>> upar = Urns.INSTANCE.resolveParameters(urn);
@@ -701,7 +719,6 @@ public enum Resources implements IResourceService {
 				// NB: should never be null but it is
 				IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
 				String owner = user == null ? "integratedmodelling.org" : user.getUsername();
-				
 
 				IResource resource = builder.withResourceVersion(Version.create("0.0.1"))
 						.withProjectName(project.getName()).withParameters(parameters)
@@ -953,10 +970,8 @@ public enum Resources implements IResourceService {
 						/*
 						 * build an observer from the data and return it
 						 */
-						return Observations.INSTANCE.makeROIObserver(
-								builder.getObjectName(0),
-								builder.getObjectScale(0).getSpace().getShape(),
-								builder.getObjectMetadata(0));
+						return Observations.INSTANCE.makeROIObserver(builder.getObjectName(0),
+								builder.getObjectScale(0).getSpace().getShape(), builder.getObjectMetadata(0));
 					}
 				}
 			}
@@ -1347,7 +1362,7 @@ public enum Resources implements IResourceService {
 	 * @return
 	 */
 	public Type getType(IContextualizable resource) {
-		
+
 		switch (resource.getType()) {
 		case CLASSIFICATION:
 			return Type.CONCEPT;
@@ -1380,4 +1395,10 @@ public enum Resources implements IResourceService {
 		return null;
 	}
 
+	@Override
+	public <T> IResourceCalculator<T> getCalculator(String urn, Class<T> cls) {
+		IResource resource = resolveResource(urn);
+		return resource == null ? null : ResourceCalculator.create(resource, cls);
+	}
+	
 }

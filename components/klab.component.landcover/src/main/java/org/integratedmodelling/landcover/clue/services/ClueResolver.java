@@ -20,6 +20,7 @@ public class ClueResolver implements IResolver<IState> {
 
 	@Override
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
+		
 		/*
 		 * first call: initialization to T0
 		 */

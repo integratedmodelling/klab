@@ -16,12 +16,12 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -92,6 +92,16 @@ public interface IResourceService {
 	}
 
 	/**
+	 * Get a calculator for the passed URN and return type.
+	 * 
+	 * @param <T>
+	 * @param urn
+	 * @param cls
+	 * @return
+	 */
+	<T> IResourceCalculator<T> getCalculator(String urn, Class<T> cls);
+	
+	/**
 	 * The local resource catalog is for resources created from local files or
 	 * specifications. These resources are created by the {@link IResourceValidator
 	 * validator} of an {@link IResourceAdapter adapter}, and must be published
@@ -120,7 +130,17 @@ public interface IResourceService {
 	 * @throws org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException
 	 * @throws org.integratedmodelling.klab.exceptions.KlabAuthorizationException
 	 */
-	IResource resolveResource(String urn) throws KlabResourceNotFoundException, KlabAuthorizationException;
+	IResource resolveResource(String urn);
+
+	/**
+	 * Resolve a resource with the option of passing a local URN with just the local
+	 * name and a target project to look into.
+	 * 
+	 * @param urn
+	 * @param project
+	 * @return
+	 */
+	IResource resolveResource(String urn, IProject project);
 
 	/**
 	 * Resolve a resource to data in a passed geometry. This involves retrieval of
@@ -296,5 +316,6 @@ public interface IResourceService {
 	 * @return true if resource can be used right away
 	 */
 	boolean isResourceOnline(String urn);
+
 
 }
