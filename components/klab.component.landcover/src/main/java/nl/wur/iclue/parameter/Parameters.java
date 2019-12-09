@@ -177,10 +177,10 @@ public class Parameters {
 	}
 
 	public DemandValidationType getDemandDeviationType(Landuse landuse) {
-		if (demandValidationTypes != null)
+		if (demandValidationTypes != null) {
 			return demandValidationTypes.get(landuse);
-		else
-			return null;
+		}
+		return null;
 	}
 
 	public void setDemandValidationTypes(Map<Landuse, DemandValidationType> validationTypes) {
@@ -188,10 +188,10 @@ public class Parameters {
 	}
 
 	public Integer getDemandDeviation(Landuse landuse) {
-		if (demandDeviations != null)
+		if (demandDeviations != null) {
 			return demandDeviations.get(landuse);
-		else
-			return null;
+		}
+		return null;
 	}
 
 	public void setDemandDeviations(Map<Landuse, Integer> demandDeviations) {

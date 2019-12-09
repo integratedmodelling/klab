@@ -2,6 +2,8 @@ package nl.alterra.shared.rasterdata;
 
 import java.util.Map;
 
+import org.integratedmodelling.klab.Observations;
+
 public class RasterData {
 
 	public Map<Integer, Integer> createValueCountTable() {
@@ -26,7 +28,7 @@ public class RasterData {
 
 	public boolean isDataDefinitionValid() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public RasterData cut(RasterData regionData, int regionValue) {
@@ -41,7 +43,7 @@ public class RasterData {
 
 	public boolean isNodata(Number cellValue) {
 		// TODO Auto-generated method stub
-		return false;
+		return Observations.INSTANCE.isNodata(cellValue);
 	}
 
 }
