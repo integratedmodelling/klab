@@ -2,28 +2,28 @@ package nl.alterra.shared.datakind;
 
 public class Category extends Clazz {
 
+	Symbol symbol = new Symbol();
+	Integer value;
+	
 	public boolean includes(Number value) {
-		// TODO Auto-generated method stub
-		return false;
+		// ? also check if null equality should return true
+		return this.value != null && value.intValue() == this.value;
 	}
 
 	public void setValue(Integer code) {
-		// TODO Auto-generated method stub
-		
+		this.value = code;
 	}
 
 	public Integer getValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return value;
 	}
 
 	public void setCaption(String caption) {
-		// TODO Auto-generated method stub
-		
+		this.caption = caption;
 	}
 	
 	public Symbol getSymbol() {
-		return null;
+		return symbol;
 	}
 
 }

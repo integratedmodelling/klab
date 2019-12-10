@@ -148,7 +148,7 @@ public class ParameterStatus {
         }
         LanduseDistributions demands = params.getDemands();
         for (Clazz adminUnit: params.getAdministrativeUnits().getDatakind().getClasses()) {
-            for (int year: demands.getSortedYears(adminUnit)) {
+            for (long year: demands.getSortedYears(adminUnit)) {
                 Map<Landuse, Integer> areaAmounts = demands.getAreaAmounts(adminUnit, year);
                 for (Landuse lu: params.getLanduses()) {
                     if (!areaAmounts.containsKey(lu))
@@ -175,7 +175,7 @@ public class ParameterStatus {
                 if (!(ds.getRasterData().isDataDefinitionValid()))
                     errorLog.add(String.format(ERROR_DRIVER_FILE_DOES_NOT_EXIST, ds.getRasterData().getDataDefinition(), -1));
             } else {
-                for (int year: ds.getYears()) {
+                for (long year: ds.getYears()) {
                     if (year<params.getBaseline().getYear())
                         errorLog.add(String.format(ERROR_DRIVER_YEAR_BEFORE_BASELINE, ds.getCaption(), year));
                     if (year>params.getTargetTime())

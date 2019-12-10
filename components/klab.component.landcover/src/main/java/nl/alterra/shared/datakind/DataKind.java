@@ -1,31 +1,35 @@
 package nl.alterra.shared.datakind;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class DataKind implements IDataKind {
 
+	Set<Clazz> categories = new LinkedHashSet<>();
+	IDataKind.LevelOfMeasurement levelOfMeasurement;
+	Type type;
+	String caption = "Classification"; // a ver
+	
 	public Set<Clazz> getClasses() {
-		// TODO Auto-generated method stub
-		return null;
+		return categories;
 	}
 
 	public IDataKind.LevelOfMeasurement getLevelOfMeasurement() {
-		// TODO Auto-generated method stub
-		return null;
+		return levelOfMeasurement;
 	}
 
 	public void setType(Type qualitative) {
-		// TODO Auto-generated method stub
+		this.type = qualitative;
 	}
 
 	public Category addNew() {
-		// TODO Auto-generated method stub
-		return null;
+		Category ret = new Category();
+		categories.add(ret);
+		return ret;
 	}
 
 	public int getClassCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return categories.size();
 	}
 
 	public Clazz findByValue(Object adminUnitValue) {
@@ -34,13 +38,11 @@ public class DataKind implements IDataKind {
 	}
 
 	public Type getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
 
 	public String getCaption() {
-		// TODO Auto-generated method stub
-		return null;
+		return caption;
 	}
 
 }

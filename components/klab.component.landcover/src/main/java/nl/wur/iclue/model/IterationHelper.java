@@ -50,7 +50,7 @@ public class IterationHelper extends Probabilities{
     private static final double SHIFT_STEP_SIZE = 0.001;
     public static Map<Landuses.Landuse, Double> probabilityShifts = null;
     
-    private int year;
+    private long year;
     protected LanduseRasterData landuseRasterData;
     private DemandValidators demands;
     private Map<Landuses.Landuse, Double> demandRatioTable;
@@ -64,7 +64,7 @@ public class IterationHelper extends Probabilities{
         super(landuses, drivers, suitabilityCalculator);
     }
     
-    public void prepareTimeStep(int year, LanduseRasterData landuseRasterData, DemandValidators demands) {
+    public void prepareTimeStep(long year, LanduseRasterData landuseRasterData, DemandValidators demands) {
         this.year = year;
         this.landuseRasterData = landuseRasterData;
         this.demands = demands;

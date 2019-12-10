@@ -1,34 +1,50 @@
 package org.integratedmodelling.landcover.clue.services;
 
+import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.landcover.clue.KlabCLUEParameters;
 
 import nl.wur.iclue.model.CLUEModel;
 
-public class ClueResolver implements IResolver<IState> {
+public class ClueResolver implements IResolver<IProcess>, IExpression {
 
-	CLUEModel clue = null;
+	private CLUEModel clue = null;
+	private IParameters<String> parameters = Parameters.create();
 	
+	public ClueResolver() {
+	}
+
+	public ClueResolver(IParameters<String> parameters, IContextualizationScope context) {
+		/*
+		 * TODO validate parameters one by one, log info
+		 */
+		this.parameters.putAll(parameters);
+	}
+
 	@Override
 	public Type getType() {
 		return Type.CONCEPT;
 	}
 
 	@Override
-	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
-		
-		/*
-		 * first call: initialization to T0
-		 */
-		if (clue == null) {
-			this.clue = new CLUEModel(new KlabCLUEParameters(context), context.getMonitor());
+	public IProcess resolve(IProcess ret, IContextualizationScope context) throws KlabException {
+		if (this.clue == null) {
+			// first call; create CLUE model.
+			this.clue = new CLUEModel(new KlabCLUEParameters(parameters, context), context.getMonitor());
 		}
-		
-		return null;
+		return ret;
+	}
+
+	@Override
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) {
+		return new ClueResolver(parameters, context);
 	}
 
 }

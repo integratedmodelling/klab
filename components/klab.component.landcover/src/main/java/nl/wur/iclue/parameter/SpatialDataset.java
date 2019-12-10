@@ -47,11 +47,11 @@ public class SpatialDataset {
 	
     private static final String ERROR_EXPECTED_STABLE_REGIONS = "Cannot cut spatial dataset by region. Regions change over time. Not supported";
     private static final String ERROR_YEAR_ALREADY_INCLUDED = "Cannot add year %d for %s. It is already defined";
-    public static final int UNKNOWN_YEAR = -1;
+    public static final long UNKNOWN_YEAR = -1;
     private String caption;
     private DataKind datakind;
 
-    private final Map<Integer, RasterData> map; // year, rasterdata
+    private final Map<Long, RasterData> map; // year, rasterdata
 
     public SpatialDataset() {
         map = new HashMap<>();
@@ -62,27 +62,27 @@ public class SpatialDataset {
         this.datakind = datakind;
     }
     
-    public void add(String filename, int year) {
+    public void add(String filename, long year) {
         RasterData rasterData = RasterDataFactory.createRasterData(filename);
         add(rasterData, year);
     }
     
-    public void add(RasterData rasterData, int year) {
+    public void add(RasterData rasterData, long year) {
         if (map.containsKey(year))
             throw new RuntimeException(String.format(ERROR_YEAR_ALREADY_INCLUDED, year, getCaption()));
         map.put(year, rasterData);
     }
     
-    public Set<Integer> getYears() {
+    public Set<Long> getYears() {
         return map.keySet();
     }
     
-    public RasterData getRasterData(int year) {
+    public RasterData getRasterData(long year) {
         return map.get(year);
     }
     
     public RasterData getLastRasterData() {
-        int year = getLastYear();
+        long year = getLastYear();
         return getRasterData(year);
     }
     
@@ -92,10 +92,10 @@ public class SpatialDataset {
      * @param year
      * @return a filename, or null if the year is below the range of available years
      */
-    public RasterData getMostRecentRasterData(int year) {
+    public RasterData getMostRecentRasterData(long year) {
     	
         // sort the years
-        List<Integer> years = getSortedYears();
+        List<Long> years = getSortedYears();
         
         int yearIndex = 0;
         if (year<years.get(yearIndex))
@@ -137,36 +137,36 @@ public class SpatialDataset {
         setFilename(filename, UNKNOWN_YEAR);
     }
 
-    public void setRasterData(RasterData rasterdata, int year) {
+    public void setRasterData(RasterData rasterdata, long year) {
         map.clear();
         add(rasterdata, year);
     }
     
-    public void setFilename(String filename, int year) {
+    public void setFilename(String filename, long year) {
         map.clear();
         add(filename, year);
     }
     
-    public Integer getYear() {
+    public Long getYear() {
         if (map.size() == 1)
             return map.keySet().iterator().next();
         else
             return null;
     }
 
-    private List<Integer> getSortedYears() {
-        ArrayList<Integer> years = new ArrayList<>();
+    private List<Long> getSortedYears() {
+        ArrayList<Long> years = new ArrayList<>();
         years.addAll(getYears());
         Collections.sort(years);
         return years;
     }
     
-    public int getFirstYear() {
+    public long getFirstYear() {
         return getSortedYears().get(0);
     }
     
-    public int getLastYear() {
-        List<Integer> years = getSortedYears();
+    public long getLastYear() {
+        List<Long> years = getSortedYears();
         return years.get(years.size()-1);
     }
     
@@ -201,7 +201,7 @@ public class SpatialDataset {
 //        return rasterData.getCellCount();
 //    }
     
-    public void removeByYear(int year) {
+    public void removeByYear(long year) {
         map.remove(year);
     }
 
@@ -214,14 +214,14 @@ public class SpatialDataset {
         SpatialDataset result = new SpatialDataset();
         result.caption = this.caption;
         result.datakind = this.datakind; // refer to same datakind instance. Needed as the equals method and hashcode of Clazz instances will be different when using deep clone
-        for (Entry<Integer, RasterData> entry: this.map.entrySet())
+        for (Entry<Long, RasterData> entry: this.map.entrySet())
             result.map.put(entry.getKey(), entry.getValue());
         return result;
     }
 
     public SpatialDataset cut(SpatialDataset regions, Category regionOfInterest) {
         // determine region rasterdata 
-        Integer regionYear = regions.getYear();
+        Long regionYear = regions.getYear();
         if (regionYear == null)
             throw new RuntimeException(ERROR_EXPECTED_STABLE_REGIONS);
         RasterData regionData = regions.getRasterData();
@@ -231,7 +231,7 @@ public class SpatialDataset {
         SpatialDataset result = new SpatialDataset();
         result.caption = this.caption;
         result.datakind = this.datakind; // refer to same datakind instance. Needed as the equals method and hashcode of Clazz instances will be different when using deep clone
-        for (Entry<Integer, RasterData> entry: this.map.entrySet()) {
+        for (Entry<Long, RasterData> entry: this.map.entrySet()) {
             RasterData regionMap = entry.getValue().cut(regionData, regionValue);
             result.map.put(entry.getKey(), regionMap);
         }

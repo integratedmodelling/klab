@@ -79,7 +79,7 @@ public class Probabilities {
      * @param demands list of land uses with demands in cell count
      * @return 
      */
-    protected Map<Landuses.Landuse, RasterData> createProbabilityMaps(int targetYear, RasterData previousLanduseMap, Map<Landuses.Landuse, Integer> demands) {
+    protected Map<Landuses.Landuse, RasterData> createProbabilityMaps(long targetYear, RasterData previousLanduseMap, Map<Landuses.Landuse, Integer> demands) {
         Map<Landuses.Landuse, RasterData> result = new HashMap<>();
 
         Map<Landuses.Landuse, Double> demandWeights = DemandWeights.create(previousLanduseMap, demands);
@@ -191,7 +191,7 @@ public class Probabilities {
             Log.log(Level.INFO, String.format(LOG_PROBABILITYMAP, lu.getCaption(), probabilityMaps.get(lu).getDataDefinition()), null);
     }
 
-    private void logDemandWeights(Map<Landuse, Double> demandWeights, int targetYear) {
+    private void logDemandWeights(Map<Landuse, Double> demandWeights, long targetYear) {
         String DEMANDWEIGHT_DOES_NOT_EXIST = "none";
         String msg = String.format("[TODO], %d", targetYear);
         for (int index = 0; index < landuses.size(); index++) {

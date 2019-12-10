@@ -295,7 +295,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				}
 			}
 
-			throw new KlabContextualizationException("URN " + urn + " does not specify an observation");
+			throw new KlabContextualizationException("Cannot observe " + urn + ": unknown or no context established");
 		}
 
 		return new ObserveContextTask(this, (Observer) object, CollectionUtils.arrayToList(scenarios));

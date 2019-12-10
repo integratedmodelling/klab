@@ -63,13 +63,13 @@ public class DemandFactory {
         }
     }
     
-    public static DemandValidators create(Parameters params, Clazz administrativeUnit, int year) {
+    public static DemandValidators create(Parameters params, Clazz administrativeUnit, long year) {
         DemandValidators validators = new DemandValidators();
         
         // OPTIMIZATION 
         // Is it necessary to determine amounts for baseline landuse distribution?
         LanduseDistributions lud;
-        int firstDemandYear = params.getDemands().getSortedYears(administrativeUnit).get(0);
+        long firstDemandYear = params.getDemands().getSortedYears(administrativeUnit).get(0);
         if (year >= firstDemandYear)
             lud = params.getDemands();
         else

@@ -979,7 +979,14 @@ public class KimValidator extends AbstractKimValidator {
                 if (_isInstantiator_1) {
                   _xifexpression_7 = "instantiator";
                 } else {
-                  _xifexpression_7 = "resolver";
+                  String _xifexpression_8 = null;
+                  boolean _isLearningModel = descriptor.isLearningModel();
+                  if (_isLearningModel) {
+                    _xifexpression_8 = "learner";
+                  } else {
+                    _xifexpression_8 = "resolver";
+                  }
+                  _xifexpression_7 = _xifexpression_8;
                 }
                 _xifexpression_6 = _xifexpression_7;
               }

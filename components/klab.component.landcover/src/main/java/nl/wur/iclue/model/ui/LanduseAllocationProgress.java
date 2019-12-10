@@ -16,13 +16,13 @@ public class LanduseAllocationProgress extends Component {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void addIteration(int year, int iterationCount, RasterData landuseMapFromIteration,
+	public void addIteration(long year, int iterationCount, RasterData landuseMapFromIteration,
 			DemandValidators validators) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void clearSeries(int year) {
+	public void clearSeries(long year) {
 		// TODO Auto-generated method stub
 		
 	}

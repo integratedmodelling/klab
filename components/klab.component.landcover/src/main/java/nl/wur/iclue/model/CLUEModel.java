@@ -124,7 +124,7 @@ public class CLUEModel {
 
 				suitabilityCalculator.updateFromBaseline(projections.getLanduseData(), administrativeUnit);
 
-				for (int year = params.getBaseline().getYear() + 1; year <= params.getTargetTime(); year++) {
+				for (long year = params.getBaseline().getYear() + 1; year <= params.getTargetTime(); year++) {
 					Log.log(Level.INFO, String.format(LOG_ALLOCATION_STARTED, year), null);
 
 					// allocate NEW land uses based on land uses in PREVIOUS year
@@ -169,7 +169,7 @@ public class CLUEModel {
 		return result;
 	}
 
-	private LanduseRasterData allocate(int year, LanduseRasterData previousLanduseRasterData,
+	private LanduseRasterData allocate(long year, LanduseRasterData previousLanduseRasterData,
 			DemandValidators demands) {
 		RasterData previousLanduseMap = previousLanduseRasterData.getLanduseMap();
 		RasterData previousAgeMap = previousLanduseRasterData.getAgeMap();
@@ -203,7 +203,7 @@ public class CLUEModel {
 					outputCellValues = allocationMaps.getOutputNodataValues();
 				} else {
 					Landuse currentLanduse = helper.getLanduse(inputCellStack);
-					int age = helper.extractAgeCellValue(inputCellStack.inputValues);
+					int age = IterationHelper.extractAgeCellValue(inputCellStack.inputValues);
 					if (EaseOfChange.CANNOT_CHANGE.equals(currentLanduse.getEaseOfChange()))
 						outputCellValues[LANDUSE_RESULT_INDEX] = currentLanduse.getCode();
 					else {
@@ -282,7 +282,7 @@ public class CLUEModel {
 		Log.log(Level.INFO, msg, null);
 	}
 
-	private void logIterationResult(IterationResult iterationResult, int year, RasterData landuseMapFromIteration,
+	private void logIterationResult(IterationResult iterationResult, long year, RasterData landuseMapFromIteration,
 			DemandValidators validators, IterationResultEvaluator evaluator) {
 		boolean iterationIsSuccessfull = IterationResult.ALLOCATION_ACCEPTABLE.equals(iterationResult);
 		if (iterationIsSuccessfull) {
@@ -313,7 +313,7 @@ public class CLUEModel {
 
 		public LanduseAndAgeDataset(SpatialDataset landuseBaseline, Landuses landuses) {
 			this.landuseData = landuseBaseline;
-			int year = landuseBaseline.getYear();
+			long year = landuseBaseline.getYear();
 
 			RasterData ageMap = LanduseRasterData.createInitialAgeMap(landuseBaseline.getRasterData(), landuses);
 			this.ageData = new SpatialDataset();
@@ -327,13 +327,13 @@ public class CLUEModel {
 					landuses);
 		}
 
-		public LanduseRasterData createRasterData(int year) {
+		public LanduseRasterData createRasterData(long year) {
 			RasterData landuse = getLanduseData().getRasterData(year);
 			RasterData age = getAgeData().getRasterData(year);
 			return new LanduseRasterData(landuse, age);
 		}
 
-		public void addRasterData(LanduseRasterData landuseAndAge, int year) {
+		public void addRasterData(LanduseRasterData landuseAndAge, long year) {
 			getLanduseData().add(landuseAndAge.getLanduseMap(), year);
 			getAgeData().add(landuseAndAge.getAgeMap(), year);
 		}
@@ -357,19 +357,19 @@ public class CLUEModel {
 			this.ageProjections = ageProjections;
 		}
 
-		public RasterData getLanduseProjection(int year) {
+		public RasterData getLanduseProjection(long year) {
 			return landuseProjections.getRasterData(year);
 		}
 
-		public RasterData getAgeProjection(int year) {
+		public RasterData getAgeProjection(long year) {
 			return ageProjections.getRasterData(year);
 		}
 
-		public int getFirstYear() {
+		public long getFirstYear() {
 			return landuseProjections.getFirstYear();
 		}
 
-		public int getLastYear() {
+		public long getLastYear() {
 			return landuseProjections.getLastYear();
 		}
 	}

@@ -25,9 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import nl.alterra.shared.datakind.Clazz;
 import nl.wur.iclue.parameter.LanduseDistributions.LanduseDistribution;
 import nl.wur.iclue.parameter.Landuses.Landuse;
-import nl.alterra.shared.datakind.Clazz;
 
 /**
  *
@@ -40,10 +41,10 @@ public class LanduseDistributions extends ArrayList<LanduseDistribution> {
 
 	private final String ERROR_YEAR_OUT_OF_RANGE = "Year %d out of range {%d..%d}";
 	private final String ERROR_INTERPOLATE_AREA = "Cannot interpolate '%s' demand for %d from previous demand/baseline %d (%d) and next demand %d (%d)";
-	private final int INVALID_YEAR = -1;
+	private final long INVALID_YEAR = -1;
 
-	public List<Integer> getSortedYears(Clazz administrativeUnit) {
-		List<Integer> years = new ArrayList<>();
+	public List<Long> getSortedYears(Clazz administrativeUnit) {
+		List<Long> years = new ArrayList<>();
 		for (LanduseDistribution dist : this) {
 			if ((administrativeUnit.equals(dist.getAdministrativeUnit())) && (!years.contains(dist.getYear())))
 				years.add(dist.getYear());
@@ -58,8 +59,8 @@ public class LanduseDistributions extends ArrayList<LanduseDistribution> {
 	 * @param year
 	 * @return map of <landuse, areaAmount>
 	 */
-	public Map<Landuse, Integer> getAreaAmounts(Clazz administrativeUnit, int year) {
-		List<Integer> years = getSortedYears(administrativeUnit);
+	public Map<Landuse, Integer> getAreaAmounts(Clazz administrativeUnit, long year) {
+		List<Long> years = getSortedYears(administrativeUnit);
 		if (years.contains(year)) {
 			return getDefinedAreaAmounts(administrativeUnit, year);
 		} else {
@@ -79,8 +80,8 @@ public class LanduseDistributions extends ArrayList<LanduseDistribution> {
 		return false;
 	}
 
-	public boolean removeAreaAmounts(Clazz administrativeUnit, int year) {
-		List<Integer> sortedYears = getSortedYears(administrativeUnit);
+	public boolean removeAreaAmounts(Clazz administrativeUnit, long year) {
+		List<Long> sortedYears = getSortedYears(administrativeUnit);
 		if (!sortedYears.contains(year))
 			return false;
 
@@ -98,36 +99,36 @@ public class LanduseDistributions extends ArrayList<LanduseDistribution> {
 		return true;
 	}
 
-	private int getPreviousDefinedYear(List<Integer> definedYears, int requestedYear) {
+	private long getPreviousDefinedYear(List<Long> definedYears, long requestedYear) {
 		throwExceptionIfOutsideRange(definedYears, requestedYear);
 
 		int index = 0;
-		int result = definedYears.get(index);
+		long result = definedYears.get(index);
 		while (definedYears.get(index) < requestedYear) {
 			result = definedYears.get(index++);
 		}
 		return result;
 	}
 
-	private int getNextDefinedYear(List<Integer> definedYears, int requestedYear) {
+	private long getNextDefinedYear(List<Long> definedYears, long requestedYear) {
 		throwExceptionIfOutsideRange(definedYears, requestedYear);
 
 		int index = definedYears.size() - 1;
-		int result = definedYears.get(index);
+		long result = definedYears.get(index);
 		while (definedYears.get(index) > requestedYear) {
 			result = definedYears.get(index--);
 		}
 		return result;
 	}
 
-	private void throwExceptionIfOutsideRange(List<Integer> definedYears, int requestedYear) {
-		int minYear = definedYears.get(0);
-		int maxYear = definedYears.get(definedYears.size() - 1);
+	private void throwExceptionIfOutsideRange(List<Long> definedYears, long requestedYear) {
+		long minYear = definedYears.get(0);
+		long maxYear = definedYears.get(definedYears.size() - 1);
 		if ((requestedYear < minYear) || (requestedYear > maxYear))
 			throw new RuntimeException(String.format(ERROR_YEAR_OUT_OF_RANGE, requestedYear, minYear, maxYear));
 	}
 
-	private Map<Landuse, Integer> getDefinedAreaAmounts(Clazz administrativeUnit, int year) {
+	private Map<Landuse, Integer> getDefinedAreaAmounts(Clazz administrativeUnit, long year) {
 		Map<Landuse, Integer> result = new HashMap<>();
 		for (LanduseDistribution distribution : this) {
 			if ((administrativeUnit.equals(distribution.getAdministrativeUnit())) && (year == distribution.getYear()))
@@ -137,8 +138,8 @@ public class LanduseDistributions extends ArrayList<LanduseDistribution> {
 		return result;
 	}
 
-	private Map<Landuse, Integer> getInterpolatedAreaAmounts(Clazz administrativeUnit, int previousDefinedyear,
-			int year, int nextDefinedYear) {
+	private Map<Landuse, Integer> getInterpolatedAreaAmounts(Clazz administrativeUnit, long previousDefinedyear,
+			long year, long nextDefinedYear) {
 		// Linear interpolation is implemented here (might use enum with various
 		// interpolation methods)
 		Map<Landuse, Integer> result = new HashMap<>();
@@ -190,21 +191,21 @@ public class LanduseDistributions extends ArrayList<LanduseDistribution> {
 		return totalArea;
 	}
 
-	public int getTotalArea(Clazz administrativeUnit, int year) {
+	public int getTotalArea(Clazz administrativeUnit, long year) {
 		return getTotalArea(getAreaAmounts(administrativeUnit, year));
 	}
 
 	public static class LanduseDistribution {
-		private int year;
+		private long year;
 		private int area;
 		private Landuse landuse;
 		private Clazz administrativeUnit;
 
-		public int getYear() {
+		public long getYear() {
 			return year;
 		}
 
-		public LanduseDistribution setYear(int year) {
+		public LanduseDistribution setYear(long year) {
 			this.year = year;
 			return this;
 		}

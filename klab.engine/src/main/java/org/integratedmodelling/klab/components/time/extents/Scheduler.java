@@ -330,7 +330,7 @@ public class Scheduler implements IScheduler {
 				longest = registration.scale.getTime().getStep().getMaxMilliseconds();
 			}
 		}
-
+		
 		this.resolution = NumberUtils.gcd(NumberUtils.longArrayFromCollection(periods));
 
 		/*
@@ -355,8 +355,12 @@ public class Scheduler implements IScheduler {
 	@Override
 	public void run() {
 
-		schedule();
+		if (this.registrations.size() < 1) {
+			return;
+		}
 
+		schedule();
+		
 		if (startTime == 0 && type == Type.REAL_TIME) {
 			startTime = DateTime.now().getMillis();
 		}

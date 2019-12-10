@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.utils.Pair;
+
 import nl.alterra.shared.datakind.Category;
 import nl.alterra.shared.datakind.Clazz;
 import nl.alterra.shared.datakind.DataKind;
@@ -43,12 +46,17 @@ public class Landuses implements Iterable<Landuse> {
     private final DataKind dataKind;
     private final List<Landuse> list;
 
+	private IDataKey dataKey;
+
     public Landuses() {
         dataKind = new DataKind();
         dataKind.setType(IDataKind.Type.QUALITATIVE);
         list = new ArrayList<>();
     }
     
+    /*
+     * Never called
+     */
     public Landuses(DataKind landuses) {
         if (!IDataKind.LevelOfMeasurement.NOMINAL.equals(landuses.getLevelOfMeasurement()))
             throw new RuntimeException(ERROR_NOT_NOMINAL);
@@ -145,6 +153,7 @@ public class Landuses implements Iterable<Landuse> {
     
     
     public class Landuse {
+    	
         private final Category category;
         private EaseOfChange easeOfChange = EaseOfChange.CANNOT_CHANGE;
         private int initialAge = 0;
@@ -210,8 +219,16 @@ public class Landuses implements Iterable<Landuse> {
         public String toString() {
             return getCaption();
         }
-        
-        
     }
+
+    public void setDataKey(IDataKey dataKey) {
+    	this.dataKey = dataKey;
+		for (Pair<Integer, String> lcp : dataKey.getAllValues()) {
+			Landuse luc = addNew();
+			luc.setCode(lcp.getFirst());
+			luc.setCaption(lcp.getSecond());
+			luc.setColour(Color.BLACK);
+		}
+	}
     
 }
