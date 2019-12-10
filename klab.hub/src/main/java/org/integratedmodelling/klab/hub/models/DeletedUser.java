@@ -137,7 +137,6 @@ public class DeletedUser implements UserDetails {
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.registrationDate = user.getRegistrationDate();
-		this.groups = user.getGroups();
 		this.setDeletionDate();
 	}
 	

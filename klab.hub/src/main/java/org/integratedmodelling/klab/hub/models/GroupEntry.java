@@ -31,7 +31,7 @@ public class GroupEntry {
 	}
 
 	public String getGroupName() {
-		return group.getId();
+		return group.getGroupName();
 	}
 
 	public DateTime getExperation() {

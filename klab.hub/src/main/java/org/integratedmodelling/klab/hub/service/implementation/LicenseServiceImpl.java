@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.manager;
+package org.integratedmodelling.klab.hub.service.implementation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.hub.config.LicenseConfig;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.models.KlabNode;
 import org.integratedmodelling.klab.hub.models.User;
+import org.integratedmodelling.klab.hub.service.LicenseService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ import org.springframework.stereotype.Component;
 import com.verhas.licensor.License;
 
 @Component
-public class LicenseManager {
+public class LicenseServiceImpl implements LicenseService {
 	
 	@Autowired
 	LinkConfig linkConfig;
@@ -39,6 +40,7 @@ public class LicenseManager {
 	
 	private final String NODE_CERT_FILE_NAME = KlabCertificate.DEFAULT_NODE_CERTIFICATE_FILENAME;
 
+	@Override
 	public byte[] generateCert(User user) {
 		try {
 			return generateCertFile(user);
@@ -47,6 +49,7 @@ public class LicenseManager {
 		}
 	}
 	
+	@Override
 	public byte[] generateCert(KlabNode node) {
 		try {
 			return generateCertFile(node);
@@ -55,6 +58,7 @@ public class LicenseManager {
 		}
 	}
 	
+	@Override
 	public byte[] generateCertFile(User user) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, PGPException {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		Properties properties = getPropertiesString(user);
@@ -63,6 +67,7 @@ public class LicenseManager {
 		return byteArrayOutputStream.toByteArray();
 	}
 	
+	@Override
 	public byte[] generateCertFile(KlabNode node) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, PGPException {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		Properties properties = getPropertiesString(node);
@@ -71,6 +76,7 @@ public class LicenseManager {
 		return byteArrayOutputStream.toByteArray();
 	}
 
+	@Override
 	public Properties getPropertiesString(User user) {
         Properties properties = new Properties();   
         DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS/2);
@@ -87,7 +93,8 @@ public class LicenseManager {
 		return properties;
 	}
 	
-    public Properties getPropertiesString(KlabNode node) throws IOException {
+    @Override
+	public Properties getPropertiesString(KlabNode node) throws IOException {
         Properties properties = new Properties();   
         DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS/2);
 		properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
@@ -116,7 +123,8 @@ public class LicenseManager {
         return encodedLicenseString;
 	}
 	
-    public Properties readCertFileContent(String certFileContent) throws IOException, PGPException, DecoderException {
+    @Override
+	public Properties readCertFileContent(String certFileContent) throws IOException, PGPException, DecoderException {
         License license = new License();
         license.loadKeyRing(licenseConfig.getPubRing().getFilename(), licenseConfig.getPubRing().getDigest());
         license.setLicenseEncoded(certFileContent);
@@ -126,10 +134,12 @@ public class LicenseManager {
         return result;
     }
 
+	@Override
 	public String get_ENGINE_CERT_FILE_NAME() {
 		return ENGINE_CERT_FILE_NAME;
 	}
 	
+	@Override
 	public String get_NODE_CERT_FILE_NAME() {
 		return NODE_CERT_FILE_NAME;
 	}

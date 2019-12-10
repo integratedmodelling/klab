@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
-import org.integratedmodelling.klab.hub.manager.LicenseManager;
 import org.integratedmodelling.klab.hub.manager.TaskManager;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
@@ -26,6 +25,7 @@ import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
+import org.integratedmodelling.klab.hub.service.LicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -53,7 +53,7 @@ public class KUserController {
 	TokenManager tokenManager;
 	
 	@Autowired
-	LicenseManager licenseManager;
+	LicenseService licenseManager;
 	
 	@Autowired
 	KlabUserManager klabUserManager;

@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.models.KlabNode;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
+import org.integratedmodelling.klab.hub.service.LicenseService;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
@@ -33,7 +34,7 @@ public class NodeAuthManager {
 	HubAuthenticationManager hubAuthenticationManager;
 	
 	@Autowired
-	LicenseManager licenseManager;
+	LicenseService licenseManager;
 	
 	@Autowired
 	KlabNodeManager klabNodeManager;

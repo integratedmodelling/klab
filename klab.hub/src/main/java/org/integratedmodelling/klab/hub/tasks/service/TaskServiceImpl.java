@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.service.implementation;
+package org.integratedmodelling.klab.hub.tasks.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,11 +6,10 @@ import java.util.Optional;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.models.Role;
-import org.integratedmodelling.klab.hub.models.tasks.Task;
-import org.integratedmodelling.klab.hub.models.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
-import org.integratedmodelling.klab.hub.service.TaskService;
+import org.integratedmodelling.klab.hub.tasks.Task;
+import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
-import org.integratedmodelling.klab.hub.models.tasks.Task;
-import org.integratedmodelling.klab.hub.models.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
+import org.integratedmodelling.klab.hub.tasks.Task;
+import org.integratedmodelling.klab.hub.tasks.TaskStatus;
+import org.integratedmodelling.klab.hub.tasks.TaskType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -22,4 +23,6 @@ public interface TaskRepository extends MongoRepository<Task, ObjectId>{
 	
 	@Query(value="{ '_class' : 'GroupRequestTask', 'token' : ?0 }")
 	Optional<Task> findGroupRequestByToken(ClickbackToken token);
+	
+	List<Task> findByType(TaskType type);
 }

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.models.tasks;
+package org.integratedmodelling.klab.hub.tasks;
 
 import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.springframework.data.annotation.Reference;

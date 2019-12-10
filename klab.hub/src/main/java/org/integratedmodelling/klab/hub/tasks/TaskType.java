@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.models.tasks;
+package org.integratedmodelling.klab.hub.tasks;
 
 public enum TaskType {
 	groupRequest(
