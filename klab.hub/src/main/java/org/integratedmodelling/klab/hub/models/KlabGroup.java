@@ -8,6 +8,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.validation.constraints.NotEmpty;
 
+import org.integratedmodelling.klab.hub.users.Role;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;

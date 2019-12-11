@@ -12,13 +12,13 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
-import org.integratedmodelling.klab.hub.models.GroupEntry;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
-import org.integratedmodelling.klab.hub.models.Role;
-import org.integratedmodelling.klab.hub.models.User;
-import org.integratedmodelling.klab.hub.models.User.AccountStatus;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.LdapService;
+import org.integratedmodelling.klab.hub.users.GroupEntry;
+import org.integratedmodelling.klab.hub.users.Role;
+import org.integratedmodelling.klab.hub.users.User;
+import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;

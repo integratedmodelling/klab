@@ -4,14 +4,17 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.models.KlabGroup;
-import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.repository.KlabGroupRepository;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
-import org.integratedmodelling.klab.hub.service.KlabGroupService;
+import org.integratedmodelling.klab.hub.tasks.CreateGroupTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.TaskType;
+import org.integratedmodelling.klab.hub.tasks.commands.CreateGroupAccept;
+import org.integratedmodelling.klab.hub.tasks.commands.CreateGroupDeny;
+import org.integratedmodelling.klab.hub.users.Role;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +24,7 @@ public class CreateGroupServiceImpl implements CreateGroupService {
 	
 	private TaskRepository taskRepository;
 	
-	public CreateGroupServiceImpl(KlabGroupRepository groupService,
+	public CreateGroupServiceImpl(KlabGroupRepository groupRepository,
 			TaskRepository taskRepository) {
 		this.groupRepository = groupRepository;
 		this.taskRepository = taskRepository;
@@ -29,21 +32,53 @@ public class CreateGroupServiceImpl implements CreateGroupService {
 	
 	@Override
 	public Task createTask(String requestee, KlabGroup group, HttpServletRequest request) {
-		if (request.isUserInRole(Role.SYSTEM )) {
+		
+		Boolean exists = groupRepository
+				.findByGroupNameIgnoreCase(group.getGroupName())
+				.isPresent();
+		
+		if(exists) {
+			throw new BadRequestException("Group by that name already present.");
 		}
-		return null;
+		
+		if (request.isUserInRole(Role.SYSTEM)) {
+			CreateGroupTask task = new CreateGroupTask(requestee);
+			task.setGroup(group);
+			taskRepository.save(task);
+			task = acceptTask(task.getId(), request);
+			return task;
+		} else {
+			CreateGroupTask task = new CreateGroupTask(requestee);
+			task.setGroup(group);
+			taskRepository.save(task);
+			return task;
+		}
 	}
 	
 	@Override
-	public Task acceptTask(String id, HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+	public CreateGroupTask acceptTask(String id, HttpServletRequest request) {
+		CreateGroupTask task = getPendingTask(id);
+		if (request.isUserInRole(task.getRoleRequirement())) {
+			CreateGroupAccept action = new CreateGroupAccept(task, groupRepository);
+			task = action.execute();
+			taskRepository.save(task);
+			return task;
+		} else {
+			return task;
+		}
 	}
 
 	@Override
 	public Task denyTask(String id, HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		CreateGroupTask task = getPendingTask(id);
+		if (request.isUserInRole(task.getRoleRequirement())) {
+			CreateGroupDeny action = new CreateGroupDeny(task);
+			task = action.execute();
+			taskRepository.save(task);
+			return task;
+		} else {
+			return task;
+		}
 	}
 
 	@Override
@@ -56,6 +91,14 @@ public class CreateGroupServiceImpl implements CreateGroupService {
 	public List<Task> getTasksByStatus(TaskType type, TaskStatus status) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private CreateGroupTask getPendingTask(String id) {
+		CreateGroupTask task = taskRepository.findById(id)
+				.map(CreateGroupTask.class::cast)
+				.filter(t -> t.getStatus() == TaskStatus.pending)
+				.orElseThrow(() -> new BadRequestException("Task already handled or does not exist."));
+		return task;
 	}
 
 }

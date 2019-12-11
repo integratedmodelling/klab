@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
-import org.integratedmodelling.klab.hub.models.Role;
+import org.integratedmodelling.klab.hub.users.Role;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;

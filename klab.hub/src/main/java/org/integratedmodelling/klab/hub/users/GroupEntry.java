@@ -1,5 +1,6 @@
-package org.integratedmodelling.klab.hub.models;
+package org.integratedmodelling.klab.hub.users;
 
+import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 

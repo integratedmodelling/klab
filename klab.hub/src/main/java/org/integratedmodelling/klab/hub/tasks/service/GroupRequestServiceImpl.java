@@ -8,26 +8,26 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.models.GroupEntry;
-import org.integratedmodelling.klab.hub.models.Role;
-import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.repository.KlabGroupRepository;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.service.UserService;
+import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.TaskType;
 import org.integratedmodelling.klab.hub.tasks.commands.GroupRequestAccept;
 import org.integratedmodelling.klab.hub.tasks.commands.GroupRequestDeny;
+import org.integratedmodelling.klab.hub.users.GroupEntry;
+import org.integratedmodelling.klab.hub.users.Role;
+import org.integratedmodelling.klab.hub.users.User;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GroupRequestServiceImpl implements GroupRequestService {
 	
-	private UserService userService;
+	private UserRepository userRepository;
 	
 	private TokenRepository tokenRepository;
 	
@@ -35,11 +35,11 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 	
 	private TaskRepository taskRepository;
 	
-	public GroupRequestServiceImpl(UserService userService,
+	public GroupRequestServiceImpl(UserRepository userRepository,
 			TokenRepository tokenRepository,
 			KlabGroupRepository groupRepository,
 			TaskRepository taskRepository) {
-		this.userService = userService;
+		this.userRepository = userRepository;
 		this.tokenRepository = tokenRepository;
 		this.groupRepository = groupRepository;
 		this.taskRepository = taskRepository;
@@ -49,7 +49,7 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 	public GroupRequestTask acceptTask(String id, HttpServletRequest request) {
 		GroupRequestTask task = getPendingTask(id);
 		if (request.isUserInRole(task.getRoleRequirement())) {
-			GroupRequestAccept action = new GroupRequestAccept(task, userService, tokenRepository);
+			GroupRequestAccept action = new GroupRequestAccept(task, userRepository, tokenRepository);
 			task = action.execute();
 			taskRepository.save(task);
 			return task;
@@ -77,11 +77,13 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 		
 		Set<GroupEntry> optIn = new HashSet<>();
 		Set<GroupEntry> requestGroups = new HashSet<GroupEntry>();
-		Set<GroupEntry> userGroupEntries = userService.getUserFromMongo(requestee)
+		Set<GroupEntry> userGroupEntries = userRepository.findByUsernameIgnoreCase(requestee)
 				.map(User::getGroupEntries)
 				.orElse(new HashSet<>());
 		
 		List<String> currentGroups = new ArrayList<String>();
+		
+		
 		userGroupEntries.forEach(entry -> {
 			currentGroups.add(entry.getGroupName());	
 		});
@@ -98,6 +100,8 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 			throw new BadRequestException("A requested Group does not exist or no groups requested");
 		}
 		
+		GroupRequestTask optInTask = null;
+		
 		for (String groupName : groupNames) {
 			groupRepository
 				.findByGroupNameIgnoreCase(groupName)
@@ -109,13 +113,13 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 				.ifPresent(group -> requestGroups.add(new GroupEntry(group)));
 		}
 		
-		userService.addUserGroupEntries(requestee, optIn);
+		if(!optIn.isEmpty()) {
+			optInTask = createTask(requestee, optIn);
+			optInTask = acceptTask(optInTask.getId(), request);
+		}
 		
 		if(requestGroups.isEmpty()) {
-			GroupRequestTask task = new GroupRequestTask(requestee);
-			task.setStatus(TaskStatus.acceptedTask);
-			taskRepository.save(task);
-			return task;
+			return optInTask;
 		} else {
 			return createTask(requestee, requestGroups);
 		}
@@ -151,5 +155,5 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 	public List<Task> getTasksByStatus(TaskType type, TaskStatus status) {
 		return taskRepository.findTaskByClassAndStatus(type, status);
 	}
-	
+
 }

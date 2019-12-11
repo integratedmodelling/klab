@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.models.tokens;
 import java.util.List;
 
 import org.integratedmodelling.klab.hub.config.LinkConfig;
-import org.integratedmodelling.klab.hub.models.GroupEntry;
+import org.integratedmodelling.klab.hub.users.GroupEntry;
 
 public class GroupsClickbackToken extends ClickbackToken {
 

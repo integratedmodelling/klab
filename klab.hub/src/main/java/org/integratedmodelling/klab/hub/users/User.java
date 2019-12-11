@@ -1,10 +1,11 @@
-package org.integratedmodelling.klab.hub.models;
+package org.integratedmodelling.klab.hub.users;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;

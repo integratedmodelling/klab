@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.integratedmodelling.klab.hub.models.Role;
+import org.integratedmodelling.klab.hub.users.Role;
 import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 

@@ -31,8 +31,8 @@ public class GroupsRequestController {
 	@Autowired
 	GroupRequestService service;
 	
-	@PostMapping(value= "/{id}", produces = "application/json", params="requestGroups")
-	@PreAuthorize("authentication.getPrincipal() == #requestee")
+	@PostMapping(value= "/{id}", produces = "application/json", params="request-groups")
+	@PreAuthorize("authentication.getPrincipal() == #requestee or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> requestGroupsResponse(
 			@PathVariable("id") String requestee,
 			@RequestParam("requestGroups") List<String> groupNames,
@@ -48,7 +48,7 @@ public class GroupsRequestController {
 	    return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 	}
 	
-	@PostMapping(value= "/{id}", produces = "application/json", params="accept")
+	@PostMapping(value= "/{id}", produces = "application/json", params= {"request-groups", "accept"})
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> requestGroupsDecision(
 			@PathVariable("id") String id,
@@ -69,7 +69,7 @@ public class GroupsRequestController {
 	    return new ResponseEntity<Void>(headers, HttpStatus.CREATED); 	 
 	}
 	
-	@GetMapping(value="/group-requests", produces = "application/json")
+	@GetMapping(value="", produces = "application/json", params="request-groups")
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> groupRequestList() {
 		HashMap<String, List<Task> > tasks = new HashMap<>();
@@ -78,7 +78,7 @@ public class GroupsRequestController {
 		return resp;
 	}
 	
-	@GetMapping(value="/group-requests", produces = "application/json", params = "status")
+	@GetMapping(value="", produces = "application/json", params = {"request-groups", "status"})
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> groupsRequestsByStatus(TaskStatus status) {
 		HashMap<String, List<Task> > tasks = new HashMap<>();

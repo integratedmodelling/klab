@@ -8,7 +8,7 @@ import java.util.Collection;
 import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
-import org.integratedmodelling.klab.hub.models.Role;
+import org.integratedmodelling.klab.hub.users.Role;
 import org.joda.time.DateTime;
 
 

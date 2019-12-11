@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.models;
+package org.integratedmodelling.klab.hub.users;
 
 import org.springframework.security.core.GrantedAuthority;
 

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.integratedmodelling.klab.hub.models.GroupEntry;
-import org.integratedmodelling.klab.hub.models.User;
-import org.integratedmodelling.klab.hub.models.User.AccountStatus;
+import org.integratedmodelling.klab.hub.users.GroupEntry;
+import org.integratedmodelling.klab.hub.users.User;
+import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.springframework.stereotype.Service;
 
 @Service

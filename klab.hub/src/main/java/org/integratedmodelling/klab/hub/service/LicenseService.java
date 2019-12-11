@@ -9,7 +9,7 @@ import java.util.Properties;
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.hub.models.KlabNode;
-import org.integratedmodelling.klab.hub.models.User;
+import org.integratedmodelling.klab.hub.users.User;
 
 public interface LicenseService {
 

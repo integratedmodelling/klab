@@ -2,10 +2,10 @@ package org.integratedmodelling.klab.hub.tasks.service;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
+import org.integratedmodelling.klab.hub.users.Role;
 
 public interface TaskService {
 	public abstract Task createTask(String requestee, Class<? extends Task> taskType);
