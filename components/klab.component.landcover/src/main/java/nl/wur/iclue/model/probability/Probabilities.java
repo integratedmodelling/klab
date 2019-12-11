@@ -79,7 +79,7 @@ public class Probabilities {
      * @param demands list of land uses with demands in cell count
      * @return 
      */
-    protected Map<Landuses.Landuse, RasterData> createProbabilityMaps(long targetYear, RasterData previousLanduseMap, Map<Landuses.Landuse, Integer> demands) {
+    protected Map<Landuses.Landuse, RasterData> createProbabilityMaps(int targetYear, RasterData previousLanduseMap, Map<Landuses.Landuse, Integer> demands) {
         Map<Landuses.Landuse, RasterData> result = new HashMap<>();
 
         Map<Landuses.Landuse, Double> demandWeights = DemandWeights.create(previousLanduseMap, demands);

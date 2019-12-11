@@ -682,7 +682,7 @@ public class WekaInstances {
 
 							sample = (Boolean) o;
 
-						} else if (!warned) {
+						} else if (Double.isNaN(this.selectFraction) && !warned) {
 							context.getMonitor()
 									.warn("point extractor: no input: specify either select or select fraction");
 							warned = true;

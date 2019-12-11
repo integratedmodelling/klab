@@ -43,7 +43,7 @@ public class Parameters {
 	private List<SpatialDataset> drivers = null;
 	private LanduseDistributions demands = null;
 	private List<Conversion> conversions = null;
-	private Long targetTime = SpatialDataset.UNKNOWN_YEAR;
+	private Integer targetTime = SpatialDataset.UNKNOWN_YEAR;
 	private Map<Landuse, DemandValidationType> demandValidationTypes = null;
 	private Map<Landuse, Integer> demandDeviations = null;
 	private Map<Landuse, FocalFilter> focalFilters = null;
@@ -167,7 +167,7 @@ public class Parameters {
 	 * 
 	 * @param targetTime
 	 */
-	public void setTargetTime(Long targetTime) {
+	public void setTargetTime(Integer targetTime) {
 		if ((baseline != null) && (baseline.isYearKnown()) && (targetTime != null) && (baseline.getYear() < targetTime))
 			this.targetTime = targetTime;
 	}

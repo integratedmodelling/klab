@@ -33,212 +33,208 @@ import nl.alterra.shared.rasterdata.RasterData;
 import nl.alterra.shared.rasterdata.RasterDataFactory;
 
 /**
- * E.g. a dataset:
- *   caption: protected areas
- *   filename: c:\data\...
- * E.g another dataset
- *   caption: Precipitation
- *   for year '2000': filename c:\data\precip
- *   for year '2010': filename c:\data\precip-later
+ * E.g. a dataset: caption: protected areas filename: c:\data\... E.g another
+ * dataset caption: Precipitation for year '2000': filename c:\data\precip for
+ * year '2010': filename c:\data\precip-later
  * 
  * @author Peter Verweij, Johnny te Roller
  */
 public class SpatialDataset {
-	
-    private static final String ERROR_EXPECTED_STABLE_REGIONS = "Cannot cut spatial dataset by region. Regions change over time. Not supported";
-    private static final String ERROR_YEAR_ALREADY_INCLUDED = "Cannot add year %d for %s. It is already defined";
-    public static final long UNKNOWN_YEAR = -1;
-    private String caption;
-    private DataKind datakind;
 
-    private final Map<Long, RasterData> map; // year, rasterdata
+	private static final String ERROR_EXPECTED_STABLE_REGIONS = "Cannot cut spatial dataset by region. Regions change over time. Not supported";
+	private static final String ERROR_YEAR_ALREADY_INCLUDED = "Cannot add year %d for %s. It is already defined";
+	public static final int UNKNOWN_YEAR = -1;
+	private String caption;
+	private DataKind datakind;
 
-    public SpatialDataset() {
-        map = new HashMap<>();
-        datakind = new DataKind();
-    }
+	private final Map<Integer, RasterData> map; // year, rasterdata
 
-    void setDatakind(DataKind datakind) {
-        this.datakind = datakind;
-    }
-    
-    public void add(String filename, long year) {
-        RasterData rasterData = RasterDataFactory.createRasterData(filename);
-        add(rasterData, year);
-    }
-    
-    public void add(RasterData rasterData, long year) {
-        if (map.containsKey(year))
-            throw new RuntimeException(String.format(ERROR_YEAR_ALREADY_INCLUDED, year, getCaption()));
-        map.put(year, rasterData);
-    }
-    
-    public Set<Long> getYears() {
-        return map.keySet();
-    }
-    
-    public RasterData getRasterData(long year) {
-        return map.get(year);
-    }
-    
-    public RasterData getLastRasterData() {
-        long year = getLastYear();
-        return getRasterData(year);
-    }
-    
-    /**
-     * gets the filename given a year.
-     * e.g. if the available years are: 2000, 2010, 2020. A request for year 2009 will return the file for 2000.
-     * @param year
-     * @return a filename, or null if the year is below the range of available years
-     */
-    public RasterData getMostRecentRasterData(long year) {
-    	
-        // sort the years
-        List<Long> years = getSortedYears();
-        
-        int yearIndex = 0;
-        if (year<years.get(yearIndex))
-            return null;
-        else if (year >= years.get(years.size()-1))
-            yearIndex = years.size()-1;
-        else {
-            for (int i=0; i<years.size()-2; i++) {
-                if (year>= years.get(i) && (year < years.get(i+1)) ) {
-                    yearIndex = i;
-                    break;
-                }
-            }
-        }
+	public SpatialDataset() {
+		map = new HashMap<>();
+		datakind = new DataKind();
+	}
 
-        return getRasterData(years.get(yearIndex));
-    }
+	void setDatakind(DataKind datakind) {
+		this.datakind = datakind;
+	}
 
-    public String getCaption() {
-        return caption;
-    }
+	public void add(String filename, int year) {
+		RasterData rasterData = RasterDataFactory.createRasterData(filename);
+		add(rasterData, year);
+	}
 
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
+	public void add(RasterData rasterData, int year) {
+		if (map.containsKey(year))
+			throw new RuntimeException(String.format(ERROR_YEAR_ALREADY_INCLUDED, year, getCaption()));
+		map.put(year, rasterData);
+	}
 
-    public RasterData getRasterData() {
-        if (map.size() == 1)
-            return map.values().iterator().next();
-        else
-            return null;
-    }
+	public Set<Integer> getYears() {
+		return map.keySet();
+	}
 
-    public void setRasterData(RasterData rasterdata) {
-        setRasterData(rasterdata, UNKNOWN_YEAR);
-    }
-    
-    public void setFilename(String filename) {
-        setFilename(filename, UNKNOWN_YEAR);
-    }
+	public RasterData getRasterData(int year) {
+		return map.get(year);
+	}
 
-    public void setRasterData(RasterData rasterdata, long year) {
-        map.clear();
-        add(rasterdata, year);
-    }
-    
-    public void setFilename(String filename, long year) {
-        map.clear();
-        add(filename, year);
-    }
-    
-    public Long getYear() {
-        if (map.size() == 1)
-            return map.keySet().iterator().next();
-        else
-            return null;
-    }
+	public RasterData getLastRasterData() {
+		int year = getLastYear();
+		return getRasterData(year);
+	}
 
-    private List<Long> getSortedYears() {
-        ArrayList<Long> years = new ArrayList<>();
-        years.addAll(getYears());
-        Collections.sort(years);
-        return years;
-    }
-    
-    public long getFirstYear() {
-        return getSortedYears().get(0);
-    }
-    
-    public long getLastYear() {
-        List<Long> years = getSortedYears();
-        return years.get(years.size()-1);
-    }
-    
-    public boolean isYearKnown() {
-        if (map.isEmpty())
-            return false;
-        else if (map.size() > 1)
-            return true;
-        else
-            return UNKNOWN_YEAR != getYear();
-    }
+	/**
+	 * gets the filename given a year. e.g. if the available years are: 2000, 2010,
+	 * 2020. A request for year 2009 will return the file for 2000.
+	 * 
+	 * @param year
+	 * @return a filename, or null if the year is below the range of available years
+	 */
+	public RasterData getMostRecentRasterData(int year) {
 
-    public DataKind getDatakind() {
-        return datakind;
-    }
+		// sort the years
+		List<Integer> years = getSortedYears();
 
-    
-    public int getCellCount(Category clz, int year) {
-        RasterData rasterData = getRasterData(year);
-        
-        int categoryValue = Integer.parseInt(clz.getValueAsString());
-        Integer cellCount = rasterData.createValueCountTable().get(categoryValue);
-        
-        if (cellCount == null)
-            cellCount = 0;
-        return cellCount;
-    }
+		int yearIndex = 0;
+		if (year < years.get(yearIndex))
+			return null;
+		else if (year >= years.get(years.size() - 1))
+			yearIndex = years.size() - 1;
+		else {
+			for (int i = 0; i < years.size() - 2; i++) {
+				if (year >= years.get(i) && (year < years.get(i + 1))) {
+					yearIndex = i;
+					break;
+				}
+			}
+		}
 
-    
+		return getRasterData(years.get(yearIndex));
+	}
+
+	public String getCaption() {
+		return caption;
+	}
+
+	public void setCaption(String caption) {
+		this.caption = caption;
+	}
+
+	public RasterData getRasterData() {
+		if (map.size() == 1)
+			return map.values().iterator().next();
+		else
+			return null;
+	}
+
+	public void setRasterData(RasterData rasterdata) {
+		setRasterData(rasterdata, UNKNOWN_YEAR);
+	}
+
+	public void setFilename(String filename) {
+		setFilename(filename, UNKNOWN_YEAR);
+	}
+
+	public void setRasterData(RasterData rasterdata, int year) {
+		map.clear();
+		add(rasterdata, year);
+	}
+
+	public void setFilename(String filename, int year) {
+		map.clear();
+		add(filename, year);
+	}
+
+	public Integer getYear() {
+		if (map.size() == 1)
+			return map.keySet().iterator().next();
+		else
+			return null;
+	}
+
+	private List<Integer> getSortedYears() {
+		ArrayList<Integer> years = new ArrayList<>();
+		years.addAll(getYears());
+		Collections.sort(years);
+		return years;
+	}
+
+	public int getFirstYear() {
+		return getSortedYears().get(0);
+	}
+
+	public int getLastYear() {
+		List<Integer> years = getSortedYears();
+		return years.get(years.size() - 1);
+	}
+
+	public boolean isYearKnown() {
+		if (map.isEmpty())
+			return false;
+		else if (map.size() > 1)
+			return true;
+		else
+			return UNKNOWN_YEAR != getYear();
+	}
+
+	public DataKind getDatakind() {
+		return datakind;
+	}
+
+	public int getCellCount(Category clz, int year) {
+		RasterData rasterData = getRasterData(year);
+
+		int categoryValue = Integer.parseInt(clz.getValueAsString());
+		Integer cellCount = rasterData.createValueCountTable().get(categoryValue);
+
+		if (cellCount == null)
+			cellCount = 0;
+		return cellCount;
+	}
+
 //    public int getCellCount(int year) {
 //        RasterData rasterData = getRasterData(year);
 //        return rasterData.getCellCount();
 //    }
-    
-    public void removeByYear(long year) {
-        map.remove(year);
-    }
 
-    /**
-     * perform a shallow clone
-     * @return 
-     */
-    @Override
-    public SpatialDataset clone() {
-        SpatialDataset result = new SpatialDataset();
-        result.caption = this.caption;
-        result.datakind = this.datakind; // refer to same datakind instance. Needed as the equals method and hashcode of Clazz instances will be different when using deep clone
-        for (Entry<Long, RasterData> entry: this.map.entrySet())
-            result.map.put(entry.getKey(), entry.getValue());
-        return result;
-    }
+	public void removeByYear(long year) {
+		map.remove(year);
+	}
 
-    public SpatialDataset cut(SpatialDataset regions, Category regionOfInterest) {
-        // determine region rasterdata 
-        Long regionYear = regions.getYear();
-        if (regionYear == null)
-            throw new RuntimeException(ERROR_EXPECTED_STABLE_REGIONS);
-        RasterData regionData = regions.getRasterData();
-        int regionValue =  Integer.parseInt(regionOfInterest.getValueAsString());
-        
-        // create new dataset with cut outs for each year for the region
-        SpatialDataset result = new SpatialDataset();
-        result.caption = this.caption;
-        result.datakind = this.datakind; // refer to same datakind instance. Needed as the equals method and hashcode of Clazz instances will be different when using deep clone
-        for (Entry<Long, RasterData> entry: this.map.entrySet()) {
-            RasterData regionMap = entry.getValue().cut(regionData, regionValue);
-            result.map.put(entry.getKey(), regionMap);
-        }
-        
-        return result;
-    }
-    
-    
-    
+	/**
+	 * perform a shallow clone
+	 * 
+	 * @return
+	 */
+	@Override
+	public SpatialDataset clone() {
+		SpatialDataset result = new SpatialDataset();
+		result.caption = this.caption;
+		result.datakind = this.datakind; // refer to same datakind instance. Needed as the equals method and hashcode of
+											// Clazz instances will be different when using deep clone
+		for (Entry<Integer, RasterData> entry : this.map.entrySet())
+			result.map.put(entry.getKey(), entry.getValue());
+		return result;
+	}
+
+	public SpatialDataset cut(SpatialDataset regions, Category regionOfInterest) {
+		// determine region rasterdata
+		Integer regionYear = regions.getYear();
+		if (regionYear == null)
+			throw new RuntimeException(ERROR_EXPECTED_STABLE_REGIONS);
+		RasterData regionData = regions.getRasterData();
+		int regionValue = Integer.parseInt(regionOfInterest.getValueAsString());
+
+		// create new dataset with cut outs for each year for the region
+		SpatialDataset result = new SpatialDataset();
+		result.caption = this.caption;
+		result.datakind = this.datakind; // refer to same datakind instance. Needed as the equals method and hashcode of
+											// Clazz instances will be different when using deep clone
+		for (Entry<Integer, RasterData> entry : this.map.entrySet()) {
+			RasterData regionMap = entry.getValue().cut(regionData, regionValue);
+			result.map.put(entry.getKey(), regionMap);
+		}
+
+		return result;
+	}
+
 }

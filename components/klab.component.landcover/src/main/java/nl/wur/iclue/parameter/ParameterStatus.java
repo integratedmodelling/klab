@@ -161,7 +161,11 @@ public class ParameterStatus {
     }
 
     private void getDriversError(List<String> errorLog) {
-        if ((params.getDrivers() == null) || (params.getDrivers().isEmpty())) {
+    	/*
+    	 * FV - empty drivers is OK as we externalize the suitability model completely. Even in the 
+    	 * general CLUE logic this should be OK, as we could have constant suitability.
+    	 */
+        if ((params.getDrivers() == null/*) || (params.getDrivers().isEmpty()*/)) {
             errorLog.add(ERROR_DRIVER_NONE);
             return;
         }
@@ -175,7 +179,7 @@ public class ParameterStatus {
                 if (!(ds.getRasterData().isDataDefinitionValid()))
                     errorLog.add(String.format(ERROR_DRIVER_FILE_DOES_NOT_EXIST, ds.getRasterData().getDataDefinition(), -1));
             } else {
-                for (long year: ds.getYears()) {
+                for (int year: ds.getYears()) {
                     if (year<params.getBaseline().getYear())
                         errorLog.add(String.format(ERROR_DRIVER_YEAR_BEFORE_BASELINE, ds.getCaption(), year));
                     if (year>params.getTargetTime())

@@ -124,7 +124,7 @@ public class CLUEModel {
 
 				suitabilityCalculator.updateFromBaseline(projections.getLanduseData(), administrativeUnit);
 
-				for (long year = params.getBaseline().getYear() + 1; year <= params.getTargetTime(); year++) {
+				for (int year = params.getBaseline().getYear() + 1; year <= params.getTargetTime(); year++) {
 					Log.log(Level.INFO, String.format(LOG_ALLOCATION_STARTED, year), null);
 
 					// allocate NEW land uses based on land uses in PREVIOUS year
@@ -169,7 +169,7 @@ public class CLUEModel {
 		return result;
 	}
 
-	private LanduseRasterData allocate(long year, LanduseRasterData previousLanduseRasterData,
+	private LanduseRasterData allocate(int year, LanduseRasterData previousLanduseRasterData,
 			DemandValidators demands) {
 		RasterData previousLanduseMap = previousLanduseRasterData.getLanduseMap();
 		RasterData previousAgeMap = previousLanduseRasterData.getAgeMap();
@@ -313,7 +313,7 @@ public class CLUEModel {
 
 		public LanduseAndAgeDataset(SpatialDataset landuseBaseline, Landuses landuses) {
 			this.landuseData = landuseBaseline;
-			long year = landuseBaseline.getYear();
+			int year = landuseBaseline.getYear();
 
 			RasterData ageMap = LanduseRasterData.createInitialAgeMap(landuseBaseline.getRasterData(), landuses);
 			this.ageData = new SpatialDataset();
@@ -327,13 +327,13 @@ public class CLUEModel {
 					landuses);
 		}
 
-		public LanduseRasterData createRasterData(long year) {
+		public LanduseRasterData createRasterData(int year) {
 			RasterData landuse = getLanduseData().getRasterData(year);
 			RasterData age = getAgeData().getRasterData(year);
 			return new LanduseRasterData(landuse, age);
 		}
 
-		public void addRasterData(LanduseRasterData landuseAndAge, long year) {
+		public void addRasterData(LanduseRasterData landuseAndAge, int year) {
 			getLanduseData().add(landuseAndAge.getLanduseMap(), year);
 			getAgeData().add(landuseAndAge.getAgeMap(), year);
 		}
@@ -357,11 +357,11 @@ public class CLUEModel {
 			this.ageProjections = ageProjections;
 		}
 
-		public RasterData getLanduseProjection(long year) {
+		public RasterData getLanduseProjection(int year) {
 			return landuseProjections.getRasterData(year);
 		}
 
-		public RasterData getAgeProjection(long year) {
+		public RasterData getAgeProjection(int year) {
 			return ageProjections.getRasterData(year);
 		}
 
