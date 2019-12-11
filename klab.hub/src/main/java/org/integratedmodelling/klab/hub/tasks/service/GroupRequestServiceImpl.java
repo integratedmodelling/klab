@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
@@ -13,9 +12,9 @@ import org.integratedmodelling.klab.hub.models.GroupEntry;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
+import org.integratedmodelling.klab.hub.repository.KlabGroupRepository;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.UserService;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
@@ -32,17 +31,17 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 	
 	private TokenRepository tokenRepository;
 	
-	private KlabGroupService groupService;
+	private KlabGroupRepository groupRepository;
 	
 	private TaskRepository taskRepository;
 	
 	public GroupRequestServiceImpl(UserService userService,
 			TokenRepository tokenRepository,
-			KlabGroupService groupService,
+			KlabGroupRepository groupRepository,
 			TaskRepository taskRepository) {
 		this.userService = userService;
 		this.tokenRepository = tokenRepository;
-		this.groupService = groupService;
+		this.groupRepository = groupRepository;
 		this.taskRepository = taskRepository;
 	}
 
@@ -91,17 +90,21 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 			throw new BadRequestException("Requested Groups already available to user.");
 		}
 		
-		if(groupService.groupsExists(groupNames) | groupNames.size() == 0) {
+		List<Boolean> exists = groupNames.stream()
+				.map(groupRepository::existsByGroupNameIgnoreCase)
+				.collect(Collectors.toList());
+		
+		if(exists.contains(false) | groupNames.size() == 0) {
 			throw new BadRequestException("A requested Group does not exist or no groups requested");
 		}
 		
 		for (String groupName : groupNames) {
-			groupService
-				.getGroup(groupName)
+			groupRepository
+				.findByGroupNameIgnoreCase(groupName)
 				.filter(group -> request.isUserInRole(group.getRoleRequirement().toString()))
 				.ifPresent(group -> optIn.add(new GroupEntry(group)));
 			
-			groupService.getGroup(groupName)
+			groupRepository.findByGroupNameIgnoreCase(groupName)
 				.filter(group -> !request.isUserInRole(group.getRoleRequirement().toString()))
 				.ifPresent(group -> requestGroups.add(new GroupEntry(group)));
 		}
@@ -140,8 +143,13 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 	}
 
 	@Override
-	public List<Task> getTasks() {
-		return taskRepository.findByType(TaskType.groupRequest);
+	public List<Task> getTasks(TaskType type) {
+		return taskRepository.findByType(type);
+	}
+
+	@Override
+	public List<Task> getTasksByStatus(TaskType type, TaskStatus status) {
+		return taskRepository.findTaskByClassAndStatus(type, status);
 	}
 	
 }

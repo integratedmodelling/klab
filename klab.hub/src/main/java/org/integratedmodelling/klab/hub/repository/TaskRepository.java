@@ -17,7 +17,7 @@ public interface TaskRepository extends MongoRepository<Task, ObjectId>{
 	
 	Optional<Task> findById(String id);
 	
-	Optional<Task> findByRequesteeIgnoreCase(String username);
+	List<Task> findByRequesteeIgnoreCase(String username);
 	
 	List<Task> findByStatus(TaskStatus status);
 	
@@ -25,4 +25,7 @@ public interface TaskRepository extends MongoRepository<Task, ObjectId>{
 	Optional<Task> findGroupRequestByToken(ClickbackToken token);
 	
 	List<Task> findByType(TaskType type);
+	
+	@Query("{'_class' : ?0 , 'status' : ?1}")
+	List<Task> findTaskByClassAndStatus(TaskType type, TaskStatus status);
 }

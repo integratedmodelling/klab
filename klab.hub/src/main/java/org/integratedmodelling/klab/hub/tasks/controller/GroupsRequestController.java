@@ -6,8 +6,9 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 
-import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
+import org.integratedmodelling.klab.hub.tasks.TaskStatus;
+import org.integratedmodelling.klab.hub.tasks.TaskType;
 import org.integratedmodelling.klab.hub.tasks.service.GroupRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +39,7 @@ public class GroupsRequestController {
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
 		
-		GroupRequestTask task = service.createTask(requestee, groupNames, request);
+		Task task = service.createTask(requestee, groupNames, request);
 	    
 		UriComponents uriComponents = b.path("/api/tasks/{id}").buildAndExpand(task.getId());
 	    HttpHeaders headers = new HttpHeaders();
@@ -70,9 +71,18 @@ public class GroupsRequestController {
 	
 	@GetMapping(value="/group-requests", produces = "application/json")
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	public ResponseEntity<?> requestGroupsList() {
+	public ResponseEntity<?> groupRequestList() {
 		HashMap<String, List<Task> > tasks = new HashMap<>();
-		tasks.put("Group Request Tasks", service.getTasks());
+		tasks.put("Group Request Tasks", service.getTasks(TaskType.groupRequest));
+		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
+		return resp;
+	}
+	
+	@GetMapping(value="/group-requests", produces = "application/json", params = "status")
+	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
+	public ResponseEntity<?> groupsRequestsByStatus(TaskStatus status) {
+		HashMap<String, List<Task> > tasks = new HashMap<>();
+		tasks.put("Pending Group Request Tasks", service.getTasksByStatus(TaskType.groupRequest, status));
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;
 	}
