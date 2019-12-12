@@ -54,6 +54,11 @@ public class KlabCLUEParameters extends Parameters {
 		}
 
 		buildLanduses();
+		
+		/*
+		 * TODO read demand and call setDemandValidationType() and demandDeviation() for ALL
+		 * landuses; those not mentioned get 0
+		 */
 
 		setBaseline(new KLABSpatialDataset(this.lulc));
 		setTargetTime((int) ret.getScale().getTime().size());
