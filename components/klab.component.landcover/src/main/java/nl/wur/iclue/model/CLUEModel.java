@@ -101,6 +101,10 @@ public class CLUEModel {
 		this.suitabilityCalculator = SuitabilityFactory.create(params);
 	}
 
+	/**
+	 * FV main driver
+	 * @return
+	 */
 	public Projections createLanduseProjections() {
 		if (suitabilityCalculator == null)
 			throw new RuntimeException(ERROR_SUITABILITIES_UNAVAILABLE);
@@ -117,8 +121,13 @@ public class CLUEModel {
 //			frm.setVisible(true);
 
 			for (Clazz administrativeUnit : params.getAdministrativeUnits().getDatakind().getClasses()) {
+				
 				Log.log(Level.INFO, String.format(LOG_ADMIN_UNIT, administrativeUnit.getCaption()), null);
 
+				/*
+				 * create outputs - in our case, just use the current state and ensure the baseline points
+				 * at the previous. Age should remain stored.
+				 */
 				LanduseAndAgeDataset projections = LanduseAndAgeDataset.createByAdministrativeBoundaryCut(
 						params.getBaseline(), params.getLanduses(), params.getAdministrativeUnits(),
 						(Category) administrativeUnit);
@@ -126,6 +135,7 @@ public class CLUEModel {
 				suitabilityCalculator.updateFromBaseline(projections.getLanduseData(), administrativeUnit);
 
 				for (int year = params.getBaseline().getYear() + 1; year <= params.getTargetTime(); year++) {
+					
 					Log.log(Level.INFO, String.format(LOG_ALLOCATION_STARTED, year), null);
 
 					// allocate NEW land uses based on land uses in PREVIOUS year
