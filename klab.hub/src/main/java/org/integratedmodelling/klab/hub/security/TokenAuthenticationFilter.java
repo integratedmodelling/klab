@@ -12,8 +12,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.hub.models.tokens.AuthenticationToken;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
+import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 

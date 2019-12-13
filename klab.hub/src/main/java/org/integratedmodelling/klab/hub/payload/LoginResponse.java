@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.payload;
 
 import org.integratedmodelling.klab.hub.models.ProfileResource;
-import org.integratedmodelling.klab.hub.models.tokens.AuthenticationToken;
+import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

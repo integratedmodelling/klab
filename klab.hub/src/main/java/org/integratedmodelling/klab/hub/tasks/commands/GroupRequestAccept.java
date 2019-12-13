@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
+import org.integratedmodelling.klab.hub.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
 import org.integratedmodelling.klab.hub.users.User;
 

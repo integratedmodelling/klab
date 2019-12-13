@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.hub.tasks.commands;
 
-import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
+import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
 
 public class GroupRequestDeny implements TaskCommand {
 	

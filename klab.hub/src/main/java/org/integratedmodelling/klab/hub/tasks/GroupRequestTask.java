@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.tasks;
 
-import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
+import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
 
