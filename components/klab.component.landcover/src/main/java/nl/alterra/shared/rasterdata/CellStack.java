@@ -1,7 +1,7 @@
 package nl.alterra.shared.rasterdata;
 
 /**
- * FV: I believe this is a set of cells in the same location. Should just
+ * FV: a set of cells in the same location. Should just
  * store a locator and be local to the raster stack.
  */
 public class CellStack {
