@@ -203,6 +203,7 @@ public class ParameterStatus {
     }
     
     private void getConversionError(List<String> errorLog) {
+    	
         List<Conversion> conversions = params.getConversions();
         if (conversions == null) {
             errorLog.add(ERROR_CONVERSION_NONE);
@@ -236,10 +237,10 @@ public class ParameterStatus {
         if (methodParams == null)
             errorLog.add(ERROR_SUITABILITY_CALCULATION_PARAMETERS_MISSING);
         switch (method) {
-            case STEPWISE_REGRESSION: {
+            case STEPWISE_REGRESSION: 
+            case BAYESIAN_STATISTICS: 
                 break;
-            }
-            case MAP: {
+            case MAP: 
                 Map<Landuse, RasterData> maps;
                 try {
                     maps = (Map<Landuse, RasterData>)methodParams;
@@ -252,7 +253,6 @@ public class ParameterStatus {
                     errorLog.add(ERROR_SUITABILITY_CALCULATION_PARAMETERS_MAPS);
                 }
                 break;
-            }
             case FUNCTION_DICTIONARY: {
                 Map<String, Map<Category,SuitabilityFunction>> functions;
                 try {

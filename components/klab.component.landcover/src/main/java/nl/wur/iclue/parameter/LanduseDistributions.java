@@ -196,6 +196,7 @@ public class LanduseDistributions extends ArrayList<LanduseDistribution> {
 	}
 
 	public static class LanduseDistribution {
+		
 		private long year;
 		private int area;
 		private Landuse landuse;

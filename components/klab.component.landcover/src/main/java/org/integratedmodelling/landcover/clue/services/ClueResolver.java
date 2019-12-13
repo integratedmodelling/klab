@@ -14,6 +14,18 @@ import org.integratedmodelling.landcover.clue.KlabCLUEParameters;
 
 import nl.wur.iclue.model.CLUEModel;
 
+/**
+ * Needed improvements:
+ * 
+ * 1. Determine the max level <n> at which classes are mentioned in transition,
+ * use that level as the aggregation level for the whole model, and match using
+ * the reasoner. 
+ * 2. When a lower-level class changes, allow a function to determine the actual class it changes 
+ *    into.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public class ClueResolver implements IResolver<IProcess>, IExpression {
 
 	private CLUEModel clue = null;
@@ -38,20 +50,23 @@ public class ClueResolver implements IResolver<IProcess>, IExpression {
 	public IProcess resolve(IProcess ret, IContextualizationScope context) throws KlabException {
 
 		if (this.clue == null) {
-
 			/*
 			 * if a duration is required as output, we have the storage for the age layer;
 			 * otherwise we will create it as storage inside the parameters.
 			 */
 			IState ageState = null;
 
-			// first call; create CLUE model.
+			/*
+			 * First time call: set the target time to 1 (from 0)
+			 */
 			this.clue = new CLUEModel(new KlabCLUEParameters(parameters, (IRuntimeScope) context, ret, ageState),
 					context.getMonitor());
+		} else {
+			// TODO set the target time to target time + 1
 		}
 
 		/*
-		 * set the time to the current
+		 * run a cycle, update process data
 		 */
 
 		return ret;

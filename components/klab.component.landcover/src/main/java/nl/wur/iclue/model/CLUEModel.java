@@ -149,22 +149,8 @@ public class CLUEModel {
 			frm.dispose();
 		}
 
-		SpatialDataset allLanduseProjections = mergeProjectionsFromAllAdminUnits(landuseProjectionsForAllAdminUnits); // Melanie
-																														// states:
-																														// Dinamica
-																														// 'fuzzifies'
-																														// at
-																														// the
-																														// admin
-																														// borders
-		SpatialDataset allAgeProjections = mergeProjectionsFromAllAdminUnits(ageProjectionsForAllAdminUnits); // Melanie
-																												// states:
-																												// Dinamica
-																												// 'fuzzifies'
-																												// at
-																												// the
-																												// admin
-																												// borders
+		SpatialDataset allLanduseProjections = mergeProjectionsFromAllAdminUnits(landuseProjectionsForAllAdminUnits); 
+		SpatialDataset allAgeProjections = mergeProjectionsFromAllAdminUnits(ageProjectionsForAllAdminUnits);
 		Projections result = new Projections(allLanduseProjections, allAgeProjections);
 		return result;
 	}

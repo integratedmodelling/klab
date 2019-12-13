@@ -34,7 +34,7 @@ public class RasterData {
 	}
 
 	public boolean isDataDefinitionValid() {
-		// TODO Auto-generated method stub
+		// sure.
 		return true;
 	}
 

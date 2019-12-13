@@ -47,14 +47,14 @@ public class SpatialDataset {
 	private String caption;
 	private DataKind datakind;
 
-	private final Map<Integer, RasterData> map; // year, rasterdata
+	protected final Map<Integer, RasterData> map; // year, rasterdata
 
 	public SpatialDataset() {
 		map = new HashMap<>();
 		datakind = new DataKind();
 	}
 
-	void setDatakind(DataKind datakind) {
+	public void setDatakind(DataKind datakind) {
 		this.datakind = datakind;
 	}
 
@@ -181,6 +181,7 @@ public class SpatialDataset {
 	}
 
 	public int getCellCount(Category clz, int year) {
+
 		RasterData rasterData = getRasterData(year);
 
 		int categoryValue = Integer.parseInt(clz.getValueAsString());
@@ -188,15 +189,11 @@ public class SpatialDataset {
 
 		if (cellCount == null)
 			cellCount = 0;
+
 		return cellCount;
 	}
 
-//    public int getCellCount(int year) {
-//        RasterData rasterData = getRasterData(year);
-//        return rasterData.getCellCount();
-//    }
-
-	public void removeByYear(long year) {
+	public void removeByYear(int year) {
 		map.remove(year);
 	}
 

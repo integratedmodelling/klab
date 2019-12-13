@@ -19,13 +19,21 @@
  * permissions and limitations under the Licence.
  */
 
-
 package nl.wur.iclue.suitability;
 
-import nl.wur.iclue.suitability.maps.SuitabilityMaps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.integratedmodelling.klab.api.data.IResourceCalculator;
+import org.integratedmodelling.landcover.clue.KLABSuitabilityCalculator;
+
+//import nl.wur.iclue.suitability.jmsl.JmslRegression;
+import nl.alterra.shared.datakind.Category;
+import nl.alterra.shared.datakind.Clazz;
+import nl.alterra.shared.datakind.DataKind;
+import nl.alterra.shared.rasterdata.CellStack;
+import nl.alterra.shared.rasterdata.RasterData;
 import nl.wur.iclue.parameter.Landuses;
 import nl.wur.iclue.parameter.Landuses.Landuse;
 import nl.wur.iclue.parameter.Parameters;
@@ -33,67 +41,69 @@ import nl.wur.iclue.parameter.SpatialDataset;
 import nl.wur.iclue.parameter.SuitabilityParameters;
 import nl.wur.iclue.suitability.function.SuitabilityFunction;
 import nl.wur.iclue.suitability.functiondictionary.FunctionDictionary;
-//import nl.wur.iclue.suitability.jmsl.JmslRegression;
-import nl.alterra.shared.datakind.Category;
-import nl.alterra.shared.datakind.Clazz;
-import nl.alterra.shared.datakind.DataKind;
-import nl.alterra.shared.rasterdata.CellStack;
-import nl.alterra.shared.rasterdata.RasterData;
+import nl.wur.iclue.suitability.maps.SuitabilityMaps;
 
 /**
  *
  * @author Peter Verweij
  */
 public class SuitabilityFactory {
-    private static final String ERROR_UNKNOWN_METHOD = "Cannot create suitability calculator. Unknown method: %s";
+	private static final String ERROR_UNKNOWN_METHOD = "Cannot create suitability calculator. Unknown method: %s";
 
-    public static SuitabilityCalculator create(Parameters params) {
-        // get all parameter datakinds
-        List<DataKind> driverDataKinds = new ArrayList<>();
-        for (SpatialDataset ds: params.getDrivers()) 
-            driverDataKinds.add(ds.getDatakind());
-        Landuses landuses = params.getLanduses();
-        
-        SuitabilityParameters suitabilityParams = params.getSuitabilityParameters();
-        SuitabilityCalculationMethod method = suitabilityParams.getMethod();
-        
-        switch (method) {
-            case CONSTANT: return new DefaultSuitabilityValue(driverDataKinds, landuses);
-            case MAP: return new SuitabilityMaps(driverDataKinds, 
-                    landuses,
-                    (Map<Landuse, RasterData>)suitabilityParams.getParameters());
-		case STEPWISE_REGRESSION:
-			return null/*
-					 * new JmslRegression(driverDataKinds, landuses, params.getDrivers(),
-					 * (Map<String, String>)suitabilityParams.getParameters())
-					 */;
-            case FUNCTION_DICTIONARY: return new FunctionDictionary(driverDataKinds, 
-                    landuses, 
-                    (Map<String, Map<Category,SuitabilityFunction>>)suitabilityParams.getParameters());
-            default:
-                throw new RuntimeException(String.format(ERROR_UNKNOWN_METHOD, method.getCaption()));
-        }
-        
-    }
-    
-      
-    
-    private static class DefaultSuitabilityValue extends SuitabilityCalculator {
+	/*
+	 * Previous code for STEPWISE_REGRESSION:
+	 * 
+	 * return new JmslRegression(driverDataKinds, landuses, params.getDrivers(),
+	 * (Map<String, String>)suitabilityParams.getParameters())
+	 * 
+	 * Only compiles with commercial JMSL library, so screw it.
+	 */
 
-        public DefaultSuitabilityValue(List<DataKind> driverDatakinds, Landuses landuses) {
-            super(driverDatakinds, landuses);
-        }
+	@SuppressWarnings("unchecked")
+	public static SuitabilityCalculator create(Parameters params) {
+		// get all parameter datakinds
+		List<DataKind> driverDataKinds = new ArrayList<>();
+		for (SpatialDataset ds : params.getDrivers())
+			driverDataKinds.add(ds.getDatakind());
+		Landuses landuses = params.getLanduses();
 
-        
-        @Override
-        public double getProbability(Landuses.Landuse landuseOfInterest, CellStack driverValues) {
-            return 0.8;
-        }
+		SuitabilityParameters suitabilityParams = params.getSuitabilityParameters();
+		SuitabilityCalculationMethod method = suitabilityParams.getMethod();
 
-        @Override
-        public void updateFromBaseline(SpatialDataset baseline, Clazz adminstrativeUnit) {
-            // void
-        }
-        
-    }
+		switch (method) {
+		case CONSTANT:
+			return new DefaultSuitabilityValue(driverDataKinds, landuses);
+		case MAP:
+			return new SuitabilityMaps(driverDataKinds, landuses,
+					(Map<Landuse, RasterData>) suitabilityParams.getParameters());
+		case BAYESIAN_STATISTICS:
+			/* FV added: maps to any k.LAB resource, not just bayesian inference */
+			return new KLABSuitabilityCalculator(driverDataKinds, landuses,
+					(IResourceCalculator<?>) suitabilityParams.getParameters());
+		case FUNCTION_DICTIONARY:
+			return new FunctionDictionary(driverDataKinds, landuses,
+					(Map<String, Map<Category, SuitabilityFunction>>) suitabilityParams.getParameters());
+		default:
+			throw new RuntimeException(String.format(ERROR_UNKNOWN_METHOD, method.getCaption()));
+		}
+
+	}
+
+	private static class DefaultSuitabilityValue extends SuitabilityCalculator {
+
+		public DefaultSuitabilityValue(List<DataKind> driverDatakinds, Landuses landuses) {
+			super(driverDatakinds, landuses);
+		}
+
+		@Override
+		public double getProbability(Landuses.Landuse landuseOfInterest, CellStack driverValues) {
+			return 0.8;
+		}
+
+		@Override
+		public void updateFromBaseline(SpatialDataset baseline, Clazz adminstrativeUnit) {
+			// void
+		}
+
+	}
 }
