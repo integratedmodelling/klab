@@ -23,6 +23,9 @@ import nl.wur.iclue.model.CLUEModel;
  * 2. When a lower-level class changes, allow a function to determine the actual class it changes 
  *    into.
  * 
+ * 3. Enable annotation-driven links for elasticity, demand AND suitability (all for one or
+ *    more LCTs).
+ * 
  * @author ferdinando.villa
  *
  */
@@ -61,8 +64,6 @@ public class ClueResolver implements IResolver<IProcess>, IExpression {
 			 */
 			this.clue = new CLUEModel(new KlabCLUEParameters(parameters, (IRuntimeScope) context, ret, ageState),
 					context.getMonitor());
-		} else {
-			// TODO set the target time to target time + 1
 		}
 
 		/*

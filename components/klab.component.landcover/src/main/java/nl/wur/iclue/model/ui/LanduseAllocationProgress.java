@@ -1,16 +1,13 @@
 package nl.wur.iclue.model.ui;
 
-import java.awt.Component;
-
 import nl.alterra.shared.rasterdata.RasterData;
 import nl.wur.iclue.model.demand.DemandValidators;
 import nl.wur.iclue.parameter.Landuses;
 
 /**
- * 
- * TODO remove  
+ * FV was a AWT component, demoted to simple monitor. Fill in the details.
  */
-public class LanduseAllocationProgress extends Component {
+public class LanduseAllocationProgress {
 
 	public LanduseAllocationProgress(Landuses landuses) {
 		// TODO Auto-generated constructor stub

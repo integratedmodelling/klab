@@ -37,76 +37,74 @@ import nl.alterra.shared.utils.log.Log;
 /**
  *
  * @author Peter Verweij, Johnny te Roller
- * @deprecated we don't really need this
  */
 public class LanduseProjector {
-	
-    private static final String logSuitabilityFile = "logStatistics.txt";
-    private static final String logProbabilitiesFile = "logDemandWeights.csv";
-    private static final String logIterationsFile = "logIterations.txt";
-    
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        if ((args == null) || (args.length < 1)) {
-            System.out.println("LanduseProjector: Cannot run. Require first argument refering to parameter file");
-            return;
-        }
-        
-        String paramFilename = args[0];
-        if (!FileUtils.exists(paramFilename)) {
-            System.out.println("LanduseProjector: Cannot run. Parameter file does not exist");
-            return;
-        }
 
-        PropertiesFile paramFile;
-        Parameters params = null;
-        try {
-            paramFile = PropertiesFile.createFromFile(paramFilename);
-            params = ParameterBuilder.build(paramFile);
-        } catch (IOException ex) {
-            System.out.println("LanduseProjector: Cannot run. IO error building parameters");
-            return;
-        }
+	private static final String logSuitabilityFile = "logStatistics.txt";
+	private static final String logProbabilitiesFile = "logDemandWeights.csv";
+	private static final String logIterationsFile = "logIterations.txt";
 
-        // prepare output directory for file storage
-        String outputRoot = getOutputRoot(paramFilename);
-        File outputRootFile = new File(outputRoot);
-        FileUtils.deleteDirectory(outputRootFile);
-        if (!outputRootFile.mkdir()) {
-            System.out.println("LanduseProjector: Cannot run. Cannot create output directory: " + outputRoot);
-            return;
-        }
-        
-        configureLogin();
-        
-        // run the model
-        CLUEModel model = new CLUEModel(params, null);
-        model.initializeSuitabilities();
-        Projections projections = model.createLanduseProjections();
-        
-        System.out.println("Saving output maps...");
-        if(saveResultMaps(outputRoot, params, projections))
-            System.out.println("saved output to: "+outputRoot);
-        else
-            System.out.println("Saving output maps failed");
-    }
-    
-    private static String getOutputRoot(String paramFileName) {
-        File f = new File(paramFileName);
-        File rootDir = f.getParentFile();
-        
-        return String.format("%s\\%s_output", rootDir.getAbsolutePath(), f.getName().replaceFirst("[.][^.]+$", ""));
-    }
-    
-    private static boolean saveResultMaps(String outputRootDirectory, Parameters params, Projections projections) {
-        // copy all projection ESRI maps
-        String outputMapsDirectory = String.format("%s\\maps", outputRootDirectory);
-        if(!new File(outputMapsDirectory).mkdir())
-            return false;
-        
+	/**
+	 * @param args the command line arguments
+	 */
+	public static void main(String[] args) {
+		if ((args == null) || (args.length < 1)) {
+			System.out.println("LanduseProjector: Cannot run. Require first argument refering to parameter file");
+			return;
+		}
+
+		String paramFilename = args[0];
+		if (!FileUtils.exists(paramFilename)) {
+			System.out.println("LanduseProjector: Cannot run. Parameter file does not exist");
+			return;
+		}
+
+		PropertiesFile paramFile;
+		Parameters params = null;
+		try {
+			paramFile = PropertiesFile.createFromFile(paramFilename);
+			params = ParameterBuilder.build(paramFile);
+		} catch (IOException ex) {
+			System.out.println("LanduseProjector: Cannot run. IO error building parameters");
+			return;
+		}
+
+		// prepare output directory for file storage
+		String outputRoot = getOutputRoot(paramFilename);
+		File outputRootFile = new File(outputRoot);
+		FileUtils.deleteDirectory(outputRootFile);
+		if (!outputRootFile.mkdir()) {
+			System.out.println("LanduseProjector: Cannot run. Cannot create output directory: " + outputRoot);
+			return;
+		}
+
+		configureLogin();
+
+		// run the model
+		CLUEModel model = new CLUEModel(params, null);
+		model.initializeSuitabilities();
+		Projections projections = model.createLanduseProjections();
+
+		System.out.println("Saving output maps...");
+		if (saveResultMaps(outputRoot, params, projections))
+			System.out.println("saved output to: " + outputRoot);
+		else
+			System.out.println("Saving output maps failed");
+	}
+
+	private static String getOutputRoot(String paramFileName) {
+		File f = new File(paramFileName);
+		File rootDir = f.getParentFile();
+
+		return String.format("%s\\%s_output", rootDir.getAbsolutePath(), f.getName().replaceFirst("[.][^.]+$", ""));
+	}
+
+	private static boolean saveResultMaps(String outputRootDirectory, Parameters params, Projections projections) {
+		// copy all projection ESRI maps
+		String outputMapsDirectory = String.format("%s\\maps", outputRootDirectory);
+		if (!new File(outputMapsDirectory).mkdir())
+			return false;
+
 //        for (int year = params.getBaseline().getYear(); year<= params.getTargetTime(); year++) {
 //            if (!GridIo.gridCopy(projections.getLanduseProjection(year).getDataDefinition(), String.format("%s\\Landuse%d", outputMapsDirectory, year)))
 //                return false;
@@ -114,13 +112,13 @@ public class LanduseProjector {
 //                return false;
 //        }
 
-        return true;
-    }
+		return true;
+	}
 
-    private static void configureLogin() {
-        Log.putTarget(SuitabilityCalculator.LOG_TOKEN, new FileLog());
-        Log.putTarget(Probabilities.LOG_TOKEN, new FileLog(logProbabilitiesFile));
-        Log.putTarget(CLUEModel.LOG_TOKEN, new FileLog(logIterationsFile));
-    }
-        
+	private static void configureLogin() {
+		Log.putTarget(SuitabilityCalculator.LOG_TOKEN, new FileLog());
+		Log.putTarget(Probabilities.LOG_TOKEN, new FileLog(logProbabilitiesFile));
+		Log.putTarget(CLUEModel.LOG_TOKEN, new FileLog(logIterationsFile));
+	}
+
 }

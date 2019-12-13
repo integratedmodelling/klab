@@ -108,12 +108,13 @@ public class CLUEModel {
 		Map<Clazz, SpatialDataset> landuseProjectionsForAllAdminUnits = new HashMap<>();
 		Map<Clazz, SpatialDataset> ageProjectionsForAllAdminUnits = new HashMap<>();
 
-		JFrame frm = new JFrame();
+		// bah
+//		JFrame frm = new JFrame();
 		try {
 			allocationProgressPanel = new LanduseAllocationProgress(params.getLanduses());
-			frm.getContentPane().add(allocationProgressPanel);
-			frm.pack();
-			frm.setVisible(true);
+//			frm.getContentPane().add(allocationProgressPanel);
+//			frm.pack();
+//			frm.setVisible(true);
 
 			for (Clazz administrativeUnit : params.getAdministrativeUnits().getDatakind().getClasses()) {
 				Log.log(Level.INFO, String.format(LOG_ADMIN_UNIT, administrativeUnit.getCaption()), null);
@@ -146,7 +147,7 @@ public class CLUEModel {
 			}
 
 		} finally {
-			frm.dispose();
+//			frm.dispose();
 		}
 
 		SpatialDataset allLanduseProjections = mergeProjectionsFromAllAdminUnits(landuseProjectionsForAllAdminUnits); 
