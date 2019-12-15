@@ -32,9 +32,12 @@ import org.integratedmodelling.klab.data.resources.ResourceCalculator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Triple;
 
 import nl.alterra.shared.rasterdata.RasterData;
 import nl.wur.iclue.model.demand.DemandFactory.DemandValidationType;
+import nl.wur.iclue.parameter.EaseOfChange;
 import nl.wur.iclue.parameter.LanduseDistributions;
 import nl.wur.iclue.parameter.LanduseDistributions.LanduseDistribution;
 import nl.wur.iclue.parameter.Landuses;
@@ -138,9 +141,14 @@ public class KlabCLUEParameters extends Parameters {
 		Map<Landuse, Integer> dDeviations = new HashMap<>();
 		LanduseDistributions demands = new LanduseDistributions();
 
-		double defaultDeviation = parameters.get("deviation", 0.05);
+		double defaultDeviation = parameters.get("deviation", 0.1);
 
 		for (Landuse landUse : getLanduses()) {
+
+			double deviationValue = defaultDeviation;
+			boolean isDeviationArea = false;
+			double elasticity = 0;
+			List<Triple<Long, Double, Boolean>> demandspecs = new ArrayList<>();
 
 			LanduseDistribution demand = new LanduseDistribution();
 
@@ -151,21 +159,30 @@ public class KlabCLUEParameters extends Parameters {
 			 */
 			if (parameters.get("elasticities") != null) {
 				for (Object[] row : findMatching(landUse.getConcept(), parameters.get("elasticities"))) {
-
+					if (row[0] instanceof Number) {
+						elasticity = ((Number) row[0]).doubleValue();
+					}
 				}
 			}
 
-			
-			
 			if (parameters.get("demand") != null) {
 
 				boolean done = false;
 
 				for (Object[] row : findMatching(landUse.getConcept(), parameters.get("demand"))) {
 
-					if (row.length > 0 && row[0] instanceof Number) {
+					if (row.length == 1) {
 
-					} else if (row.length > 0 && row[0] instanceof IKimQuantity) {
+						/*
+						 * no year; can be a proportion or an area measurement to conver into cells
+						 */
+
+					} else if (row.length > 1) {
+
+						/*
+						 * should be date/time to convert into time index and a proportion or an area
+						 * measurement to conver into cells
+						 */
 
 					}
 
@@ -206,14 +223,15 @@ public class KlabCLUEParameters extends Parameters {
 					dDeviations.put(landUse, dvalue);
 				}
 
-			} else {
-				dDeviations.put(landUse, (int) (100.0 * defaultDeviation));
-				vTypes.put(landUse, DemandValidationType.PERCENTAGE_DEVIATION);
 			}
 
-			demands.add(demand);
-		} 
+			dDeviations.put(landUse, (int) (100.0 * deviationValue));
+			vTypes.put(landUse, isDeviationArea ? DemandValidationType.ABSOLUTE_DEVIATION
+					: DemandValidationType.PERCENTAGE_DEVIATION);
+			landUse.setEaseOfChange(EaseOfChange.findByProbability(elasticity));
 
+			demands.add(demand);
+		}
 
 		setDemands(demands);
 		setDemandValidationTypes(vTypes);
@@ -261,10 +279,6 @@ public class KlabCLUEParameters extends Parameters {
 	 */
 	public List<Object[]> findMatching(IConcept concept, Object object) {
 
-		if (concept.toString().endsWith("HighDensityUrban")) {
-			System.out.println("COCO");
-		}
-
 		List<Object[]> ret = new ArrayList<>();
 		if (object instanceof Map) {
 
@@ -281,7 +295,7 @@ public class KlabCLUEParameters extends Parameters {
 				} else if (i > 0) {
 					for (Entry<?, ?> entry : ((Map<?, ?>) object).entrySet()) {
 						IConcept con = Concepts.c(((IKimConcept) entry.getKey()).toString());
-						if (entry.getKey() instanceof IConcept && concept.is(con)) {
+						if (con != null && concept.is(con)) {
 							ret.add(new Object[] { entry.getValue() });
 						}
 					}

@@ -34,6 +34,8 @@ public enum EaseOfChange {
     
     private final String caption;
     private final double weight; // value between 0..1
+    private static double[] boundaries = new double[] { 1, .9, .6, .3, .1 };
+	
 
     private EaseOfChange(String caption, double weight) {
         this.caption = caption;
@@ -48,6 +50,17 @@ public enum EaseOfChange {
         return weight;
     }
 
+    public static EaseOfChange findByProbability(double d) {
+    	
+    	for (int i = 0; i < boundaries.length; i++) {
+    		if (d > boundaries[i]) {
+    			return EaseOfChange.values()[i];
+    		}
+    	}
+    	
+    	return VERY_EASY;
+    }
+    
     public static EaseOfChange FindByCaption(String caption) {
         for (EaseOfChange elem: EaseOfChange.values()) 
             if (elem.getCaption().equalsIgnoreCase(caption))
