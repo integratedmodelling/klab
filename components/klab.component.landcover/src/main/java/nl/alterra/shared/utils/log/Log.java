@@ -1,15 +1,25 @@
 package nl.alterra.shared.utils.log;
 
+import java.util.Arrays;
+
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+
 public class Log {
 
+	static IMonitor monitor;
+	
+	public static void setMonitor(IMonitor monitor) {
+		Log.monitor = monitor;
+	}
+	
 	public static void putTarget(Object...objects) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("TODO Log::putTargets(" + Arrays.toString(objects) + ")");
 	}
 
 	public static void log(Object...objects) {
-		// TODO Auto-generated method stub
-		
+		if (monitor != null) {
+			monitor.info(objects);
+		}
 	}
 
 }

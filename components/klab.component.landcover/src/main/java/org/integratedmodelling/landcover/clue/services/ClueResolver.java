@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.landcover.clue.KlabCLUEParameters;
 
+import nl.alterra.shared.utils.log.Log;
 import nl.wur.iclue.model.CLUEModel;
 
 /**
@@ -53,6 +54,9 @@ public class ClueResolver implements IResolver<IProcess>, IExpression {
 	public IProcess resolve(IProcess ret, IContextualizationScope context) throws KlabException {
 
 		if (this.clue == null) {
+
+			Log.setMonitor(context.getMonitor());
+			
 			/*
 			 * if a duration is required as output, we have the storage for the age layer;
 			 * otherwise we will create it as storage inside the parameters.
@@ -64,11 +68,15 @@ public class ClueResolver implements IResolver<IProcess>, IExpression {
 			 */
 			this.clue = new CLUEModel(new KlabCLUEParameters(parameters, (IRuntimeScope) context, ret, ageState),
 					context.getMonitor());
+			
+			this.clue.initializeSuitabilities();
 		}
 
 		/*
-		 * run a cycle, update process data
+		 * run a cycle, update process data. TODO must set the beginning and end for this
+		 * timestep (0-1 after configuration).
 		 */
+		this.clue.createLanduseProjections();
 
 		return ret;
 	}

@@ -3,6 +3,7 @@ package org.integratedmodelling.landcover.clue;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
@@ -11,12 +12,23 @@ import nl.alterra.shared.rasterdata.RasterData;
 public class KLABRasterData extends RasterData {
 
 	IState state;
+	IStorage<?> storage;
+	
 	private ILocator time;
 	
 	public KLABRasterData(IState state, IExtent time) {
 		this.state = state.at(this.time = time);
 	}
 
+	/**
+	 * When using this form, we only keep one slice
+	 * 
+	 * @param storage
+	 */
+	public KLABRasterData(IStorage<?> storage) {
+		this.storage = storage;
+	}
+	
 	/**
 	 * @return the time
 	 */
@@ -58,7 +70,7 @@ public class KLABRasterData extends RasterData {
 
 	public RasterData cut(RasterData regionData, int regionValue) {
 		// TODO Auto-generated method stub
-		return null;
+		return regionData;
 	}
 
 	public Number getCellValue(int rowIndex, int columnIndex) {

@@ -1,19 +1,25 @@
 package org.integratedmodelling.landcover.clue;
 
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 
 import nl.alterra.shared.datakind.Category;
+import nl.alterra.shared.rasterdata.IMaskeable;
 import nl.alterra.shared.rasterdata.RasterData;
 import nl.wur.iclue.parameter.SpatialDataset;
 
-public class KLABSpatialDataset extends SpatialDataset {
+public class KLABSpatialDataset extends SpatialDataset implements IMaskeable {
 
 	IState state;
 	int currentTimeOffset = 0;
+	private SpatialDataset mask;
+	private Category maskCategory;
 	
 	KLABSpatialDataset(IState state) {
 		this.state = state;
+		setCaption(Observations.INSTANCE.getDisplayLabel(state));
+		// preload
 		for (int i = 0; i < state.getScale().getTime().size(); i++) {
 			map.put(i, new KLABRasterData(state, ((AbstractExtent)state.getScale().getTime()).getExtent(i)));
 		}
@@ -36,9 +42,9 @@ public class KLABSpatialDataset extends SpatialDataset {
 	}
 
 	@Override
-	public SpatialDataset cut(SpatialDataset regions, Category regionOfInterest) {
-		// TODO Auto-generated method stub
-		return super.cut(regions, regionOfInterest);
+	public void setMask(SpatialDataset regions, Category category) {
+		this.mask = regions;
+		this.maskCategory = category;
 	}
 	
 	

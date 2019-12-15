@@ -273,31 +273,7 @@ public enum Observations implements IObservationService {
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
 
-		if (observation instanceof ObservationGroup) {
-			ret.setLabel(StringUtils.capitalize(English.plural(observation.getObservable().getType().getName())));
-		} else {
-
-			ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
-					: observation.getObservable().getName());
-			ret.setLabel(StringUtils.capitalize(ret.getLabel().replaceAll("_", " ")));
-
-			if (observation instanceof ObservationGroupView) {
-				// pluralize the last word, then tell me I don't care for details.
-				String[] sss = ret.getLabel().split("\\s+");
-				if (sss.length > 0) {
-					sss[sss.length - 1] = English.plural(sss[sss.length - 1]);
-					ret.setLabel(StringUtils.join(sss, ' '));
-				}
-			}
-		}
-		if (observation.getObservable().getUnit() != null) {
-			ret.setLabel(ret.getLabel() + " in " + ((Unit) observation.getObservable().getUnit()).toUTFString());
-		} else if (observation.getObservable().getCurrency() != null) {
-			ret.setLabel(ret.getLabel() + " in " + observation.getObservable().getCurrency());
-		} else if (observation.getObservable().getRange() != null) {
-			ret.setLabel(ret.getLabel() + " " + observation.getObservable().getRange().getLowerBound() + " to "
-					+ observation.getObservable().getRange().getUpperBound());
-		}
+		ret.setLabel(getDisplayLabel(observation));
 
 		ret.setObservable(observation.getObservable().getDefinition());
 		if (ret.getObservable() == null) {
@@ -527,6 +503,37 @@ public enum Observations implements IObservationService {
 		ret.getActions().add(ActionReference.separator());
 		ret.getActions().add(new ActionReference("Add to cache", "AddToCache"));
 
+		return ret;
+	}
+
+	public String getDisplayLabel(IObservation observation) {
+		String ret = null;
+		if (observation instanceof ObservationGroup) {
+			ret = StringUtils.capitalize(English.plural(observation.getObservable().getType().getName()));
+		} else {
+
+			ret = (observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
+					: observation.getObservable().getName());
+			ret = StringUtils.capitalize(ret.replaceAll("_", " "));
+
+			if (observation instanceof ObservationGroupView) {
+				// pluralize the last word, then tell me I don't care for details.
+				String[] sss = ret.split("\\s+");
+				if (sss.length > 0) {
+					sss[sss.length - 1] = English.plural(sss[sss.length - 1]);
+					ret = StringUtils.join(sss, ' ');
+				}
+			}
+		}
+		if (observation.getObservable().getUnit() != null) {
+			ret = ret + " in " + ((Unit) observation.getObservable().getUnit()).toUTFString();
+		} else if (observation.getObservable().getCurrency() != null) {
+			ret = ret + " in " + observation.getObservable().getCurrency();
+		} else if (observation.getObservable().getRange() != null) {
+			ret = ret + " " + observation.getObservable().getRange().getLowerBound() + " to "
+					+ observation.getObservable().getRange().getUpperBound();
+		}
+		
 		return ret;
 	}
 

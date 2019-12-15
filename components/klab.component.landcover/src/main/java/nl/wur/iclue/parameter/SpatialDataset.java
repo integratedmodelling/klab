@@ -22,13 +22,15 @@ package nl.wur.iclue.parameter;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import nl.alterra.shared.datakind.Category;
 import nl.alterra.shared.datakind.DataKind;
+import nl.alterra.shared.rasterdata.IMaskeable;
 import nl.alterra.shared.rasterdata.RasterData;
 import nl.alterra.shared.rasterdata.RasterDataFactory;
 
@@ -50,7 +52,7 @@ public class SpatialDataset {
 	protected final Map<Integer, RasterData> map; // year, rasterdata
 
 	public SpatialDataset() {
-		map = new HashMap<>();
+		map = new LinkedHashMap<>();
 		datakind = new DataKind();
 	}
 
@@ -214,6 +216,7 @@ public class SpatialDataset {
 	}
 
 	public SpatialDataset cut(SpatialDataset regions, Category regionOfInterest) {
+		
 		// determine region rasterdata
 		Integer regionYear = regions.getYear();
 		if (regionYear == null)
@@ -221,14 +224,33 @@ public class SpatialDataset {
 		RasterData regionData = regions.getRasterData();
 		int regionValue = Integer.parseInt(regionOfInterest.getValueAsString());
 
-		// create new dataset with cut outs for each year for the region
-		SpatialDataset result = new SpatialDataset();
-		result.caption = this.caption;
-		result.datakind = this.datakind; // refer to same datakind instance. Needed as the equals method and hashcode of
-											// Clazz instances will be different when using deep clone
-		for (Entry<Integer, RasterData> entry : this.map.entrySet()) {
-			RasterData regionMap = entry.getValue().cut(regionData, regionValue);
-			result.map.put(entry.getKey(), regionMap);
+		SpatialDataset result = null;
+		if (this instanceof IMaskeable) {
+			
+			/*
+			 * k.LAB added
+			 */
+			((IMaskeable) this).setMask(regions, regionOfInterest);
+			result = this;
+
+		} else {
+
+			/*
+			 * Original CLUE logics, quite wasteful if the context is aware of the
+			 * "administrative units" and requiring complex cloning if subclasses of
+			 * SpatialDataset are used.
+			 */
+
+			result = new SpatialDataset();
+			result.caption = this.caption;
+			// TODO the stuff below should be obviated by making classes proper comparables.
+			result.datakind = this.datakind; // refer to same datakind instance. Needed as the equals method and
+												// hashcode of
+												// Clazz instances will be different when using deep clone
+			for (Entry<Integer, RasterData> entry : this.map.entrySet()) {
+				RasterData regionMap = entry.getValue().cut(regionData, regionValue);
+				result.map.put(entry.getKey(), regionMap);
+			}
 		}
 
 		return result;

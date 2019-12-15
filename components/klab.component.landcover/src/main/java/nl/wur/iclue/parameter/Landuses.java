@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.utils.Pair;
 
 import nl.alterra.shared.datakind.Category;
@@ -54,18 +55,18 @@ public class Landuses implements Iterable<Landuse> {
         list = new ArrayList<>();
     }
     
-    /*
-     * Never called
-     */
-    public Landuses(DataKind landuses) {
-        if (!IDataKind.LevelOfMeasurement.NOMINAL.equals(landuses.getLevelOfMeasurement()))
-            throw new RuntimeException(ERROR_NOT_NOMINAL);
-        dataKind = landuses;
-        
-        list = new ArrayList<>();
-        for (Clazz clz: landuses.getClasses()) 
-            list.add(new Landuse((Category)clz));
-    }
+//    /*
+//     * Never called
+//     */
+//    public Landuses(DataKind landuses) {
+//        if (!IDataKind.LevelOfMeasurement.NOMINAL.equals(landuses.getLevelOfMeasurement()))
+//            throw new RuntimeException(ERROR_NOT_NOMINAL);
+//        dataKind = landuses;
+//        
+//        list = new ArrayList<>();
+//        for (Clazz clz: landuses.getClasses()) 
+//            list.add(new Landuse((Category)clz));
+//    }
 
     public DataKind getDataKind() {
         return dataKind;
@@ -157,7 +158,10 @@ public class Landuses implements Iterable<Landuse> {
         private final Category category;
         private EaseOfChange easeOfChange = EaseOfChange.CANNOT_CHANGE;
         private int initialAge = 0;
-
+        
+        // FV invasive, but why not.
+        private IConcept concept;
+        
         private Landuse(Category category) {
             this.category = category;
         }
@@ -219,6 +223,14 @@ public class Landuses implements Iterable<Landuse> {
         public String toString() {
             return getCaption();
         }
+
+		public IConcept getConcept() {
+			return concept;
+		}
+
+		public void setConcept(IConcept concept) {
+			this.concept = concept;
+		}
     }
 
     public void setDataKey(IDataKey dataKey) {
@@ -228,6 +240,7 @@ public class Landuses implements Iterable<Landuse> {
 			luc.setCode(lcp.getFirst());
 			luc.setCaption(lcp.getSecond());
 			luc.setColour(Color.BLACK);
+			luc.setConcept((IConcept) dataKey.lookup(lcp.getFirst()));
 		}
 	}
     

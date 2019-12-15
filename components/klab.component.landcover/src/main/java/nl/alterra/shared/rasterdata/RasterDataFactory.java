@@ -9,8 +9,12 @@ package nl.alterra.shared.rasterdata;
 public class RasterDataFactory {
 
 	public static RasterDataStack createStack(Object...objects) {
-		// TODO Auto-generated method stub
-		return null;
+		RasterDataStack ret = new RasterDataStack();
+		// TODO 
+		if (objects != null) {
+			System.out.println("HOSTIA do something with the objects");
+		}
+		return ret;
 	}
 
 	public static RasterData createRasterData(String filename) {

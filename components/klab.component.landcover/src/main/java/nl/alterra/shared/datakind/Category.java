@@ -3,7 +3,6 @@ package nl.alterra.shared.datakind;
 public class Category extends Clazz {
 
 	Symbol symbol = new Symbol();
-	Integer value;
 	
 	public boolean includes(Number value) {
 		// ? also check if null equality should return true

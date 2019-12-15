@@ -4,28 +4,43 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
+import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.resources.ResourceCalculator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
+import nl.alterra.shared.rasterdata.RasterData;
 import nl.wur.iclue.model.demand.DemandFactory.DemandValidationType;
 import nl.wur.iclue.parameter.LanduseDistributions;
 import nl.wur.iclue.parameter.LanduseDistributions.LanduseDistribution;
 import nl.wur.iclue.parameter.Landuses;
 import nl.wur.iclue.parameter.Landuses.Landuse;
 import nl.wur.iclue.parameter.Parameters;
+import nl.wur.iclue.parameter.SpatialDataset;
 import nl.wur.iclue.parameter.SuitabilityParameters;
 import nl.wur.iclue.parameter.conversion.Always;
 import nl.wur.iclue.parameter.conversion.Conversion;
@@ -46,8 +61,23 @@ public class KlabCLUEParameters extends Parameters {
 	IResourceCalculator<?> suitabilityCalculator = null;
 	IResourceCalculator<?> transitionCalculator = null;
 	IState lulc;
+	private SpatialDataset ageData;
+	private IRuntimeScope scope;
+	private IProcess process;
+	private IGrid grid;
 
 	public KlabCLUEParameters(IParameters<String> parameters, IRuntimeScope scope, IProcess ret, IState ageState) {
+
+		this.scope = scope;
+		this.process = ret;
+
+		ISpace space = ret.getScale().getSpace();
+
+		if (!(space instanceof Space && ((Space) space).getGrid() != null)) {
+			throw new KlabValidationException("The CLUE model requires a gridded space to run");
+		}
+
+		this.grid = ((Space) space).getGrid();
 
 		/*
 		 * create a single administrative unit for the entire context. This is woven
@@ -108,41 +138,82 @@ public class KlabCLUEParameters extends Parameters {
 		Map<Landuse, Integer> dDeviations = new HashMap<>();
 		LanduseDistributions demands = new LanduseDistributions();
 
-		Map<?, ?> elasticityMap = null;
-		ITable<?> elasticityTable = null;
-		Map<?, ?> demandMap = null;
-		ITable<?> demandTable = null;
-				
+		double defaultDeviation = parameters.get("deviation", 0.05);
+
 		for (Landuse landUse : getLanduses()) {
 
 			LanduseDistribution demand = new LanduseDistribution();
 
+			demand.setAdministrativeUnit(getAdministrativeUnits().getDatakind().getClasses().iterator().next());
+
 			/*
-			 * TODO check specs. If not specified for this landuse, default as below
+			 * check specs. If not specified for this landuse, use sensible defaults.
 			 */
-			if (elasticityMap != null) {
-				
-			} else if (elasticityTable != null) {
-				
+			if (parameters.get("elasticities") != null) {
+				for (Object[] row : findMatching(landUse.getConcept(), parameters.get("elasticities"))) {
+
+				}
 			}
 
-			if (demandMap != null) {
-				
-			} else if (demandTable != null) {
-				
-			}
 			
-			vTypes.put(landUse, DemandValidationType.PERCENTAGE_DEVIATION);
-			dDeviations.put(landUse, 100);
+			
+			if (parameters.get("demand") != null) {
 
-			/*
-			 * default demand is 0
-			 */
-			demand.setArea(0);
-			demand.setLanduse(landUse);
-			demand.setYear(1);
+				boolean done = false;
+
+				for (Object[] row : findMatching(landUse.getConcept(), parameters.get("demand"))) {
+
+					if (row.length > 0 && row[0] instanceof Number) {
+
+					} else if (row.length > 0 && row[0] instanceof IKimQuantity) {
+
+					}
+
+					done = true;
+				}
+
+				/*
+				 * default demand is 0
+				 */
+				if (!done) {
+					demand.setArea(0);
+					demand.setLanduse(landUse);
+				}
+
+				demand.setYear(1);
+			}
+
+			if (parameters.get("deviations") != null) {
+
+				for (Object[] row : findMatching(landUse.getConcept(), parameters.get("demand"))) {
+
+					int dvalue = 10;
+
+					if (row.length == 1 && row[0] instanceof Number) {
+
+						vTypes.put(landUse, DemandValidationType.PERCENTAGE_DEVIATION);
+
+					} else if (row.length == 1 && row[0] instanceof IKimQuantity) {
+
+						// TODO make it cells
+						vTypes.put(landUse, DemandValidationType.ABSOLUTE_DEVIATION);
+
+					} else {
+						throw new KlabValidationException(
+								"Wrong deviation for " + landUse + ": should be a proportion or an area with units");
+					}
+
+					dDeviations.put(landUse, dvalue);
+				}
+
+			} else {
+				dDeviations.put(landUse, (int) (100.0 * defaultDeviation));
+				vTypes.put(landUse, DemandValidationType.PERCENTAGE_DEVIATION);
+			}
+
 			demands.add(demand);
-		}
+		} 
+
 
 		setDemands(demands);
 		setDemandValidationTypes(vTypes);
@@ -152,7 +223,7 @@ public class KlabCLUEParameters extends Parameters {
 
 		ITable<?> transitionTable = null;
 		List<Conversion> conversions = new ArrayList<>();
-		
+
 		for (Landuse from : getLanduses()) {
 			for (Landuse to : getLanduses()) {
 				Rule rule = null;
@@ -170,9 +241,79 @@ public class KlabCLUEParameters extends Parameters {
 				conversions.add(new Conversion(from, to, rule));
 			}
 		}
-		
+
 		setConversions(conversions);
-		
+
+	}
+
+	/**
+	 * Find the matching table entries or map entry for a passed concept. Do a first
+	 * pass where the concept is looked for literally; if nothing is found, do a
+	 * second pass where the inheritance is used. The object may be a map or a
+	 * table; if a map, the concept is matched to the key, otherwise it's matched to
+	 * the first column. The returned object(s) are either the map value or the
+	 * (full) rows of the table.
+	 * 
+	 * @param concept the LUC concept to match
+	 * @param object  the entry/entries matching the concept
+	 * 
+	 * @return
+	 */
+	public List<Object[]> findMatching(IConcept concept, Object object) {
+
+		if (concept.toString().endsWith("HighDensityUrban")) {
+			System.out.println("COCO");
+		}
+
+		List<Object[]> ret = new ArrayList<>();
+		if (object instanceof Map) {
+
+			for (int i = 0; i < 2; i++) {
+				if (i == 0) {
+					for (Entry<?, ?> entry : ((Map<?, ?>) object).entrySet()) {
+						if (entry.getKey() instanceof IKimConcept) {
+							IConcept con = Concepts.c(((IKimConcept) entry.getKey()).toString());
+							if (con != null && con.equals(concept)) {
+								ret.add(new Object[] { entry.getValue() });
+							}
+						}
+					}
+				} else if (i > 0) {
+					for (Entry<?, ?> entry : ((Map<?, ?>) object).entrySet()) {
+						IConcept con = Concepts.c(((IKimConcept) entry.getKey()).toString());
+						if (entry.getKey() instanceof IConcept && concept.is(con)) {
+							ret.add(new Object[] { entry.getValue() });
+						}
+					}
+				}
+
+				if (!ret.isEmpty()) {
+					return ret;
+				}
+			}
+		} else if (object instanceof ITable) {
+			for (int i = 0; i < 2; i++) {
+
+				if (i == 0) {
+					for (Object[] row : ((ITable<?>) object).getRows()) {
+						if (row[0] instanceof IKimConcept && concept.equals(Concepts.c(row[0].toString()))) {
+							ret.add(row);
+						}
+					}
+				} else if (i > 0) {
+					for (Object[] row : ((ITable<?>) object).getRows()) {
+						if (row[0] instanceof IKimConcept && concept.is(Concepts.c(((IConcept) row[0]).toString()))) {
+							ret.add(row);
+						}
+					}
+				}
+
+				if (!ret.isEmpty()) {
+					return ret;
+				}
+			}
+		}
+		return ret;
 	}
 
 	private Landuses buildLanduses() {
@@ -181,6 +322,44 @@ public class KlabCLUEParameters extends Parameters {
 		ret.setDataKey(dataKey);
 		setLandUses(ret);
 		return ret;
+	}
+
+	public SpatialDataset getAgeDataset() {
+
+		if (this.ageData == null) {
+
+			this.ageData = new SpatialDataset();
+			this.ageData.setCaption("Age");
+
+			RasterData ageMap = null;
+
+			if (false) {
+
+				/*
+				 * TODO if an output or an input is tagged with @age, use that. If it's an
+				 * output, set the values to 0 wherever the mask is.
+				 */
+
+			} else {
+
+				scope.getMonitor().info("No age state in input or output: initializing age to 0 for all categories");
+
+				IScale ascale = process.getScale().initialization();
+				@SuppressWarnings("unchecked")
+				IStorage<Number> adata = (IStorage<Number>) Klab.INSTANCE.getStorageProvider()
+						.createStorage(IArtifact.Type.NUMBER, ascale, this.scope);
+
+				for (ILocator locator : ascale) {
+					adata.put(0, locator);
+				}
+
+				ageMap = new KLABRasterData(adata);
+
+			}
+
+			this.ageData.add(ageMap, 0);
+		}
+		return this.ageData;
 	}
 
 }
