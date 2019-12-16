@@ -1,8 +1,10 @@
 package nl.alterra.shared.rasterdata;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 
 public class RasterData {
 
@@ -14,23 +16,26 @@ public class RasterData {
 	 */
 
 	public Map<Integer, Integer> createValueCountTable() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new KlabUnimplementedException("Quickscan code to be filled in - reimplement in derived classes");
 	}
 
+	/*
+	 * Hope this is what they mean
+	 */
 	public static int getCellCount(Map<Integer, Integer> vat) {
-		// TODO Auto-generated method stub
-		return 0;
+		int ret = 0;
+		for (Entry<Integer, Integer> e : vat.entrySet()) {
+			ret += e.getValue();
+		}
+		return ret;
 	}
 
 	public Object getDataDefinition() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new KlabUnimplementedException("Quickscan code to be filled in - reimplement in derived classes");
 	}
 
 	public Map<Integer, Map<Integer, Integer>> tabulateCellCount(RasterData rasterData) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new KlabUnimplementedException("Quickscan code to be filled in - reimplement in derived classes");
 	}
 
 	public boolean isDataDefinitionValid() {
@@ -39,13 +44,11 @@ public class RasterData {
 	}
 
 	public RasterData cut(RasterData regionData, int regionValue) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new KlabUnimplementedException("Quickscan code to be filled in - reimplement in derived classes");
 	}
 
 	public Number getCellValue(int rowIndex, int columnIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new KlabUnimplementedException("Quickscan code to be filled in - reimplement in derived classes");
 	}
 
 	public boolean isNodata(Object cellValue) {

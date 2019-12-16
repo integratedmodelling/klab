@@ -1,10 +1,48 @@
 package nl.alterra.shared.rasterdata;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+
 public class RasterDataStack {
 
-	public void addInput(RasterData landuseMap) {
-		// TODO Auto-generated method stub
+	List<RasterData> data = new ArrayList<>();
+
+	class It implements Iterator<CellStack> {
+
+		IScale iterable = null;
 		
+		It() {
+			if (data.size() > 0) {
+				// save the scale
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return iterable != null && false;
+		}
+
+		@Override
+		public CellStack next() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
+
+	class Itr implements Iterable<CellStack> {
+		@Override
+		public Iterator<CellStack> iterator() {
+			return new It();
+		}
+	}
+
+	public void addInput(RasterData landuseMap) {
+		data.add(landuseMap);
 	}
 
 	public RasterData addOutput(boolean b) {
@@ -13,8 +51,7 @@ public class RasterDataStack {
 	}
 
 	public Iterable<CellStack> getCellCursor() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Itr();
 	}
 
 	public boolean containsInputWithNodata(CellStack cellStack) {
@@ -24,7 +61,7 @@ public class RasterDataStack {
 
 	public void setOutputValues(CellStack cellStack, Number[] outputCellValues) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public Number[] getOutputNodataValues() {
@@ -34,7 +71,7 @@ public class RasterDataStack {
 
 	public void clearOutputs() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public int getOutputCount() {

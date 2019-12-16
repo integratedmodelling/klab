@@ -2,6 +2,7 @@ package org.integratedmodelling.landcover.clue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,6 +10,7 @@ import java.util.Map.Entry;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimQuantity;
+import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
@@ -26,14 +28,16 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.ResourceCalculator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Triple;
 
 import nl.alterra.shared.rasterdata.RasterData;
 import nl.wur.iclue.model.demand.DemandFactory.DemandValidationType;
@@ -148,11 +152,7 @@ public class KlabCLUEParameters extends Parameters {
 			double deviationValue = defaultDeviation;
 			boolean isDeviationArea = false;
 			double elasticity = 0;
-			List<Triple<Long, Double, Boolean>> demandspecs = new ArrayList<>();
-
-			LanduseDistribution demand = new LanduseDistribution();
-
-			demand.setAdministrativeUnit(getAdministrativeUnits().getDatakind().getClasses().iterator().next());
+			List<Pair<Long, Integer>> demandspecs = new ArrayList<>();
 
 			/*
 			 * check specs. If not specified for this landuse, use sensible defaults.
@@ -167,15 +167,17 @@ public class KlabCLUEParameters extends Parameters {
 
 			if (parameters.get("demand") != null) {
 
-				boolean done = false;
-
 				for (Object[] row : findMatching(landUse.getConcept(), parameters.get("demand"))) {
+
+					long time = 0;
+					int cells = 0;
 
 					if (row.length == 1) {
 
 						/*
 						 * no year; can be a proportion or an area measurement to conver into cells
 						 */
+						cells = quantityToCells(row[0]);
 
 					} else if (row.length > 1) {
 
@@ -183,21 +185,13 @@ public class KlabCLUEParameters extends Parameters {
 						 * should be date/time to convert into time index and a proportion or an area
 						 * measurement to conver into cells
 						 */
-
+						time = quantityToTime(row[1]);
+						cells = quantityToCells(row[2]);
 					}
 
-					done = true;
-				}
+					demandspecs.add(new Pair<Long, Integer>(time, cells));
 
-				/*
-				 * default demand is 0
-				 */
-				if (!done) {
-					demand.setArea(0);
-					demand.setLanduse(landUse);
 				}
-
-				demand.setYear(1);
 			}
 
 			if (parameters.get("deviations") != null) {
@@ -225,12 +219,35 @@ public class KlabCLUEParameters extends Parameters {
 
 			}
 
+			if (demandspecs.isEmpty()) {
+
+				LanduseDistribution demand = new LanduseDistribution();
+				demand.setAdministrativeUnit(getAdministrativeUnits().getDatakind().getClasses().iterator().next());
+				demand.setArea(0);
+				demand.setYear(1);
+				demand.setLanduse(landUse);
+				demands.add(demand);
+
+			} else {
+				for (Pair<Long, Integer> p : demandspecs) {
+
+					ITimeInstant it = new TimeInstant(p.getSecond());
+					long timeslice = ((Time) ((Time) ret.getScale().getTime()).at(it)).getLocatedOffset();
+
+					LanduseDistribution demand = new LanduseDistribution();
+					demand.setAdministrativeUnit(getAdministrativeUnits().getDatakind().getClasses().iterator().next());
+					demand.setArea(p.getSecond());
+					demand.setYear((int) timeslice + 1);
+					demand.setLanduse(landUse);
+					demands.add(demand);
+				}
+			}
+
 			dDeviations.put(landUse, (int) (100.0 * deviationValue));
 			vTypes.put(landUse, isDeviationArea ? DemandValidationType.ABSOLUTE_DEVIATION
 					: DemandValidationType.PERCENTAGE_DEVIATION);
 			landUse.setEaseOfChange(EaseOfChange.findByProbability(elasticity));
 
-			demands.add(demand);
 		}
 
 		setDemands(demands);
@@ -239,22 +256,40 @@ public class KlabCLUEParameters extends Parameters {
 		setBaseline(new KLABSpatialDataset(this.lulc));
 		setTargetTime(1);
 
-		ITable<?> transitionTable = null;
+		IKimTable transitionTable = parameters.get("transitions", IKimTable.class);
 		List<Conversion> conversions = new ArrayList<>();
 
+		Map<IConcept, Integer> order = new LinkedHashMap<>();
+
+		if (transitionTable != null) {
+
+			// must be square besides the first row
+			if (transitionTable.getColumnCount() != transitionTable.getRowCount() + 1) {
+
+			}
+
+			// build order and validate table
+
+		}
+
+		for (IConcept c : order.keySet()) {
+			// TODO ensure the datakey contains all mentioned concepts, even if not present
+			// in data.
+		}
+
 		for (Landuse from : getLanduses()) {
+
+			int fromIndex = findClosest(from.getConcept(), order);
+			
 			for (Landuse to : getLanduses()) {
+
+				int toIndex = findClosest(to.getConcept(), order);
+				
 				Rule rule = null;
-				if (from == to) {
+				if (from == to || fromIndex < 0 || toIndex < 0) {
 					rule = new Always();
 				} else {
-					if (transitionTable != null) {
-						/*
-						 * TODO find in table. If not, use Always.
-						 */
-					} else {
-						rule = new Always();
-					}
+					// determine rule from table
 				}
 				conversions.add(new Conversion(from, to, rule));
 			}
@@ -262,6 +297,23 @@ public class KlabCLUEParameters extends Parameters {
 
 		setConversions(conversions);
 
+	}
+
+	private int findClosest(IConcept concept, Map<IConcept, Integer> order) {
+		if (order.isEmpty()) {
+			return -1;
+		}
+		return -1;
+	}
+
+	private long quantityToTime(Object object) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private int quantityToCells(Object object) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	/**

@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -14,6 +13,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -65,8 +65,16 @@ public class LocatedState extends Observation implements IState {
 			parent = parent.getParentScale();
 		}
 
-		if (locator instanceof IGeometry) {
+		if (locator instanceof IScale) {
 			// substitute any located extents
+			int i = 0;
+			for (IExtent extent : locatedScale.getExtents()) {
+				IExtent ex = ((Scale)locator).getExtent(extent.getType());
+				if (ex != null) {
+					offsets[i] = ((AbstractExtent)ex).getLocatedOffset();
+				}
+				i++;
+			}
 		} else if (locator instanceof IExtent) {
 			int i = 0;
 			for (IExtent ext : locatedScale.getExtents()) {

@@ -1,7 +1,10 @@
 package org.integratedmodelling.landcover.clue;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -44,13 +47,17 @@ public class KLABRasterData extends RasterData {
 	}
 	
 	public Map<Integer, Integer> createValueCountTable() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public static int getCellCount(Map<Integer, Integer> vat) {
-		// TODO Auto-generated method stub
-		return 0;
+		Map<Integer,Integer> map = new HashMap<>();
+		if (state != null) {
+			for (ILocator locator : state.getScale()) {
+				Object o = state.get(locator);
+				if (!Observations.INSTANCE.isNodata(o) && state.getDataKey() != null) {
+					int value = state.getDataKey().reverseLookup(o);
+					map.put(value, map.containsKey(value) ? map.get(value) + 1 : 1);
+				}
+			}
+		}
+		return map;
 	}
 
 	public Object getDataDefinition() {
