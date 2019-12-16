@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimQuantity;
@@ -16,12 +17,12 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -30,6 +31,8 @@ import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.common.mediation.Quantity;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
@@ -38,6 +41,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
 
 import nl.alterra.shared.rasterdata.RasterData;
 import nl.wur.iclue.model.demand.DemandFactory.DemandValidationType;
@@ -196,7 +200,7 @@ public class KlabCLUEParameters extends Parameters {
 
 			if (parameters.get("deviations") != null) {
 
-				for (Object[] row : findMatching(landUse.getConcept(), parameters.get("demand"))) {
+				for (Object[] row : findMatching(landUse.getConcept(), parameters.get("deviations"))) {
 
 					int dvalue = 10;
 
@@ -231,8 +235,11 @@ public class KlabCLUEParameters extends Parameters {
 			} else {
 				for (Pair<Long, Integer> p : demandspecs) {
 
-					ITimeInstant it = new TimeInstant(p.getSecond());
-					long timeslice = ((Time) ((Time) ret.getScale().getTime()).at(it)).getLocatedOffset();
+					long timeslice = 0;
+					if (p.getFirst() > 0) {
+						ITimeInstant it = new TimeInstant(p.getFirst());
+						timeslice = ((Time) ((Time) ret.getScale().getTime()).at(it)).getLocatedOffset();
+					}
 
 					LanduseDistribution demand = new LanduseDistribution();
 					demand.setAdministrativeUnit(getAdministrativeUnits().getDatakind().getClasses().iterator().next());
@@ -280,11 +287,11 @@ public class KlabCLUEParameters extends Parameters {
 		for (Landuse from : getLanduses()) {
 
 			int fromIndex = findClosest(from.getConcept(), order);
-			
+
 			for (Landuse to : getLanduses()) {
 
 				int toIndex = findClosest(to.getConcept(), order);
-				
+
 				Rule rule = null;
 				if (from == to || fromIndex < 0 || toIndex < 0) {
 					rule = new Always();
@@ -312,7 +319,19 @@ public class KlabCLUEParameters extends Parameters {
 	}
 
 	private int quantityToCells(Object object) {
-		// TODO Auto-generated method stub
+
+		if (object instanceof Number) {
+			if (!Range.create(0, 1, true).contains(((Number) object).doubleValue())) {
+				throw new KlabValidationException("invalid proportion of area: " + object);
+			}
+			// TODO must use the total accessible cells, not the grid size
+			return (int) ((double) grid.getCellCount() * ((Number) object).doubleValue());
+		} else if (object instanceof IKimQuantity) {
+			Quantity quantity = Quantity.create(((IKimQuantity) object).getValue(),
+					Unit.create(((IKimQuantity) object).getUnit()));
+			int ret = (int) (quantity.in(Units.INSTANCE.SQUARE_METERS) / grid.getCell(0).getStandardizedArea());
+			return ret == 0 ? 1 : ret;
+		}
 		return 0;
 	}
 
@@ -357,18 +376,20 @@ public class KlabCLUEParameters extends Parameters {
 					return ret;
 				}
 			}
-		} else if (object instanceof ITable) {
+		} else if (object instanceof IKimTable) {
 			for (int i = 0; i < 2; i++) {
 
 				if (i == 0) {
-					for (Object[] row : ((ITable<?>) object).getRows()) {
-						if (row[0] instanceof IKimConcept && concept.equals(Concepts.c(row[0].toString()))) {
+					for (IKimClassifier[] row : ((IKimTable) object).getRows()) {
+						if (row[0].getConceptMatch() != null
+								&& concept.equals(Concepts.c(row[0].getConceptMatch().toString()))) {
 							ret.add(row);
 						}
 					}
 				} else if (i > 0) {
-					for (Object[] row : ((ITable<?>) object).getRows()) {
-						if (row[0] instanceof IKimConcept && concept.is(Concepts.c(((IConcept) row[0]).toString()))) {
+					for (IKimClassifier[] row : ((IKimTable) object).getRows()) {
+						if (row[0].getConceptMatch() != null
+								&& concept.is(Concepts.c(row[0].getConceptMatch().toString()))) {
 							ret.add(row);
 						}
 					}

@@ -185,6 +185,7 @@ public class CLUEModel {
 		while ((!IterationResultEvaluator.IterationResult.ALLOCATION_ACCEPTABLE.equals(iterationResult))
 				&& (!IterationResultEvaluator.IterationResult.MAX_NUMBER_OF_ITERATIONS_REACHED
 						.equals(iterationResult))) {
+			
 			// create new landcover output
 			allocationMaps.clearOutputs();
 			resultingLanduseMap = allocationMaps.addOutput(true);
