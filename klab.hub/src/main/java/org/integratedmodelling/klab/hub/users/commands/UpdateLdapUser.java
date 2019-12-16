@@ -5,21 +5,22 @@ import org.integratedmodelling.klab.hub.users.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 
-public class CreateLdapUser implements UserCommand {
+public class UpdateLdapUser implements UserCommand {
 	
 	private User user;
 	private LdapUserDetailsManager ldapUserDetailsManager;
-
-	public CreateLdapUser(User user,
-			LdapUserDetailsManager ldapUserDetailsManager) {
-		this.ldapUserDetailsManager = ldapUserDetailsManager;
+	
+	
+	public UpdateLdapUser(User user, LdapUserDetailsManager ldapUserDetailsManager) {
+		super();
 		this.user = user;
+		this.ldapUserDetailsManager = ldapUserDetailsManager;
 	}
-
+	
 	@Override
 	public User execute() {
 		UserDetails ldapUser = new LdapUserAdapter(user).convert();
-		ldapUserDetailsManager.createUser(ldapUser);
+		ldapUserDetailsManager.updateUser(ldapUser);
 		return user;
 	}
 

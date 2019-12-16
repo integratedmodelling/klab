@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.naming.Name;
+
+import org.integratedmodelling.klab.hub.users.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import net.minidev.json.JSONObject;
 

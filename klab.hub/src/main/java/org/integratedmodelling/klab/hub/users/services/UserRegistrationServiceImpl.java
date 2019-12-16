@@ -1,34 +1,53 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
+
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.service.LdapService;
+
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.hub.users.commands.CreateLdapUser;
 import org.integratedmodelling.klab.hub.users.commands.CreatePendingUser;
-import org.integratedmodelling.klab.hub.users.commands.SetUserPassword;
+import org.integratedmodelling.klab.hub.users.commands.SetUserPasswordHash;
+import org.integratedmodelling.klab.hub.users.commands.UpdateLdapUser;
+import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.query.LdapQuery;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserRegistrationServiceImpl implements UserRegistrationService{
 	
-	@Autowired
-	PasswordEncoder passwordEncoder;
-	
 	private UserRepository userRepository;
-	private LdapService ldapService;
+	private PasswordEncoder passwordEncoder;
+	private LdapTemplate ldapTemplate;
+	private LdapUserDetailsManager ldapUserDetailsManager;
 
-	public UserRegistrationServiceImpl(UserRepository userRepository, LdapService ldapService) {
+	public UserRegistrationServiceImpl(UserRepository userRepository, 
+			PasswordEncoder passwordEncoder, 
+			LdapTemplate ldapTemplate,
+			LdapUserDetailsManager ldapUserDetailsManager) {
 		super();
 		this.userRepository = userRepository;
-		this.ldapService = ldapService;
+		this.passwordEncoder = passwordEncoder;
+		this.ldapTemplate = ldapTemplate;
+		this.ldapUserDetailsManager = ldapUserDetailsManager;
 	}
+
 
 	@Override
 	public User registerNewUser(String username, String email) {
@@ -59,7 +78,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 					.findByEmailIgnoreCase(email)
 					.isPresent();
 			
-			boolean ldapExists = ldapService.userExists(username, email);
+			boolean ldapExists = ldapUserExists(username, email);
 			
 			if(ldapExists && usernameExists && emailExists) {
 				throw new UserExistsException(username);
@@ -111,11 +130,16 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 					new BadRequestException("User not active or verified"));
 			
 			if(user.getAccountStatus().equals(AccountStatus.verified) |
-					!ldapService.userExists(user.getUsername(), user.getEmail())) {
-				user = new SetUserPassword(user, password, passwordEncoder).execute();
-				new CreateLdapUser(ldapService, user);
-				//user.setPasswordHash(PasswordEncoder);
-				//new CreateLdapUser(ldapService, user, password).execute();
+					!ldapUserExists(user.getUsername(), user.getEmail())) {
+				user = new SetUserPasswordHash(user, password, passwordEncoder).execute();
+				user= new CreateLdapUser(user, ldapUserDetailsManager).execute();
+				user = new UpdateUser(user, userRepository).execute();
+				return user;
+			} else {
+				user = new SetUserPasswordHash(user, password, passwordEncoder).execute();
+				user= new UpdateLdapUser(user, ldapUserDetailsManager).execute();
+				user = new UpdateUser(user, userRepository).execute();
+				return user;
 			}
 		} else {
 			throw new BadRequestException("Cannot set password, please confirm that the password and confirmation match");
@@ -127,6 +151,41 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 			throw new BadRequestException("Password not accepted");
 		}
 		return password.equals(confirm);
+	}
+	
+	private boolean ldapUserExists(String username, String email) {
+		LdapQuery userNameQuery = query()
+				.where("objectclass").is("person")
+				.and("uid").is(username);
+		List<Object> personByName = ldapTemplate.search(userNameQuery, new UserAttributesMapper());
+		
+		LdapQuery userEmailQuery = query()
+				.where("objectclass").is("person")
+				.and("mail").is(email);
+		List<Object> personByEmail = ldapTemplate.search(userEmailQuery, new UserAttributesMapper());
+		
+		if (!personByEmail.equals(personByName)) {
+			throw new BadRequestException("Username or email address already in use.");
+		} 
+		
+		if (personByEmail.isEmpty() && personByName.isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	private class UserAttributesMapper implements AttributesMapper<Object> {
+		public HashMap<String, String> mapFromAttributes(Attributes attributes) throws NamingException {
+			HashMap<String, String> userAttributes = new HashMap<String, String>();
+			try {
+				userAttributes.put("uid", attributes.get("uid").get().toString());
+				userAttributes.put("mail", attributes.get("mail").get().toString());
+			} catch (NamingException e){
+				return new HashMap<String, String>();
+			}
+			return userAttributes;
+		}
 	}
 	
 
