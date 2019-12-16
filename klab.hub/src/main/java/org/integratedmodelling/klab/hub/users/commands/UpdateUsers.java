@@ -1,25 +1,26 @@
 package org.integratedmodelling.klab.hub.users.commands;
 
+import java.util.Set;
+
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.User;
 
-public class UpdateUser implements UserCommand{
+public class UpdateUsers {
 	
-	private User user;
+	private Set<User> users;
 	private UserRepository userRepository;
 
 	
-	public UpdateUser(User user, UserRepository userRepository) {
+	public UpdateUsers(Set<User> users, UserRepository userRepository) {
 		super();
-		this.user = user;
+		this.users = users;
 		this.userRepository = userRepository;
 	}
 
-
-	@Override
-	public User execute() {
-		userRepository.save(user);
-		return user;
+	public void execute() {
+		for(User user: users) {
+			userRepository.save(user);
+		}
 	}
 
 }

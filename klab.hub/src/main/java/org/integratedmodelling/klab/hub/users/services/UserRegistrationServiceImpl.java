@@ -120,7 +120,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 	}
 
 	@Override
-	public User setNewPassword(String username, String password, String confirm) {
+	public User setPassword(String username, String password, String confirm) {
 		if (confirmPassword(password, confirm)) {
 			User user = userRepository.findByUsernameIgnoreCase(username)
 				.filter(u -> 

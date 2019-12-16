@@ -41,7 +41,7 @@ public class GroupsRequestController {
 		
 		Task task = service.createTask(requestee, groupNames, request);
 	    
-		UriComponents uriComponents = b.path("/api/tasks/{id}").buildAndExpand(task.getId());
+		UriComponents uriComponents = b.path("/api/v2/tasks/{id}").buildAndExpand(task.getId());
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setLocation(uriComponents.toUri());
 	    
@@ -62,7 +62,7 @@ public class GroupsRequestController {
 	    	service.denyTask(id, request);
 	    }
 	    
-		UriComponents uriComponents = b.path("/api/tasks/{id}").buildAndExpand(id);
+		UriComponents uriComponents = b.path("/api/v2/tasks/{id}").buildAndExpand(id);
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setLocation(uriComponents.toUri());
 	
