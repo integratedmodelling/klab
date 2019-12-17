@@ -19,7 +19,7 @@ public class KLABSpatialDataset extends SpatialDataset implements IMaskeable {
 	KLABSpatialDataset(IState state) {
 		this.state = state;
 		setCaption(Observations.INSTANCE.getDisplayLabel(state));
-		// preload
+		// preload all states, then disable the check at creation. Each state is purely logical.
 		for (int i = 0; i < state.getScale().getTime().size(); i++) {
 			map.put(i, new KLABRasterData(state, ((AbstractExtent)state.getScale().getTime()).getExtent(i)));
 		}
@@ -37,7 +37,8 @@ public class KLABSpatialDataset extends SpatialDataset implements IMaskeable {
 
 	@Override
 	public SpatialDataset clone() {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub - check that it's not called
+		System.out.println("CACABUFFO");
 		return super.clone();
 	}
 

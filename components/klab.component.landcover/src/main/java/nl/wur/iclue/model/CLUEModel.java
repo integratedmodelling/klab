@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.landcover.clue.KlabCLUEParameters;
 
 import nl.alterra.shared.datakind.Category;
@@ -80,6 +81,7 @@ public class CLUEModel {
 	private SuitabilityCalculator suitabilityCalculator = null;
 
 	protected Parameters params;
+	private IRuntimeScope scope;
 
 	public CLUEModel(Parameters params, IMonitor monitor) {
 
@@ -89,6 +91,9 @@ public class CLUEModel {
 			throw new RuntimeException(errorMessage);
 		}
 		this.params = params;
+		if (params instanceof KlabCLUEParameters) {
+			this.scope = ((KlabCLUEParameters) params).getKlabScope();
+		}
 	}
 
 	/**
@@ -127,7 +132,7 @@ public class CLUEModel {
 //				LanduseAndAgeDataset projections = LanduseAndAgeDataset.createByAdministrativeBoundaryCut(
 //						params.getBaseline(), params.getLanduses(), params.getAdministrativeUnits(),
 //						(Category) administrativeUnit);
-				LanduseAndAgeDataset projections = LanduseAndAgeDataset.create(params, (Category) administrativeUnit);
+				LanduseAndAgeDataset projections = createLanduseAndAgeDataset(params, (Category) administrativeUnit);
 
 				suitabilityCalculator.updateFromBaseline(projections.getLanduseData(), administrativeUnit);
 
@@ -135,7 +140,7 @@ public class CLUEModel {
 
 					Log.log(Level.INFO, String.format(LOG_ALLOCATION_STARTED, year), null);
 
-					// allocate NEW land uses based on land uses in PREVIOUS year
+					// allocate NEW land uses based on land uses in PREVIOUS year.
 					LanduseRasterData previousLanduseAndAge = projections.createRasterData(year - 1);
 					DemandValidators validators = DemandFactory.create(params, administrativeUnit, year);
 					logDemands(previousLanduseAndAge.getLanduseMap(), validators);
@@ -179,14 +184,15 @@ public class CLUEModel {
 		IterationResultEvaluator.IterationResult iterationResult = evaluator.getStatus(resultingLanduseMap);
 		RasterDataStack allocationMaps = null;
 		if (!IterationResultEvaluator.IterationResult.ALLOCATION_ACCEPTABLE.equals(iterationResult))
-			allocationMaps = helper.createAllocationMaps();
+			allocationMaps = helper.createAllocationMaps(this);
 
 		// iterate
 		while ((!IterationResultEvaluator.IterationResult.ALLOCATION_ACCEPTABLE.equals(iterationResult))
 				&& (!IterationResultEvaluator.IterationResult.MAX_NUMBER_OF_ITERATIONS_REACHED
 						.equals(iterationResult))) {
-			
-			// create new landcover output
+
+			// create new landcover output. AllMaps contains 1) LUC 2) age 3...n-1) all for
+			// each LCT as inputs; first out is new LUC
 			allocationMaps.clearOutputs();
 			resultingLanduseMap = allocationMaps.addOutput(true);
 			int LANDUSE_RESULT_INDEX = 0;
@@ -228,8 +234,8 @@ public class CLUEModel {
 				Log.log(Level.INFO, INFO_TOO_FEW_CHANGES, null);
 				// build new allocation maps
 				allocationMaps = helper.createAllocationMapsWithStochasticShock(
-						evaluator.getDeviationStatusPerLanduse(resultingLanduseMap)); // apply stochasticity to
-																						// suitabilities
+						evaluator.getDeviationStatusPerLanduse(resultingLanduseMap), this); // apply stochasticity to
+				// suitabilities
 				evaluator.resetMovingAverage();
 				break;
 			}
@@ -247,7 +253,7 @@ public class CLUEModel {
 
 	private RasterData deriveAgeMap(RasterData previousAgeMap, RasterData previousLanduseMap,
 			RasterData resultingLanduseMap) {
-		RasterDataStack rasterStack = RasterDataFactory.createStack(params);
+		RasterDataStack rasterStack = RasterDataFactory.createStack(this);
 		rasterStack.addInput(previousAgeMap);
 		int INDEX_PREVIOUS_AGE = 0;
 		rasterStack.addInput(previousLanduseMap);
@@ -296,13 +302,36 @@ public class CLUEModel {
 		}
 	}
 
+	public LanduseAndAgeDataset createLanduseAndAgeDataset(Parameters parameters,
+			Category administrativeUnitOfInterest) {
+
+		if (parameters instanceof KlabCLUEParameters) {
+
+			/*
+			 * create outputs - for the age layer, use the current state from the context
+			 * (or create if not there) and ensure the baseline points at the previous. Age
+			 * should remain stored.
+			 */
+			LanduseAndAgeDataset ret = new LanduseAndAgeDataset();
+			ret.landuseData = parameters.getBaseline().cut(parameters.getAdministrativeUnits(),
+					administrativeUnitOfInterest);
+			ret.ageData = ((KlabCLUEParameters) parameters).getAgeDataset();
+
+			return ret;
+		}
+
+		return new LanduseAndAgeDataset(
+				parameters.getBaseline().cut(parameters.getAdministrativeUnits(), administrativeUnitOfInterest),
+				parameters.getLanduses());
+	}
+
 	private SpatialDataset mergeProjectionsFromAllAdminUnits(Map<Clazz, SpatialDataset> projectionsForAllAdminUnits) {
 		if (projectionsForAllAdminUnits.size() != 1)
 			throw new UnsupportedOperationException("Cannot merge projections for all admin units. Not supported yet");
 		return projectionsForAllAdminUnits.values().iterator().next();
 	}
 
-	private static class LanduseAndAgeDataset {
+	private class LanduseAndAgeDataset {
 
 		private SpatialDataset landuseData = null;
 		private SpatialDataset ageData = null;
@@ -314,7 +343,8 @@ public class CLUEModel {
 			this.landuseData = landuseBaseline;
 			int year = landuseBaseline.getYear();
 
-			RasterData ageMap = LanduseRasterData.createInitialAgeMap(landuseBaseline.getRasterData(), landuses);
+			RasterData ageMap = LanduseRasterData.createInitialAgeMap(landuseBaseline.getRasterData(), landuses,
+					CLUEModel.this);
 			this.ageData = new SpatialDataset();
 			this.ageData.setCaption("Age");
 			this.ageData.add(ageMap, year);
@@ -324,40 +354,25 @@ public class CLUEModel {
 		 * discontinued in favor of more generic next. Does the same if parameters are
 		 * standard CLUE.
 		 */
-		public static LanduseAndAgeDataset createByAdministrativeBoundaryCut(SpatialDataset landuseBaseline,
-				Landuses landuses, SpatialDataset administrativeUnits, Category administrativeUnitOfInterest) {
+		public LanduseAndAgeDataset createByAdministrativeBoundaryCut(SpatialDataset landuseBaseline, Landuses landuses,
+				SpatialDataset administrativeUnits, Category administrativeUnitOfInterest) {
 			return new LanduseAndAgeDataset(landuseBaseline.cut(administrativeUnits, administrativeUnitOfInterest),
 					landuses);
 		}
 
-		public static LanduseAndAgeDataset create(Parameters parameters, Category administrativeUnitOfInterest) {
-
-			if (parameters instanceof KlabCLUEParameters) {
-
-				/*
-				 * create outputs - for the age layer, use the current state from the context
-				 * (or create if not there) and ensure the baseline points at the previous. Age
-				 * should remain stored.
-				 */
-				LanduseAndAgeDataset ret = new LanduseAndAgeDataset();
-				ret.landuseData = parameters.getBaseline().cut(parameters.getAdministrativeUnits(),
-						administrativeUnitOfInterest);
-				ret.ageData = ((KlabCLUEParameters) parameters).getAgeDataset();
-
-				return ret;
-			}
-
-			return new LanduseAndAgeDataset(
-					parameters.getBaseline().cut(parameters.getAdministrativeUnits(), administrativeUnitOfInterest),
-					parameters.getLanduses());
-		}
-
+		/*
+		 * TODO if this is state-based, should simply get the slice
+		 */
 		public LanduseRasterData createRasterData(int year) {
 			RasterData landuse = getLanduseData().getRasterData(year);
 			RasterData age = getAgeData().getRasterData(year);
 			return new LanduseRasterData(landuse, age);
 		}
 
+		/*
+		 * TODO if this is state-based, should simply set the slice if it's there. This
+		 * gets called with the accepted projection for year n after allocation
+		 */
 		public void addRasterData(LanduseRasterData landuseAndAge, int year) {
 			getLanduseData().add(landuseAndAge.getLanduseMap(), year);
 			getAgeData().add(landuseAndAge.getAgeMap(), year);
@@ -397,5 +412,19 @@ public class CLUEModel {
 		public long getLastYear() {
 			return landuseProjections.getLastYear();
 		}
+	}
+
+	public IRuntimeScope getKlabScope() {
+		return this.scope;
+	}
+
+	/*
+	 * FV added. Use this to run one cycle at a time, as when called by the k.LAB
+	 * contextualizer.
+	 */
+	public Projections run(int yearFrom, int yearTo) {
+		params.getBaseline().setYear(yearFrom);
+		params.setTargetTime(yearTo);
+		return createLanduseProjections();
 	}
 }

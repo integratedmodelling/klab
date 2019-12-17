@@ -1,5 +1,7 @@
 package nl.alterra.shared.rasterdata;
 
+import nl.wur.iclue.model.CLUEModel;
+
 /**
  * TODO implement on top of k.LAB observations.
  * 
@@ -8,11 +10,13 @@ package nl.alterra.shared.rasterdata;
  */
 public class RasterDataFactory {
 
-	public static RasterDataStack createStack(Object...objects) {
-		RasterDataStack ret = new RasterDataStack();
+	public static RasterDataStack createStack(CLUEModel model, Object...objects) {
+		
+		
+		RasterDataStack ret = new RasterDataStack(model);
 		// TODO 
 		if (objects != null) {
-			System.out.println("HOSTIA do something with the objects");
+//			System.out.println("HOSTIA do something with the objects");
 		}
 		return ret;
 	}

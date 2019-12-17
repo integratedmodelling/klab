@@ -449,4 +449,8 @@ public class KlabCLUEParameters extends Parameters {
 		return this.ageData;
 	}
 
+	public IRuntimeScope getKlabScope() {
+		return this.scope;
+	}
+
 }

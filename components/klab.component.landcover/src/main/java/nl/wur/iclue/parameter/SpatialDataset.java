@@ -49,11 +49,21 @@ public class SpatialDataset {
 	private String caption;
 	private DataKind datakind;
 
+	// focal year - not in original CLUE (this had a very weird getYear function,
+	// returning the first year in the map). In k.LAB we set beginning and end, then
+	// run one cycle at a time using the 0-based offset in the time extent as a
+	// "year".
+	private int year = 0;
+
 	protected final Map<Integer, RasterData> map; // year, rasterdata
 
 	public SpatialDataset() {
 		map = new LinkedHashMap<>();
 		datakind = new DataKind();
+	}
+
+	public void setYear(int year) {
+		this.year = year;
 	}
 
 	public void setDatakind(DataKind datakind) {
@@ -66,9 +76,12 @@ public class SpatialDataset {
 	}
 
 	public void add(RasterData rasterData, int year) {
-		if (map.containsKey(year))
-			throw new RuntimeException(String.format(ERROR_YEAR_ALREADY_INCLUDED, year, getCaption()));
-		map.put(year, rasterData);
+		if (map.containsKey(year)) {
+			// OK for logical states
+//			throw new RuntimeException(String.format(ERROR_YEAR_ALREADY_INCLUDED, year, getCaption()));
+		} else {
+			map.put(year, rasterData);
+		}
 	}
 
 	public Set<Integer> getYears() {
@@ -147,10 +160,11 @@ public class SpatialDataset {
 	}
 
 	public Integer getYear() {
-		if (map.size() == 1)
-			return map.keySet().iterator().next();
-		else
-			return null;
+		return year;
+//		if (map.size() == 1)
+//			return map.keySet().iterator().next();
+//		else
+//			return null;
 	}
 
 	private List<Integer> getSortedYears() {
@@ -216,7 +230,7 @@ public class SpatialDataset {
 	}
 
 	public SpatialDataset cut(SpatialDataset regions, Category regionOfInterest) {
-		
+
 		// determine region rasterdata
 		Integer regionYear = regions.getYear();
 		if (regionYear == null)
@@ -226,7 +240,7 @@ public class SpatialDataset {
 
 		SpatialDataset result = null;
 		if (this instanceof IMaskeable) {
-			
+
 			/*
 			 * k.LAB added
 			 */

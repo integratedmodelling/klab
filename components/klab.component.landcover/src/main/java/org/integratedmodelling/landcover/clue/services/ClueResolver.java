@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.landcover.clue.KlabCLUEParameters;
 
@@ -53,6 +54,11 @@ public class ClueResolver implements IResolver<IProcess>, IExpression {
 	@Override
 	public IProcess resolve(IProcess ret, IContextualizationScope context) throws KlabException {
 
+		/*
+		 * index of timeslice. Should start at 1 at the first call.
+		 */
+		int targetTime = (int) ((AbstractExtent)context.getScale().getTime()).getLocatedOffset();
+		
 		if (this.clue == null) {
 
 			Log.setMonitor(context.getMonitor());
@@ -76,7 +82,7 @@ public class ClueResolver implements IResolver<IProcess>, IExpression {
 		 * run a cycle, update process data. TODO must set the beginning and end for this
 		 * timestep (0-1 after configuration).
 		 */
-		this.clue.createLanduseProjections();
+		this.clue.run(targetTime - 1, targetTime);
 
 		return ret;
 	}

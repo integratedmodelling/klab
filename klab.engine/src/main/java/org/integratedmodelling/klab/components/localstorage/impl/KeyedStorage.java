@@ -27,11 +27,13 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 	private BiMap<T, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
 	private IDataKey dataKey = null;
 	private Class<? extends T> cls;
+	private IGeometry geometry;
 
 	public KeyedStorage(IGeometry geometry, Class<? extends T> cls) {
 		// TODO use a Short
 		keyStore = new FileMappedStorage<>(geometry, Integer.class);
 		this.cls = cls;
+		this.geometry = geometry;
 	}
 
 	public void setDataKey(IDataKey dataKey) {
@@ -147,6 +149,11 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 			return false;
 		}
 
+	}
+	
+	@Override
+	public IGeometry getGeometry() {
+		return geometry;
 	}
 
 }

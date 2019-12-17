@@ -21,24 +21,25 @@
 
 package nl.wur.iclue.model;
 
-import nl.wur.iclue.model.probability.LanduseProbabilities;
-import nl.wur.iclue.model.probability.Probabilities;
-import nl.wur.iclue.model.demand.DemandValidators;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import nl.alterra.shared.datakind.Category;
+import nl.alterra.shared.datakind.Clazz;
+import nl.alterra.shared.rasterdata.CellStack;
+import nl.alterra.shared.rasterdata.RasterData;
 import nl.wur.iclue.model.demand.DemandValidator.DeviationStatus;
+import nl.wur.iclue.model.demand.DemandValidators;
+import nl.wur.iclue.model.probability.LanduseProbabilities;
 import nl.wur.iclue.model.probability.LanduseProbability;
+import nl.wur.iclue.model.probability.Probabilities;
 import nl.wur.iclue.model.probability.ProbabilityCompositeCalculator;
 import nl.wur.iclue.parameter.Landuses;
 import nl.wur.iclue.parameter.Landuses.Landuse;
 import nl.wur.iclue.parameter.SpatialDataset;
 import nl.wur.iclue.suitability.SuitabilityCalculator;
-import nl.alterra.shared.datakind.Category;
-import nl.alterra.shared.datakind.Clazz;
-import nl.alterra.shared.rasterdata.CellStack;
-import nl.alterra.shared.rasterdata.RasterData;
 
 /**
  *
@@ -72,7 +73,7 @@ public class IterationHelper extends Probabilities {
 	}
 
 	protected Map<Landuses.Landuse, RasterData> createProbabilityMaps(
-			Map<Clazz, DeviationStatus> landusesRequiringStochasticShock) {
+			Map<Clazz, DeviationStatus> landusesRequiringStochasticShock, CLUEModel model) {
 		this.landusesRequiringStochasticShock = landusesRequiringStochasticShock;
 
 		allocatableLanduses = new ArrayList<>();
@@ -89,7 +90,7 @@ public class IterationHelper extends Probabilities {
 			}
 		}
 
-		probabilityMaps = super.createProbabilityMaps(year, landuseRasterData.getLanduseMap(), getDemands(demands));
+		probabilityMaps = super.createProbabilityMaps(year, landuseRasterData.getLanduseMap(), getDemands(demands), model);
 
 		return probabilityMaps;
 	}

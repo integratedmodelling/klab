@@ -305,4 +305,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		return put((T) value, locator);
 	}
 
+	@Override
+	public IGeometry getGeometry() {
+		return geometry;
+	}
+
 }

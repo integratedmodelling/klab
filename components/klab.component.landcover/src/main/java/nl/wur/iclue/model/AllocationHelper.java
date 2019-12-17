@@ -25,6 +25,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import nl.alterra.shared.datakind.Clazz;
+import nl.alterra.shared.rasterdata.CellStack;
+import nl.alterra.shared.rasterdata.RasterData;
+import nl.alterra.shared.rasterdata.RasterDataFactory;
+import nl.alterra.shared.rasterdata.RasterDataStack;
 import nl.wur.iclue.model.demand.DemandValidator.DeviationStatus;
 import nl.wur.iclue.parameter.Landuses;
 import nl.wur.iclue.parameter.Landuses.Landuse;
@@ -33,11 +39,6 @@ import nl.wur.iclue.parameter.conversion.Always;
 import nl.wur.iclue.parameter.conversion.Conversion;
 import nl.wur.iclue.parameter.conversion.RestrictedAreas;
 import nl.wur.iclue.suitability.SuitabilityCalculator;
-import nl.alterra.shared.datakind.Clazz;
-import nl.alterra.shared.rasterdata.CellStack;
-import nl.alterra.shared.rasterdata.RasterData;
-import nl.alterra.shared.rasterdata.RasterDataFactory;
-import nl.alterra.shared.rasterdata.RasterDataStack;
 
 /**
  *
@@ -74,18 +75,18 @@ public class AllocationHelper extends IterationHelper {
 		return result;
 	}
 
-	public RasterDataStack createAllocationMaps() {
-		return createAllocationMapsWithStochasticShock(null);
+	public RasterDataStack createAllocationMaps(CLUEModel model) {
+		return createAllocationMapsWithStochasticShock(null, model);
 	}
 
 	public RasterDataStack createAllocationMapsWithStochasticShock(
-			Map<Clazz, DeviationStatus> landusesRequiringStochasticShock) {
-		RasterDataStack result = RasterDataFactory.createStack();
+			Map<Clazz, DeviationStatus> landusesRequiringStochasticShock, CLUEModel model) {
+		RasterDataStack result = RasterDataFactory.createStack(model);
 		result.addInput(landuseRasterData.getLanduseMap()); // index = 0
 		result.addInput(landuseRasterData.getAgeMap()); // index = 1
 
 		Map<Landuses.Landuse, RasterData> probabilityMaps = super.createProbabilityMaps(
-				landusesRequiringStochasticShock);
+				landusesRequiringStochasticShock, model);
 		for (Landuse lu : allocatableLanduses)
 			result.addInput(probabilityMaps.get(lu));
 

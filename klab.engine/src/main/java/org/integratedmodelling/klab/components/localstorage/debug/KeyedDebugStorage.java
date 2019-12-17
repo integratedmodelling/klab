@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
@@ -26,11 +27,13 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 	private BiMap<T, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
 	private IDataKey dataKey = null;
 	private Class<? extends T> cls;
-
+	private IScale geometry;
+	
 	public KeyedDebugStorage(IScale geometry, Class<? extends T> cls) {
 		// TODO use a Short
 		keyStore = new DebugStorage<>(geometry, Integer.class);
 		this.cls = cls;
+		this.geometry = geometry;
 	}
 
 	public void setDataKey(IDataKey dataKey) {
@@ -149,5 +152,11 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 		}
 
 	}
+	
+	@Override
+	public IGeometry getGeometry() {
+		return geometry;
+	}
+
 
 }
