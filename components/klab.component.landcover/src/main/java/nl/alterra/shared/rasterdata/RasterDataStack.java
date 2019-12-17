@@ -97,7 +97,7 @@ public class RasterDataStack {
 	}
 
 	public Number[] getOutputNodataValues() {
-		// TODO Auto-generated method stub
+		// TODO set an entire stack of values to nodata
 		return null;
 	}
 
