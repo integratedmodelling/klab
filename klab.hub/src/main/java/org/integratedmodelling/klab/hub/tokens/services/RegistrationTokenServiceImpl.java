@@ -2,15 +2,13 @@ package org.integratedmodelling.klab.hub.tokens.services;
 
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.tokens.ActivateAccountClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
-import org.integratedmodelling.klab.hub.tokens.ChangePasswordClickbackToken;
-import org.integratedmodelling.klab.hub.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
-import org.integratedmodelling.klab.hub.tokens.NewUserClickbackToken;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateActivateAccountToken;
+import org.integratedmodelling.klab.hub.tokens.TokenType;
 import org.integratedmodelling.klab.hub.tokens.commands.CreateChangePasswordToken;
 import org.integratedmodelling.klab.hub.tokens.commands.CreateNewUserAccountToken;
+import org.integratedmodelling.klab.hub.tokens.commands.CreateVerifyAccountToken;
+import org.integratedmodelling.klab.hub.tokens.commands.DeleteAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +25,10 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 	}
 
 	@Override
-	public AuthenticationToken createToken(String username, Class<? extends ClickbackToken> tokenType) {
-		if (tokenType.equals(ActivateAccountClickbackToken.class)) {
-			return new CreateActivateAccountToken(repository, username, linkConfig).execute();
-		} else if (tokenType.equals(ChangePasswordClickbackToken.class)) {
+	public AuthenticationToken createToken(String username, TokenType type) {
+		if (type.equals(TokenType.verify)) {
+			return new CreateVerifyAccountToken(repository, username, linkConfig).execute();
+		} else if (type.equals(TokenType.password)) {
 			return new CreateChangePasswordToken(repository, username, linkConfig).execute();
 		} else {
 			return null;
@@ -38,9 +36,8 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 	}
 
 	@Override
-	public AuthenticationToken createChildToken(String username, String parentToken,
-			Class<? extends ClickbackToken> tokenType) {
-		if (tokenType.equals(NewUserClickbackToken.class)) {
+	public AuthenticationToken createChildToken(String username, String parentToken, TokenType type) {
+		if (type.equals(TokenType.newUser)) {
 			return new CreateNewUserAccountToken(repository, username, linkConfig).execute();
 		} else {
 			return null;
@@ -48,12 +45,11 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 	}
 
 	@Override
-	public boolean verifyToken(String username, String id) {
+	public boolean verifyToken(String username, String id, TokenType type) {
 		return repository.findByTokenString(id)
 			.filter(token -> token.getPrincipal().equals(username))
-			.filter(token -> token.getClass().equals(ActivateAccountClickbackToken.class))
-			.map(ActivateAccountClickbackToken.class::cast)
-			.filter(token -> token.getClickbackAction().equals(ClickbackAction.activate))
+			.map(ClickbackToken.class::cast)
+			.filter(token -> token.getClickbackAction().getTokenType().equals(type))
 			.map(token -> setAuthentication(token))
 			.isPresent();
 	}
@@ -61,6 +57,11 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 	private AuthenticationToken setAuthentication(AuthenticationToken token) {
 		SecurityContextHolder.getContext().setAuthentication(token);
 		return token;
+	}
+
+	@Override
+	public void deleteToken(String tokenString) {
+		new DeleteAuthenticationToken(repository, tokenString).execute();
 	}
 
 }

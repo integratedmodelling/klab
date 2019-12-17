@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.hub.tokens;
 
 public enum TokenType {
-    activate(
-            ActivateAccountClickbackToken.class),
+    verify(
+    		VerifyAccountClickbackToken.class),
     auth(
             AuthenticationToken.class),
     engine(

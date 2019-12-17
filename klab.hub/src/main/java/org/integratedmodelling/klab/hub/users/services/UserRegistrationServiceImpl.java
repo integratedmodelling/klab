@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.hub.users.services;
 
-import static org.springframework.ldap.query.LdapQueryBuilder.query;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -9,11 +7,11 @@ import java.util.Optional;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
+
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.service.LdapService;
-
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.hub.users.commands.CreateLdapUser;
@@ -21,7 +19,6 @@ import org.integratedmodelling.klab.hub.users.commands.CreatePendingUser;
 import org.integratedmodelling.klab.hub.users.commands.SetUserPasswordHash;
 import org.integratedmodelling.klab.hub.users.commands.UpdateLdapUser;
 import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQuery;
@@ -107,7 +104,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 	}
 
 	@Override
-	public User activateNewUser(String username) {
+	public User verifyNewUser(String username) {
 		User pendingUser = userRepository.findByUsernameIgnoreCase(username)
 			.filter(user -> 
 				user.getAccountStatus().equals(AccountStatus.pendingActivation) |
@@ -116,7 +113,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 				new BadRequestException("User is already Activated or does not exist"));
 		
 		pendingUser.setAccountStatus(AccountStatus.verified);
-		return userRepository.save(pendingUser);
+		pendingUser = new UpdateUser(pendingUser, userRepository).execute();
+		return pendingUser;
 	}
 
 	@Override

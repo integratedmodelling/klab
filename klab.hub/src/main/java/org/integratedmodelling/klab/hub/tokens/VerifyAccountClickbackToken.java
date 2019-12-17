@@ -2,11 +2,11 @@ package org.integratedmodelling.klab.hub.tokens;
 
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 
-public class ActivateAccountClickbackToken extends ChangePasswordClickbackToken {
+public class VerifyAccountClickbackToken extends ChangePasswordClickbackToken {
 
     private static final long serialVersionUID = -9175135534782007340L;
 
-    public ActivateAccountClickbackToken(String username) {
+    public VerifyAccountClickbackToken(String username) {
         super(username);
     }
 

@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.hub.tokens;
 
 public enum ClickbackAction {
     activate(
-            TokenType.activate),
+            TokenType.verify),
     password(
             TokenType.password),
     groups(

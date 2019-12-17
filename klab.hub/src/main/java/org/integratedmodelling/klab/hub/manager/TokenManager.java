@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.services.TaskService;
-import org.integratedmodelling.klab.hub.tokens.ActivateAccountClickbackToken;
+import org.integratedmodelling.klab.hub.tokens.VerifyAccountClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
 import org.integratedmodelling.klab.hub.tokens.ChangePasswordClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.ClickbackAction;
@@ -219,7 +219,7 @@ public class TokenManager {
 		
 		try {
 			klabUserManager.createPendingKlabUser(newUser);
-			clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
+			clickbackToken = createClickbackToken(username, VerifyAccountClickbackToken.class);
 		} catch (UserExistsException | UserEmailExistsException e) {
 			throw new TokenGenerationException(e.getMessage(), e);
 		}
@@ -236,7 +236,7 @@ public class TokenManager {
 		for (AuthenticationToken token : tokens) {
 			tokenRepository.delete(token);
 		}
-		ClickbackToken clickbackToken = createClickbackToken(user.getUsername(), ActivateAccountClickbackToken.class);
+		ClickbackToken clickbackToken = createClickbackToken(user.getUsername(), VerifyAccountClickbackToken.class);
 		emailManager.sendNewUser(user.getEmail(), user.getUsername(), clickbackToken.getCallbackUrl());
 		return clickbackToken;
 	}
@@ -298,7 +298,7 @@ public class TokenManager {
 		// the user is already authenticated via clickback token header, but we want
 		// to do some extra verification because they aren't supplying a password
 		Authentication authentication = klabUserManager.getLoggedInAuthentication();
-		if (!(authentication instanceof ActivateAccountClickbackToken)) {
+		if (!(authentication instanceof VerifyAccountClickbackToken)) {
 			throw new AuthenticationFailedException("The token submitted was not valid for activating an account.");
 		}
 		// this will also verify that the account started in pendingActivation
@@ -497,7 +497,7 @@ public class TokenManager {
 					ClickbackToken clickbackToken = createClickbackToken(username, LostPasswordClickbackToken.class);
 					emailManager.sendLostPasswordEmail(user.getEmail(), clickbackToken.getCallbackUrl());
 				} else {
-					ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
+					ClickbackToken clickbackToken = createClickbackToken(username, VerifyAccountClickbackToken.class);
 					emailManager.sendNewUser(user.getEmail(), username, clickbackToken.getCallbackUrl());
 				}
 			} else {

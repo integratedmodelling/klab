@@ -2,9 +2,11 @@ package org.integratedmodelling.klab.hub.users.controllers;
 
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.manager.EmailManager;
+import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.SignupRequest;
-import org.integratedmodelling.klab.hub.tokens.ActivateAccountClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.NewUserClickbackToken;
+import org.integratedmodelling.klab.hub.tokens.TokenType;
+import org.integratedmodelling.klab.hub.tokens.VerifyAccountClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.services.UserRegistrationService;
@@ -40,25 +42,40 @@ public class UserRegistrationController {
 	@PostMapping(value= "", produces = "application/json")
 	public ResponseEntity<?> newUserRegistration(@RequestBody SignupRequest request) {
 		User user = userService.registerNewUser(request.getUsername(), request.getEmail());
-		ActivateAccountClickbackToken token = (ActivateAccountClickbackToken)
+		VerifyAccountClickbackToken token = (VerifyAccountClickbackToken)
 				tokenService.createToken(user.getUsername()
-						, ActivateAccountClickbackToken.class);
+						, TokenType.verify);
 		emailManager.sendNewUser(user.getEmail(), user.getEmail(), token.getCallbackUrl());
 		return new ResponseEntity<String>("Please Check your email for account verification email.", HttpStatus.CREATED);
 	}
 	
-	@PostMapping(value="/{username}", params = "activate")
-	public ResponseEntity<?> newUserRegistration(@PathVariable String username, @RequestParam String activate) {
-		if (!tokenService.verifyToken(username, activate)) {
-			throw new ActivationTokenFailedException("User Activation token failed");
+	@PostMapping(value="/{username}", params = "verify")
+	public ResponseEntity<?> newUserVerification(@PathVariable String username, @RequestParam String verify) {
+		if (!tokenService.verifyToken(username, verify, TokenType.verify)) {
+			throw new ActivationTokenFailedException("User Verification token failed");
 		}
-		User user = userService.activateNewUser(username);
+		User user = userService.verifyNewUser(username);
 		NewUserClickbackToken token = 
 				(NewUserClickbackToken) tokenService
-					.createChildToken(username, activate, NewUserClickbackToken.class);
+					.createChildToken(username, verify, TokenType.newUser);
 		
 		JSONObject resp = new JSONObject();
 		resp.appendField("User", user).appendField("clickback", token.getTokenString());
+		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
+	}
+	
+	@PostMapping(value="/{username}", params = "setPassword")
+	public ResponseEntity<?> newUserPassword(@PathVariable String username, @RequestParam String setPassword,
+			@RequestBody PasswordChangeRequest passwordRequest) {
+		if (!tokenService.verifyToken(username, setPassword, TokenType.newUser)) {
+			throw new ActivationTokenFailedException("User Verification token failed");
+		}
+		User user = userService.setPassword(username, passwordRequest.getNewPassword(), passwordRequest.getConfirm());
+		if(user != null) {
+			tokenService.deleteToken(setPassword);
+		}
+		JSONObject resp = new JSONObject();
+		resp.appendField("User", user);
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 
