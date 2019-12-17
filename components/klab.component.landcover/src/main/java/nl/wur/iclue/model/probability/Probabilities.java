@@ -196,8 +196,8 @@ public class Probabilities {
 	}
 
 	private static void logProbabilityMaps(Map<Landuse, RasterData> probabilityMaps) {
-//        for (Landuse lu: probabilityMaps.keySet())
-//            Log.log(Level.INFO, String.format(LOG_PROBABILITYMAP, lu.getCaption(), probabilityMaps.get(lu).getDataDefinition()), null);
+        for (Landuse lu: probabilityMaps.keySet())
+            Log.log(Level.INFO, String.format(LOG_PROBABILITYMAP, lu.getCaption(), probabilityMaps.get(lu).getDataDefinition()), null);
 	}
 
 	private void logDemandWeights(Map<Landuse, Double> demandWeights, long targetYear) {
