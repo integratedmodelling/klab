@@ -257,6 +257,11 @@ public interface IMessage {
 		 * Task lifecycle F -> B
 		 */
 		TaskInterrupted, DataflowNodeDetail, DataflowNodeRating,
+		
+		/**
+		 * Scheduler lifecycle F->B
+		 */
+		SchedulingStarted, SchedulingFinished, SchedulerReset, 
 
 		/*
 		 * --- Search-class types ---

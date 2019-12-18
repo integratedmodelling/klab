@@ -1430,7 +1430,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			RuntimeScope root = getRootScope();
 
 			if (root.scheduler == null) {
-				root.scheduler = new Scheduler(resolutionScope.getScale().getTime(), monitor);
+				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(), monitor);
 			}
 
 			((Scheduler) root.scheduler).schedule(actuator, schedule, this);

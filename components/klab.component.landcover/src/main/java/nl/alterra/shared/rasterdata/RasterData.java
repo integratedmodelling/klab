@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 
 public class RasterData {
@@ -53,6 +54,11 @@ public class RasterData {
 
 	public boolean isNodata(Object cellValue) {
 		return Observations.INSTANCE.isNodata(cellValue);
+	}
+
+	public Object getCellValue(ILocator cell) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

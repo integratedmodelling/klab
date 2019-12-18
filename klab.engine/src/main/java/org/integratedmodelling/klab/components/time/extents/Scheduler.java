@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ObservationChange;
+import org.integratedmodelling.klab.rest.SchedulerNotification;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.joda.time.DateTime;
@@ -226,8 +227,12 @@ public class Scheduler implements IScheduler {
 	private int wheelSize = 0;
 	private IMonitor monitor;
 	private long resolution;
-
-	public Scheduler(ITime time, IMonitor monitor) {
+	private String contextId;
+	private ISession session;
+	
+	public Scheduler(String contextId, ITime time, IMonitor monitor) {
+		this.contextId = contextId;
+		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
 		Date now = new Date();
 		this.monitor = monitor;
 		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
@@ -365,6 +370,16 @@ public class Scheduler implements IScheduler {
 			startTime = DateTime.now().getMillis();
 		}
 
+		/*
+		 * notify start
+		 */
+		SchedulerNotification notification = new SchedulerNotification();
+		notification.setContextId(contextId);
+		notification.setType(SchedulerNotification.Type.STARTED);
+		notification.setResolution(resolution);
+		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+				IMessage.Type.SchedulingStarted, notification));
+		
 		long time = startTime;
 		while (true) {
 
@@ -411,6 +426,13 @@ public class Scheduler implements IScheduler {
 				break;
 			}
 		}
+		
+		/*
+		 * notify end
+		 */
+		notification.setType(SchedulerNotification.Type.FINISHED);
+		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+				IMessage.Type.SchedulingFinished, notification));
 	}
 
 	private void reschedule(Registration registration, long startTime, boolean first) {

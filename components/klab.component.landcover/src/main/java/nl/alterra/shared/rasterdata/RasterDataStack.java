@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.landcover.clue.KLABRasterData;
 
@@ -59,8 +60,13 @@ public class RasterDataStack {
 			ILocator locator = iterator.next();
 			CellStack ret = new CellStack(inputs.size());
 
+			ILocator cell = ((IScale)locator).getSpace();
+			
 			for (RasterData input : inputs) {
-				
+				Object value = input.getCellValue(cell);
+				if (value instanceof Number) {
+					
+				}
 			}
 			
 			return ret;

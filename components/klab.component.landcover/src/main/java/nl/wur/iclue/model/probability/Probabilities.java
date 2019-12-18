@@ -88,8 +88,8 @@ public class Probabilities {
 		Map<Landuses.Landuse, Double> demandWeights = DemandWeights.create(previousLanduseMap, demands);
 		logDemandWeights(demandWeights, targetYear);
 
-		LanduseProbabilities landuseProbabilitiesOfCell = new LanduseProbabilities(landuses, false); // 'false' to
-																										// excludeLandusesThatCannotChange
+		// 'false' to excludeLandusesThatCannotChange
+		LanduseProbabilities landuseProbabilitiesOfCell = new LanduseProbabilities(landuses, false);
 		List<Landuses.Landuse> orderedLanduseList = landuseProbabilitiesOfCell.getLanduses();
 
 		// prepare map stack
@@ -196,8 +196,10 @@ public class Probabilities {
 	}
 
 	private static void logProbabilityMaps(Map<Landuse, RasterData> probabilityMaps) {
-        for (Landuse lu: probabilityMaps.keySet())
-            Log.log(Level.INFO, String.format(LOG_PROBABILITYMAP, lu.getCaption(), probabilityMaps.get(lu).getDataDefinition()), null);
+		for (Landuse lu : probabilityMaps.keySet())
+			Log.log(Level.INFO,
+					String.format(LOG_PROBABILITYMAP, lu.getCaption(), probabilityMaps.get(lu).getDataDefinition()),
+					null);
 	}
 
 	private void logDemandWeights(Map<Landuse, Double> demandWeights, long targetYear) {
