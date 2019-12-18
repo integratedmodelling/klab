@@ -56,7 +56,7 @@ public class RasterData {
 		return Observations.INSTANCE.isNodata(cellValue);
 	}
 
-	public Object getCellValue(ILocator cell) {
+	public <T> T getCellValue(ILocator cell, Class<? extends T> cls) {
 		// TODO Auto-generated method stub
 		return null;
 	}

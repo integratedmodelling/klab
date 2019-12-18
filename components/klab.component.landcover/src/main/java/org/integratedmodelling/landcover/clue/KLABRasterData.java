@@ -9,9 +9,12 @@ import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.scale.AbstractExtent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Utils;
 
 import nl.alterra.shared.rasterdata.RasterData;
@@ -69,8 +72,9 @@ public class KLABRasterData extends RasterData {
 	}
 
 	public Map<Integer, Map<Integer, Integer>> tabulateCellCount(RasterData rasterData) {
-		Map<Integer, Map<Integer, Integer>> ret = new HashMap<>();	
+		Map<Integer, Map<Integer, Integer>> ret = new HashMap<>();
 		// TODO Auto-generated method stub
+		System.out.println("SUUUUUUKA CALLING TABULATECELLCOUNT");
 		return ret;
 	}
 
@@ -85,7 +89,7 @@ public class KLABRasterData extends RasterData {
 	}
 
 	public Number getCellValue(int rowIndex, int columnIndex) {
-		
+
 		ISpace space = getScale().getSpace();
 		if (space instanceof Space && ((Space) space).getGrid() != null) {
 
@@ -106,4 +110,48 @@ public class KLABRasterData extends RasterData {
 		return state == null ? (IScale) storage.getGeometry() : state.getScale();
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T> T getCellValue(ILocator cell, Class<? extends T> cls) {
+
+		Object value = null;
+		if (cell instanceof IExtent) {
+
+			if (state != null) {
+
+				IExtent[] extents = new IExtent[2];
+				extents[0] = (IExtent) time;
+				extents[1] = (IExtent) cell;
+				value = state.get(Scale.create(extents));
+
+			} else if (storage != null && cell instanceof IGrid.Cell) {
+				Offset offset = new Offset(getScale(),
+						new long[] { getTimeOffset(), ((IGrid.Cell) cell).getOffsetInGrid() });
+				value = storage.get(offset);
+			}
+
+		} else {
+			// fooock
+		}
+
+		if (value == null) {
+			// CLUE is allergic to nulls
+			return Utils.asType(Double.NaN, cls);
+		}
+		
+		if (value instanceof Number) {
+			return Utils.asType(value, cls);
+		} else if (state != null && state.getDataKey() != null) {
+			value = state.getDataKey().reverseLookup(value);
+			return Utils.asType(value, cls);
+		}
+
+		return (T) value;
+	}
+
+	private long getTimeOffset() {
+		if (time == null || ((AbstractExtent)time).getLocatedOffset() <= 0) {
+			return 0;
+		}
+		return ((AbstractExtent)time).getLocatedOffset();
+	}
 }

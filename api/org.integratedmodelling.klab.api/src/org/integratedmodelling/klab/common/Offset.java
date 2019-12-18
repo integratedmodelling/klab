@@ -85,7 +85,7 @@ public class Offset implements ILocator {
 		this.linear = 0;
 		this.scalar = geometry.size() == 1;
 	}
-
+	
 	/**
 	 * A scanner for the passed offsets of the passed geometry. Dimensions with pos
 	 * < 0 are unlocked.

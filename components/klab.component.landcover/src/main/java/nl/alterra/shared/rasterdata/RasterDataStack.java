@@ -62,13 +62,10 @@ public class RasterDataStack {
 
 			ILocator cell = ((IScale)locator).getSpace();
 			
+			int i = 0;
 			for (RasterData input : inputs) {
-				Object value = input.getCellValue(cell);
-				if (value instanceof Number) {
-					
-				}
+				ret.inputValues[i++] = input.getCellValue(cell, Number.class);
 			}
-			
 			return ret;
 		}
 

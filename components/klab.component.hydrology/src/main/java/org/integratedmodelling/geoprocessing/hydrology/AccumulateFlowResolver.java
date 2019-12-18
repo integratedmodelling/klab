@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.geoprocessing.GeoprocessingComponent;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
@@ -16,14 +15,16 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.processing.ContributingCell;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -169,7 +170,7 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 			result.set(cell, (ret = upstreamExpression.eval(parameters, context)));
 		}
 		
-		List<Cell> upstreamCells = GeoprocessingComponent.getUpstreamCells(cell, flowdirection, null);
+		List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirection, null);
 		for (Cell upstream : upstreamCells) {
 			compute(upstream, flowdirection, result, states, downstreamExpression, upstreamExpression, false, ret);
 		}
