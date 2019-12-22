@@ -46,7 +46,7 @@ public class Parameters {
 	private Integer targetTime = SpatialDataset.UNKNOWN_YEAR;
 	private Map<Landuse, DemandValidationType> demandValidationTypes = null;
 	private Map<Landuse, Integer> demandDeviations = null;
-	private Map<Landuse, FocalFilter> focalFilters = null;
+//	private Map<Landuse, FocalFilter> focalFilters = null;
 	private SuitabilityParameters suitabilityParams = null;
 
 	private final ParameterStatus status;
@@ -198,13 +198,13 @@ public class Parameters {
 		this.demandDeviations = demandDeviations;
 	}
 
-	public Map<Landuse, FocalFilter> getFocalFilters() {
-		return focalFilters;
-	}
-
-	public void setFocalFilters(Map<Landuse, FocalFilter> filters) {
-		this.focalFilters = filters;
-	}
+//	public Map<Landuse, FocalFilter> getFocalFilters() {
+//		return focalFilters;
+//	}
+//
+//	public void setFocalFilters(Map<Landuse, FocalFilter> filters) {
+//		this.focalFilters = filters;
+//	}
 
 	public ParameterStatus getCompletenessStatus() {
 		return status;

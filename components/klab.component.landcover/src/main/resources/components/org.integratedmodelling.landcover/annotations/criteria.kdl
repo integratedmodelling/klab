@@ -16,20 +16,28 @@ annotation demand for dependencies
 		label 'Land cover type'
 }
 
-annotation demandarea for dependencies
-	"Tags a numeric dependency to be used to provide the areal demand 
-	for one or more land cover types. Use on quality or 'change in' quality 
-	for dynamic demand."
-{
-	optional value 'value'
-		"The land cover type(s) that this dependency provides demand for."
-		label 'Land cover type'
-}
-
 annotation elasticity for dependencies
 	"Tags a numeric dependency to be used to provide the elasticity 
 	for one or more land cover types. Use on quality or 'change in' quality 
 	for dynamic demand."
+{
+	optional value 'value'
+		"The land cover type(s) that this dependency provides elasticity for."
+		label 'Land cover type'
+}
+
+annotation age for dependencies
+	"Tags a numeric dependency or output to provide and/or store the age of
+	 each allocated type."
+{
+	optional value 'value'
+		"The land cover type(s) that this dependency provides elasticity for."
+		label 'Land cover type'
+}
+
+annotation deviation for dependencies
+	"Tags a numeric dependency to be used to provide the allowed deviation
+	 in allocated area per type."
 {
 	optional value 'value'
 		"The land cover type(s) that this dependency provides elasticity for."

@@ -33,7 +33,7 @@ public abstract class DemandValidator {
      * @param demand in cells
      */
     public DemandValidator(int demand) {
-        super();
+        super(); // it's a fucking Object
         this.demand = demand;
     }
 

@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+
 import nl.alterra.shared.datakind.Clazz;
 import nl.wur.iclue.parameter.LanduseDistributions.LanduseDistribution;
 import nl.wur.iclue.parameter.Landuses.Landuse;
@@ -244,6 +246,14 @@ public class LanduseDistributions extends ArrayList<LanduseDistribution> {
 					+ getArea() + " cells";
 		}
 
+	}
+
+	/**
+	 * FV adjust comfigured demand for k.LAB expectations
+	 */
+	public void normalize(IRuntimeScope scope) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

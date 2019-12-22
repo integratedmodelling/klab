@@ -95,14 +95,14 @@ public class Landuses implements Iterable<Landuse> {
         return list.get(index);
     }
     
-    public Landuse findByCaption(String caption) {
-        for (int i=0; i<size(); i++) {
-            Landuse lu = get(i);
-            if (lu.getCaption().equalsIgnoreCase(caption))
-                return lu;
-        }
-        return null;
-    }
+//    public Landuse findByCaption(String caption) {
+//        for (int i=0; i<size(); i++) {
+//            Landuse lu = get(i);
+//            if (lu.getCaption().equalsIgnoreCase(caption))
+//                return lu;
+//        }
+//        return null;
+//    }
     
     public Landuse findByValue(Number value) {
         for (int i=0; i<size(); i++) {
@@ -113,15 +113,18 @@ public class Landuses implements Iterable<Landuse> {
         return null;
     }
     
-    public Landuse findByClazz(Clazz clazz) {
-        for (int i=0; i<size(); i++) {
-            Landuse lu = get(i);
-            if (lu.getCategory().equals(clazz))
-                return lu;
-        }
-        return null;
-    }
+//    public Landuse findByClazz(Clazz clazz) {
+//        for (int i=0; i<size(); i++) {
+//            Landuse lu = get(i);
+//            if (lu.getCategory().equals(clazz))
+//                return lu;
+//        }
+//        return null;
+//    }
     
+    /*
+     * jaysus
+     */
     @Override
     public Iterator<Landuse> iterator() {
         return new Iterator<Landuse>() {
@@ -144,12 +147,12 @@ public class Landuses implements Iterable<Landuse> {
         };
     }
 
-    public String[] toCaptionArray() {
-        String[] result = new String[size()];
-        for (int i=0; i<size(); i++)
-            result[i]=get(i).getCaption();
-        return result;
-    }
+//    public String[] toCaptionArray() {
+//        String[] result = new String[size()];
+//        for (int i=0; i<size(); i++)
+//            result[i]=get(i).getCaption();
+//        return result;
+//    }
     
     
     

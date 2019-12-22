@@ -205,7 +205,13 @@ public class KlabCLUEParameters extends Parameters {
 					int dvalue = 10;
 
 					if (row.length == 1 && row[0] instanceof Number) {
-
+						
+						double num = ((Number)row[0]).doubleValue();
+						if (num < 0 || num > 1) {
+							throw new KlabValidationException("numeric deviation must be a proportion between 0 and 1");
+						}
+						
+						dvalue = (int)(num*100.0);
 						vTypes.put(landUse, DemandValidationType.PERCENTAGE_DEVIATION);
 
 					} else if (row.length == 1 && row[0] instanceof IKimQuantity) {
@@ -250,6 +256,8 @@ public class KlabCLUEParameters extends Parameters {
 				}
 			}
 
+			demands.normalize(scope);
+			
 			dDeviations.put(landUse, (int) (100.0 * deviationValue));
 			vTypes.put(landUse, isDeviationArea ? DemandValidationType.ABSOLUTE_DEVIATION
 					: DemandValidationType.PERCENTAGE_DEVIATION);
@@ -423,8 +431,10 @@ public class KlabCLUEParameters extends Parameters {
 			if (false) {
 
 				/*
-				 * TODO if an output or an input is tagged with @age, use that. If it's an
-				 * output, set the values to 0 wherever the mask is.
+				 * TODO if an output or an input is tagged with @age, use that to establish age
+				 * in time periods. If it's an output, set the values to 0 wherever the mask is.
+				 * If it's an input but "change in <age concept>" is an output, set up so that we
+				 * record the changed values.
 				 */
 
 			} else {
@@ -451,6 +461,10 @@ public class KlabCLUEParameters extends Parameters {
 
 	public IRuntimeScope getKlabScope() {
 		return this.scope;
+	}
+
+	public void setKlabScope(IRuntimeScope context) {
+		this.scope = context;
 	}
 
 }

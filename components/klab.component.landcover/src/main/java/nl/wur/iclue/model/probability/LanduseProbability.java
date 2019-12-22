@@ -36,14 +36,14 @@ public class LanduseProbability {
     private static final String ERROR_DEMANDWEIGHT_OUT_OF_RANGE = "Cannot set demandweight value to %f. Should be between [-1..1]";
     
     private final Landuses.Landuse landuse;
-    private double neighbourhood;
-    private double suitability;
-    private double demandWeight;
+    private double neighbourhood = 0;
+    private double suitability = 0;
+    private double demandWeight = 0;
 
     public LanduseProbability(Landuses.Landuse landuse) {
         super();
         this.landuse = landuse;
-        setAllButEaseOfChangeToZero();
+//        setAllButEaseOfChangeToZero();
     }
 
     public static LanduseProbability copy(LanduseProbability lup) {
@@ -58,11 +58,11 @@ public class LanduseProbability {
         return landuse;
     }
 
-    public final void setAllButEaseOfChangeToZero() {
-        neighbourhood = .0;
-        suitability = .0;
-        demandWeight = .0;
-    }
+//    public final void setAllButEaseOfChangeToZero() {
+//        neighbourhood = .0;
+//        suitability = .0;
+//        demandWeight = .0;
+//    }
 
     public double getEaseOfChange() {
         return landuse.getEaseOfChange().getWeight();

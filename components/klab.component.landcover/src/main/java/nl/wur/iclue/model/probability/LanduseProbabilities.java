@@ -80,10 +80,10 @@ public class LanduseProbabilities {
     
     
     
-    public void setAllProbabilitiesToZero() {
-        for (LanduseProbability prob: probs)
-            prob.setAllButEaseOfChangeToZero();
-    }
+//    public void setAllProbabilitiesToZero() {
+//        for (LanduseProbability prob: probs)
+//            prob.setAllButEaseOfChangeToZero();
+//    }
     
     public double getProbability(Landuse current, Landuse target, ProbabilityCompositeCalculator calculator) {
         LanduseProbability lup = get(target);

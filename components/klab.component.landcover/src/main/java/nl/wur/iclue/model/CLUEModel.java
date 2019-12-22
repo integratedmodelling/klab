@@ -175,8 +175,7 @@ public class CLUEModel {
 
 		// initialise
 		IterationResultEvaluator evaluator = new IterationResultEvaluator(demands);
-		AllocationHelper helper = new AllocationHelper(params.getLanduses(), params.getDrivers(), suitabilityCalculator,
-				params.getConversions());
+		AllocationHelper helper = new AllocationHelper(params, suitabilityCalculator);
 		helper.prepareTimeStep(year, previousLanduseRasterData, demands);
 
 		//

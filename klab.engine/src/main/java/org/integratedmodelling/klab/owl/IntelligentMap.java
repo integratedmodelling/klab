@@ -46,9 +46,14 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class IntelligentMap<T> implements Map<IConcept, T> {
 
-    Hashtable<IConcept, T>     _data       = new Hashtable<IConcept, T>();
-    ArrayList<Pair<String, T>> _unresolved = new ArrayList<Pair<String, T>>();
-
+    Hashtable<IConcept, T>     _data       = new Hashtable<>();
+    ArrayList<Pair<String, T>> _unresolved = new ArrayList<>();
+    Hashtable<IConcept, T> _cache = new Hashtable<>();
+    
+    /*
+     * TODO add caching!
+     */
+    
     public T get(IConcept concept) {
 
         resolve();
@@ -71,7 +76,11 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 
         Matcher<T> matcher = new Matcher<T>(_data);
         IConcept cms = new ConceptVisitor<T>().findMatchUpwards(matcher, concept);
-        return cms == null ? null : matcher.ret;
+        if (cms == null) {
+        	return null;
+        }
+        _cache.put(concept, matcher.ret);
+        return matcher.ret;
     }
 
     /*
@@ -95,6 +104,7 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 
     @Override
     public T put(IConcept concept, T data) {
+    	_cache.put(concept, data);
         return _data.put(concept, data);
     }
 
@@ -120,6 +130,9 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 
     @Override
     public T get(Object key) {
+    	if (_cache.containsKey(key)) {
+    		return _cache.get(key);
+    	}
         return get((IConcept) key);
     }
 

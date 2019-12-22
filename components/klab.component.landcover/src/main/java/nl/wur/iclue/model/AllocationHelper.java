@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.landcover.clue.KlabCLUEParameters;
+
 import nl.alterra.shared.datakind.Clazz;
 import nl.alterra.shared.rasterdata.CellStack;
 import nl.alterra.shared.rasterdata.RasterData;
@@ -34,6 +36,7 @@ import nl.alterra.shared.rasterdata.RasterDataStack;
 import nl.wur.iclue.model.demand.DemandValidator.DeviationStatus;
 import nl.wur.iclue.parameter.Landuses;
 import nl.wur.iclue.parameter.Landuses.Landuse;
+import nl.wur.iclue.parameter.Parameters;
 import nl.wur.iclue.parameter.SpatialDataset;
 import nl.wur.iclue.parameter.conversion.Always;
 import nl.wur.iclue.parameter.conversion.Conversion;
@@ -46,6 +49,14 @@ import nl.wur.iclue.suitability.SuitabilityCalculator;
  */
 public class AllocationHelper extends IterationHelper {
 	private final Map<Integer, Map<Landuse, Conversion>> conversions; // <fromLanduseCode, <toLanduse, conversion>>
+
+	public AllocationHelper(Parameters parameters, SuitabilityCalculator suitabilityCalculator) {
+		this(parameters.getLanduses(), parameters.getDrivers(), suitabilityCalculator, parameters.getConversions());
+		
+		if (parameters instanceof KlabCLUEParameters) {
+			// TODO recover context
+		}
+	}
 
 	public AllocationHelper(Landuses landuses, List<SpatialDataset> drivers,
 			SuitabilityCalculator suitabilityCalculator, List<Conversion> conversions) {
