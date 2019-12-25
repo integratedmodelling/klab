@@ -109,4 +109,10 @@ public class Discretization implements IDataKey {
 
 	}
 
+	@Override
+	public List<String> getSerializedObjects() {
+		// TODO Auto-generated method stub
+		return getLabels();
+	}
+
 }

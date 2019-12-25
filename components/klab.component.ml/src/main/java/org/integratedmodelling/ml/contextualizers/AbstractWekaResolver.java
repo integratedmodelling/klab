@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -300,6 +301,25 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 			}
 
+			/*
+			 * if we have a key, serialize it to reconstruct it in inference. The output is
+			 * identified as "predicted" as we do not know which specific type it will be
+			 * used to predict. The predictor keys should be used to filter out input
+			 * concepts that have not been seen by the classifier.
+			 */
+			List<String> key = instances.getDatakeyDefinitions(attribute.name());
+			if (key != null) {
+				try {
+					File keyfile = File.createTempFile("key_" + (predicted ? "predicted" : attribute.name()), ".dat");
+					FileUtils.writeLines(keyfile, key);
+					builder.addFile(keyfile);
+					builder.withParameter("key." + (predicted ? "predicted" : attribute.name()),
+							MiscUtilities.getFileName(keyfile));
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
+
 			DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
 			if (descriptor != null) {
 				try {
@@ -319,7 +339,9 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 							builder.withParameter("predicted.discretizer.cutpoints", Arrays.toString(cutpoints));
 						}
 
-						// TODO encode data key
+						if (classifier.isPredictionProbabilistic()) {
+							builder.withOutput("uncertainty", IArtifact.Type.NUMBER);
+						}
 
 					} else {
 

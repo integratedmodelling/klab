@@ -14,10 +14,10 @@ import nl.wur.iclue.parameter.SpatialDataset;
 
 public class KLABSuitabilityCalculator extends SuitabilityCalculator {
 
-	private IResourceCalculator<?> calculator;
+	private IResourceCalculator calculator;
 
 	public KLABSuitabilityCalculator(List<DataKind> driverDataKinds, Landuses landuses,
-			IResourceCalculator<?> parameters) {
+			IResourceCalculator parameters) {
 		super(driverDataKinds, landuses);
 		this.calculator = parameters;
 	}

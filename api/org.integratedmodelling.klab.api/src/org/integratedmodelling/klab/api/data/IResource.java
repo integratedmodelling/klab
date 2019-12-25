@@ -439,6 +439,16 @@ public interface IResource extends IProvenance.Node, Serializable {
 		 */
 		Builder withDependency(String name, Type type, boolean key, boolean optional);
 
+		/**
+		 * Add an output definition to the builder.
+		 * 
+		 * @param name
+		 * @param type
+		 * @param key
+		 * @return
+		 */
+		Builder withOutput(String name, Type type);
+
 	}
 
 	/**

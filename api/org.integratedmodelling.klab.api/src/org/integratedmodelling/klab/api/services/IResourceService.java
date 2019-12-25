@@ -36,8 +36,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
-import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -92,14 +90,13 @@ public interface IResourceService {
 	}
 
 	/**
-	 * Get a calculator for the passed URN and return type.
+	 * Get a calculator for the passed resource, or null if the resource 
+	 * adapter can't make one.
 	 * 
-	 * @param <T>
-	 * @param urn
-	 * @param cls
+	 * @param resource
 	 * @return
 	 */
-	<T> IResourceCalculator<T> getCalculator(String urn, Class<T> cls);
+	IResourceCalculator getCalculator(IResource resource);
 	
 	/**
 	 * The local resource catalog is for resources created from local files or

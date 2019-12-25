@@ -15,6 +15,7 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
@@ -23,6 +24,8 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -68,17 +71,21 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
+import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
@@ -1455,5 +1462,23 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public Map<String, Object> getSymbolTable() {
 		return symbolTable;
+	}
+
+	@Override
+	public IState newNonsemanticState(String name, IArtifact.Type type, IScale scale) {
+
+		IConcept concept = OWL.INSTANCE.getNonsemanticPeer(name, type);
+		IObservable observable = Observable.promote(concept);
+
+		IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, this);
+		IState ret = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
+
+		semantics.put(observable.getName(), observable);
+		structure.addVertex(ret);
+		structure.addEdge(ret, this.target);
+		catalog.put(observable.getName(), ret);
+		observations.put(ret.getId(), ret);
+
+		return ret;
 	}
 }

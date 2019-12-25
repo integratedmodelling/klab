@@ -151,6 +151,18 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 			return false;
 		}
 
+		@Override
+		public List<String> getSerializedObjects() {
+			List<String> ret = new ArrayList<>();
+			synchronized (key) {
+				for (T value : this.key.keySet()) {
+					ret.add(value instanceof IConcept ? ((IConcept) value).getDefinition()
+							: value.toString());
+				}
+			}
+			return ret;
+		}
+
 	}
 	
 	@Override

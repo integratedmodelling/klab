@@ -36,7 +36,6 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
-import org.integratedmodelling.klab.data.resources.ResourceCalculator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -69,8 +68,8 @@ import nl.wur.iclue.suitability.SuitabilityCalculationMethod;
  */
 public class KlabCLUEParameters extends Parameters {
 
-	IResourceCalculator<?> suitabilityCalculator = null;
-	IResourceCalculator<?> transitionCalculator = null;
+	IResourceCalculator suitabilityCalculator = null;
+	IResourceCalculator transitionCalculator = null;
 	IState lulc;
 	private SpatialDataset ageData;
 	private IRuntimeScope scope;
@@ -111,11 +110,11 @@ public class KlabCLUEParameters extends Parameters {
 		if (parameters.containsKey("suitability")) {
 			IResource suitability = Resources.INSTANCE.resolveResource(parameters.get("suitability").toString(),
 					scope.getModel() == null ? null : scope.getModel().getNamespace().getProject());
-			this.suitabilityCalculator = ResourceCalculator.create(suitability, Object.class);
+			this.suitabilityCalculator = Resources.INSTANCE.getCalculator(suitability);
 		} else if (parameters.containsKey("change")) {
 			IResource suitability = Resources.INSTANCE.resolveResource(parameters.get("change").toString(),
 					scope.getModel() == null ? null : scope.getModel().getNamespace().getProject());
-			this.transitionCalculator = ResourceCalculator.create(suitability, Object.class);
+			this.transitionCalculator = Resources.INSTANCE.getCalculator(suitability);
 		}
 
 		/*

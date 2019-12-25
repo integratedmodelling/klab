@@ -35,7 +35,7 @@ public class LandcoverChangeResolver implements IResolver<IProcess>, IExpression
 			this.model.configure(this.parameters, (IRuntimeScope)context);
 		}
 		
-		this.model.run(context.getScale().getTime());
+		this.model.run((IRuntimeScope)context);
 		
 		return ret;
 	}

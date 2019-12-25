@@ -24,6 +24,13 @@ public class TimeDependentFactor {
 	
 	// used only during initialization to avoid messy code
 	transient long timepoint = 0;
+	
+	public TimeDependentFactor() {
+	}
+	
+	public TimeDependentFactor(double d) {
+		this.constval = d;
+	}
 
 	/**
 	 * The value at the passed time.

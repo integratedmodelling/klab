@@ -532,7 +532,7 @@ public enum Observations implements IObservationService {
 			ret = ret + " " + observation.getObservable().getRange().getLowerBound() + " to "
 					+ observation.getObservable().getRange().getUpperBound();
 		}
-		
+
 		return ret;
 	}
 
@@ -660,11 +660,26 @@ public enum Observations implements IObservationService {
 	 */
 	public double getArea(ILocator locator) {
 		if (locator instanceof IScale) {
-			return ((IScale)locator).getSpace().getStandardizedArea();
+			return ((IScale) locator).getSpace().getStandardizedArea();
 		} else if (locator instanceof ISpace) {
-			return ((ISpace)locator).getStandardizedArea();
+			return ((ISpace) locator).getStandardizedArea();
 		}
 		return 0;
+	}
+
+	/**
+	 * Do your best to retrieve an current time extent from the passed locator.
+	 * 
+	 * @param locator
+	 * @return
+	 */
+	public ITime getTime(ILocator locator) {
+		if (locator instanceof IScale) {
+			return ((IScale) locator).getTime();
+		} else if (locator instanceof ITime) {
+			return (ITime) locator;
+		}
+		return null;
 	}
 
 }

@@ -170,6 +170,7 @@ public class CLUEModel {
 
 	private LanduseRasterData allocate(int year, LanduseRasterData previousLanduseRasterData,
 			DemandValidators demands) {
+		
 		RasterData previousLanduseMap = previousLanduseRasterData.getLanduseMap();
 		RasterData previousAgeMap = previousLanduseRasterData.getAgeMap();
 

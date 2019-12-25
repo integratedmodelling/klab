@@ -180,4 +180,13 @@ public class LookupTable implements ILookupTable {
 		return table.getExpressions();
 	}
 
+	@Override
+	public List<String> getSerializedObjects() {
+		List<String> ret = new ArrayList<>();
+		for (IConcept concept : key.keySet()) {
+			ret.add(concept.getDefinition());
+		}
+		return ret;
+	}
+
 }

@@ -11,15 +11,14 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
-import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -270,14 +269,17 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets, IMetadata metadata);
 
-//	/**
-//	 * Locate the current computation in time. There is always a single extent when
-//	 * things are computed; if time isn't in the context, ITime.INITIALIZATION is
-//	 * returned.
-//	 * 
-//	 * @return
-//	 */
-//	ILocator getCurrentTimeLocator();
+	/**
+	 * Get a new nonsemantic state for model usage. May be called by contextualizers when user-relevant
+	 * intermediate storage is required. If not relevant, raw storage should be used instead.
+	 * 
+	 * @param name
+	 * @param type
+	 * @param scale
+	 * @return
+	 */
+	IState newNonsemanticState(String name, IArtifact.Type type, IScale scale);
+	
 
 	/**
 	 * Get the dataflow we're executing.

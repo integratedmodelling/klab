@@ -58,7 +58,6 @@ import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
-import org.integratedmodelling.klab.data.resources.ResourceCalculator;
 import org.integratedmodelling.klab.data.storage.FutureResource;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
 import org.integratedmodelling.klab.engine.Engine;
@@ -73,7 +72,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
@@ -1396,9 +1394,9 @@ public enum Resources implements IResourceService {
 	}
 
 	@Override
-	public <T> IResourceCalculator<T> getCalculator(String urn, Class<T> cls) {
-		IResource resource = resolveResource(urn);
-		return resource == null ? null : ResourceCalculator.create(resource, cls);
+	public IResourceCalculator getCalculator(IResource resource) {
+		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+		return adapter.getCalculator(resource);
 	}
 	
 }

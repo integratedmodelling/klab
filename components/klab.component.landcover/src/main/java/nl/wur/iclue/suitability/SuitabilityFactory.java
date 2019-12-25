@@ -79,7 +79,7 @@ public class SuitabilityFactory {
 		case BAYESIAN_STATISTICS:
 			/* FV added: maps to any k.LAB resource, not just bayesian inference */
 			return new KLABSuitabilityCalculator(driverDataKinds, landuses,
-					(IResourceCalculator<?>) suitabilityParams.getParameters());
+					(IResourceCalculator) suitabilityParams.getParameters());
 		case FUNCTION_DICTIONARY:
 			return new FunctionDictionary(driverDataKinds, landuses,
 					(Map<String, Map<Category, SuitabilityFunction>>) suitabilityParams.getParameters());

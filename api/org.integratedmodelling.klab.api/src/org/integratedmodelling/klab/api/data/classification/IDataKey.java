@@ -39,7 +39,7 @@ public interface IDataKey {
 	 * @return
 	 */
 	List<String> getLabels();
-	
+
 	/**
 	 * Get the value corresponding to the result of reverseLookup() for that object.
 	 * 
@@ -47,17 +47,26 @@ public interface IDataKey {
 	 * @return the original object
 	 */
 	public Object lookup(int index);
-	
+
 	/**
 	 * Get value/label pairs
 	 */
 	List<Pair<Integer, String>> getAllValues();
 
 	/**
-	 * True if the keyed categories reflect an ordering. 
+	 * True if the keyed categories reflect an ordering.
 	 * 
 	 * @return true if ordered.
 	 */
 	boolean isOrdered();
+
+	/**
+	 * Get a list of the objects (not their labels) in the key, in a deserializable
+	 * form so that the key can be reconstructed from it. In all current
+	 * applications, this will mean the declarations of concepts in order of rank.
+	 * 
+	 * @return
+	 */
+	List<String> getSerializedObjects();
 
 }

@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * @author ferdinando.villa
  *
  */
-public interface IResourceCalculator<T> {
+public interface IResourceCalculator {
 
 	/**
 	 * Simple use case. for scalar use. Should also enable the situation where the
@@ -22,7 +22,7 @@ public interface IResourceCalculator<T> {
 	 * @param arguments
 	 * @return
 	 */
-	T eval(IParameters<String> arguments, IMonitor monitor);
+	<T> T eval(IParameters<String> arguments, Class<? extends T> cls, IMonitor monitor);
 
 	/**
 	 * Use case with a locator and a scope (scalar for scalar resources, but also
@@ -33,7 +33,7 @@ public interface IResourceCalculator<T> {
 	 * @param locator
 	 * @return
 	 */
-	T eval(IContextualizationScope scope, ILocator locator, IMonitor monitor);
+	<T> T eval(IContextualizationScope scope, ILocator locator, Class<? extends T> cls, IMonitor monitor);
 
 	/**
 	 * Produce the resource being computed.

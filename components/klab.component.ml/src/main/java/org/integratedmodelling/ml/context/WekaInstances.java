@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -38,6 +39,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.State;
+import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -96,6 +98,7 @@ public class WekaInstances {
 	private Map<String, DiscretizerDescriptor> discretizers = new HashMap<>();
 	private Map<String, Ranges> ranges = new HashMap<>();
 	private ReplaceMissingValues missingValuesFilter = new ReplaceMissingValues();
+	private Map<String, IDataKey> dataKeys = new HashMap<>();
 
 	// these are for distributed archetypes
 	private double selectFraction = Double.NaN;
@@ -218,6 +221,12 @@ public class WekaInstances {
 	 * the resource.
 	 */
 	private IConcept explicitContext;
+
+	/*
+	 * any attribute that has a datakey serializes its datakey here, so we can save
+	 * it with the resource and reconstruct.
+	 */
+	private Map<String, List<String>> keys = new HashMap<>();
 
 	// for use in the encoder. Presets the attribute and predictor arrays.
 	public WekaInstances(IContextualizationScope context, int nPredictors) {
@@ -548,6 +557,7 @@ public class WekaInstances {
 			ret = new Attribute(observable.getName(),
 					state == null ? Types.INSTANCE.createClassification(observable).getLabels()
 							: new ArrayList<>(state.getDataKey().getLabels()));
+			keys.put(observable.getName(), state.getDataKey().getSerializedObjects());
 			break;
 		case BOOLEAN:
 			ret = new Attribute(observable.getName(), Lists.newArrayList("false", "true"));
@@ -1149,6 +1159,39 @@ public class WekaInstances {
 	 */
 	public IObservable getPredictedObservable() {
 		return predictedObservable;
+	}
+
+	public List<String> getDatakeyDefinitions(String name) {
+		return keys.get(name);
+	}
+
+	public void setDatakey(String id, List<String> key) {
+
+		List<IConcept> concepts = new ArrayList<>();
+		for (String definition : key) {
+			IObservable o = Observables.INSTANCE.declare(definition);
+			if (o == null) {
+				throw new KlabValidationException("resource is using obsolete or unknown concepts: " + definition);
+			}
+			concepts.add(o.getType());
+		}
+		
+		IObservable root = null;
+		if (id.equals("predicted")) {
+			root = predictedObservable;
+		} else {
+			root = getPredictorObservable(id);
+		}
+		
+		if (root == null) {
+			throw new KlabValidationException("resource cannot establish observable for '" + id + "'");
+		}
+		
+		this.dataKeys.put(id, new Classification(root.getType(), concepts));	
+	}
+	
+	public IDataKey getDatakey(String name) {
+		return dataKeys.get(name);
 	}
 
 }
