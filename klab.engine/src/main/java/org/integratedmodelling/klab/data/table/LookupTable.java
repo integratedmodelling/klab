@@ -189,4 +189,13 @@ public class LookupTable implements ILookupTable {
 		return ret;
 	}
 
+	@Override
+	public List<IConcept> getConcepts() {
+		List<IConcept> ret = new ArrayList<>();
+		for (IConcept concept : key.keySet()) {
+			ret.add(concept);
+		}
+		return ret;
+	}
+
 }

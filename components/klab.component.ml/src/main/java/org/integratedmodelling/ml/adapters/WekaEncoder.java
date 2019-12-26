@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -15,12 +14,14 @@ import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -41,6 +42,115 @@ public class WekaEncoder implements IResourceEncoder {
 	@Override
 	public boolean isOnline(IResource resource) {
 		return !resource.hasErrors();
+	}
+
+	/**
+	 * This creates non-semantic observables and uses stored datakeys. Use only when
+	 * building offline calculators.
+	 * 
+	 * @param resource
+	 */
+	public void initialize(IResource resource) {
+
+		/*
+		 * load the classifier
+		 */
+		File imported = new File(((Resource) resource).getPath() + File.separator + "import.xml");
+		if (imported.exists()) {
+			this.classifier = new WekaClassifier(imported, resource.getParameters().get("classifier", String.class),
+					resource.getParameters().get("classifier.probabilistic", "false").equals("true"));
+		} else {
+			this.classifier = new WekaClassifier(((Resource) resource).getLocalFile("classifier.file"),
+					resource.getParameters().get("classifier.probabilistic", "false").equals("true"));
+		}
+
+		this.instances = new WekaInstances(null, resource.getInputs().size());
+		this.instances.admitNodata(resource.getParameters().get("submitNodata", "true").equals("true"));
+
+		/*
+		 * Set the predicted state parameters and discretizer in the instances. This
+		 * must be done as the first step so that attributes are created in the correct
+		 * order.
+		 */
+		Filter discretizer = null;
+		if (resource.getParameters().containsKey("predicted.discretizer.file")) {
+			try {
+				discretizer = (Filter) SerializationHelper
+						.read(((Resource) resource).getLocalFile("predicted.discretizer.file").toString());
+			} catch (Exception e) {
+				throw new KlabIOException(e);
+			}
+		}
+
+		IObservable predictedObservable = Observable
+				.promote(OWL.INSTANCE.getNonsemanticPeer("predicted", resource.getType())).named("predicted");
+		// setPredicted() will need the datakey, so we call this first to allow
+		// setDatakey() to work, then call the actual method later. Bit involved.
+		instances.setPredictedObservable(predictedObservable);
+
+		if (resource.getParameters().containsKey("key.predicted")) {
+			// build output datakey
+			try {
+				File file = ((Resource) resource).getLocalFile("key.predicted");
+				List<String> key = FileUtils.readLines(file);
+				instances.setDatakey("predicted", key);
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
+
+		Range prange = Range.create(resource.getParameters().get("predicted.range", String.class));
+		instances.setPredicted("predicted", predictedObservable, null, discretizer);
+		instances.setPredictedRange(prange);
+
+		/*
+		 * Initialize the instances; check ranges of learned instances and warn if our
+		 * inputs are outside.
+		 */
+		for (Attribute dependency : resource.getInputs()) {
+
+			discretizer = null;
+			if (resource.getParameters().containsKey("predictor." + dependency.getName() + ".discretizer.file")) {
+				try {
+					discretizer = (Filter) SerializationHelper.read(((Resource) resource)
+							.getLocalFile("predictor." + dependency.getName() + ".discretizer.file").toString());
+				} catch (Exception e) {
+					throw new KlabIOException(e);
+				}
+			}
+
+			if (resource.getParameters().containsKey("key." + dependency.getName())) {
+				// build predictor datakey
+				try {
+					File file = ((Resource) resource).getLocalFile("key." + dependency.getName());
+					List<String> key = FileUtils.readLines(file);
+					instances.setDatakey(dependency.getName(), key);
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
+
+			/*
+			 * we may have less predictors than during training, so we put them in the
+			 * original place leaving any others as null. The index is the position in the
+			 * instances, which starts at 1 for the class attribute, so we subtract 2 to
+			 * obtain the predictor index.
+			 */
+			int index = Integer.parseInt(
+					resource.getParameters().get("predictor." + dependency.getName() + ".index").toString()) - 2;
+
+			instances.addPredictor(dependency.getName(),
+					Observable.promote(OWL.INSTANCE.getNonsemanticPeer(dependency.getName(), dependency.getType()))
+							.named(dependency.getName()),
+					null, index, discretizer);
+
+		}
+
+		/*
+		 * Initialize the instances and set up missing data filter
+		 */
+		instances.initializeForPrediction(((Resource) resource).getLocalFile("instances.file"));
+		classifier.setTrainingDataset(instances);
 	}
 
 	public void initialize(IState predictedState, IResource resource, IContextualizationScope context) {
@@ -187,7 +297,7 @@ public class WekaEncoder implements IResourceEncoder {
 						instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
 				target.add(distribution.getNumericalMean(), locator);
 			} else {
-//				// find the most likely class
+//				// find the most likely class. TODO give the option of stochastic inference.
 //				EnumeratedDistribution<IConcept> concept = new EnumeratedDistribution<IConcept>(
 //						makeProbabilities(dataKey, (double[]) prediction));
 				int val = NumberUtils.indexOfLargest((double[]) prediction);

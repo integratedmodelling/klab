@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.data.classification;
 
 import java.util.List;
 
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -40,6 +41,13 @@ public interface IDataKey {
 	 */
 	List<String> getLabels();
 
+	/**
+	 * If the datakey indexes concepts, return the list of concepts in order of
+	 * rank. Otherwise return null (not an empty list).
+	 * @return
+	 */
+	List<IConcept> getConcepts();
+	
 	/**
 	 * Get the value corresponding to the result of reverseLookup() for that object.
 	 * 

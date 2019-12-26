@@ -161,6 +161,20 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 			return ret;
 		}
 
+		@Override
+		public List<IConcept> getConcepts() {
+			List<IConcept> ret = new ArrayList<>();
+			synchronized (key) {
+				for (T value : this.key.keySet()) {
+					if (!(value instanceof IConcept)) {
+						return null;
+					}
+					ret.add((IConcept) value);
+				}
+			}
+			return ret;
+		}
+
 	}
 	
 	@Override

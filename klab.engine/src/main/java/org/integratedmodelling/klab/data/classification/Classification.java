@@ -415,4 +415,9 @@ public class Classification implements IClassification {
 		return ret;
 	}
 
+	@Override
+	public List<IConcept> getConcepts() {
+		return conceptOrder;
+	}
+
 }

@@ -28,7 +28,7 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 	private IDataKey dataKey = null;
 	private Class<? extends T> cls;
 	private IScale geometry;
-	
+
 	public KeyedDebugStorage(IScale geometry, Class<? extends T> cls) {
 		// TODO use a Short
 		keyStore = new DebugStorage<>(geometry, Integer.class);
@@ -156,19 +156,31 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 			List<String> ret = new ArrayList<>();
 			synchronized (key) {
 				for (T value : this.key.keySet()) {
-					ret.add(value instanceof IConcept ? ((IConcept) value).getDefinition()
-							: value.toString());
+					ret.add(value instanceof IConcept ? ((IConcept) value).getDefinition() : value.toString());
+				}
+			}
+			return ret;
+		}
+
+		@Override
+		public List<IConcept> getConcepts() {
+			List<IConcept> ret = new ArrayList<>();
+			synchronized (key) {
+				for (T value : this.key.keySet()) {
+					if (!(value instanceof IConcept)) {
+						return null;
+					}
+					ret.add((IConcept) value);
 				}
 			}
 			return ret;
 		}
 
 	}
-	
+
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
 	}
-
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -113,6 +114,11 @@ public class Discretization implements IDataKey {
 	public List<String> getSerializedObjects() {
 		// TODO Auto-generated method stub
 		return getLabels();
+	}
+
+	@Override
+	public List<IConcept> getConcepts() {
+		return null;
 	}
 
 }
