@@ -20,14 +20,14 @@ public class TimeDependentFactor {
 	IState state;
 	boolean isAbsolute;
 	Function<Long, Double> function;
-	double constval;
-	
+	Double constval;
+
 	// used only during initialization to avoid messy code
 	transient long timepoint = 0;
-	
+
 	public TimeDependentFactor() {
 	}
-	
+
 	public TimeDependentFactor(double d) {
 		this.constval = d;
 	}
@@ -39,6 +39,9 @@ public class TimeDependentFactor {
 	 * @return
 	 */
 	public double get(ITime time) {
+		if (constval != null) {
+			return constval;
+		}
 		return 0;
 	}
 
@@ -49,6 +52,5 @@ public class TimeDependentFactor {
 	public static <T> Map<T, TimeDependentFactor> parse(IKimTable table) {
 		return null;
 	}
-
 
 }

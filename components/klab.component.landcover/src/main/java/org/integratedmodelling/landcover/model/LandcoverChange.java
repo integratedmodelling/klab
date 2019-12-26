@@ -1,11 +1,11 @@
 package org.integratedmodelling.landcover.model;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
@@ -20,14 +20,17 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
+import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -78,29 +81,16 @@ import org.integratedmodelling.landcover.model.LandcoverTransitionTable.Transiti
  */
 public class LandcoverChange {
 
-	enum AllocationStrategy {
-		/**
-		 * Pick the target landcover stochastically using the suitability distribution,
-		 * ignoring the probability threshold, and only convert if the transition table
-		 * allows it. This is the CLUE default and ours.
-		 */
-		STOCHASTIC,
-		/**
-		 * Choose the most likely conversion; if the associated probability is below the
-		 * threshold or the transition rules prevent it, do not convert.
-		 */
-		CONSERVATIVE_DETERMINISTIC,
-		/**
-		 * Choose the most likely conversion first, then if none is possible due to
-		 * transition rules, go to the next most likely until a conversion is found or
-		 * the probability threshold is crossed. This will produce more conversions than
-		 * the conservative and can model highly dynamic situations.
-		 */
-		GREEDY_DETERMINISTIC
+	public static enum ProbabilityCompoundingMode {
+		DEMAND_WEIGHT_DOMINATED, MULTIPLY_ALL, SUM_ALL, SUITABILITY_ONLY, DEFAULT
 	};
 
-	AllocationStrategy allocationStrategy = AllocationStrategy.STOCHASTIC;
-	int randomSeed = 123894;
+	ProbabilityCompoundingMode compoundingMode = ProbabilityCompoundingMode.DEFAULT;
+
+	/*
+	 * if set in configuration, reseed with that number at construction.
+	 */
+	long randomSeed = -1;
 
 	/**
 	 * No conversion in deterministic modes will take place if the probability
@@ -147,29 +137,56 @@ public class LandcoverChange {
 	IntelligentMap<TimeDependentFactor> deviation = new IntelligentMap<>(new TimeDependentFactor(0.05));
 	Map<IConcept, TimeDependentFactor> demand = new HashMap<>();
 
+	Random random = new Random();
+
 	/*
 	 * default transition table allows every transition and contains no table.
 	 */
 	LandcoverTransitionTable transitionTable = new LandcoverTransitionTable(false, true);
 
 	class Conversion {
+
 		IConcept from;
 		IConcept to;
 		double probability;
+
+		public Conversion(IConcept from, IConcept to, double probability) {
+			this.from = from;
+			this.to = to;
+			this.probability = probability;
+		}
+
+		public Conversion withProbability(double probability) {
+			this.probability = probability;
+			return this;
+		}
+
+		/*
+		 * this gets recorded in a temporary state
+		 */
+		@Override
+		public String toString() {
+			return from.getDefinition() + "|" + to.getDefinition() + "|" + probability;
+		}
 	}
 
 	private IProcess process;
 	private IRuntimeScope scope;
 	private IMonitor monitor;
 	private double totalArea;
-	private double areaFactor;
-	private long extentFactor;
-	private boolean firstRun = true;
 	private Map<IConcept, Double> distribution;
 	private Set<IConcept> configuredConcepts = new HashSet<>();
-	
+
+	/*
+	 * these change at each iteration
+	 */
+	Map<IConcept, Double> probabilityShifts = new IntelligentMap<Double>();
+	Map<IConcept, Double> demandRatios = new IntelligentMap<Double>();
+	Map<IConcept, Double> demandWeights = new IntelligentMap<Double>();
+
 	public LandcoverChange(IProcess targetProcess) {
 		this.process = targetProcess;
+		this.random.setSeed(randomSeed > 0 ? randomSeed : System.currentTimeMillis());
 	}
 
 	/*
@@ -183,22 +200,30 @@ public class LandcoverChange {
 	 * 
 	 * @param extent
 	 */
+	@SuppressWarnings("unchecked")
 	public void run(IRuntimeScope scope) {
+
+		// this persists across a timestep
+		probabilityShifts.clear();
+
+		// transition state for age and event detection
+		IStorage<String> transitionStorage = (IStorage<String>) Klab.INSTANCE.getStorageProvider()
+				.createStorage(IArtifact.Type.TEXT, process.getScale().without(Dimension.Type.TIME), scope);
+		// transition state for age and event detection
+		IStorage<IConcept> targetStorage = (IStorage<IConcept>) Klab.INSTANCE.getStorageProvider()
+				.createStorage(IArtifact.Type.CONCEPT, process.getScale().without(Dimension.Type.TIME), scope);
 
 		int iterations = 0;
 		while (!demandMet(scope.getScale().getTime()) && iterations < maxIterations) {
 
-			Map<IConcept, Double> demandWeights = computeDemandWeights(scope.getScale().getTime());
-
 			for (ILocator locator : scope.getScale()) {
 
 				IConcept current = landCoverType.get(locator, IConcept.class);
-				double elasticity = getElasticity(current, locator);
 
-				if (Observations.INSTANCE.isData(current) && elasticity < 1) {
+				if (Observations.INSTANCE.isData(current)) {
 
-					List<Conversion> conversions = getPossibleConversions(current, demandWeights.get(current),
-							elasticity, getNeighborhoodWeight(locator), scope, locator);
+					List<Conversion> conversions = getPossibleConversions(current,
+							/* demandWeights.get(current), */ scope, locator);
 
 					Conversion chosen = null;
 					if (conversions.size() == 1) {
@@ -207,19 +232,43 @@ public class LandcoverChange {
 						chosen = pickConversion(conversions);
 					}
 
-					if (chosen != null) {
-						applyConversion(chosen, locator);
-					}
+					applyConversion(chosen, transitionStorage, targetStorage, locator);
 				}
-
 			}
 			iterations++;
 		}
 
 		if (iterations >= maxIterations) {
-			// hostia.
+			monitor.warn(
+					"maximum iterations reached in allocation algorithm without meeting demand. Please review parameters and context.");
 		}
 
+		/*
+		 * TODO recompute age for all transitions that have happened.
+		 */
+		finalizeAllocation(targetStorage, transitionStorage, scope);
+
+	}
+
+	private void finalizeAllocation(IStorage<IConcept> targetStorage, IStorage<String> transitionStorage,
+			IRuntimeScope scope) {
+
+		long duration = scope.getScale().getTime().getEnd().getMilliseconds()
+				- scope.getScale().getTime().getStart().getMilliseconds();
+		
+		for (ILocator locator : scope.getScale()) {
+			String transition = transitionStorage.get(locator);
+			if (transition != null) {
+				this.landCoverAge.set(locator, 0);
+				this.landCoverType.set(locator, targetStorage.get(locator));
+				/*
+				 * TODO use the transition for event detection and statistics
+				 */
+			} else {
+				double age = this.landCoverAge.get(locator, Double.class);
+				this.landCoverAge.set(locator, age + duration);
+			}
+		}
 	}
 
 	/**
@@ -230,39 +279,134 @@ public class LandcoverChange {
 	 * @return
 	 */
 	private Conversion pickConversion(List<Conversion> conversions) {
-		// TODO Auto-generated method stub
-		return conversions.get(0);
+		Conversion chosen = null;
+		if (conversions.size() > 0) {
+			chosen = conversions.get(0);
+			for (int i = 1; i < conversions.size(); i++) {
+				if (chosen.probability < conversions.get(i).probability) {
+					chosen = conversions.get(i);
+				}
+			}
+		}
+		return chosen;
 	}
 
 	/**
 	 * Finalize a conversion, including the setting of age, frequency, iteration
 	 * validation criteria, and, if requested, event detector data.
+	 * 
+	 * @param targetStorage
+	 * @param transitionStorage
 	 */
-	private void applyConversion(Conversion candidate, ILocator locator) {
-		// TODO Auto-generated method stub
+	private void applyConversion(Conversion candidate, IStorage<String> transitionStorage,
+			IStorage<IConcept> targetStorage, ILocator locator) {
 
+		if (!candidate.from.equals(candidate.to)) {
+			targetStorage.put(candidate.to, locator);
+			transitionStorage.put(candidate.toString(), locator);
+		}
+		// TODO
 	}
 
-	private List<Conversion> getPossibleConversions(IConcept current, double demandWeight, double elasticity,
-			double neighborhoodWeight, IRuntimeScope scope, ILocator locator) {
+	private List<Conversion> getPossibleConversions(IConcept current, IRuntimeScope scope, ILocator locator) {
 
 		List<Conversion> ret = new ArrayList<>();
+		ITime time = scope.getScale().getTime();
+
+		double elasticity = getElasticity(current, time);
+
+		if (elasticity >= 1) {
+			return ret;
+		}
 
 		/*
 		 * The transition table will check if a transition to the target type exists,
 		 * choosing according to configuration and potentially including more generic
 		 * transitions.
 		 */
-		for (IConcept candidate : getCandidates(current, demandWeight, elasticity, neighborhoodWeight, scope,
-				locator)) {
-			for (TransitionRule transition : transitionTable.getTransitions(current, candidate)) {
+		for (Conversion candidate : getCandidates(current, scope, locator)) {
+
+			for (TransitionRule transition : transitionTable.getTransitions(candidate.from, candidate.to)) {
+
 				if (transition.isPossible(locator, scope)) {
-					// add conversion
+
+					/*
+					 * the conversion by now only contais the suitability. Add the other dimensions.
+					 */
+					double probability = compoundProbabilities(candidate, time, locator, elasticity);
+					/*
+					 * CLUE uses an (arbitrary?) further shock of +/-5% of the total probability to
+					 * prevent flip-flopping.
+					 */
+					probability += probabilityShifts.get(candidate.to);
+					probability += (nextRandom() - 0.5) * 0.05 * probability;
+
+					if (probability > 0) {
+						ret.add(candidate.withProbability(probability));
+					}
 				}
 			}
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Methods from CLUE
+	 * 
+	 * @param conversion
+	 * @param time
+	 * @param locator
+	 * @param currentElasticity
+	 * @return
+	 */
+	private double compoundProbabilities(Conversion conversion, ITime time, ILocator locator,
+			double currentElasticity) {
+
+		double suitability = conversion.probability;
+		double demandWeight = getDemandWeight(conversion.to);
+		double neighborhood = getNeighborhoodWeight(conversion.to, locator);
+		double ret = 0;
+		switch (compoundingMode) {
+		case DEFAULT:
+			ret = demandWeight + neighborhood + suitability
+					+ (conversion.from.equals(conversion.to) ? currentElasticity : 0);
+			break;
+		case DEMAND_WEIGHT_DOMINATED:
+			double rescaledDemandWeight = (demandWeight + 1.0) / 2.0;
+			double preProbability = (rescaledDemandWeight + suitability) / 2.0;
+			if (conversion.from.equals(conversion.to))
+				ret = preProbability + (1 - preProbability) * currentElasticity;
+			else
+				ret = preProbability;
+			break;
+		case MULTIPLY_ALL:
+			double elast = getElasticity(conversion.to, time);
+			ret = demandWeight + neighborhood + suitability + elast;
+			break;
+		case SUITABILITY_ONLY:
+			ret = suitability;
+			break;
+		case SUM_ALL:
+			elast = getElasticity(conversion.to, time);
+			ret = demandWeight * neighborhood * suitability * elast;
+			break;
+		}
+
+		// there is at least one situation in which ret > 1
+		return ret > 1 ? 1 : ret;
+	}
+
+	private double getDemandWeight(IConcept current) {
+		return demandWeights.get(current);
+	}
+
+	private double getElasticity(IConcept concept, ITime time) {
+		return getFactor(concept, elasticity, time);
+	}
+
+	private double nextRandom() {
+		return random.nextDouble();
 	}
 
 	/*
@@ -275,10 +419,9 @@ public class LandcoverChange {
 	 * TODO the probability should be part of the input.
 	 */
 	@SuppressWarnings("unchecked")
-	private List<IConcept> getCandidates(IConcept current, double demandWeight, double elasticity,
-			double neighborhoodWeight, IRuntimeScope scope, ILocator locator) {
+	private List<Conversion> getCandidates(IConcept current, IRuntimeScope scope, ILocator locator) {
 
-		List<IConcept> ret = new ArrayList<>();
+		List<Conversion> ret = new ArrayList<>();
 		EnumeratedDistribution<IConcept> probabilities = null;
 
 		if (suitabilityCalculator != null) {
@@ -301,63 +444,27 @@ public class LandcoverChange {
 			 */
 			probabilities = suitabilityCalculator.eval(params, EnumeratedDistribution.class, monitor);
 
-			switch (allocationStrategy) {
-			case CONSERVATIVE_DETERMINISTIC:
-				List<Pair<IConcept, Double>> list = probabilities.getPmf();
-				list.sort(new Comparator<Pair<IConcept, Double>>() {
-					@Override
-					public int compare(Pair<IConcept, Double> o1, Pair<IConcept, Double> o2) {
-						// sort by descending probability
-						return Double.compare(o2.getSecond(), o1.getSecond());
-					}
-				});
-
-				// get the most likely unless not likely enough
-				if (list.get(0).getSecond() >= probabilityThreshold) {
-					ret.add(list.get(0).getFirst());
+			for (Pair<IConcept, Double> pair : probabilities.getPmf()) {
+				if (pair.getSecond() < probabilityThreshold) {
+					break;
 				}
-				break;
-			case GREEDY_DETERMINISTIC:
-				list = probabilities.getPmf();
-				list.sort(new Comparator<Pair<IConcept, Double>>() {
-					@Override
-					public int compare(Pair<IConcept, Double> o1, Pair<IConcept, Double> o2) {
-						// sort by descending probability
-						return Double.compare(o2.getSecond(), o1.getSecond());
-					}
-				});
-
-				// get all likely enough in order
-				for (Pair<IConcept, Double> pair : list) {
-					if (pair.getSecond() < probabilityThreshold) {
-						break;
-					}
-					ret.add(pair.getFirst());
-				}
-				break;
-			case STOCHASTIC:
-				// sample the distribution, as we should.
-				ret.add(probabilities.sample());
-				break;
+				ret.add(new Conversion(current, pair.getFirst(), pair.getSecond()));
 			}
 
 		} else if (transitionCalculator != null) {
 			throw new KlabUnimplementedException(
 					"predicting transitions is still unimplemented: please use standard suitability analysis");
 		} else {
-			// add all concepts we know (equal probability if we have to)
-			ret.addAll(this.distribution.keySet());
+			// add all concepts we know (with equal probability, including current)
+			for (IConcept c : distribution.keySet()) {
+				ret.add(new Conversion(current, c, 1.0 / distribution.size()));
+			}
 		}
 
 		return ret;
 	}
 
-	private int getElasticity(IConcept current, ILocator locator) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private double getNeighborhoodWeight(ILocator locator) {
+	private double getNeighborhoodWeight(IConcept current, ILocator locator) {
 		// TODO unimplemented in CLUE. Comment is: "change weight based on surrounding
 		// regions (not cells!) which are updated
 		// during iterations (landuse changes)". Supposed to be 0-1 like all other
@@ -416,12 +523,67 @@ public class LandcoverChange {
 	 */
 	private boolean demandMet(ITime time) {
 
+		demandRatios.clear();
+		demandWeights = computeDemandWeights(scope.getScale().getTime());
+
 		/*
-		 * compute distributions, which will be used at each iteration
+		 * compute areal distribution of each landcover type, including 0 for any
+		 * landcover mentioned in the configuration but not yet represented in the data.
 		 */
 		this.distribution = preprocessLandcover(false);
+
+		if (probabilityShifts.isEmpty()) {
+			// first run: initialize to 0
+			for (IConcept lu : demand.keySet()) {
+				probabilityShifts.put(lu, 0.0);
+			}
+		}
+
+		/*
+		 * compute demand ratio
+		 */
+		this.demandRatios = new HashMap<>();
+		double totalDemand = getTotalDemand(time);
+		for (IConcept lu : demand.keySet()) {
+			this.demandRatios.put(lu, totalDemand == 0 ? 0 : (getFactor(lu, demand, time) / totalDemand));
+		}
+
+		shiftProbabilities();
+
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	private double getTotalDemand(ITime time) {
+		double ret = 0;
+		for (IConcept lu : demand.keySet()) {
+			ret += getFactor(lu, demand, time);
+		}
+		return ret;
+	}
+
+	/*
+	 * CLUE algorithm
+	 */
+	private void shiftProbabilities() {
+
+		for (Map.Entry<IConcept, Double> entry : this.probabilityShifts.entrySet()) {
+
+			IConcept landuse = entry.getKey();
+
+			if (!demandRatios.containsKey(landuse))
+				continue;
+
+			Double shiftValue = entry.getValue();
+			Double allocatedDemandRatio = 0.0;
+			if (demandRatios.get(landuse) > 0.0) {
+				allocatedDemandRatio = (demandRatios.get(landuse) - (distribution.get(landuse) / totalArea))
+						/ demandRatios.get(landuse);
+			}
+
+			double stepSize = Math.min(allocatedDemandRatio * 100 * shiftStep, maxShift);
+			probabilityShifts.put(landuse, shiftValue + stepSize);
+		}
 	}
 
 	/**
@@ -457,6 +619,13 @@ public class LandcoverChange {
 
 		this.scope = scope;
 		this.monitor = scope.getMonitor();
+
+		/*
+		 * default transition behavior is that everything is possible only if no
+		 * transition are specified, otherwise nothing is possible but the explicitly
+		 * specified transitions.
+		 */
+		defaultTransitionPossible = !parameters.containsKey("transitions");
 
 		/*
 		 * just in case
@@ -526,14 +695,22 @@ public class LandcoverChange {
 		this.deviation = readTimeDependentFactors(parameters.get("deviations"), "deviation");
 
 		/*
-		 * TODO read transition behavior from parameters if any
+		 * this would really screw things up
+		 */
+		if (!Concepts.INSTANCE.isTransitivelyIndependent(this.demand.keySet())) {
+			throw new KlabValidationException("demand concepts must be independent from each other");
+		}
+
+		/*
+		 * read transition behavior from parameters if any, otherwise default to all
+		 * transitions possible
 		 */
 		this.transitionTable = new LandcoverTransitionTable(transitionsAreTransitive, defaultTransitionPossible);
 		if (parameters.containsKey("transitions")) {
 			this.transitionTable.parse(parameters.get("transitions", IKimTable.class));
 			configuredConcepts.addAll(this.transitionTable.getConcepts());
 		}
-		
+
 	}
 
 	private boolean findOrCreateAgeState() {
@@ -594,8 +771,8 @@ public class LandcoverChange {
 			}
 		}
 		/*
-		 * add all concepts mentioned that are not in the current state with area 0 so they 
-		 * become game for transitions 
+		 * add all concepts mentioned that are not in the current state with area 0 so
+		 * they become game for transitions
 		 */
 		for (IConcept c : configuredConcepts) {
 			if (!areaDistribution.containsKey(c)) {
@@ -630,6 +807,8 @@ public class LandcoverChange {
 					if (state instanceof IState) {
 						TimeDependentFactor factor = new TimeDependentFactor();
 						factor.state = (IState) state;
+						factor.isAbsolute = annotationName.equals("elasticities")
+								|| !((IState) state).getObservable().is(Type.PROPORTION);
 						for (Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
 							if (o instanceof IKimConcept) {
 								IConcept concept = Concepts.INSTANCE.declare((IKimConcept) o);
@@ -666,7 +845,7 @@ public class LandcoverChange {
 							}
 
 							factor.constval = ((Number) entry.getValue()).doubleValue();
-							factor.isAbsolute = false;
+							factor.isAbsolute = annotationName.equals("elasticities");
 
 						} else if (entry.getValue() instanceof IKimQuantity) {
 							Quantity q = Quantity.create(((IKimQuantity) entry.getValue()).getValue(),
@@ -763,16 +942,20 @@ public class LandcoverChange {
 			}
 		}
 
-		/*
-		 * TODO! Further validation depending on what the target is. ALL DEMAND CONCEPTS
-		 * MUST BE DISJOINT or the algorithm will produce crap!
-		 */
-
 		return ret;
 	}
 
-	double getFactor(IntelligentMap<TimeDependentFactor> source, ITime time) {
-		return 0;
+	double getFactor(IConcept concept, Map<IConcept, TimeDependentFactor> source, ITime time) {
+
+		TimeDependentFactor factor = source.get(concept);
+		if (factor == null) {
+			return 0;
+		}
+		double ret = factor.get(time);
+		if (!factor.isAbsolute) {
+			ret *= totalArea;
+		}
+		return ret;
 	}
 
 }

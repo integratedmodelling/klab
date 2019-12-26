@@ -121,8 +121,6 @@ public class Scale implements IScale {
 	protected ISpace space = null;
 	protected MultidimensionalCursor cursor;
 
-//	protected InstanceIdentifier identifier = new InstanceIdentifier();
-
 	/*
 	 * Next are to support subscales built as views of another
 	 */
@@ -1563,6 +1561,11 @@ public class Scale implements IScale {
 
 	public long[] getLocatedOffsets() {
 		return locatedOffsets;
+	}
+
+	@Override
+	public IScale without(Type dimension) {
+		return removeExtent(dimension);
 	}
 
 }
