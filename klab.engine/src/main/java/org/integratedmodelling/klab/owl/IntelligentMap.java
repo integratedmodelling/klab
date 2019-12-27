@@ -28,6 +28,7 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
@@ -49,9 +50,9 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class IntelligentMap<T> implements Map<IConcept, T> {
 
-	Hashtable<IConcept, T> _data = new Hashtable<>();
+	HashMap<IConcept, T> _data = new HashMap<>();
 	ArrayList<Pair<String, T>> _unresolved = new ArrayList<>();
-	Hashtable<IConcept, T> _cache = new Hashtable<>();
+	HashMap<IConcept, T> _cache = new HashMap<>();
 	private T defaultValue = null;
 
 	public IntelligentMap() {
@@ -69,14 +70,18 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 
 	public T get(IConcept concept) {
 
+		if (_data.containsKey(concept)) {
+			return _data.get(concept); 
+		}
+		
 		resolve();
 
 		class Matcher<TYPE> implements ConceptVisitor.ConceptMatcher {
 
-			Hashtable<IConcept, TYPE> coll;
+			Map<IConcept, TYPE> coll;
 			TYPE ret = null;
 
-			public Matcher(Hashtable<IConcept, TYPE> c) {
+			public Matcher(Map<IConcept, TYPE> c) {
 				coll = c;
 			}
 
@@ -92,7 +97,6 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 		if (cms == null) {
 			return defaultValue;
 		}
-		_cache.put(concept, matcher.ret);
 		if (matcher.ret == null) {
 			return defaultValue;
 		}
@@ -127,6 +131,8 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 	@Override
 	public void clear() {
 		_data.clear();
+		_cache.clear();
+		_unresolved.clear();
 	}
 
 	@Override
@@ -153,7 +159,9 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 		if (_cache.containsKey(key)) {
 			return _cache.get(key);
 		}
-		return get((IConcept) key);
+		T ret = get((IConcept) key);
+		_cache.put((IConcept) key, ret);
+		return ret;
 	}
 
 	@Override

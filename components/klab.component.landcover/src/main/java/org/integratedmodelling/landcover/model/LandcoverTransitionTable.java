@@ -19,12 +19,15 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.IntelligentMap;
+import org.integratedmodelling.klab.owl.ReasonerCache;
 
 public class LandcoverTransitionTable {
 
 	boolean transitive = true;
 	boolean canTransitionWhenUnspecified = false;
 
+	ReasonerCache rcache = new ReasonerCache();
+	
 	class TransitionRule {
 
 		IConcept target;
@@ -39,7 +42,14 @@ public class LandcoverTransitionTable {
 
 		public TransitionRule(IConcept target, IKimClassifier rule) {
 			this.target = target;
-			// TODO Auto-generated constructor stub
+
+			if (rule.getBooleanMatch() != null) {
+				if (rule.getBooleanMatch()) {
+					this.always = true;
+				} else {
+					this.never = true;
+				}
+			}
 		}
 
 		public boolean isPossible(ILocator locator, IRuntimeScope scope) {
@@ -135,8 +145,7 @@ public class LandcoverTransitionTable {
 				throw new KlabValidationException("unknown concept in transition table, row" + (i + 1));
 			}
 			concepts.add(source);
-			Map<IConcept, TransitionRule> map = this.transitive ? new IntelligentMap<TransitionRule>()
-					: new LinkedHashMap<IConcept, TransitionRule>();
+			Map<IConcept, TransitionRule> map = new LinkedHashMap<IConcept, TransitionRule>();
 
 			for (int c = 1; c < table.getColumnCount(); c++) {
 				IKimClassifier rule = table.getRow(i)[c];
@@ -157,7 +166,7 @@ public class LandcoverTransitionTable {
 	public Set<IConcept> getConcepts() {
 		return concepts;
 	}
-	
+
 	/**
 	 * Return the possible transition rules between two types, arranged so that the
 	 * most appropriate comes first. If we're not in transitive mode the return list
@@ -170,7 +179,21 @@ public class LandcoverTransitionTable {
 	 */
 	public List<TransitionRule> getTransitions(IConcept current, IConcept candidate) {
 		List<TransitionRule> ret = new ArrayList<>();
-		// TODO
+		Map<IConcept, TransitionRule> potential = transitions.get(current);
+		if (potential != null) {
+			TransitionRule specific = potential.get(candidate);
+			if (specific != null) {
+				ret.add(specific);
+			}
+			for (IConcept target : potential.keySet()) {
+				if (!target.equals(candidate) && (this.transitive && rcache.is(candidate, target))) {
+					ret.add(potential.get(target));
+				}
+			}
+		}
+		
+		ret.add(defaultTransitionRule);
+		
 		return ret;
 	}
 

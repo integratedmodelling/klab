@@ -33,7 +33,6 @@ public class PercentageDeviationValidator extends DemandValidator{
         this.acceptablePercentageDeviation = acceptablePercentageDeviation;
     }
 
-    
     @Override
     protected double getAllocatedMinAmountToBeValid() {
         return (double)getDemand()*(100-acceptablePercentageDeviation)/100;
