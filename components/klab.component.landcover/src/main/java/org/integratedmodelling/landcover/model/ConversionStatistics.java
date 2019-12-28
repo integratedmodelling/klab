@@ -1,8 +1,11 @@
 package org.integratedmodelling.landcover.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -39,7 +42,27 @@ public class ConversionStatistics {
 		t.put(conversion.to, moved == null ? area : moved + area);
 	}
 	
-	public void print() {
+	public void summarize(double totalArea) {
+		
+		int maxSize = 0;
+		Map<IConcept, String> labels = new HashMap<>();
+		Set<IConcept> allConcepts = new HashSet<>(allFrom.keySet());
+		allConcepts.addAll(allTo.keySet());
+		
+		/*
+		 * build labels
+		 */
+		for (IConcept c : allConcepts) {
+			String label = Concepts.INSTANCE.getDisplayName(c);
+			if (label.length() > maxSize) {
+				maxSize = label.length();
+			}
+			labels.put(c, label);
+		}
+		
+		/*
+		 * 
+		 */
 		
 	}
 

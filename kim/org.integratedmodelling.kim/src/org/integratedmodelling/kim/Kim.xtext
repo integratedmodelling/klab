@@ -987,7 +987,7 @@ Number:
 	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
 
 Quantity:
-	value=Number '.' (unit=Unit | currency=Currency)
+	value=Number (over?='/' | '.') (unit=Unit | currency=Currency)
 ;
 
 Date:

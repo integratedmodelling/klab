@@ -27,7 +27,7 @@ public class LandcoverTransitionTable {
 	boolean canTransitionWhenUnspecified = false;
 
 	ReasonerCache rcache = new ReasonerCache();
-	
+
 	class TransitionRule {
 
 		IConcept target;
@@ -36,6 +36,9 @@ public class LandcoverTransitionTable {
 		Long minimumAge;
 		ITimeInstant after;
 		IExpression selector;
+
+		// rule gets deactivated after the demand for its target is met.
+		boolean active = true;
 
 		public TransitionRule() {
 		}
@@ -65,6 +68,7 @@ public class LandcoverTransitionTable {
 			}
 			if (after != null) {
 				ITime time = Observations.INSTANCE.getTime(locator);
+				return time.getEnd().getMilliseconds() > after.getMilliseconds();
 			}
 			if (selector != null) {
 
@@ -167,6 +171,57 @@ public class LandcoverTransitionTable {
 		return concepts;
 	}
 
+	public boolean isActive() {
+		for (IConcept c : transitions.keySet()) {
+			for (IConcept cc : transitions.get(c).keySet()) {
+				if (transitions.get(c).get(cc).active) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Deactivate any rule whose target is the passed one. Return whether there are
+	 * any other active rules.
+	 * 
+	 * @param metDemand
+	 * @return
+	 */
+	public boolean deactivate(IConcept metDemand) {
+		boolean ret = false;
+		for (IConcept c : transitions.keySet()) {
+			for (IConcept cc : transitions.get(c).keySet()) {
+				TransitionRule rule = transitions.get(c).get(cc);
+				if (rcache.is(rule.target, metDemand)) {
+					rule.active = false;
+				} else if (rule.active) {
+					ret = true;
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Activate all rules prior to demand reevaluation.
+	 * 
+	 * @return
+	 */
+	public void activate() {
+		for (IConcept c : transitions.keySet()) {
+			for (IConcept cc : transitions.get(c).keySet()) {
+				TransitionRule rule = transitions.get(c).get(cc);
+				rule.active = true;
+			}
+		}
+	}
+
+	public boolean isEmpty() {
+		return transitions.isEmpty();
+	}
+
 	/**
 	 * Return the possible transition rules between two types, arranged so that the
 	 * most appropriate comes first. If we're not in transitive mode the return list
@@ -182,18 +237,21 @@ public class LandcoverTransitionTable {
 		Map<IConcept, TransitionRule> potential = transitions.get(current);
 		if (potential != null) {
 			TransitionRule specific = potential.get(candidate);
-			if (specific != null) {
+			if (specific != null && specific.active) {
 				ret.add(specific);
 			}
 			for (IConcept target : potential.keySet()) {
 				if (!target.equals(candidate) && (this.transitive && rcache.is(candidate, target))) {
-					ret.add(potential.get(target));
+					TransitionRule rule = potential.get(target);
+					if (rule.active) {
+						ret.add(rule);
+					}
 				}
 			}
 		}
-		
+
 		ret.add(defaultTransitionRule);
-		
+
 		return ret;
 	}
 

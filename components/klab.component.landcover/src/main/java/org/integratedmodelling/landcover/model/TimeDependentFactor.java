@@ -1,11 +1,10 @@
 package org.integratedmodelling.landcover.model;
 
-import java.util.Map;
 import java.util.function.Function;
 
-import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * A (potentially) time-dependent quantity that may be initialized as a
@@ -39,18 +38,16 @@ public class TimeDependentFactor {
 	 * @return
 	 */
 	public double get(ITime time) {
+		
 		if (constval != null) {
 			return constval;
+		} else if (state != null) {
+			return Utils.asType(state.aggregate(time), Double.class);
+		} else if (function != null) {
+			return function.apply(time.getStart().getMilliseconds()
+					+ (time.getEnd().getMilliseconds() - time.getStart().getMilliseconds()) / 2);
 		}
 		return 0;
-	}
-
-	public static <T> Map<T, TimeDependentFactor> parse(Map<?, ?> map) {
-		return null;
-	}
-
-	public static <T> Map<T, TimeDependentFactor> parse(IKimTable table) {
-		return null;
 	}
 
 }
