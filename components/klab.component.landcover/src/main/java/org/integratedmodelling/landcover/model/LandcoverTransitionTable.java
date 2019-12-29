@@ -172,6 +172,11 @@ public class LandcoverTransitionTable {
 	}
 
 	public boolean isActive() {
+
+		if (defaultTransitionRule.always) {
+			return true;
+		}
+		
 		for (IConcept c : transitions.keySet()) {
 			for (IConcept cc : transitions.get(c).keySet()) {
 				if (transitions.get(c).get(cc).active) {
@@ -179,11 +184,12 @@ public class LandcoverTransitionTable {
 				}
 			}
 		}
+		
 		return false;
 	}
 
 	/**
-	 * Deactivate any rule whose target is the passed one. Return whether there are
+	 * Deactivate any rule whose target is the passed concept. Return whether there are
 	 * any other active rules.
 	 * 
 	 * @param metDemand

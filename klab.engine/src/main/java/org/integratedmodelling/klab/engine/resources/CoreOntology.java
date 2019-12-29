@@ -245,6 +245,8 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String DEPENDS_ON_PROPERTY = "observation:dependsOn";
 		public static final String RELATES_TO_PROPERTY = "observation:relatesTo";
 		public static final String AFFECTS_PROPERTY = "observation:affects";
+		public static final String CREATES_PROPERTY = "observation:creates";
+		public static final String CHANGES_PROPERTY = "observation:changes";
 		public static final String CONTAINS_PART_PROPERTY = "observation:containsPart";
 		public static final String CONTAINS_PART_SPATIALLY_PROPERTY = "observation:containsPartSpatially";
 		public static final String OBSERVES_PROPERTY = "observation:observes";

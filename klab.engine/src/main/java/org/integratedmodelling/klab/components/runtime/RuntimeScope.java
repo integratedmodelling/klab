@@ -692,8 +692,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
 
-				IArtifact merging = createTarget(mergingActuator, this.getDataflow().getResolutionScale(), scope,
-						rootSubject);
+				IArtifact merging = createTarget(mergingActuator, /* this.getDataflow().getResolutionScale() */scale,
+						scope, rootSubject);
 
 				/*
 				 * partition sub-state does not go in the catalog

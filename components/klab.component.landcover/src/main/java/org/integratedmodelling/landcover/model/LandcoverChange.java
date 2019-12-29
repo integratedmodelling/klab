@@ -50,10 +50,15 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.IntelligentMap;
+import org.integratedmodelling.klab.owl.ReasonerCache;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.landcover.model.LandcoverTransitionTable.TransitionRule;
+import org.joda.time.Interval;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import com.ibm.icu.text.NumberFormat;
 
@@ -93,6 +98,11 @@ public class LandcoverChange {
 	};
 
 	ProbabilityCompoundingMode compoundingMode = ProbabilityCompoundingMode.DEFAULT;
+
+	private static final PeriodFormatter periodFormat = new PeriodFormatterBuilder().appendDays()
+			.appendSuffix(" day", " days").appendSeparator(" ").printZeroIfSupported().minimumPrintedDigits(2)
+			.appendHours().appendSeparator(":").appendMinutes().printZeroIfSupported().minimumPrintedDigits(2)
+			.appendSeparator(":").appendSeconds().minimumPrintedDigits(2).toFormatter();
 
 	/**
 	 * No conversion in deterministic modes will take place if the probability
@@ -146,6 +156,7 @@ public class LandcoverChange {
 
 	Random random = new Random();
 	MersenneTwister betterRandom = new MersenneTwister();
+	ReasonerCache rcache = new ReasonerCache();
 
 	/*
 	 * default transition table allows every transition and contains no table.
@@ -203,8 +214,8 @@ public class LandcoverChange {
 	 * these change at each iteration
 	 */
 	Map<IConcept, Double> probabilityShifts = new IntelligentMap<Double>(0.0);
-	Map<IConcept, Double> demandRatios = new IntelligentMap<Double>();
-	Map<IConcept, Double> demandWeights = new IntelligentMap<Double>();
+	Map<IConcept, Double> demandRatios = new IntelligentMap<Double>(0.0);
+	Map<IConcept, Double> demandWeights = new IntelligentMap<Double>(0.0);
 
 	/*
 	 * this contains -1 if there's less area than target +/- deviation, +1 if too
@@ -214,8 +225,9 @@ public class LandcoverChange {
 	Map<IConcept, DescriptiveStatistics> movingAverages = new HashMap<>();
 
 	private boolean tainted;
-
 	private double defaultDeviation = 0.05;
+	private long runtimePerIteration = -1;
+	private long nextents;
 
 	public LandcoverChange(IProcess targetProcess) {
 		this.process = targetProcess;
@@ -235,7 +247,9 @@ public class LandcoverChange {
 	@SuppressWarnings("unchecked")
 	public void run(IRuntimeScope scope) {
 
-		// this persists across a timestep
+		monitor.info("Running change cycle " + scope.getScale().getTime().getStart() + " to "
+				+ scope.getScale().getTime().getEnd());
+
 		this.probabilityShifts.clear();
 		this.movingAverages.clear();
 		this.goalsMet.clear();
@@ -262,18 +276,21 @@ public class LandcoverChange {
 		int iteration = 0;
 		boolean isInterrupted = false;
 		DemandEvaluation eval = null;
+		int nexts = 0;
 
 		/*
 		 * TODO if all goals are met and there are still active transitions, just run
 		 * one iteration with the current transition rules and do not allocate anything.
 		 */
-
 		while (iteration < maxIterations) {
 
 			eval = demandMet(scope.getScale().getTime(), iteration);
 
-			if (eval == DemandEvaluation.NO_MORE_GOALS && !transitionTable.isEmpty() && !transitionTable.isActive()) {
-				monitor.info("All goals met and no consequential transitions remaining");
+			if (eval == DemandEvaluation.NO_MORE_GOALS && iteration > 0) {
+				break;
+			}
+
+			if (!transitionTable.isActive()) {
 				break;
 			}
 
@@ -281,8 +298,13 @@ public class LandcoverChange {
 				break;
 			}
 
+			if (iteration > 0) {
+				monitor.info("   Running iteration " + iteration);
+			}
+			
 			this.conversionStatistics.reset();
 
+			long startTime = System.currentTimeMillis();
 			for (ILocator locator : scope.getScale()) {
 
 				if (monitor.isInterrupted()) {
@@ -292,6 +314,20 @@ public class LandcoverChange {
 
 				IConcept current = landCoverType.get(locator, IConcept.class);
 				if (Observations.INSTANCE.isData(current)) {
+
+					// report estimated time per iteration
+					if (runtimePerIteration < 0 && this.nextents >= 10000) {
+						nexts++;
+						if (nexts == 5000) {
+							// dividing by 9000 instead of 5000 to correct by a completely empirical factor
+							// I don't really understand.
+							runtimePerIteration = (long) ((double) (System.currentTimeMillis() - startTime)
+									* (((double) this.nextents) / 8500.0));
+							Period period = new Period(runtimePerIteration);
+							monitor.info("Estimated time per iteration: " + periodFormat.print(period));
+						}
+					}
+
 					List<Conversion> conversions = getPossibleConversions(current, scope, locator,
 							eval != DemandEvaluation.NO_MORE_GOALS, iteration);
 					applyConversion(current, pickConversion(conversions), transitionStorage, targetStorage, locator);
@@ -299,7 +335,7 @@ public class LandcoverChange {
 
 			}
 
-			conversionStatistics.summarize(this.totalArea);
+			System.out.println(conversionStatistics.summarize(this.totalArea));
 
 			iteration++;
 		}
@@ -315,9 +351,11 @@ public class LandcoverChange {
 		} else if (isInterrupted) {
 			monitor.warn("Allocation interrupted.");
 		} else if (iteration > 0) {
-			// TODO log any surplus
-			monitor.info(
-					"demand targets achieved at " + scope.getScale().getTime() + " in " + iteration + " iterations");
+			if (demand.size() > 0) { 
+				// TODO log any surplus
+				monitor.info(goalsMet.size() + " of " + demand.size() + " targets achieved at "
+					+ scope.getScale().getTime().getEnd() + " in " + iteration + " iterations");
+			}
 		}
 
 		/*
@@ -478,7 +516,17 @@ public class LandcoverChange {
 			ILocator slocator = locator.as(ISpace.class);
 			String transition = transitionStorage.get(slocator);
 			if (transition != null) {
-				this.landCoverAge.set(locator, 0);
+
+				IConcept prima = this.landCoverType.get(locator, IConcept.class);
+				IConcept dopo = targetStorage.get(slocator);
+
+				if (!prima.equals(dopo)) {
+					this.landCoverAge.set(locator, 0);
+				} else {
+					double age = this.landCoverAge.get(locator, Double.class);
+					this.landCoverAge.set(locator, age + duration);
+				}
+
 				this.landCoverType.set(locator, targetStorage.get(slocator));
 				/*
 				 * TODO use the transition for event detection and statistics
@@ -763,7 +811,7 @@ public class LandcoverChange {
 		double ret = 0;
 		Map<IConcept, Double> distribution = original ? this.originalDistribution : this.distribution;
 		for (IConcept key : distribution.keySet()) {
-			if (key.is(target)) {
+			if (rcache.is(key, target)) {
 				ret += distribution.get(key);
 			}
 		}
@@ -1024,11 +1072,13 @@ public class LandcoverChange {
 	private Map<IConcept, Double> preprocessLandcover(boolean initializeAge, boolean useBuffer) {
 
 		this.totalArea = 0.0;
+		this.nextents = 0;
 		Map<IConcept, Double> areaDistribution = new HashMap<>();
 		for (ILocator locator : this.scope.getScale()) {
 			Object value = useBuffer ? this.targetStorage.get(locator.as(ISpace.class))
 					: this.landCoverType.get(locator);
 			if (Observations.INSTANCE.isData(value)) {
+				this.nextents++;
 				double area = Observations.INSTANCE.getArea(locator);
 				totalArea += area;
 				if (value instanceof IConcept) {
