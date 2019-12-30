@@ -134,7 +134,7 @@ public class LandcoverChange {
 	 * if true, exceeding demand is OK, otherwise let the algorithm rip when we have
 	 * too much of a type.
 	 */
-	boolean greedy = true;
+	boolean greedy = false;
 
 	/*
 	 * one of these supplies the probability distribution, either for the concept
@@ -275,8 +275,12 @@ public class LandcoverChange {
 
 		int iteration = 0;
 		boolean isInterrupted = false;
-		DemandEvaluation eval = null;
 		int nexts = 0;
+
+		// initialize
+		for (IConcept lu : demand.keySet()) {
+			probabilityShifts.put(lu, 0.0);
+		}
 
 		/*
 		 * TODO if all goals are met and there are still active transitions, just run
@@ -284,22 +288,8 @@ public class LandcoverChange {
 		 */
 		while (iteration < maxIterations) {
 
-			eval = demandMet(scope.getScale().getTime(), iteration);
-
-			if (eval == DemandEvaluation.NO_MORE_GOALS && iteration > 0) {
-				break;
-			}
-
 			if (!transitionTable.isActive()) {
 				break;
-			}
-
-			if (eval == DemandEvaluation.MET) {
-				break;
-			}
-
-			if (iteration > 0) {
-				monitor.info("   Running iteration " + iteration);
 			}
 
 			this.conversionStatistics.reset();
@@ -328,26 +318,45 @@ public class LandcoverChange {
 						}
 					}
 
-					List<Conversion> conversions = getPossibleConversions(current, scope, locator,
-							eval != DemandEvaluation.NO_MORE_GOALS, iteration);
+					List<Conversion> conversions = getPossibleConversions(current, scope, locator, iteration);
 					applyConversion(current, pickConversion(conversions), transitionStorage, targetStorage, locator);
 				}
 
 			}
 
+			if (isInterrupted) {
+				break;
+			}
+			
+			this.distribution = preprocessLandcover(false, true);
+
+			DemandEvaluation eval = evaluateConvergence(scope.getScale().getTime(), iteration);
+
+			if (eval == DemandEvaluation.NO_MORE_GOALS || eval == DemandEvaluation.MET) {
+				break;
+			} else if (eval == DemandEvaluation.NOT_CONVERGING) {
+				monitor.warn("Not converging towards demand goals - either too little change or change "
+						+ "in the wrong direction. Please review parameters and context.");
+				break;
+			}
+
+			/*
+			 * if we get here, we need more iterations
+			 */
+
+			demandWeights = computeDemandWeights(scope.getScale().getTime());
+			shiftProbabilities();
 			System.out.println(conversionStatistics.summarize(this.totalArea));
+			monitor.info("   Running iteration " + (iteration + 1));
 
 			iteration++;
+
 		}
 
 		if (iteration >= maxIterations) {
 			this.tainted = true;
 			monitor.warn(
 					"Maximum iterations reached in allocation algorithm without meeting demand. Please review parameters and context.");
-		} else if (eval == DemandEvaluation.NOT_CONVERGING) {
-			this.tainted = true;
-			monitor.warn(
-					"Not converging towards demand goals - either too little change or change in the wrong direction. Please review parameters and context.");
 		} else if (isInterrupted) {
 			monitor.warn("Allocation interrupted.");
 		} else if (iteration > 0) {
@@ -404,11 +413,9 @@ public class LandcoverChange {
 			boolean demandMet = true;
 			if (!okrange.contains(actual)) {
 				if (balance < 0 || !greedy) {
-
 					monitor.info((iteration == 0 ? "" : "remaining ") + (balance < 0 ? "deficit" : "surplus") + " of "
 							+ Concepts.INSTANCE.getDisplayName(demanded) + " is " + formattedBalance
 							+ " km^2 at iteration #" + iteration);
-
 					deviationFromTarget.put(demanded, actual > target ? 1 : -1);
 					demandMet = false;
 				}
@@ -439,44 +446,44 @@ public class LandcoverChange {
 		final int MOVING_AVERAGE_WINDOW_SIZE = 10;
 		final double MINIMUM_MEAN_DEVIATION = 0.05;
 
-		if (previousDistribution == null) {
-			previousDistribution = new HashMap<>(distribution);
-		} else {
-			// check for equality first: if no change at all, stop right away
-			boolean ok = false;
-			for (IConcept c : deviationFromTarget.keySet()) {
-				if (previousDistribution.get(c) != distribution.get(c)) {
-					ok = true;
-					break;
-				}
-				if (!ok) {
-					ret = DemandEvaluation.NOT_CONVERGING;
-				}
-			}
-
-			if (ret != DemandEvaluation.NOT_CONVERGING) {
-				// otherwise only declare failure after a certain number of iteration with
-				// little movement from the mean or increasing distance
-				for (IConcept c : distribution.keySet()) {
-					if (movingAverages.containsKey(c)) {
-						DescriptiveStatistics stats = movingAverages.get(c);
-						double previousMean = stats.getMean();
-						stats.addValue(distribution.get(c));
-						double newMean = stats.getMean();
-						if (Math.abs((previousMean - newMean) / newMean) < MINIMUM_MEAN_DEVIATION) {
-							ret = DemandEvaluation.NOT_CONVERGING;
-						}
-					} else {
-						DescriptiveStatistics stats = new DescriptiveStatistics(MOVING_AVERAGE_WINDOW_SIZE);
-						stats.addValue(distribution.get(c));
-						movingAverages.put(c, stats);
-					}
-				}
-
-				// store for next time
-				previousDistribution.putAll(distribution);
-			}
-		}
+//		if (previousDistribution == null) {
+//			previousDistribution = new HashMap<>(distribution);
+//		} else {
+//			// check for equality first: if no change at all, stop right away
+//			boolean ok = false;
+//			for (IConcept c : deviationFromTarget.keySet()) {
+//				if (previousDistribution.get(c) != distribution.get(c)) {
+//					ok = true;
+//					break;
+//				}
+//				if (!ok) {
+//					ret = DemandEvaluation.NOT_CONVERGING;
+//				}
+//			}
+//
+//			if (ret != DemandEvaluation.NOT_CONVERGING) {
+//				// otherwise only declare failure after a certain number of iteration with
+//				// little movement from the mean or increasing distance
+//				for (IConcept c : distribution.keySet()) {
+//					if (movingAverages.containsKey(c)) {
+//						DescriptiveStatistics stats = movingAverages.get(c);
+//						double previousMean = stats.getMean();
+//						stats.addValue(distribution.get(c));
+//						double newMean = stats.getMean();
+//						if (Math.abs((previousMean - newMean) / newMean) < MINIMUM_MEAN_DEVIATION) {
+//							ret = DemandEvaluation.NOT_CONVERGING;
+//						}
+//					} else {
+//						DescriptiveStatistics stats = new DescriptiveStatistics(MOVING_AVERAGE_WINDOW_SIZE);
+//						stats.addValue(distribution.get(c));
+//						movingAverages.put(c, stats);
+//					}
+//				}
+//
+//				// store for next time
+//				previousDistribution.putAll(distribution);
+//			}
+//		}
 
 		return ret;
 	}
@@ -584,7 +591,7 @@ public class LandcoverChange {
 	}
 
 	private List<Conversion> getPossibleConversions(IConcept current, IRuntimeScope scope, ILocator locator,
-			boolean withDemand, int iteration) {
+			int iteration) {
 
 		List<Conversion> ret = new ArrayList<>();
 		ITime time = scope.getScale().getTime();
@@ -648,8 +655,8 @@ public class LandcoverChange {
 	 * @param currentResistance
 	 * @return
 	 */
-	private double compoundProbabilities(Conversion conversion, ITime time, ILocator locator/*, double currentResistance*/,
-			int iteration) {
+	private double compoundProbabilities(Conversion conversion, ITime time,
+			ILocator locator/* , double currentResistance */, int iteration) {
 
 		double suitability = conversion.getSuitability();
 
@@ -676,7 +683,8 @@ public class LandcoverChange {
 			double rescaledDemandWeight = (demandWeight + 1.0) / 2.0;
 			double preProbability = (rescaledDemandWeight + suitability) / 2.0;
 			if (conversion.getSource().equals(conversion.getDestination()))
-				ret = preProbability + (1 - preProbability) /** currentResistance*/;
+				ret = preProbability + (1 - preProbability) /** currentResistance */
+				;
 			else
 				ret = preProbability;
 			break;
@@ -697,7 +705,6 @@ public class LandcoverChange {
 	}
 
 	private double getDemandWeight(IConcept current) {
-		System.out.println("ZODDO");
 		return demandWeights.get(current);
 	}
 
@@ -804,6 +811,12 @@ public class LandcoverChange {
 			}
 			ret.put(key, result);
 		}
+
+		System.out.println("DEMAND WEIGHTS");
+		for (IConcept dio : ret.keySet()) {
+			System.out.println("Weight for " + dio + " is now " + ret.get(dio));
+		}
+
 		return ret;
 	}
 
@@ -820,45 +833,6 @@ public class LandcoverChange {
 
 	enum DemandEvaluation {
 		MET, NOT_MET, NOT_CONVERGING, NO_MORE_GOALS
-	}
-
-	/**
-	 * Check if demand is met, tabulating all distributions and checking them
-	 * against demand at the time.
-	 * 
-	 * @return
-	 */
-	private DemandEvaluation demandMet(ITime time, int iteration) {
-
-		if (iteration > 0) {
-			/*
-			 * recompute new areal distribution of each landcover type from current buffer,
-			 * including 0 for any landcover mentioned in the configuration but not yet
-			 * represented in the data. When entering at iteration == 0, the distribution is
-			 * the same as the original distribution.
-			 * 
-			 * TODO as an optimization, we could skip this step by keeping the running
-			 * totals updated at each transition.
-			 */
-			this.distribution = preprocessLandcover(false, true);
-		}
-
-		DemandEvaluation ret = evaluateConvergence(time, iteration);
-		if (ret == DemandEvaluation.NOT_MET) {
-
-			demandWeights = computeDemandWeights(scope.getScale().getTime());
-
-			if (probabilityShifts.isEmpty()) {
-				// first run: initialize to 0
-				for (IConcept lu : demand.keySet()) {
-					probabilityShifts.put(lu, 0.0);
-				}
-			} else {
-				shiftProbabilities();
-			}
-		}
-
-		return ret;
 	}
 
 	private double getTotalDemand(ITime time) {
@@ -885,7 +859,7 @@ public class LandcoverChange {
 			Double shiftValue = entry.getValue();
 			Double allocatedDemandRatio = 0.0;
 			if (demandRatios.get(landuse) > 0.0) {
-				allocatedDemandRatio = (demandRatios.get(landuse) - (distribution.get(landuse) / totalArea))
+				allocatedDemandRatio = (demandRatios.get(landuse) - (getAllocatedArea(landuse, false) / totalArea))
 						/ demandRatios.get(landuse);
 			}
 
@@ -937,7 +911,7 @@ public class LandcoverChange {
 		 * specified transitions.
 		 */
 		defaultTransitionPossible = !parameters.containsKey("transitions");
-		this.greedy = parameters.get("greedy", Boolean.TRUE);
+		this.greedy = parameters.get("greedy", Boolean.FALSE);
 
 		/*
 		 * just in case
