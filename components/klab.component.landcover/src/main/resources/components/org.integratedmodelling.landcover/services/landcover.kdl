@@ -6,7 +6,7 @@
 @namespace klab.landcover
 
 @xor(demand, demandarea)
-export process clue
+export process allocate
 	"An implementation of the general principles of the CLUE land cover change model 
 	 for the k.LAB environment."
 	label 'Landcover change'
@@ -24,6 +24,9 @@ export process clue
 		""
 	
 	optional list demand
+		""
+	
+	optional boolean greedy
 		""
 	
 	geometry T1S2

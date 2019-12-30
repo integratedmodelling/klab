@@ -44,10 +44,11 @@ public interface IDataKey {
 	/**
 	 * If the datakey indexes concepts, return the list of concepts in order of
 	 * rank. Otherwise return null (not an empty list).
+	 * 
 	 * @return
 	 */
 	List<IConcept> getConcepts();
-	
+
 	/**
 	 * Get the value corresponding to the result of reverseLookup() for that object.
 	 * 
@@ -76,5 +77,13 @@ public interface IDataKey {
 	 * @return
 	 */
 	List<String> getSerializedObjects();
+
+	/**
+	 * Ensure that the key includes the passed value, which should be compatible in
+	 * type with those already present. 
+	 * 
+	 * @param value
+	 */
+	void include(Object value);
 
 }

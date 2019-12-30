@@ -86,6 +86,9 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	public long set(ILocator index, Object value) {
 		touch();
+		if (dataKey != null && value != null) {
+			dataKey.include(value);
+		}
 		return storage.putObject(value, index);
 	}
 

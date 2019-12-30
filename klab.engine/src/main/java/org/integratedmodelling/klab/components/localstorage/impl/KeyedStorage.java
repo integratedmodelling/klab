@@ -42,15 +42,24 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 
 	@Override
 	public synchronized long put(T value, ILocator locator) {
+
 		Integer cValue = null;
+		
+		// proprio necessaria, sta roba? Basically, trying to keep the concept key synchronized with an externally supplied
+		// datakey, but allow for expansion, which sounds strange.
+		if (dataKey != null) {
+			cValue = dataKey.reverseLookup(value);
+			if (cValue < 0) {
+				cValue = null;
+			}
+		}
 		if (value != null) {
-			cValue = dataKey == null ? conceptKey.size() : dataKey.reverseLookup(value);
+			if (cValue == null) {
+				cValue = conceptKey.size();
+			}
 			if (conceptKey.containsKey(value)) {
 				cValue = conceptKey.get(value);
 			} else {
-//				if (dataKey == null) {
-//					cValue++;
-//				}
 				conceptKey.put(value, cValue);
 			}
 		}
@@ -154,8 +163,7 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 			List<String> ret = new ArrayList<>();
 			synchronized (key) {
 				for (T value : this.key.keySet()) {
-					ret.add(value instanceof IConcept ? ((IConcept) value).getDefinition()
-							: value.toString());
+					ret.add(value instanceof IConcept ? ((IConcept) value).getDefinition() : value.toString());
 				}
 			}
 			return ret;
@@ -175,7 +183,16 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 			return ret;
 		}
 
+		@SuppressWarnings("unchecked")
+		@Override
+		public void include(Object value) {
+			if (!this.key.containsKey((T)value)) {
+				this.key.put((T)value, this.key.size());
+			}
+		}
+		
 	}
+
 	
 	@Override
 	public IGeometry getGeometry() {

@@ -619,7 +619,7 @@ public class LandcoverChange {
 					 * the conversion by now only contais the suitability. Add the other dimensions
 					 * and shock the suitabilities in defect/surplus after the first iteration.
 					 */
-					double probability = compoundProbabilities(candidate, time, locator, resistance, iteration);
+					double probability = compoundProbabilities(candidate, time, locator, iteration);
 
 					/*
 					 * CLUE uses an (arbitrary?) proportional shock of max +/-5% of the total
@@ -648,7 +648,7 @@ public class LandcoverChange {
 	 * @param currentResistance
 	 * @return
 	 */
-	private double compoundProbabilities(Conversion conversion, ITime time, ILocator locator, double currentResistance,
+	private double compoundProbabilities(Conversion conversion, ITime time, ILocator locator/*, double currentResistance*/,
 			int iteration) {
 
 		double suitability = conversion.getSuitability();
@@ -670,14 +670,13 @@ public class LandcoverChange {
 		double ret = 0;
 		switch (compoundingMode) {
 		case DEFAULT:
-			ret = demandWeight + neighborhood + suitability
-					+ (conversion.getSource().equals(conversion.getDestination()) ? currentResistance : 0);
+			ret = demandWeight + neighborhood + suitability;
 			break;
 		case DEMAND_WEIGHT_DOMINATED:
 			double rescaledDemandWeight = (demandWeight + 1.0) / 2.0;
 			double preProbability = (rescaledDemandWeight + suitability) / 2.0;
 			if (conversion.getSource().equals(conversion.getDestination()))
-				ret = preProbability + (1 - preProbability) * currentResistance;
+				ret = preProbability + (1 - preProbability) /** currentResistance*/;
 			else
 				ret = preProbability;
 			break;

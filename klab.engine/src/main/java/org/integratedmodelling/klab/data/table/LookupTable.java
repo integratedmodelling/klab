@@ -198,4 +198,13 @@ public class LookupTable implements ILookupTable {
 		return ret;
 	}
 
+	@Override
+	public void include(Object value) {
+		if (!(value instanceof IConcept)) {
+			throw new IllegalArgumentException("a table can only serve as a datakey for concepts");
+		}
+		if (!this.key.containsKey((IConcept)value)) {
+			this.key.put((IConcept)value, this.key.size());
+		}
+	}
 }

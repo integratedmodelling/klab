@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -418,6 +419,32 @@ public class Classification implements IClassification {
 	@Override
 	public List<IConcept> getConcepts() {
 		return conceptOrder;
+	}
+
+	@Override
+	public void include(Object value) {
+
+		if (!(value instanceof IConcept)) {
+			throw new IllegalArgumentException("Invalid value for a classification: " + value);
+		}
+		if (!definitionSet().contains(((IConcept)value).getDefinition())) {
+			this.conceptOrder.add((IConcept)value);
+			this.conceptIndexes = null;
+			this.definitionSet.add(((IConcept)value).getDefinition());
+		}
+	}
+
+	Set<String> definitionSet = null;
+	
+	private Set<String> definitionSet() {
+		
+		if (this.definitionSet == null) {
+			this.definitionSet = new LinkedHashSet<>();
+			for (IConcept c : conceptOrder) {
+				this.definitionSet.add(c.getDefinition());
+			}
+		}
+		return this.definitionSet;
 	}
 
 }
