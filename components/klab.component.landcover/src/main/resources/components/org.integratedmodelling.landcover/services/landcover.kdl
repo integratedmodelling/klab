@@ -28,5 +28,5 @@ export process clue
 	
 	geometry T1S2
 	
-	class org.integratedmodelling.landcover.clue.services.LandcoverChangeResolver
+	class org.integratedmodelling.landcover.services.LandcoverChangeResolver
 }

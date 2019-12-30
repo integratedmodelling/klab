@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.landcover.clue.KLABRasterData;
 
 import nl.wur.iclue.model.CLUEModel;
 
@@ -44,9 +41,9 @@ public class RasterDataStack {
 		Iterator<ILocator> iterator = null;
 
 		It() {
-			if (inputs.size() > 0 && inputs.get(0) instanceof KLABRasterData) {
-				iterator = ((KLABRasterData)inputs.get(0)).getScale().iterator();
-			}
+//			if (inputs.size() > 0 && inputs.get(0) instanceof KLABRasterData) {
+//				iterator = ((KLABRasterData)inputs.get(0)).getScale().iterator();
+//			}
 		}
 
 		@Override
@@ -79,10 +76,11 @@ public class RasterDataStack {
 	}
 
 	public RasterData addOutput(boolean isInteger) {
-		RasterData data = new KLABRasterData(Klab.INSTANCE.getStorageProvider().createStorage(Type.NUMBER,
-				model.getKlabScope().getScale().initialization(), model.getKlabScope()));
-		addOutput(data);
-		return data;
+//		RasterData data = new KLABRasterData(Klab.INSTANCE.getStorageProvider().createStorage(Type.NUMBER,
+//				model.getKlabScope().getScale().initialization(), model.getKlabScope()));
+//		addOutput(data);
+//		return data;
+		return null;
 	}
 
 	public Iterable<CellStack> getCellCursor() {

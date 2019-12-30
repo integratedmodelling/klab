@@ -1,11 +1,11 @@
 package org.integratedmodelling.ml.adapters;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
+import org.apache.commons.math3.random.Well19937c;
 import org.apache.commons.math3.util.Pair;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -24,7 +24,8 @@ public class WekaCalculator implements IResourceCalculator {
 
 	private IResource resource;
 	private WekaEncoder encoder = new WekaEncoder();
-
+	private Well19937c generator = new Well19937c();
+	
 	public WekaCalculator(IResource resource) {
 		this.resource = resource;
 		this.encoder.initialize(resource);
@@ -57,10 +58,11 @@ public class WekaCalculator implements IResourceCalculator {
 						for (int i = 0; i < concepts.size(); i++) {
 							pairs.add(Pair.create(concepts.get(i), ((double[])prediction)[i]));
 						}
-						return (T) new EnumeratedDistribution<IConcept>(pairs);
+						return (T) new EnumeratedDistribution<IConcept>(generator, pairs);
 					}
 				}
 			}
+			// TODO numbers etc.
 
 		} else {
 			IDataKey dataKey = encoder.instances.getDatakey("predicted");

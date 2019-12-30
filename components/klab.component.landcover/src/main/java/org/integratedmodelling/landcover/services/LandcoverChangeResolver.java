@@ -1,4 +1,4 @@
-package org.integratedmodelling.landcover.clue.services;
+package org.integratedmodelling.landcover.services;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.general.IExpression;

@@ -2,6 +2,7 @@ package org.integratedmodelling.landcover.model;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,19 +33,19 @@ public class ConversionStatistics {
 		// in km2
 		double area = Observations.INSTANCE.getArea(locator) / 1000000;
 
-		Double lost = allFrom.get(conversion.from);
-		Double gained = allTo.get(conversion.to);
+		Double lost = allFrom.get(conversion.getSource());
+		Double gained = allTo.get(conversion.getDestination());
 		lost = lost == null ? -area : lost - area;
 		gained = gained == null ? area : gained + area;
-		allFrom.put(conversion.from, lost);
-		allTo.put(conversion.to, gained);
-		Map<IConcept, Double> t = transitions.get(conversion.from);
+		allFrom.put(conversion.getSource(), lost);
+		allTo.put(conversion.getDestination(), gained);
+		Map<IConcept, Double> t = transitions.get(conversion.getSource());
 		if (t == null) {
 			t = new HashMap<>();
-			transitions.put(conversion.from, t);
+			transitions.put(conversion.getSource(), t);
 		}
-		Double moved = t.get(conversion.to);
-		t.put(conversion.to, moved == null ? area : moved + area);
+		Double moved = t.get(conversion.getDestination());
+		t.put(conversion.getDestination(), moved == null ? area : moved + area);
 	}
 
 	public String summarize(double totalArea) {
@@ -71,11 +72,23 @@ public class ConversionStatistics {
 
 		double total = 0;
 		NumberFormat format = NumberFormat.getInstance();
-		
-		List<Entry<IConcept, Double>> froms = new ArrayList<>(allFrom.entrySet()); 
-		List<Entry<IConcept, Double>> tos = new ArrayList<>(allTo.entrySet()); 
+
+		List<Entry<IConcept, Double>> froms = new ArrayList<>(allFrom.entrySet());
+		List<Entry<IConcept, Double>> tos = new ArrayList<>(allTo.entrySet());
+
+		Comparator<Entry<IConcept, Double>> comparator = new Comparator<Entry<IConcept, Double>>() {
+			@Override
+			public int compare(Entry<IConcept, Double> arg0, Entry<IConcept, Double> arg1) {
+				return Concepts.INSTANCE.getDisplayName(arg0.getKey())
+						.compareTo(Concepts.INSTANCE.getDisplayName(arg1.getKey()));
+			}
+		};
+
+		froms.sort(comparator);
+		tos.sort(comparator);
+
 		double[] columnTotals = new double[allTo.size()];
-		
+
 		/* one row/column for the correspondent in table; another for totals */
 		for (int row = 0; row <= allFrom.size() + 1; row++) {
 
@@ -88,7 +101,7 @@ public class ConversionStatistics {
 					} else if (column == allTo.size() + 1) {
 						token = "Totals";
 					} else if (column > 0) {
-						token = Concepts.INSTANCE.getDisplayName(tos.get(column -1).getKey());
+						token = Concepts.INSTANCE.getDisplayName(tos.get(column - 1).getKey());
 					}
 				} else if (row == allFrom.size() + 1) {
 					if (column == 0) {
@@ -102,15 +115,15 @@ public class ConversionStatistics {
 					// intermediate rows
 					if (column == 0) {
 						// from concept
-						token = Concepts.INSTANCE.getDisplayName(froms.get(row-1).getKey());
+						token = Concepts.INSTANCE.getDisplayName(froms.get(row - 1).getKey());
 					} else if (column == allTo.size() + 1) {
 						// row total
 						token = format.format(rowTotal);
 						rowTotal = 0;
 					} else {
 						// column value
-						IConcept from = froms.get(row-1).getKey();
-						IConcept to = tos.get(column-1).getKey();
+						IConcept from = froms.get(row - 1).getKey();
+						IConcept to = tos.get(column - 1).getKey();
 						Double dvalue = transitions.get(from).get(to);
 						double value = dvalue == null ? 0 : dvalue;
 						// add to row
@@ -120,7 +133,7 @@ public class ConversionStatistics {
 						// add to total
 						total += value;
 						// add to column totals
-						columnTotals[column-1] += value;
+						columnTotals[column - 1] += value;
 					}
 				}
 				ret.append(StringUtils.rightPad(token, maxSize));

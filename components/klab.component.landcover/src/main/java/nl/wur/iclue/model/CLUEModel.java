@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.landcover.clue.KlabCLUEParameters;
 
 import nl.alterra.shared.datakind.Category;
 import nl.alterra.shared.datakind.Clazz;
@@ -91,9 +90,9 @@ public class CLUEModel {
 			throw new RuntimeException(errorMessage);
 		}
 		this.params = params;
-		if (params instanceof KlabCLUEParameters) {
-			this.scope = ((KlabCLUEParameters) params).getKlabScope();
-		}
+//		if (params instanceof KlabCLUEParameters) {
+//			this.scope = ((KlabCLUEParameters) params).getKlabScope();
+//		}
 	}
 
 	/**
@@ -305,20 +304,20 @@ public class CLUEModel {
 	public LanduseAndAgeDataset createLanduseAndAgeDataset(Parameters parameters,
 			Category administrativeUnitOfInterest) {
 
-		if (parameters instanceof KlabCLUEParameters) {
-
-			/*
-			 * create outputs - for the age layer, use the current state from the context
-			 * (or create if not there) and ensure the baseline points at the previous. Age
-			 * should remain stored.
-			 */
-			LanduseAndAgeDataset ret = new LanduseAndAgeDataset();
-			ret.landuseData = parameters.getBaseline().cut(parameters.getAdministrativeUnits(),
-					administrativeUnitOfInterest);
-			ret.ageData = ((KlabCLUEParameters) parameters).getAgeDataset();
-
-			return ret;
-		}
+//		if (parameters instanceof KlabCLUEParameters) {
+//
+//			/*
+//			 * create outputs - for the age layer, use the current state from the context
+//			 * (or create if not there) and ensure the baseline points at the previous. Age
+//			 * should remain stored.
+//			 */
+//			LanduseAndAgeDataset ret = new LanduseAndAgeDataset();
+//			ret.landuseData = parameters.getBaseline().cut(parameters.getAdministrativeUnits(),
+//					administrativeUnitOfInterest);
+//			ret.ageData = ((KlabCLUEParameters) parameters).getAgeDataset();
+//
+//			return ret;
+//		}
 
 		return new LanduseAndAgeDataset(
 				parameters.getBaseline().cut(parameters.getAdministrativeUnits(), administrativeUnitOfInterest),

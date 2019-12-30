@@ -45,6 +45,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.data.Transition;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -55,7 +56,6 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.landcover.model.LandcoverTransitionTable.TransitionRule;
-import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -163,21 +163,17 @@ public class LandcoverChange {
 	 */
 	LandcoverTransitionTable transitionTable = new LandcoverTransitionTable(false, true);
 
-	class Conversion {
+	static class Conversion extends Transition<IConcept> {
 
-		IConcept from;
-		IConcept to;
-		double probability;
+		transient double suitability;
 
-		public Conversion(IConcept from, IConcept to, double probability) {
-			this.from = from;
-			this.to = to;
-			this.probability = probability;
+		public Conversion(IConcept from, IConcept to, double suitability) {
+			super(from, to);
+			this.suitability = suitability;
 		}
 
-		public Conversion withProbability(double probability) {
-			this.probability = probability;
-			return this;
+		public double getSuitability() {
+			return suitability;
 		}
 
 		/*
@@ -185,7 +181,12 @@ public class LandcoverChange {
 		 */
 		@Override
 		public String toString() {
-			return from.getDefinition() + "|" + to.getDefinition() + "|" + probability;
+			return getSource().getDefinition() + "->" + getDestination().getDefinition();
+		}
+
+		public Conversion withSuitability(double probability) {
+			this.suitability = probability;
+			return this;
 		}
 	}
 
@@ -247,8 +248,7 @@ public class LandcoverChange {
 	@SuppressWarnings("unchecked")
 	public void run(IRuntimeScope scope) {
 
-		monitor.info("Running change cycle " + scope.getScale().getTime().getStart() + " to "
-				+ scope.getScale().getTime().getEnd());
+		monitor.info("Running change cycle to " + scope.getScale().getTime().getEnd());
 
 		this.probabilityShifts.clear();
 		this.movingAverages.clear();
@@ -301,7 +301,7 @@ public class LandcoverChange {
 			if (iteration > 0) {
 				monitor.info("   Running iteration " + iteration);
 			}
-			
+
 			this.conversionStatistics.reset();
 
 			long startTime = System.currentTimeMillis();
@@ -351,10 +351,10 @@ public class LandcoverChange {
 		} else if (isInterrupted) {
 			monitor.warn("Allocation interrupted.");
 		} else if (iteration > 0) {
-			if (demand.size() > 0) { 
+			if (demand.size() > 0) {
 				// TODO log any surplus
 				monitor.info(goalsMet.size() + " of " + demand.size() + " targets achieved at "
-					+ scope.getScale().getTime().getEnd() + " in " + iteration + " iterations");
+						+ scope.getScale().getTime().getEnd() + " in " + iteration + " iterations");
 			}
 		}
 
@@ -546,8 +546,7 @@ public class LandcoverChange {
 	}
 
 	/**
-	 * Called only if >1 conversions are possible. If in stochastic mode, pick one
-	 * according to probability, otherwise pick the most likely.
+	 * Sample the distribution of possible conversions.
 	 * 
 	 * @param conversions
 	 * @return
@@ -555,12 +554,12 @@ public class LandcoverChange {
 	private Conversion pickConversion(List<Conversion> conversions) {
 		Conversion chosen = null;
 		if (conversions.size() > 0) {
-			chosen = conversions.get(0);
-			for (int i = 1; i < conversions.size(); i++) {
-				if (chosen.probability < conversions.get(i).probability) {
-					chosen = conversions.get(i);
-				}
+			List<Pair<Conversion, Double>> pmf = new ArrayList<>();
+			for (Conversion conversion : conversions) {
+				pmf.add(new Pair<>(conversion, conversion.getSuitability()));
 			}
+			EnumeratedDistribution<Conversion> distribution = new EnumeratedDistribution<>(betterRandom, pmf);
+			chosen = distribution.sample();
 		}
 		return chosen;
 	}
@@ -574,9 +573,9 @@ public class LandcoverChange {
 	 */
 	private void applyConversion(IConcept current, Conversion candidate, IStorage<String> transitionStorage,
 			IStorage<IConcept> targetStorage, ILocator locator) {
-		if (candidate != null && !candidate.from.equals(candidate.to)) {
+		if (candidate != null && !candidate.getSource().equals(candidate.getDestination())) {
 			locator = locator.as(ISpace.class);
-			targetStorage.put(candidate.to, locator);
+			targetStorage.put(candidate.getDestination(), locator);
 			transitionStorage.put(candidate.toString(), locator);
 			this.conversionStatistics.add(candidate, locator);
 		} else {
@@ -611,7 +610,8 @@ public class LandcoverChange {
 		 */
 		for (Conversion candidate : getCandidates(current, scope, locator)) {
 
-			for (TransitionRule transition : transitionTable.getTransitions(candidate.from, candidate.to)) {
+			for (TransitionRule transition : transitionTable.getTransitions(candidate.getSource(),
+					candidate.getDestination())) {
 
 				if (transition.isPossible(locator, scope)) {
 
@@ -622,14 +622,14 @@ public class LandcoverChange {
 					double probability = compoundProbabilities(candidate, time, locator, resistance, iteration);
 
 					/*
-					 * CLUE uses an (arbitrary?) further shock of +/-5% of the total probability to
-					 * prevent flip-flopping.
+					 * CLUE uses an (arbitrary?) proportional shock of max +/-5% of the total
+					 * probability to help prevent flip-flopping.
 					 */
-					probability += probabilityShifts.get(candidate.to);
+					probability += probabilityShifts.get(candidate.getDestination());
 					probability += (nextRandom() - 0.5) * 0.05 * probability;
 
 					if (probability > 0) {
-						ret.add(candidate.withProbability(probability));
+						ret.add(candidate.withSuitability(probability));
 					}
 				}
 			}
@@ -651,10 +651,10 @@ public class LandcoverChange {
 	private double compoundProbabilities(Conversion conversion, ITime time, ILocator locator, double currentResistance,
 			int iteration) {
 
-		double suitability = conversion.probability;
+		double suitability = conversion.getSuitability();
 
 		if (iteration > 0) {
-			int deviation = deviationFromTarget.get(conversion.to);
+			int deviation = deviationFromTarget.get(conversion.getDestination());
 			if (deviation != 0) {
 				/*
 				 * shock the suitability according to what's needed
@@ -665,31 +665,31 @@ public class LandcoverChange {
 			}
 		}
 
-		double demandWeight = getDemandWeight(conversion.to);
-		double neighborhood = getNeighborhoodWeight(conversion.to, locator);
+		double demandWeight = getDemandWeight(conversion.getDestination());
+		double neighborhood = getNeighborhoodWeight(conversion.getDestination(), locator);
 		double ret = 0;
 		switch (compoundingMode) {
 		case DEFAULT:
 			ret = demandWeight + neighborhood + suitability
-					+ (conversion.from.equals(conversion.to) ? currentResistance : 0);
+					+ (conversion.getSource().equals(conversion.getDestination()) ? currentResistance : 0);
 			break;
 		case DEMAND_WEIGHT_DOMINATED:
 			double rescaledDemandWeight = (demandWeight + 1.0) / 2.0;
 			double preProbability = (rescaledDemandWeight + suitability) / 2.0;
-			if (conversion.from.equals(conversion.to))
+			if (conversion.getSource().equals(conversion.getDestination()))
 				ret = preProbability + (1 - preProbability) * currentResistance;
 			else
 				ret = preProbability;
 			break;
 		case MULTIPLY_ALL:
-			double elast = getResistance(conversion.to, time);
+			double elast = getResistance(conversion.getDestination(), time);
 			ret = demandWeight + neighborhood + suitability + elast;
 			break;
 		case SUITABILITY_ONLY:
 			ret = suitability;
 			break;
 		case SUM_ALL:
-			elast = getResistance(conversion.to, time);
+			elast = getResistance(conversion.getDestination(), time);
 			ret = demandWeight * neighborhood * suitability * elast;
 			break;
 		}

@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.data.IResourceCalculator;
-import org.integratedmodelling.landcover.clue.KLABSuitabilityCalculator;
-
 //import nl.wur.iclue.suitability.jmsl.JmslRegression;
 import nl.alterra.shared.datakind.Category;
 import nl.alterra.shared.datakind.Clazz;
@@ -78,8 +75,8 @@ public class SuitabilityFactory {
 					(Map<Landuse, RasterData>) suitabilityParams.getParameters());
 		case BAYESIAN_STATISTICS:
 			/* FV added: maps to any k.LAB resource, not just bayesian inference */
-			return new KLABSuitabilityCalculator(driverDataKinds, landuses,
-					(IResourceCalculator) suitabilityParams.getParameters());
+//			return new KLABSuitabilityCalculator(driverDataKinds, landuses,
+//					(IResourceCalculator) suitabilityParams.getParameters());
 		case FUNCTION_DICTIONARY:
 			return new FunctionDictionary(driverDataKinds, landuses,
 					(Map<String, Map<Category, SuitabilityFunction>>) suitabilityParams.getParameters());
