@@ -319,8 +319,8 @@ public class LandcoverChange {
 					if (runtimePerIteration < 0 && this.nextents >= 10000) {
 						nexts++;
 						if (nexts == 5000) {
-							// dividing by 9000 instead of 5000 to correct by a completely empirical factor
-							// I don't really understand.
+							// dividing by 8500 instead of 5000 to correct by a completely empirical factor
+							// I don't really understand but seems to work.
 							runtimePerIteration = (long) ((double) (System.currentTimeMillis() - startTime)
 									* (((double) this.nextents) / 8500.0));
 							Period period = new Period(runtimePerIteration);
@@ -697,6 +697,7 @@ public class LandcoverChange {
 	}
 
 	private double getDemandWeight(IConcept current) {
+		System.out.println("ZODDO");
 		return demandWeights.get(current);
 	}
 

@@ -26,16 +26,14 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.owl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A map indexed by concepts, whose get() method will select the entry that best
@@ -50,9 +48,11 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class IntelligentMap<T> implements Map<IConcept, T> {
 
-	HashMap<IConcept, T> _data = new HashMap<>();
-	ArrayList<Pair<String, T>> _unresolved = new ArrayList<>();
-	HashMap<IConcept, T> _cache = new HashMap<>();
+	HashMap<String, T> data = new HashMap<>();
+	HashMap<String, T> cache = new HashMap<>();
+	HashMap<String, Set<String>> closure = new HashMap<>();
+	HashMap<IConcept, T> original = new HashMap<>();
+
 	private T defaultValue = null;
 
 	public IntelligentMap() {
@@ -68,142 +68,110 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 		this.defaultValue = defaultValue;
 	}
 
-	public T get(IConcept concept) {
+	public T get(Object object) {
 
-		if (_data.containsKey(concept)) {
-			return _data.get(concept); 
-		}
-		
-		resolve();
-
-		class Matcher<TYPE> implements ConceptVisitor.ConceptMatcher {
-
-			Map<IConcept, TYPE> coll;
-			TYPE ret = null;
-
-			public Matcher(Map<IConcept, TYPE> c) {
-				coll = c;
-			}
-
-			@Override
-			public boolean match(IConcept c) {
-				ret = coll.get(c);
-				return (ret != null);
-			}
+		if (!(object instanceof IConcept)) {
+			return null;
 		}
 
-		Matcher<T> matcher = new Matcher<T>(_data);
-		IConcept cms = new ConceptVisitor<T>().findMatchUpwards(matcher, concept);
-		if (cms == null) {
-			return defaultValue;
-		}
-		if (matcher.ret == null) {
-			return defaultValue;
-		}
-		return matcher.ret;
-	}
+		IConcept concept = (IConcept) object;
+		String definition = concept.getDefinition();
 
-	/*
-	 * resolve all those that are not unknown any more, leave the still unknown.
-	 */
-	private void resolve() {
+		// cached
+		if (cache.containsKey(definition)) {
+			T ret = cache.get(definition);
+			return ret == null ? defaultValue : ret;
+		}
 
-		if (_unresolved.size() > 0) {
-			ArrayList<Pair<String, T>> unresolved = new ArrayList<Pair<String, T>>();
-			for (Pair<String, T> u : _unresolved) {
-				IConcept concept = Concepts.INSTANCE.getConcept(u.getFirst());
-				if (concept == null) {
-					unresolved.add(u);
-				} else {
-					put(concept, u.getSecond());
+		// direct
+		T ret = data.get(definition);
+
+		// OK, indirect
+		if (ret /* still */ == null) {
+			for (String def : this.closure.keySet()) {
+				if (this.closure.get(def).contains(definition)) {
+					ret = data.get(def);
+					break;
 				}
 			}
-			_unresolved = unresolved;
 		}
+		
+		// cache nulls
+		cache.put(definition, ret);
+
+		return ret == null ? defaultValue : ret;
+
 	}
 
 	@Override
 	public T put(IConcept concept, T data) {
-		_cache.put(concept, data);
-		return _data.put(concept, data);
+
+		if (!closure.containsKey(concept.getDefinition())) {
+			Set<String> clss = new HashSet<>();
+			for (IConcept c : concept.getSemanticClosure()) {
+				clss.add(c.getDefinition());
+			}
+			this.closure.put(concept.getDefinition(), clss);
+		}
+		this.data.put(concept.getDefinition(), data);
+		return this.original.put(concept, data);
 	}
 
 	@Override
 	public void clear() {
-		_data.clear();
-		_cache.clear();
-		_unresolved.clear();
+		// don't clear the expensive knowledge base
+		original.clear();
+		data.clear();
 	}
 
 	@Override
 	public boolean containsKey(Object key) {
-		return _data.containsKey(key);
+		return original.containsKey(key);
 	}
 
 	@Override
 	public boolean containsValue(Object value) {
-		return _data.containsValue(value);
+		return original.containsValue(value);
 	}
 
 	@Override
-	public Set<java.util.Map.Entry<IConcept, T>> entrySet() {
-		return _data.entrySet();
-	}
-
-	@Override
-	public T get(Object key) {
-		/*
-		 * explicitly specified "literal" values requiring no reasoning are returned
-		 * first, irrespective of their hierarchy.
-		 */
-		if (_cache.containsKey(key)) {
-			return _cache.get(key);
-		}
-		T ret = get((IConcept) key);
-		_cache.put((IConcept) key, ret);
-		return ret;
+	public Set<Map.Entry<IConcept, T>> entrySet() {
+		return original.entrySet();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return _data.isEmpty();
+		return original.isEmpty();
 	}
 
 	@Override
 	public Set<IConcept> keySet() {
-		return _data.keySet();
+		return original.keySet();
 	}
 
 	@Override
 	public void putAll(Map<? extends IConcept, ? extends T> m) {
-		_data.putAll(m);
+		for (IConcept c : m.keySet()) {
+			put(c, m.get(c));
+		}
 	}
 
 	@Override
 	public T remove(Object key) {
-		return _data.remove(key);
+		if (key instanceof IConcept) {
+			data.remove(((IConcept) key).getDefinition());
+		}
+		return original.remove(key);
 	}
 
 	@Override
 	public int size() {
-		return _data.size();
+		return original.size();
 	}
 
 	@Override
 	public Collection<T> values() {
-		return _data.values();
-	}
-
-	/**
-	 * This is for concepts that may be unknown at the time of insertion. We keep a
-	 * list of still-unknown ones and we try to associate them at every get().
-	 * 
-	 * @param concept
-	 * @param data
-	 */
-	public void put(String concept, T data) {
-		// TODO Auto-generated method stub
-		_unresolved.add(new Pair<String, T>(concept, data));
+		return original.values();
 	}
 
 }
