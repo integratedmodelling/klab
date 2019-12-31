@@ -266,7 +266,7 @@ public class LandcoverChange {
 				.createStorage(IArtifact.Type.CONCEPT, process.getScale().without(Dimension.Type.TIME), scope);
 
 		/*
-		 * compute demand as ratios. These don't change with iterations, only with time.
+		 * compute demand ratios. These don't change with iterations, only with time.
 		 */
 		this.demandRatios = new HashMap<>();
 		double totalDemand = getTotalDemand(scope.getScale().getTime());
@@ -346,7 +346,6 @@ public class LandcoverChange {
 			demandWeights = computeDemandWeights(scope.getScale().getTime());
 			shiftProbabilities();
 			System.out.println(conversionStatistics.summarize(this.totalArea));
-			monitor.info("   Running iteration " + (iteration + 1));
 
 			iteration++;
 
@@ -355,14 +354,14 @@ public class LandcoverChange {
 		if (iteration >= maxIterations) {
 			this.tainted = true;
 			monitor.warn(
-					"Maximum iterations reached in allocation algorithm without meeting demand. Please review parameters and context.");
+					"   Maximum iterations reached in allocation algorithm without meeting demand. Please review parameters and context.");
 		} else if (isInterrupted) {
 			monitor.warn("Allocation interrupted.");
 		} else if (iteration > 0) {
 			if (demand.size() > 0) {
 				// TODO log any surplus
-				monitor.info(goalsMet.size() + " of " + demand.size() + " targets achieved at "
-						+ scope.getScale().getTime().getEnd() + " in " + iteration + " iterations");
+				monitor.info("   " + goalsMet.size() + " of " + demand.size() + " targets achieved in " + iteration
+						+ " iterations");
 			}
 		}
 
@@ -409,15 +408,11 @@ public class LandcoverChange {
 			String formattedBalance = NumberFormat.getInstance().format(Quantity
 					.create(Math.abs(balance), Units.INSTANCE.SQUARE_METERS).in(Units.INSTANCE.SQUARE_KILOMETERS));
 
-			System.out.println("Current balance for " + demanded + " = " + formattedBalance + " km2 "
-					+ (balance < 0 ? "missing" : "exceeding"));
-
 			boolean demandMet = true;
 			if (!okrange.contains(actual)) {
 				if (balance < 0 || !greedy) {
-					monitor.info((iteration == 0 ? "" : "remaining ") + (balance < 0 ? "deficit" : "surplus") + " of "
-							+ Concepts.INSTANCE.getDisplayName(demanded) + " is " + formattedBalance
-							+ " km^2 at iteration #" + iteration);
+					monitor.info("   #" + iteration + ": " + Concepts.INSTANCE.getDisplayName(demanded)
+							+ (balance < 0 ? " deficit" : " surplus") + " = " + formattedBalance + " km^2");
 					deviationFromTarget.put(demanded, actual > target ? 1 : -1);
 					demandMet = false;
 				}
