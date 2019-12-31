@@ -130,9 +130,11 @@ public class LandcoverChange {
 	 */
 	boolean transitionsAreTransitive = true;
 	boolean defaultTransitionPossible = false;
+
 	/*
-	 * if true, exceeding demand is OK, otherwise let the algorithm rip when we have
-	 * too much of a type.
+	 * if true, exceeding demand is OK, otherwise we let the algorithm rip when we
+	 * have too much of any type. The algorithm will, of course, rip for nothing if
+	 * there are no rules that allow LCTs in demand to change.
 	 */
 	boolean greedy = false;
 
@@ -327,8 +329,6 @@ public class LandcoverChange {
 			if (isInterrupted) {
 				break;
 			}
-			
-			this.distribution = preprocessLandcover(false, true);
 
 			DemandEvaluation eval = evaluateConvergence(scope.getScale().getTime(), iteration);
 
@@ -343,7 +343,6 @@ public class LandcoverChange {
 			/*
 			 * if we get here, we need more iterations
 			 */
-
 			demandWeights = computeDemandWeights(scope.getScale().getTime());
 			shiftProbabilities();
 			System.out.println(conversionStatistics.summarize(this.totalArea));
@@ -376,9 +375,12 @@ public class LandcoverChange {
 	}
 
 	/*
-	 * returns true if NOT converging or diverging.
+	 * recompute distributions and returns true if NOT converging or diverging.
 	 */
 	private DemandEvaluation evaluateConvergence(ITime time, int iteration) {
+
+		this.previousDistribution = this.distribution;
+		this.distribution = preprocessLandcover(false, true);
 
 		DemandEvaluation ret = DemandEvaluation.MET;
 
@@ -443,47 +445,45 @@ public class LandcoverChange {
 			return ret;
 		}
 
+		/*
+		 * we have demand and goals aren't met: evaluate if we're moving too slow or not
+		 * at all on the goals.
+		 */
 		final int MOVING_AVERAGE_WINDOW_SIZE = 10;
 		final double MINIMUM_MEAN_DEVIATION = 0.05;
 
-//		if (previousDistribution == null) {
-//			previousDistribution = new HashMap<>(distribution);
-//		} else {
-//			// check for equality first: if no change at all, stop right away
-//			boolean ok = false;
-//			for (IConcept c : deviationFromTarget.keySet()) {
-//				if (previousDistribution.get(c) != distribution.get(c)) {
-//					ok = true;
-//					break;
-//				}
-//				if (!ok) {
-//					ret = DemandEvaluation.NOT_CONVERGING;
-//				}
-//			}
-//
-//			if (ret != DemandEvaluation.NOT_CONVERGING) {
-//				// otherwise only declare failure after a certain number of iteration with
-//				// little movement from the mean or increasing distance
-//				for (IConcept c : distribution.keySet()) {
-//					if (movingAverages.containsKey(c)) {
-//						DescriptiveStatistics stats = movingAverages.get(c);
-//						double previousMean = stats.getMean();
-//						stats.addValue(distribution.get(c));
-//						double newMean = stats.getMean();
-//						if (Math.abs((previousMean - newMean) / newMean) < MINIMUM_MEAN_DEVIATION) {
-//							ret = DemandEvaluation.NOT_CONVERGING;
-//						}
-//					} else {
-//						DescriptiveStatistics stats = new DescriptiveStatistics(MOVING_AVERAGE_WINDOW_SIZE);
-//						stats.addValue(distribution.get(c));
-//						movingAverages.put(c, stats);
-//					}
-//				}
-//
-//				// store for next time
-//				previousDistribution.putAll(distribution);
-//			}
-//		}
+		// check for equality first: if no change at all, stop right away
+		boolean ok = false;
+		for (IConcept c : deviationFromTarget.keySet()) {
+			if (previousDistribution.get(c) != distribution.get(c)) {
+				ok = true;
+				break;
+			}
+			if (!ok) {
+				ret = DemandEvaluation.NOT_CONVERGING;
+			}
+		}
+
+		if (ret != DemandEvaluation.NOT_CONVERGING) {
+			// otherwise only declare failure after a certain number of iteration with
+			// little movement from the mean or increasing distance
+			for (IConcept c : distribution.keySet()) {
+				if (movingAverages.containsKey(c)) {
+					DescriptiveStatistics stats = movingAverages.get(c);
+					double previousMean = stats.getMean();
+					stats.addValue(distribution.get(c));
+					double newMean = stats.getMean();
+					if (iteration > MOVING_AVERAGE_WINDOW_SIZE
+							&& Math.abs((previousMean - newMean) / newMean) < MINIMUM_MEAN_DEVIATION) {
+						ret = DemandEvaluation.NOT_CONVERGING;
+					}
+				} else {
+					DescriptiveStatistics stats = new DescriptiveStatistics(MOVING_AVERAGE_WINDOW_SIZE);
+					stats.addValue(distribution.get(c));
+					movingAverages.put(c, stats);
+				}
+			}
+		}
 
 		return ret;
 	}
