@@ -21,10 +21,8 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
@@ -71,7 +69,6 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
-import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -85,7 +82,6 @@ import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
@@ -1339,6 +1335,29 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public IDataflow<?> getDataflow() {
 		return actuator == null ? null : ((Actuator) actuator).getDataflow();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends IArtifact> Map<String, T> getLocalCatalog(Class<T> cls) {
+
+		Map<String, T> ret = new HashMap<>();
+		for (Pair<String, ? extends IArtifact> artifact : getArtifacts(cls)) {
+
+			String name = artifact.getFirst();
+			if (artifact.getSecond() instanceof IState && actuator != null) {
+				for (IActuator a : actuator.getActuators()) {
+					if (a.getName().equals(name) && a.getAlias() != null) {
+						name = a.getAlias();
+						break;
+					}
+				}
+			}
+			ret.put(name, (T) artifact.getSecond());
+		}
+
+		return ret;
+
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -270,8 +271,9 @@ public interface IRuntimeScope extends IContextualizationScope {
 	IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets, IMetadata metadata);
 
 	/**
-	 * Get a new nonsemantic state for model usage. May be called by contextualizers when user-relevant
-	 * intermediate storage is required. If not relevant, raw storage should be used instead.
+	 * Get a new nonsemantic state for model usage. May be called by contextualizers
+	 * when user-relevant intermediate storage is required. If not relevant, raw
+	 * storage should be used instead.
 	 * 
 	 * @param name
 	 * @param type
@@ -279,7 +281,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	IState newNonsemanticState(String name, IArtifact.Type type, IScale scale);
-	
 
 	/**
 	 * Get the dataflow we're executing.
@@ -352,4 +353,14 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	IRuntimeScope locate(ILocator transitionScale);
+
+	/**
+	 * Get all the artifacts known to this context indexed by their local name in the
+	 * context of execution. An actuator must have been specified for the context.
+	 * 
+	 * @param <T>
+	 * @param cls
+	 * @return
+	 */
+	<T extends IArtifact> Map<String, T> getLocalCatalog(Class<T> cls);
 }

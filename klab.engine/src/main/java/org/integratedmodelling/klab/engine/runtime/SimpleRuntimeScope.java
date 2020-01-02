@@ -650,4 +650,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 		return ret;
 	}
+
+	@Override
+	public <T extends IArtifact> Map<String, T> getLocalCatalog(Class<T> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

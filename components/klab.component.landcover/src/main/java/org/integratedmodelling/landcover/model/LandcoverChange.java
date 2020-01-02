@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimDate;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IParameters;
@@ -45,8 +46,10 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.Transition;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.code.LocatedExpression;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -156,8 +159,7 @@ public class LandcoverChange {
 	IntelligentMap<TimeDependentFactor> deviation = new IntelligentMap<>(new TimeDependentFactor());
 	Map<IConcept, TimeDependentFactor> demand = new HashMap<>();
 
-	Random random = new Random();
-	MersenneTwister betterRandom = new MersenneTwister();
+	MersenneTwister random = new MersenneTwister();
 	ReasonerCache rcache = new ReasonerCache();
 
 	/*
@@ -389,7 +391,7 @@ public class LandcoverChange {
 
 			TimeDependentFactor spec = demand.get(demanded);
 			double original = getAllocatedArea(demanded, true);
-			double target = spec.get(time);
+			double target = spec.get(time, this.scope);
 			if (!spec.isAbsolute) {
 				target = original + (original * target);
 			}
@@ -560,7 +562,7 @@ public class LandcoverChange {
 			for (Conversion conversion : conversions) {
 				pmf.add(new Pair<>(conversion, conversion.getSuitability()));
 			}
-			EnumeratedDistribution<Conversion> distribution = new EnumeratedDistribution<>(betterRandom, pmf);
+			EnumeratedDistribution<Conversion> distribution = new EnumeratedDistribution<>(random, pmf);
 			chosen = distribution.sample();
 		}
 		return chosen;
@@ -591,7 +593,7 @@ public class LandcoverChange {
 		List<Conversion> ret = new ArrayList<>();
 		ITime time = scope.getScale().getTime();
 
-		double resistance = getResistance(current, time);
+		double resistance = getResistance(current, time, locator);
 
 		/*
 		 * CLUE just compounds the elasticity with the probabilities, with the result
@@ -684,14 +686,14 @@ public class LandcoverChange {
 				ret = preProbability;
 			break;
 		case MULTIPLY_ALL:
-			double elast = getResistance(conversion.getDestination(), time);
+			double elast = getResistance(conversion.getDestination(), time, locator);
 			ret = demandWeight + neighborhood + suitability + elast;
 			break;
 		case SUITABILITY_ONLY:
 			ret = suitability;
 			break;
 		case SUM_ALL:
-			elast = getResistance(conversion.getDestination(), time);
+			elast = getResistance(conversion.getDestination(), time, locator);
 			ret = demandWeight * neighborhood * suitability * elast;
 			break;
 		}
@@ -703,12 +705,12 @@ public class LandcoverChange {
 		return demandWeights.get(current);
 	}
 
-	private double getResistance(IConcept concept, ITime time) {
-		return getFactor(concept, resistance, time);
+	private double getResistance(IConcept concept, ITime time, ILocator locator) {
+		return getFactor(concept, resistance, time, locator);
 	}
 
 	private double nextRandom() {
-		return betterRandom.nextDouble();
+		return random.nextDouble();
 	}
 
 	/*
@@ -870,7 +872,7 @@ public class LandcoverChange {
 		IntelligentMap<Double> ret = new IntelligentMap<>(0.0);
 		for (IConcept c : demand.keySet()) {
 			TimeDependentFactor spec = demand.get(c);
-			double value = spec.get(time);
+			double value = spec.get(time, this.scope);
 			if (!spec.isAbsolute) {
 				double area = getAllocatedArea(c, true);
 				value = area + (area * value);
@@ -898,7 +900,7 @@ public class LandcoverChange {
 		this.monitor = scope.getMonitor();
 
 		long randomSeed = parameters.get("seed", -1L);
-		this.betterRandom.setSeed(randomSeed > 0 ? randomSeed : System.currentTimeMillis());
+		this.random.setSeed(randomSeed > 0 ? randomSeed : System.currentTimeMillis());
 
 		/*
 		 * default transition behavior is that everything is possible only if no
@@ -972,9 +974,9 @@ public class LandcoverChange {
 		/*
 		 * these will properly use annotations as well as configuration specs
 		 */
-		this.resistance = readTimeDependentFactors(parameters.get("resistances"), "resistance");
-		this.demand = readTimeDependentFactors(parameters.get("demand"), "demand");
-		this.deviation = readTimeDependentFactors(parameters.get("deviations"), "deviation");
+		this.resistance = readTimeDependentFactors(parameters.get("resistances"), "resistance", scope);
+		this.demand = readTimeDependentFactors(parameters.get("demand"), "demand", scope);
+		this.deviation = readTimeDependentFactors(parameters.get("deviations"), "deviation", scope);
 
 		/*
 		 * this would really screw things up
@@ -989,7 +991,7 @@ public class LandcoverChange {
 		 */
 		this.transitionTable = new LandcoverTransitionTable(transitionsAreTransitive, defaultTransitionPossible);
 		if (parameters.containsKey("transitions")) {
-			this.transitionTable.parse(parameters.get("transitions", IKimTable.class));
+			this.transitionTable.parse(parameters.get("transitions", IKimTable.class), scope);
 			configuredConcepts.addAll(this.transitionTable.getConcepts());
 		}
 
@@ -1082,14 +1084,15 @@ public class LandcoverChange {
 	 * @param annotationName
 	 * @return
 	 */
-	private IntelligentMap<TimeDependentFactor> readTimeDependentFactors(Object object, String annotationName) {
+	private IntelligentMap<TimeDependentFactor> readTimeDependentFactors(Object object, String annotationName,
+			IRuntimeScope scope) {
 
 		IntelligentMap<TimeDependentFactor> ret = new IntelligentMap<>();
 
 		/*
 		 * start with tagged dependencies
 		 */
-		if (this.scope.getModel() != null) {
+		if (scope.getModel() != null) {
 			for (IObservable dependency : this.scope.getModel().getDependencies()) {
 				if (Annotations.INSTANCE.hasAnnotation(dependency, annotationName)) {
 					IAnnotation annotation = Annotations.INSTANCE.getAnnotation(dependency, annotationName);
@@ -1146,6 +1149,8 @@ public class LandcoverChange {
 							if (factor.constval == 0) {
 								throw new KlabValidationException("invalid areal specifications in " + annotationName);
 							}
+						} else if (entry.getValue() instanceof IKimExpression) {
+							factor.expression = new LocatedExpression((IKimExpression)entry.getValue(), scope);
 						}
 
 						if (specs.get(concept) == null) {
@@ -1176,7 +1181,7 @@ public class LandcoverChange {
 
 						if (time instanceof IKimDate) {
 							factor.timepoint = ((IKimDate) time).getDate().getTime();
-						}
+						} 
 
 						if (value.getNumberMatch() != null) {
 							if (!zeroone.contains(value.getNumberMatch())) {
@@ -1191,6 +1196,8 @@ public class LandcoverChange {
 									Unit.create(((IKimQuantity) value).getUnit()));
 							factor.constval = q.in(Units.INSTANCE.SQUARE_METERS);
 							factor.isAbsolute = true;
+						} else if (value.getExpressionMatch() != null) {
+							factor.expression = new LocatedExpression(value.getExpressionMatch(), scope);
 						}
 
 						if (factor.constval == 0) {
@@ -1236,11 +1243,15 @@ public class LandcoverChange {
 	}
 
 	double getFactor(IConcept concept, Map<IConcept, TimeDependentFactor> source, ITime time) {
+		return getFactor(concept, source, time, null);
+	}
+
+	double getFactor(IConcept concept, Map<IConcept, TimeDependentFactor> source, ITime time, ILocator locator) {
 		TimeDependentFactor factor = source.get(concept);
 		if (factor == null) {
 			return 0;
 		}
-		return factor.get(time);
+		return locator == null ? factor.get(time, this.scope) : factor.get(time, locator, scope);
 	}
 
 	public boolean isTainted() {

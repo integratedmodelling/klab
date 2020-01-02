@@ -37,7 +37,7 @@ public class ContributingCell extends Expando {
 	// non-null if this is relative to the focal cell
 	private Orientation orientation = null;
 	// original d8 code
-	int d8 = 0;
+	int d8 = -1;
 
 	/*
 	 * if we have this, we can compute upstream and downstream cells.
@@ -45,7 +45,7 @@ public class ContributingCell extends Expando {
 	private IState flowdirections = null;
 	private Map<String, IState> states = new HashMap<>();
 	private boolean outlet = false;
-	
+
 	public ContributingCell(Cell cell) {
 		this.delegate = cell;
 	}
@@ -69,18 +69,21 @@ public class ContributingCell extends Expando {
 
 	public List<ContributingCell> getUpstream() {
 		List<ContributingCell> ret = new ArrayList<>();
-		for (Pair<Cell, Orientation> upstream : Geospace.getUpstreamCellsWithOrientation(delegate,
-				flowdirections, null)) {
-			ret.add(new ContributingCell(upstream.getFirst(), this, upstream.getSecond()));
+		if (flowdirections != null) {
+			for (Pair<Cell, Orientation> upstream : Geospace.getUpstreamCellsWithOrientation(delegate, flowdirections,
+					null)) {
+				ret.add(new ContributingCell(upstream.getFirst(), this, upstream.getSecond()));
+			}
 		}
 		return ret;
 	}
 
 	public ContributingCell getDownstream() {
-		Pair<Cell, Orientation> downstream = Geospace.getDownstreamCellWithOrientation(delegate,
-				flowdirections);
-		if (downstream != null) {
-			return new ContributingCell(downstream.getFirst(), this, downstream.getSecond());
+		if (flowdirections != null) {
+			Pair<Cell, Orientation> downstream = Geospace.getDownstreamCellWithOrientation(delegate, flowdirections);
+			if (downstream != null) {
+				return new ContributingCell(downstream.getFirst(), this, downstream.getSecond());
+			}
 		}
 		return null;
 	}
@@ -218,7 +221,10 @@ public class ContributingCell extends Expando {
 	 * @return
 	 */
 	public Orientation getFlowdirection() {
-		return Geospace.getOrientation(d8);
+		if (d8 >= 0) {
+			return Geospace.getOrientation(d8);
+		}
+		return null;
 	}
 
 	public Cell getNeighbor(Orientation orientation) {

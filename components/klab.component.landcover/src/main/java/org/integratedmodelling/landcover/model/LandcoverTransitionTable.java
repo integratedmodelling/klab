@@ -12,11 +12,11 @@ import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.code.LocatedExpression;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.IntelligentMap;
 import org.integratedmodelling.klab.owl.ReasonerCache;
@@ -35,7 +35,7 @@ public class LandcoverTransitionTable {
 		boolean never = false;
 		Long minimumAge;
 		ITimeInstant after;
-		IExpression selector;
+		LocatedExpression selector;
 
 		// rule gets deactivated after the demand for its target is met.
 		boolean active = true;
@@ -43,7 +43,7 @@ public class LandcoverTransitionTable {
 		public TransitionRule() {
 		}
 
-		public TransitionRule(IConcept target, IKimClassifier rule) {
+		public TransitionRule(IConcept target, IKimClassifier rule, IRuntimeScope overallScope) {
 			this.target = target;
 
 			if (rule.getBooleanMatch() != null) {
@@ -52,6 +52,8 @@ public class LandcoverTransitionTable {
 				} else {
 					this.never = true;
 				}
+			} else if (rule.getExpressionMatch() != null) {
+				this.selector = new LocatedExpression(rule.getExpressionMatch(), overallScope, true);
 			}
 		}
 
@@ -71,7 +73,7 @@ public class LandcoverTransitionTable {
 				return time.getEnd().getMilliseconds() > after.getMilliseconds();
 			}
 			if (selector != null) {
-
+				return selector.eval(scope, locator, Boolean.class);
 			}
 			return false;
 		}
@@ -114,7 +116,7 @@ public class LandcoverTransitionTable {
 		return transition.isPossible(locator, scope);
 	}
 
-	public void parse(IKimTable table) {
+	public void parse(IKimTable table, IRuntimeScope overallScope) {
 
 		if (table.getRowCount() < 2) {
 			throw new KlabValidationException("transition table must have at least two rows");
@@ -153,7 +155,7 @@ public class LandcoverTransitionTable {
 
 			for (int c = 1; c < table.getColumnCount(); c++) {
 				IKimClassifier rule = table.getRow(i)[c];
-				TransitionRule transition = new TransitionRule(targets.get(c - 1), rule);
+				TransitionRule transition = new TransitionRule(targets.get(c - 1), rule, overallScope);
 				map.put(targets.get(c - 1), transition);
 			}
 
