@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -61,7 +62,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	private String description;
 	private DirectObservation context;
-	private ResolutionScope scope;
+	private ResolutionScope resolutionScope;
 	private boolean primary = true;
 	IDirectObservation relationshipSource;
 	IDirectObservation relationshipTarget;
@@ -126,8 +127,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		 * their states using their own resolution if any is specified.
 		 */
 		if (actuators.size() == 0) {
-			if (scope.getResolvedArtifact() != null) {
-				return scope.getResolvedArtifact().getArtifact();
+			if (resolutionScope.getResolvedArtifact() != null) {
+				return resolutionScope.getResolvedArtifact().getArtifact();
 			}
 			return Observation.empty();
 		}
@@ -223,7 +224,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			try {
 
 				IArtifact data = Klab.INSTANCE.getRuntimeProvider()
-						.compute(actuator, this, scale, scope, context, monitor).get();
+						.compute(actuator, this, scale, resolutionScope/* , context */, monitor).get();
 				if (ret == null) {
 					ret = data;
 				} else {
@@ -247,7 +248,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 		if (actuator.getModel() != null) {
 
-			Scale mcoverage = actuator.getModel().getCoverage(scope.getMonitor());
+			Scale mcoverage = actuator.getModel().getCoverage(resolutionScope.getMonitor());
 			if (!mcoverage.isEmpty() || actuator.isPartition()) {
 
 				Scale coverage = mcoverage;
@@ -392,7 +393,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	public void setResolutionScope(ResolutionScope scope) {
-		this.scope = scope;
+		this.resolutionScope = scope;
 	}
 
 	public static Dataflow empty() {
@@ -401,7 +402,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public static Dataflow empty(ResolutionScope scope) {
 		Dataflow ret = new Dataflow();
-		ret.scope = scope;
+		ret.resolutionScope = scope;
 		ret.session = scope.getSession();
 		return ret;
 	}
@@ -417,7 +418,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public static Dataflow empty(IObservable observable, String name, ResolutionScope scope) {
 
 		Dataflow ret = new Dataflow();
-		ret.scope = scope;
+		ret.resolutionScope = scope;
 		ret.session = scope.getSession();
 
 		Actuator actuator = Actuator.create(ret, scope.getMode());
@@ -500,8 +501,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	@Override
 	public IScale getResolutionScale() {
-		if (this.resolutionScale == null && scope != null) {
-			this.resolutionScale = scope.getScale();
+		if (this.resolutionScale == null && resolutionScope != null) {
+			this.resolutionScale = resolutionScope.getScale();
 			if (hasOccurrents && this.resolutionScale.getTime() != null) {
 				ITime time = this.resolutionScale.getTime();
 				if (time.isGeneric() || time.size() == 1) {
@@ -534,10 +535,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	public Dataflow withScopeScale(IScale scale) {
-		if (this.scope != null) {
-			this.scope = this.scope.rescale(scale);
+		if (this.resolutionScope != null) {
+			this.resolutionScope = this.resolutionScope.rescale(scale);
 		}
 		return this;
 	}
+
 
 }

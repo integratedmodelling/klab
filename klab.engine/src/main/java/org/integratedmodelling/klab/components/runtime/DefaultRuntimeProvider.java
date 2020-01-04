@@ -112,14 +112,21 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
-			IResolutionScope scope, IDirectObservation context, IMonitor monitor) throws KlabException {
+			IResolutionScope scope/* , IDirectObservation context */, IMonitor monitor) throws KlabException {
+
+		if (((Actuator) actuator).getObservable().is(Type.RELATIONSHIP) && scope.getMode() == Mode.RESOLUTION) {
+			System.out.println("ZANA MADONNA");
+		}
 
 		return executor.submit(new Callable<IArtifact>() {
 
 			@Override
 			public IArtifact call() throws Exception {
 
-				boolean switchContext = ((Actuator) actuator).getObservable().getType().is(Type.COUNTABLE)
+				IDirectObservation context = scope.getContext();
+
+				boolean switchContext = context != null
+						&& ((Actuator) actuator).getObservable().getType().is(Type.COUNTABLE)
 						&& scope.getMode() == Mode.RESOLUTION;
 
 				/*
@@ -130,13 +137,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				IScale actuatorScale = actuator.mergeScale(scale, monitor);
 
 				IRuntimeScope runtimeContext = null;
-				if (context == null) {
-					// new context
-					runtimeContext = createRuntimeContext(actuator, scope, actuatorScale, monitor);
-				} else if (switchContext) {
-					// new catalog, new scale, context subject is in the scope
+				if (switchContext) {
+					// new catalog, new scale, context subject is in the scope, network remains
 					runtimeContext = ((Subject) context).getRuntimeScope().createContext(actuatorScale, actuator, scope,
 							monitor);
+				} else if (context == null) {
+					// new context
+					runtimeContext = createRuntimeContext(actuator, scope, actuatorScale, monitor);
 				} else {
 					// instantiating or resolving states: stay in context
 					runtimeContext = ((Subject) context).getRuntimeScope().createChild(actuatorScale, actuator, scope,
@@ -249,8 +256,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					((ComputableResource) resource).getValidatedResource(IClassification.class),
 					resource.getCondition(), resource.isNegated());
 		} else if (resource.getAccordingTo() != null) {
-			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(
-					observable.getType(), resource.getAccordingTo());
+			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(observable.getType(),
+					resource.getAccordingTo());
 			ret = ClassifyingStateResolver.getServiceCall(classification, resource.getCondition(),
 					resource.isNegated());
 		} else if (resource.getLookupTable() != null) {
@@ -361,44 +368,44 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	 * 
 	 * @param observable
 	 * @param scale
-	 * @param context
+	 * @param scope
 	 * @param createArchetype if true, create an archetype. TODO support for
 	 *                        non-qualities.
 	 * @return
 	 */
-	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope context,
+	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope scope,
 			boolean createArchetype) {
 
 		boolean createActors = observable.is(Type.COUNTABLE) && scale.getTime() != null && scale.getTime().size() > 1;
 		Activity activity = null;
 
-		IIdentity identity = context.getMonitor().getIdentity();
+		IIdentity identity = scope.getMonitor().getIdentity();
 		if (identity instanceof AbstractTask) {
 			activity = ((AbstractTask<?>) identity).getActivity();
 		}
 
 		Observation ret = null;
 		if (observable.is(Type.SUBJECT) || observable.is(Type.AGENT)) {
-			ret = new Subject(observable.getName(), (Observable) observable, (Scale) scale, context);
+			ret = new Subject(observable.getName(), (Observable) observable, (Scale) scale, scope);
 		} else if (observable.is(Type.EVENT)) {
-			ret = new Event(observable.getName(), (Observable) observable, (Scale) scale, context);
+			ret = new Event(observable.getName(), (Observable) observable, (Scale) scale, scope);
 		} else if (observable.is(Type.PROCESS)) {
-			ret = new Process(observable.getName(), (Observable) observable, (Scale) scale, context);
+			ret = new Process(observable.getName(), (Observable) observable, (Scale) scale, scope);
 		} else if (observable.is(Type.RELATIONSHIP)) {
 			throw new KlabInternalErrorException(
 					"createObservation() does not create relationships: use createRelationship()");
 		} else if (observable.is(Type.QUALITY)) {
 			if (createArchetype) {
-				ret = State.newArchetype((Observable) observable, (Scale) scale, context);
+				ret = State.newArchetype((Observable) observable, (Scale) scale, scope);
 			} else {
 				IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(),
-						scale, context);
-				ret = new State((Observable) observable, (Scale) scale, context, (IDataStorage<?>) storage);
+						scale, scope);
+				ret = new State((Observable) observable, (Scale) scale, scope, (IDataStorage<?>) storage);
 			}
 		} else if (observable.is(Type.CONFIGURATION)) {
 
 			ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(observable.getName(),
-					(Observable) observable, (Scale) scale, context);
+					(Observable) observable, (Scale) scale, scope);
 		}
 
 		ret.setGenerator(activity);
@@ -421,7 +428,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 		IRelationship ret = new Relationship(observable.getName(), (Observable) observable, (Scale) scale,
 				runtimeContext);
-
 		runtimeContext.network.addEdge(relationshipSource, relationshipTarget, ret);
 		((Observation) ret).setGenerator(activity);
 

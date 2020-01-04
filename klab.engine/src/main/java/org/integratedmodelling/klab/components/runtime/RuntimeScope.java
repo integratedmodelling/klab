@@ -447,7 +447,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				// original context.
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 
-			} else if (this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+			} else if (resolutionScope.getPreresolvedModels(observable) == null
+					|| this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
 				/*
 				 * Add an empty dataflow to create the observation. This is only done if there
 				 * are no preloaded resolvers in this scale, so we are certain that other
@@ -458,12 +459,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
-				((Monitor) monitor).get(subtask));
-
-//		for (IState s:ret.getStates()) {
-//			System.out.println("DIOCAN " + s);
-//		}
+		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale)
+				.run(scale.initialization(), ((Monitor) monitor).get(subtask));
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
@@ -602,7 +599,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				// original context.
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 
-			} else if (this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+			} else if (resolutionScope.getPreresolvedModels(observable) == null
+					|| this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
 				/*
 				 * Add an empty dataflow to create the observation. This is only done if there
 				 * are no preloaded resolvers in this scale, so we are certain that other
@@ -613,7 +611,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		ret = (IRelationship) dataflow.withMetadata(metadata)
+		ret = (IRelationship) dataflow.withMetadata(metadata).withScopeScale(scale)
 				.connecting((IDirectObservation) source, (IDirectObservation) target)
 				.run(scale.initialization(), ((Monitor) monitor).get(subtask));
 

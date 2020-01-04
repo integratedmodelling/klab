@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.node.controllers;
 
 import java.security.Principal;
+import java.util.UUID;
 
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
@@ -31,74 +32,88 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @Secured(Role.ENGINE)
 public class ResourceController {
 
-    @Autowired
-    ResourceManager resourceManager;
+	@Autowired
+	ResourceManager resourceManager;
 
-    @Autowired
-    FileStorageService fileStorageService;
+	@Autowired
+	FileStorageService fileStorageService;
 
-    /*
-     * TODO this is probably the perfect place for a reactive controller, using a Mono<KlabData> instead of
-     * KlabData.
-     */
-    @GetMapping(value = API.NODE.RESOURCE.GET_URN, produces = "application/json")
-    @ResponseBody
-    public KlabData getUrnData(@PathVariable String urn, Principal principal) {
+	/*
+	 * TODO this is probably the perfect place for a reactive controller, using a
+	 * Mono<KlabData> instead of KlabData.
+	 */
+	@GetMapping(value = API.NODE.RESOURCE.GET_URN, produces = "application/json")
+	@ResponseBody
+	public KlabData getUrnData(@PathVariable String urn, Principal principal) {
 
-        IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
-        // TODO check groups and send unauthorized if not authorized (AccessDeniedException)
-        if (resource == null) {
-            throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
-        }
+		IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
+		// TODO check groups and send unauthorized if not authorized
+		// (AccessDeniedException)
+		if (resource == null) {
+			throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
+		}
 
-        Builder builder = KlabData.newBuilder();
+		Builder builder = KlabData.newBuilder();
 
-        // TODO!
+		// TODO!
 
-        return builder.build();
-    }
+		return builder.build();
+	}
 
-    @PostMapping(value = API.NODE.RESOURCE.RESOLVE_URN, produces = "application/json")
-    @ResponseBody
-    public ResourceReference resolveUrn(@PathVariable String urn, Principal principal) {
+	@PostMapping(value = API.NODE.RESOURCE.RESOLVE_URN, produces = "application/json")
+	@ResponseBody
+	public ResourceReference resolveUrn(@PathVariable String urn, Principal principal) {
 
-        IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
-        // TODO check groups and send unauthorized if not authorized (AccessDeniedException)
-        if (resource == null) {
-            throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
-        }
-        return ((Resource) resource).getReference();
-    }
+		IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
+		// TODO check groups and send unauthorized if not authorized
+		// (AccessDeniedException)
+		if (resource == null) {
+			throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
+		}
+		return ((Resource) resource).getReference();
+	}
 
-    @PutMapping(API.NODE.RESOURCE.SUBMIT)
-    public PublishResourceResponse uploadFile(@RequestParam("file") MultipartFile file, Principal principal) {
+	@PutMapping(API.NODE.RESOURCE.SUBMIT)
+	public PublishResourceResponse uploadFile(@RequestParam("file") MultipartFile file, Principal principal) {
 
-        String fileName = fileStorageService.storeFile(file);
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
-                .path(fileName).toUriString();
+		String fileName = fileStorageService.storeFile(file);
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
+				.path(fileName).toUriString();
 
-        // TODO spawn publish thread, return 201 with response
-        PublishResourceResponse ret = new PublishResourceResponse();
-        
-        // thread should unzip resource, load resource.json, establish adapter, call the validator, build resource and import it
-        // in public catalog
-        
-        
+		/*
+		 * unzip in temporary area and load resource.json
+		 */
+		
+		/*
+		 * ensure we can handle this
+		 */
+		
+		
+		// thread should unzip resource, load resource.json, establish adapter, call the
+		// validator, build resource and import it
+		// in public catalog
+
+		String publishId = UUID.randomUUID().toString();
+		
+		// TODO spawn publish thread, return 201 with response
+		PublishResourceResponse ret = new PublishResourceResponse();
+
 //        return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
-        
-        return ret;
-    }
 
-    @PostMapping(API.NODE.RESOURCE.SUBMIT)
-    @ResponseBody
-    public PublishResourceResponse uploadFile(ResourceReference resource, Principal principal) {
-        
-        PublishResourceResponse ret = new PublishResourceResponse();
+		return ret;
+	}
 
-        IResource res = resourceManager.publishResource(resource, null, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
-        ret.setUrn(res.getUrn());
-        
-        return ret;
-    }
+	@PostMapping(API.NODE.RESOURCE.SUBMIT)
+	@ResponseBody
+	public PublishResourceResponse uploadFile(ResourceReference resource, Principal principal) {
+
+		PublishResourceResponse ret = new PublishResourceResponse();
+
+		IResource res = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
+				Klab.INSTANCE.getRootMonitor());
+		ret.setOriginalUrn(res.getUrn());
+
+		return ret;
+	}
 
 }

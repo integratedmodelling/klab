@@ -62,7 +62,7 @@ public interface IRuntimeProvider {
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
 	Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
-			IResolutionScope scope, IDirectObservation context, IMonitor monitor) throws KlabException;
+			IResolutionScope scope/* , IDirectObservation context */, IMonitor monitor) throws KlabException;
 
 	/**
 	 * Create an empty runtime context for the dataflow that will build the context
