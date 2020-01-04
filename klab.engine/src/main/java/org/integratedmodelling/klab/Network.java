@@ -20,8 +20,8 @@ import org.integratedmodelling.klab.api.services.INetworkService;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.NodeReference;
 
 public enum Network implements INetworkService {
@@ -55,10 +55,9 @@ public enum Network implements INetworkService {
 
 		for (NodeReference node : authorization.getNodes()) {
 			Node identity = new Node(node, authorization.getUserData().getToken());
-
 			try {
 				mergeCapabilities(identity, client.with(authorization.getUserData().getToken())
-						.get(chooseUrl(node.getUrls()) + API.CAPABILITIES, Capabilities.class));
+						.get(chooseUrl(node.getUrls()) + API.CAPABILITIES, NodeCapabilities.class));
 				onlineNodes.put(identity.getName(), identity);
 			} catch (Exception e) {
 				offlineNodes.put(identity.getName(), identity);
@@ -67,9 +66,10 @@ public enum Network implements INetworkService {
 
 	}
 
-	private void mergeCapabilities(Node node, Capabilities capabilities) {
+	private void mergeCapabilities(Node node, NodeCapabilities capabilities) {
 		// TODO Auto-generated method stub
-		
+		// TODO this should be repeated on a timer
+		System.out.println("CAPABILITIES");
 	}
 
 	@Override

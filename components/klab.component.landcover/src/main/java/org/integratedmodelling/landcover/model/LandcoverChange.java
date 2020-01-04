@@ -94,6 +94,10 @@ import com.ibm.icu.text.NumberFormat;
  */
 public class LandcoverChange {
 
+	/*
+	 * keeping these from CLUE but, like CLUE, only using the default. Not sure of
+	 * the wisdom in any other.
+	 */
 	public static enum ProbabilityCompoundingMode {
 		DEMAND_WEIGHT_DOMINATED, MULTIPLY_ALL, SUM_ALL, SUITABILITY_ONLY, DEFAULT
 	};

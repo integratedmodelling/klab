@@ -15,6 +15,7 @@ public class NodeCapabilities {
 	private String version;
 	private String build;
 	private IdentityReference owner;
+	private boolean acceptSubmission;
 	private List<AuthorityReference> authorities = new ArrayList<>();
 	private List<ComponentReference> staticComponents = new ArrayList<>();
 	private List<ComponentReference> dynamicComponents = new ArrayList<>();
@@ -135,5 +136,13 @@ public class NodeCapabilities {
 
 	public void setResourceAdapters(List<ResourceAdapterReference> resourceAdapters) {
 		this.resourceAdapters = resourceAdapters;
+	}
+
+	public boolean isAcceptSubmission() {
+		return acceptSubmission;
+	}
+
+	public void setAcceptSubmission(boolean acceptSubmission) {
+		this.acceptSubmission = acceptSubmission;
 	}
 }

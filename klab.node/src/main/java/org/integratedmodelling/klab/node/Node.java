@@ -35,23 +35,11 @@ public class Node {
 	private String contextPath = "/node";
 	private IPartnerIdentity owner;
 	private ICertificate certificate;
-
-	static final String GITWAR = "gitblit-1.8.0.war";
-	static File gitWarPath;
-
+	
 	public Node(INodeStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
 		this.owner = NodeAuthenticationManager.INSTANCE.authenticate(certificate, options);
 		// in engine: setRootIdentity(this.owner);
-
-		/*
-		 * copy the Gitblit war to its home directory
-		 */
-//		File gitDirectory = Configuration.INSTANCE.getDataPath("git");
-//		gitWarPath = new File(gitDirectory + File.separator + GITWAR);
-//		if (!gitWarPath.exists()) {
-//			URLUtils.copyChanneled(this.getClass().getClassLoader().getResource(GITWAR), gitWarPath);
-//		}
 	}
 
 	public String getLocalAddress() {

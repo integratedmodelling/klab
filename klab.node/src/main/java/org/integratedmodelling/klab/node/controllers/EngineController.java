@@ -2,9 +2,10 @@ package org.integratedmodelling.klab.node.controllers;
 
 import java.security.Principal;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.node.auth.Role;
-import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,13 +32,28 @@ public class EngineController {
 	 */
 	@RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public Capabilities capabilities(Principal user) {
+	public NodeCapabilities capabilities(Principal user) {
 		
-		Capabilities ret = new Capabilities();
+		NodeCapabilities ret = new NodeCapabilities();
+		
+		String submitting = Configuration.INSTANCE.getProperty("klab.node.submitting", "NONE");
+		
+		if ("*".equals(submitting)) {
+			ret.setAcceptSubmission(true);
+		} else if ("NONE".equals(submitting)) {
+			ret.setAcceptSubmission(false);
+		} else {
+			/*
+			 * TODO check user groups inside the value
+			 */
+		}
 		
 		// synchronized projects
 		// components
+		// authorities
 		// online and offline resources
+		// authorization to submit
+		
 		
 		return ret;
 	}
