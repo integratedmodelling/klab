@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
@@ -46,7 +45,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.Transition;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.LocatedExpression;
@@ -165,7 +163,7 @@ public class LandcoverChange {
 	/*
 	 * default transition table allows every transition and contains no table.
 	 */
-	LandcoverTransitionTable transitionTable = new LandcoverTransitionTable(false, true);
+	LandcoverTransitionTable transitionTable;
 
 	static class Conversion extends Transition<IConcept> {
 
@@ -236,6 +234,7 @@ public class LandcoverChange {
 
 	public LandcoverChange(IProcess targetProcess) {
 		this.process = targetProcess;
+		this.transitionTable = new LandcoverTransitionTable(false, true, random);
 	}
 
 	/*
@@ -257,7 +256,7 @@ public class LandcoverChange {
 		this.probabilityShifts.clear();
 		this.movingAverages.clear();
 		this.goalsMet.clear();
-		this.transitionTable.activate();
+		this.transitionTable.activate(this.landCoverAge);
 		this.previousDistribution = null;
 
 		// transition buffer for age and event detection
@@ -989,7 +988,8 @@ public class LandcoverChange {
 		 * read transition behavior from parameters if any, otherwise default to all
 		 * transitions possible
 		 */
-		this.transitionTable = new LandcoverTransitionTable(transitionsAreTransitive, defaultTransitionPossible);
+		this.transitionTable = new LandcoverTransitionTable(transitionsAreTransitive, defaultTransitionPossible,
+				random);
 		if (parameters.containsKey("transitions")) {
 			this.transitionTable.parse(parameters.get("transitions", IKimTable.class), scope);
 			configuredConcepts.addAll(this.transitionTable.getConcepts());
@@ -1150,7 +1150,7 @@ public class LandcoverChange {
 								throw new KlabValidationException("invalid areal specifications in " + annotationName);
 							}
 						} else if (entry.getValue() instanceof IKimExpression) {
-							factor.expression = new LocatedExpression((IKimExpression)entry.getValue(), scope);
+							factor.expression = new LocatedExpression((IKimExpression) entry.getValue(), scope);
 						}
 
 						if (specs.get(concept) == null) {
@@ -1181,7 +1181,7 @@ public class LandcoverChange {
 
 						if (time instanceof IKimDate) {
 							factor.timepoint = ((IKimDate) time).getDate().getTime();
-						} 
+						}
 
 						if (value.getNumberMatch() != null) {
 							if (!zeroone.contains(value.getNumberMatch())) {

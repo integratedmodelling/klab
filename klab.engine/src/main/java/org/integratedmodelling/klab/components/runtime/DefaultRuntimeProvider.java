@@ -376,7 +376,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope scope,
 			boolean createArchetype) {
 
-		boolean createActors = observable.is(Type.COUNTABLE) && scale.getTime() != null && scale.getTime().size() > 1;
+		boolean createActors = observable.is(Type.COUNTABLE) && scale.isTemporallyDistributed();
 		Activity activity = null;
 
 		IIdentity identity = scope.getMonitor().getIdentity();
