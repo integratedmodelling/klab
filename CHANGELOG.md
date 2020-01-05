@@ -28,6 +28,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- IDE reads status of network periodically and enables publish action if there are
+  nodes that allow publishing for the adapter of the resource.
+- New Configuration::getProperty method uses overriding system properties.
+- Node permissions (query, publish and use of each adapter) configured from properties.
+- Node has its own engine and publishes basic permissions and adapters in capabilities.
 - Full CLUE-inspired (and much extended) landcover change module working and documented.
 - Fixed logics in contextualization of sub-countables removes bugs in relationship 
   contextualization.

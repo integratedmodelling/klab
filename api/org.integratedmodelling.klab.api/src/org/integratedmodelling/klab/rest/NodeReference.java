@@ -19,6 +19,7 @@ public class NodeReference {
     private boolean online;
     private int retryPeriodMinutes;
     private int loadFactor;
+    private List<String> adapters = new ArrayList<>();
     private List<String> incomingConnections = new ArrayList<>();
     private List<String> outgoingConnections = new ArrayList<>();
     
@@ -164,4 +165,12 @@ public class NodeReference {
                 + ", online=" + online + ", retryPeriodMinutes=" + retryPeriodMinutes + ", loadFactor=" + loadFactor
                 + ", incomingConnections=" + incomingConnections + ", outgoingConnections=" + outgoingConnections + "]";
     }
+
+	public List<String> getAdapters() {
+		return adapters;
+	}
+
+	public void setAdapters(List<String> adapters) {
+		this.adapters = adapters;
+	}
 }

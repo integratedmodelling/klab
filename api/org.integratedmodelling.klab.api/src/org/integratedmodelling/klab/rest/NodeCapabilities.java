@@ -16,6 +16,7 @@ public class NodeCapabilities {
 	private String build;
 	private IdentityReference owner;
 	private boolean acceptSubmission;
+	private boolean acceptQueries;
 	private List<AuthorityReference> authorities = new ArrayList<>();
 	private List<ComponentReference> staticComponents = new ArrayList<>();
 	private List<ComponentReference> dynamicComponents = new ArrayList<>();
@@ -144,5 +145,13 @@ public class NodeCapabilities {
 
 	public void setAcceptSubmission(boolean acceptSubmission) {
 		this.acceptSubmission = acceptSubmission;
+	}
+
+	public boolean isAcceptQueries() {
+		return acceptQueries;
+	}
+
+	public void setAcceptQueries(boolean acceptQueries) {
+		this.acceptQueries = acceptQueries;
 	}
 }

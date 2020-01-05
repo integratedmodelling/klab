@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
 /**
  * All functions related to k.LAB network authentication, authorization and
@@ -25,6 +26,15 @@ public interface INetworkService {
 	 */
 	Collection<INodeIdentity> getNodes();
 
+	/**
+	 * Get all the nodes with the specified permission.
+	 * 
+	 * @param permission
+	 * @param onlineOnly if true, only check nodes that are known to be online.
+	 * @return
+	 */
+	Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly);
+	
 	/**
 	 * Submit a GET request to all nodes in parallel and merge the results when all
 	 * have returned, failed or timed out.
@@ -50,5 +60,6 @@ public interface INetworkService {
 	 */
 	<T, K, V> T broadcastPost(V request, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
 			IMonitor monitor);
+
 
 }

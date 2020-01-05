@@ -1,17 +1,16 @@
 package org.integratedmodelling.klab.auth;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IServerIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.rest.NodeReference;
+import org.integratedmodelling.klab.rest.NodeReference.Permission;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,15 +27,11 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
 
     IServerIdentity parent;
     String token;
-    List<INodeIdentity> nodes = new ArrayList<>();
     Set<GrantedAuthority> authorities = new HashSet<>();
     
-    public NetworkSession(String token, List<NodeReference> nodes, Hub hub) {
+    public NetworkSession(String token, Hub hub) {
         this.token = token;
         this.parent = hub;
-        for (NodeReference n : nodes) {
-            this.nodes.add(new Node(n, token));
-        }
         this.authorities.add(new SimpleGrantedAuthority(Roles.NETWORK_SESSION));
     }
 
@@ -63,7 +58,7 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
 
     @Override
     public Collection<INodeIdentity> getNodes() {
-        return nodes;
+        return Network.INSTANCE.getNodes();
     }
 
     @Override
@@ -100,5 +95,10 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+	@Override
+	public Collection<INodeIdentity> getNodes(Permission permission) {
+		return Network.INSTANCE.getNodes(permission, true);
+	}
 
 }

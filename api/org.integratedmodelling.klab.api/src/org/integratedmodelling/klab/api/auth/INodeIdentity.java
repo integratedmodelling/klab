@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.rest.NodeReference.Permission;
  * @version $Id: $Id
  */
 public interface INodeIdentity extends IServerIdentity {
-    
+	
     /** Constant <code>type</code> */
     Type type = Type.NODE;
 
@@ -42,4 +42,18 @@ public interface INodeIdentity extends IServerIdentity {
      */
     Set<Permission> getPermissions();
 
+    /**
+     * IDs for all adapters usable by the asking engine
+     * 
+     * @return
+     */
+    Set<String> getAdapters();
+    
+    /**
+     * All resource IDs handled by the node visible by the asking engine
+     * 
+     * @return
+     */
+    Set<String> getResources();
+    
 }

@@ -71,6 +71,7 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.ui.TimeEditor;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
@@ -135,6 +136,8 @@ public class ResourceEditor extends ViewPart {
 	private Geometry geometry = null;
 
 	private Button executeActionButton;
+
+	private List<NodeReference> publishingNodes;
 
 	public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -451,6 +454,13 @@ public class ResourceEditor extends ViewPart {
 		this.references
 				.setText(this.metadata.containsKey(IMetadata.DC_SOURCE) ? this.metadata.get(IMetadata.DC_SOURCE) : "");
 		this.notes.setText(this.metadata.containsKey(IMetadata.IM_NOTES) ? this.metadata.get(IMetadata.IM_NOTES) : "");
+
+		this.publishingNodes = Activator.engineMonitor().isRunning()
+				? Activator.klab().getPublishingNodes(resource.getAdapterType())
+				: new ArrayList<>();
+
+		this.publishButton.setEnabled(this.isPublishable.getSelection() && !this.publishingNodes.isEmpty());
+
 	}
 
 	private boolean hasErrors(ResourceReference resource) {
@@ -1068,9 +1078,14 @@ public class ResourceEditor extends ViewPart {
 		GridData gd_publishButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_publishButton.widthHint = 72;
 		publishButton.setLayoutData(gd_publishButton);
-		publishButton.setGrayed(true);
 		publishButton.setText("Publish...");
 		publishButton.setEnabled(false);
+		publishButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				publish();
+			}
+		});
 
 		saveButton = new Button(composite, SWT.NONE);
 		GridData gd_saveButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -1104,6 +1119,11 @@ public class ResourceEditor extends ViewPart {
 		initializeMenu();
 	}
 
+	protected void publish() {
+		// TODO Auto-generated method stub
+		System.out.println("PUBLISH HOSTIA!");
+	}
+
 	protected void executeSelectedOperation() {
 		if (resource != null && resource.getUrn() != null && selectedOperation != null) {
 			ResourceOperationRequest request = new ResourceOperationRequest();
@@ -1129,28 +1149,34 @@ public class ResourceEditor extends ViewPart {
 	}
 
 	private void swapDimension(String timeSpec) {
-		setDirty(true);
+		if (this.geometry != null) {
+			setDirty(true);
+		}
 		Geometry tgeo = timeSpec == null ? null : Geometry.create(timeSpec);
 		if (this.geometry == null) {
 			this.geometry = tgeo;
 		} else {
 			this.geometry = tgeo == null ? this.geometry.without(Type.TIME) : this.geometry.override(tgeo);
 		}
-		this.geometryDefinition.setText(this.geometry.toString());
+		if (this.geometryDefinition != null) {
+			this.geometryDefinition.setText(this.geometry.toString());
+		}
 	}
 
 	protected void setDirty(boolean b) {
-		if (b) {
-			if (!getTitle().startsWith("*")) {
-				setPartName("* " + getTitle());
+		if (saveButton != null) {
+			if (b) {
+				if (!getTitle().startsWith("*")) {
+					setPartName("* " + getTitle());
+				}
+			} else {
+				if (getTitle().startsWith("*")) {
+					setPartName(getTitle().substring(2));
+				}
 			}
-		} else {
-			if (getTitle().startsWith("*")) {
-				setPartName(getTitle().substring(2));
-			}
+			saveButton.setEnabled(b && Activator.engineMonitor() != null && Activator.engineMonitor().isRunning());
+			dirty = b;
 		}
-		saveButton.setEnabled(b && Activator.engineMonitor() != null && Activator.engineMonitor().isRunning());
-		dirty = b;
 	}
 
 	public void dispose() {

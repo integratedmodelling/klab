@@ -164,7 +164,7 @@ public class KlabCertificate implements ICertificate {
 			return true;
 		}
 
-		return false;
+		return true;
 	}
 
 	/**

@@ -16,7 +16,6 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.ICertificate.Type;
-import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
@@ -157,7 +156,7 @@ public enum Authentication implements IAuthenticationService {
 	public <T extends IIdentity> T getAuthenticatedIdentity(Class<T> type) {
 		for (IIdentity id : identities.values()) {
 			if (type.isAssignableFrom(id.getClass())) {
-				return (T)id;
+				return (T) id;
 			}
 		}
 		return null;
@@ -231,6 +230,13 @@ public enum Authentication implements IAuthenticationService {
 			Logging.INSTANCE.info("No user certificate: continuing in anonymous offline mode");
 
 			return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
+		}
+
+		if (certificate.getType() == Type.NODE && getAuthenticatedIdentity(INodeIdentity.class) != null) {
+			ret = new KlabUser(certificate.getProperty(ICertificate.KEY_NODENAME),
+					getAuthenticatedIdentity(INodeIdentity.class));
+			registerIdentity(ret);
+			return ret;
 		}
 
 		String authenticationServer = null;
@@ -307,10 +313,9 @@ public enum Authentication implements IAuthenticationService {
 			if (authentication != null) {
 
 				HubReference hubNode = authentication.getHub();
-				Hub node = new Hub(hubNode);
-				node.setOnline(true);
-				NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),
-						authentication.getNodes(), node);
+				Hub hub = new Hub(hubNode);
+				hub.setOnline(true);
+				NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(), hub);
 
 				ret = new KlabUser(authentication.getUserData(), networkSession);
 
@@ -347,7 +352,7 @@ public enum Authentication implements IAuthenticationService {
 		if (ret != null) {
 			registerIdentity(ret);
 		}
-		
+
 		return ret;
 	}
 

@@ -40,6 +40,7 @@ import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.auth.ICertificate.Type;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
@@ -314,27 +315,36 @@ public class Engine extends Server implements IEngine, UserDetails {
 	 * @throws KlabException              if startup fails
 	 */
 	public static Engine start() {
-		return start(new EngineStartupOptions());
+		return start(null, new EngineStartupOptions());
 	}
 
-	public static Engine start(IEngineStartupOptions options) {
+	public static Engine start(ICertificate certificate) {
+		return start(certificate, new EngineStartupOptions());
+	}
+	
+	public static Engine start(EngineStartupOptions options) {
+		return start(null, options);
+	}
+	
+	public static Engine start(ICertificate certificate, IEngineStartupOptions options) {
 
-		ICertificate certificate = null;
+		if (certificate == null) {
 
-		if (options.isAnonymous()) {
-			certificate = new AnonymousEngineCertificate();
-		} else {
-
-			if (options.getCertificateResource() != null) {
-				certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
+			if (options.isAnonymous()) {
+				certificate = new AnonymousEngineCertificate();
 			} else {
-				File certFile = options.getCertificateFile();
-				if (!certFile.exists()) {
-					// check for legacy certificate
-					certFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + "im.cert");
+
+				if (options.getCertificateResource() != null) {
+					certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
+				} else {
+					File certFile = options.getCertificateFile();
+					if (!certFile.exists()) {
+						// check for legacy certificate
+						certFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + "im.cert");
+					}
+					certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
+							: KlabCertificate.createDefault();
 				}
-				certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
-						: KlabCertificate.createDefault();
 			}
 		}
 
@@ -348,9 +358,12 @@ public class Engine extends Server implements IEngine, UserDetails {
 			throw new KlabException("engine failed to start");
 		}
 
-		System.out.println("\n" + Logo.ENGINE_BANNER);
-		System.out.println("\nStartup successful: " + ret.getUsername() + " v" + Version.CURRENT + " on " + new Date());
-
+		if (certificate.getType() == ICertificate.Type.ENGINE) {
+			System.out.println("\n" + Logo.ENGINE_BANNER);
+			System.out.println(
+					"\nStartup successful: " + ret.getUsername() + " v" + Version.CURRENT + " on " + new Date());
+		}
+		
 		return ret;
 	}
 
@@ -430,7 +443,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		Logging.INSTANCE.info("k.LAB v" + Version.CURRENT + " build " + Version.VERSION_BUILD + " @"
 				+ Version.VERSION_COMMIT + " booting...");
-		
+
 		/*
 		 * set up access to the k.IM grammar
 		 */

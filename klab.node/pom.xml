@@ -39,12 +39,6 @@
 			<dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId> 
 			<version>9.3.0.M1</version> </dependency> -->
 
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.component.weather</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
-
 		<!-- unzip uploaded resources -->
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>
@@ -64,7 +58,32 @@
 			<artifactId>jose4j</artifactId>
 			<version>0.6.3</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.weather</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.components.cdm</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.mca</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.ml</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.hydrology</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.ogc</artifactId>

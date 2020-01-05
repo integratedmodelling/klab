@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
@@ -14,10 +13,10 @@ import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.node.INodeStartupOptions;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
-import org.integratedmodelling.klab.utils.URLUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -35,11 +34,11 @@ public class Node {
 	private String contextPath = "/node";
 	private IPartnerIdentity owner;
 	private ICertificate certificate;
-	
+	private Engine engine;
+
 	public Node(INodeStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
 		this.owner = NodeAuthenticationManager.INSTANCE.authenticate(certificate, options);
-		// in engine: setRootIdentity(this.owner);
 	}
 
 	public String getLocalAddress() {
@@ -85,6 +84,7 @@ public class Node {
 
 	private boolean boot(INodeStartupOptions options) {
 		try {
+			this.engine = Engine.start(this.certificate);
 			this.port = options.getPort();
 			Map<String, Object> props = new HashMap<>();
 			props.put("server.port", "" + options.getPort());
@@ -150,6 +150,18 @@ public class Node {
 		// Klab.INSTANCE.getRuntimeProvider().shutdown();
 
 		context.close();
+	}
+
+	public IPartnerIdentity getOwner() {
+		return owner;
+	}
+
+	public ICertificate getCertificate() {
+		return certificate;
+	}
+
+	public Engine getEngine() {
+		return engine;
 	}
 
 }
