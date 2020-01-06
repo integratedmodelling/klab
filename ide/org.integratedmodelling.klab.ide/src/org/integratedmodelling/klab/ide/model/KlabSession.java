@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
@@ -41,6 +42,7 @@ import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
+import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.SearchRequest;
@@ -412,6 +414,7 @@ public class KlabSession extends KlabPeer {
 	@MessageHandler(messageClass = IMessage.MessageClass.Authorization, type = IMessage.Type.NetworkStatus)
 	public void handleNetworkStatus(NetworkReference network) {
 		Activator.klab().updateNetwork(network);
+		send(IMessage.MessageClass.UserInterface, IMessage.Type.NetworkStatus, network);
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
@@ -458,6 +461,15 @@ public class KlabSession extends KlabPeer {
 	@MessageHandler
 	public void handleObservation(ObservationReference observation) {
 		recordObservation(observation);
+	}
+	
+	@MessageHandler
+	public void handlePublishResponse(ResourcePublishResponse response) {
+		if (response.getError() != null) {
+			Eclipse.INSTANCE.alert("Publishing of " + response.getOriginalUrn() + " failed: " + response.getError());
+		} else {
+			// TODO enqueue an event for later checking
+		}
 	}
 
 	@MessageHandler

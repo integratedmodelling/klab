@@ -25,7 +25,6 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [comment]: <>   ()
 [comment]: <>   (Next build: [0.10.0.xxx] -- ISO Date)
 
-
 ## Unreleased
 ### Added
 - IDE reads status of network periodically and enables publish action if there are

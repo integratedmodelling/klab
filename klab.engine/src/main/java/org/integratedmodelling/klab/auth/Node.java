@@ -31,7 +31,7 @@ public class Node implements INodeIdentity {
     private int retryPeriod = 15;
     private long lastCheck = System.currentTimeMillis();
 
-    static Client client = Client.create();
+    private Client client;
 
     public Node(String name, IPartnerIdentity owner) {
         this.name = name;
@@ -158,12 +158,12 @@ public class Node implements INodeIdentity {
 		this.lastCheck = lastCheck;
 	}
 
-	public static Client getClient() {
-		return client;
-	}
-
-	public static void setClient(Client client) {
-		Node.client = client;
+	public Client getClient() {
+		if (this.client == null) {
+			this.client = Client.create().with(this);
+			this.client.setUrl(this.urls.toArray(new String[this.urls.size()]));
+		}
+		return this.client;
 	}
 
 	public void setName(String name) {

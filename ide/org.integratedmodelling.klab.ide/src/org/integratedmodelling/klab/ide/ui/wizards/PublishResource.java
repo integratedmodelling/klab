@@ -26,61 +26,91 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.ide.ui.wizards;
 
+import java.util.List;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.rest.NodeReference;
+import org.integratedmodelling.klab.rest.ResourceReference;
 
-public class NewProject extends WizardPage {
+public class PublishResource extends WizardPage {
+
 	private Text text;
+	private Combo combo;
+	private ResourceReference resource;
+	private List<NodeReference> nodes;
 
-	/**
-	 * Create the wizard.
-	 */
-	public NewProject() {
+	public PublishResource(ResourceReference resource, List<NodeReference> nodes) {
 		super("wizardPage");
+		this.resource = resource;
+		this.nodes = nodes;
 		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
-		setTitle("New k.LAB project");
-		setDescription("Create a new local k.LAB project");
+		setTitle("Publish resource");
+		setDescription("Publish a local resource to a k.LAB node");
 	}
 
-	/**
-	 * Create contents of the wizard.
-	 * @param parent
-	 */
 	@Override
-    public void createControl(Composite parent) {
+	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 
 		setControl(container);
 		container.setLayout(new FormLayout());
-		
+
+		Label lblNewLabel = new Label(container, SWT.NONE);
+		FormData fd_lblNewLabel = new FormData();
+		fd_lblNewLabel.left = new FormAttachment(0, 57);
+		fd_lblNewLabel.top = new FormAttachment(0, 38);
+		lblNewLabel.setLayoutData(fd_lblNewLabel);
+		lblNewLabel.setText("Host node");
+
 		text = new Text(container, SWT.BORDER);
 		FormData fd_text = new FormData();
-		fd_text.top = new FormAttachment(0, 37);
-		fd_text.right = new FormAttachment(100, -83);
+		fd_text.right = new FormAttachment(100, -84);
 		text.setLayoutData(fd_text);
-		
-		Label lblProjectName = new Label(container, SWT.NONE);
-		fd_text.left = new FormAttachment(lblProjectName, 6);
-		lblProjectName.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
-		FormData fd_lblProjectName = new FormData();
-		fd_lblProjectName.bottom = new FormAttachment(100, -44);
-		fd_lblProjectName.top = new FormAttachment(0, 36);
-		fd_lblProjectName.left = new FormAttachment(0, 61);
-		fd_lblProjectName.right = new FormAttachment(100, -323);
-		lblProjectName.setLayoutData(fd_lblProjectName);
-		lblProjectName.setText("Project name");
-	}
-	public Text getProjectName() {
-		return text;
+
+		combo = new Combo(container, SWT.READ_ONLY);
+		FormData fd_combo = new FormData();
+		fd_combo.top = new FormAttachment(lblNewLabel, -1, SWT.TOP);
+		fd_combo.left = new FormAttachment(text, 0, SWT.LEFT);
+		fd_combo.right = new FormAttachment(100, -67);
+		combo.setLayoutData(fd_combo);
+
+		Label lblNewLabel_1 = new Label(container, SWT.NONE);
+		fd_text.left = new FormAttachment(lblNewLabel_1, 30);
+		fd_text.top = new FormAttachment(lblNewLabel_1, -3, SWT.TOP);
+		lblNewLabel_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		FormData fd_lblNewLabel_1 = new FormData();
+		fd_lblNewLabel_1.top = new FormAttachment(lblNewLabel, 28);
+		fd_lblNewLabel_1.left = new FormAttachment(lblNewLabel, 0, SWT.LEFT);
+		lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
+		lblNewLabel_1.setText("Suggested ID");
+
+		/*
+		 * Add open projects in namespace, preselecting the one we started with, if any.
+		 */
+		this.text.setText(resource.getLocalName().toLowerCase());
+		for (NodeReference node : nodes) {
+			combo.add(node.getId());
+		}
+		combo.select(0);
+
 	}
 
+	public NodeReference getTargetNode() {
+		return this.nodes.get(combo.getSelectionIndex());
+	}
+	
+	public String getSuggestedName() {
+		return this.text.getText();
+	}
 }

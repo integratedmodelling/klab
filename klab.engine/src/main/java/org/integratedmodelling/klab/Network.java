@@ -41,7 +41,6 @@ public enum Network implements INetworkService {
 	private HubReference hub;
 	private Map<String, NodeReference> nodes = Collections.synchronizedMap(new HashMap<>());
 	
-	
 	private Network() {
 		Services.INSTANCE.registerService(this, INetworkService.class);
 	}
@@ -51,6 +50,11 @@ public enum Network implements INetworkService {
 		return new HashSet<>(onlineNodes.values());
 	}
 
+	@Override
+	public INodeIdentity getNode(String name) {
+		return onlineNodes.get(name);
+	}
+	
 	@Override
 	public Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly) {
 		List<INodeIdentity> ret = new ArrayList<>();

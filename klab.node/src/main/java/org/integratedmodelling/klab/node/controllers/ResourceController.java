@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.node.controllers;
 
 import java.security.Principal;
-import java.util.UUID;
 
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
@@ -14,8 +13,8 @@ import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.FileStorageService;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
-import org.integratedmodelling.klab.rest.PublishResourceResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.ResourceSubmission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,9 +72,20 @@ public class ResourceController {
 		return ((Resource) resource).getReference();
 	}
 
+	/**
+	 * Take charge of a resource submission consisting of a zip archive uploaded
+	 * with all the contents (file name = temporary ID) and return whether it's
+	 * accepted. After true is returned, the other endpoints can be used to check on
+	 * the resource status.
+	 * 
+	 * @param file
+	 * @param principal
+	 * @return
+	 */
 	@PutMapping(API.NODE.RESOURCE.SUBMIT)
-	public PublishResourceResponse uploadFile(@RequestParam("file") MultipartFile file, Principal principal) {
+	public boolean submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
 
+		String publishId = file.getName();
 		String fileName = fileStorageService.storeFile(file);
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
 				.path(fileName).toUriString();
@@ -83,35 +93,38 @@ public class ResourceController {
 		/*
 		 * unzip in temporary area and load resource.json
 		 */
-		
+
 		/*
 		 * ensure we can handle this
 		 */
-		
-		
+
 		// thread should unzip resource, load resource.json, establish adapter, call the
 		// validator, build resource and import it
 		// in public catalog
 
-		String publishId = UUID.randomUUID().toString();
-		
-		// TODO spawn publish thread, return 201 with response
-		PublishResourceResponse ret = new PublishResourceResponse();
-
-//        return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
-
-		return ret;
+		return false;
 	}
 
+	/**
+	 * Take charge of a resource submission consisting only of a resource.json
+	 * contents and a temporary ID, and return whether it's accepted. After true is
+	 * returned, the other endpoints can be used to check on the resource status.
+	 * 
+	 * @param resource
+	 * @param principal
+	 * @return
+	 */
 	@PostMapping(API.NODE.RESOURCE.SUBMIT)
 	@ResponseBody
-	public PublishResourceResponse uploadFile(ResourceReference resource, Principal principal) {
+	public boolean submitResource(ResourceSubmission resource, Principal principal) {
 
-		PublishResourceResponse ret = new PublishResourceResponse();
-
-		IResource res = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
+		boolean ret = false;
+		
+		System.out.println("ZIO PAPA RESOURCE " + resource.getData().getUrn() + " SUBMITTED FOR PUBLICATION");
+		
+		IResource res = resourceManager.publishResource(resource.getData(), null, (EngineAuthorization) principal,
 				Klab.INSTANCE.getRootMonitor());
-		ret.setOriginalUrn(res.getUrn());
+
 
 		return ret;
 	}

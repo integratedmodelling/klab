@@ -28,17 +28,20 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
@@ -87,7 +90,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author ferdinando.villa
  *
  */
-public class Client extends RestTemplate {
+public class Client extends RestTemplate implements IClient {
 
 	public static final String KLAB_VERSION_HEADER = "KlabVersion";
 	public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
@@ -96,16 +99,17 @@ public class Client extends RestTemplate {
 	String authToken;
 
 	RestTemplate basicTemplate = new RestTemplate();
+	private Set<String> endpoints = new HashSet<>();
 
 	private static ClientHttpRequestFactory factory;
 
 	public static Client createCustomTimeoutClient(int timeout) {
-		HttpComponentsClientHttpRequestFactory custom =  new HttpComponentsClientHttpRequestFactory();
+		HttpComponentsClientHttpRequestFactory custom = new HttpComponentsClientHttpRequestFactory();
 		custom.setReadTimeout(timeout);
 		custom.setConnectTimeout(timeout);
 		return new Client(custom);
 	}
-	
+
 	public static Client create() {
 
 		if (factory == null) {
@@ -290,6 +294,7 @@ public class Client extends RestTemplate {
 		return ret;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes" })
 	public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
 
@@ -332,7 +337,26 @@ public class Client extends RestTemplate {
 		}
 	}
 
+	public void setUrl(String... url) {
+		if (url == null || url.length == 0) {
+			this.endpoints.clear();
+		} else {
+			for (String u : url) {
+				this.endpoints.add(u);
+			}
+		}
+	}
+
+	private String pickEndpoint() {
+		// TODO periodically check URLs and choose the first that responds (or the one
+		// with the smallest load)
+		return this.endpoints.isEmpty() ? null : this.endpoints.iterator().next();
+	}
+
+	@Override
 	public boolean getDownload(String url, File output) {
+
+		url = checkEndpoint(url);
 
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
@@ -374,6 +398,16 @@ public class Client extends RestTemplate {
 		return true;
 	}
 
+	private String checkEndpoint(String url) {
+		if (!url.toLowerCase().startsWith("http")) {
+			String ep = pickEndpoint();
+			if (ep != null) {
+				url = ep + (ep.endsWith("/") || url.startsWith("/") ? "" : "/") + url;
+			}
+		}
+		return url;
+	}
+
 	/**
 	 * Instrumented for header communication and error parsing
 	 * 
@@ -381,8 +415,9 @@ public class Client extends RestTemplate {
 	 * @param cls
 	 * @return the deserialized result
 	 */
+	@Override
 	@SuppressWarnings({ "rawtypes" })
-	public <T> T get(String url, Class<T> cls) {
+	public <T> T get(String url, Class<? extends T> cls) {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
@@ -448,6 +483,11 @@ public class Client extends RestTemplate {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public <T> T postFile(String url, Object data, Class<? extends T> cls) {
+		throw new KlabUnimplementedException("POST file unimplemented!");
 	}
 
 }

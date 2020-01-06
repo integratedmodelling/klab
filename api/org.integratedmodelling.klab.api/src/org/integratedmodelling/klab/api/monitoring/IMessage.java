@@ -206,6 +206,16 @@ public interface IMessage {
 		 */
 		CreateNamespace, CreateScenario, DeleteNamespace, DeleteLocalResource, CreateProject, DeleteProject,
 		CreateScript, DeleteScript, CreateTestCase, DeleteTestCase,
+		
+		/*
+		 * F->B: publish or update a local or public resource
+		 */
+		PublishLocalResource, UpdatePublicResource, 
+		
+		/*
+		 * B->F: respond to a request to publish a resource (just submit asynchronously).
+		 */
+		ResourceSubmitted,
 
 		/**
 		 * F->B: notification when files are explicitly changed, added or deleted;

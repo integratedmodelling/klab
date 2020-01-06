@@ -1,9 +1,10 @@
 package org.integratedmodelling.klab.rest;
 
-public class PublishResourceResponse {
+public class ResourcePublishResponse {
 
 	private String originalUrn;
 	private String temporaryId;
+	private String error;
 
 	public String getOriginalUrn() {
 		return originalUrn;
@@ -19,6 +20,14 @@ public class PublishResourceResponse {
 
 	public void setTemporaryId(String temporaryId) {
 		this.temporaryId = temporaryId;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
 	}
 
 }

@@ -68,6 +68,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActions;
 import org.integratedmodelling.klab.ide.ui.TimeEditor;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
@@ -460,6 +461,8 @@ public class ResourceEditor extends ViewPart {
 				: new ArrayList<>();
 
 		this.publishButton.setEnabled(this.isPublishable.getSelection() && !this.publishingNodes.isEmpty());
+
+		setDirty(false);
 
 	}
 
@@ -1117,11 +1120,15 @@ public class ResourceEditor extends ViewPart {
 		createActions();
 		initializeToolBar();
 		initializeMenu();
+		
+		setDirty(false);
 	}
 
 	protected void publish() {
-		// TODO Auto-generated method stub
-		System.out.println("PUBLISH HOSTIA!");
+		if (dirty) {
+			save();
+		}
+		KlabNavigatorActions.publishLocalResource(resource, publishingNodes);
 	}
 
 	protected void executeSelectedOperation() {

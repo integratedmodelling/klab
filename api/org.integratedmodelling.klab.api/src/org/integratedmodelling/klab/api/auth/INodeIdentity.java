@@ -56,4 +56,5 @@ public interface INodeIdentity extends IServerIdentity {
      */
     Set<String> getResources();
     
+    
 }

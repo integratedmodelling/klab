@@ -83,7 +83,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author ferdinando.villa
  *
  */
-public class Client extends RestTemplate {
+public class EngineClient extends RestTemplate {
 
 	public static final String ENGINE_DEFAULT_URL = "http://127.0.0.1:8283/modeler";
 
@@ -97,13 +97,13 @@ public class Client extends RestTemplate {
 
 	private static ClientHttpRequestFactory factory;
 
-	public static Client create(String url) {
+	public static EngineClient create(String url) {
 
 		if (factory == null) {
 			factory = new HttpComponentsClientHttpRequestFactory();
 		}
 
-		return new Client(factory, url);
+		return new EngineClient(factory, url);
 	}
 
 	public String getUrl() {
@@ -211,13 +211,13 @@ public class Client extends RestTemplate {
 		this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
 	}
 
-	private Client(ClientHttpRequestFactory factory, String url) {
+	private EngineClient(ClientHttpRequestFactory factory, String url) {
 		super(factory);
 		this.url = url;
 		setup();
 	}
 
-	private Client() {
+	private EngineClient() {
 		super(factory);
 		this.url = ENGINE_DEFAULT_URL;
 	}
@@ -229,7 +229,7 @@ public class Client extends RestTemplate {
 	 *            any identity.
 	 * @return a new
 	 */
-	public Client with(String authorization) {
+	public EngineClient with(String authorization) {
 
 		/*
 		 * TODO handle the chain of authorization properly. Tokens are only issued for
@@ -237,7 +237,7 @@ public class Client extends RestTemplate {
 		 * calls.
 		 */
 
-		Client ret = new Client();
+		EngineClient ret = new EngineClient();
 		ret.objectMapper = this.objectMapper;
 		ret.authToken = authorization;
 		ret.url = url;

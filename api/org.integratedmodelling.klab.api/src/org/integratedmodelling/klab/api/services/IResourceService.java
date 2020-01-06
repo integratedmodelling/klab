@@ -90,14 +90,14 @@ public interface IResourceService {
 	}
 
 	/**
-	 * Get a calculator for the passed resource, or null if the resource 
-	 * adapter can't make one.
+	 * Get a calculator for the passed resource, or null if the resource adapter
+	 * can't make one.
 	 * 
 	 * @param resource
 	 * @return
 	 */
 	IResourceCalculator getCalculator(IResource resource);
-	
+
 	/**
 	 * The local resource catalog is for resources created from local files or
 	 * specifications. These resources are created by the {@link IResourceValidator
@@ -314,5 +314,24 @@ public interface IResourceService {
 	 */
 	boolean isResourceOnline(String urn);
 
+	/**
+	 * Submit a resource for publication to the node identified by nodeId, which
+	 * must be an online node on the network. Return a temporary ID with which to
+	 * track the publication process. If anything goes wrong, a suitable exception
+	 * will be thrown.
+	 * 
+	 * @param resource
+	 * @param nodeId
+	 * @param suggestedName
+	 * @return a temporary ID to track the publishing.
+	 */
+	String submitResource(IResource resource, String nodeId, String suggestedName);
+
+	/**
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	boolean validateForPublication(IResource resource);
 
 }

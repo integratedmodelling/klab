@@ -99,8 +99,10 @@ import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
+import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
+import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SearchMatch;
@@ -517,6 +519,30 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		} else {
 			// TODO do something with the shape - must involve user to define semantics
 		}
+	}
+
+	@MessageHandler
+	private void publishResource(final ResourcePublishRequest request, IMessage.Type type) {
+
+		ResourcePublishResponse response = new ResourcePublishResponse();
+		if (type == IMessage.Type.PublishLocalResource) {
+			response.setOriginalUrn(request.getUrn());
+			IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
+			if (resource == null || resource.hasErrors()) {
+				response.setError("Resource has errors or is unknown to the engine");
+			} else {
+				try {
+					String tempId = Resources.INSTANCE.submitResource(resource, request.getNode().getId(),
+						request.getSuggestedName());
+					response.setTemporaryId(tempId);
+				} catch (Throwable e) {
+					response.setError(e.getMessage());
+				}
+			}
+		} else {
+			response.setError("Updating of public resources is still unimplemented");
+		}
+		monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceSubmitted, response);
 	}
 
 	@MessageHandler

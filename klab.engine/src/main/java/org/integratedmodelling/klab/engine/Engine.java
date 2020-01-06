@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Klab.AnnotationHandler;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
+import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
@@ -48,6 +49,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
@@ -321,11 +323,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 	public static Engine start(ICertificate certificate) {
 		return start(certificate, new EngineStartupOptions());
 	}
-	
+
 	public static Engine start(EngineStartupOptions options) {
 		return start(null, options);
 	}
-	
+
 	public static Engine start(ICertificate certificate, IEngineStartupOptions options) {
 
 		if (certificate == null) {
@@ -363,7 +365,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			System.out.println(
 					"\nStartup successful: " + ret.getUsername() + " v" + Version.CURRENT + " on " + new Date());
 		}
-		
+
 		return ret;
 	}
 
@@ -763,8 +765,13 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	@Override
 	public boolean isOnline() {
+		return Network.INSTANCE.getHub() != null && Network.INSTANCE.getNodes().size() > 0;
+	}
+
+	@Override
+	public IClient getClient() {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
 	}
 
 }

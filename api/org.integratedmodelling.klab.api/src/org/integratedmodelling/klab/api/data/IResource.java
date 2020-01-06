@@ -487,6 +487,15 @@ public interface IResource extends IProvenance.Node, Serializable {
 	boolean hasErrors();
 
 	/**
+	 * Return an empty string if the resource has no issues, otherwise a message that
+	 * describes any issue (errors, warnings and the like) that users should be aware 
+	 * of. Currently used only if {{@link #hasErrors()} returns true.
+	 * 
+	 * @return a (possibly empty) status message.
+	 */
+	String getStatusMessage();
+	
+	/**
 	 * Return all local resource file paths, as slash-separated strings starting at
 	 * a point depending on the resource type (e.g. in local resources it will start
 	 * at the project name). May be empty, never null. All paths will start with the

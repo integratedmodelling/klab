@@ -8,8 +8,8 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
 /**
- * All functions related to k.LAB network authentication, authorization and
- * usage.
+ * All functions related to k.LAB nodes. The network service is built at
+ * authentication and refreshed periodically.
  * 
  * @author Ferd
  *
@@ -60,6 +60,14 @@ public interface INetworkService {
 	 */
 	<T, K, V> T broadcastPost(V request, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
 			IMonitor monitor);
+
+	/**
+	 * Get the (online) node identified by name, or null if offline or unknown.
+	 * 
+	 * @param name
+	 * @return the node or null
+	 */
+	INodeIdentity getNode(String name);
 
 
 }

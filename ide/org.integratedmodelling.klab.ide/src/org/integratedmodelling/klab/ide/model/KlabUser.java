@@ -7,6 +7,7 @@ public class KlabUser {
 	private String username = "Offline";
 	private String email = "";
 	private boolean online;
+	private String token;
 
 	public KlabUser() {
 	}

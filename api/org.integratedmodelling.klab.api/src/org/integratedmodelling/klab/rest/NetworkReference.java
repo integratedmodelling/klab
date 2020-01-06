@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A picture of the current network accessible to the engine user. Should only include
- * online nodes at the time of calling. All 
+ * A picture of network currently accessible to the engine user. Should only
+ * include online nodes at the time of calling; carries the most up to date
+ * JWT token to talk to them.
  * 
  * @author Ferd
  *
@@ -28,7 +29,7 @@ public class NetworkReference {
 	public void setResources(List<String> resources) {
 		this.resources = resources;
 	}
-	
+
 	public HubReference getHub() {
 		return hub;
 	}
@@ -73,5 +74,4 @@ public class NetworkReference {
 	public String toString() {
 		return "NetworkReference [publishing=" + publishing + ", hub=" + hub + ", nodes=" + nodes + "]";
 	}
-
 }

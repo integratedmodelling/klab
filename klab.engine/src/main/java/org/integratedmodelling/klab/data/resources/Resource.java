@@ -507,4 +507,10 @@ public class Resource implements IResource {
 		return granules;
 	}
 
+	@Override
+	public String getStatusMessage() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
 }
