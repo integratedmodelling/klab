@@ -31,18 +31,17 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-// TODO: Auto-generated Javadoc
 /**
  * A catalog (simply a map String -> T) read from a JSON file and capable of
  * resynchronizing intelligently on request.
  * <p>
- * Any put/remove operations won't sync the contents to the backing file. To
- * synchronize the file write() must be called.
+ * Any put/remove operations won't sync the contents to the backing file unless
+ * setSynchronization(true) is called first. Otherwise synchronize the file
+ * manually by calling write() when necessary.
  * 
  * @author ferdinando.villa
  * @version $Id: $Id
- * @param <T>
- *            the type of the resource in the catalog
+ * @param <T> the type of the resource in the catalog
  */
 public class FileCatalog<T> extends LinkedHashMap<String, T> {
 
@@ -52,19 +51,16 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 	File file;
 	long timestamp;
 	boolean error;
+	boolean autosync = false;
 
 	/**
 	 * Creates the.
 	 *
-	 * @param <T>
-	 *            the main type for the collection
-	 * @param url
-	 *            the URL containing the JSON data catalog
-	 * @param interfaceClass
-	 *            the type of the interface returned (or the implementation type
-	 *            itself)
-	 * @param implementationClass
-	 *            the class implementing the interface
+	 * @param <T>                 the main type for the collection
+	 * @param url                 the URL containing the JSON data catalog
+	 * @param interfaceClass      the type of the interface returned (or the
+	 *                            implementation type itself)
+	 * @param implementationClass the class implementing the interface
 	 * @return a new URL-based catalog
 	 */
 	public static <T> FileCatalog<T> create(URL url, Class<T> interfaceClass, Class<? extends T> implementationClass) {
@@ -74,15 +70,11 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 	/**
 	 * Creates the.
 	 *
-	 * @param <T>
-	 *            the interface type
-	 * @param file
-	 *            the containing the JSON data catalog
-	 * @param interfaceClass
-	 *            the type of the interface returned (or the implementation type
-	 *            itself)
-	 * @param implementationClass
-	 *            the class implementing the interface
+	 * @param <T>                 the interface type
+	 * @param file                the containing the JSON data catalog
+	 * @param interfaceClass      the type of the interface returned (or the
+	 *                            implementation type itself)
+	 * @param implementationClass the class implementing the interface
 	 * @return a new file-based catalog
 	 */
 	public static <T> FileCatalog<T> create(File file, Class<T> interfaceClass,
@@ -102,12 +94,9 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 	/**
 	 * Instantiates a new file catalog.
 	 *
-	 * @param file
-	 *            the file
-	 * @param type
-	 *            the type
-	 * @param cls
-	 *            the cls
+	 * @param file the file
+	 * @param type the type
+	 * @param cls  the cls
 	 */
 	public FileCatalog(File file, Class<? extends T> type, Class<? extends T> cls) {
 
@@ -140,11 +129,10 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 	/**
 	 * Synchronize, reading the file if necessary.
 	 *
-	 * @param stream
-	 *            the stream
+	 * @param stream the stream
 	 * @return true if no errors. Non-existing file is not an error.
-	 * @throws java.lang.ClassCastException
-	 *             if the data read are not of the type configured
+	 * @throws java.lang.ClassCastException if the data read are not of the type
+	 *                                      configured
 	 */
 	public boolean synchronize(InputStream stream) {
 
@@ -178,8 +166,7 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 	 * Write the map to the backing file. Call after making changes to the
 	 * underlying map.
 	 * 
-	 * @throws IllegalStateException
-	 *             if the catalog was read from a URL.
+	 * @throws IllegalStateException if the catalog was read from a URL.
 	 */
 	public void write() {
 		if (this.file != null && this.file.exists()) {
@@ -205,6 +192,73 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 
 	public File getFile() {
 		return file;
+	}
+
+	public FileCatalog<T> setSynchronization(boolean b) {
+		this.autosync = b;
+		return this;
+	}
+
+	@Override
+	public T put(String key, T value) {
+		T ret = super.put(key, value);
+		if (autosync) {
+			write();
+		}
+		return ret;
+	}
+
+	@Override
+	public void putAll(Map<? extends String, ? extends T> m) {
+		super.putAll(m);
+		if (autosync) {
+			write();
+		}
+	}
+
+	@Override
+	public T putIfAbsent(String key, T value) {
+		T ret = super.putIfAbsent(key, value);
+		if (autosync && ret == null) {
+			write();
+		}
+		return ret;
+	}
+
+	@Override
+	public boolean remove(Object key, Object value) {
+		boolean ret = super.remove(key, value);
+		if (autosync && ret) {
+			write();
+		}
+		return ret;
+	}
+
+	@Override
+	public T remove(Object key) {
+		T ret = super.remove(key);
+		if (autosync && ret != null) {
+			write();
+		}
+		return ret;
+	}
+
+	@Override
+	public boolean replace(String key, T oldValue, T newValue) {
+		boolean ret = super.replace(key, oldValue, newValue);
+		if (autosync && ret) {
+			write();
+		}
+		return ret;
+	}
+
+	@Override
+	public T replace(String key, T value) {
+		T ret = super.replace(key, value);
+		if (autosync && ret != null) {
+			write();
+		}
+		return ret;
 	}
 
 }

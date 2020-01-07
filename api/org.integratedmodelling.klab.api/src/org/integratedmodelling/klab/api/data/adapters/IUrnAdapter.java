@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * Base interface for a URN adapter, which can produce non-semantic data from
- * simple URNs with the universal protocol (klab:adapter:....).
+ * simple URNs with the universal protocol ([klab/nodename]:adapter:....).
  * 
  * @author Ferd
  *

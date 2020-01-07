@@ -1,7 +1,8 @@
-package klab;
 syntax = "proto3";
+package org.integratedmodelling.klab.data.encoding;
 
 //import "google/protobuf/any.proto";
+
 /**
  * The data response to a URN get() request. Will contain a state or one or more objects,
  * with the correspondent geometry for validation and optional semantics.

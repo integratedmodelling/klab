@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -316,16 +317,15 @@ public interface IResourceService {
 
 	/**
 	 * Submit a resource for publication to the node identified by nodeId, which
-	 * must be an online node on the network. Return a temporary ID with which to
-	 * track the publication process. If anything goes wrong, a suitable exception
-	 * will be thrown.
+	 * must be an online node on the network. Return an open ticket that will be
+	 * closed when publication is done.
 	 * 
 	 * @param resource
 	 * @param nodeId
 	 * @param suggestedName
 	 * @return a temporary ID to track the publishing.
 	 */
-	String submitResource(IResource resource, String nodeId, String suggestedName);
+	ITicket submitResource(IResource resource, String nodeId, String suggestedName);
 
 	/**
 	 * 

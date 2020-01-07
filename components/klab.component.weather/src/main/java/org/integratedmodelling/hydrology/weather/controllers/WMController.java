@@ -132,6 +132,7 @@ public class WMController {
 		}
 
 		if (out.exists()) {
+			
 			WeatherStation ws = new WeatherStation(name, out);
 
 			WeatherStation existing = WeatherFactory.INSTANCE.getDatabase().retrieve(ws.getId());

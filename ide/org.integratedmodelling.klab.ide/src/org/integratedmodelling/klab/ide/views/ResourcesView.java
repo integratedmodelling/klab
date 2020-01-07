@@ -26,6 +26,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -49,7 +50,11 @@ import org.integratedmodelling.klab.rest.ResourceReference;
 
 public class ResourcesView extends ViewPart {
 
+	public static final int LOCAL = 0;
+	public static final int PUBLIC = 1;
+	
 	public static final String ID = "org.integratedmodelling.klab.ide.views.ResourcesView";
+	
 	private Table table;
 	private TableViewer tableViewer;
 	private Text searchField;
@@ -57,6 +62,8 @@ public class ResourcesView extends ViewPart {
 	private List<EResourceReference> currentMatches = new ArrayList<>();
 	private KlabPeer klab;
 	private MenuItem mntmPreviewResource;
+	private Combo targetSelector;
+	private int mode = LOCAL;
 
 	class LabelProvider implements ITableLabelProvider {
 
@@ -155,7 +162,10 @@ public class ResourcesView extends ViewPart {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
 		{
-			searchField = new Text(container, SWT.BORDER);
+			Composite searchContainer = new Composite(container, SWT.NONE);
+			searchContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			searchContainer.setLayout(new GridLayout(2, false));
+			searchField = new Text(searchContainer, SWT.BORDER);
 			searchField.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyReleased(KeyEvent e) {
@@ -164,6 +174,15 @@ public class ResourcesView extends ViewPart {
 				}
 			});
 			searchField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			targetSelector = new Combo(searchContainer, SWT.READ_ONLY);
+			targetSelector.add("Local ");
+			targetSelector.add("Public");
+			targetSelector.select(0);
+			targetSelector.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+				}
+			});
 		}
 		{
 			tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
@@ -292,11 +311,24 @@ public class ResourcesView extends ViewPart {
 				mntmPreviewResource.setEnabled(true);
 			});
 			break;
+		case NetworkStatus:
+			// TODO if there's anything new and !(set to local + focus on search bar), switch to public and
+			// reload.
+			break;
 		default:
 			break;
 		}
 	}
 
+	/**
+	 * Switch to public (1) or local (0)
+	 */
+	public void switchTo(int mode) {
+		if (this.mode != mode) {
+			
+		}
+	}
+	
 	protected void search(String text) {
 		currentMatches.clear();
 		if (text.length() > 1) {
