@@ -532,9 +532,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				response.setError("Resource has errors or is unknown to the engine");
 			} else {
 				try {
-					String tempId = Resources.INSTANCE.submitResource(resource, request.getNode().getId(),
-						request.getSuggestedName());
-					response.setTemporaryId(tempId);
+					String ticketId = Resources.INSTANCE.submitResource(resource, request.getNode().getId(),
+						request.getSuggestedName()).getId();
+					response.setTicketId(ticketId);
 				} catch (Throwable e) {
 					response.setError(e.getMessage());
 				}

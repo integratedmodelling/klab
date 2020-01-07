@@ -13,26 +13,12 @@ import java.util.Collection;
 public interface ITicketManager {
 
 	/**
-	 * Create a new ticket with an arbitrary unique ID. The parameters define the
-	 * ticket (type, status and key/pair data).
-	 * 
-	 * @param objects
-	 */
-	ITicket create(Object... objects);
-
-	/**
-	 * Open a new ticket. Must create it first.
+	 * Open a new ticket.
 	 * 
 	 * @param ticket
 	 */
-	void open(ITicket ticket);
-
-	/**
-	 * 
-	 * @param ticket
-	 * @param status
-	 */
-	void resolve(ITicket ticket, ITicket.Status status);
+	ITicket open(Object... data);
+	
 
 	/**
 	 * Return the ticket(s) correspondent to the passed selectors, which can be

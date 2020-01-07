@@ -56,7 +56,6 @@ import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
-import org.integratedmodelling.klab.common.monitoring.Ticket;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
@@ -1409,9 +1408,8 @@ public enum Resources implements IResourceService {
 	}
 
 	@Override
-	public String submitResource(IResource resource, String nodeId, String suggestedName) {
+	public ITicket submitResource(IResource resource, String nodeId, String suggestedName) {
 
-		final String ret = NameGenerator.shortUUID();
 		final INodeIdentity node = Network.INSTANCE.getNode(nodeId);
 
 		if (resource.hasErrors() || !validateForPublication(resource)) {
@@ -1423,6 +1421,11 @@ public enum Resources implements IResourceService {
 					+ nodeId + " unresponsive or offline");
 		}
 
+		IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
+		String userId = user == null ? "anonymous" : user.getUsername();
+
+		final ITicket ret = Klab.INSTANCE.getTicketManager().open("user", userId, ITicket.Type.ResourceSubmission, "node", nodeId, "resource", resource.getUrn());
+		
 		new Thread() {
 			@Override
 			public void run() {
@@ -1431,20 +1434,14 @@ public enum Resources implements IResourceService {
 					if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 						if (resource.getLocalPaths().isEmpty()) {
 							ResourceSubmission submission = new ResourceSubmission();
-							submission.setTemporaryId(ret);
+							submission.setTemporaryId(ret.getId());
 							submission.setData(((Resource) resource).getReference());
 							ResourceSubmissionResponse response = node.getClient().post(
 									API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, submission, ResourceSubmissionResponse.class);
 							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
-								Klab.INSTANCE.getTicketManager()
-										.open(Ticket.create(response.getTemporaryId(), ITicket.Type.ResourceSubmission,
-												"urn", resource.getUrn(), "message", response.getMessage()));
+								ret.resolve();
 							} else {
-								Klab.INSTANCE.getTicketManager()
-										.resolve(
-												Ticket.create(ret, ITicket.Type.ResourceSubmission, "urn",
-														resource.getUrn(), "message", response.getMessage()),
-												ITicket.Status.ERROR);
+								ret.error("Node rejected submission: " + response.getMessage());
 							}
 						} else {
 							// zip the files and submit the archive with the temporary ID as the
@@ -1455,15 +1452,9 @@ public enum Resources implements IResourceService {
 							ResourceSubmissionResponse response = node.getClient().postFile(
 									API.NODE.RESOURCE.SUBMIT_FILES, zipFile, ResourceSubmissionResponse.class);
 							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
-								Klab.INSTANCE.getTicketManager()
-										.open(Ticket.create(response.getTemporaryId(), ITicket.Type.ResourceSubmission,
-												"urn", resource.getUrn(), "message", response.getMessage()));
+								ret.resolve();
 							} else {
-								Klab.INSTANCE.getTicketManager()
-										.resolve(
-												Ticket.create(ret, ITicket.Type.ResourceSubmission, "urn",
-														resource.getUrn(), "message", response.getMessage()),
-												ITicket.Status.ERROR);
+								ret.error("Node rejected submission: " + response.getMessage());
 							}
 
 						}
@@ -1472,8 +1463,7 @@ public enum Resources implements IResourceService {
 						// ResourceReference.
 					}
 				} catch (Throwable e) {
-					Klab.INSTANCE.getTicketManager().resolve(Ticket.create(ret, ITicket.Type.ResourceSubmission, "urn",
-							resource.getUrn(), "message", e.getMessage()), ITicket.Status.ERROR);
+					ret.error("Error during publishing: " + e.getMessage());
 				}
 
 			}

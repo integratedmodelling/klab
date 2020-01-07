@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.common.monitoring;
+package org.integratedmodelling.klab.client.tickets;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -168,6 +168,7 @@ public class Ticket implements ITicket {
 		this.type = t.type;
 		this.id = t.id;
 	}
+
 	@Override
 	public void delete() {
 		manager.remove(this);
@@ -176,16 +177,17 @@ public class Ticket implements ITicket {
 	@Override
 	public void resolve() {
 		this.status = Status.RESOLVED;
-		refresh();
+		this.resolutionDate = new Date(System.currentTimeMillis());
 	}
 
 	@Override
 	public void error(String status) {
 		this.status = Status.ERROR;
+		this.resolutionDate = new Date(System.currentTimeMillis());
 		if (status != null) {
 			this.statusMessage = status;
 		}
-		refresh();
+		this.manager.put(this);
 	}
 
 }

@@ -51,7 +51,8 @@ public class Urn {
 	/**
 	 * Whether the URN can be processed by any node. In this case, the URN has no
 	 * attached data and the catalog name is the ID of the adapter that will process
-	 * it.
+	 * it. If we don't have the adapter, we will choose a node among those that do,
+	 * using the load factor or some other criterion.
 	 * 
 	 * @return true if universal.
 	 */

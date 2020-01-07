@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.common.monitoring;
+package org.integratedmodelling.klab.client.tickets;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.ITicketManager;
-import org.integratedmodelling.klab.utils.FileCatalog;
+import org.integratedmodelling.klab.client.utils.FileCatalog;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class TicketManager implements ITicketManager {
@@ -22,7 +22,7 @@ public class TicketManager implements ITicketManager {
 		catalog = Collections
 				.synchronizedMap(new FileCatalog<Ticket>(file, Ticket.class, Ticket.class).setSynchronization(true));
 	}
-	
+
 	@Override
 	public Collection<ITicket> get(Object... selectors) {
 		List<ITicket> ret = new ArrayList<>();

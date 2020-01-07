@@ -20,6 +20,29 @@ public interface ITicket {
 	enum Status {
 		OPEN, RESOLVED, ERROR
 	}
+	
+	/**
+	 * Refresh the ticket from the manager after changes.
+	 * 
+	 */
+	void refresh();
+	
+	/**
+	 * Delete the ticket from the manager.
+	 * 
+	 */
+	void delete();
+	
+	/**
+	 * Resolve the ticket and update in the manager.
+	 * 
+	 */
+	void resolve();
+	
+	/**
+	 * Resolve the ticket as error and update in the manager.
+	 */
+	void error(String status);
 
 	/**
 	 * Ticket has a permanent, unique ID. In the ticket manager, it's assigned
@@ -73,5 +96,10 @@ public interface ITicket {
 	 * @return
 	 */
 	String getStatusMessage();
+
+	/**
+	 * Update and save.
+	 */
+	void update(Object... objects);
 
 }

@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.rest;
 public class ResourcePublishResponse {
 
 	private String originalUrn;
-	private String temporaryId;
+	private String ticketId;
 	private String error;
 
 	public String getOriginalUrn() {
@@ -14,12 +14,12 @@ public class ResourcePublishResponse {
 		this.originalUrn = originalUrn;
 	}
 
-	public String getTemporaryId() {
-		return temporaryId;
+	public String getTicketId() {
+		return ticketId;
 	}
 
-	public void setTemporaryId(String temporaryId) {
-		this.temporaryId = temporaryId;
+	public void setTicketId(String temporaryId) {
+		this.ticketId = temporaryId;
 	}
 
 	public String getError() {

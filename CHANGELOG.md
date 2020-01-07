@@ -27,6 +27,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- Add ITicket and ITicketManager for basic, file-based ticket management in both
+  engine and client packages.
 - IDE reads status of network periodically and enables publish action if there are
   nodes that allow publishing for the adapter of the resource.
 - New Configuration::getProperty method uses overriding system properties.
