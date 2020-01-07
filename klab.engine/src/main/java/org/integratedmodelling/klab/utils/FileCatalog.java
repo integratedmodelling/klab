@@ -196,7 +196,7 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
      * @throws IllegalStateException
      *             if the catalog was read from a URL.
      */
-    public void write() {
+    public synchronized void write() {
         if (this.file != null && this.file.exists()) {
 
             ObjectMapper objectMapper = new ObjectMapper();

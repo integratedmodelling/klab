@@ -90,6 +90,7 @@ import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.ResourceSubmission;
+import org.integratedmodelling.klab.rest.ResourceSubmissionResponse;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -1432,9 +1433,18 @@ public enum Resources implements IResourceService {
 							ResourceSubmission submission = new ResourceSubmission();
 							submission.setTemporaryId(ret);
 							submission.setData(((Resource) resource).getReference());
-							if (node.getClient().post(API.NODE.RESOURCE.SUBMIT, submission, Boolean.class)) {
+							ResourceSubmissionResponse response = node.getClient().post(
+									API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, submission, ResourceSubmissionResponse.class);
+							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
 								Klab.INSTANCE.getTicketManager()
-										.open(Ticket.create(ret, ITicket.Type.ResourceSubmission));
+										.open(Ticket.create(response.getTemporaryId(), ITicket.Type.ResourceSubmission,
+												"urn", resource.getUrn(), "message", response.getMessage()));
+							} else {
+								Klab.INSTANCE.getTicketManager()
+										.resolve(
+												Ticket.create(ret, ITicket.Type.ResourceSubmission, "urn",
+														resource.getUrn(), "message", response.getMessage()),
+												ITicket.Status.ERROR);
 							}
 						} else {
 							// zip the files and submit the archive with the temporary ID as the
@@ -1442,24 +1452,35 @@ public enum Resources implements IResourceService {
 							File zipFile = new File(
 									System.getProperty("java.io.tmpdir") + File.separator + ret + ".zip");
 							ZipUtils.zip(zipFile, new File(resource.getLocalPath()), false, true);
-							if (node.getClient().postFile(API.NODE.RESOURCE.SUBMIT, zipFile, Boolean.class)) {
+							ResourceSubmissionResponse response = node.getClient().postFile(
+									API.NODE.RESOURCE.SUBMIT_FILES, zipFile, ResourceSubmissionResponse.class);
+							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
 								Klab.INSTANCE.getTicketManager()
-										.open(Ticket.create(ret, ITicket.Type.ResourceSubmission));
+										.open(Ticket.create(response.getTemporaryId(), ITicket.Type.ResourceSubmission,
+												"urn", resource.getUrn(), "message", response.getMessage()));
+							} else {
+								Klab.INSTANCE.getTicketManager()
+										.resolve(
+												Ticket.create(ret, ITicket.Type.ResourceSubmission, "urn",
+														resource.getUrn(), "message", response.getMessage()),
+												ITicket.Status.ERROR);
 							}
+
 						}
 					} else {
 						// TODO republish an update to a remote resource - should be just the updated
 						// ResourceReference.
 					}
 				} catch (Throwable e) {
-					Klab.INSTANCE.getTicketManager().resolve(Ticket.create(ret, ITicket.Type.ResourceSubmission),
-							ITicket.Status.ERROR);
+					Klab.INSTANCE.getTicketManager().resolve(Ticket.create(ret, ITicket.Type.ResourceSubmission, "urn",
+							resource.getUrn(), "message", e.getMessage()), ITicket.Status.ERROR);
 				}
 
 			}
 		}.start();
 
 		return ret;
+
 	}
 
 	@Override

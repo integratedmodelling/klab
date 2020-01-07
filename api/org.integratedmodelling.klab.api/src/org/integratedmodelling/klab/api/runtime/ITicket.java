@@ -18,24 +18,51 @@ public interface ITicket {
 	}
 
 	enum Status {
-		OPEN, CLOSED, ERROR
+		OPEN, RESOLVED, ERROR
 	}
 
+	/**
+	 * Ticket has a permanent, unique ID. In the ticket manager, it's assigned
+	 * explicitly.
+	 * 
+	 * @return
+	 */
 	String getId();
 
+	/**
+	 * Immutable post date.
+	 * 
+	 * @return
+	 */
 	Date getPostDate();
 
 	/**
-	 * Date of resolution (closing or error), or null.
+	 * Date of resolution (closing or error), or null. May go back to null if ticket
+	 * is reopened. For now, no history is kept.
 	 * 
 	 * @return
 	 */
 	Date getResolutionDate();
 
+	/**
+	 * Ticket status.
+	 * 
+	 * @return
+	 */
 	Status getStatus();
 
+	/**
+	 * Ticket type.
+	 * 
+	 * @return
+	 */
 	Type getType();
 
+	/**
+	 * Arbitrary data. All strings for good behavior across network endpoints.
+	 * 
+	 * @return
+	 */
 	Map<String, String> getData();
 
 	/**

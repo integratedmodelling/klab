@@ -44,7 +44,7 @@ public interface IClient {
 	 * @param cls
 	 * @return
 	 */
-	<T> T postFile(String url, Object data, Class<? extends T> cls);
+	<T> T postFile(String url, File data, Class<? extends T> cls);
 
 	/**
 	 * Download a file through a GET call into the file path of choice. Throw

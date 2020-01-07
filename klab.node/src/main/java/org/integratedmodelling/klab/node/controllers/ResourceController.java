@@ -15,12 +15,16 @@ import org.integratedmodelling.klab.node.resources.FileStorageService;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.ResourceSubmission;
+import org.integratedmodelling.klab.rest.ResourceSubmissionResponse;
+import org.integratedmodelling.klab.rest.ResourceSubmissionResponse.Status;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -82,27 +86,34 @@ public class ResourceController {
 	 * @param principal
 	 * @return
 	 */
-	@PutMapping(API.NODE.RESOURCE.SUBMIT)
-	public boolean submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
+	@PutMapping(API.NODE.RESOURCE.SUBMIT_FILES)
+	@ResponseBody
+	public ResourceSubmissionResponse submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
 
+		ResourceSubmissionResponse ret = new ResourceSubmissionResponse();
+		
 		String publishId = file.getName();
 		String fileName = fileStorageService.storeFile(file);
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
 				.path(fileName).toUriString();
 
 		/*
-		 * unzip in temporary area and load resource.json
-		 */
-
-		/*
 		 * ensure we can handle this
 		 */
 
+		/*
+		 * submit and create ticket
+		 */
+		
+		
 		// thread should unzip resource, load resource.json, establish adapter, call the
 		// validator, build resource and import it
 		// in public catalog
-
-		return false;
+		
+		ret.setTemporaryId(publishId);
+		ret.setStatus(Status.ACCEPTED);
+		
+		return ret;
 	}
 
 	/**
@@ -114,18 +125,24 @@ public class ResourceController {
 	 * @param principal
 	 * @return
 	 */
-	@PostMapping(API.NODE.RESOURCE.SUBMIT)
+	@PostMapping(value = API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public boolean submitResource(ResourceSubmission resource, Principal principal) {
+	public ResourceSubmissionResponse submitResource(@RequestBody ResourceSubmission resource, Principal principal) {
 
-		boolean ret = false;
+		ResourceSubmissionResponse ret = new ResourceSubmissionResponse();
 		
 		System.out.println("ZIO PAPA RESOURCE " + resource.getData().getUrn() + " SUBMITTED FOR PUBLICATION");
+
+		/*
+		 * create ticket
+		 */
+//		
+//		IResource res = resourceManager.publishResource(resource.getData(), null, (EngineAuthorization) principal,
+//				Klab.INSTANCE.getRootMonitor());
+
+		ret.setTemporaryId(resource.getTemporaryId());
+		ret.setStatus(Status.ACCEPTED);
 		
-		IResource res = resourceManager.publishResource(resource.getData(), null, (EngineAuthorization) principal,
-				Klab.INSTANCE.getRootMonitor());
-
-
 		return ret;
 	}
 

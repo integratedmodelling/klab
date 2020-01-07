@@ -41,7 +41,6 @@ import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
@@ -65,6 +64,8 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -298,8 +299,13 @@ public class Client extends RestTemplate implements IClient {
 	@SuppressWarnings({ "rawtypes" })
 	public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
 
+		url = checkEndpoint(url);
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
+		if (data != null) {
+			headers.setContentType(MediaType.APPLICATION_JSON);
+		}
 		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 		if (authToken != null) {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
@@ -486,8 +492,50 @@ public class Client extends RestTemplate implements IClient {
 	}
 
 	@Override
-	public <T> T postFile(String url, Object data, Class<? extends T> cls) {
-		throw new KlabUnimplementedException("POST file unimplemented!");
+	public <T> T postFile(String url, File file, Class<? extends T> cls) {
+
+		url = checkEndpoint(url);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "application/json");
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		if (authToken != null) {
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
+		}
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		body.add("file", file);
+		HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
+
+		try {
+
+			ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+
+			switch (response.getStatusCodeValue()) {
+			case 302:
+			case 403:
+				throw new KlabAuthorizationException("unauthorized request " + url);
+			case 404:
+				throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+			}
+
+			if (response.getBody() == null) {
+				return null;
+			}
+			if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
+				Object exception = response.getBody().get("exception");
+				// Object path = response.getBody().get("path");
+				Object message = response.getBody().get("message");
+				// Object error = response.getBody().get("error");
+				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+			}
+
+			return objectMapper.convertValue(response.getBody(), cls);
+
+		} catch (RestClientException e) {
+			throw new KlabIOException(e);
+		}
+
 	}
 
 }

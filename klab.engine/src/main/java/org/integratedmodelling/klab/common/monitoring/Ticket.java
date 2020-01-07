@@ -8,13 +8,14 @@ import org.integratedmodelling.klab.api.runtime.ITicket;
 
 public class Ticket implements ITicket {
 
-	String id;
-	Date postDate;
-	Date resolutionDate;
-	Status status = Status.OPEN;
-	Type type;
-	Map<String, String> data = new HashMap<>();
-	String statusMessage;
+	private String id;
+	private Date postDate;
+	private Date resolutionDate;
+	private Status status = Status.OPEN;
+	private Type type;
+	private Map<String, String> data = new HashMap<>();
+	private String statusMessage;
+	private boolean seen = false;
 
 	public static Ticket create(String id, Object... objects) {
 		Ticket ret = new Ticket();
@@ -95,6 +96,38 @@ public class Ticket implements ITicket {
 
 	public void setStatusMessage(String statusMessage) {
 		this.statusMessage = statusMessage;
+	}
+
+	public boolean isSeen() {
+		return seen;
+	}
+
+	public void setSeen(boolean seen) {
+		this.seen = seen;
+	}
+
+	public boolean matches(Object[] selectors) {
+		if (selectors != null) {
+			for (int i = 0; i < selectors.length; i++) {
+				if (selectors[i] instanceof Status) {
+					if (status != (Status) selectors[i]) {
+						return false;
+					}
+				} else if (selectors[i] instanceof Type) {
+					if (type != (Type) selectors[i]) {
+						return false;
+					}
+				} else {
+					String dat = data.get(selectors[i]);
+					Object match = selectors[++i];
+					if (!(dat == null && match == null) || match == null || dat != null
+							|| !dat.equals(match.toString())) {
+						return false;
+					}
+				}
+			}
+		}
+		return selectors != null;
 	}
 
 }
