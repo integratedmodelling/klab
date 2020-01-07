@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.hub.exception.GroupRequestTokenFailedExcepti
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
-import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
@@ -42,6 +41,7 @@ import org.integratedmodelling.klab.hub.tokens.LostPasswordClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.NewUserClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.VerifyEmailClickbackToken;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
+import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.Role;
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.User.AccountStatus;

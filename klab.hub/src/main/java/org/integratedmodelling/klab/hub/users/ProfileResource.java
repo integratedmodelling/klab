@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.models;
+package org.integratedmodelling.klab.hub.users;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,8 +11,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.integratedmodelling.klab.hub.users.GroupEntry;
-import org.integratedmodelling.klab.hub.users.Role;
+import org.integratedmodelling.klab.hub.models.Constraints;
+import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.rest.Group;
 import org.joda.time.DateTime;

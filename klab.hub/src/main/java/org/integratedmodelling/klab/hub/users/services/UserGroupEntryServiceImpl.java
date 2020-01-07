@@ -11,8 +11,9 @@ import org.integratedmodelling.klab.hub.users.GroupEntry;
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.commands.UpdateUsers;
 import org.joda.time.DateTime;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	
 	private UserRepository userRepository;
@@ -37,7 +38,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 			);		
 		}
 		
-		new UpdateUsers(users, userRepository);
+		new UpdateUsers(users, userRepository).execute();
 	}
 	
 	@Override
@@ -59,7 +60,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 			);		
 		}
 		
-		new UpdateUsers(users, userRepository);
+		new UpdateUsers(users, userRepository).execute();
 	}
 	
 	private Set<GroupEntry> createGroupEntries(Set<String> groupnames, DateTime experiation) {
