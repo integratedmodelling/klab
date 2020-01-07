@@ -153,6 +153,14 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
 	 * time at all.
 	 */
 	IScale initialization();
+	
+	/**
+	 * Return a new scale without the passed dimension.
+	 * 
+	 * @param dimension
+	 * @return
+	 */
+	IScale without(IGeometry.Dimension.Type dimension);
 
 	/**
 	 * Return a scale optimized for iterating along the dimensions passed here (use

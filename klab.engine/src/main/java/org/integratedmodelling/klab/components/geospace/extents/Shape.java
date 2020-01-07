@@ -836,5 +836,12 @@ public class Shape extends AbstractExtent implements IShape {
 		// TODO Auto-generated method stub
 		return this;
 	}
-
+	
+	@Override
+	public IExtent getExtent(long stateIndex) {
+		if (stateIndex != 0) {
+			throw new IllegalArgumentException("cannot access state #" + stateIndex + " in a Shape");
+		}
+		return this;
+	}
 }

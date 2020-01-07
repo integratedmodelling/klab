@@ -163,14 +163,13 @@ public interface API {
 			public static final String SUBMIT = "/indexing/submit";
 
 			/**
-			 * Request suggestions for queries in context matching a query string and 
-			 * user permissions, sorted by match score and (increasing) computational
-			 * load.
+			 * Request suggestions for queries in context matching a query string and user
+			 * permissions, sorted by match score and (increasing) computational load.
 			 * 
 			 * POST
 			 */
 			public static final String SUGGESTIONS = "/indexing/suggestions";
-			
+
 		}
 
 	}
@@ -185,7 +184,16 @@ public interface API {
 			 * 
 			 * PUT
 			 */
-			public static final String SUBMIT = "/resource/submit";
+			public static final String SUBMIT_FILES = "/resource/submitfiles";
+
+			/**
+			 * Like the above but used when the resource only contains a single
+			 * resource.json metadata file, whose contents are sent directly in a POST
+			 * message.
+			 * 
+			 * POST
+			 */
+			public static final String SUBMIT_DESCRIPTOR = "/resource/submitdescriptor";
 
 			/**
 			 * Publish a local resource to the public catalog of this node. Return the final

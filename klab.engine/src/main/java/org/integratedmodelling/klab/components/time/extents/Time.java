@@ -115,6 +115,8 @@ public class Time extends Extent implements ITime {
 		ret.start = new TimeInstant(0);
 		ret.end = new TimeInstant(0);
 		ret.multiplicity = 1;
+		ret.locatedLinearOffset = 0;
+		ret.locatedOffsets = new long[] { 0 };
 		ret.resolution = new ResolutionImpl(Resolution.Type.YEAR, 0.0);
 		if (scale != null) {
 			ret.setScaleId(scale.getScaleId());
@@ -123,7 +125,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	public static Time initialization(ITime time) {
-		Time ret = new Time((Time)time);
+		Time ret = new Time((Time) time);
 		ret.extentType = ITime.Type.INITIALIZATION;
 		ret.multiplicity = 1;
 		ret.locatedOffsets = new long[] { 0 };
@@ -167,7 +169,7 @@ public class Time extends Extent implements ITime {
 				ret.multiplicity = 0;
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -402,10 +404,10 @@ public class Time extends Extent implements ITime {
 			ret.locatedOffsets = new long[] { stateIndex + 1 };
 			ret.locatedLinearOffset = stateIndex + 1;
 		}
-		
+
 		// remember lineage to speed up location of conformant extents
 		ret.__id = this.__id;
-		
+
 		return ret;
 	}
 
@@ -656,8 +658,8 @@ public class Time extends Extent implements ITime {
 			} else if (locators[0] instanceof Time) {
 				if (((Time) locators[0]).is(ITime.Type.INITIALIZATION)) {
 					// initialization but with our scaleId
-					return new Time((Time) locators[0]).withScaleId(getScaleId());
-				} else if (((Time)locators[0]).__id == this.__id) {
+					return new Time((Time) locators[0]).withScaleId(getScaleId()).withLocatedOffset(0);
+				} else if (((Time) locators[0]).__id == this.__id) {
 					return (IExtent) locators[0];
 				}
 				/*
@@ -695,11 +697,17 @@ public class Time extends Extent implements ITime {
 		return "[" + this.start + " - " + this.end + "]";
 	}
 
-	private IExtent withScaleId(String scaleId) {
+	private Time withScaleId(String scaleId) {
 		setScaleId(scaleId);
 		return this;
 	}
 
+	private Time withLocatedOffset(long n) {
+		this.locatedLinearOffset = n;
+		this.locatedOffsets = new long[] { n };
+		return this;
+	}
+	
 	public Time upgradeForOccurrents() {
 		return create(ITime.Type.GRID, this.getResolution().getType(), 1.0, this.start, this.end,
 				TimeDuration.create(this.start, this.end, true));

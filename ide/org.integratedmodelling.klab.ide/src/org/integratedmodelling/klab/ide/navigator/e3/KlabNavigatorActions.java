@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.navigator.e3;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -36,13 +37,16 @@ import org.integratedmodelling.klab.ide.ui.wizards.NewNamespaceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewProjectWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewScriptWizard;
+import org.integratedmodelling.klab.ide.ui.wizards.PublishResourceWizard;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.DocumentationEditor;
 import org.integratedmodelling.klab.ide.views.ReferencesEditor;
 import org.integratedmodelling.klab.ide.views.ResourceEditor;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.rest.ResourceReference;
 
 public class KlabNavigatorActions {
 
@@ -160,6 +164,13 @@ public class KlabNavigatorActions {
 			request.getResourceUrns().add(resource.getResource().getUrn());
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.DeleteLocalResource, request);
 		}
+	}
+	
+	public static void publishLocalResource(ResourceReference resource, List<NodeReference> nodes) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+				new PublishResourceWizard(resource, nodes));
+		dialog.create();
+		dialog.open();
 	}
 	
 	public static void exportResource(EResource resource) {

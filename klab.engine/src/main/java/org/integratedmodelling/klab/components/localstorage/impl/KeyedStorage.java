@@ -27,11 +27,13 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 	private BiMap<T, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
 	private IDataKey dataKey = null;
 	private Class<? extends T> cls;
+	private IGeometry geometry;
 
 	public KeyedStorage(IGeometry geometry, Class<? extends T> cls) {
 		// TODO use a Short
 		keyStore = new FileMappedStorage<>(geometry, Integer.class);
 		this.cls = cls;
+		this.geometry = geometry;
 	}
 
 	public void setDataKey(IDataKey dataKey) {
@@ -40,15 +42,24 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 
 	@Override
 	public synchronized long put(T value, ILocator locator) {
+
 		Integer cValue = null;
+		
+		// proprio necessaria, sta roba? Basically, trying to keep the concept key synchronized with an externally supplied
+		// datakey, but allow for expansion, which sounds strange.
+		if (dataKey != null) {
+			cValue = dataKey.reverseLookup(value);
+			if (cValue < 0) {
+				cValue = null;
+			}
+		}
 		if (value != null) {
-			cValue = dataKey == null ? conceptKey.size() : dataKey.reverseLookup(value);
+			if (cValue == null) {
+				cValue = conceptKey.size();
+			}
 			if (conceptKey.containsKey(value)) {
 				cValue = conceptKey.get(value);
 			} else {
-//				if (dataKey == null) {
-//					cValue++;
-//				}
 				conceptKey.put(value, cValue);
 			}
 		}
@@ -147,6 +158,45 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 			return false;
 		}
 
+		@Override
+		public List<String> getSerializedObjects() {
+			List<String> ret = new ArrayList<>();
+			synchronized (key) {
+				for (T value : this.key.keySet()) {
+					ret.add(value instanceof IConcept ? ((IConcept) value).getDefinition() : value.toString());
+				}
+			}
+			return ret;
+		}
+
+		@Override
+		public List<IConcept> getConcepts() {
+			List<IConcept> ret = new ArrayList<>();
+			synchronized (key) {
+				for (T value : this.key.keySet()) {
+					if (!(value instanceof IConcept)) {
+						return null;
+					}
+					ret.add((IConcept) value);
+				}
+			}
+			return ret;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void include(Object value) {
+			if (!this.key.containsKey((T)value)) {
+				this.key.put((T)value, this.key.size());
+			}
+		}
+		
+	}
+
+	
+	@Override
+	public IGeometry getGeometry() {
+		return geometry;
 	}
 
 }

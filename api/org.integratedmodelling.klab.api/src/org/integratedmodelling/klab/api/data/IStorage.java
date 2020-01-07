@@ -37,4 +37,11 @@ public interface IStorage<T> extends Closeable {
 	 */
 	IArtifact.Type getType();
 
+	/**
+	 * Geometry of reference for the storage. 
+	 * 
+	 * @return
+	 */
+	IGeometry getGeometry();
+
 }

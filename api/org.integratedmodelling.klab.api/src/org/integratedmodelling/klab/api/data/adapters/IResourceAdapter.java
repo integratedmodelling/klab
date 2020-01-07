@@ -16,6 +16,8 @@
 package org.integratedmodelling.klab.api.data.adapters;
 
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCalculator;
 
 /**
  * A {@code IResourceAdapter} is the interface for a plug-in providing a new
@@ -54,9 +56,9 @@ public interface IResourceAdapter {
 	IResourceValidator getValidator();
 
 	/**
-	 * Produce a new instance of the
-	 * {@link org.integratedmodelling.klab.api.data.adapters.IResourcePublisher} for
-	 * this resource type.
+	 * Produce a new instance of a resource publisher that will receive the physical
+	 * contents of a local resource and produce a public one from it. Used only in
+	 * nodes.
 	 *
 	 * @return a
 	 *         {@link org.integratedmodelling.klab.api.data.adapters.IResourcePublisher}
@@ -84,6 +86,17 @@ public interface IResourceAdapter {
 	 *         importing.
 	 */
 	IResourceImporter getImporter();
+
+	/**
+	 * If this resource can be used to compute a value from a set of inputs, return
+	 * a calculator that exposes an expression-like API. This normally applies to
+	 * resources that compute values in scalar scope. The passed resource must be
+	 * using this adapter.
+	 * 
+	 * @return a calculator if the resource supports it, null otherwise.
+	 * @throws IllegalArgumentException if the resource does not use this adapter
+	 */
+	IResourceCalculator getCalculator(IResource resource);
 
 	/**
 	 * Return a prototype describing all the user-modifiable parameters that can be

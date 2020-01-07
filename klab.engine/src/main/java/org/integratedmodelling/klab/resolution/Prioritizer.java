@@ -52,8 +52,12 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		rankingCriteria.add(NS.LEXICAL_SCOPE);
 		rankingCriteria.add(NS.TRAIT_CONCORDANCE);
 		rankingCriteria.add(NS.SEMANTIC_DISTANCE);
-		rankingCriteria.add(NS.SCALE_SPECIFICITY);
-		rankingCriteria.add(NS.SCALE_COVERAGE);
+//		rankingCriteria.add(NS.SCALE_SPECIFICITY);
+//		rankingCriteria.add(NS.SCALE_COVERAGE);
+		rankingCriteria.add(NS.TIME_SPECIFICITY);
+		rankingCriteria.add(NS.TIME_COVERAGE);
+		rankingCriteria.add(NS.SPACE_SPECIFICITY);
+		rankingCriteria.add(NS.SPACE_COVERAGE);
 		rankingCriteria.add(NS.INHERENCY);
 		rankingCriteria.add(NS.EVIDENCE);
 		rankingCriteria.add(NS.NETWORK_REMOTENESS);
@@ -517,13 +521,22 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		return ret;
 	}
 
-	private double[] computeTemporalCriteria(ModelReference model, ResolutionScope scope) {
+	/**
+	 * Temporal criteria are 0: coverage; 1: specificity; 2: coherency. The latter
+	 * is not active at this time (will be -1).
+	 * <p>
+	 * Made static and public so that contextualizers can use it.
+	 * 
+	 * @param modelStart
+	 * @param modelEnd
+	 * @param time
+	 * @return
+	 */
+	public static double[] computeTemporalCriteria(long modelStart, long modelEnd, ITime time) {
 
 		double[] ret = new double[] { -1, -1, -1 };
-		ITime time = scope.getCoverage().getTime();
 
-		Range mrange = Range.create(model.getTimeStart() == -1 ? null : model.getTimeStart(),
-				model.getTimeEnd() == -1 ? null : model.getTimeEnd());
+		Range mrange = Range.create(modelStart == -1 ? null : modelStart, modelEnd == -1 ? null : modelEnd);
 		Range crange = Range.create(time.getStart(), time.getEnd());
 
 		/*
@@ -531,23 +544,23 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		 * - [0-25] distance if covered in infinite tail from or to a single-point
 		 * beginning or end. If grid, covered.
 		 */
-		if (time.size() > 1) {
+//		if (time.size() > 1) {
+//
+//		} else {
 
+		double d = mrange.exclusionOf(crange);
+
+		if (d == 1) {
+			ret[0] = 1; // very least but we don't reject
+		} else if (d == 0) {
+			ret[0] = 100;
+		} else if (mrange.isBounded()) {
+			ret[0] = 75 - (d * 25);
 		} else {
-
-			double d = mrange.exclusionOf(crange);
-
-			if (d == 1) {
-				ret[0] = 1; // very least but we don't reject
-			} else if (d == 0) {
-				ret[0] = 100;
-			} else if (mrange.isBounded()) {
-				ret[0] = 75 - (25 - (d * 25));
-			} else {
-				ret[0] = 50 - (49 - (d * 49));
-			}
-
+			ret[0] = 50 - (d * 49);
 		}
+
+//		}
 
 		/*
 		 * specificity differs by resolution type (even if generic) and is corrected by
@@ -557,8 +570,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 
 		if (crange.isBounded()) {
 
-			double focalPointModel = mrange.getFocalPoint();
-			double focalPointContext = crange.getFocalPoint();
+			double focalPointModel = mrange.isLeftBounded() ? mrange.getLowerBound() : mrange.getFocalPoint();
+			double focalPointContext = crange.getLowerBound();
 
 			if (time.size() > 1) {
 
@@ -568,13 +581,13 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 					if (mrange.contains(crange)) {
 						ret[1] = 100;
 					} else {
-						ret[1] = 100 * (mrange.getWidth()/crange.getWidth());
+						ret[1] = 100 * (mrange.getWidth() / crange.getWidth());
 						if (ret[1] > 100) {
 							ret[1] = 100;
 						}
 					}
 				}
-				
+
 			} else if (Double.isNaN(focalPointModel)) {
 				ret[1] = 25;
 			} else {
@@ -602,6 +615,10 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		 */
 
 		return ret;
+	}
+
+	private double[] computeTemporalCriteria(ModelReference model, ResolutionScope scope) {
+		return computeTemporalCriteria(model.getTimeStart(), model.getTimeEnd(), scope.getCoverage().getTime());
 	}
 
 	private double getMin(double a, double b) {

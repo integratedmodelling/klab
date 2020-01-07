@@ -160,14 +160,14 @@ public class Range implements IValueMediator {
 	}
 
 	public void setLowerBound(Double lowerBound) {
-		lowerInfinite = lowerBound == null;
+		lowerInfinite = lowerBound == null || lowerBound == Double.NEGATIVE_INFINITY;
 		if (lowerBound != null) {
 			this.lowerBound = lowerBound;
 		}
 	}
 
 	public void setUpperBound(Double upperBound) {
-		upperInfinite = upperBound == null;
+		upperInfinite = upperBound == null || upperBound == Double.POSITIVE_INFINITY;
 		if (upperBound != null) {
 			this.upperBound = upperBound;
 		}
@@ -528,12 +528,12 @@ public class Range implements IValueMediator {
 			rightExclusion = upperBound - other.upperBound;
 		}
 
-		double size = leftExclusion + rightExclusion;
+		double size = other.isBounded() ? other.getWidth() : (leftExclusion + rightExclusion);
 		if (size == 0) {
 			return 0;
 		}
 
-		return leftExclusion / size + rightExclusion / size;
+		return Math.abs(leftExclusion / size) + Math.abs(rightExclusion / size);
 
 	}
 

@@ -165,6 +165,10 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 			return this == NUMBER || this == BOOLEAN || this == TEXT || this == CONCEPT || this == VALUE;
 		}
 
+		public boolean isNumeric() {
+			return this == NUMBER;
+		}
+		
 		public static boolean isCompatible(Type required, Type supplied) {
 
 			// unknown/universal

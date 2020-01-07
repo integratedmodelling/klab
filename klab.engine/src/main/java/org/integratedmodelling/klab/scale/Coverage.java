@@ -185,19 +185,26 @@ public class Coverage extends Scale implements ICoverage {
 
 		Scale coverage = (Scale) other;
 		List<Pair<IExtent, Double>> newcoverages = new ArrayList<>();
-		if (coverage.getExtentCount() != getExtentCount()) {
-			throw new IllegalArgumentException("cannot merge a coverage with a scale with different dimensions");
-		}
+//		if (coverage.getExtentCount() != getExtentCount()) {
+//			throw new IllegalArgumentException("cannot merge a coverage with a scale with different dimensions");
+//		}
 
 		// flag gain for extents to recompute it; save previous and put it back after
 		double pgain = this.gain;
 		this.gain = Double.NaN;
 		for (int i = 0; i < coverage.getExtentCount(); i++) {
-			if (extents.get(i).getType() != coverage.getExtents().get(i).getType()) {
-				throw new IllegalArgumentException("cannot merge a coverage with a scale with different dimensions");
+
+			Type type = coverage.getExtents().get(i).getType();
+
+			IExtent ex = this.getExtent(type);
+			if (ex == null) {
+				newcoverages.add(new Pair<>(getCurrentExtent(coverage, type), 1.0));
+			} else {
+				// FIXME must use the MERGED extent - which are not kept. The extents array
+				// contains the full area to cover.
+				newcoverages.add(
+						mergeExtent(coverage.getExtents().get(i).getType(), getCurrentExtent(coverage, type), how));
 			}
-			// FIXME must use the MERGED extent - which are not kept. The extents array contains the full area to cover. 
-			newcoverages.add(mergeExtent(i, getCurrentExtent(coverage, i), how));
 		}
 
 		double gain = this.gain;
@@ -212,13 +219,17 @@ public class Coverage extends Scale implements ICoverage {
 	}
 
 	/*
-	 * Get the currently merged extent
+	 * Get the currently merged extent in the passed coverage
 	 */
-	private IExtent getCurrentExtent(Scale coverage, int i) {
+	private static IExtent getCurrentExtent(Scale coverage, Type type) {
 		if (coverage instanceof Coverage) {
-			return ((Coverage)coverage).coverages.get(i).getFirst();
-		} 
-		return coverage.getExtents().get(i);
+			for (Pair<IExtent, Double> cov : ((Coverage) coverage).coverages) {
+				if (cov.getFirst() != null && cov.getFirst().getType() == type) {
+					return cov.getFirst();
+				}
+			}
+		}
+		return coverage.getExtent(type);
 	}
 
 	@Override
@@ -266,23 +277,33 @@ public class Coverage extends Scale implements ICoverage {
 	 * @param how
 	 * @return
 	 */
-	private Pair<IExtent, Double> mergeExtent(int i, IExtent other, LogicalConnector how) {
+	private Pair<IExtent, Double> mergeExtent(Dimension.Type type, IExtent other, LogicalConnector how) {
 
-		IExtent orig = extents.get(i);
-		
-		if (orig instanceof ITime && ((ITime)orig).is(ITime.Type.INITIALIZATION)) {
+		IExtent orig = getExtent(type);
+
+		if (orig instanceof ITime && ((ITime) orig).is(ITime.Type.INITIALIZATION)) {
 			return new Pair<>(orig, 1.0);
 		}
-		
-		IExtent current = coverages.get(i).getFirst();
-		double ccover = coverages.get(i).getSecond();
+
+		Pair<IExtent, Double> coverag = null;
+		int i = 0;
+		for (IExtent oc : extents) {
+			if (oc.getType() == type) {
+				coverag = coverages.get(i);
+				break;
+			}
+			i++;
+		}
+
+		IExtent current = coverag.getFirst();
+		double ccover = coverag.getSecond();
 		double newcover = 0;
 		double gain = 0;
 		double previouscoverage = current == null ? 0 : ccover;
 
 		if (how == LogicalConnector.UNION) {
 
-			double origcover = ((AbstractExtent)orig).getCoveredExtent();
+			double origcover = ((AbstractExtent) orig).getCoveredExtent();
 
 			// guarantee that we don't union with anything larger. Use outer extent.
 			IExtent x = orig.equals(other) ? other
@@ -291,17 +312,17 @@ public class Coverage extends Scale implements ICoverage {
 
 			IExtent union = null;
 			if (current == null) {
-				newcover = ((AbstractExtent)x).getCoveredExtent();
+				newcover = ((AbstractExtent) x).getCoveredExtent();
 			} else {
 				union = x.equals(current) ? x : ((AbstractExtent) x).mergeCoverage(current, LogicalConnector.UNION);
-				newcover = ((AbstractExtent)union).getCoveredExtent();
+				newcover = ((AbstractExtent) union).getCoveredExtent();
 			}
 
 			// happens with non-dimensional extents
-			if (!((AbstractExtent)x).isEmpty() && newcover == 0 && origcover == 0) {
+			if (!((AbstractExtent) x).isEmpty() && newcover == 0 && origcover == 0) {
 				newcover = origcover = 1;
 			}
-			
+
 			boolean proceed = ((newcover / origcover) - ccover) > minModelCoverage;
 			if (proceed) {
 				gain = (newcover / origcover) - previouscoverage;
@@ -313,27 +334,28 @@ public class Coverage extends Scale implements ICoverage {
 
 			// if intersecting nothing with X, leave it at nothing
 			if (current != null) {
-				double origcover = ((AbstractExtent)orig).getCoveredExtent();
+				double origcover = ((AbstractExtent) orig).getCoveredExtent();
 				IExtent x = ((AbstractExtent) current).mergeCoverage(((AbstractExtent) other).getExtent(),
 						LogicalConnector.INTERSECTION);
-				newcover = ((AbstractExtent)x).getCoveredExtent();
+				newcover = ((AbstractExtent) x).getCoveredExtent();
 
 				// happens with non-dimensional extents
-				if (!((AbstractExtent)x).isEmpty() && newcover == 0 && origcover == 0) {
+				if (!((AbstractExtent) x).isEmpty() && newcover == 0 && origcover == 0) {
 					newcover = origcover = 1;
 				}
-				
-				gain = (newcover / origcover) - previouscoverage; 
+
+				gain = (newcover / origcover) - previouscoverage;
 				this.gain = Double.isNaN(this.gain) ? gain : this.gain * gain;
 				return new Pair<>(newcover == 0 ? null : x, newcover / origcover);
 			}
-			
+
 		} else {
-			// throw new IllegalArgumentException("cannot merge a coverage with another using operation: " + how);
+			// throw new IllegalArgumentException("cannot merge a coverage with another
+			// using operation: " + how);
 		}
 
 		// return the original, let gain untouched
-		return new Pair<>(coverages.get(i).getFirst(), coverages.get(i).getSecond());
+		return new Pair<>(coverag.getFirst(), coverag.getSecond());
 	}
 
 	@Override
@@ -358,16 +380,16 @@ public class Coverage extends Scale implements ICoverage {
 		this.minRequiredCoverage = d;
 	}
 
-    public boolean coversBoundaries(Scale scale) {
-        for (IExtent extent : scale.getExtents()) {
-            for (Pair<IExtent, Double> cov : coverages) {
-                if (cov.getFirst().getType() == extent.getType()) {
-                    if (!extent.getBoundingExtent().contains(cov.getFirst().getBoundingExtent())) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
+	public boolean coversBoundaries(Scale scale) {
+		for (IExtent extent : scale.getExtents()) {
+			for (Pair<IExtent, Double> cov : coverages) {
+				if (cov.getFirst().getType() == extent.getType()) {
+					if (!extent.getBoundingExtent().contains(cov.getFirst().getBoundingExtent())) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 }

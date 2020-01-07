@@ -38,7 +38,7 @@ public class EngineMonitor {
     protected long recheckSecondsWhenOnline = 5;
     protected long recheckSecondsWhenOffline = 5;
     long uptime = -1;
-    Client client;
+    EngineClient client;
     StompMessageBus bus;
 
     String sessionId;
@@ -60,7 +60,7 @@ public class EngineMonitor {
         engineUrl = url;
         this.onEngineUp = onEngineUp;
         this.onEngineDown = onEngineDown;
-        this.client = Client.create(url);
+        this.client = EngineClient.create(url);
         this.sessionId = initialSessionId;
     }
 
@@ -97,7 +97,7 @@ public class EngineMonitor {
 
     public void setEngineUrl(String url) {
         this.engineUrl = url;
-        this.client = Client.create(url);
+        this.client = EngineClient.create(url);
     }
 
     public class RepeatingJob extends Job {
@@ -207,7 +207,7 @@ public class EngineMonitor {
         return this.capabilities;
     }
 
-	public Client getClient() {
+	public EngineClient getClient() {
 		return this.client;
 	}
 

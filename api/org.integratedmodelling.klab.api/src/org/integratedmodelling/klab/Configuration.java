@@ -94,6 +94,15 @@ public enum Configuration implements IConfigurationService {
 		return this.properties;
 	}
 
+	@Override
+	public String getProperty(String property, String defaultValue) {
+		String ret = System.getProperty(property);
+		if (ret == null) {
+			ret = getProperties().getProperty(property);
+		}
+		return ret == null ? defaultValue : ret;
+	}
+	
 	/**
 	 * Non-API Save the properties after making changes from outside configuration.
 	 * Should be used only internally, or removed in favor of a painful setting API.
@@ -285,7 +294,8 @@ public enum Configuration implements IConfigurationService {
 		return System.getProperty("forceResourcesOnline") != null;
 	}
 
-	public String getTemporaryDataDirectory() {
-		return getProperties().getProperty(KLAB_TEMPORARY_DATA_DIRECTORY, System.getProperty("java.io.tmpdir"));
+	public File getTemporaryDataDirectory() {
+		return new File(
+				getProperties().getProperty(KLAB_TEMPORARY_DATA_DIRECTORY, System.getProperty("java.io.tmpdir")));
 	}
 }

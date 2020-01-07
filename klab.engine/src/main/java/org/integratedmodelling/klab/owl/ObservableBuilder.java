@@ -785,6 +785,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			IConcept ret = ontology.getConcept(conceptId);
 
 			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.CHANGES_PROPERTY), concept, ontology);
 
 			/*
 			 * context of the change is the same context as the quality it describes - FIXME this shouldn't be

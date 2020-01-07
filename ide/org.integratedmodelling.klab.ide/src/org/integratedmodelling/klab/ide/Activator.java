@@ -31,7 +31,7 @@ import org.integratedmodelling.kim.ui.internal.KimActivator;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.client.http.Client;
+import org.integratedmodelling.klab.client.http.EngineClient;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
 import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.kim.KimResourceListener;
@@ -400,7 +400,7 @@ public class Activator extends AbstractUIPlugin {
 		return get().klab;
 	}
 
-	public static Client client() {
+	public static EngineClient client() {
 		return engineMonitor().getClient();
 	}
 	

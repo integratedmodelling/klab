@@ -25,6 +25,13 @@ abstract value classifier {
 	optional text 'geometry' 
 		"Force the geometry of the learned resource to the passed value. Pass 'coverage' to set it to the coverage of the learning
  		 dataflow, or a geometry definition for a specific geometry. The default is the geometry of the learning context."
+
+	optional number sample
+		"A 0-1 proportion of states to sample states to use for training when both the archetype and the predictors are 
+		 distributed qualities at initialization. When used, there is no need for a separate archetype model."
+		 
+	optional boolean expression select
+		"A selector that can be used in conjunction with sample to further narrow down the states used for training."
 			
 	optional number seed
 		"Seed for cross-validation or percentage split."

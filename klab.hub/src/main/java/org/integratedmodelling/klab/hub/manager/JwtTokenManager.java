@@ -39,11 +39,12 @@ public class JwtTokenManager {
 			roleStrings.add(role.toString());
 		}
 		
+		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
 		JsonWebSignature jws = new JsonWebSignature();
 		jws.setPayload(claims.toJson());
 		jws.setKey(NetworkKeyManager.INSTANCE.getPrivateKey());
 		jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
-		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
+		
 		String token;
 		try {
 			token = jws.getCompactSerialization();

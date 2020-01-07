@@ -89,7 +89,8 @@ public enum GeotoolsUtils {
 		}
 
 		/*
-		 * only go through active cells.
+		 * only go through active cells. State should have been located through a proxy
+		 * for other extents.
 		 */
 		for (Cell cell : grid) {
 			Object o = state.get(cell);

@@ -188,6 +188,18 @@ public class Observable implements IObservable {
 		this.name = name;
 	}
 
+	/**
+	 * "Fluent" setName for special circumstances. Use with caution and only OUTSIDE
+	 * of resolution.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Observable named(String name) {
+		this.name = name;
+		return this;
+	}
+
 	public void setDeclaration(String declaration) {
 		this.declaration = declaration.trim();
 	}
@@ -707,6 +719,10 @@ public class Observable implements IObservable {
 	 */
 	public boolean mustContextualizeAtResolution() {
 		return mustContextualize;
+	}
+
+	public void setAnnotations(List<IAnnotation> list) {
+		this.annotations = list;
 	}
 
 }

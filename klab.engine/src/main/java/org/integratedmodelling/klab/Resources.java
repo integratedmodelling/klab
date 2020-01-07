@@ -21,11 +21,14 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -46,12 +49,14 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.common.monitoring.Ticket;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
@@ -84,14 +89,18 @@ import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.ResourceSubmission;
+import org.integratedmodelling.klab.rest.ResourceSubmissionResponse;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Utils;
+import org.integratedmodelling.klab.utils.ZipUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -404,7 +413,23 @@ public enum Resources implements IResourceService {
 	public final static String MODEL_URN_PREFIX = Urns.KLAB_URN_PREFIX + "models:";
 
 	@Override
-	public IResource resolveResource(String urn) throws KlabResourceNotFoundException, KlabAuthorizationException {
+	public IResource resolveResource(String urn, IProject project) {
+
+		boolean isLocalName = urn.indexOf(':') < 0;
+
+		if (isLocalName && project == null) {
+			throw new IllegalArgumentException("local resource name passed without a project");
+		}
+
+		if (project == null || !isLocalName) {
+			return resolveResource(urn);
+		}
+
+		return project.getLocalResource(urn);
+	}
+
+	@Override
+	public IResource resolveResource(String urn) {
 
 		IResource ret = null;
 		Pair<String, Map<String, String>> upar = Urns.INSTANCE.resolveParameters(urn);
@@ -701,7 +726,6 @@ public enum Resources implements IResourceService {
 				// NB: should never be null but it is
 				IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
 				String owner = user == null ? "integratedmodelling.org" : user.getUsername();
-				
 
 				IResource resource = builder.withResourceVersion(Version.create("0.0.1"))
 						.withProjectName(project.getName()).withParameters(parameters)
@@ -953,10 +977,8 @@ public enum Resources implements IResourceService {
 						/*
 						 * build an observer from the data and return it
 						 */
-						return Observations.INSTANCE.makeROIObserver(
-								builder.getObjectName(0),
-								builder.getObjectScale(0).getSpace().getShape(),
-								builder.getObjectMetadata(0));
+						return Observations.INSTANCE.makeROIObserver(builder.getObjectName(0),
+								builder.getObjectScale(0).getSpace().getShape(), builder.getObjectMetadata(0));
 					}
 				}
 			}
@@ -1347,6 +1369,7 @@ public enum Resources implements IResourceService {
 	 * @return
 	 */
 	public Type getType(IContextualizable resource) {
+
 		switch (resource.getType()) {
 		case CLASSIFICATION:
 			return Type.CONCEPT;
@@ -1378,10 +1401,92 @@ public enum Resources implements IResourceService {
 		}
 		return null;
 	}
-	
+
 	@Override
-	public IResource createMergedTemporalResource(List<String> resources) {
-		return null;
+	public IResourceCalculator getCalculator(IResource resource) {
+		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+		return adapter.getCalculator(resource);
+	}
+
+	@Override
+	public String submitResource(IResource resource, String nodeId, String suggestedName) {
+
+		final String ret = NameGenerator.shortUUID();
+		final INodeIdentity node = Network.INSTANCE.getNode(nodeId);
+
+		if (resource.hasErrors() || !validateForPublication(resource)) {
+			throw new KlabValidationException(
+					"Resource " + resource.getUrn() + " cannot be published: " + resource.getStatusMessage());
+		}
+		if (node == null) {
+			throw new KlabResourceNotFoundException("Resource " + resource.getUrn() + " cannot be published: node "
+					+ nodeId + " unresponsive or offline");
+		}
+
+		new Thread() {
+			@Override
+			public void run() {
+
+				try {
+					if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+						if (resource.getLocalPaths().isEmpty()) {
+							ResourceSubmission submission = new ResourceSubmission();
+							submission.setTemporaryId(ret);
+							submission.setData(((Resource) resource).getReference());
+							ResourceSubmissionResponse response = node.getClient().post(
+									API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, submission, ResourceSubmissionResponse.class);
+							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
+								Klab.INSTANCE.getTicketManager()
+										.open(Ticket.create(response.getTemporaryId(), ITicket.Type.ResourceSubmission,
+												"urn", resource.getUrn(), "message", response.getMessage()));
+							} else {
+								Klab.INSTANCE.getTicketManager()
+										.resolve(
+												Ticket.create(ret, ITicket.Type.ResourceSubmission, "urn",
+														resource.getUrn(), "message", response.getMessage()),
+												ITicket.Status.ERROR);
+							}
+						} else {
+							// zip the files and submit the archive with the temporary ID as the
+							// file name.
+							File zipFile = new File(
+									System.getProperty("java.io.tmpdir") + File.separator + ret + ".zip");
+							ZipUtils.zip(zipFile, new File(resource.getLocalPath()), false, true);
+							ResourceSubmissionResponse response = node.getClient().postFile(
+									API.NODE.RESOURCE.SUBMIT_FILES, zipFile, ResourceSubmissionResponse.class);
+							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
+								Klab.INSTANCE.getTicketManager()
+										.open(Ticket.create(response.getTemporaryId(), ITicket.Type.ResourceSubmission,
+												"urn", resource.getUrn(), "message", response.getMessage()));
+							} else {
+								Klab.INSTANCE.getTicketManager()
+										.resolve(
+												Ticket.create(ret, ITicket.Type.ResourceSubmission, "urn",
+														resource.getUrn(), "message", response.getMessage()),
+												ITicket.Status.ERROR);
+							}
+
+						}
+					} else {
+						// TODO republish an update to a remote resource - should be just the updated
+						// ResourceReference.
+					}
+				} catch (Throwable e) {
+					Klab.INSTANCE.getTicketManager().resolve(Ticket.create(ret, ITicket.Type.ResourceSubmission, "urn",
+							resource.getUrn(), "message", e.getMessage()), ITicket.Status.ERROR);
+				}
+
+			}
+		}.start();
+
+		return ret;
+
+	}
+
+	@Override
+	public boolean validateForPublication(IResource resource) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

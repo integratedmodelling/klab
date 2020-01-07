@@ -1,0 +1,97 @@
+/*******************************************************************************
+ *  Copyright (C) 2007, 2015:
+ *  
+ *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
+ *    - integratedmodelling.org
+ *    - any other authors listed in @author annotations
+ *
+ *    All rights reserved. This file is part of the k.LAB software suite,
+ *    meant to enable modular, collaborative, integrated 
+ *    development of interoperable data and model components. For
+ *    details, see http://integratedmodelling.org.
+ *    
+ *    This program is free software; you can redistribute it and/or
+ *    modify it under the terms of the Affero General Public License 
+ *    Version 3 or any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but without any warranty; without even the implied warranty of
+ *    merchantability or fitness for a particular purpose.  See the
+ *    Affero General Public License for more details.
+ *  
+ *     You should have received a copy of the Affero General Public License
+ *     along with this program; if not, write to the Free Software
+ *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *     The license is also available at: https://www.gnu.org/licenses/agpl.html
+ *******************************************************************************/
+package org.integratedmodelling.klab.ide.ui.wizards;
+
+import java.util.List;
+
+import org.eclipse.jface.wizard.Wizard;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.EResource;
+import org.integratedmodelling.klab.rest.NodeReference;
+import org.integratedmodelling.klab.rest.ResourcePublishResponse;
+import org.integratedmodelling.klab.rest.ResourcePublishRequest;
+import org.integratedmodelling.klab.rest.ResourceReference;
+
+public class PublishResourceWizard extends Wizard {
+
+	private PublishResource page;
+	private ResourceReference target = null;
+	private List<NodeReference> nodes;
+
+	public PublishResourceWizard(ResourceReference target, List<NodeReference> nodes) {
+		setWindowTitle("Create a new k.LAB Namespace");
+		this.nodes = nodes;
+		this.target = target;
+	}
+
+	@Override
+	public void addPages() {
+		addPage(this.page = new PublishResource(target, nodes));
+	}
+
+	@Override
+	public boolean performFinish() {
+
+		if (validate(target)) {
+
+			ResourcePublishRequest request = new ResourcePublishRequest();
+
+			request.setUrn(target.getUrn());
+			request.setNode(page.getTargetNode());
+			request.setSuggestedName(page.getSuggestedName());
+			
+			Activator.post((message) -> {
+				System.out.println("GOT RESPONSE " + message.getPayload(ResourcePublishResponse.class));
+//				File file = message.getPayload(ProjectModificationNotification.class).getFile();
+//				Activator.loader().add(file);
+//				Display.getDefault().asyncExec(() -> {
+//					IFile ifile = Eclipse.INSTANCE.getIFile(file);
+//					try {
+//						ifile.getParent().refreshLocal(IFolder.DEPTH_INFINITE, null);
+//					    Eclipse.INSTANCE.openFile(
+//								ifile,
+//								0);
+//					    KlabNavigator.refresh();
+//					} catch (CoreException e) {
+//					}
+//				});
+			}, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean validate(ResourceReference resource) {
+
+		// TODO basic validation of contents; engine will do the rest
+
+		return true;
+	}
+
+}

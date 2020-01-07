@@ -49,7 +49,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
-import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -197,7 +196,7 @@ public enum Observations implements IObservationService {
 			}
 			ret.setHistogram(histogram.build());
 		}
-		
+
 		return ret;
 	}
 
@@ -264,14 +263,6 @@ public enum Observations implements IObservationService {
 			ret.setMain(true);
 		}
 
-		// HM probably not- a descriptor is a descriptor, only states and children
-		// should be different. Locator is only used
-		// for the summary we ask later, and defaults to the full scale of the
-		// observation.
-//		if (locator != null) {
-//			observation = observation.at(locator);
-//		}
-
 		ISubject rootSubject = ((Observation) observation).getRuntimeScope().getRootSubject();
 		if (rootSubject != null) {
 			ret.setRootContextId(rootSubject.getId());
@@ -281,31 +272,7 @@ public enum Observations implements IObservationService {
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
 
-		if (observation instanceof ObservationGroup) {
-			ret.setLabel(StringUtils.capitalize(English.plural(observation.getObservable().getType().getName())));
-		} else {
-
-			ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
-					: observation.getObservable().getName());
-			ret.setLabel(StringUtils.capitalize(ret.getLabel().replaceAll("_", " ")));
-
-			if (observation instanceof ObservationGroupView) {
-				// pluralize the last word, then tell me I don't care for details.
-				String[] sss = ret.getLabel().split("\\s+");
-				if (sss.length > 0) {
-					sss[sss.length - 1] = English.plural(sss[sss.length - 1]);
-					ret.setLabel(StringUtils.join(sss, ' '));
-				}
-			}
-		}
-		if (observation.getObservable().getUnit() != null) {
-			ret.setLabel(ret.getLabel() + " in " + ((Unit) observation.getObservable().getUnit()).toUTFString());
-		} else if (observation.getObservable().getCurrency() != null) {
-			ret.setLabel(ret.getLabel() + " in " + observation.getObservable().getCurrency());
-		} else if (observation.getObservable().getRange() != null) {
-			ret.setLabel(ret.getLabel() + " " + observation.getObservable().getRange().getLowerBound() + " to "
-					+ observation.getObservable().getRange().getUpperBound());
-		}
+		ret.setLabel(getDisplayLabel(observation));
 
 		ret.setObservable(observation.getObservable().getDefinition());
 		if (ret.getObservable() == null) {
@@ -364,8 +331,15 @@ public enum Observations implements IObservationService {
 				scaleReference.setSpaceScale(scaleRank);
 			}
 			if (time != null) {
-				// TODO time
+
+				scaleReference.setTimeScale(time.getScaleRank());
+				scaleReference.setStart(time.getStart() == null ? 0 : time.getStart().getMilliseconds());
+				scaleReference.setEnd(time.getEnd() == null ? 0 : time.getEnd().getMilliseconds());
+				scaleReference.setTimeResolutionDescription(time.getResolution() == null ? null
+						: time.getResolution().getMultiplier() + " "
+								+ StringUtils.capitalize(time.getResolution().getType().name()));
 			}
+
 			ret.setScaleReference(scaleReference);
 		}
 
@@ -531,6 +505,37 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
+	public String getDisplayLabel(IObservation observation) {
+		String ret = null;
+		if (observation instanceof ObservationGroup) {
+			ret = StringUtils.capitalize(English.plural(observation.getObservable().getType().getName()));
+		} else {
+
+			ret = (observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
+					: observation.getObservable().getName());
+			ret = StringUtils.capitalize(ret.replaceAll("_", " "));
+
+			if (observation instanceof ObservationGroupView) {
+				// pluralize the last word, then tell me I don't care for details.
+				String[] sss = ret.split("\\s+");
+				if (sss.length > 0) {
+					sss[sss.length - 1] = English.plural(sss[sss.length - 1]);
+					ret = StringUtils.join(sss, ' ');
+				}
+			}
+		}
+		if (observation.getObservable().getUnit() != null) {
+			ret = ret + " in " + ((Unit) observation.getObservable().getUnit()).toUTFString();
+		} else if (observation.getObservable().getCurrency() != null) {
+			ret = ret + " in " + observation.getObservable().getCurrency();
+		} else if (observation.getObservable().getRange() != null) {
+			ret = ret + " " + observation.getObservable().getRange().getLowerBound() + " to "
+					+ observation.getObservable().getRange().getUpperBound();
+		}
+
+		return ret;
+	}
+
 	public String formatValue(IObservable observable, Object object) {
 
 		if (object instanceof IConcept) {
@@ -645,6 +650,36 @@ public enum Observations implements IObservationService {
 
 	public boolean isNodata(Object o) {
 		return !isData(o);
+	}
+
+	/**
+	 * Do your best to retrieve an area in square meters from the passed locator.
+	 * 
+	 * @param locator
+	 * @return
+	 */
+	public double getArea(ILocator locator) {
+		if (locator instanceof IScale) {
+			return ((IScale) locator).getSpace().getStandardizedArea();
+		} else if (locator instanceof ISpace) {
+			return ((ISpace) locator).getStandardizedArea();
+		}
+		return 0;
+	}
+
+	/**
+	 * Do your best to retrieve an current time extent from the passed locator.
+	 * 
+	 * @param locator
+	 * @return
+	 */
+	public ITime getTime(ILocator locator) {
+		if (locator instanceof IScale) {
+			return ((IScale) locator).getTime();
+		} else if (locator instanceof ITime) {
+			return (ITime) locator;
+		}
+		return null;
 	}
 
 }

@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -120,8 +121,6 @@ public class Scale implements IScale {
 	protected ISpace space = null;
 	protected MultidimensionalCursor cursor;
 
-//	protected InstanceIdentifier identifier = new InstanceIdentifier();
-
 	/*
 	 * Next are to support subscales built as views of another
 	 */
@@ -147,6 +146,10 @@ public class Scale implements IScale {
 	protected Scale() {
 	}
 
+	public Scale getParentScale() {
+		return parentScale;
+	}
+	
 	protected Scale(Collection<IExtent> extents) {
 		for (IExtent e : extents) {
 			mergeExtent(e);
@@ -258,7 +261,7 @@ public class Scale implements IScale {
 		for (int i = 0; i < this.locatedOffsets.length; i++) {
 			IExtent ext = fixed[i];
 			if (ext == null) {
-				ext = ((Extent)this.originalScale.extents.get(i)).getExtent(this.locatedOffsets[i]);
+				ext = ((AbstractExtent)this.originalScale.extents.get(i)).getExtent(this.locatedOffsets[i]);
 			}
 			extents.add(ext);
 			if (ext instanceof ISpace) {
@@ -708,6 +711,15 @@ public class Scale implements IScale {
 		return true;
 	}
 
+	public IExtent getExtent(Dimension.Type type) {
+		for (IExtent e : extents) {
+			if (e.getType() == type) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
 	/*
 	 * true if the passed scale has the same extents as we do.
 	 */
@@ -966,7 +978,7 @@ public class Scale implements IScale {
 
 				// parameters may specify a location
 				for (Dimension dimension : t.geometry.getDimensions()) {
-					Object[] o = Geometry.getLocatorParameters(dimension);
+					Object[] o = getLocatorParameters(dimension);
 					if (o != null) {
 						defs.add(new Pair<>(dimension.getType(), o));
 					}
@@ -1040,6 +1052,28 @@ public class Scale implements IScale {
 		return scale.sort();
 	}
 
+	/**
+	 * Convert any parameters in the dimension to locators that we can use
+	 * directly. If none are specific of the implementation, default to the
+	 * result of the implementation in {@link Geometry}.
+	 * 
+	 * @param dimension
+	 * @return
+	 */
+	public static Object[] getLocatorParameters(Dimension dimension) {
+
+		if (dimension.getType() == Dimension.Type.TIME) {
+			if (dimension.getParameters().containsKey(Geometry.PARAMETER_TIME_LOCATOR)) {
+				Object value = dimension.getParameters().get(Geometry.PARAMETER_TIME_LOCATOR);
+				if (value instanceof Long && ((Long)value) > 0) {
+					return new Object[] { new TimeInstant((Long)value) };
+				}
+			}
+		}
+		
+		return Geometry.getLocatorParameters(dimension);
+	}
+
 	public Scale minus(Type extent) {
 		List<IExtent> exts = new ArrayList<>();
 		for (IExtent ext : extents) {
@@ -1050,7 +1084,6 @@ public class Scale implements IScale {
 		return create(exts);
 	}
 
-//	@Override
 	public long getOffset(ILocator index) {
 
 		if (index instanceof Offset) {
@@ -1523,7 +1556,16 @@ public class Scale implements IScale {
 			return ret;
 		}
 
-		throw new IllegalArgumentException("Scale harmonize() called with a non-scale parameter");
+		throw new IllegalArgumentException("Scale adopt() called with a non-scale parameter");
+	}
+
+	public long[] getLocatedOffsets() {
+		return locatedOffsets;
+	}
+
+	@Override
+	public IScale without(Type dimension) {
+		return removeExtent(dimension);
 	}
 
 }

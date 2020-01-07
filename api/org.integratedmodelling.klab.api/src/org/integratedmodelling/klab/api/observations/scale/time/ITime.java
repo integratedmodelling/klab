@@ -122,6 +122,12 @@ public interface ITime extends IExtent {
 			}
 
 			public static Type parse(String unit) {
+				
+				if (unit.length() > 1) {
+					// case insensitive beyond the single letter
+					unit = unit.toLowerCase();
+				}
+				
 				switch (unit) {
 				case "M":
 				case "millennium":

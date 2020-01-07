@@ -725,6 +725,8 @@ class KimValidator extends AbstractKimValidator {
 								"classifier"
 							else if (descriptor.instantiator)
 								"instantiator"
+							else if (descriptor.learningModel)
+								"learner"
 							else
 								"resolver";
 

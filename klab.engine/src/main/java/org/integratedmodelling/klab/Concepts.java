@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
-import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
@@ -102,8 +101,7 @@ public enum Concepts implements IConceptService {
 	 * Quick static way to obtain a concept that is known to exist. Throws an
 	 * unchecked exception if the concept isn't found.
 	 *
-	 * @param conceptId
-	 *            the concept id
+	 * @param conceptId the concept id
 	 * @return the concept. Never null.
 	 */
 	public static Concept c(String conceptId) {
@@ -124,8 +122,7 @@ public enum Concepts implements IConceptService {
 	 * Quick static way to obtain a property that is known to exist. Throws an
 	 * unchecked exception if the property isn't found.
 	 *
-	 * @param propertyId
-	 *            the property id
+	 * @param propertyId the property id
 	 * @return the property. Never null.
 	 */
 	public static Property p(String propertyId) {
@@ -145,8 +142,7 @@ public enum Concepts implements IConceptService {
 	/**
 	 * Get the best display name for a concept.
 	 *
-	 * @param t
-	 *            the t
+	 * @param t the t
 	 * @return a name for display
 	 */
 	public String getDisplayName(IConcept t) {
@@ -168,35 +164,33 @@ public enum Concepts implements IConceptService {
 	/**
 	 * Get the best display name for a concept.
 	 *
-	 * @param t
-	 *            the t
+	 * @param t the t
 	 * @return a name for display
 	 */
 	public String getDisplayName(IObservable o) {
 
 		String ret = getDisplayName(o.getType());
-		
+
 		for (Pair<ValueOperator, Object> operator : o.getValueOperators()) {
 
 			ret += StringUtils.capitalize(operator.getFirst().declaration.replace(' ', '_'));
 
 			if (operator.getSecond() instanceof IConcept) {
-				ret += getDisplayName((IConcept)operator.getSecond());
+				ret += getDisplayName((IConcept) operator.getSecond());
 			} else if (operator.getSecond() instanceof IObservable) {
-				ret += getDisplayName((IObservable)operator.getSecond());
+				ret += getDisplayName((IObservable) operator.getSecond());
 			} else {
 				ret += "_" + operator.getSecond().toString().replace(' ', '_');
 			}
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Get the best display name and turn any camel case into something more
 	 * text-like if it does not contain spaces.
 	 *
-	 * @param t
-	 *            the t
+	 * @param t the t
 	 * @return a name for display
 	 */
 	public String getDisplayLabel(IConcept t) {
@@ -214,7 +208,7 @@ public enum Concepts implements IConceptService {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Arrange a set of concepts into the collection of the most specific members of
 	 * each concept hierarchy therein. Return one concept or null.
@@ -290,8 +284,7 @@ public enum Concepts implements IConceptService {
 	 * traits, only these are seen as "general" enough to be used in an "exposes"
 	 * statement.
 	 *
-	 * @param tr
-	 *            the tr
+	 * @param tr the tr
 	 * @return true if the concept was declared in a root-level k.IM statement.
 	 */
 	public boolean isBaseDeclaration(IConcept tr) {
@@ -417,7 +410,6 @@ public enum Concepts implements IConceptService {
 		}
 		return new Pair<>(ret, rem);
 	}
-	
 
 	/**
 	 * Utility to filter a concept list
@@ -440,9 +432,8 @@ public enum Concepts implements IConceptService {
 		return new Pair<>(ret, rem);
 	}
 
-
 	public String getCssClass(IConcept concept) {
-		
+
 		switch (Kim.INSTANCE.getFundamentalType(((Concept) concept).getTypeSet())) {
 		case QUALITY:
 			return "text-sem-quality";
@@ -482,7 +473,27 @@ public enum Concepts implements IConceptService {
 	static Pattern internalConceptPattern = Pattern.compile("[A-Z]+_[0-9]+");
 
 	public boolean isDerived(IConcept c) {
-		return internalConceptPattern.matcher(c.getName()).matches(); 
+		return internalConceptPattern.matcher(c.getName()).matches();
+	}
+
+	/**
+	 * Brute-force check for transitive dependency within a set of concepts. Result
+	 * is independent of whether the concepts are declared disjoint or not.
+	 * 
+	 * @param keySet
+	 * @return
+	 */
+	public boolean isTransitivelyIndependent(Collection<IConcept> keySet) {
+
+		Set<IConcept> keys2 = new HashSet<>(keySet);
+		for (IConcept c1 : keySet) {
+			for (IConcept c2 : keys2) {
+				if (!c1.equals(c2) && (c1.is(c2) || c2.is(c1))) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 }

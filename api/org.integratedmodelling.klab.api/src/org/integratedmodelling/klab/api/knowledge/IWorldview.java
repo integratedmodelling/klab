@@ -35,5 +35,13 @@ public interface IWorldview extends IWorkspace {
      * @return the translated geometry
      */
     IScale getScale(IGeometry geometry);
-    
+
+	/**
+	 * If the root domain of the ontology redefines the passed core concept, return
+	 * the redefined version, otherwise return the core concept itself.
+	 * 
+	 * @param coreConcept
+	 * @return
+	 */
+	IConcept getCoreConcept(IConcept coreConcept);
 }

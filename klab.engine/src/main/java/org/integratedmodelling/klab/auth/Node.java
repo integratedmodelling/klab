@@ -23,13 +23,15 @@ public class Node implements INodeIdentity {
     private String authenticatingHub;
     private List<String> urls = new ArrayList<>();
     private Set<Permission> permissions = new HashSet<>();
+    private Set<String> resourceUrls = new HashSet<>();
+    private Set<String> adapterIds = new HashSet<>();
     private Date bootTime = new Date();
     private String token;
     private boolean online;
     private int retryPeriod = 15;
     private long lastCheck = System.currentTimeMillis();
 
-    static Client client = Client.create();
+    private Client client;
 
     public Node(String name, IPartnerIdentity owner) {
         this.name = name;
@@ -42,6 +44,7 @@ public class Node implements INodeIdentity {
 		this.urls.addAll(node.getUrls());
 		this.parent = partner;
 		this.token = token;
+		this.adapterIds.addAll(node.getAdapters());
 		// TODO permissions
     }
 
@@ -155,12 +158,12 @@ public class Node implements INodeIdentity {
 		this.lastCheck = lastCheck;
 	}
 
-	public static Client getClient() {
-		return client;
-	}
-
-	public static void setClient(Client client) {
-		Node.client = client;
+	public Client getClient() {
+		if (this.client == null) {
+			this.client = Client.create().with(this);
+			this.client.setUrl(this.urls.toArray(new String[this.urls.size()]));
+		}
+		return this.client;
 	}
 
 	public void setName(String name) {
@@ -177,6 +180,16 @@ public class Node implements INodeIdentity {
 
 	public void setBootTime(Date bootTime) {
 		this.bootTime = bootTime;
+	}
+
+	@Override
+	public Set<String> getAdapters() {
+		return adapterIds;
+	}
+
+	@Override
+	public Set<String> getResources() {
+		return resourceUrls;
 	}
     
     

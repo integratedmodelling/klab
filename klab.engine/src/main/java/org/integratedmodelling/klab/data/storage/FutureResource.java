@@ -210,4 +210,9 @@ public class FutureResource implements IResource, Future<IResource> {
 		return getDelegate(timeout).getGranules();
 	}
 
+	@Override
+	public String getStatusMessage() {
+		return getDelegate(timeout).getStatusMessage();
+	}
+
 }

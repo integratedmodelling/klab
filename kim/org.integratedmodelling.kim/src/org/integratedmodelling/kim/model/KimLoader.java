@@ -510,7 +510,7 @@ public class KimLoader implements IKimLoader {
 
 				if (info.namespace == null) {
 					throw new KlabInternalErrorException(
-							"namespace is null after validation. This should never happen.");
+							"namespace is not found after validation. This should never happen.");
 				}
 
 				((KimNamespace) info.namespace).setLoader(this);

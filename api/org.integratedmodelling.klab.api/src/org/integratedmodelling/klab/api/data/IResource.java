@@ -439,6 +439,16 @@ public interface IResource extends IProvenance.Node, Serializable {
 		 */
 		Builder withDependency(String name, Type type, boolean key, boolean optional);
 
+		/**
+		 * Add an output definition to the builder.
+		 * 
+		 * @param name
+		 * @param type
+		 * @param key
+		 * @return
+		 */
+		Builder withOutput(String name, Type type);
+
 	}
 
 	/**
@@ -476,6 +486,15 @@ public interface IResource extends IProvenance.Node, Serializable {
 	 */
 	boolean hasErrors();
 
+	/**
+	 * Return an empty string if the resource has no issues, otherwise a message that
+	 * describes any issue (errors, warnings and the like) that users should be aware 
+	 * of. Currently used only if {{@link #hasErrors()} returns true.
+	 * 
+	 * @return a (possibly empty) status message.
+	 */
+	String getStatusMessage();
+	
 	/**
 	 * Return all local resource file paths, as slash-separated strings starting at
 	 * a point depending on the resource type (e.g. in local resources it will start

@@ -204,7 +204,18 @@ public interface IMessage {
 		/*
 		 * F->B: ask engine to modify or delete projects or project assets
 		 */
-		CreateNamespace, CreateScenario, DeleteNamespace, DeleteLocalResource, CreateProject, DeleteProject, CreateScript, DeleteScript, CreateTestCase, DeleteTestCase,
+		CreateNamespace, CreateScenario, DeleteNamespace, DeleteLocalResource, CreateProject, DeleteProject,
+		CreateScript, DeleteScript, CreateTestCase, DeleteTestCase,
+		
+		/*
+		 * F->B: publish or update a local or public resource
+		 */
+		PublishLocalResource, UpdatePublicResource, 
+		
+		/*
+		 * B->F: respond to a request to publish a resource (just submit asynchronously).
+		 */
+		ResourceSubmitted,
 
 		/**
 		 * F->B: notification when files are explicitly changed, added or deleted;
@@ -249,6 +260,12 @@ public interface IMessage {
 		ExecuteObservationAction,
 
 		/**
+		 * F->B Authorization class - inquiries about permitted operations and network
+		 * status
+		 */
+		NetworkStatus,
+
+		/**
 		 * --- Task lifecycle --- B -> F
 		 */
 		ScriptStarted, TaskStarted, TaskFinished, TaskAborted, DataflowCompiled, DataflowStateChanged,
@@ -257,6 +274,11 @@ public interface IMessage {
 		 * Task lifecycle F -> B
 		 */
 		TaskInterrupted, DataflowNodeDetail, DataflowNodeRating,
+
+		/**
+		 * Scheduler lifecycle F->B
+		 */
+		SchedulingStarted, SchedulingFinished, SchedulerReset,
 
 		/*
 		 * --- Search-class types ---
@@ -281,7 +303,8 @@ public interface IMessage {
 		/*
 		 * --- ResourceLifecycle-class types, F->B
 		 */
-		ImportResource, DeleteResource, UpdateResource, ValidateResource, PreviewResource, CopyResource, MoveResource, CreateResource, ImportIntoResource, ResourceOperation,
+		ImportResource, DeleteResource, UpdateResource, ValidateResource, PreviewResource, CopyResource, MoveResource,
+		CreateResource, ImportIntoResource, ResourceOperation,
 
 		/*
 		 * --- ResourceLifecycle-class types, B->F

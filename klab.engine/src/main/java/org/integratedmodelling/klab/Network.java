@@ -20,9 +20,12 @@ import org.integratedmodelling.klab.api.services.INetworkService;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.HubReference;
+import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.NodeReference;
+import org.integratedmodelling.klab.rest.NodeReference.Permission;
+import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 
 public enum Network implements INetworkService {
 
@@ -35,6 +38,9 @@ public enum Network implements INetworkService {
 
 	Client client = Client.create();
 
+	private HubReference hub;
+	private Map<String, NodeReference> nodes = Collections.synchronizedMap(new HashMap<>());
+	
 	private Network() {
 		Services.INSTANCE.registerService(this, INetworkService.class);
 	}
@@ -44,6 +50,29 @@ public enum Network implements INetworkService {
 		return new HashSet<>(onlineNodes.values());
 	}
 
+	@Override
+	public INodeIdentity getNode(String name) {
+		return onlineNodes.get(name);
+	}
+	
+	@Override
+	public Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly) {
+		List<INodeIdentity> ret = new ArrayList<>();
+		for (String s : onlineNodes.keySet()) {
+			if (onlineNodes.get(s).getPermissions().contains(permission)) {
+				ret.add(onlineNodes.get(s));
+			}
+		}
+		if (!onlineOnly) {
+			for (String s : offlineNodes.keySet()) {
+				if (offlineNodes.get(s).getPermissions().contains(permission)) {
+					ret.add(offlineNodes.get(s));
+				}
+			}
+		}
+		return ret;
+	}
+	
 	/**
 	 * Build the network based on the result of authentication.
 	 * 
@@ -53,12 +82,14 @@ public enum Network implements INetworkService {
 
 		Client client = Client.create();
 
+		this.hub = authorization.getHub();
+		
 		for (NodeReference node : authorization.getNodes()) {
+			this.nodes.put(node.getId(), node);
 			Node identity = new Node(node, authorization.getUserData().getToken());
-
 			try {
 				mergeCapabilities(identity, client.with(authorization.getUserData().getToken())
-						.get(chooseUrl(node.getUrls()) + API.CAPABILITIES, Capabilities.class));
+						.get(chooseUrl(node.getUrls()) + API.CAPABILITIES, NodeCapabilities.class));
 				onlineNodes.put(identity.getName(), identity);
 			} catch (Exception e) {
 				offlineNodes.put(identity.getName(), identity);
@@ -67,9 +98,29 @@ public enum Network implements INetworkService {
 
 	}
 
-	private void mergeCapabilities(Node node, Capabilities capabilities) {
-		// TODO Auto-generated method stub
-		
+	// these return descriptors to communicate to clients
+	public HubReference getHub() {
+		return this.hub;
+	}
+	
+	public Collection<NodeReference> getNodeDescriptors() {
+		return this.nodes.values();
+	}
+
+	public NodeReference getNodeDescriptor(String id) {
+		return this.nodes.get(id);
+	}
+	
+	private void mergeCapabilities(Node node, NodeCapabilities capabilities) {
+		if (capabilities.isAcceptSubmission()) {
+			node.getPermissions().add(Permission.PUBLISH);
+		}
+		if (capabilities.isAcceptQueries()) {
+			node.getPermissions().add(Permission.QUERY);
+		}
+		for (ResourceAdapterReference adapter : capabilities.getResourceAdapters()) {
+			node.getAdapters().add(adapter.getName());
+		}
 	}
 
 	@Override

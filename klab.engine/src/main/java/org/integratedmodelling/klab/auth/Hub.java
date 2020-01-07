@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.auth.IServerIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.rest.HubReference;
 
@@ -25,7 +26,7 @@ public class Hub implements IServerIdentity {
 
     private long lastCheck = System.currentTimeMillis();
 
-    static Client client = Client.create();
+    private Client client;
 
     public Hub(String name, IPartnerIdentity owner) {
         this.name = name;
@@ -68,6 +69,15 @@ public class Hub implements IServerIdentity {
         return bootTime;
     }
 
+    @Override
+    public Client getClient() {
+		if (this.client == null) {
+			this.client = Client.create().with(this);
+			this.client.setUrl(this.urls.toArray(new String[this.urls.size()]));
+		}
+		return this.client;
+    }
+    
     @Override
     public IMonitor getMonitor() {
         // TODO Auto-generated method stub

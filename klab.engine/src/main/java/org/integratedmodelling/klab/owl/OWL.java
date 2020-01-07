@@ -1026,6 +1026,9 @@ public enum OWL {
 		case NUMBER:
 			qualityType = Type.QUANTITY;
 			break;
+		case CONCEPT:
+			qualityType = Type.CLASS;
+			break;
 		case BOOLEAN:
 			qualityType = Type.PRESENCE;
 			break;
