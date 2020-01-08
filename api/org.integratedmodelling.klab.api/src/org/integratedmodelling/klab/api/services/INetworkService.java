@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.services;
 import java.util.Collection;
 import java.util.function.Function;
 
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
@@ -34,7 +35,7 @@ public interface INetworkService {
 	 * @return
 	 */
 	Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly);
-	
+
 	/**
 	 * Submit a GET request to all nodes in parallel and merge the results when all
 	 * have returned, failed or timed out.
@@ -69,5 +70,17 @@ public interface INetworkService {
 	 */
 	INodeIdentity getNode(String name);
 
+	/**
+	 * Choose the best online node at the time of calling to provide data from the
+	 * passed URN. This is only called if the URN cannot be handled locally. Must
+	 * handle "universal" URNs starting with klab: and having the adapter as
+	 * catalog, and non-local URNs; each may be served by 0+ nodes, and the choice
+	 * should be based on the current load factors, versions (which may be added to
+	 * the URN) and mirroring options.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	INodeIdentity getNodeForResource(Urn urn);
 
 }

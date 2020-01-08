@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.rest.TicketResponse;
 
 public class Ticket implements ITicket {
 
@@ -148,6 +149,8 @@ public class Ticket implements ITicket {
 					this.status = (Status) objects[i];
 				} else if (objects[i] instanceof Type) {
 					this.type = (Type) objects[i];
+				} else if (objects[i] instanceof TicketResponse.Ticket) {
+					copy((TicketResponse.Ticket) objects[i]);
 				} else {
 					Object key = objects[i];
 					Object value = objects[++i];
@@ -169,13 +172,29 @@ public class Ticket implements ITicket {
 		this.id = t.id;
 	}
 
+	private void copy(TicketResponse.Ticket t) {
+		this.data.putAll(t.getData());
+		if (t.getPostDate() > 0) {
+			this.postDate = new Date(t.getPostDate());
+		}
+		if (t.getResolutionDate() > 0) {
+			this.resolutionDate = new Date(t.getResolutionDate());
+		}
+		if (t.getStatus() != null) {
+			this.status = t.getStatus();
+		}
+		if (t.getType() != null) {
+			this.type = t.getType();
+		}
+	}
+
 	@Override
 	public void delete() {
 		manager.remove(this);
 	}
 
 	@Override
-	public void resolve(Object...data) {
+	public void resolve(Object... data) {
 		update(data);
 		this.status = Status.RESOLVED;
 		update();

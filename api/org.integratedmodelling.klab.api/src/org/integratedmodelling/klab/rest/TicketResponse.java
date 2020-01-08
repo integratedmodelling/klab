@@ -85,6 +85,11 @@ public class TicketResponse {
 			this.seen = seen;
 		}
 
+		@Override
+		public String toString() {
+			return "Ticket [id=" + id + ", status=" + status + ", type=" + type + ", data=" + data + "]";
+		}
+
 	}
 
 	private List<Ticket> tickets = new ArrayList<>();

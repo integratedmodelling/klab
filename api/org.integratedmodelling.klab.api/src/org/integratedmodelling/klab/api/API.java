@@ -244,13 +244,11 @@ public interface API {
 			public static final String DELETE_URN = "/resource/delete/" + P_URN;
 
 			/**
-			 * Retrieve raw observation data for passed URN in passed scale. If resource has
-			 * time geometry, the response at initialization contains an individual token
-			 * for repeated requests at transitions.
+			 * Retrieve raw observation data for passed URN in passed geometry.
 			 * 
-			 * GET
+			 * POST
 			 */
-			public static final String GET_URN = "/resource/get/" + P_URN;
+			public static final String CONTEXTUALIZE = "/resource/contextualize";
 
 			/**
 			 * Upload a resource.

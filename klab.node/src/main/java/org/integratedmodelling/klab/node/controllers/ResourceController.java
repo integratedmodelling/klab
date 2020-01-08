@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Builder;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -14,13 +15,12 @@ import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.FileStorageService;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
+import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.klab.rest.ResourceSubmissionResponse;
-import org.integratedmodelling.klab.rest.ResourceSubmissionResponse.Status;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,15 +45,16 @@ public class ResourceController {
 	 * TODO this is probably the perfect place for a reactive controller, using a
 	 * Mono<KlabData> instead of KlabData.
 	 */
-	@GetMapping(value = API.NODE.RESOURCE.GET_URN, produces = "application/json")
+	@PostMapping(value = API.NODE.RESOURCE.CONTEXTUALIZE, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public KlabData getUrnData(@PathVariable String urn, Principal principal) {
+	public KlabData getUrnData(@RequestBody ResourceDataRequest request, Principal principal) {
 
-		IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
+		IResource resource = resourceManager.getResource(request.getUrn(),
+				((EngineAuthorization) principal).getGroups());
 		// TODO check groups and send unauthorized if not authorized
 		// (AccessDeniedException)
 		if (resource == null) {
-			throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
+			throw new KlabResourceNotFoundException("resource " + request.getUrn() + " not found on this node");
 		}
 
 		Builder builder = KlabData.newBuilder();
@@ -88,10 +89,8 @@ public class ResourceController {
 	 */
 	@PutMapping(API.NODE.RESOURCE.SUBMIT_FILES)
 	@ResponseBody
-	public ResourceSubmissionResponse submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
+	public TicketResponse.Ticket submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
 
-		ResourceSubmissionResponse ret = new ResourceSubmissionResponse();
-		
 		String publishId = file.getName();
 		String fileName = fileStorageService.storeFile(file);
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
@@ -104,16 +103,13 @@ public class ResourceController {
 		/*
 		 * submit and create ticket
 		 */
-		
-		
+
 		// thread should unzip resource, load resource.json, establish adapter, call the
 		// validator, build resource and import it
 		// in public catalog
-		
-		ret.setTicket(publishId);
-		ret.setStatus(Status.ACCEPTED);
-		
-		return ret;
+
+
+		return null;
 	}
 
 	/**
@@ -127,10 +123,9 @@ public class ResourceController {
 	 */
 	@PostMapping(value = API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResourceSubmissionResponse submitResource(@RequestBody ResourceReference resource, Principal principal) {
+	public TicketResponse.Ticket submitResource(@RequestBody ResourceReference resource, Principal principal) {
 
-		ResourceSubmissionResponse ret = new ResourceSubmissionResponse();
-		
+
 		System.out.println("ZIO PAPA RESOURCE " + resource.getUrn() + " SUBMITTED FOR PUBLICATION");
 
 		/*
@@ -139,11 +134,8 @@ public class ResourceController {
 //		
 		ITicket ticket = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
 				Klab.INSTANCE.getRootMonitor());
-
-		ret.setTicket(ticket.getId());
-		ret.setStatus(Status.ACCEPTED);
 		
-		return ret;
+		return TicketManager.encode(ticket);
 	}
 
 }

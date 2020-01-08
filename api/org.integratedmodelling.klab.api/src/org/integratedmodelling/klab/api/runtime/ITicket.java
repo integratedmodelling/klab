@@ -35,7 +35,7 @@ public interface ITicket {
 
 	/**
 	 * Resolve the ticket and update in the manager. Pass any new data in key, value
-	 * pairs.
+	 * pairs. Should also be able to use a network bean.
 	 * 
 	 */
 	void resolve(Object...data);

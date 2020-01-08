@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.ITicketManager;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
@@ -69,6 +70,18 @@ public class TicketManager implements ITicketManager {
 
 	void put(Ticket ticket) {
 		catalog.put(ticket.getId(), ticket);
+	}
+
+	public static TicketResponse.Ticket encode(ITicket t) {
+		TicketResponse.Ticket ret = new TicketResponse.Ticket();
+		ret.setId(t.getId());
+		ret.getData().putAll(t.getData());
+		ret.setPostDate(t.getPostDate().getTime());
+		ret.setResolutionDate(t.getResolutionDate() == null ? 0 : t.getResolutionDate().getTime());
+		ret.setStatus(t.getStatus());
+		ret.setType(t.getType());
+		ret.setStatusMessage(t.getStatusMessage());
+		return ret;
 	}
 
 }

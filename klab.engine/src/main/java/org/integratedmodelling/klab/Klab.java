@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.api.runtime.ITicket.Status;
 import org.integratedmodelling.klab.api.runtime.ITicketManager;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
@@ -544,6 +545,10 @@ public enum Klab implements IRuntimeService {
 				if (node != null) {
 					TicketResponse.Ticket response = node.getClient().get(API.TICKET.INFO, TicketResponse.Ticket.class,
 							"ticket", open.getData().get("ticket"));
+					System.out.println("GOT " + response);
+					if (response.getStatus() != Status.OPEN) {
+						open.resolve(response);
+					}
 				}
 			}
 		}

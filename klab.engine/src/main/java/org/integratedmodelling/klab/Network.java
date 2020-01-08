@@ -34,9 +34,9 @@ public enum Network implements INetworkService {
 	INSTANCE;
 
 	public static final int NETWORK_CHECK_INTERVAL_SECONDS = 180;
-	
+
 	private static int MAX_THREADS = 10;
-	
+
 	Map<String, INodeIdentity> onlineNodes = Collections.synchronizedMap(new HashMap<>());
 	Map<String, INodeIdentity> offlineNodes = Collections.synchronizedMap(new HashMap<>());
 
@@ -44,13 +44,13 @@ public enum Network implements INetworkService {
 
 	private HubReference hub;
 	private Map<String, NodeReference> nodes = Collections.synchronizedMap(new HashMap<>());
-	
+
 	private Timer timer = new Timer("Network checking");
-	
+
 	private Network() {
 		Services.INSTANCE.registerService(this, INetworkService.class);
-	    timer.scheduleAtFixedRate(new TimerTask() {
-			
+		timer.scheduleAtFixedRate(new TimerTask() {
+
 			@Override
 			public void run() {
 				checkNetwork();
@@ -67,7 +67,7 @@ public enum Network implements INetworkService {
 	public INodeIdentity getNode(String name) {
 		return onlineNodes.get(name);
 	}
-	
+
 	@Override
 	public Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly) {
 		List<INodeIdentity> ret = new ArrayList<>();
@@ -85,7 +85,7 @@ public enum Network implements INetworkService {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Build the network based on the result of authentication.
 	 * 
@@ -96,7 +96,7 @@ public enum Network implements INetworkService {
 		Client client = Client.create();
 
 		this.hub = authorization.getHub();
-		
+
 		for (NodeReference node : authorization.getNodes()) {
 			this.nodes.put(node.getId(), node);
 			Node identity = new Node(node, authorization.getUserData().getToken());
@@ -115,7 +115,7 @@ public enum Network implements INetworkService {
 	public HubReference getHub() {
 		return this.hub;
 	}
-	
+
 	public Collection<NodeReference> getNodeDescriptors() {
 		return this.nodes.values();
 	}
@@ -123,7 +123,7 @@ public enum Network implements INetworkService {
 	public NodeReference getNodeDescriptor(String id) {
 		return this.nodes.get(id);
 	}
-	
+
 	private void mergeCapabilities(Node node, NodeCapabilities capabilities) {
 		if (capabilities.isAcceptSubmission()) {
 			node.getPermissions().add(Permission.PUBLISH);
@@ -247,7 +247,6 @@ public enum Network implements INetworkService {
 		return urls.iterator().next();
 	}
 
-	
 	protected void checkNetwork() {
 		System.out.println("Checking network");
 		List<INodeIdentity> moveOnline = new ArrayList<>();
@@ -264,8 +263,14 @@ public enum Network implements INetworkService {
 				NodeCapabilities capabilities = node.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
 				Logging.INSTANCE.info("node " + node.getName() + " went online");
 			} catch (Exception e) {
-				
+
 			}
 		}
+	}
+
+	@Override
+	public INodeIdentity getNodeForResource(Urn urn) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

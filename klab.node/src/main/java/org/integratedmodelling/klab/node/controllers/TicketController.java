@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.node.controllers;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.TicketService;
 import org.integratedmodelling.klab.rest.TicketRequest;
@@ -26,7 +27,7 @@ public class TicketController {
 	@ResponseBody
 	public TicketResponse.Ticket getTicketInfo(@PathVariable String ticket) {
 		ITicket t = ticketService.getTicket(ticket);
-		return getReference(t);
+		return t == null ? null : TicketManager.encode(t);
 	}
 	
 	@PostMapping(API.TICKET.QUERY)
@@ -34,18 +35,6 @@ public class TicketController {
 	public TicketResponse queryTickets(@RequestBody TicketRequest request) {
 		
 		return null;
-	}
-
-	private TicketResponse.Ticket getReference(ITicket t) {
-		TicketResponse.Ticket ret = new TicketResponse.Ticket();
-		ret.setId(t.getId());
-		ret.getData().putAll(t.getData());
-		ret.setPostDate(t.getPostDate().getTime());
-		ret.setResolutionDate(t.getResolutionDate() == null ? 0 : t.getResolutionDate().getTime());
-		ret.setStatus(t.getStatus());
-		ret.setType(t.getType());
-		ret.setStatusMessage(t.getStatusMessage());
-		return ret;
 	}
 
 

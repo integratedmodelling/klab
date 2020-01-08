@@ -56,6 +56,8 @@ import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.data.encoding.DecodingDataBuilder;
+import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
@@ -87,8 +89,9 @@ import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.klab.rest.ResourceSubmissionResponse;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -869,71 +872,64 @@ public enum Resources implements IResourceService {
 		return builder.build();
 	}
 
-	// @Override
-	// public IKlabData getResourceData(IResource resource, Map<String, String>
-	// urnParameters, IGeometry geometry,
-	// IComputationContext context) {
-	//
-	// if (Urns.INSTANCE.isLocal(resource.getUrn())) {
-	//
-	// IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
-	// if (adapter == null) {
-	// throw new KlabUnsupportedFeatureException(
-	// "adapter for resource of type " + resource.getAdapterType() + " not
-	// available");
-	// }
-	//
-	// IKlabData.Builder builder = new LocalDataBuilder((IRuntimeContext) context);
-	// try {
-	// adapter.getEncoder().getEncodedData(resource, urnParameters, geometry,
-	// builder, context);
-	// return builder.build();
-	// } catch (Throwable t) {
-	// context.getMonitor().error("cannot access resource data for " +
-	// resource.getUrn());
-	// }
-	// } else {
-	//
-	// /*
-	// * TODO send REST request to any node that owns this resource - start with the
-	// * named owner if we have it; if unsuccessful, try using resolution service on
-	// * all nodes. Then use the get endpoint.
-	// */
-	// }
-	// return null;
-	// }
-
-	/*
-	 * OLD version: the one above will break the system when errors happen - TODO
-	 * figure out why.
-	 */
 	@Override
 	public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			IContextualizationScope context) {
 
-		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+		boolean local = Urns.INSTANCE.isLocal(resource.getUrn());
+		Urn urn = new Urn(resource.getUrn());
+		if (urn.isUniversal()) {
+			// use it locally only if we have the adapter.
+			local = getResourceAdapter(urn.getCatalog()) == null;
+		}
 
-			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
-			if (adapter == null) {
-				throw new KlabUnsupportedFeatureException(
-						"adapter for resource of type " + resource.getAdapterType() + " not available");
-			}
+		if (local) {
 
-			IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
-			try {
-				adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
-				return builder.build();
-			} catch (Throwable e) {
-				// just return null later
+			if (urn.isUniversal()) {
+
+				IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
+				if (adapter == null) {
+					throw new KlabUnsupportedFeatureException(
+							"adapter for resource of type " + resource.getAdapterType() + " not available");
+				}
+
+				IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
+				try {
+					adapter.getEncodedData(urn, builder, geometry, context);
+					return builder.build();
+				} catch (Throwable e) {
+					// just return null later
+				}
+
+			} else {
+
+				IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+				if (adapter == null) {
+					throw new KlabUnsupportedFeatureException(
+							"adapter for resource of type " + resource.getAdapterType() + " not available");
+				}
+
+				IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
+				try {
+					adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
+					return builder.build();
+				} catch (Throwable e) {
+					// just return null later
+				}
 			}
 		} else {
 
-			/*
-			 * TODO send REST request to any node that owns this resource - start with the
-			 * named owner if we have it; if unsuccessful, try using resolution service on
-			 * all nodes. Then use the get endpoint.
-			 */
+			INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
+			if (node != null) {
+				ResourceDataRequest request = new ResourceDataRequest();
+				request.setUrn(urn.getUrn());
+				request.setGeometry(geometry.encode());
+				DecodingDataBuilder builder = new DecodingDataBuilder(
+						node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, KlabData.class), context);
+				return builder.build();
+			}
 		}
+
 		return null;
 	}
 
@@ -1437,28 +1433,18 @@ public enum Resources implements IResourceService {
 				try {
 					if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 						if (resource.getLocalPaths().isEmpty()) {
-							ResourceSubmissionResponse response = node.getClient().post(
-									API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, ((Resource) resource).getReference(),
-									ResourceSubmissionResponse.class);
-							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
-								ret.update("ticket", response.getTicket());
-							} else {
-								ret.error("Node rejected submission: " + response.getMessage());
-							}
+							TicketResponse.Ticket response = node.getClient().post(API.NODE.RESOURCE.SUBMIT_DESCRIPTOR,
+									((Resource) resource).getReference(), TicketResponse.Ticket.class);
+							ret.update(response);
 						} else {
 							// zip the files and submit the archive with the temporary ID as the
 							// file name.
 							File zipFile = new File(
 									System.getProperty("java.io.tmpdir") + File.separator + ret + ".zip");
 							ZipUtils.zip(zipFile, new File(resource.getLocalPath()), false, true);
-							ResourceSubmissionResponse response = node.getClient().postFile(
-									API.NODE.RESOURCE.SUBMIT_FILES, zipFile, ResourceSubmissionResponse.class);
-							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
-								ret.update("ticket", response.getTicket());
-							} else {
-								ret.error("Node rejected submission: " + response.getMessage());
-							}
-
+							TicketResponse.Ticket response = node.getClient().postFile(API.NODE.RESOURCE.SUBMIT_FILES,
+									zipFile, TicketResponse.Ticket.class);
+							ret.update(response);
 						}
 					} else {
 						// TODO republish an update to a remote resource - should be just the updated
