@@ -423,7 +423,9 @@ public class Client extends RestTemplate implements IClient {
 	 */
 	@Override
 	@SuppressWarnings({ "rawtypes" })
-	public <T> T get(String url, Class<? extends T> cls) {
+	public <T> T get(String url, Class<? extends T> cls, Object... parameters) {
+
+		url = checkEndpoint(url);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
@@ -432,6 +434,23 @@ public class Client extends RestTemplate implements IClient {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
 		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		if (parameters != null) {
+			String params = "";
+			for (int i = 0; i < parameters.length; i++) {
+				String key = parameters[i].toString();
+				String val = parameters[++i].toString();
+				if (url.contains("{" + key + "}")) {
+					url = url.replace("{" + key + "}", val);
+				} else {
+					params += (params.isEmpty() ? "" : "&") + key + "=" + Escape.forURL(val);
+				}
+			}
+			if (!params.isEmpty()) {
+				url += "?" + params;
+			}
+		}
+
 		ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
 
 		switch (response.getStatusCodeValue()) {
@@ -454,41 +473,6 @@ public class Client extends RestTemplate implements IClient {
 		}
 
 		return objectMapper.convertValue(response.getBody(), cls);
-	}
-
-	/**
-	 * Instrumented for header communication and error parsing
-	 * 
-	 * @param url
-	 * @param cls
-	 * @param urlVariables
-	 * @return the deserialized result
-	 */
-	public <T> T get(String url, Class<T> cls, Map<String, ?> urlVariables) {
-		return get(addParameters(url, urlVariables), cls);
-	}
-
-	/**
-	 * Create a GET URL from a base url and a set of parameters. Yes I know I can
-	 * use URIComponentsBuilder etc.
-	 * 
-	 * @param url
-	 * @param parameters
-	 * @return the finished url
-	 */
-	public static String addParameters(String url, Map<String, ?> parameters) {
-		String ret = url;
-		if (parameters != null) {
-			for (String key : parameters.keySet()) {
-				if (ret.length() == url.length()) {
-					ret += "?";
-				} else {
-					ret += "&";
-				}
-				ret += key + "=" + Escape.forURL(parameters.get(key).toString());
-			}
-		}
-		return ret;
 	}
 
 	@Override

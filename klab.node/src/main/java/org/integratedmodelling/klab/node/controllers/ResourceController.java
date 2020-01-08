@@ -5,6 +5,7 @@ import java.security.Principal;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Builder;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -14,7 +15,6 @@ import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.FileStorageService;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.klab.rest.ResourceSubmission;
 import org.integratedmodelling.klab.rest.ResourceSubmissionResponse;
 import org.integratedmodelling.klab.rest.ResourceSubmissionResponse.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +110,7 @@ public class ResourceController {
 		// validator, build resource and import it
 		// in public catalog
 		
-		ret.setTemporaryId(publishId);
+		ret.setTicket(publishId);
 		ret.setStatus(Status.ACCEPTED);
 		
 		return ret;
@@ -127,20 +127,20 @@ public class ResourceController {
 	 */
 	@PostMapping(value = API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResourceSubmissionResponse submitResource(@RequestBody ResourceSubmission resource, Principal principal) {
+	public ResourceSubmissionResponse submitResource(@RequestBody ResourceReference resource, Principal principal) {
 
 		ResourceSubmissionResponse ret = new ResourceSubmissionResponse();
 		
-		System.out.println("ZIO PAPA RESOURCE " + resource.getData().getUrn() + " SUBMITTED FOR PUBLICATION");
+		System.out.println("ZIO PAPA RESOURCE " + resource.getUrn() + " SUBMITTED FOR PUBLICATION");
 
 		/*
 		 * create ticket
 		 */
 //		
-//		IResource res = resourceManager.publishResource(resource.getData(), null, (EngineAuthorization) principal,
-//				Klab.INSTANCE.getRootMonitor());
+		ITicket ticket = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
+				Klab.INSTANCE.getRootMonitor());
 
-		ret.setTemporaryId(resource.getTemporaryId());
+		ret.setTicket(ticket.getId());
 		ret.setStatus(Status.ACCEPTED);
 		
 		return ret;

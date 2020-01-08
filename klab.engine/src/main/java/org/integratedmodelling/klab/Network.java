@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,8 +33,10 @@ public enum Network implements INetworkService {
 
 	INSTANCE;
 
+	public static final int NETWORK_CHECK_INTERVAL_SECONDS = 180;
+	
 	private static int MAX_THREADS = 10;
-
+	
 	Map<String, INodeIdentity> onlineNodes = Collections.synchronizedMap(new HashMap<>());
 	Map<String, INodeIdentity> offlineNodes = Collections.synchronizedMap(new HashMap<>());
 
@@ -41,10 +45,19 @@ public enum Network implements INetworkService {
 	private HubReference hub;
 	private Map<String, NodeReference> nodes = Collections.synchronizedMap(new HashMap<>());
 	
+	private Timer timer = new Timer("Network checking");
+	
 	private Network() {
 		Services.INSTANCE.registerService(this, INetworkService.class);
+	    timer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				checkNetwork();
+			}
+		}, 30 * 1000, NETWORK_CHECK_INTERVAL_SECONDS * 1000);
 	}
-	
+
 	@Override
 	public Collection<INodeIdentity> getNodes() {
 		return new HashSet<>(onlineNodes.values());
@@ -234,4 +247,25 @@ public enum Network implements INetworkService {
 		return urls.iterator().next();
 	}
 
+	
+	protected void checkNetwork() {
+		System.out.println("Checking network");
+		List<INodeIdentity> moveOnline = new ArrayList<>();
+		List<INodeIdentity> moveOffline = new ArrayList<>();
+		for (INodeIdentity node : onlineNodes.values()) {
+			try {
+				NodeCapabilities capabilities = node.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
+			} catch (Exception e) {
+				Logging.INSTANCE.info("node " + node.getName() + " went offline");
+			}
+		}
+		for (INodeIdentity node : offlineNodes.values()) {
+			try {
+				NodeCapabilities capabilities = node.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
+				Logging.INSTANCE.info("node " + node.getName() + " went online");
+			} catch (Exception e) {
+				
+			}
+		}
+	}
 }

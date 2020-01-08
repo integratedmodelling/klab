@@ -125,6 +125,31 @@ public interface API {
 	 */
 	public static final String KIM = "/kim";
 
+	/**
+	 * Read-only ticket API, implemented in the Node and maybe later in the Hub. Engines
+	 * have ticket management but only Websockets clients can access it.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static interface TICKET {
+		
+		/**
+		 * Retrieve the specific ticket with the passed ID.
+		 * 
+		 * GET
+		 */
+		public static final String INFO = "/ticket/info/{ticket}";
+		
+		/**
+		 * Retrieve all tickets matching the field values in the query string.
+		 * 
+		 * GET
+		 */
+		public static final String QUERY = "/ticket/query";
+		
+	}
+	
 	public static interface HUB {
 
 		/**
@@ -252,6 +277,11 @@ public interface API {
 			 */
 			public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
 
+			/**
+			 * Retrieve the resource metadata for the passed URN.
+			 */
+			public static final String INFO_URN = "/resource/info/" + P_URN;
+			
 			/**
 			 * List all resources available to the requesting engine. Parameterize for
 			 * verbose or short return.

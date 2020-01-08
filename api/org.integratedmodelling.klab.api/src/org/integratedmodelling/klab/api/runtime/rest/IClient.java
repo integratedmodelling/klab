@@ -20,7 +20,7 @@ public interface IClient {
 	 * @param cls
 	 * @return
 	 */
-	<T> T get(String url, Class<? extends T> cls);
+	<T> T get(String url, Class<? extends T> cls, Object...query);
 
 	/**
 	 * Send a payload through a POST instruction and return the parsed response.

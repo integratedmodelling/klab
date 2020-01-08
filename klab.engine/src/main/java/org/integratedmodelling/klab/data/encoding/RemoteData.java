@@ -17,8 +17,10 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
  */
 public class RemoteData implements IKlabData {
 
+	KlabData data;
+	
 	public RemoteData(KlabData data, IRuntimeScope context) {
-
+		this.data = data;
 	}
 
 	@Override

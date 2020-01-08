@@ -14,31 +14,32 @@ import java.util.Map;
 public interface ITicket {
 
 	enum Type {
-		ResourceSubmission,
+		ResourceSubmission, ResourcePublication
 	}
 
 	enum Status {
 		OPEN, RESOLVED, ERROR
 	}
-	
+
 	/**
 	 * Refresh the ticket from the manager after changes.
 	 * 
 	 */
 	void refresh();
-	
+
 	/**
 	 * Delete the ticket from the manager.
 	 * 
 	 */
 	void delete();
-	
+
 	/**
-	 * Resolve the ticket and update in the manager.
+	 * Resolve the ticket and update in the manager. Pass any new data in key, value
+	 * pairs.
 	 * 
 	 */
-	void resolve();
-	
+	void resolve(Object...data);
+
 	/**
 	 * Resolve the ticket as error and update in the manager.
 	 */

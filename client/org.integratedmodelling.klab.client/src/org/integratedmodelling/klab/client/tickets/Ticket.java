@@ -175,19 +175,20 @@ public class Ticket implements ITicket {
 	}
 
 	@Override
-	public void resolve() {
+	public void resolve(Object...data) {
+		update(data);
 		this.status = Status.RESOLVED;
-		this.resolutionDate = new Date(System.currentTimeMillis());
+		update();
 	}
 
 	@Override
 	public void error(String status) {
 		this.status = Status.ERROR;
-		this.resolutionDate = new Date(System.currentTimeMillis());
 		if (status != null) {
 			this.statusMessage = status;
 		}
-		this.manager.put(this);
+		update();
 	}
+
 
 }

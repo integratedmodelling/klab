@@ -3,13 +3,13 @@ package org.integratedmodelling.klab.node.resources;
 import java.io.File;
 import java.util.Set;
 
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -18,10 +18,14 @@ import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ResourceManager {
+
+	@Autowired
+	TicketService ticketService;
 
 	/*
 	 * The public resource catalog. This is not persisted at the moment, but simply
@@ -34,7 +38,7 @@ public class ResourceManager {
 	}
 
 	public IResource getResource(String urn, Set<Group> groups) {
-		
+
 		Urn kurn = new Urn(urn);
 		if (kurn.isUniversal()) {
 
@@ -65,7 +69,7 @@ public class ResourceManager {
 		return null;
 	}
 
-	public IResource publishResource(ResourceReference resourceReference, File uploadFolder, EngineAuthorization user,
+	public ITicket publishResource(ResourceReference resourceReference, File uploadFolder, EngineAuthorization user,
 			IMonitor monitor) {
 
 		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resourceReference.getAdapterType());
@@ -80,13 +84,32 @@ public class ResourceManager {
 					+ " not implemented: cannot publish resource");
 		}
 
-		IResource ret = publisher.publish(new Resource(resourceReference).in(uploadFolder), monitor);
+		final ITicket ret = ticketService.open(ITicket.Type.ResourcePublication, "resource", resourceReference.getUrn(),
+				"user", user.getUsername());
 
-		// TODO establish public URN
+		/*
+		 * spawn thread that will publish and resolve the ticket with the "urn"
+		 * parameter set to the public URN.
+		 */
+		new Thread() {
+			@Override
+			public void run() {
 
-		if (ret != null && !ret.hasErrors()) {
-			this.catalog.put(ret.getUrn(), ret);
-		}
+				try {
+					IResource resource = publisher.publish(new Resource(resourceReference).in(uploadFolder), monitor);
+					if (resource != null && !resource.hasErrors()) {
+						ret.resolve("urn", resource.getUrn());
+//					this.catalog.put(ret.getUrn(), ret);
+					} else {
+						ret.error("Publishing failed: " + resource == null ? "no resource returned by publisher"
+								: resource.getStatusMessage());
+					}
+				} catch (Throwable t) {
+					ret.error("Publishing failed with exception: " + t.getMessage());
+				}
+
+			}
+		}.start();
 
 		return ret;
 	}

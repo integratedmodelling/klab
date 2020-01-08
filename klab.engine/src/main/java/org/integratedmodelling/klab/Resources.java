@@ -88,13 +88,11 @@ import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.klab.rest.ResourceSubmission;
 import org.integratedmodelling.klab.rest.ResourceSubmissionResponse;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -1407,6 +1405,11 @@ public enum Resources implements IResourceService {
 		return adapter.getCalculator(resource);
 	}
 
+	/**
+	 * Resource submission opens an engine ticket if type
+	 * {@link ITicket.Type.ResourceSubmission} which, when successfully resolved,
+	 * will contain the public URN in the "urn" parameter.
+	 */
 	@Override
 	public ITicket submitResource(IResource resource, String nodeId, String suggestedName) {
 
@@ -1424,8 +1427,9 @@ public enum Resources implements IResourceService {
 		IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
 		String userId = user == null ? "anonymous" : user.getUsername();
 
-		final ITicket ret = Klab.INSTANCE.getTicketManager().open("user", userId, ITicket.Type.ResourceSubmission, "node", nodeId, "resource", resource.getUrn());
-		
+		final ITicket ret = Klab.INSTANCE.getTicketManager().open("user", userId, ITicket.Type.ResourceSubmission,
+				"node", nodeId, "resource", resource.getUrn());
+
 		new Thread() {
 			@Override
 			public void run() {
@@ -1433,13 +1437,11 @@ public enum Resources implements IResourceService {
 				try {
 					if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 						if (resource.getLocalPaths().isEmpty()) {
-							ResourceSubmission submission = new ResourceSubmission();
-							submission.setTemporaryId(ret.getId());
-							submission.setData(((Resource) resource).getReference());
 							ResourceSubmissionResponse response = node.getClient().post(
-									API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, submission, ResourceSubmissionResponse.class);
+									API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, ((Resource) resource).getReference(),
+									ResourceSubmissionResponse.class);
 							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
-								ret.resolve();
+								ret.update("ticket", response.getTicket());
 							} else {
 								ret.error("Node rejected submission: " + response.getMessage());
 							}
@@ -1452,7 +1454,7 @@ public enum Resources implements IResourceService {
 							ResourceSubmissionResponse response = node.getClient().postFile(
 									API.NODE.RESOURCE.SUBMIT_FILES, zipFile, ResourceSubmissionResponse.class);
 							if (response.getStatus() == ResourceSubmissionResponse.Status.ACCEPTED) {
-								ret.resolve();
+								ret.update("ticket", response.getTicket());
 							} else {
 								ret.error("Node rejected submission: " + response.getMessage());
 							}

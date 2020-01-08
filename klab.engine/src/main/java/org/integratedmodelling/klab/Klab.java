@@ -8,11 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
@@ -21,12 +25,12 @@ import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.ITicketManager;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
-import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
@@ -34,6 +38,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -50,6 +55,8 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 public enum Klab implements IRuntimeService {
 
 	INSTANCE;
+
+	public static final int TICKET_CHECK_INTERVAL_SECONDS = 60;
 
 	/**
 	 * This can be set to a runnable that starts the REST services.
@@ -80,6 +87,7 @@ public enum Klab implements IRuntimeService {
 
 	private Map<Class<? extends Annotation>, AnnotationHandler> annotationHandlers = new HashMap<>();
 	private IMonitor rootMonitor = new RootMonitor();
+	private Timer timer = new Timer("Ticket checking");
 
 	private Klab() {
 		rootMonitor = new RootMonitor();
@@ -87,6 +95,12 @@ public enum Klab implements IRuntimeService {
 		this.ticketManager = new TicketManager(
 				new File(Configuration.INSTANCE.getDataPath() + File.separator + "tickets.json"));
 		Services.INSTANCE.registerService(this, IRuntimeService.class);
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				checkPendingTickets();
+			}
+		}, 30 * 1000, TICKET_CHECK_INTERVAL_SECONDS * 1000);
 	}
 
 	public void setNetworkServiceApplication(Runnable runnable) {
@@ -518,6 +532,21 @@ public enum Klab implements IRuntimeService {
 	@Override
 	public ITicketManager getTicketManager() {
 		return ticketManager;
+	}
+
+	protected void checkPendingTickets() {
+		// TODO Auto-generated method stub
+		for (ITicket open : ticketManager.get(ITicket.Status.OPEN)) {
+			if (open.getData().containsKey("node")) {
+				// check with node
+				System.out.println("Checking open ticket " + open.getId() + "...");
+				INodeIdentity node = Network.INSTANCE.getNode(open.getData().get("node"));
+				if (node != null) {
+					TicketResponse.Ticket response = node.getClient().get(API.TICKET.INFO, TicketResponse.Ticket.class,
+							"ticket", open.getData().get("ticket"));
+				}
+			}
+		}
 	}
 
 }

@@ -99,10 +99,10 @@ import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
-import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
+import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SearchMatch;
@@ -114,6 +114,8 @@ import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.SettingChangeRequest;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.SpatialLocation;
+import org.integratedmodelling.klab.rest.TicketRequest;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -532,8 +534,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				response.setError("Resource has errors or is unknown to the engine");
 			} else {
 				try {
-					String ticketId = Resources.INSTANCE.submitResource(resource, request.getNode().getId(),
-						request.getSuggestedName()).getId();
+					String ticketId = Resources.INSTANCE
+							.submitResource(resource, request.getNode().getId(), request.getSuggestedName()).getId();
 					response.setTicketId(ticketId);
 				} catch (Throwable e) {
 					response.setError(e.getMessage());
@@ -543,6 +545,20 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			response.setError("Updating of public resources is still unimplemented");
 		}
 		monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceSubmitted, response);
+	}
+
+	@MessageHandler
+	private void handleTicketRequest(final TicketRequest request) {
+
+		TicketResponse ret = new TicketResponse();
+
+		if (request.getTicketId() != null) {
+			
+		} else {
+			
+		}
+		
+		monitor.send(IMessage.MessageClass.EngineLifecycle, IMessage.Type.TicketResponse, ret);
 	}
 
 	@MessageHandler

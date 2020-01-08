@@ -7,15 +7,15 @@ public class ResourceSubmissionResponse {
 	}
 
 	private Status status;
-	private String temporaryId;
+	private String ticket;
 	private String message;
 
-	public String getTemporaryId() {
-		return temporaryId;
+	public String getTicket() {
+		return ticket;
 	}
 
-	public void setTemporaryId(String temporaryId) {
-		this.temporaryId = temporaryId;
+	public void setTicket(String temporaryId) {
+		this.ticket = temporaryId;
 	}
 
 	public Status getStatus() {

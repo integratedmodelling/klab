@@ -64,7 +64,6 @@ public class TicketManager implements ITicketManager {
 		Ticket ticket = Ticket.create(NameGenerator.shortUUID(), objects);
 		catalog.put(ticket.getId(), ticket);
 		ticket.manager = this;
-		open(ticket);
 		return ticket;
 	}
 

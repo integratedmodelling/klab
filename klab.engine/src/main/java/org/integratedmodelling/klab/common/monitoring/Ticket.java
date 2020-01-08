@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.api.runtime.ITicket;
 public class Ticket implements ITicket {
 
 	transient TicketManager manager;
-	
+
 	private String id;
 	private Date postDate;
 	private Date resolutionDate;
@@ -141,7 +141,7 @@ public class Ticket implements ITicket {
 	}
 
 	@Override
-	public void update(Object...objects) {
+	public void update(Object... objects) {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof Status) {
@@ -157,7 +157,7 @@ public class Ticket implements ITicket {
 		}
 		this.manager.put(this);
 	}
-	
+
 	private void copy(Ticket t) {
 		this.data.clear();
 		this.data.putAll(t.data);
@@ -168,15 +168,17 @@ public class Ticket implements ITicket {
 		this.type = t.type;
 		this.id = t.id;
 	}
+
 	@Override
 	public void delete() {
 		manager.remove(this);
 	}
 
 	@Override
-	public void resolve() {
+	public void resolve(Object...data) {
+		update(data);
 		this.status = Status.RESOLVED;
-		refresh();
+		update();
 	}
 
 	@Override
@@ -185,7 +187,13 @@ public class Ticket implements ITicket {
 		if (status != null) {
 			this.statusMessage = status;
 		}
-		refresh();
+		update();
+	}
+
+	@Override
+	public String toString() {
+		return "Ticket [id=" + id + ", postDate=" + postDate + ", status=" + status + ", type=" + type + ", data="
+				+ data + "]";
 	}
 
 }
