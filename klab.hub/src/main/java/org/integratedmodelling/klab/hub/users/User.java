@@ -208,7 +208,11 @@ public class User implements UserDetails{
         this.roles.clear();
         this.roles.addAll(roles);
     }
-
+    
+    public Set<Role> getRoles() {
+    	return this.roles;
+    }
+    
     public void addGroupEntries(GroupEntry... groups) {
         this.groupEntries.addAll(Arrays.asList(groups));
     }

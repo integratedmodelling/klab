@@ -1,12 +1,16 @@
-package org.integratedmodelling.klab.hub.users.services;
+package org.integratedmodelling.klab.hub.users.services.impls;
+
+import java.util.List;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.DeletedUserRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.AuthProvider;
+import org.integratedmodelling.klab.hub.users.DeletedUser;
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.hub.users.commands.DeleteUser;
+import org.integratedmodelling.klab.hub.users.services.UserDeletionService;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 
 public class UserDeletionServiceImpl implements UserDeletionService{
@@ -36,6 +40,20 @@ public class UserDeletionServiceImpl implements UserDeletionService{
 		}
 		new DeleteUser(user, userRepository, deletedUserRepository).execute();
 		
+	}
+
+
+	@Override
+	public List<DeletedUser> getDeletedUsers() {
+		return deletedUserRepository.findAll();
+	}
+
+
+	@Override
+	public DeletedUser getDeletedUser(String username) {
+		DeletedUser user = deletedUserRepository.findByUsernameIgnoreCase(username)
+				.orElseThrow(() -> new BadRequestException("No deleted user by that username found"));
+		return user;
 	}
 
 }

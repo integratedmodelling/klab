@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.users.services;
+package org.integratedmodelling.klab.hub.users.services.impls;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.hub.users.commands.CreatePendingUser;
 import org.integratedmodelling.klab.hub.users.commands.SetUserPasswordHash;
 import org.integratedmodelling.klab.hub.users.commands.UpdateLdapUser;
 import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
+import org.integratedmodelling.klab.hub.users.services.UserRegistrationService;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQuery;

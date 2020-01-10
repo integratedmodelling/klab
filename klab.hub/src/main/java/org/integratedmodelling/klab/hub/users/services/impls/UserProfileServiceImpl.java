@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.users.services;
+package org.integratedmodelling.klab.hub.users.services.impls;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
+import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,12 @@ public class UserProfileServiceImpl implements UserProfileService {
 	private UserRepository userRepository;
 	
 	private ObjectMapper objectMapper;
+	
+	public UserProfileServiceImpl(UserRepository userRepository, ObjectMapper objectMapper) {
+		super();
+		this.userRepository = userRepository;
+		this.objectMapper = objectMapper;
+	}
 
 	@Override
 	public ProfileResource updateUserByProfile(ProfileResource profile) {
