@@ -44,7 +44,7 @@ public class LocalData implements IKlabData {
 	 * @param context
 	 */
 	public LocalData(Map<?, ?> data, IContextualizationScope context) {
-		// TODO Auto-generated constructor stub
+
 		if (data.containsKey("states")) {
 			for (Object s : (Iterable<?>) data.get("states")) {
 
@@ -79,7 +79,7 @@ public class LocalData implements IKlabData {
 
 			}
 		} else if (data.containsKey("objects")) {
-
+			// TODO Auto-generated constructor stub
 		}
 	}
 

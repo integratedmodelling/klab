@@ -5,10 +5,11 @@ import java.security.Principal;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.node.auth.Role;
+import org.integratedmodelling.klab.node.resources.ResourceManager;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Secured(Role.ENGINE)
 public class EngineController {
 
+	@Autowired
+	ResourceManager resourceManager;
+	
 	/**
 	 * In a node, the capabilities endpoint is secured and the result depends on the
 	 * authorized privileges.
@@ -53,6 +57,8 @@ public class EngineController {
 
 		ret.setAcceptSubmission(isAuthorized(user, submitting));
 		ret.setAcceptQueries(isAuthorized(user, searching));
+		ret.getResourceCatalogs().addAll(resourceManager.getCatalogs());
+		ret.getResourceNamespaces().addAll(resourceManager.getNamespaces());
 
 		// synchronized projects
 		// components

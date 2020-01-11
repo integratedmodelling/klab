@@ -5,12 +5,13 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 
 /**
  * A builder that encodes the data into a Protobuf object which will be sent
- * over the network for reconstruction by a matching {@link IKlabData} object at the
- * client end. The build() step is normally not called here, but uses the
+ * over the network for reconstruction by a matching {@link IKlabData} object at
+ * the client end. The build() step is normally not called here, but uses the
  * {@link RemoteData} class for completeness and testing.
  * 
  * @author ferdinando.villa
@@ -22,7 +23,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	KlabData.State.Builder stateBuilder = null;
 	KlabData.Object.Builder objectBuilder = null;
 	EncodingDataBuilder parent = null;
-	
+
 	public EncodingDataBuilder() {
 	}
 
@@ -95,23 +96,38 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	public void add(Object value) {
 		if (this.stateBuilder != null) {
 			if (value instanceof Number) {
-				this.stateBuilder.addDoubledata(((Number)value).doubleValue());
+				this.stateBuilder.addDoubledata(((Number) value).doubleValue());
 			} else if (value instanceof Boolean) {
-				this.stateBuilder.addBooleandata((Boolean)value);
+				this.stateBuilder.addBooleandata((Boolean) value);
 			} else if (value instanceof String) {
-				this.stateBuilder.addTabledata(getTableValue((String)value, this.builder));
+				this.stateBuilder.addTabledata(getTableValue((String) value, this.builder));
 			}
 		}
 	}
 
 	private int getTableValue(String value, KlabData.Builder builder) {
-		// TODO update lookup table 
+		// TODO update lookup table
 		return 0;
 	}
 
 	@Override
 	public void add(Object value, ILocator offset) {
-		// TODO Auto-generated method stub
-		
+		if (this.stateBuilder != null) {
+			long index = -1;
+			// TODO there should be a simpler way to turn a locator into an index, given that this is a 
+			// universal feature of locators.
+			if (offset instanceof Offset) {
+				index = ((Offset)offset).linear;
+			} else {
+				throw new IllegalArgumentException("EncodingDataBuilder only accepts offset locators");
+			}
+			if (value instanceof Number) {
+				this.stateBuilder.setDoubledata((int)index, ((Number)value).doubleValue());
+			} else if (value instanceof Boolean) {
+				this.stateBuilder.setBooleandata((int)index, (Boolean)value);
+			} else if (value instanceof String) {
+				this.stateBuilder.setTabledata((int)index, getTableValue((String)value, this.builder));
+			}
+		}
 	}
 }

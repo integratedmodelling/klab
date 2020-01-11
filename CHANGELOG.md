@@ -27,6 +27,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- First tests with remote resources using test UrnAdapter working.
 - Add ITicket and ITicketManager for basic, file-based ticket management in both
   engine and client packages.
 - IDE reads status of network periodically and enables publish action if there are
