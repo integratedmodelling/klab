@@ -66,4 +66,11 @@ public interface IUrnAdapter {
 	 */
 	IGeometry getGeometry(Urn urn);
 
+	/**
+	 * Return a description suitabile for API users.
+	 * 
+	 * @return
+	 */
+	String getDescription();
+
 }

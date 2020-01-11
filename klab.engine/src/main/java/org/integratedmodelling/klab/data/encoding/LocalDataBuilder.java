@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.encoding;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
@@ -10,7 +11,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.Metadata;
@@ -39,7 +39,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	Metadata metadata = new Metadata();
 	IObservable observable;
 	String objectName;
-	IScale scale;
+	IGeometry scale;
 	LocalDataBuilder parent;
 
 	public LocalDataBuilder(IRuntimeScope context) {
@@ -57,7 +57,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		this.state = state;
 	}
 	
-	public LocalDataBuilder(IObservable observable, String objectName, IScale scale,
+	public LocalDataBuilder(IObservable observable, String objectName, IGeometry scale,
 			LocalDataBuilder parent) {
 		this.context = parent.context;
 		this.parent = parent;
@@ -115,7 +115,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public Builder startObject(String artifactName, String objectName, IScale scale) {
+	public Builder startObject(String artifactName, String objectName, IGeometry scale) {
 
 		IObservable observable = context.getSemantics(artifactName);
 		if (observable == null) {
@@ -128,7 +128,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	@Override
 	public Builder finishObject() {
 
-		this.observation = (IDirectObservation) context.newObservation(observable, objectName, scale, metadata);
+		this.observation = (IDirectObservation) context.newObservation(observable, objectName, (Scale)scale, metadata);
 		
 		// for (String key : metadata.keySet()) {
 		// this.observation.getMetadata().put(key, metadata.get(key));

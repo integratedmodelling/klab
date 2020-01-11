@@ -82,7 +82,8 @@ public interface IResource extends IProvenance.Node, Serializable {
 	 * Get the geometry associated with the resource, without fetching the entire
 	 * data content.
 	 *
-	 * @return the resource's geometry
+	 * @return the resource's geometry. A resource that works for any geometry
+	 *         should return an empty geometry.
 	 */
 	IGeometry getGeometry();
 
@@ -134,7 +135,7 @@ public interface IResource extends IProvenance.Node, Serializable {
 	 * resource is of type object. Use of attributes for non-object resources is
 	 * reserved for later. Do not confuse this with resource parameters, which are
 	 * stored with the resource by the validator to help the encoder produce the
-	 * artifacts.
+	 * artifacts, or with resources inputs and outputs.
 	 * 
 	 * @author Ferd
 	 *
@@ -151,16 +152,17 @@ public interface IResource extends IProvenance.Node, Serializable {
 	Collection<Attribute> getInputs();
 
 	/**
-	 * Dependencies describe artifacts that must be available when the resource is
-	 * used to produce data. They use the same structure as attributes and can only
-	 * appear in URNs that identify computations.
+	 * Dependencies describe artifacts that can be made be available beyond the main
+	 * artifact when the resource is used to produce data. They use the same
+	 * structure as attributes and can only appear in URNs that identify
+	 * computations.
 	 * 
 	 * @return dependencies
 	 */
 	Collection<Attribute> getOutputs();
 
 	/**
-	 * The type of the artifact produced.
+	 * The type of the main artifact produced.
 	 * 
 	 * @return the type
 	 */
@@ -463,7 +465,8 @@ public interface IResource extends IProvenance.Node, Serializable {
 	 * Granular resources have an overall geometry and a set of sub-resources
 	 * indexed by their respective sub-geometry. These are returned by
 	 * {@link #getGranules()}, which is empty if {@link #isGranular()} returns
-	 * false.
+	 * false. This can happen when a resources uses multiple others on demand,
+	 * possibly through a generating template.
 	 * 
 	 * @return
 	 */
@@ -487,14 +490,14 @@ public interface IResource extends IProvenance.Node, Serializable {
 	boolean hasErrors();
 
 	/**
-	 * Return an empty string if the resource has no issues, otherwise a message that
-	 * describes any issue (errors, warnings and the like) that users should be aware 
-	 * of. Currently used only if {{@link #hasErrors()} returns true.
+	 * Return an empty string if the resource has no issues, otherwise a message
+	 * that describes any issue (errors, warnings and the like) that users should be
+	 * aware of. Currently used only if {{@link #hasErrors()} returns true.
 	 * 
 	 * @return a (possibly empty) status message.
 	 */
 	String getStatusMessage();
-	
+
 	/**
 	 * Return all local resource file paths, as slash-separated strings starting at
 	 * a point depending on the resource type (e.g. in local resources it will start

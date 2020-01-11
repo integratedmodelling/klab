@@ -93,4 +93,9 @@ public class OSMUrnAdapter implements IUrnAdapter {
 		throw new KlabIOException("wrong OSM resource namespace in " + urn);
 	}
 
+	@Override
+	public String getDescription() {
+		return "Simple, URN-based OpenStreetMap access for k.LAB";
+	}
+
 }

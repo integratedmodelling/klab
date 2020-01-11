@@ -270,7 +270,24 @@ public enum Network implements INetworkService {
 
 	@Override
 	public INodeIdentity getNodeForResource(Urn urn) {
-		// TODO Auto-generated method stub
+		if (urn.isUniversal()) {
+			return chooseNode(getNodesWithAdapter(urn.getCatalog()));
+		}
 		return null;
+	}
+
+	private INodeIdentity chooseNode(Collection<INodeIdentity> nodesWithAdapter) {
+		// TODO use load factor and/or some intelligent criterion
+		return nodesWithAdapter.isEmpty() ? null : nodesWithAdapter.iterator().next();
+	}
+
+	private Collection<INodeIdentity> getNodesWithAdapter(String adapter) {
+		List<INodeIdentity> ret = new ArrayList<>();
+		for (INodeIdentity node : onlineNodes.values()) {
+			if (node.getAdapters().contains(adapter)) {
+				ret.add(node);
+			}
+		}
+		return ret;
 	}
 }

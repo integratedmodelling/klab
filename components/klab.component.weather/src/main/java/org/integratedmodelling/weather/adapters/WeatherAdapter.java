@@ -99,4 +99,9 @@ public class WeatherAdapter implements IUrnAdapter {
 				"weather service: URN namespace " + urn.getNamespace() + " cannot be understood");
 	}
 
+	@Override
+	public String getDescription() {
+		return "Weather stations and their data, reconstructed storm events and on-demand interpolation of weather records.";
+	}
+
 }

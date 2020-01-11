@@ -4,11 +4,12 @@ import java.security.Principal;
 
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
-import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Builder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
@@ -19,7 +20,10 @@ import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
+import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,23 +49,12 @@ public class ResourceController {
 	 * TODO this is probably the perfect place for a reactive controller, using a
 	 * Mono<KlabData> instead of KlabData.
 	 */
-	@PostMapping(value = API.NODE.RESOURCE.CONTEXTUALIZE, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = API.NODE.RESOURCE.CONTEXTUALIZE, /* produces = "application/x-protobuf", */ consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public KlabData getUrnData(@RequestBody ResourceDataRequest request, Principal principal) {
-
-		IResource resource = resourceManager.getResource(request.getUrn(),
+		IGeometry geometry = Geometry.create(request.getGeometry());
+		return resourceManager.getResourceData(request.getUrn(), geometry,
 				((EngineAuthorization) principal).getGroups());
-		// TODO check groups and send unauthorized if not authorized
-		// (AccessDeniedException)
-		if (resource == null) {
-			throw new KlabResourceNotFoundException("resource " + request.getUrn() + " not found on this node");
-		}
-
-		Builder builder = KlabData.newBuilder();
-
-		// TODO!
-
-		return builder.build();
 	}
 
 	@PostMapping(value = API.NODE.RESOURCE.RESOLVE_URN, produces = "application/json")
@@ -108,7 +101,6 @@ public class ResourceController {
 		// validator, build resource and import it
 		// in public catalog
 
-
 		return null;
 	}
 
@@ -125,7 +117,6 @@ public class ResourceController {
 	@ResponseBody
 	public TicketResponse.Ticket submitResource(@RequestBody ResourceReference resource, Principal principal) {
 
-
 		System.out.println("ZIO PAPA RESOURCE " + resource.getUrn() + " SUBMITTED FOR PUBLICATION");
 
 		/*
@@ -134,7 +125,7 @@ public class ResourceController {
 //		
 		ITicket ticket = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
 				Klab.INSTANCE.getRootMonitor());
-		
+
 		return TicketManager.encode(ticket);
 	}
 

@@ -37,7 +37,9 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
+import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -64,6 +66,8 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
+import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -72,6 +76,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.protobuf.util.JsonFormat;
 
 /**
  * Helper to avoid having to write 10 lines every time I need to do a GET with
@@ -162,6 +167,35 @@ public class Client extends RestTemplate implements IClient {
 			converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
 			messageConverters.add(converter);
 			this.setMessageConverters(messageConverters);
+		}
+	}
+
+	public static class NodeClient extends Client {
+
+		public NodeClient(INodeIdentity node) {
+
+			super(factory);
+
+			objectMapper = new ObjectMapper();
+			List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+			MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
+			StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+			FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
+			ProtobufHttpMessageConverter protobufConverter = new ProtobufHttpMessageConverter();
+			// ByteArrayHttpMessageConverter byteConverter = new
+			// ByteArrayHttpMessageConverter();
+			jsonMessageConverter.setObjectMapper(objectMapper);
+
+			setErrorHandler(new JSONResponseErrorHandler());
+			messageConverters.add(jsonMessageConverter);
+			messageConverters.add(utf8);
+			messageConverters.add(formHttpMessageConverter);
+			messageConverters.add(protobufConverter);
+			// messageConverters.add(byteConverter);
+			setMessageConverters(messageConverters);
+			this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
+			this.authToken = node.getId();
+
 		}
 	}
 
@@ -296,7 +330,7 @@ public class Client extends RestTemplate implements IClient {
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes" })
+//	@SuppressWarnings({ "rawtypes" })
 	public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
 
 		url = checkEndpoint(url);
@@ -315,7 +349,7 @@ public class Client extends RestTemplate implements IClient {
 
 		try {
 
-			ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+			ResponseEntity<Object> response = exchange(url, HttpMethod.POST, entity, Object.class);
 
 			switch (response.getStatusCodeValue()) {
 			case 302:
@@ -328,12 +362,19 @@ public class Client extends RestTemplate implements IClient {
 			if (response.getBody() == null) {
 				return null;
 			}
-			if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
-				Object exception = response.getBody().get("exception");
-				// Object path = response.getBody().get("path");
-				Object message = response.getBody().get("message");
-				// Object error = response.getBody().get("error");
+			if (response.getBody() instanceof Map && ((Map<?, ?>) response.getBody()).containsKey("exception")
+					&& ((Map<?, ?>) response.getBody()).get("exception") != null) {
+
+				Map<?, ?> map = (Map<?, ?>) response.getBody();
+				Object exception = map.get("exception");
+				// Object path = map.get("path");
+				Object message = map.get("message");
+				// Object error = map.get("error");
 				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+			}
+
+			if (cls.isAssignableFrom(response.getBody().getClass())) {
+				return (T) response.getBody();
 			}
 
 			return objectMapper.convertValue(response.getBody(), cls);

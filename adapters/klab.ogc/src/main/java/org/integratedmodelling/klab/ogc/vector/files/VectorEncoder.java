@@ -31,6 +31,7 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
@@ -119,8 +120,8 @@ public class VectorEncoder implements IResourceEncoder {
          * merge urn params with resource params: if attr=x, use filter, if just value=x and we have a 
          * nameAttribute filter, else add to parameters
          */
-        String idRequested = urnParameters.containsKey(Urns.SINGLE_PARAMETER_KEY) && urnParameters.size() == 1
-                ? urnParameters.get(Urns.SINGLE_PARAMETER_KEY)
+        String idRequested = urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY) && urnParameters.size() == 1
+                ? urnParameters.get(Urn.SINGLE_PARAMETER_KEY)
                 : null;
                 
         String geomName = source.getSchema().getGeometryDescriptor().getName().toString();

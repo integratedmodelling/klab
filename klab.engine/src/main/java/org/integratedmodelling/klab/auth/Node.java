@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
+import org.integratedmodelling.klab.communication.client.Client.NodeClient;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
@@ -160,7 +161,8 @@ public class Node implements INodeIdentity {
 
 	public Client getClient() {
 		if (this.client == null) {
-			this.client = Client.create().with(this);
+			// client is pre-instrumented to handle Protobuf messages
+			this.client = new NodeClient(this);
 			this.client.setUrl(this.urls.toArray(new String[this.urls.size()]));
 		}
 		return this.client;

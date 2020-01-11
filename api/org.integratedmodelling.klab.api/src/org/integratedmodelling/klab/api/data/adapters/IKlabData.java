@@ -17,8 +17,8 @@ package org.integratedmodelling.klab.api.data.adapters;
 
 import java.util.List;
 
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 
@@ -115,7 +115,7 @@ public interface IKlabData {
 		 *             if the artifact name is not recognized by the context
 		 *             associated with this builder.		 
 		 */
-		Builder startObject(String artifactName, String objectName, IScale scale);
+		Builder startObject(String artifactName, String objectName, IGeometry scale);
 
 		/**
 		 * Finishes the object definition and sets the returned context back to the

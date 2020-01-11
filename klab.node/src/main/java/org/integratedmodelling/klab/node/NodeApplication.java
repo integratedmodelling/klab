@@ -13,6 +13,7 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
+import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -38,8 +39,8 @@ public class NodeApplication {
 	}
 
 	@Bean
-	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
-		return new ProtobufHttpMessageConverter();
+	public ProtobufJsonFormatHttpMessageConverter ProtobufJsonFormatHttpMessageConverter() {
+		return new ProtobufJsonFormatHttpMessageConverter();
 	}
 
 	@Bean

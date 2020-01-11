@@ -313,7 +313,7 @@ public enum Resources implements IResourceService {
 			this.loader = getLocalWorkspace().load(this.loader, monitor);
 			return true;
 		} catch (Throwable e) {
-			Logging.INSTANCE.error(e.getLocalizedMessage());
+			Logging.INSTANCE.error(e);
 		}
 		return false;
 	}
@@ -326,7 +326,7 @@ public enum Resources implements IResourceService {
 			this.loader = getServiceWorkspace().load(this.loader, monitor);
 			return true;
 		} catch (Throwable e) {
-			Logging.INSTANCE.error(e.getLocalizedMessage());
+			Logging.INSTANCE.error(e);
 		}
 		return false;
 	}
@@ -429,20 +429,29 @@ public enum Resources implements IResourceService {
 	}
 
 	@Override
-	public IResource resolveResource(String urn) {
+	public IResource resolveResource(String urns) {
 
 		IResource ret = null;
-		Pair<String, Map<String, String>> upar = Urns.INSTANCE.resolveParameters(urn);
-		urn = upar.getFirst();
+		Urn urn = new Urn(urns);
 
-		if (Urns.INSTANCE.isLocal(urn)) {
-			ret = getLocalResourceCatalog().get(urn);
+		if (urn.isLocal()) {
+			ret = getLocalResourceCatalog().get(urn.toString());
+		} else if (urn.isUniversal()) {
+			// these resolve by definition
+			ResourceReference ref = new ResourceReference();
+			ref.setUrn(urn.toString());
+			ref.setAdapterType(urn.getCatalog());
+			ref.setLocalName(urn.getResourceId());
+			ref.setGeometry("#");
+			ref.setVersion(Version.CURRENT);
+			ref.setType(Type.VALUE); // for now
+			return new Resource(ref);
 		} else {
 
 			/*
 			 * see if we have cached it, and if so, whether we need to refresh
 			 */
-			ret = getPublicResourceCatalog().get(urn);
+			ret = getPublicResourceCatalog().get(urn.toString());
 			if (ret != null) {
 				/*
 				 * TODO check if we need to refresh the URN from the network; if so, set ret to
@@ -456,8 +465,8 @@ public enum Resources implements IResourceService {
 		/*
 		 * apply any modification from parameters if any
 		 */
-		if (ret != null && !upar.getSecond().isEmpty()) {
-			ret = ((Resource) ret).applyParameters(upar.getSecond());
+		if (ret != null && !urn.getParameters().isEmpty()) {
+			ret = ((Resource) ret).applyParameters(urn.getParameters());
 		}
 
 		return ret;
@@ -880,7 +889,7 @@ public enum Resources implements IResourceService {
 		Urn urn = new Urn(resource.getUrn());
 		if (urn.isUniversal()) {
 			// use it locally only if we have the adapter.
-			local = getResourceAdapter(urn.getCatalog()) == null;
+			local = getResourceAdapter(urn.getCatalog()) != null;
 		}
 
 		if (local) {
@@ -925,7 +934,7 @@ public enum Resources implements IResourceService {
 				request.setUrn(urn.getUrn());
 				request.setGeometry(geometry.encode());
 				DecodingDataBuilder builder = new DecodingDataBuilder(
-						node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, KlabData.class), context);
+						node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class), context);
 				return builder.build();
 			}
 		}
@@ -1113,20 +1122,15 @@ public enum Resources implements IResourceService {
 				}
 				return ret;
 			}
-		} else {
-
-			/*
-			 * TODO only check using the network services if the resource needs refreshing
-			 */
-
-			/*
-			 * TODO send REST request to any node that owns this resource - start with the
-			 * named owner if we have it; if unsuccessful, try using resolution service on
-			 * all nodes.
-			 */
+		} else if (Urns.INSTANCE.isUniversal(resource.getUrn())) {
+			Urn urn = new Urn(resource.getUrn());
+			if (getUrnAdapter(urn.getCatalog()) != null) {
+				return getUrnAdapter(urn.getCatalog()).isOnline(urn);
+			}
 		}
 
-		return false;
+		Urn urn = new Urn(resource.getUrn());
+		return Network.INSTANCE.getNodeForResource(urn) != null;
 	}
 
 	/**
@@ -1306,6 +1310,16 @@ public enum Resources implements IResourceService {
 			ref.getExportCapabilities().putAll(Resources.INSTANCE.getResourceAdapter(adapter).getImporter()
 					.getExportCapabilities((IResource) null));
 			ref.setMultipleResources(resourceAdapters.get(adapter).getImporter().acceptsMultiple());
+			ret.add(ref);
+		}
+		for (String adapter : urnAdapters.keySet()) {
+			ResourceAdapterReference ref = new ResourceAdapterReference();
+			ref.setName(adapter);
+			IUrnAdapter urnAdapter = urnAdapters.get(adapter);
+			ref.setLabel(adapter);
+			ref.setDescription(urnAdapter.getDescription());
+			ref.setFileBased(false);
+			ref.setMultipleResources(false);
 			ret.add(ref);
 		}
 		return ret;

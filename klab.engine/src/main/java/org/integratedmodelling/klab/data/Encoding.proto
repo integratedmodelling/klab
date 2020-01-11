@@ -26,6 +26,8 @@ message KlabData {
 		map<string, string> properties = 2;
 		repeated State states = 3;
 		repeated Object objects = 4;
+		string geometry = 5;
+		map<string,string> metadata = 6;
 	}
 	
 	message LookupTable {
@@ -43,6 +45,7 @@ message KlabData {
 		repeated bool booleandata = 6;
 		LookupTable table = 7;
 		string externalDatasourceUrl = 8;
+		map<string,string> metadata = 9;
 	}
 
 	string geometry = 1;
@@ -54,8 +57,8 @@ message KlabData {
 	
 	// these two should be in a oneof , but no joy there.
 	repeated Object objects = 5;
-	State state = 6;
+	repeated State states = 6;
 	
 	// if this is true, we just sent a byte to say that time has passed but the data are as before.
-	boolean noChange = 7;
+	int32 noChange = 7;
 }

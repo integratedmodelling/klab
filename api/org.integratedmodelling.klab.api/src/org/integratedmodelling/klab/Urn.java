@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.integratedmodelling.klab.common.Urns;
 
 /**
@@ -13,8 +16,11 @@ import org.integratedmodelling.klab.common.Urns;
  */
 public class Urn {
 
+	final public static String SINGLE_PARAMETER_KEY = "value";
+
 	private String urn;
 	private String[] tokens;
+	private Map<String, String> parameters = new HashMap<>();
 
 	/**
 	 * Pass a valid URN string. For now does no validation.
@@ -25,8 +31,27 @@ public class Urn {
 		if (urn.startsWith(Urns.KLAB_URN_PREFIX)) {
 			urn = urn.substring(Urns.KLAB_URN_PREFIX.length());
 		}
+		if (urn.contains("#")) {
+			if (urn.contains("#")) {
+				String[] uu = urn.split("#");
+				urn = uu[0];
+				for (String s : uu[1].split("&")) {
+					if (s.contains("=")) {
+						String[] kv = s.split("=");
+						parameters.put(kv[0], kv[1]);
+					} else {
+						parameters.put(SINGLE_PARAMETER_KEY, s);
+					}
+				}
+			}
+		}
 		this.urn = urn;
 		this.tokens = urn.split(":");
+	}
+
+	private void readParameters(String string) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**
@@ -107,6 +132,10 @@ public class Urn {
 	@Override
 	public String toString() {
 		return urn;
+	}
+
+	public Map<String, String> getParameters() {
+		return parameters;
 	}
 
 }
