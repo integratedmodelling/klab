@@ -64,23 +64,11 @@ public class PublishResourceWizard extends Wizard {
 			request.setUrn(target.getUrn());
 			request.setNode(page.getTargetNode());
 			request.setSuggestedName(page.getSuggestedName());
+			request.setSuggestedCatalog(page.getSuggestedCatalog());
+			request.setSuggestedNamespace(request.getSuggestedNamespace());
 			
-			Activator.post((message) -> {
-				System.out.println("GOT RESPONSE " + message.getPayload(ResourcePublishResponse.class));
-//				File file = message.getPayload(ProjectModificationNotification.class).getFile();
-//				Activator.loader().add(file);
-//				Display.getDefault().asyncExec(() -> {
-//					IFile ifile = Eclipse.INSTANCE.getIFile(file);
-//					try {
-//						ifile.getParent().refreshLocal(IFolder.DEPTH_INFINITE, null);
-//					    Eclipse.INSTANCE.openFile(
-//								ifile,
-//								0);
-//					    KlabNavigator.refresh();
-//					} catch (CoreException e) {
-//					}
-//				});
-			}, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
+			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
+
 			return true;
 		}
 
@@ -89,7 +77,7 @@ public class PublishResourceWizard extends Wizard {
 
 	private boolean validate(ResourceReference resource) {
 
-		// TODO basic validation of contents; engine will do the rest
+		// TODO basic validation of contents and metadata; engine will do the rest
 
 		return true;
 	}

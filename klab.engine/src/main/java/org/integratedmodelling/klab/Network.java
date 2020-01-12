@@ -134,6 +134,8 @@ public enum Network implements INetworkService {
 		for (ResourceAdapterReference adapter : capabilities.getResourceAdapters()) {
 			node.getAdapters().add(adapter.getName());
 		}
+		node.getCatalogIds().addAll(capabilities.getResourceCatalogs());
+		node.getNamespaceIds().addAll(capabilities.getResourceNamespaces());
 	}
 
 	@Override

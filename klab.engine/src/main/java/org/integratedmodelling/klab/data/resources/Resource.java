@@ -470,12 +470,16 @@ public class Resource implements IResource {
 	 * @return
 	 */
 	public File getPath() {
+		File ret = null;
 		IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
 		if (project != null) {
-			return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
+			ret = new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
 					+ Path.getLast(urn, ':'));
+			if (!ret.exists() && version != null) {
+				ret = new File(ret + ".v" + version);
+			}
 		}
-		return null;
+		return ret;
 	}
 
 	@Override

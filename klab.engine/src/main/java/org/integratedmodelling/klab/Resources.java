@@ -1454,8 +1454,8 @@ public enum Resources implements IResourceService {
 							// zip the files and submit the archive with the temporary ID as the
 							// file name.
 							File zipFile = new File(
-									System.getProperty("java.io.tmpdir") + File.separator + ret + ".zip");
-							ZipUtils.zip(zipFile, new File(resource.getLocalPath()), false, true);
+									System.getProperty("java.io.tmpdir") + File.separator + ret.getId() + ".zip");
+							ZipUtils.zip(zipFile, ((Resource)resource).getPath(), false, true);
 							TicketResponse.Ticket response = node.getClient().postFile(API.NODE.RESOURCE.SUBMIT_FILES,
 									zipFile, TicketResponse.Ticket.class);
 							ret.update(response);

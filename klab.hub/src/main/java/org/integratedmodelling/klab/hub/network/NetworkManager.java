@@ -44,6 +44,8 @@ public class NetworkManager {
 		ret.setOnline(isOnline);
 		ret.getUrls().addAll(node.getUrls());
 		ret.setPartner(hubAuthenticationManager.getHubReference().getPartner());
+		ret.getCatalogs().addAll(node.getCatalogIds());
+		ret.getNamespaces().addAll(node.getNamespaceIds());
 
 		// TODO more
 

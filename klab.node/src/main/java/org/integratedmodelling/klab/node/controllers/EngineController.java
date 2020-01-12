@@ -5,6 +5,7 @@ import java.security.Principal;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
@@ -29,7 +30,7 @@ public class EngineController {
 
 	@Autowired
 	ResourceManager resourceManager;
-	
+
 	/**
 	 * In a node, the capabilities endpoint is secured and the result depends on the
 	 * authorized privileges.
@@ -59,12 +60,8 @@ public class EngineController {
 		ret.setAcceptQueries(isAuthorized(user, searching));
 		ret.getResourceCatalogs().addAll(resourceManager.getCatalogs());
 		ret.getResourceNamespaces().addAll(resourceManager.getNamespaces());
-
-		// synchronized projects
-		// components
-		// authorities
-		// online and offline resources
-		// authorization to submit
+		ret.getResourceCatalogs().add(resourceManager.getDefaultCatalog());
+		ret.getResourceNamespaces().add(resourceManager.getDefaultNamespace());
 
 		return ret;
 	}

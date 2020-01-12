@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.ZipUtils;
 import org.joda.time.DateTime;
@@ -194,7 +195,7 @@ public class ResourceCatalog implements IResourceCatalog {
 			ret = sanitizeResourceId(reference.getMetadata().get(IMetadata.IM_THEMATIC_AREA));
 		}
 		if (ret /* still */ == null) {
-			ret = Configuration.INSTANCE.getProperty(Resource.DEFAULT_CATALOG_PROPERTY, "generic");
+			ret = getDefaultCatalog();
 		}
 		return ret;
 	}
@@ -205,9 +206,10 @@ public class ResourceCatalog implements IResourceCatalog {
 			/*
 			 * use region if any
 			 */
+			ret = sanitizeResourceId(reference.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA));
 		}
 		if (ret == null) {
-			ret = Configuration.INSTANCE.getProperty(Resource.DEFAULT_NAMESPACE_PROPERTY, "public");
+			ret = getDefaultNamespace();
 		}
 		return ret;
 	}
@@ -217,18 +219,9 @@ public class ResourceCatalog implements IResourceCatalog {
 		return Path.getRemainder(ret, "/");
 	}
 
-	public IResource importResource(File archive, EngineAuthorization user) {
+	public IResource importResource(File resourcePath, EngineAuthorization user) {
 
-		/*
-		 * Create a temporary path in resource path and unzip the whole thing
-		 */
-		File temporary = new File(this.resourcePath + File.separator + NameGenerator.shortUUID());
-
-		/*
-		 * read up resource.json and turn it into a resource using importResource
-		 */
-		ZipUtils.unzip(archive, temporary);
-		File metadata = new File(temporary + File.separator + "resource.json");
+		File metadata = new File(resourcePath + File.separator + "resource.json");
 		ResourceReference reference = JsonUtils.load(metadata, ResourceReference.class);
 		IResource ret = importResourceData(reference, user);
 
@@ -237,7 +230,7 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		if (publisher == null) {
 			try {
-				FileUtils.deleteDirectory(temporary);
+				FileUtils.deleteDirectory(resourcePath);
 			} catch (IOException e) {
 				Logging.INSTANCE.error(e);
 			}
@@ -245,17 +238,6 @@ public class ResourceCatalog implements IResourceCatalog {
 					"cannot import resource " + reference.getUrn() + ": adapter is not recognized or cannot publish");
 		}
 
-		/*
-		 * rename the resource folder according to the public URN and name
-		 */
-		File destination = new File(this.resourcePath + File.separator + ret.getId());
-		try {
-			FileUtils.moveDirectory(temporary, destination);
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
-
-		// publish; potentially long-running.
 		ret = publisher.publish(ret, Klab.INSTANCE.getRootMonitor());
 
 		/*
@@ -491,6 +473,22 @@ public class ResourceCatalog implements IResourceCatalog {
 		// TODO record all changes, up version
 		// ENSURE THE RESOURCE TIMESTAMP IS NEW
 		return null;
+	}
+
+	public String getDefaultNamespace() {
+		return Configuration.INSTANCE.getProperty(Resource.DEFAULT_NAMESPACE_PROPERTY, "public");
+	}
+
+	public String getDefaultCatalog() {
+		return Configuration.INSTANCE.getProperty(Resource.DEFAULT_CATALOG_PROPERTY, "generic");
+	}
+
+	public Pair<File, String> unpackArchive(File uploadArchive) {
+		File temporary = new File(this.resourcePath + File.separator + NameGenerator.shortUUID());
+		ZipUtils.unzip(uploadArchive, temporary);
+		File metadata = new File(temporary + File.separator + "resource.json");
+		ResourceReference reference = JsonUtils.load(metadata, ResourceReference.class);
+		return new Pair<>(temporary, reference.getUrn());
 	}
 
 }

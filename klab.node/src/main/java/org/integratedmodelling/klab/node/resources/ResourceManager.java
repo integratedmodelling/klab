@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.data.encoding.EncodingDataBuilder;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,21 +52,32 @@ public class ResourceManager {
 
 			EncodingDataBuilder builder = new EncodingDataBuilder();
 			adapter.getEncodedData(kurn, builder, geometry, null);
-			
+
 			return builder.buildEncoded();
-			
+
 		} else {
-			
+
 		}
 		return null;
 	}
 
-	public ITicket publishResource(ResourceReference resourceReference, File uploadFolder, EngineAuthorization user,
+	public ITicket publishResource(ResourceReference resourceReference, File uploadArchive, EngineAuthorization user,
 			IMonitor monitor) {
 
-		final ITicket ret = ticketService.open(ITicket.Type.ResourcePublication, "resource", resourceReference.getUrn(),
-				"user", user.getUsername());
+		String originalUrn = null;
+		File resourcePath = null;
+		if (uploadArchive != null) {
+			Pair<File, String> unpacked = catalog.unpackArchive(uploadArchive);
+			resourcePath = unpacked.getFirst();
+			originalUrn = unpacked.getSecond();
+		} else {
+			originalUrn = resourceReference.getUrn();
+		}
 
+		final ITicket ret = ticketService.open(ITicket.Type.ResourcePublication, "resource", originalUrn, "user",
+				user.getUsername());
+		final File uploadDirectory = resourcePath;
+		
 		/*
 		 * spawn thread that will publish and resolve the ticket with the "urn"
 		 * parameter set to the public URN.
@@ -75,8 +87,8 @@ public class ResourceManager {
 			public void run() {
 				try {
 					IResource resource = null;
-					if (uploadFolder != null) {
-						resource = catalog.importResource(uploadFolder, user);
+					if (uploadDirectory != null) {
+						resource = catalog.importResource(uploadDirectory, user);
 					} else {
 						resource = catalog.importResource(resourceReference, user);
 					}
@@ -96,11 +108,21 @@ public class ResourceManager {
 	}
 
 	public Collection<String> getCatalogs() {
+		// TODO maybe some catalogs could be reserved to specific groups/users
 		return catalog.getCatalogs();
 	}
 
 	public Collection<String> getNamespaces() {
+		// TODO maybe some namespaces could be reserved to specific groups/users
 		return catalog.getNamespaces();
+	}
+
+	public String getDefaultCatalog() {
+		return catalog.getDefaultCatalog();
+	}
+
+	public String getDefaultNamespace() {
+		return catalog.getDefaultNamespace();
 	}
 
 }

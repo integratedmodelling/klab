@@ -76,7 +76,7 @@ public class ResourceController {
 	 * @param principal
 	 * @return
 	 */
-	@PutMapping(API.NODE.RESOURCE.SUBMIT_FILES)
+	@PostMapping(API.NODE.RESOURCE.SUBMIT_FILES)
 	@ResponseBody
 	public TicketResponse.Ticket submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
 
