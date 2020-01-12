@@ -1,5 +1,9 @@
 package org.integratedmodelling.klab.components.geospace.processing.osm;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -96,6 +100,12 @@ public class OSMUrnAdapter implements IUrnAdapter {
 	@Override
 	public String getDescription() {
 		return "Simple, URN-based OpenStreetMap access for k.LAB";
+	}
+
+	@Override
+	public Collection<String> getResourceUrns() {
+		List<String> ret = new ArrayList<>();
+		return ret;
 	}
 
 }

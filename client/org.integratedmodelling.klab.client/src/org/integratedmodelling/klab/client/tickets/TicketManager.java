@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.api.runtime.ITicket.Status;
 import org.integratedmodelling.klab.api.runtime.ITicketManager;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -69,6 +70,19 @@ public class TicketManager implements ITicketManager {
 
 	void put(Ticket ticket) {
 		catalog.put(ticket.getId(), ticket);
+	}
+
+	@Override
+	public Collection<ITicket> getResolvedAfter(long l) {
+		Set<ITicket> ret = new HashSet<>();
+		for (Ticket ticket : catalog.values()) {
+			if (ticket.getStatus() != Status.OPEN && ticket.getResolutionDate() != null
+					&& ticket.getResolutionDate().getTime() >= l) {
+				ticket.manager = this;
+				ret.add(ticket);
+			}
+		}
+		return ret;
 	}
 
 }

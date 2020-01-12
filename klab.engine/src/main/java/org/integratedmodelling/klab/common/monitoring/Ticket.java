@@ -174,17 +174,9 @@ public class Ticket implements ITicket {
 
 	private void copy(TicketResponse.Ticket t) {
 		this.data.putAll(t.getData());
-		if (t.getPostDate() > 0) {
-			this.postDate = new Date(t.getPostDate());
-		}
-		if (t.getResolutionDate() > 0) {
-			this.resolutionDate = new Date(t.getResolutionDate());
-		}
-		if (t.getStatus() != null) {
-			this.status = t.getStatus();
-		}
-		if (t.getType() != null) {
-			this.type = t.getType();
+		if (this.status == Status.OPEN && t.getStatus() != Status.OPEN) {
+			this.status = t.getStatus();	
+			this.resolutionDate = new Date(System.currentTimeMillis());
 		}
 	}
 

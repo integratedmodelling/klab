@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.data.adapters;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -72,5 +74,12 @@ public interface IUrnAdapter {
 	 * @return
 	 */
 	String getDescription();
+
+	/**
+	 * Return all resource URNs that this adapter handles.
+	 * 
+	 * @return
+	 */
+	Collection<String> getResourceUrns();
 
 }

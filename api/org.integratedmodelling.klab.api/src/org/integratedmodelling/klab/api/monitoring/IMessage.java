@@ -264,7 +264,12 @@ public interface IMessage {
 		 * status
 		 */
 		NetworkStatus,
-
+		
+		/**
+		 * -- Ticketing system monitoring, send around internally by UserInterface after engine notification
+		 */
+		TicketResolved,
+		
 		/**
 		 * --- Task lifecycle --- B -> F
 		 */
@@ -310,6 +315,7 @@ public interface IMessage {
 		 * --- ResourceLifecycle-class types, B->F
 		 */
 		ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated, ResourceCreated
+
 	}
 
 	/**

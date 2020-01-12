@@ -1,11 +1,14 @@
 package org.integratedmodelling.klab.node.controllers;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
+import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
@@ -46,13 +49,18 @@ public class EngineController {
 
 		String submitting = Configuration.INSTANCE.getProperty("klab.node.submitting", "NONE");
 		String searching = Configuration.INSTANCE.getProperty("klab.node.searching", "NONE");
-
+		List<String> universalResourceUrns = new ArrayList<>();
+		
 		for (ResourceAdapterReference adapter : Resources.INSTANCE.describeResourceAdapters()) {
 			// check if the adapter is authorized for this user
 			String authorized = Configuration.INSTANCE
 					.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "NONE");
 			if (isAuthorized(user, authorized)) {
 				ret.getResourceAdapters().add(adapter);
+				if (adapter.isUniversal()) {
+					IUrnAdapter uad = Resources.INSTANCE.getUrnAdapter(adapter.getName());
+					universalResourceUrns.addAll(uad.getResourceUrns());
+				}
 			}
 		}
 
@@ -63,6 +71,14 @@ public class EngineController {
 		ret.getResourceCatalogs().add(resourceManager.getDefaultCatalog());
 		ret.getResourceNamespaces().add(resourceManager.getDefaultNamespace());
 
+		for (String urn : resourceManager.getOnlineResources()) {
+			if (resourceManager.canAccess(urn, (EngineAuthorization) user)) {
+				ret.getResourceUrns().add(urn);
+			}
+		}
+		
+		ret.getResourceUrns().addAll(universalResourceUrns);
+		
 		return ret;
 	}
 

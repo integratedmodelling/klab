@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.TicketResponse;
 
 /**
  * Holder of state for sessions and projects. Singleton available through the

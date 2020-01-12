@@ -20,10 +20,33 @@ public class NodeReference {
 	private int retryPeriodMinutes;
 	private int loadFactor;
 	private Set<String> adapters = new HashSet<>();
+	private Set<String> resources = new HashSet<>();
 	private Set<String> namespaces = new LinkedHashSet<>();
 	private Set<String> catalogs = new LinkedHashSet<>();
 	private List<String> incomingConnections = new ArrayList<>();
 	private List<String> outgoingConnections = new ArrayList<>();
+
+	public NodeReference() {
+
+	}
+
+	public NodeReference(NodeCapabilities capabilities) {
+		for (ResourceAdapterReference adapter : capabilities.getResourceAdapters()) {
+			this.adapters.add(adapter.getName());
+		}
+		this.id = capabilities.getName();
+		this.catalogs.addAll(capabilities.getResourceCatalogs());
+		this.namespaces.addAll(capabilities.getResourceNamespaces());
+		this.resources.addAll(capabilities.getResourceUrns());
+		this.online = capabilities.isOnline();
+		if (capabilities.isAcceptSubmission()) {
+			this.permissions.add(Permission.PUBLISH);
+		}
+		if (capabilities.isAcceptQueries()) {
+			this.permissions.add(Permission.QUERY);
+		}
+		// TODO authorities
+	}
 
 	public String getId() {
 		return id;
@@ -191,4 +214,13 @@ public class NodeReference {
 	public void setCatalogs(Set<String> catalogs) {
 		this.catalogs = catalogs;
 	}
+
+	public Set<String> getResources() {
+		return resources;
+	}
+
+	public void setResources(Set<String> resources) {
+		this.resources = resources;
+	}
+
 }

@@ -21,18 +21,25 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * The raster publisher will attempt WCS publishing if a WCS server is connected.
+ * The raster publisher will attempt WCS publishing if a WCS server is
+ * connected.
  * 
  * @author ferdinando.villa
  *
  */
 public class VectorPublisher implements IResourcePublisher {
 
-  @Override
-  public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
-    // TODO Auto-generated method stub
-    return null;
-  }
+	@Override
+	public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
 
+		IResource ret = localResource;
+
+		/*
+		 * If we have Postgis + Geoserver dedicated to this node instance, publish in
+		 * them and turn the resource into a WFS one.
+		 */
+		
+		return ret;
+	}
 
 }

@@ -35,4 +35,9 @@ public class TicketService implements ITicketManager {
 		delegate.remove(selectors);
 	}
 
+	@Override
+	public Collection<ITicket> getResolvedAfter(long l) {
+		return delegate.getResolvedAfter(l);
+	}
+
 }

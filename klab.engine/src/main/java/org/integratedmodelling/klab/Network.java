@@ -250,23 +250,36 @@ public enum Network implements INetworkService {
 	}
 
 	protected void checkNetwork() {
+		
 		System.out.println("Checking network");
 		List<INodeIdentity> moveOnline = new ArrayList<>();
 		List<INodeIdentity> moveOffline = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
 			try {
 				NodeCapabilities capabilities = node.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
+				this.nodes.put(node.getId(), new NodeReference(capabilities));
 			} catch (Exception e) {
+				moveOffline.add(node);
 				Logging.INSTANCE.info("node " + node.getName() + " went offline");
 			}
 		}
 		for (INodeIdentity node : offlineNodes.values()) {
 			try {
 				NodeCapabilities capabilities = node.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
+				moveOnline.add(node);
+				this.nodes.put(node.getId(), new NodeReference(capabilities));
 				Logging.INSTANCE.info("node " + node.getName() + " went online");
 			} catch (Exception e) {
-
 			}
+		}
+		
+		for (INodeIdentity node : moveOnline) {
+			offlineNodes.remove(node.getId());
+			onlineNodes.put(node.getId(), node);
+		}
+		for (INodeIdentity node : moveOffline) {
+			onlineNodes.remove(node.getId());
+			offlineNodes.put(node.getId(), node);
 		}
 	}
 

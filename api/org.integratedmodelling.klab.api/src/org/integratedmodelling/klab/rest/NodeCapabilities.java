@@ -22,6 +22,7 @@ public class NodeCapabilities {
 	private List<AuthorityReference> authorities = new ArrayList<>();
 	private List<ComponentReference> staticComponents = new ArrayList<>();
 	private List<ComponentReference> dynamicComponents = new ArrayList<>();
+	private Set<String> resourceUrns = new LinkedHashSet<>();
 	private Set<String> resourceNamespaces = new LinkedHashSet<>();
 	private Set<String> resourceCatalogs = new LinkedHashSet<>();
 	private List<String> mirrors = new ArrayList<>();
@@ -29,7 +30,7 @@ public class NodeCapabilities {
 	private long refreshFrequencyMillis;
 	private int loadFactor;
 	private boolean online;
-
+	
 	public String getName() {
 		return name;
 	}
@@ -173,5 +174,13 @@ public class NodeCapabilities {
 
 	public void setResourceCatalogs(Set<String> resourceCatalogs) {
 		this.resourceCatalogs = resourceCatalogs;
+	}
+
+	public Set<String> getResourceUrns() {
+		return resourceUrns;
+	}
+
+	public void setResourceUrns(Set<String> resourceUrns) {
+		this.resourceUrns = resourceUrns;
 	}
 }

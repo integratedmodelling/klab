@@ -42,4 +42,11 @@ public interface ITicketManager {
 	 */
 	void remove(Object... selectors);
 
+	/**
+	 * Get all tickets resolved after the passed time.
+	 * @param l
+	 * @return
+	 */
+	Collection<ITicket> getResolvedAfter(long l);
+
 }

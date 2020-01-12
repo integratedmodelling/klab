@@ -83,7 +83,6 @@ public class ResourceController {
 		String fileName = fileStorageService.storeFile(file);
 		ITicket ticket = resourceManager.publishResource(null, new File(fileName), (EngineAuthorization) principal,
 				Klab.INSTANCE.getRootMonitor());
-
 		return TicketManager.encode(ticket);
 	}
 
@@ -102,7 +101,6 @@ public class ResourceController {
 
 		ITicket ticket = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
 				Klab.INSTANCE.getRootMonitor());
-
 		return TicketManager.encode(ticket);
 	}
 

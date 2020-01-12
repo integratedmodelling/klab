@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
@@ -415,6 +416,9 @@ public class KlabSession extends KlabPeer {
 	public void handleNetworkStatus(NetworkReference network) {
 		Activator.klab().updateNetwork(network);
 		send(IMessage.MessageClass.UserInterface, IMessage.Type.NetworkStatus, network);
+		for (TicketResponse.Ticket ticket : network.getResolvedTickets()) {
+			send(IMessage.MessageClass.UserInterface, IMessage.Type.TicketResolved, ticket);
+		}
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)

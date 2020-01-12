@@ -18,6 +18,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -58,11 +59,13 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -194,6 +197,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 */
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
+	private AtomicLong lastNetworkCheck = new AtomicLong(0);
 
 	private ActorRef rootActor;
 
@@ -205,6 +209,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	public Session(Engine engine, IEngineUserIdentity user) {
 		this.user = user;
 		this.monitor = ((Monitor) engine.getMonitor()).get(this);
+		this.lastNetworkCheck.set(System.currentTimeMillis());
 		this.authorities.add(new SimpleGrantedAuthority(Roles.SESSION));
 		Authentication.INSTANCE.registerSession(this);
 	}
@@ -504,6 +509,13 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				}
 			}
 		}
+
+		for (ITicket resolved : Klab.INSTANCE.getTicketManager().getResolvedAfter(lastNetworkCheck.get())) {
+			ret.getResolvedTickets().add(TicketManager.encode(resolved));
+		}
+
+		this.lastNetworkCheck.set(System.currentTimeMillis());
+			
 		monitor.send(IMessage.MessageClass.Authorization, IMessage.Type.NetworkStatus, ret);
 	}
 
@@ -553,11 +565,11 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		TicketResponse ret = new TicketResponse();
 
 		if (request.getTicketId() != null) {
-			
+
 		} else {
-			
+
 		}
-		
+
 		monitor.send(IMessage.MessageClass.EngineLifecycle, IMessage.Type.TicketResponse, ret);
 	}
 

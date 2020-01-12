@@ -21,6 +21,7 @@ public class NetworkReference {
 	private HubReference hub;
 	private Map<String, NodeReference> nodes = new HashMap<>();
 	private List<String> connections = new ArrayList<>();
+	private List<TicketResponse.Ticket> resolvedTickets = new ArrayList<>();
 
 	public List<String> getResources() {
 		return resources;
@@ -73,5 +74,13 @@ public class NetworkReference {
 	@Override
 	public String toString() {
 		return "NetworkReference [publishing=" + publishing + ", hub=" + hub + ", nodes=" + nodes + "]";
+	}
+
+	public List<TicketResponse.Ticket> getResolvedTickets() {
+		return resolvedTickets;
+	}
+
+	public void setResolvedTickets(List<TicketResponse.Ticket> resolvedTickets) {
+		this.resolvedTickets = resolvedTickets;
 	}
 }

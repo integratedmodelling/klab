@@ -58,16 +58,35 @@ public class ResourceCatalog implements IResourceCatalog {
 	 * TODO use MapDB as a persistent option.
 	 */
 	private Map<String, ResourceReference> resources = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, File> resourcePaths = Collections.synchronizedMap(new HashMap<>());
 	private File resourcePath;
 	private Set<String> namespaces = new HashSet<>();
 	private Set<String> catalogs = new HashSet<>();
+	private static Set<String> commonExtensions;
+
+	static {
+		commonExtensions = Collections.synchronizedSet(new HashSet<>());
+		commonExtensions.add(".shp");
+		commonExtensions.add(".tif");
+		commonExtensions.add(".tiff");
+		commonExtensions.add(".csv");
+		commonExtensions.add(".xsl");
+	}
 
 	private String sanitizeResourceId(String id) {
 		if (id == null) {
 			return null;
 		}
 		id = id.toLowerCase();
+		for (String ext : commonExtensions) {
+			if (id.endsWith(ext)) {
+				id = id.substring(0, id.length() - ext.length());
+			}
+		}
+		// all spaces become dots
 		id = id.replaceAll("\\s+", ".");
+		// all .N become _N
+		id = id.replaceAll("\\.([0-9])", "_$1");
 		SafeUrl url = SafeUrls.sanitize(id);
 		String ret = url.getSafeUrlString();
 		return ret;
@@ -85,11 +104,12 @@ public class ResourceCatalog implements IResourceCatalog {
 	}
 
 	private void initialize() {
-		for (File res : this.resourcePath.listFiles()) {
-			File metadata = new File(res + File.separator + "resource.json");
+		for (File resPath : this.resourcePath.listFiles()) {
+			File metadata = new File(resPath + File.separator + "resource.json");
 			if (metadata.exists()) {
 				Resource resource = new Resource(JsonUtils.load(metadata, ResourceReference.class));
 				put(resource.getUrn(), resource);
+				resourcePaths.put(resource.getUrn(), resPath);
 			}
 		}
 	}
@@ -105,9 +125,9 @@ public class ResourceCatalog implements IResourceCatalog {
 		}
 
 		IResource ret = null;
-		File temporary = new File(this.resourcePath + File.separator + NameGenerator.shortUUID());
+		File resourcePath = new File(this.resourcePath + File.separator + NameGenerator.shortUUID());
 		Resource resource = importResourceData(reference, user);
-		File metadata = new File(temporary + File.separator + "resource.json");
+		File metadata = new File(resourcePath + File.separator + "resource.json");
 		try {
 			FileUtils.writeStringToFile(metadata, JsonUtils.printAsJson(resource.getReference()),
 					StandardCharsets.UTF_8);
@@ -116,6 +136,7 @@ public class ResourceCatalog implements IResourceCatalog {
 			ret = publisher.publish(resource, Klab.INSTANCE.getRootMonitor());
 			((Resource) ret).validate(Resources.INSTANCE);
 			put(ret.getUrn(), ret);
+			resourcePaths.put(ret.getUrn(), resourcePath);
 
 		} catch (IOException e) {
 			throw new KlabIOException(e);
@@ -152,7 +173,7 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		reference.setLocalName(id);
 		reference.setProjectName(null);
-		reference.setLocalPath(removeProject(reference.getLocalPath()));
+		reference.setLocalPath("");
 		List<String> localpaths = new ArrayList<>();
 		for (String s : reference.getLocalPaths()) {
 			localpaths.add(removeProject(s));
@@ -215,7 +236,9 @@ public class ResourceCatalog implements IResourceCatalog {
 	}
 
 	private String removeProject(String localPath) {
+		// remove project/resources/folder/, leaving only the local file paths from the data directory
 		String ret = Path.getRemainder(localPath, "/");
+		ret = Path.getRemainder(ret, "/");
 		return Path.getRemainder(ret, "/");
 	}
 
@@ -237,7 +260,15 @@ public class ResourceCatalog implements IResourceCatalog {
 			throw new IllegalStateException(
 					"cannot import resource " + reference.getUrn() + ": adapter is not recognized or cannot publish");
 		}
-
+		
+		try {
+			// write out the modified resource, overwriting the original
+			FileUtils.writeStringToFile(metadata, JsonUtils.printAsJson(((Resource)ret).getReference()),
+				StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+		
 		ret = publisher.publish(ret, Klab.INSTANCE.getRootMonitor());
 
 		/*
@@ -246,6 +277,7 @@ public class ResourceCatalog implements IResourceCatalog {
 		((Resource) ret).validate(Resources.INSTANCE);
 
 		put(ret.getUrn(), ret);
+		resourcePaths.put(ret.getUrn(), resourcePath);
 
 		return ret;
 	}
@@ -275,43 +307,17 @@ public class ResourceCatalog implements IResourceCatalog {
 		ResourceReference ref = resources.get(key);
 		return ref == null ? null : new Resource(ref);
 	}
-
-	/**
-	 * Return the resource's valid directory path in the filesystem, creating it if
-	 * necessary. If this returns null, there must be an error in the resource.
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	private File getResourcePath(IResource resource) {
-
-		String resPath = resource.getLocalPath();
-		File ret = new File(this.resourcePath + File.separator + resPath);
-		ret.mkdir();
-		return ret;
-	}
-
+	
 	@Override
 	public IResource put(String key, IResource value) {
 
 		Urn urn = new Urn(key);
 		this.namespaces.add(urn.getNamespace());
 		this.catalogs.add(urn.getCatalog());
-
 		IResource ret = get(value.getUrn());
 		ResourceReference ref = ((Resource) value).getReference();
 		resources.put(value.getUrn(), ref);
-		File resourcePath = getResourcePath(value);
-		if (resourcePath != null) {
-			try {
-				File resFile = new File(resourcePath + File.separator + "resource.json");
-				if (!resFile.exists()) {
-					FileUtils.writeStringToFile(resFile, JsonUtils.printAsJson(ref), StandardCharsets.UTF_8);
-				}
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
-		}
+
 		return ret;
 	}
 
@@ -346,8 +352,7 @@ public class ResourceCatalog implements IResourceCatalog {
 	@Override
 	public IResource remove(Object key) {
 		IResource ret = get(key);
-		// resources.remove(eq("urn", key));
-		File resourcePath = getResourcePath(ret);
+		File resourcePath = resourcePaths.remove(ret);
 		if (resourcePath != null) {
 			try {
 				FileUtils.deleteDirectory(resourcePath);
@@ -361,15 +366,13 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public void putAll(Map<? extends String, ? extends IResource> m) {
-		for (String key : m.keySet()) {
-			put(key, m.get(key));
-		}
+		throw new IllegalStateException("putAll cannot be called on a public resource catalog: all insertions must be atomic");
 	}
 
 	@Override
 	public void clear() {
 		for (IResource resource : values()) {
-			File resourcePath = getResourcePath(resource);
+			File resourcePath = resourcePaths.remove(resource.getUrn());
 			if (resourcePath.isDirectory()) {
 				try {
 					FileUtils.deleteDirectory(resourcePath);

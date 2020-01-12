@@ -25,6 +25,9 @@ import org.springframework.web.client.RestTemplate;
 		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers" })
 public class NodeApplication {
 	
+	// property specifying the resource online checking interval in seconds
+	public static final String RESOURCE_CHECKING_INTERVAL_SECONDS = "klab.node.resources.checkinterval";
+	
 	private static Node node;
 	
 	public void run(String[] args) {

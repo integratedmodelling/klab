@@ -1318,6 +1318,7 @@ public enum Resources implements IResourceService {
 			IUrnAdapter urnAdapter = urnAdapters.get(adapter);
 			ref.setLabel(adapter);
 			ref.setDescription(urnAdapter.getDescription());
+			ref.setUniversal(true);
 			ref.setFileBased(false);
 			ref.setMultipleResources(false);
 			ret.add(ref);
@@ -1416,9 +1417,10 @@ public enum Resources implements IResourceService {
 	}
 
 	/**
-	 * Resource submission opens an engine ticket if type
-	 * {@link ITicket.Type.ResourceSubmission} which, when successfully resolved,
-	 * will contain the public URN in the "urn" parameter.
+	 * Resource submission opens an engine ticket of type
+	 * {@link ITicket.Type.ResourceSubmission} which will be updated with the ticket
+	 * number identifying the remote node ticket, in the data field "ticket". That
+	 * ticket should be checked to inquire about the state of the submission.
 	 */
 	@Override
 	public ITicket submitResource(IResource resource, String nodeId, String suggestedName) {
@@ -1449,16 +1451,16 @@ public enum Resources implements IResourceService {
 						if (resource.getLocalPaths().isEmpty()) {
 							TicketResponse.Ticket response = node.getClient().post(API.NODE.RESOURCE.SUBMIT_DESCRIPTOR,
 									((Resource) resource).getReference(), TicketResponse.Ticket.class);
-							ret.update(response);
+							ret.update("ticket", response.getId());
 						} else {
 							// zip the files and submit the archive with the temporary ID as the
 							// file name.
 							File zipFile = new File(
 									System.getProperty("java.io.tmpdir") + File.separator + ret.getId() + ".zip");
-							ZipUtils.zip(zipFile, ((Resource)resource).getPath(), false, true);
+							ZipUtils.zip(zipFile, ((Resource) resource).getPath(), false, true);
 							TicketResponse.Ticket response = node.getClient().postFile(API.NODE.RESOURCE.SUBMIT_FILES,
 									zipFile, TicketResponse.Ticket.class);
-							ret.update(response);
+							ret.update("ticket", response.getId());
 						}
 					} else {
 						// TODO republish an update to a remote resource - should be just the updated

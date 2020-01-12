@@ -1,5 +1,9 @@
 package org.integratedmodelling.random.adapters;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.math3.distribution.IntegerDistribution;
 import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -133,6 +137,13 @@ public class RandomAdapter implements IUrnAdapter {
 	@Override
 	public String getDescription() {
 		return "Random data and objects for testing and stochastic simulations.";
+	}
+
+	@Override
+	public Collection<String> getResourceUrns() {
+		List<String> ret = new ArrayList<>();
+		// TODO
+		return ret;
 	}
 
 }
