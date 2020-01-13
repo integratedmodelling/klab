@@ -111,16 +111,6 @@ public interface IResourceService {
 	IResourceCatalog getLocalResourceCatalog();
 
 	/**
-	 * The public resource catalog contains resources after they have been published
-	 * by the {@link IResourcePublisher publisher} of the adapter that created the
-	 * resource. These resources can be shared with others and projects using their
-	 * URNs can be shared on k.LAB nodes.
-	 *
-	 * @return the public resource catalog
-	 */
-	IResourceCatalog getPublicResourceCatalog();
-
-	/**
 	 * Resolve the passed URN to a resource.
 	 *
 	 * @param urn the

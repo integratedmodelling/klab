@@ -25,7 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,14 +41,20 @@ public class ResourceController {
 	@Autowired
 	FileStorageService fileStorageService;
 
-	/*
-	 * TODO this is probably the perfect place for a reactive controller, using a
-	 * Mono<KlabData> instead of KlabData.
+	/**
+	 * Controller for the main operation of retrieving resource data. Unique in
+	 * k.LAB for returning a Protobuf object.
+	 * 
+	 * TODO As the volume of data can be large, this is probably the perfect place
+	 * for a reactive controller, using a Mono<KlabData> instead of KlabData.
 	 */
-	@PostMapping(value = API.NODE.RESOURCE.CONTEXTUALIZE, /* produces = "application/x-protobuf", */ consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = API.NODE.RESOURCE.CONTEXTUALIZE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public KlabData getUrnData(@RequestBody ResourceDataRequest request, Principal principal) {
 		IGeometry geometry = Geometry.create(request.getGeometry());
+		if (!resourceManager.canAccess(request.getUrn(), (EngineAuthorization) principal)) {
+			throw new SecurityException(request.getUrn());
+		}
 		return resourceManager.getResourceData(request.getUrn(), geometry,
 				((EngineAuthorization) principal).getGroups());
 	}
@@ -59,8 +64,9 @@ public class ResourceController {
 	public ResourceReference resolveUrn(@PathVariable String urn, Principal principal) {
 
 		IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
-		// TODO check groups and send unauthorized if not authorized
-		// (AccessDeniedException)
+		if (!resourceManager.canAccess(urn, (EngineAuthorization) principal)) {
+			throw new SecurityException(urn);
+		}
 		if (resource == null) {
 			throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
 		}

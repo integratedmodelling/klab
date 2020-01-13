@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.INetworkService;
 import org.integratedmodelling.klab.auth.Node;
-import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.HubReference;
@@ -37,25 +36,14 @@ public enum Network implements INetworkService {
 
 	private static int MAX_THREADS = 10;
 
+	private HubReference hub;
 	Map<String, INodeIdentity> onlineNodes = Collections.synchronizedMap(new HashMap<>());
 	Map<String, INodeIdentity> offlineNodes = Collections.synchronizedMap(new HashMap<>());
-
-	Client client = Client.create();
-
-	private HubReference hub;
-	private Map<String, NodeReference> nodes = Collections.synchronizedMap(new HashMap<>());
 
 	private Timer timer = new Timer("Network checking");
 
 	private Network() {
 		Services.INSTANCE.registerService(this, INetworkService.class);
-		timer.scheduleAtFixedRate(new TimerTask() {
-
-			@Override
-			public void run() {
-				checkNetwork();
-			}
-		}, 30 * 1000, NETWORK_CHECK_INTERVAL_SECONDS * 1000);
 	}
 
 	@Override
@@ -93,35 +81,32 @@ public enum Network implements INetworkService {
 	 */
 	public void buildNetwork(EngineAuthenticationResponse authorization) {
 
-		Client client = Client.create();
-
 		this.hub = authorization.getHub();
 
 		for (NodeReference node : authorization.getNodes()) {
-			this.nodes.put(node.getId(), node);
 			Node identity = new Node(node, authorization.getUserData().getToken());
 			try {
-				mergeCapabilities(identity, client.with(authorization.getUserData().getToken())
-						.get(chooseUrl(node.getUrls()) + API.CAPABILITIES, NodeCapabilities.class));
+				mergeCapabilities(identity, identity.getClient().get(API.CAPABILITIES, NodeCapabilities.class));
 				onlineNodes.put(identity.getName(), identity);
+				Resources.INSTANCE.getPublicResourceCatalog().update(identity);
 			} catch (Exception e) {
 				offlineNodes.put(identity.getName(), identity);
 			}
 		}
+
+		// schedule the network check service
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				checkNetwork();
+			}
+		}, NETWORK_CHECK_INTERVAL_SECONDS * 1000, NETWORK_CHECK_INTERVAL_SECONDS * 1000);
 
 	}
 
 	// these return descriptors to communicate to clients
 	public HubReference getHub() {
 		return this.hub;
-	}
-
-	public Collection<NodeReference> getNodeDescriptors() {
-		return this.nodes.values();
-	}
-
-	public NodeReference getNodeDescriptor(String id) {
-		return this.nodes.get(id);
 	}
 
 	private void mergeCapabilities(Node node, NodeCapabilities capabilities) {
@@ -139,16 +124,15 @@ public enum Network implements INetworkService {
 	}
 
 	@Override
-	public <T, K> T broadcastGet(Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
-			IMonitor monitor, Object... urlVariables) {
+	public <T, K> T broadcastGet(String endpoint, Class<? extends K> individualResponseType,
+			Function<Collection<K>, T> merger, IMonitor monitor, Object... urlVariables) {
 
 		Collection<Callable<K>> tasks = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
 			tasks.add(new Callable<K>() {
 				@Override
 				public K call() throws Exception {
-					return client.with(node).get(chooseUrl(node.getUrls()), individualResponseType,
-							makeParameterMap(urlVariables));
+					return node.getClient().get(endpoint, individualResponseType, urlVariables);
 				}
 			});
 		}
@@ -188,15 +172,8 @@ public enum Network implements INetworkService {
 		return merger.apply(retvals);
 	}
 
-	private Map<String, ?> makeParameterMap(Object[] urlVariables) {
-		Map<String, Object> ret = new HashMap<>();
-		for (int i = 0; i < urlVariables.length; i++) {
-			ret.put(urlVariables[i].toString(), urlVariables[++i]);
-		}
-		return ret;
-	}
-
-	public <T, K, V> T broadcastPost(V request, Class<? extends K> individualResponseType,
+	@Override
+	public <T, K, V> T broadcastPost(String endpoint, V request, Class<? extends K> individualResponseType,
 			Function<Collection<K>, T> merger, IMonitor monitor) {
 
 		Collection<Callable<K>> tasks = new ArrayList<>();
@@ -204,7 +181,7 @@ public enum Network implements INetworkService {
 			tasks.add(new Callable<K>() {
 				@Override
 				public K call() throws Exception {
-					return client.with(node).post(chooseUrl(node.getUrls()), request, individualResponseType);
+					return node.getClient().post(endpoint, request, individualResponseType);
 				}
 			});
 		}
@@ -249,30 +226,31 @@ public enum Network implements INetworkService {
 		return urls.iterator().next();
 	}
 
-	protected void checkNetwork() {
-		
+	protected synchronized void checkNetwork() {
+
 		System.out.println("Checking network");
 		List<INodeIdentity> moveOnline = new ArrayList<>();
 		List<INodeIdentity> moveOffline = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
 			try {
-				NodeCapabilities capabilities = node.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
-				this.nodes.put(node.getId(), new NodeReference(capabilities));
+				((Node) node).mergeCapabilities(node.getClient().get(API.CAPABILITIES, NodeCapabilities.class));
 			} catch (Exception e) {
 				moveOffline.add(node);
+				Resources.INSTANCE.getPublicResourceCatalog().remove(node);
 				Logging.INSTANCE.info("node " + node.getName() + " went offline");
 			}
 		}
 		for (INodeIdentity node : offlineNodes.values()) {
 			try {
 				NodeCapabilities capabilities = node.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
+				((Node) node).mergeCapabilities(capabilities);
 				moveOnline.add(node);
-				this.nodes.put(node.getId(), new NodeReference(capabilities));
+				Resources.INSTANCE.getPublicResourceCatalog().update(node);
 				Logging.INSTANCE.info("node " + node.getName() + " went online");
 			} catch (Exception e) {
 			}
 		}
-		
+
 		for (INodeIdentity node : moveOnline) {
 			offlineNodes.remove(node.getId());
 			onlineNodes.put(node.getId(), node);

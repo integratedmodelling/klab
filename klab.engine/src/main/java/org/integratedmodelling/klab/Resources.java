@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
@@ -57,7 +55,6 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.DecodingDataBuilder;
-import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
@@ -71,6 +68,7 @@ import org.integratedmodelling.klab.engine.resources.ComponentsWorkspace;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
+import org.integratedmodelling.klab.engine.resources.PublicResourceCatalog;
 import org.integratedmodelling.klab.engine.resources.ServiceWorkspace;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -120,12 +118,12 @@ public enum Resources implements IResourceService {
 	INSTANCE;
 
 	class ResourceData {
-		long timestamp;
+		long timestamp;	
 		boolean online;
 	}
 
 	private Map<String, ResourceData> statusCache = Collections.synchronizedMap(new HashMap<>());
-	private ExecutorService resourceTaskExecutor;
+//	private ExecutorService resourceTaskExecutor;
 	private IKimLoader loader = null;
 
 	/**
@@ -144,7 +142,7 @@ public enum Resources implements IResourceService {
 	 * {@link #setResourceCatalog} before any request is made.
 	 */
 	IResourceCatalog localResourceCatalog;
-	IResourceCatalog publicResourceCatalog;
+	PublicResourceCatalog publicResourceCatalog = new PublicResourceCatalog();
 
 	Map<String, Map<String, Project>> projectCatalog = new HashMap<>();
 
@@ -183,13 +181,6 @@ public enum Resources implements IResourceService {
 	private ServiceWorkspace service;
 
 	private IProject localProject;
-
-	// /**
-	// * Temporary, ephemeral workspace only meant to host the common project for
-	// * on-demand namespaces.
-	// *
-	// */
-	// private IWorkspace common;
 
 	private Resources() {
 		Services.INSTANCE.registerService(this, IResourceService.class);
@@ -447,19 +438,7 @@ public enum Resources implements IResourceService {
 			ref.setType(Type.VALUE); // for now
 			return new Resource(ref);
 		} else {
-
-			/*
-			 * see if we have cached it, and if so, whether we need to refresh
-			 */
-			ret = getPublicResourceCatalog().get(urn.toString());
-			if (ret != null) {
-				/*
-				 * TODO check if we need to refresh the URN from the network; if so, set ret to
-				 * null again.
-				 */
-			}
-			// TODO use network services; ensure any checks are done
-			// TODO cache data with appropriate expiration time
+			ret = publicResourceCatalog.get(urn.getUrn());
 		}
 
 		/*
@@ -1064,11 +1043,7 @@ public enum Resources implements IResourceService {
 		return localResourceCatalog;
 	}
 
-	@Override
-	public IResourceCatalog getPublicResourceCatalog() {
-		if (publicResourceCatalog == null) {
-			publicResourceCatalog = new ResourceCatalog("publicresources");
-		}
+	public PublicResourceCatalog getPublicResourceCatalog() {
 		return publicResourceCatalog;
 	}
 
@@ -1077,16 +1052,19 @@ public enum Resources implements IResourceService {
 		return new ResourceBuilder();
 	}
 
-	public ExecutorService getResourceTaskExecutor() {
-		if (resourceTaskExecutor == null) {
-			// TODO condition both the type and the parameters of the executor to options
-			resourceTaskExecutor = Executors.newFixedThreadPool(Configuration.INSTANCE.getResourceThreadCount());
-		}
-		return resourceTaskExecutor;
-	}
+//	public ExecutorService getResourceTaskExecutor() {
+//		if (resourceTaskExecutor == null) {
+//			// TODO condition both the type and the parameters of the executor to options
+//			resourceTaskExecutor = Executors.newFixedThreadPool(Configuration.INSTANCE.getResourceThreadCount());
+//		}
+//		return resourceTaskExecutor;
+//	}
 
 	@Override
 	public boolean isResourceOnline(String urn) {
+		if (!Urns.INSTANCE.isLocal(urn) && !Urns.INSTANCE.isUniversal(urn)) {
+			return publicResourceCatalog.isOnline(urn);
+		}
 		IResource resource = resolveResource(urn);
 		return resource == null ? false : isResourceOnline(resource);
 	}
@@ -1127,10 +1105,11 @@ public enum Resources implements IResourceService {
 			if (getUrnAdapter(urn.getCatalog()) != null) {
 				return getUrnAdapter(urn.getCatalog()).isOnline(urn);
 			}
+		} else {
+			publicResourceCatalog.isOnline(resource.getUrn());
 		}
 
-		Urn urn = new Urn(resource.getUrn());
-		return Network.INSTANCE.getNodeForResource(urn) != null;
+		return false;
 	}
 
 	/**

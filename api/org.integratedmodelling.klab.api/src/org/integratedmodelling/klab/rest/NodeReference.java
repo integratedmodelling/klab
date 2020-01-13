@@ -6,6 +6,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
+
 public class NodeReference {
 
 	public static enum Permission {
@@ -20,7 +22,7 @@ public class NodeReference {
 	private int retryPeriodMinutes;
 	private int loadFactor;
 	private Set<String> adapters = new HashSet<>();
-	private Set<String> resources = new HashSet<>();
+//	private Set<String> resources = new HashSet<>();
 	private Set<String> namespaces = new LinkedHashSet<>();
 	private Set<String> catalogs = new LinkedHashSet<>();
 	private List<String> incomingConnections = new ArrayList<>();
@@ -28,6 +30,16 @@ public class NodeReference {
 
 	public NodeReference() {
 
+	}
+	
+	public NodeReference(INodeIdentity node) {
+		this.id = node.getName();
+		this.permissions.addAll(node.getPermissions());
+		this.namespaces.addAll(node.getNamespaceIds());
+		this.catalogs.addAll(node.getCatalogIds());
+//		this.resources.addAll(node.getResources());
+		this.online = node.isOnline();
+		this.urls.addAll(node.getUrls());
 	}
 
 	public NodeReference(NodeCapabilities capabilities) {
@@ -37,7 +49,7 @@ public class NodeReference {
 		this.id = capabilities.getName();
 		this.catalogs.addAll(capabilities.getResourceCatalogs());
 		this.namespaces.addAll(capabilities.getResourceNamespaces());
-		this.resources.addAll(capabilities.getResourceUrns());
+//		this.resources.addAll(capabilities.getResourceUrns());
 		this.online = capabilities.isOnline();
 		if (capabilities.isAcceptSubmission()) {
 			this.permissions.add(Permission.PUBLISH);
@@ -215,12 +227,12 @@ public class NodeReference {
 		this.catalogs = catalogs;
 	}
 
-	public Set<String> getResources() {
-		return resources;
-	}
-
-	public void setResources(Set<String> resources) {
-		this.resources = resources;
-	}
+//	public Set<String> getResources() {
+//		return resources;
+//	}
+//
+//	public void setResources(Set<String> resources) {
+//		this.resources = resources;
+//	}
 
 }

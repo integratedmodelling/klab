@@ -496,7 +496,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		INetworkSessionIdentity network = this.getParentIdentity(INetworkSessionIdentity.class);
 		if (network != null) {
 			for (INodeIdentity node : network.getNodes()) {
-				NodeReference desc = Network.INSTANCE.getNodeDescriptor(node.getName());
+				NodeReference desc = new NodeReference(node);
 				if (desc != null) {
 					if (node.getPermissions().contains(Permission.PUBLISH)) {
 						ret.getPublishing().add(node.getName());
@@ -509,6 +509,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				}
 			}
 		}
+		
+		ret.getOnlineUrns().addAll(Resources.INSTANCE.getPublicResourceCatalog().getOnlineUrns());
 
 		for (ITicket resolved : Klab.INSTANCE.getTicketManager().getResolvedAfter(lastNetworkCheck.get())) {
 			ret.getResolvedTickets().add(TicketManager.encode(resolved));

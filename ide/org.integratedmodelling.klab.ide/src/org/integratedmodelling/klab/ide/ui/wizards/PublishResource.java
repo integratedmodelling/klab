@@ -125,13 +125,15 @@ public class PublishResource extends WizardPage {
 				widgetSelected(e);
 			}
 		});
-		combo.select(0);
 		
 		catalogCombo = new Combo(container, SWT.NONE);
 		FormData fd_catalogCombo = new FormData();
 		fd_catalogCombo.top = new FormAttachment(text, 30);
 		fd_catalogCombo.right = new FormAttachment(100, -66);
 		catalogCombo.setLayoutData(fd_catalogCombo);
+		for (String catalog : nodes.get(0).getCatalogs()) {
+			catalogCombo.add(catalog);
+		}
 		
 		Label lblCatalogoptional = new Label(container, SWT.NONE);
 		fd_lblNewLabel_1.right = new FormAttachment(lblCatalogoptional, 0, SWT.RIGHT);
@@ -148,6 +150,9 @@ public class PublishResource extends WizardPage {
 		fd_namespaceCombo.top = new FormAttachment(catalogCombo, 27);
 		fd_namespaceCombo.left = new FormAttachment(0, 159);
 		namespaceCombo.setLayoutData(fd_namespaceCombo);
+		for (String namespace : nodes.get(0).getNamespaces()) {
+			namespaceCombo.add(namespace);
+		}
 		
 		Label lblNewLabel_2 = new Label(container, SWT.NONE);
 		fd_lblCatalogoptional.left = new FormAttachment(0, 39);
@@ -158,6 +163,8 @@ public class PublishResource extends WizardPage {
 		fd_lblNewLabel_2.top = new FormAttachment(namespaceCombo, 1, SWT.TOP);
 		lblNewLabel_2.setLayoutData(fd_lblNewLabel_2);
 		lblNewLabel_2.setText("Namespace (optional)");
+
+		combo.select(0);
 
 	}
 

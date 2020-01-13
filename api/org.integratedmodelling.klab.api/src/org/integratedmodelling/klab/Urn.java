@@ -49,11 +49,6 @@ public class Urn {
 		this.tokens = urn.split(":");
 	}
 
-	private void readParameters(String string) {
-		// TODO Auto-generated method stub
-
-	}
-
 	/**
 	 * Node name, mandatory in all URNs. In universal ones it will be "klab". In
 	 * local ones, it will be "local".
@@ -121,7 +116,7 @@ public class Urn {
 	}
 
 	/**
-	 * Unmodified URN string.
+	 * Unmodified URN string without parameters
 	 * 
 	 * @return the unmodified URN.
 	 */

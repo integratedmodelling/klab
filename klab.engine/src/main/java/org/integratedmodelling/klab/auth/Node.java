@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.communication.client.Client.NodeClient;
+import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
@@ -212,6 +213,13 @@ public class Node implements INodeIdentity {
 
 	public void setCatalogIds(Set<String> catalogIds) {
 		this.catalogIds = catalogIds;
+	}
+
+	public void mergeCapabilities(NodeCapabilities nodeCapabilities) {
+		this.catalogIds.addAll(nodeCapabilities.getResourceCatalogs());
+		this.namespaceIds.addAll(nodeCapabilities.getResourceNamespaces());
+		this.resourceUrls.clear();
+		this.resourceUrls.addAll(nodeCapabilities.getResourceUrns());
 	}
 
 }

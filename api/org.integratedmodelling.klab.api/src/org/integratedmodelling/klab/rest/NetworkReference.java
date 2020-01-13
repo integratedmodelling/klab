@@ -22,6 +22,7 @@ public class NetworkReference {
 	private Map<String, NodeReference> nodes = new HashMap<>();
 	private List<String> connections = new ArrayList<>();
 	private List<TicketResponse.Ticket> resolvedTickets = new ArrayList<>();
+	private List<String> onlineUrns = new ArrayList<>();
 
 	public List<String> getResources() {
 		return resources;
@@ -82,5 +83,13 @@ public class NetworkReference {
 
 	public void setResolvedTickets(List<TicketResponse.Ticket> resolvedTickets) {
 		this.resolvedTickets = resolvedTickets;
+	}
+
+	public List<String> getOnlineUrns() {
+		return onlineUrns;
+	}
+
+	public void setOnlineUrns(List<String> onlineUrns) {
+		this.onlineUrns = onlineUrns;
 	}
 }

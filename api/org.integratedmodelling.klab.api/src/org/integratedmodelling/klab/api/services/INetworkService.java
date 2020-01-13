@@ -46,7 +46,7 @@ public interface INetworkService {
 	 * @param urlVariables
 	 * @return the result of merging through the merger
 	 */
-	<T, K> T broadcastGet(Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
+	<T, K> T broadcastGet(String endpoint, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
 			IMonitor monitor, Object... urlVariables);
 
 	/**
@@ -59,7 +59,7 @@ public interface INetworkService {
 	 * @param monitor
 	 * @return the result of merging through the merger
 	 */
-	<T, K, V> T broadcastPost(V request, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
+	<T, K, V> T broadcastPost(String endpoint, V request, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
 			IMonitor monitor);
 
 	/**

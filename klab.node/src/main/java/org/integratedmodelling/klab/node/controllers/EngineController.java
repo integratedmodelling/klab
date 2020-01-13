@@ -54,7 +54,7 @@ public class EngineController {
 		for (ResourceAdapterReference adapter : Resources.INSTANCE.describeResourceAdapters()) {
 			// check if the adapter is authorized for this user
 			String authorized = Configuration.INSTANCE
-					.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "NONE");
+					.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "");
 			if (isAuthorized(user, authorized)) {
 				ret.getResourceAdapters().add(adapter);
 				if (adapter.isUniversal()) {
@@ -83,6 +83,7 @@ public class EngineController {
 	}
 
 	private boolean isAuthorized(Principal user, String permissions) {
+		// TODO switch to KlabPermission class
 		if ("*".equals(permissions)) {
 			return true;
 		} else if ("NONE".equals(permissions)) {
