@@ -21,7 +21,6 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.ITable;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
@@ -35,14 +34,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  * @version $Id: $Id
  */
 public interface IState extends IObservation, IDataArtifact {
-
-	/**
-	 * True if the state has the same value overall independent of scale. Used to
-	 * optimize visualization, computation and storage.
-	 *
-	 * @return true if constant
-	 */
-	boolean isConstant();
 
 	/**
 	 * If this is called with a type different from the original one returned by

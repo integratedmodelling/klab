@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -90,7 +91,7 @@ public class WekaClassifier {
 
         try {
             instances.getInstances().setClassIndex(0);
-            classifier.buildClassifier(instances.getInstances());
+        	classifier.buildClassifier(instances.getInstances());
             Evaluation eval = new Evaluation(instances.getInstances());
             eval.evaluateModel(classifier, instances.getInstances());
 

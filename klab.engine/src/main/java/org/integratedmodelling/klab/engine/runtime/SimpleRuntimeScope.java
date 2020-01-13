@@ -27,9 +27,9 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
@@ -89,6 +89,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	Graph<IArtifact, Relationship> network;
 	ISubject rootSubject;
 	Map<String, IObservable> semantics;
+	Map<String, Object> symbolTable = new HashMap<>();
 
 	public SimpleRuntimeScope(Actuator actuator) {
 		this.observable = actuator.getObservable();
@@ -151,7 +152,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IScheduler<?> getScheduler() {
+	public IScheduler getScheduler() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -618,7 +619,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public void scheduleActions(Actuator active) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -627,4 +628,32 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return this;
 	}
 
+	@Override
+	public Map<String, Object> getSymbolTable() {
+		return symbolTable;
+	}
+
+	@Override
+	public IState newNonsemanticState(String name, IArtifact.Type type, IScale scale) {
+
+		IConcept concept = OWL.INSTANCE.getNonsemanticPeer(name, type);
+		IObservable observable = Observable.promote(concept);
+
+		IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, this);
+		IState ret = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
+
+		semantics.put(observable.getName(), observable);
+		structure.addVertex(ret);
+		structure.addEdge(ret, this.target);
+		artifacts.put(observable.getName(), ret);
+		observations.put(ret.getId(), ret);
+
+		return ret;
+	}
+
+	@Override
+	public <T extends IArtifact> Map<String, T> getLocalCatalog(Class<T> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

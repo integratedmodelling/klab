@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.kim.api.IContextualizable;
@@ -61,7 +62,7 @@ public interface IRuntimeProvider {
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
 	Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
-			IResolutionScope scope, IDirectObservation context, IMonitor monitor) throws KlabException;
+			IResolutionScope scope/* , IDirectObservation context */, IMonitor monitor) throws KlabException;
 
 	/**
 	 * Create an empty runtime context for the dataflow that will build the context
@@ -90,11 +91,12 @@ public interface IRuntimeProvider {
 	 *
 	 * @param resource a {@link org.integratedmodelling.kim.api.IContextualizable}
 	 *                 object.
-	 * @param actuator the actuator providing the context for the computation.
+	 * @param observable
+	 * @param session
 	 * 
 	 * @return the service call encoding the resource
 	 */
-	IServiceCall getServiceCall(IContextualizable resource, IActuator actuator);
+	IServiceCall getServiceCall(IContextualizable resource, IObservable observable, ISession session);
 
 	/**
 	 * Distribute the computation of the passed state resolver over the passed
@@ -200,7 +202,8 @@ public interface IRuntimeProvider {
 	 * @param operand
 	 * @return
 	 */
-	IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand);
+	IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand,
+			Set<ValueOperator> modifiers);
 
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID

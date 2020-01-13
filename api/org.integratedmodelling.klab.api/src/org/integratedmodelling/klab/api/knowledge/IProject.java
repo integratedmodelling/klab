@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.INamespace;
 
 // TODO: Auto-generated Javadoc
@@ -114,6 +115,14 @@ public interface IProject {
 	 */
 	boolean isRemote();
 
+	/**
+	 * Find a local resource by local name and return it. 
+	 * 
+	 * @param urn the local resource name
+	 * @return local resource or null
+	 */
+	IResource getLocalResource(String urn);
+	
 	/**
 	 * Name of originating node. Not null implies {@link #isRemote()} == true.
 	 *

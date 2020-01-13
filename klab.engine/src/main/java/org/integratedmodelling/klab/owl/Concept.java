@@ -657,7 +657,7 @@ public class Concept extends Knowledge implements IConcept {
 		if (this == concept || this.equals(concept)) {
 			return distance;
 		}
-
+		
 		IConcept core1 = Observables.INSTANCE.getCoreObservable(this);
 		IConcept core2 = Observables.INSTANCE.getCoreObservable(concept);
 

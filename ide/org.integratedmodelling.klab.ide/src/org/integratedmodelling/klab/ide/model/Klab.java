@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFolder;
@@ -35,9 +36,12 @@ import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
+import org.integratedmodelling.klab.rest.NetworkReference;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.TicketResponse;
 
 /**
  * Holder of state for sessions and projects. Singleton available through the
@@ -64,6 +68,7 @@ public class Klab {
 	private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
 	private List<ResourceAdapterReference> resourceAdapters = new ArrayList<>();
 	private Map<String, NamespaceCompilationResult> namespaceStatus = new HashMap<>();
+	private AtomicReference<NetworkReference> network = new AtomicReference<>();
 
 	public void synchronizeProjectResources(String projectName, File projectRoot) {
 
@@ -110,6 +115,10 @@ public class Klab {
 				: new ArrayList<>();
 	}
 
+	void updateNetwork(NetworkReference network) {
+		this.network.set(network);
+	}
+
 	/**
 	 * Get all project resources
 	 * 
@@ -124,7 +133,8 @@ public class Klab {
 	}
 
 	/*
-	 * sync the resource status and project errors with the capabilities from the engine
+	 * sync the resource status and project errors with the capabilities from the
+	 * engine
 	 */
 	private void synchronizeProjectResources(List<ProjectReference> localWorkspaceProjects) {
 		for (ProjectReference project : localWorkspaceProjects) {
@@ -305,22 +315,22 @@ public class Klab {
 			}
 		} else if (item instanceof EResource) {
 			if (level.equals(Level.SEVERE)) {
-				return (((EResource)item).getResource().isError());
-			} 
+				return (((EResource) item).getResource().isError());
+			}
 		} else if (item instanceof EResourceFolder) {
-			for (ENavigatorItem resource : (((EResourceFolder)item).getEChildren())) {
+			for (ENavigatorItem resource : (((EResourceFolder) item).getEChildren())) {
 				if (hasNotifications(resource, level)) {
 					return true;
 				}
 			}
 		} else if (item instanceof EScriptFolder) {
-			for (ENavigatorItem resource : (((EScriptFolder)item).getEChildren())) {
+			for (ENavigatorItem resource : (((EScriptFolder) item).getEChildren())) {
 				if (hasNotifications(resource, level)) {
 					return true;
 				}
 			}
 		} else if (item instanceof ETestFolder) {
-			for (ENavigatorItem resource : (((ETestFolder)item).getEChildren())) {
+			for (ENavigatorItem resource : (((ETestFolder) item).getEChildren())) {
 				if (hasNotifications(resource, level)) {
 					return true;
 				}
@@ -351,20 +361,32 @@ public class Klab {
 			if (level.equals(Level.WARNING) && ((EModel) item).isWarnings()) {
 				return true;
 			}
-			CompileInfo info = Kim.INSTANCE.getCompileInfo(((EModel)item).getNamespace());
+			CompileInfo info = Kim.INSTANCE.getCompileInfo(((EModel) item).getNamespace());
 			if (info != null) {
 				if (level.equals(Level.SEVERE)) {
-					return info.getErrors(((EModel)item).getName()).size() > 0;
+					return info.getErrors(((EModel) item).getName()).size() > 0;
 				} else if (level.equals(Level.WARNING)) {
-					return info.getWarnings(((EModel)item).getName()).size() > 0;
+					return info.getWarnings(((EModel) item).getName()).size() > 0;
 				} else if (level.equals(Level.INFO)) {
-					return info.getInfo(((EModel)item).getName()).size() > 0;
+					return info.getInfo(((EModel) item).getName()).size() > 0;
 				}
 			}
 		}
- 		return false;
+		return false;
 	}
 
+	public List<NodeReference> getPublishingNodes(String adapter) {
+		List<NodeReference> ret = new ArrayList<>();
+		NetworkReference network = this.network.get();
+		if (network != null) {
+			for (NodeReference node : network.getNodes().values()) {
+				if (network.getPublishing().contains(node.getId()) && node.getAdapters().contains(adapter)) {
+					ret.add(node);
+				}
+			}
+		}
+		return ret;
+	}
 
 	public void updateResource(LocalResourceReference resource) {
 		EResourceReference res = getResource(resource.getUrn());

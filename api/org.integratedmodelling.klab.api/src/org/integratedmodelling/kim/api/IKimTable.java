@@ -15,5 +15,7 @@ public interface IKimTable extends IKimStatement {
 	int getColumnCount();
 
 	IKimClassifier[] getRow(int i);
+	
+	List<IKimClassifier[]> getRows();
 
 }

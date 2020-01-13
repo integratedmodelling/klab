@@ -196,10 +196,14 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 
 				/*
 				 * use the current context and monitor
-				 * FIXME does nothing
 				 */
-//				binding.setVariable("_c", context);
-//				binding.setVariable("_monitor", context.getMonitor());
+				binding.setVariable("_c", context);
+				binding.setVariable("_monitor", context.getMonitor());
+				
+				IRuntimeScope scope = (IRuntimeScope)context;
+				if (scope.getScale().getTime() != null) {
+					binding.setVariable("_jtime", scope.getScale().getTime());
+				}
 				
 				for (String v : defineIfAbsent) {
 					if (!binding.hasVariable(v)) {

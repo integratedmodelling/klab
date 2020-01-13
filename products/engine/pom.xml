@@ -31,6 +31,26 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.landcover</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.components.cdm</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.mca</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.ml</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.hydrology</artifactId>
 			<version>${klab.version}</version>
 		</dependency>

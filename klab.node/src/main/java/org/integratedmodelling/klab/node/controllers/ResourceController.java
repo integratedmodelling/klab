@@ -1,104 +1,113 @@
 package org.integratedmodelling.klab.node.controllers;
 
+import java.io.File;
 import java.security.Principal;
 
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
-import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Builder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.FileStorageService;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
-import org.integratedmodelling.klab.rest.PublishResourceResponse;
+import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @Secured(Role.ENGINE)
 public class ResourceController {
 
-    @Autowired
-    ResourceManager resourceManager;
+	@Autowired
+	ResourceManager resourceManager;
 
-    @Autowired
-    FileStorageService fileStorageService;
+	@Autowired
+	FileStorageService fileStorageService;
 
-    /*
-     * TODO this is probably the perfect place for a reactive controller, using a Mono<KlabData> instead of
-     * KlabData.
-     */
-    @GetMapping(value = API.NODE.RESOURCE.GET_URN, produces = "application/json")
-    @ResponseBody
-    public KlabData getUrnData(@PathVariable String urn, Principal principal) {
+	/**
+	 * Controller for the main operation of retrieving resource data. Unique in
+	 * k.LAB for returning a Protobuf object.
+	 * 
+	 * TODO As the volume of data can be large, this is probably the perfect place
+	 * for a reactive controller, using a Mono<KlabData> instead of KlabData.
+	 */
+	@PostMapping(value = API.NODE.RESOURCE.CONTEXTUALIZE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public KlabData getUrnData(@RequestBody ResourceDataRequest request, Principal principal) {
+		IGeometry geometry = Geometry.create(request.getGeometry());
+		if (!resourceManager.canAccess(request.getUrn(), (EngineAuthorization) principal)) {
+			throw new SecurityException(request.getUrn());
+		}
+		return resourceManager.getResourceData(request.getUrn(), geometry,
+				((EngineAuthorization) principal).getGroups());
+	}
 
-        IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
-        // TODO check groups and send unauthorized if not authorized (AccessDeniedException)
-        if (resource == null) {
-            throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
-        }
+	@PostMapping(value = API.NODE.RESOURCE.RESOLVE_URN, produces = "application/json")
+	@ResponseBody
+	public ResourceReference resolveUrn(@PathVariable String urn, Principal principal) {
 
-        Builder builder = KlabData.newBuilder();
+		IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
+		if (!resourceManager.canAccess(urn, (EngineAuthorization) principal)) {
+			throw new SecurityException(urn);
+		}
+		if (resource == null) {
+			throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
+		}
+		return ((Resource) resource).getReference();
+	}
 
-        // TODO!
+	/**
+	 * Take charge of a resource submission consisting of a zip archive uploaded
+	 * with all the contents (file name = temporary ID) and return the resulting
+	 * ticket, from which the client can follow progress.
+	 * 
+	 * @param file
+	 * @param principal
+	 * @return
+	 */
+	@PostMapping(API.NODE.RESOURCE.SUBMIT_FILES)
+	@ResponseBody
+	public TicketResponse.Ticket submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
 
-        return builder.build();
-    }
+		String fileName = fileStorageService.storeFile(file);
+		ITicket ticket = resourceManager.publishResource(null, new File(fileName), (EngineAuthorization) principal,
+				Klab.INSTANCE.getRootMonitor());
+		return TicketManager.encode(ticket);
+	}
 
-    @PostMapping(value = API.NODE.RESOURCE.RESOLVE_URN, produces = "application/json")
-    @ResponseBody
-    public ResourceReference resolveUrn(@PathVariable String urn, Principal principal) {
+	/**
+	 * Take charge of a resource submission consisting only of a resource.json
+	 * contents and a temporary ID, and return the resulting ticket, from which the
+	 * client can follow progress.
+	 * 
+	 * @param resource
+	 * @param principal
+	 * @return
+	 */
+	@PostMapping(value = API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public TicketResponse.Ticket submitResource(@RequestBody ResourceReference resource, Principal principal) {
 
-        IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
-        // TODO check groups and send unauthorized if not authorized (AccessDeniedException)
-        if (resource == null) {
-            throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
-        }
-        return ((Resource) resource).getReference();
-    }
-
-    @PutMapping(API.NODE.RESOURCE.SUBMIT)
-    public PublishResourceResponse uploadFile(@RequestParam("file") MultipartFile file, Principal principal) {
-
-        String fileName = fileStorageService.storeFile(file);
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
-                .path(fileName).toUriString();
-
-        // TODO spawn publish thread, return 201 with response
-        PublishResourceResponse ret = new PublishResourceResponse();
-        
-        // thread should unzip resource, load resource.json, establish adapter, call the validator, build resource and import it
-        // in public catalog
-        
-        
-//        return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
-        
-        return ret;
-    }
-
-    @PostMapping(API.NODE.RESOURCE.SUBMIT)
-    @ResponseBody
-    public PublishResourceResponse uploadFile(ResourceReference resource, Principal principal) {
-        
-        PublishResourceResponse ret = new PublishResourceResponse();
-
-        IResource res = resourceManager.publishResource(resource, null, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
-        ret.setUrn(res.getUrn());
-        
-        return ret;
-    }
+		ITicket ticket = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
+				Klab.INSTANCE.getRootMonitor());
+		return TicketManager.encode(ticket);
+	}
 
 }

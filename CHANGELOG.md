@@ -25,15 +25,60 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [comment]: <>   ()
 [comment]: <>   (Next build: [0.10.0.xxx] -- ISO Date)
 
-
 ## Unreleased
 ### Added
+- First tests with remote resources using test UrnAdapter working.
+- Add ITicket and ITicketManager for basic, file-based ticket management in both
+  engine and client packages.
+- IDE reads status of network periodically and enables publish action if there are
+  nodes that allow publishing for the adapter of the resource.
+- New Configuration::getProperty method uses overriding system properties.
+- Node permissions (query, publish and use of each adapter) configured from properties.
+- Node has its own engine and publishes basic permissions and adapters in capabilities.
+- Full CLUE-inspired (and much extended) landcover change module working and documented.
+- Fixed logics in contextualization of sub-countables removes bugs in relationship 
+  contextualization.
+- New class LocatedExpression to (eventually) substitute all custom expression handling in
+  contextualizers, accessing neighborhoods and the like automatically.
+- IResourceCalculator class to build an easy to use API wrapper for a resource and 
+  evaluate it as a scalar and/or in a located context.
+- Learning models without an archetype will use the main observable as a dependency and change the main observable to its "predicted" version using the worldview core concept for predicted, now in the observation ontology. This allows faster and easier specification of simple learners. Distributed learned qualities now offers a sample (fraction) and a select (points for sampling) option in the Weka contextualizers.
+- Archetype and predictor annotations are now part of the main engine instead of the ML component.
+- Indexing of states based on temporal geometries working in visualization API. 
 - New 'level of' operator to allow easy modeling of orderings (on SB's suggestion).
+- New 'change in' operator creating the process that changes a quality. The process
+  is inherent to the quality, automatically "affects" it, and a dependency is 
+  added to models to set the initial value.
+- New 'summed' and 'averaged' modifiers in value operators to force aggregations to
+  produce sums or averages independent of semantics. "Total" should work the same
+  way.
 - API to support 'universal URNs' with 'klab' as node name, resolved entirely by the
   engine using IUrnResolver. 
 - Implementation of 'klab:osm:' open street maps URNs and search service using OSMNames
   linked to free-text search.
 - Stubs for event instantiators in space/time.
+- Observations with occurrents promote the temporal context from generic/specific to grid.
+  Temporal logics straightened out and better understood.
+- Lots of additional subtlety in the contextualization of dependencies and secondary 
+  observables. In general, contextualization is done as soon as possible, i.e. in model 
+  declarations according to the model type. Instantiators are the only ones where dependencies are 
+  contextualized to the context at resolution time, as the context cannot be known in
+  advance. Context is always validated but only assigned to dependencies when the primary observable
+  has *explicit* ('within') contextualization.
+- Learning models now learn contextual qualities properly and create an "archetype" state that does
+  not end up in the context or in the notifications, so that the API of the contextualizer does not
+  change.
+- Reset the build count from 200 and align the codebase to the new hub and node architecture.
+- Now understanding 'set xxx to []' with an unknown xxx (not an output and not the implied
+  inherent for change processes) as "variables" that will be computed and become available in
+  subsequent actions. Using new IContextualizer#isVariable API.
+- Syntactic support for 'merging <model|resource>....' instead of 'using' ... in models, reserved
+  to change models that can string together compatible temporal resources or models.
+- Straighten out and clean up k.DL for targeting computations: xxx <- contextualizer() for
+  variables, xxx >> mediator() for mediators, and contextualizer() >> xxx for targeting 
+  alternative outputs.
+- Any stray storage remained on disk after previous contextualizations is deleted at 
+  engine boot.
 ### Changed
 - Resources can be "granular", i.e. composed of multiple resources with individual 
   geometry that give the full resource geometry when merged. Mostly unimplemented.
@@ -41,6 +86,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Learning models and void models are no longer indexed.
 - Catch exceptions from botched URN used for model coverage at indexing so that boot
   continues instead of aborting without notice.
+- Full testing and support for learning qualities from a sampled distributed archetype,
+  both categorical or numeric. 
 ### Removed
 
 ## [0.10.0.179] -- 2019/09/05

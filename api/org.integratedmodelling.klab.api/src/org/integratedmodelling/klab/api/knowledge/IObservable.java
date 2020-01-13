@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -251,6 +252,12 @@ public interface IObservable extends ISemantic, IResolvable {
 
 		Builder linking(IConcept source, IConcept target);
 
+		/**
+		 * Set the name for the observable resulting from buildObservable().
+		 * 
+		 * @param name
+		 * @return
+		 */
 		Builder named(String name);
 
 		/**
@@ -287,7 +294,23 @@ public interface IObservable extends ISemantic, IResolvable {
 		 */
 		Builder withTargetPredicate(IConcept targetPredicate);
 
+		/**
+		 * Set the observable resulting from buildObservable() as optional.
+		 * 
+		 * @param optional
+		 * @return
+		 */
 		Builder optional(boolean optional);
+
+		/**
+		 * Remove all the elements <em>directly</em> stated in the current concept
+		 * corresponding to the passed role, if existing, and return a builder for the
+		 * concept without them.
+		 * 
+		 * @param roles
+		 * @return
+		 */
+		Builder without(ObservableRole... roles);
 
 	}
 

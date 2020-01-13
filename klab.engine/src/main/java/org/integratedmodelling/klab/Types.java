@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -56,219 +57,240 @@ import org.integratedmodelling.klab.owl.OWL;
  */
 public enum Types implements ITypeService {
 
-    INSTANCE;
+	INSTANCE;
 
-    private Types() {
-        Services.INSTANCE.registerService(this, ITypeService.class);
-    }
+	private Types() {
+		Services.INSTANCE.registerService(this, ITypeService.class);
+	}
 
-    /**
-     * Return a (flat) list of all children up to the passed level of detail, using
-     * the model object (stated) hierarchy and keeping the order of declaration
-     * (depth- first if more levels are involved). Allows abstract concepts in the
-     * result - if only concrete ones are desires, use
-     * {@link #getConcreteChildrenAtLevel} instead.
-     * 
-     * @param baseType
-     * @param level
-     * @return all children at level
-     */
-    public List<IConcept> getChildrenAtLevel(IConcept baseType, int level) {
+	/**
+	 * Return a (flat) list of all children up to the passed level of detail, using
+	 * the model object (stated) hierarchy and keeping the order of declaration
+	 * (depth- first if more levels are involved). Allows abstract concepts in the
+	 * result - if only concrete ones are desires, use
+	 * {@link #getConcreteChildrenAtLevel} instead.
+	 * 
+	 * @param baseType
+	 * @param level
+	 * @return all children at level
+	 */
+	public List<IConcept> getChildrenAtLevel(IConcept baseType, int level) {
 
-        List<IConcept> ret = new ArrayList<>();
+		List<IConcept> ret = new ArrayList<>();
 
-        INamespace ns = Namespaces.INSTANCE.getNamespace(baseType.getNamespace());
-        if (ns == null) {
-            return ret;
-        }
+		INamespace ns = Namespaces.INSTANCE.getNamespace(baseType.getNamespace());
+		if (ns == null) {
+			return ret;
+		}
 
-        IKimObject mo = ns.getObject(baseType.getName());
-        if (mo == null) {
-            return ret;
-        }
+		IKimObject mo = ns.getObject(baseType.getName());
+		if (mo == null) {
+			return ret;
+		}
 
-        findAtLevel(mo, ret, level, 0, false);
+		findAtLevel(mo, ret, level, 0, false);
 
-        return ret;
-    }
+		return ret;
+	}
 
-    /**
-     * If current is a child of base at passed level, return it; otherwise return
-     * the parent at the passed level, or null if the concept is unrelated or higher
-     * than level. Uses the model object (stated) hierarchy.
-     * 
-     * @param base
-     * @param current
-     * @param level
-     * @return parent at level
-     */
-    public IConcept getParentAtLevel(IConcept base, IConcept current, int level) {
-        IConcept ret = null;
-        if (current.is(base)) {
-            int l = getDetailLevel(base, current);
-            if (l == level) {
-                return current;
-            }
-            if (l > level) {
-                for (IConcept c : getChildrenAtLevel(base, level)) {
-                    if (current.is(c)) {
-                        return c;
-                    }
-                }
-            }
-        }
-        return ret;
-    }
+	/**
+	 * If current is a child of base at passed level, return it; otherwise return
+	 * the parent at the passed level, or null if the concept is unrelated or higher
+	 * than level. Uses the model object (stated) hierarchy.
+	 * 
+	 * @param base
+	 * @param current
+	 * @param level
+	 * @return parent at level
+	 */
+	public IConcept getParentAtLevel(IConcept base, IConcept current, int level) {
+		IConcept ret = null;
+		if (current.is(base)) {
+			int l = getDetailLevel(base, current);
+			if (l == level) {
+				return current;
+			}
+			if (l > level) {
+				for (IConcept c : getChildrenAtLevel(base, level)) {
+					if (current.is(c)) {
+						return c;
+					}
+				}
+			}
+		}
+		return ret;
+	}
 
-    /**
-     * Get the level of detail corresponding to the passed key in the DECLARED
-     * hierarchy of baseType - i.e. using the model objects declared in k.IM. Key
-     * can be the concept fully qualified name or its ID alone, matched
-     * case-insensitive. Semantics alone does not suffice: the concepts must be
-     * arranged in a declaration hierarchy for the levels to be attributed. Also
-     * only works with trait and class types, as this is only relevant to
-     * classifications.
-     * 
-     * @param baseType
-     * @param key
-     * @return detail level
-     */
-    public int getDetailLevel(IConcept baseType, String key) {
+	/**
+	 * Get the level of detail corresponding to the passed key in the DECLARED
+	 * hierarchy of baseType - i.e. using the model objects declared in k.IM. Key
+	 * can be the concept fully qualified name or its ID alone, matched
+	 * case-insensitive. Semantics alone does not suffice: the concepts must be
+	 * arranged in a declaration hierarchy for the levels to be attributed. Also
+	 * only works with trait and class types, as this is only relevant to
+	 * classifications.
+	 * 
+	 * @param baseType
+	 * @param key
+	 * @return detail level
+	 */
+	public int getDetailLevel(IConcept baseType, String key) {
 
-        /*
-         * go through children using the model object hierarchy. Will only find the ones
-         * declared in a hierarchy.
-         */
-        INamespace ns = Namespaces.INSTANCE.getNamespace(baseType.getNamespace());
-        if (ns == null) {
-            return -1;
-        }
+		/*
+		 * go through children using the model object hierarchy. Will only find the ones
+		 * declared in a hierarchy.
+		 */
+		INamespace ns = Namespaces.INSTANCE.getNamespace(baseType.getNamespace());
+		if (ns == null) {
+			return -1;
+		}
 
-        IKimObject mo = ns.getObject(baseType.getName());
-        if (mo == null) {
-            return -1;
-        }
+		IKimObject mo = ns.getObject(baseType.getName());
+		if (mo == null) {
+			return -1;
+		}
 
-        return findLevel(mo, key, 0);
-    }
+		return findLevel(mo, key, 0);
+	}
 
-    /**
-     * Return a (flat) list of all CONCRETE children up to the passed level of
-     * detail, using the model object (stated) hierarchy and keeping the order of
-     * declaration (depth- first if more levels are involved).
-     * 
-     * @param baseType
-     * @param level
-     * @return concrete children at level
-     */
-    public List<IConcept> getConcreteChildrenAtLevel(IConcept baseType, int level) {
+	/**
+	 * Return a (flat) list of all CONCRETE children up to the passed level of
+	 * detail, using the model object (stated) hierarchy and keeping the order of
+	 * declaration (depth- first if more levels are involved).
+	 * 
+	 * @param baseType
+	 * @param level
+	 * @return concrete children at level
+	 */
+	public List<IConcept> getConcreteChildrenAtLevel(IConcept baseType, int level) {
 
-        List<IConcept> ret = new ArrayList<>();
+		List<IConcept> ret = new ArrayList<>();
 
-        INamespace ns = Namespaces.INSTANCE.getNamespace(baseType.getNamespace());
-        if (ns == null) {
-            return ret;
-        }
+		INamespace ns = Namespaces.INSTANCE.getNamespace(baseType.getNamespace());
+		if (ns == null) {
+			return ret;
+		}
 
-        IKimObject mo = ns.getObject(baseType.getName());
-        if (mo == null) {
-            return ret;
-        }
+		IKimObject mo = ns.getObject(baseType.getName());
+		if (mo == null) {
+			return ret;
+		}
 
-        findAtLevel(mo, ret, level, 0, true);
+		findAtLevel(mo, ret, level, 0, true);
 
-        return ret;
-    }
+		return ret;
+	}
 
-    /**
-     * Get the level of detail of current in the DECLARED hierarchy of base - i.e.
-     * using the model objects declared in k.IM. Only works with trait and class
-     * types, as this is only relevant to classifications.
-     * 
-     * @param base
-     * @param current
-     * @return detail level of current within base
-     */
-    public int getDetailLevel(IConcept base, IConcept current) {
-        return getDetailLevel(base, current.toString());
-    }
-    
-    private static int findLevel(IKimObject mo, String key, int level) {
+	/**
+	 * Get the level of detail of current in the DECLARED hierarchy of base - i.e.
+	 * using the model objects declared in k.IM. Only works with trait and class
+	 * types, as this is only relevant to classifications.
+	 * 
+	 * @param base
+	 * @param current
+	 * @return detail level of current within base
+	 */
+	public int getDetailLevel(IConcept base, IConcept current) {
+		return getDetailLevel(base, current.toString());
+	}
 
-        if (mo == null || mo.getName() == null) {
-            return -1;
-        }
+	private static int findLevel(IKimObject mo, String key, int level) {
 
-        if (mo.getName().equals(key) || mo.getId().equalsIgnoreCase(key)) {
-            return level;
-        }
+		if (mo == null || mo.getName() == null) {
+			return -1;
+		}
 
-        for (IKimObject o : mo.getChildren()) {
-            if (o instanceof IConceptDefinition) {
-                int l = findLevel(o, key, level + 1);
-                if (l > 0) {
-                    return l;
-                }
-            }
-        }
+		if (mo.getName().equals(key) || mo.getId().equalsIgnoreCase(key)) {
+			return level;
+		}
 
-        return -1;
-    }
+		for (IKimObject o : mo.getChildren()) {
+			if (o instanceof IConceptDefinition) {
+				int l = findLevel(o, key, level + 1);
+				if (l > 0) {
+					return l;
+				}
+			}
+		}
 
-    private void findAtLevel(IKimObject mo, List<IConcept> ret, int level, int current, boolean filterAbstract) {
+		return -1;
+	}
 
-        IConcept k = Concepts.c(mo.getName());
-        if (!filterAbstract || !k.isAbstract()) {
-            ret.add(k);
-        }
-        if (level < 0 || level < current) {
-            for (IKimObject o : mo.getChildren()) {
-                if (o instanceof IConceptDefinition) {
-                    findAtLevel(o, ret, level, current + 1, filterAbstract);
-                }
-            }
-        }
-    }
+	private void findAtLevel(IKimObject mo, List<IConcept> ret, int level, int current, boolean filterAbstract) {
 
-    /**
-     * Create a classification based on the encodings stored as metadata in the
-     * concept hierarchy.
-     * 
-     * TODO this may be called multiple times, so it should cache the result.
-     * 
-     * @param rootClass
-     * @param metadataEncodingProperty
-     * @return classification
-     * @throws KlabValidationException
-     */
-    public IClassification createClassificationFromMetadata(IConcept rootClass, String metadataEncodingProperty)
-            throws KlabValidationException {
+		IConcept k = Concepts.c(mo.getName());
+		if (!filterAbstract || !k.isAbstract()) {
+			ret.add(k);
+		}
+		if (level < 0 || level < current) {
+			for (IKimObject o : mo.getChildren()) {
+				if (o instanceof IConceptDefinition) {
+					findAtLevel(o, ret, level, current + 1, filterAbstract);
+				}
+			}
+		}
+	}
 
-        if (rootClass.is(Type.CLASS)) {
-            rootClass = getCategorizingType(rootClass);
-        }
+	/**
+	 * Create a classification for an observable, including all the possible types.
+	 * Automatically demote from class to trait as needed.
+	 * 
+	 * @param rootClass
+	 * @return
+	 */
+	public IClassification createClassification(ISemantic rootClass) {
+		Classification ret = Classification.create(rootClass.getType());
+		// TODO!
+		return ret;
+	}
 
-        Classification ret = Classification.create(rootClass);
+	/**
+	 * Create a classification based on the encodings stored as metadata in the
+	 * concept hierarchy.
+	 * 
+	 * TODO this may be called multiple times, so it should cache the result.
+	 * 
+	 * @param rootClass
+	 * @param metadataEncodingProperty
+	 * @return classification
+	 * @throws KlabValidationException
+	 */
+	public IClassification createClassificationFromMetadata(IConcept rootClass, String metadataEncodingProperty)
+			throws KlabValidationException {
 
-        for (IKnowledge c : ret.getConcept().getSemanticClosure()) {
+		if (rootClass.is(Type.CLASS)) {
+			rootClass = getCategorizingType(rootClass);
+		}
 
-            IMetadata m = c.getMetadata();
-            Object o = m.get(metadataEncodingProperty);
+		Classification ret = Classification.create(rootClass);
 
-            if (o != null && !(o instanceof Double && Double.isNaN((Double) o))) {
-                ret.addClassifier(Classifier.create(o), (IConcept) c);
-            }
-        }
+		for (IKnowledge c : ret.getConcept().getSemanticClosure()) {
 
-        ret.initialize();
+			IMetadata m = c.getMetadata();
+			Object o = m.get(metadataEncodingProperty);
 
-        return ret;
-    }
+			if (o != null && !(o instanceof Double && Double.isNaN((Double) o))) {
+				if (o instanceof List) {
+					
+					for (Object oo : ((List<?>)o)) {
+						ret.addClassifier(Classifier.create(oo), (IConcept) c);
+					}
+					
+				} else {
+					ret.addClassifier(Classifier.create(o), (IConcept) c);
+				}
+			}
+		}
 
-    public IConcept getCategorizingType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.INCARNATES_TRAIT_PROPERTY));
-        return cls.isEmpty() ? null : cls.iterator().next();
-    }
+		ret.initialize();
+
+		return ret;
+	}
+
+	public IConcept getCategorizingType(IConcept concept) {
+		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+				Concepts.p(NS.INCARNATES_TRAIT_PROPERTY));
+		return cls.isEmpty() ? null : cls.iterator().next();
+	}
 
 }

@@ -111,6 +111,14 @@ public abstract class AbstractExtent implements IExtent {
 	public abstract boolean isEmpty();
 
 	/**
+	 * Return the n-th state of the ordered topology as a new extent with one state.
+	 * 
+	 * @param stateIndex
+	 * @return a new extent with getValueCount() == 1.
+	 */
+	public abstract IExtent getExtent(long stateIndex);
+
+	/**
 	 * Return a double that describes the extent of this topological object. It
 	 * should only be used to compare objects of the same type. Redundant with
 	 * {@link IExtent#getStandardizedDimension()} but this is meant to compute fast.

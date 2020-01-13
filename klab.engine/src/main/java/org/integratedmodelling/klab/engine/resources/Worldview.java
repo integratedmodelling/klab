@@ -12,21 +12,33 @@ import org.integratedmodelling.klab.scale.Scale;
 
 public class Worldview extends MonitorableGitWorkspace implements IWorldview {
 
-    public Worldview(String name, File root, Collection<String> gitUrls) {
-        super(root, name, gitUrls);
-        this.setSkipSync(System.getProperty("skipWorldviewSync") != null);
-    }
+	public Worldview(String name, File root, Collection<String> gitUrls) {
+		super(root, name, gitUrls);
+		this.setSkipSync(System.getProperty("skipWorldviewSync") != null);
+	}
 
-    @Override
-    public IScale getScale(IGeometry geometry) {
-        return Scale.create(geometry);
-    }
-    
-    public static IConcept getGeoregionConcept() {
-    	/**
-    	 * TODO! Tie to annotation in worldview AND configured parameter to override
-    	 */
-    	return Concepts.c("earth:Region");
-    }
+	@Override
+	public IScale getScale(IGeometry geometry) {
+		return Scale.create(geometry);
+	}
+
+	@Override
+	public IConcept getCoreConcept(IConcept coreConcept) {
+
+		for (IConcept c : coreConcept.getChildren()) {
+			if (c.getOntology().getName().equals(this.getName()) && c.getDefinition().equals(c.toString())) {
+				return c;
+			}
+		}
+
+		return coreConcept;
+	}
+
+	public static IConcept getGeoregionConcept() {
+		/**
+		 * TODO! Tie to annotation in worldview AND configured parameter to override
+		 */
+		return Concepts.c("earth:Region");
+	}
 
 }

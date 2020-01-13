@@ -95,12 +95,6 @@ public class MediatingState extends Observation implements IState {
 		return delegate.set(index, val);
 	}
 
-	// Remaining functionality is delegated to original state
-
-	public boolean isConstant() {
-		return delegate.isConstant();
-	}
-
 	/**
 	 * Must return the delegate's ID so that any request by ID will fetch the
 	 * original content.

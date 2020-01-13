@@ -13,17 +13,20 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -42,6 +45,7 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
@@ -191,8 +195,8 @@ public class DataflowCompiler {
 		if (contextModel != null && contextModel.isInstantiator() && actuator.getMode() == Mode.RESOLUTION) {
 
 			/*
-			 * recover any output states with static initializers
-			 * NB: where expressions and the like are added
+			 * recover any output states with static initializers NB: where expressions and
+			 * the like are added
 			 */
 			for (int i = 1; i < contextModel.getObservables().size(); i++) {
 				if (((Observable) contextModel.getObservables().get(i)).isResolved()) {
@@ -324,29 +328,56 @@ public class DataflowCompiler {
 			ret.setName(observable.getReferenceName());
 			ret.setAlias(observable.getName());
 
-			switch (observable.getDescription()) {
-			case CATEGORIZATION:
-				ret.setType(Type.CONCEPT);
-				break;
-			case DETECTION:
-			case INSTANTIATION:
-				ret.setType(observable.getArtifactType());
-				break;
-			case QUANTIFICATION:
-				ret.setType(Type.NUMBER);
-				break;
-			case SIMULATION:
-				ret.setType(Type.PROCESS);
-				break;
-			case VERIFICATION:
-				ret.setType(Type.BOOLEAN);
-				break;
-			case CHARACTERIZATION:
-			case CLASSIFICATION:
-				ret.setType(Type.VOID);
-				break;
-			default:
-				break;
+			/*
+			 * FIXME this condition is silly; also there will be more problems due to this
+			 * check. It should check for an ADDED inherency stored in the observable along
+			 * with the original observable, rather than playing with the concept as is, as
+			 * it's hard to know where the inherency was assigned.
+			 */
+			if (!observable.is(IKimConcept.Type.CHANGE)
+					&& Observables.INSTANCE.getDirectContextType(observable.getType()) != null) {
+				if (models.size() > 0 && models.iterator().next().model.isLearning()) {
+					/*
+					 * A learning model for a directly inherent quality will create a void actuator
+					 * - no state should be generated in the context.
+					 */
+					ret.setType(Type.VOID);
+				} else {
+					/*
+					 * if not learning, we remove the inherency in the dataflow as it was needed to
+					 * resolve the inherent observable, but the model is run in an object's context
+					 * and we don't maintain the inherency when the semantics is local to the
+					 * object.
+					 */
+					this.observable = (Observable) ObservableBuilder.getBuilder(this.observable, monitor)
+							.without(ObservableRole.CONTEXT).buildObservable();
+				}
+			} else {
+
+				switch (observable.getDescription()) {
+				case CATEGORIZATION:
+					ret.setType(Type.CONCEPT);
+					break;
+				case DETECTION:
+				case INSTANTIATION:
+					ret.setType(observable.getArtifactType());
+					break;
+				case QUANTIFICATION:
+					ret.setType(Type.NUMBER);
+					break;
+				case SIMULATION:
+					ret.setType(Type.PROCESS);
+					break;
+				case VERIFICATION:
+					ret.setType(Type.BOOLEAN);
+					break;
+				case CHARACTERIZATION:
+				case CLASSIFICATION:
+					ret.setType(Type.VOID);
+					break;
+				default:
+					break;
+				}
 			}
 
 			if (observer != null) {
@@ -486,7 +517,28 @@ public class DataflowCompiler {
 				// ones
 				Map<String, IUnit> chosenUnits = new HashMap<>();
 
+				/*
+				 * the dataflow won't compile actuators for the dependencies of a directly
+				 * contextualized observable model (model xxxx within yyyy) unless they must be
+				 * resolved from the context. So if the resolution graph contains the
+				 * dependencies with the same EXPLICIT "within" that is also explicit in the
+				 * primary observable, these have been resolved from an instantiator and they do
+				 * not need to be compiled in.
+				 */
+				IConcept directContext = Observables.INSTANCE.getDirectContextType(this.observable.getType());
+
 				for (Node child : sortChildren()) {
+
+					IConcept childContext = Observables.INSTANCE.getDirectContextType(child.observable.getType());
+
+					if (directContext != null && directContext.equals(childContext)) {
+						/*
+						 * can only be resolved through the instantiator of the object. TODO we should
+						 * ensure that a dependency for the primary observable is included, in the
+						 * ObservableReasoner of course.
+						 */
+						continue;
+					}
 
 					// this may be a new actuator or a reference to an existing one.
 					Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
@@ -780,8 +832,7 @@ public class DataflowCompiler {
 	 * @param iLocator
 	 * @return
 	 */
-	public List<IContextualizable> getModelComputation(Model model, IArtifact.Type targetType,
-			boolean initialization) {
+	public List<IContextualizable> getModelComputation(Model model, IArtifact.Type targetType, boolean initialization) {
 		List<IContextualizable> ret = new ArrayList<>(model.getComputation());
 		int lastDirectPosition = -1;
 		IArtifact.Type lastDirectType = null;
@@ -798,8 +849,7 @@ public class DataflowCompiler {
 		}
 
 		if (lastDirectType != null && lastDirectType != targetType && lastDirectType != IArtifact.Type.VALUE) {
-			IContextualizable cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType,
-					targetType);
+			IContextualizable cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType, targetType);
 			if (cast != null) {
 				ret.add(lastDirectPosition + 1, cast);
 			}

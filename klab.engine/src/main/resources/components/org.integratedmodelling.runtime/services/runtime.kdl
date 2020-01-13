@@ -29,7 +29,6 @@ export value exec
 		default "groovy"
 		
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver
-
 }
 
 export value literal
@@ -41,7 +40,24 @@ export value literal
 		"The value to be contextualized"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
+}
 
+export value evaluate
+	"Evaluate a literal or an expression in the context, producing an arbitrary value."
+{
+	optional object literal
+		"The value to be returned"
+
+	optional value expression code
+		"The expression to be executed"
+				
+	optional boolean expression ifcondition 
+		"A condition to check before executing the code" 
+
+	optional boolean expression unlesscondition 
+		"A negative conditions to check before executing the code" 
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.Evaluator
 }
 
 filter number convert
@@ -190,6 +206,17 @@ export value contextualize
 	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver
 }
 
+export value timeseries
+	"Return a resolver for multiple time-sensitive URN-specified resources or models"
+	label 'Extract data from URNs'
+{
+	
+	list urns
+		"URNs of the models and resources to merge temporally"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnResolver
+}
+
 export object instantiate
 	"Return an instantiator for a URN-specified resource"
 	label 'Extract objects from URN'
@@ -199,6 +226,18 @@ export object instantiate
 		"The URN pointing to the resource to be resolved and retrieved"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator
+
+}
+
+export object timechooser
+	"Return a time-sensitive instantiator for urns or models"
+	label 'Extract objects from URN'
+{
+	
+	list urns
+		"URNs of the models and resources to merge temporally"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnInstantiator
 
 }
 

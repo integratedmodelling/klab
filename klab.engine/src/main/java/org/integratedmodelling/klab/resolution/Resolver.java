@@ -179,9 +179,9 @@ public enum Resolver {
 		// TODO support model
 		ResolutionScope ret = resolve(observable, parentScope.getChildScope(observable, mode, (Scale) scale, model),
 				mode);
-		if (ret.getCoverage().isRelevant()) {
-			parentScope.merge(ret);
-		}
+//		if (ret.getCoverage().isRelevant()) {
+//			parentScope.merge(ret);
+//		}
 		return ret;
 	}
 
@@ -201,9 +201,9 @@ public enum Resolver {
 
 		ResolutionScope ret = resolve(observable,
 				parentScope.getChildScope(observable, (Scale) scale, source, target, upstreamModel), Mode.RESOLUTION);
-		if (ret.getCoverage().isRelevant()) {
-			parentScope.merge(ret);
-		}
+//		if (ret.getCoverage().isRelevant()) {
+//			parentScope.merge(ret);
+//		}
 		return ret;
 	}
 

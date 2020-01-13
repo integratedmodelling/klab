@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
@@ -91,7 +92,7 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * 
 	 * @return a scheduler or null.
 	 */
-	IScheduler<?> getScheduler();
+	IScheduler getScheduler();
 
 	/**
 	 * There is one report per root context. Actuators will add sections to it as
@@ -370,6 +371,15 @@ public interface IContextualizationScope extends IParameters<String> {
 	 */
 	Collection<IObservation> getChildrenOf(IObservation observation);
 
+	/**
+	 * A context may have auxiliary named variables created by models, which 
+	 * will be available to contextualizers. These should be private to the 
+	 * models, so only visible within their scope.
+	 * 
+	 * @return the symbol table, never null.
+	 */
+	Map<String, Object> getSymbolTable();
+	
 	/**
 	 * Create a context to compile an expression.
 	 * 

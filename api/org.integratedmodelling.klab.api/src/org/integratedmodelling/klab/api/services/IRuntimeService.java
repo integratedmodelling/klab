@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.ITicketManager;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -89,5 +90,12 @@ public interface IRuntimeService {
      * @return the message bus. Should not return null.
      */
     IMessageBus getMessageBus();
+    
+    /**
+     * Return the ticket manager for the engine.
+     * 
+     * @return
+     */
+    ITicketManager getTicketManager();
 
 }

@@ -28,6 +28,7 @@ public enum UnarySemanticOperator {
     MONETARY_VALUE(new Type[] { Type.OBSERVABLE, Type.CONFIGURATION }, "monetary value of"),
     OCCURRENCE(new Type[] { Type.COUNTABLE }, "occurrence of"),
     ASSESSMENT(new Type[] { Type.QUALITY }, "assessment of"),
+    CHANGE(new Type[] { Type.PROCESS }, "change in"),
     OBSERVABILITY(new Type[] { Type.OBSERVABLE }, "observability of"),
     MAGNITUDE(new Type[] { Type.QUANTIFIABLE }, "magnitude of"),
     LEVEL(new Type[] { Type.QUANTIFIABLE }, "level of"),

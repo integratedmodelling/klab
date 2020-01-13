@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +14,8 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
+import org.integratedmodelling.klab.communication.client.Client.NodeClient;
+import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
@@ -20,108 +23,112 @@ public class Node implements INodeIdentity {
 
 	private String name;
 	private IPartnerIdentity parent;
-    private String authenticatingHub;
-    private List<String> urls = new ArrayList<>();
-    private Set<Permission> permissions = new HashSet<>();
-    private Date bootTime = new Date();
-    private String token;
-    private boolean online;
-    private int retryPeriod = 15;
-    private long lastCheck = System.currentTimeMillis();
+	private String authenticatingHub;
+	private List<String> urls = new ArrayList<>();
+	private Set<Permission> permissions = new HashSet<>();
+	private Set<String> resourceUrls = new HashSet<>();
+	private Set<String> adapterIds = new HashSet<>();
+	private Set<String> namespaceIds = new LinkedHashSet<>();
+	private Set<String> catalogIds = new LinkedHashSet<>();
+	private Date bootTime = new Date();
+	private String token;
+	private boolean online;
+	private int retryPeriod = 15;
+	private long lastCheck = System.currentTimeMillis();
 
-    static Client client = Client.create();
+	private Client client;
 
-    public Node(String name, IPartnerIdentity owner) {
-        this.name = name;
-        this.parent = owner;
-    }
-    
-    public Node(NodeReference node, String token) {
+	public Node(String name, IPartnerIdentity owner) {
+		this.name = name;
+		this.parent = owner;
+	}
+
+	public Node(NodeReference node, String token) {
 		Partner partner = Authentication.INSTANCE.requirePartner(node.getPartner());
 		this.name = node.getId();
 		this.urls.addAll(node.getUrls());
 		this.parent = partner;
 		this.token = token;
-		// TODO permissions
-    }
+		this.adapterIds.addAll(node.getAdapters());
+		this.catalogIds.addAll(node.getCatalogs());
+		this.namespaceIds.addAll(node.getNamespaces());
+	}
 
+	/**
+	 * Force a check for online status, set the online flag and return the result.
+	 * Should be executed automatically every retryPeriod minutes unless the server
+	 * is offline from construction (retry period will be 0 in that case).
+	 * 
+	 * @return true if online
+	 */
+	public boolean ping() {
+		this.online = false;
+		for (String url : urls) {
+			if ((this.online = client.ping(url))) {
+				break;
+			}
+		}
+		this.lastCheck = System.currentTimeMillis();
+		return this.online;
+	}
 
-    /**
-     * Force a check for online status, set the online flag and 
-     * return the result. Should be executed automatically every
-     * retryPeriod minutes unless the server is offline from construction (retry
-     * period will be 0 in that case).
-     * 
-     * @return true if online
-     */
-    public boolean ping() {
-        this.online = false;
-        for (String url : urls) {
-            if ((this.online = client.ping(url))) {
-                break;
-            }
-        }
-        this.lastCheck = System.currentTimeMillis();
-        return this.online;
-    }
+	@Override
+	public String getName() {
+		return this.name;
+	}
 
-    @Override
-    public String getName() {
-        return this.name;
-    }
+	@Override
+	public Date getBootTime() {
+		return bootTime;
+	}
 
-    @Override
-    public Date getBootTime() {
-        return bootTime;
-    }
+	@Override
+	public IMonitor getMonitor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IMonitor getMonitor() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getId() {
+		return token;
+	}
 
-    @Override
-    public String getId() {
-        return token;
-    }
+	@Override
+	public boolean is(Type type) {
+		return type == INodeIdentity.TYPE;
+	}
 
-    @Override
-    public boolean is(Type type) {
-        return type == INodeIdentity.TYPE;
-    }
+	@Override
+	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+		return IIdentity.findParent(this, type);
+	}
 
-    @Override
-    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-        return IIdentity.findParent(this, type);
-    }
+	@Override
+	public IPartnerIdentity getParentIdentity() {
+		return parent;
+	}
 
-    @Override
-    public IPartnerIdentity getParentIdentity() {
-        return parent;
-    }
+	@Override
+	public boolean isOnline() {
+		if ((System.currentTimeMillis() - lastCheck) > retryPeriod * (1000 * 60)) {
+			return ping();
+		}
+		return this.online;
+	}
 
-    @Override
-    public boolean isOnline() {
-        if ((System.currentTimeMillis() - lastCheck) > retryPeriod * (1000 * 60)) {
-            return ping();
-        }
-        return this.online;
-    }
+	@Override
+	public Set<Permission> getPermissions() {
+		return permissions;
+	}
 
-    @Override
-    public Set<Permission> getPermissions() {
-        return permissions;
-    }
+	@Override
+	public Collection<String> getUrls() {
+		return urls;
+	}
 
-    @Override
-    public Collection<String> getUrls() {
-        return urls;
-    }
-
-    public void setOnline(boolean b) {
-        this.online = b;
-    }
+	public void setOnline(boolean b) {
+		this.online = b;
+	}
 
 	public IPartnerIdentity getParent() {
 		return parent;
@@ -155,12 +162,13 @@ public class Node implements INodeIdentity {
 		this.lastCheck = lastCheck;
 	}
 
-	public static Client getClient() {
-		return client;
-	}
-
-	public static void setClient(Client client) {
-		Node.client = client;
+	public Client getClient() {
+		if (this.client == null) {
+			// client is pre-instrumented to handle Protobuf messages
+			this.client = new NodeClient(this);
+			this.client.setUrl(this.urls.toArray(new String[this.urls.size()]));
+		}
+		return this.client;
 	}
 
 	public void setName(String name) {
@@ -178,6 +186,40 @@ public class Node implements INodeIdentity {
 	public void setBootTime(Date bootTime) {
 		this.bootTime = bootTime;
 	}
-    
-    
+
+	@Override
+	public Set<String> getAdapters() {
+		return adapterIds;
+	}
+
+	@Override
+	public Set<String> getResources() {
+		return resourceUrls;
+	}
+
+	@Override
+	public Set<String> getNamespaceIds() {
+		return namespaceIds;
+	}
+
+	public void setNamespaceIds(Set<String> namespaceIds) {
+		this.namespaceIds = namespaceIds;
+	}
+
+	@Override
+	public Set<String> getCatalogIds() {
+		return catalogIds;
+	}
+
+	public void setCatalogIds(Set<String> catalogIds) {
+		this.catalogIds = catalogIds;
+	}
+
+	public void mergeCapabilities(NodeCapabilities nodeCapabilities) {
+		this.catalogIds.addAll(nodeCapabilities.getResourceCatalogs());
+		this.namespaceIds.addAll(nodeCapabilities.getResourceNamespaces());
+		this.resourceUrls.clear();
+		this.resourceUrls.addAll(nodeCapabilities.getResourceUrns());
+	}
+
 }

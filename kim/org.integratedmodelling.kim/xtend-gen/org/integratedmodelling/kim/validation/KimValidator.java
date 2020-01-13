@@ -514,7 +514,7 @@ public class KimValidator extends AbstractKimValidator {
               KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
           }
           if ((((obsIdx == 0) && (observable.getMain() != null)) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE)))) {
-            IKimConcept.ComponentRole _distributedInherent = observable.getMain().getDistributedInherent();
+            IKimConcept.ObservableRole _distributedInherent = observable.getMain().getDistributedInherent();
             boolean _tripleNotEquals = (_distributedInherent != null);
             hasDistributedAttributeObservable = _tripleNotEquals;
           }
@@ -658,7 +658,7 @@ public class KimValidator extends AbstractKimValidator {
                 KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
               ok = false;
             } else {
-              IKimConcept.ComponentRole _distributedInherent = observable.getMain().getDistributedInherent();
+              IKimConcept.ObservableRole _distributedInherent = observable.getMain().getDistributedInherent();
               boolean _tripleNotEquals_4 = (_distributedInherent != null);
               if (_tripleNotEquals_4) {
                 this.error("Distributed inherency (of each, for each, within each) are only allowed as main observables", 
@@ -800,6 +800,17 @@ public class KimValidator extends AbstractKimValidator {
     }
     EList<ValueAssignment> _contextualizers = model.getContextualizers();
     for (final ValueAssignment contextualizer : _contextualizers) {
+      String _model_1 = contextualizer.getExecValue().getModel();
+      boolean _tripleNotEquals_3 = (_model_1 != null);
+      if (_tripleNotEquals_3) {
+        boolean _isMerging = model.isMerging();
+        boolean _not = (!_isMerging);
+        if (_not) {
+        }
+      } else {
+        if ((model.isMerging() && (contextualizer.getExecValue().getUrn() == null))) {
+        }
+      }
     }
     if ((statement != null)) {
       if ((namespace != null)) {
@@ -813,13 +824,14 @@ public class KimValidator extends AbstractKimValidator {
         descriptor.getDependencies().addAll(dependencies);
         descriptor.setInstantiator((model.isInstantiator() || hasDistributedAttributeObservable));
         descriptor.setDocstring(model.getDocstring());
+        descriptor.setResourceMerger(model.isMerging());
         EList<Urn> _urns = model.getUrns();
         for (final Urn urn : _urns) {
           descriptor.getResourceUrns().add(urn.getName());
         }
         Function _function = model.getFunction();
-        boolean _tripleNotEquals_3 = (_function != null);
-        if (_tripleNotEquals_3) {
+        boolean _tripleNotEquals_4 = (_function != null);
+        if (_tripleNotEquals_4) {
           Function _function_1 = model.getFunction();
           KimServiceCall _kimServiceCall = new KimServiceCall(_function_1, descriptor);
           descriptor.setResourceFunction(_kimServiceCall);
@@ -830,13 +842,13 @@ public class KimValidator extends AbstractKimValidator {
           }
         } else {
           String _boolean = model.getBoolean();
-          boolean _tripleNotEquals_4 = (_boolean != null);
-          if (_tripleNotEquals_4) {
+          boolean _tripleNotEquals_5 = (_boolean != null);
+          if (_tripleNotEquals_5) {
             descriptor.setInlineValue(Boolean.valueOf(Boolean.parseBoolean(model.getBoolean())));
           } else {
             org.integratedmodelling.kim.kim.Number _number = model.getNumber();
-            boolean _tripleNotEquals_5 = (_number != null);
-            if (_tripleNotEquals_5) {
+            boolean _tripleNotEquals_6 = (_number != null);
+            if (_tripleNotEquals_6) {
               descriptor.setInlineValue(Kim.INSTANCE.parseNumber(model.getNumber()));
             }
           }
@@ -864,9 +876,9 @@ public class KimValidator extends AbstractKimValidator {
         }
         descriptor.setLearningModel(statement.getModel().equals("learn"));
         IKimModel.Type _switchResult = null;
-        String _model_1 = statement.getModel();
-        if (_model_1 != null) {
-          switch (_model_1) {
+        String _model_2 = statement.getModel();
+        if (_model_2 != null) {
+          switch (_model_2) {
             case "number":
               _switchResult = IKimModel.Type.NUMBER;
               break;
@@ -910,8 +922,8 @@ public class KimValidator extends AbstractKimValidator {
           _contextualization.add(_computableResource);
         }
         Classification _classification_1 = model.getClassification();
-        boolean _tripleNotEquals_6 = (_classification_1 != null);
-        if (_tripleNotEquals_6) {
+        boolean _tripleNotEquals_7 = (_classification_1 != null);
+        if (_tripleNotEquals_7) {
           java.util.List<IContextualizable> _contextualization_1 = descriptor.getContextualization();
           Classification _classification_2 = model.getClassification();
           boolean _isDiscretization = model.isDiscretization();
@@ -919,8 +931,8 @@ public class KimValidator extends AbstractKimValidator {
           _contextualization_1.add(_computableResource_1);
         }
         Table _lookupTable_1 = model.getLookupTable();
-        boolean _tripleNotEquals_7 = (_lookupTable_1 != null);
-        if (_tripleNotEquals_7) {
+        boolean _tripleNotEquals_8 = (_lookupTable_1 != null);
+        if (_tripleNotEquals_8) {
           java.util.List<IContextualizable> _contextualization_2 = descriptor.getContextualization();
           Table _lookupTable_2 = model.getLookupTable();
           EList<String> _lookupTableArgs_3 = model.getLookupTableArgs();
@@ -928,8 +940,8 @@ public class KimValidator extends AbstractKimValidator {
           _contextualization_2.add(_computableResource_2);
         }
         String _lookupTableId_2 = model.getLookupTableId();
-        boolean _tripleNotEquals_8 = (_lookupTableId_2 != null);
-        if (_tripleNotEquals_8) {
+        boolean _tripleNotEquals_9 = (_lookupTableId_2 != null);
+        if (_tripleNotEquals_9) {
           Object tobj_1 = ns_1.getSymbolTable().get(model.getLookupTableId());
           EList<String> _lookupTableArgs_4 = model.getLookupTableArgs();
           KimLookupTable table_1 = new KimLookupTable(((IKimTable) tobj_1), _lookupTableArgs_4, null);
@@ -938,24 +950,24 @@ public class KimValidator extends AbstractKimValidator {
           _contextualization_3.add(_computableResource_3);
         }
         String _classificationProperty = model.getClassificationProperty();
-        boolean _tripleNotEquals_9 = (_classificationProperty != null);
-        if (_tripleNotEquals_9) {
+        boolean _tripleNotEquals_10 = (_classificationProperty != null);
+        if (_tripleNotEquals_10) {
           java.util.List<IContextualizable> _contextualization_4 = descriptor.getContextualization();
           String _classificationProperty_1 = model.getClassificationProperty();
           ComputableResource _computableResource_4 = new ComputableResource(descriptor, _classificationProperty_1);
           _contextualization_4.add(_computableResource_4);
         }
         String _name_1 = model.getName();
-        boolean _tripleNotEquals_10 = (_name_1 != null);
-        if (_tripleNotEquals_10) {
+        boolean _tripleNotEquals_11 = (_name_1 != null);
+        if (_tripleNotEquals_11) {
           descriptor.name = model.getName();
         } else {
           int _size_2 = descriptor.getObservables().size();
           boolean _greaterThan_2 = (_size_2 > 0);
           if (_greaterThan_2) {
             String _formalName = descriptor.getObservables().get(0).getFormalName();
-            boolean _tripleNotEquals_11 = (_formalName != null);
-            if (_tripleNotEquals_11) {
+            boolean _tripleNotEquals_12 = (_formalName != null);
+            if (_tripleNotEquals_12) {
               descriptor.name = observables.get(0).getFormalName();
             } else {
               String _xifexpression_6 = null;
@@ -967,7 +979,14 @@ public class KimValidator extends AbstractKimValidator {
                 if (_isInstantiator_1) {
                   _xifexpression_7 = "instantiator";
                 } else {
-                  _xifexpression_7 = "resolver";
+                  String _xifexpression_8 = null;
+                  boolean _isLearningModel = descriptor.isLearningModel();
+                  if (_isLearningModel) {
+                    _xifexpression_8 = "learner";
+                  } else {
+                    _xifexpression_8 = "resolver";
+                  }
+                  _xifexpression_7 = _xifexpression_8;
                 }
                 _xifexpression_6 = _xifexpression_7;
               }
@@ -988,8 +1007,8 @@ public class KimValidator extends AbstractKimValidator {
           ns_1.getSymbolTable().put(descriptor.name, descriptor);
         }
         Metadata _metadata = model.getMetadata();
-        boolean _tripleNotEquals_12 = (_metadata != null);
-        if (_tripleNotEquals_12) {
+        boolean _tripleNotEquals_13 = (_metadata != null);
+        if (_tripleNotEquals_13) {
           Metadata _metadata_1 = model.getMetadata();
           KimMetadata _kimMetadata = new KimMetadata(_metadata_1, descriptor);
           descriptor.setMetadata(_kimMetadata);
@@ -1918,109 +1937,120 @@ public class KimValidator extends AbstractKimValidator {
                 }
                 operator.add(IKimConcept.Type.DISTANCE);
               } else {
-                boolean _isMagnitude = concept.isMagnitude();
-                if (_isMagnitude) {
-                  int _size = Kim.intersection(flags, IKimConcept.CONTINUOUS_QUALITY_TYPES).size();
-                  boolean _equals = (_size == 0);
-                  if (_equals) {
-                    this.error("Magnitudes can only be observed for quantifiable qualities", concept.getConcept(), null, 
+                boolean _isChange = concept.isChange();
+                if (_isChange) {
+                  boolean _contains_3 = flags.contains(IKimConcept.Type.QUALITY);
+                  boolean _not_4 = (!_contains_3);
+                  if (_not_4) {
+                    this.error("Change processes can only be defined for qualities", concept.getConcept(), null, 
                       KimPackage.CONCEPT__CONCEPT);
                   }
-                  operator.add(IKimConcept.Type.MAGNITUDE);
-                  operator.add(IKimConcept.Type.SUBJECTIVE);
+                  operator.add(IKimConcept.Type.CHANGE);
                 } else {
-                  boolean _isType = concept.isType();
-                  if (_isType) {
-                    boolean _contains_3 = flags.contains(IKimConcept.Type.TRAIT);
-                    if (_contains_3) {
-                      boolean _contains_4 = flags.contains(IKimConcept.Type.ABSTRACT);
-                      boolean _not_4 = (!_contains_4);
-                      if (_not_4) {
-                        this.error("Types of traits can only be referenced for abstract traits", concept.getConcept(), null, 
-                          KimPackage.CONCEPT__CONCEPT);
-                      }
-                    } else {
-                      boolean _contains_5 = flags.contains(IKimConcept.Type.QUALITY);
-                      if (_contains_5) {
-                        this.error("Qualities cannot be further categorized", concept.getConcept(), null, 
-                          KimPackage.CONCEPT__CONCEPT);
-                      }
+                  boolean _isMagnitude = concept.isMagnitude();
+                  if (_isMagnitude) {
+                    int _size = Kim.intersection(flags, IKimConcept.CONTINUOUS_QUALITY_TYPES).size();
+                    boolean _equals = (_size == 0);
+                    if (_equals) {
+                      this.error("Magnitudes can only be observed for quantifiable qualities", concept.getConcept(), null, 
+                        KimPackage.CONCEPT__CONCEPT);
                     }
-                    operator.add(IKimConcept.Type.CLASS);
+                    operator.add(IKimConcept.Type.MAGNITUDE);
+                    operator.add(IKimConcept.Type.SUBJECTIVE);
                   } else {
-                    boolean _isObservability = concept.isObservability();
-                    if (_isObservability) {
-                      operator.add(IKimConcept.Type.OBSERVABILITY);
-                    } else {
-                      if ((concept.isOccurrence() || concept.isPresence())) {
-                        boolean _contains_6 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
-                        boolean _not_5 = (!_contains_6);
+                    boolean _isType = concept.isType();
+                    if (_isType) {
+                      boolean _contains_4 = flags.contains(IKimConcept.Type.TRAIT);
+                      if (_contains_4) {
+                        boolean _contains_5 = flags.contains(IKimConcept.Type.ABSTRACT);
+                        boolean _not_5 = (!_contains_5);
                         if (_not_5) {
-                          String _xifexpression_1 = null;
-                          boolean _isOccurrence = concept.isOccurrence();
-                          if (_isOccurrence) {
-                            _xifexpression_1 = "Occurrence";
-                          } else {
-                            _xifexpression_1 = "Presence";
-                          }
-                          String _plus_5 = (_xifexpression_1 + 
-                            " can only be assessed for direct observables (subjects, events, processes and relationships)");
-                          this.error(_plus_5, 
-                            concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
-                        }
-                        boolean _isOccurrence_1 = concept.isOccurrence();
-                        if (_isOccurrence_1) {
-                          operator.add(IKimConcept.Type.OCCURRENCE);
-                          operator.add(IKimConcept.Type.PROBABILITY);
-                        } else {
-                          operator.add(IKimConcept.Type.PRESENCE);
+                          this.error("Types of traits can only be referenced for abstract traits", concept.getConcept(), null, 
+                            KimPackage.CONCEPT__CONCEPT);
                         }
                       } else {
-                        boolean _isProbability = concept.isProbability();
-                        if (_isProbability) {
-                          boolean _contains_7 = flags.contains(IKimConcept.Type.EVENT);
+                        boolean _contains_6 = flags.contains(IKimConcept.Type.QUALITY);
+                        if (_contains_6) {
+                          this.error("Qualities cannot be further categorized", concept.getConcept(), null, 
+                            KimPackage.CONCEPT__CONCEPT);
+                        }
+                      }
+                      operator.add(IKimConcept.Type.CLASS);
+                    } else {
+                      boolean _isObservability = concept.isObservability();
+                      if (_isObservability) {
+                        operator.add(IKimConcept.Type.OBSERVABILITY);
+                      } else {
+                        if ((concept.isOccurrence() || concept.isPresence())) {
+                          boolean _contains_7 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
                           boolean _not_6 = (!_contains_7);
                           if (_not_6) {
-                            String _xifexpression_2 = null;
-                            boolean _contains_8 = flags.contains(
-                              IKimConcept.Type.DIRECT_OBSERVABLE);
-                            if (_contains_8) {
-                              _xifexpression_2 = "; use occurrence for probability of presence";
+                            String _xifexpression_1 = null;
+                            boolean _isOccurrence = concept.isOccurrence();
+                            if (_isOccurrence) {
+                              _xifexpression_1 = "Occurrence";
                             } else {
-                              _xifexpression_2 = "";
+                              _xifexpression_1 = "Presence";
                             }
-                            String _plus_6 = ("Probability only applies to events" + _xifexpression_2);
-                            this.error(_plus_6, 
+                            String _plus_5 = (_xifexpression_1 + 
+                              " can only be assessed for direct observables (subjects, events, processes and relationships)");
+                            this.error(_plus_5, 
                               concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
                           }
-                          operator.add(IKimConcept.Type.PROBABILITY);
-                        } else {
-                          boolean _isProportion = concept.isProportion();
-                          if (_isProportion) {
-                            operator.add(IKimConcept.Type.PROPORTION);
+                          boolean _isOccurrence_1 = concept.isOccurrence();
+                          if (_isOccurrence_1) {
+                            operator.add(IKimConcept.Type.OCCURRENCE);
+                            operator.add(IKimConcept.Type.PROBABILITY);
                           } else {
-                            boolean _isRatio = concept.isRatio();
-                            if (_isRatio) {
-                              operator.add(IKimConcept.Type.RATIO);
-                            } else {
-                              boolean _isValue = concept.isValue();
-                              if (_isValue) {
-                                operator.add(IKimConcept.Type.VALUE);
-                                boolean _isMonetary = concept.isMonetary();
-                                if (_isMonetary) {
-                                  operator.add(IKimConcept.Type.MONETARY);
-                                }
+                            operator.add(IKimConcept.Type.PRESENCE);
+                          }
+                        } else {
+                          boolean _isProbability = concept.isProbability();
+                          if (_isProbability) {
+                            boolean _contains_8 = flags.contains(IKimConcept.Type.EVENT);
+                            boolean _not_7 = (!_contains_8);
+                            if (_not_7) {
+                              String _xifexpression_2 = null;
+                              boolean _contains_9 = flags.contains(
+                                IKimConcept.Type.DIRECT_OBSERVABLE);
+                              if (_contains_9) {
+                                _xifexpression_2 = "; use occurrence for probability of presence";
                               } else {
-                                boolean _isUncertainty = concept.isUncertainty();
-                                if (_isUncertainty) {
-                                  boolean _contains_9 = flags.contains(IKimConcept.Type.QUALITY);
-                                  boolean _not_7 = (!_contains_9);
-                                  if (_not_7) {
-                                    this.error(
-                                      "Uncertainty is associated to qualities. Use probability or occurrence for other observables", 
-                                      concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
+                                _xifexpression_2 = "";
+                              }
+                              String _plus_6 = ("Probability only applies to events" + _xifexpression_2);
+                              this.error(_plus_6, 
+                                concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
+                            }
+                            operator.add(IKimConcept.Type.PROBABILITY);
+                          } else {
+                            boolean _isProportion = concept.isProportion();
+                            if (_isProportion) {
+                              operator.add(IKimConcept.Type.PROPORTION);
+                            } else {
+                              boolean _isRatio = concept.isRatio();
+                              if (_isRatio) {
+                                operator.add(IKimConcept.Type.RATIO);
+                              } else {
+                                boolean _isValue = concept.isValue();
+                                if (_isValue) {
+                                  operator.add(IKimConcept.Type.VALUE);
+                                  boolean _isMonetary = concept.isMonetary();
+                                  if (_isMonetary) {
+                                    operator.add(IKimConcept.Type.MONETARY);
                                   }
-                                  operator.add(IKimConcept.Type.UNCERTAINTY);
+                                } else {
+                                  boolean _isUncertainty = concept.isUncertainty();
+                                  if (_isUncertainty) {
+                                    boolean _contains_10 = flags.contains(IKimConcept.Type.QUALITY);
+                                    boolean _not_8 = (!_contains_10);
+                                    if (_not_8) {
+                                      this.error(
+                                        "Uncertainty is associated to qualities. Use probability or occurrence for other observables", 
+                                        concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
+                                    }
+                                    operator.add(IKimConcept.Type.UNCERTAINTY);
+                                  }
                                 }
                               }
                             }
@@ -2033,15 +2063,15 @@ public class KimValidator extends AbstractKimValidator {
               }
             }
             boolean _isEmpty_2 = operator.isEmpty();
-            boolean _not_8 = (!_isEmpty_2);
-            if (_not_8) {
-              ret = Kim.INSTANCE.makeQuality(ret, operator.<IKimConcept.Type>toArray(new IKimConcept.Type[operator.size()]));
-              boolean _contains_10 = flags.contains(IKimConcept.Type.MACRO);
-              if (_contains_10) {
+            boolean _not_9 = (!_isEmpty_2);
+            if (_not_9) {
+              ret = Kim.INSTANCE.applyOperator(ret, operator.<IKimConcept.Type>toArray(new IKimConcept.Type[operator.size()]));
+              boolean _contains_11 = flags.contains(IKimConcept.Type.MACRO);
+              if (_contains_11) {
                 ret.add(IKimConcept.Type.MACRO);
               }
-              boolean _contains_11 = flags.contains(IKimConcept.Type.SUBJECTIVE);
-              if (_contains_11) {
+              boolean _contains_12 = flags.contains(IKimConcept.Type.SUBJECTIVE);
+              if (_contains_12) {
                 ret.add(IKimConcept.Type.SUBJECTIVE);
               }
             }
@@ -2844,6 +2874,22 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED);
         ok = false;
       } else {
+        int i_6 = 0;
+        EList<ConceptDeclaration> _qualitiesAffected = concept.getQualitiesAffected();
+        for (final ConceptDeclaration decl_2 : _qualitiesAffected) {
+          {
+            KimConcept quality = Kim.INSTANCE.declareConcept(decl_2);
+            boolean _is = quality.is(IKimConcept.Type.QUALITY);
+            boolean _not_10 = (!_is);
+            if (_not_10) {
+              this.error(
+                "only quality types can be affected by a process", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i_6);
+            } else {
+              ret.getQualitiesAffected().add(quality);
+            }
+            i_6++;
+          }
+        }
       }
     }
     Metadata _metadata = concept.getMetadata();

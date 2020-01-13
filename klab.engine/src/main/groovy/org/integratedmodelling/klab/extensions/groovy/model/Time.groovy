@@ -24,6 +24,6 @@ class Time extends Extent<ITime> {
 	}
 
 	public String toString() {
-		return unwrap().toString();
+		return unwrap().describe();
 	}
 }

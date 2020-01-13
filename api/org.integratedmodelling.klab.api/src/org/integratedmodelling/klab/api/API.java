@@ -125,6 +125,31 @@ public interface API {
 	 */
 	public static final String KIM = "/kim";
 
+	/**
+	 * Read-only ticket API, implemented in the Node and maybe later in the Hub. Engines
+	 * have ticket management but only Websockets clients can access it.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static interface TICKET {
+		
+		/**
+		 * Retrieve the specific ticket with the passed ID.
+		 * 
+		 * GET
+		 */
+		public static final String INFO = "/ticket/info/{ticket}";
+		
+		/**
+		 * Retrieve all tickets matching the field values in the query string.
+		 * 
+		 * GET
+		 */
+		public static final String QUERY = "/ticket/query";
+		
+	}
+	
 	public static interface HUB {
 
 		/**
@@ -163,14 +188,13 @@ public interface API {
 			public static final String SUBMIT = "/indexing/submit";
 
 			/**
-			 * Request suggestions for queries in context matching a query string and 
-			 * user permissions, sorted by match score and (increasing) computational
-			 * load.
+			 * Request suggestions for queries in context matching a query string and user
+			 * permissions, sorted by match score and (increasing) computational load.
 			 * 
 			 * POST
 			 */
 			public static final String SUGGESTIONS = "/indexing/suggestions";
-			
+
 		}
 
 	}
@@ -185,7 +209,16 @@ public interface API {
 			 * 
 			 * PUT
 			 */
-			public static final String SUBMIT = "/resource/submit";
+			public static final String SUBMIT_FILES = "/resource/submitfiles";
+
+			/**
+			 * Like the above but used when the resource only contains a single
+			 * resource.json metadata file, whose contents are sent directly in a POST
+			 * message.
+			 * 
+			 * POST
+			 */
+			public static final String SUBMIT_DESCRIPTOR = "/resource/submitdescriptor";
 
 			/**
 			 * Publish a local resource to the public catalog of this node. Return the final
@@ -211,13 +244,11 @@ public interface API {
 			public static final String DELETE_URN = "/resource/delete/" + P_URN;
 
 			/**
-			 * Retrieve raw observation data for passed URN in passed scale. If resource has
-			 * time geometry, the response at initialization contains an individual token
-			 * for repeated requests at transitions.
+			 * Retrieve raw observation data for passed URN in passed geometry.
 			 * 
-			 * GET
+			 * POST
 			 */
-			public static final String GET_URN = "/resource/get/" + P_URN;
+			public static final String CONTEXTUALIZE = "/resource/contextualize";
 
 			/**
 			 * Upload a resource.
@@ -244,6 +275,11 @@ public interface API {
 			 */
 			public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
 
+			/**
+			 * Retrieve the resource metadata for the passed URN.
+			 */
+			public static final String INFO_URN = "/resource/info/" + P_URN;
+			
 			/**
 			 * List all resources available to the requesting engine. Parameterize for
 			 * verbose or short return.

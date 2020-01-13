@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -154,11 +155,10 @@ public class ModelKbox extends ObservableKbox {
 
 		initialize(context.getMonitor());
 
-		// Contextualize the observable unless it's a subject - also used to
-		// establish semantic distance in the matcher
-		if (context.getContext() != null && !observable.is(Type.SUBJECT)) {
+		// Contextualize the observable if needed
+		if (context.getContext() != null && ((Observable) observable).mustContextualizeAtResolution()) {
 			observable = Observables.INSTANCE.contextualizeTo(observable,
-					context.getContext().getObservable().getType(), context.getMonitor());
+					context.getContext().getObservable().getType(), true, context.getMonitor());
 		}
 
 		Pair<Scale, Set<IRankedModel>> preResolved = context.isCaching() ? null
@@ -643,6 +643,7 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		if (ret.size() > 0) {
+			
 			for (IObservable attr : model.getAttributeObservables().values()) {
 
 				// attribute type must have inherent type added
@@ -651,9 +652,9 @@ public class ModelKbox extends ObservableKbox {
 				m.setObservable(type.getDefinition());
 				m.setObservableConcept(type.getType());
 				m.setObservationType(attr.getDescription().name());
-				// m.setObservationConcept(attr.getObservationType());
 				m.setDereifyingAttribute(attr.getName());
 				m.setMediation(Mediation.DEREIFY_QUALITY);
+				m.setPrimaryObservable(!model.isInstantiator());
 				ret.add(m);
 			}
 
@@ -719,7 +720,7 @@ public class ModelKbox extends ObservableKbox {
 		boolean first = true;
 
 		for (IObservable obs : model.getObservables()) {
-			
+
 			ModelReference m = new ModelReference();
 
 			m.setId(model.getId());

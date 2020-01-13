@@ -27,8 +27,7 @@ public class WfsPublisher implements IResourcePublisher {
 
   @Override
   public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
-    // TODO Auto-generated method stub
-    return null;
+    return localResource;
   }
 
 }

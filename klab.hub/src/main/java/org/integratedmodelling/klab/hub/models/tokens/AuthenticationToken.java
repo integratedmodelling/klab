@@ -28,6 +28,8 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     @Indexed
     private String username;
+    
+    private String paretToken;
 
 	protected DateTime expiration;
 
@@ -48,7 +50,7 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
         this.expiration = DateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
     }
 
-    /**
+	/**
      * add an expiration check to the default isAuthenticated() implementation
      */
     @Override
@@ -109,6 +111,14 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
     public String toString() {
         return getClass().getSimpleName() + ": " + getTokenString();
     }
+
+	public String getParetToken() {
+		return paretToken;
+	}
+
+	public void setParetToken(String paretToken) {
+		this.paretToken = paretToken;
+	}
 
 }
 

@@ -95,5 +95,4 @@ public class TokenClickbackConfig {
     public String getClickback() {
     	return CLICKBACK;
     };
-    
 }

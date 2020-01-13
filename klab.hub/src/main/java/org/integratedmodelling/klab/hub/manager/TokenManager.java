@@ -13,8 +13,11 @@ import javax.mail.MessagingException;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
+import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.ChangePasswordTokenFailedException;
+import org.integratedmodelling.klab.hub.exception.GroupRequestTokenFailedException;
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
@@ -22,6 +25,9 @@ import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.models.User.AccountStatus;
+import org.integratedmodelling.klab.hub.models.tasks.GroupRequestTask;
+import org.integratedmodelling.klab.hub.models.tasks.Task;
+import org.integratedmodelling.klab.hub.models.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.models.tokens.ActivateAccountClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.AuthenticationToken;
 import org.integratedmodelling.klab.hub.models.tokens.ChangePasswordClickbackToken;
@@ -29,25 +35,32 @@ import org.integratedmodelling.klab.hub.models.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.InviteUserClickbackToken;
+import org.integratedmodelling.klab.hub.models.tokens.LostPasswordClickbackToken;
+import org.integratedmodelling.klab.hub.models.tokens.NewUserClickbackToken;
 import org.integratedmodelling.klab.hub.models.tokens.VerifyEmailClickbackToken;
+import org.integratedmodelling.klab.hub.payload.LoginResponse;
+import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
+import org.integratedmodelling.klab.hub.service.TaskService;
 import org.integratedmodelling.klab.hub.service.KlabGroupService;
-import org.integratedmodelling.klab.hub.service.KlabUserDetailsService;
+import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 //Maybe make a service for the tokens, which the manager can call
 //this may make it easier to follow
 @Component
 public class TokenManager {
 	
-	@Autowired
-	private KlabUserDetailsService klabUserDetailsService;
 
 	@Autowired
 	private TokenRepository tokenRepository;
@@ -60,6 +73,9 @@ public class TokenManager {
 	
 	@Autowired
 	private KlabGroupService klabGroupService;
+	
+	@Autowired
+	private TaskService taskService;
 
 	@Autowired
 	private EmailManager emailManager;
@@ -82,6 +98,22 @@ public class TokenManager {
 			// (shouldn't get here though)
 			throw new KlabAuthorizationException("Unable to get token constructor method.", e);
 		}
+		result.setCallbackUrl(tokenClickbackConfig);
+		result.setAuthenticated(true);
+		tokenRepository.save(result);
+		return result;
+	}
+	
+	public ClickbackToken createClickbackToken(String username, String parentToken, Class<? extends ClickbackToken> tokenType) {
+		ClickbackToken result = null;
+		try {
+			result = tokenType.getConstructor(String.class).newInstance(username);
+		} catch (Exception e) {
+			// mainly this is to throw RuntimeException instead of a checked exception
+			// (shouldn't get here though)
+			throw new KlabAuthorizationException("Unable to get token constructor method.", e);
+		}
+		result.setParetToken(parentToken);
 		result.setCallbackUrl(tokenClickbackConfig);
 		result.setAuthenticated(true);
 		tokenRepository.save(result);
@@ -115,25 +147,20 @@ public class TokenManager {
 		return token;
 	}
 
-	public AuthenticationToken authenticate(String username, String password) {
+	public AuthenticationToken getAuthenticationToken(String username, String password) {
 		AuthenticationToken result = null;
-		try {
-			Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
-			Authentication authResult = authenticationManager.authenticate(authRequest);
-			if (!authResult.isAuthenticated()) {
-				String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
-				throw new KlabException(msg) {
-					private static final long serialVersionUID = -8517575154826926750L;
-				};
-			} else {
-				deleteExpiredTokens(username);
-				result = createAuthenticationToken(username, AuthenticationToken.class);
-				SecurityContextHolder.getContext().setAuthentication(result);
-				klabUserManager.updateLastLogin(username);
-			}
-		} catch (KlabException e) {
-			String msg = "Login failed for user: " + username;
-			throw new KlabException(msg, e);
+		Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
+		Authentication authResult = authenticationManager.authenticate(authRequest);
+		if (!authResult.isAuthenticated()) {
+			String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
+			throw new KlabException(msg) {
+				private static final long serialVersionUID = -8517575154826926750L;
+			};
+		} else {
+			deleteExpiredTokens(username);
+			result = createAuthenticationToken(username, AuthenticationToken.class);
+			SecurityContextHolder.getContext().setAuthentication(result);
+			klabUserManager.updateLastLogin(username);
 		}
 		return result;
 	}
@@ -156,31 +183,63 @@ public class TokenManager {
 	}
 
 	public ClickbackToken createNewUser(String username, String email) throws TokenGenerationException {
-		User user = klabUserDetailsService.loadUserByUsername(username);
-		if (user != null) {
-			if (!AccountStatus.pendingActivation.equals(user.getAccountStatus())
-					|| !email.equals(user.getEmail())) {
-				throw new BadRequestException("An account with this username already exists.\n"
-						+ "If you are re-sending a registration email, please use the same email address as before.");
-			}
-		} else {
-			User newUser = new User();
-			newUser.setUsername(username);
-			newUser.setEmail(email);
-			newUser.setRoles(Arrays.asList(Role.ROLE_USER));
-			newUser.setRegistrationDate();
-			try {
-				klabUserDetailsService.createMongoUser(newUser);
-			} catch (UserExistsException | UserEmailExistsException e) {
-				throw new BadRequestException(e.getMessage(), e);
+		boolean ldapEntry = klabUserManager.ldapUserExists(username, email);
+		boolean userExist = klabUserManager.mongUserExists(username, email);
+		
+		if (ldapEntry) {
+			throw new UserExistsException("User name or email already registered");
+		}
+		
+		if (userExist) {
+			User user = klabUserManager.loadUserByUsername(username);
+			if (user == null ) {
+				throw new UserEmailExistsException(email);
+			} else {
+				if (!user.getEmail().equals(email)) {
+					throw new UserExistsException(username);
+				} else {
+					ClickbackToken clickbackToken = resendActivateAccountClickback(user);
+					return clickbackToken;
+				}
 			}
 		}
-
-		ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
+		ClickbackToken clickbackToken = createNewUserAndToken(username, email);
+		return clickbackToken;
+	}
+	
+	
+	private ClickbackToken createNewUserAndToken(String username, String email) {
+		ClickbackToken clickbackToken = null;
+		User newUser = new User();
+		newUser.setUsername(username);
+		newUser.setEmail(email);
+		newUser.setRoles(Arrays.asList(Role.ROLE_USER));
+		newUser.setRegistrationDate();
+		
+		try {
+			klabUserManager.createPendingKlabUser(newUser);
+			clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
+		} catch (UserExistsException | UserEmailExistsException e) {
+			throw new TokenGenerationException(e.getMessage(), e);
+		}
 		emailManager.sendNewUser(email, username, clickbackToken.getCallbackUrl());
 		return clickbackToken;
 	}
 	
+	private ClickbackToken resendActivateAccountClickback(User user) {
+		if (!AccountStatus.pendingActivation.equals(user.getAccountStatus())) {
+			throw new BadRequestException("An account with this username already exists.\n"
+					+ "User may request a new password for their account.");
+		}
+		List<AuthenticationToken> tokens = tokenRepository.findByUsername(user.getUsername());
+		for (AuthenticationToken token : tokens) {
+			tokenRepository.delete(token);
+		}
+		ClickbackToken clickbackToken = createClickbackToken(user.getUsername(), ActivateAccountClickbackToken.class);
+		emailManager.sendNewUser(user.getEmail(), user.getUsername(), clickbackToken.getCallbackUrl());
+		return clickbackToken;
+	}
+
 	public ClickbackToken createNewUserWithGroups(String username, String email, String tokenString, List<String> groups) {
 		ClickbackToken token = createNewUser(username, email);
 		handleInviteClickbackToken(username, tokenString, groups);
@@ -207,6 +266,11 @@ public class TokenManager {
 		return token;
 	}
 	
+	public LostPasswordClickbackToken createlostPasswordClickbackToken(String username) {
+		LostPasswordClickbackToken token = (LostPasswordClickbackToken) createClickbackToken(username, LostPasswordClickbackToken.class);
+		return token;
+	}
+	
 	public ClickbackToken handleVerificationToken(String userId, String tokenString) {
 		//lets only find a clickback token that invited the user
 		ClickbackToken activationToken = tokenRepository
@@ -214,17 +278,17 @@ public class TokenManager {
 			.map(ClickbackToken.class::cast)
 			.filter(token -> token.getClickbackAction().equals(ClickbackAction.activate))
 			.filter(token -> token.getPrincipal().equals(userId))
-			.orElseThrow(IllegalArgumentException::new);
+			.orElseThrow(() -> new ActivationTokenFailedException("Activation Token no longer active"));
 		//lets login to the security context
 		SecurityContextHolder.getContext().setAuthentication(activationToken);
-		//activate 
+		//verify account 
 		verifyAccount();
-		deleteToken(tokenString);
+		//deleteToken(tokenString);
 		
 		if(klabUserManager.getLoggedInUser().getProvider() == null) {
-			return createClickbackToken(klabUserManager.getLoggedInUsername(), ChangePasswordClickbackToken.class);
+			return createClickbackToken(klabUserManager.getLoggedInUsername(), tokenString, NewUserClickbackToken.class);
 		} else {
-			activationToken.setDetails("Deleted");
+			activationToken.setDetails("Error");
 			return activationToken;
 		}
 	}
@@ -232,12 +296,12 @@ public class TokenManager {
 	public void verifyAccount() {
 		// the user is already authenticated via clickback token header, but we want
 		// to do some extra verification because they aren't supplying a password
-		Authentication authentication = klabUserDetailsService.getLoggedInAuthentication();
+		Authentication authentication = klabUserManager.getLoggedInAuthentication();
 		if (!(authentication instanceof ActivateAccountClickbackToken)) {
 			throw new AuthenticationFailedException("The token submitted was not valid for activating an account.");
 		}
 		// this will also verify that the account started in pendingActivation
-		klabUserDetailsService.activateUser(klabUserManager.getLoggedInUsername());
+		klabUserManager.activateUser(klabUserManager.getLoggedInUsername());
 	}
 	
 	
@@ -246,13 +310,19 @@ public class TokenManager {
 		ClickbackToken changePasswordToken = tokenRepository
 				.findByTokenString(tokenString)
 				.map(ClickbackToken.class::cast)
-				.filter(token -> token.getClickbackAction().equals(ClickbackAction.password))
+				.filter(token -> (token.getClickbackAction().equals(ClickbackAction.password) |
+						token.getClickbackAction().equals(ClickbackAction.lostPassword) |
+						token.getClickbackAction().equals(ClickbackAction.newUser)))
 				.filter(token -> token.getPrincipal().equals(userId))
 				.filter(token -> !token.isExpired())
-				.orElseThrow(IllegalArgumentException::new);
+				.orElseThrow(()->new ChangePasswordTokenFailedException("Token inactive.  Make another request for changing user password"));
 		//lets login
 		SecurityContextHolder.getContext().setAuthentication(changePasswordToken);
 		setPasswordAndSendVerificationEmail(newPassword);
+		deleteToken(tokenString);
+		if (changePasswordToken.getClickbackAction().equals(ClickbackAction.newUser)) {
+			deleteToken(changePasswordToken.getParetToken());
+		}
 		changePasswordToken.setDetails("Deleted");
 		return changePasswordToken;
 	}
@@ -267,17 +337,28 @@ public class TokenManager {
 		User persistedUser = klabUserManager.getLoggedInUser();
 		if (persistedUser == null) {
 			throw new BadRequestException("Could not find a user with the token that was submitted.");
-		} else if (!AccountStatus.active.equals(persistedUser.getAccountStatus())) {
-			throw new BadRequestException("An active user could not be found with the token that was submitted.");
+		}
+		AccountStatus status = persistedUser.getAccountStatus();
+		if (!status.equals(AccountStatus.active) & !status.equals(AccountStatus.verified)) {
+			throw new BadRequestException("An verified or active user could not be found with the token that was submitted.");
 		} else {
 			// in case the user is changing their password to solve a broken state (i.e.
 			// Mongo but no LDAP)
 			// this will prevent the missing LDAP record from breaking the process
-			if (!klabUserDetailsService.ldapUserExists(persistedUser.getUsername())) {
-				klabUserDetailsService.createLdapUser(persistedUser);
+			if (!klabUserManager.ldapUserExists(persistedUser.getUsername(), persistedUser.getEmail())) {
+				klabUserManager.createLdapUser(persistedUser);
+				persistedUser.setPasswordHash(passwordEncoder.encode(newPassword));
+				klabUserManager.updateKlabUser(persistedUser);
+				klabUserManager.activateUser(persistedUser.getUsername());
+			} else {
+				persistedUser.setPasswordHash(passwordEncoder.encode((newPassword)));
+				klabUserManager.updateKlabUser(persistedUser);
+			}
+			if (!klabUserManager.ldapUserExists(persistedUser.getUsername(),persistedUser.getEmail())) {
+				klabUserManager.createLdapUser(persistedUser);
 			}
 			persistedUser.setPasswordHash(passwordEncoder.encode((newPassword)));
-			klabUserDetailsService.updateUser(persistedUser);
+			klabUserManager.updateKlabUser(persistedUser);
 			try {
 				// send an email notifying the user their password was changed
 				emailManager.sendPasswordChangeConfirmation(persistedUser.getEmail());
@@ -287,6 +368,7 @@ public class TokenManager {
 			}
 		}
 	}
+		
 	
 	public AuthenticationToken createAuthenticationToken(String username,
 			Class<? extends AuthenticationToken> tokenType) {
@@ -303,7 +385,7 @@ public class TokenManager {
 			// (shouldn't get here though)
 			throw new KlabAuthorizationException("Unable to get token constructor method.", e);
 		}
-		User user = klabUserDetailsService.loadUserByUsername(username);
+		User user = klabUserManager.loadUserByUsername(username);
 		result.setAuthorities(user.getAuthorities());
 		result.setAuthenticated(true);
 		tokenRepository.save(result);
@@ -312,13 +394,18 @@ public class TokenManager {
 
 	public GroupsClickbackToken createGroupsClickbackToken(String username, List<String> groups) {
 		GroupsClickbackToken token = (GroupsClickbackToken) createClickbackToken(username,GroupsClickbackToken.class);
+		token.setGroups(groups);
 		token.setCallbackUrl(tokenClickbackConfig);
+		tokenRepository.save(token);
 		return token;
 	}
 	
 	public void sendGroupClickbackToken(String username, List<String> groups) {
 		GroupsClickbackToken token = createGroupsClickbackToken(username, groups);
 		String grpString = groups.stream().collect(Collectors.joining(","));
+		GroupRequestTask task = (GroupRequestTask) taskService.createTask(username, GroupRequestTask.class);
+		task.setToken(token);
+		taskService.saveTask(task);
 		URL clickbackWithGroups;
 		try {
 			clickbackWithGroups = new URL(
@@ -349,13 +436,14 @@ public class TokenManager {
 	}
 	
 	public void inviteNewUserWithGroups(String email, List<String> groups) throws MessagingException {
-		User user = klabUserDetailsService.loadUserByUsername(email);
+		User user = klabUserManager.loadUserByUsername(email);
 		if (user != null) {
 			if (!AccountStatus.pendingActivation.equals(user.getAccountStatus())
 					|| !email.equals(user.getEmail())) {
 				throw new BadRequestException("An account with this username already exists.\n");
 			}
-		} else {
+		} 
+		if (user != null) {
 			sendInviteUserClickbackToken(email, groups);
 		}
 	}
@@ -366,18 +454,20 @@ public class TokenManager {
 			.map(ClickbackToken.class::cast)
 			.filter(token -> token.getClickbackAction().equals(ClickbackAction.groups))
 			.filter(token -> token.getPrincipal().equals(userId))
-			.orElseThrow(IllegalArgumentException::new);
+			.orElseThrow(() -> new GroupRequestTokenFailedException("Token no longer valid"));
 		//lets login to the security context
 		SecurityContextHolder.getContext().setAuthentication(groupsClickbackToken);
-		klabUserDetailsService.getLoggedInAuthentication();
-		User user = klabUserDetailsService.loadUserByUsername(userId);
+		klabUserManager.getLoggedInAuthentication();
+		User user = klabUserManager.loadUserByUsername(userId);
 		Collection<String> available = klabGroupService.getGroupNames();
 		//groups.addAll(user.getGroups());
 		if(!available.containsAll(groups)) {
-			throw new KlabException("A Group was included that does not exist in the database");
+			throw new BadRequestException("A Group was included that does not exist in the database");
 		}
 		user.setGroups(groups);
-		klabUserDetailsService.updateUser(user);
+		klabUserManager.updateKlabUser(user);
+		Task task = taskService.getGroupRequestTaskByToken(groupsClickbackToken);
+		taskService.changeTaskStatus(task.getId(), TaskStatus.acceptedEmail);
 		deleteToken(tokenString);
 		return groupsClickbackToken;
 	}
@@ -389,17 +479,65 @@ public class TokenManager {
 				.filter(token -> token.getClickbackAction().equals(ClickbackAction.invite))
 				.orElseThrow(IllegalArgumentException::new);
 		SecurityContextHolder.getContext().setAuthentication(inviteClickToken);
-		klabUserDetailsService.getLoggedInAuthentication();
-		User user = klabUserDetailsService.loadUserByUsername(userId);
+		klabUserManager.getLoggedInAuthentication();
+		User user = klabUserManager.loadUserByUsername(userId);
 		Collection<String> available = klabGroupService.getGroupNames();
 		//groups.addAll(user.getGroups());
 		if(!available.containsAll(groups)) {
 			throw new KlabException("A Group was included that does not exist in the database");
 		}
 		user.setGroups(groups);
-		klabUserDetailsService.updateUser(user);
+		klabUserManager.updateKlabUser(user);
 		deleteToken(tokenString);
 		return inviteClickToken;
+	}
+
+	public void sendLostPasswordToken(String username) {
+		try {
+			User user = klabUserManager.loadUserByUsername(username);
+			if (user != null) {
+				if(klabUserManager.ldapUserExists(user.getUsername(), user.getEmail())) {
+					ClickbackToken clickbackToken = createClickbackToken(username, LostPasswordClickbackToken.class);
+					emailManager.sendLostPasswordEmail(user.getEmail(), clickbackToken.getCallbackUrl());
+				} else {
+					ClickbackToken clickbackToken = createClickbackToken(username, ActivateAccountClickbackToken.class);
+					emailManager.sendNewUser(user.getEmail(), username, clickbackToken.getCallbackUrl());
+				}
+			} else {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+				//throw new KlabException("Username was not found");
+			}
+		} catch (UsernameNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+		} catch (MessagingException e) {
+			throw new KlabException("There was a problem sending the Lost Password Email.  Contact System Admin.");
+		}
+	}
+
+	public LoginResponse authenticate(String username, String password) {
+		try {
+			AuthenticationToken token = getAuthenticationToken(username, password);
+			ProfileResource profile = klabUserManager.getLoggedInUserProfile();
+			LoginResponse loginResponse = new LoginResponse(token, profile);
+			return loginResponse;
+		} catch (AuthenticationException e) {
+			return new LoginResponse();
+		}
+	}
+	
+	public LogoutResponse logout(String username, String token) {
+		try {
+			User user = klabUserManager.getLoggedInUser();
+			if (user.getUsername().equals(username)) {
+				deleteToken(token);
+				LogoutResponse resp = new LogoutResponse(username);
+				return resp;
+			} else {
+				return new LogoutResponse();
+			}
+		} catch  (UsernameNotFoundException e){
+			return new LogoutResponse();
+		}
 	}
 
 }

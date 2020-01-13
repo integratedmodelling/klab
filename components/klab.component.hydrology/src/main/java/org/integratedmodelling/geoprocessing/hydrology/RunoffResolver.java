@@ -1,6 +1,5 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
-import org.integratedmodelling.geoprocessing.GeoprocessingComponent;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -8,11 +7,12 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -99,7 +99,7 @@ public class RunoffResolver implements IResolver<IState>, IExpression {
 		    outflow = ((prec - (0.05 * mret))*(prec - (0.05 * mret)))/(prec + (0.95 * mret));
 		}
 		
-		for (Cell upstream : GeoprocessingComponent.getUpstreamCells(cell, flowdirection, null)) {
+		for (Cell upstream : Geospace.getUpstreamCells(cell, flowdirection, null)) {
 			outflow += computeRunoff(upstream, flowdirection, precipitation, curvenumber, runoff);
 		}
 		runoff.set(cell, outflow);

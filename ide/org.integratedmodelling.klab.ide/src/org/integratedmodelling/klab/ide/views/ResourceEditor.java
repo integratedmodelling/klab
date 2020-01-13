@@ -68,12 +68,15 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActions;
 import org.integratedmodelling.klab.ide.ui.TimeEditor;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.rest.ResourceOperationRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
 import org.integratedmodelling.klab.utils.Path;
@@ -84,6 +87,8 @@ import org.integratedmodelling.klab.utils.Utils;
 public class ResourceEditor extends ViewPart {
 
 	public static final String ID = "org.integratedmodelling.klab.ide.views.ResourceEditor";
+
+	private static final String REVALIDATE_RESOURCE_ACTION = "Revalidate resource";
 
 	private Label urnLabel;
 	private Composite mapHolder;
@@ -123,13 +128,17 @@ public class ResourceEditor extends ViewPart {
 	private StyledText references;
 	private StyledText notes;
 	private TimeEditor timeEditor;
-
+	private String selectedOperation = null;
 	private TableViewerColumn tableViewerColumn_3D;
 	private Label messageLabel;
 	private Table outputTable;
 	private TableViewer outputViewer;
 
 	private Geometry geometry = null;
+
+	private Button executeActionButton;
+
+	private List<NodeReference> publishingNodes;
 
 	public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -407,7 +416,7 @@ public class ResourceEditor extends ViewPart {
 		}
 
 		this.timeEditor.setTo(this.geometry.getDimension(Type.TIME));
-		
+
 		// TODO errors! They are not contained in the resource.
 		// this.isPublishable.setSelection(false);
 		// this.unpublishableReason.setText(string == null ? "" : string);
@@ -446,6 +455,15 @@ public class ResourceEditor extends ViewPart {
 		this.references
 				.setText(this.metadata.containsKey(IMetadata.DC_SOURCE) ? this.metadata.get(IMetadata.DC_SOURCE) : "");
 		this.notes.setText(this.metadata.containsKey(IMetadata.IM_NOTES) ? this.metadata.get(IMetadata.IM_NOTES) : "");
+
+		this.publishingNodes = Activator.engineMonitor().isRunning()
+				? Activator.klab().getPublishingNodes(resource.getAdapterType())
+				: new ArrayList<>();
+
+		this.publishButton.setEnabled(this.isPublishable.getSelection() && !this.publishingNodes.isEmpty());
+
+		setDirty(false);
+
 	}
 
 	private boolean hasErrors(ResourceReference resource) {
@@ -702,11 +720,26 @@ public class ResourceEditor extends ViewPart {
 			lblOperations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 			lblOperations.setText("Operations:");
 
-			Combo combo = new Combo(composite_3, SWT.READ_ONLY);
-			combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			Combo actionChooser = new Combo(composite_3, SWT.READ_ONLY);
+			actionChooser.add(REVALIDATE_RESOURCE_ACTION);
+			actionChooser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			actionChooser.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					selectedOperation = actionChooser.getText();
+					executeActionButton.setEnabled(true);
+				}
+			});
 
-			Button btnNewButton_3 = new Button(composite_3, SWT.NONE);
-			btnNewButton_3.setText("Execute");
+			executeActionButton = new Button(composite_3, SWT.NONE);
+			executeActionButton.setText("Execute");
+			executeActionButton.setEnabled(false);
+			executeActionButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					executeSelectedOperation();
+				}
+			});
 
 			Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
 			lblNewLabel_4
@@ -1048,9 +1081,14 @@ public class ResourceEditor extends ViewPart {
 		GridData gd_publishButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_publishButton.widthHint = 72;
 		publishButton.setLayoutData(gd_publishButton);
-		publishButton.setGrayed(true);
 		publishButton.setText("Publish...");
 		publishButton.setEnabled(false);
+		publishButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				publish();
+			}
+		});
 
 		saveButton = new Button(composite, SWT.NONE);
 		GridData gd_saveButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -1082,6 +1120,24 @@ public class ResourceEditor extends ViewPart {
 		createActions();
 		initializeToolBar();
 		initializeMenu();
+		
+		setDirty(false);
+	}
+
+	protected void publish() {
+		if (dirty) {
+			save();
+		}
+		KlabNavigatorActions.publishLocalResource(resource, publishingNodes);
+	}
+
+	protected void executeSelectedOperation() {
+		if (resource != null && resource.getUrn() != null && selectedOperation != null) {
+			ResourceOperationRequest request = new ResourceOperationRequest();
+			request.setUrn(resource.getUrn());
+			request.setOperation(selectedOperation);
+			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request);
+		}
 	}
 
 	private void save() {
@@ -1100,28 +1156,34 @@ public class ResourceEditor extends ViewPart {
 	}
 
 	private void swapDimension(String timeSpec) {
-		setDirty(true);
-		Geometry tgeo = Geometry.create(timeSpec);
+		if (this.geometry != null) {
+			setDirty(true);
+		}
+		Geometry tgeo = timeSpec == null ? null : Geometry.create(timeSpec);
 		if (this.geometry == null) {
 			this.geometry = tgeo;
 		} else {
-			this.geometry = this.geometry.override(tgeo);
+			this.geometry = tgeo == null ? this.geometry.without(Type.TIME) : this.geometry.override(tgeo);
 		}
-		this.geometryDefinition.setText(this.geometry.toString());
+		if (this.geometryDefinition != null) {
+			this.geometryDefinition.setText(this.geometry.toString());
+		}
 	}
 
 	protected void setDirty(boolean b) {
-		if (b) {
-			if (!getTitle().startsWith("*")) {
-				setPartName("* " + getTitle());
+		if (saveButton != null) {
+			if (b) {
+				if (!getTitle().startsWith("*")) {
+					setPartName("* " + getTitle());
+				}
+			} else {
+				if (getTitle().startsWith("*")) {
+					setPartName(getTitle().substring(2));
+				}
 			}
-		} else {
-			if (getTitle().startsWith("*")) {
-				setPartName(getTitle().substring(2));
-			}
+			saveButton.setEnabled(b && Activator.engineMonitor() != null && Activator.engineMonitor().isRunning());
+			dirty = b;
 		}
-		saveButton.setEnabled(b && Activator.engineMonitor() != null && Activator.engineMonitor().isRunning());
-		dirty = b;
 	}
 
 	public void dispose() {

@@ -64,18 +64,18 @@ public class NewProject extends WizardPage {
 		
 		text = new Text(container, SWT.BORDER);
 		FormData fd_text = new FormData();
-		fd_text.top = new FormAttachment(0, 47);
-		fd_text.left = new FormAttachment(0, 177);
-		fd_text.right = new FormAttachment(100, -91);
+		fd_text.top = new FormAttachment(0, 37);
+		fd_text.right = new FormAttachment(100, -83);
 		text.setLayoutData(fd_text);
 		
 		Label lblProjectName = new Label(container, SWT.NONE);
+		fd_text.left = new FormAttachment(lblProjectName, 6);
 		lblProjectName.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 		FormData fd_lblProjectName = new FormData();
-		fd_lblProjectName.bottom = new FormAttachment(text, -3, SWT.BOTTOM);
-		fd_lblProjectName.top = new FormAttachment(text, 3, SWT.TOP);
-		fd_lblProjectName.right = new FormAttachment(text, -18);
-		fd_lblProjectName.left = new FormAttachment(0, 89);
+		fd_lblProjectName.bottom = new FormAttachment(100, -44);
+		fd_lblProjectName.top = new FormAttachment(0, 36);
+		fd_lblProjectName.left = new FormAttachment(0, 61);
+		fd_lblProjectName.right = new FormAttachment(100, -323);
 		lblProjectName.setLayoutData(fd_lblProjectName);
 		lblProjectName.setText("Project name");
 	}

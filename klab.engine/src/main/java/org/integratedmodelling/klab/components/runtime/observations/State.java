@@ -17,10 +17,10 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.DataIterator;
+import org.integratedmodelling.klab.data.storage.LocatedState;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -49,6 +49,15 @@ public class State extends Observation implements IState, IKeyHolder {
 	ITable<Number> table;
 	IMetadata metadata = new Metadata();
 
+	public static State newArchetype(Observable observable, Scale scale, IRuntimeScope context) {
+		return new State(observable, scale, context);
+	}
+
+	private State(Observable observable, Scale scale, IRuntimeScope context) {
+		super(observable, scale, context);
+		this.setArchetype(true);
+	}
+
 	public State(Observable observable, Scale scale, IRuntimeScope context, IDataStorage<?> data) {
 		super(observable, scale, context);
 		this.storage = data;
@@ -56,14 +65,9 @@ public class State extends Observation implements IState, IKeyHolder {
 	}
 
 	@Override
-	public boolean isConstant() {
-		return false;
-	}
-
-	@Override
 	public IState as(IArtifact.Type type) {
 
-		if (type == storage.getType() || type == IArtifact.Type.VALUE) {
+		if (isArchetype() || type == storage.getType() || type == IArtifact.Type.VALUE) {
 			return this;
 		}
 
@@ -82,6 +86,9 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	public long set(ILocator index, Object value) {
 		touch();
+		if (dataKey != null && value != null) {
+			dataKey.include(value);
+		}
 		return storage.putObject(value, index);
 	}
 
@@ -100,7 +107,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public IArtifact.Type getType() {
-		return storage.getType();
+		return isArchetype() ? IArtifact.Type.VOID : storage.getType();
 	}
 
 	@Override
@@ -127,8 +134,21 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public IState at(ILocator locator) {
-		Scale scale = (Scale)getScale().at(locator);
-		return scale.isConformant(getScale()) ? this : new RescalingState(this, (Scale) scale, getRuntimeScope());
+
+		/*
+		 * if the locator is a scale, this should not modify it at all, otherwise locate
+		 * the scale to the passed object.
+		 */
+		Scale scale = (Scale) getScale().at(locator);
+
+		/*
+		 * if the located scale is conformant (i.e. points to whole dimensions or unique
+		 * points on them), return a located instance of this, otherwise create a
+		 * rescaled instance.
+		 */
+		return scale.isConformant(getScale()) 
+				? new LocatedState(this, (Scale) scale, getRuntimeScope())
+				: new RescalingState(this, (Scale) scale, getRuntimeScope());
 	}
 
 	@Override

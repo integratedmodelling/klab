@@ -39,7 +39,7 @@ import org.integratedmodelling.klab.utils.Pair;
 public interface IContextualizable extends IKimStatement, IDataflowNode {
 
 	public static enum Type {
-		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, EXPRESSION, CONVERSION, LITERAL,
+		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, MERGED_RESOURCES, EXPRESSION, CONVERSION, LITERAL,
 		/* conditions are currently underspecified */CONDITION
 	}
 
@@ -382,5 +382,22 @@ public interface IContextualizable extends IKimStatement, IDataflowNode {
 	 * @return the geometry
 	 */
 	IGeometry getGeometry();
+
+	/**
+	 * If true, this defines an accessory variable rather than a dependency. The
+	 * targetId is the name of the variable.
+	 * 
+	 * @return
+	 */
+	boolean isVariable();
+
+	/**
+	 * List of merged URNs that may represent resources or models. The resulting
+	 * contextualizer must arrange them by temporal context and choose the
+	 * appropriate one when data are requested.
+	 * 
+	 * @param mergedUrns
+	 */
+	List<String> getMergedUrns();
 
 }

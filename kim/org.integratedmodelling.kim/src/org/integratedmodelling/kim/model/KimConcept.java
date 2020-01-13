@@ -111,7 +111,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	 * if any component was declared as the distributed inherent ('of each'), this
 	 * returns the correspondent component role.
 	 */
-	private ComponentRole distributedInherent = null;
+	private ObservableRole distributedInherent = null;
 
 	/**
 	 * True if any concepts in the declaration are templated
@@ -257,11 +257,11 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		ret.type = observable.type;
 
 		if (declaration.isDistributedOfInherency()) {
-			ret.distributedInherent = ComponentRole.INHERENT;
+			ret.distributedInherent = ObservableRole.INHERENT;
 		} else if (declaration.isDistributedForInherency()) {
-			ret.distributedInherent = ComponentRole.GOAL;
+			ret.distributedInherent = ObservableRole.GOAL;
 		} else if (declaration.isDistributedWithinInherency()) {
-			ret.distributedInherent = ComponentRole.CONTEXT;
+			ret.distributedInherent = ObservableRole.CONTEXT;
 		}
 
 		ConceptDeclaration inherency = declaration.getInherency();
@@ -664,11 +664,14 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		} else if (declaration.isLevel()) {
 			observationType = UnarySemanticOperator.LEVEL;
 			operator = Type.CLASS;
+		} else if (declaration.isChange()) {
+			observationType = UnarySemanticOperator.CHANGE;
+			operator = Type.CHANGE;
 		}
 
 		if (operator != null) {
 			this.argumentType = this.type;
-			this.type = Kim.INSTANCE.makeQuality(type, operator);
+			this.type = Kim.INSTANCE.applyOperator(type, operator);
 		}
 
 		return type;
@@ -1143,15 +1146,60 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		}
 		return ret;
 	}
+	
+	public KimConcept removeComponents(ObservableRole... roles) {
 
-	public KimConcept removeComponents(List<String> declarations, List<ComponentRole> roles) {
+		KimConcept ret = new KimConcept(this);
+
+		for (ObservableRole role : roles) {
+
+			switch (role) {
+			case ADJACENT:
+				ret.adjacent = null;
+				break;
+			case CAUSANT:
+				ret.causant = null;
+				break;
+			case CAUSED:
+				ret.caused = null;
+				break;
+			case COMPRESENT:
+				ret.compresent = null;
+				break;
+			case CONTEXT:
+				ret.context = null;
+				break;
+			case COOCCURRENT:
+				ret.cooccurrent = null;
+				break;
+			case GOAL:
+				ret.motivation = null;
+				break;
+			case INHERENT:
+				ret.inherent = null;
+				break;
+			case ROLE:
+				ret.roles.clear();
+				break;
+			case TRAIT:
+				ret.traits.clear();
+				break;
+			default:
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	public KimConcept removeComponents(List<String> declarations, List<ObservableRole> roles) {
 
 		KimConcept ret = new KimConcept(this);
 
 		for (int i = 0; i < declarations.size(); i++) {
 
 			String declaration = declarations.get(i);
-			ComponentRole role = roles.get(i);
+			ObservableRole role = roles.get(i);
 
 			switch (role) {
 			case ADJACENT:
@@ -1285,7 +1333,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	}
 
 	@Override
-	public ComponentRole getDistributedInherent() {
+	public ObservableRole getDistributedInherent() {
 		return distributedInherent;
 	}
 

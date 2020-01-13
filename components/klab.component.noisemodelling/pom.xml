@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.integratedmodelling</groupId>
+		<artifactId>components</artifactId>
+		<version>0.10.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>klab.component.noisemodelling</artifactId>
+	<description>k.LAB port of NoisePlanet noise modeling package</description>
+	<dependencies>
+		<dependency>
+			<groupId>org.orbisgis</groupId>
+			<artifactId>poly2tri-core</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.orbisgis</groupId>
+			<artifactId>cts</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.engine</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.klab.api</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+	</dependencies>
+</project>

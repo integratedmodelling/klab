@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -21,8 +22,6 @@ public enum Urns {
 
 	INSTANCE;
 
-    final public static String SINGLE_PARAMETER_KEY = "value";
-    
 	final public static String KLAB_URN_PREFIX = "urn:klab:";
 	final public static String LOCAL_URN_PREFIX = "urn:klab:local:";
 	final public static String VOID_URN_PREFIX = "urn:klab:void:";
@@ -63,6 +62,10 @@ public enum Urns {
 
 	public boolean isLocal(String urn) {
 		return urn.startsWith(LOCAL_URN_PREFIX) || urn.startsWith("local:") || urn.startsWith(LOCAL_FILE_PREFIX);
+	}
+
+	public boolean isUniversal(String urn) {
+		return urn.startsWith("klab");
 	}
 
 	public String getLocalUrn(String resourceId, IProject project, String owner) {
@@ -109,7 +112,7 @@ public enum Urns {
                     String[] kv = s.split("=");
                     parameters.put(kv[0], kv[1]);
                 } else {
-                    parameters.put(SINGLE_PARAMETER_KEY, s);
+                    parameters.put(Urn.SINGLE_PARAMETER_KEY, s);
                 }
             }
         }

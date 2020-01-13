@@ -11,7 +11,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.ComponentRole;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.SemanticType;
@@ -65,7 +66,8 @@ public class ObservableBuilder implements IObservable.Builder {
 	private String name;
 	private IObservable filteredObservable;
 	private IConcept targetPredicate;
-	
+	private boolean mustContextualize = false;
+
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
 	private List<IConcept> removed = new ArrayList<>();
@@ -73,6 +75,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private List<KlabValidationException> errors = new ArrayList<>();
 	private IUnit unit;
 	private ICurrency currency;
+	private List<IAnnotation> annotations = new ArrayList<>();
 
 	private boolean isTrivial = true;
 	private boolean distributedInherency = false;
@@ -82,6 +85,14 @@ public class ObservableBuilder implements IObservable.Builder {
 	// withDeclaration() and the
 	// builder is merely building it.
 	private boolean declarationIsComplete = false;
+
+	public static ObservableBuilder getBuilder(IObservable observable, IMonitor monitor) {
+		return new ObservableBuilder((Observable) observable, monitor);
+	}
+
+	public static ObservableBuilder getBuilder(IConcept concept) {
+		return new ObservableBuilder(concept);
+	}
 
 	public ObservableBuilder(Concept main, Ontology ontology) {
 		this.main = main;
@@ -97,6 +108,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.type = ((Concept) main).type;
 	}
 
+	public ObservableBuilder(IConcept main, IMonitor monitor) {
+		this(main);
+		this.monitor = monitor;
+	}
+
 	/**
 	 * Copies all info from the first level of specification of the passed
 	 * observable. Will retain the original semantics, so it won't separate prefix
@@ -106,6 +122,11 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * @param observable
 	 */
 	public ObservableBuilder(Observable observable, IMonitor monitor) {
+
+		/*
+		 * TODO the operator should be separated based on the type, and added back when
+		 * reconstructing.
+		 */
 
 		this.main = (Concept) Observables.INSTANCE.getCoreObservable(observable.getType());
 		this.type = this.main.getTypeSet();
@@ -119,6 +140,9 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.goal = Observables.INSTANCE.getDirectGoalType(observable.getType());
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
+		this.mustContextualize = observable.mustContextualizeAtResolution();
+
+		this.annotations.addAll(observable.getAnnotations());
 
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			this.roles.add(role);
@@ -137,6 +161,50 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.valueOperators.addAll(observable.getValueOperators());
 		this.monitor = monitor;
 		this.filteredObservable = observable.getFilteredObservable();
+	}
+
+	public String computeDeclaration() {
+
+		StringBuffer ret = new StringBuffer(512);
+
+		for (IConcept role : roles) {
+			ret.append(role + " ");
+		}
+		for (IConcept trait : traits) {
+			ret.append(trait + " ");
+		}
+
+		ret.append(main + " ");
+
+		if (this.inherent != null) {
+
+		}
+		if (this.context != null) {
+
+		}
+		if (this.causant != null) {
+
+		}
+		if (this.caused != null) {
+
+		}
+		if (this.compresent != null) {
+
+		}
+		if (this.adjacent != null) {
+
+		}
+		if (this.goal != null) {
+
+		}
+		if (this.context != null) {
+
+		}
+		if (this.context != null) {
+
+		}
+
+		return ret.toString().trim();
 	}
 
 	public ObservableBuilder(ObservableBuilder other) {
@@ -159,6 +227,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.monitor = other.monitor;
 		this.valueOperators.addAll(other.valueOperators);
 		this.filteredObservable = other.filteredObservable;
+		this.mustContextualize = other.mustContextualize;
+		this.annotations.addAll(other.annotations);
 
 		checkTrivial();
 	}
@@ -177,7 +247,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		isTrivial = false;
 		return this;
 	}
-	
+
 	@Override
 	public Builder optional(boolean optional) {
 		this.optional = optional;
@@ -310,6 +380,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			case ASSESSMENT:
 				reset(makeAssessment(argument, false));
 				break;
+			case CHANGE:
+				reset(makeChange(argument, false));
+				break;
 			case COUNT:
 				reset(makeCount(argument, false));
 				break;
@@ -394,6 +467,28 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	@Override
+	public Builder without(ObservableRole... roles) {
+
+		KimConcept newDeclaration = this.declaration.removeComponents(roles);
+		ObservableBuilder ret = new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration));
+
+		/*
+		 * copy the rest
+		 */
+		ret.unit = unit;
+		ret.currency = currency;
+		ret.valueOperators.addAll(valueOperators);
+		ret.name = name;
+		ret.targetPredicate = targetPredicate;
+		ret.filteredObservable = filteredObservable;
+		ret.optional = this.optional;
+		ret.mustContextualize = mustContextualize;
+		ret.annotations.addAll(annotations);
+
+		return ret;
+	}
+
+	@Override
 	public Builder withoutAny(Collection<IConcept> concepts) {
 		return withoutAny(concepts.toArray(new IConcept[concepts.size()]));
 	}
@@ -402,60 +497,60 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder without(IConcept... concepts) {
 
 		ObservableBuilder ret = new ObservableBuilder(this);
-		List<ComponentRole> removedRoles = new ArrayList<>();
+		List<ObservableRole> removedRoles = new ArrayList<>();
 		for (IConcept concept : concepts) {
 			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithout(ret.traits,
 					concept);
 			ret.traits = new ArrayList<>(tdelta.getFirst());
 			ret.removed.addAll(tdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.TRAIT);
+				removedRoles.add(ObservableRole.TRAIT);
 			}
 			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithout(ret.roles, concept);
 			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.ROLE);
+				removedRoles.add(ObservableRole.ROLE);
 			}
 			if (ret.context != null && ret.context.equals(concept)) {
 				ret.context = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CONTEXT);
+				removedRoles.add(ObservableRole.CONTEXT);
 			}
 			if (ret.inherent != null && ret.inherent.equals(concept)) {
 				ret.inherent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.INHERENT);
+				removedRoles.add(ObservableRole.INHERENT);
 			}
 			if (ret.adjacent != null && ret.adjacent.equals(concept)) {
 				ret.adjacent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.ADJACENT);
+				removedRoles.add(ObservableRole.ADJACENT);
 			}
 			if (ret.caused != null && ret.caused.equals(concept)) {
 				ret.caused = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CAUSED);
+				removedRoles.add(ObservableRole.CAUSED);
 			}
 			if (ret.causant != null && ret.causant.equals(concept)) {
 				ret.causant = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CAUSANT);
+				removedRoles.add(ObservableRole.CAUSANT);
 			}
 			if (ret.compresent != null && ret.compresent.equals(concept)) {
 				ret.compresent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.COMPRESENT);
+				removedRoles.add(ObservableRole.COMPRESENT);
 			}
 			if (ret.goal != null && ret.goal.equals(concept)) {
 				ret.goal = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.GOAL);
+				removedRoles.add(ObservableRole.GOAL);
 			}
 			if (ret.cooccurrent != null && ret.cooccurrent.equals(concept)) {
 				ret.cooccurrent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.COOCCURRENT);
+				removedRoles.add(ObservableRole.COOCCURRENT);
 			}
 		}
 		if (ret.removed.size() > 0) {
@@ -475,61 +570,61 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder withoutAny(IKimConcept.Type... concepts) {
 
 		ObservableBuilder ret = new ObservableBuilder(this);
-		List<ComponentRole> removedRoles = new ArrayList<>();
+		List<ObservableRole> removedRoles = new ArrayList<>();
 		for (IKimConcept.Type concept : concepts) {
 			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(ret.traits,
 					concept);
 			ret.traits = new ArrayList<>(tdelta.getFirst());
 			ret.removed.addAll(tdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.TRAIT);
+				removedRoles.add(ObservableRole.TRAIT);
 			}
 			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(ret.roles,
 					concept);
 			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.ROLE);
+				removedRoles.add(ObservableRole.ROLE);
 			}
 			if (ret.context != null && ret.context.is(concept)) {
 				ret.removed.add(ret.context);
 				ret.context = null;
-				removedRoles.add(ComponentRole.CONTEXT);
+				removedRoles.add(ObservableRole.CONTEXT);
 			}
 			if (ret.inherent != null && ret.inherent.is(concept)) {
 				ret.removed.add(ret.inherent);
 				ret.inherent = null;
-				removedRoles.add(ComponentRole.INHERENT);
+				removedRoles.add(ObservableRole.INHERENT);
 			}
 			if (ret.adjacent != null && ret.adjacent.is(concept)) {
 				ret.removed.add(ret.adjacent);
 				ret.adjacent = null;
-				removedRoles.add(ComponentRole.ADJACENT);
+				removedRoles.add(ObservableRole.ADJACENT);
 			}
 			if (ret.caused != null && ret.caused.is(concept)) {
 				ret.removed.add(ret.caused);
 				ret.caused = null;
-				removedRoles.add(ComponentRole.CAUSED);
+				removedRoles.add(ObservableRole.CAUSED);
 			}
 			if (ret.causant != null && ret.causant.is(concept)) {
 				ret.removed.add(ret.causant);
 				ret.causant = null;
-				removedRoles.add(ComponentRole.CAUSANT);
+				removedRoles.add(ObservableRole.CAUSANT);
 			}
 			if (ret.compresent != null && ret.compresent.is(concept)) {
 				ret.removed.add(ret.compresent);
 				ret.compresent = null;
-				removedRoles.add(ComponentRole.COMPRESENT);
+				removedRoles.add(ObservableRole.COMPRESENT);
 			}
 			if (ret.goal != null && ret.goal.is(concept)) {
 				ret.removed.add(ret.goal);
 				ret.goal = null;
-				removedRoles.add(ComponentRole.GOAL);
+				removedRoles.add(ObservableRole.GOAL);
 			}
 			if (ret.cooccurrent != null && ret.cooccurrent.is(concept)) {
 				ret.removed.add(ret.cooccurrent);
 				ret.cooccurrent = null;
-				removedRoles.add(ComponentRole.COOCCURRENT);
+				removedRoles.add(ObservableRole.COOCCURRENT);
 			}
 		}
 		if (ret.removed.size() > 0) {
@@ -550,61 +645,61 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder withoutAny(IConcept... concepts) {
 
 		ObservableBuilder ret = new ObservableBuilder(this);
-		List<ComponentRole> removedRoles = new ArrayList<>();
+		List<ObservableRole> removedRoles = new ArrayList<>();
 		for (IConcept concept : concepts) {
 			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(ret.traits,
 					concept);
 			ret.traits = new ArrayList<>(tdelta.getFirst());
 			ret.removed.addAll(tdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.TRAIT);
+				removedRoles.add(ObservableRole.TRAIT);
 			}
 			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(ret.roles,
 					concept);
 			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
 			for (int i = 0; i < tdelta.getSecond().size(); i++) {
-				removedRoles.add(ComponentRole.ROLE);
+				removedRoles.add(ObservableRole.ROLE);
 			}
 			if (ret.context != null && ret.context.is(concept)) {
 				ret.context = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CONTEXT);
+				removedRoles.add(ObservableRole.CONTEXT);
 			}
 			if (ret.inherent != null && ret.inherent.is(concept)) {
 				ret.inherent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.INHERENT);
+				removedRoles.add(ObservableRole.INHERENT);
 			}
 			if (ret.adjacent != null && ret.adjacent.is(concept)) {
 				ret.adjacent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.ADJACENT);
+				removedRoles.add(ObservableRole.ADJACENT);
 			}
 			if (ret.caused != null && ret.caused.is(concept)) {
 				ret.caused = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CAUSED);
+				removedRoles.add(ObservableRole.CAUSED);
 			}
 			if (ret.causant != null && ret.causant.is(concept)) {
 				ret.causant = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.CAUSANT);
+				removedRoles.add(ObservableRole.CAUSANT);
 			}
 			if (ret.compresent != null && ret.compresent.is(concept)) {
 				ret.compresent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.COMPRESENT);
+				removedRoles.add(ObservableRole.COMPRESENT);
 			}
 			if (ret.goal != null && ret.goal.is(concept)) {
 				ret.goal = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.GOAL);
+				removedRoles.add(ObservableRole.GOAL);
 			}
 			if (ret.cooccurrent != null && ret.cooccurrent.is(concept)) {
 				ret.cooccurrent = null;
 				ret.removed.add(concept);
-				removedRoles.add(ComponentRole.COOCCURRENT);
+				removedRoles.add(ObservableRole.COOCCURRENT);
 			}
 		}
 		if (ret.removed.size() > 0) {
@@ -649,17 +744,72 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	/**
-	 * Turn a concept into its assessment if it's not already one, implementing the
+	 * Turn a concept into its change if it's not already one, implementing the
 	 * corresponding semantic operator.
 	 * 
-	 * @param concept
-	 *            the untransformed concept
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeAssessment(IConcept concept, boolean addDefinition) {
+	public Concept makeChange(IConcept concept, boolean addDefinition) {
+
+		String cName = getCleanId(concept) + "Change";
+
+		if (!concept.is(Type.QUALITY)) {
+			return null;
+		}
+
+		String definition = UnarySemanticOperator.CHANGE.declaration[0] + " " + concept.getDefinition();
+		Ontology ontology = (Ontology) concept.getOntology();
+		String conceptId = ontology.getIdForDefinition(definition);
+		IConcept context = Observables.INSTANCE.getContextType(concept);
+
+		if (conceptId == null) {
+
+			conceptId = ontology.createIdForDefinition(definition);
+
+			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.CHANGE.name());
+
+			ArrayList<IAxiom> ax = new ArrayList<>();
+			ax.add(Axiom.ClassAssertion(conceptId, newType));
+			ax.add(Axiom.SubClass(NS.CORE_CHANGE, conceptId));
+			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+
+			if (addDefinition) {
+				ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+			}
+			ontology.define(ax);
+
+			IConcept ret = ontology.getConcept(conceptId);
+
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.CHANGES_PROPERTY), concept, ontology);
+
+			/*
+			 * context of the change is the same context as the quality it describes - FIXME this shouldn't be
+			 * needed as the inherency is an alternative place to look for context.
+			 */
+			if (context != null) {
+				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
+			}
+
+		}
+
+		return ontology.getConcept(conceptId);
+	}
+
+	/**
+	 * Turn a concept into its assessment if it's not already one, implementing the
+	 * corresponding semantic operator (legacy and eventually, probably, deprecated)
+	 * 
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
+	 * @return the transformed concept
+	 */
+	public Concept makeAssessment(IConcept concept, boolean addDefinition) {
 
 		String cName = getCleanId(concept) + "Assessment";
 
@@ -699,11 +849,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * implementing the corresponding semantic operator. Also makes the original
 	 * concept the numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeCount(IConcept concept, boolean addDefinition) {
@@ -755,11 +903,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * Turn a concept into the distance from it if it's not already one,
 	 * implementing the corresponding semantic operator.
 	 * 
-	 * @param concept
-	 *            the untransformed concept
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeDistance(IConcept concept, boolean addDefinition) {
@@ -804,11 +950,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makePresence(IConcept concept, boolean addDefinition) {
@@ -854,11 +998,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * already one, implementing the corresponding semantic operator. Also makes the
 	 * original concept the numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be a direct observable.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be a direct observable.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeOccurrence(IConcept concept, boolean addDefinition) {
@@ -905,11 +1047,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * one, implementing the corresponding semantic operator. Also makes the
 	 * original concept the numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be any observable.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be any observable.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeObservability(IConcept concept, boolean addDefinition) {
@@ -954,11 +1094,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be an event.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be an event.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeMagnitude(IConcept concept, boolean addDefinition) {
@@ -997,17 +1135,15 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		return ontology.getConcept(conceptId);
 	}
-	
+
 	/**
 	 * Turn a concept into its probability if it's not already one, implementing the
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be an event.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be an event.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeLevel(IConcept concept, boolean addDefinition) {
@@ -1047,17 +1183,14 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-
 	/**
 	 * Turn a concept into its probability if it's not already one, implementing the
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept. Must be an event.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept. Must be an event.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeProbability(IConcept concept, boolean addDefinition) {
@@ -1102,11 +1235,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * corresponding semantic operator. Also makes the original concept the
 	 * numerosity's inherent.
 	 * 
-	 * @param concept
-	 *            the untransformed concept.
-	 * @param addDefinition
-	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-	 *            true if used from outside the builder
+	 * @param concept       the untransformed concept.
+	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+	 *                      annotation; pass true if used from outside the builder
 	 * @return the transformed concept
 	 */
 	public Concept makeUncertainty(IConcept concept, boolean addDefinition) {
@@ -1810,13 +1941,12 @@ public class ObservableBuilder implements IObservable.Builder {
 
 			ValueOperator valueOperator = op.getFirst();
 			Object valueOperand = op.getSecond();
-			
+
 			ret.setDeclaration(ret.getDeclaration() + " " + valueOperator.declaration);
 			if (name == null) {
 				ret.setName(ret.getName() + "_" + valueOperator.textForm);
 			}
 
-			
 			if (valueOperand instanceof IConcept) {
 
 				ret.setDeclaration(ret.getDeclaration() + " " + ((IConcept) valueOperand).getDefinition());
@@ -1839,7 +1969,7 @@ public class ObservableBuilder implements IObservable.Builder {
 					}
 				}
 			}
-			
+
 			ret.getValueOperators().add(new Pair<>(valueOperator, valueOperand));
 
 		}
@@ -1847,11 +1977,13 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (name != null) {
 			ret.setName(name);
 		}
-		
+
 		ret.setTargetPredicate(targetPredicate);
 		ret.setfilteredObservable(filteredObservable);
 		ret.setOptional(this.optional);
-		
+		ret.setMustContextualizeAtResolution(mustContextualize);
+		ret.getAnnotations().addAll(annotations);
+
 		return ret;
 	}
 
@@ -1872,7 +2004,6 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.name = name;
 		return this;
 	}
-
 
 	@Override
 	public Builder withDistributedInherency(boolean ofEach) {

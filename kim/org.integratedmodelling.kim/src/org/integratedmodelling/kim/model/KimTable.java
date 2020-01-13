@@ -61,4 +61,9 @@ public class KimTable extends KimStatement implements IKimTable {
 	public IKimClassifier[] getRow(int i) {
 		return rows.get(i);
 	}
+
+	@Override
+	public List<IKimClassifier[]> getRows() {
+		return rows;
+	}
 }

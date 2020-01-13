@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.nodemodel.ICompositeNode;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlAnnotation;
 import org.integratedmodelling.kdl.api.IKdlComputation;
@@ -17,7 +15,6 @@ import org.integratedmodelling.kdl.api.IKdlContextualizer;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.Function;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
 public class KdlActuator extends KdlStatement implements IKdlActuator {
@@ -38,7 +35,6 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	String newObservationUrn;
 	String geometry;
 	String semantics;
-	String units;
 	String javaClass;
 	String label;
 	Type type;
@@ -149,12 +145,6 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 
 			this.geometry = o.getBody().getGeometry();
 			this.javaClass = o.getBody().getJavaClass();
-
-			if (o.getBody().getUnits() != null) {
-				// store as string
-				ICompositeNode node = NodeModelUtils.getNode(o.getBody().getUnits());
-				this.units = node.getText();
-			}
 
 			if (o.getBody().getComputations() != null) {
 				KdlComputation kc = new KdlComputation();
@@ -271,14 +261,6 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 
 	public void setSemantics(String semantics) {
 		this.semantics = semantics;
-	}
-
-	public String getUnits() {
-		return units;
-	}
-
-	public void setUnits(String units) {
-		this.units = units;
 	}
 
 	public boolean isOptional() {

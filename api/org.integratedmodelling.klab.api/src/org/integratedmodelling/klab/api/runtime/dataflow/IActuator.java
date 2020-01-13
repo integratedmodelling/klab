@@ -18,7 +18,9 @@ package org.integratedmodelling.klab.api.runtime.dataflow;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -116,5 +118,15 @@ public interface IActuator extends IDataflowNode {
 	 * @return a boolean.
 	 */
 	boolean isComputed();
+
+	/**
+	 * Take an overall scale and turn it into the scale that our computation
+	 * requires. This normally will mean adopting any constraint from the 
+	 * model, which include those of any resource.
+	 * 
+	 * @param scale
+	 * @return
+	 */
+	IScale mergeScale(IScale scale, IMonitor monitor);
 
 }

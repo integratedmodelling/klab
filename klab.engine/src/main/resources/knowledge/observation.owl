@@ -102,7 +102,7 @@ Main author</dc:contributor>
 
     <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#affects">
         <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Process"/>
-        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quality"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
         <rdfs:comment>A process affects a state in its context when it is able to change the state of the correspondent quality as time moves on. If this relationship exists, the state is dynamic.</rdfs:comment>
     </owl:ObjectProperty>
     
@@ -112,6 +112,15 @@ Main author</dc:contributor>
 
     <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#appliesTo">
         <rdfs:comment>Allows restricting the range of observables that an observable applies to, the meaning of which depends on the type of observable. TODO specialize this and use the proper one for each type.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#changes -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#changes">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#affects"/>
+        <rdfs:comment>For observables modified by a process but owned by the context where the process occurs, so existing independently of the process itself.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -157,6 +166,15 @@ Main author</dc:contributor>
             </owl:Restriction>
         </rdfs:domain>
         <rdfs:comment>The relationship that links an observation to its observable.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#creates -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#creates">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#affects"/>
+        <rdfs:comment>For affected observables that are owned by a process: e.g., runoff water volume created by waterflow.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -584,6 +602,15 @@ Main author</dc:contributor>
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Attribute">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Change -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Change">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Process"/>
+        <rdfs:comment>A process that is inherent to a quality, causing its states to change in time.</rdfs:comment>
     </owl:Class>
     
 
@@ -1128,6 +1155,15 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#PhysicalProperty">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Predicted -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Predicted">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Attribute"/>
+        <rdfs:comment>Attribute tagging predicted qualities. Used in learning models.</rdfs:comment>
     </owl:Class>
     
 

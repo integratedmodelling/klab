@@ -56,6 +56,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private List<INotification> notifications = new ArrayList<>();
 	private List<AttributeReference> attributes = new ArrayList<>();
 	private List<AttributeReference> dependencies = new ArrayList<>();
+	private List<AttributeReference> outputs = new ArrayList<>();
 	private long resourceTimestamp = System.currentTimeMillis();
 	private Version resourceVersion;
 	private boolean error = false;
@@ -78,6 +79,7 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.parameters.putAll(this.parameters);
 		ret.metadata.putAll(metadata);
 		ret.geometry = this.geometry;
+		ret.outputs.addAll(this.outputs);
 		ret.notifications.addAll(this.notifications);
 		ret.history.addAll(this.history);
 		ret.resourceTimestamp = this.resourceTimestamp;
@@ -250,6 +252,17 @@ public class ResourceBuilder implements IResource.Builder {
 		return this;
 	}
 
+	@Override
+	public Builder withOutput(String name, IArtifact.Type type) {
+		AttributeReference attribute = new AttributeReference();
+		attribute.setName(name);
+		attribute.setType(type);
+		attribute.setKey(false);
+		attribute.setOptional(true);
+		this.outputs.add(attribute);
+		return this;
+	}
+	
 	@Override
 	public Builder withDependency(String name, IArtifact.Type type, boolean key, boolean optional) {
 		AttributeReference attribute = new AttributeReference();

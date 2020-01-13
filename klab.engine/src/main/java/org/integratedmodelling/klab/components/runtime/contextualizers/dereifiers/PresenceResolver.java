@@ -48,8 +48,8 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 	@Override
 	public IDataArtifact resolve(IDataArtifact ret, IContextualizationScope context) throws KlabException {
 
-		ISpace space = ((Scale) ret.getGeometry()).getSpace();
-		Geometry geometry =  ((Scale) ret.getGeometry()).asGeometry();
+		ISpace space = ((Scale) context.getScale()).getSpace();
+		Geometry geometry =  ((Scale) context.getScale()).asGeometry();
 
 		if (!(space instanceof Space) || ((Space) space).getGrid() == null) {
 			// TODO only return an appropriate state for existence of artifact in context if

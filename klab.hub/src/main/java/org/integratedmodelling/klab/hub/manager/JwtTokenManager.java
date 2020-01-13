@@ -7,7 +7,6 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
-import org.integratedmodelling.klab.hub.service.ProfileService;
 import org.integratedmodelling.klab.rest.Group;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
@@ -27,10 +26,10 @@ public class JwtTokenManager {
 	private HubAuthenticationManager hubAuthenticationManager;
 	
 	@Autowired
-	private ProfileService profileService;
+	private KlabUserManager klabUserManager;
 
 	public String createEngineJwtToken(String username) {
-		ProfileResource profile = profileService.getUserProfile(username);
+		ProfileResource profile = klabUserManager.getUserProfile(username);
 		JwtClaims claims = new JwtClaims();
 		claims.setIssuer(hubAuthenticationManager.getHubReference().getId());
 		claims.setSubject(profile.getUsername());
@@ -44,11 +43,12 @@ public class JwtTokenManager {
 			roleStrings.add(role.getId());
 		}
 		
+		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
 		JsonWebSignature jws = new JsonWebSignature();
 		jws.setPayload(claims.toJson());
 		jws.setKey(NetworkKeyManager.INSTANCE.getPrivateKey());
 		jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
-		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
+		
 		String token;
 		try {
 			token = jws.getCompactSerialization();

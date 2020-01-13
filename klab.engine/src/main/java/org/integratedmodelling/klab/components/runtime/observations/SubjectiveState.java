@@ -79,10 +79,6 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
         return current.getParentIdentity();
     }
 
-    public boolean isConstant() {
-        return current.isConstant();
-    }
-
     public IState as(IArtifact.Type type) {
         return current.as(type);
     }

@@ -51,13 +51,12 @@ public class EngineAuthManager {
 		case LEGACY:
 			break;
 		case TEST:
-			if (IPUtils.isLocalhost(ip)) {
+			if (IPUtils.isLocal(ip)) {
 				return processLocalEngineUser(request);
 			} else {
 				break;	
 			}
 		case USER:
-			System.out.println(ip);
 			if (IPUtils.isLocalhost(ip)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return processLocalEngineUser(request);
@@ -105,6 +104,7 @@ public class EngineAuthManager {
 	        	tokenManager.deleteExpiredTokens(username);
 	            String token = jwtTokenManager.createEngineJwtToken(username);
 	            ProfileResource profile = klabUserManager.getUserProfile(username);
+	            klabUserManager.updateLastEngineConnection(profile.getUsername());
 	            EngineUser engineUser = new EngineUser(username, null);
 	            engineUser.setEmailAddress(email);
 	            engineUser.setToken(token);
@@ -140,6 +140,7 @@ public class EngineAuthManager {
         }
         tokenManager.deleteExpiredTokens(username);
         ProfileResource profile = klabUserManager.getUserProfile(username);
+        klabUserManager.updateLastEngineConnection(profile.getUsername());
         EngineUser engineUser = new EngineUser(username, null);
         engineUser.setEmailAddress(profile.getEmail());
         engineUser.setToken(token);

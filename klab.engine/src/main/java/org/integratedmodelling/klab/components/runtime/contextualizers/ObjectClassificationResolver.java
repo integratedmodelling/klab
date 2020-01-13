@@ -5,10 +5,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
@@ -46,7 +48,7 @@ public class ObjectClassificationResolver
 		this.classifier = classifier;
 	}
 
-	public static IServiceCall getServiceCall(IObservable classified, IConcept classifier)
+	public static IServiceCall getServiceCall(IObservable classified, IConcept classifier, Set<ValueOperator> modifiers)
 			throws KlabValidationException {
 		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "classifier", classifier);
 	}

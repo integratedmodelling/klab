@@ -102,8 +102,18 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 		for (org.integratedmodelling.kim.kim.ValueOperator modifier : declaration.getValueOperators()) {
 
-			String op = modifier.getModifier() == null ? (modifier.getTotal() == null ? "down_to" : "total")
-					: modifier.getModifier();
+			String op = null;
+			if (modifier.getTotal() != null) {
+				op = "total";
+			} else if (modifier.getSummed() != null) {
+				op = "summed";
+			} else if (modifier.getAveraged() != null) {
+				op = "averaged";
+			} else if (modifier.getModifier() == null) {
+				op = "down_to";
+			} else {
+				op = modifier.getModifier();
+			}
 
 			ValueOperator operator = ValueOperator.getOperator(op);
 			Object operand = null;
@@ -178,7 +188,8 @@ public class KimObservable extends KimStatement implements IKimObservable {
 			} else if (operator.getSecond() instanceof IKimObservable) {
 				ret += " (" + ((IKimObservable) operator.getSecond()).getDefinition() + ")";
 			} else {
-				ret += " " + (operator.getSecond() instanceof String ? "'" : "") + operator.getSecond().toString()
+				ret += " " + (operator.getSecond() instanceof String ? "'" : "")
+						+ (operator.getSecond() != null ? operator.getSecond().toString() : "")
 						+ (operator.getSecond() instanceof String ? "'" : "");
 			}
 		}
@@ -343,7 +354,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 		return ret;
 	}
-	
+
 //	@Override
 	public boolean needsUnits() {
 
@@ -400,7 +411,6 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 		return false;
 	}
-
 
 	@Override
 	public List<Pair<ValueOperator, Object>> getValueOperators() {

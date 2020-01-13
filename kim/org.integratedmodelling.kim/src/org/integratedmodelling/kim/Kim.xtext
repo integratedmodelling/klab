@@ -54,7 +54,7 @@ ModelBodyStatement:
 		 ( (name=LOWERCASE_ID | (observables+=AnnotatedObservableSemantics (',' observables+=AnnotatedObservableSemantics)*)))
 		 (docstring=STRING)?
 		 ('observing' dependencies+=Dependency (',' dependencies+=Dependency)* )?
-		 ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+		 (('using' | merging?='merging') contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		 (('classified' | discretization?='discretized') (('into' classification=Classification) | ('according' 'to' classificationProperty=PropertyId)))?
 	     // arg ? means result field, arg * means ignore column. If not given, will match self in the first column and result in last, ignoring anything in between
 		 ('lookup' 
@@ -121,6 +121,8 @@ TableClassifier returns ClassifierRHS:
 	(boolean='true' | boolean='false') | 
 	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
 	num=Number | 
+	quantity=Quantity |
+	date=Date |
 	'in' set=List | 
 	string=STRING | 
 	concept=ConceptDeclaration | 
@@ -192,7 +194,8 @@ ExecutableValue returns ComputableValue:
 	(
 		function=Function |
 		expr=EXPR ('in' language=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID))? |
-		urn=UrnId
+		urn=(UrnId|STRING) |
+		model=Path
 	) (('if'|conditionNegated?='unless') condition=Value)?
 ;
 
@@ -329,7 +332,9 @@ ObservableSemantics:
 ValueOperator:
 	(modifier=VALUE_OPERATOR | downTo='down' 'to') 
 		(comparisonValue=Number| comparisonQuantity=Quantity | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')')) |
-	total='total'
+	total='total' | 
+	averaged='averaged' | 
+	summed='summed'
 ;
 
 /** 
@@ -439,6 +444,7 @@ Concept:
 	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
 	probability?='probability' 'of' concept=SimpleConceptDeclaration |
 	assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+	(change?='change' 'in' | change?='next') concept=SimpleConceptDeclaration |
 	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
 	magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
 	level?='level' 'of' concept=SimpleConceptDeclaration |
@@ -647,7 +653,7 @@ ConceptStatementBody:
 
 		('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
 
-//		(restrictions+=RestrictionStatement*) &
+		('implies' implications+=Implication (',' implications+=Implication)*)? &
 	
 		('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
 
@@ -658,6 +664,15 @@ ConceptStatementBody:
 		(properties+=PropertyStatement*) 
 	
 	)
+;
+
+Implication:
+	(quantifier=Quantification)? concept=ConceptDeclaration 
+	     /*(*/('as' target=ConceptDeclaration)? /* & ('within' context=ConceptDeclaration)?)?  */
+;
+
+Quantification: {Quantification}
+	(only?='only' | (exactly?='exactly' | 'at' (atLeast?='least' | atMost?='most'))? cardinality=INT ('or' orMore?='more')? )? 
 ;
 
 PropertyStatement:
@@ -972,7 +987,7 @@ Number:
 	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
 
 Quantity:
-	value=Number '.' (unit=Unit | currency=Currency)
+	value=Number (over?='/' | '.') (unit=Unit | currency=Currency)
 ;
 
 Date:

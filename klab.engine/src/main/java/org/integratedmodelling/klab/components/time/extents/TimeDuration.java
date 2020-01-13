@@ -7,7 +7,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.Duration;
-import org.joda.time.Period;
 
 public class TimeDuration implements ITimeDuration {
 
@@ -15,6 +14,7 @@ public class TimeDuration implements ITimeDuration {
 	private ITimeInstant start = null;
 	private Duration period = null;
 	private Resolution.Type resolution = null;
+	boolean regular = true;
 
 	private TimeDuration(Duration period, ITimeInstant start) {
 		this.period = period;
@@ -55,9 +55,7 @@ public class TimeDuration implements ITimeDuration {
 			} else {
 				this.resolution = Resolution.Type.MILLISECOND;
 			}
-
 		}
-
 		return this.resolution;
 	}
 
@@ -119,6 +117,28 @@ public class TimeDuration implements ITimeDuration {
 		ret.resolution = type;
 		ret.period = new Duration(milliseconds);
 		return ret;
+	}
+
+	@Override
+	public boolean isRegular() {
+		return resolution.isRegular();
+	}
+
+	@Override
+	public long getMaxMilliseconds() {
+		return regular ? getMilliseconds() : 0;
+	}
+
+	@Override
+	public long getCommonDivisorMilliseconds() {
+		// TODO Auto-generated method stub
+		return regular ? getMilliseconds() : 0;
+	}
+
+	@Override
+	public String getSpecification() {
+		// TODO Auto-generated method stub
+		return "todo";
 	}
 
 }

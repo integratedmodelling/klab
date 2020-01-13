@@ -631,7 +631,7 @@ public class Flowchart {
 			return context.getName();
 		}
 		for (IActuator child : context.getActuators()) {
-			if (child.getAlias().equals(input)) {
+			if (child.getAlias() != null && child.getAlias().equals(input)) {
 				return child.getName();
 			}
 		}

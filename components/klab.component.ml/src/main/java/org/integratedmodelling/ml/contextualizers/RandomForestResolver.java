@@ -3,7 +3,6 @@ package org.integratedmodelling.ml.contextualizers;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -42,14 +41,14 @@ java weka.classifiers.bayes.BayesNet -t iris.arff -D \
  */
 public class RandomForestResolver extends AbstractWekaResolver<RandomForest> implements IExpression {
 
-	private IContextualizationScope context;
+//	private IContextualizationScope context;
 
 	public RandomForestResolver() {}
 	
 	public RandomForestResolver(IParameters<String> parameters,IContextualizationScope context) {
 		// TODO check parameters!
-		super(RandomForest.class, fixDefaults(parameters), true, false, false);
-		this.context = context;
+		super(RandomForest.class, fixDefaults(parameters), context.getTargetSemantics(), true, false, false);
+//		this.context = context;
 	}
 
 	private static IParameters<String> fixDefaults(IParameters<String> parameters) {
@@ -65,17 +64,6 @@ public class RandomForestResolver extends AbstractWekaResolver<RandomForest> imp
 		}
 		
 		return parameters;
-	}
-
-//	@Override
-//	public IGeometry getGeometry() {
-//		// TODO check
-//		return ((Scale)context.getScale().at(ITime.INITIALIZATION)).asGeometry();
-//	}
-
-	@Override
-	public Type getType() {
-		return Type.NUMBER;
 	}
 
 	@Override

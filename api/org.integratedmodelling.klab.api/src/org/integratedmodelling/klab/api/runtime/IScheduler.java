@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.api.runtime;
 
-import java.util.function.BiConsumer;
-
 /**
  * An observation-specific scheduler that can run temporal transitions over a
  * set of differently scaled observations in mock time or in real time, ensuring
@@ -10,7 +8,7 @@ import java.util.function.BiConsumer;
  * @author ferdinando.villa
  *
  */
-public interface IScheduler<T> {
+public interface IScheduler {
 
 	enum Type {
 		REAL_TIME, MOCK_TIME
@@ -72,18 +70,14 @@ public interface IScheduler<T> {
 	void stop();
 
 	/**
-	 * Current absolute time. May have to switch to bigint for nanosecond
-	 * resolution. Only meaningful while running in realtime mode or when full
-	 * synchronicity is enabled.
-	 * 
-	 * @return
-	 */
-	long getTime();
-
-	/**
 	 * Get the synchronicity mode. The default mode should be SYNCHRONOUS or TIME_SYNCHRONOUS.
 	 * 
 	 * @return
 	 */
 	public Synchronicity getSynchronicity();
+
+	/**
+	 * Start, run to completion (if possible) and return.
+	 */
+	void run();
 }

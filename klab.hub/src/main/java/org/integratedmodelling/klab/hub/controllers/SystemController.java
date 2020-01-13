@@ -1,0 +1,69 @@
+package org.integratedmodelling.klab.hub.controllers;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.annotation.security.RolesAllowed;
+import javax.mail.MessagingException;
+
+import org.apache.commons.collections.buffer.CircularFifoBuffer;
+import org.integratedmodelling.klab.hub.config.LoggingConfig;
+import org.integratedmodelling.klab.hub.manager.TokenManager;
+import org.integratedmodelling.klab.hub.payload.InviteRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import net.minidev.json.JSONObject;
+
+@RestController
+@RequestMapping("/api/system")
+@RolesAllowed({"ROLE_SYSTEM" })
+public class SystemController {
+	
+	@Autowired
+	LoggingConfig loggingConfig;
+	
+	@Autowired
+	TokenManager tokenManager;
+	
+	@GetMapping(value="/logs", params = {"lines"})
+	public ResponseEntity<?> getHubLogResponse(@RequestParam("lines") int lines) throws IOException {
+		Path path = Paths.get(loggingConfig.getLOGGING_FILE());
+		File file = path.toFile();
+		FileInputStream input = new FileInputStream(file);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+		CircularFifoBuffer fifoLog = new CircularFifoBuffer();
+		if (lines == -1) {
+			int lineCount = (int) Files.lines(path).count();
+			fifoLog = new CircularFifoBuffer(lineCount);
+		} else {
+			fifoLog = new CircularFifoBuffer(lines);
+		}
+		
+		for(String tmp; (tmp = reader.readLine()) != null;)
+			fifoLog.add(tmp);
+		reader.close();
+		JSONObject resp = new JSONObject();
+		resp.appendField("Log", fifoLog.toArray());
+		return new ResponseEntity<JSONObject>(resp, HttpStatus.OK);
+	}
+	
+	@PostMapping(value="/invite", produces = "application/json")
+	public ResponseEntity<?> inviteUserResponse(@RequestBody InviteRequest request) throws MessagingException {
+		tokenManager.inviteNewUserWithGroups(request.getEmail(), request.getGroups());
+		return new ResponseEntity<String>("Invite Sent.", HttpStatus.CREATED);
+	}
+}

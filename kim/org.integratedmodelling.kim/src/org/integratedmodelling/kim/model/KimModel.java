@@ -13,7 +13,6 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ModelStatement;
-import org.integratedmodelling.klab.api.model.INamespace;
 
 /**
  * Built by the generator and passed to the engine.
@@ -36,7 +35,6 @@ public class KimModel extends KimStatement implements IKimModel {
 	private boolean isAbstract = false;
 	private boolean interpreter = false;
 	private boolean learningModel = false;
-//	private boolean assessmentModel = false;
 	private Type type = Type.SEMANTIC;
 	private Scope scope = Scope.PUBLIC;
 	private List<IKimObservable> observables = new ArrayList<>();
@@ -51,7 +49,8 @@ public class KimModel extends KimStatement implements IKimModel {
 	private List<String> resourceUrns = new ArrayList<>();
 	private IServiceCall resourceFunction;
 	private Object inlineValue;
-
+	private boolean resourceMerger;
+	
 	// contextualizer/processing given after 'using'
 	private List<IContextualizable> contextualization = new ArrayList<>();
 
@@ -110,15 +109,6 @@ public class KimModel extends KimStatement implements IKimModel {
 	public void setLearningModel(boolean learningModel) {
 		this.learningModel = learningModel;
 	}
-
-//	@Override
-//	public boolean isAssessmentModel() {
-//		return assessmentModel;
-//	}
-
-//	public void setAssessmentModel(boolean assessmentModel) {
-//		this.assessmentModel = assessmentModel;
-//	}
 
 	@Override
 	public Type getType() {
@@ -243,6 +233,15 @@ public class KimModel extends KimStatement implements IKimModel {
 
 	public void setScope(IKimStatement.Scope scope) {
 		this.scope = scope;
+	}
+
+	@Override
+	public boolean isResourceMerger() {
+		return resourceMerger;
+	}
+
+	public void setResourceMerger(boolean resourceMerger) {
+		this.resourceMerger = resourceMerger;
 	}
 
 }

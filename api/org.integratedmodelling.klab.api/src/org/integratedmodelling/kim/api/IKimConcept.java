@@ -327,7 +327,11 @@ public interface IKimConcept extends IKimStatement {
 		 * Makes an attribute a rescaling transformation, which does not preserve
 		 * observation semantics
 		 */
-		RESCALING;
+		RESCALING,
+		/**
+		 * A process that defines the change of its inherent quality.
+		 */
+		CHANGE;
 
 		boolean isNumeric() {
 			return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);
@@ -336,9 +340,10 @@ public interface IKimConcept extends IKimStatement {
 	}
 
 	/**
-	 * Roles of each component, to ease modifications and inspect specific clauses.
+	 * Roles of each component of an observable, to ease modifications (e.g. in
+	 * builders) and inspect specific clauses.
 	 */
-	public enum ComponentRole {
+	public enum ObservableRole {
 		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT
 	}
 
@@ -534,7 +539,7 @@ public interface IKimConcept extends IKimStatement {
 	 */
 	String getCodeName();
 
-	ComponentRole getDistributedInherent();
+	ObservableRole getDistributedInherent();
 
 	boolean isTraitObservable();
 

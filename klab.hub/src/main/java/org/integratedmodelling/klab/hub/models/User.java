@@ -79,6 +79,7 @@ public class User implements UserDetails{
         deleted,
         expired,
         pendingActivation,
+        verified,
     };
 
     // @Transient prevents the password from being stored in Mongo.
@@ -342,13 +343,33 @@ public class User implements UserDetails{
 	public void setRegistrationDate() {
         registrationDate = DateTime.now();
     }
+	
+	public void setRegistrationDate(DateTime date) {
+        registrationDate = date;
+    }
+	
+	public DateTime getRegistrationDate() {
+        return registrationDate;
+    }
 
     public void setLastLogin() {
         lastLogin = DateTime.now();
     }
+    
+    public void setLastLogin(DateTime date) {
+        lastLogin = date;
+    }
+    
+    public DateTime getLastLogin() {
+    	return lastLogin;
+    }
 
     public void setLastEngineConnection() {
         lastEngineConnection = DateTime.now();
+    }
+    
+    public void setLastEngineConnection(DateTime date) {
+        lastEngineConnection = date;
     }
 
     public String getProviderId() {

@@ -54,6 +54,12 @@ import ij.blob.Blob;
 import ij.blob.ManyBlobs;
 import ij.process.ImageProcessor;
 
+/**
+ * 
+ * @author ferdinando.villa
+ * @deprecated as much slower than native JAI vectorizer. Keep for situations where native
+ * code can't be run (e.g. when SPI calls are made and a Spring jar breaks them).
+ */
 public class PolygonInstantiator implements IExpression, IInstantiator {
 
 	Descriptor exprDescriptor = null;

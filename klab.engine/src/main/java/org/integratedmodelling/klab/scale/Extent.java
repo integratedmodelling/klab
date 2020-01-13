@@ -33,14 +33,6 @@ public abstract class Extent extends AbstractExtent {
 	}
 
 	/**
-	 * Return the n-th state of the ordered topology as a new extent with one state.
-	 * 
-	 * @param stateIndex
-	 * @return a new extent with getValueCount() == 1.
-	 */
-	public abstract IExtent getExtent(long stateIndex);
-
-	/**
 	 * True if the extent is completely specified and usable. Extents may be
 	 * partially specified to constrain observation to specific representations or
 	 * scales.

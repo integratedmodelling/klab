@@ -44,7 +44,7 @@ public class NodeAuthManager {
 	public NodeAuthenticationResponse processNodeCert(NodeAuthenticationRequest request, String ip) {
 		switch (request.getLevel()) {
 		case TEST:
-			if (IPUtils.isLocalhost(ip)) {
+			if (IPUtils.isLocal(ip)) {
 				return processLocalNode(request);
 			} else {
 				break;	

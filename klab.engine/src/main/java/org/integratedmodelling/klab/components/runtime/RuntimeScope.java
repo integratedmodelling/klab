@@ -15,13 +15,15 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
-import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -35,15 +37,16 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -66,11 +69,13 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
+import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.provenance.Provenance;
@@ -79,6 +84,7 @@ import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -112,13 +118,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	ISubject rootSubject;
 	IDirectObservation contextSubject;
 	Map<String, IObservation> observations;
-	Scheduler<?> scheduler;
+	IScheduler scheduler;
 	IReport report;
 	ContextualizationStrategy contextualizationStrategy;
 	// set only by the actuator, relevant only in instantiators with attributes
 	IModel model;
 	Set<String> notifiedObservations;
 	Map<IConcept, ObservationGroup> groups;
+	Map<String, Object> symbolTable = new HashMap<>();
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -227,6 +234,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			ret.target = createTarget(indirectTarget);
 		}
 		ret.target = catalog.get(ret.targetName);
+
+		/*
+		 * this is the only one where the symbol table is kept.
+		 */
+		ret.symbolTable.putAll(symbolTable);
 
 		return ret;
 	}
@@ -435,7 +447,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				// original context.
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 
-			} else if (this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+			} else if (resolutionScope.getPreresolvedModels(observable) == null
+					|| this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
 				/*
 				 * Add an empty dataflow to create the observation. This is only done if there
 				 * are no preloaded resolvers in this scale, so we are certain that other
@@ -446,12 +459,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale.initialization(),
-				((Monitor) monitor).get(subtask));
-
-//		for (IState s:ret.getStates()) {
-//			System.out.println("DIOCAN " + s);
-//		}
+		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale)
+				.run(scale.initialization(), ((Monitor) monitor).get(subtask));
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
@@ -590,7 +599,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				// original context.
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 
-			} else if (this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+			} else if (resolutionScope.getPreresolvedModels(observable) == null
+					|| this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
 				/*
 				 * Add an empty dataflow to create the observation. This is only done if there
 				 * are no preloaded resolvers in this scale, so we are certain that other
@@ -601,7 +611,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		ret = (IRelationship) dataflow.withMetadata(metadata)
+		ret = (IRelationship) dataflow.withMetadata(metadata).withScopeScale(scale)
 				.connecting((IDirectObservation) source, (IDirectObservation) target)
 				.run(scale.initialization(), ((Monitor) monitor).get(subtask));
 
@@ -632,6 +642,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ret.actuator = actuator;
 		if (this.target instanceof IDirectObservation) {
 			ret.contextSubject = (IDirectObservation) this.target;
+			if (ret.contextSubject instanceof IProcess) {
+				ret.contextSubject = getParentOf(ret.contextSubject);
+			}
 		} else if (ret.contextSubject == null) {
 			// this only happens when the father is root.
 			ret.contextSubject = rootSubject;
@@ -673,8 +686,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
 
-				IArtifact merging = createTarget(mergingActuator, this.getDataflow().getResolutionScale(), scope,
-						rootSubject);
+				IArtifact merging = createTarget(mergingActuator, /* this.getDataflow().getResolutionScale() */scale,
+						scope, rootSubject);
 
 				/*
 				 * partition sub-state does not go in the catalog
@@ -795,7 +808,17 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public IObservable getSemantics(String identifier) {
-		return semantics.get(identifier);
+		IObservable ret = semantics.get(identifier);
+		if (ret == null) {
+			// this catches partitions
+			for (IObservable obs : semantics.values()) {
+				if (identifier.equals(obs.getName())) {
+					ret = obs;
+					break;
+				}
+			}
+		}
+		return ret;
 	}
 
 	@Override
@@ -866,14 +889,21 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	public IArtifact createTarget(Actuator actuator, IScale scale, IResolutionScope scope,
 			IDirectObservation rootSubject) {
 
-		Map<String, Pair<Observable, Mode>> targetObservables = new HashMap<>();
+		/*
+		 * support map: the fields are observable, mode, and a boolean that is true if
+		 * the actuator is void, meaning an archetype should be created instead of a
+		 * true observation. So far this only happens with contextual quality learning
+		 * models.
+		 */
+		Map<String, Triple<Observable, Mode, Boolean>> targetObservables = new HashMap<>();
 
 		if (this.catalog.get(actuator.getName()) != null) {
 			return this.catalog.get(actuator.getName());
 		}
 
 		if (/* this.catalog.get(actuator.getName()) == null && */ !actuator.isPartition()) {
-			targetObservables.put(actuator.getName(), new Pair<>(actuator.getObservable(), actuator.getMode()));
+			targetObservables.put(actuator.getName(), new Triple<>(actuator.getObservable(), actuator.getMode(),
+					actuator.getType() == IArtifact.Type.VOID));
 		}
 
 		/*
@@ -884,7 +914,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
 				IObservable output = actuator.getModel().getObservables().get(i);
 				targetObservables.put(output.getName(),
-						new Pair<>((Observable) output, output.getDescription().getResolutionMode()));
+						new Triple<>((Observable) output, output.getDescription().getResolutionMode(), false));
 			}
 		}
 
@@ -894,7 +924,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		for (IContextualizable computation : actuator.getComputation()) {
 			if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getName()) == null) {
 				targetObservables.put(computation.getTarget().getName(),
-						new Pair<>((Observable) computation.getTarget(), computation.getComputationMode()));
+						new Triple<>((Observable) computation.getTarget(), computation.getComputationMode(), false));
 			}
 		}
 
@@ -907,7 +937,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		for (String name : targetObservables.keySet()) {
 
-			Pair<Observable, Mode> op = targetObservables.get(name);
+			Triple<Observable, Mode, Boolean> op = targetObservables.get(name);
 			Observable observable = op.getFirst();
 			Mode mode = op.getSecond();
 
@@ -933,7 +963,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							actuator.getDataflow().getRelationshipSource(),
 							actuator.getDataflow().getRelationshipTarget(), this);
 				} else {
-					observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
+					observation = DefaultRuntimeProvider.createObservation(observable, scale, this, op.getThird());
 				}
 
 				if (getRootSubject() != null) {
@@ -958,14 +988,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						if (metadata != null) {
 							/* state specs may be in metadata from resource attributes */
 							Object obj = metadata.getCaseInsensitive(attr);
-							if (obj != null) {
-								IState state = (IState) DefaultRuntimeProvider.createObservation(
-										actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale,
-										this);
-								((State) state).distributeScalar(obj);
-								predefinedStates.add(state);
-								done = true;
-							}
+//							if (obj != null) {
+							IState state = (IState) DefaultRuntimeProvider.createObservation(
+									actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale, this);
+							((State) state).distributeScalar(obj);
+							predefinedStates.add(state);
+							done = true;
+//							}
 						}
 
 						if (!done) {
@@ -974,10 +1003,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							RuntimeScope p = getParentWithTarget(rootSubject);
 							IArtifact artifact = p.findArtifactByObservableName(attr);
 							if (artifact == null) {
-								artifact = p
-										.findArtifact(
-												actuator.getDataflow().getModel().getAttributeObservables().get(attr))
-										.getSecond();
+								Pair<String, IArtifact> art = p.findArtifact(
+										actuator.getDataflow().getModel().getAttributeObservables().get(attr));
+								artifact = art == null ? null : art.getSecond();
 							}
 							if (artifact instanceof IState) {
 								// observable may be different or use data reduction traits
@@ -1155,7 +1183,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public IDirectObservation getContextSubject() {
 		return contextSubject;
@@ -1172,7 +1200,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public Scheduler<?> getScheduler() {
+	public IScheduler getScheduler() {
 		return getRootScope().scheduler;
 	}
 
@@ -1308,6 +1336,29 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
+	public <T extends IArtifact> Map<String, T> getLocalCatalog(Class<T> cls) {
+
+		Map<String, T> ret = new HashMap<>();
+		for (Pair<String, ? extends IArtifact> artifact : getArtifacts(cls)) {
+
+			String name = artifact.getFirst();
+			if (artifact.getSecond() instanceof IState && actuator != null) {
+				for (IActuator a : actuator.getActuators()) {
+					if (a.getName().equals(name) && a.getAlias() != null) {
+						name = a.getAlias();
+						break;
+					}
+				}
+			}
+			ret.put(name, (T) artifact.getSecond());
+		}
+
+		return ret;
+
+	}
+
+	@Override
 	public Context getExpressionContext() {
 		return ExpressionContext.create(this);
 	}
@@ -1361,41 +1412,90 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void scheduleActions(Actuator actuator) {
 
-		boolean go = false;
-		for (Computation computation : actuator.getContextualizers()) {
-			if (computation.resource.getTrigger() == Trigger.TRANSITION
-					// TODO next should be removed
-					|| computation.observable.getArtifactType().isOccurrent()
-					|| (computation.resource.getTrigger() == Trigger.RESOLUTION
-							&& computation.resource.getGeometry().getDimension(IGeometry.Dimension.Type.TIME) != null)) {
-				go = true;
-				break;
-			}
-		}
-		
-		if (!go) {
-			return;
-		}
+		/*
+		 * Only occurrents occur.
+		 */
+		boolean isOccurrent = actuator.getType().isOccurrent();
+		if (isOccurrent) {
 
-		RuntimeScope root = getRootScope();
-		
-		if (root.scheduler == null) {
-			root.scheduler = new Scheduler<IObservation>(resolutionScope.getScale().getTime()) {
+			List<Computation> schedule = new ArrayList<>();
+			for (Computation computation : actuator.getContextualizers()) {
 
-				@Override
-				protected ITime getTime(IObservation object) {
-					return object.getScale().getTime();
+				/*
+				 * nothing meant for initialization should be scheduled.
+				 */
+				if (computation.resource.getTrigger() == Trigger.DEFINITION) {
+					continue;
 				}
 
-			};
+				/*
+				 * conditions for scheduling
+				 */
+				boolean isTransition = computation.resource.getTrigger() == Trigger.DEFINITION;
+
+				/*
+				 * null target == aux variable, occur at will.
+				 */
+				boolean targetOccurs = computation.target == null || computation.target.getType().isOccurrent()
+						|| (isOccurrent
+								&& Observables.INSTANCE.isAffectedBy(computation.observable, actuator.getObservable()))
+						|| (computation.target != null
+								&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null);
+
+				if (isTransition || targetOccurs) {
+					schedule.add(computation);
+				}
+			}
+
+			if (schedule.isEmpty()) {
+				return;
+			}
+
+			RuntimeScope root = getRootScope();
+
+			if (root.scheduler == null) {
+				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(), monitor);
+			}
+
+			((Scheduler) root.scheduler).schedule(actuator, schedule, this);
 		}
 
-		root.scheduler.schedule(actuator, this);
 	}
 
 	@Override
 	public IRuntimeScope locate(ILocator transitionScale) {
-		// TODO Auto-generated method stub
-		return this;
+
+		RuntimeScope ret = new RuntimeScope(this);
+		ret.scale = (Scale) transitionScale;
+
+		/*
+		 * TODO wrap all temporal states into a temporal rescaling state - works both to
+		 * subset and to aggregate
+		 */
+
+		return ret;
+	}
+
+	@Override
+	public Map<String, Object> getSymbolTable() {
+		return symbolTable;
+	}
+
+	@Override
+	public IState newNonsemanticState(String name, IArtifact.Type type, IScale scale) {
+
+		IConcept concept = OWL.INSTANCE.getNonsemanticPeer(name, type);
+		IObservable observable = Observable.promote(concept);
+
+		IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, this);
+		IState ret = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
+
+		semantics.put(observable.getName(), observable);
+		structure.addVertex(ret);
+		structure.addEdge(ret, this.target);
+		catalog.put(observable.getName(), ret);
+		observations.put(ret.getId(), ret);
+
+		return ret;
 	}
 }

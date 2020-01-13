@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.data.DataType;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -145,6 +146,11 @@ public class DebugStorage<T> implements IDataStorage<T> {
 	@Override
 	public long putObject(Object value, ILocator locator) {
 		return put((T) value, locator);
+	}
+
+	@Override
+	public IGeometry getGeometry() {
+		return geometry;
 	}
 
 }

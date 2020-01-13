@@ -1,18 +1,17 @@
 package org.integratedmodelling.klab.data.encoding;
 
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
 /**
  * A builder that encodes the data into a Protobuf object which will be sent
- * over the network for reconstruction by a matching {@link IKlabData} object at the
- * client end. The build() step is normally not called here, but uses the
+ * over the network for reconstruction by a matching {@link IKlabData} object at
+ * the client end. The build() step is normally not called here, but uses the
  * {@link RemoteData} class for completeness and testing.
  * 
  * @author ferdinando.villa
@@ -20,66 +19,115 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
  */
 public class EncodingDataBuilder implements IKlabData.Builder {
 
-	IContextualizationScope context;
+	KlabData.Builder builder = KlabData.newBuilder();
+	KlabData.State.Builder stateBuilder = null;
+	KlabData.Object.Builder objectBuilder = null;
+	EncodingDataBuilder parent = null;
 
-	public EncodingDataBuilder(IContextualizationScope context) {
-		this.context = context;
+	public EncodingDataBuilder() {
+	}
+
+	public EncodingDataBuilder(EncodingDataBuilder root) {
+		this.parent = root;
+		this.builder = root.builder;
+		this.stateBuilder = root.stateBuilder;
+		this.objectBuilder = root.objectBuilder;
 	}
 
 	@Override
 	public Builder startState(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		EncodingDataBuilder ret = new EncodingDataBuilder(this);
+		ret.stateBuilder = KlabData.State.newBuilder();
+		ret.stateBuilder.setName(name);
+		return ret;
 	}
 
 	@Override
 	public Builder finishState() {
-		// TODO Auto-generated method stub
-		return null;
+		if (this.parent.objectBuilder != null) {
+			this.parent.objectBuilder.addStates(this.stateBuilder.build());
+		} else {
+			this.parent.builder.addStates(stateBuilder.build());
+		}
+		return this.parent;
 	}
 
 	@Override
-	public Builder startObject(String artifactName, String objectName, IScale scale) {
-		// TODO Auto-generated method stub
-		return null;
+	public Builder startObject(String artifactName, String objectName, IGeometry scale) {
+		EncodingDataBuilder ret = new EncodingDataBuilder(this);
+		ret.objectBuilder = KlabData.Object.newBuilder();
+		ret.objectBuilder.setName(objectName);
+		ret.objectBuilder.setGeometry(scale.encode());
+		return ret;
 	}
 
 	@Override
 	public Builder finishObject() {
-		// TODO Auto-generated method stub
-		return null;
+		this.parent.builder.addObjects(this.objectBuilder.build());
+		return this.parent;
 	}
 
 	@Override
 	public Builder withMetadata(String property, Object object) {
-		// TODO Auto-generated method stub
-		return null;
+		if (this.stateBuilder != null) {
+			this.stateBuilder.putMetadata(property, object.toString());
+		} else if (this.objectBuilder != null) {
+			this.objectBuilder.putMetadata(property, object.toString());
+		}
+		return this;
 	}
 
 	@Override
 	public Builder addNotification(INotification notification) {
 		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	public KlabData buildEncoded() {
-		return null;
+		return builder.build();
 	}
 
 	@Override
 	public IKlabData build() {
-		return new RemoteData(buildEncoded(), (IRuntimeScope) context);
+		throw new IllegalStateException("build() should not be called on an encoding builder");
 	}
 
 	@Override
 	public void add(Object value) {
-		// TODO Auto-generated method stub
+		if (this.stateBuilder != null) {
+			if (value instanceof Number) {
+				this.stateBuilder.addDoubledata(((Number) value).doubleValue());
+			} else if (value instanceof Boolean) {
+				this.stateBuilder.addBooleandata((Boolean) value);
+			} else if (value instanceof String) {
+				this.stateBuilder.addTabledata(getTableValue((String) value, this.builder));
+			}
+		}
+	}
 
+	private int getTableValue(String value, KlabData.Builder builder) {
+		// TODO update lookup table
+		return 0;
 	}
 
 	@Override
 	public void add(Object value, ILocator offset) {
-		// TODO Auto-generated method stub
-		
+		if (this.stateBuilder != null) {
+			long index = -1;
+			// TODO there should be a simpler way to turn a locator into an index, given that this is a 
+			// universal feature of locators.
+			if (offset instanceof Offset) {
+				index = ((Offset)offset).linear;
+			} else {
+				throw new IllegalArgumentException("EncodingDataBuilder only accepts offset locators");
+			}
+			if (value instanceof Number) {
+				this.stateBuilder.setDoubledata((int)index, ((Number)value).doubleValue());
+			} else if (value instanceof Boolean) {
+				this.stateBuilder.setBooleandata((int)index, (Boolean)value);
+			} else if (value instanceof String) {
+				this.stateBuilder.setTabledata((int)index, getTableValue((String)value, this.builder));
+			}
+		}
 	}
 }

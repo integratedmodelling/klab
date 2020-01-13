@@ -61,7 +61,7 @@ import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class RuntimeView extends ViewPart {
-	
+
 	private static class ContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
 			return new Object[0];
@@ -276,7 +276,7 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Color getForeground(Object element) {
-			
+
 			if (element instanceof ETaskReference) {
 				switch (((ETaskReference) element).getStatus()) {
 				case TaskStarted:
@@ -417,7 +417,7 @@ public class RuntimeView extends ViewPart {
 			gd_engineStatusIcon.heightHint = 24;
 			gd_engineStatusIcon.widthHint = 24;
 			engineStatusIcon.setLayoutData(gd_engineStatusIcon);
-			engineStatusIcon.setToolTipText("Engine is offline");
+			engineStatusIcon.setToolTipText(Activator.engineMonitor().isRunning() ? "Engine is online" : "Engine is offline");
 
 			engineStatusLabel = new Label(composite, SWT.NONE);
 			engineStatusLabel.setForeground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_GRAY));
@@ -735,16 +735,16 @@ public class RuntimeView extends ViewPart {
 		if (o instanceof EDataflowReference) {
 			Eclipse.INSTANCE.edit(((EDataflowReference) o).getKdlCode(), "dataflow", "kdl", false);
 		} else if (o instanceof ENotification) {
-			switch (((ENotification)o).getLevel()) {
+			switch (((ENotification) o).getLevel()) {
 			case "SEVERE":
-				Eclipse.INSTANCE.alert(((ENotification)o).getMessage());
+				Eclipse.INSTANCE.alert(((ENotification) o).getMessage());
 				break;
 			case "WARNING":
-				Eclipse.INSTANCE.warning(((ENotification)o).getMessage());
+				Eclipse.INSTANCE.warning(((ENotification) o).getMessage());
 				break;
 			case "INFO":
 			case "FINE":
-				Eclipse.INSTANCE.info(((ENotification)o).getMessage());
+				Eclipse.INSTANCE.info(((ENotification) o).getMessage());
 				break;
 			}
 		}
@@ -789,6 +789,13 @@ public class RuntimeView extends ViewPart {
 				taskArea.setMaximizedControl(taskTree);
 			});
 			break;
+		case NetworkStatus:
+			Display.getDefault().asyncExec(() -> {
+				networkStatusIcon.setToolTipText("Connected to the k.LAB network");
+				networkStatusIcon.setImage(org.eclipse.wb.swt.ResourceManager
+						.getPluginImage("org.integratedmodelling.klab.ide", "icons/world24.png"));
+			});
+			break;
 		case ResetContext:
 			lastFocus = null;
 			Display.getDefault().asyncExec(() -> {
@@ -820,8 +827,10 @@ public class RuntimeView extends ViewPart {
 			Display.getDefault().asyncExec(() -> {
 				taskViewer.setInput(history = new ArrayList<>());
 				engineStatusIcon.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/grey24.png"));
+				engineStatusIcon.setToolTipText("Engine is offline");
 				networkStatusIcon
 						.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldgrey24.png"));
+				networkStatusIcon.setToolTipText("Not connected to the k.LAB network");
 				engineStatusLabel.setText("Engine is offline");
 			});
 			break;
@@ -829,13 +838,14 @@ public class RuntimeView extends ViewPart {
 			final Capabilities capabilities = message.getPayload(Capabilities.class);
 			Display.getDefault().asyncExec(() -> {
 				engineStatusIcon.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/green24.png"));
-				if (capabilities.isOnline()) {
-					networkStatusIcon
-							.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/world24.png"));
-				} else {
-					networkStatusIcon
-							.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldgrey24.png"));
-				}
+				engineStatusIcon.setToolTipText("Engine is online");
+//				if (capabilities.isOnline()) {
+//					networkStatusIcon
+//							.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/world24.png"));
+//				} else {
+//					networkStatusIcon
+//							.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldgrey24.png"));
+//				}
 				engineStatusLabel.setText("User " + capabilities.getOwner().getId() + " logged in");
 			});
 			break;

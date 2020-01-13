@@ -605,6 +605,17 @@ class KimValidator extends AbstractKimValidator {
 
 		for (contextualizer : model.contextualizers) {
 			// TODO validate required arguments from prototype and dependencies
+			if (contextualizer.execValue.model !== null) {
+				
+			 if (!model.merging) {
+			 	// error
+			 }
+			 
+			 // TODO check for recognized model
+				
+			} else if (model.merging && contextualizer.execValue.urn === null) {
+				
+			}
 		}
 
 		/*
@@ -628,7 +639,8 @@ class KimValidator extends AbstractKimValidator {
 				descriptor.dependencies.addAll(dependencies)
 				descriptor.instantiator = model.isInstantiator || hasDistributedAttributeObservable
 				descriptor.docstring = model.docstring
-
+				descriptor.resourceMerger = model.merging
+				
 				// data source - function or literal/remote URN
 				for (urn : model.urns) {
 					descriptor.resourceUrns.add(urn.name)
@@ -713,6 +725,8 @@ class KimValidator extends AbstractKimValidator {
 								"classifier"
 							else if (descriptor.instantiator)
 								"instantiator"
+							else if (descriptor.learningModel)
+								"learner"
 							else
 								"resolver";
 
@@ -1534,6 +1548,12 @@ class KimValidator extends AbstractKimValidator {
 							KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.DISTANCE)
+				} else if (concept.isChange) {
+					if (!flags.contains(Type.QUALITY)) {
+						error("Change processes can only be defined for qualities", concept.concept, null,
+							KimPackage.CONCEPT__CONCEPT)
+					}
+					operator.add(Type.CHANGE)
 				} else if (concept.isMagnitude) {
 					if (Kim.intersection(flags, IKimConcept.CONTINUOUS_QUALITY_TYPES).size() == 0) {
 						error("Magnitudes can only be observed for quantifiable qualities", concept.concept, null,
@@ -1599,7 +1619,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 				if (!operator.isEmpty) {
-					ret = Kim.INSTANCE.makeQuality(ret, operator.toArray(newArrayOfSize(operator.size())))
+					ret = Kim.INSTANCE.applyOperator(ret, operator.toArray(newArrayOfSize(operator.size())))
 					if (flags.contains(Type.MACRO)) {
 						ret.add(Type.MACRO)
 					}
@@ -2261,6 +2281,19 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				// TODO process affects quality; deliberative agents can affect states of subject types.
+				var i = 0
+				for (decl : concept.qualitiesAffected) {
+					var quality = Kim.INSTANCE.declareConcept(decl)
+					if (!quality.is(Type.QUALITY)) {
+						error(
+							"only quality types can be affected by a process",
+							concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i)
+					} else {
+						ret.qualitiesAffected.add(quality)
+					}
+					i++
+				}
+
 			}
 		}
 

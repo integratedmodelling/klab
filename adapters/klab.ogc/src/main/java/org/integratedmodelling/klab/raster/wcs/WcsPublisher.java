@@ -27,8 +27,8 @@ public class WcsPublisher implements IResourcePublisher {
 
   @Override
   public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
-    // TODO Auto-generated method stub
-    return null;
+    // nothing to do except maybe validation
+    return localResource;
   }
 
 }
