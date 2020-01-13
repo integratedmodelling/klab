@@ -132,6 +132,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 					!ldapUserExists(user.getUsername(), user.getEmail())) {
 				user = new SetUserPasswordHash(user, password, passwordEncoder).execute();
 				user= new CreateLdapUser(user, ldapUserDetailsManager).execute();
+				user.setAccountStatus(AccountStatus.active);
 				user = new UpdateUser(user, userRepository).execute();
 				return user;
 			} else {

@@ -17,7 +17,7 @@ public class CreateUserAuthenticationToken implements TokenCommand{
 
 	@Override
 	public AuthenticationToken execute() {
-		AuthenticationToken result = new AuthenticationToken();
+		AuthenticationToken result = new AuthenticationToken(user.getUsername());
 		result.setAuthorities(user.getAuthorities());
 		result.setAuthenticated(true);
 		tokenRepository.save(result);

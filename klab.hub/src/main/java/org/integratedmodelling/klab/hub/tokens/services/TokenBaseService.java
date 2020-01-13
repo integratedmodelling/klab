@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
 import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
-import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.TokenType;
 
 public interface TokenBaseService {

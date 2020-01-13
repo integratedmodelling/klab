@@ -12,7 +12,9 @@ import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.hub.users.commands.DeleteUser;
 import org.integratedmodelling.klab.hub.users.services.UserDeletionService;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserDeletionServiceImpl implements UserDeletionService{
 	
 	private UserRepository userRepository;

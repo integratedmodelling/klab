@@ -25,23 +25,23 @@ public class UserProfileController {
 		this.userService = userService;
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/{username}")
 	@PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<?> getUserProfile(@PathVariable("id") String username) {
+	public ResponseEntity<?> getUserProfile(@PathVariable("username") String username) {
 		ProfileResource profile = userService.getUserProfile(username);
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
 	}
 	
 	@GetMapping("/me")
 	@PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<?> getCurrentUserProfile(@PathVariable("id") String username) {
+	public ResponseEntity<?> getCurrentUserProfile() {
 		ProfileResource profile = userService.getCurrentUserProfile();
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/{username}")
 	@PreAuthorize("authentication.getPrincipal() == #username" )
-	public ResponseEntity<?> updateUserProfile(@PathVariable("id") String username, @RequestBody UpdateUserRequest updateRequest) {
+	public ResponseEntity<?> updateUserProfile(@PathVariable("username") String username, @RequestBody UpdateUserRequest updateRequest) {
 		ProfileResource profile = userService.updateUserByProfile(updateRequest.getProfile());
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
 	}

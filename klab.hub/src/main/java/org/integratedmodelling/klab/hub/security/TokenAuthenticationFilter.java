@@ -44,6 +44,7 @@ public class TokenAuthenticationFilter implements Filter {
         } catch (Throwable e) {
           Logging.INSTANCE.error("Could not set user authentication in security context " + e.toString());
         } finally {
+        	SecurityContextHolder.getContext();
         	chain.doFilter(request, response);
 		}
 

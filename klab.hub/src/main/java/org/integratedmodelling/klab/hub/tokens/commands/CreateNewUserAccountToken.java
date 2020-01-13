@@ -4,6 +4,7 @@ import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.tokens.NewUserClickbackToken;
+import org.integratedmodelling.klab.hub.tokens.VerifyAccountClickbackToken;
 
 public class CreateNewUserAccountToken extends CreateTokenCommand{
 	
@@ -28,7 +29,7 @@ public class CreateNewUserAccountToken extends CreateTokenCommand{
 	}
 	
 	private String getParentTokenId(String username) {
-		return tokenRepository.findByUsernameAndClass(username, CreateVerifyAccountToken.class.getName())
+		return tokenRepository.findByUsernameAndClass(username, VerifyAccountClickbackToken.class.getName())
 			.map(token -> token.getTokenString())
 			.orElseThrow(()-> new BadRequestException("Should have an activate Account clickback, but does not."));		
 	}

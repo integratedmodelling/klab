@@ -1,23 +1,33 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
 import java.util.List;
+
 import java.util.Optional;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
+import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
 import org.integratedmodelling.klab.hub.tokens.TokenType;
 import org.integratedmodelling.klab.hub.tokens.commands.CreateUserAuthenticationToken;
+import org.integratedmodelling.klab.hub.tokens.commands.DeleteAuthenticationToken;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.User;
+import org.integratedmodelling.klab.hub.users.commands.GetUserProfile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
 public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	
 	private AuthenticationManager authenticationManager;
@@ -26,6 +36,16 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	
 	private TokenRepository tokenRepository;
 	
+	private ObjectMapper objectMapper;
+	
+	public UserAuthTokenServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
+			TokenRepository tokenRepository, ObjectMapper objectMapper) {
+		super();
+		this.authenticationManager = authenticationManager;
+		this.userRepository = userRepository;
+		this.tokenRepository = tokenRepository;
+		this.objectMapper = objectMapper;
+	}
 
 	@Override
 	public AuthenticationToken createToken(String username, TokenType type) {
@@ -55,8 +75,7 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 
 	@Override
 	public void deleteToken(String tokenString) {
-		// TODO Auto-generated method stub
-		
+		new DeleteAuthenticationToken(tokenRepository, tokenString).execute();
 	}
 	
 	private void deleteExpiredTokens(String username) {
@@ -71,7 +90,11 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	@Override
 	public AuthenticationToken getUserAuthenticationToken(String username, String password) {
 		Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
-		authRequest = authenticationManager.authenticate(authRequest);
+		try {
+			authRequest = authenticationManager.authenticate(authRequest);
+		} catch (AuthenticationException e) {
+			throw new BadRequestException("Username or password incorrect.");
+		}
 		if (!authRequest.isAuthenticated()) {
 			String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
 			throw new KlabException(msg);
@@ -86,7 +109,16 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	@Override
 	public LoginResponse getAuthResponse(String username, String password) {
 		AuthenticationToken token = getUserAuthenticationToken(username, password);
-		return null;
+		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
+		LoginResponse response = new LoginResponse(token, profile.getSafeProfile());
+		return response;
+	}
+
+	@Override
+	public LogoutResponse getLogoutResponse(String token) {
+		deleteToken(token);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		return new LogoutResponse(username);
 	}
 
 }
