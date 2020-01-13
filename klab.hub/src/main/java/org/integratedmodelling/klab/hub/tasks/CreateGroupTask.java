@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.tasks;
 
-import org.integratedmodelling.klab.hub.models.KlabGroup;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
 
@@ -8,17 +8,17 @@ import org.springframework.data.annotation.TypeAlias;
 public class CreateGroupTask extends Task{
 
 	@Reference
-	KlabGroup group;
+	MongoGroup group;
 	
 	public CreateGroupTask(String requestee) {
 		super(requestee, TaskType.createGroup);
 	}
 
-	public KlabGroup getGroup() {
+	public MongoGroup getGroup() {
 		return group;
 	}
 
-	public void setGroup(KlabGroup group) {
+	public void setGroup(MongoGroup group) {
 		this.group = group;
 	}
 

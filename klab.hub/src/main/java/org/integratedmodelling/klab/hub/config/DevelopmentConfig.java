@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
-import org.integratedmodelling.klab.hub.models.KlabGroup;
-import org.integratedmodelling.klab.hub.service.KlabGroupService;
+import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
 import org.integratedmodelling.klab.hub.users.Role;
@@ -35,7 +35,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	private KlabUserManager KlabUserManager;
 	
 	@Autowired
-	private KlabGroupService klabGroupService;
+	private MongoGroupService klabGroupService;
 	
 	@Autowired
 	KlabUserManager klabUserManager;
@@ -176,8 +176,8 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     }
     
     public void createIntialGroups() {
-		Map<String, KlabGroup> groups = new HashMap<>();
-		groups = FileCatalog.create(DevelopmentConfig.class.getClassLoader().getResource("auth/groups.json"), KlabGroup.class);
+		Map<String, MongoGroup> groups = new HashMap<>();
+		groups = FileCatalog.create(DevelopmentConfig.class.getClassLoader().getResource("auth/groups.json"), MongoGroup.class);
 		groups.forEach((k,v)->klabGroupService.createGroup(v.getGroupName(),v));
     }
 

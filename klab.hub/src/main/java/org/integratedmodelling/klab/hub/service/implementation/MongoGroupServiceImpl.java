@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.models.KlabGroup;
-import org.integratedmodelling.klab.hub.service.KlabGroupService;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,19 +18,19 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 @Service
-public class KlabGroupServiceImpl implements KlabGroupService {
+public class MongoGroupServiceImpl implements MongoGroupService {
 	
 	private final MongoTemplate mongoTemplate;
 	
     @Autowired
-    public KlabGroupServiceImpl(MongoTemplate mongoTemplate) {
+    public MongoGroupServiceImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
     
 	@Override
-	public void createGroup(String id, KlabGroup group) {
+	public void createGroup(String id, MongoGroup group) {
 		Query query = new Query(Criteria.where("groupName").is(id));
-		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
+		List<MongoGroup> found = mongoTemplate.find(query, MongoGroup.class);
 		if (found.size() == 0) {
 			mongoTemplate.save(group);
 			Logging.INSTANCE.info("Created Mongo Group: " + group.toString());
@@ -40,9 +40,9 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 	}
 
 	@Override
-	public void updateGroup(String id, KlabGroup group) {
+	public void updateGroup(String id, MongoGroup group) {
 		Query query = new Query(Criteria.where("id").is(id));
-		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
+		List<MongoGroup> found = mongoTemplate.find(query, MongoGroup.class);
 		if (found.size() == 1) {
 			mongoTemplate.save(group);
 		}
@@ -51,7 +51,7 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 	@Override
 	public void deleteGroup(String id) {
 		Query query = new Query(Criteria.where("id").is(id));
-		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
+		List<MongoGroup> found = mongoTemplate.find(query, MongoGroup.class);
 		if (found.size() == 1) {
 			mongoTemplate.remove(found.get(0));
 			Logging.INSTANCE.info("Deleted Mongo Group: " + id);
@@ -61,27 +61,27 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 	}
 
 	@Override
-	public Collection<KlabGroup> getGroups() {
-		return mongoTemplate.findAll(KlabGroup.class);
+	public Collection<MongoGroup> getGroups() {
+		return mongoTemplate.findAll(MongoGroup.class);
 	}
 
 	@Override
-	public Optional<KlabGroup> getGroup(String groupName) {
+	public Optional<MongoGroup> getGroup(String groupName) {
 		Query query = new Query(Criteria.where("groupName").is(groupName));
-		List<KlabGroup> found = mongoTemplate.find(query, KlabGroup.class);
+		List<MongoGroup> found = mongoTemplate.find(query, MongoGroup.class);
 		if (found.size() == 1) {
-			Optional<KlabGroup> group = Optional.of(found.get(0));
+			Optional<MongoGroup> group = Optional.of(found.get(0));
 			return group;
 		}
-		Optional<KlabGroup> emptyGroup = Optional.empty();
+		Optional<MongoGroup> emptyGroup = Optional.empty();
 		return emptyGroup;
 	}
 
 	@Override
 	public Collection<String> getGroupNames() {
-		Collection<KlabGroup> groups = mongoTemplate.findAll(KlabGroup.class);
+		Collection<MongoGroup> groups = mongoTemplate.findAll(MongoGroup.class);
 		Collection<String> groupNames = new HashSet<>();
-		for(KlabGroup group: groups) {
+		for(MongoGroup group: groups) {
 			groupNames.add(group.getId());
 		}
 		return groupNames;
@@ -90,7 +90,7 @@ public class KlabGroupServiceImpl implements KlabGroupService {
 	@Override
 	public Collection<? extends Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
-		for (KlabGroup grp : mongoTemplate.findAll(KlabGroup.class)) {
+		for (MongoGroup grp : mongoTemplate.findAll(MongoGroup.class)) {
 			if(grp != null) {
 				Group group = new Group();
 				group.setId(grp.getId());

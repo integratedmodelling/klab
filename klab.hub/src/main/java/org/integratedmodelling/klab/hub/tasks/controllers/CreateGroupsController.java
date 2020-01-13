@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 
-import org.integratedmodelling.klab.hub.models.KlabGroup;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.TaskType;
@@ -36,7 +36,7 @@ public class CreateGroupsController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> createGroupsResponse(
 			@PathVariable("id") String requestee,
-			@RequestBody KlabGroup group,
+			@RequestBody MongoGroup group,
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
 		

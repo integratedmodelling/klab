@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.hub.exception.UserExistsException;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.service.KlabGroupService;
+import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
@@ -74,7 +74,7 @@ public class TokenManager {
 	AuthenticationManager authenticationManager;
 	
 	@Autowired
-	private KlabGroupService klabGroupService;
+	private MongoGroupService klabGroupService;
 	
 	@Autowired
 	private TaskService taskService;

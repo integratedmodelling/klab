@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.rest.Group;
 import org.joda.time.DateTime;
-import org.integratedmodelling.klab.hub.service.KlabGroupService;
+import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -54,7 +54,7 @@ public class KlabUserManager implements UserDetailsService{
     LinkConfig linkConfig;
     
 	@Autowired
-	KlabGroupService klabGroupService;
+	MongoGroupService klabGroupService;
 	
 	@Override
 	public User loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.models;
+package org.integratedmodelling.klab.hub.groups;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
-import org.integratedmodelling.klab.hub.repository.KlabGroupRepository;
+import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
 import org.integratedmodelling.klab.hub.users.User;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	
 	private UserRepository userRepository;
-	private KlabGroupRepository groupRepository;
+	private MongoGroupRepository groupRepository;
 	
 	@Override
 	public void setUsersGroupsFromNames(UpdateUsersGroups updateRequest) {

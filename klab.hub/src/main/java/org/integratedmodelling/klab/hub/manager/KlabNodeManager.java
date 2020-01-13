@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.hub.models.KlabGroup;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.models.KlabNode;
-import org.integratedmodelling.klab.hub.service.KlabGroupService;
+import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.hub.service.KlabNodeService;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class KlabNodeManager {
 	KlabNodeService klabNodeService;
 	
 	@Autowired
-	KlabGroupService klabGroupService;
+	MongoGroupService klabGroupService;
 	
 	public Collection<KlabNode> getNodes() {
 		return klabNodeService.getNodes();
@@ -46,7 +46,7 @@ public class KlabNodeManager {
 		for (String groupName : node.getGroups()) {
 			if(groupName != null) {
 				Group group = new Group();
-				KlabGroup klabGroup = klabGroupService.getGroup(groupName)
+				MongoGroup klabGroup = klabGroupService.getGroup(groupName)
 						.orElseThrow(IllegalArgumentException::new);
 				group.setId(klabGroup.getId());
 				group.setProjectUrls(klabGroup.getProjectUrls());
@@ -61,7 +61,7 @@ public class KlabNodeManager {
 	
 	public List<Group> getGroups() {
 		List<Group> listOfGroups = new ArrayList<>();
-		for (KlabGroup klabGroup : klabGroupService.getGroups()) {
+		for (MongoGroup klabGroup : klabGroupService.getGroups()) {
 			if(klabGroup != null) {
 				Group group = new Group();
 				group.setId(klabGroup.getId());

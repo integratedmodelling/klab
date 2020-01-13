@@ -1,23 +1,23 @@
 package org.integratedmodelling.klab.hub.users;
 
-import org.integratedmodelling.klab.hub.models.KlabGroup;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class GroupEntry {
 	
 	@DBRef
-	private KlabGroup group;
+	private MongoGroup group;
 	private DateTime experation;
 	private DateTime inception;
 	
-	public GroupEntry(KlabGroup group, DateTime experation) {
+	public GroupEntry(MongoGroup group, DateTime experation) {
 		this.group = group;
 		this.experation = experation;
 		setInception();
 	}
 	
-	public GroupEntry(KlabGroup group) {
+	public GroupEntry(MongoGroup group) {
 		this.group = group;
 		this.experation = null;
 		setInception();
@@ -53,11 +53,11 @@ public class GroupEntry {
 		return true;
 	}
 
-	public KlabGroup getGroup() {
+	public MongoGroup getGroup() {
 		return group;
 	}
 	
-	public void setGroup(KlabGroup group) {
+	public void setGroup(MongoGroup group) {
 		this.group = group;
 	}
 }

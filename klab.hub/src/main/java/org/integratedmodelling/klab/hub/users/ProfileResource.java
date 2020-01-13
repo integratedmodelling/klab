@@ -11,8 +11,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.models.Constraints;
-import org.integratedmodelling.klab.hub.models.KlabGroup;
 import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.rest.Group;
 import org.joda.time.DateTime;
@@ -175,13 +175,13 @@ public class ProfileResource implements OAuth2User{
 		for (GroupEntry grp : this.getGroups()) {
 			if(grp != null) {
 				Group group = new Group();
-				KlabGroup kGroup = grp.getGroup();
-				group.setId(kGroup.getGroupName());
-				group.setProjectUrls(kGroup.getProjectUrls());
-				group.setSshKey(kGroup.getSshKey());
-				group.setObservables(kGroup.getObservableReferences());
-				group.setWorldview(kGroup.getWorldview());
-				group.setIconUrl(kGroup.getIconUrl());
+				MongoGroup mGroup = grp.getGroup();
+				group.setId(mGroup.getGroupName());
+				group.setProjectUrls(mGroup.getProjectUrls());
+				group.setSshKey(mGroup.getSshKey());
+				group.setObservables(mGroup.getObservableReferences());
+				group.setWorldview(mGroup.getWorldview());
+				group.setIconUrl(mGroup.getIconUrl());
 				listOfGroups.add(group);
 			}
 		}
@@ -216,8 +216,8 @@ public class ProfileResource implements OAuth2User{
 		List<GroupEntry> safeGroups = new ArrayList<>();
 		for (GroupEntry entry : cleanedProfile.getGroups()) {
 			if(entry != null) {
-				KlabGroup cleanGroup = new KlabGroup();
-				KlabGroup unsafeGroup = entry.getGroup();
+				MongoGroup cleanGroup = new MongoGroup();
+				MongoGroup unsafeGroup = entry.getGroup();
 				cleanGroup.setIconUrl(unsafeGroup.getIconUrl());
 				cleanGroup.setGroupName(unsafeGroup.getGroupName());
 				cleanGroup.setDependsOn(unsafeGroup.getDependsOn());

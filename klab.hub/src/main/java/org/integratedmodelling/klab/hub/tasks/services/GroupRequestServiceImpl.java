@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.repository.KlabGroupRepository;
+import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
@@ -31,13 +31,13 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 	
 	private TokenRepository tokenRepository;
 	
-	private KlabGroupRepository groupRepository;
+	private MongoGroupRepository groupRepository;
 	
 	private TaskRepository taskRepository;
 	
 	public GroupRequestServiceImpl(UserRepository userRepository,
 			TokenRepository tokenRepository,
-			KlabGroupRepository groupRepository,
+			MongoGroupRepository groupRepository,
 			TaskRepository taskRepository) {
 		this.userRepository = userRepository;
 		this.tokenRepository = tokenRepository;

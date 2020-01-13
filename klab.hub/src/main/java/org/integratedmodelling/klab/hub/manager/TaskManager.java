@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
-import org.integratedmodelling.klab.hub.models.KlabGroup;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.service.KlabGroupService;
+import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.hub.service.UserService;
 import org.integratedmodelling.klab.hub.tasks.CreateGroupTask;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
@@ -38,7 +38,7 @@ public class TaskManager {
 	UserService userService;
 	
 	@Autowired
-	KlabGroupService klabGroupService;
+	MongoGroupService klabGroupService;
 	
 	
 	public List<Task> getTasks() {
@@ -100,7 +100,7 @@ public class TaskManager {
 		return taskService.getTask(taskId);
 	}
 
-	public CreateGroupTask createGroupTask(String username, KlabGroup group) {
+	public CreateGroupTask createGroupTask(String username, MongoGroup group) {
 		if (!klabGroupService.getGroupNames().contains(group.getId())) {
 			CreateGroupTask task = (CreateGroupTask) taskService.createTask(username, CreateGroupTask.class, Role.ROLE_SYSTEM);
 			task.setGroup(group);

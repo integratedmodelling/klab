@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.models;
+package org.integratedmodelling.klab.hub.groups;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ import org.springframework.data.annotation.Reference;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "KlabGroups")
-public class KlabGroup {
+@Document(collection = "Groups")
+public class MongoGroup {
 
 	@Id
 	private String id;
@@ -92,10 +92,10 @@ public class KlabGroup {
 		this.observables = observables;
 	}
 	
-	public KlabGroup() {
+	public MongoGroup() {
 	}
 
-	public KlabGroup(String id) {
+	public MongoGroup(String id) {
 		this.id = id;
 	}
 

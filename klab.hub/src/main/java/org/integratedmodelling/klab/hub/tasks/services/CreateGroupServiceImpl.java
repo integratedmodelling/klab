@@ -5,8 +5,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.models.KlabGroup;
-import org.integratedmodelling.klab.hub.repository.KlabGroupRepository;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
 import org.integratedmodelling.klab.hub.tasks.CreateGroupTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
@@ -20,18 +20,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class CreateGroupServiceImpl implements CreateGroupService {
 
-	private KlabGroupRepository groupRepository;
+	private MongoGroupRepository groupRepository;
 	
 	private TaskRepository taskRepository;
 	
-	public CreateGroupServiceImpl(KlabGroupRepository groupRepository,
+	public CreateGroupServiceImpl(MongoGroupRepository groupRepository,
 			TaskRepository taskRepository) {
 		this.groupRepository = groupRepository;
 		this.taskRepository = taskRepository;
 	}
 	
 	@Override
-	public Task createTask(String requestee, KlabGroup group, HttpServletRequest request) {
+	public Task createTask(String requestee, MongoGroup group, HttpServletRequest request) {
 		
 		Boolean exists = groupRepository
 				.findByGroupNameIgnoreCase(group.getGroupName())
