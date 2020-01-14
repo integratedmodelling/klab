@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
-import org.integratedmodelling.klab.hub.nodes.KlabNode;
+import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.hub.service.LicenseService;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -91,7 +91,7 @@ public class NodeAuthManager {
 				String msg = String.format("The cert file submitted for node %s is expired.", nodename);
 				throw new AuthenticationFailedException(msg);
 			}
-			KlabNode node = klabNodeManager.getNode(nodename);
+			MongoNode node = klabNodeManager.getNode(nodename);
 			Properties properties = licenseManager.getPropertiesString(node);
 			certificateProperties.remove(KlabCertificate.KEY_EXPIRATION);
 	        properties.remove(KlabCertificate.KEY_EXPIRATION);

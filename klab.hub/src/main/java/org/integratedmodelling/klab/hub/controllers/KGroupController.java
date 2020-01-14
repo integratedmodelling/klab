@@ -5,7 +5,6 @@ import javax.annotation.security.RolesAllowed;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
-import org.integratedmodelling.klab.hub.manager.TaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

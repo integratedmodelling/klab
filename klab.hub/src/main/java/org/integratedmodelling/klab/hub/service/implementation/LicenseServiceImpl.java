@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.config.LicenseConfig;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
-import org.integratedmodelling.klab.hub.nodes.KlabNode;
+import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.service.LicenseService;
 import org.integratedmodelling.klab.hub.users.User;
 import org.joda.time.DateTime;
@@ -50,7 +50,7 @@ public class LicenseServiceImpl implements LicenseService {
 	}
 	
 	@Override
-	public byte[] generateCert(KlabNode node) {
+	public byte[] generateCert(MongoNode node) {
 		try {
 			return generateCertFile(node);
 		} catch (Exception e) {
@@ -68,7 +68,7 @@ public class LicenseServiceImpl implements LicenseService {
 	}
 	
 	@Override
-	public byte[] generateCertFile(KlabNode node) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, PGPException {
+	public byte[] generateCertFile(MongoNode node) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, PGPException {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		Properties properties = getPropertiesString(node);
 		properties.setProperty(KlabCertificate.KEY_CERTIFICATE, encodedLicenseString(properties));
@@ -94,7 +94,7 @@ public class LicenseServiceImpl implements LicenseService {
 	}
 	
     @Override
-	public Properties getPropertiesString(KlabNode node) throws IOException {
+	public Properties getPropertiesString(MongoNode node) throws IOException {
         Properties properties = new Properties();   
         DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS/2);
 		properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	

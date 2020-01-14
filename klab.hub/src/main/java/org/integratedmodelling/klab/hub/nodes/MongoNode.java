@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Nodes")
-public class KlabNode {
+public class MongoNode {
 	
     @Id @GeneratedValue
     String id;

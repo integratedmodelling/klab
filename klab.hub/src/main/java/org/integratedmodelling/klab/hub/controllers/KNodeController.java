@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.hub.manager.KlabNodeManager;
-import org.integratedmodelling.klab.hub.nodes.KlabNode;
+import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.service.LicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,7 +49,7 @@ public class KNodeController {
 	}
 
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Object> updateNode(@PathVariable("id") String id, @RequestBody KlabNode node) {
+	public ResponseEntity<Object> updateNode(@PathVariable("id") String id, @RequestBody MongoNode node) {
 		klabNodeManager.updateNodeGroups(id, node);
 		return new ResponseEntity<>("The node has been updated successsfully", HttpStatus.OK);
 	}
@@ -62,13 +62,13 @@ public class KNodeController {
 	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Object> getNode(@PathVariable("id") String id) {
-		KlabNode node = klabNodeManager.getNode(id);
+		MongoNode node = klabNodeManager.getNode(id);
 		return new ResponseEntity<>(node, HttpStatus.OK);		
 	}
 
 	@GetMapping(value= "/{id}", params = "certificate")
 	public void generateNodeCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
-		KlabNode node = klabNodeManager.getNode(id);
+		MongoNode node = klabNodeManager.getNode(id);
 		byte[] certFileContent = licenseManager.generateCert(node);
 		String certFileString = String.format("attachment; filename=%s", licenseManager.get_NODE_CERT_FILE_NAME());
 		response.setHeader("Content-disposition", certFileString);
@@ -80,7 +80,7 @@ public class KNodeController {
 	}
 	
 	@PostMapping(value = "", produces = "application/json")
-	public ResponseEntity<Object> createNode(@RequestBody KlabNode node) {
+	public ResponseEntity<Object> createNode(@RequestBody MongoNode node) {
 		klabNodeManager.createNode(node.getNode(), node);
 		return new ResponseEntity<>(node, HttpStatus.CREATED);
 	}

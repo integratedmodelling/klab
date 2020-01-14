@@ -8,24 +8,24 @@ import java.util.Properties;
 
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
-import org.integratedmodelling.klab.hub.nodes.KlabNode;
+import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.users.User;
 
 public interface LicenseService {
 
 	byte[] generateCert(User user);
 
-	byte[] generateCert(KlabNode node);
+	byte[] generateCert(MongoNode node);
 
 	byte[] generateCertFile(User user)
 			throws IOException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, PGPException;
 
-	byte[] generateCertFile(KlabNode node)
+	byte[] generateCertFile(MongoNode node)
 			throws IOException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, PGPException;
 
 	Properties getPropertiesString(User user);
 
-	Properties getPropertiesString(KlabNode node) throws IOException;
+	Properties getPropertiesString(MongoNode node) throws IOException;
 
 	Properties readCertFileContent(String certFileContent) throws IOException, PGPException, DecoderException;
 

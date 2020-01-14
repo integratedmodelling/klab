@@ -1,12 +1,11 @@
-package org.integratedmodelling.klab.hub.service.implementation;
+package org.integratedmodelling.klab.hub.nodes.services;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.nodes.KlabNode;
-import org.integratedmodelling.klab.hub.service.KlabNodeService;
+import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,9 +23,9 @@ public class KlabNodeServiceImpl implements KlabNodeService{
     }
 
 	@Override
-	public void createNode(String nodename, KlabNode node) {
+	public void createNode(String nodename, MongoNode node) {
 		Query query = new Query(Criteria.where("node").is(nodename));
-		List<KlabNode> found = mongoTemplate.find(query, KlabNode.class);
+		List<MongoNode> found = mongoTemplate.find(query, MongoNode.class);
 		if (found.size() == 0) {
 			mongoTemplate.save(node);
 		} else {
@@ -35,11 +34,11 @@ public class KlabNodeServiceImpl implements KlabNodeService{
 	}
 
 	@Override
-	public void updateNodeGroups(String nodename, KlabNode node) {
+	public void updateNodeGroups(String nodename, MongoNode node) {
 		Query query = new Query(Criteria.where("node").is(nodename));
-		List<KlabNode> found = mongoTemplate.find(query, KlabNode.class);
+		List<MongoNode> found = mongoTemplate.find(query, MongoNode.class);
 		if (found.size() == 1) {
-			KlabNode savedNode = found.get(0);
+			MongoNode savedNode = found.get(0);
 			savedNode.setGroups(node.getGroups());
 			mongoTemplate.save(savedNode);
 		} else {
@@ -50,9 +49,9 @@ public class KlabNodeServiceImpl implements KlabNodeService{
 	@Override
 	public void updateNodeLastConnection(String nodename) {
 		Query query = new Query(Criteria.where("node").is(nodename));
-		List<KlabNode> found = mongoTemplate.find(query, KlabNode.class);
+		List<MongoNode> found = mongoTemplate.find(query, MongoNode.class);
 		if (found.size() == 1) {
-			KlabNode savedNode = found.get(0);
+			MongoNode savedNode = found.get(0);
 			savedNode.setLastNodeConnection();
 			mongoTemplate.save(savedNode);
 		} else {
@@ -63,9 +62,9 @@ public class KlabNodeServiceImpl implements KlabNodeService{
 	@Override
 	public void deleteNode(String nodename) {
 		Query query = new Query(Criteria.where("node").is(nodename));
-		List<KlabNode> found = mongoTemplate.find(query, KlabNode.class);
+		List<MongoNode> found = mongoTemplate.find(query, MongoNode.class);
 		if (found.size() == 1) {
-			KlabNode deleteNode = found.get(0);
+			MongoNode deleteNode = found.get(0);
 			mongoTemplate.remove(deleteNode);
 		} else {
 			throw new BadRequestException("Found more than one node of that name");
@@ -73,19 +72,19 @@ public class KlabNodeServiceImpl implements KlabNodeService{
 	}
 
 	@Override
-	public Collection<KlabNode> getNodes() {
-		return mongoTemplate.findAll(KlabNode.class);
+	public Collection<MongoNode> getNodes() {
+		return mongoTemplate.findAll(MongoNode.class);
 	}
 
 	@Override
-	public Optional<KlabNode> getNode(String nodename) {
+	public Optional<MongoNode> getNode(String nodename) {
 		Query query = new Query(Criteria.where("node").is(nodename));
-		List<KlabNode> found = mongoTemplate.find(query, KlabNode.class);
+		List<MongoNode> found = mongoTemplate.find(query, MongoNode.class);
 		if (found.size() == 1) {
-			Optional<KlabNode> node = Optional.of(found.get(0));
+			Optional<MongoNode> node = Optional.of(found.get(0));
 			return node;
 		}
-		Optional<KlabNode> emptyNode = Optional.empty();
+		Optional<MongoNode> emptyNode = Optional.empty();
 		return emptyNode;
 	}
 	
