@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.hub.manager.KlabNodeManager;
-import org.integratedmodelling.klab.hub.models.KlabNode;
+import org.integratedmodelling.klab.hub.nodes.KlabNode;
 import org.integratedmodelling.klab.hub.service.LicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -4,8 +4,8 @@ import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
 import org.integratedmodelling.klab.hub.manager.TaskManager;
-import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +27,6 @@ public class KGroupController {
 	@Autowired
 	MongoGroupService mongoGroupService;
 	
-	@Autowired
-	TaskManager taskManager;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<Object> getGroups() {

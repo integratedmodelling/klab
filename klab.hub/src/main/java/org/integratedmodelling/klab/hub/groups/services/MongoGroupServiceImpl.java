@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.service.implementation;
+package org.integratedmodelling.klab.hub.groups.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
-import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;

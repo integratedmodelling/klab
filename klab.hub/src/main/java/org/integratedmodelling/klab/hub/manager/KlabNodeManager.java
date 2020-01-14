@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
-import org.integratedmodelling.klab.hub.models.KlabNode;
-import org.integratedmodelling.klab.hub.service.MongoGroupService;
+import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
+import org.integratedmodelling.klab.hub.nodes.KlabNode;
 import org.integratedmodelling.klab.hub.service.KlabNodeService;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.beans.factory.annotation.Autowired;

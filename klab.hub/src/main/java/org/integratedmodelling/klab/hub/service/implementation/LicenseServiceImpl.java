@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.config.LicenseConfig;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
-import org.integratedmodelling.klab.hub.models.KlabNode;
+import org.integratedmodelling.klab.hub.nodes.KlabNode;
 import org.integratedmodelling.klab.hub.service.LicenseService;
 import org.integratedmodelling.klab.hub.users.User;
 import org.joda.time.DateTime;

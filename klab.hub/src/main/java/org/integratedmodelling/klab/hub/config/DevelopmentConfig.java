@@ -12,8 +12,8 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
-import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
 import org.integratedmodelling.klab.hub.users.Role;

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.models;
+package org.integratedmodelling.klab.hub.nodes;
 
 import java.util.List;
 import javax.persistence.GeneratedValue;

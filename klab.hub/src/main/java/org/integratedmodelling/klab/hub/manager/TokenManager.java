@@ -22,10 +22,10 @@ import org.integratedmodelling.klab.hub.exception.GroupRequestTokenFailedExcepti
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
+import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;

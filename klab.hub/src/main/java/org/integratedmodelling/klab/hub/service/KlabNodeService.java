@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.service;
 import java.util.Collection;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.models.KlabNode;
+import org.integratedmodelling.klab.hub.nodes.KlabNode;
 
 public interface KlabNodeService {
 	   public abstract void createNode(String nodename, KlabNode node);

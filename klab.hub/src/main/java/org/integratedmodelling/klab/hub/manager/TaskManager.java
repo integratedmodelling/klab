@@ -10,8 +10,8 @@ import javax.ws.rs.BadRequestException;
 
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.service.MongoGroupService;
 import org.integratedmodelling.klab.hub.service.UserService;
 import org.integratedmodelling.klab.hub.tasks.CreateGroupTask;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
