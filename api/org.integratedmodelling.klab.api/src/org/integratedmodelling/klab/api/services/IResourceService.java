@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
-import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -312,10 +311,11 @@ public interface IResourceService {
 	 * 
 	 * @param resource
 	 * @param nodeId
-	 * @param suggestedName
+	 * @param publicationData any user suggestions about name, namespace, catalog
+	 *                        and permissions.
 	 * @return a temporary ID to track the publishing.
 	 */
-	ITicket submitResource(IResource resource, String nodeId, String suggestedName);
+	ITicket submitResource(IResource resource, String nodeId, Map<String, String> publicationData);
 
 	/**
 	 * 

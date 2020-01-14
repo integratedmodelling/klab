@@ -233,6 +233,11 @@ public interface IMetadata extends IParameters<String> {
 	 */
 	public static final String IM_PERMISSIONS = "im:permissions";
 
+	// publication data to send along with publish requests
+	public static final String IM_SUGGESTED_RESOURCE_ID = "im:suggested-resource-id";
+	public static final String IM_SUGGESTED_NAMESPACE_ID = "im:suggested-namespace-id";
+	public static final String IM_SUGGESTED_CATALOG_ID = "im:suggested-catalog-id";
+	
 	/**
 	 * Tags those extensive observables that are actually intensive because the
 	 * observation is of an inherent countable.

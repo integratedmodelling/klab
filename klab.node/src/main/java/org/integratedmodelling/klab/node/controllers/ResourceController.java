@@ -109,7 +109,6 @@ public class ResourceController {
 	@PostMapping(value = API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public TicketResponse.Ticket submitResource(@RequestBody ResourceReference resource, Principal principal) {
-
 		ITicket ticket = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
 				Klab.INSTANCE.getRootMonitor());
 		return TicketManager.encode(ticket);

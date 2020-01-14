@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -509,7 +510,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				}
 			}
 		}
-		
+
 		ret.getOnlineUrns().addAll(Resources.INSTANCE.getPublicResourceCatalog().getOnlineUrns());
 
 		for (ITicket resolved : Klab.INSTANCE.getTicketManager().getResolvedAfter(lastNetworkCheck.get())) {
@@ -517,7 +518,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		}
 
 		this.lastNetworkCheck.set(System.currentTimeMillis());
-			
+
 		monitor.send(IMessage.MessageClass.Authorization, IMessage.Type.NetworkStatus, ret);
 	}
 
@@ -542,6 +543,22 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		ResourcePublishResponse response = new ResourcePublishResponse();
 		if (type == IMessage.Type.PublishLocalResource) {
+			
+			Map<String, String> publicationData = new HashMap<>();
+			
+			if (request.getPermissions() != null) {
+				publicationData.put(IMetadata.IM_PERMISSIONS, request.getPermissions());
+			}
+			if (request.getSuggestedName() != null) {
+				publicationData.put(IMetadata.IM_SUGGESTED_RESOURCE_ID, request.getSuggestedName());
+			}
+			if (request.getSuggestedNamespace() != null) {
+				publicationData.put(IMetadata.IM_SUGGESTED_NAMESPACE_ID, request.getSuggestedNamespace());
+			}
+			if (request.getSuggestedCatalog() != null) {
+				publicationData.put(IMetadata.IM_SUGGESTED_CATALOG_ID, request.getSuggestedCatalog());
+			}
+			
 			response.setOriginalUrn(request.getUrn());
 			IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
 			if (resource == null || resource.hasErrors()) {
@@ -549,12 +566,13 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			} else {
 				try {
 					String ticketId = Resources.INSTANCE
-							.submitResource(resource, request.getNode().getId(), request.getSuggestedName()).getId();
+							.submitResource(resource, request.getNode().getId(), publicationData).getId();
 					response.setTicketId(ticketId);
 				} catch (Throwable e) {
 					response.setError(e.getMessage());
 				}
 			}
+			
 		} else {
 			response.setError("Updating of public resources is still unimplemented");
 		}

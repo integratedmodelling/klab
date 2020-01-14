@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.annotation.Nullable;
 
@@ -118,7 +121,7 @@ public enum Resources implements IResourceService {
 	INSTANCE;
 
 	class ResourceData {
-		long timestamp;	
+		long timestamp;
 		boolean online;
 	}
 
@@ -1390,14 +1393,8 @@ public enum Resources implements IResourceService {
 		return adapter.getCalculator(resource);
 	}
 
-	/**
-	 * Resource submission opens an engine ticket of type
-	 * {@link ITicket.Type.ResourceSubmission} which will be updated with the ticket
-	 * number identifying the remote node ticket, in the data field "ticket". That
-	 * ticket should be checked to inquire about the state of the submission.
-	 */
 	@Override
-	public ITicket submitResource(IResource resource, String nodeId, String suggestedName) {
+	public ITicket submitResource(IResource resource, String nodeId, Map<String, String> suggestions) {
 
 		final INodeIdentity node = Network.INSTANCE.getNode(nodeId);
 
@@ -1419,19 +1416,31 @@ public enum Resources implements IResourceService {
 		new Thread() {
 			@Override
 			public void run() {
-
 				try {
 					if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 						if (resource.getLocalPaths().isEmpty()) {
+							ResourceReference reference = ((Resource) resource).getReference();
+							reference.getMetadata().putAll(suggestions);
 							TicketResponse.Ticket response = node.getClient().post(API.NODE.RESOURCE.SUBMIT_DESCRIPTOR,
-									((Resource) resource).getReference(), TicketResponse.Ticket.class);
+									reference, TicketResponse.Ticket.class);
 							ret.update("ticket", response.getId());
 						} else {
-							// zip the files and submit the archive with the temporary ID as the
-							// file name.
+							if (!suggestions.isEmpty()) {
+								File pprop = new File(
+										((Resource) resource).getPath() + File.separator + "publish.properties");
+								Properties properties = new Properties();
+								properties.putAll(suggestions);
+								try (OutputStream out = new FileOutputStream(pprop)) {
+									properties.store(out, null);
+								}
+							}
 							File zipFile = new File(
 									System.getProperty("java.io.tmpdir") + File.separator + ret.getId() + ".zip");
 							ZipUtils.zip(zipFile, ((Resource) resource).getPath(), false, true);
+							if (!suggestions.isEmpty()) {
+								FileUtils.deleteQuietly(new File(
+										((Resource) resource).getPath() + File.separator + "publish.properties"));
+							}
 							TicketResponse.Ticket response = node.getClient().postFile(API.NODE.RESOURCE.SUBMIT_FILES,
 									zipFile, TicketResponse.Ticket.class);
 							ret.update("ticket", response.getId());
