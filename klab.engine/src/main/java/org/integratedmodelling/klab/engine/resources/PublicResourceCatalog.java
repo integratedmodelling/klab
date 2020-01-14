@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.resources;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ public class PublicResourceCatalog {
 		}
 		return ret;
 	}
-	
+
 	public void update(INodeIdentity node) {
 		for (String urn : node.getResources()) {
 			ResourceDescriptor descriptor = descriptors.get(urn);
@@ -67,7 +68,8 @@ public class PublicResourceCatalog {
 				INodeIdentity node = Network.INSTANCE.getNode(id);
 				if (node.isOnline()) {
 					try {
-						descriptor.metadata = node.getClient().get(API.NODE.RESOURCE.INFO_URN, ResourceReference.class);
+						descriptor.metadata = node.getClient()
+								.get(API.url(API.NODE.RESOURCE.RESOLVE_URN, API.P_URN, urn), ResourceReference.class);
 						break;
 					} catch (Throwable t) {
 						// move to the next
@@ -84,6 +86,14 @@ public class PublicResourceCatalog {
 				descriptor.online = descriptor.nodes.size() > 0;
 			}
 		}
+	}
+
+	public Collection<String> getNodes(String urn) {
+		ResourceDescriptor descriptor = descriptors.get(urn);
+		if (descriptor == null || !descriptor.online) {
+			return new ArrayList<>();
+		}
+		return descriptor.nodes;
 	}
 
 }

@@ -428,15 +428,10 @@ public enum Resources implements IResourceService {
 		if (urn.isLocal()) {
 			ret = getLocalResourceCatalog().get(urn.toString());
 		} else if (urn.isUniversal()) {
-			// these resolve by definition
-			ResourceReference ref = new ResourceReference();
-			ref.setUrn(urn.toString());
-			ref.setAdapterType(urn.getCatalog());
-			ref.setLocalName(urn.getResourceId());
-			ref.setGeometry("#");
-			ref.setVersion(Version.CURRENT);
-			ref.setType(Type.VALUE); // for now
-			return new Resource(ref);
+			IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
+			if (adapter != null) {
+				return adapter.getResource(urns);
+			}
 		} else {
 			ret = publicResourceCatalog.get(urn.getUrn());
 		}
@@ -1106,7 +1101,7 @@ public enum Resources implements IResourceService {
 				return getUrnAdapter(urn.getCatalog()).isOnline(urn);
 			}
 		} else {
-			publicResourceCatalog.isOnline(resource.getUrn());
+			return publicResourceCatalog.isOnline(resource.getUrn());
 		}
 
 		return false;

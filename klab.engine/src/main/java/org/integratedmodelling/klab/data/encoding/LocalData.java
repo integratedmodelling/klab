@@ -73,7 +73,12 @@ public class LocalData implements IKlabData {
 
 				for (ILocator locator : target.getScale()) {
 					if (doubles != null) {
-						target.set(locator, doubles.next());
+						Object o = doubles.next();
+						// yes, they do this.
+						if ("NaN".equals(o)) {
+							o = null;
+						}
+						target.set(locator, o);
 					}
 				}
 
