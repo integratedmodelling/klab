@@ -23,8 +23,6 @@ public class KlabPermissions {
 	private Set<String> allowedUsers = new HashSet<>();
 	private Set<String> excludedUsers = new HashSet<>();
 
-	private String encoding;
-
 	private KlabPermissions(String s) {
 		if (s != null && !s.isEmpty()) {
 			String[] ss = s.split(",");
@@ -50,7 +48,6 @@ public class KlabPermissions {
 				}
 			}
 		}
-		this.encoding = s;
 	}
 
 	/**
@@ -130,7 +127,7 @@ public class KlabPermissions {
 	}
 
 	public String toString() {
-		return encoding == null ? encode() : encoding;
+		return encode();
 	}
 
 	private String encode() {
@@ -149,8 +146,7 @@ public class KlabPermissions {
 		for (String user : excludedUsers) {
 			buffer.append((buffer.length() == 0 ? "" : ",") + "!" + user);
 		}
-		this.encoding = buffer.toString();
-		return this.encoding;
+		return buffer.toString();
 	}
 
 }

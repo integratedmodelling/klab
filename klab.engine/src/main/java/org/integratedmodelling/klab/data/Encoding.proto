@@ -47,6 +47,9 @@ message KlabData {
 	}
 
 	string geometry = 1;
+	// the semantics field may carry a URN in a contextualization request 
+	// encoded as a single KlabData object. Otherwise it's provided for 
+	// future usage (and should probably come with a worldview field).
 	string semantics = 2;
 	int64  elapsed = 3;
 	

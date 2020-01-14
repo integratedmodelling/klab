@@ -65,7 +65,8 @@ public class PublishResourceWizard extends Wizard {
 			request.setNode(page.getTargetNode());
 			request.setSuggestedName(page.getSuggestedName());
 			request.setSuggestedCatalog(page.getSuggestedCatalog());
-			request.setSuggestedNamespace(request.getSuggestedNamespace());
+			request.setSuggestedNamespace(page.getSuggestedNamespace());
+			request.setPermissions(page.getPermissions());
 			
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
 

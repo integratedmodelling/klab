@@ -7,6 +7,7 @@ public class ResourcePublishRequest {
 	private String suggestedName;
 	private String suggestedNamespace;
 	private String suggestedCatalog;
+	private String permissions;
 
 	public String getUrn() {
 		return urn;
@@ -51,6 +52,14 @@ public class ResourcePublishRequest {
 
 	public void setSuggestedNamespace(String suggestedNamespace) {
 		this.suggestedNamespace = suggestedNamespace;
+	}
+
+	public String getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(String permissions) {
+		this.permissions = permissions;
 	}
 	
 }

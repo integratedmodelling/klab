@@ -32,20 +32,20 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.ui.PermissionEditor;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
 
 public class PublishResource extends WizardPage {
 
@@ -55,6 +55,7 @@ public class PublishResource extends WizardPage {
 	private List<NodeReference> nodes;
 	private Combo catalogCombo;
 	private Combo namespaceCombo;
+	private PermissionEditor permissionsEditor;
 
 	public PublishResource(ResourceReference resource, List<NodeReference> nodes) {
 		super("wizardPage");
@@ -140,7 +141,15 @@ public class PublishResource extends WizardPage {
 		}
 
 		combo.select(0);
-
+		
+		Group grpPermissions = new Group(container, SWT.NONE);
+		grpPermissions.setText("Permissions");
+		grpPermissions.setLayout(new GridLayout(1, false));
+		grpPermissions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		
+		permissionsEditor = new PermissionEditor(grpPermissions, SWT.NONE);
+		permissionsEditor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		permissionsEditor.setPermissions(resource.getMetadata().get(IMetadata.IM_PERMISSIONS));
 	}
 
 	public NodeReference getTargetNode() {
@@ -158,5 +167,8 @@ public class PublishResource extends WizardPage {
 	public String getSuggestedCatalog() {
 		return this.catalogCombo.getText();
 	}
-
+	
+	public String getPermissions() {
+		return this.permissionsEditor.getPermissions();
+	}
 }
