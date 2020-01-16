@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -78,8 +77,6 @@ public class WeatherData {
 	 */
 	List<Observation> observables = new ArrayList<>();
 
-	
-	
 	/**
 	 * Regular weather driver: will use Thiessen polygons and assumes data are raw
 	 * and from actual observations. Data may contain no-data; no weather generator

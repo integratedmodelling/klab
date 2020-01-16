@@ -66,6 +66,7 @@ public class WeatherAdapter implements IUrnAdapter {
 		// TODO Auto-generated method stub
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
+			getInterpolatedData(urn, builder, geometry, context);
 			break;
 		case stations:
 			break;
@@ -78,6 +79,11 @@ public class WeatherAdapter implements IUrnAdapter {
 		throw new IllegalArgumentException(
 				"weather service: URN namespace " + urn.getNamespace() + " cannot be understood");
 
+	}
+
+	private void getInterpolatedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package org.integratedmodelling.hydrology.weather.controllers;
+package org.integratedmodelling.weather.controllers;
 
 /*******************************************************************************
  *  Copyright (C) 2007, 2015:
