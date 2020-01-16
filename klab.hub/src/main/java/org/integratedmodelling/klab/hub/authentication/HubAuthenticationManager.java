@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.hub.IHubStartupOptions;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
+import org.integratedmodelling.klab.hub.config.LicenseConfig;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
@@ -41,6 +42,9 @@ public class HubAuthenticationManager {
 	String hubName;
 
 	Client client = Client.create();
+	
+	LicenseConfig licenseConfig;
+	
 	private Partner partner;
 
 	public HubAuthenticationManager() {
@@ -141,7 +145,10 @@ public class HubAuthenticationManager {
 		certificate = hubCertificates.get(hubCert);
 		return certificate;
 	}
-
+	
+	public LicenseConfig getLicenseConfig() {
+		return licenseConfig;
+	}
 
 
 }

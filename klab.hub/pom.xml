@@ -44,6 +44,12 @@
 			<artifactId>bcprov-jdk15on</artifactId>
 			<version>1.59</version>
 		</dependency>
+		<!-- GPG generation -->
+	    <dependency>
+	      <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
+	      <artifactId>bouncy-gpg</artifactId>
+	      <version>2.1.0</version>
+	    </dependency>
 		<!-- JWT token generation -->
 		<dependency>
 			<groupId>org.bitbucket.b_c</groupId>

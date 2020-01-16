@@ -27,13 +27,13 @@ public class GroupsController {
 	GroupService groupService;
 	
 	@GetMapping(value = "")
-	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
+	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<?> getGroups() {
 		return new ResponseEntity<>(groupService.getGroups(), HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "", params="names")
-	@PreAuthorize("hasRole('ROLE_ENGINE') or hasRole('ROLE_USER') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
+	@PreAuthorize("hasRole('ROLE_ENGINE') or hasRole('ROLE_USER') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> getGroupNames() {
 		JSONObject resp = new JSONObject();
 		resp.appendField("Groups", groupService.getGroupNames());

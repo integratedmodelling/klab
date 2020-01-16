@@ -1,8 +1,6 @@
 package org.integratedmodelling.klab.hub.nodes.controllers;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.groups.MongoGroup;
-import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +16,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.minidev.json.JSONObject;
-
 @RestController
 @RequestMapping("/api/v2/nodes")
 public class MongoNodeController {
+	
 	@Autowired
 	NodeService nodeService;
 	
-	@GetMapping(value = "")
+	@GetMapping(value = "", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
 	public ResponseEntity<?> getNodes() {
 		return new ResponseEntity<>(nodeService.getNodes(), HttpStatus.OK);
 	}
 	
-	@PutMapping(value = "/{nodeName}")
+	@PutMapping(value = "/{nodeName}", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> updateNode(@PathVariable("nodeName") String nodeName, @RequestBody MongoNode node) {
 		if(nodeName.equals(node.getNode())) {
@@ -43,7 +40,7 @@ public class MongoNodeController {
 		return new ResponseEntity<>("The group has been updated successsfully", HttpStatus.OK);
 	}
 	
-	@DeleteMapping(value = "/{nodeName}")
+	@DeleteMapping(value = "/{nodeName}", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> delete(@PathVariable("nodeName") String nodeName,  @RequestBody MongoNode node) {
 		if(nodeName.equals(node.getNode())) {
@@ -54,14 +51,14 @@ public class MongoNodeController {
 		return new ResponseEntity<>("The Groups has been deleted successsfully", HttpStatus.OK);
 	}
 	
-	@GetMapping(value= "/{nodeName}")
-	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
+	@GetMapping(value= "/{nodeName}", produces = "application/json")
+	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> getGroup(@PathVariable("nodeName") String nodeName) {
 		MongoNode node = nodeService.getNode(nodeName);
 		return new ResponseEntity<>(node, HttpStatus.OK);		
 	}
 	
-	@PostMapping(value="")
+	@PostMapping(value="", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> createGroup(@RequestBody MongoNode node) {
 		node = nodeService.createNode(node);

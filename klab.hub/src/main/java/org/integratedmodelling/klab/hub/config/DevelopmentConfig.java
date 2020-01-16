@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.config;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -10,9 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.auth.Hub;
+import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
+import org.integratedmodelling.klab.hub.license.ArmoredKeyPair;
+import org.integratedmodelling.klab.hub.license.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.licenses.services.PgpKeyService;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.service.LdapService;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
@@ -26,6 +33,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import com.mongodb.MongoClient;
+import com.mongodb.client.model.CreateCollectionOptions;
+
+
 
 @Profile("development")
 @Configuration
@@ -41,7 +53,13 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	KlabUserManager klabUserManager;
 	
 	@Autowired
+	HubAuthenticationManager hubAuthenticationManager;
+	
+	@Autowired
 	LdapService ldapService;
+	
+	@Autowired
+	PgpKeyService keyService;
 	
 	private static final List<User> initialUsers = new ArrayList<User>(100);
 	
@@ -185,6 +203,32 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	public void onApplicationEvent(ContextRefreshedEvent arg0) {
 		createIntialGroups();
 		createInitialUsers();
+		try {
+			createInitialConfiguration();
+		} catch (PGPException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void createInitialConfiguration() throws PGPException, IOException {
+		MongoClient client = new MongoClient();
+		MongoTemplate template = new MongoTemplate(client, "collaborationTest");
+		if(!template.getCollectionNames().contains("LicenseConfigurations")) {
+//			CreateCollectionOptions options = new CreateCollectionOptions()
+//					.capped(true)
+//					.autoIndex(false)
+//					.sizeInBytes(256);
+			client.getDatabase("collaborationTest").createCollection("LicenseConfigurations");
+			LicenseConfiguration config = new LicenseConfiguration();
+			config.setEmail("info@intergratedmodelling.org");
+			config.setHubId("IM");
+			config.setKeyString("Not sure this is very important");
+			config.setPassphrase("password");
+			ArmoredKeyPair keys = keyService.generateKeys(2048, config.getHubId(), config.getEmail(), config.getPassphrase());
+			config.setKeys(keys);
+			template.save(config, "LicenseConfigurations");
+		}
 	}
 
 }
