@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v2/nodes")
 public class MongoNodeController {
 	
+	private NodeService nodeService;
+	
 	@Autowired
-	NodeService nodeService;
+	MongoNodeController(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
 	
 	@GetMapping(value = "", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
@@ -42,7 +46,7 @@ public class MongoNodeController {
 	
 	@DeleteMapping(value = "/{nodeName}", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<Object> delete(@PathVariable("nodeName") String nodeName,  @RequestBody MongoNode node) {
+	public ResponseEntity<Object> deleteNode(@PathVariable("nodeName") String nodeName,  @RequestBody MongoNode node) {
 		if(nodeName.equals(node.getNode())) {
 			nodeService.deleteNode(node);	
 		} else {
@@ -53,14 +57,14 @@ public class MongoNodeController {
 	
 	@GetMapping(value= "/{nodeName}", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
-	public ResponseEntity<Object> getGroup(@PathVariable("nodeName") String nodeName) {
+	public ResponseEntity<Object> getNode(@PathVariable("nodeName") String nodeName) {
 		MongoNode node = nodeService.getNode(nodeName);
 		return new ResponseEntity<>(node, HttpStatus.OK);		
 	}
 	
 	@PostMapping(value="", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<Object> createGroup(@RequestBody MongoNode node) {
+	public ResponseEntity<Object> createNode(@RequestBody MongoNode node) {
 		node = nodeService.createNode(node);
 		return new ResponseEntity<>(node, HttpStatus.CREATED);
 	}

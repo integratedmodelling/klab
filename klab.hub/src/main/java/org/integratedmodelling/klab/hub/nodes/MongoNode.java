@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.nodes;
 
 import java.util.List;
-import javax.persistence.GeneratedValue;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -10,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "Nodes")
 public class MongoNode {
 	
-    @Id @GeneratedValue
+    @Id
     String id;
 
     @Indexed(unique = true)

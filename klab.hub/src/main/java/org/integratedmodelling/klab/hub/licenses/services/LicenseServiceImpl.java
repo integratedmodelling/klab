@@ -91,7 +91,7 @@ public class LicenseServiceImpl implements LicenseService {
 				configuration.getHubId()) + new Date();
 		properties.store(writer, generatedBy);
 		license.setLicense(writer.toString());
-		license.loadKey(targetStream, configuration.getHubId());
+		license.loadKey(targetStream, configuration.getHubId() + " <" + configuration.getEmail() + ">");
         String encodedLicenseString = license.encodeLicense(configuration.getPassphrase());
         return encodedLicenseString;
 	}
@@ -128,6 +128,8 @@ public class LicenseServiceImpl implements LicenseService {
 		config.setHubId("IM");
 		config.setKeyString("Not sure this is very important");
 		config.setPassphrase(password);
+		config.setName("Integrated Modelling Hub");
+		config.setHubUrl("localhost:8284/hub");
 		
 		ArmoredKeyPair keys = null;
 		try {

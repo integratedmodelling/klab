@@ -24,29 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class NodeLicenseController {
 	
-	@Autowired
-	NodeService nodeService;
-	
-	@Autowired
-	LicenseService licenseService;
-	
-	@GetMapping(value= "/{id}", params = "certificate")
-	@RolesAllowed({ "ROLE_SYSTEM" })
-	public void generateNodeCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
-		MongoNode node = nodeService.getNode(id);
-		byte[] certFileContent = null;
-		try {
-			certFileContent = licenseService.generateCertFile(node);
-		} catch (GeneralSecurityException | PGPException e) {
-			throw new BadRequestException("Error Creating node certificate byte String");
-		}
-		String certFileString = String.format("attachment; filename=%s", licenseService.get_NODE_CERT_FILE_NAME());
-		response.setHeader("Content-disposition", certFileString);
-		response.setContentType("text/plain;charset=utf-8");
-		response.setContentLength(certFileContent.length);
-		IOUtils.copy(new ByteArrayInputStream(certFileContent), response.getOutputStream());
-		response.flushBuffer();
-		IOUtils.closeQuietly(response.getOutputStream());
-	}
+
 
 }

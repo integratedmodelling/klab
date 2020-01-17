@@ -12,6 +12,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class NodeServiceImpl implements NodeService {
 	
+	public NodeServiceImpl(MongoNodeRepository repository) {
+		super();
+		this.repository = repository;
+	}
+
 	private MongoNodeRepository repository;
 
 	@Override
