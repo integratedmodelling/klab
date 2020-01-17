@@ -123,12 +123,6 @@ public enum WeatherEvents {
 			Variable xcenter = ncfile.findVariable("xcentermean");
 			Variable ycenter = ncfile.findVariable("ycentermean");
 
-//			Range x = new Range();
-//			Range y = new Range();
-//			Range t = new Range();
-//			Range p = new Range();
-//			Range s = new Range();
-
 			DateTime start = new DateTime(1998, 1, 1, 0, 0);
 
 			/*
@@ -173,13 +167,13 @@ public enum WeatherEvents {
 				long durationMs = (long) timespanv * 60 * 60 * 1000;
 
 				Map<String, Object> data = new HashMap<>();
-				data.put("bounding_box", boundingBox);
-				data.put("precipitation_mm", mmPerHour);
-				data.put("area_m2", spacespanv);
-				data.put("start_long", startTimeMs);
-				data.put("end_long", startTimeMs + durationMs);
-				data.put("duration_hours", (long) timespanv);
-				data.put("id", (long) n);
+				data.put(WeatherEvent.BOUNDING_BOX, boundingBox);
+				data.put(WeatherEvent.PRECIPITATION_MM, mmPerHour);
+				data.put(WeatherEvent.AREA_M2, spacespanv);
+				data.put(WeatherEvent.START_LONG, startTimeMs);
+				data.put(WeatherEvent.END_LONG, startTimeMs + durationMs);
+				data.put(WeatherEvent.DURATION_HOURS, (long) timespanv);
+				data.put(WeatherEvent.ID, (long) n);
 
 				WeatherEvent event = new WeatherEvent(data);
 				ebox.store(event, monitor);
@@ -189,25 +183,7 @@ public enum WeatherEvents {
 						+ totalprecipv + " mm of shit" + " over "
 						+ NumberFormat.getInstance().format(spacespanv / 1000000.0) + "km2.\nBounding box is "
 						+ boundingBox);
-
-//				
-//				
-//				x.include(xminv);
-//				x.include(xmaxv);
-//				y.include(yminv);
-//				y.include(ymaxv);
-//				t.include(tstartv);
-//				s.include(timespanv);
-//				p.include(totalprecipv);
-//
-//				if (n % 100000 == 0) {
-//					System.out.println("Done " + n);
-//					System.out.println("x: " + x + "; y = " + y + "; t = " + t + "; s = " + s + "; p = " + p);
-//				}
 			}
-
-//			System.out.println("FINISHED\n");
-//			System.out.println("FINAL x: " + x + "; y = " + y + "; t = " + t + "; s = " + s + "; p = " + p);
 
 		} catch (Throwable t) {
 			throw new KlabIOException(t);

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.node.resources;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +25,10 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IActivity;
+import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
@@ -53,7 +57,8 @@ import org.jgrapht.Graph;
 public class ResourceScope implements IRuntimeScope {
 
 	/**
-	 * Use when called from a JSON post request without additional inputs
+	 * Use when called from a JSON post request without additional inputs. May build
+	 * dummy artifacts for any additional outputs.
 	 * 
 	 * @param resource
 	 * @param geometry
@@ -64,7 +69,8 @@ public class ResourceScope implements IRuntimeScope {
 
 	/**
 	 * Use when called from a post request carrying input and everything else in a
-	 * KlabData object.
+	 * KlabData object. This will build artifacts for the inputs and possibly for
+	 * the outputs.
 	 * 
 	 * @param request
 	 */
@@ -311,13 +317,13 @@ public class ResourceScope implements IRuntimeScope {
 	@Override
 	public void putAll(Map<? extends String, ? extends Object> m) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void clear() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -377,13 +383,13 @@ public class ResourceScope implements IRuntimeScope {
 	@Override
 	public void setData(String name, IArtifact data) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void set(String name, Object value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -401,25 +407,25 @@ public class ResourceScope implements IRuntimeScope {
 	@Override
 	public void rename(String name, String alias) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setTarget(IArtifact target) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setScale(IScale geometry) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void processAnnotation(IAnnotation annotation) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -443,13 +449,13 @@ public class ResourceScope implements IRuntimeScope {
 	@Override
 	public void link(IArtifact parent, IArtifact child) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void replaceTarget(IArtifact self) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -467,13 +473,13 @@ public class ResourceScope implements IRuntimeScope {
 	@Override
 	public void setModel(Model model) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeArtifact(IArtifact object) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -517,7 +523,7 @@ public class ResourceScope implements IRuntimeScope {
 	@Override
 	public void newPredicate(IDirectObservation target, IConcept predicate) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -529,7 +535,7 @@ public class ResourceScope implements IRuntimeScope {
 	@Override
 	public void scheduleActions(Actuator active) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -544,4 +550,162 @@ public class ResourceScope implements IRuntimeScope {
 		return null;
 	}
 
+	@Override
+	public Collection<IArtifact> getAdditionalOutputs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	class DummyArtifact implements IArtifact {
+
+		@Override
+		public String getId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getTimestamp() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
+
+		@Override
+		public Iterator<IArtifact> iterator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IGeometry getGeometry() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IMetadata getMetadata() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getUrn() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IAnnotation> getAnnotations() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IAgent getConsumer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IAgent getOwner() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IActivity getGenerator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IArtifact> getAntecedents() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IArtifact> getConsequents() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IArtifact trace(IConcept concept) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IArtifact> collect(IConcept concept) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IArtifact trace(IConcept role, IDirectObservation roleContext) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IArtifact> getChildArtifacts() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int groupSize() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public IProvenance getProvenance() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Type getType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void release() {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public boolean is(Class<?> cls) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public <T> T as(Class<?> cls) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean isArchetype() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+	}
 }

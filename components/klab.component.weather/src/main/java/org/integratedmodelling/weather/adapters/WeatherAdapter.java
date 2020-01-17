@@ -14,8 +14,12 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.weather.WeatherComponent;
+import org.integratedmodelling.weather.data.WeatherEvent;
 import org.integratedmodelling.weather.data.WeatherEvents;
 import org.integratedmodelling.weather.data.WeatherFactory;
+import org.integratedmodelling.weather.data.WeatherStation;
 
 /**
  * Urns:
@@ -69,8 +73,10 @@ public class WeatherAdapter implements IUrnAdapter {
 			getInterpolatedData(urn, builder, geometry, context);
 			break;
 		case stations:
+			getStations(urn, builder, geometry, context);
 			break;
 		case storms:
+			getStorms(urn, builder, geometry, context);
 			break;
 		default:
 			break;
@@ -81,9 +87,40 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	}
 
+	private void getStations(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void getStorms(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+		
+		double minPrecipitation = 0;
+		
+		if (urn.getParameters().containsKey("minprec")) {
+			minPrecipitation = Double.parseDouble(urn.getParameters().get("minprec").toString());
+		}
+		
+		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation)) {
+			
+			Builder ob = builder.startObject("result", "storm_" + event.asData().get(WeatherEvent.ID),
+					(IGeometry) event.asData().get(WeatherEvent.BOUNDING_BOX));
+			
+			Builder sb = ob.startState("precipitation");
+			sb.add(event.asData().get(WeatherEvent.PRECIPITATION_MM));
+			sb.finishState();
+
+			Builder db = ob.startState("duration");
+			db.add(event.asData().get(WeatherEvent.DURATION_HOURS));
+			db.finishState();
+			
+			ob.finishObject();
+		}
+
+	}
+
 	private void getInterpolatedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -136,7 +173,7 @@ public class WeatherAdapter implements IUrnAdapter {
 	public String getDescription() {
 		return "Weather stations and their data, reconstructed storm events and on-demand interpolation of weather records.";
 	}
-	
+
 	@Override
 	public IResource getResource(String urn) {
 		// TODO Auto-generated method stub
