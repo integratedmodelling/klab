@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.hub.manager.KlabNodeManager;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
-import org.integratedmodelling.klab.hub.service.LicenseService;
+import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class KNodeController {
 	KlabNodeManager klabNodeManager;
 	
 	@Autowired
-	LicenseService licenseManager;
+	LicenseServiceLegacy licenseManager;
 	
 	@GetMapping(value = "")
 	public ResponseEntity<Object> getNodes() {

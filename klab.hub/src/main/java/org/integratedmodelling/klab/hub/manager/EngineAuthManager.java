@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
-import org.integratedmodelling.klab.hub.service.LicenseService;
+import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 public class EngineAuthManager {
 	
 	@Autowired
-	LicenseService licenseManager;
+	LicenseServiceLegacy licenseManager;
 	
 	@Autowired
 	TokenManager tokenManager;

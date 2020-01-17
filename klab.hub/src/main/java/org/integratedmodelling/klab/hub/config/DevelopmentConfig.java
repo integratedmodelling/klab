@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.config;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -13,7 +14,6 @@ import java.util.Set;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
@@ -34,8 +34,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import com.google.common.hash.Hashing;
 import com.mongodb.MongoClient;
-import com.mongodb.client.model.CreateCollectionOptions;
 
 
 
@@ -212,23 +213,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	}
 
 	private void createInitialConfiguration() throws PGPException, IOException {
-		MongoClient client = new MongoClient();
-		MongoTemplate template = new MongoTemplate(client, "collaborationTest");
-		if(!template.getCollectionNames().contains("LicenseConfigurations")) {
-//			CreateCollectionOptions options = new CreateCollectionOptions()
-//					.capped(true)
-//					.autoIndex(false)
-//					.sizeInBytes(256);
-			client.getDatabase("collaborationTest").createCollection("LicenseConfigurations");
-			LicenseConfiguration config = new LicenseConfiguration();
-			config.setEmail("info@intergratedmodelling.org");
-			config.setHubId("IM");
-			config.setKeyString("Not sure this is very important");
-			config.setPassphrase("password");
-			ArmoredKeyPair keys = keyService.generateKeys(2048, config.getHubId(), config.getEmail(), config.getPassphrase());
-			config.setKeys(keys);
-			template.save(config, "LicenseConfigurations");
-		}
+		
 	}
 
 }

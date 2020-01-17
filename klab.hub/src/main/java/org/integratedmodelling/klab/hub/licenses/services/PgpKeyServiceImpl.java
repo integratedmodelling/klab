@@ -35,7 +35,6 @@ public class PgpKeyServiceImpl implements PgpKeyService {
 	
 	private BigInteger publicExponent = BigInteger.valueOf(0x10001);
 	private SecureRandom random = new SecureRandom();
-	private int strength = 2048;
 	private int certainty = 12; 
 	private int s2kcount = 0xc0;
 	

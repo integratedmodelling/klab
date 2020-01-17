@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.config.LicenseConfig;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
-import org.integratedmodelling.klab.hub.service.LicenseService;
+import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
 import org.integratedmodelling.klab.hub.users.User;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import com.verhas.licensor.License;
 
 @Component
-public class LicenseServiceImpl implements LicenseService {
+public class LicenseServiceLegacyImpl implements LicenseServiceLegacy {
 	
 	@Autowired
 	LinkConfig linkConfig;

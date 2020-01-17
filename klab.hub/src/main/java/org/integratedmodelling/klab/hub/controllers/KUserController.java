@@ -19,7 +19,7 @@ import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
-import org.integratedmodelling.klab.hub.service.LicenseService;
+import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
 import org.integratedmodelling.klab.hub.tokens.ChangePasswordClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.ClickbackAction;
 import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
@@ -53,7 +53,7 @@ public class KUserController {
 	TokenManager tokenManager;
 	
 	@Autowired
-	LicenseService licenseManager;
+	LicenseServiceLegacy licenseManager;
 	
 	@Autowired
 	KlabUserManager klabUserManager;

@@ -11,7 +11,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.users.User;
 
-public interface LicenseService {
+public interface LicenseServiceLegacy {
 
 	byte[] generateCert(User user);
 

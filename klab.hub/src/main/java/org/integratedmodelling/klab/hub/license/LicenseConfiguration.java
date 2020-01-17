@@ -18,9 +18,17 @@ public class LicenseConfiguration {
 	
 	private String name;
 	
+	private String hubUrl;
+	
 	private String passphrase;
 	
 	private ArmoredKeyPair keys;
+
+	private String digest;
+	
+	public String getId() {
+		return id;
+	}
 
 	public String getEmail() {
 		return email;
@@ -68,6 +76,22 @@ public class LicenseConfiguration {
 
 	public void setPassphrase(String passphrase) {
 		this.passphrase = passphrase;
+	}
+
+	public void setDigest(String sha256hex) {
+		this.digest = sha256hex;		
+	}
+
+	public String getDigest() {
+		return this.digest;
+	}
+
+	public String getHubUrl() {
+		return hubUrl;
+	}
+
+	public void setHubUrl(String hubUrl) {
+		this.hubUrl = hubUrl;
 	}
 	
 }
