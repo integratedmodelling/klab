@@ -30,10 +30,11 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.navigator.model.EResource;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.views.ResourcesView;
 import org.integratedmodelling.klab.rest.NodeReference;
-import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
@@ -67,7 +68,15 @@ public class PublishResourceWizard extends Wizard {
 			request.setSuggestedCatalog(page.getSuggestedCatalog());
 			request.setSuggestedNamespace(page.getSuggestedNamespace());
 			request.setPermissions(page.getPermissions());
-			
+
+			/*
+			 * open a ticket
+			 */
+			Activator.session().getTicketManager().open(ITicket.Type.ResourceSubmission, "resource", target.getUrn());
+			Eclipse.INSTANCE.openView(ResourcesView.ID, (view) -> {
+				((ResourcesView) view).showPending();
+			});
+
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
 
 			return true;

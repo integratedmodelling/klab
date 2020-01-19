@@ -126,7 +126,7 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		IResource ret = null;
 		File resourcePath = new File(this.resourcePath + File.separator + NameGenerator.shortUUID());
-		Resource resource = importResourceData(reference, user);
+		Resource resource = importResourceData(resourcePath, reference, user);
 		File metadata = new File(resourcePath + File.separator + "resource.json");
 		try {
 			FileUtils.writeStringToFile(metadata, JsonUtils.printAsJson(resource.getReference()),
@@ -162,7 +162,7 @@ public class ResourceCatalog implements IResourceCatalog {
 	 * @param reference
 	 * @return the correspondent resource
 	 */
-	private Resource importResourceData(ResourceReference reference, EngineAuthorization user) {
+	private Resource importResourceData(File resourcePath, ResourceReference reference, EngineAuthorization user) {
 
 		/*
 		 * fix the resource reference
@@ -173,7 +173,7 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		reference.setLocalName(id);
 		reference.setProjectName(null);
-		reference.setLocalPath("");
+		reference.setLocalPath(resourcePath.toString());
 		List<String> localpaths = new ArrayList<>();
 		for (String s : reference.getLocalPaths()) {
 			localpaths.add(removeProject(s));
@@ -246,7 +246,7 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		File metadata = new File(resourcePath + File.separator + "resource.json");
 		ResourceReference reference = JsonUtils.load(metadata, ResourceReference.class);
-		IResource ret = importResourceData(reference, user);
+		IResource ret = importResourceData(resourcePath, reference, user);
 
 		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(ret.getAdapterType());
 		IResourcePublisher publisher = adapter == null ? null : adapter.getPublisher();

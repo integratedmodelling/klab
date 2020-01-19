@@ -94,7 +94,7 @@ public enum Klab implements IRuntimeService {
 		rootMonitor = new RootMonitor();
 		setupExtensions();
 		this.ticketManager = new TicketManager(
-				new File(Configuration.INSTANCE.getDataPath() + File.separator + "tickets.json"));
+				new File(Configuration.INSTANCE.getDataPath() + File.separator + "tickets.engine.json"));
 		Services.INSTANCE.registerService(this, IRuntimeService.class);
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
