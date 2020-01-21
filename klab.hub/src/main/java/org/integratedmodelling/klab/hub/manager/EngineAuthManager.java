@@ -39,9 +39,6 @@ public class EngineAuthManager {
 	JwtTokenManager jwtTokenManager;
 	
 	@Autowired
-	HubAuthenticationManager hubAuthenticationManager;
-	
-	@Autowired
 	NetworkManager networkManager;
 	
 	public EngineAuthenticationResponse processEngineCert(EngineAuthenticationRequest request, String ip) {
@@ -78,7 +75,7 @@ public class EngineAuthManager {
 				now.toString());
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engineUser.getGroups(),
 				tomorrow.toString(), engineUser.getId());
-		return new EngineAuthenticationResponse(authenticatedIdentity, hubAuthenticationManager.getHubReference(),
+		return new EngineAuthenticationResponse(authenticatedIdentity, HubAuthenticationManager.INSTANCE.getHubReference(),
 				networkManager.getNodes(engineUser.getGroups()));
 	}
 
@@ -127,7 +124,7 @@ public class EngineAuthManager {
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engineUser.getGroups(),
 				tomorrow.toString(), engineUser.getId());
 		Logging.INSTANCE.info("Local Engine Run on hub with User: " + engineUser.getUsername());
-		return new EngineAuthenticationResponse(authenticatedIdentity, hubAuthenticationManager.getHubReference(),
+		return new EngineAuthenticationResponse(authenticatedIdentity, HubAuthenticationManager.INSTANCE.getHubReference(),
 				networkManager.getNodes(engineUser.getGroups()));
 	}
 

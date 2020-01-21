@@ -31,9 +31,6 @@ import org.springframework.stereotype.Component;
 public class NodeAuthManager {
 	
 	@Autowired
-	HubAuthenticationManager hubAuthenticationManager;
-	
-	@Autowired
 	LicenseServiceLegacy licenseManager;
 	
 	@Autowired
@@ -75,9 +72,9 @@ public class NodeAuthManager {
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
 				Groups, tomorrow.toString(), node.getId());
 		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
-				hubAuthenticationManager.getHubReference().getId(), Groups,
+				HubAuthenticationManager.INSTANCE.getHubReference().getId(), Groups,
 				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
-		networkManager.notifyAuthorizedNode(node, hubAuthenticationManager.getHubReference(), true);
+		networkManager.notifyAuthorizedNode(node, HubAuthenticationManager.INSTANCE.getHubReference(), true);
 		return response;
 	}
 
@@ -97,7 +94,7 @@ public class NodeAuthManager {
 	        properties.remove(KlabCertificate.KEY_EXPIRATION);
 	        if (certificateProperties.equals(properties)) {
 	        	INodeIdentity ret = null;
-	    		ret = new Node(hubAuthenticationManager.getHubName() + "." + nodename, hubAuthenticationManager.getPartner());
+	    		ret = new Node(HubAuthenticationManager.INSTANCE.getHubName() + "." + nodename, HubAuthenticationManager.INSTANCE.getRootIdentity());
 	    		return ret;
 	        }
 	        return null;
@@ -117,14 +114,14 @@ public class NodeAuthManager {
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
 				Groups, tomorrow.toString(), node.getId());
 		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
-				hubAuthenticationManager.getHubReference().getId(), Groups,
+				HubAuthenticationManager.INSTANCE.getHubReference().getId(), Groups,
 				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
-		networkManager.notifyAuthorizedNode(node, hubAuthenticationManager.getHubReference(), true);
+		networkManager.notifyAuthorizedNode(node, HubAuthenticationManager.INSTANCE.getHubReference(), true);
 		return response;
 		}
 
 	private INodeIdentity authenticateLocalNodeCert(String nodeName) {
-		INodeIdentity node = new Node(hubAuthenticationManager.getHubName() + "." + nodeName, hubAuthenticationManager.getPartner());
+		INodeIdentity node = new Node(HubAuthenticationManager.INSTANCE.getHubName() + "." + nodeName, HubAuthenticationManager.INSTANCE.getRootIdentity());
 		try {
 			node.getUrls().add("http://"+IPUtils.getLocalIp()+":8287/node");
 		} catch (Exception e) {

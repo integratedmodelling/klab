@@ -69,7 +69,6 @@ public class LicenseServiceImpl implements LicenseService {
 		DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS);
 		properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
 		properties.setProperty(KlabCertificate.KEY_NODENAME, node.getNode());
-		properties.setProperty(KlabCertificate.KEY_EMAIL, node.getEmail());
 		properties.setProperty(KlabCertificate.KEY_SIGNATURE, configuration.getKeyString());
 		properties.setProperty(KlabCertificate.KEY_PARTNER_NAME, configuration.getName());
 		properties.setProperty(KlabCertificate.KEY_PARTNER_EMAIL, configuration.getEmail());

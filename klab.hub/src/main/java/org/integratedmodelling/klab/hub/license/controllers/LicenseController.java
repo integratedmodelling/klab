@@ -3,19 +3,43 @@ package org.integratedmodelling.klab.hub.license.controllers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openpgp.PGPException;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.groups.commands.GetNodesGroups;
+import org.integratedmodelling.klab.hub.groups.commands.GetNodesMongoGroups;
+import org.integratedmodelling.klab.hub.groups.services.GroupService;
+import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
+import org.integratedmodelling.klab.hub.license.commands.EvaluateNodeLicenseProperties;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseService;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
+import org.integratedmodelling.klab.hub.nodes.commands.GetINodeIdentity;
+import org.integratedmodelling.klab.hub.nodes.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
+import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
+import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
+import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
+import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +52,9 @@ public class LicenseController {
 	
 	@Autowired
 	LicenseService licenseService;
+	
+	@Autowired
+	MongoGroupRepository groupRepository;
 	
 	@GetMapping(value= "/nodes/{id}", params = "certificate")
 	@RolesAllowed({ "ROLE_SYSTEM" })
@@ -46,6 +73,43 @@ public class LicenseController {
 		IOUtils.copy(new ByteArrayInputStream(certFileContent), response.getOutputStream());
 		response.flushBuffer();
 		IOUtils.closeQuietly(response.getOutputStream());
+	}
+	
+	@PostMapping(value= "/nodes/auth-cert")
+	@RolesAllowed({ "ROLE_SYSTEM" })
+	public ResponseEntity<NodeAuthenticationResponse> processNodeCertificate(@RequestBody NodeAuthenticationRequest request, HttpServletRequest httpRequest) {
+        String remoteAddr = "";
+
+        if (httpRequest != null) {
+            remoteAddr = httpRequest.getHeader("X-FORWARDED-FOR");
+            if (remoteAddr == null || "".equals(remoteAddr)) {
+                remoteAddr = httpRequest.getRemoteAddr();
+            }
+        }
+        
+        MongoNode node = nodeService.getNode(request.getNodeName());
+        
+        boolean compare = 
+        		new EvaluateNodeLicenseProperties(
+        				node, 
+        				licenseService, 
+        				request.getCertificate()).execute();
+
+        if(compare) {
+        	Set<Group> groups = new GetNodesGroups(node, groupRepository).execute();
+        	AuthenticatedIdentity authenticatedIdentity = 
+        			new GetNodeAuthenticatedIdentity(node, groups).execute();
+        	
+    		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
+    				HubAuthenticationManager.INSTANCE.getHubReference().getId(), groups,
+    				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
+    		
+    		return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+        	NodeAuthenticationResponse response = new NodeAuthenticationResponse();
+        	return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
+
 	}
 
 }

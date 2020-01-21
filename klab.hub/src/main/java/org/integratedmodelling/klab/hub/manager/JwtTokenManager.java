@@ -22,12 +22,10 @@ public class JwtTokenManager {
 	private static final String ENGINE_AUDIENCE = "engine";
 	private static final int EXPIRATION_DAYS = 10;
 	
-	@Autowired
-	private HubAuthenticationManager hubAuthenticationManager;
 
 	public String createEngineJwtToken(User user) {
 		JwtClaims claims = new JwtClaims();
-		claims.setIssuer(hubAuthenticationManager.getHubReference().getId());
+		claims.setIssuer(HubAuthenticationManager.INSTANCE.getHubReference().getId());
 		claims.setSubject(user.getUsername());
 		claims.setAudience(ENGINE_AUDIENCE);
 		claims.setIssuedAtToNow();

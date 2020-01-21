@@ -54,9 +54,6 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	KlabUserManager klabUserManager;
 	
 	@Autowired
-	HubAuthenticationManager hubAuthenticationManager;
-	
-	@Autowired
 	LdapService ldapService;
 	
 	@Autowired

@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class NetworkManager {
 
-	@Autowired
-	HubAuthenticationManager hubAuthenticationManager;
 
 	private Set<INodeIdentity> onlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
@@ -28,10 +26,10 @@ public class NetworkManager {
 	public Collection<NodeReference> getNodes(Set<Group> groups) {
 		Set<NodeReference> ret = new HashSet<>();
 		for (INodeIdentity node : onlineNodes) {
-			ret.add(createNodeReference(node, hubAuthenticationManager.getHubReference(), true));
+			ret.add(createNodeReference(node, HubAuthenticationManager.INSTANCE.getHubReference(), true));
 		}
 		for (INodeIdentity node : offlineNodes) {
-			ret.add(createNodeReference(node, hubAuthenticationManager.getHubReference(), false));
+			ret.add(createNodeReference(node, HubAuthenticationManager.INSTANCE.getHubReference(), false));
 		}
 		return ret;
 	}
@@ -43,7 +41,7 @@ public class NetworkManager {
 		ret.setId(node.getName());
 		ret.setOnline(isOnline);
 		ret.getUrls().addAll(node.getUrls());
-		ret.setPartner(hubAuthenticationManager.getHubReference().getPartner());
+		ret.setPartner(HubAuthenticationManager.INSTANCE.getHubReference().getPartner());
 
 		// TODO more
 

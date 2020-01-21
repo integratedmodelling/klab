@@ -12,17 +12,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class NodeServiceImpl implements NodeService {
 	
-	public NodeServiceImpl(MongoNodeRepository repository) {
+	public NodeServiceImpl(MongoNodeRepository nodeRepository) {
 		super();
-		this.repository = repository;
+		this.nodeRepository = nodeRepository;
 	}
 
-	private MongoNodeRepository repository;
+	private MongoNodeRepository nodeRepository;
 
 	@Override
 	public MongoNode createNode(MongoNode node) {
 		if (!nodeExists(node.getNode())) {
-			return new CreateMongoNode(node, repository).execute();
+			return new CreateMongoNode(node, nodeRepository).execute();
 		} else {
 			throw new BadRequestException("Node by that name already exists");
 		}
@@ -48,11 +48,11 @@ public class NodeServiceImpl implements NodeService {
 
 	@Override
 	public MongoNode getNode(String nodeName) {
-		return new GetMongoNodeByName(nodeName, repository).execute();
+		return new GetMongoNodeByName(nodeName, nodeRepository).execute();
 	}
 	
 	private Boolean nodeExists(String nodeName) {
-		return repository.findByNodeIgnoreCase(nodeName).isPresent();
+		return nodeRepository.findByNodeIgnoreCase(nodeName).isPresent();
 	}
 
 }
