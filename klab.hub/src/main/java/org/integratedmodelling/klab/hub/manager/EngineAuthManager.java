@@ -5,10 +5,16 @@ import java.util.Properties;
 
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.API.HUB;
+import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
+import org.integratedmodelling.klab.hub.authentication.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
@@ -17,6 +23,7 @@ import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.utils.IPUtils;
 import org.joda.time.DateTime;
@@ -71,11 +78,15 @@ public class EngineAuthManager {
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
 		EngineUser engineUser = authenticateEngineCert(request);
+		Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
 		IdentityReference userIdentity = new IdentityReference(engineUser.getUsername(), engineUser.getEmailAddress(),
 				now.toString());
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engineUser.getGroups(),
 				tomorrow.toString(), engineUser.getId());
-		return new EngineAuthenticationResponse(authenticatedIdentity, HubAuthenticationManager.INSTANCE.getHubReference(),
+		
+		
+		HubReference hub = new GenerateHubReference().execute();
+		return new EngineAuthenticationResponse(authenticatedIdentity, hub,
 				networkManager.getNodes(engineUser.getGroups()));
 	}
 
@@ -124,7 +135,8 @@ public class EngineAuthManager {
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engineUser.getGroups(),
 				tomorrow.toString(), engineUser.getId());
 		Logging.INSTANCE.info("Local Engine Run on hub with User: " + engineUser.getUsername());
-		return new EngineAuthenticationResponse(authenticatedIdentity, HubAuthenticationManager.INSTANCE.getHubReference(),
+		HubReference hub = new GenerateHubReference().execute();
+		return new EngineAuthenticationResponse(authenticatedIdentity, hub,
 				networkManager.getNodes(engineUser.getGroups()));
 	}
 

@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.hub.license.controllers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
@@ -12,19 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openpgp.PGPException;
-import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
+import org.integratedmodelling.klab.Authentication;
+import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.commands.GetNodesGroups;
-import org.integratedmodelling.klab.hub.groups.commands.GetNodesMongoGroups;
-import org.integratedmodelling.klab.hub.groups.services.GroupService;
-import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
 import org.integratedmodelling.klab.hub.license.commands.EvaluateNodeLicenseProperties;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseService;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
-import org.integratedmodelling.klab.hub.nodes.commands.GetINodeIdentity;
 import org.integratedmodelling.klab.hub.nodes.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -100,8 +93,10 @@ public class LicenseController {
         	AuthenticatedIdentity authenticatedIdentity = 
         			new GetNodeAuthenticatedIdentity(node, groups).execute();
         	
-    		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
-    				HubAuthenticationManager.INSTANCE.getHubReference().getId(), groups,
+    		NodeAuthenticationResponse response = new NodeAuthenticationResponse(
+    				authenticatedIdentity,
+    				Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class).getId(),
+    				groups,
     				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
     		
     		return new ResponseEntity<>(response, HttpStatus.OK);

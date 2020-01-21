@@ -39,16 +39,11 @@ public enum HubAuthenticationManager {
 	private Map<String, KlabCertificate> nodeCertificates = new HashMap<>();
 	private Map<String, KlabCertificate> hubCertificates = new HashMap<>();
 
-	// set after authentication
-	HubReference hubReference;
-
 	String hubName = null;
 
 	Client client = Client.create();
 	
 	LicenseConfig licenseConfig;
-	
-	IPartnerIdentity rootIdentity;
 
 	private HubAuthenticationManager() {
 
@@ -66,14 +61,6 @@ public enum HubAuthenticationManager {
 		}
 	}
 
-	public HubReference getHubReference() {
-		return this.hubReference;
-	}
-
-    public IPartnerIdentity getRootIdentity() {
-        return rootIdentity;
-    }
-
 	/**
 	 * Read our own certificate and set the necessary permissions.
 	 * 
@@ -89,7 +76,7 @@ public enum HubAuthenticationManager {
 		partnerIdentity.setId(certificate.getProperty(ICertificate.KEY_PARTNER_NAME));
 		partnerIdentity.setEmail(certificate.getProperty(ICertificate.KEY_PARTNER_EMAIL));
 		partnerIdentity.setLastLogin(DateTime.now().toString());
-		rootIdentity = new Partner(partnerIdentity);
+		IPartnerIdentity rootIdentity = new Partner(partnerIdentity);
 		
 		Authentication.INSTANCE.registerIdentity(rootIdentity);
 		

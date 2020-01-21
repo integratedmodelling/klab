@@ -3,7 +3,10 @@ package org.integratedmodelling.klab.hub.manager;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.API.HUB;
+import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.hub.users.Role;
@@ -25,7 +28,8 @@ public class JwtTokenManager {
 
 	public String createEngineJwtToken(User user) {
 		JwtClaims claims = new JwtClaims();
-		claims.setIssuer(HubAuthenticationManager.INSTANCE.getHubReference().getId());
+		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
+		claims.setIssuer(hub.getId());
 		claims.setSubject(user.getUsername());
 		claims.setAudience(ENGINE_AUDIENCE);
 		claims.setIssuedAtToNow();
