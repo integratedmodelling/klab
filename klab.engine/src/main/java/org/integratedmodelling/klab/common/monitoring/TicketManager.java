@@ -8,10 +8,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Network;
+import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.ITicket.Status;
 import org.integratedmodelling.klab.api.runtime.ITicketManager;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
@@ -19,20 +26,51 @@ public class TicketManager implements ITicketManager {
 
 	private Map<String, Ticket> catalog;
 
+	private final static int REMOTE_TICKET_CHECKING_PERIOD_SECONDS = 30;
+
+	/*
+	 * TODO add periodic checking of all node tickets that are still open.
+	 */
+	Timer timer;
+
 	public TicketManager(File file) {
-		catalog = Collections.synchronizedMap(new FileCatalog<Ticket>(file, Ticket.class, Ticket.class));
+		this.catalog = Collections
+				.synchronizedMap(new FileCatalog<Ticket>(file, Ticket.class, Ticket.class).setSynchronization(true));
+		this.timer = new Timer(true);
+		this.timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				checkRemoteTickets();
+			}
+		}, 5 * 1000, REMOTE_TICKET_CHECKING_PERIOD_SECONDS * 1000);
 	}
 
-	@Override
-	public void open(ITicket ticket) {
-		((Ticket)ticket).setStatus(Status.OPEN);
-		catalog.put(ticket.getId(), (Ticket)ticket);
-	}
+	protected void checkRemoteTickets() {
 
-	@Override
-	public void resolve(ITicket ticket, ITicket.Status status) {
-		((Ticket)ticket).setStatus(status);
-		catalog.put(ticket.getId(), (Ticket)ticket);
+		List<Ticket> remoteOpen = new ArrayList<>();
+		for (Ticket ticket : this.catalog.values()) {
+			if (ticket.getStatus() == Status.OPEN && ticket.getData().containsKey("node")) {
+				remoteOpen.add(ticket);
+			}
+		}
+
+		for (Ticket ticket : remoteOpen) {
+			INodeIdentity node = Network.INSTANCE.getNode(ticket.getData().get("node"));
+			if (node != null) {
+				try {
+					TicketResponse.Ticket response = node.getClient().get(API.TICKET.INFO, TicketResponse.Ticket.class);
+					// use catalog.get() for synchronization
+					if (response.getStatus() != Status.OPEN) {
+						Logging.INSTANCE
+								.info("ticket " + response.getId() + " status changed to " + response.getStatus());
+						catalog.get(ticket.getId()).update(response);
+					}
+				} catch (Throwable e) {
+					// do nothing
+				}
+			}
+		}
+
 	}
 
 	@Override
@@ -49,6 +87,7 @@ public class TicketManager implements ITicketManager {
 		Set<String> ret = new HashSet<>();
 		for (Ticket ticket : catalog.values()) {
 			if (ticket.matches(selectors)) {
+				ticket.manager = this;
 				ret.add(ticket.getId());
 			}
 		}
@@ -57,7 +96,9 @@ public class TicketManager implements ITicketManager {
 
 	@Override
 	public ITicket getTicket(String id) {
-		return catalog.get(id);
+		Ticket ret = catalog.get(id);
+		ret.manager = this;
+		return ret;
 	}
 
 	@Override
@@ -69,10 +110,40 @@ public class TicketManager implements ITicketManager {
 	}
 
 	@Override
-	public ITicket create(Object... objects) {
+	public ITicket open(Object... objects) {
 		Ticket ticket = Ticket.create(NameGenerator.shortUUID(), objects);
-		open(ticket);
+		catalog.put(ticket.getId(), ticket);
+		ticket.manager = this;
 		return ticket;
+	}
+
+	void put(Ticket ticket) {
+		catalog.put(ticket.getId(), ticket);
+	}
+
+	public static TicketResponse.Ticket encode(ITicket t) {
+		TicketResponse.Ticket ret = new TicketResponse.Ticket();
+		ret.setId(t.getId());
+		ret.getData().putAll(t.getData());
+		ret.setPostDate(t.getPostDate().getTime());
+		ret.setResolutionDate(t.getResolutionDate() == null ? 0 : t.getResolutionDate().getTime());
+		ret.setStatus(t.getStatus());
+		ret.setType(t.getType());
+		ret.setStatusMessage(t.getStatusMessage());
+		return ret;
+	}
+
+	@Override
+	public Collection<ITicket> getResolvedAfter(long l) {
+		Set<ITicket> ret = new HashSet<>();
+		for (Ticket ticket : catalog.values()) {
+			if (ticket.getStatus() != Status.OPEN && ticket.getResolutionDate() != null
+					&& ticket.getResolutionDate().getTime() >= l) {
+				ticket.manager = this;
+				ret.add(ticket);
+			}
+		}
+		return ret;
 	}
 
 }

@@ -30,10 +30,11 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.navigator.model.EResource;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.views.ResourcesView;
 import org.integratedmodelling.klab.rest.NodeReference;
-import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
@@ -64,23 +65,20 @@ public class PublishResourceWizard extends Wizard {
 			request.setUrn(target.getUrn());
 			request.setNode(page.getTargetNode());
 			request.setSuggestedName(page.getSuggestedName());
-			
-			Activator.post((message) -> {
-				System.out.println("GOT RESPONSE " + message.getPayload(ResourcePublishResponse.class));
-//				File file = message.getPayload(ProjectModificationNotification.class).getFile();
-//				Activator.loader().add(file);
-//				Display.getDefault().asyncExec(() -> {
-//					IFile ifile = Eclipse.INSTANCE.getIFile(file);
-//					try {
-//						ifile.getParent().refreshLocal(IFolder.DEPTH_INFINITE, null);
-//					    Eclipse.INSTANCE.openFile(
-//								ifile,
-//								0);
-//					    KlabNavigator.refresh();
-//					} catch (CoreException e) {
-//					}
-//				});
-			}, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
+			request.setSuggestedCatalog(page.getSuggestedCatalog());
+			request.setSuggestedNamespace(page.getSuggestedNamespace());
+			request.setPermissions(page.getPermissions());
+
+			/*
+			 * open a ticket
+			 */
+			Activator.session().getTicketManager().open(ITicket.Type.ResourceSubmission, "resource", target.getUrn());
+			Eclipse.INSTANCE.openView(ResourcesView.ID, (view) -> {
+				((ResourcesView) view).showPending();
+			});
+
+			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
+
 			return true;
 		}
 
@@ -89,7 +87,7 @@ public class PublishResourceWizard extends Wizard {
 
 	private boolean validate(ResourceReference resource) {
 
-		// TODO basic validation of contents; engine will do the rest
+		// TODO basic validation of contents and metadata; engine will do the rest
 
 		return true;
 	}

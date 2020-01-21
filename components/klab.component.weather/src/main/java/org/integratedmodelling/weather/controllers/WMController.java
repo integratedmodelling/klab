@@ -1,4 +1,4 @@
-package org.integratedmodelling.hydrology.weather.controllers;
+package org.integratedmodelling.weather.controllers;
 
 /*******************************************************************************
  *  Copyright (C) 2007, 2015:
@@ -132,6 +132,7 @@ public class WMController {
 		}
 
 		if (out.exists()) {
+			
 			WeatherStation ws = new WeatherStation(name, out);
 
 			WeatherStation existing = WeatherFactory.INSTANCE.getDatabase().retrieve(ws.getId());

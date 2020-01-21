@@ -87,7 +87,9 @@ public class Observable {
 		obs.setExtendedDescription(this.extendedDescription);
 		obs.setDescription(this.description);
 		obs.setSeparator(this.separator);
-		obs.setState(this.state.toString());
+		if(this.state != null) {
+			obs.setState(this.state.toString());
+		}
 		return obs;
 	}
 

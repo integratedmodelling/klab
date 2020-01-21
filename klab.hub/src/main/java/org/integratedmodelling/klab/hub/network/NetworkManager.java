@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.auth.Partner;
+import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeReference;
@@ -39,10 +39,11 @@ public class NetworkManager {
 		
 		NodeReference ret = new NodeReference();
 		
-		Partner partner = Authentication.INSTANCE.getAuthenticatedIdentity(Partner.class);
+		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
+		
 		IdentityReference partnerIdentity = new IdentityReference();
-		partnerIdentity.setId(partner.getId());
-		partnerIdentity.setEmail(partner.getEmailAddress());
+		partnerIdentity.setId(hub.getParentIdentity().getId());
+		partnerIdentity.setEmail(hub.getParentIdentity().getEmailAddress());
 		partnerIdentity.setLastLogin(DateTime.now().toString());
 		
 		ret.setId(node.getName());

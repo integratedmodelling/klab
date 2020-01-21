@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
-import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -35,6 +34,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -108,16 +108,6 @@ public interface IResourceService {
 	 * @return the local resource catalog
 	 */
 	IResourceCatalog getLocalResourceCatalog();
-
-	/**
-	 * The public resource catalog contains resources after they have been published
-	 * by the {@link IResourcePublisher publisher} of the adapter that created the
-	 * resource. These resources can be shared with others and projects using their
-	 * URNs can be shared on k.LAB nodes.
-	 *
-	 * @return the public resource catalog
-	 */
-	IResourceCatalog getPublicResourceCatalog();
 
 	/**
 	 * Resolve the passed URN to a resource.
@@ -316,16 +306,16 @@ public interface IResourceService {
 
 	/**
 	 * Submit a resource for publication to the node identified by nodeId, which
-	 * must be an online node on the network. Return a temporary ID with which to
-	 * track the publication process. If anything goes wrong, a suitable exception
-	 * will be thrown.
+	 * must be an online node on the network. Return an open ticket that will be
+	 * closed when publication is done.
 	 * 
 	 * @param resource
 	 * @param nodeId
-	 * @param suggestedName
+	 * @param publicationData any user suggestions about name, namespace, catalog
+	 *                        and permissions.
 	 * @return a temporary ID to track the publishing.
 	 */
-	String submitResource(IResource resource, String nodeId, String suggestedName);
+	ITicket submitResource(IResource resource, String nodeId, Map<String, String> publicationData);
 
 	/**
 	 * 

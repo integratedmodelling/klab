@@ -1,9 +1,14 @@
 package org.integratedmodelling.klab.components.geospace.processing.osm;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
@@ -13,7 +18,9 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
 
 @UrnAdapter(type = "osm", version = Version.CURRENT)
@@ -91,6 +98,31 @@ public class OSMUrnAdapter implements IUrnAdapter {
 		}
 
 		throw new KlabIOException("wrong OSM resource namespace in " + urn);
+	}
+
+	@Override
+	public String getDescription() {
+		return "Simple, URN-based OpenStreetMap access for k.LAB";
+	}
+
+	@Override
+	public Collection<String> getResourceUrns() {
+		List<String> ret = new ArrayList<>();
+		return ret;
+	}
+
+	@Override
+	public IResource getResource(String urn) {
+		// TODO Auto-generated method stub
+		Urn kurn = new Urn(urn);
+		ResourceReference ref = new ResourceReference();
+		ref.setUrn(urn.toString());
+		ref.setAdapterType(getName());
+		ref.setLocalName(kurn.getResourceId());
+		ref.setGeometry("#");
+		ref.setVersion(Version.CURRENT);
+		ref.setType(Type.VALUE); // for now
+		return new Resource(ref);
 	}
 
 }

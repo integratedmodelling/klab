@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.rest.TicketResponse;
 
 public class Ticket implements ITicket {
+
+	transient TicketManager manager;
 
 	private String id;
 	private Date postDate;
@@ -17,7 +20,7 @@ public class Ticket implements ITicket {
 	private String statusMessage;
 	private boolean seen = false;
 
-	public static Ticket create(String id, Object... objects) {
+	static Ticket create(String id, Object... objects) {
 		Ticket ret = new Ticket();
 		ret.id = id;
 		ret.postDate = new Date(System.currentTimeMillis());
@@ -28,7 +31,9 @@ public class Ticket implements ITicket {
 				} else if (objects[i] instanceof Type) {
 					ret.type = (Type) objects[i];
 				} else {
-					ret.data.put(objects[i].toString(), objects[++i].toString());
+					Object key = objects[i];
+					Object value = objects[++i];
+					ret.data.put(key.toString(), value == null ? null : value.toString());
 				}
 			}
 		}
@@ -128,6 +133,78 @@ public class Ticket implements ITicket {
 			}
 		}
 		return selectors != null;
+	}
+
+	@Override
+	public void refresh() {
+		Ticket t = (Ticket) manager.getTicket(this.id);
+		copy(t);
+	}
+
+	@Override
+	public void update(Object... objects) {
+		if (objects != null) {
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof Status) {
+					this.status = (Status) objects[i];
+				} else if (objects[i] instanceof Type) {
+					this.type = (Type) objects[i];
+				} else if (objects[i] instanceof TicketResponse.Ticket) {
+					copy((TicketResponse.Ticket) objects[i]);
+				} else {
+					Object key = objects[i];
+					Object value = objects[++i];
+					this.data.put(key.toString(), value == null ? null : value.toString());
+				}
+			}
+		}
+		this.manager.put(this);
+	}
+
+	private void copy(Ticket t) {
+		this.data.clear();
+		this.data.putAll(t.data);
+		this.seen = t.seen;
+		this.postDate = t.postDate;
+		this.resolutionDate = t.resolutionDate;
+		this.status = t.status;
+		this.type = t.type;
+		this.id = t.id;
+	}
+
+	private void copy(TicketResponse.Ticket t) {
+		this.data.putAll(t.getData());
+		if (this.status == Status.OPEN && t.getStatus() != Status.OPEN) {
+			this.status = t.getStatus();	
+			this.resolutionDate = new Date(System.currentTimeMillis());
+		}
+	}
+
+	@Override
+	public void delete() {
+		manager.remove(this);
+	}
+
+	@Override
+	public void resolve(Object... data) {
+		update(data);
+		this.status = Status.RESOLVED;
+		update();
+	}
+
+	@Override
+	public void error(String status) {
+		this.status = Status.ERROR;
+		if (status != null) {
+			this.statusMessage = status;
+		}
+		update();
+	}
+
+	@Override
+	public String toString() {
+		return "Ticket [id=" + id + ", postDate=" + postDate + ", status=" + status + ", type=" + type + ", data="
+				+ data + "]";
 	}
 
 }

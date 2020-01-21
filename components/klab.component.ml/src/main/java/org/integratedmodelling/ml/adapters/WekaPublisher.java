@@ -9,8 +9,8 @@ public class WekaPublisher implements IResourcePublisher {
 
 	@Override
 	public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
-		// TODO Auto-generated method stub
-		return null;
+		// no action needed
+		return localResource;
 	}
 
 }

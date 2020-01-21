@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.data.adapters;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -8,7 +10,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * Base interface for a URN adapter, which can produce non-semantic data from
- * simple URNs with the universal protocol (klab:adapter:....).
+ * simple URNs with the universal protocol ([klab/nodename]:adapter:....).
  * 
  * @author Ferd
  *
@@ -21,6 +23,15 @@ public interface IUrnAdapter {
 	 * @return the adapter name.
 	 */
 	String getName();
+
+	/**
+	 * The adapter must be capable of producing a resource for a specific URN,
+	 * containing the type, inputs, outputs, attributes and metadata that describe
+	 * it.
+	 * 
+	 * @return
+	 */
+	IResource getResource(String urn);
 
 	/**
 	 * Check if the resource can be accessed. This should ensure the ability of
@@ -49,7 +60,7 @@ public interface IUrnAdapter {
 	 *                 the root observation.
 	 */
 	void getEncodedData(Urn urn, IKlabData.Builder builder, IGeometry geometry, IContextualizationScope context);
-	
+
 	/**
 	 * Get the resource type.
 	 * 
@@ -65,5 +76,19 @@ public interface IUrnAdapter {
 	 * @return
 	 */
 	IGeometry getGeometry(Urn urn);
+
+	/**
+	 * Return a description suitabile for API users.
+	 * 
+	 * @return
+	 */
+	String getDescription();
+
+	/**
+	 * Return all resource URNs that this adapter handles.
+	 * 
+	 * @return
+	 */
+	Collection<String> getResourceUrns();
 
 }

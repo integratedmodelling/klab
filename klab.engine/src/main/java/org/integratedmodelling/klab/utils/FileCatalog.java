@@ -31,195 +31,246 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-// TODO: Auto-generated Javadoc
 /**
  * A catalog (simply a map String -> T) read from a JSON file and capable of
  * resynchronizing intelligently on request.
  * <p>
- * Any put/remove operations won't sync the contents to the backing file. To
- * synchronize the file write() must be called.
+ * Any put/remove operations won't sync the contents to the backing file unless
+ * setSynchronization(true) is called first. Otherwise synchronize the file
+ * manually by calling write() when necessary.
  * 
  * @author ferdinando.villa
  * @version $Id: $Id
- * @param <T>
- *            the type of the resource in the catalog
+ * @param <T> the type of the resource in the catalog
  */
 public class FileCatalog<T> extends LinkedHashMap<String, T> {
 
-    private static final long serialVersionUID = 8664294752013639030L;
+	private static final long serialVersionUID = 8664294752013639030L;
 
-    Class<? extends T> cls;
-    File file;
-    long timestamp;
-    boolean error;
+	Class<? extends T> cls;
+	File file;
+	long timestamp;
+	boolean error;
+	boolean autosync = false;
 
-    /**
-     * Creates the.
-     *
-     * @param <T>
-     *            the main type for the collection
-     * @param url
-     *            the URL containing the JSON data catalog
-     * @param interfaceClass
-     *            the type of the interface returned (or the implementation type
-     *            itself)
-     * @param implementationClass
-     *            the class implementing the interface
-     * @return a new URL-based catalog
-     */
-    public static <T> FileCatalog<T> create(URL url, Class<T> interfaceClass, Class<? extends T> implementationClass) {
-        return new FileCatalog<T>(url, interfaceClass, implementationClass);
-    }
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>                 the main type for the collection
+	 * @param url                 the URL containing the JSON data catalog
+	 * @param interfaceClass      the type of the interface returned (or the
+	 *                            implementation type itself)
+	 * @param implementationClass the class implementing the interface
+	 * @return a new URL-based catalog
+	 */
+	public static <T> FileCatalog<T> create(URL url, Class<T> interfaceClass, Class<? extends T> implementationClass) {
+		return new FileCatalog<T>(url, interfaceClass, implementationClass);
+	}
 
-    /**
-    * Creates a new catalog from a URL.
-    *
-    * @param <T>
-    *            the main type for the collection
-    * @param url
-    *            the URL containing the JSON data catalog
-    * @param implementationClass
-    *            the type of the object returned
-    * @return a new URL-based catalog
-    */
-    public static <T> FileCatalog<T> create(URL url, Class<T> implementationClass) {
-        return new FileCatalog<T>(url, implementationClass, implementationClass);
-    }
+	/**
+	 * Creates a new catalog from a URL.
+	 *
+	 * @param <T>                 the main type for the collection
+	 * @param url                 the URL containing the JSON data catalog
+	 * @param implementationClass the type of the object returned
+	 * @return a new URL-based catalog
+	 */
+	public static <T> FileCatalog<T> create(URL url, Class<T> implementationClass) {
+		return new FileCatalog<T>(url, implementationClass, implementationClass);
+	}
 
-    /**
-     * Creates the.
-     *
-     * @param <T>
-     *            the interface type
-     * @param file
-     *            the containing the JSON data catalog
-     * @param interfaceClass
-     *            the type of the interface returned (or the implementation type
-     *            itself)
-     * @param implementationClass
-     *            the class implementing the interface
-     * @return a new file-based catalog
-     */
-    public static <T> FileCatalog<T> create(File file, Class<T> interfaceClass,
-            Class<? extends T> implementationClass) {
-        return new FileCatalog<T>(file, interfaceClass, implementationClass);
-    }
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>                 the interface type
+	 * @param file                the containing the JSON data catalog
+	 * @param interfaceClass      the type of the interface returned (or the
+	 *                            implementation type itself)
+	 * @param implementationClass the class implementing the interface
+	 * @return a new file-based catalog
+	 */
+	public static <T> FileCatalog<T> create(File file, Class<T> interfaceClass,
+			Class<? extends T> implementationClass) {
+		return new FileCatalog<T>(file, interfaceClass, implementationClass);
+	}
 
-    private FileCatalog(URL url, Class<T> type, Class<? extends T> cls) {
-        this.cls = cls;
-        try (InputStream input = url.openStream()) {
-            this.error = !synchronize(input);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public FileCatalog<T> setSynchronization(boolean b) {
+		this.autosync = b;
+		return this;
+	}
 
-    /**
-     * Instantiates a new file catalog.
-     *
-     * @param file
-     *            the file
-     * @param type
-     *            the type
-     * @param cls
-     *            the cls
-     */
-    public FileCatalog(File file, Class<? extends T> type, Class<? extends T> cls) {
+	private FileCatalog(URL url, Class<T> type, Class<? extends T> cls) {
+		this.cls = cls;
+		try (InputStream input = url.openStream()) {
+			this.error = !synchronize(input);
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                throw new KlabIOException(e);
-            }
-        }
+	/**
+	 * Instantiates a new file catalog.
+	 *
+	 * @param file the file
+	 * @param type the type
+	 * @param cls  the cls
+	 */
+	public FileCatalog(File file, Class<? extends T> type, Class<? extends T> cls) {
 
-        this.file = file;
-        this.cls = cls;
-        try (InputStream input = new FileInputStream(file)) {
-            this.error = !synchronize(input);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
 
-    /**
-     * Checks for errors.
-     *
-     * @return a boolean.
-     */
-    public boolean hasErrors() {
-        return this.error;
-    }
+		this.file = file;
+		this.cls = cls;
+		try (InputStream input = new FileInputStream(file)) {
+			this.error = !synchronize(input);
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    /**
-     * Synchronize, reading the file if necessary.
-     *
-     * @param stream
-     *            the stream
-     * @return true if no errors. Non-existing file is not an error.
-     * @throws java.lang.ClassCastException
-     *             if the data read are not of the type configured
-     */
-    public boolean synchronize(InputStream stream) {
+	@Override
+	public T put(String key, T value) {
+		T ret = super.put(key, value);
+		if (autosync) {
+			write();
+		}
+		return ret;
+	}
 
-        boolean ret = true;
+	@Override
+	public void putAll(Map<? extends String, ? extends T> m) {
+		super.putAll(m);
+		if (autosync) {
+			write();
+		}
+	}
 
-        if (this.file == null || (this.file.exists() && this.timestamp < this.file.lastModified())) {
+	@Override
+	public T putIfAbsent(String key, T value) {
+		T ret = super.putIfAbsent(key, value);
+		if (autosync && ret == null) {
+			write();
+		}
+		return ret;
+	}
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                    .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+	@Override
+	public boolean remove(Object key, Object value) {
+		boolean ret = super.remove(key, value);
+		if (autosync && ret) {
+			write();
+		}
+		return ret;
+	}
 
-            try {
-                JavaType type = objectMapper.getTypeFactory().constructMapLikeType(Map.class, String.class, cls);
-                Map<Object, T> data = objectMapper.reader(type).readValue(stream);
-                clear();
-                for (Object key : data.keySet()) {
-                    put(key.toString(), (T) data.get(key));
-                }
-                this.timestamp = this.file == null ? System.currentTimeMillis() : this.file.lastModified();
-            } catch (IOException e) {
-                ret = false;
-            }
-        }
+	@Override
+	public T remove(Object key) {
+		T ret = super.remove(key);
+		if (autosync && ret != null) {
+			write();
+		}
+		return ret;
+	}
 
-        return ret;
+	@Override
+	public boolean replace(String key, T oldValue, T newValue) {
+		boolean ret = super.replace(key, oldValue, newValue);
+		if (autosync && ret) {
+			write();
+		}
+		return ret;
+	}
 
-    }
+	@Override
+	public T replace(String key, T value) {
+		T ret = super.replace(key, value);
+		if (autosync && ret != null) {
+			write();
+		}
+		return ret;
+	}
 
-    /**
-     * Write the map to the backing file. Call after making changes to the
-     * underlying map.
-     * 
-     * @throws IllegalStateException
-     *             if the catalog was read from a URL.
-     */
-    public synchronized void write() {
-        if (this.file != null && this.file.exists()) {
+	/**
+	 * Checks for errors.
+	 *
+	 * @return a boolean.
+	 */
+	public boolean hasErrors() {
+		return this.error;
+	}
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
-            objectMapper.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
-            objectMapper.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
-            objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                    .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	/**
+	 * Synchronize, reading the file if necessary.
+	 *
+	 * @param stream the stream
+	 * @return true if no errors. Non-existing file is not an error.
+	 * @throws java.lang.ClassCastException if the data read are not of the type
+	 *                                      configured
+	 */
+	public boolean synchronize(InputStream stream) {
 
-            Map<String, T> data = new HashMap<>();
-            data.putAll(this);
-            try {
-                objectMapper.writer().writeValue(this.file, data);
-            } catch (IOException e) {
-                throw new KlabIOException(e);
-            }
-            this.timestamp = this.file.lastModified();
-        }
-    }
+		boolean ret = true;
 
-    public File getFile() {
-        return file;
-    }
+		if (this.file == null || (this.file.exists() && this.timestamp < this.file.lastModified())) {
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+					.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+			try {
+				JavaType type = objectMapper.getTypeFactory().constructMapLikeType(Map.class, String.class, cls);
+				Map<Object, T> data = objectMapper.reader(type).readValue(stream);
+				clear();
+				for (Object key : data.keySet()) {
+					put(key.toString(), (T) data.get(key));
+				}
+				this.timestamp = this.file == null ? System.currentTimeMillis() : this.file.lastModified();
+			} catch (IOException e) {
+				ret = false;
+			}
+		}
+
+		return ret;
+
+	}
+
+	/**
+	 * Write the map to the backing file. Call after making changes to the
+	 * underlying map.
+	 * 
+	 * @throws IllegalStateException if the catalog was read from a URL.
+	 */
+	public synchronized void write() {
+		if (this.file != null && this.file.exists()) {
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
+			objectMapper.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
+			objectMapper.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
+			objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+					.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+			Map<String, T> data = new HashMap<>();
+			data.putAll(this);
+			try {
+				objectMapper.writer().writeValue(this.file, data);
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+			this.timestamp = this.file.lastModified();
+		}
+	}
+
+	public File getFile() {
+		return file;
+	}
 
 }

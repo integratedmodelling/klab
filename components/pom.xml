@@ -21,5 +21,6 @@
     <module>klab.component.weather</module>
   	<module>klab.component.landcover</module>
   	<module>klab.component.noisemodelling</module>
+  	<module>klab.component.random</module>
   </modules>
 </project>

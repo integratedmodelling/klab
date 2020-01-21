@@ -6,7 +6,6 @@ import org.integratedmodelling.klab.hub.users.AuthProvider;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.Role;
 import org.integratedmodelling.klab.hub.users.User;
-import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;

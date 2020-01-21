@@ -18,6 +18,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -47,6 +48,7 @@ import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -58,11 +60,13 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -99,10 +103,10 @@ import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
-import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
+import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SearchMatch;
@@ -114,6 +118,8 @@ import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.SettingChangeRequest;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.SpatialLocation;
+import org.integratedmodelling.klab.rest.TicketRequest;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -192,6 +198,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 */
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
+	private AtomicLong lastNetworkCheck = new AtomicLong(0);
 
 	private ActorRef rootActor;
 
@@ -203,6 +210,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	public Session(Engine engine, IEngineUserIdentity user) {
 		this.user = user;
 		this.monitor = ((Monitor) engine.getMonitor()).get(this);
+		this.lastNetworkCheck.set(System.currentTimeMillis());
 		this.authorities.add(new SimpleGrantedAuthority(Roles.SESSION));
 		Authentication.INSTANCE.registerSession(this);
 	}
@@ -489,7 +497,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		INetworkSessionIdentity network = this.getParentIdentity(INetworkSessionIdentity.class);
 		if (network != null) {
 			for (INodeIdentity node : network.getNodes()) {
-				NodeReference desc = Network.INSTANCE.getNodeDescriptor(node.getName());
+				NodeReference desc = new NodeReference(node);
 				if (desc != null) {
 					if (node.getPermissions().contains(Permission.PUBLISH)) {
 						ret.getPublishing().add(node.getName());
@@ -502,6 +510,15 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				}
 			}
 		}
+
+		ret.getOnlineUrns().addAll(Resources.INSTANCE.getPublicResourceCatalog().getOnlineUrns());
+
+		for (ITicket resolved : Klab.INSTANCE.getTicketManager().getResolvedAfter(lastNetworkCheck.get())) {
+			ret.getResolvedTickets().add(TicketManager.encode(resolved));
+		}
+
+		this.lastNetworkCheck.set(System.currentTimeMillis());
+
 		monitor.send(IMessage.MessageClass.Authorization, IMessage.Type.NetworkStatus, ret);
 	}
 
@@ -526,23 +543,54 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		ResourcePublishResponse response = new ResourcePublishResponse();
 		if (type == IMessage.Type.PublishLocalResource) {
+			
+			Map<String, String> publicationData = new HashMap<>();
+			
+			if (request.getPermissions() != null) {
+				publicationData.put(IMetadata.IM_PERMISSIONS, request.getPermissions());
+			}
+			if (request.getSuggestedName() != null) {
+				publicationData.put(IMetadata.IM_SUGGESTED_RESOURCE_ID, request.getSuggestedName());
+			}
+			if (request.getSuggestedNamespace() != null) {
+				publicationData.put(IMetadata.IM_SUGGESTED_NAMESPACE_ID, request.getSuggestedNamespace());
+			}
+			if (request.getSuggestedCatalog() != null) {
+				publicationData.put(IMetadata.IM_SUGGESTED_CATALOG_ID, request.getSuggestedCatalog());
+			}
+			
 			response.setOriginalUrn(request.getUrn());
 			IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
 			if (resource == null || resource.hasErrors()) {
 				response.setError("Resource has errors or is unknown to the engine");
 			} else {
 				try {
-					String tempId = Resources.INSTANCE.submitResource(resource, request.getNode().getId(),
-						request.getSuggestedName());
-					response.setTemporaryId(tempId);
+					String ticketId = Resources.INSTANCE
+							.submitResource(resource, request.getNode().getId(), publicationData).getId();
+					response.setTicketId(ticketId);
 				} catch (Throwable e) {
 					response.setError(e.getMessage());
 				}
 			}
+			
 		} else {
 			response.setError("Updating of public resources is still unimplemented");
 		}
 		monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceSubmitted, response);
+	}
+
+	@MessageHandler
+	private void handleTicketRequest(final TicketRequest request) {
+
+		TicketResponse ret = new TicketResponse();
+
+		if (request.getTicketId() != null) {
+
+		} else {
+
+		}
+
+		monitor.send(IMessage.MessageClass.EngineLifecycle, IMessage.Type.TicketResponse, ret);
 	}
 
 	@MessageHandler

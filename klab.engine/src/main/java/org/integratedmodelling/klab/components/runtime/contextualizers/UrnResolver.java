@@ -34,7 +34,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 		Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
 		this.resource = Resources.INSTANCE.resolveResource(urn);
 		if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
-			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
+			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or offline");
 		}
 		this.urnParameters = call.getSecond();
 	}

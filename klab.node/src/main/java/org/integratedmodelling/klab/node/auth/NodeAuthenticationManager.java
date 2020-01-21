@@ -15,7 +15,6 @@ import java.util.Set;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
-import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.node.INodeStartupOptions;
 import org.integratedmodelling.klab.auth.KlabCertificate;

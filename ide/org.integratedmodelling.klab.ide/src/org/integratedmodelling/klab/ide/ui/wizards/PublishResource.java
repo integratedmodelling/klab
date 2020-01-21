@@ -30,16 +30,20 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.ui.PermissionEditor;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
@@ -49,6 +53,9 @@ public class PublishResource extends WizardPage {
 	private Combo combo;
 	private ResourceReference resource;
 	private List<NodeReference> nodes;
+	private Combo catalogCombo;
+	private Combo namespaceCombo;
+	private PermissionEditor permissionsEditor;
 
 	public PublishResource(ResourceReference resource, List<NodeReference> nodes) {
 		super("wizardPage");
@@ -64,53 +71,104 @@ public class PublishResource extends WizardPage {
 		Composite container = new Composite(parent, SWT.NULL);
 
 		setControl(container);
-		container.setLayout(new FormLayout());
+		GridLayout gl_container = new GridLayout(2, false);
+		gl_container.marginTop = 12;
+		container.setLayout(gl_container);
 
 		Label lblNewLabel = new Label(container, SWT.NONE);
-		FormData fd_lblNewLabel = new FormData();
-		fd_lblNewLabel.left = new FormAttachment(0, 57);
-		fd_lblNewLabel.top = new FormAttachment(0, 38);
-		lblNewLabel.setLayoutData(fd_lblNewLabel);
+		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel.setAlignment(SWT.RIGHT);
 		lblNewLabel.setText("Host node");
 
-		text = new Text(container, SWT.BORDER);
-		FormData fd_text = new FormData();
-		fd_text.right = new FormAttachment(100, -84);
-		text.setLayoutData(fd_text);
-
 		combo = new Combo(container, SWT.READ_ONLY);
-		FormData fd_combo = new FormData();
-		fd_combo.top = new FormAttachment(lblNewLabel, -1, SWT.TOP);
-		fd_combo.left = new FormAttachment(text, 0, SWT.LEFT);
-		fd_combo.right = new FormAttachment(100, -67);
-		combo.setLayoutData(fd_combo);
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblNewLabel_1 = new Label(container, SWT.NONE);
-		fd_text.left = new FormAttachment(lblNewLabel_1, 30);
-		fd_text.top = new FormAttachment(lblNewLabel_1, -3, SWT.TOP);
+		lblNewLabel_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-		FormData fd_lblNewLabel_1 = new FormData();
-		fd_lblNewLabel_1.top = new FormAttachment(lblNewLabel, 28);
-		fd_lblNewLabel_1.left = new FormAttachment(lblNewLabel, 0, SWT.LEFT);
-		lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
 		lblNewLabel_1.setText("Suggested ID");
 
 		/*
 		 * Add open projects in namespace, preselecting the one we started with, if any.
 		 */
-		this.text.setText(resource.getLocalName().toLowerCase());
 		for (NodeReference node : nodes) {
 			combo.add(node.getId());
 		}
-		combo.select(0);
+		combo.addSelectionListener(new SelectionListener() {
 
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				NodeReference node = nodes.get(combo.getSelectionIndex());
+				namespaceCombo.removeAll();
+				for (String namespace : node.getNamespaces()) {
+					namespaceCombo.add(namespace);
+				}
+				catalogCombo.removeAll();
+				for (String catalog : node.getCatalogs()) {
+					catalogCombo.add(catalog);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+
+		text = new Text(container, SWT.BORDER);
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		this.text.setText(resource.getLocalName().toLowerCase());
+
+		Label lblCatalogoptional = new Label(container, SWT.NONE);
+		lblCatalogoptional.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblCatalogoptional.setAlignment(SWT.RIGHT);
+		lblCatalogoptional.setText("Catalog (optional)");
+
+		catalogCombo = new Combo(container, SWT.NONE);
+		catalogCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		for (String catalog : nodes.get(0).getCatalogs()) {
+			catalogCombo.add(catalog);
+		}
+
+		Label lblNewLabel_2 = new Label(container, SWT.NONE);
+		lblNewLabel_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel_2.setText("Namespace (optional)");
+
+		namespaceCombo = new Combo(container, SWT.NONE);
+		namespaceCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		for (String namespace : nodes.get(0).getNamespaces()) {
+			namespaceCombo.add(namespace);
+		}
+
+		combo.select(0);
+		
+		Group grpPermissions = new Group(container, SWT.NONE);
+		grpPermissions.setText("Permissions");
+		grpPermissions.setLayout(new GridLayout(1, false));
+		grpPermissions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		
+		permissionsEditor = new PermissionEditor(grpPermissions, SWT.NONE);
+		permissionsEditor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		permissionsEditor.setPermissions(resource.getMetadata().get(IMetadata.IM_PERMISSIONS));
 	}
 
 	public NodeReference getTargetNode() {
 		return this.nodes.get(combo.getSelectionIndex());
 	}
-	
+
 	public String getSuggestedName() {
 		return this.text.getText();
+	}
+
+	public String getSuggestedNamespace() {
+		return this.namespaceCombo.getText();
+	}
+
+	public String getSuggestedCatalog() {
+		return this.catalogCombo.getText();
+	}
+	
+	public String getPermissions() {
+		return this.permissionsEditor.getPermissions();
 	}
 }

@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -46,6 +47,7 @@ import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 import org.integratedmodelling.klab.utils.Escape;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -64,6 +66,7 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -162,6 +165,35 @@ public class Client extends RestTemplate implements IClient {
 			converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
 			messageConverters.add(converter);
 			this.setMessageConverters(messageConverters);
+		}
+	}
+
+	public static class NodeClient extends Client {
+
+		public NodeClient(INodeIdentity node) {
+
+			super(factory);
+
+			objectMapper = new ObjectMapper();
+			List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+			MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
+			StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+			FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
+			ProtobufHttpMessageConverter protobufConverter = new ProtobufHttpMessageConverter();
+			// ByteArrayHttpMessageConverter byteConverter = new
+			// ByteArrayHttpMessageConverter();
+			jsonMessageConverter.setObjectMapper(objectMapper);
+
+			setErrorHandler(new JSONResponseErrorHandler());
+			messageConverters.add(jsonMessageConverter);
+			messageConverters.add(utf8);
+			messageConverters.add(formHttpMessageConverter);
+			messageConverters.add(protobufConverter);
+			// messageConverters.add(byteConverter);
+			setMessageConverters(messageConverters);
+			this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
+			this.authToken = node.getId();
+
 		}
 	}
 
@@ -296,7 +328,7 @@ public class Client extends RestTemplate implements IClient {
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes" })
+//	@SuppressWarnings({ "rawtypes" })
 	public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
 
 		url = checkEndpoint(url);
@@ -315,7 +347,7 @@ public class Client extends RestTemplate implements IClient {
 
 		try {
 
-			ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+			ResponseEntity<Object> response = exchange(url, HttpMethod.POST, entity, Object.class);
 
 			switch (response.getStatusCodeValue()) {
 			case 302:
@@ -328,12 +360,19 @@ public class Client extends RestTemplate implements IClient {
 			if (response.getBody() == null) {
 				return null;
 			}
-			if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
-				Object exception = response.getBody().get("exception");
-				// Object path = response.getBody().get("path");
-				Object message = response.getBody().get("message");
-				// Object error = response.getBody().get("error");
+			if (response.getBody() instanceof Map && ((Map<?, ?>) response.getBody()).containsKey("exception")
+					&& ((Map<?, ?>) response.getBody()).get("exception") != null) {
+
+				Map<?, ?> map = (Map<?, ?>) response.getBody();
+				Object exception = map.get("exception");
+				// Object path = map.get("path");
+				Object message = map.get("message");
+				// Object error = map.get("error");
 				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+			}
+
+			if (cls.isAssignableFrom(response.getBody().getClass())) {
+				return (T) response.getBody();
 			}
 
 			return objectMapper.convertValue(response.getBody(), cls);
@@ -423,7 +462,9 @@ public class Client extends RestTemplate implements IClient {
 	 */
 	@Override
 	@SuppressWarnings({ "rawtypes" })
-	public <T> T get(String url, Class<? extends T> cls) {
+	public <T> T get(String url, Class<? extends T> cls, Object... parameters) {
+
+		url = checkEndpoint(url);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
@@ -432,6 +473,23 @@ public class Client extends RestTemplate implements IClient {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
 		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		if (parameters != null) {
+			String params = "";
+			for (int i = 0; i < parameters.length; i++) {
+				String key = parameters[i].toString();
+				String val = parameters[++i].toString();
+				if (url.contains("{" + key + "}")) {
+					url = url.replace("{" + key + "}", val);
+				} else {
+					params += (params.isEmpty() ? "" : "&") + key + "=" + Escape.forURL(val);
+				}
+			}
+			if (!params.isEmpty()) {
+				url += "?" + params;
+			}
+		}
+
 		ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
 
 		switch (response.getStatusCodeValue()) {
@@ -456,41 +514,6 @@ public class Client extends RestTemplate implements IClient {
 		return objectMapper.convertValue(response.getBody(), cls);
 	}
 
-	/**
-	 * Instrumented for header communication and error parsing
-	 * 
-	 * @param url
-	 * @param cls
-	 * @param urlVariables
-	 * @return the deserialized result
-	 */
-	public <T> T get(String url, Class<T> cls, Map<String, ?> urlVariables) {
-		return get(addParameters(url, urlVariables), cls);
-	}
-
-	/**
-	 * Create a GET URL from a base url and a set of parameters. Yes I know I can
-	 * use URIComponentsBuilder etc.
-	 * 
-	 * @param url
-	 * @param parameters
-	 * @return the finished url
-	 */
-	public static String addParameters(String url, Map<String, ?> parameters) {
-		String ret = url;
-		if (parameters != null) {
-			for (String key : parameters.keySet()) {
-				if (ret.length() == url.length()) {
-					ret += "?";
-				} else {
-					ret += "&";
-				}
-				ret += key + "=" + Escape.forURL(parameters.get(key).toString());
-			}
-		}
-		return ret;
-	}
-
 	@Override
 	public <T> T postFile(String url, File file, Class<? extends T> cls) {
 
@@ -504,7 +527,7 @@ public class Client extends RestTemplate implements IClient {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-		body.add("file", file);
+		body.add("file", new FileSystemResource(file));
 		HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
 
 		try {

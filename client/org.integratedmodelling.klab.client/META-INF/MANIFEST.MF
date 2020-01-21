@@ -83,6 +83,7 @@ Export-Package: org.integratedmodelling.klab.client,
    org.springframework.http,
    com.fasterxml.jackson.databind",
  org.integratedmodelling.klab.client.messaging;uses:="org.integratedmodelling.klab.api.monitoring,org.integratedmodelling.klab.monitoring,org.springframework.messaging.simp.stomp",
+ org.integratedmodelling.klab.client.tickets,
  org.integratedmodelling.klab.client.utils,
  org.joda.time,
  org.joda.time.base

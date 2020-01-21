@@ -55,6 +55,18 @@ public interface INodeIdentity extends IServerIdentity {
      * @return
      */
     Set<String> getResources();
+
+    /**
+     * All the namespace IDs in node resources, including its default namespace.
+     * 
+     * @return
+     */
+	Set<String> getNamespaceIds();
     
-    
+    /**
+     * All the catalog IDs in node resources, including its default catalog.
+     * 
+     * @return
+     */
+	Set<String> getCatalogIds();
 }

@@ -59,7 +59,8 @@ import org.integratedmodelling.klab.monitoring.Message;
 public interface API {
 
 	/**
-	 * Use to simply substitute parameters in URLs.
+	 * Use to simply substitute parameters in URLs:
+	 * <code>API.url(API.RESOURCE.RESOLVE_URN, API.P_URN, urn)</code>
 	 * 
 	 * @param template
 	 * @param kvp
@@ -124,6 +125,31 @@ public interface API {
 	 * <b>Authentication:</b> open
 	 */
 	public static final String KIM = "/kim";
+
+	/**
+	 * Read-only ticket API, implemented in the Node and maybe later in the Hub.
+	 * Engines have ticket management but only Websockets clients can access it.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static interface TICKET {
+
+		/**
+		 * Retrieve the specific ticket with the passed ID.
+		 * 
+		 * GET
+		 */
+		public static final String INFO = "/ticket/info/{ticket}";
+
+		/**
+		 * Retrieve all tickets matching the field values in the query string.
+		 * 
+		 * GET
+		 */
+		public static final String QUERY = "/ticket/query";
+
+	}
 
 	public static interface HUB {
 
@@ -219,13 +245,11 @@ public interface API {
 			public static final String DELETE_URN = "/resource/delete/" + P_URN;
 
 			/**
-			 * Retrieve raw observation data for passed URN in passed scale. If resource has
-			 * time geometry, the response at initialization contains an individual token
-			 * for repeated requests at transitions.
+			 * Retrieve raw observation data for passed URN in passed geometry.
 			 * 
-			 * GET
+			 * POST
 			 */
-			public static final String GET_URN = "/resource/get/" + P_URN;
+			public static final String CONTEXTUALIZE = "/resource/contextualize";
 
 			/**
 			 * Upload a resource.

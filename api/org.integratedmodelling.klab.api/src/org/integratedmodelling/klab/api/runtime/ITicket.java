@@ -14,12 +14,36 @@ import java.util.Map;
 public interface ITicket {
 
 	enum Type {
-		ResourceSubmission,
+		ResourceSubmission, ResourcePublication
 	}
 
 	enum Status {
 		OPEN, RESOLVED, ERROR
 	}
+
+	/**
+	 * Refresh the ticket from the manager after changes.
+	 * 
+	 */
+	void refresh();
+
+	/**
+	 * Delete the ticket from the manager.
+	 * 
+	 */
+	void delete();
+
+	/**
+	 * Resolve the ticket and update in the manager. Pass any new data in key, value
+	 * pairs. Should also be able to use a network bean.
+	 * 
+	 */
+	void resolve(Object...data);
+
+	/**
+	 * Resolve the ticket as error and update in the manager.
+	 */
+	void error(String status);
 
 	/**
 	 * Ticket has a permanent, unique ID. In the ticket manager, it's assigned
@@ -73,5 +97,10 @@ public interface ITicket {
 	 * @return
 	 */
 	String getStatusMessage();
+
+	/**
+	 * Update and save.
+	 */
+	void update(Object... objects);
 
 }

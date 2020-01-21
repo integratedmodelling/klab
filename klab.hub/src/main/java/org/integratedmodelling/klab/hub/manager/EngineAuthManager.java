@@ -147,6 +147,7 @@ public class EngineAuthManager {
         	token = jwtTokenManager.createEngineJwtToken(user);
         } else {
         	username = "hades";
+        	user = klabUserManager.getUser(username);
         	token = jwtTokenManager.createEngineJwtToken(user);
         }
         tokenManager.deleteExpiredTokens(username);
