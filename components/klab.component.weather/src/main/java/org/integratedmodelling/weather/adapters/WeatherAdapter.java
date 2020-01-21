@@ -89,7 +89,7 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	private void getStations(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	private void getStorms(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
