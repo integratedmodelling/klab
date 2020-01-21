@@ -10,6 +10,7 @@ import javax.naming.directory.Attributes;
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.User;
@@ -88,13 +89,16 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 				Optional<User> pendingUser = userRepository.findByUsernameIgnoreCase(username)
 						.filter(u -> u.getAccountStatus().equals(AccountStatus.pendingActivation));
 				pendingUser
-					.orElseThrow(()-> new BadRequestException("User Exists but has not set a password. "
+					.orElseThrow(()-> new BadRequestException("User exists but has not set a password. "
 							+ "Please make a forgot password request."));
 				return pendingUser;
 			}
 			
 			if(usernameExists != emailExists) {
-				throw new UserExistsException(username);
+				if (usernameExists)
+					throw new UserExistsException(username);
+				else
+					throw new UserEmailExistsException(email);
 			}
 			
 			throw new UserExistsException("How did we get here?"); 

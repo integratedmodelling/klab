@@ -45,7 +45,7 @@ public class UserRegistrationController {
 		VerifyAccountClickbackToken token = (VerifyAccountClickbackToken)
 				tokenService.createToken(user.getUsername()
 						, TokenType.verify);
-		emailManager.sendNewUser(user.getEmail(), user.getEmail(), token.getCallbackUrl());
+		emailManager.sendNewUser(user.getEmail(), user.getUsername(), token.getCallbackUrl());
 		return new ResponseEntity<String>("Please Check your email for account verification email.", HttpStatus.CREATED);
 	}
 	

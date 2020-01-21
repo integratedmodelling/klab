@@ -29,7 +29,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 	public ProfileResource updateUserByProfile(ProfileResource profile) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		User user = userRepository.findByUsernameIgnoreCase(username)
-				.filter(u -> u.getUsername() == profile.getUsername())
+				.filter(u -> u.getUsername().equals(profile.getUsername()))
 				.orElseThrow(() ->  
 					new KlabException("Current User context does match updated profile username"));
 		user.updateFromProfileResource(profile);
