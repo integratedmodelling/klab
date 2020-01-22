@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import java.util.Set;
+
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.springframework.stereotype.Service;
 
@@ -9,5 +11,6 @@ public interface UserProfileService {
 	abstract ProfileResource updateUserByProfile(ProfileResource profile);
 	abstract ProfileResource getUserProfile(String username);
 	abstract ProfileResource getCurrentUserProfile();
+	abstract Set<ProfileResource> getAllUserProfiles();
 
 }

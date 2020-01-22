@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.hub.users.services.impls;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
@@ -55,6 +58,14 @@ public class UserProfileServiceImpl implements UserProfileService {
 					new BadRequestException("User does not exist"));
 		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
 		return profile.getSafeProfile();
+	}
+
+	@Override
+	public Set<ProfileResource> getAllUserProfiles() {
+		Set<ProfileResource> profiles = new HashSet<>();
+		userRepository.findAll().forEach(user -> profiles.add(
+				objectMapper.convertValue(user, ProfileResource.class).getSafeProfile()));
+		return profiles;
 	}
 
 }

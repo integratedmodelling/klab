@@ -52,7 +52,7 @@ public class ProfileResource implements OAuth2User{
 
     public List<Role> roles = new ArrayList<>(); // LDAP security roles or OAuth
 
-    public List<GroupEntry> groups = new ArrayList<>(); // research groups, etc. in web tool
+    public List<GroupEntry> groupEntries = new ArrayList<>(); // research groups, etc. in web tool
 
     public boolean sendUpdates;
 
@@ -75,7 +75,7 @@ public class ProfileResource implements OAuth2User{
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(username).append(email).append(serverUrl).append(firstName).append(lastName)
-                .append(initials).append(address).append(jobTitle).append(phone).append(affiliation).append(groups)
+                .append(initials).append(address).append(jobTitle).append(phone).append(affiliation).append(groupEntries)
                 .append(sendUpdates).append(comments).append(accountStatus).hashCode();
     }
 
@@ -95,7 +95,7 @@ public class ProfileResource implements OAuth2User{
         return new EqualsBuilder().append(username, other.username).append(email, other.email)
                 .append(serverUrl, other.serverUrl).append(firstName, other.firstName).append(lastName, other.lastName)
                 .append(initials, other.initials).append(address, other.address).append(jobTitle, other.jobTitle)
-                .append(phone, other.phone).append(affiliation, other.affiliation).append(groups, other.groups)
+                .append(phone, other.phone).append(affiliation, other.affiliation).append(groupEntries, other.groupEntries)
                 .append(sendUpdates, other.sendUpdates).append(comments, other.comments)
                 .append(accountStatus, other.accountStatus).isEquals();
     }
@@ -109,11 +109,11 @@ public class ProfileResource implements OAuth2User{
 	}
 	
     public List<GroupEntry> getGroups() {
-		return groups;
+		return groupEntries;
 	}
 
 	public void setGroups(List<GroupEntry> groups) {
-		this.groups = groups;
+		this.groupEntries = groups;
 	}
 
 	public void setToken(String token) {
@@ -198,7 +198,7 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.comments = comments;
 		cleanedProfile.email = email;
 		cleanedProfile.firstName = firstName;
-		cleanedProfile.groups = groups;
+		cleanedProfile.groupEntries = groupEntries;
 		cleanedProfile.id = id;
 		cleanedProfile.initials = initials;
 		cleanedProfile.jobTitle = jobTitle;
@@ -225,7 +225,7 @@ public class ProfileResource implements OAuth2User{
 				safeGroups.add(entry);
 			}
 		}
-		cleanedProfile.groups = safeGroups;
+		cleanedProfile.groupEntries = safeGroups;
 		return cleanedProfile;
 	}
 }

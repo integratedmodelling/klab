@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
+import java.util.Set;
+
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
@@ -23,6 +25,13 @@ public class UserProfileController {
 	@Autowired
 	UserProfileController(UserProfileService userService) {
 		this.userService = userService;
+	}
+	
+	@GetMapping("")
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
+	public ResponseEntity<?> getAllUserProfiles() {
+		Set<ProfileResource> profiles = userService.getAllUserProfiles();
+		return new ResponseEntity<>(profiles,HttpStatus.OK);
 	}
 	
 	@GetMapping("/{username}")
