@@ -31,13 +31,13 @@ public interface IKimModel extends IKimActiveStatement {
 
 	boolean isInstantiator();
 
-	/**
-	 * If true, the model must be a change process model and it will have >1
-	 * comparable resources distributed over a period of time.
-	 * 
-	 * @return
-	 */
-	boolean isResourceMerger();
+//	/**
+//	 * If true, the model must be a change process model and it will have >1
+//	 * comparable resources distributed over a period of time.
+//	 * 
+//	 * @return
+//	 */
+//	boolean isResourceMerger();
 
 	String getName();
 

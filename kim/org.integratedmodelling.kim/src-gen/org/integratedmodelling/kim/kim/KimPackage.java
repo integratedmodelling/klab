@@ -345,22 +345,13 @@ public interface KimPackage extends EPackage
   int MODEL_BODY_STATEMENT__URNS = 1;
 
   /**
-   * The feature id for the '<em><b>Function</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MODEL_BODY_STATEMENT__FUNCTION = 2;
-
-  /**
    * The feature id for the '<em><b>Number</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__NUMBER = 3;
+  int MODEL_BODY_STATEMENT__NUMBER = 2;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -369,16 +360,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__BOOLEAN = 4;
-
-  /**
-   * The feature id for the '<em><b>Concept</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MODEL_BODY_STATEMENT__CONCEPT = 5;
+  int MODEL_BODY_STATEMENT__BOOLEAN = 3;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -387,7 +369,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__NAME = 6;
+  int MODEL_BODY_STATEMENT__NAME = 4;
 
   /**
    * The feature id for the '<em><b>Observables</b></em>' containment reference list.
@@ -396,7 +378,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__OBSERVABLES = 7;
+  int MODEL_BODY_STATEMENT__OBSERVABLES = 5;
 
   /**
    * The feature id for the '<em><b>Docstring</b></em>' attribute.
@@ -405,7 +387,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__DOCSTRING = 8;
+  int MODEL_BODY_STATEMENT__DOCSTRING = 6;
 
   /**
    * The feature id for the '<em><b>Dependencies</b></em>' containment reference list.
@@ -414,16 +396,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__DEPENDENCIES = 9;
-
-  /**
-   * The feature id for the '<em><b>Merging</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MODEL_BODY_STATEMENT__MERGING = 10;
+  int MODEL_BODY_STATEMENT__DEPENDENCIES = 7;
 
   /**
    * The feature id for the '<em><b>Contextualizers</b></em>' containment reference list.
@@ -432,7 +405,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__CONTEXTUALIZERS = 11;
+  int MODEL_BODY_STATEMENT__CONTEXTUALIZERS = 8;
 
   /**
    * The feature id for the '<em><b>Discretization</b></em>' attribute.
@@ -441,7 +414,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__DISCRETIZATION = 12;
+  int MODEL_BODY_STATEMENT__DISCRETIZATION = 9;
 
   /**
    * The feature id for the '<em><b>Classification</b></em>' containment reference.
@@ -450,7 +423,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__CLASSIFICATION = 13;
+  int MODEL_BODY_STATEMENT__CLASSIFICATION = 10;
 
   /**
    * The feature id for the '<em><b>Classification Property</b></em>' attribute.
@@ -459,7 +432,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY = 14;
+  int MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY = 11;
 
   /**
    * The feature id for the '<em><b>Lookup Table Args</b></em>' attribute list.
@@ -468,7 +441,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS = 15;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS = 12;
 
   /**
    * The feature id for the '<em><b>Lookup Table</b></em>' containment reference.
@@ -477,7 +450,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__LOOKUP_TABLE = 16;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE = 13;
 
   /**
    * The feature id for the '<em><b>Lookup Table Id</b></em>' attribute.
@@ -486,7 +459,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = 17;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = 14;
 
   /**
    * The feature id for the '<em><b>Actions</b></em>' containment reference list.
@@ -495,7 +468,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__ACTIONS = 18;
+  int MODEL_BODY_STATEMENT__ACTIONS = 15;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -504,7 +477,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__METADATA = 19;
+  int MODEL_BODY_STATEMENT__METADATA = 16;
 
   /**
    * The number of structural features of the '<em>Model Body Statement</em>' class.
@@ -513,7 +486,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 20;
+  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 17;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ClassificationImpl <em>Classification</em>}' class.
@@ -1348,22 +1321,13 @@ public interface KimPackage extends EPackage
   int COMPUTABLE_VALUE__URN = 7;
 
   /**
-   * The feature id for the '<em><b>Model</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COMPUTABLE_VALUE__MODEL = 8;
-
-  /**
    * The feature id for the '<em><b>Condition Negated</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int COMPUTABLE_VALUE__CONDITION_NEGATED = 9;
+  int COMPUTABLE_VALUE__CONDITION_NEGATED = 8;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' containment reference.
@@ -1372,7 +1336,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int COMPUTABLE_VALUE__CONDITION = 10;
+  int COMPUTABLE_VALUE__CONDITION = 9;
 
   /**
    * The number of structural features of the '<em>Computable Value</em>' class.
@@ -1381,7 +1345,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int COMPUTABLE_VALUE_FEATURE_COUNT = 11;
+  int COMPUTABLE_VALUE_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl <em>Namespace</em>}' class.
@@ -4900,17 +4864,6 @@ public interface KimPackage extends EPackage
   EReference getModelBodyStatement_Urns();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getFunction <em>Function</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Function</em>'.
-   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getFunction()
-   * @see #getModelBodyStatement()
-   * @generated
-   */
-  EReference getModelBodyStatement_Function();
-
-  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getNumber <em>Number</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4931,17 +4884,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getModelBodyStatement_Boolean();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getConcept <em>Concept</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Concept</em>'.
-   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getConcept()
-   * @see #getModelBodyStatement()
-   * @generated
-   */
-  EReference getModelBodyStatement_Concept();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getName <em>Name</em>}'.
@@ -4986,17 +4928,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getModelBodyStatement_Dependencies();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isMerging <em>Merging</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Merging</em>'.
-   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#isMerging()
-   * @see #getModelBodyStatement()
-   * @generated
-   */
-  EAttribute getModelBodyStatement_Merging();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getContextualizers <em>Contextualizers</em>}'.
@@ -5952,17 +5883,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getComputableValue_Urn();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ComputableValue#getModel <em>Model</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Model</em>'.
-   * @see org.integratedmodelling.kim.kim.ComputableValue#getModel()
-   * @see #getComputableValue()
-   * @generated
-   */
-  EAttribute getComputableValue_Model();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ComputableValue#isConditionNegated <em>Condition Negated</em>}'.
@@ -9677,14 +9597,6 @@ public interface KimPackage extends EPackage
     EReference MODEL_BODY_STATEMENT__URNS = eINSTANCE.getModelBodyStatement_Urns();
 
     /**
-     * The meta object literal for the '<em><b>Function</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference MODEL_BODY_STATEMENT__FUNCTION = eINSTANCE.getModelBodyStatement_Function();
-
-    /**
      * The meta object literal for the '<em><b>Number</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -9699,14 +9611,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute MODEL_BODY_STATEMENT__BOOLEAN = eINSTANCE.getModelBodyStatement_Boolean();
-
-    /**
-     * The meta object literal for the '<em><b>Concept</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference MODEL_BODY_STATEMENT__CONCEPT = eINSTANCE.getModelBodyStatement_Concept();
 
     /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -9739,14 +9643,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference MODEL_BODY_STATEMENT__DEPENDENCIES = eINSTANCE.getModelBodyStatement_Dependencies();
-
-    /**
-     * The meta object literal for the '<em><b>Merging</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute MODEL_BODY_STATEMENT__MERGING = eINSTANCE.getModelBodyStatement_Merging();
 
     /**
      * The meta object literal for the '<em><b>Contextualizers</b></em>' containment reference list feature.
@@ -10477,14 +10373,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute COMPUTABLE_VALUE__URN = eINSTANCE.getComputableValue_Urn();
-
-    /**
-     * The meta object literal for the '<em><b>Model</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute COMPUTABLE_VALUE__MODEL = eINSTANCE.getComputableValue_Model();
 
     /**
      * The meta object literal for the '<em><b>Condition Negated</b></em>' attribute feature.

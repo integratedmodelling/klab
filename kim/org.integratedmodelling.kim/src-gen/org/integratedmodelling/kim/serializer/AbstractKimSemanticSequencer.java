@@ -512,29 +512,29 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Metadata | 
 	 *                         properties+=PropertyStatement
 	 *                     )? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (implications+=Implication implications+=Implication*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (implications+=Implication implications+=Implication*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
+	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
+	 *                     (
+	 *                         alias?='equals'? 
+	 *                         coreConcept?='core'? 
+	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
+	 *                     )? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
 	 *                         roles+=ConceptDeclaration* 
 	 *                         (targetObservables+=ConceptDeclaration targetObservables+=ConceptDeclaration*)? 
 	 *                         restrictedObservables+=ConceptDeclaration 
 	 *                         restrictedObservables+=ConceptDeclaration*
-	 *                     )? 
-	 *                     (
-	 *                         alias?='equals'? 
-	 *                         coreConcept?='core'? 
-	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
 	 *                     )?
 	 *                 )+
 	 *             ) | 
@@ -687,10 +687,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 caused=SimpleConceptDeclaration | 
 	 *                 during=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -718,10 +718,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 caused=SimpleConceptDeclaration | 
 	 *                 during=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -1002,7 +1002,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *
 	 * Constraint:
 	 *     (
-	 *         (function=Function | (expr=EXPR (language=LOWERCASE_ID | language=UPPERCASE_ID | language=CAMELCASE_ID)?) | urn=UrnId | urn=STRING | model=Path) 
+	 *         (function=Function | (expr=EXPR (language=LOWERCASE_ID | language=UPPERCASE_ID | language=CAMELCASE_ID)?) | urn=UrnId | urn=STRING) 
 	 *         (conditionNegated?='unless'? condition=Value)?
 	 *     )
 	 */
@@ -1237,18 +1237,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 * Constraint:
 	 *     (
 	 *         instantiator?='each'? 
-	 *         (
-	 *             (urns+=Urn urns+=Urn*) | 
-	 *             function=Function | 
-	 *             number=Number | 
-	 *             boolean='true' | 
-	 *             boolean='false' | 
-	 *             concept=SimpleObservableSemantics
-	 *         )? 
+	 *         ((urns+=Urn urns+=Urn*) | number=Number | boolean='true' | boolean='false')? 
 	 *         (name=LOWERCASE_ID | (observables+=AnnotatedObservableSemantics observables+=AnnotatedObservableSemantics*)) 
 	 *         docstring=STRING? 
 	 *         (dependencies+=Dependency dependencies+=Dependency*)? 
-	 *         (merging?='merging'? contextualizers+=ValueExecution contextualizers+=ValueExecution*)? 
+	 *         (contextualizers+=ValueExecution contextualizers+=ValueExecution*)? 
 	 *         (discretization?='discretized'? (classification=Classification | classificationProperty=PropertyId))? 
 	 *         (
 	 *             (
@@ -1667,7 +1660,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     Urn returns Urn
 	 *
 	 * Constraint:
-	 *     (name=UrnId | name=STRING | name=LocalFilePath)
+	 *     (name=PathName | name=UrnId | name=STRING | name=LocalFilePath)
 	 */
 	protected void sequence_Urn(ISerializationContext context, Urn semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1691,10 +1684,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     ValueExecution returns ValueAssignment
 	 *
 	 * Constraint:
-	 *     (execValue=ExecutableValue target=LOWERCASE_ID?)
+	 *     execValue=ExecutableValue
 	 */
 	protected void sequence_ValueExecution(ISerializationContext context, ValueAssignment semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, KimPackage.Literals.VALUE_ASSIGNMENT__EXEC_VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KimPackage.Literals.VALUE_ASSIGNMENT__EXEC_VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getValueExecutionAccess().getExecValueExecutableValueParserRuleCall_0(), semanticObject.getExecValue());
+		feeder.finish();
 	}
 	
 	

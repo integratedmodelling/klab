@@ -133,7 +133,7 @@ public class Model extends KimObject implements IModel {
 		this.scope = model.getScope();
 		this.setErrors(model.isErrors());
 		this.setInactive(model.isInactive());
-		this.merger = model.isResourceMerger();
+//		this.merger = model.isResourceMerger();
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
 
@@ -247,7 +247,8 @@ public class Model extends KimObject implements IModel {
 			}
 		}
 
-		if (model.isResourceMerger() && getMainObservable() != null) {
+		// TODO this should result from having multiple resources or models
+		if (this.merger && getMainObservable() != null) {
 
 			if (!getMainObservable().is(Type.CHANGE)) {
 				// TODO may remove, should be prevented by validator.
@@ -267,16 +268,17 @@ public class Model extends KimObject implements IModel {
 			for (IContextualizable r : model.getContextualization()) {
 				String urn = ((ComputableResource) r).getUrn();
 				if (urn == null) {
-					monitor.error("Cannot use anything but URNs in a 'merging' clause", getStatement());
+					monitor.error("Cannot use anything but URNs in a merging model", getStatement());
 					setErrors(true);
 				}
 				ress.add(urn);
 			}
 			try {
+				// TODO build a special local:merged:... resource, add that
 				this.resources.clear();
-				this.resources.add(
-						new ComputableResource(ress, inherent.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION,
-								inherent.getArtifactType()));
+//				this.resources.add(
+//						new ComputableResource(ress, inherent.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION,
+//								inherent.getArtifactType()));
 			} catch (Throwable e) {
 				monitor.error("Model has resource validation errors", getStatement());
 				setErrors(true);
@@ -739,41 +741,29 @@ public class Model extends KimObject implements IModel {
 						resource.getServiceCall());
 				setErrors(true);
 			}
-		} else if (resource.getMergedUrns() != null) {
-
-			// intersect resource coverage
-			Scale rscale = null;
-			for (String murn : resource.getMergedUrns()) {
-				if (murn.contains(":")) {
-					IResource res = Resources.INSTANCE.resolveResource(murn);
-					if (res == null) {
-						// monitor.send(new CompileNo);
-						this.setInactive(true);
-					} else {
-						rscale = Scale.create(res.getGeometry());
-					}
-				} else {
-					IKimObject obj = Resources.INSTANCE.getModelObject(murn);
-					if (obj instanceof Model) {
-						rscale = ((Model) obj).getCoverage(monitor);
-					}
-				}
-
-				if (rscale != null) {
-					if (this.resourceCoverage == null) {
-						this.resourceCoverage = rscale;
-					} else {
-						this.resourceCoverage = this.resourceCoverage.merge(rscale, LogicalConnector.INTERSECTION);
-					}
-				} else {
-					monitor.error("unknown resource or model " + murn + " in merging statement", getStatement());
-				}
-			}
-
-			// set it in the resource so we have it
-			resource.setMergedGeometry(this.resourceCoverage.getGeometry());
-
-		}
+		} /*
+			 * TODO bring this back as a merged geometry for the merging resource
+			 * else if (resource.getMergedUrns() != null) {
+			 * 
+			 * // intersect resource coverage Scale rscale = null; for (String murn :
+			 * resource.getMergedUrns()) { if (murn.contains(":")) { IResource res =
+			 * Resources.INSTANCE.resolveResource(murn); if (res == null) { //
+			 * monitor.send(new CompileNo); this.setInactive(true); } else { rscale =
+			 * Scale.create(res.getGeometry()); } } else { IKimObject obj =
+			 * Resources.INSTANCE.getModelObject(murn); if (obj instanceof Model) { rscale =
+			 * ((Model) obj).getCoverage(monitor); } }
+			 * 
+			 * if (rscale != null) { if (this.resourceCoverage == null) {
+			 * this.resourceCoverage = rscale; } else { this.resourceCoverage =
+			 * this.resourceCoverage.merge(rscale, LogicalConnector.INTERSECTION); } } else
+			 * { monitor.error("unknown resource or model " + murn +
+			 * " in merging statement", getStatement()); } }
+			 * 
+			 * // set it in the resource so we have it
+			 * resource.setMergedGeometry(this.resourceCoverage.getGeometry());
+			 * 
+			 * }
+			 */
 
 		return resource;
 	}

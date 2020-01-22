@@ -49,7 +49,7 @@ public class KimModel extends KimStatement implements IKimModel {
 	private List<String> resourceUrns = new ArrayList<>();
 	private IServiceCall resourceFunction;
 	private Object inlineValue;
-	private boolean resourceMerger;
+//	private boolean resourceMerger;
 	
 	// contextualizer/processing given after 'using'
 	private List<IContextualizable> contextualization = new ArrayList<>();
@@ -235,13 +235,13 @@ public class KimModel extends KimStatement implements IKimModel {
 		this.scope = scope;
 	}
 
-	@Override
-	public boolean isResourceMerger() {
-		return resourceMerger;
-	}
-
-	public void setResourceMerger(boolean resourceMerger) {
-		this.resourceMerger = resourceMerger;
-	}
+//	@Override
+//	public boolean isResourceMerger() {
+//		return resourceMerger;
+//	}
+//
+//	public void setResourceMerger(boolean resourceMerger) {
+//		this.resourceMerger = resourceMerger;
+//	}
 
 }

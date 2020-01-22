@@ -605,17 +605,17 @@ class KimValidator extends AbstractKimValidator {
 
 		for (contextualizer : model.contextualizers) {
 			// TODO validate required arguments from prototype and dependencies
-			if (contextualizer.execValue.model !== null) {
-				
-			 if (!model.merging) {
-			 	// error
-			 }
-			 
-			 // TODO check for recognized model
-				
-			} else if (model.merging && contextualizer.execValue.urn === null) {
-				
-			}
+//			if (contextualizer.execValue.model !== null) {
+//				
+////			 if (!model.merging) {
+////			 	// error
+////			 }
+//			 
+//			 // TODO check for recognized model
+//				
+//			} else if (model.merging && contextualizer.execValue.urn === null) {
+//				
+//			}
 		}
 
 		/*
@@ -639,19 +639,19 @@ class KimValidator extends AbstractKimValidator {
 				descriptor.dependencies.addAll(dependencies)
 				descriptor.instantiator = model.isInstantiator || hasDistributedAttributeObservable
 				descriptor.docstring = model.docstring
-				descriptor.resourceMerger = model.merging
+//				descriptor.resourceMerger = model.merging
 				
 				// data source - function or literal/remote URN
 				for (urn : model.urns) {
 					descriptor.resourceUrns.add(urn.name)
 				}
 
-				if (model.function !== null) {
+				/* if (model.function !== null) {
 					descriptor.resourceFunction = new KimServiceCall(model.function, descriptor)
 					for (notification : (descriptor.resourceFunction.get() as KimServiceCall).validateUsage(null)) {
 						notify(notification, model.function, KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION)
 					}
-				} else if (model.getBoolean() !== null) {
+				} else */ if (model.getBoolean() !== null) {
 					descriptor.inlineValue = Boolean.parseBoolean(model.getBoolean())
 				} else if (model.number !== null) {
 					descriptor.inlineValue = Kim.INSTANCE.parseNumber(model.number)

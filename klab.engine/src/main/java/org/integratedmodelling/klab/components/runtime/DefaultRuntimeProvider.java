@@ -264,13 +264,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			ret = LookupStateResolver.getServiceCall(
 					((ComputableResource) resource).getValidatedResource(ILookupTable.class), resource.getCondition(),
 					resource.isNegated());
-		} else if (resource.getMergedUrns() != null) {
-			if (resource.getComputationMode() == Mode.INSTANTIATION) {
-				ret = MergedUrnInstantiator.getServiceCall(resource.getMergedUrns());
-			} else {
-				ret = MergedUrnResolver.getServiceCall(resource.getMergedUrns());
-			}
-		} else {
+		} /*
+			 * else if (resource.getMergedUrns() != null) { if
+			 * (resource.getComputationMode() == Mode.INSTANTIATION) { ret =
+			 * MergedUrnInstantiator.getServiceCall(resource.getMergedUrns()); } else { ret
+			 * = MergedUrnResolver.getServiceCall(resource.getMergedUrns()); } }
+			 */else {
 			throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
 		}
 

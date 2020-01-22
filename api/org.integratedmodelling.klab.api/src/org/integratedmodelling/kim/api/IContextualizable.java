@@ -391,13 +391,13 @@ public interface IContextualizable extends IKimStatement, IDataflowNode {
 	 */
 	boolean isVariable();
 
-	/**
-	 * List of merged URNs that may represent resources or models. The resulting
-	 * contextualizer must arrange them by temporal context and choose the
-	 * appropriate one when data are requested.
-	 * 
-	 * @param mergedUrns
-	 */
-	List<String> getMergedUrns();
+//	/**
+//	 * List of merged URNs that may represent resources or models. The resulting
+//	 * contextualizer must arrange them by temporal context and choose the
+//	 * appropriate one when data are requested.
+//	 * 
+//	 * @param mergedUrns
+//	 */
+//	List<String> getMergedUrns();
 
 }

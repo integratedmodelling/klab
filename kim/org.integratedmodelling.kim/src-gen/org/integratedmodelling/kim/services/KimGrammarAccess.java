@@ -335,16 +335,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cCommaKeyword_1_0_0_1_0 = (Keyword)cGroup_1_0_0_1.eContents().get(0);
 		private final Assignment cUrnsAssignment_1_0_0_1_1 = (Assignment)cGroup_1_0_0_1.eContents().get(1);
 		private final RuleCall cUrnsUrnParserRuleCall_1_0_0_1_1_0 = (RuleCall)cUrnsAssignment_1_0_0_1_1.eContents().get(0);
-		private final Assignment cFunctionAssignment_1_0_1 = (Assignment)cAlternatives_1_0.eContents().get(1);
-		private final RuleCall cFunctionFunctionParserRuleCall_1_0_1_0 = (RuleCall)cFunctionAssignment_1_0_1.eContents().get(0);
-		private final Assignment cNumberAssignment_1_0_2 = (Assignment)cAlternatives_1_0.eContents().get(2);
-		private final RuleCall cNumberNumberParserRuleCall_1_0_2_0 = (RuleCall)cNumberAssignment_1_0_2.eContents().get(0);
-		private final Assignment cBooleanAssignment_1_0_3 = (Assignment)cAlternatives_1_0.eContents().get(3);
-		private final Alternatives cBooleanAlternatives_1_0_3_0 = (Alternatives)cBooleanAssignment_1_0_3.eContents().get(0);
-		private final Keyword cBooleanTrueKeyword_1_0_3_0_0 = (Keyword)cBooleanAlternatives_1_0_3_0.eContents().get(0);
-		private final Keyword cBooleanFalseKeyword_1_0_3_0_1 = (Keyword)cBooleanAlternatives_1_0_3_0.eContents().get(1);
-		private final Assignment cConceptAssignment_1_0_4 = (Assignment)cAlternatives_1_0.eContents().get(4);
-		private final RuleCall cConceptSimpleObservableSemanticsParserRuleCall_1_0_4_0 = (RuleCall)cConceptAssignment_1_0_4.eContents().get(0);
+		private final Assignment cNumberAssignment_1_0_1 = (Assignment)cAlternatives_1_0.eContents().get(1);
+		private final RuleCall cNumberNumberParserRuleCall_1_0_1_0 = (RuleCall)cNumberAssignment_1_0_1.eContents().get(0);
+		private final Assignment cBooleanAssignment_1_0_2 = (Assignment)cAlternatives_1_0.eContents().get(2);
+		private final Alternatives cBooleanAlternatives_1_0_2_0 = (Alternatives)cBooleanAssignment_1_0_2.eContents().get(0);
+		private final Keyword cBooleanTrueKeyword_1_0_2_0_0 = (Keyword)cBooleanAlternatives_1_0_2_0.eContents().get(0);
+		private final Keyword cBooleanFalseKeyword_1_0_2_0_1 = (Keyword)cBooleanAlternatives_1_0_2_0.eContents().get(1);
 		private final Keyword cAsKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
 		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
 		private final Assignment cNameAssignment_2_0 = (Assignment)cAlternatives_2.eContents().get(0);
@@ -367,10 +363,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cDependenciesAssignment_4_2_1 = (Assignment)cGroup_4_2.eContents().get(1);
 		private final RuleCall cDependenciesDependencyParserRuleCall_4_2_1_0 = (RuleCall)cDependenciesAssignment_4_2_1.eContents().get(0);
 		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
-		private final Alternatives cAlternatives_5_0 = (Alternatives)cGroup_5.eContents().get(0);
-		private final Keyword cUsingKeyword_5_0_0 = (Keyword)cAlternatives_5_0.eContents().get(0);
-		private final Assignment cMergingAssignment_5_0_1 = (Assignment)cAlternatives_5_0.eContents().get(1);
-		private final Keyword cMergingMergingKeyword_5_0_1_0 = (Keyword)cMergingAssignment_5_0_1.eContents().get(0);
+		private final Keyword cUsingKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
 		private final Assignment cContextualizersAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
 		private final RuleCall cContextualizersValueExecutionParserRuleCall_5_1_0 = (RuleCall)cContextualizersAssignment_5_1.eContents().get(0);
 		private final Group cGroup_5_2 = (Group)cGroup_5.eContents().get(2);
@@ -423,11 +416,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cMetadataMetadataParserRuleCall_9_1_0 = (RuleCall)cMetadataAssignment_9_1.eContents().get(0);
 		
 		//ModelBodyStatement:
-		//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
-		//	concept=SimpleObservableSemantics)
+		//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false'))
 		//	'as')? (name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (','
 		//	observables+=AnnotatedObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
-		//	dependencies+=Dependency)*)? (('using' | merging?='merging') contextualizers+=ValueExecution (','
+		//	dependencies+=Dependency)*)? ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (','
 		//	contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
 		//	classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
 		//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
@@ -435,14 +427,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	actions+=ActionSpecification* ('metadata' metadata=Metadata)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
-		//concept=SimpleObservableSemantics) 'as')? (name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (','
-		//observables+=AnnotatedObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
-		//dependencies+=Dependency)*)? (('using' | merging?='merging') contextualizers+=ValueExecution (','
-		//contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
-		//classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
-		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into'
-		//(lookupTable=Table | lookupTableId=UPPERCASE_ID))? actions+=ActionSpecification* ('metadata' metadata=Metadata)?
+		//instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false')) 'as')?
+		//(name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (',' observables+=AnnotatedObservableSemantics)*)
+		//docstring=STRING? ('observing' dependencies+=Dependency (',' dependencies+=Dependency)*)? ('using'
+		///*  | merging?='merging')*/ contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)? (('classified' |
+		//discretization?='discretized') ('into' classification=Classification | 'according' 'to'
+		//classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
+		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
+		//actions+=ActionSpecification* ('metadata' metadata=Metadata)?
 		public Group getGroup() { return cGroup; }
 		
 		//instantiator?='each'?
@@ -451,14 +443,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'each'
 		public Keyword getInstantiatorEachKeyword_0_0() { return cInstantiatorEachKeyword_0_0; }
 		
-		//((urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
-		//concept=SimpleObservableSemantics) 'as')?
+		//((urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false')) 'as')?
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//(urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
-		//concept=SimpleObservableSemantics)
+		//(urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false'))
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
+		////				(models+=PathName (',' models+=PathName)*) | 
 		//urns+=Urn (',' urns+=Urn)*
 		public Group getGroup_1_0_0() { return cGroup_1_0_0; }
 		
@@ -480,35 +471,24 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Urn
 		public RuleCall getUrnsUrnParserRuleCall_1_0_0_1_1_0() { return cUrnsUrnParserRuleCall_1_0_0_1_1_0; }
 		
-		//function=Function
-		public Assignment getFunctionAssignment_1_0_1() { return cFunctionAssignment_1_0_1; }
-		
-		//Function
-		public RuleCall getFunctionFunctionParserRuleCall_1_0_1_0() { return cFunctionFunctionParserRuleCall_1_0_1_0; }
-		
+		////				function=Function | 
 		//number=Number
-		public Assignment getNumberAssignment_1_0_2() { return cNumberAssignment_1_0_2; }
+		public Assignment getNumberAssignment_1_0_1() { return cNumberAssignment_1_0_1; }
 		
 		//Number
-		public RuleCall getNumberNumberParserRuleCall_1_0_2_0() { return cNumberNumberParserRuleCall_1_0_2_0; }
+		public RuleCall getNumberNumberParserRuleCall_1_0_1_0() { return cNumberNumberParserRuleCall_1_0_1_0; }
 		
 		//boolean=('true' | 'false')
-		public Assignment getBooleanAssignment_1_0_3() { return cBooleanAssignment_1_0_3; }
+		public Assignment getBooleanAssignment_1_0_2() { return cBooleanAssignment_1_0_2; }
 		
 		//('true' | 'false')
-		public Alternatives getBooleanAlternatives_1_0_3_0() { return cBooleanAlternatives_1_0_3_0; }
+		public Alternatives getBooleanAlternatives_1_0_2_0() { return cBooleanAlternatives_1_0_2_0; }
 		
 		//'true'
-		public Keyword getBooleanTrueKeyword_1_0_3_0_0() { return cBooleanTrueKeyword_1_0_3_0_0; }
+		public Keyword getBooleanTrueKeyword_1_0_2_0_0() { return cBooleanTrueKeyword_1_0_2_0_0; }
 		
 		//'false'
-		public Keyword getBooleanFalseKeyword_1_0_3_0_1() { return cBooleanFalseKeyword_1_0_3_0_1; }
-		
-		//concept=SimpleObservableSemantics
-		public Assignment getConceptAssignment_1_0_4() { return cConceptAssignment_1_0_4; }
-		
-		//SimpleObservableSemantics
-		public RuleCall getConceptSimpleObservableSemanticsParserRuleCall_1_0_4_0() { return cConceptSimpleObservableSemanticsParserRuleCall_1_0_4_0; }
+		public Keyword getBooleanFalseKeyword_1_0_2_0_1() { return cBooleanFalseKeyword_1_0_2_0_1; }
 		
 		//'as'
 		public Keyword getAsKeyword_1_1() { return cAsKeyword_1_1; }
@@ -573,22 +553,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Dependency
 		public RuleCall getDependenciesDependencyParserRuleCall_4_2_1_0() { return cDependenciesDependencyParserRuleCall_4_2_1_0; }
 		
-		//(('using' | merging?='merging') contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+		//('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		public Group getGroup_5() { return cGroup_5; }
 		
-		//('using' | merging?='merging')
-		public Alternatives getAlternatives_5_0() { return cAlternatives_5_0; }
-		
 		//'using'
-		public Keyword getUsingKeyword_5_0_0() { return cUsingKeyword_5_0_0; }
+		public Keyword getUsingKeyword_5_0() { return cUsingKeyword_5_0; }
 		
-		//merging?='merging'
-		public Assignment getMergingAssignment_5_0_1() { return cMergingAssignment_5_0_1; }
-		
-		//'merging'
-		public Keyword getMergingMergingKeyword_5_0_1_0() { return cMergingMergingKeyword_5_0_1_0; }
-		
-		//contextualizers+=ValueExecution
+		///*  | merging?='merging')*/ contextualizers+=ValueExecution
 		public Assignment getContextualizersAssignment_5_1() { return cContextualizersAssignment_5_1; }
 		
 		//ValueExecution
@@ -1228,29 +1199,33 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Urn");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
 		private final Alternatives cNameAlternatives_0 = (Alternatives)cNameAssignment.eContents().get(0);
-		private final RuleCall cNameUrnIdParserRuleCall_0_0 = (RuleCall)cNameAlternatives_0.eContents().get(0);
-		private final RuleCall cNameSTRINGTerminalRuleCall_0_1 = (RuleCall)cNameAlternatives_0.eContents().get(1);
-		private final RuleCall cNameLocalFilePathParserRuleCall_0_2 = (RuleCall)cNameAlternatives_0.eContents().get(2);
+		private final RuleCall cNamePathNameParserRuleCall_0_0 = (RuleCall)cNameAlternatives_0.eContents().get(0);
+		private final RuleCall cNameUrnIdParserRuleCall_0_1 = (RuleCall)cNameAlternatives_0.eContents().get(1);
+		private final RuleCall cNameSTRINGTerminalRuleCall_0_2 = (RuleCall)cNameAlternatives_0.eContents().get(2);
+		private final RuleCall cNameLocalFilePathParserRuleCall_0_3 = (RuleCall)cNameAlternatives_0.eContents().get(3);
 		
 		//Urn:
-		//	name=(UrnId | STRING | LocalFilePath);
+		//	name=(PathName | UrnId | STRING | LocalFilePath);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//// String used when there are strange chars or keywords in the URN.
-		//name=(UrnId | STRING | LocalFilePath)
+		//name=(PathName | UrnId | STRING | LocalFilePath)
 		public Assignment getNameAssignment() { return cNameAssignment; }
 		
-		//(UrnId | STRING | LocalFilePath)
+		//(PathName | UrnId | STRING | LocalFilePath)
 		public Alternatives getNameAlternatives_0() { return cNameAlternatives_0; }
 		
+		//PathName
+		public RuleCall getNamePathNameParserRuleCall_0_0() { return cNamePathNameParserRuleCall_0_0; }
+		
 		//UrnId
-		public RuleCall getNameUrnIdParserRuleCall_0_0() { return cNameUrnIdParserRuleCall_0_0; }
+		public RuleCall getNameUrnIdParserRuleCall_0_1() { return cNameUrnIdParserRuleCall_0_1; }
 		
 		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_0_1() { return cNameSTRINGTerminalRuleCall_0_1; }
+		public RuleCall getNameSTRINGTerminalRuleCall_0_2() { return cNameSTRINGTerminalRuleCall_0_2; }
 		
 		//LocalFilePath
-		public RuleCall getNameLocalFilePathParserRuleCall_0_2() { return cNameLocalFilePathParserRuleCall_0_2; }
+		public RuleCall getNameLocalFilePathParserRuleCall_0_3() { return cNameLocalFilePathParserRuleCall_0_3; }
 	}
 	public class LookupTableElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.LookupTable");
@@ -2312,38 +2287,18 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	public class ValueExecutionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ValueExecution");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cExecValueAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cExecValueExecutableValueParserRuleCall_0_0 = (RuleCall)cExecValueAssignment_0.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cForKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cTargetAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cTargetLOWERCASE_IDTerminalRuleCall_1_1_0 = (RuleCall)cTargetAssignment_1_1.eContents().get(0);
+		private final Assignment cExecValueAssignment = (Assignment)rule.eContents().get(1);
+		private final RuleCall cExecValueExecutableValueParserRuleCall_0 = (RuleCall)cExecValueAssignment.eContents().get(0);
 		
 		//ValueExecution ValueAssignment:
-		//	execValue=ExecutableValue ('for' target=LOWERCASE_ID)?;
+		//	execValue=ExecutableValue /* ('for' target=LOWERCASE_ID)? */;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//execValue=ExecutableValue ('for' target=LOWERCASE_ID)?
-		public Group getGroup() { return cGroup; }
-		
 		//execValue=ExecutableValue
-		public Assignment getExecValueAssignment_0() { return cExecValueAssignment_0; }
+		public Assignment getExecValueAssignment() { return cExecValueAssignment; }
 		
 		//ExecutableValue
-		public RuleCall getExecValueExecutableValueParserRuleCall_0_0() { return cExecValueExecutableValueParserRuleCall_0_0; }
-		
-		//('for' target=LOWERCASE_ID)?
-		public Group getGroup_1() { return cGroup_1; }
-		
-		//'for'
-		public Keyword getForKeyword_1_0() { return cForKeyword_1_0; }
-		
-		//target=LOWERCASE_ID
-		public Assignment getTargetAssignment_1_1() { return cTargetAssignment_1_1; }
-		
-		//LOWERCASE_ID
-		public RuleCall getTargetLOWERCASE_IDTerminalRuleCall_1_1_0() { return cTargetLOWERCASE_IDTerminalRuleCall_1_1_0; }
+		public RuleCall getExecValueExecutableValueParserRuleCall_0() { return cExecValueExecutableValueParserRuleCall_0; }
 	}
 	public class ExecutableValueElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ExecutableValue");
@@ -2365,8 +2320,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cUrnAlternatives_0_2_0 = (Alternatives)cUrnAssignment_0_2.eContents().get(0);
 		private final RuleCall cUrnUrnIdParserRuleCall_0_2_0_0 = (RuleCall)cUrnAlternatives_0_2_0.eContents().get(0);
 		private final RuleCall cUrnSTRINGTerminalRuleCall_0_2_0_1 = (RuleCall)cUrnAlternatives_0_2_0.eContents().get(1);
-		private final Assignment cModelAssignment_0_3 = (Assignment)cAlternatives_0.eContents().get(3);
-		private final RuleCall cModelPathParserRuleCall_0_3_0 = (RuleCall)cModelAssignment_0_3.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Alternatives cAlternatives_1_0 = (Alternatives)cGroup_1.eContents().get(0);
 		private final Keyword cIfKeyword_1_0_0 = (Keyword)cAlternatives_1_0.eContents().get(0);
@@ -2376,16 +2329,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cConditionValueParserRuleCall_1_1_0 = (RuleCall)cConditionAssignment_1_1.eContents().get(0);
 		
 		//ExecutableValue ComputableValue:
-		//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING) |
-		//	model=Path) (('if' | conditionNegated?='unless') condition=Value)?;
+		//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING))
+		//	(('if' | conditionNegated?='unless') condition=Value)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING) |
-		//model=Path) (('if' | conditionNegated?='unless') condition=Value)?
+		//(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING))
+		//(('if' | conditionNegated?='unless') condition=Value)?
 		public Group getGroup() { return cGroup; }
 		
-		//(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING) |
-		//model=Path)
+		//(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING))
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
 		//function=Function
@@ -2435,12 +2387,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//STRING
 		public RuleCall getUrnSTRINGTerminalRuleCall_0_2_0_1() { return cUrnSTRINGTerminalRuleCall_0_2_0_1; }
-		
-		//model=Path
-		public Assignment getModelAssignment_0_3() { return cModelAssignment_0_3; }
-		
-		//Path
-		public RuleCall getModelPathParserRuleCall_0_3_0() { return cModelPathParserRuleCall_0_3_0; }
 		
 		//(('if' | conditionNegated?='unless') condition=Value)?
 		public Group getGroup_1() { return cGroup_1; }
@@ -10907,11 +10853,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ModelBodyStatement:
-	//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
-	//	concept=SimpleObservableSemantics)
+	//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false'))
 	//	'as')? (name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (','
 	//	observables+=AnnotatedObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
-	//	dependencies+=Dependency)*)? (('using' | merging?='merging') contextualizers+=ValueExecution (','
+	//	dependencies+=Dependency)*)? ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (','
 	//	contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
 	//	classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
 	//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
@@ -10973,7 +10918,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Urn:
-	//	name=(UrnId | STRING | LocalFilePath);
+	//	name=(PathName | UrnId | STRING | LocalFilePath);
 	public UrnElements getUrnAccess() {
 		return pUrn;
 	}
@@ -11102,7 +11047,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ValueExecution ValueAssignment:
-	//	execValue=ExecutableValue ('for' target=LOWERCASE_ID)?;
+	//	execValue=ExecutableValue /* ('for' target=LOWERCASE_ID)? */;
 	public ValueExecutionElements getValueExecutionAccess() {
 		return pValueExecution;
 	}
@@ -11112,8 +11057,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ExecutableValue ComputableValue:
-	//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING) |
-	//	model=Path) (('if' | conditionNegated?='unless') condition=Value)?;
+	//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=(UrnId | STRING))
+	//	(('if' | conditionNegated?='unless') condition=Value)?;
 	public ExecutableValueElements getExecutableValueAccess() {
 		return pExecutableValue;
 	}

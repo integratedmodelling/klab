@@ -175,9 +175,9 @@ public class EModel extends EKimObject implements IKimModel, EDocumentable {
 		return delegate.getNamespace();
 	}
 
-	@Override
-	public boolean isResourceMerger() {
-		return delegate.isResourceMerger();
-	}
+//	@Override
+//	public boolean isResourceMerger() {
+//		return delegate.isResourceMerger();
+//	}
 
 }
