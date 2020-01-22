@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -16,6 +15,8 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.apache.commons.text.RandomStringGenerator;
+import org.bouncycastle.bcpg.ArmoredInputStream;
+import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.license.ArmoredKeyPair;
@@ -26,7 +27,6 @@ import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
-import com.google.common.hash.Hashing;
 import com.verhas.licensor.License;
 
 @Service
@@ -60,6 +60,7 @@ public class LicenseServiceImpl implements LicenseService {
 		Properties properties = getPropertiesString(node);
 		properties.setProperty(KlabCertificate.KEY_CERTIFICATE, encodedLicenseString(properties));
 		properties.store(byteArrayOutputStream, "Node Certificate Generated On " + new Date());
+		byteArrayOutputStream.close();
 		return byteArrayOutputStream.toByteArray();
 	}
 
@@ -106,9 +107,11 @@ public class LicenseServiceImpl implements LicenseService {
 		
 		ArmoredKeyPair keys = configuration.getKeys();
 		InputStream targetStream = new ByteArrayInputStream(keys.publicKey().getBytes());
+		InputStream armoredBais = new ByteArrayInputStream(certFileContent.getBytes());
+		ArmoredInputStream armoredInputStream = new ArmoredInputStream(armoredBais);
 		
-		license.loadKeyRing(targetStream, configuration.getDigest().getBytes());
-		license.setLicenseEncoded(certFileContent);
+		license.loadKeyRing(targetStream, configuration.getDigest());
+		license.setLicenseEncoded(armoredInputStream);
         String propertiesString = license.getLicenseString();
         Properties result = new Properties();
         result.load(new StringReader(propertiesString));
@@ -131,19 +134,21 @@ public class LicenseServiceImpl implements LicenseService {
 		config.setHubUrl("localhost:8284/hub");
 		
 		ArmoredKeyPair keys = null;
+		
 		try {
-			keys = keyService.generateKeys(2048, config.getHubId(), config.getEmail(), config.getPassphrase());
+			keys = keyService.generateKeys(4096, config.getHubId(), config.getEmail(), config.getPassphrase());
+	        final SHA512Digest dig = new SHA512Digest();
+	        dig.reset();
+	        dig.update(keys.publicKey().getBytes(), 0, keys.publicKey().getBytes().length);
+	        final byte[] digest = new byte[dig.getDigestSize()];
+	        dig.doFinal(digest, 0);
+			config.setDigest(digest);
+			config.setKeys(keys);
 		} catch (PGPException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		String sha256hex = Hashing.sha256()
-				  .hashString(keys.publicKey(), StandardCharsets.UTF_8)
-				  .toString();
-		
-		config.setKeys(keys);
-		config.setDigest(sha256hex);
 		return repository.insert(config);
 	}
 

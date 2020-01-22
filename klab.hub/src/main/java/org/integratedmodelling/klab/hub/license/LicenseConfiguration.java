@@ -24,7 +24,7 @@ public class LicenseConfiguration {
 	
 	private ArmoredKeyPair keys;
 
-	private String digest;
+	private byte[] digest;
 	
 	public String getId() {
 		return id;
@@ -78,11 +78,11 @@ public class LicenseConfiguration {
 		this.passphrase = passphrase;
 	}
 
-	public void setDigest(String sha256hex) {
+	public void setDigest(byte[] sha256hex) {
 		this.digest = sha256hex;		
 	}
 
-	public String getDigest() {
+	public byte[] getDigest() {
 		return this.digest;
 	}
 

@@ -124,6 +124,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.permitAll()
 			.antMatchers(HttpMethod.POST, "/api/v2/users")
 			.permitAll()
+			.antMatchers(HttpMethod.POST, "/api/v2/nodes/auth-cert")
+			.permitAll()
 			.regexMatchers("/api/v2/users/.*?(verify|activate|lostPassword|setPassword|requestNewPassword|groups).*")
 			.permitAll()
 			.regexMatchers("/api/v2/users/?(log-in|log-out)")

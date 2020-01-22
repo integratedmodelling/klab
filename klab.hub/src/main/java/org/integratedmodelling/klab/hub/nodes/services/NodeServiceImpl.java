@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.commands.CreateMongoNode;
 import org.integratedmodelling.klab.hub.nodes.commands.GetMongoNodeByName;
+import org.integratedmodelling.klab.hub.nodes.commands.UpdateMongoNode;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,7 @@ public class NodeServiceImpl implements NodeService {
 
 	@Override
 	public MongoNode updateNode(MongoNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		return new UpdateMongoNode(node, nodeRepository).execute();
 	}
 
 	@Override

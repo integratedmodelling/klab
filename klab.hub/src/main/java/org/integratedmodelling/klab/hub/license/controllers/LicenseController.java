@@ -9,6 +9,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Authentication;
@@ -69,7 +70,6 @@ public class LicenseController {
 	}
 	
 	@PostMapping(value= "/nodes/auth-cert")
-	@RolesAllowed({ "ROLE_SYSTEM" })
 	public ResponseEntity<NodeAuthenticationResponse> processNodeCertificate(@RequestBody NodeAuthenticationRequest request, HttpServletRequest httpRequest) {
         String remoteAddr = "";
 
@@ -86,9 +86,11 @@ public class LicenseController {
         		new EvaluateNodeLicenseProperties(
         				node, 
         				licenseService, 
-        				request.getCertificate()).execute();
+        				new String(Base64.decodeBase64(request.getCertificate())))
+        				.execute();
 
         if(compare) {
+        	
         	Set<Group> groups = new GetNodesGroups(node, groupRepository).execute();
         	AuthenticatedIdentity authenticatedIdentity = 
         			new GetNodeAuthenticatedIdentity(node, groups).execute();
@@ -98,6 +100,9 @@ public class LicenseController {
     				Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class).getId(),
     				groups,
     				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
+    		
+    		node.setLastNodeConnection();
+    		nodeService.updateNode(node);
     		
     		return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
