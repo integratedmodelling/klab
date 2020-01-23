@@ -14,7 +14,7 @@ import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.hub.config.LicenseConfig;
+import org.integratedmodelling.klab.hub.config.LegacyLicenseConfig;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
@@ -23,7 +23,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.verhas.licensor.License;
+import com.javax0.license3j.licensor.License;
+
 
 @Component
 public class LicenseServiceLegacyImpl implements LicenseServiceLegacy {
@@ -32,7 +33,7 @@ public class LicenseServiceLegacyImpl implements LicenseServiceLegacy {
 	LinkConfig linkConfig;
 	
 	@Autowired
-	LicenseConfig licenseConfig;
+	LegacyLicenseConfig licenseConfig;
 	
 	public static final int CERT_FILE_TTL_DAYS = 365;
 	

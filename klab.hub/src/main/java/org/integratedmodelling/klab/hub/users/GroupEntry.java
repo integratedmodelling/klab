@@ -36,7 +36,11 @@ public class GroupEntry {
 	}
 
 	public DateTime getExperation() {
-		return experation;
+		if(experation == null) {
+			return DateTime.now().plusMonths(6);
+		} else {
+			return experation;
+		}
 	}
 
 	public void setRenewal(DateTime experation) {

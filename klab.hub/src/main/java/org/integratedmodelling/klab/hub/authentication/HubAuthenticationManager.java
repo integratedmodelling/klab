@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
-import org.integratedmodelling.klab.hub.config.LicenseConfig;
+import org.integratedmodelling.klab.hub.config.LegacyLicenseConfig;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
@@ -43,7 +43,7 @@ public enum HubAuthenticationManager {
 
 	Client client = Client.create();
 	
-	LicenseConfig licenseConfig;
+	LegacyLicenseConfig licenseConfig;
 
 	private HubAuthenticationManager() {
 
@@ -143,7 +143,7 @@ public enum HubAuthenticationManager {
 		return certificate;
 	}
 	
-	public LicenseConfig getLicenseConfig() {
+	public LegacyLicenseConfig getLicenseConfig() {
 		return licenseConfig;
 	}
 

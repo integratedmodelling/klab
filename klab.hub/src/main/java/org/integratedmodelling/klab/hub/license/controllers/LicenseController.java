@@ -86,7 +86,7 @@ public class LicenseController {
         		new EvaluateNodeLicenseProperties(
         				node, 
         				licenseService, 
-        				new String(Base64.decodeBase64(request.getCertificate())))
+        				request.getCertificate())
         				.execute();
 
         if(compare) {

@@ -175,7 +175,7 @@ public interface API {
 		 * Called by nodes on hubs when authenticating with them. Parameters like the
 		 * engine version.
 		 */
-		public static final String AUTHENTICATE_NODE = "/api/auth-cert/node";
+		public static final String AUTHENTICATE_NODE = "/api/v2/nodes/auth-cert";
 
 		public static interface INDEXING {
 

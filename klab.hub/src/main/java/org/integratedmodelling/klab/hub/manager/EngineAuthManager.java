@@ -57,7 +57,7 @@ public class EngineAuthManager {
 			break;
 		case TEST:
 			if (IPUtils.isLocal(ip)) {
-				return processLocalEngineUser(request);
+				return processEngineUser(request);
 			} else {
 				break;	
 			}

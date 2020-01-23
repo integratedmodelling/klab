@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "license")
-public class LicenseConfig {
+public class LegacyLicenseConfig {
 	
 	private String userId;
 	private String password;

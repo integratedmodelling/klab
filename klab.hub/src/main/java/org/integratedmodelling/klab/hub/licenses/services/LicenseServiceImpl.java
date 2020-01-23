@@ -8,6 +8,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
@@ -27,7 +28,11 @@ import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
-import com.verhas.licensor.License;
+import com.javax0.license3j.licensor.License;
+
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.RsaLength;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 
 @Service
 public class LicenseServiceImpl implements LicenseService {
@@ -111,7 +116,7 @@ public class LicenseServiceImpl implements LicenseService {
 		ArmoredInputStream armoredInputStream = new ArmoredInputStream(armoredBais);
 		
 		license.loadKeyRing(targetStream, configuration.getDigest());
-		license.setLicenseEncoded(armoredInputStream);
+		license.setLicenseEncoded(armoredInputStream,"UTF-8");
         String propertiesString = license.getLicenseString();
         Properties result = new Properties();
         result.load(new StringReader(propertiesString));
@@ -150,6 +155,31 @@ public class LicenseServiceImpl implements LicenseService {
 		}
 		
 		return repository.insert(config);
+	}
+	
+	public LicenseConfiguration generateLicenseConfiguration() {
+		 try {
+			final KeyringConfig rsaKeyRing = BouncyGPG.createSimpleKeyring()
+				        .simpleRsaKeyRing("Juliet Capulet <juliet@example.com>", RsaLength.RSA_3072_BIT);
+			rsaKeyRing.getPublicKeyRings()
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidAlgorithmParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (PGPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return configuration;
+		
 	}
 
 }
