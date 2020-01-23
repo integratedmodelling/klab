@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
@@ -35,6 +36,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -61,12 +63,21 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 	private String learnedGeometry = null;
 	private List<IDocumentationProvider.Item> documentation = new ArrayList<>();
 
+	private IKimExpression selector;
+	private double selectFraction = Double.NaN;
+	protected IObservable targetObservable;
+
 	protected AbstractWekaResolver() {
 	}
 
-	protected AbstractWekaResolver(Class<T> cls, IParameters<String> parameters, boolean requiresDiscretization,
-			boolean predictionIsProbabilistic, boolean admitsNodata) {
+	public IArtifact.Type getType() {
+		return targetObservable.getArtifactType();
+	}
+
+	protected AbstractWekaResolver(Class<T> cls, IParameters<String> parameters, IObservable observable,
+			boolean requiresDiscretization, boolean predictionIsProbabilistic, boolean admitsNodata) {
 		this.options = new WekaOptions(cls, parameters);
+		this.targetObservable = observable;
 		this.classifier = new WekaClassifier(cls, this.options, predictionIsProbabilistic);
 		this.classDiscretizer = parameters.get("discretization", IServiceCall.class);
 		this.instancesExport = parameters.get("instances", String.class);
@@ -74,6 +85,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		this.admitsNodata = admitsNodata;
 		this.resourceId = parameters.get("resource", String.class);
 		this.learnedGeometry = parameters.get("geometry", String.class);
+		this.selector = parameters.get("select", IKimExpression.class);
+		this.selectFraction = parameters.get("sample", this.selector == null ? Double.NaN : 1.0);
 	}
 
 	@Override
@@ -92,7 +105,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		}
 
 		WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeScope) context, true,
-				admitsNodata, classDiscretizer);
+				admitsNodata, classDiscretizer, selector, selectFraction);
 
 		if (instances.getInstances().isEmpty()) {
 			context.getMonitor().warn("No instances in training set: cannot train Weka classifier");
@@ -153,10 +166,12 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 		if (prediction instanceof double[]) {
 
-			// predicted state must be discretized
-			// FIXME this could be a categorical state without discretization
-			EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(
-					instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
+			// predicted state must be discretized unless it's not numeric
+			EnumeratedRealDistribution distribution = null;
+			if (target.getObservable().getArtifactType().isNumeric()) {
+				distribution = new EnumeratedRealDistribution(instances.getPredictedDiscretization().getMidpoints(),
+						(double[]) prediction);
+			}
 
 			if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
 				target.set(locator, distribution.getNumericalMean());
@@ -270,7 +285,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 				builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
 						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
 			} else {
-				
+
 				IObservable observable = predicted ? instances.getPredictedObservable()
 						: instances.getPredictorObservable(attribute.name());
 				if (!predicted) {
@@ -284,6 +299,25 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 //				builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
 //						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
 
+			}
+
+			/*
+			 * if we have a key, serialize it to reconstruct it in inference. The output is
+			 * identified as "predicted" as we do not know which specific type it will be
+			 * used to predict. The predictor keys should be used to filter out input
+			 * concepts that have not been seen by the classifier.
+			 */
+			List<String> key = instances.getDatakeyDefinitions(attribute.name());
+			if (key != null) {
+				try {
+					File keyfile = File.createTempFile("key_" + (predicted ? "predicted" : attribute.name()), ".dat");
+					FileUtils.writeLines(keyfile, key);
+					builder.addFile(keyfile);
+					builder.withParameter("key." + (predicted ? "predicted" : attribute.name()),
+							MiscUtilities.getFileName(keyfile));
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
 			}
 
 			DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
@@ -305,7 +339,9 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 							builder.withParameter("predicted.discretizer.cutpoints", Arrays.toString(cutpoints));
 						}
 
-						// TODO encode data key
+						if (classifier.isPredictionProbabilistic()) {
+							builder.withOutput("uncertainty", IArtifact.Type.NUMBER);
+						}
 
 					} else {
 

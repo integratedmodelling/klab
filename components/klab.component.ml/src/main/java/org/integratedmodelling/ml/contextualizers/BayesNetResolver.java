@@ -42,19 +42,21 @@ java weka.classifiers.bayes.BayesNet -t iris.arff -D \
  */
 public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements IExpression {
 
-	private IContextualizationScope context;
+//	private IContextualizationScope context;
 
-	public BayesNetResolver() {}
-	
-	public BayesNetResolver(IParameters<String> parameters,IContextualizationScope context) {
-		super(BayesNet.class, checkDefaults(parameters), true, true, false);
-		this.context = context;
+	public BayesNetResolver() {
+	}
+
+	public BayesNetResolver(IParameters<String> parameters, IContextualizationScope context) {
+		super(BayesNet.class, checkDefaults(parameters), context.getTargetSemantics(), true, true, false);
+//		this.context = context;
 	}
 
 	private static IParameters<String> checkDefaults(IParameters<String> parameters) {
 
 		/*
-		 * Both search and estimator parameters are mandatory. This way we enable defaults.
+		 * Both search and estimator parameters are mandatory. This way we enable
+		 * defaults.
 		 */
 		if (!parameters.containsKey("search")) {
 			parameters.put("search", KimServiceCall.create("weka.bayes.k2", "maxparents", 3));
@@ -62,19 +64,8 @@ public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements 
 		if (!parameters.containsKey("estimator")) {
 			parameters.put("estimator", KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0));
 		}
-		
-		return parameters;
-	}
 
-//	@Override
-//	public IGeometry getGeometry() {
-//		// TODO check
-//		return ((Scale)context.getScale().at(ITime.INITIALIZATION)).asGeometry();
-//	}
-//
-	@Override
-	public Type getType() {
-		return Type.NUMBER;
+		return parameters;
 	}
 
 	@Override

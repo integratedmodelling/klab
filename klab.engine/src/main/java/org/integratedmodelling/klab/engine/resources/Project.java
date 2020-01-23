@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.templates.KimTemplates;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -187,5 +188,15 @@ public class Project implements IProject {
 	@Override
 	public IWorkspace getWorkspace() {
 		return Resources.INSTANCE.getWorkspaceFor(getRoot());
+	}
+
+	@Override
+	public IResource getLocalResource(String urn) {
+		for (String u : getLocalResourceUrns()) {
+			if (u.endsWith(":" + urn)) {
+				return Resources.INSTANCE.resolveResource(u);
+			}
+		}
+		return null;
 	}
 }

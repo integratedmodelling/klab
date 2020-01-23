@@ -2,6 +2,10 @@ package org.integratedmodelling.klab.hub.service;
 
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2UserInfo;
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2UserInfoFactory;
+import org.integratedmodelling.klab.hub.users.AuthProvider;
+import org.integratedmodelling.klab.hub.users.ProfileResource;
+import org.integratedmodelling.klab.hub.users.Role;
+import org.integratedmodelling.klab.hub.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
@@ -19,11 +23,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.klab.hub.exception.OAuth2AuthenticationProcessingException;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
-import org.integratedmodelling.klab.hub.models.AuthProvider;
-import org.integratedmodelling.klab.hub.models.ProfileResource;
-import org.integratedmodelling.klab.hub.models.Role;
-import org.integratedmodelling.klab.hub.models.User;
-import org.integratedmodelling.klab.hub.models.User.AccountStatus;
 
 @Service
 public class OAuth2UserService extends DefaultOAuth2UserService {

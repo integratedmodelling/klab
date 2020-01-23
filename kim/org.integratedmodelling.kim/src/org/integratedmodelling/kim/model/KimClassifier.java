@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimDate;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.Classifier;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
@@ -33,6 +35,8 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
 	private ArrayList<IKimConcept> conceptMatches;
 	private String stringMatch;
 	private IKimExpression expressionMatch;
+	private IKimQuantity quantityMatch;
+	private IKimDate dateMatch;
     private IArtifact.Type type = Type.VOID;
     
 	// this produces a catch-all and should only be called when isOtherwise() == true
@@ -168,6 +172,15 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
         	catchAll = true;
         	type = Type.VOID;
 
+        } else if (statement.getQuantity() != null) {
+        	
+        	this.quantityMatch = new KimQuantity(statement.getQuantity());
+        	type = Type.NUMBER;
+        	
+        } else if (statement.getDate() != null) {
+        	
+        	this.setDateMatch(new KimDate(statement.getDate()));
+        	type = Type.TEMPORALEXTENT;
         }
     }
 
@@ -321,6 +334,22 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
 	@Override
 	public Type getType() {
 		return type;
+	}
+
+	public IKimQuantity getQuantityMatch() {
+		return quantityMatch;
+	}
+
+	public void setQuantityMatch(IKimQuantity quantityMatch) {
+		this.quantityMatch = quantityMatch;
+	}
+
+	public IKimDate getDateMatch() {
+		return dateMatch;
+	}
+
+	public void setDateMatch(IKimDate dateMatch) {
+		this.dateMatch = dateMatch;
 	}
 
 }

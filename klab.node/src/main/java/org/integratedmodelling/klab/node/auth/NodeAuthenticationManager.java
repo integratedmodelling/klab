@@ -12,11 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.node.INodeStartupOptions;
 import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.auth.Node;
+import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.node.utils.DateTimeUtil;
@@ -135,7 +138,16 @@ public enum NodeAuthenticationManager {
                 .setAllowedClockSkewInSeconds(ALLOWED_CLOCK_SKEW_MS / 1000).setVerificationKey(publicKey).build();
 
         jwksVerifiers.put(response.getAuthenticatingNodeId(), jwtVerifier);
-
+        
+        /*
+         * setup the various identities: partner->node, we add the engine later.
+         */
+        rootIdentity = new Partner(response.getUserData().getIdentity().getId());
+        Authentication.INSTANCE.registerIdentity(rootIdentity);
+        Node node = new Node(certificate.getProperty(ICertificate.KEY_NODENAME), rootIdentity);
+        node.setOnline(true);
+        Authentication.INSTANCE.registerIdentity(node);
+        
         return rootIdentity;
     }
 

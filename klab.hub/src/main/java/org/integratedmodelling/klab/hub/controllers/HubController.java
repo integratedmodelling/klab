@@ -1,12 +1,10 @@
 package org.integratedmodelling.klab.hub.controllers;
 
 import java.util.List;
-
 import javax.mail.MessagingException;
 
 import org.integratedmodelling.klab.hub.config.LoggingConfig;
 import org.integratedmodelling.klab.hub.exception.TokenGenerationException;
-import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.SignupRequest;
@@ -25,9 +23,6 @@ public class HubController {
 	
 	@Autowired
 	TokenManager tokenManager;
-	
-	@Autowired
-	KlabUserManager klabUserManager;
 	
 	@Autowired
 	LoggingConfig loggingConfig;

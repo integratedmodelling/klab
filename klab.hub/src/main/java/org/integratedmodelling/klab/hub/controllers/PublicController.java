@@ -19,9 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublicController {
 
 	@Autowired
-	HubAuthenticationManager hubAuthenticationManager;
-
-	@Autowired
 	NetworkManager networkManager;
 
 	@Autowired

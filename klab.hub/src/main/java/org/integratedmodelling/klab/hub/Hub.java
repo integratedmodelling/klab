@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.hub.IHubStartupOptions;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -32,12 +33,13 @@ public class Hub {
 	int port = IConfigurationService.DEFAULT_HUB_PORT;
 	private ConfigurableApplicationContext context;
 	private String contextPath = "/hub";
-	private HubAuthenticationManager authManager;
+	private IPartnerIdentity owner;
 	private ICertificate certificate;
     FileCatalog<Group> defaultGroups;
     
 	public Hub(IHubStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
+		this.owner = HubAuthenticationManager.INSTANCE.authenticate(options, certificate);
 		// cert is prevalidated and we are the top consumers, so no further
 		// authentication needed
 	}
@@ -89,9 +91,9 @@ public class Hub {
 			props.put("server.servlet.contextPath", contextPath);
 			SpringApplication app = new SpringApplication(HubApplication.class);
 			app.setDefaultProperties(props);
-			this.context = app.run(options.getArguments());
-			this.authManager = this.context.getBean(HubAuthenticationManager.class);
-			this.authManager.authenticate(options, this.certificate);
+			this.context = app.run(options.getArguments());	
+//			this.authManager = this.context.getBean(HubAuthenticationManager.class);
+//			this.authManager.authenticate(options, this.certificate);
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(
 					"\nStartup successful: " + "k.LAB hub server" + " v" + Version.CURRENT + " on " + new Date());

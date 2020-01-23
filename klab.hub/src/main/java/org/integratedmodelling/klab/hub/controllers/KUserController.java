@@ -5,24 +5,27 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
-import org.integratedmodelling.klab.hub.manager.LicenseManager;
+import org.integratedmodelling.klab.hub.manager.TaskManager;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
-import org.integratedmodelling.klab.hub.models.ProfileResource;
-import org.integratedmodelling.klab.hub.models.Role;
-import org.integratedmodelling.klab.hub.models.User;
-import org.integratedmodelling.klab.hub.models.tokens.ChangePasswordClickbackToken;
-import org.integratedmodelling.klab.hub.models.tokens.ClickbackAction;
-import org.integratedmodelling.klab.hub.models.tokens.ClickbackToken;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
+import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
+import org.integratedmodelling.klab.hub.tokens.ChangePasswordClickbackToken;
+import org.integratedmodelling.klab.hub.tokens.ClickbackAction;
+import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
+import org.integratedmodelling.klab.hub.users.ProfileResource;
+import org.integratedmodelling.klab.hub.users.Role;
+import org.integratedmodelling.klab.hub.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,12 +46,15 @@ import net.minidev.json.JSONObject;
 @RestController
 @RequestMapping("/api/users")
 public class KUserController {
+	
+	@Autowired
+	TaskManager taskManager;
 
 	@Autowired
 	TokenManager tokenManager;
 	
 	@Autowired
-	LicenseManager licenseManager;
+	LicenseServiceLegacy licenseManager;
 	
 	@Autowired
 	KlabUserManager klabUserManager;
@@ -73,8 +79,8 @@ public class KUserController {
 	public ResponseEntity<?> activateResponse(
 			@PathVariable("id") String userId,
 			@RequestParam("groups") String tokenString,
-			@RequestParam("addGroups") List<String> groups)  {
-		tokenManager.handleGroupsClickbackToken(userId, tokenString, groups);
+			@RequestParam("addGroups") Set<String> groups)  {
+		tokenManager.handleGroupsClickbackToken(tokenString, groups);
 		ProfileResource profile = klabUserManager.getLoggedInUserProfile().getSafeProfile();
 		return new ResponseEntity<>(profile,HttpStatus.CREATED);
 	}
@@ -90,8 +96,11 @@ public class KUserController {
 	
 	@PostMapping(value= "/{id}", produces = "application/json", params="requestGroups")
 	@PreAuthorize("authentication.getPrincipal() == #username")
-	public ResponseEntity<?> requestGroupsResponse(@PathVariable("id") String username, @RequestParam("requestGroups") List<String> groups) {
-		tokenManager.sendGroupClickbackToken(username, groups);
+	public ResponseEntity<?> requestGroupsResponse(
+			@PathVariable("id") String username,
+			@RequestParam("requestGroups") List<String> groupNames,
+			HttpServletRequest request) {
+		taskManager.userRequestGroupsTask(username, groupNames, request);
 		return new ResponseEntity<>("Sent email to system adminstrator requesting additional groups",HttpStatus.CREATED);
 	}
 	
@@ -129,7 +138,7 @@ public class KUserController {
 	@GetMapping(value = "/{id}", produces = "application/json")
 	@PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ProfileResource getUserById(@PathVariable("id") String username) {
-		return klabUserManager.getLoggedInUserProfile().getSafeProfile();
+		return klabUserManager.getUserProfile(username).getSafeProfile();
 	}
 	
 	@DeleteMapping(value= "/{id}", produces = "application/json")
@@ -180,7 +189,7 @@ public class KUserController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	@PostMapping(value = "", produces = "application/json", params="addUsersGroups")
 	public ResponseEntity<?> addUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
-		klabUserManager.addUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
+		klabUserManager.addUsersGroupsFromNames(updateUserGroups);
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body("Updated Succesful");
@@ -189,7 +198,7 @@ public class KUserController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	@PostMapping(value = "", produces = "application/json", params="removeUsersGroups")
 	public ResponseEntity<?> removeUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
-		klabUserManager.removeUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
+		klabUserManager.removeUsersGroups(updateUserGroups);
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body("Updated Succesful");
@@ -198,7 +207,7 @@ public class KUserController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	@PostMapping(value = "", produces = "application/json", params="setUsersGroups")
 	public ResponseEntity<?> setUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
-		klabUserManager.setUsersGroups(updateUserGroups.getUsernames(),updateUserGroups.getGroupnames());
+		klabUserManager.setUsersGroupsFromNames(updateUserGroups);
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body("Updated Succesful");

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.encoding;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
@@ -23,7 +24,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 
 	class Descriptor {
 
-		public Descriptor(String artifactName, String objectName, IScale scale2, boolean isObject) {
+		public Descriptor(String artifactName, String objectName, IGeometry scale2, boolean isObject) {
 			this.artifactName = artifactName;
 			this.name = objectName;
 			this.scale = scale2;
@@ -36,7 +37,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 		}
 
 		IMetadata metadata = new Metadata();
-		IScale scale = null;
+		IGeometry scale = null;
 		String name;
 		String artifactName;
 		boolean isState;
@@ -73,7 +74,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	}
 
 	public IScale getObjectScale(int n) {
-		return objects.get(n).scale;
+		return (IScale)objects.get(n).scale;
 	}
 
 	public IMetadata getObjectMetadata(int n) {
@@ -107,7 +108,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public Builder startObject(String artifactName, String objectName, IScale scale) {
+	public Builder startObject(String artifactName, String objectName, IGeometry scale) {
 		return new VisitingDataBuilder(this, new Descriptor(artifactName, objectName, scale, true));
 	}
 

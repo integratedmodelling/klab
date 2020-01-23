@@ -1049,8 +1049,6 @@ public class ResolutionScope implements IResolutionScope {
 				}
 			} while (knownObservables.containsKey(newName));
 
-			System.out.println("SUPERCIUCK HAS BEEN RENAMED " + newName);
-
 			ret = new Observable(resolvable);
 			ret.setReferenceName(newName);
 
@@ -1062,6 +1060,15 @@ public class ResolutionScope implements IResolutionScope {
 	@Override
 	public Scale getScale() {
 		return Scale.create(getCoverage().getExtents());
+	}
+
+	/*
+	 * for when scopes are reused in different scales
+	 */
+	public ResolutionScope rescale(IScale scale) {
+		ResolutionScope ret = new ResolutionScope(this);
+		ret.coverage = Coverage.full(scale);
+		return ret;
 	}
 
 }

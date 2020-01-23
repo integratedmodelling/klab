@@ -1,7 +1,9 @@
 package org.integratedmodelling.kim.model;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
+import org.integratedmodelling.kim.api.IKimDate;
 import org.integratedmodelling.kim.kim.Date;
 
 /**
@@ -10,7 +12,7 @@ import org.integratedmodelling.kim.kim.Date;
  * @author ferdinando.villa
  *
  */
-public class KimDate {
+public class KimDate implements IKimDate {
 
 	private int year;
 	private int month;
@@ -49,6 +51,7 @@ public class KimDate {
 		return ret;
 	}
 
+	@Override
 	public int getYear() {
 		return year;
 	}
@@ -57,6 +60,7 @@ public class KimDate {
 		this.year = year;
 	}
 
+	@Override
 	public int getMonth() {
 		return month;
 	}
@@ -65,6 +69,7 @@ public class KimDate {
 		this.month = month;
 	}
 
+	@Override
 	public int getDay() {
 		return day;
 	}
@@ -73,6 +78,7 @@ public class KimDate {
 		this.day = day;
 	}
 
+	@Override
 	public int getHour() {
 		return hour;
 	}
@@ -81,6 +87,7 @@ public class KimDate {
 		this.hour = hour;
 	}
 
+	@Override
 	public int getMin() {
 		return min;
 	}
@@ -89,6 +96,7 @@ public class KimDate {
 		this.min = min;
 	}
 
+	@Override
 	public int getSec() {
 		return sec;
 	}
@@ -97,6 +105,7 @@ public class KimDate {
 		this.sec = sec;
 	}
 
+	@Override
 	public int getMs() {
 		return ms;
 	}
@@ -105,6 +114,16 @@ public class KimDate {
 		this.ms = ms;
 	}
 
+	@Override
+	public java.util.Date getDate() {
+		java.util.Date ret = new GregorianCalendar(year, month, day, hour, min, sec).getTime();
+		if (ms > 0) {
+			ret = new java.util.Date(ret.getTime() + ms);
+		}
+		return ret;
+	}
+	
+	@Override
 	public boolean isValid() {
 		
 		boolean ok = ms < 1000;

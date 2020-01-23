@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.scale;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,8 +36,10 @@ import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
@@ -118,13 +121,14 @@ public class Scale implements IScale {
 	protected ISpace space = null;
 	protected MultidimensionalCursor cursor;
 
-//	protected InstanceIdentifier identifier = new InstanceIdentifier();
-
 	/*
 	 * Next are to support subscales built as views of another
 	 */
 	// the originating scale. If size() == 1, we can locate directly in it using the
 	// offset below.
+	private Scale parentScale = null;
+	// the root scale, used to access the original extents (the parent may itself be
+	// a sub-located scale). This is only filled when iterating.
 	private Scale originalScale = null;
 	// the offset in the original scale (only applies if originalScaleId > 0);
 	long originalScaleOffset = -1;
@@ -142,6 +146,10 @@ public class Scale implements IScale {
 	protected Scale() {
 	}
 
+	public Scale getParentScale() {
+		return parentScale;
+	}
+	
 	protected Scale(Collection<IExtent> extents) {
 		for (IExtent e : extents) {
 			mergeExtent(e);
@@ -158,7 +166,10 @@ public class Scale implements IScale {
 	 * @param offset
 	 */
 	public Scale(Scale scale, long offset) {
-		this.originalScale = scale;
+		this.parentScale = this.originalScale = scale;
+		while (this.originalScale.parentScale != null) {
+			this.originalScale = this.originalScale.parentScale;
+		}
 		this.multiplicity = 1;
 		setLocatorsTo(offset);
 	}
@@ -170,7 +181,10 @@ public class Scale implements IScale {
 	 * @param offset
 	 */
 	public Scale(Scale scale, Offset offset) {
-		this.originalScale = scale;
+		this.parentScale = this.originalScale = scale;
+		while (this.originalScale.parentScale != null) {
+			this.originalScale = this.originalScale.parentScale;
+		}
 		this.multiplicity = 1;
 		if (offset.scalar) {
 			setLocatorsTo(offset.linear);
@@ -181,27 +195,95 @@ public class Scale implements IScale {
 
 	/**
 	 * Call ONLY on a scale locator created with the above constructor, to reset the
-	 * offsets to the passed one.
+	 * offsets to the passed one. The offset scans ONE dimension.
 	 * 
-	 * @param offset
+	 * TODO if supporting >1 dimensions (i.e. more than just time and space), we 
+	 * will need to fully support the scanning using the mdcursor rather than the
+	 * fast strategy adopted here.
+	 * 
+	 * @param offset the 0-n offset for an iteration, always moving from 0 to the
+	 *               state count in the current localization.
 	 */
 	public void setLocatorsTo(long offset) {
 
-		this.originalScaleOffset = offset;
-		this.locatedOffsets = this.originalScale.cursor.getElementIndexes(offset);
+		/*
+		 * SO: allocate a vector of offsets, initialize at -1. Go up the originalScale
+		 * until it's null, setting each offset to the linearOffset of the located one
+		 * in it. The resulting cursor will locate the root-level extents.
+		 * 
+		 */
+
+		/**
+		 * Inherit the already located offsets from all parents
+		 */
+		this.locatedOffsets = new long[parentScale.extents.size()];
+		IExtent[] fixed = new IExtent[parentScale.extents.size()];
+		Arrays.fill(this.locatedOffsets, -1);
+		Scale parent = parentScale;
+		while (parent != null) {
+			if (parent.locatedOffsets != null) {
+				for (int i = 0; i < parent.locatedOffsets.length; i++) {
+					if (this.locatedOffsets[i] < 0 && parent.locatedOffsets[i] >= 0) {
+						this.locatedOffsets[i] = parent.locatedOffsets[i];
+						fixed[i] = parent.extents.get(i);
+					}
+				}
+			}
+			parent = parent.parentScale;
+		}
+		
+		/*
+		 * If >1 offset is -1, set all but the last @0. This will wreak havoc if we ever have >2 
+		 * extents.
+		 */
+		boolean multiple = false;
+		for (int i = 0; i < locatedOffsets.length; i++) {
+			boolean last = i == locatedOffsets.length - 1;
+			if (locatedOffsets[i] < 0) {
+				if (last) {
+					locatedOffsets[i] = offset;
+				} else {
+					locatedOffsets[i] = 0;
+					if (multiple) {
+						throw new KlabUnimplementedException("Scanning of multiple dimensions in subscales is unsupported");
+					}
+					multiple = true;
+				}
+			}
+		}
+		
+		this.originalScaleOffset = this.originalScale.cursor.getElementOffset(locatedOffsets);
+//		
+//		this.originalScaleOffset = offset;
+//		this.locatedOffsets = this.parentScale.cursor.getElementIndexes(offset);
 		this.extents.clear();
-		for (int i = 0; i < this.originalScale.extents.size(); i++) {
-			IExtent ext = this.originalScale.extents.get(i) instanceof Extent
-					? ((Extent) this.originalScale.extents.get(i)).getExtent(this.locatedOffsets[i])
-					: this.originalScale.extents.get(i);
-			this.extents.add(ext);
+
+		for (int i = 0; i < this.locatedOffsets.length; i++) {
+			IExtent ext = fixed[i];
+			if (ext == null) {
+				ext = ((AbstractExtent)this.originalScale.extents.get(i)).getExtent(this.locatedOffsets[i]);
+			}
+			extents.add(ext);
 			if (ext instanceof ISpace) {
 				this.space = (ISpace) ext;
 			} else if (ext instanceof ITime) {
 				this.time = (ITime) ext;
 			}
 		}
+
 		
+//		for (int i = 0; i < this.parentScale.extents.size(); i++) {
+//			IExtent ext = this.parentScale.extents.get(i) instanceof Extent
+//					? ((Extent) this.parentScale.extents.get(i)).getExtent(this.locatedOffsets[i])
+//					: this.parentScale.extents.get(i);
+//			this.extents.add(ext);
+//			if (ext instanceof ISpace) {
+//				this.space = (ISpace) ext;
+//			} else if (ext instanceof ITime) {
+//				this.time = (ITime) ext;
+//			}
+//		}
+
 		sort();
 
 	}
@@ -217,9 +299,9 @@ public class Scale implements IScale {
 		this.locatedOffsets = offset;
 		this.multiplicity = 1;
 		this.extents.clear();
-		for (int i = 0; i < this.originalScale.extents.size(); i++) {
+		for (int i = 0; i < this.parentScale.extents.size(); i++) {
 
-			IExtent newExt = this.originalScale.extents.get(i);
+			IExtent newExt = this.parentScale.extents.get(i);
 			if (offset[i] < 0 && newExt instanceof Extent) {
 				newExt = ((Extent) newExt).getExtent(offset[i]);
 			}
@@ -231,7 +313,7 @@ public class Scale implements IScale {
 				this.time = (ITime) newExt;
 			}
 		}
-		
+
 		sort();
 	}
 
@@ -439,6 +521,8 @@ public class Scale implements IScale {
 			throw new KlabInternalErrorException("internal error: infinite dimension is not the first in scale");
 		}
 
+		extents = order;
+
 		// recompute strided offsets for quick extent access
 		cursor = new MultidimensionalCursor();
 		long[] dims = new long[isInfiniteTime ? extents.size() - 1 : extents.size()];
@@ -447,9 +531,8 @@ public class Scale implements IScale {
 			dims[n++] = extents.get(i).size();
 		}
 		cursor.defineDimensions(dims);
-		extents = order;
 		geometry = null;
-		
+
 		return this;
 	}
 
@@ -628,6 +711,15 @@ public class Scale implements IScale {
 		return true;
 	}
 
+	public IExtent getExtent(Dimension.Type type) {
+		for (IExtent e : extents) {
+			if (e.getType() == type) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
 	/*
 	 * true if the passed scale has the same extents as we do.
 	 */
@@ -881,12 +973,12 @@ public class Scale implements IScale {
 
 			if (t.geometry instanceof IScale) {
 				// FIXME CHECK!
-				return (Scale)t.geometry;
+				return (Scale) t.geometry;
 			} else if (t.geometry instanceof IGeometry) {
 
 				// parameters may specify a location
 				for (Dimension dimension : t.geometry.getDimensions()) {
-					Object[] o = Geometry.getLocatorParameters(dimension);
+					Object[] o = getLocatorParameters(dimension);
 					if (o != null) {
 						defs.add(new Pair<>(dimension.getType(), o));
 					}
@@ -941,7 +1033,7 @@ public class Scale implements IScale {
 			int i = 0;
 
 			ret.locatedOffsets = new long[scale.getExtents().size()];
-			ret.originalScale = scale;
+			ret.parentScale = scale;
 			for (IExtent e : ret.getExtents()) {
 				long located = ((AbstractExtent) e).getLocatedOffset();
 				if (located < 0) {
@@ -960,6 +1052,28 @@ public class Scale implements IScale {
 		return scale.sort();
 	}
 
+	/**
+	 * Convert any parameters in the dimension to locators that we can use
+	 * directly. If none are specific of the implementation, default to the
+	 * result of the implementation in {@link Geometry}.
+	 * 
+	 * @param dimension
+	 * @return
+	 */
+	public static Object[] getLocatorParameters(Dimension dimension) {
+
+		if (dimension.getType() == Dimension.Type.TIME) {
+			if (dimension.getParameters().containsKey(Geometry.PARAMETER_TIME_LOCATOR)) {
+				Object value = dimension.getParameters().get(Geometry.PARAMETER_TIME_LOCATOR);
+				if (value instanceof Long && ((Long)value) > 0) {
+					return new Object[] { new TimeInstant((Long)value) };
+				}
+			}
+		}
+		
+		return Geometry.getLocatorParameters(dimension);
+	}
+
 	public Scale minus(Type extent) {
 		List<IExtent> exts = new ArrayList<>();
 		for (IExtent ext : extents) {
@@ -970,13 +1084,12 @@ public class Scale implements IScale {
 		return create(exts);
 	}
 
-//	@Override
 	public long getOffset(ILocator index) {
 
 		if (index instanceof Offset) {
-			return ((Offset)index).linear;
+			return ((Offset) index).linear;
 		}
-		
+
 		if (index instanceof Geometry) {
 			index = Scale.create((IGeometry) index);
 		}
@@ -1243,7 +1356,7 @@ public class Scale implements IScale {
 	@Override
 	public Scale merge(IScale scale) {
 
-		if (scale == this || hasEqualExtents(scale)) {
+		if (scale == this || scale.isEmpty() || hasEqualExtents(scale)) {
 			return this;
 		}
 
@@ -1285,13 +1398,13 @@ public class Scale implements IScale {
 	@Override
 	public IGeometry getGeometry() {
 		// TODO maybe just the original scale
-		return originalScale == null ? null : originalScale.asGeometry();
+		return parentScale == null ? null : parentScale.asGeometry();
 	}
 
 	public boolean isConformant(Scale scale) {
 		// easy way to tell is if this is a subset of the passed one, although it gets
 		// messy afterwards...
-		if (scale.equals(this) || (this.originalScale != null && this.originalScale.equals(scale))) {
+		if (scale.equals(this) || (this.parentScale != null && this.parentScale.equals(scale))) {
 			return true;
 		}
 
@@ -1350,15 +1463,15 @@ public class Scale implements IScale {
 	public class GridOffsetScanner implements Iterable<Offset> {
 
 		ThreadLocal<Offset> shuttle = new ThreadLocal<>();
-		
+
 		class It implements Iterator<Offset> {
-			
+
 			int offset = 0;
 
 			It() {
 				shuttle.set(Offset.create("0", minus(Dimension.Type.TIME)));
 			}
-			
+
 			@Override
 			public boolean hasNext() {
 				return offset < space.size();
@@ -1373,7 +1486,7 @@ public class Scale implements IScale {
 			}
 
 		}
-		
+
 		@Override
 		public Iterator<Offset> iterator() {
 			return new It();
@@ -1383,7 +1496,7 @@ public class Scale implements IScale {
 
 	@Override
 	public IScale initialization() {
-		return getTime() == null ? this : at(Time.initialization(this));
+		return getTime() == null ? this : at(Time.initialization(getTime()));
 	}
 
 	public static IScale empty() {
@@ -1394,15 +1507,65 @@ public class Scale implements IScale {
 	public boolean is(String string) {
 		return asGeometry().is(string);
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
-		return o instanceof Scale && ((Scale)o).asGeometry().equals(asGeometry());
+		return o instanceof Scale && ((Scale) o).asGeometry().equals(asGeometry());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return asGeometry().hashCode();
+	}
+
+	@Override
+	public IScale adopt(IScale scale, IMonitor monitor) {
+
+		if (scale == this || scale.isEmpty() || hasEqualExtents(scale)) {
+			return this;
+		}
+
+		if (scale instanceof Scale) {
+
+			Scale other = (Scale) scale;
+			Scale ret = new Scale();
+			ArrayList<IExtent> common = new ArrayList<>();
+			HashSet<Dimension.Type> commonConcepts = new HashSet<>();
+
+			for (IExtent e : extents) {
+				if (other.getDimension(e.getType()) != null) {
+					common.add(e);
+					commonConcepts.add(e.getType());
+				} else {
+					ret.mergeExtent(e);
+				}
+			}
+
+			for (IExtent e : other.getExtents()) {
+				if (ret.getDimension(e.getType()) == null && !commonConcepts.contains(e.getType())) {
+					ret.mergeExtent(e);
+				}
+			}
+
+			for (IExtent e : common) {
+				IExtent oext = other.getDimension(e.getType());
+				IExtent merged = (IExtent) e.adopt(oext, monitor);
+				ret.mergeExtent(merged);
+			}
+
+			return ret;
+		}
+
+		throw new IllegalArgumentException("Scale adopt() called with a non-scale parameter");
+	}
+
+	public long[] getLocatedOffsets() {
+		return locatedOffsets;
+	}
+
+	@Override
+	public IScale without(Type dimension) {
+		return removeExtent(dimension);
 	}
 
 }

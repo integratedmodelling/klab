@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -15,7 +16,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.utils.Pair;
 
 public class ExpressionContext implements IExpression.Context {
 
@@ -35,13 +35,15 @@ public class ExpressionContext implements IExpression.Context {
 		ret.monitor = context.getMonitor();
 		ret.returnType = context.getArtifactType();
 
-		for (Pair<String, IObservation> artifact : context.getArtifacts(IObservation.class)) {
-			ret.identifiers.add(artifact.getFirst());
-			if (artifact.getSecond() instanceof IState) {
-				ret.stateIdentifiers.add(artifact.getFirst());
+		for (Entry<String, IObservation> artifact : context.getLocalCatalog(IObservation.class).entrySet()) {
+
+			String name = artifact.getKey();
+			ret.identifiers.add(name);
+			if (artifact.getValue() instanceof IState) {
+				ret.stateIdentifiers.add(name);
 			}
-			ret.identifierTypes.put(artifact.getFirst(),
-					Observables.INSTANCE.getObservableType(artifact.getSecond().getObservable(), true));
+			ret.identifierTypes.put(name,
+					Observables.INSTANCE.getObservableType(artifact.getValue().getObservable(), true));
 		}
 		return ret;
 	}

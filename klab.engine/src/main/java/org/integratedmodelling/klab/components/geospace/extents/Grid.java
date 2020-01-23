@@ -246,6 +246,7 @@ public class Grid extends Area implements IGrid {
 			this.x = x;
 			this.y = y;
 			this.locatedOffsets = new long[] { x, y };
+			this.locatedLinearOffset = Grid.this.getOffset(x, y);
 		}
 
 		@Override
@@ -729,6 +730,20 @@ public class Grid extends Area implements IGrid {
 		@Override
 		public boolean isCovered(long stateIndex) {
 			return true; // stateIndex == 0;
+		}
+
+		@Override
+		public IExtent adopt(IExtent extent, IMonitor monitor) {
+			// TODO Auto-generated method stub
+			return this;
+		}
+
+		@Override
+		public IExtent getExtent(long stateIndex) {
+			if (stateIndex != 0) {
+				throw new IllegalArgumentException("cannot access state #" + stateIndex + " in a Cell");
+			}
+			return this;
 		}
 	}
 

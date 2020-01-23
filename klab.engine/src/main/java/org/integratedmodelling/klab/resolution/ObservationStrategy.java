@@ -8,6 +8,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Traits;
@@ -18,6 +19,7 @@ import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
+import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
@@ -98,11 +100,11 @@ public class ObservationStrategy {
 		 */
 		if (observable.is(Type.CHANGE)) {
 			IConcept dep = observable.getInherentType();
-			if (((Model) model).findDependency(dep) == null) {
+			if (((Model) model).findDependency(dep) == null && ((Model) model).findOutput(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep), Mode.RESOLUTION));
 			}
 		}
-
+		
 		/**
 		 * Add dependencies for anything mentioned in operators if needed
 		 */

@@ -3,12 +3,14 @@ package org.integratedmodelling.klab.api.services;
 import java.util.Collection;
 import java.util.function.Function;
 
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
 /**
- * All functions related to k.LAB network authentication, authorization and
- * usage.
+ * All functions related to k.LAB nodes. The network service is built at
+ * authentication and refreshed periodically.
  * 
  * @author Ferd
  *
@@ -26,6 +28,15 @@ public interface INetworkService {
 	Collection<INodeIdentity> getNodes();
 
 	/**
+	 * Get all the nodes with the specified permission.
+	 * 
+	 * @param permission
+	 * @param onlineOnly if true, only check nodes that are known to be online.
+	 * @return
+	 */
+	Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly);
+
+	/**
 	 * Submit a GET request to all nodes in parallel and merge the results when all
 	 * have returned, failed or timed out.
 	 * 
@@ -35,7 +46,7 @@ public interface INetworkService {
 	 * @param urlVariables
 	 * @return the result of merging through the merger
 	 */
-	<T, K> T broadcastGet(Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
+	<T, K> T broadcastGet(String endpoint, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
 			IMonitor monitor, Object... urlVariables);
 
 	/**
@@ -48,7 +59,28 @@ public interface INetworkService {
 	 * @param monitor
 	 * @return the result of merging through the merger
 	 */
-	<T, K, V> T broadcastPost(V request, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
+	<T, K, V> T broadcastPost(String endpoint, V request, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
 			IMonitor monitor);
+
+	/**
+	 * Get the (online) node identified by name, or null if offline or unknown.
+	 * 
+	 * @param name
+	 * @return the node or null
+	 */
+	INodeIdentity getNode(String name);
+
+	/**
+	 * Choose the best online node at the time of calling to provide data from the
+	 * passed URN. This is only called if the URN cannot be handled locally. Must
+	 * handle "universal" URNs starting with klab: and having the adapter as
+	 * catalog, and non-local URNs; each may be served by 0+ nodes, and the choice
+	 * should be based on the current load factors, versions (which may be added to
+	 * the URN) and mirroring options.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	INodeIdentity getNodeForResource(Urn urn);
 
 }

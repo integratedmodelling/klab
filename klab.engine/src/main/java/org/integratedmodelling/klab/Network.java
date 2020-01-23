@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,30 +20,58 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.INetworkService;
 import org.integratedmodelling.klab.auth.Node;
-import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.HubReference;
+import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.NodeReference;
+import org.integratedmodelling.klab.rest.NodeReference.Permission;
+import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 
 public enum Network implements INetworkService {
 
 	INSTANCE;
 
+	public static final int NETWORK_CHECK_INTERVAL_SECONDS = 180;
+
 	private static int MAX_THREADS = 10;
 
+	private HubReference hub;
 	Map<String, INodeIdentity> onlineNodes = Collections.synchronizedMap(new HashMap<>());
 	Map<String, INodeIdentity> offlineNodes = Collections.synchronizedMap(new HashMap<>());
 
-	Client client = Client.create();
+	private Timer timer = new Timer("Network checking");
 
 	private Network() {
 		Services.INSTANCE.registerService(this, INetworkService.class);
 	}
-	
+
 	@Override
 	public Collection<INodeIdentity> getNodes() {
 		return new HashSet<>(onlineNodes.values());
+	}
+
+	@Override
+	public INodeIdentity getNode(String name) {
+		return onlineNodes.get(name);
+	}
+
+	@Override
+	public Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly) {
+		List<INodeIdentity> ret = new ArrayList<>();
+		for (String s : onlineNodes.keySet()) {
+			if (onlineNodes.get(s).getPermissions().contains(permission)) {
+				ret.add(onlineNodes.get(s));
+			}
+		}
+		if (!onlineOnly) {
+			for (String s : offlineNodes.keySet()) {
+				if (offlineNodes.get(s).getPermissions().contains(permission)) {
+					ret.add(offlineNodes.get(s));
+				}
+			}
+		}
+		return ret;
 	}
 
 	/**
@@ -51,38 +81,60 @@ public enum Network implements INetworkService {
 	 */
 	public void buildNetwork(EngineAuthenticationResponse authorization) {
 
-		Client client = Client.create();
+		this.hub = authorization.getHub();
 
 		for (NodeReference node : authorization.getNodes()) {
 			Node identity = new Node(node, authorization.getUserData().getToken());
-
 			try {
-				mergeCapabilities(identity, client.with(authorization.getUserData().getToken())
-						.get(chooseUrl(node.getUrls()) + API.CAPABILITIES, Capabilities.class));
+				mergeCapabilities(identity, identity.getClient().get(API.CAPABILITIES, NodeCapabilities.class));
 				onlineNodes.put(identity.getName(), identity);
+				Resources.INSTANCE.getPublicResourceCatalog().update(identity);
 			} catch (Exception e) {
 				offlineNodes.put(identity.getName(), identity);
 			}
 		}
 
+		// schedule the network check service
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				checkNetwork();
+			}
+		}, NETWORK_CHECK_INTERVAL_SECONDS * 1000, NETWORK_CHECK_INTERVAL_SECONDS * 1000);
+
 	}
 
-	private void mergeCapabilities(Node node, Capabilities capabilities) {
-		// TODO Auto-generated method stub
-		
+	// these return descriptors to communicate to clients
+	public HubReference getHub() {
+		return this.hub;
+	}
+
+	private void mergeCapabilities(Node node, NodeCapabilities capabilities) {
+		if (capabilities.isAcceptSubmission()) {
+			node.getPermissions().add(Permission.PUBLISH);
+		}
+		if (capabilities.isAcceptQueries()) {
+			node.getPermissions().add(Permission.QUERY);
+		}
+		for (ResourceAdapterReference adapter : capabilities.getResourceAdapters()) {
+			node.getAdapters().add(adapter.getName());
+		}
+		node.getCatalogIds().addAll(capabilities.getResourceCatalogs());
+		node.getNamespaceIds().addAll(capabilities.getResourceNamespaces());
+		node.getResources().addAll(capabilities.getResourceUrns());
+		node.setOnline(true);
 	}
 
 	@Override
-	public <T, K> T broadcastGet(Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
-			IMonitor monitor, Object... urlVariables) {
+	public <T, K> T broadcastGet(String endpoint, Class<? extends K> individualResponseType,
+			Function<Collection<K>, T> merger, IMonitor monitor, Object... urlVariables) {
 
 		Collection<Callable<K>> tasks = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
 			tasks.add(new Callable<K>() {
 				@Override
 				public K call() throws Exception {
-					return client.with(node).get(chooseUrl(node.getUrls()), individualResponseType,
-							makeParameterMap(urlVariables));
+					return node.getClient().get(endpoint, individualResponseType, urlVariables);
 				}
 			});
 		}
@@ -122,15 +174,8 @@ public enum Network implements INetworkService {
 		return merger.apply(retvals);
 	}
 
-	private Map<String, ?> makeParameterMap(Object[] urlVariables) {
-		Map<String, Object> ret = new HashMap<>();
-		for (int i = 0; i < urlVariables.length; i++) {
-			ret.put(urlVariables[i].toString(), urlVariables[++i]);
-		}
-		return ret;
-	}
-
-	public <T, K, V> T broadcastPost(V request, Class<? extends K> individualResponseType,
+	@Override
+	public <T, K, V> T broadcastPost(String endpoint, V request, Class<? extends K> individualResponseType,
 			Function<Collection<K>, T> merger, IMonitor monitor) {
 
 		Collection<Callable<K>> tasks = new ArrayList<>();
@@ -138,7 +183,7 @@ public enum Network implements INetworkService {
 			tasks.add(new Callable<K>() {
 				@Override
 				public K call() throws Exception {
-					return client.with(node).post(chooseUrl(node.getUrls()), request, individualResponseType);
+					return node.getClient().post(endpoint, request, individualResponseType);
 				}
 			});
 		}
@@ -183,4 +228,73 @@ public enum Network implements INetworkService {
 		return urls.iterator().next();
 	}
 
+	protected synchronized void checkNetwork() {
+
+		List<INodeIdentity> moveOnline = new ArrayList<>();
+		List<INodeIdentity> moveOffline = new ArrayList<>();
+		for (INodeIdentity node : onlineNodes.values()) {
+			try {
+				((Node) node).mergeCapabilities(node.getClient().get(API.CAPABILITIES, NodeCapabilities.class));
+			} catch (Exception e) {
+				moveOffline.add(node);
+				Resources.INSTANCE.getPublicResourceCatalog().remove(node);
+				Logging.INSTANCE.info("node " + node.getName() + " went offline");
+			}
+		}
+		for (INodeIdentity node : offlineNodes.values()) {
+			try {
+				NodeCapabilities capabilities = node.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
+				((Node) node).mergeCapabilities(capabilities);
+				moveOnline.add(node);
+				Resources.INSTANCE.getPublicResourceCatalog().update(node);
+				Logging.INSTANCE.info("node " + node.getName() + " went online");
+			} catch (Exception e) {
+			}
+		}
+
+		for (INodeIdentity node : moveOnline) {
+			offlineNodes.remove(node.getId());
+			onlineNodes.put(node.getId(), node);
+			((Node)node).setOnline(true);
+		}
+		for (INodeIdentity node : moveOffline) {
+			onlineNodes.remove(node.getId());
+			offlineNodes.put(node.getId(), node);
+			((Node)node).setOnline(false);
+		}
+	}
+
+	@Override
+	public INodeIdentity getNodeForResource(Urn urn) {
+		if (urn.isUniversal()) {
+			return chooseNode(getNodesWithAdapter(urn.getCatalog()));
+		}
+		return chooseNode(getOnlineNodes(Resources.INSTANCE.getPublicResourceCatalog().getNodes(urn.getUrn())));
+	}
+
+	private Collection<INodeIdentity> getOnlineNodes(Collection<String> nodes) {
+		List<INodeIdentity> ret = new ArrayList<>();
+		for (String node : nodes) {
+			INodeIdentity n = onlineNodes.get(node);
+			if (n != null) {
+				ret.add(n);
+			}
+		}
+		return ret;
+	}
+
+	private INodeIdentity chooseNode(Collection<INodeIdentity> nodesWithAdapter) {
+		// TODO use load factor and/or some intelligent criterion
+		return nodesWithAdapter.isEmpty() ? null : nodesWithAdapter.iterator().next();
+	}
+
+	private Collection<INodeIdentity> getNodesWithAdapter(String adapter) {
+		List<INodeIdentity> ret = new ArrayList<>();
+		for (INodeIdentity node : onlineNodes.values()) {
+			if (node.getAdapters().contains(adapter)) {
+				ret.add(node);
+			}
+		}
+		return ret;
+	}
 }

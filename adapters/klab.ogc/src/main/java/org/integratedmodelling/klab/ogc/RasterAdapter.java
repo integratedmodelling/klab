@@ -20,6 +20,8 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
@@ -101,6 +103,12 @@ public class RasterAdapter implements IFileResourceAdapter {
 				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/raster.kdl"))
 						.getActuators().iterator().next(),
 				null);
+	}
+
+	@Override
+	public IResourceCalculator getCalculator(IResource resource) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

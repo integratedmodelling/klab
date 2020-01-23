@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,10 +36,10 @@ public class Classification implements IClassification {
 	private IConcept nilClassifier;
 	private List<IConcept> conceptOrder = new ArrayList<>();
 	private double[] distributionBreakpoints;
-    private Map<IConcept, Double>     numCodes         = null;
-    private Map<IConcept, Integer>    conceptIndexes;
-    
-    // this is for reporting to the dataflow 
+	private Map<IConcept, Double> numCodes = null;
+	private Map<IConcept, Integer> conceptIndexes;
+
+	// this is for reporting to the dataflow
 	private Set<IKimExpression> expressions = new HashSet<>();
 
 	public Classification(IKimClassification classification) {
@@ -58,6 +59,23 @@ public class Classification implements IClassification {
 			conceptOrder.add(concept);
 		}
 
+		initialize();
+	}
+
+	/**
+	 * Use to build a number -> concept classification when we know all the concepts
+	 * and we need to preserve their order.
+	 * 
+	 * @param rootClass
+	 * @param conceptOrder
+	 */
+	public Classification(IConcept rootClass, List<IConcept> conceptOrder) {
+		this(rootClass);
+		int i = 0;
+		for (IConcept concept : conceptOrder) {
+			this.classifiers.add(new Pair<>(concept, Classifier.NumberMatcher(i++)));
+			this.conceptOrder.add(concept);
+		}
 		initialize();
 	}
 
@@ -140,9 +158,9 @@ public class Classification implements IClassification {
 	 *         concepts in the order defined by the intervals (size n). If the
 	 *         concept list was not passed, the concept array will be filled with
 	 *         nulls.
-	 * @throws KlabValidationException
-	 *             if the observable is a continuous range mapping but the
-	 *             classification has disjoint intervals.
+	 * @throws KlabValidationException if the observable is a continuous range
+	 *                                 mapping but the classification has disjoint
+	 *                                 intervals.
 	 */
 	double[] computeDistributionBreakpoints(Collection<Classifier> cls, List<IConcept> classes) {
 
@@ -242,96 +260,93 @@ public class Classification implements IClassification {
 	@Override
 	public boolean isContiguousAndFinite() {
 
-        if (distributionBreakpoints == null)
-            return false;
+		if (distributionBreakpoints == null)
+			return false;
 
-        return !(Double.isInfinite(distributionBreakpoints[0]) || Double
-                .isInfinite(distributionBreakpoints[distributionBreakpoints.length - 1]));
+		return !(Double.isInfinite(distributionBreakpoints[0])
+				|| Double.isInfinite(distributionBreakpoints[distributionBreakpoints.length - 1]));
 	}
 
 	@Override
 	public IConcept classify(Object object, IContextualizationScope context) {
-		
-        if (object instanceof Number && Double.isNaN(((Number) object).doubleValue())) {
-        	object = null;
-        }
 
-        if (object == null && nilClassifier != null) {
-            return nilClassifier;
-        }
+		if (object instanceof Number && Double.isNaN(((Number) object).doubleValue())) {
+			object = null;
+		}
 
-        for (Pair<IConcept, IClassifier> p : this.classifiers) {
-            if (p.getSecond().classify(object,context)) {
-                return p.getFirst();
-            }
-        }
+		if (object == null && nilClassifier != null) {
+			return nilClassifier;
+		}
 
-        return null;
+		for (Pair<IConcept, IClassifier> p : this.classifiers) {
+			if (p.getSecond().classify(object, context)) {
+				return p.getFirst();
+			}
+		}
+
+		return null;
 	}
 
 	@Override
 	public double undiscretize(IConcept object) {
-        double ret = Double.NaN;
-        if (distributionBreakpoints != null
-                && distributionBreakpoints.length == (conceptOrder.size() + 1)) {
-            for (int i = 0; i < conceptOrder.size(); i++) {
-                if (object.equals(conceptOrder.get(i))) {
-                    ret = distributionBreakpoints[i] + ((distributionBreakpoints[i + 1]
-                            - distributionBreakpoints[1]) / 2.0);
-                    break;
-                }
-            }
-        }
-        return ret;
+		double ret = Double.NaN;
+		if (distributionBreakpoints != null && distributionBreakpoints.length == (conceptOrder.size() + 1)) {
+			for (int i = 0; i < conceptOrder.size(); i++) {
+				if (object.equals(conceptOrder.get(i))) {
+					ret = distributionBreakpoints[i]
+							+ ((distributionBreakpoints[i + 1] - distributionBreakpoints[1]) / 2.0);
+					break;
+				}
+			}
+		}
+		return ret;
 	}
 
 	@Override
 	public double getNumericValue(IConcept o) {
-        if (numCodes == null) {
-            numCodes = new HashMap<>();
-            if (distributionBreakpoints != null) {
-                for (int i = 0; i < conceptOrder.size(); i++) {
-                    double val = distributionBreakpoints[i]
-                            + ((distributionBreakpoints[i + 1]
-                                    - distributionBreakpoints[i]) / 2.0);
-                    numCodes.put(conceptOrder.get(i), val);
-                }
-            } else {
-                for (int i = 0; i < conceptOrder.size(); i++) {
-                    numCodes.put(conceptOrder.get(i), (double) (i + 1));
-                }
-            }
-        }
-        return numCodes.get(o);
+		if (numCodes == null) {
+			numCodes = new HashMap<>();
+			if (distributionBreakpoints != null) {
+				for (int i = 0; i < conceptOrder.size(); i++) {
+					double val = distributionBreakpoints[i]
+							+ ((distributionBreakpoints[i + 1] - distributionBreakpoints[i]) / 2.0);
+					numCodes.put(conceptOrder.get(i), val);
+				}
+			} else {
+				for (int i = 0; i < conceptOrder.size(); i++) {
+					numCodes.put(conceptOrder.get(i), (double) (i + 1));
+				}
+			}
+		}
+		return numCodes.get(o);
 	}
-	
-    public int getRank(IConcept object) {
-    	if (this.conceptIndexes == null) {
-            conceptIndexes = new HashMap<>();
-            for (int i = 0; i < conceptOrder.size(); i++) {
-                conceptIndexes.put(conceptOrder.get(i), i);
-            }
-    	}
-        Integer ret = conceptIndexes.get(object);
-        return ret == null ? -1 : ret;
-    }
 
+	public int getRank(IConcept object) {
+		if (this.conceptIndexes == null) {
+			conceptIndexes = new HashMap<>();
+			for (int i = 0; i < conceptOrder.size(); i++) {
+				conceptIndexes.put(conceptOrder.get(i), i);
+			}
+		}
+		Integer ret = conceptIndexes.get(object);
+		return ret == null ? -1 : ret;
+	}
 
 	@Override
 	public int classifyToIndex(Object o, IContextualizationScope monitor) {
-		
-        if (conceptIndexes == null) {
-            conceptIndexes = new HashMap<>();
-            for (int i = 0; i < conceptOrder.size(); i++) {
-                conceptIndexes.put(conceptOrder.get(i), i);
-            }
-        }
-        IConcept c = classify(o, monitor);
-        if (c == null) {
-            return -1;
-        }
-        Integer ret = conceptIndexes.get(c);
-        return ret == null ? -1 : ret;
+
+		if (conceptIndexes == null) {
+			conceptIndexes = new HashMap<>();
+			for (int i = 0; i < conceptOrder.size(); i++) {
+				conceptIndexes.put(conceptOrder.get(i), i);
+			}
+		}
+		IConcept c = classify(o, monitor);
+		if (c == null) {
+			return -1;
+		}
+		Integer ret = conceptIndexes.get(c);
+		return ret == null ? -1 : ret;
 	}
 
 	public static Classification create(IConcept rootClass) {
@@ -339,7 +354,7 @@ public class Classification implements IClassification {
 		// TODO this doesn't do much interesting, should probably be hidden
 		return ret;
 	}
-	
+
 	public void addClassifier(Classifier classifier, IConcept c) {
 		classifiers.add(new Pair<>(c, classifier));
 		conceptOrder.add(c);
@@ -347,14 +362,14 @@ public class Classification implements IClassification {
 
 	@Override
 	public int reverseLookup(Object value) {
-		return getRank((IConcept)value);
+		return getRank((IConcept) value);
 	}
 
 	@Override
 	public int size() {
 		return classifiers.size();
 	}
-	
+
 	@Override
 	public List<String> getLabels() {
 		List<String> ret = new ArrayList<>();
@@ -376,7 +391,7 @@ public class Classification implements IClassification {
 
 	@Override
 	public List<Pair<Integer, String>> getAllValues() {
-		List<Pair<Integer,String>> ret = new ArrayList<>();
+		List<Pair<Integer, String>> ret = new ArrayList<>();
 		for (IConcept c : conceptOrder) {
 			ret.add(new Pair<>(getRank(c), Concepts.INSTANCE.getDisplayName(c)));
 		}
@@ -387,10 +402,49 @@ public class Classification implements IClassification {
 	public Object lookup(int index) {
 		return conceptOrder.get(index);
 	}
-	
+
 	public Collection<IKimExpression> getUniqueExpressions() {
 		return this.expressions;
 	}
 
+	@Override
+	public List<String> getSerializedObjects() {
+		List<String> ret = new ArrayList<>();
+		for (IConcept c : conceptOrder) {
+			ret.add(c.getDefinition());
+		}
+		return ret;
+	}
+
+	@Override
+	public List<IConcept> getConcepts() {
+		return conceptOrder;
+	}
+
+	@Override
+	public void include(Object value) {
+
+		if (!(value instanceof IConcept)) {
+			throw new IllegalArgumentException("Invalid value for a classification: " + value);
+		}
+		if (!definitionSet().contains(((IConcept)value).getDefinition())) {
+			this.conceptOrder.add((IConcept)value);
+			this.conceptIndexes = null;
+			this.definitionSet.add(((IConcept)value).getDefinition());
+		}
+	}
+
+	Set<String> definitionSet = null;
+	
+	private Set<String> definitionSet() {
+		
+		if (this.definitionSet == null) {
+			this.definitionSet = new LinkedHashSet<>();
+			for (IConcept c : conceptOrder) {
+				this.definitionSet.add(c.getDefinition());
+			}
+		}
+		return this.definitionSet;
+	}
 
 }

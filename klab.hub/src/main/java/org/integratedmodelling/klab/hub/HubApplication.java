@@ -28,7 +28,8 @@ import org.springframework.stereotype.Component;
 		"org.integratedmodelling.klab.hub.config",
 		"org.integratedmodelling.klab.hub.repository",
 		"org.integratedmodelling.klab.hub.models",
-		"org.integratedmodelling.klab.hub.manager"
+		"org.integratedmodelling.klab.hub.manager",
+		"org.integratedmodelling.klab.hub.tasks"
 		})
 
 public class HubApplication {

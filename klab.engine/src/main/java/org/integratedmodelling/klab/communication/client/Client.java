@@ -28,14 +28,17 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -44,6 +47,7 @@ import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 import org.integratedmodelling.klab.utils.Escape;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -62,6 +66,9 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -87,7 +94,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author ferdinando.villa
  *
  */
-public class Client extends RestTemplate {
+public class Client extends RestTemplate implements IClient {
 
 	public static final String KLAB_VERSION_HEADER = "KlabVersion";
 	public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
@@ -96,16 +103,17 @@ public class Client extends RestTemplate {
 	String authToken;
 
 	RestTemplate basicTemplate = new RestTemplate();
+	private Set<String> endpoints = new HashSet<>();
 
 	private static ClientHttpRequestFactory factory;
 
 	public static Client createCustomTimeoutClient(int timeout) {
-		HttpComponentsClientHttpRequestFactory custom =  new HttpComponentsClientHttpRequestFactory();
+		HttpComponentsClientHttpRequestFactory custom = new HttpComponentsClientHttpRequestFactory();
 		custom.setReadTimeout(timeout);
 		custom.setConnectTimeout(timeout);
 		return new Client(custom);
 	}
-	
+
 	public static Client create() {
 
 		if (factory == null) {
@@ -157,6 +165,35 @@ public class Client extends RestTemplate {
 			converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
 			messageConverters.add(converter);
 			this.setMessageConverters(messageConverters);
+		}
+	}
+
+	public static class NodeClient extends Client {
+
+		public NodeClient(INodeIdentity node) {
+
+			super(factory);
+
+			objectMapper = new ObjectMapper();
+			List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+			MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
+			StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+			FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
+			ProtobufHttpMessageConverter protobufConverter = new ProtobufHttpMessageConverter();
+			// ByteArrayHttpMessageConverter byteConverter = new
+			// ByteArrayHttpMessageConverter();
+			jsonMessageConverter.setObjectMapper(objectMapper);
+
+			setErrorHandler(new JSONResponseErrorHandler());
+			messageConverters.add(jsonMessageConverter);
+			messageConverters.add(utf8);
+			messageConverters.add(formHttpMessageConverter);
+			messageConverters.add(protobufConverter);
+			// messageConverters.add(byteConverter);
+			setMessageConverters(messageConverters);
+			this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
+			this.authToken = node.getId();
+
 		}
 	}
 
@@ -290,11 +327,17 @@ public class Client extends RestTemplate {
 		return ret;
 	}
 
-	@SuppressWarnings({ "rawtypes" })
+	@Override
+//	@SuppressWarnings({ "rawtypes" })
 	public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
+
+		url = checkEndpoint(url);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
+		if (data != null) {
+			headers.setContentType(MediaType.APPLICATION_JSON);
+		}
 		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 		if (authToken != null) {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
@@ -304,7 +347,7 @@ public class Client extends RestTemplate {
 
 		try {
 
-			ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+			ResponseEntity<Object> response = exchange(url, HttpMethod.POST, entity, Object.class);
 
 			switch (response.getStatusCodeValue()) {
 			case 302:
@@ -317,12 +360,19 @@ public class Client extends RestTemplate {
 			if (response.getBody() == null) {
 				return null;
 			}
-			if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
-				Object exception = response.getBody().get("exception");
-				// Object path = response.getBody().get("path");
-				Object message = response.getBody().get("message");
-				// Object error = response.getBody().get("error");
+			if (response.getBody() instanceof Map && ((Map<?, ?>) response.getBody()).containsKey("exception")
+					&& ((Map<?, ?>) response.getBody()).get("exception") != null) {
+
+				Map<?, ?> map = (Map<?, ?>) response.getBody();
+				Object exception = map.get("exception");
+				// Object path = map.get("path");
+				Object message = map.get("message");
+				// Object error = map.get("error");
 				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+			}
+
+			if (cls.isAssignableFrom(response.getBody().getClass())) {
+				return (T) response.getBody();
 			}
 
 			return objectMapper.convertValue(response.getBody(), cls);
@@ -332,7 +382,26 @@ public class Client extends RestTemplate {
 		}
 	}
 
+	public void setUrl(String... url) {
+		if (url == null || url.length == 0) {
+			this.endpoints.clear();
+		} else {
+			for (String u : url) {
+				this.endpoints.add(u);
+			}
+		}
+	}
+
+	private String pickEndpoint() {
+		// TODO periodically check URLs and choose the first that responds (or the one
+		// with the smallest load)
+		return this.endpoints.isEmpty() ? null : this.endpoints.iterator().next();
+	}
+
+	@Override
 	public boolean getDownload(String url, File output) {
+
+		url = checkEndpoint(url);
 
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
@@ -374,6 +443,16 @@ public class Client extends RestTemplate {
 		return true;
 	}
 
+	private String checkEndpoint(String url) {
+		if (!url.toLowerCase().startsWith("http")) {
+			String ep = pickEndpoint();
+			if (ep != null) {
+				url = ep + (ep.endsWith("/") || url.startsWith("/") ? "" : "/") + url;
+			}
+		}
+		return url;
+	}
+
 	/**
 	 * Instrumented for header communication and error parsing
 	 * 
@@ -381,8 +460,11 @@ public class Client extends RestTemplate {
 	 * @param cls
 	 * @return the deserialized result
 	 */
+	@Override
 	@SuppressWarnings({ "rawtypes" })
-	public <T> T get(String url, Class<T> cls) {
+	public <T> T get(String url, Class<? extends T> cls, Object... parameters) {
+
+		url = checkEndpoint(url);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
@@ -391,6 +473,23 @@ public class Client extends RestTemplate {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
 		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		if (parameters != null) {
+			String params = "";
+			for (int i = 0; i < parameters.length; i++) {
+				String key = parameters[i].toString();
+				String val = parameters[++i].toString();
+				if (url.contains("{" + key + "}")) {
+					url = url.replace("{" + key + "}", val);
+				} else {
+					params += (params.isEmpty() ? "" : "&") + key + "=" + Escape.forURL(val);
+				}
+			}
+			if (!params.isEmpty()) {
+				url += "?" + params;
+			}
+		}
+
 		ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
 
 		switch (response.getStatusCodeValue()) {
@@ -415,39 +514,51 @@ public class Client extends RestTemplate {
 		return objectMapper.convertValue(response.getBody(), cls);
 	}
 
-	/**
-	 * Instrumented for header communication and error parsing
-	 * 
-	 * @param url
-	 * @param cls
-	 * @param urlVariables
-	 * @return the deserialized result
-	 */
-	public <T> T get(String url, Class<T> cls, Map<String, ?> urlVariables) {
-		return get(addParameters(url, urlVariables), cls);
-	}
+	@Override
+	public <T> T postFile(String url, File file, Class<? extends T> cls) {
 
-	/**
-	 * Create a GET URL from a base url and a set of parameters. Yes I know I can
-	 * use URIComponentsBuilder etc.
-	 * 
-	 * @param url
-	 * @param parameters
-	 * @return the finished url
-	 */
-	public static String addParameters(String url, Map<String, ?> parameters) {
-		String ret = url;
-		if (parameters != null) {
-			for (String key : parameters.keySet()) {
-				if (ret.length() == url.length()) {
-					ret += "?";
-				} else {
-					ret += "&";
-				}
-				ret += key + "=" + Escape.forURL(parameters.get(key).toString());
-			}
+		url = checkEndpoint(url);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "application/json");
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		if (authToken != null) {
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
-		return ret;
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		body.add("file", new FileSystemResource(file));
+		HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
+
+		try {
+
+			ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+
+			switch (response.getStatusCodeValue()) {
+			case 302:
+			case 403:
+				throw new KlabAuthorizationException("unauthorized request " + url);
+			case 404:
+				throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+			}
+
+			if (response.getBody() == null) {
+				return null;
+			}
+			if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
+				Object exception = response.getBody().get("exception");
+				// Object path = response.getBody().get("path");
+				Object message = response.getBody().get("message");
+				// Object error = response.getBody().get("error");
+				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+			}
+
+			return objectMapper.convertValue(response.getBody(), cls);
+
+		} catch (RestClientException e) {
+			throw new KlabIOException(e);
+		}
+
 	}
 
 }

@@ -1,0 +1,18 @@
+package org.integratedmodelling.klab.hub.tasks;
+
+public enum TaskType {
+	groupRequest(
+			GroupRequestTask.class),
+	createGroup(
+			CreateGroupTask.class);
+	
+	private final Class<? extends Task> clazz;
+	
+    public Class<? extends Task> getClazz() {
+        return clazz;
+    }
+    
+    TaskType(Class<? extends Task> clazz) {
+        this.clazz = clazz;
+    }
+}

@@ -18,6 +18,8 @@ package org.integratedmodelling.klab.api.auth;
 import java.util.Collection;
 import java.util.Date;
 
+import org.integratedmodelling.klab.api.runtime.rest.IClient;
+
 /**
  * The Interface IServerIdentity.
  *
@@ -58,4 +60,11 @@ public abstract interface IServerIdentity extends IRuntimeIdentity {
      * @return true if online at the time of calling (or the most recent check).
      */
     boolean isOnline();
+
+    /**
+     * Return a primed client with the URLs and the token already set.
+     * 
+     * @return
+     */
+	IClient getClient();
 }

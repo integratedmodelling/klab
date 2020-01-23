@@ -59,9 +59,9 @@ import org.integratedmodelling.klab.utils.Utils;
  * used to build {@link IArtifact artifacts}.
  *
  * When a URN is referenced in k.IM, it is turned into a
- * {@link org.integratedmodelling.kim.api.IContextualizable} which is passed
- * to the {@link IRuntimeProvider runtime} and turned into a KDL function call
- * or literal, which encodes their computation or resolution. Executing the KDL
+ * {@link org.integratedmodelling.kim.api.IContextualizable} which is passed to
+ * the {@link IRuntimeProvider runtime} and turned into a KDL function call or
+ * literal, which encodes their computation or resolution. Executing the KDL
  * call as part of a
  * {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow} builds
  * the corresponding
@@ -73,6 +73,18 @@ import org.integratedmodelling.klab.utils.Utils;
 public class Resource implements IResource {
 
 	private static final long serialVersionUID = -923039635832182164L;
+
+	// these are used during resource publication as user preferences for the final
+	// URN. Namespace is taken from the "geographical area" in metadata, catalog
+	// from
+	// the thematic area if unspecified.
+	public static final String PREFERRED_NAMESPACE_METADATA_KEY = "klab.resource.preferred.catalog";
+	public static final String PREFERRED_CATALOG_METADATA_KEY = "klab.resource.preferred.catalog";
+	public static final String PREFERRED_LOCALNAME_METADATA_KEY = "klab.resource.preferred.localname";
+
+	// properties for configuration, used only in nodes at publication.
+	public static final String DEFAULT_CATALOG_PROPERTY = "klab.node.default.catalog";
+	public static final String DEFAULT_NAMESPACE_PROPERTY = "klab.node.default.namespace";
 
 	String urn;
 	Version version;
@@ -97,16 +109,23 @@ public class Resource implements IResource {
 	SpatialExtent spatialExtent;
 
 	/*
+	 * This is an absolute location only defined in node (public) resources.
+	 */
+	File resourcePath;
+
+	/*
 	 * TRY TEMPLATES FOR:
 	 * 
 	 * CRU: (unzip)
-	 * https://crudata.uea.ac.uk/cru/data/hrg/cru_ts_4.03/cruts.1905011326.v4.03/cld/cru_ts4.03.{year1}.{year2}.cld.dat.nc.gz
+	 * https://crudata.uea.ac.uk/cru/data/hrg/cru_ts_4.03/cruts.1905011326.v4.03/cld
+	 * /cru_ts4.03.{year1}.{year2}.cld.dat.nc.gz
 	 * 
 	 * TRMM:
-	 * https://disc2.gesdisc.eosdis.nasa.gov:443/opendap/TRMM_L3/TRMM_3B42_Daily.7/{year}/{month}/3B42_Daily.{year}{month}{day}.7.nc4
-	 * year: 1998-2019 month: 01-12 day: 01-31 
+	 * https://disc2.gesdisc.eosdis.nasa.gov:443/opendap/TRMM_L3/TRMM_3B42_Daily.7/{
+	 * year}/{month}/3B42_Daily.{year}{month}{day}.7.nc4 year: 1998-2019 month:
+	 * 01-12 day: 01-31
 	 */
-	
+
 	// support for granularity
 	private Map<IGeometry, IResource> granules = new LinkedHashMap<>();
 
@@ -440,10 +459,16 @@ public class Resource implements IResource {
 	 */
 	public File getLocalFile(String parameter) {
 		if (this.parameters.containsKey(parameter)) {
-			IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
-			if (project != null) {
-				return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
-						+ Path.getLast(urn, ':') + File.separator + this.parameters.get(parameter));
+			if (projectName != null) {
+				IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
+				if (project != null) {
+					return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
+							+ Path.getLast(urn, ':') + File.separator + this.parameters.get(parameter));
+				}
+			} else {
+				/*
+				 * node resource
+				 */
 			}
 		}
 		return null;
@@ -457,12 +482,16 @@ public class Resource implements IResource {
 	 * @return
 	 */
 	public File getPath() {
+		File ret = null;
 		IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
 		if (project != null) {
-			return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
+			ret = new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
 					+ Path.getLast(urn, ':'));
+			if (!ret.exists() && version != null) {
+				ret = new File(ret + ".v" + version);
+			}
 		}
-		return null;
+		return ret;
 	}
 
 	@Override
@@ -505,6 +534,12 @@ public class Resource implements IResource {
 	@Override
 	public Map<IGeometry, IResource> getGranules() {
 		return granules;
+	}
+
+	@Override
+	public String getStatusMessage() {
+		// TODO Auto-generated method stub
+		return "";
 	}
 
 }

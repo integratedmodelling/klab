@@ -95,6 +95,21 @@ public class Path {
         }
         return ret;
     }
+    
+    /**
+     * Get reminder after first
+     * @param path
+     * @param separator
+     * @return
+     */
+    public static String getRemainder(String path, String separator) {
+        int n = path.indexOf(separator);
+        String ret = path;
+        if (n >= 0) {
+            ret = path.substring(n+1);
+        }
+        return ret;
+    }
 
     public static String getFrom(String path, int n, char separatpr) {
         String s = path;

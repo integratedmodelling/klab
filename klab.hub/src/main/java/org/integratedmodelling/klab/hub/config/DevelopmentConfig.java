@@ -1,22 +1,31 @@
 package org.integratedmodelling.klab.hub.config;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.Set;
 
+import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
+import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
+import org.integratedmodelling.klab.hub.license.ArmoredKeyPair;
+import org.integratedmodelling.klab.hub.license.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.licenses.services.PgpKeyService;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
-import org.integratedmodelling.klab.hub.models.KlabGroup;
-import org.integratedmodelling.klab.hub.models.Role;
-import org.integratedmodelling.klab.hub.models.User;
-import org.integratedmodelling.klab.hub.models.User.AccountStatus;
-import org.integratedmodelling.klab.hub.service.KlabGroupService;
 import org.integratedmodelling.klab.hub.service.LdapService;
+import org.integratedmodelling.klab.hub.users.GroupEntry;
+import org.integratedmodelling.klab.hub.users.Role;
+import org.integratedmodelling.klab.hub.users.User;
+import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +33,12 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.data.mongodb.core.MongoTemplate;
+
+import com.google.common.hash.Hashing;
+import com.mongodb.MongoClient;
+
+
 
 @Profile("development")
 @Configuration
@@ -33,13 +48,16 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	private KlabUserManager KlabUserManager;
 	
 	@Autowired
-	private KlabGroupService klabGroupService;
+	private MongoGroupService klabGroupService;
 	
 	@Autowired
 	KlabUserManager klabUserManager;
 	
 	@Autowired
 	LdapService ldapService;
+	
+	@Autowired
+	PgpKeyService keyService;
 	
 	private static final List<User> initialUsers = new ArrayList<User>(100);
 	
@@ -89,7 +107,15 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
         return start + (int)Math.round(Math.random() * (end - start));
     }
     
-    static {
+    
+    private List<User> getInitialUsers() {
+		GroupEntry im = new GroupEntry(klabGroupService.getGroup("IM").get());
+		GroupEntry aries = new GroupEntry(klabGroupService.getGroup("ARIES").get());
+		GroupEntry alice = new GroupEntry(klabGroupService.getGroup("ALICE").get());
+		Set<GroupEntry> entries = new HashSet<GroupEntry>();
+		entries.add(im);
+		entries.add(aries);
+		entries.add(alice);
     	for (int i = 0; i<100; i++) {
     		User u = testUser("User-"+i, "password", "user-"+i+"@integratedmodelling.org", "Name"+i, "Last"+i, Role.ROLE_USER);
     		int x = (int)(Math.random()*100+1);
@@ -101,18 +127,18 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     			u.addRoles(Role.ROLE_DATA_MANAGER); // less than 7% are data manager
     		x = (int)(Math.random()*100+1);
     		if (x <= 80) {
-    			u.addGroups("IM", "ARIES"); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
-    			String[] groups = {"ALICE", "OTHER", "KLAB"}; // and other random group assignment 
-        		for (int j = 0; j<groups.length; j++) {
+    			u.addGroupEntries(entries); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
+    			
+        		for (int j = 0; j<entries.size(); j++) {
         			x = (int)(Math.random()*100+1);
             		if (x <= 33) {
-            			u.addGroups(groups[j]);
+            			u.addGroupEntries(aries);
             		}
         		}
         		x = (int)(Math.random()*100+1);
         		if (x < 22) {
         			for (int j = 0; j<=x; j++) {
-        				u.addGroups("GROUP "+j); // multiple groups
+        				u.addGroupEntries(alice); // multiple groups
         			}
         		}
     		}
@@ -137,22 +163,19 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     		}
     		initialUsers.add(u);
     	}
-        system.addGroups("ARIES");
-        system.addGroups("IM");
-        system.addGroups("ALICE");
-        hades.addGroups("ARIES");
-        hades.addGroups("IM");
-        achilles_activeMissingLdap.addGroups("IM");
-        triton_pendingMissingLdap.addGroups("IM");
+        system.addGroupEntries(aries);
+        system.addGroupEntries(im);
+        system.addGroupEntries(alice);
+        hades.addGroupEntries(aries);
+        hades.addGroupEntries(im);
+        achilles_activeMissingLdap.addGroupEntries(im);
+        triton_pendingMissingLdap.addGroupEntries(aries);
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);
         initialUsers.add(system);
         initialUsers.add(hades);
         initialUsers.add(achilles_activeMissingLdap);
         initialUsers.add(triton_pendingMissingLdap);
-    }
-    
-    private List<User> getInitialUsers() {
-        return new ArrayList<>(initialUsers);
+        return initialUsers;
     }
     
     public void createInitialUsers() {
@@ -173,15 +196,25 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     }
     
     public void createIntialGroups() {
-		Map<String, KlabGroup> groups = new HashMap<>();
-		groups = FileCatalog.create(DevelopmentConfig.class.getClassLoader().getResource("auth/groups.json"), KlabGroup.class);
-		groups.forEach((k,v)->klabGroupService.createGroup(v.getId(),v));
+		Map<String, MongoGroup> groups = new HashMap<>();
+		groups = FileCatalog.create(DevelopmentConfig.class.getClassLoader().getResource("auth/groups.json"), MongoGroup.class);
+		groups.forEach((k,v)->klabGroupService.createGroup(v.getGroupName(),v));
     }
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent arg0) {
-		createInitialUsers();
 		createIntialGroups();
+		createInitialUsers();
+		try {
+			createInitialConfiguration();
+		} catch (PGPException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void createInitialConfiguration() throws PGPException, IOException {
+		
 	}
 
 }

@@ -54,6 +54,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -156,7 +157,7 @@ public class Actuator implements IActuator {
 	public void addComputation(IContextualizable resource) {
 		((ComputableResource) resource).setOriginalObservable(this.observable);
 		computedResources.add(resource);
-		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, this);
+		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, observable, session);
 		computationStrategy.add(new Pair<>(serviceCall, resource));
 	}
 
@@ -164,7 +165,7 @@ public class Actuator implements IActuator {
 		((ComputableResource) resource).setTargetId(target.getAlias() == null ? target.getName() : target.getAlias());
 		((ComputableResource) resource).setMediation(true);
 		computedResources.add(resource);
-		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target);
+		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target.observable, session);
 		mediationStrategy.add(new Pair<>(serviceCall, resource));
 	}
 
@@ -218,6 +219,12 @@ public class Actuator implements IActuator {
 	 * it into the actuator, so each actuator tree should be used only once.
 	 */
 	private Scale mergedScale;
+
+	/*
+	 * The scale at runtime, computed by merging the overall scale with any specific
+	 * model coverage.
+	 */
+	private IScale runtimeScale = null;
 
 	/*
 	 * Name of the corresponding observable in the generating model, if that's
@@ -313,11 +320,11 @@ public class Actuator implements IActuator {
 			}
 
 			IServiceCall function = service.getFirst();
-			
+
 			if (((ComputableResource) service.getSecond()).getModifiedParameters() != null) {
 				function.getParameters().putAll(((ComputableResource) service.getSecond()).getModifiedParameters());
 			}
-			
+
 			if (service.getSecond().getTargetId() != null) {
 				IObservable observable = ctx.getSemantics(service.getSecond().getTargetId());
 				if (observable != null) {
@@ -359,18 +366,20 @@ public class Actuator implements IActuator {
 			 * Aux variables are computed and recorded, that's it.
 			 */
 			if (contextualizer.getFirst() instanceof IEvaluator) {
-				ctx.getSymbolTable().put(contextualizer.getSecond().getTargetId(), (((IEvaluator)contextualizer.getFirst()).evaluate(ctx)));
+				ctx.getSymbolTable().put(contextualizer.getSecond().getTargetId(),
+						(((IEvaluator) contextualizer.getFirst()).evaluate(ctx)));
 				continue;
 			}
-			
+
 			IObservable indirectTarget = null;
 
 			if (contextualizer.getSecond().getTargetId() != null) {
 				IArtifact indirect = ctx.getArtifact(contextualizer.getSecond().getTargetId());
 				if (indirect instanceof IObservation) {
-					indirectTarget = ((IObservation)indirect).getObservable();
+					indirectTarget = ((IObservation) indirect).getObservable();
 				} else {
-					throw new IllegalStateException("cannot find indirect target observation " + contextualizer.getSecond().getTargetId());
+					throw new IllegalStateException(
+							"cannot find indirect target observation " + contextualizer.getSecond().getTargetId());
 				}
 			}
 			String targetId = "self_";
@@ -820,7 +829,7 @@ public class Actuator implements IActuator {
 						+ (nout < mediationStrategy.size() - 1 || computationStrategy.size() > 0 ? "," : "") + "\n";
 				nout++;
 			}
-			
+
 			for (int i = 0; i < computationStrategy.size(); i++) {
 				ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     "))) : ofs + "     ")
 						+ (computationStrategy.get(i).getSecond()
@@ -828,8 +837,7 @@ public class Actuator implements IActuator {
 						+ computationStrategy.get(i).getFirst().getSourceCode()
 						+ ((computationStrategy.get(i).getSecond().getTarget() == null
 								|| computationStrategy.get(i).getSecond().isVariable()
-								|| computationStrategy.get(i).getSecond().getTarget().equals(observable)) 
-										? ""
+								|| computationStrategy.get(i).getSecond().getTarget().equals(observable)) ? ""
 										: (" >> " + computationStrategy.get(i).getSecond().getTarget().getName()))
 						+ (nout < computationStrategy.size() - 1 ? "," : "") + "\n";
 				nout++;
@@ -1405,6 +1413,13 @@ public class Actuator implements IActuator {
 		return false;
 	}
 
+	public void resetScales() {
+		this.runtimeScale = null;
+		for (IActuator actuator : actuators) {
+			((Actuator)actuator).resetScales();
+		}
+	}
+	
 	/**
 	 * The name of the observable of the model that generated this. If it's a
 	 * multi-model partitioning actuator, keep the name of the observable.
@@ -1422,5 +1437,21 @@ public class Actuator implements IActuator {
 	public Actuator withAlias(String alias) {
 		this.alias = alias;
 		return this;
+	}
+
+	@Override
+	public IScale mergeScale(IScale scale, IMonitor monitor) {
+
+		if (this.runtimeScale == null) {
+			this.runtimeScale = scale;
+			if (this.model != null) {
+				IScale modelScale = model.getCoverage(monitor);
+				if (!modelScale.isEmpty()) {
+					this.runtimeScale = scale.adopt(modelScale, monitor);
+				}
+			}
+		}
+
+		return this.runtimeScale;
 	}
 }

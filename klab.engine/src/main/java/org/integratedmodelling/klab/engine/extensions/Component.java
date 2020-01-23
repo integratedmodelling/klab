@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.extensions.component.Setup;
@@ -424,5 +425,10 @@ public class Component implements IComponent {
 		return Resources.INSTANCE.getComponentsWorkspace();
 	}
 
+	@Override
+	public IResource getLocalResource(String urn) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

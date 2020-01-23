@@ -12,24 +12,30 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
-import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IProcess;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.ObservationChange;
+import org.integratedmodelling.klab.rest.SchedulerNotification;
 import org.integratedmodelling.klab.scale.Extent;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.joda.time.DateTime;
 
@@ -108,20 +114,16 @@ public class Scheduler implements IScheduler {
 						return;
 					}
 
-//					/*
-//					 * 1. Turn the millisecond t into the correspondent T extent for the
-//					 * observation's scale
-//					 */
-//					ITime transition = (ITime) scale.getTime().at(new TimeInstant(t));
-
 					/*
 					 * 2. Set the context at() the current time. This will also need to expose any
 					 * affected outputs that move at a different (context) speed through a rescaling
 					 * wrapper. Done within the context, which uses its current target to establish
 					 * the specific view of the context.
 					 */
-					ILocator transitionScale = Scale.substituteExtent(scale, transition);
+					ILocator transitionScale = scale.at(transition);
 					IRuntimeScope transitionContext = scope.locate(transitionScale);
+
+					Set<IObservation> changed = new HashSet<>();
 
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
@@ -133,8 +135,34 @@ public class Scheduler implements IScheduler {
 						actuator.runContextualizer(computation.contextualizer, computation.observable,
 								computation.resource, computation.target, transitionContext, (IScale) transitionScale);
 
-						if (!target.isActive()) {
+						if (computation.target instanceof IDirectObservation
+								&& !((IDirectObservation) computation.target).isActive()) {
+							changed.add((IObservation) computation.target);
+							// TODO if in group, group has changed too
 							break;
+						}
+
+						if (computation.target instanceof IProcess) {
+							// report all changed states that were affected or created.
+							for (IConcept affected : Observables.INSTANCE
+									.getAffectedQualities(((IProcess) computation.target).getObservable().getType())) {
+								IState state = scope.getArtifact(affected, IState.class);
+								if (state != null) {
+									// TODO only if changed!
+									changed.add(state);
+								}
+							}
+						}
+
+						/*
+						 * report only states for now - must become discriminating and intelligent. If
+						 * in folder
+						 */
+						if (computation.target instanceof IState /*
+																	 * TODO check if changes happened independent of
+																	 * type
+																	 */) {
+							changed.add((IObservation) computation.target);
 						}
 					}
 
@@ -144,7 +172,27 @@ public class Scheduler implements IScheduler {
 					if (!target.isActive()) {
 						// TODO target went MIA - notify relatives
 					} else {
-						// TODO
+
+						for (IObservation observation : changed) {
+
+							ObservationChange change = new ObservationChange();
+							change.setContextId(scope.getRootSubject().getId());
+							change.setId(observation.getId());
+							change.setTimestamp(t);
+
+							// TODO fill in
+							if (observation instanceof IState) {
+								change.setNewValues(true);
+							} else if (observation instanceof IDirectObservation
+									&& !((IDirectObservation) observation).isActive()) {
+								change.setTerminated(true);
+							}
+
+							ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+							session.getMonitor()
+									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+											IMessage.Type.ModifiedObservation, change));
+						}
 					}
 
 				}
@@ -198,8 +246,12 @@ public class Scheduler implements IScheduler {
 	private int wheelSize = 0;
 	private IMonitor monitor;
 	private long resolution;
+	private String contextId;
+	private ISession session;
 
-	public Scheduler(ITime time, IMonitor monitor) {
+	public Scheduler(String contextId, ITime time, IMonitor monitor) {
+		this.contextId = contextId;
+		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
 		Date now = new Date();
 		this.monitor = monitor;
 		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
@@ -235,7 +287,12 @@ public class Scheduler implements IScheduler {
 		IScale modelScale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
 
 		/*
-		 * should not be the case if we get here at all, but who knows.
+		 * should not be the case if we get here at all, but who knows. TODO: if there
+		 * is no explicit temporal nature, a contextualizer should check if any of the
+		 * dependencies have changed OR has changed data at T (even if computed before)
+		 * and exec again only if so. This should be done by inserting change event
+		 * points in each artifact and checking those, rather than using a value change
+		 * resulting from the actual update.
 		 */
 		if (overall.getTime() == null || modelScale.getTime() == null) {
 			return;
@@ -327,11 +384,25 @@ public class Scheduler implements IScheduler {
 	@Override
 	public void run() {
 
+		if (this.registrations.size() < 1) {
+			return;
+		}
+
 		schedule();
 
 		if (startTime == 0 && type == Type.REAL_TIME) {
 			startTime = DateTime.now().getMillis();
 		}
+
+		/*
+		 * notify start
+		 */
+		SchedulerNotification notification = new SchedulerNotification();
+		notification.setContextId(contextId);
+		notification.setType(SchedulerNotification.Type.STARTED);
+		notification.setResolution(resolution);
+		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+				IMessage.Type.SchedulingStarted, notification));
 
 		long time = startTime;
 		while (true) {
@@ -379,6 +450,13 @@ public class Scheduler implements IScheduler {
 				break;
 			}
 		}
+
+		/*
+		 * notify end
+		 */
+		notification.setType(SchedulerNotification.Type.FINISHED);
+		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+				IMessage.Type.SchedulingFinished, notification));
 	}
 
 	private void reschedule(Registration registration, long startTime, boolean first) {
@@ -388,7 +466,7 @@ public class Scheduler implements IScheduler {
 		}
 
 		if (registration.scale.getTime().size() != IGeometry.INFINITE_SIZE
-				&& registration.tIndex >= registration.scale.getTime().size()) {
+				&& (registration.tIndex + 1) >= (registration.scale.getTime().size())) {
 			return;
 		}
 
@@ -405,7 +483,7 @@ public class Scheduler implements IScheduler {
 //		}
 
 		long stepSize = registration.scale.getTime().getStep().getMilliseconds();
-		ITime step = ((ITime) ((Extent) registration.scale.getTime()).getExtent(registration.tIndex++));
+		ITime step = ((ITime) ((Extent) registration.scale.getTime()).getExtent(++registration.tIndex));
 		if (!registration.scale.getTime().isRegular()) {
 			stepSize = step.getEnd().getMilliseconds() - step.getStart().getMilliseconds();
 		}

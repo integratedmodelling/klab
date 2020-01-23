@@ -16,16 +16,15 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
-import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -35,9 +34,8 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
-import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -92,6 +90,15 @@ public interface IResourceService {
 	}
 
 	/**
+	 * Get a calculator for the passed resource, or null if the resource adapter
+	 * can't make one.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	IResourceCalculator getCalculator(IResource resource);
+
+	/**
 	 * The local resource catalog is for resources created from local files or
 	 * specifications. These resources are created by the {@link IResourceValidator
 	 * validator} of an {@link IResourceAdapter adapter}, and must be published
@@ -103,16 +110,6 @@ public interface IResourceService {
 	IResourceCatalog getLocalResourceCatalog();
 
 	/**
-	 * The public resource catalog contains resources after they have been published
-	 * by the {@link IResourcePublisher publisher} of the adapter that created the
-	 * resource. These resources can be shared with others and projects using their
-	 * URNs can be shared on k.LAB nodes.
-	 *
-	 * @return the public resource catalog
-	 */
-	IResourceCatalog getPublicResourceCatalog();
-
-	/**
 	 * Resolve the passed URN to a resource.
 	 *
 	 * @param urn the
@@ -120,7 +117,17 @@ public interface IResourceService {
 	 * @throws org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException
 	 * @throws org.integratedmodelling.klab.exceptions.KlabAuthorizationException
 	 */
-	IResource resolveResource(String urn) throws KlabResourceNotFoundException, KlabAuthorizationException;
+	IResource resolveResource(String urn);
+
+	/**
+	 * Resolve a resource with the option of passing a local URN with just the local
+	 * name and a target project to look into.
+	 * 
+	 * @param urn
+	 * @param project
+	 * @return
+	 */
+	IResource resolveResource(String urn, IProject project);
 
 	/**
 	 * Resolve a resource to data in a passed geometry. This involves retrieval of
@@ -298,13 +305,23 @@ public interface IResourceService {
 	boolean isResourceOnline(String urn);
 
 	/**
-	 * Create a merged temporal resource from several temporally-explicit,
-	 * homogeneous resources. The geometry will have intersected space and
-	 * intelligently unioned time.
+	 * Submit a resource for publication to the node identified by nodeId, which
+	 * must be an online node on the network. Return an open ticket that will be
+	 * closed when publication is done.
 	 * 
-	 * @param resources
-	 * @return a temporal resource with the merged geometry.
+	 * @param resource
+	 * @param nodeId
+	 * @param publicationData any user suggestions about name, namespace, catalog
+	 *                        and permissions.
+	 * @return a temporary ID to track the publishing.
 	 */
-	IResource createMergedTemporalResource(List<IResource> resources);
+	ITicket submitResource(IResource resource, String nodeId, Map<String, String> publicationData);
+
+	/**
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	boolean validateForPublication(IResource resource);
 
 }

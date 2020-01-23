@@ -1,6 +1,6 @@
 {
 	"IM": {
-		"id": "IM",
+		"groupName": "IM",
 		"description": "Integrated Modelling Partnership",
 		"sshKey": null,
 		"projectUrls": [
@@ -8,26 +8,30 @@
 			"https://bitbucket.org/integratedmodelling/im.aries.git"
 		],
         "iconUrl": "http://integratedmodelling.org/dev/statics/logos/k.lab.png",
-		"observables": [],
-		"worldview": true
+		"worldview": true,
+        "observables": [],
+        "roleRequirement" : "ROLE_USER"
 	},
-    "ALICE" : {
-        "id": "ALICE",
+	"ALICE" : {
+        "groupName": "ALICE",
         "description": "Improving the management of Atlantic Landscapes: accounting for biodiversity and ecosystem services",
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/alice.sandbox.git"
 		],
         "iconUrl": "http://integratedmodelling.org/dev/statics/logos/ALICE.png",
 		"observables": [],
-		"worldview": false
-
-    },
+		"worldview": false,
+		"roleRequirement" : "ROLE_ADMINISTRATOR",
+		"dependsOn": ["IM"]
+	},
 	"ARIES": {
-		"id": "ARIES",
+		"groupName": "ARIES",
 		"description": "ARIES (ARtificial Intelligence for Ecosystem Services)",
 		"sshKey": null,
         "iconUrl": "http://integratedmodelling.org/dev/statics/logos/ARIES.png",
 		"worldview": false,
+		"roleRequirement" : "ROLE_ADMINISTRATOR",
+		"dependsOn": ["IM"],
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/im.data.global.git",
 			"https://bitbucket.org/integratedmodelling/im.data.usa.git",
@@ -320,7 +324,7 @@
 			},
 			{
 			    "separator": false,
-				"label": "Effect of climate on vegetation growth",
+				"label": "Effect of climate on vegetation growth.",
 				"observable": "",
 				"description": "An index quantifying the influence of climatic factors on vegetation growth",
 				"semantics": "PROCESS",
@@ -366,3 +370,4 @@
 		]
 	}
 }
+

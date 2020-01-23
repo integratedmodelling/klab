@@ -4,23 +4,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.hub.IHubStartupOptions;
+import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
-import org.integratedmodelling.klab.hub.network.NetworkManager;
+import org.integratedmodelling.klab.hub.config.LicenseConfig;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.joda.time.DateTime;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
-public class HubAuthenticationManager {
+public enum HubAuthenticationManager {
+	
+	INSTANCE;
 
 	//private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
 	//private static final String ENGINE_AUDIENCE = "engine";
@@ -37,21 +39,13 @@ public class HubAuthenticationManager {
 	private Map<String, KlabCertificate> nodeCertificates = new HashMap<>();
 	private Map<String, KlabCertificate> hubCertificates = new HashMap<>();
 
-	// set after authentication
-	HubReference hubReference;
-
-	@Autowired
-	NetworkManager networkManager;
-	
-	@Autowired
-	GroupManager groupManager;
-
-	String hubName;
+	String hubName = null;
 
 	Client client = Client.create();
-	private Partner partner;
+	
+	LicenseConfig licenseConfig;
 
-	public HubAuthenticationManager() {
+	private HubAuthenticationManager() {
 
 		for (String test : new Reflections(new ResourcesScanner()).getResources(Pattern.compile(".*\\.cert"))) {
 			KlabCertificate certificate = KlabCertificate.createFromClasspath(test);
@@ -67,38 +61,35 @@ public class HubAuthenticationManager {
 		}
 	}
 
-	public HubReference getHubReference() {
-		return this.hubReference;
-	}
-
-	public Partner getPartner() {
-		return this.partner;
-	}
-
 	/**
 	 * Read our own certificate and set the necessary permissions.
 	 * 
 	 * @param certificate
+	 * @return 
 	 */
-	public void authenticate(IHubStartupOptions options, ICertificate certificate) {
+	public IPartnerIdentity authenticate(IHubStartupOptions options, ICertificate certificate) {
 
 		this.hubName = options.getHubName() == null ? certificate.getProperty(ICertificate.KEY_HUBNAME)
 				: options.getHubName();
-
-		this.hubReference = new HubReference();
-		this.hubReference.setId(this.hubName);
-		this.hubReference.setOnline(true);
-		this.hubReference.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));
-
+		
 		IdentityReference partnerIdentity = new IdentityReference();
 		partnerIdentity.setId(certificate.getProperty(ICertificate.KEY_PARTNER_NAME));
 		partnerIdentity.setEmail(certificate.getProperty(ICertificate.KEY_PARTNER_EMAIL));
 		partnerIdentity.setLastLogin(DateTime.now().toString());
+		IPartnerIdentity rootIdentity = new Partner(partnerIdentity);
+		
+		Authentication.INSTANCE.registerIdentity(rootIdentity);
+		
+		HubReference hubReference = new HubReference();
+		hubReference.setId(this.hubName);
+		hubReference.setOnline(true);
+		hubReference.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));
 
-		// TODO address and stuff
-
-		this.partner = new Partner(partnerIdentity);
-		this.hubReference.setPartner(partnerIdentity);
+		hubReference.setPartner(partnerIdentity);
+		
+		Hub hub = new Hub(hubReference);
+		
+		Authentication.INSTANCE.registerIdentity(hub);
 
 		if (certificate.getProperty(ICertificate.KEY_PARTNER_HUB) != null) {
 			/*
@@ -110,9 +101,11 @@ public class HubAuthenticationManager {
 		 * ensure we have a valid key pair for JWT signing
 		 */
 		if (NetworkKeyManager.INSTANCE.initialize(certificate.getProperty(ICertificate.KEY_SIGNATURE),
-				this.hubReference.getId())) {
+				hubReference.getId())) {
 			// TODO a new certificate was generated, so any pre-issued tokens are invalid
 		}
+		
+		return rootIdentity;
 	}
 
 
@@ -149,7 +142,10 @@ public class HubAuthenticationManager {
 		certificate = hubCertificates.get(hubCert);
 		return certificate;
 	}
-
+	
+	public LicenseConfig getLicenseConfig() {
+		return licenseConfig;
+	}
 
 
 }

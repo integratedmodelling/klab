@@ -17,10 +17,10 @@
   	<module>klab.component.tables</module>
   	<module>klab.components.cdm</module>
   	<module>klab.component.ecology</module>
-
-<!--   	<module>klab.component.renjin</module>
- -->  	<module>klab.component.weather</module>
+<!--   	<module>klab.component.renjin</module> -->  	
+    <module>klab.component.weather</module>
   	<module>klab.component.landcover</module>
   	<module>klab.component.noisemodelling</module>
+  	<module>klab.component.random</module>
   </modules>
 </project>

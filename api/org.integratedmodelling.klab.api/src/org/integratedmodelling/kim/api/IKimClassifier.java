@@ -38,6 +38,10 @@ public interface IKimClassifier extends IKimStatement {
 
 	ArrayList<IKimConcept> getConceptMatches();
 	
+	IKimQuantity getQuantityMatch();
+	
+	IKimDate getDateMatch();
+	
 	/**
 	 * The type of the object incarnated by this classifier
 	 * 

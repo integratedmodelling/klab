@@ -186,12 +186,11 @@ public interface IMetadata extends IParameters<String> {
 	public static String IM_KEYWORDS = "im:keywords";
 
 	public static String IM_KEY = "im:key";
-	
-    public static String IM_THEMATIC_AREA = "im:thematic-area";
 
-    public static String IM_GEOGRAPHIC_AREA = "im:geographic-area";
+	public static String IM_THEMATIC_AREA = "im:thematic-area";
 
-	
+	public static String IM_GEOGRAPHIC_AREA = "im:geographic-area";
+
 	/**
 	 * ISO639-2 http://www.w3.org/TR/NOTE-datetime RFC1766
 	 * http://www.ietf.org/rfc/rfc1766.txt
@@ -219,19 +218,33 @@ public interface IMetadata extends IParameters<String> {
 	public static final String IM_NOTES = "im:notes";
 
 	/**
-	 * Tags concepts that annotate physical states that don't need units 
-	 * because of adopting rescaling traits.
+	 * Tags concepts that annotate physical states that don't need units because of
+	 * adopting rescaling traits.
 	 */
 	public static final String IM_IS_RESCALED = "im:is-rescaled";
+
+	/**
+	 * Permissions in k.LAB are either "*" for public and/or a list of
+	 * comma-separated groups (uppercase) and/or usernames (lowercase). An empty
+	 * permission string means "owner only" (and possibly admin, left to
+	 * implementations). Prefixing either with a ! denies the permission for the
+	 * user or group (supposedly to narrow a previous more general one: e.g.
+	 * *,!BADGUYS).
+	 */
+	public static final String IM_PERMISSIONS = "im:permissions";
+
+	// publication data to send along with publish requests
+	public static final String IM_SUGGESTED_RESOURCE_ID = "im:suggested-resource-id";
+	public static final String IM_SUGGESTED_NAMESPACE_ID = "im:suggested-namespace-id";
+	public static final String IM_SUGGESTED_CATALOG_ID = "im:suggested-catalog-id";
 	
 	/**
-	 * Tags those extensive observables that are actually intensive because
-	 * the observation is of an inherent countable.
+	 * Tags those extensive observables that are actually intensive because the
+	 * observation is of an inherent countable.
 	 */
 	public static final String IM_RESCALES_INHERENT = "im:rescales-inherent";
-	
-	/** The Constant KLAB_LINE_COLOR. */
-	/*
+
+	/**
 	 * KLAB-specific, for visualization and display
 	 */
 	public static final String KLAB_LINE_COLOR = "klab:linecolor";

@@ -10,6 +10,7 @@ public class ResourceAdapterReference {
 	private String label;
 	private ServicePrototype parameters;
 	private boolean fileBased;
+	private boolean universal;
 	private Map<String, String> exportCapabilities = new HashMap<>();
 	private boolean multipleResources;
 
@@ -67,5 +68,13 @@ public class ResourceAdapterReference {
 
 	public void setMultipleResources(boolean multipleResources) {
 		this.multipleResources = multipleResources;
+	}
+
+	public boolean isUniversal() {
+		return universal;
+	}
+
+	public void setUniversal(boolean universal) {
+		this.universal = universal;
 	}
 }

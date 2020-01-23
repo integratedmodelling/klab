@@ -103,7 +103,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 													dataflow.getKdlCode(), contextualizationStrategy.getElkGraph())));
 							/*
 							 * make a copy of the coverage so that we ensure it's a scale, behaving properly
-							 * at merge.
+							 * at merge. FIXME this must be the entire scale now - each actuator creates its
+							 * artifacts, then initialization is handled when computing.
 							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy().initialization(), monitor);
 
@@ -115,19 +116,6 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 */
 							session.registerObservationContext(((Observation) ret).getRuntimeScope());
 
-							/*
-							 * The actuator has sent this already, but we send the final artifact a second
-							 * time to bring it to the foreground for the listeners
-							 */
-//							if (dataflow.isPrimary()) {
-//								session.getMonitor().send(Message.create(session.getId(),
-//										IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation,
-//										Observations.INSTANCE
-//												.createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, false, true)
-//												.withTaskId(token)));
-//								((Artifact)ret).setNotified(true);
-//
-//							}
 							/*
 							 * Unregister the task
 							 */

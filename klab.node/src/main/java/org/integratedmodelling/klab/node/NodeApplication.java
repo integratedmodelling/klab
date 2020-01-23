@@ -13,6 +13,7 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
+import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +24,9 @@ import org.springframework.web.client.RestTemplate;
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.node.security",
 		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers" })
 public class NodeApplication {
+	
+	// property specifying the resource online checking interval in seconds
+	public static final String RESOURCE_CHECKING_INTERVAL_SECONDS = "klab.node.resources.checkinterval";
 	
 	private static Node node;
 	
@@ -38,8 +42,8 @@ public class NodeApplication {
 	}
 
 	@Bean
-	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
-		return new ProtobufHttpMessageConverter();
+	public ProtobufJsonFormatHttpMessageConverter ProtobufJsonFormatHttpMessageConverter() {
+		return new ProtobufJsonFormatHttpMessageConverter();
 	}
 
 	@Bean

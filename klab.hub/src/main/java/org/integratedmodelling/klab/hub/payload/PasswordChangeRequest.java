@@ -5,12 +5,17 @@ import javax.validation.constraints.NotEmpty;
 public class PasswordChangeRequest {
 	public String username;
 
-	public String oldPassword;
-
 	@NotEmpty
 	public String newPassword;
+	
+	@NotEmpty
+	public String confirm;
 
 	public String getNewPassword() {
 		return newPassword;
+	}
+	
+	public String getConfirm() {
+		return confirm;
 	}
 }

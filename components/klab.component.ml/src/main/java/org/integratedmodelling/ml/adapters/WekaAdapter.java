@@ -20,6 +20,8 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
@@ -74,5 +76,13 @@ public class WekaAdapter implements IFileResourceAdapter {
 				.declare(getClass().getClassLoader()
 						.getResource("components/org.integratedmodelling.ml/adapter/weka.kdl"))
 				.getActuators().iterator().next(), null);
+	}
+
+	@Override
+	public IResourceCalculator getCalculator(IResource resource) {
+		if (!getName().equals(resource.getAdapterType())) {
+			throw new IllegalArgumentException("cannot create a WEKA calculator for non-WEKA resource " + resource.getUrn());
+		}
+		return new WekaCalculator(resource);
 	}
 }

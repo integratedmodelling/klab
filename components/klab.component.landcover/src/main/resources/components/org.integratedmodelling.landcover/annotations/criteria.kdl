@@ -1,0 +1,43 @@
+/**
+ * This file defines the contract for all core annotations recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+
+annotation demand for dependencies
+	"Tags a numeric dependency to be used to provide the proportion of demand 
+	for one or more land cover types.
+{
+	optional value 'value'
+		"The land cover type(s) that this dependency provides demand for."
+		label 'Land cover type'
+}
+
+annotation resistance for dependencies
+	"Tags a numeric dependency to be used to provide the resistance 
+	for one or more land cover types.
+{
+	optional value 'value'
+		"The land cover type(s) that this dependency provides resistance for."
+		label 'Land cover type'
+}
+
+annotation age for dependencies
+	"Tags a numeric dependency or output to provide and/or store the age of
+	 each allocated type."
+{
+	optional value 'value'
+		"The land cover type(s) that this dependency provides elasticity for."
+		label 'Land cover type'
+}
+
+annotation deviation for dependencies
+	"Tags a numeric dependency to be used to provide the allowed deviation
+	 in allocated area per type."
+{
+	optional value 'value'
+		"The land cover type(s) that this dependency provides elasticity for."
+		label 'Land cover type'
+}
