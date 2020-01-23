@@ -17,8 +17,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	
+	public UserGroupEntryServiceImpl(UserRepository userRepository, MongoGroupRepository groupRepository) {
+		super();
+		this.userRepository = userRepository;
+		this.groupRepository = groupRepository;
+	}
+
 	private UserRepository userRepository;
 	private MongoGroupRepository groupRepository;
+	
 	
 	@Override
 	public void setUsersGroupsFromNames(UpdateUsersGroups updateRequest) {
