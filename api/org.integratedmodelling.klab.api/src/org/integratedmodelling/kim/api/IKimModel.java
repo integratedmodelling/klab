@@ -43,7 +43,7 @@ public interface IKimModel extends IKimActiveStatement {
 
 	Optional<Object> getInlineValue();
 
-	Optional<IServiceCall> getResourceFunction();
+//	Optional<IServiceCall> getResourceFunction();
 
 	/**
 	 * Contextualizer or processor(s) given after 'using'

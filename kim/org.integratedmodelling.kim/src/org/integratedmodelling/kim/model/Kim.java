@@ -483,6 +483,10 @@ public enum Kim {
 
 	private static UrnDescriptor unvalidatedUrn = new UrnDescriptor(KNOWN | ACCESSIBLE, "Demo URN");
 
+	private UrnDescriptor validUrn(String urn) {
+		return new UrnDescriptor(KNOWN | ACCESSIBLE, urn);
+	}
+
 	public Number parseNumber(org.integratedmodelling.kim.kim.Number number) {
 		ICompositeNode node = NodeModelUtils.findActualNodeFor(number);
 		if (number.isExponential() || number.isDecimal()) {
@@ -778,7 +782,10 @@ public enum Kim {
 	public UrnDescriptor getUrnDescriptor(String urn) {
 
 		UrnDescriptor ret = null;
-		;
+		if (!urn.contains(":") || urn.startsWith("klab:")) {
+			// FIXME this should validate model URNs when admissible, ensuring they are declared
+			return validUrn(urn);
+		}
 		if (validatorCallback != null) {
 			ret = validatorCallback.classifyUrn(urn);
 		}

@@ -188,7 +188,7 @@ ComputableValue:
 	null?='unknown';
 	
 ValueExecution returns ValueAssignment:
-	execValue=ExecutableValue /* ('for' target=LOWERCASE_ID)? */
+	execValue=ExecutableValue ('for' target=LOWERCASE_ID)?
 ;
 	
 ExecutableValue returns ComputableValue:

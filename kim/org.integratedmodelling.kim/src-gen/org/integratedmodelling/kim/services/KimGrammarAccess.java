@@ -2287,18 +2287,38 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	public class ValueExecutionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ValueExecution");
-		private final Assignment cExecValueAssignment = (Assignment)rule.eContents().get(1);
-		private final RuleCall cExecValueExecutableValueParserRuleCall_0 = (RuleCall)cExecValueAssignment.eContents().get(0);
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cExecValueAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cExecValueExecutableValueParserRuleCall_0_0 = (RuleCall)cExecValueAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cForKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cTargetAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cTargetLOWERCASE_IDTerminalRuleCall_1_1_0 = (RuleCall)cTargetAssignment_1_1.eContents().get(0);
 		
 		//ValueExecution ValueAssignment:
-		//	execValue=ExecutableValue /* ('for' target=LOWERCASE_ID)? */;
+		//	execValue=ExecutableValue ('for' target=LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
+		//execValue=ExecutableValue ('for' target=LOWERCASE_ID)?
+		public Group getGroup() { return cGroup; }
+		
 		//execValue=ExecutableValue
-		public Assignment getExecValueAssignment() { return cExecValueAssignment; }
+		public Assignment getExecValueAssignment_0() { return cExecValueAssignment_0; }
 		
 		//ExecutableValue
-		public RuleCall getExecValueExecutableValueParserRuleCall_0() { return cExecValueExecutableValueParserRuleCall_0; }
+		public RuleCall getExecValueExecutableValueParserRuleCall_0_0() { return cExecValueExecutableValueParserRuleCall_0_0; }
+		
+		//('for' target=LOWERCASE_ID)?
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'for'
+		public Keyword getForKeyword_1_0() { return cForKeyword_1_0; }
+		
+		//target=LOWERCASE_ID
+		public Assignment getTargetAssignment_1_1() { return cTargetAssignment_1_1; }
+		
+		//LOWERCASE_ID
+		public RuleCall getTargetLOWERCASE_IDTerminalRuleCall_1_1_0() { return cTargetLOWERCASE_IDTerminalRuleCall_1_1_0; }
 	}
 	public class ExecutableValueElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ExecutableValue");
@@ -11047,7 +11067,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ValueExecution ValueAssignment:
-	//	execValue=ExecutableValue /* ('for' target=LOWERCASE_ID)? */;
+	//	execValue=ExecutableValue ('for' target=LOWERCASE_ID)?;
 	public ValueExecutionElements getValueExecutionAccess() {
 		return pValueExecution;
 	}

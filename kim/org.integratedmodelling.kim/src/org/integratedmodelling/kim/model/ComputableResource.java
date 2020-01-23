@@ -94,11 +94,11 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	private IObservable originalObservable;
 	private boolean copy = false;
 	
-	/**
-	 * If not empty, this is the first of a chain (which cannot be hierarchical).
-	 * For now this only happens with URNs.
-	 */
-	private List<ComputableResource> siblings = new ArrayList<>();
+//	/**
+//	 * If not empty, this is the first of a chain (which cannot be hierarchical).
+//	 * For now this only happens with URNs.
+//	 */
+//	private List<ComputableResource> siblings = new ArrayList<>();
 
 	private List<IAnnotation> externalParameters;
 
@@ -532,18 +532,18 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		}
 	}
 
-	/**
-	 * Chain a new resource to the current one. Only happens with URNs so far.
-	 * 
-	 * @param validate
-	 */
-	public void chainResource(ComputableResource resource) {
-		siblings.add(resource);
-	}
-
-	public List<ComputableResource> getSiblings() {
-		return siblings;
-	}
+//	/**
+//	 * Chain a new resource to the current one. Only happens with URNs so far.
+//	 * 
+//	 * @param validate
+//	 */
+//	public void chainResource(ComputableResource resource) {
+//		siblings.add(resource);
+//	}
+//
+//	public List<ComputableResource> getSiblings() {
+//		return siblings;
+//	}
 
 	@Override
 	public void visit(Visitor visitor) {
@@ -557,9 +557,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		if (condition != null) {
 			condition.visit(visitor);
 		}
-		for (ComputableResource sibling : siblings) {
-			sibling.visit(visitor);
-		}
+//		for (ComputableResource sibling : siblings) {
+//			sibling.visit(visitor);
+//		}
 	}
 
 	@Override

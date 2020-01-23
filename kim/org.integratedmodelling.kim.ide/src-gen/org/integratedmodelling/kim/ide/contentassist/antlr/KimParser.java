@@ -294,6 +294,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getValueAssignmentAccess().getGroup_0(), "rule__ValueAssignment__Group_0__0");
 			builder.put(grammarAccess.getComputableValueAccess().getGroup_2(), "rule__ComputableValue__Group_2__0");
 			builder.put(grammarAccess.getComputableValueAccess().getGroup_2_1(), "rule__ComputableValue__Group_2_1__0");
+			builder.put(grammarAccess.getValueExecutionAccess().getGroup(), "rule__ValueExecution__Group__0");
+			builder.put(grammarAccess.getValueExecutionAccess().getGroup_1(), "rule__ValueExecution__Group_1__0");
 			builder.put(grammarAccess.getExecutableValueAccess().getGroup(), "rule__ExecutableValue__Group__0");
 			builder.put(grammarAccess.getExecutableValueAccess().getGroup_0_1(), "rule__ExecutableValue__Group_0_1__0");
 			builder.put(grammarAccess.getExecutableValueAccess().getGroup_0_1_1(), "rule__ExecutableValue__Group_0_1_1__0");
@@ -732,7 +734,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getComputableValueAccess().getIdAssignment_3(), "rule__ComputableValue__IdAssignment_3");
 			builder.put(grammarAccess.getComputableValueAccess().getListAssignment_4(), "rule__ComputableValue__ListAssignment_4");
 			builder.put(grammarAccess.getComputableValueAccess().getNullAssignment_5(), "rule__ComputableValue__NullAssignment_5");
-			builder.put(grammarAccess.getValueExecutionAccess().getExecValueAssignment(), "rule__ValueExecution__ExecValueAssignment");
+			builder.put(grammarAccess.getValueExecutionAccess().getExecValueAssignment_0(), "rule__ValueExecution__ExecValueAssignment_0");
+			builder.put(grammarAccess.getValueExecutionAccess().getTargetAssignment_1_1(), "rule__ValueExecution__TargetAssignment_1_1");
 			builder.put(grammarAccess.getExecutableValueAccess().getFunctionAssignment_0_0(), "rule__ExecutableValue__FunctionAssignment_0_0");
 			builder.put(grammarAccess.getExecutableValueAccess().getExprAssignment_0_1_0(), "rule__ExecutableValue__ExprAssignment_0_1_0");
 			builder.put(grammarAccess.getExecutableValueAccess().getLanguageAssignment_0_1_1_1(), "rule__ExecutableValue__LanguageAssignment_0_1_1_1");

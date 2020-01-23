@@ -4029,22 +4029,48 @@ ruleValueExecution returns [EObject current=null]
 }:
 	(
 		(
-			{
-				newCompositeNode(grammarAccess.getValueExecutionAccess().getExecValueExecutableValueParserRuleCall_0());
-			}
-			lv_execValue_0_0=ruleExecutableValue
-			{
-				if ($current==null) {
-					$current = createModelElementForParent(grammarAccess.getValueExecutionRule());
+			(
+				{
+					newCompositeNode(grammarAccess.getValueExecutionAccess().getExecValueExecutableValueParserRuleCall_0_0());
 				}
-				set(
-					$current,
-					"execValue",
-					lv_execValue_0_0,
-					"org.integratedmodelling.kim.Kim.ExecutableValue");
-				afterParserOrEnumRuleCall();
-			}
+				lv_execValue_0_0=ruleExecutableValue
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getValueExecutionRule());
+					}
+					set(
+						$current,
+						"execValue",
+						lv_execValue_0_0,
+						"org.integratedmodelling.kim.Kim.ExecutableValue");
+					afterParserOrEnumRuleCall();
+				}
+			)
 		)
+		(
+			otherlv_1='for'
+			{
+				newLeafNode(otherlv_1, grammarAccess.getValueExecutionAccess().getForKeyword_1_0());
+			}
+			(
+				(
+					lv_target_2_0=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_target_2_0, grammarAccess.getValueExecutionAccess().getTargetLOWERCASE_IDTerminalRuleCall_1_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getValueExecutionRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"target",
+							lv_target_2_0,
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+					}
+				)
+			)
+		)?
 	)
 ;
 
