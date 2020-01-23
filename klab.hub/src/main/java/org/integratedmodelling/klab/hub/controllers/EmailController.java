@@ -7,14 +7,14 @@ import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.config.EmailConfig.EmailType;
+import org.integratedmodelling.klab.hub.emails.EmailTemplate;
 import org.integratedmodelling.klab.hub.exception.SendEmailException;
 import org.integratedmodelling.klab.hub.manager.EmailManager;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
-import org.integratedmodelling.klab.hub.models.EmailTemplate;
-import org.integratedmodelling.klab.hub.models.User;
 import org.integratedmodelling.klab.hub.payload.KlabEmail;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.service.EmailTemplateService;
+import org.integratedmodelling.klab.hub.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ import org.springframework.web.server.ResponseStatusException;
  *
  */
 @RestController
-@RequestMapping("/api/services/emails")
+@RequestMapping("/api/v2/services/emails")
 @RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 public class EmailController {
 

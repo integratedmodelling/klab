@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.service;
 import java.util.Collection;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.models.EmailTemplate;
+import org.integratedmodelling.klab.hub.emails.EmailTemplate;
 
 /**
  * The email template service

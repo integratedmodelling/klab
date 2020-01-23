@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.models;
+package org.integratedmodelling.klab.hub.emails;
 
 import javax.persistence.GeneratedValue;
 import javax.validation.constraints.Email;
