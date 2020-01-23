@@ -64,8 +64,8 @@ public class PgpKeyServiceImpl implements PgpKeyService {
 
         try {
             return ArmoredKeyPair.of(
-                    generateArmoredSecretKeyRing(keyRingGenerator),
-                    generateArmoredPublicKeyRing(keyRingGenerator));
+                    generateArmoredSecretKeyRing(keyRingGenerator).toByteArray(),
+                    generateArmoredPublicKeyRing(keyRingGenerator).toByteArray());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -108,7 +108,7 @@ public class PgpKeyServiceImpl implements PgpKeyService {
                 .build(passphrase.toCharArray());
     }
 
-    private String generateArmoredSecretKeyRing(PGPKeyRingGenerator keyRingGenerator) throws IOException {
+    private ByteArrayOutputStream generateArmoredSecretKeyRing(PGPKeyRingGenerator keyRingGenerator) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (
                 ArmoredOutputStream armoredOutputStream = new ArmoredOutputStream(outputStream);
@@ -116,10 +116,10 @@ public class PgpKeyServiceImpl implements PgpKeyService {
         ) {
             keyRingGenerator.generateSecretKeyRing().encode(bufferedOutputStream);
         }
-        return outputStream.toString();
+        return outputStream;
     }
 
-    private String generateArmoredPublicKeyRing(PGPKeyRingGenerator keyRingGenerator) throws IOException {
+    private ByteArrayOutputStream generateArmoredPublicKeyRing(PGPKeyRingGenerator keyRingGenerator) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (
                 ArmoredOutputStream armoredOutputStream = new ArmoredOutputStream(outputStream);
@@ -127,6 +127,6 @@ public class PgpKeyServiceImpl implements PgpKeyService {
         ) {
             keyRingGenerator.generatePublicKeyRing().encode(bufferedOutputStream, true);
         }
-        return outputStream.toString();
+        return outputStream;
     }
 }

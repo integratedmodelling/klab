@@ -2,6 +2,9 @@ package org.integratedmodelling.klab.hub.licenses.services;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Properties;
 
 import org.bouncycastle.openpgp.PGPException;
@@ -15,5 +18,5 @@ public interface LicenseService {
 	public Properties getPropertiesString(MongoNode node);
 	public Properties readCertFileContent(String certFileContent) throws IOException, PGPException;
 	public String get_NODE_CERT_FILE_NAME();
-	public LicenseConfiguration generateNewLicenseConfiguration();
+	public LicenseConfiguration generateNewLicenseConfiguration() throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException;
 }
