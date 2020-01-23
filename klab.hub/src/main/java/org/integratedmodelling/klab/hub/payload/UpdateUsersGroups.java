@@ -11,6 +11,8 @@ public class UpdateUsersGroups {
 	
 	public DateTime experation;
 	
+	public UpdateUsersGroups() {};
+	
 	public UpdateUsersGroups(Set<String> usernames,Set<String> groupnames, DateTime experation) {
 		this.usernames = usernames;
 		this.groupnames = groupnames;
