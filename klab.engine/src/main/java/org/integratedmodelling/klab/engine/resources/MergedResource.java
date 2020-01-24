@@ -16,8 +16,6 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -31,10 +29,8 @@ import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
@@ -67,8 +63,7 @@ public class MergedResource implements IResource {
 		long start = -1;
 		long end = -1;
 		ICoverage coverage;
-		// either one or the other is defined
-		List<Pair<IResource, IModel>> resources = new ArrayList<>();
+		List<IResource> resources = new ArrayList<>();
 	}
 
 	/*
@@ -97,38 +92,20 @@ public class MergedResource implements IResource {
 		for (String urn : statement.getResourceUrns()) {
 
 			IResource resource = null;
-			Model model = null;
 			IScale scale = null;
 
-			if (urn.contains(":")) {
-				resource = Resources.INSTANCE.resolveResource(urn);
-				if (resource == null) {
-					throw new KlabValidationException("URN " + urn + " does not specify a resource");
-				}
-				if (this.type != null && this.type != resource.getType()) {
-					throw new KlabValidationException(
-							"Cannot mix type " + this.type + " with " + resource.getType() + " from " + urn);
-				}
-				scale = Scale.create(resource.getGeometry());
-				this.type = resource.getType();
-
-			} else {
-				// model object
-				IKimObject mo = Resources.INSTANCE.getModelObject(urn);
-				if (!(mo instanceof IModel)) {
-					throw new KlabValidationException("URN " + urn + " does not specify a model");
-				}
-				model = (Model) mo;
-				scale = ((Model) mo).getCoverage(monitor);
-				if (this.type != null && this.type != model.getObservables().get(0).getArtifactType()) {
-					throw new KlabValidationException("Cannot mix type " + this.type + " with "
-							+ model.getObservables().get(0).getArtifactType() + " from " + urn);
-
-				}
-				this.type = model.getObservables().get(0).getArtifactType();
+			resource = Resources.INSTANCE.resolveResource(urn);
+			if (resource == null) {
+				throw new KlabValidationException("URN " + urn + " does not specify a resource");
 			}
+			if (this.type != null && this.type != resource.getType()) {
+				throw new KlabValidationException(
+						"Cannot mix type " + this.type + " with " + resource.getType() + " from " + urn);
+			}
+			scale = Scale.create(resource.getGeometry());
+			this.type = resource.getType();
 
-			getResourceSet(scale).resources.add(new Pair<>(resource, model));
+			getResourceSet(scale).resources.add(resource);
 
 		}
 
@@ -345,6 +322,31 @@ public class MergedResource implements IResource {
 	public String getLocalProjectName() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Pick the specific resource to use for the passed scale. TODO return a
+	 * collection of resources and use the next to fill in for any nodata in the
+	 * previous.
+	 * 
+	 * @param scale
+	 * @return
+	 */
+	public List<IResource> contextualize(IScale scale) {
+
+		List<IResource> ret = new ArrayList<>();
+		if (scale.getTime() == null && resources.size() > 0) {
+			ResourceSet set = resources.get(-1L);
+			if (set != null) {
+				ret.addAll(set.resources);
+			}
+		} else {
+			ResourceSet set = resources
+					.get(scale.getTime().getStart() == null ? -1L : scale.getTime().getStart().getMilliseconds());
+			ret.addAll(set.resources);
+		}
+
+		return ret;
 	}
 
 }
