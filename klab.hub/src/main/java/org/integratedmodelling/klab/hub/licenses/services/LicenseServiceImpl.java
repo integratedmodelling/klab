@@ -21,6 +21,7 @@ import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.license.ArmoredKeyPair;
+import org.integratedmodelling.klab.hub.license.BouncyConfiguration;
 import org.integratedmodelling.klab.hub.license.BouncyGpgKeyRing;
 import org.integratedmodelling.klab.hub.license.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.license.commands.GetLicenseConfiguration;
@@ -132,14 +133,14 @@ public class LicenseServiceImpl implements LicenseService {
 		
 		String passphrase = pwdGenerator.generate(36);
 		
-		LicenseConfiguration config = new LicenseConfiguration();
+		LicenseConfiguration config = new BouncyConfiguration();
 		
 		config.setEmail("info@intergratedmodelling.org");
 		config.setHubId("IM");
 		config.setKeyString(UUID.randomUUID().toString());
 		config.setPassphrase(passphrase);
 		config.setName("Integrated Modelling Hub");
-		config.setHubUrl("localhost:8284/hub");
+		config.setHubUrl("http://localhost:8284/hub");
 		
 		KeyringConfig keyRing = new BouncyGpgKeyRing().createKeyRing("IM", "info@intergratedmodelling.org", passphrase);
 		

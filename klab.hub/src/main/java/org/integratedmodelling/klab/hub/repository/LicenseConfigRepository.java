@@ -10,4 +10,5 @@ import com.google.common.base.Optional;
 @Repository
 public interface LicenseConfigRepository extends MongoRepository<LicenseConfiguration, ObjectId>{
 	Optional<LicenseConfiguration> findById(String id);
+	Optional<LicenseConfiguration> findByKeyString(String keyString);
 }

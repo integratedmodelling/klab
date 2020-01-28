@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface LicenseService {
+public abstract interface LicenseService {
 	public byte[] generateCertFile(MongoNode node) throws GeneralSecurityException, IOException, PGPException;
 	public Properties getPropertiesString(MongoNode node);
 	public Properties readCertFileContent(String certFileContent) throws IOException, PGPException;

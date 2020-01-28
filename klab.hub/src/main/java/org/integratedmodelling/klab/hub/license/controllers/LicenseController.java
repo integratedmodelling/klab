@@ -2,25 +2,28 @@ package org.integratedmodelling.klab.hub.license.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
+import java.security.NoSuchProviderException;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.auth.Hub;
-import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.groups.commands.GetNodesGroups;
-import org.integratedmodelling.klab.hub.license.commands.EvaluateNodeLicenseProperties;
-import org.integratedmodelling.klab.hub.licenses.services.LicenseService;
+import org.integratedmodelling.klab.hub.license.BouncyLicense;
+import org.integratedmodelling.klab.hub.license.CipherProperties;
+import org.integratedmodelling.klab.hub.license.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.license.PropertiesFactory;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
+import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
@@ -38,29 +41,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v2")
+@RequestMapping("/api/v2/")
 public class LicenseController {
 	
 	@Autowired
 	NodeService nodeService;
 	
 	@Autowired
-	LicenseService licenseService;
+	LicenseConfigRepository licenseRepo;
 	
 	@Autowired
 	MongoGroupRepository groupRepository;
 	
-	@GetMapping(value= "/nodes/{id}", params = "certificate")
+	@GetMapping(value= "nodes/{id}", params = "certificate")
 	@RolesAllowed({ "ROLE_SYSTEM" })
 	public void generateNodeCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
 		MongoNode node = nodeService.getNode(id);
-		byte[] certFileContent = null;
-		try {
-			certFileContent = licenseService.generateCertFile(node);
-		} catch (GeneralSecurityException | PGPException e) {
-			throw new BadRequestException("Error Creating node certificate byte String");
-		}
-		String certFileString = String.format("attachment; filename=%s", licenseService.get_NODE_CERT_FILE_NAME());
+		LicenseConfiguration configuration = licenseRepo.findAll().get(0);
+		
+		Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();
+
+		
+		byte[] certFileContent = new BouncyLicense().generate(nodeProperties, configuration);;
+		
+		String certFileString = String.format("attachment; filename=%s", KlabCertificate.DEFAULT_NODE_CERTIFICATE_FILENAME);
+		
 		response.setHeader("Content-disposition", certFileString);
 		response.setContentType("text/plain;charset=utf-8");
 		response.setContentLength(certFileContent.length);
@@ -69,9 +74,12 @@ public class LicenseController {
 		IOUtils.closeQuietly(response.getOutputStream());
 	}
 	
-	@PostMapping(value= "/nodes/auth-cert")
-	public ResponseEntity<NodeAuthenticationResponse> processNodeCertificate(@RequestBody NodeAuthenticationRequest request, HttpServletRequest httpRequest) {
-        String remoteAddr = "";
+	@PostMapping(value= "nodes/auth-cert")
+	public ResponseEntity<NodeAuthenticationResponse> processNodeCertificate(
+			@RequestBody NodeAuthenticationRequest request, 
+			HttpServletRequest httpRequest) {
+		
+		String remoteAddr = "";
 
         if (httpRequest != null) {
             remoteAddr = httpRequest.getHeader("X-FORWARDED-FOR");
@@ -80,16 +88,25 @@ public class LicenseController {
             }
         }
         
+        LicenseConfiguration configuration = licenseRepo.findByKeyString(request.getNodeKey()).get();
+        
         MongoNode node = nodeService.getNode(request.getNodeName());
         
-        boolean compare = 
-        		new EvaluateNodeLicenseProperties(
-        				node, 
-        				licenseService, 
-        				request.getCertificate())
-        				.execute();
+        Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();
+        
+        Properties cipherProperties = null;
+        
+		try {
+			cipherProperties = new CipherProperties().getCipherProperties(configuration, request.getCertificate());
+		} catch (NoSuchProviderException | IOException | PGPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        nodeProperties.remove(KlabCertificate.KEY_EXPIRATION);
+        cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
 
-        if(compare) {
+        if(nodeProperties.equals(cipherProperties)) {
         	
         	Set<Group> groups = new GetNodesGroups(node, groupRepository).execute();
         	AuthenticatedIdentity authenticatedIdentity = 
