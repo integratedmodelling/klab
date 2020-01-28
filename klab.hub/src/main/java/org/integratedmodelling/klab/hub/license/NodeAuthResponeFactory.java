@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.hub.groups.commands.GetNodesGroups;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
-import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
@@ -37,7 +36,7 @@ public class NodeAuthResponeFactory {
 	public NodeAuthenticationResponse getRespone(
 			NodeAuthenticationRequest request,
 			String ip,
-			LicenseConfigRepository configRepo, 
+			LicenseConfiguration config, 
 			NodeService nodeService, 
 			MongoGroupRepository groupRepo) throws NoSuchProviderException, IOException, PGPException {
 		
@@ -53,10 +52,9 @@ public class NodeAuthResponeFactory {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return localNode(request, groupRepo);
 			} else {
-				LicenseConfiguration configuration = configRepo.findByKeyString(request.getNodeKey()).get();
 				MongoNode node = nodeService.getNode(request.getNodeName());
 				Set<Group> groups = new GetNodesGroups(node, groupRepo).execute();
-				NodeAuthenticationResponse response = processNode(request.getCertificate(),node, groups, configuration);
+				NodeAuthenticationResponse response = processNode(request.getCertificate(),node, groups, config);
 				if(response.getUserData() != null) {
 		    		node.setLastNodeConnection();
 		    		nodeService.updateNode(node);
@@ -65,16 +63,13 @@ public class NodeAuthResponeFactory {
 				return response;
 			}
 		}
-		return null;
-		
+		return null;		
 	}
+	
 	private NodeAuthenticationResponse processNode(String cipher, MongoNode node, Set<Group> groups,
 			LicenseConfiguration configuration) throws NoSuchProviderException, IOException, PGPException {
 		Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();
 		Properties cipherProperties =  new CipherProperties().getCipherProperties(configuration, cipher);
-        nodeProperties.remove(KlabCertificate.KEY_EXPIRATION);
-        cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
-        
         nodeProperties.remove(KlabCertificate.KEY_EXPIRATION);
         cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
 
@@ -88,7 +83,6 @@ public class NodeAuthResponeFactory {
     				Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class).getId(),
     				groups,
     				NetworkKeyManager.INSTANCE.getEncodedPublicKey());    
-    		
     		return response;
         } else {
         	return new NodeAuthenticationResponse();

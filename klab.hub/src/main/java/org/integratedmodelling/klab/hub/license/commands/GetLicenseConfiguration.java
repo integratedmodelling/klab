@@ -1,12 +1,12 @@
 package org.integratedmodelling.klab.hub.license.commands;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.license.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 
-import com.google.common.base.Optional;
 
 public class GetLicenseConfiguration {
 	

@@ -4,30 +4,22 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.NoSuchProviderException;
 import java.util.Properties;
-import java.util.Set;
-
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openpgp.PGPException;
-import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.hub.groups.commands.GetNodesGroups;
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.license.BouncyLicense;
-import org.integratedmodelling.klab.hub.license.CipherProperties;
 import org.integratedmodelling.klab.hub.license.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.license.NodeAuthResponeFactory;
 import org.integratedmodelling.klab.hub.license.PropertiesFactory;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
-import org.integratedmodelling.klab.hub.nodes.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
-import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
-import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
-import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,45 +80,17 @@ public class LicenseController {
             }
         }
         
-        LicenseConfiguration configuration = licenseRepo.findByKeyString(request.getNodeKey()).get();
+        LicenseConfiguration config = licenseRepo.findByKeyString(request.getNodeKey())
+        		.orElseGet(() -> new LicenseConfiguration());
         
-        MongoNode node = nodeService.getNode(request.getNodeName());
-        
-        Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();
-        
-        Properties cipherProperties = null;
-        
+        NodeAuthenticationResponse response = null;
 		try {
-			cipherProperties = new CipherProperties().getCipherProperties(configuration, request.getCertificate());
+			response = new NodeAuthResponeFactory().getRespone(request, remoteAddr, config, nodeService, groupRepository);
 		} catch (NoSuchProviderException | IOException | PGPException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BadRequestException("Make a more useful message to help fiqure out what happened.");
 		}
-        
-        nodeProperties.remove(KlabCertificate.KEY_EXPIRATION);
-        cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
-
-        if(nodeProperties.equals(cipherProperties)) {
-        	
-        	Set<Group> groups = new GetNodesGroups(node, groupRepository).execute();
-        	AuthenticatedIdentity authenticatedIdentity = 
-        			new GetNodeAuthenticatedIdentity(node, groups).execute();
-        	
-    		NodeAuthenticationResponse response = new NodeAuthenticationResponse(
-    				authenticatedIdentity,
-    				Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class).getId(),
-    				groups,
-    				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
-    		
-    		node.setLastNodeConnection();
-    		nodeService.updateNode(node);
-    		
-    		return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-        	NodeAuthenticationResponse response = new NodeAuthenticationResponse();
-        	return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        	return new ResponseEntity<>(response, HttpStatus.OK);
         }
-
-	}
 
 }

@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "LicenseConfigurations")
-public abstract class LicenseConfiguration {
+public class LicenseConfiguration {
 	
 	@Id
 	private String id;
