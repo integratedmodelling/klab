@@ -1,16 +1,23 @@
 package org.integratedmodelling.klab.hub.tasks;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotEmpty;
 
 import org.integratedmodelling.klab.hub.users.Role;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Tasks")
-public class Task {
+public abstract class Task {
 
 	@Id
 	String id;
@@ -28,15 +35,26 @@ public class Task {
     @Enumerated(EnumType.STRING)
     TaskStatus status;
     
-    @NotEmpty
-    @Enumerated
-    TaskType type;
-	
+    @Enumerated(EnumType.STRING)
+    TaskStatus parentStatus;
+    
     DateTime expirationDate;
     
-    public Task(String requestee, TaskType type) {
+    /**
+     * The next task to be accepted or deny
+     */
+    @Reference
+    List<Task> next = new ArrayList<Task>();
+    
+	/**
+     * If true, after create, we do accept
+     */
+    boolean autoAccepted;
+    
+    public Task(String requestee) {
     	this.requestee = requestee;
-    	this.type = type;
+    	this.setIssued();
+		this.setStatus(TaskStatus.pending);
     }
 
 	public String getId() {
@@ -95,11 +113,52 @@ public class Task {
 		this.roleRequirement = role;
 	}
 
-	public TaskType getType() {
-		return type;
+	public boolean isAutoAccepted() {
+		return this.autoAccepted;
+	}
+	
+	public void setAutoAccepted(boolean autoAccepted) {
+		this.autoAccepted = autoAccepted;
+	}
+	
+	/**
+	 * @return the parentStatus
+	 */
+	public TaskStatus getParentStatus() {
+		return parentStatus;
 	}
 
-	public void setType(TaskType type) {
-		this.type = type;
+	/**
+	 * @param parentStatus the parentStatus to set
+	 */
+	public void setParentStatus(TaskStatus parentStatus) {
+		this.parentStatus = parentStatus;
 	}
+
+	/**
+	 * @return the next
+	 */
+	public List<Task> getNext() {
+		return next;
+	}
+
+	/**
+	 * @param next task to add to next
+	 */
+	public void add(Task next) {
+		this.next.add(next);
+	}
+
+	/**
+	 * Specific code for accept action
+	 * The status of task after this operation is the final one, it will be change inside the method 
+	 * The new status is not persisted
+	 */
+	abstract public void acceptTaskAction(HttpServletRequest request);
+	/**
+	 * Specific code for deny action
+	 * The status of task after this operation is the final one, it must be changed inside the method
+	 * The new status is not persisted
+	 */
+	abstract public void denyTaskAction(HttpServletRequest request);
 }

@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.hub.tasks;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
 import org.springframework.data.annotation.Reference;
 
@@ -9,7 +11,7 @@ public class RemoveGroupTask extends Task{
 	ClickbackToken token;
 
 	public RemoveGroupTask(String requestee) {
-		super(requestee, TaskType.removeGroupRequest);
+		super(requestee);
 	}
 	
 	public ClickbackToken getToken() {
@@ -18,6 +20,18 @@ public class RemoveGroupTask extends Task{
 
 	public void setToken(ClickbackToken token) {
 		this.token = token;
+	}
+
+	@Override
+	public void acceptTaskAction(HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void denyTaskAction(HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -54,7 +54,7 @@ public class TaskManager {
 	}
 
 	private Task acceptTask(String taskId, HttpServletRequest request) {
-		Task task = taskService.getTask(taskId);
+		Task task = taskService.getTask(taskId).get();
 		if(request.isUserInRole(task.getRoleRequirement())) {
 			if(task.getClass().equals(GroupRequestTask.class)) {
 				GroupRequestTask taskRequest =  (GroupRequestTask) task;
@@ -81,7 +81,7 @@ public class TaskManager {
 	}
 	
 	private Task denyTask(String taskId, HttpServletRequest request) {
-		Task task = taskService.getTask(taskId);
+		Task task = taskService.getTask(taskId).get();
 		if(request.isUserInRole(task.getRoleRequirement())) {
 			if(task.getClass().equals(GroupRequestTask.class)) {
 				GroupRequestTask taskRequest =  (GroupRequestTask) task;
@@ -97,7 +97,7 @@ public class TaskManager {
 	}
 
 	public Task getTask(String taskId) {
-		return taskService.getTask(taskId);
+		return taskService.getTask(taskId).get();
 	}
 
 	public CreateGroupTask createGroupTask(String username, MongoGroup group) {
