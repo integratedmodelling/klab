@@ -4,6 +4,7 @@ import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.RemoveGroupTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
+import org.integratedmodelling.klab.hub.tasks.TaskCommand;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
 
@@ -17,7 +18,7 @@ public class RemoveGroupDeny implements TaskCommand {
 		this.task = task;
 		this.tokenRepository = tokenRepository;
 	}
-
+	
 	public RemoveGroupTask execute() {
 		ClickbackToken token = task.getToken();
 		tokenRepository.delete(token);
@@ -25,11 +26,13 @@ public class RemoveGroupDeny implements TaskCommand {
 		return task;
 	}
 
+
 	@Override
 	public void executeAccept(Task task) {
 		// TODO Auto-generated method stub
 		
 	}
+
 
 	@Override
 	public void executeDeny(Task task) {

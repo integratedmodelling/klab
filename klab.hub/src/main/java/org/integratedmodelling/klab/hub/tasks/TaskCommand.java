@@ -1,6 +1,4 @@
-package org.integratedmodelling.klab.hub.tasks.commands;
-
-import org.integratedmodelling.klab.hub.tasks.Task;
+package org.integratedmodelling.klab.hub.tasks;
 
 public interface TaskCommand {
 	

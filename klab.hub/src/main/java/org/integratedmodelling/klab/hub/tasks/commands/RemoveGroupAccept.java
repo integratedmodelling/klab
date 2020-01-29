@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
 import org.integratedmodelling.klab.hub.tasks.RemoveGroupTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
+import org.integratedmodelling.klab.hub.tasks.TaskCommand;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
