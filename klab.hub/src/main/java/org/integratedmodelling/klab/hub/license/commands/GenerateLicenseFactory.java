@@ -22,8 +22,7 @@ public class GenerateLicenseFactory {
 			return config;
 		}
 		if(clazz.getName() == LegacyConfiguration.class.getName()){
-			Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
-			LegacyConfiguration config = new NewLegacyConfiguration(hub).get();
+			LegacyConfiguration config = new NewLegacyConfiguration().get();
 			return config;
 		}
 		return null;
