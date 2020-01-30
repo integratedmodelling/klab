@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
-import org.integratedmodelling.klab.hub.users.User;
 
 public class PropertiesFactory {
 	

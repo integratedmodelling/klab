@@ -10,6 +10,7 @@ public interface UserProfileService {
 	
 	abstract ProfileResource updateUserByProfile(ProfileResource profile);
 	abstract ProfileResource getUserProfile(String username);
+	abstract ProfileResource getRawUserProfile(String username);
 	abstract ProfileResource getCurrentUserProfile();
 	abstract Set<ProfileResource> getAllUserProfiles();
 

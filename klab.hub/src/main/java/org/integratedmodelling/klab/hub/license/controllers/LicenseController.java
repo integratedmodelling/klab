@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
-import org.integratedmodelling.klab.hub.service.UserService;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
@@ -91,7 +90,7 @@ public class LicenseController {
 		LicenseConfiguration config = licenseRepo.findByKeyString(request.getNodeKey())
 				.orElseGet(() -> new LicenseConfiguration());
 
-		NodeAuthenticationResponse response = null;
+		NodeAuthenticationResponse response;
 
 		try {
 			response = new NodeAuthResponeFactory().getRespone(request, remoteAddr, config, nodeService, groupRepository);
@@ -123,7 +122,7 @@ public class LicenseController {
 		IOUtils.closeQuietly(response.getOutputStream());
 	}
 	
-	@PostMapping(value= "engine/auth-cert")
+	@PostMapping(value= "engines/auth-cert")
 	public ResponseEntity<EngineAuthenticationResponse> processEngineCertificate(
 			@RequestBody EngineAuthenticationRequest request,
 			HttpServletRequest httpRequest) {
@@ -139,8 +138,15 @@ public class LicenseController {
 		LicenseConfiguration config = licenseRepo.findByKeyString(request.getUserKey())
 				.orElseGet(() -> new LicenseConfiguration());
 
-		EngineAuthenticationResponse response = new EngineAuthResponeFactory()
+		EngineAuthenticationResponse response;
+		
+		try {
+			response = new EngineAuthResponeFactory()
 				.getRespone(request, remoteAddr, config, userProfileService, groupRepository);
+		} catch (NoSuchProviderException | IOException | PGPException e) {
+			throw new BadRequestException("Make a more useful message to help fiqure out what happened.");
+		}
+		
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

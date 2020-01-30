@@ -30,8 +30,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Override
 	public ProfileResource updateUserByProfile(ProfileResource profile) {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userRepository.findByUsernameIgnoreCase(username)
+		User user = userRepository.findByUsernameIgnoreCase(profile.getUsername())
 				.filter(u -> u.getUsername().equals(profile.getUsername()))
 				.orElseThrow(() ->  
 					new KlabException("Current User context does match updated profile username"));
@@ -66,6 +65,15 @@ public class UserProfileServiceImpl implements UserProfileService {
 		userRepository.findAll().forEach(user -> profiles.add(
 				objectMapper.convertValue(user, ProfileResource.class).getSafeProfile()));
 		return profiles;
+	}
+
+	@Override
+	public ProfileResource getRawUserProfile(String username) {
+		User user = userRepository.findByUsernameIgnoreCase(username)
+				.orElseThrow(() ->  
+					new BadRequestException("User does not exist"));
+		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
+		return profile;
 	}
 
 }
