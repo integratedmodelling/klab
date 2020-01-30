@@ -18,7 +18,9 @@ import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.MongoGroupAdapter;
 import org.integratedmodelling.klab.hub.groups.commands.GetNodesGroups;
+import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
+import org.integratedmodelling.klab.hub.nodes.commands.GetINodeIdentity;
 import org.integratedmodelling.klab.hub.nodes.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -75,14 +77,18 @@ public class NodeAuthResponeFactory {
 
         if(nodeProperties.equals(cipherProperties)) {
         	
+        	INodeIdentity nodeIdentity = new GetINodeIdentity(node).execute();
+        	
         	AuthenticatedIdentity authenticatedIdentity = 
-        			new GetNodeAuthenticatedIdentity(node, groups).execute();
+        			new GetNodeAuthenticatedIdentity(nodeIdentity, groups).execute();
+        	
         	
     		NodeAuthenticationResponse response = new NodeAuthenticationResponse(
     				authenticatedIdentity,
     				Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class).getId(),
     				groups,
     				NetworkKeyManager.INSTANCE.getEncodedPublicKey());    
+        	NetworkManager.INSTANCE.notifyAuthorizedNode(nodeIdentity, true);
     		return response;
         } else {
         	return new NodeAuthenticationResponse();
@@ -110,8 +116,7 @@ public class NodeAuthResponeFactory {
 		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
 				hub.getId(), groups,
 				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
-		//TODO
-		//networkManager.notifyAuthorizedNode(node, true);
+		NetworkManager.INSTANCE.notifyAuthorizedNode(node, true);
 		return response;
 	}
 	

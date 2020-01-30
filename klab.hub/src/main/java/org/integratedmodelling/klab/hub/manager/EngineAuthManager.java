@@ -45,9 +45,6 @@ public class EngineAuthManager {
 	@Autowired
 	JwtTokenManager jwtTokenManager;
 	
-	@Autowired
-	NetworkManager networkManager;
-	
 	public EngineAuthenticationResponse processEngineCert(EngineAuthenticationRequest request, String ip) {
 		switch (request.getLevel()) {
 		case ANONYMOUS:
@@ -87,7 +84,7 @@ public class EngineAuthManager {
 		
 		HubReference hub = new GenerateHubReference().execute();
 		return new EngineAuthenticationResponse(authenticatedIdentity, hub,
-				networkManager.getNodes(engineUser.getGroups()));
+				NetworkManager.INSTANCE.getNodes(engineUser.getGroups()));
 	}
 
 	private EngineUser authenticateEngineCert(EngineAuthenticationRequest request) {
@@ -137,7 +134,7 @@ public class EngineAuthManager {
 		Logging.INSTANCE.info("Local Engine Run on hub with User: " + engineUser.getUsername());
 		HubReference hub = new GenerateHubReference().execute();
 		return new EngineAuthenticationResponse(authenticatedIdentity, hub,
-				networkManager.getNodes(engineUser.getGroups()));
+				NetworkManager.INSTANCE.getNodes(engineUser.getGroups()));
 	}
 
 	private EngineUser authenticateLocalEngineCert(String username) {
