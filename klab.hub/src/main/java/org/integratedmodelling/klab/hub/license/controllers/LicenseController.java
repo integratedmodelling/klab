@@ -17,12 +17,15 @@ import org.integratedmodelling.klab.hub.license.EngineAuthResponeFactory;
 import org.integratedmodelling.klab.hub.license.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.license.NodeAuthResponeFactory;
 import org.integratedmodelling.klab.hub.license.PropertiesFactory;
+import org.integratedmodelling.klab.hub.manager.EmailManager;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
+import org.integratedmodelling.klab.hub.users.services.UserRegistrationService;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
@@ -41,17 +44,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v2/")
 public class LicenseController {
 
-	@Autowired
-	NodeService nodeService;
+	private NodeService nodeService;
+	
+	private UserProfileService userProfileService;
+
+	private LicenseConfigRepository licenseRepo;
+
+	private MongoGroupRepository groupRepository;
 	
 	@Autowired
-	UserProfileService userProfileService;
-
-	@Autowired
-	LicenseConfigRepository licenseRepo;
-
-	@Autowired
-	MongoGroupRepository groupRepository;
+	LicenseController(NodeService nodeService,
+			UserProfileService userProfileService,
+			LicenseConfigRepository licenseRepo,
+			MongoGroupRepository groupRepository) {
+		this.nodeService = nodeService;
+		this.userProfileService = userProfileService;
+		this.licenseRepo = licenseRepo;
+		this.groupRepository = groupRepository;
+	}
 
 	@GetMapping(value= "nodes/{id}", params = "certificate")
 	@RolesAllowed({ "ROLE_SYSTEM" })
