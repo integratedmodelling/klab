@@ -11,7 +11,10 @@ public class CipherProperties {
 	   public Properties getCipherProperties(LicenseConfiguration configuration, String cipher) throws NoSuchProviderException, IOException, PGPException{
 	      if(configuration.getClass() == BouncyConfiguration.class){
 	    	  return new BouncyLicense().getPropertiesFromCipher(cipher, configuration);
-	      }		
+	      }
+	      if(configuration.getClass() == LegacyConfiguration.class){
+	    	  return new LegacyLicense().getPropertiesFromCipher(cipher, configuration);
+	      }
 	      return null;
 	   }
 }

@@ -17,8 +17,9 @@ public class LegacyLicenseConfig {
 	private String nodeName;
 	private String hubId;
 	private String name;
-	
-    private final SecRing secRing = new SecRing();
+	private String hubUrl;
+
+	private final SecRing secRing = new SecRing();
     private final PubRing pubRing = new PubRing();
 	
 	public static class SecRing {
@@ -117,6 +118,14 @@ public class LegacyLicenseConfig {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getHubUrl() {
+		return this.hubUrl;
+	}
+	
+    public void setHubUrl(String hubUrl) {
+		this.hubUrl = hubUrl;
 	}
 	
 }

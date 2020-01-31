@@ -7,15 +7,12 @@ import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.api.API.HUB;
-import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.auth.Partner;
-import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.authentication.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
+import org.integratedmodelling.klab.hub.license.JwtToken;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
@@ -41,12 +38,6 @@ public class EngineAuthManager {
 	
 	@Autowired
 	KlabUserManager klabUserManager;
-	
-	@Autowired
-	JwtTokenManager jwtTokenManager;
-	
-	@Autowired
-	NetworkManager networkManager;
 	
 	public EngineAuthenticationResponse processEngineCert(EngineAuthenticationRequest request, String ip) {
 		switch (request.getLevel()) {
@@ -87,7 +78,7 @@ public class EngineAuthManager {
 		
 		HubReference hub = new GenerateHubReference().execute();
 		return new EngineAuthenticationResponse(authenticatedIdentity, hub,
-				networkManager.getNodes(engineUser.getGroups()));
+				NetworkManager.INSTANCE.getNodes(engineUser.getGroups()));
 	}
 
 	private EngineUser authenticateEngineCert(EngineAuthenticationRequest request) {
@@ -105,13 +96,14 @@ public class EngineAuthManager {
 	        }
 			
 	        User user = klabUserManager.getUser(username);
+	        klabUserManager.getUserProfile(username);
 	        Properties properties = licenseManager.getPropertiesString(user);
 	        
 	        propertiesFromCertificate.remove(KlabCertificate.KEY_EXPIRATION);
 	        properties.remove(KlabCertificate.KEY_EXPIRATION);
 	        if (propertiesFromCertificate.equals(properties)) {
 	        	tokenManager.deleteExpiredTokens(username);
-	            String token = jwtTokenManager.createEngineJwtToken(user);
+	            String token = new JwtToken().createEngineJwtToken(user);
 	            ProfileResource profile = klabUserManager.getUserProfile(username);
 	            klabUserManager.updateLastEngineConnection(user);
 	            EngineUser engineUser = new EngineUser(username, null);
@@ -137,18 +129,18 @@ public class EngineAuthManager {
 		Logging.INSTANCE.info("Local Engine Run on hub with User: " + engineUser.getUsername());
 		HubReference hub = new GenerateHubReference().execute();
 		return new EngineAuthenticationResponse(authenticatedIdentity, hub,
-				networkManager.getNodes(engineUser.getGroups()));
+				NetworkManager.INSTANCE.getNodes(engineUser.getGroups()));
 	}
 
 	private EngineUser authenticateLocalEngineCert(String username) {
 		User user = klabUserManager.getUser(username);
         String token = null;
         if (username.equals("system") ) {
-        	token = jwtTokenManager.createEngineJwtToken(user);
+        	token = new JwtToken().createEngineJwtToken(user);
         } else {
         	username = "hades";
         	user = klabUserManager.getUser(username);
-        	token = jwtTokenManager.createEngineJwtToken(user);
+        	token = new JwtToken().createEngineJwtToken(user);
         }
         tokenManager.deleteExpiredTokens(username);
         klabUserManager.updateLastEngineConnection(user);

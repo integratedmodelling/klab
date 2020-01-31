@@ -26,7 +26,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
 
-public class BouncyLicense implements License {	
+public class BouncyLicense implements KlabLicense {	
 
 	@Override
 	public byte[] generate(Properties properties, LicenseConfiguration configuration) {

@@ -297,6 +297,8 @@ public class User implements UserDetails{
         phone = resource.phone;
         sendUpdates = resource.sendUpdates;
         serverUrl = resource.serverUrl;
+        lastEngineConnection = resource.lastEngineConnection;
+        lastLogin = resource.lastLogin;
     }
 
     public boolean userGroupsOverlapWith(HashSet<GroupEntry> groups) {

@@ -169,7 +169,7 @@ public interface API {
 		 * <br/>
 		 * <b>Authentication:</b> open
 		 */
-		public static final String AUTHENTICATE_ENGINE = "/api/auth-cert/engine";
+		public static final String AUTHENTICATE_ENGINE = "/api/v2/engines/auth-cert";
 
 		/**
 		 * Called by nodes on hubs when authenticating with them. Parameters like the

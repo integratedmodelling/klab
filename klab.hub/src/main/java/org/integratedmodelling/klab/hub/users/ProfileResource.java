@@ -228,4 +228,8 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.groupEntries = safeGroups;
 		return cleanedProfile;
 	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
 }
