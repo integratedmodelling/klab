@@ -103,7 +103,7 @@ public class GroupRequestTask extends Task{
 		
 	}
 	
-	public static class Command implements TaskCommand {
+	public static class Command extends TaskCommand {
 		
 		@Autowired
 		private UserRepository userRepository;

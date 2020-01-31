@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.users.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,15 +62,14 @@ public class CreateGroupTask extends Task{
 		
 	}
 	
-	public static class Command implements TaskCommand {
+	public static class Command extends TaskCommand {
 		
 		@Autowired
-		private MongoGroupRepository groupRepository;
+		private GroupService service;
 		
 		@Override
 		public void executeAccept(Task task) {
-			MongoGroup group = ((CreateGroupTask)task).getGroup();
-			groupRepository.save(group);
+			service.createGroup(((CreateGroupTask)task).getGroup());
 			task.setStatus(TaskStatus.accepted);
 		}
 
