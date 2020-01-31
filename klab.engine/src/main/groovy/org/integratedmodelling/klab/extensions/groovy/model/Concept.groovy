@@ -86,7 +86,7 @@ public class Concept {
 
     def getConcept() {
         resolve();
-        return concept;
+        return this.concept;
     }
 
     def by(Concept of) {
@@ -330,7 +330,7 @@ public class Concept {
         }
         return ret;
     }
-
+	
     private IConcept toConcept(Object o) {
 
         if (o instanceof IConcept) {
@@ -339,7 +339,7 @@ public class Concept {
 
         if (o instanceof Concept) {
             ((Concept)o).resolve();
-            return ((Concept)o).concept;
+            return ((Concept)o).getConcept();
         }
 
         return null;

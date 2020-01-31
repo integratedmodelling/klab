@@ -183,8 +183,6 @@ public class KimNotifier implements Kim.Notifier {
 
 	@Override
 	public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
-
-		System.out.println("POPPAMADONNA " + namespace.getName());
 		
 		Namespaces.INSTANCE.release(namespace.getName(), monitor);
 		Namespace ns = new Namespace(namespace);
