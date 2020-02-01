@@ -25,6 +25,15 @@ public interface IUrnAdapter {
 	String getName();
 
 	/**
+	 * The adapter must be capable of producing a resource for a specific URN,
+	 * containing the type, inputs, outputs, attributes and metadata that describe
+	 * it.
+	 * 
+	 * @return
+	 */
+	IResource getResource(String urn);
+
+	/**
 	 * Check if the resource can be accessed. This should ensure the ability of
 	 * calling
 	 * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IContextualizationScope)}
@@ -51,7 +60,7 @@ public interface IUrnAdapter {
 	 *                 the root observation.
 	 */
 	void getEncodedData(Urn urn, IKlabData.Builder builder, IGeometry geometry, IContextualizationScope context);
-	
+
 	/**
 	 * Get the resource type.
 	 * 

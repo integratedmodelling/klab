@@ -121,6 +121,8 @@ public enum Network implements INetworkService {
 		}
 		node.getCatalogIds().addAll(capabilities.getResourceCatalogs());
 		node.getNamespaceIds().addAll(capabilities.getResourceNamespaces());
+		node.getResources().addAll(capabilities.getResourceUrns());
+		node.setOnline(true);
 	}
 
 	@Override
@@ -228,7 +230,6 @@ public enum Network implements INetworkService {
 
 	protected synchronized void checkNetwork() {
 
-		System.out.println("Checking network");
 		List<INodeIdentity> moveOnline = new ArrayList<>();
 		List<INodeIdentity> moveOffline = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
@@ -254,10 +255,12 @@ public enum Network implements INetworkService {
 		for (INodeIdentity node : moveOnline) {
 			offlineNodes.remove(node.getId());
 			onlineNodes.put(node.getId(), node);
+			((Node)node).setOnline(true);
 		}
 		for (INodeIdentity node : moveOffline) {
 			onlineNodes.remove(node.getId());
 			offlineNodes.put(node.getId(), node);
+			((Node)node).setOnline(false);
 		}
 	}
 
@@ -266,7 +269,18 @@ public enum Network implements INetworkService {
 		if (urn.isUniversal()) {
 			return chooseNode(getNodesWithAdapter(urn.getCatalog()));
 		}
-		return null;
+		return chooseNode(getOnlineNodes(Resources.INSTANCE.getPublicResourceCatalog().getNodes(urn.getUrn())));
+	}
+
+	private Collection<INodeIdentity> getOnlineNodes(Collection<String> nodes) {
+		List<INodeIdentity> ret = new ArrayList<>();
+		for (String node : nodes) {
+			INodeIdentity n = onlineNodes.get(node);
+			if (n != null) {
+				ret.add(n);
+			}
+		}
+		return ret;
 	}
 
 	private INodeIdentity chooseNode(Collection<INodeIdentity> nodesWithAdapter) {

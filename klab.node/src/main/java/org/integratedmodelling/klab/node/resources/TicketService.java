@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class TicketService implements ITicketManager {
 
 	ITicketManager delegate = new TicketManager(
-			new File(Configuration.INSTANCE.getDataPath() + File.separator + "ntickets.json"));
+			new File(Configuration.INSTANCE.getDataPath() + File.separator + "tickets.node.json"));
 
 	@Override
 	public ITicket open(Object... data) {

@@ -17,11 +17,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
+import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.client.tickets.TicketManager;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
@@ -62,6 +64,7 @@ import org.integratedmodelling.klab.utils.StringUtil;
 public class KlabSession extends KlabPeer {
 
 	private int NETWORK_CHECK_INTERVAL_SECONDS = 60;
+	private int TICKET_CHECK_INTERVAL_SECONDS = 6;
 
 	private AtomicLong queryCounter = new AtomicLong();
 
@@ -79,6 +82,11 @@ public class KlabSession extends KlabPeer {
 	 * All notifications not linked to a task
 	 */
 	private List<ENotification> systemNotifications = Collections.synchronizedList(new ArrayList<>());
+
+	/*
+	 * Tickets to track engine tickets that track node tickets
+	 */
+	private TicketManager ticketManager;
 
 	/*
 	 * Current root context and task in UI or null
@@ -99,8 +107,14 @@ public class KlabSession extends KlabPeer {
 
 	public KlabSession(String sessionId) {
 		super(Sender.SESSION, sessionId);
+
+		this.ticketManager = new TicketManager(
+				new File(Configuration.INSTANCE.getDataPath() + File.separator + "tickets.modeler.json"));
+
 		// run the first network check in 10 seconds
 		new CheckNetworkTask().schedule(10000);
+		// start checking tickets in 5
+		new CheckNetworkTask().schedule(5000);
 	}
 
 	class CheckNetworkTask extends Job {
@@ -116,7 +130,21 @@ public class KlabSession extends KlabPeer {
 			schedule(NETWORK_CHECK_INTERVAL_SECONDS * 1000);
 			return Status.OK_STATUS;
 		}
+	}
 
+	class CheckTicketsTask extends Job {
+
+		public CheckTicketsTask() {
+			super("");
+		}
+
+		protected IStatus run(IProgressMonitor monitor) {
+			schedule(TICKET_CHECK_INTERVAL_SECONDS * 1000);
+			for (ITicket ticket : ticketManager.get()) {
+				System.out.println("AAAH! TICKET! " + ticket);
+			}
+			return Status.OK_STATUS;
+		}
 	}
 
 	/*
@@ -466,7 +494,7 @@ public class KlabSession extends KlabPeer {
 	public void handleObservation(ObservationReference observation) {
 		recordObservation(observation);
 	}
-	
+
 	@MessageHandler
 	public void handlePublishResponse(ResourcePublishResponse response) {
 		if (response.getError() != null) {
@@ -527,6 +555,10 @@ public class KlabSession extends KlabPeer {
 
 	public EObservationReference getObservation(String id) {
 		return observationCatalog.get(id);
+	}
+
+	public TicketManager getTicketManager() {
+		return this.ticketManager;
 	}
 
 }

@@ -23,6 +23,8 @@ import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.EncodingDataBuilder;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.node.NodeApplication;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
@@ -91,9 +93,19 @@ public class ResourceManager {
 		this.onlineResourceUrns.addAll(online);
 	}
 
-	public KlabData getResourceData(String urn, IGeometry geometry, Set<Group> groups) {
+	/**
+	 * TODO this version accepts no inputs. The one that does should encode
+	 * everything, including geometry and URN, into a posted KlabData object.
+	 * 
+	 * @param urn
+	 * @param geometry
+	 * @param groups
+	 * @return
+	 */
+	public KlabData getResourceData(String urn, IGeometry geometry) {
 
 		Urn kurn = new Urn(urn);
+
 		if (kurn.isUniversal()) {
 
 			IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(kurn.getCatalog());
@@ -102,20 +114,27 @@ public class ResourceManager {
 			}
 
 			EncodingDataBuilder builder = new EncodingDataBuilder();
-			adapter.getEncodedData(kurn, builder, geometry, null);
+			adapter.getEncodedData(kurn, builder, geometry, new ResourceScope(adapter.getResource(urn), null));
 			return builder.buildEncoded();
 
 		}
 
-		Urn kUrn = new Urn(urn);
-		IResource resource = catalog.get(kUrn.getUrn());
+		IResource resource = catalog.get(kurn.getUrn());
 		if (resource == null) {
-			throw new IllegalArgumentException("URN " + kUrn + " cannot be resolved");
+			throw new IllegalArgumentException("URN " + urn + " cannot be resolved");
 		}
 
 		EncodingDataBuilder builder = new EncodingDataBuilder();
-		Resources.INSTANCE.getResourceData(resource, kUrn.getParameters(), geometry, null);
+		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+		if (adapter == null) {
+			throw new KlabUnsupportedFeatureException(
+					"adapter for resource of type " + resource.getAdapterType() + " not available");
+		}
+		adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
+				new ResourceScope(resource, null));
+
 		return builder.buildEncoded();
+
 	}
 
 	public ITicket publishResource(ResourceReference resourceReference, File uploadArchive, EngineAuthorization user,

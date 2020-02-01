@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.annotation.Nullable;
 
@@ -66,6 +69,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.ComponentsWorkspace;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.resources.PublicResourceCatalog;
@@ -118,7 +122,7 @@ public enum Resources implements IResourceService {
 	INSTANCE;
 
 	class ResourceData {
-		long timestamp;	
+		long timestamp;
 		boolean online;
 	}
 
@@ -428,15 +432,10 @@ public enum Resources implements IResourceService {
 		if (urn.isLocal()) {
 			ret = getLocalResourceCatalog().get(urn.toString());
 		} else if (urn.isUniversal()) {
-			// these resolve by definition
-			ResourceReference ref = new ResourceReference();
-			ref.setUrn(urn.toString());
-			ref.setAdapterType(urn.getCatalog());
-			ref.setLocalName(urn.getResourceId());
-			ref.setGeometry("#");
-			ref.setVersion(Version.CURRENT);
-			ref.setType(Type.VALUE); // for now
-			return new Resource(ref);
+			IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
+			if (adapter != null) {
+				return adapter.getResource(urns);
+			}
 		} else {
 			ret = publicResourceCatalog.get(urn.getUrn());
 		}
@@ -1106,7 +1105,7 @@ public enum Resources implements IResourceService {
 				return getUrnAdapter(urn.getCatalog()).isOnline(urn);
 			}
 		} else {
-			publicResourceCatalog.isOnline(resource.getUrn());
+			return publicResourceCatalog.isOnline(resource.getUrn());
 		}
 
 		return false;
@@ -1395,14 +1394,8 @@ public enum Resources implements IResourceService {
 		return adapter.getCalculator(resource);
 	}
 
-	/**
-	 * Resource submission opens an engine ticket of type
-	 * {@link ITicket.Type.ResourceSubmission} which will be updated with the ticket
-	 * number identifying the remote node ticket, in the data field "ticket". That
-	 * ticket should be checked to inquire about the state of the submission.
-	 */
 	@Override
-	public ITicket submitResource(IResource resource, String nodeId, String suggestedName) {
+	public ITicket submitResource(IResource resource, String nodeId, Map<String, String> suggestions) {
 
 		final INodeIdentity node = Network.INSTANCE.getNode(nodeId);
 
@@ -1424,19 +1417,31 @@ public enum Resources implements IResourceService {
 		new Thread() {
 			@Override
 			public void run() {
-
 				try {
 					if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 						if (resource.getLocalPaths().isEmpty()) {
+							ResourceReference reference = ((Resource) resource).getReference();
+							reference.getMetadata().putAll(suggestions);
 							TicketResponse.Ticket response = node.getClient().post(API.NODE.RESOURCE.SUBMIT_DESCRIPTOR,
-									((Resource) resource).getReference(), TicketResponse.Ticket.class);
+									reference, TicketResponse.Ticket.class);
 							ret.update("ticket", response.getId());
 						} else {
-							// zip the files and submit the archive with the temporary ID as the
-							// file name.
+							if (!suggestions.isEmpty()) {
+								File pprop = new File(
+										((Resource) resource).getPath() + File.separator + "publish.properties");
+								Properties properties = new Properties();
+								properties.putAll(suggestions);
+								try (OutputStream out = new FileOutputStream(pprop)) {
+									properties.store(out, null);
+								}
+							}
 							File zipFile = new File(
 									System.getProperty("java.io.tmpdir") + File.separator + ret.getId() + ".zip");
 							ZipUtils.zip(zipFile, ((Resource) resource).getPath(), false, true);
+							if (!suggestions.isEmpty()) {
+								FileUtils.deleteQuietly(new File(
+										((Resource) resource).getPath() + File.separator + "publish.properties"));
+							}
 							TicketResponse.Ticket response = node.getClient().postFile(API.NODE.RESOURCE.SUBMIT_FILES,
 									zipFile, TicketResponse.Ticket.class);
 							ret.update("ticket", response.getId());

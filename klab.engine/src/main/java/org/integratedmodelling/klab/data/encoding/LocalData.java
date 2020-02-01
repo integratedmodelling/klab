@@ -51,7 +51,7 @@ public class LocalData implements IKlabData {
 				Map<?, ?> state = (Map<?, ?>) s;
 				IState target = null;
 				if ("result".equals(state.get("name"))) {
-				
+
 					target = context.getTargetArtifact() instanceof IState ? (IState) context.getTargetArtifact()
 							: null;
 					this.state = target;
@@ -73,7 +73,12 @@ public class LocalData implements IKlabData {
 
 				for (ILocator locator : target.getScale()) {
 					if (doubles != null) {
-						target.set(locator, doubles.next());
+						Object o = doubles.next();
+						// yes, they do this, mixed in with doubles.
+						if ("NaN".equals(o)) {
+							o = null;
+						}
+						target.set(locator, o);
 					}
 				}
 

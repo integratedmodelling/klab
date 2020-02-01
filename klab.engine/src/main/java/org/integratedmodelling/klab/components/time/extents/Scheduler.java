@@ -287,7 +287,12 @@ public class Scheduler implements IScheduler {
 		IScale modelScale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
 
 		/*
-		 * should not be the case if we get here at all, but who knows.
+		 * should not be the case if we get here at all, but who knows. TODO: if there
+		 * is no explicit temporal nature, a contextualizer should check if any of the
+		 * dependencies have changed OR has changed data at T (even if computed before)
+		 * and exec again only if so. This should be done by inserting change event
+		 * points in each artifact and checking those, rather than using a value change
+		 * resulting from the actual update.
 		 */
 		if (overall.getTime() == null || modelScale.getTime() == null) {
 			return;

@@ -79,7 +79,7 @@ public class ResourcesView extends ViewPart {
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
-
+ 
 		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
@@ -373,5 +373,9 @@ public class ResourcesView extends ViewPart {
 	@Override
 	public void setFocus() {
 		// Set the focus
+	}
+
+	public void showPending() {
+		System.out.println("Showing the fucking pending resources");
 	}
 }

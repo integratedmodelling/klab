@@ -75,7 +75,8 @@ public class Resource implements IResource {
 	private static final long serialVersionUID = -923039635832182164L;
 
 	// these are used during resource publication as user preferences for the final
-	// URN. Namespace is taken from the "geographical area" in metadata, catalog from
+	// URN. Namespace is taken from the "geographical area" in metadata, catalog
+	// from
 	// the thematic area if unspecified.
 	public static final String PREFERRED_NAMESPACE_METADATA_KEY = "klab.resource.preferred.catalog";
 	public static final String PREFERRED_CATALOG_METADATA_KEY = "klab.resource.preferred.catalog";
@@ -106,6 +107,11 @@ public class Resource implements IResource {
 	private Map<String, String> exports = new LinkedHashMap<>();
 	// for display in resource descriptors
 	SpatialExtent spatialExtent;
+
+	/*
+	 * This is an absolute location only defined in node (public) resources.
+	 */
+	File resourcePath;
 
 	/*
 	 * TRY TEMPLATES FOR:
@@ -453,10 +459,16 @@ public class Resource implements IResource {
 	 */
 	public File getLocalFile(String parameter) {
 		if (this.parameters.containsKey(parameter)) {
-			IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
-			if (project != null) {
-				return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
-						+ Path.getLast(urn, ':') + File.separator + this.parameters.get(parameter));
+			if (projectName != null) {
+				IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
+				if (project != null) {
+					return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
+							+ Path.getLast(urn, ':') + File.separator + this.parameters.get(parameter));
+				}
+			} else {
+				/*
+				 * node resource
+				 */
 			}
 		}
 		return null;

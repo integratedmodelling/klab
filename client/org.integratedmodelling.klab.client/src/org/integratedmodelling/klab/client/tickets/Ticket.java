@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.rest.TicketResponse;
 public class Ticket implements ITicket {
 
 	transient TicketManager manager;
-	
+
 	private String id;
 	private Date postDate;
 	private Date resolutionDate;
@@ -112,27 +112,29 @@ public class Ticket implements ITicket {
 	}
 
 	public boolean matches(Object[] selectors) {
-		if (selectors != null) {
-			for (int i = 0; i < selectors.length; i++) {
-				if (selectors[i] instanceof Status) {
-					if (status != (Status) selectors[i]) {
-						return false;
-					}
-				} else if (selectors[i] instanceof Type) {
-					if (type != (Type) selectors[i]) {
-						return false;
-					}
-				} else {
-					String dat = data.get(selectors[i]);
-					Object match = selectors[++i];
-					if (!(dat == null && match == null) || match == null || dat != null
-							|| !dat.equals(match.toString())) {
-						return false;
-					}
+
+		if (selectors == null || selectors.length == 0) {
+			return true;
+		}
+		for (int i = 0; i < selectors.length; i++) {
+			if (selectors[i] instanceof Status) {
+				if (status != (Status) selectors[i]) {
+					return false;
+				}
+			} else if (selectors[i] instanceof Type) {
+				if (type != (Type) selectors[i]) {
+					return false;
+				}
+			} else {
+				String dat = data.get(selectors[i]);
+				Object match = selectors[++i];
+				if (!(dat == null && match == null) || match == null || dat != null || !dat.equals(match.toString())) {
+					return false;
 				}
 			}
 		}
-		return selectors != null;
+		return false;
+
 	}
 
 	@Override
@@ -142,7 +144,7 @@ public class Ticket implements ITicket {
 	}
 
 	@Override
-	public void update(Object...objects) {
+	public void update(Object... objects) {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof Status) {
@@ -150,7 +152,7 @@ public class Ticket implements ITicket {
 				} else if (objects[i] instanceof Type) {
 					this.type = (Type) objects[i];
 				} else if (objects[i] instanceof TicketResponse.Ticket) {
-					copy((TicketResponse.Ticket)objects[i]);
+					copy((TicketResponse.Ticket) objects[i]);
 				} else {
 					Object key = objects[i];
 					Object value = objects[++i];
@@ -160,7 +162,7 @@ public class Ticket implements ITicket {
 		}
 		this.manager.put(this);
 	}
-	
+
 	private void copy(Ticket t) {
 		this.data.clear();
 		this.data.putAll(t.data);
@@ -187,14 +189,14 @@ public class Ticket implements ITicket {
 			this.type = t.getType();
 		}
 	}
-	
+
 	@Override
 	public void delete() {
 		manager.remove(this);
 	}
 
 	@Override
-	public void resolve(Object...data) {
+	public void resolve(Object... data) {
 		update(data);
 		this.status = Status.RESOLVED;
 		update();
@@ -208,6 +210,5 @@ public class Ticket implements ITicket {
 		}
 		update();
 	}
-
 
 }

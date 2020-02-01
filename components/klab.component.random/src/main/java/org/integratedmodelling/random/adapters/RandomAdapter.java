@@ -13,12 +13,15 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.rest.ResourceReference;
 
 /**
  * Handles "klab:random:...." URNs. Possible selectors in third field of URN:
@@ -146,4 +149,17 @@ public class RandomAdapter implements IUrnAdapter {
 		return ret;
 	}
 
+	@Override
+	public IResource getResource(String urn) {
+		// TODO Auto-generated method stub
+		Urn kurn = new Urn(urn);
+		ResourceReference ref = new ResourceReference();
+		ref.setUrn(urn.toString());
+		ref.setAdapterType(getName());
+		ref.setLocalName(kurn.getResourceId());
+		ref.setGeometry("#");
+		ref.setVersion(Version.CURRENT);
+		ref.setType(Type.NUMBER); // for now
+		return new Resource(ref);
+	}
 }

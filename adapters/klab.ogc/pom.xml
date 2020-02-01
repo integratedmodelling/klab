@@ -10,6 +10,12 @@
 	<artifactId>klab.ogc</artifactId>
 	<name>OGC and GIS data adapters for k.LAB (files, WCS and WFS) </name>
 	<dependencies>
+		<!-- Postgis for publishing -->
+<!-- 		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-postgis</artifactId>
+			<version>${geotools.version}</version>
+		</dependency> -->
 		<!-- https://mvnrepository.com/artifact/org.geotools.xsd/gt-xsd-wcs -->
 		<dependency>
 			<groupId>org.geotools.xsd</groupId>

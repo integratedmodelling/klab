@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.rest.TicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +46,10 @@ public class ResourceController {
 	 * Controller for the main operation of retrieving resource data. Unique in
 	 * k.LAB for returning a Protobuf object.
 	 * 
+	 * TODO another similar one should be provided that accepts a KlabData object,
+	 * encoding everything but with the option of providing data for the
+	 * contextualization scope.
+	 * 
 	 * TODO As the volume of data can be large, this is probably the perfect place
 	 * for a reactive controller, using a Mono<KlabData> instead of KlabData.
 	 */
@@ -55,11 +60,11 @@ public class ResourceController {
 		if (!resourceManager.canAccess(request.getUrn(), (EngineAuthorization) principal)) {
 			throw new SecurityException(request.getUrn());
 		}
-		return resourceManager.getResourceData(request.getUrn(), geometry,
-				((EngineAuthorization) principal).getGroups());
+		// TODO also check that the principal can access the adapter
+		return resourceManager.getResourceData(request.getUrn(), geometry);
 	}
 
-	@PostMapping(value = API.NODE.RESOURCE.RESOLVE_URN, produces = "application/json")
+	@GetMapping(value = API.NODE.RESOURCE.RESOLVE_URN, produces = "application/json")
 	@ResponseBody
 	public ResourceReference resolveUrn(@PathVariable String urn, Principal principal) {
 
@@ -104,7 +109,6 @@ public class ResourceController {
 	@PostMapping(value = API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public TicketResponse.Ticket submitResource(@RequestBody ResourceReference resource, Principal principal) {
-
 		ITicket ticket = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
 				Klab.INSTANCE.getRootMonitor());
 		return TicketManager.encode(ticket);

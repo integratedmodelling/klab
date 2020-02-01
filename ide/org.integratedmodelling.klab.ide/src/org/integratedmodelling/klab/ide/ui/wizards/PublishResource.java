@@ -32,16 +32,18 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.ui.PermissionEditor;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
@@ -53,6 +55,7 @@ public class PublishResource extends WizardPage {
 	private List<NodeReference> nodes;
 	private Combo catalogCombo;
 	private Combo namespaceCombo;
+	private PermissionEditor permissionsEditor;
 
 	public PublishResource(ResourceReference resource, List<NodeReference> nodes) {
 		super("wizardPage");
@@ -68,45 +71,31 @@ public class PublishResource extends WizardPage {
 		Composite container = new Composite(parent, SWT.NULL);
 
 		setControl(container);
-		container.setLayout(new FormLayout());
+		GridLayout gl_container = new GridLayout(2, false);
+		gl_container.marginTop = 12;
+		container.setLayout(gl_container);
 
 		Label lblNewLabel = new Label(container, SWT.NONE);
-		FormData fd_lblNewLabel = new FormData();
-		lblNewLabel.setLayoutData(fd_lblNewLabel);
+		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel.setAlignment(SWT.RIGHT);
 		lblNewLabel.setText("Host node");
 
-		text = new Text(container, SWT.BORDER);
-		FormData fd_text = new FormData();
-		text.setLayoutData(fd_text);
-
 		combo = new Combo(container, SWT.READ_ONLY);
-		fd_text.right = new FormAttachment(combo, 0, SWT.RIGHT);
-		fd_text.top = new FormAttachment(combo, 22);
-		fd_lblNewLabel.top = new FormAttachment(combo, 1, SWT.TOP);
-		FormData fd_combo = new FormData();
-		fd_combo.right = new FormAttachment(100, -67);
-		fd_combo.left = new FormAttachment(lblNewLabel, 12);
-		fd_combo.top = new FormAttachment(0, 37);
-		combo.setLayoutData(fd_combo);
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblNewLabel_1 = new Label(container, SWT.NONE);
-		fd_lblNewLabel.right = new FormAttachment(lblNewLabel_1, 0, SWT.RIGHT);
-		fd_text.left = new FormAttachment(0, 159);
+		lblNewLabel_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-		FormData fd_lblNewLabel_1 = new FormData();
-		fd_lblNewLabel_1.top = new FormAttachment(lblNewLabel, 27);
-		lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
 		lblNewLabel_1.setText("Suggested ID");
 
 		/*
 		 * Add open projects in namespace, preselecting the one we started with, if any.
 		 */
-		this.text.setText(resource.getLocalName().toLowerCase());
 		for (NodeReference node : nodes) {
 			combo.add(node.getId());
 		}
 		combo.addSelectionListener(new SelectionListener() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				NodeReference node = nodes.get(combo.getSelectionIndex());
@@ -119,63 +108,58 @@ public class PublishResource extends WizardPage {
 					catalogCombo.add(catalog);
 				}
 			}
-			
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
 		});
-		
+
+		text = new Text(container, SWT.BORDER);
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		this.text.setText(resource.getLocalName().toLowerCase());
+
+		Label lblCatalogoptional = new Label(container, SWT.NONE);
+		lblCatalogoptional.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblCatalogoptional.setAlignment(SWT.RIGHT);
+		lblCatalogoptional.setText("Catalog (optional)");
+
 		catalogCombo = new Combo(container, SWT.NONE);
-		FormData fd_catalogCombo = new FormData();
-		fd_catalogCombo.top = new FormAttachment(text, 30);
-		fd_catalogCombo.right = new FormAttachment(100, -66);
-		catalogCombo.setLayoutData(fd_catalogCombo);
+		catalogCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		for (String catalog : nodes.get(0).getCatalogs()) {
 			catalogCombo.add(catalog);
 		}
-		
-		Label lblCatalogoptional = new Label(container, SWT.NONE);
-		fd_lblNewLabel_1.right = new FormAttachment(lblCatalogoptional, 0, SWT.RIGHT);
-		fd_catalogCombo.left = new FormAttachment(lblCatalogoptional, 12);
-		lblCatalogoptional.setAlignment(SWT.RIGHT);
-		FormData fd_lblCatalogoptional = new FormData();
-		fd_lblCatalogoptional.top = new FormAttachment(catalogCombo, 1, SWT.TOP);
-		lblCatalogoptional.setLayoutData(fd_lblCatalogoptional);
-		lblCatalogoptional.setText("Catalog (optional)");
-		
+
+		Label lblNewLabel_2 = new Label(container, SWT.NONE);
+		lblNewLabel_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel_2.setText("Namespace (optional)");
+
 		namespaceCombo = new Combo(container, SWT.NONE);
-		FormData fd_namespaceCombo = new FormData();
-		fd_namespaceCombo.right = new FormAttachment(100, -67);
-		fd_namespaceCombo.top = new FormAttachment(catalogCombo, 27);
-		fd_namespaceCombo.left = new FormAttachment(0, 159);
-		namespaceCombo.setLayoutData(fd_namespaceCombo);
+		namespaceCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		for (String namespace : nodes.get(0).getNamespaces()) {
 			namespaceCombo.add(namespace);
 		}
-		
-		Label lblNewLabel_2 = new Label(container, SWT.NONE);
-		fd_lblCatalogoptional.left = new FormAttachment(0, 39);
-		fd_lblCatalogoptional.right = new FormAttachment(lblNewLabel_2, 0, SWT.RIGHT);
-		FormData fd_lblNewLabel_2 = new FormData();
-		fd_lblNewLabel_2.left = new FormAttachment(0, 28);
-		fd_lblNewLabel_2.right = new FormAttachment(100, -430);
-		fd_lblNewLabel_2.top = new FormAttachment(namespaceCombo, 1, SWT.TOP);
-		lblNewLabel_2.setLayoutData(fd_lblNewLabel_2);
-		lblNewLabel_2.setText("Namespace (optional)");
 
 		combo.select(0);
-
+		
+		Group grpPermissions = new Group(container, SWT.NONE);
+		grpPermissions.setText("Permissions");
+		grpPermissions.setLayout(new GridLayout(1, false));
+		grpPermissions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		
+		permissionsEditor = new PermissionEditor(grpPermissions, SWT.NONE);
+		permissionsEditor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		permissionsEditor.setPermissions(resource.getMetadata().get(IMetadata.IM_PERMISSIONS));
 	}
 
 	public NodeReference getTargetNode() {
 		return this.nodes.get(combo.getSelectionIndex());
 	}
-	
+
 	public String getSuggestedName() {
 		return this.text.getText();
 	}
-	
+
 	public String getSuggestedNamespace() {
 		return this.namespaceCombo.getText();
 	}
@@ -183,6 +167,8 @@ public class PublishResource extends WizardPage {
 	public String getSuggestedCatalog() {
 		return this.catalogCombo.getText();
 	}
-
-
+	
+	public String getPermissions() {
+		return this.permissionsEditor.getPermissions();
+	}
 }

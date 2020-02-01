@@ -59,7 +59,8 @@ import org.integratedmodelling.klab.monitoring.Message;
 public interface API {
 
 	/**
-	 * Use to simply substitute parameters in URLs.
+	 * Use to simply substitute parameters in URLs:
+	 * <code>API.url(API.RESOURCE.RESOLVE_URN, API.P_URN, urn)</code>
 	 * 
 	 * @param template
 	 * @param kvp
@@ -126,30 +127,30 @@ public interface API {
 	public static final String KIM = "/kim";
 
 	/**
-	 * Read-only ticket API, implemented in the Node and maybe later in the Hub. Engines
-	 * have ticket management but only Websockets clients can access it.
+	 * Read-only ticket API, implemented in the Node and maybe later in the Hub.
+	 * Engines have ticket management but only Websockets clients can access it.
 	 * 
 	 * @author Ferd
 	 *
 	 */
 	public static interface TICKET {
-		
+
 		/**
 		 * Retrieve the specific ticket with the passed ID.
 		 * 
 		 * GET
 		 */
 		public static final String INFO = "/ticket/info/{ticket}";
-		
+
 		/**
 		 * Retrieve all tickets matching the field values in the query string.
 		 * 
 		 * GET
 		 */
 		public static final String QUERY = "/ticket/query";
-		
+
 	}
-	
+
 	public static interface HUB {
 
 		/**
@@ -276,11 +277,6 @@ public interface API {
 			public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
 
 			/**
-			 * Retrieve the resource metadata for the passed URN.
-			 */
-			public static final String INFO_URN = "/resource/info/" + P_URN;
-			
-			/**
 			 * List all resources available to the requesting engine. Parameterize for
 			 * verbose or short return.
 			 * 
@@ -353,7 +349,7 @@ public interface API {
 		 * 
 		 * GET
 		 */
-		public static final String SHUTDOWN = "/engine/admin/shutdown";
+		public static final String SHUTDOWN = "/admin/shutdown";
 
 		/**
 		 * Endpoints to remotely deploy/undeploy projects and components.
@@ -371,23 +367,36 @@ public interface API {
 			 * 
 			 * PUT as attachment POST as Git URL
 			 */
-			public static final String DEPLOY = "/engine/admin/component/deploy";
+			public static final String DEPLOY = "/admin/component/deploy";
 
 			/**
 			 * The Constant UNDEPLOY_COMPONENT.
 			 *
 			 * DELETE
 			 */
-			public static final String UNDEPLOY_COMPONENT = "/engine/admin/component/undeploy/" + P_COMPONENT;
+			public static final String UNDEPLOY_COMPONENT = "/admin/component/undeploy/" + P_COMPONENT;
 
 			/**
 			 * The Constant SETUP_COMPONENT.
 			 *
 			 * POST
 			 */
-			public static final String SETUP_COMPONENT = "/engine/admin/component/setup/" + P_COMPONENT;
+			public static final String SETUP_COMPONENT = "/admin/component/setup/" + P_COMPONENT;
 		}
+		
+		/**
+		 * Set one or more properties to the specified values.
+		 * 
+		 * POST
+		 */
+		public static final String CONFIGURE = "/admin/configure";
 
+		/**
+		 * Get the configuration properties and their current values.
+		 * 
+		 * GET
+		 */
+		public static final String CONFIGURATION = "/admin/configuration";
 	}
 
 	/**
