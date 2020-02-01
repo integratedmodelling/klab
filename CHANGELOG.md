@@ -26,6 +26,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [comment]: <>   (Next build: [0.10.0.xxx] -- ISO Date)
 
 ## Unreleased
+## [0.10.0.222] -- 2020/02/01
 ### Added
 - First tests with remote resources using test UrnAdapter working.
 - Add ITicket and ITicketManager for basic, file-based ticket management in both
