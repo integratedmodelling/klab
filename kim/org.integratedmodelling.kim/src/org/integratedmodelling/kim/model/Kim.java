@@ -1820,7 +1820,6 @@ public enum Kim {
 	private void recordCompileNotification(CompileNotificationReference inot, CompileInfo ci) {
 
 		if (inot.getLevel() == Level.SEVERE.intValue()) {
-			System.out.println("CAZZO " + inot);
 			ci.getErrors().add(inot);
 		} else if (inot.getLevel() == Level.WARNING.intValue()) {
 			ci.getWarnings().add(inot);
