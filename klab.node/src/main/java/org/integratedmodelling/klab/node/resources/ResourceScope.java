@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.node.resources;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -705,6 +706,12 @@ public class ResourceScope implements IRuntimeScope {
 		public boolean isArchetype() {
 			// TODO Auto-generated method stub
 			return false;
+		}
+
+		@Override
+		public List<IActivity> getActions() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}

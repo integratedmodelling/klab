@@ -1414,6 +1414,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		/*
 		 * Only occurrents occur.
+		 * FIXME yes, but they may affect continuants
 		 */
 		boolean isOccurrent = actuator.getType().isOccurrent();
 		if (isOccurrent) {

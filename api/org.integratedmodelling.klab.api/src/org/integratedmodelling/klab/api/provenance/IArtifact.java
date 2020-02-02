@@ -33,10 +33,10 @@ import org.integratedmodelling.klab.utils.Range;
 
 /**
  * An Artifact can be any of the first-class products of a k.LAB task: a
- * non-semantic {@link IDataArtifact} or {@link IObjectArtifact}, a semantic
- * {@link IObservation} (as produced by most activities in k.LAB) or a
- * {@link IKimModel k.IM model description} when the model has been produced by
- * an observation activity, such as a learning model.
+ * non-semantic {@link IDataArtifact} or {@link IObjectArtifact}, an observed
+ * (semantic) {@link IObservation} (as produced by most activities in k.LAB) or
+ * a {@link IKimModel k.IM model description} when the model has been produced
+ * by an observation activity, such as a learning model.
  * <p>
  * By implementing {@link java.lang.Iterable}, we also allow Artifacts to
  * represent groups of artifacts (e.g. all the {@link ISubject subjects}
@@ -168,7 +168,7 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		public boolean isNumeric() {
 			return this == NUMBER;
 		}
-		
+
 		public static boolean isCompatible(Type required, Type supplied) {
 
 			// unknown/universal
@@ -198,8 +198,8 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	}
 
 	/**
-	 * The geometry linked to the observation. Observational artifacts will
-	 * specialize this as IScale.
+	 * The geometry linked to the observation. Observed artifacts will specialize
+	 * this as IScale.
 	 *
 	 * @return the geometry
 	 */
