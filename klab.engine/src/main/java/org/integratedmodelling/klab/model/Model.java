@@ -311,6 +311,10 @@ public class Model extends KimObject implements IModel {
 
 	public boolean isKnownDependency(String targetId) {
 		for (IObservable observable : dependencies) {
+			if (observable == null) {
+				// only in error
+				continue;
+			}
 			if (targetId.equals(observable.getName())) {
 				return true;
 			}

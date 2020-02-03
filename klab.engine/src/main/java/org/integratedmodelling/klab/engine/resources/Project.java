@@ -121,7 +121,8 @@ public class Project implements IProject {
 
 		File ret = new File(getRoot() + File.separator + IKimProject.SOURCE_FOLDER + File.separator
 				+ namespaceId.replace('.', File.separatorChar) + ".kim");
-		new File(MiscUtilities.getFilePath(ret.toString())).mkdirs();
+		File npath = new File(MiscUtilities.getFilePath(ret.toString()));
+		npath.mkdirs();
 		try (PrintWriter out = new PrintWriter(ret)) {
 			out.print((createScenario ? "scenario " : (isPrivate ? "private " : "") + "namespace ") + namespaceId
 					+ ";\n\n");
