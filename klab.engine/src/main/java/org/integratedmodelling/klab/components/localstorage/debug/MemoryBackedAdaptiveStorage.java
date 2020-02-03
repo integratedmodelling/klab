@@ -78,10 +78,5 @@ public class MemoryBackedAdaptiveStorage<T> extends AbstractAdaptiveStorage<T> {
 		
 	}
 
-	@Override
-	public void touch(ITime time) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
