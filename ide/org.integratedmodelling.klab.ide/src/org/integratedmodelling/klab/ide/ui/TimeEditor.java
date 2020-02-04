@@ -45,6 +45,10 @@ public class TimeEditor extends Composite {
 	private Combo time_step;
 	private CLabel message;
 	private Combo time_type;
+	private Text coverageExtent;
+	private Text coverageEnd;
+	private Text coverageStart;
+	private Combo coverageUnit;
 
 	/**
 	 * Pass one to the constructor to be notified of any changes that result in a
@@ -189,6 +193,48 @@ public class TimeEditor extends Composite {
 		Label time_chooseEnd = new Label(grpTime, SWT.NONE);
 		time_chooseEnd.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
 
+		Label lblCovers = new Label(grpTime, SWT.NONE);
+		lblCovers.setText("Covers");
+
+		Composite coverageWidget = new Composite(grpTime, SWT.NONE);
+		coverageWidget.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		GridLayout gl_coverageWidget = new GridLayout(4, false);
+		gl_coverageWidget.marginWidth = 0;
+		gl_coverageWidget.marginHeight = 0;
+		gl_coverageWidget.horizontalSpacing = 2;
+		coverageWidget.setLayout(gl_coverageWidget);
+
+//		coverageExtent = new Text(coverageWidget, SWT.BORDER);
+//		coverageExtent.setEditable(false);
+//		coverageExtent.setEnabled(false);
+//		GridData gd_coverageExtent = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+//		gd_coverageExtent.widthHint = 36;
+//		coverageExtent.setLayoutData(gd_coverageExtent);
+
+		coverageUnit = new Combo(coverageWidget, SWT.READ_ONLY);
+		coverageUnit.setItems(new String[] { "Century", "Decade", "Year", "Month", "Week", "Day", "Hour",
+				"Minute", "Second", "Millisecond", "Nanosecond" });
+		coverageUnit.setEnabled(false);
+		coverageUnit.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		coverageUnit.select(3);
+
+		coverageStart = new Text(coverageWidget, SWT.BORDER);
+		coverageStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		coverageStart.setEditable(false);
+		coverageStart.setEnabled(false);
+		
+		Label lblTo = new Label(coverageWidget, SWT.NONE);
+		lblTo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTo.setText("To");
+		
+		coverageEnd = new Text(coverageWidget, SWT.BORDER);
+		coverageEnd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		coverageEnd.setEnabled(false);
+		coverageEnd.setEditable(false);
+
+		Label time_chooseStep = new Label(grpTime, SWT.NONE);
+		time_chooseStep.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+
 		Label lblNewLabel_4 = new Label(grpTime, SWT.NONE);
 		lblNewLabel_4.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel_4.setText("Step");
@@ -226,9 +272,9 @@ public class TimeEditor extends Composite {
 		time_step.setEnabled(false);
 		time_step.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		time_step.select(3);
-
-		Label time_chooseStep = new Label(grpTime, SWT.NONE);
-		time_chooseStep.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+		
+		Label label_2 = new Label(grpTime, SWT.NONE);
+		label_2.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
 		new Label(grpTime, SWT.NONE);
 
 		message = new CLabel(grpTime, SWT.WRAP);
@@ -236,6 +282,7 @@ public class TimeEditor extends Composite {
 		message.setTopMargin(5);
 		message.setText("");
 		message.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		new Label(grpTime, SWT.NONE);
 	}
 
 	public void setTo(Dimension time) {
@@ -257,7 +304,7 @@ public class TimeEditor extends Composite {
 		String geometry = getGeometry();
 		if (listener != null) {
 //			if (geometry != null) {
-				listener.onValidModification(geometry);
+			listener.onValidModification(geometry);
 //			}
 		}
 		/*
