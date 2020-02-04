@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
@@ -347,6 +348,12 @@ public class MergedResource implements IResource {
 		}
 
 		return ret;
+	}
+
+	@Override
+	public List<IActivity> getActions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

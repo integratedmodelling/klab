@@ -191,27 +191,27 @@ public class CoreOntology extends AbstractWorkspace {
 		/*
 		 * model objects for function return types and the like
 		 */
-		public static final String INTEGER = "klab:ShortInteger";
-		public static final String FLOAT = "klab:ShortFloat";
-		public static final String TEXT = "klab:Text";
-		public static final String LONG = "klab:LongInteger";
-		public static final String DOUBLE = "klab:LongFloat";
-		public static final String BOOLEAN = "klab:Boolean";
-		public static final String NUMBER = "klab:Number";
-		public static final String SHAPE = "klab:Shape";
+//		public static final String INTEGER = "klab:ShortInteger";
+//		public static final String FLOAT = "klab:ShortFloat";
+//		public static final String TEXT = "klab:Text";
+//		public static final String LONG = "klab:LongInteger";
+//		public static final String DOUBLE = "klab:LongFloat";
+//		public static final String BOOLEAN = "klab:Boolean";
+//		public static final String NUMBER = "klab:Number";
+//		public static final String SHAPE = "klab:Shape";
 
-		public static final String STATE_CONTEXTUALIZER = "klab:StateContextualizer";
-		public static final String SUBJECT_CONTEXTUALIZER = "klab:SubjectContextualizer";
-		public static final String PROCESS_CONTEXTUALIZER = "klab:ProcessContextualizer";
-		public static final String EVENT_INSTANTIATOR = "klab:EventInstantiator";
-		public static final String SUBJECT_INSTANTIATOR = "klab:SubjectInstantiator";
-		public static final String EVENT_CONTEXTUALIZER = "klab:EventContextualizer";
-		public static final String RELATIONSHIP_INSTANTIATOR = "klab:RelationshipInstantiator";
-		public static final String FUNCTIONAL_RELATIONSHIP_CONTEXTUALIZER = "klab:FunctionalRelationshipContextualizer";
-		public static final String STRUCTURAL_RELATIONSHIP_CONTEXTUALIZER = "klab:StructuralRelationshipContextualizer";
-		public static final String DATASOURCE = "klab:DataSource";
-		public static final String OBJECTSOURCE = "klab:ObjectSource";
-		public static final String LOOKUP_TABLE = "klab:LookupTable";
+//		public static final String STATE_CONTEXTUALIZER = "klab:StateContextualizer";
+//		public static final String SUBJECT_CONTEXTUALIZER = "klab:SubjectContextualizer";
+//		public static final String PROCESS_CONTEXTUALIZER = "klab:ProcessContextualizer";
+//		public static final String EVENT_INSTANTIATOR = "klab:EventInstantiator";
+//		public static final String SUBJECT_INSTANTIATOR = "klab:SubjectInstantiator";
+//		public static final String EVENT_CONTEXTUALIZER = "klab:EventContextualizer";
+//		public static final String RELATIONSHIP_INSTANTIATOR = "klab:RelationshipInstantiator";
+//		public static final String FUNCTIONAL_RELATIONSHIP_CONTEXTUALIZER = "klab:FunctionalRelationshipContextualizer";
+//		public static final String STRUCTURAL_RELATIONSHIP_CONTEXTUALIZER = "klab:StructuralRelationshipContextualizer";
+//		public static final String DATASOURCE = "klab:DataSource";
+//		public static final String OBJECTSOURCE = "klab:ObjectSource";
+//		public static final String LOOKUP_TABLE = "klab:LookupTable";
 
 		/*
 		 * annotation properties supporting k.LAB functions
@@ -379,7 +379,7 @@ public class CoreOntology extends AbstractWorkspace {
 		 * This test is unlikely to fail, but its purpose is primarily to preload the
 		 * core ontology catalogues, so that the k.IM validator will not cause delays
 		 * when checking core concepts, which makes the validator stop silently (by
-		 * XText design) and ignore everything beyond the first delay.
+		 * horrendous XText design) and ignore everything beyond the first delay.
 		 * 
 		 * DO NOT REMOVE this test. Removing it will cause seemingly completely
 		 * unrelated bugs that will take a very long time to figure out.
