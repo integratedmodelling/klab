@@ -124,7 +124,7 @@ public class Project implements IProject {
 		File npath = new File(MiscUtilities.getFilePath(ret.toString()));
 		npath.mkdirs();
 		try (PrintWriter out = new PrintWriter(ret)) {
-			out.print((createScenario ? "scenario " : (isPrivate ? "private " : "") + "namespace ") + namespaceId
+			out.print((createScenario ? "scenario " : (isPrivate ? "private " : "")) + "namespace " + namespaceId
 					+ ";\n\n");
 		} catch (Exception e) {
 			throw new KlabIOException(e);
