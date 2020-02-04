@@ -228,14 +228,14 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 */
 	IGeometry getGeometry();
 
-	/**
-	 * If true, this model uses the 'merging' clause to merge resources or other
-	 * models into a change model for the inherent observable. Such models have the
-	 * same observable as an output instead of a dependency, as normal change models
-	 * do.
-	 * 
-	 * @return
-	 */
-	boolean isResourceMerger();
+//	/**
+//	 * If true, this model uses the 'merging' clause to merge resources or other
+//	 * models into a change model for the inherent observable. Such models have the
+//	 * same observable as an output instead of a dependency, as normal change models
+//	 * do.
+//	 * 
+//	 * @return
+//	 */
+//	boolean isResourceMerger();
 
 }

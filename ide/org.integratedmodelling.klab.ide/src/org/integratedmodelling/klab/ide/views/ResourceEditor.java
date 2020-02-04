@@ -563,7 +563,7 @@ public class ResourceEditor extends ViewPart {
 			mapHolder.setLayout(new GridLayout(1, false));
 			GridData gd_mapHolder = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
 			gd_mapHolder.heightHint = 181;
-			gd_mapHolder.widthHint = 360;
+			gd_mapHolder.widthHint = 420;
 			mapHolder.setLayoutData(gd_mapHolder);
 
 			Group grpSpaceclickTo = new Group(mapHolder, SWT.NONE);
@@ -577,7 +577,7 @@ public class ResourceEditor extends ViewPart {
 
 			Group grpTime = new Group(mapHolder, SWT.NONE);
 			grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-			grpTime.setSize(238, 352);
+			grpTime.setSize(420, 352);
 			grpTime.setLayout(new GridLayout(1, false));
 			grpTime.setText("Time");
 

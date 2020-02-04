@@ -25,3 +25,9 @@ void split
 {
 	class org.integratedmodelling.klab.clitool.console.commands.unit.Split
 }
+
+void reason
+	"Analyze the units for an observable and report."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.unit.Reason
+}

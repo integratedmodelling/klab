@@ -29,7 +29,7 @@ public class KimStatement extends KimScope implements IKimStatement {
     protected int firstCharOffset;
     protected int lastCharOffset;
     protected int offset;
-    protected String namespace;
+    protected String namespaceId;
     protected List<IKimAnnotation> annotations = new ArrayList<>();
     protected KimMetadata metadata;
     protected KimMetadata documentationMetadata;
@@ -52,7 +52,7 @@ public class KimStatement extends KimScope implements IKimStatement {
         this.firstLine = statement.firstLine;
         this.lastLine = statement.lastLine;
         this.offset = statement.offset;
-        this.namespace = statement.namespace;
+        this.namespaceId = statement.namespaceId;
         this.resource = statement.resource;
         this.deprecated = statement.deprecated;
         this.deprecation = statement.deprecation;
@@ -69,7 +69,7 @@ public class KimStatement extends KimScope implements IKimStatement {
         this.parent = parent;
 		IKimNamespace ns = findNamespace(parent);
 		if (ns != null) {
-			this.namespace = ns.getName();
+			this.namespaceId = ns.getName();
 		}
 		if (statement != null) {
 			this.uri = EcoreUtil.getURI(statement);
@@ -252,11 +252,11 @@ public class KimStatement extends KimScope implements IKimStatement {
     
     @Override
     public String getNamespace() {
-    	return namespace;
+    	return namespaceId;
     }
     
     public void setNamespace(String namespace) {
-    	this.namespace = namespace;
+    	this.namespaceId = namespace;
     }
     
     /**

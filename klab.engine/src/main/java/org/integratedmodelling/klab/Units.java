@@ -521,7 +521,7 @@ public enum Units implements IUnitService {
 		}
 
 		if (defaultUnitCache.containsKey(observable.getType().getDefinition())) {
-			return defaultUnitCache.get(observable.getType().getDefinition());
+//			return defaultUnitCache.get(observable.getType().getDefinition());
 		}
 
 		Unit ret = null;

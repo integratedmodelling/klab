@@ -154,6 +154,7 @@ public class WekaEncoder implements IResourceEncoder {
 	}
 
 	public void initialize(IState predictedState, IResource resource, IContextualizationScope context) {
+		
 		/*
 		 * load the classifier
 		 */

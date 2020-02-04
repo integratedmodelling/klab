@@ -27,6 +27,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- Implement API for modification logging as part of provenance model with provenance nodes having getActions() -> List<IActivity>. This will be used to ensure recomputation of artifacts whose dependencies have changed over time.
+
+## [0.10.0.222] -- 2020/02/01
+### Added
 - First tests with remote resources using test UrnAdapter working.
 - Add ITicket and ITicketManager for basic, file-based ticket management in both
   engine and client packages.

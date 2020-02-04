@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.provenance;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -23,11 +26,13 @@ public class Activity implements IActivity {
 
 	private String id;
 	private long start = System.currentTimeMillis();
-	private long end; 
-	
-	public Activity() {
-		// TODO Auto-generated constructor stub
-	}
+	private long end;
+	private Type type = Type.Creation;
+	private ITime schedulerTime;
+
+//	public Activity() {
+//		// TODO Auto-generated constructor stub
+//	}
 
 	// TODO add provenance
 	public Activity(String token) {
@@ -80,6 +85,30 @@ public class Activity implements IActivity {
 
 	public void finished() {
 		this.end = System.currentTimeMillis();
+	}
+
+	@Override
+	public List<IActivity> getActions() {
+		List<IActivity> ret = new ArrayList<>();
+		return ret;
+	}
+
+	@Override
+	public Type getType() {
+		return this.type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	@Override
+	public ITime getSchedulerTime() {
+		return this.schedulerTime;
+	}
+
+	public void setSchedulerTime(ITime schedulerTime) {
+		this.schedulerTime = schedulerTime;
 	}
 
 }

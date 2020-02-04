@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.INetwork;
+import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -33,7 +34,7 @@ import com.google.common.collect.Lists;
 public abstract class Artifact implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
-	private Activity generator;
+	private List<IActivity> activities = new ArrayList<>();
 	private Map<Class<?>, Object> peers = new HashMap<>();
 	private boolean archetype;
 	
@@ -188,11 +189,15 @@ public abstract class Artifact implements IArtifact {
 	}
 
 	public Activity getGenerator() {
-		return generator;
+		return activities.size() > 0 ? (Activity)activities.get(0) : null;
+	}
+	
+	public List<IActivity> getActions() {
+		return activities;
 	}
 
 	public void setGenerator(Activity generator) {
-		this.generator = generator;
+		this.activities.add(generator);
 		this.generatorActivityId = generator.getId();
 	}
 

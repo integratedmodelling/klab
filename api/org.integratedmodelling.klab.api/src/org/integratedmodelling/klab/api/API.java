@@ -349,7 +349,7 @@ public interface API {
 		 * 
 		 * GET
 		 */
-		public static final String SHUTDOWN = "/engine/admin/shutdown";
+		public static final String SHUTDOWN = "/admin/shutdown";
 
 		/**
 		 * Endpoints to remotely deploy/undeploy projects and components.
@@ -367,23 +367,36 @@ public interface API {
 			 * 
 			 * PUT as attachment POST as Git URL
 			 */
-			public static final String DEPLOY = "/engine/admin/component/deploy";
+			public static final String DEPLOY = "/admin/component/deploy";
 
 			/**
 			 * The Constant UNDEPLOY_COMPONENT.
 			 *
 			 * DELETE
 			 */
-			public static final String UNDEPLOY_COMPONENT = "/engine/admin/component/undeploy/" + P_COMPONENT;
+			public static final String UNDEPLOY_COMPONENT = "/admin/component/undeploy/" + P_COMPONENT;
 
 			/**
 			 * The Constant SETUP_COMPONENT.
 			 *
 			 * POST
 			 */
-			public static final String SETUP_COMPONENT = "/engine/admin/component/setup/" + P_COMPONENT;
+			public static final String SETUP_COMPONENT = "/admin/component/setup/" + P_COMPONENT;
 		}
+		
+		/**
+		 * Set one or more properties to the specified values.
+		 * 
+		 * POST
+		 */
+		public static final String CONFIGURE = "/admin/configure";
 
+		/**
+		 * Get the configuration properties and their current values.
+		 * 
+		 * GET
+		 */
+		public static final String CONFIGURATION = "/admin/configuration";
 	}
 
 	/**
