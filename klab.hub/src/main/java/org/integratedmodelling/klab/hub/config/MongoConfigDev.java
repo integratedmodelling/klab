@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -7,6 +8,7 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import com.mongodb.MongoClient;
@@ -20,10 +22,13 @@ import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 @EnableMongoRepositories(basePackages = "org.integratedmodelling.klab.hub.repository")
 @EnableMongoAuditing
 public class MongoConfigDev extends MongoConfig {
-
+	@Autowired
+    private MappingMongoConverter mongoConverter;
+    
     @Bean
     public MongoTemplate mongoTemplate(MongoClient mongoClient) {
-        return new MongoTemplate(mongoDbFactory(mongoClient));
+    	this.mongoConverter.setMapKeyDotReplacement("#");
+        return new MongoTemplate(mongoDbFactory(mongoClient), this.mongoConverter);
     }
 
     @Bean
@@ -42,7 +47,7 @@ public class MongoConfigDev extends MongoConfig {
     public MongoClient mongoClient(MongoServer mongoServer) {
         return new MongoClient(new ServerAddress(mongoServer.getLocalAddress()));
     }
-    
+
 	@Override
 	protected String getAuthDatabaseName() {
         return "authTest";
@@ -56,6 +61,5 @@ public class MongoConfigDev extends MongoConfig {
 	@Override
 	protected String getDatabaseName() {
 		return "collaborationTest";
-	}
-    
+	}	
 }

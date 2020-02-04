@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import com.sun.istack.NotNull;
 
@@ -11,6 +12,7 @@ import com.sun.istack.NotNull;
 public class DockerNode extends DockerConfiguration {
 
 	@NotNull
+	@DBRef
 	private MongoNode node;
 	
 	@NotNull
