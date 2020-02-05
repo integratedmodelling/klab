@@ -29,17 +29,17 @@ public class TaskServiceImpl implements TaskService{
 	TaskRepository taskRepository;
 
 	@Override
-	public List<Task> createTasks(Class<? extends Task> clazz, HttpServletRequest request, TaskParameters parameters) {
+	public List<Task> createTasks(Class<? extends Task> clazz, TaskParameters parameters) {
 		List<Task> tasks = null;
 		TaskBuilder builder = TaskFactory.getBuilder(clazz);
 		if (builder == null) {
 			throw new KlabAuthorizationException("Unable to get builder for class "+clazz);
 		}
 		tasks = builder.build(parameters);
+		saveAllTasks(tasks);
 		for(Task task: tasks) {
-			saveTask(task);
-			if (task.isAutoAccepted()) {
-				acceptTask(task.getId(), request);
+			if (task.getParentStatus() != TaskStatus.pending && task.isAutoAccepted()) {
+				acceptTask(task.getId(), parameters.getRequest());
 			}
 		}
 		return tasks;
@@ -93,23 +93,7 @@ public class TaskServiceImpl implements TaskService{
 	}
 			
 	@Override
-	public Task closeTask(String id, TaskStatus status) {
-		Optional<Task> task = taskRepository.findById(id);
-		if(task.isPresent()) {
-			Task updatedTask = task.get();
-			closeTask(updatedTask, status);
-			return updatedTask;
-		} else {
-			throw new BadRequestException(String.format("Task by %s id, does not exist", id));
-		}
-	}
-	
-	/**
-	 * Close task using sent status and save to the repository
-	 * @param task
-	 * @param status
-	 */
-	private void closeTask(Task task, TaskStatus status) {
+	public void closeTask(Task task, TaskStatus status) {
 		task.setStatus(status);
 		task.setClosed();
 		saveTask(task);
@@ -140,6 +124,19 @@ public class TaskServiceImpl implements TaskService{
 			throw new BadRequestException(String.format("Task by %s id, does not exist", id));
 		}
 	}
+	
+	@Override
+	public Task closeTask(String id, TaskStatus status) {
+		Optional<Task> task = taskRepository.findById(id);
+		if(task.isPresent()) {
+			Task updatedTask = task.get();
+			closeTask(updatedTask, status);
+			return updatedTask;
+		} else {
+			throw new BadRequestException(String.format("Task by %s id, does not exist", id));
+		}
+	}
+	
 
 	@Override
 	public List<Task> getTasks() {
@@ -147,9 +144,15 @@ public class TaskServiceImpl implements TaskService{
 	}
 
 	@Override
-	public Task saveTask(Task task) {
-		return taskRepository.save(task);
+	public void saveTask(Task task) {
+		taskRepository.save(task);
 	}
+	
+	@Override
+	public void saveAllTasks(Iterable<Task> tasks) {
+		taskRepository.saveAll(tasks);
+	}
+
 
 	@Override
 	public Optional<Task> getTask(String id) {
@@ -174,5 +177,4 @@ public class TaskServiceImpl implements TaskService{
 	public Optional<Task> getTaskByToken(Class<? extends Task> clazz, ClickbackToken token) {
 		return taskRepository.findByToken(clazz, token);
 	}
-
 }

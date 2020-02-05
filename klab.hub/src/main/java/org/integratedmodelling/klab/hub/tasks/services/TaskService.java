@@ -18,9 +18,11 @@ public interface TaskService {
 	 * @param parameters
 	 * @return
 	 */
-	public abstract List<Task> createTasks(Class<? extends Task> clazz, HttpServletRequest request, TaskParameters parameters);
-	public abstract Task saveTask(Task task);
+	public abstract List<Task> createTasks(Class<? extends Task> clazz, TaskParameters parameters);
+	public abstract void saveTask(Task task);
+	public abstract void saveAllTasks(Iterable<Task> tasks);
 	public abstract Task closeTask(String id, TaskStatus status);
+	public abstract void closeTask(Task task, TaskStatus status);
 	public abstract void deleteTask(String id);
 	public abstract Task acceptTask(String id, HttpServletRequest request);
 	public abstract Task denyTask(String id, HttpServletRequest request);

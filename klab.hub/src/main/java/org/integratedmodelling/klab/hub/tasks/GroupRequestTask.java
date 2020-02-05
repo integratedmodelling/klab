@@ -96,6 +96,7 @@ public class GroupRequestTask extends Task{
 			if(!requestGroups.isEmpty()) {
 				Task requestGroupsTask = new GroupRequestTask(param.getRequestee(), requestGroups);
 				requestGroupsTask.setRoleRequirement(Role.ROLE_ADMINISTRATOR);
+				ret.add(requestGroupsTask);
 			}
 			
 			return ret;

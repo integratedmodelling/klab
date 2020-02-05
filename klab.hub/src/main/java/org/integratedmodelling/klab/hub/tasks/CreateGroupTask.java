@@ -67,6 +67,7 @@ public class CreateGroupTask extends Task{
 		@Autowired
 		private GroupService service;
 		
+		
 		@Override
 		public void executeAccept(Task task) {
 			service.createGroup(((CreateGroupTask)task).getGroup());
@@ -98,16 +99,12 @@ public class CreateGroupTask extends Task{
 
 	@Override
 	public void acceptTaskAction(HttpServletRequest request) {
-		if (request.isUserInRole(this.getRoleRequirement())) {
-			command.executeAccept(this);
-		}
+		command.executeAccept(this);
 	}
 
 	@Override
 	public void denyTaskAction(HttpServletRequest request) {
-		if (request.isUserInRole(this.getRoleRequirement())) {
-			command.executeDeny(this);
-		}
+		command.executeDeny(this);
 	}
 
 }

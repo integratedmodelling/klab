@@ -42,7 +42,6 @@ public class GroupsRequestController {
 		
 		List<Task> tasks = service.createTasks(
 				GroupRequestTask.class,
-				request,
 				new GroupRequestTask.Parameters(requestee, request, groupNames));
 	    
 	    return new ResponseEntity<>(tasks, HttpStatus.CREATED);

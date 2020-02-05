@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.hub.tokens.GroupsClickbackToken;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
 import org.integratedmodelling.klab.hub.users.User;
 
-public class RemoveGroupAccept implements TaskCommand{
+public class RemoveGroupAccept extends TaskCommand{
 	
 	private final RemoveGroupTask task;
 	

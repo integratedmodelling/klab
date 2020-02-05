@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.hub.tasks.TaskCommand;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
 
-public class RemoveGroupDeny implements TaskCommand {
+public class RemoveGroupDeny extends TaskCommand {
 	
 	private final RemoveGroupTask task;
 	

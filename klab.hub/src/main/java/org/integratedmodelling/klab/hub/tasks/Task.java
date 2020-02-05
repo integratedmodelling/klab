@@ -1,9 +1,7 @@
 package org.integratedmodelling.klab.hub.tasks;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -52,9 +50,14 @@ public abstract class Task {
     boolean autoAccepted;
     
     public Task(String requestee) {
+    	this(requestee, null);
+    }
+    
+    public Task(String requestee, TaskStatus parentStatus) {
     	this.requestee = requestee;
     	this.setIssued();
 		this.setStatus(TaskStatus.pending);
+		this.setParentStatus(parentStatus);
     }
 
 	public String getId() {
@@ -153,12 +156,14 @@ public abstract class Task {
 	 * Specific code for accept action
 	 * The status of task after this operation is the final one, it will be change inside the method 
 	 * The new status is not persisted
+	 * @param request the request, used if needed to check roles
 	 */
 	abstract public void acceptTaskAction(HttpServletRequest request);
 	/**
 	 * Specific code for deny action
 	 * The status of task after this operation is the final one, it must be changed inside the method
 	 * The new status is not persisted
+	 * @param request the request, used if needed to check roles
 	 */
 	abstract public void denyTaskAction(HttpServletRequest request);
 }
