@@ -89,7 +89,7 @@ public interface ITime extends IExtent {
 				}
 				return false;
 			}
-			
+
 			public long getMilliseconds() {
 				switch (this) {
 				case MILLISECOND:
@@ -122,12 +122,12 @@ public interface ITime extends IExtent {
 			}
 
 			public static Type parse(String unit) {
-				
+
 				if (unit.length() > 1) {
 					// case insensitive beyond the single letter
 					unit = unit.toLowerCase();
 				}
-				
+
 				switch (unit) {
 				case "M":
 				case "millennium":
@@ -271,6 +271,34 @@ public interface ITime extends IExtent {
 	Resolution getResolution();
 
 	/**
+	 * A logical time can have a resolution for its coverage, e.g. specifying "any
+	 * month of january within a year" would have resolution = year and
+	 * coverageResolution = month, with a start coverage = 0 and end coverage = 1.
+	 * If null, there is no partial coverage.
+	 * 
+	 * @return
+	 */
+	Resolution getCoverageResolution();
+
+	/**
+	 * Only for logical time: specifies the start offset of the covered portion
+	 * within the overall span if the coverage resolution is specified. The value is
+	 * given in the coverage resolution unit.
+	 * 
+	 * @return
+	 */
+	long getCoverageLocatorStart();
+
+	/**
+	 * Only for logical time: specifies the end offset of the covered portion within
+	 * the overall span if the coverage resolution is specified. The value is
+	 * given in the coverage resolution unit.
+	 * 
+	 * @return
+	 */
+	long getCoverageLocatorEnd();
+
+	/**
 	 * Check the type against the passed one.
 	 * 
 	 * @param type
@@ -286,14 +314,13 @@ public interface ITime extends IExtent {
 	Type getTimeType();
 
 	/**
-	 * Needed to check for intersection with resource geometry. Should probably redefine 
-	 * intersects etc. in Geometry.Dimension and specialize, but for now keep the ad-hoc
-	 * redundancy.
+	 * Needed to check for intersection with resource geometry. Should probably
+	 * redefine intersects etc. in Geometry.Dimension and specialize, but for now
+	 * keep the ad-hoc redundancy.
 	 * 
 	 * @param dimension, guaranteed to have Type = TIME.
 	 * @return
 	 */
 	boolean intersects(Dimension dimension);
-
 
 }

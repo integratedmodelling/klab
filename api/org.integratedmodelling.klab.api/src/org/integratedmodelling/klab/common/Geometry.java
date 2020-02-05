@@ -232,12 +232,12 @@ public class Geometry implements IGeometry {
 	 * time period as a long
 	 */
 	public static final String PARAMETER_TIME_START = "tstart";
-	
+
 	/**
 	 * time period as a long
 	 */
 	public static final String PARAMETER_TIME_END = "tend";
-	
+
 	/**
 	 * Time representation: one of generic, specific, grid or real.
 	 */
@@ -260,6 +260,12 @@ public class Geometry implements IGeometry {
 	 * {@link Resolution}.
 	 */
 	public static final String PARAMETER_TIME_SCOPE_UNIT = "tunit";
+
+	public static final String PARAMETER_TIME_COVERAGE_UNIT = "coverageunit";
+
+	public static final String PARAMETER_TIME_COVERAGE_START = "coveragestart";
+
+	public static final String PARAMETER_TIME_COVERAGE_END = "coverageend";
 
 	public static Geometry create(String geometry) {
 		return makeGeometry(geometry, 0);
@@ -339,7 +345,7 @@ public class Geometry implements IGeometry {
 				return o1.getType() == Type.TIME ? -1 : 0;
 			}
 		});
-		
+
 		String ret = granularity == Granularity.MULTIPLE ? "#" : "";
 		for (Dimension dim : dims) {
 			ret += dim.getType() == Type.SPACE ? (dim.isGeneric() ? "\u03c3" : (dim.isRegular() ? "S" : "s"))
@@ -906,7 +912,7 @@ public class Geometry implements IGeometry {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return encode().hashCode();

@@ -46,6 +46,9 @@ public class Time extends Extent implements ITime {
 	ITimeDuration step;
 	boolean realtime = false;
 	Resolution resolution;
+	Resolution coverageResolution;
+	long coverageStart;
+	long coverageEnd;
 	long multiplicity = 1;
 	boolean partial = false;
 	boolean regular = true;
@@ -152,7 +155,8 @@ public class Time extends Extent implements ITime {
 	}
 
 	public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
-			ITimeInstant start, ITimeInstant end, ITimeDuration period) {
+			ITimeInstant start, ITimeInstant end, ITimeDuration period, Resolution.Type coverageUnit,
+			long coverageStart, long coverageEnd) {
 		Time ret = new Time();
 		ret.extentType = type;
 		ret.start = start;
@@ -169,8 +173,18 @@ public class Time extends Extent implements ITime {
 				ret.multiplicity = 0;
 			}
 		}
+		if (coverageUnit != null) {
+			ret.coverageResolution = new ResolutionImpl(coverageUnit, 1);
+			ret.coverageStart = coverageStart;
+			ret.coverageEnd = coverageEnd;
+		}
 
 		return ret;
+	}
+
+	public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
+			ITimeInstant start, ITimeInstant end, ITimeDuration period) {
+		return create(type, resolutionType, resolutionMultiplier, start, end, period, null, -1, -1);
 	}
 
 	public static Time create(IAnnotation timeAnnotation) {
@@ -470,6 +484,11 @@ public class Time extends Extent implements ITime {
 				args += "," + Geometry.PARAMETER_TIME_SCOPE + "=" + resolution.getMultiplier();
 				args += "," + Geometry.PARAMETER_TIME_SCOPE_UNIT + "=" + resolution.getType();
 			}
+			if (coverageResolution != null) {
+				args += "," + Geometry.PARAMETER_TIME_COVERAGE_UNIT + "=" + coverageResolution.getType();
+				args += "," + Geometry.PARAMETER_TIME_COVERAGE_START + "=" + coverageStart;
+				args += "," + Geometry.PARAMETER_TIME_COVERAGE_END + "=" + coverageEnd;
+			}
 		}
 
 		return ret + "{" + args + "}";
@@ -607,7 +626,9 @@ public class Time extends Extent implements ITime {
 		Long tstep = dimension.getParameters().get(Geometry.PARAMETER_TIME_GRIDRESOLUTION, Long.class);
 		Long tstart = dimension.getParameters().get(Geometry.PARAMETER_TIME_START, Long.class);
 		Long tend = dimension.getParameters().get(Geometry.PARAMETER_TIME_END, Long.class);
-
+		String cunit = dimension.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_UNIT, String.class);
+		Long cstart = dimension.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_START, Long.class);
+		Long cend = dimension.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_END, Long.class);
 		ITime.Type type = representation == null ? null : ITime.Type.valueOf(representation.toUpperCase());
 
 		if (type == ITime.Type.INITIALIZATION) {
@@ -707,7 +728,7 @@ public class Time extends Extent implements ITime {
 		this.locatedOffsets = new long[] { n };
 		return this;
 	}
-	
+
 	public Time upgradeForOccurrents() {
 		return create(ITime.Type.GRID, this.getResolution().getType(), 1.0, this.start, this.end,
 				TimeDuration.create(this.start, this.end, true));
@@ -734,6 +755,21 @@ public class Time extends Extent implements ITime {
 			}
 		}
 		return this;
+	}
+
+	@Override
+	public Resolution getCoverageResolution() {
+		return coverageResolution;
+	}
+
+	@Override
+	public long getCoverageLocatorStart() {
+		return coverageStart;
+	}
+
+	@Override
+	public long getCoverageLocatorEnd() {
+		return coverageEnd;
 	}
 
 }
