@@ -1,11 +1,7 @@
 package org.integratedmodelling.klab.hub.network.controllers;
 
-import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.network.CreateNodeContainer;
 import org.integratedmodelling.klab.hub.network.DockerNode;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.repository.DockerConfigurationRepository;
@@ -22,15 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.DockerCmdExecFactory;
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.Ports;
-import com.github.dockerjava.api.model.Ports.Binding;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
-import com.github.dockerjava.core.DockerClientConfig;
-import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
-
 
 
 @RestController
@@ -66,45 +55,20 @@ public class DockerConfigurationController {
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> launchNodeDocker(@PathVariable("id") String id)  {
 		
-		DockerNode docker = (DockerNode) dockerRepo.findById(id)
-				.orElseThrow(() -> new BadRequestException("Could not match node to one in database."));
+		DockerNode config = (DockerNode) dockerRepo.findById(id)
+				.orElseThrow(() -> new BadRequestException("Could not match node configuration id to one in database."));
 		
-		DockerClientConfig clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
-				  .withDockerHost(docker.getDockerHost())
+		DefaultDockerClientConfig dockerConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
+				.withDockerHost(config.getDockerHost())
+				.build();
+		
+		DockerClient client = DockerClientBuilder.getInstance(dockerConfig)
 				  .build();
 		
-		DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory()
-				  .withReadTimeout(1000)
-				  .withConnectTimeout(1000)
-				  .withMaxTotalConnections(100)
-				  .withMaxPerRouteConnections(10);
+		CreateContainerResponse resp = new CreateNodeContainer(client, config).exec();
+		client.startContainerCmd(resp.getId()).exec();
 		
-		DockerClient dockerClient = DockerClientBuilder.getInstance(clientConfig)
-				  .withDockerCmdExecFactory(dockerCmdExecFactory)
-				  .build();
-		
-		
-		ExposedPort port = ExposedPort.parse(Integer.toString(docker.getPort()));
-		
-		Ports portBindings = new Ports();
-		portBindings.bind(port, Binding.bindPort(docker.getPort()));
-		
-		List<String> entry = new ArrayList<String>();
-		entry.add("java");
-		entry.add("-jar");
-		entry.add("klab.node.jar");
-		entry.add("-Xmx" + docker.getJvmMax() + "M");
-		docker.getProperties().forEach((v,k) -> entry.add(v.toString()+"="+k.toString()));
-		
-		CreateContainerResponse container = dockerClient.createContainerCmd(docker.getImage())
-				   .withExposedPorts(port)
-				   .withHostConfig(newHostConfig().withPortBindings(portBindings))
-				   .withName(docker.getNode().getNode()+"_from_Hub")
-				   .withEntrypoint(entry)
-				   .exec();
-		
-		dockerClient.startContainerCmd(container.getId()).exec();
-		return new ResponseEntity<>(docker,HttpStatus.CREATED);
+		return new ResponseEntity<>(resp,HttpStatus.CREATED);
 	}
 
 }
