@@ -871,8 +871,8 @@ public class Geometry implements IGeometry {
 //		Geometry g4 = create("T1(23)S2(200,100)");
 //		Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
 
-		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
-		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
+//		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
+//		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
 	}
 
 	@Override

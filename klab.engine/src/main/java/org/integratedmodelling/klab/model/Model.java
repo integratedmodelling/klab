@@ -223,12 +223,17 @@ public class Model extends KimObject implements IModel {
 		 */
 		if (!model.getResourceUrns().isEmpty()) {
 
-			MergedResource merged = model.getResourceUrns().size() > 1 ? new MergedResource(model, monitor) : null;
-			ComputableResource urnResource = validate(
-					new ComputableResource(merged == null ? model.getResourceUrns().get(0) : merged.getUrn(),
-							this.isInstantiator() ? Mode.INSTANTIATION : Mode.RESOLUTION),
-					monitor);
-			this.resources.add(urnResource);
+			try {
+				MergedResource merged = model.getResourceUrns().size() > 1 ? new MergedResource(model, monitor) : null;
+				ComputableResource urnResource = validate(
+						new ComputableResource(merged == null ? model.getResourceUrns().get(0) : merged.getUrn(),
+								this.isInstantiator() ? Mode.INSTANTIATION : Mode.RESOLUTION),
+						monitor);
+				this.resources.add(urnResource);
+			} catch (Throwable t) {
+				monitor.error(t.getMessage(), getStatement());
+				setErrors(true);
+			}
 
 		} else if (model.getInlineValue().isPresent()) {
 			this.resources.add(validate(new ComputableResource(model.getInlineValue()), monitor));

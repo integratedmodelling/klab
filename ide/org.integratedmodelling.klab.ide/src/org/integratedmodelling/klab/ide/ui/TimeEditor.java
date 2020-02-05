@@ -333,7 +333,7 @@ public class TimeEditor extends Composite {
 				}
 			}
 			if (time.getParameters().contains(Geometry.PARAMETER_TIME_SCOPE_UNIT)) {
-				time_scope.select(Arrays.asList(coverageUnit.getItems()).indexOf(StringUtil.capitalize(
+				time_scope.select(Arrays.asList(time_scope.getItems()).indexOf(StringUtil.capitalize(
 						time.getParameters().get(Geometry.PARAMETER_TIME_SCOPE_UNIT, String.class).toLowerCase())));
 			}
 //			if (time.getParameters().contains(Geometry.PARAMETER_TIME_)) {
@@ -359,11 +359,11 @@ public class TimeEditor extends Composite {
 			}
 			if (time.getParameters().contains(Geometry.PARAMETER_TIME_COVERAGE_UNIT)) {
 				coverageUnit.select(Arrays.asList(coverageUnit.getItems()).indexOf(StringUtil.capitalize(
-						time.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_UNIT, String.class).toUpperCase())));
+						time.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_UNIT, String.class).toLowerCase())));
 			}
-			
+
 			// TODO grid - needs resolution and unit in geometry, not fixed MS interval.
-			
+
 			setEnablements(time_type.getText());
 		}
 	}

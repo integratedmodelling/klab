@@ -304,7 +304,7 @@ public class Time extends Extent implements ITime {
 		return copy();
 	}
 
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ILocator> T as(Class<T> cls) {
 //		if (Long.class.isAssignableFrom(cls)) {
@@ -360,7 +360,9 @@ public class Time extends Extent implements ITime {
 	public Time collapse() {
 		return isConsistent()
 				? create(this.extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL,
-						this.resolution.getType(), resolution.getMultiplier(start, end), start, end, null)
+						this.resolution.getType(), resolution.getMultiplier(start, end), start, end, null,
+						(this.coverageResolution == null ? null : this.coverageResolution.getType()),
+						this.coverageStart, this.coverageEnd)
 				: this;
 	}
 
@@ -644,10 +646,16 @@ public class Time extends Extent implements ITime {
 			start = new TimeInstant(locator);
 		}
 
+		Resolution.Type coverage = null;
+		if (cunit != null) {
+			coverage = Resolution.Type.parse(cunit);
+		}
+
 		Resolution.Type resType = unit == null ? null : Resolution.Type.parse(unit);
 		ITimeDuration step = tstep == null ? null : TimeDuration.create(tstep, resType);
 
-		return create(type, resType, scope == null ? null : 1.0, start, end, step);
+		return create(type, resType, scope == null ? null : 1.0, start, end, step, coverage,
+				(cstart == null ? -1 : cstart), (cend == null ? -1 : cend));
 	}
 
 	@Override

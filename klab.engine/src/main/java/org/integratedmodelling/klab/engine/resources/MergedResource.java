@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -59,12 +60,15 @@ public class MergedResource implements IResource {
 	private Geometry geometry;
 	private long timeStart = -1;
 	private long timeEnd = -1;
+	private boolean logicalTime;
+	private ITime.Resolution coverageResolution;
 
 	class ResourceSet {
 		long start = -1;
 		long end = -1;
 		ICoverage coverage;
 		List<IResource> resources = new ArrayList<>();
+		public Resolution coverageResolution;
 	}
 
 	/*
@@ -106,6 +110,11 @@ public class MergedResource implements IResource {
 			scale = Scale.create(resource.getGeometry());
 			this.type = resource.getType();
 
+			this.logicalTime = scale.getTime() != null && scale.getTime().isGeneric();
+			if (this.logicalTime) {
+				this.coverageResolution = scale.getTime().getCoverageResolution();
+			}
+
 			getResourceSet(scale).resources.add(resource);
 
 		}
@@ -119,6 +128,17 @@ public class MergedResource implements IResource {
 
 		ResourceSet ret = null;
 		ITime time = scale.getTime();
+
+		if (logicalTime && !time.isGeneric()) {
+			throw new KlabValidationException(
+					"Cannot merge resources in logical time with others with different temporal representation");
+		}
+		
+		if (coverageResolution != null && !time.getCoverageResolution().equals(coverageResolution)) {
+			throw new KlabValidationException(
+					"Cannot merge resources in logical time and different coverage resolutions");
+		}
+
 		if (!resources.isEmpty()) {
 			if (time == null) {
 				if (resources.size() == 1) {
@@ -132,7 +152,19 @@ public class MergedResource implements IResource {
 						throw new KlabValidationException(
 								"Cannot merge temporal resources with non-temporal resources");
 					}
-					if (time.getStart() != null && timeStart == time.getStart().getMilliseconds()) {
+					if (time.is(ITime.Type.LOGICAL)) {
+
+						if (time.getCoverageResolution() == null) {
+							throw new KlabValidationException(
+									"Temporal resources in logical time must specify temporal coverage to be merged");
+						}
+
+						if (timeStart == time.getCoverageLocatorStart()) {
+							ret = set;
+							break;
+						}
+
+					} else if (time.getStart() != null && timeStart == time.getStart().getMilliseconds()) {
 						ret = set;
 						break;
 					}
@@ -142,11 +174,31 @@ public class MergedResource implements IResource {
 		}
 
 		if (ret == null) {
+
+			/*
+			 * TODO use coverage data for logical time
+			 */
+
 			ret = new ResourceSet();
 			ret.coverage = Coverage.full(scale);
 			if (time != null) {
-				ret.start = time.getStart() == null ? -1 : time.getStart().getMilliseconds();
-				ret.end = time.getEnd() == null ? -1 : time.getEnd().getMilliseconds();
+
+				if (time.is(ITime.Type.LOGICAL)) {
+
+					if (time.getCoverageResolution() == null) {
+						throw new KlabValidationException(
+								"Temporal resources in logical time must specify temporal coverage to be merged");
+					}
+
+					ret.start = time.getCoverageLocatorStart();
+					ret.end = time.getCoverageLocatorEnd();
+					ret.coverageResolution = time.getCoverageResolution();
+
+				} else {
+
+					ret.start = time.getStart() == null ? -1 : time.getStart().getMilliseconds();
+					ret.end = time.getEnd() == null ? -1 : time.getEnd().getMilliseconds();
+				}
 			}
 			resources.put(ret.start, ret);
 			if (timeStart < 0 || timeStart > ret.start) {
@@ -167,6 +219,11 @@ public class MergedResource implements IResource {
 		}
 
 		/*
+		 * TODO this sucks - set from resources; if logical, must be through coverage
+		 */
+		ITime.Resolution.Type resolution = ITime.Resolution.Type.MILLISECOND;
+
+		/*
 		 * create the final geometry with a shape and a time extent
 		 */
 		IShape shape = null;
@@ -185,8 +242,9 @@ public class MergedResource implements IResource {
 
 		ITime time = null;
 		if (timeStart > 0) {
-			time = Time.create(ITime.Type.PHYSICAL, ITime.Resolution.Type.MILLISECOND, 1, new TimeInstant(timeStart),
-					null, null);
+			time = Time.create(ITime.Type.PHYSICAL, resolution, 1, new TimeInstant(timeStart), null, null);
+		} else {
+			time = Time.create(ITime.Type.LOGICAL, resolution, 1, null, null, null);
 		}
 		this.scale = Scale.create(shape, time);
 		this.geometry = ((Scale) this.scale).asGeometry();
