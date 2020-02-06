@@ -414,4 +414,28 @@ public class MergedResource implements IResource {
 		return null;
 	}
 
+	@Override
+	public IResource localize(ITime time) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
+	/**
+	 * Check if all resources are online. Called as a special case by the resource
+	 * service.
+	 * 
+	 * @return
+	 */
+	public boolean isOnline() {
+		for (ResourceSet rs : resources.values()) {
+			for (IResource rr : rs.resources) {
+				if (!Resources.INSTANCE.isResourceOnline(rr)) {
+					return false;
+				}
+			}
+		}
+		return true;
+		
+	}
+
 }

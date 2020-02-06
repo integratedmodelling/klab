@@ -463,7 +463,9 @@ public class Time extends Extent implements ITime {
 	public String encode() {
 
 		String prefix = "T";
-		if (partial && step == null) {
+		if (getTimeType() == ITime.Type.LOGICAL) {
+			prefix = "\u03c4";
+		} else if (partial && step == null) {
 			prefix = "t";
 		}
 
