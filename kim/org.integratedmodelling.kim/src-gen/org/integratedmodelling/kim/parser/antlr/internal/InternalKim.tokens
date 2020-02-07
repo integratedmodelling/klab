@@ -54,7 +54,7 @@
 'causant'=136
 'caused'=122
 'causing'=126
-'change'=148
+'change'=147
 'changed'=149
 'charge'=238
 'children'=111
@@ -123,7 +123,6 @@
 'inherent'=132
 'inherits'=189
 'initialization'=216
-'instantaneous'=147
 'instantiation'=58
 'integrate'=63
 'interactive'=166
@@ -186,6 +185,7 @@
 'purpose'=135
 'quality'=219
 'quantity'=221
+'rate'=148
 'ratio'=157
 'reactive'=167
 'realm'=213

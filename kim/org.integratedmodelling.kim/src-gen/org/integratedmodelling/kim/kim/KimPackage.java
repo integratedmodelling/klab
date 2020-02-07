@@ -2457,22 +2457,22 @@ public interface KimPackage extends EPackage
   int CONCEPT__ASSESSMENT = 11;
 
   /**
-   * The feature id for the '<em><b>Rate</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__RATE = 12;
-
-  /**
    * The feature id for the '<em><b>Change</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__CHANGE = 13;
+  int CONCEPT__CHANGE = 12;
+
+  /**
+   * The feature id for the '<em><b>Rate</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__RATE = 13;
 
   /**
    * The feature id for the '<em><b>Uncertainty</b></em>' attribute.
@@ -7137,17 +7137,6 @@ public interface KimPackage extends EPackage
   EAttribute getConcept_Assessment();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isRate <em>Rate</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Rate</em>'.
-   * @see org.integratedmodelling.kim.kim.Concept#isRate()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Rate();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isChange <em>Change</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7157,6 +7146,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getConcept_Change();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isRate <em>Rate</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rate</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#isRate()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Rate();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isUncertainty <em>Uncertainty</em>}'.
@@ -11329,20 +11329,20 @@ public interface KimPackage extends EPackage
     EAttribute CONCEPT__ASSESSMENT = eINSTANCE.getConcept_Assessment();
 
     /**
-     * The meta object literal for the '<em><b>Rate</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__RATE = eINSTANCE.getConcept_Rate();
-
-    /**
      * The meta object literal for the '<em><b>Change</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute CONCEPT__CHANGE = eINSTANCE.getConcept_Change();
+
+    /**
+     * The meta object literal for the '<em><b>Rate</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__RATE = eINSTANCE.getConcept_Rate();
 
     /**
      * The meta object literal for the '<em><b>Uncertainty</b></em>' attribute feature.

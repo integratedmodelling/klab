@@ -604,8 +604,6 @@ public class Model extends KimObject implements IModel {
 
 	private void mergeGeometry(IGeometry geometry, IMonitor monitor) {
 
-		IGeometry ziocan = this.geometry;
-		System.out.println(ziocan);
 		if (geometry != null) {
 			if (this.geometry == null) {
 				this.geometry = geometry;

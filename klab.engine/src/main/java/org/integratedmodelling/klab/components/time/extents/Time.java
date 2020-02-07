@@ -187,6 +187,22 @@ public class Time extends Extent implements ITime {
 		return create(type, resolutionType, resolutionMultiplier, start, end, period, null, -1, -1);
 	}
 
+	/**
+	 * Return the timepoints for all events starting and ending at the passed
+	 * resolution in the time period we represent. If ordinal is true, return
+	 * 0-based indices based on the next higher resolution (e.g. month or week
+	 * number within a year, even if our own resolution is a decade); otherwise pass
+	 * the actual start timestamps in milliseconds. If we don't span any of those
+	 * events, return an empty array.
+	 * 
+	 * @param resolution
+	 * @param ordinal
+	 * @return
+	 */
+	public long[] getEvents(Resolution.Type resolution, boolean ordinal) {
+		return null;
+	}
+
 	public static Time create(IAnnotation timeAnnotation) {
 
 		if (timeAnnotation.containsKey(IServiceCall.DEFAULT_PARAMETER_NAME)) {

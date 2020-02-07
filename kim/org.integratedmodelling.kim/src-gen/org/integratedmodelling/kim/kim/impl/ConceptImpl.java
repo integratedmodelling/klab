@@ -38,8 +38,8 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isDistance <em>Distance</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProbability <em>Probability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isAssessment <em>Assessment</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isRate <em>Rate</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isChange <em>Change</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isRate <em>Rate</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isUncertainty <em>Uncertainty</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isLevel <em>Level</em>}</li>
@@ -280,26 +280,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
   protected boolean assessment = ASSESSMENT_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isRate() <em>Rate</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isRate()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean RATE_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isRate() <em>Rate</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isRate()
-   * @generated
-   * @ordered
-   */
-  protected boolean rate = RATE_EDEFAULT;
-
-  /**
    * The default value of the '{@link #isChange() <em>Change</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -318,6 +298,26 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean change = CHANGE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isRate() <em>Rate</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isRate()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean RATE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isRate() <em>Rate</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isRate()
+   * @generated
+   * @ordered
+   */
+  protected boolean rate = RATE_EDEFAULT;
 
   /**
    * The default value of the '{@link #isUncertainty() <em>Uncertainty</em>}' attribute.
@@ -936,31 +936,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @generated
    */
   @Override
-  public boolean isRate()
-  {
-    return rate;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setRate(boolean newRate)
-  {
-    boolean oldRate = rate;
-    rate = newRate;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__RATE, oldRate, rate));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public boolean isChange()
   {
     return change;
@@ -978,6 +953,31 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     change = newChange;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__CHANGE, oldChange, change));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isRate()
+  {
+    return rate;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setRate(boolean newRate)
+  {
+    boolean oldRate = rate;
+    rate = newRate;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__RATE, oldRate, rate));
   }
 
   /**
@@ -1411,10 +1411,10 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isProbability();
       case KimPackage.CONCEPT__ASSESSMENT:
         return isAssessment();
-      case KimPackage.CONCEPT__RATE:
-        return isRate();
       case KimPackage.CONCEPT__CHANGE:
         return isChange();
+      case KimPackage.CONCEPT__RATE:
+        return isRate();
       case KimPackage.CONCEPT__UNCERTAINTY:
         return isUncertainty();
       case KimPackage.CONCEPT__MAGNITUDE:
@@ -1491,11 +1491,11 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__ASSESSMENT:
         setAssessment((Boolean)newValue);
         return;
-      case KimPackage.CONCEPT__RATE:
-        setRate((Boolean)newValue);
-        return;
       case KimPackage.CONCEPT__CHANGE:
         setChange((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT__RATE:
+        setRate((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__UNCERTAINTY:
         setUncertainty((Boolean)newValue);
@@ -1586,11 +1586,11 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__ASSESSMENT:
         setAssessment(ASSESSMENT_EDEFAULT);
         return;
-      case KimPackage.CONCEPT__RATE:
-        setRate(RATE_EDEFAULT);
-        return;
       case KimPackage.CONCEPT__CHANGE:
         setChange(CHANGE_EDEFAULT);
+        return;
+      case KimPackage.CONCEPT__RATE:
+        setRate(RATE_EDEFAULT);
         return;
       case KimPackage.CONCEPT__UNCERTAINTY:
         setUncertainty(UNCERTAINTY_EDEFAULT);
@@ -1669,10 +1669,10 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return probability != PROBABILITY_EDEFAULT;
       case KimPackage.CONCEPT__ASSESSMENT:
         return assessment != ASSESSMENT_EDEFAULT;
-      case KimPackage.CONCEPT__RATE:
-        return rate != RATE_EDEFAULT;
       case KimPackage.CONCEPT__CHANGE:
         return change != CHANGE_EDEFAULT;
+      case KimPackage.CONCEPT__RATE:
+        return rate != RATE_EDEFAULT;
       case KimPackage.CONCEPT__UNCERTAINTY:
         return uncertainty != UNCERTAINTY_EDEFAULT;
       case KimPackage.CONCEPT__MAGNITUDE:
@@ -1734,10 +1734,10 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(probability);
     result.append(", assessment: ");
     result.append(assessment);
-    result.append(", rate: ");
-    result.append(rate);
     result.append(", change: ");
     result.append(change);
+    result.append(", rate: ");
+    result.append(rate);
     result.append(", uncertainty: ");
     result.append(uncertainty);
     result.append(", magnitude: ");

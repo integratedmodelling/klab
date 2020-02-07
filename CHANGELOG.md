@@ -29,10 +29,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - Implement API for modification logging as part of provenance model with provenance nodes
    having getActions() -> List<IActivity>. This will be used to ensure recomputation of 
-   artifacts whose dependencies have changed over time.
+   artifacts whose dependencies have changed during the latest transition.
 - Change models that use resources that provide different temporal states for a changing
   quality are enabled. They automatically export the quality as output unless it's explicitly
   mentioned as either an output or an input.
+- Improve logics in notifying partitioned observations so that small slivers of uncovered 
+  space don't create false partitions that build nonfunctional models.
+- Add UI in IDE to specify or select a categorization in resource editor.
+- Add syntactic support for "change rate of" operator to refer to the rate 
+  of change for a quality (dQ/dt).
+- Allow concept declarations using 'equals' in test and script namespaces.
+  
 ## [0.10.0.222] -- 2020/02/01
 ### Added
 - First tests with remote resources using test UrnAdapter working.

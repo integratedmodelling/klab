@@ -414,8 +414,40 @@ public class MergedResource implements IResource {
 	 */
 	public List<IResource> contextualize(IScale scale) {
 
+		long locator = -1;
+		
 		if (logicalTime && resolutionTime != null) {
-			// anchor the resource set to the resolution time
+
+			// anchor the locator to the resolution time
+			switch (this.coverageResolution.getType()) {
+			case CENTURY:
+				break;
+			case DAY:
+				break;
+			case DECADE:
+				break;
+			case HOUR:
+				break;
+			case MILLENNIUM:
+				break;
+			case MILLISECOND:
+				break;
+			case MINUTE:
+				break;
+			case MONTH:
+				break;
+			case SECOND:
+				break;
+			case WEEK:
+				break;
+			case YEAR:
+				break;
+			default:
+				break;
+			
+			}
+		} else if (scale.getTime() == null && scale.getTime().getStart() != null) {
+			locator =  scale.getTime().getStart().getMilliseconds();
 		}
 		
 		List<IResource> ret = new ArrayList<>();
@@ -425,8 +457,7 @@ public class MergedResource implements IResource {
 				ret.addAll(set.resources);
 			}
 		} else {
-			ResourceSet set = resources
-					.get(scale.getTime().getStart() == null ? -1L : scale.getTime().getStart().getMilliseconds());
+			ResourceSet set = resources.get(locator);
 			ret.addAll(set.resources);
 		}
 
