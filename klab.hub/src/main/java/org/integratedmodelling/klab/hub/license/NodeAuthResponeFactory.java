@@ -50,10 +50,10 @@ public class NodeAuthResponeFactory {
 				break;	
 			}
 		default:
-//			if (IPUtils.isLocalhost(ip)) {
-//				//You are running locally with a hub, so it is assumed that the hub is a development hub
-//				return localNode(request, groupRepo);
-//			} else {
+			if (IPUtils.isLocalhost(ip)) {
+				//You are running locally with a hub, so it is assumed that the hub is a development hub
+				return localNode(request, groupRepo);
+			} else {
 				MongoNode node = nodeService.getNode(request.getNodeName());
 				Set<Group> groups = new GetNodesGroups(node, groupRepo).execute();
 				NodeAuthenticationResponse response = processNode(request.getCertificate(),node, groups, config);
@@ -64,8 +64,8 @@ public class NodeAuthResponeFactory {
 				//networkManager.notifyAuthorizedNode(node, true);
 				return response;
 			}
-//		}
-		return null;		
+		}
+		return null;
 	}
 	
 	private NodeAuthenticationResponse processNode(String cipher, MongoNode node, Set<Group> groups,
@@ -85,7 +85,7 @@ public class NodeAuthResponeFactory {
         	
     		NodeAuthenticationResponse response = new NodeAuthenticationResponse(
     				authenticatedIdentity,
-    				Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class).getId(),
+    				Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class).getName(),
     				groups,
     				NetworkKeyManager.INSTANCE.getEncodedPublicKey());    
         	NetworkManager.INSTANCE.notifyAuthorizedNode(nodeIdentity, true);
@@ -114,7 +114,7 @@ public class NodeAuthResponeFactory {
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
 				groups, tomorrow.toString(), node.getId());
 		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
-				hub.getId(), groups,
+				hub.getName(), groups,
 				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
 		NetworkManager.INSTANCE.notifyAuthorizedNode(node, true);
 		return response;

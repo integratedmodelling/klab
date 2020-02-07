@@ -21,8 +21,6 @@ public class DockerNode extends DockerConfiguration {
 	
 	private int jvmMax = 2048;
 	
-	private int port = 8287;
-	
 	private int maxSizeMB = 128;
 
 	public MongoNode getNode() {
@@ -55,14 +53,6 @@ public class DockerNode extends DockerConfiguration {
 
 	public void setJvmMax(int jvmMax) {
 		this.jvmMax = jvmMax;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
 	}
 
 	public int getmaxSizeMB() {

@@ -37,6 +37,8 @@ public abstract class DockerConfiguration {
 	private Properties properties;
 	
 	private Set<DockerVolume> volumes;
+	
+	private DockerPorts ports;
 
 	public String getId() {
 		return id;
@@ -137,4 +139,13 @@ public abstract class DockerConfiguration {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public DockerPorts getPorts() {
+		return ports;
+	}
+
+	public void setPorts(DockerPorts ports) {
+		this.ports = ports;
+	}
+
 }

@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.hub.network.controllers;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.network.CreateNodeContainer;
 import org.integratedmodelling.klab.hub.network.DockerNode;
+import org.integratedmodelling.klab.hub.network.commands.CreateNodeContainer;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.repository.DockerConfigurationRepository;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
@@ -65,7 +65,7 @@ public class DockerConfigurationController {
 		DockerClient client = DockerClientBuilder.getInstance(dockerConfig)
 				  .build();
 		
-		CreateContainerResponse resp = new CreateNodeContainer(client, config).exec();
+		CreateContainerResponse resp = new CreateNodeContainer(client, config).exec(config.getNode().getNode());
 		client.startContainerCmd(resp.getId()).exec();
 		
 		return new ResponseEntity<>(resp,HttpStatus.CREATED);
