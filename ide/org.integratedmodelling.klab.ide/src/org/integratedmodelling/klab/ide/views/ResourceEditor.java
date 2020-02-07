@@ -133,11 +133,8 @@ public class ResourceEditor extends ViewPart {
 	private Label messageLabel;
 	private Table outputTable;
 	private TableViewer outputViewer;
-
 	private Geometry geometry = null;
-
 	private Button executeActionButton;
-
 	private List<NodeReference> publishingNodes;
 	private Combo categorizationsCombo;
 

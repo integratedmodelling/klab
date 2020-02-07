@@ -445,7 +445,7 @@ Concept:
 	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
 	probability?='probability' 'of' concept=SimpleConceptDeclaration |
 	assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
-	(change?='change' 'in' | change?='next') concept=SimpleConceptDeclaration |
+	((rate?='instantaneous')? change?='change' 'in' | change?='changed') concept=SimpleConceptDeclaration |
 	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
 	magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
 	level?='level' 'of' concept=SimpleConceptDeclaration |
