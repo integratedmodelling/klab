@@ -77,6 +77,27 @@ public class MergedResource implements IResource {
 	 */
 	private NavigableMap<Long, ResourceSet> resources = new TreeMap<>();
 
+	private ITime resolutionTime;
+
+	public MergedResource(MergedResource other) {
+		this.id = other.id;
+		this.timestamp = other.timestamp;
+		this.urn = other.urn;
+		this.metadata = other.metadata;
+		this.parameters = other.parameters;
+		this.attributes = other.attributes;
+		this.inputs = other.inputs;
+		this.outputs = other.outputs;
+		this.type = other.type;
+		this.exports = other.exports;
+		this.geometry = other.geometry;
+		this.timeStart = other.timeStart;
+		this.timeEnd = other.timeEnd;
+		this.logicalTime = other.logicalTime;
+		this.coverageResolution = other.coverageResolution;
+		this.resources.putAll(other.resources);
+	}
+
 	/**
 	 * Call with a model statement after verifying that more than one URN is
 	 * mentioned. The constructor automatically registers the resource with the
@@ -133,7 +154,7 @@ public class MergedResource implements IResource {
 			throw new KlabValidationException(
 					"Cannot merge resources in logical time with others with different temporal representation");
 		}
-		
+
 		if (coverageResolution != null && !time.getCoverageResolution().equals(coverageResolution)) {
 			throw new KlabValidationException(
 					"Cannot merge resources in logical time and different coverage resolutions");
@@ -384,15 +405,19 @@ public class MergedResource implements IResource {
 	}
 
 	/**
-	 * Pick the specific resource to use for the passed scale. TODO return a
-	 * collection of resources and use the next to fill in for any nodata in the
-	 * previous.
+	 * Pick the specific resource(s) to use for the passed scale. TODO return a
+	 * collection of resources and use the next to either fill in for any nodata in
+	 * the previous, or add/average
 	 * 
 	 * @param scale
 	 * @return
 	 */
 	public List<IResource> contextualize(IScale scale) {
 
+		if (logicalTime && resolutionTime != null) {
+			// anchor the resource set to the resolution time
+		}
+		
 		List<IResource> ret = new ArrayList<>();
 		if (scale.getTime() == null && resources.size() > 0) {
 			ResourceSet set = resources.get(-1L);
@@ -416,8 +441,16 @@ public class MergedResource implements IResource {
 
 	@Override
 	public IResource localize(ITime time) {
-		// TODO Auto-generated method stub
-		return this;
+
+		MergedResource ret = new MergedResource(this);
+
+		/*
+		 * if logical time, prepare to locate the closest resource after anchoring the
+		 * interval in the resources to the expected transitions.
+		 */
+		ret.resolutionTime = time;
+
+		return ret;
 	}
 
 	/**
@@ -435,7 +468,7 @@ public class MergedResource implements IResource {
 			}
 		}
 		return true;
-		
+
 	}
 
 }

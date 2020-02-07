@@ -271,6 +271,15 @@ public class Geometry implements IGeometry {
 		return makeGeometry(geometry, 0);
 	}
 
+	private static Geometry create(Iterable<Dimension> dims) {
+		Geometry ret = new Geometry();
+		for (Dimension dim : dims) {
+			ret.scalar = false;
+			ret.dimensions.add((DimensionImpl) dim);
+		}
+		return ret;
+	}
+
 	public static GeometryBuilder builder() {
 		return new GeometryBuilder();
 	}
@@ -1045,7 +1054,9 @@ public class Geometry implements IGeometry {
 	 * 
 	 * In general, any geometry can merge in a scalar geometry (an empty one will
 	 * become scalar); other dimensions can be inherited if they are not present, or
-	 * they must have the same dimensionality in order to be kept without error.
+	 * they must have the same dimensionality in order to be kept without error. If
+	 * the receiver has a generic dimension and the incoming dimension is not
+	 * generic, the result adopts the specific one.
 	 * 
 	 * If we have a dimension that the other doesn't, just leave it there in the
 	 * result.
@@ -1063,14 +1074,17 @@ public class Geometry implements IGeometry {
 			return this;
 		}
 
-		List<Dimension> add = new ArrayList<>();
+		List<Dimension> result = new ArrayList<>();
 		for (Dimension dimension : geometry.getDimensions()) {
 			if (getDimension(dimension.getType()) == null) {
-				add.add(((DimensionImpl) dimension).copy());
+				result.add(((DimensionImpl) dimension).copy());
+			} else if (getDimension(dimension.getType()).isGeneric() && !dimension.isGeneric()) {
+				// a specific dimension trumps a generic one
+				result.add(((DimensionImpl) dimension).copy());
 			} else if (!((DimensionImpl) getDimension(dimension.getType())).isCompatible(dimension)) {
 				return null;
 			} else {
-				Dimension myDimension = getDimension(dimension.getType());
+				Dimension myDimension = ((DimensionImpl) getDimension(dimension.getType())).copy();
 				if (myDimension.size() == 0 && dimension.size() > 0) {
 					// merging a distributed dimension makes us distributed
 					((DimensionImpl) myDimension).shape = ((DimensionImpl) dimension).shape.clone();
@@ -1079,17 +1093,12 @@ public class Geometry implements IGeometry {
 					// merging an irregular dimension makes us irregular
 					((DimensionImpl) myDimension).regular = false;
 				}
+				result.add(myDimension);
 			}
 		}
 
-		Geometry ret = create(this.encode());
+		return create(result);
 
-		for (Dimension dimension : add) {
-			ret.scalar = false;
-			ret.dimensions.add((DimensionImpl) dimension);
-		}
-
-		return ret;
 	}
 
 	/**

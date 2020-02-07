@@ -224,12 +224,30 @@ public class Model extends KimObject implements IModel {
 		if (!model.getResourceUrns().isEmpty()) {
 
 			try {
+
 				MergedResource merged = model.getResourceUrns().size() > 1 ? new MergedResource(model, monitor) : null;
 				ComputableResource urnResource = validate(
 						new ComputableResource(merged == null ? model.getResourceUrns().get(0) : merged.getUrn(),
 								this.isInstantiator() ? Mode.INSTANTIATION : Mode.RESOLUTION),
 						monitor);
 				this.resources.add(urnResource);
+
+				if (merged != null && merged.getType() == IArtifact.Type.PROCESS) {
+
+					/**
+					 * the resolved model of a process that changes a quality will normally also
+					 * have the quality itself as output, so we add it unless it's already there
+					 * either as an input or as an output.
+					 */
+					if (this.observables.get(0) != null && this.observables.get(0).is(Type.CHANGE)) {
+						IConcept inherent = this.observables.get(0).getInherentType();
+						if (inherent != null && findOutput(inherent) == null && findOutput(inherent) == null) {
+							observables.add(Observable.promote(inherent));
+						}
+					}
+
+				}
+
 			} catch (Throwable t) {
 				monitor.error(t.getMessage(), getStatement());
 				setErrors(true);
@@ -586,6 +604,8 @@ public class Model extends KimObject implements IModel {
 
 	private void mergeGeometry(IGeometry geometry, IMonitor monitor) {
 
+		IGeometry ziocan = this.geometry;
+		System.out.println(ziocan);
 		if (geometry != null) {
 			if (this.geometry == null) {
 				this.geometry = geometry;
