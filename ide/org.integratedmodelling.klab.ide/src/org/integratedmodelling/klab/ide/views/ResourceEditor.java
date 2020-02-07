@@ -139,6 +139,7 @@ public class ResourceEditor extends ViewPart {
 	private Button executeActionButton;
 
 	private List<NodeReference> publishingNodes;
+	private Combo categorizationsCombo;
 
 	public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -1069,10 +1070,29 @@ public class ResourceEditor extends ViewPart {
 			}
 		});
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout gl_composite = new GridLayout(4, false);
+		GridLayout gl_composite = new GridLayout(6, false);
 		gl_composite.marginLeft = 4;
 		composite.setLayout(gl_composite);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Composite composite_4 = new Composite(composite, SWT.NONE);
+		composite_4.setLayout(new GridLayout(4, false));
+		
+		Label lblNewLabel_6 = new Label(composite_4, SWT.NONE);
+		lblNewLabel_6.setBounds(0, 0, 55, 15);
+		lblNewLabel_6.setText("Categorization");
+		
+		categorizationsCombo = new Combo(composite_4, SWT.READ_ONLY);
+		GridData gd_categorizationsCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_categorizationsCombo.widthHint = 76;
+		categorizationsCombo.setLayoutData(gd_categorizationsCombo);
+		categorizationsCombo.setItems(new String[] {"New..."});
+		categorizationsCombo.setBounds(0, 0, 91, 23);
+		categorizationsCombo.select(0);
+		
+		Button btnEdit = new Button(composite_4, SWT.NONE);
+		btnEdit.setText("Edit...");
+		new Label(composite_4, SWT.NONE);
 
 		messageLabel = new Label(composite, SWT.NONE);
 		messageLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -1116,6 +1136,7 @@ public class ResourceEditor extends ViewPart {
 			}
 		});
 		cancelButton.setText("Cancel");
+		new Label(composite, SWT.NONE);
 
 		createActions();
 		initializeToolBar();
