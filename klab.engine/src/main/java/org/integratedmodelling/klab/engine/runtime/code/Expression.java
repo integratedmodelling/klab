@@ -220,6 +220,18 @@ public abstract class Expression implements IExpression {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Collection<IObservable> getDependents(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IObservable> getPrecursors(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
   }
   
   public static IContextualizationScope emptyContext(IMonitor monitor) {

@@ -76,6 +76,24 @@ public interface IContextualizationScope extends IParameters<String> {
 	IProvenance getProvenance();
 
 	/**
+	 * Return all the observable that depend directly on the passed one in this
+	 * context.
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	Collection<IObservable> getDependents(IObservable observable);
+
+	/**
+	 * Return all the observables that the passed one depends directly on in this
+	 * context.
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	Collection<IObservable> getPrecursors(IObservable observable);
+
+	/**
 	 * <p>
 	 * getEventBus.
 	 * </p>

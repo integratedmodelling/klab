@@ -715,4 +715,16 @@ public class ResourceScope implements IRuntimeScope {
 		}
 
 	}
+
+	@Override
+	public Collection<IObservable> getDependents(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IObservable> getPrecursors(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

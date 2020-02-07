@@ -1513,4 +1513,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 		return ret;
 	}
+
+	@Override
+	public Collection<IObservable> getDependents(IObservable observable) {
+		List<IObservable> ret = new ArrayList<>();
+		return ret;
+	}
+
+	@Override
+	public Collection<IObservable> getPrecursors(IObservable observable) {
+		List<IObservable> ret = new ArrayList<>();
+		return ret;
+	}
 }
