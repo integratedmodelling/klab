@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -238,7 +239,7 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public Map<String, Object> getSymbolTable() {
+	public Map<String, IVariable> getVariables() {
 		// TODO Auto-generated method stub
 		return null;
 	}

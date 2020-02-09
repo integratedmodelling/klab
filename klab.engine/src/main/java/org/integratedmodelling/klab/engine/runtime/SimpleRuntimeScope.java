@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -89,7 +90,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	Graph<IArtifact, Relationship> network;
 	ISubject rootSubject;
 	Map<String, IObservable> semantics;
-	Map<String, Object> symbolTable = new HashMap<>();
+	Map<String, IVariable> symbolTable = new HashMap<>();
 
 	public SimpleRuntimeScope(Actuator actuator) {
 		this.observable = actuator.getObservable();
@@ -629,7 +630,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public Map<String, Object> getSymbolTable() {
+	public Map<String, IVariable> getVariables() {
 		return symbolTable;
 	}
 

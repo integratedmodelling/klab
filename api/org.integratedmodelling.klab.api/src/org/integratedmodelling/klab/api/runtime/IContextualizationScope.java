@@ -405,7 +405,7 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * 
 	 * @return the symbol table, never null.
 	 */
-	Map<String, Object> getSymbolTable();
+	Map<String, IVariable> getVariables();
 
 	/**
 	 * Create a context to compile an expression.
