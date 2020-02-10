@@ -317,18 +317,35 @@ public interface API {
 	public interface AUTHORITY {
 
 		/**
+		 * Authority ID
+		 */
+		public static final String P_AUTHORITY = "{authority}";
+
+		/**
+		 * Identifier according to authority
+		 */
+		public static final String P_IDENTIFIER = "{identifier}";
+
+		/**
+		 * Authority capabilities.
+		 * 
+		 * GET JSON
+		 */
+		public static final String CAPABILITIES = "/authority/" + P_AUTHORITY + "/capabilities";
+
+		/**
 		 * The Constant RESOLVE.
 		 *
 		 * GET JSON
 		 */
-		public static final String RESOLVE = "/engine/authority/resolve";
+		public static final String RESOLVE = "/authority/" + P_AUTHORITY + "/resolve/" + P_IDENTIFIER;
 
 		/**
 		 * The Constant QUERY.
 		 *
 		 * POST
 		 */
-		public static final String QUERY = "/engine/authority/query";
+		public static final String QUERY = "/authority/" + P_AUTHORITY + "/query";
 	}
 
 	/**
@@ -383,7 +400,7 @@ public interface API {
 			 */
 			public static final String SETUP_COMPONENT = "/admin/component/setup/" + P_COMPONENT;
 		}
-		
+
 		/**
 		 * Set one or more properties to the specified values.
 		 * 

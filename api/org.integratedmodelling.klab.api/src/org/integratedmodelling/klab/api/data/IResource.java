@@ -25,9 +25,11 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 
@@ -533,5 +535,21 @@ public interface IResource extends IProvenance.Node, Serializable {
 	 * @return project name
 	 */
 	String getLocalProjectName();
+
+	/**
+	 * A resource that is temporal and has generic time may need to be localized to
+	 * a specific time before it can be contextualized. This method should return
+	 * the same resource it's called on, unless structural changes need to be made
+	 * before the normal contextualization can take place, operated by
+	 * {@link IResourceService#getResourceData(IResource, Map, IGeometry, IContextualizationScope)}.
+	 * <p>
+	 * This is only called if the resource's geometry has generic time and the
+	 * context of use has specific time.
+	 * 
+	 * @param time
+	 * @return this or another resource that can deal with the passed overall
+	 *         temporal context.
+	 */
+	IResource localize(ITime time);
 
 }

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.ide.ui;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -26,6 +27,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Type;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 public class TimeEditor extends Composite {
@@ -36,6 +38,7 @@ public class TimeEditor extends Composite {
 	private Text time_step_multiplier;
 	private Resolution.Type scopeResolution = Resolution.Type.YEAR;
 	private Resolution.Type stepResolution = Resolution.Type.YEAR;
+	private Resolution.Type coverageResolution = Resolution.Type.YEAR;
 	private ITime.Type timeType = null;
 	private Combo time_scope;
 	private Listener listener = null;
@@ -45,6 +48,12 @@ public class TimeEditor extends Composite {
 	private Combo time_step;
 	private CLabel message;
 	private Combo time_type;
+	private Text coverageEnd;
+	private Text coverageStart;
+	private Combo coverageUnit;
+
+	// used for converting the longs in geometries to reparseable dates
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * Pass one to the constructor to be notified of any changes that result in a
@@ -189,6 +198,58 @@ public class TimeEditor extends Composite {
 		Label time_chooseEnd = new Label(grpTime, SWT.NONE);
 		time_chooseEnd.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
 
+		Label lblCovers = new Label(grpTime, SWT.NONE);
+		lblCovers.setText("Covers");
+
+		Composite coverageWidget = new Composite(grpTime, SWT.NONE);
+		coverageWidget.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		GridLayout gl_coverageWidget = new GridLayout(4, false);
+		gl_coverageWidget.marginWidth = 0;
+		gl_coverageWidget.marginHeight = 0;
+		gl_coverageWidget.horizontalSpacing = 2;
+		coverageWidget.setLayout(gl_coverageWidget);
+
+		coverageUnit = new Combo(coverageWidget, SWT.READ_ONLY);
+		coverageUnit.setItems(new String[] { "Century", "Decade", "Year", "Month", "Week", "Day", "Hour", "Minute",
+				"Second", "Millisecond", "Nanosecond" });
+		coverageUnit.setEnabled(false);
+		coverageUnit.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		coverageUnit.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				coverageResolution = Resolution.Type.valueOf(coverageUnit.getText().toUpperCase());
+				modified();
+			}
+		});
+		coverageUnit.select(4);
+
+		coverageStart = new Text(coverageWidget, SWT.BORDER);
+		coverageStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		coverageStart.setEnabled(false);
+		coverageStart.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				modified();
+			}
+		});
+
+		Label lblTo = new Label(coverageWidget, SWT.NONE);
+		lblTo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTo.setText("To");
+
+		coverageEnd = new Text(coverageWidget, SWT.BORDER);
+		coverageEnd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		coverageEnd.setEnabled(false);
+		coverageEnd.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				modified();
+			}
+		});
+
+		Label time_chooseStep = new Label(grpTime, SWT.NONE);
+		time_chooseStep.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+
 		Label lblNewLabel_4 = new Label(grpTime, SWT.NONE);
 		lblNewLabel_4.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel_4.setText("Step");
@@ -227,8 +288,8 @@ public class TimeEditor extends Composite {
 		time_step.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		time_step.select(3);
 
-		Label time_chooseStep = new Label(grpTime, SWT.NONE);
-		time_chooseStep.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+		Label label_2 = new Label(grpTime, SWT.NONE);
+		label_2.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
 		new Label(grpTime, SWT.NONE);
 
 		message = new CLabel(grpTime, SWT.WRAP);
@@ -236,6 +297,7 @@ public class TimeEditor extends Composite {
 		message.setTopMargin(5);
 		message.setText("");
 		message.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		new Label(grpTime, SWT.NONE);
 	}
 
 	public void setTo(Dimension time) {
@@ -248,8 +310,61 @@ public class TimeEditor extends Composite {
 			time_step.select(3);
 			time_scope.select(3);
 			time_type.select(0);
+			coverageEnd.setText("");
+			coverageStart.setText("");
+			coverageUnit.select(4);
 		} else {
-			// TODO!
+			if (time.getParameters().contains(Geometry.PARAMETER_TIME_REPRESENTATION)) {
+				switch (time.getParameters().get(Geometry.PARAMETER_TIME_REPRESENTATION, String.class)) {
+				case "logical":
+					time_type.select(1);
+					break;
+				case "physical":
+					time_type.select(2);
+					break;
+				case "grid":
+					time_type.select(3);
+					break;
+				case "real":
+					time_type.select(4);
+					break;
+				default:
+					time_type.select(0);
+				}
+			}
+			if (time.getParameters().contains(Geometry.PARAMETER_TIME_SCOPE_UNIT)) {
+				time_scope.select(Arrays.asList(time_scope.getItems()).indexOf(StringUtil.capitalize(
+						time.getParameters().get(Geometry.PARAMETER_TIME_SCOPE_UNIT, String.class).toLowerCase())));
+			}
+//			if (time.getParameters().contains(Geometry.PARAMETER_TIME_)) {
+//				time_scope.select(Arrays.asList(coverageUnit.getItems()).indexOf(
+//						time.getParameters().get(Geometry.PARAMETER_TIME_SCOPE_UNIT, String.class).toUpperCase()));
+//			}
+			if (time.getParameters().contains(Geometry.PARAMETER_TIME_SCOPE)) {
+				time_scope_multiplier.setText("" + time.getParameters().get(Geometry.PARAMETER_TIME_SCOPE));
+			}
+			if (time.getParameters().contains(Geometry.PARAMETER_TIME_START)) {
+				Date date = new Date(time.getParameters().get(Geometry.PARAMETER_TIME_START, Long.class));
+				time_start.setText(dateFormat.format(date));
+			}
+			if (time.getParameters().contains(Geometry.PARAMETER_TIME_END)) {
+				Date date = new Date(time.getParameters().get(Geometry.PARAMETER_TIME_END, Long.class));
+				time_end.setText(dateFormat.format(date));
+			}
+			if (time.getParameters().contains(Geometry.PARAMETER_TIME_COVERAGE_START)) {
+				coverageStart.setText("" + time.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_START));
+			}
+			if (time.getParameters().contains(Geometry.PARAMETER_TIME_COVERAGE_END)) {
+				coverageEnd.setText("" + time.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_END));
+			}
+			if (time.getParameters().contains(Geometry.PARAMETER_TIME_COVERAGE_UNIT)) {
+				coverageUnit.select(Arrays.asList(coverageUnit.getItems()).indexOf(StringUtil.capitalize(
+						time.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_UNIT, String.class).toLowerCase())));
+			}
+
+			// TODO grid - needs resolution and unit in geometry, not fixed MS interval.
+
+			setEnablements(time_type.getText());
 		}
 	}
 
@@ -257,7 +372,7 @@ public class TimeEditor extends Composite {
 		String geometry = getGeometry();
 		if (listener != null) {
 //			if (geometry != null) {
-				listener.onValidModification(geometry);
+			listener.onValidModification(geometry);
 //			}
 		}
 		/*
@@ -331,16 +446,22 @@ public class TimeEditor extends Composite {
 			time_end.setEnabled(false);
 			time_step_multiplier.setEnabled(false);
 			time_step.setEnabled(false);
+			coverageUnit.setEnabled(false);
+			coverageEnd.setEnabled(false);
+			coverageStart.setEnabled(false);
 //			stepResolution = null;
 			break;
 		case "Generic":
 			timeType = Type.LOGICAL;
 			time_scope.setEnabled(true);
 			time_scope_multiplier.setEnabled(true);
-			time_start.setEnabled(false);
-			time_end.setEnabled(false);
+			time_start.setEnabled(true);
+			time_end.setEnabled(true);
 			time_step_multiplier.setEnabled(false);
 			time_step.setEnabled(false);
+			coverageUnit.setEnabled(true);
+			coverageEnd.setEnabled(true);
+			coverageStart.setEnabled(true);
 //			stepResolution = null;
 			break;
 		case "Specific":
@@ -351,6 +472,9 @@ public class TimeEditor extends Composite {
 			time_end.setEnabled(true);
 			time_step_multiplier.setEnabled(false);
 			time_step.setEnabled(false);
+			coverageUnit.setEnabled(false);
+			coverageEnd.setEnabled(false);
+			coverageStart.setEnabled(false);
 //			stepResolution = null;
 			break;
 		case "Grid":
@@ -361,6 +485,9 @@ public class TimeEditor extends Composite {
 			time_step.setEnabled(true);
 			time_start.setEnabled(true);
 			time_end.setEnabled(true);
+			coverageUnit.setEnabled(false);
+			coverageEnd.setEnabled(false);
+			coverageStart.setEnabled(false);
 			break;
 		case "Real time":
 			timeType = Type.REAL;
@@ -370,6 +497,9 @@ public class TimeEditor extends Composite {
 			time_step.setEnabled(true);
 			time_start.setEnabled(true);
 			time_end.setEnabled(true);
+			coverageUnit.setEnabled(false);
+			coverageEnd.setEnabled(false);
+			coverageStart.setEnabled(false);
 			break;
 		}
 	}
@@ -411,6 +541,7 @@ public class TimeEditor extends Composite {
 		Date end = null;
 		String startDesc = null;
 		String endDesc = null;
+		String covDesc = null;
 
 		if (time_start.isEnabled() && !time_start.getText().trim().isEmpty()) {
 			try {
@@ -436,6 +567,17 @@ public class TimeEditor extends Composite {
 			} catch (ParseException e) {
 				error = "Invalid format for end date";
 			}
+		}
+
+		if (coverageUnit.isEnabled() && !coverageStart.getText().trim().isEmpty()) {
+			String eend = "";
+			if (!coverageEnd.getText().trim().isEmpty()) {
+				eend = coverageEnd.getText().trim();
+			} else {
+				eend = "" + (Long.parseLong(coverageStart.getText().trim()) + 1);
+			}
+			covDesc = "coverageunit=" + coverageResolution.name().toLowerCase() + ",coveragestart="
+					+ coverageStart.getText().trim() + ",coverageend=" + eend;
 		}
 
 		long step = -1;
@@ -504,6 +646,9 @@ public class TimeEditor extends Composite {
 			}
 			if (step > 0) {
 				ret += ",tstep=" + step;
+			}
+			if (covDesc != null) {
+				ret += "," + covDesc;
 			}
 
 			ret += "}";

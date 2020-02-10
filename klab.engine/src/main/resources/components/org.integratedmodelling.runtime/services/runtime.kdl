@@ -42,24 +42,6 @@ export value literal
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
 }
 
-export value evaluate
-	"Evaluate a literal or an expression in the context, producing an arbitrary value."
-{
-	optional object literal
-		"The value to be returned"
-
-	optional value expression code
-		"The expression to be executed"
-				
-	optional boolean expression ifcondition 
-		"A condition to check before executing the code" 
-
-	optional boolean expression unlesscondition 
-		"A negative conditions to check before executing the code" 
-				
-	class org.integratedmodelling.klab.components.runtime.contextualizers.Evaluator
-}
-
 filter number convert
 	"Convert a numeric state from a unit, range or currency to a compatible other."
 	label '$original to $target'

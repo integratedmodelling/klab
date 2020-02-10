@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -547,6 +548,11 @@ public class Resource implements IResource {
 	public List<IActivity> getActions() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IResource localize(ITime time) {
+		return this;
 	}
 
 }

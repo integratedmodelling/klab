@@ -132,6 +132,11 @@ public class Scheduler implements IScheduler {
 					 */
 					for (Actuator.Computation computation : computations) {
 
+						if (computation.variable != null) {
+							transitionContext.getVariables().put(computation.targetId, computation.variable);
+							continue;
+						}
+						
 						actuator.runContextualizer(computation.contextualizer, computation.observable,
 								computation.resource, computation.target, transitionContext, (IScale) transitionScale);
 
