@@ -2,19 +2,23 @@ package org.integratedmodelling.klab.node.controllers;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
+import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,7 +47,7 @@ public class EngineController {
 	 */
 	@RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public NodeCapabilities capabilities(Principal user) {
+	public NodeCapabilities capabilities(EngineAuthorization user) {
 
 		NodeCapabilities ret = new NodeCapabilities();
 
@@ -82,15 +86,17 @@ public class EngineController {
 		return ret;
 	}
 
-	private boolean isAuthorized(Principal user, String permissions) {
+	private boolean isAuthorized(EngineAuthorization user, String permissions) {
 		// TODO switch to KlabPermission class
 		if ("*".equals(permissions)) {
 			return true;
 		} else if ("NONE".equals(permissions)) {
 			return false;
 		} else {
-			// TODO check groups
+			KlabPermissions perms = KlabPermissions.create(permissions);
+			Collection<String> groups = new ArrayList<>();
+			user.getGroups().forEach(g -> groups.add(g.getId()));
+			return perms.isAuthorized(user.getUsername(), groups);
 		}
-		return false;
 	}
 }
