@@ -133,7 +133,6 @@ public class Model extends KimObject implements IModel {
 		this.scope = model.getScope();
 		this.setErrors(model.isErrors());
 		this.setInactive(model.isInactive());
-//		this.merger = model.isResourceMerger();
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
 
