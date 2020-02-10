@@ -376,6 +376,8 @@ public class ResourcesView extends ViewPart {
 	}
 
 	public void showPending() {
-		System.out.println("Showing the fucking pending resources");
+		//TODO
+		//Need to dome something to show status of pending resources
+		targetSelector.select(1);
 	}
 }
