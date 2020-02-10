@@ -29,10 +29,11 @@ package org.integratedmodelling.klab.ide.ui.wizards;
 import java.util.List;
 
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.ResourcesView;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
@@ -45,7 +46,7 @@ public class PublishResourceWizard extends Wizard {
 	private List<NodeReference> nodes;
 
 	public PublishResourceWizard(ResourceReference target, List<NodeReference> nodes) {
-		setWindowTitle("Create a new k.LAB Namespace");
+		setWindowTitle("Publish a new k.Lab Resource");
 		this.nodes = nodes;
 		this.target = target;
 	}
@@ -72,11 +73,20 @@ public class PublishResourceWizard extends Wizard {
 			/*
 			 * open a ticket
 			 */
+		
 			Activator.session().getTicketManager().open(ITicket.Type.ResourceSubmission, "resource", target.getUrn());
-			Eclipse.INSTANCE.openView(ResourcesView.ID, (view) -> {
-				((ResourcesView) view).showPending();
-			});
 
+				ResourcesView view = null;
+				try {
+					view = (ResourcesView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResourcesView.ID);
+				} catch (PartInitException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					//what should we do in this case?
+				}
+				//this also needs to do something more
+				view.showPending();
+			
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
 
 			return true;

@@ -89,8 +89,11 @@ public class EngineController {
 		} else if ("NONE".equals(permissions)) {
 			return false;
 		} else {
-			// TODO check groups
+			if (Configuration.INSTANCE.getProperty("klab.node.submitting", "NONE").contains(permissions)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
-		return false;
 	}
 }
