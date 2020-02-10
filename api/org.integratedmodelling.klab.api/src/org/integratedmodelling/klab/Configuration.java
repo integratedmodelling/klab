@@ -102,7 +102,7 @@ public enum Configuration implements IConfigurationService {
 		}
 		return ret == null ? defaultValue : ret;
 	}
-	
+
 	/**
 	 * Non-API Save the properties after making changes from outside configuration.
 	 * Should be used only internally, or removed in favor of a painful setting API.
@@ -135,6 +135,18 @@ public enum Configuration implements IConfigurationService {
 	 */
 	public boolean useReasoner() {
 		return true;
+	}
+
+	/**
+	 * Applies the standard k.LAB property pattern "klab.{service}.{property}" and
+	 * retrieves the correspondent property.
+	 * 
+	 * @param service
+	 * @param property
+	 * @return
+	 */
+	public String getServiceProperty(String service, String property) {
+		return getProperty("klab." + service + "." + property, null);
 	}
 
 	/** {@inheritDoc} */
