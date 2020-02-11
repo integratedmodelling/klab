@@ -1,12 +1,15 @@
 package org.integratedmodelling.klab.hub.network;
 
+import java.util.Properties;
+import java.util.Set;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.sun.istack.NotNull;
 
 @Document(collection="DockerConfiguration")
-public class DockerConfiguration {
+public abstract class DockerConfiguration {
 	@Id
 	String id;
 	
@@ -26,6 +29,16 @@ public class DockerConfiguration {
 	String regUsername;
 	
 	String regEmail;
+	
+	String password;
+	
+	private Set<String> networks;
+	
+	private Properties properties;
+	
+	private Set<DockerVolume> volumes;
+	
+	private DockerPorts ports;
 
 	public String getId() {
 		return id;
@@ -93,6 +106,46 @@ public class DockerConfiguration {
 
 	public void setRegEmail(String regEmail) {
 		this.regEmail = regEmail;
+	}
+	
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+
+	public Set<DockerVolume> getVolumes() {
+		return volumes;
+	}
+
+	public void setVolumes(Set<DockerVolume> volumes) {
+		this.volumes = volumes;
+	}
+
+	public Set<String> getNetworks() {
+		return networks;
+	}
+
+	public void setNetworks(Set<String> networks) {
+		this.networks = networks;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public DockerPorts getPorts() {
+		return ports;
+	}
+
+	public void setPorts(DockerPorts ports) {
+		this.ports = ports;
 	}
 
 }

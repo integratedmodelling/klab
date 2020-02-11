@@ -25,7 +25,7 @@ public class JwtToken {
 	public String createEngineJwtToken(ProfileResource profile) {
 		JwtClaims claims = new JwtClaims();
 		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
-		claims.setIssuer(hub.getId());
+		claims.setIssuer(hub.getName());
 		claims.setSubject(profile.getUsername());
 		claims.setAudience(ENGINE_AUDIENCE);
 		claims.setIssuedAtToNow();
@@ -59,7 +59,7 @@ public class JwtToken {
 	public String createEngineJwtToken(User user) {
 		JwtClaims claims = new JwtClaims();
 		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
-		claims.setIssuer(hub.getId());
+		claims.setIssuer(hub.getName());
 		claims.setSubject(user.getUsername());
 		claims.setAudience(ENGINE_AUDIENCE);
 		claims.setIssuedAtToNow();

@@ -14,7 +14,7 @@ import java.util.Set;
 public class NodeAuthenticationResponse {
 
 	private AuthenticatedIdentity userData;
-	private String authenticatingNodeId;
+	private String authenticatingHub;
 	private String publicKey;
 	private Set<Group> groups = new HashSet<>();
 
@@ -26,12 +26,12 @@ public class NodeAuthenticationResponse {
 		this.userData = userData;
 	}
 
-	public String getAuthenticatingNodeId() {
-		return authenticatingNodeId;
+	public String getAuthenticatingHub() {
+		return authenticatingHub;
 	}
 
-	public void setAuthenticatingNodeId(String authenticatingNodeId) {
-		this.authenticatingNodeId = authenticatingNodeId;
+	public void setAuthenticatingHub(String authenticatingHubId) {
+		this.authenticatingHub = authenticatingHubId;
 	}
 
 	public String getPublicKey() {
@@ -56,7 +56,7 @@ public class NodeAuthenticationResponse {
 	public NodeAuthenticationResponse(AuthenticatedIdentity userData, String authenticatingNodeId, Collection<Group> groups, String publicKey) {
 		super();
 		this.userData = userData;
-		this.authenticatingNodeId = authenticatingNodeId;
+		this.authenticatingHub = authenticatingNodeId;
 		this.publicKey = publicKey;
 		this.groups.addAll(groups);
 	}

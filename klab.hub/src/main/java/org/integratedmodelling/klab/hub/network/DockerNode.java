@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.hub.network;
 
-import java.util.Properties;
-
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -20,11 +18,8 @@ public class DockerNode extends DockerConfiguration {
 	
 	private byte[] cert;
 	
-	private Properties properties;
 	
 	private int jvmMax = 2048;
-	
-	private int port = 8287;
 	
 	private int maxSizeMB = 128;
 
@@ -52,28 +47,12 @@ public class DockerNode extends DockerConfiguration {
 		this.cert = cert;
 	}
 
-	public Properties getProperties() {
-		return properties;
-	}
-
-	public void setProperties(Properties properties) {
-		this.properties = properties;
-	}
-
 	public int getJvmMax() {
 		return jvmMax;
 	}
 
 	public void setJvmMax(int jvmMax) {
 		this.jvmMax = jvmMax;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
 	}
 
 	public int getmaxSizeMB() {
