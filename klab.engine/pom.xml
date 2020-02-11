@@ -77,6 +77,20 @@
 	</build>
 	<dependencies>
 
+		<!-- Unirest, while redundant with Spring templates, removes a lot of pain 
+			when doing quick REST interactions -->
+		<dependency>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>3.4.03</version>
+			<classifier>standalone</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-objectmapper-jackson</artifactId>
+			<version>3.4.03</version>
+		</dependency>
+
 		<!-- tiny Jar to pluralize subject names for folder IDs -->
 		<dependency>
 			<groupId>org.atteo</groupId>
