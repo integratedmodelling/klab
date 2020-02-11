@@ -65,7 +65,8 @@ public class DockerConfigurationController {
 		DockerClient client = DockerClientBuilder.getInstance(dockerConfig)
 				  .build();
 		
-		CreateContainerResponse resp = new CreateNodeContainer(client, config).exec(config.getNode().getNode());
+		CreateNodeContainer cmd = new CreateNodeContainer(client, config);
+		CreateContainerResponse resp = cmd.exec(config.getNode().getNode());
 		client.startContainerCmd(resp.getId()).exec();
 		
 		return new ResponseEntity<>(resp,HttpStatus.CREATED);

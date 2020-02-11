@@ -86,6 +86,7 @@ public class PublishResourceWizard extends Wizard {
 			//this also needs to do something more
 			view.showPending();
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
+			return true;
 		}
 
 		return false;
