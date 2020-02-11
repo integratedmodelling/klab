@@ -22,5 +22,3 @@ Once you are able to run both components on your development machine, refer to t
 === Contributing core knowledge
 
 == As a k.LAB developer
-
-Uff 

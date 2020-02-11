@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -28,14 +29,14 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 	public final static String FUNCTION_ID = "klab.runtime.instantiate";
 
 	private IResource resource;
-	private Map<String,String> urnParameters;
+	private Map<String, String> urnParameters;
 
 	// don't remove - only used as expression
 	public UrnInstantiator() {
 	}
 
 	public UrnInstantiator(String urn) {
-	    Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
+		Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
 		this.resource = Resources.INSTANCE.resolveResource(urn);
 		if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
 			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
@@ -48,15 +49,37 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
-		IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
+	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
+			throws KlabException {
+
 		List<IObjectArtifact> ret = new ArrayList<>();
+		IResource res = this.resource;
+
+		if (this.resource instanceof MergedResource) {
+			List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale());
+			if (resources.isEmpty()) {
+				context.getMonitor()
+						.warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");
+				return ret;
+			}
+
+			// TODO must contextualize the LIST, not just the first resource
+			if (resources.size() > 1) {
+				context.getMonitor().warn(
+						"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
+			}
+			
+			res = resources.get(0);
+
+		}
+
+		IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
 		if (data.getArtifact() != null) {
-		    for (IArtifact artifact : data.getArtifact()) {
-	            if (artifact instanceof IObjectArtifact) {
-	                ret.add((IObjectArtifact) artifact);
-	            }
-		    }
+			for (IArtifact artifact : data.getArtifact()) {
+				if (artifact instanceof IObjectArtifact) {
+					ret.add((IObjectArtifact) artifact);
+				}
+			}
 		}
 		return ret;
 	}

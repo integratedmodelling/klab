@@ -69,6 +69,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.ComponentsWorkspace;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.resources.PublicResourceCatalog;
@@ -1073,6 +1074,10 @@ public enum Resources implements IResourceService {
 
 	public boolean isResourceOnline(IResource resource, boolean forceUpdate) {
 
+		if (resource instanceof MergedResource) {
+			return ((MergedResource)resource).isOnline();
+		}
+		
 		if (Configuration.INSTANCE.forceResourcesOnline()) {
 			return true;
 		}

@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isProbability <em>Probability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isAssessment <em>Assessment</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isChange <em>Change</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Concept#isRate <em>Rate</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isUncertainty <em>Uncertainty</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isLevel <em>Level</em>}</li>
@@ -334,6 +335,28 @@ public interface Concept extends EObject
    * @generated
    */
   void setChange(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Rate</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Rate</em>' attribute.
+   * @see #setRate(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_Rate()
+   * @model
+   * @generated
+   */
+  boolean isRate();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#isRate <em>Rate</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Rate</em>' attribute.
+   * @see #isRate()
+   * @generated
+   */
+  void setRate(boolean value);
 
   /**
    * Returns the value of the '<em><b>Uncertainty</b></em>' attribute.

@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Pair;
@@ -210,13 +211,25 @@ public abstract class Expression implements IExpression {
 	}
 
 	@Override
-	public Map<String, Object> getSymbolTable() {
+	public Map<String, IVariable> getVariables() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Collection<IArtifact> getAdditionalOutputs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IObservable> getDependents(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IObservable> getPrecursors(IObservable observable) {
 		// TODO Auto-generated method stub
 		return null;
 	}

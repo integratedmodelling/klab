@@ -535,6 +535,10 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 	public static double[] computeTemporalCriteria(long modelStart, long modelEnd, ITime time) {
 
 		double[] ret = new double[] { -1, -1, -1 };
+		
+		if (time == null) {
+			return ret;
+		}
 
 		Range mrange = Range.create(modelStart == -1 ? null : modelStart, modelEnd == -1 ? null : modelEnd);
 		Range crange = Range.create(time.getStart(), time.getEnd());

@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -108,6 +109,12 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		return highTimeOffset;
 	}
 
+
+	@Override
+	public void touch(ITime time) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	protected abstract void duplicateBackendSlice(long sliceToCopy, long newSliceIndex);
 

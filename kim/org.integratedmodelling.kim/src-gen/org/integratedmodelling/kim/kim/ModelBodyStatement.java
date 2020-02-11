@@ -19,15 +19,12 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isInstantiator <em>Instantiator</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getUrns <em>Urns</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getNumber <em>Number</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getBoolean <em>Boolean</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getObservables <em>Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDependencies <em>Dependencies</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isMerging <em>Merging</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getContextualizers <em>Contextualizers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isDiscretization <em>Discretization</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getClassification <em>Classification</em>}</li>
@@ -80,28 +77,6 @@ public interface ModelBodyStatement extends EObject
   EList<Urn> getUrns();
 
   /**
-   * Returns the value of the '<em><b>Function</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Function</em>' containment reference.
-   * @see #setFunction(Function)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Function()
-   * @model containment="true"
-   * @generated
-   */
-  Function getFunction();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getFunction <em>Function</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Function</em>' containment reference.
-   * @see #getFunction()
-   * @generated
-   */
-  void setFunction(Function value);
-
-  /**
    * Returns the value of the '<em><b>Number</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -144,28 +119,6 @@ public interface ModelBodyStatement extends EObject
    * @generated
    */
   void setBoolean(String value);
-
-  /**
-   * Returns the value of the '<em><b>Concept</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Concept</em>' containment reference.
-   * @see #setConcept(ObservableSemantics)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Concept()
-   * @model containment="true"
-   * @generated
-   */
-  ObservableSemantics getConcept();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getConcept <em>Concept</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Concept</em>' containment reference.
-   * @see #getConcept()
-   * @generated
-   */
-  void setConcept(ObservableSemantics value);
 
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -234,28 +187,6 @@ public interface ModelBodyStatement extends EObject
    * @generated
    */
   EList<Dependency> getDependencies();
-
-  /**
-   * Returns the value of the '<em><b>Merging</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Merging</em>' attribute.
-   * @see #setMerging(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Merging()
-   * @model
-   * @generated
-   */
-  boolean isMerging();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isMerging <em>Merging</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Merging</em>' attribute.
-   * @see #isMerging()
-   * @generated
-   */
-  void setMerging(boolean value);
 
   /**
    * Returns the value of the '<em><b>Contextualizers</b></em>' containment reference list.

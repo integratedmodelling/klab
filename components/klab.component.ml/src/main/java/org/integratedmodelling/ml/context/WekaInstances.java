@@ -280,6 +280,8 @@ public class WekaInstances {
 			@Nullable Filter discretizer) {
 		if (predictorState != null) {
 			this.predictorStates.set(index, predictorState);
+		} else {
+			this.predictorObservables.add(predictor);
 		}
 		this.attributes.set(index + 1, getAttribute(predictor, predictorState));
 		if (discretizer != null) {

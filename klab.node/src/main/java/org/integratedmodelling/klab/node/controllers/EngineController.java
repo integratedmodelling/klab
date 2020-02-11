@@ -1,12 +1,13 @@
 package org.integratedmodelling.klab.node.controllers;
 
-import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
@@ -43,7 +44,7 @@ public class EngineController {
 	 */
 	@RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public NodeCapabilities capabilities(Principal user) {
+	public NodeCapabilities capabilities(EngineAuthorization user) {
 
 		NodeCapabilities ret = new NodeCapabilities();
 
@@ -82,18 +83,17 @@ public class EngineController {
 		return ret;
 	}
 
-	private boolean isAuthorized(Principal user, String permissions) {
+	private boolean isAuthorized(EngineAuthorization user, String permissions) {
 		// TODO switch to KlabPermission class
 		if ("*".equals(permissions)) {
 			return true;
 		} else if ("NONE".equals(permissions)) {
 			return false;
 		} else {
-			if (Configuration.INSTANCE.getProperty("klab.node.submitting", "NONE").contains(permissions)) {
-				return true;
-			} else {
-				return false;
-			}
+			KlabPermissions perms = KlabPermissions.create(permissions);
+			Collection<String> groups = new ArrayList<>();
+			user.getGroups().forEach(g -> groups.add(g.getId()));
+			return perms.isAuthorized(user.getUsername(), groups);
 		}
 	}
 }

@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.Dependency;
-import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
@@ -43,15 +42,12 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isInstantiator <em>Instantiator</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getUrns <em>Urns</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getNumber <em>Number</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getBoolean <em>Boolean</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getObservables <em>Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getDependencies <em>Dependencies</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isMerging <em>Merging</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getContextualizers <em>Contextualizers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isDiscretization <em>Discretization</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getClassification <em>Classification</em>}</li>
@@ -98,16 +94,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
   protected EList<Urn> urns;
 
   /**
-   * The cached value of the '{@link #getFunction() <em>Function</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getFunction()
-   * @generated
-   * @ordered
-   */
-  protected Function function;
-
-  /**
    * The cached value of the '{@link #getNumber() <em>Number</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -136,16 +122,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected String boolean_ = BOOLEAN_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getConcept() <em>Concept</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getConcept()
-   * @generated
-   * @ordered
-   */
-  protected ObservableSemantics concept;
 
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -206,26 +182,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected EList<Dependency> dependencies;
-
-  /**
-   * The default value of the '{@link #isMerging() <em>Merging</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isMerging()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean MERGING_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isMerging() <em>Merging</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isMerging()
-   * @generated
-   * @ordered
-   */
-  protected boolean merging = MERGING_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getContextualizers() <em>Contextualizers</em>}' containment reference list.
@@ -414,56 +370,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    */
   @Override
-  public Function getFunction()
-  {
-    return function;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetFunction(Function newFunction, NotificationChain msgs)
-  {
-    Function oldFunction = function;
-    function = newFunction;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__FUNCTION, oldFunction, newFunction);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setFunction(Function newFunction)
-  {
-    if (newFunction != function)
-    {
-      NotificationChain msgs = null;
-      if (function != null)
-        msgs = ((InternalEObject)function).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__FUNCTION, null, msgs);
-      if (newFunction != null)
-        msgs = ((InternalEObject)newFunction).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__FUNCTION, null, msgs);
-      msgs = basicSetFunction(newFunction, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__FUNCTION, newFunction, newFunction));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public org.integratedmodelling.kim.kim.Number getNumber()
   {
     return number;
@@ -531,56 +437,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     boolean_ = newBoolean;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__BOOLEAN, oldBoolean, boolean_));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public ObservableSemantics getConcept()
-  {
-    return concept;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetConcept(ObservableSemantics newConcept, NotificationChain msgs)
-  {
-    ObservableSemantics oldConcept = concept;
-    concept = newConcept;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__CONCEPT, oldConcept, newConcept);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setConcept(ObservableSemantics newConcept)
-  {
-    if (newConcept != concept)
-    {
-      NotificationChain msgs = null;
-      if (concept != null)
-        msgs = ((InternalEObject)concept).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__CONCEPT, null, msgs);
-      if (newConcept != null)
-        msgs = ((InternalEObject)newConcept).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__CONCEPT, null, msgs);
-      msgs = basicSetConcept(newConcept, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__CONCEPT, newConcept, newConcept));
   }
 
   /**
@@ -661,31 +517,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       dependencies = new EObjectContainmentEList<Dependency>(Dependency.class, this, KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES);
     }
     return dependencies;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isMerging()
-  {
-    return merging;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setMerging(boolean newMerging)
-  {
-    boolean oldMerging = merging;
-    merging = newMerging;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__MERGING, oldMerging, merging));
   }
 
   /**
@@ -970,12 +801,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     {
       case KimPackage.MODEL_BODY_STATEMENT__URNS:
         return ((InternalEList<?>)getUrns()).basicRemove(otherEnd, msgs);
-      case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
-        return basicSetFunction(null, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         return basicSetNumber(null, msgs);
-      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
-        return basicSetConcept(null, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__OBSERVABLES:
         return ((InternalEList<?>)getObservables()).basicRemove(otherEnd, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
@@ -1008,14 +835,10 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return isInstantiator();
       case KimPackage.MODEL_BODY_STATEMENT__URNS:
         return getUrns();
-      case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
-        return getFunction();
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         return getNumber();
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         return getBoolean();
-      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
-        return getConcept();
       case KimPackage.MODEL_BODY_STATEMENT__NAME:
         return getName();
       case KimPackage.MODEL_BODY_STATEMENT__OBSERVABLES:
@@ -1024,8 +847,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return getDocstring();
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         return getDependencies();
-      case KimPackage.MODEL_BODY_STATEMENT__MERGING:
-        return isMerging();
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         return getContextualizers();
       case KimPackage.MODEL_BODY_STATEMENT__DISCRETIZATION:
@@ -1066,17 +887,11 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         getUrns().clear();
         getUrns().addAll((Collection<? extends Urn>)newValue);
         return;
-      case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
-        setFunction((Function)newValue);
-        return;
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         setNumber((org.integratedmodelling.kim.kim.Number)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         setBoolean((String)newValue);
-        return;
-      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
-        setConcept((ObservableSemantics)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__NAME:
         setName((String)newValue);
@@ -1091,9 +906,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         getDependencies().clear();
         getDependencies().addAll((Collection<? extends Dependency>)newValue);
-        return;
-      case KimPackage.MODEL_BODY_STATEMENT__MERGING:
-        setMerging((Boolean)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         getContextualizers().clear();
@@ -1145,17 +957,11 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__URNS:
         getUrns().clear();
         return;
-      case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
-        setFunction((Function)null);
-        return;
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         setNumber((org.integratedmodelling.kim.kim.Number)null);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         setBoolean(BOOLEAN_EDEFAULT);
-        return;
-      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
-        setConcept((ObservableSemantics)null);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__NAME:
         setName(NAME_EDEFAULT);
@@ -1168,9 +974,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return;
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         getDependencies().clear();
-        return;
-      case KimPackage.MODEL_BODY_STATEMENT__MERGING:
-        setMerging(MERGING_EDEFAULT);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         getContextualizers().clear();
@@ -1217,14 +1020,10 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return instantiator != INSTANTIATOR_EDEFAULT;
       case KimPackage.MODEL_BODY_STATEMENT__URNS:
         return urns != null && !urns.isEmpty();
-      case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
-        return function != null;
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         return number != null;
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         return BOOLEAN_EDEFAULT == null ? boolean_ != null : !BOOLEAN_EDEFAULT.equals(boolean_);
-      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
-        return concept != null;
       case KimPackage.MODEL_BODY_STATEMENT__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KimPackage.MODEL_BODY_STATEMENT__OBSERVABLES:
@@ -1233,8 +1032,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return DOCSTRING_EDEFAULT == null ? docstring != null : !DOCSTRING_EDEFAULT.equals(docstring);
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         return dependencies != null && !dependencies.isEmpty();
-      case KimPackage.MODEL_BODY_STATEMENT__MERGING:
-        return merging != MERGING_EDEFAULT;
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         return contextualizers != null && !contextualizers.isEmpty();
       case KimPackage.MODEL_BODY_STATEMENT__DISCRETIZATION:
@@ -1276,8 +1073,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     result.append(name);
     result.append(", docstring: ");
     result.append(docstring);
-    result.append(", merging: ");
-    result.append(merging);
     result.append(", discretization: ");
     result.append(discretization);
     result.append(", classificationProperty: ");

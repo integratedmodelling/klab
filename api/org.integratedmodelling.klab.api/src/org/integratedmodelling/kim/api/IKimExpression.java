@@ -21,4 +21,11 @@ public interface IKimExpression {
 	 * @return
 	 */
 	boolean isForcedScalar();
+
+	/**
+	 * Return the reconstructed k.IM expression for inclusion in source code.
+	 * 
+	 * @return
+	 */
+	String getSourceCode();
 }

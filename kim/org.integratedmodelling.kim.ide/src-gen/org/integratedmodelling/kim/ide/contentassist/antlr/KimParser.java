@@ -35,9 +35,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelAccess().getAlternatives(), "rule__Model__Alternatives");
 			builder.put(grammarAccess.getStatementAccess().getAlternatives(), "rule__Statement__Alternatives");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_1_0(), "rule__ModelBodyStatement__Alternatives_1_0");
-			builder.put(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_3_0(), "rule__ModelBodyStatement__BooleanAlternatives_1_0_3_0");
+			builder.put(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_2_0(), "rule__ModelBodyStatement__BooleanAlternatives_1_0_2_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_2(), "rule__ModelBodyStatement__Alternatives_2");
-			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_5_0(), "rule__ModelBodyStatement__Alternatives_5_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6_0(), "rule__ModelBodyStatement__Alternatives_6_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6_1(), "rule__ModelBodyStatement__Alternatives_6_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getLookupTableArgsAlternatives_7_1_1_0(), "rule__ModelBodyStatement__LookupTableArgsAlternatives_7_1_1_0");
@@ -127,6 +126,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptAccess().getAuthorityAlternatives_0_2_4_0(), "rule__Concept__AuthorityAlternatives_0_2_4_0");
 			builder.put(grammarAccess.getConceptAccess().getAlternatives_3_1(), "rule__Concept__Alternatives_3_1");
 			builder.put(grammarAccess.getConceptAccess().getAlternatives_6_0(), "rule__Concept__Alternatives_6_0");
+			builder.put(grammarAccess.getConceptAccess().getAlternatives_6_0_0_1(), "rule__Concept__Alternatives_6_0_0_1");
 			builder.put(grammarAccess.getConceptAccess().getAlternatives_17_1(), "rule__Concept__Alternatives_17_1");
 			builder.put(grammarAccess.getConceptAccess().getStringIdentifierAlternatives_17_1_0_0(), "rule__Concept__StringIdentifierAlternatives_17_1_0_0");
 			builder.put(grammarAccess.getConceptAccess().getAuthorityAlternatives_17_3_0(), "rule__Concept__AuthorityAlternatives_17_3_0");
@@ -415,6 +415,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptAccess().getGroup_5(), "rule__Concept__Group_5__0");
 			builder.put(grammarAccess.getConceptAccess().getGroup_6(), "rule__Concept__Group_6__0");
 			builder.put(grammarAccess.getConceptAccess().getGroup_6_0_0(), "rule__Concept__Group_6_0_0__0");
+			builder.put(grammarAccess.getConceptAccess().getGroup_6_0_0_1_1(), "rule__Concept__Group_6_0_0_1_1__0");
 			builder.put(grammarAccess.getConceptAccess().getGroup_7(), "rule__Concept__Group_7__0");
 			builder.put(grammarAccess.getConceptAccess().getGroup_8(), "rule__Concept__Group_8__0");
 			builder.put(grammarAccess.getConceptAccess().getGroup_9(), "rule__Concept__Group_9__0");
@@ -605,17 +606,14 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelBodyStatementAccess().getInstantiatorAssignment_0(), "rule__ModelBodyStatement__InstantiatorAssignment_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getUrnsAssignment_1_0_0_0(), "rule__ModelBodyStatement__UrnsAssignment_1_0_0_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getUrnsAssignment_1_0_0_1_1(), "rule__ModelBodyStatement__UrnsAssignment_1_0_0_1_1");
-			builder.put(grammarAccess.getModelBodyStatementAccess().getFunctionAssignment_1_0_1(), "rule__ModelBodyStatement__FunctionAssignment_1_0_1");
-			builder.put(grammarAccess.getModelBodyStatementAccess().getNumberAssignment_1_0_2(), "rule__ModelBodyStatement__NumberAssignment_1_0_2");
-			builder.put(grammarAccess.getModelBodyStatementAccess().getBooleanAssignment_1_0_3(), "rule__ModelBodyStatement__BooleanAssignment_1_0_3");
-			builder.put(grammarAccess.getModelBodyStatementAccess().getConceptAssignment_1_0_4(), "rule__ModelBodyStatement__ConceptAssignment_1_0_4");
+			builder.put(grammarAccess.getModelBodyStatementAccess().getNumberAssignment_1_0_1(), "rule__ModelBodyStatement__NumberAssignment_1_0_1");
+			builder.put(grammarAccess.getModelBodyStatementAccess().getBooleanAssignment_1_0_2(), "rule__ModelBodyStatement__BooleanAssignment_1_0_2");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getNameAssignment_2_0(), "rule__ModelBodyStatement__NameAssignment_2_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getObservablesAssignment_2_1_0(), "rule__ModelBodyStatement__ObservablesAssignment_2_1_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getObservablesAssignment_2_1_1_1(), "rule__ModelBodyStatement__ObservablesAssignment_2_1_1_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getDocstringAssignment_3(), "rule__ModelBodyStatement__DocstringAssignment_3");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getDependenciesAssignment_4_1(), "rule__ModelBodyStatement__DependenciesAssignment_4_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getDependenciesAssignment_4_2_1(), "rule__ModelBodyStatement__DependenciesAssignment_4_2_1");
-			builder.put(grammarAccess.getModelBodyStatementAccess().getMergingAssignment_5_0_1(), "rule__ModelBodyStatement__MergingAssignment_5_0_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getContextualizersAssignment_5_1(), "rule__ModelBodyStatement__ContextualizersAssignment_5_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getContextualizersAssignment_5_2_1(), "rule__ModelBodyStatement__ContextualizersAssignment_5_2_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getDiscretizationAssignment_6_0_1(), "rule__ModelBodyStatement__DiscretizationAssignment_6_0_1");
@@ -744,7 +742,6 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getExecutableValueAccess().getExprAssignment_0_1_0(), "rule__ExecutableValue__ExprAssignment_0_1_0");
 			builder.put(grammarAccess.getExecutableValueAccess().getLanguageAssignment_0_1_1_1(), "rule__ExecutableValue__LanguageAssignment_0_1_1_1");
 			builder.put(grammarAccess.getExecutableValueAccess().getUrnAssignment_0_2(), "rule__ExecutableValue__UrnAssignment_0_2");
-			builder.put(grammarAccess.getExecutableValueAccess().getModelAssignment_0_3(), "rule__ExecutableValue__ModelAssignment_0_3");
 			builder.put(grammarAccess.getExecutableValueAccess().getConditionNegatedAssignment_1_0_1(), "rule__ExecutableValue__ConditionNegatedAssignment_1_0_1");
 			builder.put(grammarAccess.getExecutableValueAccess().getConditionAssignment_1_1(), "rule__ExecutableValue__ConditionAssignment_1_1");
 			builder.put(grammarAccess.getNamespaceAccess().getAnnotationsAssignment_0_0(), "rule__Namespace__AnnotationsAssignment_0_0");
@@ -902,7 +899,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptAccess().getConceptAssignment_4_2(), "rule__Concept__ConceptAssignment_4_2");
 			builder.put(grammarAccess.getConceptAccess().getAssessmentAssignment_5_0(), "rule__Concept__AssessmentAssignment_5_0");
 			builder.put(grammarAccess.getConceptAccess().getConceptAssignment_5_2(), "rule__Concept__ConceptAssignment_5_2");
-			builder.put(grammarAccess.getConceptAccess().getChangeAssignment_6_0_0_0(), "rule__Concept__ChangeAssignment_6_0_0_0");
+			builder.put(grammarAccess.getConceptAccess().getChangeAssignment_6_0_0_1_0(), "rule__Concept__ChangeAssignment_6_0_0_1_0");
+			builder.put(grammarAccess.getConceptAccess().getRateAssignment_6_0_0_1_1_0(), "rule__Concept__RateAssignment_6_0_0_1_1_0");
 			builder.put(grammarAccess.getConceptAccess().getChangeAssignment_6_0_1(), "rule__Concept__ChangeAssignment_6_0_1");
 			builder.put(grammarAccess.getConceptAccess().getConceptAssignment_6_1(), "rule__Concept__ConceptAssignment_6_1");
 			builder.put(grammarAccess.getConceptAccess().getUncertaintyAssignment_7_0(), "rule__Concept__UncertaintyAssignment_7_0");

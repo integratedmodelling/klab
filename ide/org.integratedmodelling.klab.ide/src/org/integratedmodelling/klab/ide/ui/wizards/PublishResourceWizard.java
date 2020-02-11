@@ -76,20 +76,15 @@ public class PublishResourceWizard extends Wizard {
 		
 			Activator.session().getTicketManager().open(ITicket.Type.ResourceSubmission, "resource", target.getUrn());
 
-				ResourcesView view = null;
-				try {
-					view = (ResourcesView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResourcesView.ID);
-				} catch (PartInitException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					//what should we do in this case?
-				}
-				//this also needs to do something more
-				view.showPending();
-			
+			ResourcesView view = null;
+			try {
+				view = (ResourcesView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResourcesView.ID);
+			} catch (PartInitException e) {
+				Eclipse.INSTANCE.handleException(e);
+			}
+			//this also needs to do something more
+			view.showPending();
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
-
-			return true;
 		}
 
 		return false;
@@ -103,3 +98,5 @@ public class PublishResourceWizard extends Wizard {
 	}
 
 }
+
+

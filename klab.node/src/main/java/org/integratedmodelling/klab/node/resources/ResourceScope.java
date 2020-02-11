@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.node.resources;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +34,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -237,7 +239,7 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public Map<String, Object> getSymbolTable() {
+	public Map<String, IVariable> getVariables() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -707,5 +709,23 @@ public class ResourceScope implements IRuntimeScope {
 			return false;
 		}
 
+		@Override
+		public List<IActivity> getActions() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
+
+	@Override
+	public Collection<IObservable> getDependents(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IObservable> getPrecursors(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

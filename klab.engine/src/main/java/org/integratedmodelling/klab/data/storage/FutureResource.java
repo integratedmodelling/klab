@@ -16,6 +16,8 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -213,6 +215,16 @@ public class FutureResource implements IResource, Future<IResource> {
 	@Override
 	public String getStatusMessage() {
 		return getDelegate(timeout).getStatusMessage();
+	}
+
+	@Override
+	public List<IActivity> getActions() {
+		return delegate.getActions();
+	}
+
+	@Override
+	public IResource localize(ITime time) {
+		return this;
 	}
 
 }

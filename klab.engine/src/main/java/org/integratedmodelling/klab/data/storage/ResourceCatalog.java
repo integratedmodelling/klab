@@ -40,6 +40,7 @@ public class ResourceCatalog implements IResourceCatalog {
 	 * TODO use MapDB as a persistent option (for the public catalog).
 	 */
 	private Map<String, ResourceReference> resources = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, IResource> inlineResources = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * Create a new resource catalog.
@@ -73,6 +74,9 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public IResource get(Object key) {
+		if (inlineResources.containsKey(key)) {
+			return inlineResources.get(key);
+		}
 		ResourceReference ref = resources.get(key);
 		return ref == null ? null : new Resource(ref);
 	}
@@ -138,7 +142,11 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		return null;
 	}
-
+	
+	public void addInlineResource(IResource resource) {
+		this.inlineResources.put(resource.getUrn(), resource);
+	}
+	
 	@Override
 	public IResource put(String key, IResource value) {
 

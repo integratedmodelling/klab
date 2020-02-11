@@ -171,7 +171,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
 		IParameters<String> parameters = context;
-		if (additionalParameters != null) {
+		if (additionalParameters != null || !context.getVariables().isEmpty()) {
 			parameters = new Parameters<String>();
 			parameters.putAll(context);
 			parameters.putAll(additionalParameters);
@@ -183,6 +183,11 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 				this.condition = conditionDescriptor.compile();
 			}
 		}
+		
+		for (String key : context.getVariables().keySet()) {
+			parameters.put(key, context.getVariables().get(key).getValue(parameters, context));
+		}
+		
 		boolean ok = true;
 		if (condition != null) {
 			Object cond = condition.eval(parameters, context);

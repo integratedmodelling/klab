@@ -17,10 +17,12 @@ package org.integratedmodelling.klab.api.provenance;
 
 import java.util.Optional;
 
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 
 /**
- * Activity (process).
+ * Activity (process). Primary processes produce observations. Secondary
+ * processes (after creation) may modify them.
  * 
  * @author Ferd
  * @version $Id: $Id
@@ -28,10 +30,11 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 public interface IActivity extends IProvenance.Node {
 
 	/**
-	 * A classification of the observation activity (odo:Description) that can
-	 * produce an observation of this observable. Encodes the same classification in
-	 * ODO-IM. The descriptions specialize {@link IResolutionScope#Mode}, which is
-	 * captured by exposing its correspondent value.
+	 * A classification of the primary observation activity (odo:Description) that
+	 * can produce an observation of this observable. Encodes the same
+	 * classification in ODO-IM. The descriptions specialize
+	 * {@link IResolutionScope#Mode}, which is captured by exposing its
+	 * correspondent value.
 	 * 
 	 * @author ferdinando.villa
 	 *
@@ -89,29 +92,41 @@ public interface IActivity extends IProvenance.Node {
 		public IResolutionScope.Mode getResolutionMode() {
 			return mode;
 		}
-		
+
 		Description(IResolutionScope.Mode mode) {
 			this.mode = mode;
 		}
 	}
 
+	enum Type {
+		Creation, ValuesModified, ObjectsModified, Instances
+	}
+
 	/**
-	 * <p>
-	 * getStart.
-	 * </p>
+	 * System time of start.
 	 *
 	 * @return a long.
 	 */
 	long getStart();
 
 	/**
-	 * <p>
-	 * getEnd.
-	 * </p>
+	 * System time of end.
 	 *
 	 * @return a long.
 	 */
 	long getEnd();
+	
+	/**
+	 * Scheduler time of action. Null if agent is not the k.LAB scheduler.
+	 * @return
+	 */
+	ITime getSchedulerTime();
+
+	/**
+	 * The type of the action.
+	 * @return
+	 */
+	Type getType();
 
 	/**
 	 * If the action was caused by another action, return the action that caused it.

@@ -132,6 +132,11 @@ public class Scheduler implements IScheduler {
 					 */
 					for (Actuator.Computation computation : computations) {
 
+						if (computation.variable != null) {
+							transitionContext.getVariables().put(computation.targetId, computation.variable);
+							continue;
+						}
+						
 						actuator.runContextualizer(computation.contextualizer, computation.observable,
 								computation.resource, computation.target, transitionContext, (IScale) transitionScale);
 
@@ -290,8 +295,8 @@ public class Scheduler implements IScheduler {
 		 * should not be the case if we get here at all, but who knows. TODO: if there
 		 * is no explicit temporal nature, a contextualizer should check if any of the
 		 * dependencies have changed OR has changed data at T (even if computed before)
-		 * and exec again only if so. This should be done by inserting change event
-		 * points in each artifact and checking those, rather than using a value change
+		 * and exec again only if so. This should be done by using the provenance graph
+		 * for each artifact and checking those, rather than using a value change
 		 * resulting from the actual update.
 		 */
 		if (overall.getTime() == null || modelScale.getTime() == null) {
@@ -429,7 +434,7 @@ public class Scheduler implements IScheduler {
 						}
 
 						registration.run(time + registration.delayInSlot);
-						reschedule(registration, time + resolution, false);
+						reschedule(registration, time, false);
 
 					} else {
 						registration.rounds--;
@@ -460,6 +465,12 @@ public class Scheduler implements IScheduler {
 	}
 
 	private void reschedule(Registration registration, long startTime, boolean first) {
+
+		/*
+		 * FIXME this must become the next() time, adjusted to fit the resolution if
+		 * necessary (should not be necessary).
+		 */
+		startTime = startTime + resolution;
 
 		if (stopped.get()) {
 			return;

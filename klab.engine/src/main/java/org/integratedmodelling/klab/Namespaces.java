@@ -36,7 +36,7 @@ public enum Namespaces implements INamespaceService {
     /**
      * Non-API. Release the named namespace, de-indexing any indexed objects it contained.
      * 
-     * @param namespace
+     * @param namespaceId
      * @param monitor
      * @throws KlabException
      */

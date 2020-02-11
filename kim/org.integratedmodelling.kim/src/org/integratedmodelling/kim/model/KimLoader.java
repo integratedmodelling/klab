@@ -139,7 +139,7 @@ public class KimLoader implements IKimLoader {
 				project = workspace.overrideProject(project.getName(), root);
 			}
 
-			if (!projectLocations.contains(root)) {
+//			if (!projectLocations.contains(root)) {
 				project = Kim.INSTANCE.getProjectIn(root);
 				if (project == null) {
 					Kim.INSTANCE.userWorkspace.addProjectPath(root);
@@ -153,7 +153,7 @@ public class KimLoader implements IKimLoader {
 					System.err.println("internal: project path " + root + " caused a null project");
 				}
 			}
-		}
+//		}
 		if (!projects.isEmpty()) {
 			load(projects);
 		}

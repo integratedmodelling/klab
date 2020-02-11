@@ -93,28 +93,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	// actuator the resource is used in).
 	private IObservable originalObservable;
 	private boolean copy = false;
-	
-	/**
-	 * If not empty, this is the first of a chain (which cannot be hierarchical).
-	 * For now this only happens with URNs.
-	 */
-	private List<ComputableResource> siblings = new ArrayList<>();
-
 	private List<IAnnotation> externalParameters;
-
-	// these set from the outside if the resource is a merge of others
-	private List<String> mergedUrns;
-	private IGeometry mergedGeometry;
-	private IArtifact.Type mergedType;
-
-	@Override
-	public List<String> getMergedUrns() {
-		return mergedUrns;
-	}
-
-	public void setMergedUrns(List<String> mergedUrns) {
-		this.mergedUrns = mergedUrns;
-	}
 
 	public ComputableResource copy() {
 		ComputableResource ret = new ComputableResource(getEObject(), getParent());
@@ -136,13 +115,12 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		ret.target = this.target;
 		ret.targetId = this.targetId;
 		ret.copy = true;
-		ret.mergedUrns = this.mergedUrns;
-		ret.mergedType = this.mergedType;
 		ret.interactiveParameters = this.interactiveParameters;
 		ret.externalParameters = this.externalParameters;
-		// ret.type = this.type;
 		ret.resolutionMode = this.resolutionMode;
 		ret.originalObservable = this.originalObservable;
+		ret.variable = this.variable;
+		ret.trigger = this.trigger;
 		return ret;
 	}
 
@@ -294,11 +272,11 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		this.resolutionMode = Mode.RESOLUTION;
 	}
 	
-	public ComputableResource(List<String> mergedUrns, Mode mode, IArtifact.Type type) {
-		this.mergedUrns = mergedUrns;
-		this.mergedType = type;
-		this.resolutionMode = mode;
-	}
+//	public ComputableResource(List<String> mergedUrns, Mode mode, IArtifact.Type type) {
+//		this.mergedUrns = mergedUrns;
+//		this.mergedType = type;
+//		this.resolutionMode = mode;
+//	}
 
 	public ComputableResource(IValueMediator from, IValueMediator to) {
 		this.conversion = new Pair<>(from, to);
@@ -374,11 +352,10 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value));
 			this.type = Type.LITERAL;
 			// this.type = Utils.getArtifactType(this.literal.getClass());
-		} else if (value.getModel() != null) {
-			// only accepted when merging
-			this.urn = value.getModel();
-			this.type = Type.RESOURCE;
-		}
+		} /*
+			 * else if (value.getModel() != null) { // only accepted when merging this.urn =
+			 * value.getModel(); this.type = Type.RESOURCE; }
+			 */
 
 		this.language = value.getLanguage();
 	}
@@ -529,18 +506,18 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		}
 	}
 
-	/**
-	 * Chain a new resource to the current one. Only happens with URNs so far.
-	 * 
-	 * @param validate
-	 */
-	public void chainResource(ComputableResource resource) {
-		siblings.add(resource);
-	}
-
-	public List<ComputableResource> getSiblings() {
-		return siblings;
-	}
+//	/**
+//	 * Chain a new resource to the current one. Only happens with URNs so far.
+//	 * 
+//	 * @param validate
+//	 */
+//	public void chainResource(ComputableResource resource) {
+//		siblings.add(resource);
+//	}
+//
+//	public List<ComputableResource> getSiblings() {
+//		return siblings;
+//	}
 
 	@Override
 	public void visit(Visitor visitor) {
@@ -554,9 +531,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		if (condition != null) {
 			condition.visit(visitor);
 		}
-		for (ComputableResource sibling : siblings) {
-			sibling.visit(visitor);
-		}
+//		for (ComputableResource sibling : siblings) {
+//			sibling.visit(visitor);
+//		}
 	}
 
 	@Override
@@ -752,9 +729,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 				type = Type.CONDITION;
 			} else if (this.urn != null) {
 				type = Type.RESOURCE;
-			} else if (this.mergedUrns != null) {
-				type = Type.MERGED_RESOURCES;
-			}
+			} /*
+				 * else if (this.mergedUrns != null) { type = Type.MERGED_RESOURCES; }
+				 */
 		}
 
 		if (type /* still */ == null) {
@@ -784,9 +761,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	@Override
 	public IGeometry getGeometry() {
 		
-		if (this.mergedGeometry != null) {
-			return this.mergedGeometry;
-		}
+//		if (this.mergedGeometry != null) {
+//			return this.mergedGeometry;
+//		}
 		
 		switch(getType()) {
 		case RESOURCE:
@@ -831,8 +808,32 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		this.variable = variable;
 	}
 	
-	public void setMergedGeometry(IGeometry geometry) {
-		this.mergedGeometry = geometry;
+	@Override
+	public String getSourceCode() {
+		
+		// TODO if we ever support more stuff as aux vars
+		switch (getType()) {
+		case CLASSIFICATION:
+			break;
+		case CONDITION:
+			break;
+		case CONVERSION:
+			break;
+		case EXPRESSION:
+			return this.expression.getSourceCode();
+		case LITERAL:
+			return literal instanceof String ? ("\"" + literal + "\"") : (literal + "");
+		case LOOKUP_TABLE:
+			break;
+		case RESOURCE:
+			break;
+		case SERVICE:
+			break;
+		default:
+			break;
+		
+		}
+		return super.getSourceCode();
 	}
 	
 }

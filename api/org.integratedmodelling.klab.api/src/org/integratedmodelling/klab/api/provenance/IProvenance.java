@@ -24,7 +24,6 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**
@@ -47,8 +46,8 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
  * The equivalent of a OPM Plan is a {@link IDataflow}, which organizes model
  * Agents into a strategy to perform Activities. The latter are
  * <strong>observation activities</strong> and are typed according to
- * {@link IActivity.Description}: they may be acknowledgements, computations (either
- * resolutions or instantiations) or detections.
+ * {@link IActivity.Description}: they may be acknowledgements, computations
+ * (either resolutions or instantiations) or detections.
  * <p>
  * The observation Activities are organized into super-activities (processes)
  * correspondent to ITask identities in k.LAB. The responsibility for Activities
@@ -86,7 +85,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
  * @version $Id: $Id
  */
 public interface IProvenance {
-
+	
 	/**
 	 * Everything except Actions is a node. Used only to allow generalizing the API.
 	 * 
@@ -102,13 +101,19 @@ public interface IProvenance {
 		String getId();
 
 		/**
-		 * Timestamp. TODO: this must reflect scheduler time if these are instantiated
-		 * with a scheduler active.
+		 * Timestamp of creation.
 		 * 
 		 * @return
 		 */
 		long getTimestamp();
 
+		/**
+		 * Return all the actions that have interested this node in chronological order.
+		 *
+		 * @return a {@link java.util.List} object.
+		 */
+		List<IActivity> getActions();
+		
 		/**
 		 * Return the graph we're part of.
 		 * 
