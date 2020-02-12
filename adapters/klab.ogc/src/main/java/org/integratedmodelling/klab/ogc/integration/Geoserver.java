@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ogc.integration;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -9,6 +10,9 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Urn;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
@@ -54,20 +58,15 @@ public class Geoserver {
 	}
 
 	/**
-	 * <dataStore> <name>nyc</name> <connectionParameters> <host>localhost</host>
-	 * <port>5432</port> <database>nyc</database> <user>bob</user>
-	 * <passwd>postgres</passwd> <dbtype>postgis</dbtype> </connectionParameters>
-	 * </dataStore>
+	 * Create a datastore for the database in the postgis object, using the passed
+	 * namespace. Must not exist already.
 	 * 
-	 * @param postgis use the postgis that published the resource
-	 * @param namespace geoserver namespace (will be created if needed)
-	 * @param table   table name
+	 * @param postgis
+	 * @param namespace
 	 * @return
 	 */
-	public boolean publishPostgisVector(Postgis postgis, String namespace, String table) {
+	public boolean createDatastore(Postgis postgis, String namespace) {
 
-		namespace = requireNamespace(namespace);
-		
 		Map<String, Object> message = new HashMap<>();
 		Map<String, Object> payload = new HashMap<>();
 		Map<String, String> data = new LinkedHashMap<>();
@@ -78,7 +77,7 @@ public class Geoserver {
 		data.put("passwd", postgis.getPassword());
 		data.put("dbtype", "postgis");
 		payload.put("connectionParameters", data);
-		payload.put("name", table);
+		payload.put("name", postgis.getDatabase());
 		message.put("dataStore", payload);
 
 		HttpRequestWithBody request = Unirest.post(this.url + "/rest/workspaces/" + namespace + "/datastores")
@@ -88,6 +87,173 @@ public class Geoserver {
 		}
 
 		return request.body(message).asEmpty().isSuccess();
+	}
+
+	/**
+	 * Create a datastore from the passed DB if it does not exist already in the
+	 * given namespace.
+	 * 
+	 * @param postgis
+	 * @param namespace
+	 * @return
+	 */
+	public boolean requireDatastore(Postgis postgis, String namespace) {
+
+		if (getDatastores(namespace).contains(postgis.getDatabase())) {
+			return true;
+		}
+
+		return createDatastore(postgis, namespace);
+	}
+
+	public boolean createCoverageStore(String namespace, String name, File file) {
+
+		if (getCoveragestores(namespace).contains(name)) {
+			deleteCoverageStore(namespace, name);
+		}
+
+		Map<String, Object> payload = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+
+		try {
+			data.put("name", name);
+			data.put("url", file.toURI().toURL().toString());
+			payload.put("coverageStore", data);
+
+			HttpRequestWithBody request = Unirest.post(this.url + "/rest/workspaces/" + namespace + "/coveragestores")
+					.header("Content-Type", "application/json");
+
+			if (this.username != null) {
+				request = request.basicAuth(username, password);
+			}
+
+			return request.body(payload).asEmpty().isSuccess();
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Delete a coverage store and all its metadata; leave any data in place.
+	 * 
+	 * @param namespace
+	 * @param name
+	 * @return
+	 */
+	private boolean deleteCoverageStore(String namespace, String name) {
+		return Unirest
+				.delete(this.url + "/rest/workspaces/" + namespace + "/coveragestores/" + name + "?purge=metadata")
+				.asEmpty().isSuccess();
+	}
+
+	public Set<String> getDatastores(String namespace) {
+
+		Set<String> ret = new HashSet<>();
+		GetRequest request = Unirest.get(this.url + "/rest/workspaces/" + namespace + "/datastores");
+		if (this.username != null) {
+			request = request.basicAuth(username, password);
+		}
+		HttpResponse<JsonNode> result = request.asJson();
+		JSONObject response = result.getBody().getObject();
+		if (response.has("dataStores") && response.get("dataStores") instanceof JSONObject) {
+			response = response.getJSONObject("dataStores");
+			for (Object datastore : response.getJSONArray("dataStore")) {
+				if (datastore instanceof JSONObject) {
+					ret.add(((JSONObject) datastore).getString("name"));
+				}
+			}
+		}
+		return ret;
+	}
+
+	public Set<String> getCoveragestores(String namespace) {
+
+		Set<String> ret = new HashSet<>();
+		GetRequest request = Unirest.get(this.url + "/rest/workspaces/" + namespace + "/coveragestores");
+		if (this.username != null) {
+			request = request.basicAuth(username, password);
+		}
+		HttpResponse<JsonNode> result = request.asJson();
+		JSONObject response = result.getBody().getObject();
+		if (response.has("dataStores") && response.get("coverageStores") instanceof JSONObject) {
+			response = response.getJSONObject("coverageStores");
+			for (Object datastore : response.getJSONArray("coverageStore")) {
+				if (datastore instanceof JSONObject) {
+					ret.add(((JSONObject) datastore).getString("name"));
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * <dataStore> <name>nyc</name> <connectionParameters> <host>localhost</host>
+	 * <port>5432</port> <database>nyc</database> <user>bob</user>
+	 * <passwd>postgres</passwd> <dbtype>postgis</dbtype> </connectionParameters>
+	 * </dataStore>
+	 * 
+	 * @param postgis   use the postgis that published the resource
+	 * @param namespace geoserver namespace (will be created if needed)
+	 * @param table     table name
+	 * @return
+	 */
+	public boolean publishPostgisVector(Postgis postgis, String namespace, String table) {
+
+		namespace = requireNamespace(namespace);
+		String datastore = postgis.getDatabase();
+		if (requireDatastore(postgis, namespace)) {
+
+			if (getFeatureTypes(namespace, datastore).contains(table)) {
+				deleteFeatureType(namespace, datastore, table);
+			}
+
+			Map<String, Object> payload = new HashMap<>();
+			Map<String, Object> data = new HashMap<>();
+
+			data.put("name", table);
+			payload.put("featureType", data);
+
+			HttpRequestWithBody request = Unirest
+					.post(this.url + "/rest/workspaces/" + namespace + "/datastores/" + datastore + "/featuretypes")
+					.header("Content-Type", "application/json");
+
+			if (this.username != null) {
+				request = request.basicAuth(username, password);
+			}
+
+			return request.body(payload).asEmpty().isSuccess();
+		}
+
+		return false;
+	}
+
+	private boolean deleteFeatureType(String namespace, String datastore, String featuretype) {
+		return Unirest.delete(this.url + "/rest/workspaces/" + namespace + "/datastores/" + datastore + "/featuretypes/"
+				+ featuretype).asEmpty().isSuccess();
+	}
+
+	public Set<String> getFeatureTypes(String namespace, String datastore) {
+
+		Set<String> ret = new HashSet<>();
+		GetRequest request = Unirest
+				.get(this.url + "/rest/workspaces/" + namespace + "/datastores/" + datastore + "/featuretypes.json");
+		if (this.username != null) {
+			request = request.basicAuth(username, password);
+		}
+		HttpResponse<JsonNode> result = request.asJson();
+		JSONObject response = result.getBody().getObject();
+		if (response.has("featureTypes") && response.get("featureTypes") instanceof JSONObject) {
+			response = response.getJSONObject("featureTypes");
+			for (Object featuretype : response.getJSONArray("featureType")) {
+				if (featuretype instanceof JSONObject) {
+					ret.add(((JSONObject) featuretype).getString("name"));
+				}
+			}
+		}
+		return ret;
 	}
 
 	public boolean publishRaster(Urn urn, File file) {
@@ -140,12 +306,25 @@ public class Geoserver {
 	}
 
 	public static void main(String[] args) {
+
 		if (!isEnabled()) {
 			System.out.println("NOT ENABLED");
 			return;
 		}
+
 		Geoserver geoserver = create();
-		geoserver.requireNamespace("ziorana");
+
+		for (String namespace : geoserver.getNamespaces()) {
+			System.out.println("NS " + namespace);
+			for (String datastore : geoserver.getDatastores(namespace)) {
+				System.out.println("   DS " + datastore);
+				for (String featuretype : geoserver.getFeatureTypes(namespace, datastore)) {
+					System.out.println("     FT " + featuretype);
+				}
+
+			}
+		}
+
 	}
 
 }

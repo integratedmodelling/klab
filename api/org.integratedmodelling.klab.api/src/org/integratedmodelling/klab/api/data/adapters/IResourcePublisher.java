@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface IResourcePublisher.
  *

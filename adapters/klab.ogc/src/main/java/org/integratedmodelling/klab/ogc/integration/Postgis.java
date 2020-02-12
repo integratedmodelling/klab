@@ -233,15 +233,19 @@ public class Postgis {
 			System.out.println("NOT ENABLED");
 			return;
 		}
+
+		Urn urn = new Urn("im.data:spain:infrastructure:admin");
 		
-		Postgis postgis = Postgis.create(new Urn("klab:mah:boh:poh"));
+		// publish table in postgis
+		Postgis postgis = Postgis.create(urn);
 		System.out.println(postgis.isOnline() ? "OK" : "NAAH");
-		String table = postgis.publish(new File("C:\\Users\\Ferd\\Dropbox\\Data\\rivers.shp"),
-				new Urn("im.data:public:infrastructure:rivers"));
+		String table = postgis.publish(new File("C:\\Users\\Ferd\\Dropbox\\Data\\Administrativre\\Spain\\gadm36_ESP_4.shp"), urn);
 		System.out.println("Published table " + table);
+		
+		// create datastore for db (if needed) and feature type for table in Geoserver
 		Geoserver geoserver = Geoserver.create();
-		if (geoserver.publishPostgisVector(postgis, "stocazzo", table)) {
-			System.out.println("Store published to Geoserver");
+		if (geoserver.publishPostgisVector(postgis, "klabtest", table)) {
+			System.out.println("Store published to Geoserver as " + "klabtest:" + table);
 		} else {
 			System.out.println("Store publishing to Geoserver failed");
 		}
@@ -250,15 +254,15 @@ public class Postgis {
 	public String getPort() {
 		return Configuration.INSTANCE.getServiceProperty("postgres", "port");
 	}
-	
+
 	public String getHost() {
 		return Configuration.INSTANCE.getServiceProperty("postgres", "host");
 	}
-	
+
 	public String getUsername() {
 		return Configuration.INSTANCE.getServiceProperty("postgres", "user");
 	}
-	
+
 	public String getPassword() {
 		return Configuration.INSTANCE.getServiceProperty("postgres", "password");
 	}
