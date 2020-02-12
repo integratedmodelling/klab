@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.hub.network.controllers;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.network.DockerManager;
 import org.integratedmodelling.klab.hub.network.DockerNode;
-import org.integratedmodelling.klab.hub.network.commands.CreateNodeContainer;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.repository.DockerConfigurationRepository;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
@@ -16,22 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.core.DefaultDockerClientConfig;
-import com.github.dockerjava.core.DockerClientBuilder;
-
 
 @RestController
 @RequestMapping("/api/v2/network/configurations")
-public class DockerConfigurationController {
+public class DockerDeploymentController {
 	
 	private MongoNodeRepository nodeRepo;
 	private DockerConfigurationRepository dockerRepo;
 	
 	
 	@Autowired
-	public DockerConfigurationController(MongoNodeRepository nodeRepo,
+	public DockerDeploymentController(MongoNodeRepository nodeRepo,
 			DockerConfigurationRepository dockerRepo) {
 		super();
 		this.nodeRepo = nodeRepo;
@@ -58,18 +53,11 @@ public class DockerConfigurationController {
 		DockerNode config = (DockerNode) dockerRepo.findById(id)
 				.orElseThrow(() -> new BadRequestException("Could not match node configuration id to one in database."));
 		
-		DefaultDockerClientConfig dockerConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
-				.withDockerHost(config.getDockerHost())
-				.build();
+		DockerManager.INSTANCE.configureClient(config.getHostConfig());
 		
-		DockerClient client = DockerClientBuilder.getInstance(dockerConfig)
-				  .build();
+		String containerId = DockerManager.INSTANCE.createAndDeploy(config);
 		
-		CreateNodeContainer cmd = new CreateNodeContainer(client, config);
-		CreateContainerResponse resp = cmd.exec(config.getNode().getNode());
-		client.startContainerCmd(resp.getId()).exec();
-		
-		return new ResponseEntity<>(resp,HttpStatus.CREATED);
+		return new ResponseEntity<>(containerId,HttpStatus.CREATED);
 	}
 
 }
