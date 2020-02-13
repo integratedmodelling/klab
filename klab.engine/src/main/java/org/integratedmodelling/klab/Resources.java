@@ -1074,6 +1074,10 @@ public enum Resources implements IResourceService {
 
 	public boolean isResourceOnline(IResource resource, boolean forceUpdate) {
 
+		if (resource instanceof MergedResource) {
+			return ((MergedResource)resource).isOnline();
+		}
+		
 		if (Configuration.INSTANCE.forceResourcesOnline()) {
 			return true;
 		}

@@ -46,16 +46,16 @@ public class EngineAuthResponeFactory {
 				break;	
 			}
 		case USER:
-//			if (IPUtils.isLocalhost(remoteAddr)) {
+			if (IPUtils.isLocalhost(remoteAddr)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
-//				return localEngine(request, userProfileService, groupRepository);
-//			} else {
+				return localEngine(request, userProfileService, groupRepository);
+			} else {
 				ProfileResource profile = userProfileService.getRawUserProfile(request.getUsername());
 				EngineAuthenticationResponse response = remoteEngine(profile, request.getCertificate(), config);
 	    		profile.setLastEngineConnection(DateTime.now());
 	    		userProfileService.updateUserByProfile(profile);
 	    		return response;
-//			}
+			}
 		default:
 			break;
 		}

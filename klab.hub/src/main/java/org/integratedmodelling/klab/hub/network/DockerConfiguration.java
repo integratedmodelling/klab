@@ -4,33 +4,18 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.sun.istack.NotNull;
 
-@Document(collection="DockerConfiguration")
+@Document(collection="DeploymentConfiguration")
 public abstract class DockerConfiguration {
 	@Id
 	String id;
 	
-	@NotNull
-	String dockerHost;
-	
-	boolean tlsVerify;
-	
-	String certPath;
-	
-	String configPath;
-	
-	String apiVersion;
-	
-	String registryUrl;
-	
-	String regUsername;
-	
-	String regEmail;
-	
-	String password;
+	@DBRef
+	private DockerHostConfig hostConfig;
 	
 	private Set<String> networks;
 	
@@ -39,73 +24,14 @@ public abstract class DockerConfiguration {
 	private Set<DockerVolume> volumes;
 	
 	private DockerPorts ports;
+	
+	private Set<String> dependsOn;
+	
+	@NotNull
+	private String image;
 
 	public String getId() {
 		return id;
-	}
-
-	public String getDockerHost() {
-		return dockerHost;
-	}
-
-	public void setDockerHost(String dockerHost) {
-		this.dockerHost = dockerHost;
-	}
-
-	public boolean isTlsVerify() {
-		return tlsVerify;
-	}
-
-	public void setTlsVerify(boolean tlsVerify) {
-		this.tlsVerify = tlsVerify;
-	}
-
-	public String getCertPath() {
-		return certPath;
-	}
-
-	public void setCertPath(String certPath) {
-		this.certPath = certPath;
-	}
-
-	public String getConfigPath() {
-		return configPath;
-	}
-
-	public void setConfigPath(String configPath) {
-		this.configPath = configPath;
-	}
-
-	public String getApiVersion() {
-		return apiVersion;
-	}
-
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
-
-	public String getRegistryUrl() {
-		return registryUrl;
-	}
-
-	public void setRegistryUrl(String registryUrl) {
-		this.registryUrl = registryUrl;
-	}
-
-	public String getRegUsername() {
-		return regUsername;
-	}
-
-	public void setRegUsername(String regUsername) {
-		this.regUsername = regUsername;
-	}
-
-	public String getRegEmail() {
-		return regEmail;
-	}
-
-	public void setRegEmail(String regEmail) {
-		this.regEmail = regEmail;
 	}
 	
 	public Properties getProperties() {
@@ -132,20 +58,37 @@ public abstract class DockerConfiguration {
 		this.networks = networks;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public DockerPorts getPorts() {
 		return ports;
 	}
 
 	public void setPorts(DockerPorts ports) {
 		this.ports = ports;
+	}
+	
+	public DockerHostConfig getHostConfig() {
+		return hostConfig;
+	}
+
+	public void setHostConfig(DockerHostConfig hostConfig) {
+		this.hostConfig = hostConfig;
+	}
+
+	public Set<String> getDependsOn() {
+		return dependsOn;
+	}
+
+	public void setDependsOn(Set<String> dependsOn) {
+		this.dependsOn = dependsOn;
+	}
+	
+	public String getImage() {
+		return image;
+	}
+
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 }

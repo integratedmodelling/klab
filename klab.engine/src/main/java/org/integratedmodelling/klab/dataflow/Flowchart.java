@@ -306,7 +306,9 @@ public class Flowchart {
 		 * targets and 'self' when the input is the same name as the actuator.
 		 */
 		for (Pair<IServiceCall, IContextualizable> actor : actuator.getComputationStrategy()) {
-			compileComputation(actor, element, actuator);
+			if (actor.getFirst() != null) {
+				compileComputation(actor, element, actuator);
+			}
 		}
 
 		return element;

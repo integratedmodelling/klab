@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
@@ -48,6 +49,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -125,7 +127,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	IModel model;
 	Set<String> notifiedObservations;
 	Map<IConcept, ObservationGroup> groups;
-	Map<String, Object> symbolTable = new HashMap<>();
+	Map<String, IVariable> symbolTable = new HashMap<>();
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -178,6 +180,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 	}
 
+	RuntimeScope(RuntimeScope scope, Map<String, IVariable> variables) {
+		this(scope);
+		this.getVariables().putAll(variables);
+	}
+	
 	RuntimeScope(RuntimeScope context) {
 		this.putAll(context);
 		this.namespace = context.namespace;
@@ -238,7 +245,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		/*
 		 * this is the only one where the symbol table is kept.
 		 */
-		ret.symbolTable.putAll(symbolTable);
+//		ret.symbolTable.get().putAll(symbolTable);
 
 		return ret;
 	}
@@ -459,8 +466,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale)
-				.run(scale.initialization(), ((Monitor) monitor).get(subtask));
+		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
+				((Monitor) monitor).get(subtask));
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
@@ -1413,8 +1420,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	public void scheduleActions(Actuator actuator) {
 
 		/*
-		 * Only occurrents occur.
-		 * FIXME yes, but they may affect continuants
+		 * Only occurrents occur. FIXME yes, but they may affect continuants
 		 */
 		boolean isOccurrent = actuator.getType().isOccurrent();
 		if (isOccurrent) {
@@ -1423,8 +1429,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			for (Computation computation : actuator.getContextualizers()) {
 
 				/*
-				 * nothing meant for initialization should be scheduled.
+				 * nothing meant for initialization should be scheduled. Resource is null if
+				 * this encodes an aux variable.
 				 */
+				if (computation.variable != null) {
+					schedule.add(computation);
+					continue;
+				}
+
 				if (computation.resource.getTrigger() == Trigger.DEFINITION) {
 					continue;
 				}
@@ -1478,7 +1490,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public Map<String, Object> getSymbolTable() {
+	public Map<String, IVariable> getVariables() {
 		return symbolTable;
 	}
 
@@ -1511,6 +1523,18 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				}
 			}
 		}
+		return ret;
+	}
+
+	@Override
+	public Collection<IObservable> getDependents(IObservable observable) {
+		List<IObservable> ret = new ArrayList<>();
+		return ret;
+	}
+
+	@Override
+	public Collection<IObservable> getPrecursors(IObservable observable) {
+		List<IObservable> ret = new ArrayList<>();
 		return ret;
 	}
 }

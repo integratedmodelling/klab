@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.ogc.vector.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.Properties;
 
 import org.geotools.data.DataStore;
@@ -31,6 +32,8 @@ import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.ogc.integration.Geoserver;
+import org.integratedmodelling.klab.ogc.integration.Postgis;
 
 /**
  * The raster publisher will attempt WCS publishing if a WCS server is
@@ -50,7 +53,10 @@ public class VectorPublisher implements IResourcePublisher {
 		 * If we have Postgis + Geoserver dedicated to this node instance, publish in
 		 * them and turn the resource into a WFS one.
 		 */
-		if (false /* have postgis */) {
+		if (Postgis.isEnabled()) {
+			
+			
+			
 			try {
 
 				// TODO resource shp path
@@ -82,7 +88,7 @@ public class VectorPublisher implements IResourcePublisher {
 			}
 		}
 		
-		if (false /* have Geoserver */ ) {
+		if (Geoserver.isEnabled()) {
 			
 			/* 
 			 * ensure database is published as a PG store
@@ -107,5 +113,7 @@ public class VectorPublisher implements IResourcePublisher {
 
 		return ret;
 	}
+	
+
 
 }

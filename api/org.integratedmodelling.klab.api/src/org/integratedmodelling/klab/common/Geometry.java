@@ -232,12 +232,12 @@ public class Geometry implements IGeometry {
 	 * time period as a long
 	 */
 	public static final String PARAMETER_TIME_START = "tstart";
-	
+
 	/**
 	 * time period as a long
 	 */
 	public static final String PARAMETER_TIME_END = "tend";
-	
+
 	/**
 	 * Time representation: one of generic, specific, grid or real.
 	 */
@@ -261,8 +261,23 @@ public class Geometry implements IGeometry {
 	 */
 	public static final String PARAMETER_TIME_SCOPE_UNIT = "tunit";
 
+	public static final String PARAMETER_TIME_COVERAGE_UNIT = "coverageunit";
+
+	public static final String PARAMETER_TIME_COVERAGE_START = "coveragestart";
+
+	public static final String PARAMETER_TIME_COVERAGE_END = "coverageend";
+
 	public static Geometry create(String geometry) {
 		return makeGeometry(geometry, 0);
+	}
+
+	private static Geometry create(Iterable<Dimension> dims) {
+		Geometry ret = new Geometry();
+		for (Dimension dim : dims) {
+			ret.scalar = false;
+			ret.dimensions.add((DimensionImpl) dim);
+		}
+		return ret;
 	}
 
 	public static GeometryBuilder builder() {
@@ -339,7 +354,7 @@ public class Geometry implements IGeometry {
 				return o1.getType() == Type.TIME ? -1 : 0;
 			}
 		});
-		
+
 		String ret = granularity == Granularity.MULTIPLE ? "#" : "";
 		for (Dimension dim : dims) {
 			ret += dim.getType() == Type.SPACE ? (dim.isGeneric() ? "\u03c3" : (dim.isRegular() ? "S" : "s"))
@@ -865,8 +880,8 @@ public class Geometry implements IGeometry {
 //		Geometry g4 = create("T1(23)S2(200,100)");
 //		Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
 
-		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
-		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
+//		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
+//		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
 	}
 
 	@Override
@@ -906,7 +921,7 @@ public class Geometry implements IGeometry {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return encode().hashCode();
@@ -1039,7 +1054,9 @@ public class Geometry implements IGeometry {
 	 * 
 	 * In general, any geometry can merge in a scalar geometry (an empty one will
 	 * become scalar); other dimensions can be inherited if they are not present, or
-	 * they must have the same dimensionality in order to be kept without error.
+	 * they must have the same dimensionality in order to be kept without error. If
+	 * the receiver has a generic dimension and the incoming dimension is not
+	 * generic, the result adopts the specific one.
 	 * 
 	 * If we have a dimension that the other doesn't, just leave it there in the
 	 * result.
@@ -1057,14 +1074,17 @@ public class Geometry implements IGeometry {
 			return this;
 		}
 
-		List<Dimension> add = new ArrayList<>();
+		List<Dimension> result = new ArrayList<>();
 		for (Dimension dimension : geometry.getDimensions()) {
 			if (getDimension(dimension.getType()) == null) {
-				add.add(((DimensionImpl) dimension).copy());
+				result.add(((DimensionImpl) dimension).copy());
+			} else if (getDimension(dimension.getType()).isGeneric() && !dimension.isGeneric()) {
+				// a specific dimension trumps a generic one
+				result.add(((DimensionImpl) dimension).copy());
 			} else if (!((DimensionImpl) getDimension(dimension.getType())).isCompatible(dimension)) {
 				return null;
 			} else {
-				Dimension myDimension = getDimension(dimension.getType());
+				Dimension myDimension = ((DimensionImpl) getDimension(dimension.getType())).copy();
 				if (myDimension.size() == 0 && dimension.size() > 0) {
 					// merging a distributed dimension makes us distributed
 					((DimensionImpl) myDimension).shape = ((DimensionImpl) dimension).shape.clone();
@@ -1073,17 +1093,12 @@ public class Geometry implements IGeometry {
 					// merging an irregular dimension makes us irregular
 					((DimensionImpl) myDimension).regular = false;
 				}
+				result.add(myDimension);
 			}
 		}
 
-		Geometry ret = create(this.encode());
+		return create(result);
 
-		for (Dimension dimension : add) {
-			ret.scalar = false;
-			ret.dimensions.add((DimensionImpl) dimension);
-		}
-
-		return ret;
 	}
 
 	/**

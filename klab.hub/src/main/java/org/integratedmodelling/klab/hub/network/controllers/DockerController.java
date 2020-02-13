@@ -40,43 +40,51 @@ public class DockerController {
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
 	public ResponseEntity<?> getNodes() {
 		DockerConfiguration config = repo.findAll().get(0);
-			DockerClientConfig clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
-					  .withDockerHost(config.getDockerHost())
-					  .build();
-			
-			DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory()
-					  .withReadTimeout(1000)
-					  .withConnectTimeout(1000)
-					  .withMaxTotalConnections(100)
-					  .withMaxPerRouteConnections(10);
-			
-			DockerClient dockerClient = DockerClientBuilder.getInstance(clientConfig)
-					  .withDockerCmdExecFactory(dockerCmdExecFactory)
-					  .build();
-			
-			
-			
-			ExposedPort port = ExposedPort.parse("8287");
-			Binding.bindPort(8287);
-			Ports portBindings = new Ports();
-			portBindings.bind(port, Binding.bindPort(8287));
-			List<String> entry = new ArrayList();
-			entry.add("ECHO java -jar");
-			entry.add("$NODE");
-			entry.add("-Dspring.config.location=$CONFIG");
-			entry.add("-cert $CERT");
-			entry.add("-Xmx2048M");
-			entry.add("-Dklab.node.submitting=FUCKERS");
-			
-			CreateContainerResponse container = dockerClient.createContainerCmd("node:un_development")
-					   .withExposedPorts(port)
-					   .withHostConfig(newHostConfig().withPortBindings(portBindings))
-					   .withName("node_hub")
-					   .withEntrypoint("java", "-jar", "klab.node.jar")
-					   .exec();
-			
-			dockerClient.startContainerCmd(container.getId()).exec();
+//			DockerClientConfig clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
+//					  .withDockerHost(config.getDockerHost())
+//					  .build();
+//			
+//			DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory()
+//					  .withReadTimeout(1000)
+//					  .withConnectTimeout(1000)
+//					  .withMaxTotalConnections(100)
+//					  .withMaxPerRouteConnections(10);
+//			
+//			DockerClient dockerClient = DockerClientBuilder.getInstance(clientConfig)
+//					  .withDockerCmdExecFactory(dockerCmdExecFactory)
+//					  .build();
+//			
+//			
+//			
+//			ExposedPort port = ExposedPort.parse("8287");
+//			Binding.bindPort(8287);
+//			Ports portBindings = new Ports();
+//			portBindings.bind(port, Binding.bindPort(8287));
+//			List<String> entry = new ArrayList();
+//			entry.add("ECHO java -jar");
+//			entry.add("$NODE");
+//			entry.add("-Dspring.config.location=$CONFIG");
+//			entry.add("-cert $CERT");
+//			entry.add("-Xmx2048M");
+//			entry.add("-Dklab.node.submitting=FUCKERS");
+//			
+//			CreateContainerResponse container = dockerClient.createContainerCmd("node:un_development")
+//					   .withExposedPorts(port)
+//					   .withHostConfig(newHostConfig().withPortBindings(portBindings))
+//					   .withName("node_hub")
+//					   .withEntrypoint("java", "-jar", "klab.node.jar")
+//					   .exec();
+//			
+//			dockerClient.startContainerCmd(container.getId()).exec();
 		return null;
+	}
+	
+	@GetMapping(value = "deployed-containers", produces = "application/json")
+	@PreAuthorize("hasRole('ROLE_SYSTEM')")
+	public ResponseEntity<?> getRunningContainers() {
+		
+		return null;
+		
 	}
 	
 }

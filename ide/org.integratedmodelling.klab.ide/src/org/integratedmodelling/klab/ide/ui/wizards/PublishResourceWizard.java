@@ -34,6 +34,7 @@ import org.eclipse.ui.PlatformUI;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.ResourcesView;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
@@ -76,19 +77,15 @@ public class PublishResourceWizard extends Wizard {
 		
 			Activator.session().getTicketManager().open(ITicket.Type.ResourceSubmission, "resource", target.getUrn());
 
-				ResourcesView view = null;
-				try {
-					view = (ResourcesView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResourcesView.ID);
-				} catch (PartInitException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					//what should we do in this case?
-				}
-				//this also needs to do something more
-				view.showPending();
-			
+			ResourcesView view = null;
+			try {
+				view = (ResourcesView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResourcesView.ID);
+			} catch (PartInitException e) {
+				Eclipse.INSTANCE.handleException(e);
+			}
+			//this also needs to do something more
+			view.showPending();
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
-
 			return true;
 		}
 
@@ -103,3 +100,5 @@ public class PublishResourceWizard extends Wizard {
 	}
 
 }
+
+

@@ -10,10 +10,12 @@ import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.Role;
 import org.integratedmodelling.klab.hub.users.User;
+import org.integratedmodelling.klab.rest.Group;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.lang.JoseException;
+
 
 public class JwtToken {
 	
@@ -33,8 +35,13 @@ public class JwtToken {
 		claims.setGeneratedJwtId();
 		
 		List<String> roleStrings = new ArrayList<>();
+		
 		for (Role role : profile.getRoles()) {
 			roleStrings.add(role.toString());
+		}
+		
+		for(Group group: profile.getGroupsList()) {
+			roleStrings.add(group.getId());
 		}
 		
 		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);

@@ -46,6 +46,9 @@ public class Time extends Extent implements ITime {
 	ITimeDuration step;
 	boolean realtime = false;
 	Resolution resolution;
+	Resolution coverageResolution;
+	long coverageStart;
+	long coverageEnd;
 	long multiplicity = 1;
 	boolean partial = false;
 	boolean regular = true;
@@ -152,7 +155,8 @@ public class Time extends Extent implements ITime {
 	}
 
 	public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
-			ITimeInstant start, ITimeInstant end, ITimeDuration period) {
+			ITimeInstant start, ITimeInstant end, ITimeDuration period, Resolution.Type coverageUnit,
+			long coverageStart, long coverageEnd) {
 		Time ret = new Time();
 		ret.extentType = type;
 		ret.start = start;
@@ -169,8 +173,34 @@ public class Time extends Extent implements ITime {
 				ret.multiplicity = 0;
 			}
 		}
+		if (coverageUnit != null) {
+			ret.coverageResolution = new ResolutionImpl(coverageUnit, 1);
+			ret.coverageStart = coverageStart;
+			ret.coverageEnd = coverageEnd;
+		}
 
 		return ret;
+	}
+
+	public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
+			ITimeInstant start, ITimeInstant end, ITimeDuration period) {
+		return create(type, resolutionType, resolutionMultiplier, start, end, period, null, -1, -1);
+	}
+
+	/**
+	 * Return the timepoints for all events starting and ending at the passed
+	 * resolution in the time period we represent. If ordinal is true, return
+	 * 0-based indices based on the next higher resolution (e.g. month or week
+	 * number within a year, even if our own resolution is a decade); otherwise pass
+	 * the actual start timestamps in milliseconds. If we don't span any of those
+	 * events, return an empty array.
+	 * 
+	 * @param resolution
+	 * @param ordinal
+	 * @return
+	 */
+	public long[] getEvents(Resolution.Type resolution, boolean ordinal) {
+		return null;
 	}
 
 	public static Time create(IAnnotation timeAnnotation) {
@@ -290,7 +320,7 @@ public class Time extends Extent implements ITime {
 		return copy();
 	}
 
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ILocator> T as(Class<T> cls) {
 //		if (Long.class.isAssignableFrom(cls)) {
@@ -346,7 +376,9 @@ public class Time extends Extent implements ITime {
 	public Time collapse() {
 		return isConsistent()
 				? create(this.extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL,
-						this.resolution.getType(), resolution.getMultiplier(start, end), start, end, null)
+						this.resolution.getType(), resolution.getMultiplier(start, end), start, end, null,
+						(this.coverageResolution == null ? null : this.coverageResolution.getType()),
+						this.coverageStart, this.coverageEnd)
 				: this;
 	}
 
@@ -447,7 +479,9 @@ public class Time extends Extent implements ITime {
 	public String encode() {
 
 		String prefix = "T";
-		if (partial && step == null) {
+		if (getTimeType() == ITime.Type.LOGICAL) {
+			prefix = "\u03c4";
+		} else if (partial && step == null) {
 			prefix = "t";
 		}
 
@@ -469,6 +503,11 @@ public class Time extends Extent implements ITime {
 			if (resolution != null) {
 				args += "," + Geometry.PARAMETER_TIME_SCOPE + "=" + resolution.getMultiplier();
 				args += "," + Geometry.PARAMETER_TIME_SCOPE_UNIT + "=" + resolution.getType();
+			}
+			if (coverageResolution != null) {
+				args += "," + Geometry.PARAMETER_TIME_COVERAGE_UNIT + "=" + coverageResolution.getType();
+				args += "," + Geometry.PARAMETER_TIME_COVERAGE_START + "=" + coverageStart;
+				args += "," + Geometry.PARAMETER_TIME_COVERAGE_END + "=" + coverageEnd;
 			}
 		}
 
@@ -607,7 +646,9 @@ public class Time extends Extent implements ITime {
 		Long tstep = dimension.getParameters().get(Geometry.PARAMETER_TIME_GRIDRESOLUTION, Long.class);
 		Long tstart = dimension.getParameters().get(Geometry.PARAMETER_TIME_START, Long.class);
 		Long tend = dimension.getParameters().get(Geometry.PARAMETER_TIME_END, Long.class);
-
+		String cunit = dimension.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_UNIT, String.class);
+		Long cstart = dimension.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_START, Long.class);
+		Long cend = dimension.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_END, Long.class);
 		ITime.Type type = representation == null ? null : ITime.Type.valueOf(representation.toUpperCase());
 
 		if (type == ITime.Type.INITIALIZATION) {
@@ -623,10 +664,16 @@ public class Time extends Extent implements ITime {
 			start = new TimeInstant(locator);
 		}
 
+		Resolution.Type coverage = null;
+		if (cunit != null) {
+			coverage = Resolution.Type.parse(cunit);
+		}
+
 		Resolution.Type resType = unit == null ? null : Resolution.Type.parse(unit);
 		ITimeDuration step = tstep == null ? null : TimeDuration.create(tstep, resType);
 
-		return create(type, resType, scope == null ? null : 1.0, start, end, step);
+		return create(type, resType, scope == null ? null : 1.0, start, end, step, coverage,
+				(cstart == null ? -1 : cstart), (cend == null ? -1 : cend));
 	}
 
 	@Override
@@ -707,7 +754,7 @@ public class Time extends Extent implements ITime {
 		this.locatedOffsets = new long[] { n };
 		return this;
 	}
-	
+
 	public Time upgradeForOccurrents() {
 		return create(ITime.Type.GRID, this.getResolution().getType(), 1.0, this.start, this.end,
 				TimeDuration.create(this.start, this.end, true));
@@ -734,6 +781,21 @@ public class Time extends Extent implements ITime {
 			}
 		}
 		return this;
+	}
+
+	@Override
+	public Resolution getCoverageResolution() {
+		return coverageResolution;
+	}
+
+	@Override
+	public long getCoverageLocatorStart() {
+		return coverageStart;
+	}
+
+	@Override
+	public long getCoverageLocatorEnd() {
+		return coverageEnd;
 	}
 
 }

@@ -518,9 +518,9 @@ public class KimValidator extends AbstractKimValidator {
           }
           if ((((observable.getMain() != null) && observable.getMain().is(IKimConcept.Type.ABSTRACT)) && 
             (!(observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))))) {
-            this.error(("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or" + 
-              " resolve attributes or roles)."), 
-              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+            this.error(
+              ("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or" + 
+                " resolve attributes or roles)."), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
           }
           Kim.ConceptDescriptor definition = observable.getDescriptor();
           if ((definition != null)) {
@@ -2061,8 +2061,9 @@ public class KimValidator extends AbstractKimValidator {
   public void checkConceptDefinition(final ConceptStatement statement) {
     boolean ok = true;
     Namespace ns = KimValidator.getNamespace(statement);
-    if (((ns != null) && ns.isWorldviewBound())) {
-      this.error("Concept definitions are not admitted in secondary namespaces", KimPackage.Literals.CONCEPT_STATEMENT__BODY);
+    if ((((ns != null) && ns.isWorldviewBound()) && (!((statement.getBody() != null) && statement.getBody().isAlias())))) {
+      this.error("Concept definitions are not admitted in secondary namespaces: use \'equals\' to declare aliases", 
+        KimPackage.Literals.CONCEPT_STATEMENT__BODY);
       ok = false;
     }
     EnumSet<IKimConcept.Type> type = Kim.INSTANCE.getType(statement.getConcept());
@@ -2855,8 +2856,8 @@ public class KimValidator extends AbstractKimValidator {
             boolean _is = quality.is(IKimConcept.Type.QUALITY);
             boolean _not_10 = (!_is);
             if (_not_10) {
-              this.error(
-                "only quality types can be affected by a process", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i_6);
+              this.error("only quality types can be affected by a process", concept, 
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i_6);
             } else {
               ret.getQualitiesAffected().add(quality);
             }
