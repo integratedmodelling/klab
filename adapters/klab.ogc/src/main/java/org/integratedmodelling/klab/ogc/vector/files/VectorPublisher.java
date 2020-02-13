@@ -15,12 +15,16 @@
  */
 package org.integratedmodelling.klab.ogc.vector.files;
 
+import java.io.File;
+
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEnhancer;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.ogc.integration.Geoserver;
 import org.integratedmodelling.klab.ogc.integration.Postgis;
 
@@ -40,34 +44,48 @@ public class VectorPublisher implements IResourceEnhancer {
 
 	@Override
 	public boolean isEnhanced(IResource resource) {
-		// stop any further attempt, as the result of enhancing uses a different adapter.
-		return true;
+		/*
+		 * a vector resource is not enhanced; the enhanced resource is WFS which cannot
+		 * be further enhanced. This means "keep trying to push to GS/Postgis if so
+		 * configured
+		 */
+		return false;
 	}
 
 	@Override
 	public IResource enhanceResource(IResource resource) {
-		
+
+		Resource ret = (Resource) resource;
+
 		if (Geoserver.isEnabled()) {
-			
-			Resource ret = new Resource(((Resource)resource).getReference());
-			// TODO add message with date and results
-			ret.copyToHistory("Enhanced by vector adapter");
-			
+
+			Geoserver geoserver = Geoserver.create();
+			Urn urn = new Urn(resource.getUrn());
+
 			if (Postgis.isEnabled()) {
-				Postgis postgis = Postgis.create(new Urn(resource.getUrn()));
+				Postgis postgis = Postgis.create(urn);
 				if (postgis.isOnline()) {
-					// find the main file
-					// publish in postgis
-					// publish in geoserver
-					// fix resource adapter and parameters
-					// return fixed resource
+
+					File file = ((VectorAdapter) Resources.INSTANCE.getResourceAdapter(VectorAdapter.ID))
+							.getMainFile(resource);
+
+					String table = postgis.publish(file, urn);
+					if (geoserver.createDatastore(postgis, urn.getNamespace())
+							&& geoserver.publishPostgisVector(postgis, urn.getNamespace(), table)) {
+
+						ret = new Resource(((Resource) resource).getReference());
+						// fix resource adapter and parameters			
+						// TODO add message with date and results
+						ret.copyToHistory("Enhanced by vector adapter");
+						// return fixed resource
+//						ret.setAdapter(VectorAdapter.ID);
+					}
 				}
 			}
-			
+
 		}
-		
-		return resource;
+
+		return ret;
 	}
-	
 
 }

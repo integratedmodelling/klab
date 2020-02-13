@@ -104,6 +104,8 @@ public class Postgis {
 					ok = false;
 				}
 			}
+		} else {
+			ok = true;
 		}
 
 		this.active = ok;
@@ -113,12 +115,11 @@ public class Postgis {
 		return this.active;
 	}
 
-	// CREATE DATABASE my_spatial_db TEMPLATE=template_postgis OR
-	/*
-	 * CREATE EXTENSION postgis; -- CREATE EXTENSION fuzzystrmatch; -- CREATE
-	 * EXTENSION postgis_tiger_geocoder; --this one is optional if you want to use
-	 * the rules based standardizer (pagc_normalize_address) -- CREATE EXTENSION
-	 * address_standardizer;
+	/**
+	 * Doesn't mean it's online, it means there is enough configuration for it to
+	 * try and get online.
+	 * 
+	 * @return true if DB operations can be attempted.
 	 */
 	public static boolean isEnabled() {
 		return Configuration.INSTANCE.getServiceProperty("postgres", "host") != null
@@ -175,6 +176,7 @@ public class Postgis {
 	private String publishVector(File resource, Urn urn) throws KlabStorageException {
 
 		String ret = urn.getNamespace() + "_" + urn.getResourceId();
+		ret = ret.replaceAll("\\.", "_").toLowerCase();
 
 		try {
 
@@ -219,6 +221,8 @@ public class Postgis {
 					writer.write();
 				}
 			}
+			
+			datastore.dispose();
 
 		} catch (Throwable t) {
 			throw new KlabStorageException(t.getMessage());
@@ -235,13 +239,13 @@ public class Postgis {
 		}
 
 		Urn urn = new Urn("im.data:spain:infrastructure:admin");
-		
+
 		// publish table in postgis
 		Postgis postgis = Postgis.create(urn);
 		System.out.println(postgis.isOnline() ? "OK" : "NAAH");
 		String table = postgis.publish(new File("E:\\Dropbox\\Data\\Administrativre\\Spain\\gadm36_ESP_4.shp"), urn);
 		System.out.println("Published table " + table);
-		
+
 		// create datastore for db (if needed) and feature type for table in Geoserver
 		Geoserver geoserver = Geoserver.create();
 		if (geoserver.publishPostgisVector(postgis, "klabtest", table)) {
