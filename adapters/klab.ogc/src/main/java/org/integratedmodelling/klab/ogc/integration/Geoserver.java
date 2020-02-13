@@ -11,9 +11,6 @@ import java.util.Set;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Urn;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
 import kong.unirest.HttpResponse;
@@ -132,7 +129,7 @@ public class Geoserver {
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 		}
-		
+
 		return false;
 	}
 
@@ -152,7 +149,9 @@ public class Geoserver {
 	public Set<String> getDatastores(String namespace) {
 
 		Set<String> ret = new HashSet<>();
-		GetRequest request = Unirest.get(this.url + "/rest/workspaces/" + namespace + "/datastores");
+		GetRequest request = Unirest.get(this.url + "/rest/workspaces/" + namespace + "/datastores").header("Accept",
+				"application/json");
+		;
 		if (this.username != null) {
 			request = request.basicAuth(username, password);
 		}
@@ -172,7 +171,9 @@ public class Geoserver {
 	public Set<String> getCoveragestores(String namespace) {
 
 		Set<String> ret = new HashSet<>();
-		GetRequest request = Unirest.get(this.url + "/rest/workspaces/" + namespace + "/coveragestores");
+		GetRequest request = Unirest.get(this.url + "/rest/workspaces/" + namespace + "/coveragestores")
+				.header("Accept", "application/json");
+		;
 		if (this.username != null) {
 			request = request.basicAuth(username, password);
 		}
@@ -274,7 +275,7 @@ public class Geoserver {
 
 	public Set<String> getNamespaces() {
 		Set<String> ret = new HashSet<>();
-		GetRequest request = Unirest.get(this.url + "/rest/namespaces");
+		GetRequest request = Unirest.get(this.url + "/rest/namespaces").header("Accept", "application/json");
 		if (this.username != null) {
 			request = request.basicAuth(username, password);
 		}

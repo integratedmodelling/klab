@@ -310,7 +310,8 @@ public interface API {
 	public static final String SCHEMA = "/schema";
 
 	/**
-	 * Authority endpoints are public.
+	 * All authority endpoints are public, although some may limit access
+	 * according to the principal.
 	 *
 	 * @author ferdinando.villa
 	 */
@@ -331,21 +332,21 @@ public interface API {
 		 * 
 		 * GET JSON
 		 */
-		public static final String CAPABILITIES = "/authority/" + P_AUTHORITY + "/capabilities";
+		public static final String CAPABILITIES = "/public/authority/" + P_AUTHORITY + "/capabilities";
 
 		/**
 		 * The Constant RESOLVE.
 		 *
 		 * GET JSON
 		 */
-		public static final String RESOLVE = "/authority/" + P_AUTHORITY + "/resolve/" + P_IDENTIFIER;
+		public static final String RESOLVE = "/public/authority/" + P_AUTHORITY + "/resolve/" + P_IDENTIFIER;
 
 		/**
 		 * The Constant QUERY.
 		 *
 		 * POST
 		 */
-		public static final String QUERY = "/authority/" + P_AUTHORITY + "/query";
+		public static final String QUERY = "/public/authority/" + P_AUTHORITY + "/query";
 	}
 
 	/**

@@ -40,6 +40,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   of change for a quality (dQ/dt).
 - Allow concept declarations using 'equals' in test and script namespaces.
 - Enable support for auxiliary variables (https://integratedmodelling.org/jira/browse/KEN-16)
+- Extend IResourcePublisher with an IResourceEnhancer interface that can postprocess
+  resources (in asynchronous, arbitrarily long operations) and modify them for better 
+  accessibility, performance or content. 
+- Implement publishing of vector and raster files to node-connected Geoserver and enhancement
+  of vector/raster public resources to WFS/WCS ones.
   
 ## [0.10.0.222] -- 2020/02/01
 ### Added

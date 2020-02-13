@@ -239,7 +239,7 @@ public class Postgis {
 		// publish table in postgis
 		Postgis postgis = Postgis.create(urn);
 		System.out.println(postgis.isOnline() ? "OK" : "NAAH");
-		String table = postgis.publish(new File("C:\\Users\\Ferd\\Dropbox\\Data\\Administrativre\\Spain\\gadm36_ESP_4.shp"), urn);
+		String table = postgis.publish(new File("E:\\Dropbox\\Data\\Administrativre\\Spain\\gadm36_ESP_4.shp"), urn);
 		System.out.println("Published table " + table);
 		
 		// create datastore for db (if needed) and feature type for table in Geoserver
