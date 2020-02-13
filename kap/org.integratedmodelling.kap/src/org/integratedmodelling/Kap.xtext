@@ -1,0 +1,9 @@
+grammar org.integratedmodelling.Kap with org.eclipse.xtext.common.Terminals
+
+generate kap "http://www.integratedmodelling.org/Kap"
+
+Model:
+	greetings+=Greeting*;
+	
+Greeting:
+	'Hello' name=ID '!';

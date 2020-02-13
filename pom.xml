@@ -69,6 +69,7 @@
 		<module>api</module>
 		<module>kdl</module>
 		<module>kim</module>
+		<module>kap</module>
 		<module>klab.engine</module>
 		<module>adapters</module>
 		<module>klab.modeler</module>
@@ -81,7 +82,8 @@
 		<module>components</module>
 		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
 		<!--  <module>docs</module> -->
- 	</modules>
+		<module>kap</module>
+	</modules>
 
 	<properties>
 
