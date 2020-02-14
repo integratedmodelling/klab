@@ -3,7 +3,6 @@
  */
 package org.integratedmodelling.kap.validation
 
-
 /**
  * This class contains custom validation rules. 
  *

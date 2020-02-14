@@ -25,7 +25,7 @@ import org.eclipse.xtext.service.GrammarProvider;
 public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public class ModelElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Model");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Model");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Action cModelAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cPreambleAssignment_1 = (Assignment)cGroup.eContents().get(1);
@@ -57,7 +57,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getDefinitionsDefinitionParserRuleCall_2_0() { return cDefinitionsDefinitionParserRuleCall_2_0; }
 	}
 	public class PreambleElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Preamble");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Preamble");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cNameKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
@@ -151,7 +151,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getVersionLOWERCASE_IDTerminalRuleCall_2_3_1_0() { return cVersionLOWERCASE_IDTerminalRuleCall_2_3_1_0; }
 	}
 	public class DefinitionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Definition");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Definition");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cDefKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
@@ -194,7 +194,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getBodyBodyParserRuleCall_4_0() { return cBodyBodyParserRuleCall_4_0; }
 	}
 	public class ArgumentDeclarationElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.ArgumentDeclaration");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.ArgumentDeclaration");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Action cArgumentDeclarationAction_0 = (Action)cGroup.eContents().get(0);
 		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
@@ -246,7 +246,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
 	}
 	public class ParameterListElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.ParameterList");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.ParameterList");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cPairsAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cPairsKeyValuePairParserRuleCall_0_0 = (RuleCall)cPairsAssignment_0.eContents().get(0);
@@ -281,7 +281,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getPairsKeyValuePairParserRuleCall_1_1_0() { return cPairsKeyValuePairParserRuleCall_1_1_0; }
 	}
 	public class KeyValuePairElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.KeyValuePair");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.KeyValuePair");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
@@ -329,7 +329,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getValueValueParserRuleCall_1_0() { return cValueValueParserRuleCall_1_0; }
 	}
 	public class ValueElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Value");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Value");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Assignment cArgvalueAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
 		private final RuleCall cArgvalueARGVALUETerminalRuleCall_0_0 = (RuleCall)cArgvalueAssignment_0.eContents().get(0);
@@ -385,7 +385,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getExpressionEXPRTerminalRuleCall_4_0() { return cExpressionEXPRTerminalRuleCall_4_0; }
 	}
 	public class LiteralElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Literal");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Literal");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Assignment cNumberAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
 		private final RuleCall cNumberNumberParserRuleCall_0_0 = (RuleCall)cNumberAssignment_0.eContents().get(0);
@@ -460,7 +460,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getBooleanFalseKeyword_4_0_1() { return cBooleanFalseKeyword_4_0_1; }
 	}
 	public class BodyElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Body");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Body");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
 		private final Action cBodyAction_0_0 = (Action)cGroup_0.eContents().get(0);
@@ -533,7 +533,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
 	}
 	public class StatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Statement");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Statement");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Assignment cCallAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
 		private final RuleCall cCallCallParserRuleCall_0_0 = (RuleCall)cCallAssignment_0.eContents().get(0);
@@ -601,7 +601,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getRightParenthesisKeyword_3_3() { return cRightParenthesisKeyword_3_3; }
 	}
 	public class IfStatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.IfStatement");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.IfStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cIfKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cExpressionAssignment_1 = (Assignment)cGroup.eContents().get(1);
@@ -676,7 +676,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getElseCallIfBodyParserRuleCall_4_1_0() { return cElseCallIfBodyParserRuleCall_4_1_0; }
 	}
 	public class IfBodyElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.IfBody");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.IfBody");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Assignment cCallAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
 		private final RuleCall cCallCallParserRuleCall_0_0 = (RuleCall)cCallAssignment_0.eContents().get(0);
@@ -703,7 +703,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getBodyBodyParserRuleCall_1_0() { return cBodyBodyParserRuleCall_1_0; }
 	}
 	public class CallElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Call");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Call");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
@@ -766,7 +766,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getSemicolonKeyword_2_1() { return cSemicolonKeyword_2_1; }
 	}
 	public class ActionsElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Actions");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Actions");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Assignment cCallAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
 		private final RuleCall cCallCallParserRuleCall_0_0 = (RuleCall)cCallAssignment_0.eContents().get(0);
@@ -830,7 +830,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getRightParenthesisKeyword_3_3() { return cRightParenthesisKeyword_3_3; }
 	}
 	public class MatchElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Match");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Match");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
 		private final Assignment cIdAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
@@ -987,7 +987,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getBodyBodyParserRuleCall_5_2_0() { return cBodyBodyParserRuleCall_5_2_0; }
 	}
 	public class NumberElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Number");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Number");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
 		private final Keyword cPlusSignKeyword_0_0 = (Keyword)cAlternatives_0.eContents().get(0);
@@ -1104,7 +1104,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getExpINTTerminalRuleCall_4_0_2_0() { return cExpINTTerminalRuleCall_4_0_2_0; }
 	}
 	public class DateElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Date");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.Date");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cYearAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cYearINTTerminalRuleCall_0_0 = (RuleCall)cYearAssignment_0.eContents().get(0);
@@ -1274,18 +1274,18 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		this.pMatch = new MatchElements();
 		this.pNumber = new NumberElements();
 		this.pDate = new DateElements();
-		this.tLOWERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.LOWERCASE_ID");
-		this.tARGVALUE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.ARGVALUE");
-		this.tEXPR = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.EXPR");
-		this.tEMBEDDEDTEXT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.EMBEDDEDTEXT");
-		this.tREGEXP = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.REGEXP");
-		this.tOBSERVABLE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.OBSERVABLE");
+		this.tLOWERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.LOWERCASE_ID");
+		this.tARGVALUE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.ARGVALUE");
+		this.tEXPR = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.EXPR");
+		this.tEMBEDDEDTEXT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.EMBEDDEDTEXT");
+		this.tREGEXP = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.REGEXP");
+		this.tOBSERVABLE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kap.Kap.OBSERVABLE");
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
 		Grammar grammar = grammarProvider.getGrammar(this);
 		while (grammar != null) {
-			if ("org.integratedmodelling.Kap".equals(grammar.getName())) {
+			if ("org.integratedmodelling.kap.Kap".equals(grammar.getName())) {
 				return grammar;
 			}
 			List<Grammar> grammars = grammar.getUsedGrammars();

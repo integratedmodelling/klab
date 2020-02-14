@@ -13,7 +13,7 @@ import org.eclipse.xtext.testing.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.integratedmodelling.kap.kap.Model;
-import org.integratedmodelling.tests.KapInjectorProvider;
+import org.integratedmodelling.kap.tests.KapInjectorProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

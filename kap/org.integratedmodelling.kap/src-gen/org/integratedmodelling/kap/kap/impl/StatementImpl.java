@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 import org.integratedmodelling.kap.kap.Call;
 import org.integratedmodelling.kap.kap.IfStatement;
 import org.integratedmodelling.kap.kap.KapPackage;

@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kap.web
 
-import org.integratedmodelling.web.AbstractKapWebModule
-
 /**
  * Use this class to register additional components to be used within the web application.
  */

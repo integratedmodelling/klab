@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
 import org.integratedmodelling.kap.kap.Actions;
 import org.integratedmodelling.kap.kap.ArgumentDeclaration;
 import org.integratedmodelling.kap.kap.Body;

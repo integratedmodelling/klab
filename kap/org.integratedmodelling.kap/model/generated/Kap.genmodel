@@ -4,7 +4,7 @@
     modelPluginID="org.integratedmodelling.kap" forceOverwrite="true" modelName="Kap"
     updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.19">
-  <genPackages prefix="Kap" basePackage="org.integratedmodelling" disposableProviderFactory="true"
+  <genPackages prefix="Kap" basePackage="org.integratedmodelling.kap" disposableProviderFactory="true"
       fileExtensions="kap" ecorePackage="Kap.ecore#/">
     <genClasses ecoreClass="Kap.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Model/preamble"/>

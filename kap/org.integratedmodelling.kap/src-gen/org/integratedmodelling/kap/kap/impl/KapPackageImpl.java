@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
 import org.integratedmodelling.kap.kap.Actions;
 import org.integratedmodelling.kap.kap.ArgumentDeclaration;
 import org.integratedmodelling.kap.kap.Body;

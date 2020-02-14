@@ -3,7 +3,6 @@
  */
 package org.integratedmodelling.kap
 
-
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
  */

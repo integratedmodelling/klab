@@ -8,8 +8,7 @@ public enum Kap {
     INSTANCE;
 
 	public IKapApplication declare(Model model) {
-		// TODO Auto-generated method stub
-		return null;
+		return new KapApplication(model);
 	}
     
 //    public IKdlDataflow declare(Model dataflow) {

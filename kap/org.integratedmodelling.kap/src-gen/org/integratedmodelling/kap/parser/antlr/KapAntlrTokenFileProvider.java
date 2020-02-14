@@ -11,6 +11,6 @@ public class KapAntlrTokenFileProvider implements IAntlrTokenFileProvider {
 	@Override
 	public InputStream getAntlrTokenFile() {
 		ClassLoader classLoader = getClass().getClassLoader();
-		return classLoader.getResourceAsStream("org/integratedmodelling/parser/antlr/internal/InternalKap.tokens");
+		return classLoader.getResourceAsStream("org/integratedmodelling/kap/parser/antlr/internal/InternalKap.tokens");
 	}
 }

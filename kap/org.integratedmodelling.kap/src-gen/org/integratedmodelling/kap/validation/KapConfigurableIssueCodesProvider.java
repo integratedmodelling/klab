@@ -10,7 +10,7 @@ import org.eclipse.xtext.validation.SeverityConverter;
 
 @SuppressWarnings("restriction")
 public class KapConfigurableIssueCodesProvider extends ConfigurableIssueCodesProvider {
-	protected static final String ISSUE_CODE_PREFIX = "org.integratedmodelling.";
+	protected static final String ISSUE_CODE_PREFIX = "org.integratedmodelling.kap.";
 
 	public static final String DEPRECATED_MODEL_PART = ISSUE_CODE_PREFIX + "deprecatedModelPart";
 

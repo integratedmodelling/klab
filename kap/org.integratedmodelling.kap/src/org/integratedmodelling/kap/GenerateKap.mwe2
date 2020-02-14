@@ -33,7 +33,7 @@ Workflow {
 			}
 		}
 		language = StandardLanguage {
-			name = "org.integratedmodelling.Kap"
+			name = "org.integratedmodelling.kap.Kap"
 			fileExtensions = "kap"
 			parserGenerator = {
 				options = {

@@ -13,7 +13,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.shared.SharedStateModule;
 import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kap.KapRuntimeModule;
-import org.integratedmodelling.ui.KapUiModule;
+import org.integratedmodelling.kap.ui.KapUiModule;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -23,7 +23,7 @@ import org.osgi.framework.BundleContext;
 public class KapActivator extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "org.integratedmodelling.kap.ui";
-	public static final String ORG_INTEGRATEDMODELLING_KAP = "org.integratedmodelling.Kap";
+	public static final String ORG_INTEGRATEDMODELLING_KAP_KAP = "org.integratedmodelling.kap.Kap";
 	
 	private static final Logger logger = Logger.getLogger(KapActivator.class);
 	
@@ -73,14 +73,14 @@ public class KapActivator extends AbstractUIPlugin {
 	}
 	
 	protected com.google.inject.Module getRuntimeModule(String grammar) {
-		if (ORG_INTEGRATEDMODELLING_KAP.equals(grammar)) {
+		if (ORG_INTEGRATEDMODELLING_KAP_KAP.equals(grammar)) {
 			return new KapRuntimeModule();
 		}
 		throw new IllegalArgumentException(grammar);
 	}
 	
 	protected com.google.inject.Module getUiModule(String grammar) {
-		if (ORG_INTEGRATEDMODELLING_KAP.equals(grammar)) {
+		if (ORG_INTEGRATEDMODELLING_KAP_KAP.equals(grammar)) {
 			return new KapUiModule(this);
 		}
 		throw new IllegalArgumentException(grammar);

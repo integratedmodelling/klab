@@ -15,4 +15,4 @@ Require-Bundle: org.integratedmodelling.kap.ui,
  org.eclipse.xtext.ui.testing,
  org.eclipse.ui.workbench;resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.integratedmodelling.ui.tests;x-internal=true
+Export-Package: org.integratedmodelling.kap.ui.tests;x-internal=true

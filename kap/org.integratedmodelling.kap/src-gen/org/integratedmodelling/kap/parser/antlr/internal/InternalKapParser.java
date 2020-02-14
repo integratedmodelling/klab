@@ -3,7 +3,6 @@ package org.integratedmodelling.kap.parser.antlr.internal;
 import org.eclipse.xtext.*;
 import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.parser.impl.*;
-import org.integratedmodelling.kap.services.KapGrammarAccess;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.parser.antlr.AbstractInternalAntlrParser;
@@ -11,6 +10,10 @@ import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream.HiddenTokens;
 import org.eclipse.xtext.parser.antlr.IUnorderedGroupHelper.UnorderedGroupState;
 import org.eclipse.xtext.parser.antlr.AntlrDatatypeRuleToken;
+import org.integratedmodelling.kap.services.KapGrammarAccess;
+
+
+
 import org.antlr.runtime.*;
 import java.util.Stack;
 import java.util.List;
@@ -220,7 +223,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"preamble",
                       						lv_preamble_1_0,
-                      						"org.integratedmodelling.Kap.Preamble");
+                      						"org.integratedmodelling.kap.Kap.Preamble");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -270,7 +273,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
             	      						current,
             	      						"definitions",
             	      						lv_definitions_2_0,
-            	      						"org.integratedmodelling.Kap.Definition");
+            	      						"org.integratedmodelling.kap.Kap.Definition");
             	      					afterParserOrEnumRuleCall();
             	      				
             	    }
@@ -414,7 +417,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
               						current,
               						"name",
               						lv_name_1_0,
-              						"org.integratedmodelling.Kap.LOWERCASE_ID");
+              						"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
               				
             }
 
@@ -505,7 +508,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
             	      												current,
             	      												"worldview",
             	      												lv_worldview_4_0,
-            	      												"org.integratedmodelling.Kap.LOWERCASE_ID");
+            	      												"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
             	      										
             	    }
 
@@ -733,7 +736,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
             	      												current,
             	      												"version",
             	      												lv_version_10_0,
-            	      												"org.integratedmodelling.Kap.LOWERCASE_ID");
+            	      												"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
             	      										
             	    }
 
@@ -891,7 +894,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
               						current,
               						"name",
               						lv_name_1_0,
-              						"org.integratedmodelling.Kap.LOWERCASE_ID");
+              						"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
               				
             }
 
@@ -933,7 +936,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"arguments",
                       						lv_arguments_2_0,
-                      						"org.integratedmodelling.Kap.ArgumentDeclaration");
+                      						"org.integratedmodelling.kap.Kap.ArgumentDeclaration");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -977,7 +980,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
               						current,
               						"body",
               						lv_body_4_0,
-              						"org.integratedmodelling.Kap.Body");
+              						"org.integratedmodelling.kap.Kap.Body");
               					afterParserOrEnumRuleCall();
               				
             }
@@ -1128,7 +1131,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"ids",
                       							lv_ids_2_0,
-                      							"org.integratedmodelling.Kap.LOWERCASE_ID");
+                      							"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
                       					
                     }
 
@@ -1179,7 +1182,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                     	      								current,
                     	      								"ids",
                     	      								lv_ids_4_0,
-                    	      								"org.integratedmodelling.Kap.LOWERCASE_ID");
+                    	      								"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
                     	      						
                     	    }
 
@@ -1319,7 +1322,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
               						current,
               						"pairs",
               						lv_pairs_0_0,
-              						"org.integratedmodelling.Kap.KeyValuePair");
+              						"org.integratedmodelling.kap.Kap.KeyValuePair");
               					afterParserOrEnumRuleCall();
               				
             }
@@ -1381,7 +1384,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
             	      							current,
             	      							"pairs",
             	      							lv_pairs_2_0,
-            	      							"org.integratedmodelling.Kap.KeyValuePair");
+            	      							"org.integratedmodelling.kap.Kap.KeyValuePair");
             	      						afterParserOrEnumRuleCall();
             	      					
             	    }
@@ -1521,7 +1524,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"name",
                       							lv_name_0_0,
-                      							"org.integratedmodelling.Kap.LOWERCASE_ID");
+                      							"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
                       					
                     }
 
@@ -1626,7 +1629,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
               						current,
               						"value",
               						lv_value_3_0,
-              						"org.integratedmodelling.Kap.Value");
+              						"org.integratedmodelling.kap.Kap.Value");
               					afterParserOrEnumRuleCall();
               				
             }
@@ -1785,7 +1788,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"argvalue",
                       						lv_argvalue_0_0,
-                      						"org.integratedmodelling.Kap.ARGVALUE");
+                      						"org.integratedmodelling.kap.Kap.ARGVALUE");
                       				
                     }
 
@@ -1825,7 +1828,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"literal",
                       						lv_literal_1_0,
-                      						"org.integratedmodelling.Kap.Literal");
+                      						"org.integratedmodelling.kap.Kap.Literal");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -1862,7 +1865,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"id",
                       						lv_id_2_0,
-                      						"org.integratedmodelling.Kap.LOWERCASE_ID");
+                      						"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
                       				
                     }
 
@@ -1898,7 +1901,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"observable",
                       						lv_observable_3_0,
-                      						"org.integratedmodelling.Kap.OBSERVABLE");
+                      						"org.integratedmodelling.kap.Kap.OBSERVABLE");
                       				
                     }
 
@@ -1934,7 +1937,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"expression",
                       						lv_expression_4_0,
-                      						"org.integratedmodelling.Kap.EXPR");
+                      						"org.integratedmodelling.kap.Kap.EXPR");
                       				
                     }
 
@@ -2067,7 +2070,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"number",
                       						lv_number_0_0,
-                      						"org.integratedmodelling.Kap.Number");
+                      						"org.integratedmodelling.kap.Kap.Number");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -2111,7 +2114,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"from",
                       							lv_from_1_0,
-                      							"org.integratedmodelling.Kap.Number");
+                      							"org.integratedmodelling.kap.Kap.Number");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -2152,7 +2155,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"to",
                       							lv_to_3_0,
-                      							"org.integratedmodelling.Kap.Number");
+                      							"org.integratedmodelling.kap.Kap.Number");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -2232,7 +2235,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"date",
                       						lv_date_5_0,
-                      						"org.integratedmodelling.Kap.Date");
+                      						"org.integratedmodelling.kap.Kap.Date");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -2492,7 +2495,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"list",
                       							lv_list_1_0,
-                      							"org.integratedmodelling.Kap.Statement");
+                      							"org.integratedmodelling.kap.Kap.Statement");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -2580,7 +2583,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                     	      							current,
                     	      							"list",
                     	      							lv_list_2_0,
-                    	      							"org.integratedmodelling.Kap.Statement");
+                    	      							"org.integratedmodelling.kap.Kap.Statement");
                     	      						afterParserOrEnumRuleCall();
                     	      					
                     	    }
@@ -2670,7 +2673,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                               								current,
                               								"group",
                               								lv_group_4_0,
-                              								"org.integratedmodelling.Kap.Statement");
+                              								"org.integratedmodelling.kap.Kap.Statement");
                               							afterParserOrEnumRuleCall();
                               						
                             }
@@ -2717,7 +2720,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                             	      								current,
                             	      								"group",
                             	      								lv_group_5_0,
-                            	      								"org.integratedmodelling.Kap.Statement");
+                            	      								"org.integratedmodelling.kap.Kap.Statement");
                             	      							afterParserOrEnumRuleCall();
                             	      						
                             	    }
@@ -2899,7 +2902,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"call",
                       						lv_call_0_0,
-                      						"org.integratedmodelling.Kap.Call");
+                      						"org.integratedmodelling.kap.Kap.Call");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -2936,7 +2939,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"text",
                       						lv_text_1_0,
-                      						"org.integratedmodelling.Kap.EMBEDDEDTEXT");
+                      						"org.integratedmodelling.kap.Kap.EMBEDDEDTEXT");
                       				
                     }
 
@@ -2976,7 +2979,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"if",
                       						lv_if_2_0,
-                      						"org.integratedmodelling.Kap.IfStatement");
+                      						"org.integratedmodelling.kap.Kap.IfStatement");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -3026,7 +3029,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"group",
                       							lv_group_4_0,
-                      							"org.integratedmodelling.Kap.Statement");
+                      							"org.integratedmodelling.kap.Kap.Statement");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -3073,7 +3076,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                     	      							current,
                     	      							"group",
                     	      							lv_group_5_0,
-                    	      							"org.integratedmodelling.Kap.Statement");
+                    	      							"org.integratedmodelling.kap.Kap.Statement");
                     	      						afterParserOrEnumRuleCall();
                     	      					
                     	    }
@@ -3220,7 +3223,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
               						current,
               						"expression",
               						lv_expression_1_0,
-              						"org.integratedmodelling.Kap.EXPR");
+              						"org.integratedmodelling.kap.Kap.EXPR");
               				
             }
 
@@ -3254,7 +3257,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
               						current,
               						"body",
               						lv_body_2_0,
-              						"org.integratedmodelling.Kap.IfBody");
+              						"org.integratedmodelling.kap.Kap.IfBody");
               					afterParserOrEnumRuleCall();
               				
             }
@@ -3318,7 +3321,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
             	      							current,
             	      							"elseIfExpression",
             	      							lv_elseIfExpression_5_0,
-            	      							"org.integratedmodelling.Kap.EXPR");
+            	      							"org.integratedmodelling.kap.Kap.EXPR");
             	      					
             	    }
 
@@ -3352,7 +3355,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
             	      							current,
             	      							"elseIfCall",
             	      							lv_elseIfCall_6_0,
-            	      							"org.integratedmodelling.Kap.IfBody");
+            	      							"org.integratedmodelling.kap.Kap.IfBody");
             	      						afterParserOrEnumRuleCall();
             	      					
             	    }
@@ -3417,7 +3420,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"elseCall",
                       							lv_elseCall_8_0,
-                      							"org.integratedmodelling.Kap.IfBody");
+                      							"org.integratedmodelling.kap.Kap.IfBody");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -3574,7 +3577,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"call",
                       						lv_call_0_0,
-                      						"org.integratedmodelling.Kap.Call");
+                      						"org.integratedmodelling.kap.Kap.Call");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -3615,7 +3618,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"body",
                       						lv_body_1_0,
-                      						"org.integratedmodelling.Kap.Body");
+                      						"org.integratedmodelling.kap.Kap.Body");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -3738,7 +3741,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
               						current,
               						"name",
               						lv_name_0_0,
-              						"org.integratedmodelling.Kap.LOWERCASE_ID");
+              						"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
               				
             }
 
@@ -3793,7 +3796,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                               							current,
                               							"parameters",
                               							lv_parameters_2_0,
-                              							"org.integratedmodelling.Kap.ParameterList");
+                              							"org.integratedmodelling.kap.Kap.ParameterList");
                               						afterParserOrEnumRuleCall();
                               					
                             }
@@ -3866,7 +3869,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       								current,
                       								"actions",
                       								lv_actions_5_0,
-                      								"org.integratedmodelling.Kap.Actions");
+                      								"org.integratedmodelling.kap.Kap.Actions");
                       							afterParserOrEnumRuleCall();
                       						
                     }
@@ -4018,7 +4021,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"call",
                       						lv_call_0_0,
-                      						"org.integratedmodelling.Kap.Call");
+                      						"org.integratedmodelling.kap.Kap.Call");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -4059,7 +4062,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"body",
                       						lv_body_1_0,
-                      						"org.integratedmodelling.Kap.Body");
+                      						"org.integratedmodelling.kap.Kap.Body");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -4100,7 +4103,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       						current,
                       						"match",
                       						lv_match_2_0,
-                      						"org.integratedmodelling.Kap.Match");
+                      						"org.integratedmodelling.kap.Kap.Match");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -4150,7 +4153,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"matches",
                       							lv_matches_4_0,
-                      							"org.integratedmodelling.Kap.Match");
+                      							"org.integratedmodelling.kap.Kap.Match");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -4197,7 +4200,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                     	      							current,
                     	      							"matches",
                     	      							lv_matches_5_0,
-                    	      							"org.integratedmodelling.Kap.Match");
+                    	      							"org.integratedmodelling.kap.Kap.Match");
                     	      						afterParserOrEnumRuleCall();
                     	      					
                     	    }
@@ -4359,7 +4362,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"id",
                       							true,
-                      							"org.integratedmodelling.Kap.LOWERCASE_ID");
+                      							"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
                       					
                     }
 
@@ -4399,7 +4402,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"body",
                       							lv_body_2_0,
-                      							"org.integratedmodelling.Kap.Body");
+                      							"org.integratedmodelling.kap.Kap.Body");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -4442,7 +4445,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"regexp",
                       							true,
-                      							"org.integratedmodelling.Kap.REGEXP");
+                      							"org.integratedmodelling.kap.Kap.REGEXP");
                       					
                     }
 
@@ -4482,7 +4485,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"body",
                       							lv_body_5_0,
-                      							"org.integratedmodelling.Kap.Body");
+                      							"org.integratedmodelling.kap.Kap.Body");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -4525,7 +4528,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"observable",
                       							true,
-                      							"org.integratedmodelling.Kap.OBSERVABLE");
+                      							"org.integratedmodelling.kap.Kap.OBSERVABLE");
                       					
                     }
 
@@ -4565,7 +4568,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"body",
                       							lv_body_8_0,
-                      							"org.integratedmodelling.Kap.Body");
+                      							"org.integratedmodelling.kap.Kap.Body");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -4612,7 +4615,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"literal",
                       							true,
-                      							"org.integratedmodelling.Kap.Literal");
+                      							"org.integratedmodelling.kap.Kap.Literal");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -4653,7 +4656,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"body",
                       							lv_body_11_0,
-                      							"org.integratedmodelling.Kap.Body");
+                      							"org.integratedmodelling.kap.Kap.Body");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -4736,7 +4739,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"body",
                       							lv_body_14_0,
-                      							"org.integratedmodelling.Kap.Body");
+                      							"org.integratedmodelling.kap.Kap.Body");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -4783,7 +4786,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"arguments",
                       							lv_arguments_15_0,
-                      							"org.integratedmodelling.Kap.ArgumentDeclaration");
+                      							"org.integratedmodelling.kap.Kap.ArgumentDeclaration");
                       						afterParserOrEnumRuleCall();
                       					
                     }
@@ -4824,7 +4827,7 @@ public class InternalKapParser extends AbstractInternalAntlrParser {
                       							current,
                       							"body",
                       							lv_body_17_0,
-                      							"org.integratedmodelling.Kap.Body");
+                      							"org.integratedmodelling.kap.Kap.Body");
                       						afterParserOrEnumRuleCall();
                       					
                     }

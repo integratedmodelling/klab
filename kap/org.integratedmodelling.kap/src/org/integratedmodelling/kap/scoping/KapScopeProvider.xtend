@@ -3,7 +3,6 @@
  */
 package org.integratedmodelling.kap.scoping
 
-
 /**
  * This class contains custom scoping description.
  * 

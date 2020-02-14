@@ -11,7 +11,6 @@ import org.eclipse.xtext.ISetup;
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import org.eclipse.xtext.resource.IResourceFactory;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
-import org.integratedmodelling.kap.KapRuntimeModule;
 import org.integratedmodelling.kap.kap.KapPackage;
 
 @SuppressWarnings("all")
@@ -31,8 +30,8 @@ public class KapStandaloneSetupGenerated implements ISetup {
 	}
 	
 	public void register(Injector injector) {
-		if (!EPackage.Registry.INSTANCE.containsKey("http://www.integratedmodelling.org/Kap")) {
-			EPackage.Registry.INSTANCE.put("http://www.integratedmodelling.org/Kap", KapPackage.eINSTANCE);
+		if (!EPackage.Registry.INSTANCE.containsKey("http://www.integratedmodelling.org/kap/Kap")) {
+			EPackage.Registry.INSTANCE.put("http://www.integratedmodelling.org/kap/Kap", KapPackage.eINSTANCE);
 		}
 		IResourceFactory resourceFactory = injector.getInstance(IResourceFactory.class);
 		IResourceServiceProvider serviceProvider = injector.getInstance(IResourceServiceProvider.class);

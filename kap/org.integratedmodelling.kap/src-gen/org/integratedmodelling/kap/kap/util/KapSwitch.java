@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.util.Switch;
+
 import org.integratedmodelling.kap.kap.Actions;
 import org.integratedmodelling.kap.kap.ArgumentDeclaration;
 import org.integratedmodelling.kap.kap.Body;

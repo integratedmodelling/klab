@@ -39,7 +39,7 @@ public interface KapPackage extends EPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  String eNS_URI = "http://www.integratedmodelling.org/Kap";
+  String eNS_URI = "http://www.integratedmodelling.org/kap/Kap";
 
   /**
    * The package namespace name.

@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kap.ide
 
-import org.integratedmodelling.ide.AbstractKapIdeModule
-
 /**
  * Use this class to register ide components.
  */

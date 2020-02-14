@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 import org.integratedmodelling.kap.kap.KapPackage;
 import org.integratedmodelling.kap.kap.KeyValuePair;
 import org.integratedmodelling.kap.kap.ParameterList;

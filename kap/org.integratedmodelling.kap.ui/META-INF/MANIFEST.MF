@@ -20,7 +20,11 @@ Require-Bundle: org.integratedmodelling.kap,
  org.eclipse.xtend.lib;bundle-version="2.14.0";resolution:=optional
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.integratedmodelling.ui.contentassist,
+Export-Package: org.integratedmodelling.kap.ui,
+ org.integratedmodelling.kap.ui.contentassist,
  org.integratedmodelling.kap.ui.internal,
- org.integratedmodelling.ui.quickfix
+ org.integratedmodelling.kap.ui.labeling,
+ org.integratedmodelling.kap.ui.outline,
+ org.integratedmodelling.kap.ui.quickfix,
+ org.integratedmodelling.kap.validation
 Bundle-Activator: org.integratedmodelling.kap.ui.internal.KapActivator

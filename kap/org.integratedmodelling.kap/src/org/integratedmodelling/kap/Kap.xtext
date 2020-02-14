@@ -1,6 +1,6 @@
-grammar org.integratedmodelling.Kap with org.eclipse.xtext.common.Terminals
+grammar org.integratedmodelling.kap.Kap with org.eclipse.xtext.common.Terminals
 
-generate kap "http://www.integratedmodelling.org/Kap"
+generate kap "http://www.integratedmodelling.org/kap/Kap"
 
 Model: {Model}
 	(preamble=Preamble)?

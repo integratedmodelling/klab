@@ -64,12 +64,12 @@ public abstract class AbstractKapRuntimeModule extends DefaultRuntimeModule {
 
 	@Override
 	public void configure(Binder binder) {
-		properties = tryBindProperties(binder, "org/integratedmodelling/Kap.properties");
+		properties = tryBindProperties(binder, "org/integratedmodelling/kap/Kap.properties");
 		super.configure(binder);
 	}
 	
 	public void configureLanguageName(Binder binder) {
-		binder.bind(String.class).annotatedWith(Names.named(Constants.LANGUAGE_NAME)).toInstance("org.integratedmodelling.Kap");
+		binder.bind(String.class).annotatedWith(Names.named(Constants.LANGUAGE_NAME)).toInstance("org.integratedmodelling.kap.Kap");
 	}
 	
 	public void configureFileExtensions(Binder binder) {

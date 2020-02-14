@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeEList;
+
 import org.integratedmodelling.kap.kap.ArgumentDeclaration;
 import org.integratedmodelling.kap.kap.KapPackage;
 

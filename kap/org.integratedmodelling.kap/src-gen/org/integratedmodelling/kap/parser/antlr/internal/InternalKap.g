@@ -9,7 +9,7 @@ options {
 }
 
 @lexer::header {
-package org.integratedmodelling.parser.antlr.internal;
+package org.integratedmodelling.kap.parser.antlr.internal;
 
 // Hack: Use our own Lexer superclass by means of import. 
 // Currently there is no other way to specify the superclass for the lexer.
@@ -17,7 +17,7 @@ import org.eclipse.xtext.parser.antlr.Lexer;
 }
 
 @parser::header {
-package org.integratedmodelling.parser.antlr.internal;
+package org.integratedmodelling.kap.parser.antlr.internal;
 
 import org.eclipse.xtext.*;
 import org.eclipse.xtext.parser.*;
@@ -29,7 +29,7 @@ import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream.HiddenTokens;
 import org.eclipse.xtext.parser.antlr.IUnorderedGroupHelper.UnorderedGroupState;
 import org.eclipse.xtext.parser.antlr.AntlrDatatypeRuleToken;
-import org.integratedmodelling.services.KapGrammarAccess;
+import org.integratedmodelling.kap.services.KapGrammarAccess;
 
 }
 
@@ -107,7 +107,7 @@ ruleModel returns [EObject current=null]
 						$current,
 						"preamble",
 						lv_preamble_1_0,
-						"org.integratedmodelling.Kap.Preamble");
+						"org.integratedmodelling.kap.Kap.Preamble");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -126,7 +126,7 @@ ruleModel returns [EObject current=null]
 						$current,
 						"definitions",
 						lv_definitions_2_0,
-						"org.integratedmodelling.Kap.Definition");
+						"org.integratedmodelling.kap.Kap.Definition");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -178,7 +178,7 @@ rulePreamble returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_1_0,
-						"org.integratedmodelling.Kap.LOWERCASE_ID");
+						"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 				}
 			)
 		)
@@ -212,7 +212,7 @@ rulePreamble returns [EObject current=null]
 												$current,
 												"worldview",
 												lv_worldview_4_0,
-												"org.integratedmodelling.Kap.LOWERCASE_ID");
+												"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 										}
 									)
 								)
@@ -311,7 +311,7 @@ rulePreamble returns [EObject current=null]
 												$current,
 												"version",
 												lv_version_10_0,
-												"org.integratedmodelling.Kap.LOWERCASE_ID");
+												"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 										}
 									)
 								)
@@ -368,7 +368,7 @@ ruleDefinition returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_1_0,
-						"org.integratedmodelling.Kap.LOWERCASE_ID");
+						"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 				}
 			)
 		)
@@ -386,7 +386,7 @@ ruleDefinition returns [EObject current=null]
 						$current,
 						"arguments",
 						lv_arguments_2_0,
-						"org.integratedmodelling.Kap.ArgumentDeclaration");
+						"org.integratedmodelling.kap.Kap.ArgumentDeclaration");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -409,7 +409,7 @@ ruleDefinition returns [EObject current=null]
 						$current,
 						"body",
 						lv_body_4_0,
-						"org.integratedmodelling.Kap.Body");
+						"org.integratedmodelling.kap.Kap.Body");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -462,7 +462,7 @@ ruleArgumentDeclaration returns [EObject current=null]
 							$current,
 							"ids",
 							lv_ids_2_0,
-							"org.integratedmodelling.Kap.LOWERCASE_ID");
+							"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 					}
 				)
 			)
@@ -485,7 +485,7 @@ ruleArgumentDeclaration returns [EObject current=null]
 								$current,
 								"ids",
 								lv_ids_4_0,
-								"org.integratedmodelling.Kap.LOWERCASE_ID");
+								"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 						}
 					)
 				)
@@ -528,7 +528,7 @@ ruleParameterList returns [EObject current=null]
 						$current,
 						"pairs",
 						lv_pairs_0_0,
-						"org.integratedmodelling.Kap.KeyValuePair");
+						"org.integratedmodelling.kap.Kap.KeyValuePair");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -555,7 +555,7 @@ ruleParameterList returns [EObject current=null]
 							$current,
 							"pairs",
 							lv_pairs_2_0,
-							"org.integratedmodelling.Kap.KeyValuePair");
+							"org.integratedmodelling.kap.Kap.KeyValuePair");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -595,7 +595,7 @@ ruleKeyValuePair returns [EObject current=null]
 							$current,
 							"name",
 							lv_name_0_0,
-							"org.integratedmodelling.Kap.LOWERCASE_ID");
+							"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 					}
 				)
 			)
@@ -635,7 +635,7 @@ ruleKeyValuePair returns [EObject current=null]
 						$current,
 						"value",
 						lv_value_3_0,
-						"org.integratedmodelling.Kap.Value");
+						"org.integratedmodelling.kap.Kap.Value");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -673,7 +673,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"argvalue",
 						lv_argvalue_0_0,
-						"org.integratedmodelling.Kap.ARGVALUE");
+						"org.integratedmodelling.kap.Kap.ARGVALUE");
 				}
 			)
 		)
@@ -692,7 +692,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"literal",
 						lv_literal_1_0,
-						"org.integratedmodelling.Kap.Literal");
+						"org.integratedmodelling.kap.Kap.Literal");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -712,7 +712,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"id",
 						lv_id_2_0,
-						"org.integratedmodelling.Kap.LOWERCASE_ID");
+						"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 				}
 			)
 		)
@@ -731,7 +731,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"observable",
 						lv_observable_3_0,
-						"org.integratedmodelling.Kap.OBSERVABLE");
+						"org.integratedmodelling.kap.Kap.OBSERVABLE");
 				}
 			)
 		)
@@ -750,7 +750,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"expression",
 						lv_expression_4_0,
-						"org.integratedmodelling.Kap.EXPR");
+						"org.integratedmodelling.kap.Kap.EXPR");
 				}
 			)
 		)
@@ -787,7 +787,7 @@ ruleLiteral returns [EObject current=null]
 						$current,
 						"number",
 						lv_number_0_0,
-						"org.integratedmodelling.Kap.Number");
+						"org.integratedmodelling.kap.Kap.Number");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -808,7 +808,7 @@ ruleLiteral returns [EObject current=null]
 							$current,
 							"from",
 							lv_from_1_0,
-							"org.integratedmodelling.Kap.Number");
+							"org.integratedmodelling.kap.Kap.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -831,7 +831,7 @@ ruleLiteral returns [EObject current=null]
 							$current,
 							"to",
 							lv_to_3_0,
-							"org.integratedmodelling.Kap.Number");
+							"org.integratedmodelling.kap.Kap.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -871,7 +871,7 @@ ruleLiteral returns [EObject current=null]
 						$current,
 						"date",
 						lv_date_5_0,
-						"org.integratedmodelling.Kap.Date");
+						"org.integratedmodelling.kap.Kap.Date");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -948,7 +948,7 @@ ruleBody returns [EObject current=null]
 							$current,
 							"list",
 							lv_list_1_0,
-							"org.integratedmodelling.Kap.Statement");
+							"org.integratedmodelling.kap.Kap.Statement");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -967,7 +967,7 @@ ruleBody returns [EObject current=null]
 							$current,
 							"list",
 							lv_list_2_0,
-							"org.integratedmodelling.Kap.Statement");
+							"org.integratedmodelling.kap.Kap.Statement");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1004,7 +1004,7 @@ ruleBody returns [EObject current=null]
 								$current,
 								"group",
 								lv_group_4_0,
-								"org.integratedmodelling.Kap.Statement");
+								"org.integratedmodelling.kap.Kap.Statement");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -1023,7 +1023,7 @@ ruleBody returns [EObject current=null]
 								$current,
 								"group",
 								lv_group_5_0,
-								"org.integratedmodelling.Kap.Statement");
+								"org.integratedmodelling.kap.Kap.Statement");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -1067,7 +1067,7 @@ ruleStatement returns [EObject current=null]
 						$current,
 						"call",
 						lv_call_0_0,
-						"org.integratedmodelling.Kap.Call");
+						"org.integratedmodelling.kap.Kap.Call");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1087,7 +1087,7 @@ ruleStatement returns [EObject current=null]
 						$current,
 						"text",
 						lv_text_1_0,
-						"org.integratedmodelling.Kap.EMBEDDEDTEXT");
+						"org.integratedmodelling.kap.Kap.EMBEDDEDTEXT");
 				}
 			)
 		)
@@ -1106,7 +1106,7 @@ ruleStatement returns [EObject current=null]
 						$current,
 						"if",
 						lv_if_2_0,
-						"org.integratedmodelling.Kap.IfStatement");
+						"org.integratedmodelling.kap.Kap.IfStatement");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1131,7 +1131,7 @@ ruleStatement returns [EObject current=null]
 							$current,
 							"group",
 							lv_group_4_0,
-							"org.integratedmodelling.Kap.Statement");
+							"org.integratedmodelling.kap.Kap.Statement");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1150,7 +1150,7 @@ ruleStatement returns [EObject current=null]
 							$current,
 							"group",
 							lv_group_5_0,
-							"org.integratedmodelling.Kap.Statement");
+							"org.integratedmodelling.kap.Kap.Statement");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1197,7 +1197,7 @@ ruleIfStatement returns [EObject current=null]
 						$current,
 						"expression",
 						lv_expression_1_0,
-						"org.integratedmodelling.Kap.EXPR");
+						"org.integratedmodelling.kap.Kap.EXPR");
 				}
 			)
 		)
@@ -1215,7 +1215,7 @@ ruleIfStatement returns [EObject current=null]
 						$current,
 						"body",
 						lv_body_2_0,
-						"org.integratedmodelling.Kap.IfBody");
+						"org.integratedmodelling.kap.Kap.IfBody");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1243,7 +1243,7 @@ ruleIfStatement returns [EObject current=null]
 							$current,
 							"elseIfExpression",
 							lv_elseIfExpression_5_0,
-							"org.integratedmodelling.Kap.EXPR");
+							"org.integratedmodelling.kap.Kap.EXPR");
 					}
 				)
 			)
@@ -1261,7 +1261,7 @@ ruleIfStatement returns [EObject current=null]
 							$current,
 							"elseIfCall",
 							lv_elseIfCall_6_0,
-							"org.integratedmodelling.Kap.IfBody");
+							"org.integratedmodelling.kap.Kap.IfBody");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1286,7 +1286,7 @@ ruleIfStatement returns [EObject current=null]
 							$current,
 							"elseCall",
 							lv_elseCall_8_0,
-							"org.integratedmodelling.Kap.IfBody");
+							"org.integratedmodelling.kap.Kap.IfBody");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1325,7 +1325,7 @@ ruleIfBody returns [EObject current=null]
 						$current,
 						"call",
 						lv_call_0_0,
-						"org.integratedmodelling.Kap.Call");
+						"org.integratedmodelling.kap.Kap.Call");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1345,7 +1345,7 @@ ruleIfBody returns [EObject current=null]
 						$current,
 						"body",
 						lv_body_1_0,
-						"org.integratedmodelling.Kap.Body");
+						"org.integratedmodelling.kap.Kap.Body");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1383,7 +1383,7 @@ ruleCall returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_0_0,
-						"org.integratedmodelling.Kap.LOWERCASE_ID");
+						"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 				}
 			)
 		)
@@ -1406,7 +1406,7 @@ ruleCall returns [EObject current=null]
 							$current,
 							"parameters",
 							lv_parameters_2_0,
-							"org.integratedmodelling.Kap.ParameterList");
+							"org.integratedmodelling.kap.Kap.ParameterList");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1436,7 +1436,7 @@ ruleCall returns [EObject current=null]
 								$current,
 								"actions",
 								lv_actions_5_0,
-								"org.integratedmodelling.Kap.Actions");
+								"org.integratedmodelling.kap.Kap.Actions");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -1481,7 +1481,7 @@ ruleActions returns [EObject current=null]
 						$current,
 						"call",
 						lv_call_0_0,
-						"org.integratedmodelling.Kap.Call");
+						"org.integratedmodelling.kap.Kap.Call");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1501,7 +1501,7 @@ ruleActions returns [EObject current=null]
 						$current,
 						"body",
 						lv_body_1_0,
-						"org.integratedmodelling.Kap.Body");
+						"org.integratedmodelling.kap.Kap.Body");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1521,7 +1521,7 @@ ruleActions returns [EObject current=null]
 						$current,
 						"match",
 						lv_match_2_0,
-						"org.integratedmodelling.Kap.Match");
+						"org.integratedmodelling.kap.Kap.Match");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1546,7 +1546,7 @@ ruleActions returns [EObject current=null]
 							$current,
 							"matches",
 							lv_matches_4_0,
-							"org.integratedmodelling.Kap.Match");
+							"org.integratedmodelling.kap.Kap.Match");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1565,7 +1565,7 @@ ruleActions returns [EObject current=null]
 							$current,
 							"matches",
 							lv_matches_5_0,
-							"org.integratedmodelling.Kap.Match");
+							"org.integratedmodelling.kap.Kap.Match");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1609,7 +1609,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"id",
 							true,
-							"org.integratedmodelling.Kap.LOWERCASE_ID");
+							"org.integratedmodelling.kap.Kap.LOWERCASE_ID");
 					}
 				)
 			)
@@ -1631,7 +1631,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"body",
 							lv_body_2_0,
-							"org.integratedmodelling.Kap.Body");
+							"org.integratedmodelling.kap.Kap.Body");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1653,7 +1653,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"regexp",
 							true,
-							"org.integratedmodelling.Kap.REGEXP");
+							"org.integratedmodelling.kap.Kap.REGEXP");
 					}
 				)
 			)
@@ -1675,7 +1675,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"body",
 							lv_body_5_0,
-							"org.integratedmodelling.Kap.Body");
+							"org.integratedmodelling.kap.Kap.Body");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1697,7 +1697,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"observable",
 							true,
-							"org.integratedmodelling.Kap.OBSERVABLE");
+							"org.integratedmodelling.kap.Kap.OBSERVABLE");
 					}
 				)
 			)
@@ -1719,7 +1719,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"body",
 							lv_body_8_0,
-							"org.integratedmodelling.Kap.Body");
+							"org.integratedmodelling.kap.Kap.Body");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1741,7 +1741,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"literal",
 							true,
-							"org.integratedmodelling.Kap.Literal");
+							"org.integratedmodelling.kap.Kap.Literal");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1764,7 +1764,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"body",
 							lv_body_11_0,
-							"org.integratedmodelling.Kap.Body");
+							"org.integratedmodelling.kap.Kap.Body");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1808,7 +1808,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"body",
 							lv_body_14_0,
-							"org.integratedmodelling.Kap.Body");
+							"org.integratedmodelling.kap.Kap.Body");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1830,7 +1830,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"arguments",
 							lv_arguments_15_0,
-							"org.integratedmodelling.Kap.ArgumentDeclaration");
+							"org.integratedmodelling.kap.Kap.ArgumentDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1853,7 +1853,7 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"body",
 							lv_body_17_0,
-							"org.integratedmodelling.Kap.Body");
+							"org.integratedmodelling.kap.Kap.Body");
 						afterParserOrEnumRuleCall();
 					}
 				)

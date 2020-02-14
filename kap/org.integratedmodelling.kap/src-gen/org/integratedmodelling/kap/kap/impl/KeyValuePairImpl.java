@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
 import org.integratedmodelling.kap.kap.KapPackage;
 import org.integratedmodelling.kap.kap.KeyValuePair;
 import org.integratedmodelling.kap.kap.Value;
