@@ -70,8 +70,7 @@ public class VectorPublisher implements IResourceEnhancer {
 							.getMainFile(resource);
 
 					String table = postgis.publish(file, urn);
-					if (geoserver.createDatastore(postgis, urn.getNamespace())
-							&& geoserver.publishPostgisVector(postgis, urn.getNamespace(), table)) {
+					if (table != null && geoserver.publishPostgisVector(postgis, urn.getNamespace(), table)) {
 
 						ret = new Resource(((Resource) resource).getReference());
 						// fix resource adapter and parameters			
