@@ -7,7 +7,13 @@ Model: {Model}
 	definitions+=Definition*;
 
 Preamble:
-	'name' name=LOWERCASE_ID 
+	'name' name=LOWERCASE_ID // path, too
+	(
+		('worldview' worldview=LOWERCASE_ID)? &
+		('permissions' permissions=STRING)? &
+		('author' authors=STRING)? &
+		('version' version=LOWERCASE_ID)? 
+	)
 ;	
 
 Definition:
@@ -25,58 +31,53 @@ KeyValuePair:
 	value=Value;
 	
 Value:
+	argvalue=ARGVALUE |
 	literal=Literal |
 	id=LOWERCASE_ID |
 //	urn=Urn | 
 //	list=List |
-//	map=Map | 
+//	map=Map | ???
 	observable=OBSERVABLE | 
 	expression=EXPR// |
-//	table=LookupTable
+//	table=LookupTable ???
 	;
-
-	
-///**
-// * URN is 4 sections: node (or 'klab' for internal resources), catalog (or adapter for internal resources), namespace and
-// * resource ID. Admits a version number and a fragment (with only lowercase_id chars in it). It is
-// * legal, but not required, to start with the default prefix urn:klab:. The 4th path element (the ID) may be
-// * integer.
-// */
-//UrnId:
-//	('urn:klab:')? PathName ':'  PathName ':' PathName ':' (Path|INT) (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
-//	
-//UrnKvp:
-//	PathName '=' (Path|INT)
-//;		
-//	
-//PathName:
-//	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) ('.' (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
-//;
-//
-//Path:
-//	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
-//;
 
 Literal:
 	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
 
 Body: {Body}
-	list+=Statement (';' list+=Statement)* |
+	list+=Statement (list+=Statement)* |
 	// only way to be empty is to be an empty group
-	isgroup?='(' (group+=Statement (';' group += Statement)*)? ')'
+	isgroup?='(' (group+=Statement (group += Statement)*)? ')'
 ;
 
 Statement:
-	call=Call  |
+	call=Call |
 	text=EMBEDDEDTEXT |
-	'(' group+=Call (';' group+=Call)* ')'
+	if=IfStatement |
+	'(' group+=Statement (group+=Statement)* ')'
+//	WhileStatement |
+//	DoStatement |
+//	ForStatement |
+;
+
+IfStatement:
+	'if' expression=EXPR body=IfBody	
+		('else' 'if' elseIfExpression+=EXPR elseIfCall+=IfBody)* 
+		('else' elseCall=IfBody)?
+;
+
+IfBody:
+	call=Call |
+	body=Body
 ;
 
 Call:
-	name=LOWERCASE_ID ('(' (parameters=ParameterList)? ')')? (':' => actions=Actions)? 
+	name=LOWERCASE_ID ('(' (parameters=ParameterList)? ')')? ((':' actions=Actions) | ';')? 
 ;
 
 Actions: 
+	call=Call |
 	body=Body |
 	match=Match |
 	'(' matches+=Match (matches+=Match)* ')'
@@ -89,8 +90,6 @@ Match:
 	literal?=Literal '->' body=Body |
 	text?=STRING '->' body=Body |
 	arguments=ArgumentDeclaration '->' body=Body
-	// number
-	// list
 ;
 
 Number:
@@ -103,16 +102,20 @@ Date:
 terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
+terminal ARGVALUE:
+	'$' ('0'..'9')*
+;
 
 terminal EXPR:
 	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
 	
+terminal EMBEDDEDTEXT:
+	'%%%'((' ')*'-')*'\r' -> '%%%'((' ')*'-')*'\r';
+
 terminal REGEXP:
 	'%' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\') | !('\\' | '%'))* '%';
 	
 terminal OBSERVABLE:
 	'{' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '}';
 	
-terminal EMBEDDEDTEXT:
-	'---' -> '---';
 	
