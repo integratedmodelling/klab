@@ -1,8 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.integratedmodelling.kap</groupId>
-	<version>1.0.0-SNAPSHOT</version>
+	<groupId>org.integratedmodelling</groupId>
+	<version>0.10.0-SNAPSHOT</version>
 	<artifactId>kap</artifactId>
 	<packaging>pom</packaging>
 	<parent>
@@ -10,15 +11,14 @@
 		<artifactId>klab</artifactId>
 		<version>0.10.0-SNAPSHOT</version>
 	</parent>
-	
+
 	<properties>
-<!-- 		<xtextVersion>2.19.0</xtextVersion>
- -->		<project.build.sourceEncoding>windows-1252</project.build.sourceEncoding>
+		<!-- <xtextVersion>2.19.0</xtextVersion> -->
+		<project.build.sourceEncoding>windows-1252</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<!-- Tycho settings -->
-<!-- 		<tycho-version>1.4.0</tycho-version>
- -->		<!-- Define overridable properties for tycho-surefire-plugin -->
+		<!-- <tycho-version>1.4.0</tycho-version> -->		<!-- Define overridable properties for tycho-surefire-plugin -->
 		<platformSystemProperties></platformSystemProperties>
 		<moduleProperties></moduleProperties>
 		<systemProperties></systemProperties>
@@ -28,10 +28,11 @@
 		<module>org.integratedmodelling.kap</module>
 		<module>org.integratedmodelling.kap.ide</module>
 		<module>org.integratedmodelling.kap.ui</module>
-		<module>org.integratedmodelling.kap.web</module>
+		<!-- <module>org.integratedmodelling.kap.web</module> -->
 		<module>org.integratedmodelling.kap.target</module>
-		<module>org.integratedmodelling.kap.tests</module>
-		<module>org.integratedmodelling.kap.ui.tests</module>
+		<module>org.integratedmodelling.kap.feature</module>
+		<module>org.integratedmodelling.kap.repository</module>
+		<!-- <module>org.integratedmodelling.kap.tests</module> <module>org.integratedmodelling.kap.ui.tests</module> -->
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -215,10 +216,7 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<!-- 
-						Can be removed after first generator execution
-						https://bugs.eclipse.org/bugs/show_bug.cgi?id=480097
-					-->
+					<!-- Can be removed after first generator execution https://bugs.eclipse.org/bugs/show_bug.cgi?id=480097 -->
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-compiler-plugin</artifactId>
 					<version>${tycho-version}</version>
@@ -227,17 +225,17 @@
 						<useProjectSettings>false</useProjectSettings>
 					</configuration>
 				</plugin>
-				<!-- to skip running (and compiling) tests use commandline flag: -Dmaven.test.skip
-					To skip tests, but still compile them, use: -DskipTests
-					To allow all tests in a pom to pass/fail, use commandline flag: -fae (fail
-					at end) -->
+				<!-- to skip running (and compiling) tests use commandline flag: -Dmaven.test.skip 
+					To skip tests, but still compile them, use: -DskipTests To allow all tests 
+					in a pom to pass/fail, use commandline flag: -fae (fail at end) -->
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-surefire-plugin</artifactId>
 					<version>${tycho-version}</version>
 					<configuration>
 						<!-- THE FOLLOWING LINE MUST NOT BE BROKEN BY AUTOFORMATTING -->
-						<argLine>${platformSystemProperties} ${systemProperties} ${moduleProperties} ${additionalTestArguments}</argLine>
+						<argLine>${platformSystemProperties} ${systemProperties}
+							${moduleProperties} ${additionalTestArguments}</argLine>
 						<failIfNoTests>false</failIfNoTests>
 						<useUIHarness>false</useUIHarness>
 					</configuration>

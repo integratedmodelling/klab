@@ -110,7 +110,7 @@ public abstract class AbstractKapUiModule extends DefaultUiModule {
 	public void configureHighlightingLexer(Binder binder) {
 		binder.bind(org.eclipse.xtext.parser.antlr.Lexer.class)
 			.annotatedWith(Names.named(LexerIdeBindings.HIGHLIGHTING))
-			.to(org.integratedmodelling.parser.antlr.internal.InternalKapLexer.class);
+			.to(org.integratedmodelling.kap.parser.antlr.internal.InternalKapLexer.class);
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2

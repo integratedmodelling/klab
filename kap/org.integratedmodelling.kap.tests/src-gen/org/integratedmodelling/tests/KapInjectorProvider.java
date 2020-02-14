@@ -7,10 +7,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.eclipse.xtext.testing.GlobalRegistries;
 import org.eclipse.xtext.testing.GlobalRegistries.GlobalStateMemento;
+import org.integratedmodelling.kap.KapRuntimeModule;
+import org.integratedmodelling.kap.KapStandaloneSetup;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.IRegistryConfigurator;
-import org.integratedmodelling.KapRuntimeModule;
-import org.integratedmodelling.KapStandaloneSetup;
 
 public class KapInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
 

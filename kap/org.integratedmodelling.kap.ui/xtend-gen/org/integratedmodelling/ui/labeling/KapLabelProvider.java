@@ -6,9 +6,9 @@ package org.integratedmodelling.ui.labeling;
 import com.google.inject.Inject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
-import org.integratedmodelling.kap.Body;
-import org.integratedmodelling.kap.Call;
-import org.integratedmodelling.kap.Statement;
+import org.integratedmodelling.kap.kap.Body;
+import org.integratedmodelling.kap.kap.Call;
+import org.integratedmodelling.kap.kap.Statement;
 
 /**
  * Provides labels for EObjects.

@@ -4,7 +4,7 @@
 	<extension point="org.eclipse.emf.ecore.generated_package">
 		<package 
 			uri = "http://www.integratedmodelling.org/Kap"
-			class = "org.integratedmodelling.kap.KapPackage"
+			class = "org.integratedmodelling.kap.kap.KapPackage"
 			genModel = "model/generated/Kap.genmodel" />
 	</extension>
 </plugin>

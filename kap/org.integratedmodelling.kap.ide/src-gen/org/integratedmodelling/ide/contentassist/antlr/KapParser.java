@@ -10,7 +10,7 @@ import java.util.Map;
 import org.eclipse.xtext.AbstractElement;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.AbstractContentAssistParser;
 import org.integratedmodelling.ide.contentassist.antlr.internal.InternalKapParser;
-import org.integratedmodelling.services.KapGrammarAccess;
+import org.integratedmodelling.kap.services.KapGrammarAccess;
 
 public class KapParser extends AbstractContentAssistParser {
 

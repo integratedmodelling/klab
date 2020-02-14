@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.shared.SharedStateModule;
 import org.eclipse.xtext.util.Modules2;
-import org.integratedmodelling.KapRuntimeModule;
+import org.integratedmodelling.kap.KapRuntimeModule;
 import org.integratedmodelling.ui.KapUiModule;
 import org.osgi.framework.BundleContext;
 

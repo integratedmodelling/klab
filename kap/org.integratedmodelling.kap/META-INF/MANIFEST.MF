@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.integratedmodelling.kap
 Bundle-ManifestVersion: 2
 Bundle-Name: org.integratedmodelling.kap
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Integrated Modelling Partnership
+Bundle-Version: 0.10.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kap; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext,
@@ -14,17 +14,18 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtext.util,
  org.eclipse.emf.common,
  org.eclipse.xtend.lib;bundle-version="2.14.0",
- org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
+ org.antlr.runtime;bundle-version="[3.2.0,3.2.1)",
+ org.integratedmodelling.klab.api
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.integratedmodelling.kap.impl,
- org.integratedmodelling,
- org.integratedmodelling.validation,
- org.integratedmodelling.serializer,
- org.integratedmodelling.generator,
- org.integratedmodelling.kap,
- org.integratedmodelling.scoping,
- org.integratedmodelling.kap.util,
- org.integratedmodelling.parser.antlr,
- org.integratedmodelling.services,
- org.integratedmodelling.parser.antlr.internal
+Export-Package: org.integratedmodelling.kap,
+ org.integratedmodelling.kap.generator,
+ org.integratedmodelling.kap.kap,
+ org.integratedmodelling.kap.kap.impl,
+ org.integratedmodelling.kap.kap.util,
+ org.integratedmodelling.kap.parser.antlr,
+ org.integratedmodelling.kap.parser.antlr.internal,
+ org.integratedmodelling.kap.scoping,
+ org.integratedmodelling.kap.serializer,
+ org.integratedmodelling.kap.services,
+ org.integratedmodelling.kap.validation
 Import-Package: org.apache.log4j

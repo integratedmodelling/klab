@@ -6,6 +6,7 @@ package org.integratedmodelling.validation;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.xtext.ui.validation.AbstractValidatorConfigurationBlock;
+import org.integratedmodelling.kap.validation.KapConfigurableIssueCodesProvider;
 
 @SuppressWarnings("restriction")
 public class KapValidatorConfigurationBlock extends AbstractValidatorConfigurationBlock {

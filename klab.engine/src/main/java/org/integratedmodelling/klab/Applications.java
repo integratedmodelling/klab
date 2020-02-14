@@ -1,0 +1,70 @@
+package org.integratedmodelling.klab;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
+
+import org.apache.commons.io.IOUtils;
+import org.eclipse.xtext.testing.IInjectorProvider;
+import org.eclipse.xtext.testing.util.ParseHelper;
+import org.integratedmodelling.kap.api.IKapApplication;
+import org.integratedmodelling.kap.kap.Model;
+import org.integratedmodelling.kap.model.Kap;
+import org.integratedmodelling.klab.api.services.IDataflowService;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.xtext.DataflowInjectorProvider;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
+public enum Applications {
+
+	INSTANCE;
+	
+	@Inject
+	ParseHelper<Model> dataflowParser;
+
+	private Applications() {
+		IInjectorProvider injectorProvider = new DataflowInjectorProvider();
+		Injector injector = injectorProvider.getInjector();
+		if (injector != null) {
+			injector.injectMembers(this);
+		}
+		Services.INSTANCE.registerService(this, IDataflowService.class);
+	}
+
+//	@Override
+	public IKapApplication declare(URL url) throws KlabException {
+		try (InputStream stream = url.openStream()) {
+			return declare(stream);
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+	}
+
+//	@Override
+	public IKapApplication declare(File file) throws KlabException {
+		try (InputStream stream = new FileInputStream(file)) {
+			return declare(stream);
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+	}
+
+//	@Override
+	public IKapApplication declare(InputStream file) throws KlabValidationException {
+		IKapApplication ret = null;
+		try {
+			String definition = IOUtils.toString(file);
+			Model model = dataflowParser.parse(definition);
+			ret = Kap.INSTANCE.declare(model);
+		} catch (Exception e) {
+			throw new KlabValidationException(e);
+		}
+		return ret;
+	}
+	
+}
