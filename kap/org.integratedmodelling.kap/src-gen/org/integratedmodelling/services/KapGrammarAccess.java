@@ -499,16 +499,18 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cLeftParenthesisKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
 		private final Assignment cGroupAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
 		private final RuleCall cGroupCallParserRuleCall_2_1_0 = (RuleCall)cGroupAssignment_2_1.eContents().get(0);
-		private final Assignment cGroupAssignment_2_2 = (Assignment)cGroup_2.eContents().get(2);
-		private final RuleCall cGroupCallParserRuleCall_2_2_0 = (RuleCall)cGroupAssignment_2_2.eContents().get(0);
+		private final Group cGroup_2_2 = (Group)cGroup_2.eContents().get(2);
+		private final Keyword cSemicolonKeyword_2_2_0 = (Keyword)cGroup_2_2.eContents().get(0);
+		private final Assignment cGroupAssignment_2_2_1 = (Assignment)cGroup_2_2.eContents().get(1);
+		private final RuleCall cGroupCallParserRuleCall_2_2_1_0 = (RuleCall)cGroupAssignment_2_2_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_2_3 = (Keyword)cGroup_2.eContents().get(3);
 		
 		//Statement:
 		//	call=Call | text=EMBEDDEDTEXT |
-		//	'(' group+=Call group+=Call* ')';
+		//	'(' group+=Call (';' group+=Call)* ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//call=Call | text=EMBEDDEDTEXT | '(' group+=Call group+=Call* ')'
+		//call=Call | text=EMBEDDEDTEXT | '(' group+=Call (';' group+=Call)* ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//call=Call
@@ -523,7 +525,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		//EMBEDDEDTEXT
 		public RuleCall getTextEMBEDDEDTEXTTerminalRuleCall_1_0() { return cTextEMBEDDEDTEXTTerminalRuleCall_1_0; }
 		
-		//'(' group+=Call group+=Call* ')'
+		//'(' group+=Call (';' group+=Call)* ')'
 		public Group getGroup_2() { return cGroup_2; }
 		
 		//'('
@@ -535,11 +537,17 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		//Call
 		public RuleCall getGroupCallParserRuleCall_2_1_0() { return cGroupCallParserRuleCall_2_1_0; }
 		
-		//group+=Call*
-		public Assignment getGroupAssignment_2_2() { return cGroupAssignment_2_2; }
+		//(';' group+=Call)*
+		public Group getGroup_2_2() { return cGroup_2_2; }
+		
+		//';'
+		public Keyword getSemicolonKeyword_2_2_0() { return cSemicolonKeyword_2_2_0; }
+		
+		//group+=Call
+		public Assignment getGroupAssignment_2_2_1() { return cGroupAssignment_2_2_1; }
 		
 		//Call
-		public RuleCall getGroupCallParserRuleCall_2_2_0() { return cGroupCallParserRuleCall_2_2_0; }
+		public RuleCall getGroupCallParserRuleCall_2_2_1_0() { return cGroupCallParserRuleCall_2_2_1_0; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_2_3() { return cRightParenthesisKeyword_2_3; }
@@ -703,16 +711,13 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//// error is a special variable instantiated on error, not a keyword
 		//id?=LOWERCASE_ID '->' body=Body | regexp?=REGEXP '->' body=Body | observable?=OBSERVABLE '->' body=Body |
 		//literal?=Literal '->' body=Body | text?=STRING '->' body=Body | arguments=ArgumentDeclaration '->' body=Body
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//// error is a special variable instantiated on error, not a keyword
 		//id?=LOWERCASE_ID '->' body=Body
 		public Group getGroup_0() { return cGroup_0; }
 		
-		//// error is a special variable instantiated on error, not a keyword
 		//id?=LOWERCASE_ID
 		public Assignment getIdAssignment_0_0() { return cIdAssignment_0_0; }
 		
@@ -1252,7 +1257,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Statement:
 	//	call=Call | text=EMBEDDEDTEXT |
-	//	'(' group+=Call group+=Call* ')';
+	//	'(' group+=Call (';' group+=Call)* ')';
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}
@@ -1342,7 +1347,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal EMBEDDEDTEXT:
-	//	'---' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '---';
+	//	'---'->'---';
 	public TerminalRule getEMBEDDEDTEXTRule() {
 		return tEMBEDDEDTEXT;
 	}

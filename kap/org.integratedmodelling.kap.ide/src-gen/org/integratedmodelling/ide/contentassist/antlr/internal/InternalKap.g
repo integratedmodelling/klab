@@ -1928,9 +1928,9 @@ rule__Statement__Group_2__2__Impl
 	}
 :
 (
-	{ before(grammarAccess.getStatementAccess().getGroupAssignment_2_2()); }
-	(rule__Statement__GroupAssignment_2_2)*
-	{ after(grammarAccess.getStatementAccess().getGroupAssignment_2_2()); }
+	{ before(grammarAccess.getStatementAccess().getGroup_2_2()); }
+	(rule__Statement__Group_2_2__0)*
+	{ after(grammarAccess.getStatementAccess().getGroup_2_2()); }
 )
 ;
 finally {
@@ -1957,6 +1957,60 @@ rule__Statement__Group_2__3__Impl
 	{ before(grammarAccess.getStatementAccess().getRightParenthesisKeyword_2_3()); }
 	')'
 	{ after(grammarAccess.getStatementAccess().getRightParenthesisKeyword_2_3()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__Statement__Group_2_2__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__Statement__Group_2_2__0__Impl
+	rule__Statement__Group_2_2__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Statement__Group_2_2__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getStatementAccess().getSemicolonKeyword_2_2_0()); }
+	';'
+	{ after(grammarAccess.getStatementAccess().getSemicolonKeyword_2_2_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Statement__Group_2_2__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__Statement__Group_2_2__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Statement__Group_2_2__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getStatementAccess().getGroupAssignment_2_2_1()); }
+	(rule__Statement__GroupAssignment_2_2_1)
+	{ after(grammarAccess.getStatementAccess().getGroupAssignment_2_2_1()); }
 )
 ;
 finally {
@@ -4003,15 +4057,15 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Statement__GroupAssignment_2_2
+rule__Statement__GroupAssignment_2_2_1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getStatementAccess().getGroupCallParserRuleCall_2_2_0()); }
+		{ before(grammarAccess.getStatementAccess().getGroupCallParserRuleCall_2_2_1_0()); }
 		ruleCall
-		{ after(grammarAccess.getStatementAccess().getGroupCallParserRuleCall_2_2_0()); }
+		{ after(grammarAccess.getStatementAccess().getGroupCallParserRuleCall_2_2_1_0()); }
 	)
 ;
 finally {
@@ -4571,7 +4625,7 @@ RULE_REGEXP : '%' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'%'|'\\')|~(('\\'|'%')))* '%';
 
 RULE_OBSERVABLE : '{' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'\\')|~(('\\'|'}')))* '}';
 
-RULE_EMBEDDEDTEXT : '---' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'\\')|~(('\\'|'}')))* '---';
+RULE_EMBEDDEDTEXT : '---' ( options {greedy=false;} : . )*'---';
 
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 

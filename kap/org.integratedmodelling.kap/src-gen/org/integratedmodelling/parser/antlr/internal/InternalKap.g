@@ -950,27 +950,33 @@ ruleStatement returns [EObject current=null]
 				)
 			)
 			(
+				otherlv_4=';'
+				{
+					newLeafNode(otherlv_4, grammarAccess.getStatementAccess().getSemicolonKeyword_2_2_0());
+				}
 				(
-					{
-						newCompositeNode(grammarAccess.getStatementAccess().getGroupCallParserRuleCall_2_2_0());
-					}
-					lv_group_4_0=ruleCall
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getStatementRule());
+					(
+						{
+							newCompositeNode(grammarAccess.getStatementAccess().getGroupCallParserRuleCall_2_2_1_0());
 						}
-						add(
-							$current,
-							"group",
-							lv_group_4_0,
-							"org.integratedmodelling.Kap.Call");
-						afterParserOrEnumRuleCall();
-					}
+						lv_group_5_0=ruleCall
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getStatementRule());
+							}
+							add(
+								$current,
+								"group",
+								lv_group_5_0,
+								"org.integratedmodelling.Kap.Call");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
 			)*
-			otherlv_5=')'
+			otherlv_6=')'
 			{
-				newLeafNode(otherlv_5, grammarAccess.getStatementAccess().getRightParenthesisKeyword_2_3());
+				newLeafNode(otherlv_6, grammarAccess.getStatementAccess().getRightParenthesisKeyword_2_3());
 			}
 		)
 	)
@@ -1892,7 +1898,7 @@ RULE_REGEXP : '%' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'%'|'\\')|~(('\\'|'%')))* '%';
 
 RULE_OBSERVABLE : '{' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'\\')|~(('\\'|'}')))* '}';
 
-RULE_EMBEDDEDTEXT : '---' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'\\')|~(('\\'|'}')))* '---';
+RULE_EMBEDDEDTEXT : '---' ( options {greedy=false;} : . )*'---';
 
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 

@@ -60,6 +60,7 @@ public class KapParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getBodyAccess().getGroup_1_1(), "rule__Body__Group_1_1__0");
 			builder.put(grammarAccess.getBodyAccess().getGroup_1_1_1(), "rule__Body__Group_1_1_1__0");
 			builder.put(grammarAccess.getStatementAccess().getGroup_2(), "rule__Statement__Group_2__0");
+			builder.put(grammarAccess.getStatementAccess().getGroup_2_2(), "rule__Statement__Group_2_2__0");
 			builder.put(grammarAccess.getCallAccess().getGroup(), "rule__Call__Group__0");
 			builder.put(grammarAccess.getCallAccess().getGroup_1(), "rule__Call__Group_1__0");
 			builder.put(grammarAccess.getCallAccess().getGroup_2(), "rule__Call__Group_2__0");
@@ -110,7 +111,7 @@ public class KapParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getStatementAccess().getCallAssignment_0(), "rule__Statement__CallAssignment_0");
 			builder.put(grammarAccess.getStatementAccess().getTextAssignment_1(), "rule__Statement__TextAssignment_1");
 			builder.put(grammarAccess.getStatementAccess().getGroupAssignment_2_1(), "rule__Statement__GroupAssignment_2_1");
-			builder.put(grammarAccess.getStatementAccess().getGroupAssignment_2_2(), "rule__Statement__GroupAssignment_2_2");
+			builder.put(grammarAccess.getStatementAccess().getGroupAssignment_2_2_1(), "rule__Statement__GroupAssignment_2_2_1");
 			builder.put(grammarAccess.getCallAccess().getNameAssignment_0(), "rule__Call__NameAssignment_0");
 			builder.put(grammarAccess.getCallAccess().getParametersAssignment_1_1(), "rule__Call__ParametersAssignment_1_1");
 			builder.put(grammarAccess.getCallAccess().getActionsAssignment_2_1(), "rule__Call__ActionsAssignment_2_1");

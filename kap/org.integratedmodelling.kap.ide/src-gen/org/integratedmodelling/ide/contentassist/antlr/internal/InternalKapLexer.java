@@ -516,11 +516,11 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_LOWERCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4566:19: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
-            // InternalKap.g:4566:21: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKap.g:4620:19: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
+            // InternalKap.g:4620:21: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
             {
             matchRange('a','z'); 
-            // InternalKap.g:4566:30: ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKap.g:4620:30: ( 'a' .. 'z' | '0' .. '9' | '_' )*
             loop1:
             do {
                 int alt1=2;
@@ -569,11 +569,11 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_EXPR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4568:11: ( '[' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']' )
-            // InternalKap.g:4568:13: '[' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']'
+            // InternalKap.g:4622:11: ( '[' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']' )
+            // InternalKap.g:4622:13: '[' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']'
             {
             match('['); 
-            // InternalKap.g:4568:17: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )*
+            // InternalKap.g:4622:17: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )*
             loop2:
             do {
                 int alt2=3;
@@ -589,7 +589,7 @@ public class InternalKapLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // InternalKap.g:4568:18: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' )
+            	    // InternalKap.g:4622:18: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( (input.LA(1)>='\\' && input.LA(1)<=']')||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -605,7 +605,7 @@ public class InternalKapLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // InternalKap.g:4568:58: ~ ( ( '\\\\' | ']' ) )
+            	    // InternalKap.g:4622:58: ~ ( ( '\\\\' | ']' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='[')||(input.LA(1)>='^' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -642,11 +642,11 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_REGEXP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4570:13: ( '%' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )* '%' )
-            // InternalKap.g:4570:15: '%' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )* '%'
+            // InternalKap.g:4624:13: ( '%' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )* '%' )
+            // InternalKap.g:4624:15: '%' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )* '%'
             {
             match('%'); 
-            // InternalKap.g:4570:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )*
+            // InternalKap.g:4624:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )*
             loop3:
             do {
                 int alt3=3;
@@ -662,7 +662,7 @@ public class InternalKapLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // InternalKap.g:4570:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' )
+            	    // InternalKap.g:4624:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( input.LA(1)=='%'||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -678,7 +678,7 @@ public class InternalKapLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // InternalKap.g:4570:60: ~ ( ( '\\\\' | '%' ) )
+            	    // InternalKap.g:4624:60: ~ ( ( '\\\\' | '%' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='$')||(input.LA(1)>='&' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -715,11 +715,11 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_OBSERVABLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4572:17: ( '{' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' ) | ~ ( ( '\\\\' | '}' ) ) )* '}' )
-            // InternalKap.g:4572:19: '{' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' ) | ~ ( ( '\\\\' | '}' ) ) )* '}'
+            // InternalKap.g:4626:17: ( '{' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' ) | ~ ( ( '\\\\' | '}' ) ) )* '}' )
+            // InternalKap.g:4626:19: '{' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' ) | ~ ( ( '\\\\' | '}' ) ) )* '}'
             {
             match('{'); 
-            // InternalKap.g:4572:23: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' ) | ~ ( ( '\\\\' | '}' ) ) )*
+            // InternalKap.g:4626:23: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' ) | ~ ( ( '\\\\' | '}' ) ) )*
             loop4:
             do {
                 int alt4=3;
@@ -735,7 +735,7 @@ public class InternalKapLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // InternalKap.g:4572:24: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' )
+            	    // InternalKap.g:4626:24: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -751,7 +751,7 @@ public class InternalKapLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // InternalKap.g:4572:60: ~ ( ( '\\\\' | '}' ) )
+            	    // InternalKap.g:4626:60: ~ ( ( '\\\\' | '}' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='|')||(input.LA(1)>='~' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -788,81 +788,48 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_EMBEDDEDTEXT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4574:19: ( '---' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' ) | ~ ( ( '\\\\' | '}' ) ) )* '---' )
-            // InternalKap.g:4574:21: '---' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' ) | ~ ( ( '\\\\' | '}' ) ) )* '---'
+            // InternalKap.g:4628:19: ( '---' ( options {greedy=false; } : . )* '---' )
+            // InternalKap.g:4628:21: '---' ( options {greedy=false; } : . )* '---'
             {
             match("---"); 
 
-            // InternalKap.g:4574:27: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' ) | ~ ( ( '\\\\' | '}' ) ) )*
+            // InternalKap.g:4628:27: ( options {greedy=false; } : . )*
             loop5:
             do {
-                int alt5=3;
+                int alt5=2;
                 int LA5_0 = input.LA(1);
 
                 if ( (LA5_0=='-') ) {
                     int LA5_1 = input.LA(2);
 
                     if ( (LA5_1=='-') ) {
-                        int LA5_4 = input.LA(3);
+                        int LA5_3 = input.LA(3);
 
-                        if ( (LA5_4=='-') ) {
-                            int LA5_5 = input.LA(4);
-
-                            if ( ((LA5_5>='\u0000' && LA5_5<='|')||(LA5_5>='~' && LA5_5<='\uFFFF')) ) {
-                                alt5=2;
-                            }
-
-
-                        }
-                        else if ( ((LA5_4>='\u0000' && LA5_4<=',')||(LA5_4>='.' && LA5_4<='|')||(LA5_4>='~' && LA5_4<='\uFFFF')) ) {
+                        if ( (LA5_3=='-') ) {
                             alt5=2;
                         }
+                        else if ( ((LA5_3>='\u0000' && LA5_3<=',')||(LA5_3>='.' && LA5_3<='\uFFFF')) ) {
+                            alt5=1;
+                        }
 
 
                     }
-                    else if ( ((LA5_1>='\u0000' && LA5_1<=',')||(LA5_1>='.' && LA5_1<='|')||(LA5_1>='~' && LA5_1<='\uFFFF')) ) {
-                        alt5=2;
+                    else if ( ((LA5_1>='\u0000' && LA5_1<=',')||(LA5_1>='.' && LA5_1<='\uFFFF')) ) {
+                        alt5=1;
                     }
 
 
                 }
-                else if ( (LA5_0=='\\') ) {
+                else if ( ((LA5_0>='\u0000' && LA5_0<=',')||(LA5_0>='.' && LA5_0<='\uFFFF')) ) {
                     alt5=1;
-                }
-                else if ( ((LA5_0>='\u0000' && LA5_0<=',')||(LA5_0>='.' && LA5_0<='[')||(LA5_0>=']' && LA5_0<='|')||(LA5_0>='~' && LA5_0<='\uFFFF')) ) {
-                    alt5=2;
                 }
 
 
                 switch (alt5) {
             	case 1 :
-            	    // InternalKap.g:4574:28: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\\\' )
+            	    // InternalKap.g:4628:55: .
             	    {
-            	    match('\\'); 
-            	    if ( input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
-            	        input.consume();
-
-            	    }
-            	    else {
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        recover(mse);
-            	        throw mse;}
-
-
-            	    }
-            	    break;
-            	case 2 :
-            	    // InternalKap.g:4574:64: ~ ( ( '\\\\' | '}' ) )
-            	    {
-            	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='|')||(input.LA(1)>='~' && input.LA(1)<='\uFFFF') ) {
-            	        input.consume();
-
-            	    }
-            	    else {
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        recover(mse);
-            	        throw mse;}
-
+            	    matchAny(); 
 
             	    }
             	    break;
@@ -890,10 +857,10 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4576:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // InternalKap.g:4576:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalKap.g:4630:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalKap.g:4630:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // InternalKap.g:4576:11: ( '^' )?
+            // InternalKap.g:4630:11: ( '^' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -902,7 +869,7 @@ public class InternalKapLexer extends Lexer {
             }
             switch (alt6) {
                 case 1 :
-                    // InternalKap.g:4576:11: '^'
+                    // InternalKap.g:4630:11: '^'
                     {
                     match('^'); 
 
@@ -920,7 +887,7 @@ public class InternalKapLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalKap.g:4576:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalKap.g:4630:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop7:
             do {
                 int alt7=2;
@@ -969,10 +936,10 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4578:10: ( ( '0' .. '9' )+ )
-            // InternalKap.g:4578:12: ( '0' .. '9' )+
+            // InternalKap.g:4632:10: ( ( '0' .. '9' )+ )
+            // InternalKap.g:4632:12: ( '0' .. '9' )+
             {
-            // InternalKap.g:4578:12: ( '0' .. '9' )+
+            // InternalKap.g:4632:12: ( '0' .. '9' )+
             int cnt8=0;
             loop8:
             do {
@@ -986,7 +953,7 @@ public class InternalKapLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // InternalKap.g:4578:13: '0' .. '9'
+            	    // InternalKap.g:4632:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -1018,10 +985,10 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4580:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // InternalKap.g:4580:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalKap.g:4634:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalKap.g:4634:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // InternalKap.g:4580:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalKap.g:4634:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -1039,10 +1006,10 @@ public class InternalKapLexer extends Lexer {
             }
             switch (alt11) {
                 case 1 :
-                    // InternalKap.g:4580:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // InternalKap.g:4634:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // InternalKap.g:4580:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalKap.g:4634:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop9:
                     do {
                         int alt9=3;
@@ -1058,7 +1025,7 @@ public class InternalKapLexer extends Lexer {
 
                         switch (alt9) {
                     	case 1 :
-                    	    // InternalKap.g:4580:21: '\\\\' .
+                    	    // InternalKap.g:4634:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -1066,7 +1033,7 @@ public class InternalKapLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalKap.g:4580:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalKap.g:4634:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -1091,10 +1058,10 @@ public class InternalKapLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalKap.g:4580:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // InternalKap.g:4634:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // InternalKap.g:4580:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalKap.g:4634:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop10:
                     do {
                         int alt10=3;
@@ -1110,7 +1077,7 @@ public class InternalKapLexer extends Lexer {
 
                         switch (alt10) {
                     	case 1 :
-                    	    // InternalKap.g:4580:54: '\\\\' .
+                    	    // InternalKap.g:4634:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -1118,7 +1085,7 @@ public class InternalKapLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalKap.g:4580:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalKap.g:4634:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -1161,12 +1128,12 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4582:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalKap.g:4582:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalKap.g:4636:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalKap.g:4636:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalKap.g:4582:24: ( options {greedy=false; } : . )*
+            // InternalKap.g:4636:24: ( options {greedy=false; } : . )*
             loop12:
             do {
                 int alt12=2;
@@ -1191,7 +1158,7 @@ public class InternalKapLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // InternalKap.g:4582:52: .
+            	    // InternalKap.g:4636:52: .
             	    {
             	    matchAny(); 
 
@@ -1221,12 +1188,12 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4584:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalKap.g:4584:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalKap.g:4638:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalKap.g:4638:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalKap.g:4584:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalKap.g:4638:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop13:
             do {
                 int alt13=2;
@@ -1239,7 +1206,7 @@ public class InternalKapLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // InternalKap.g:4584:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalKap.g:4638:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1259,7 +1226,7 @@ public class InternalKapLexer extends Lexer {
                 }
             } while (true);
 
-            // InternalKap.g:4584:40: ( ( '\\r' )? '\\n' )?
+            // InternalKap.g:4638:40: ( ( '\\r' )? '\\n' )?
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -1268,9 +1235,9 @@ public class InternalKapLexer extends Lexer {
             }
             switch (alt15) {
                 case 1 :
-                    // InternalKap.g:4584:41: ( '\\r' )? '\\n'
+                    // InternalKap.g:4638:41: ( '\\r' )? '\\n'
                     {
-                    // InternalKap.g:4584:41: ( '\\r' )?
+                    // InternalKap.g:4638:41: ( '\\r' )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -1279,7 +1246,7 @@ public class InternalKapLexer extends Lexer {
                     }
                     switch (alt14) {
                         case 1 :
-                            // InternalKap.g:4584:41: '\\r'
+                            // InternalKap.g:4638:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1311,10 +1278,10 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4586:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalKap.g:4586:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalKap.g:4640:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalKap.g:4640:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalKap.g:4586:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalKap.g:4640:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt16=0;
             loop16:
             do {
@@ -1368,8 +1335,8 @@ public class InternalKapLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKap.g:4588:16: ( . )
-            // InternalKap.g:4588:18: .
+            // InternalKap.g:4642:16: ( . )
+            // InternalKap.g:4642:18: .
             {
             matchAny(); 
 
@@ -1644,7 +1611,7 @@ public class InternalKapLexer extends Lexer {
     static final String DFA17_acceptS =
         "\4\uffff\1\4\6\uffff\1\13\1\14\1\15\1\16\1\20\1\uffff\1\23\7\uffff\1\34\1\35\3\uffff\1\41\1\42\1\24\1\1\2\uffff\1\27\1\uffff\1\34\1\uffff\1\4\1\5\1\6\4\uffff\1\13\1\14\1\15\1\16\1\20\1\21\1\33\1\22\1\23\1\25\1\uffff\1\30\1\31\1\32\1\35\1\36\1\37\1\40\1\41\1\uffff\1\17\1\uffff\1\7\1\10\2\uffff\1\26\3\uffff\1\12\1\2\1\uffff\1\11\1\3";
     static final String DFA17_specialS =
-        "\1\5\24\uffff\1\1\1\3\1\0\3\uffff\1\2\1\4\65\uffff}>";
+        "\1\1\24\uffff\1\0\1\2\1\4\3\uffff\1\3\1\5\65\uffff}>";
     static final String[] DFA17_transitionS = {
             "\11\37\2\36\2\37\1\36\22\37\1\36\1\37\1\33\2\37\1\26\1\37\1\34\1\14\1\15\1\37\1\4\1\16\1\20\1\21\1\35\12\32\1\13\1\17\1\37\1\1\3\37\1\7\1\23\1\10\1\31\1\6\25\31\1\25\2\37\1\30\1\31\1\37\3\24\1\12\1\5\1\3\5\24\1\22\1\24\1\11\5\24\1\2\6\24\1\27\uff84\37",
             "\1\40",
@@ -1767,16 +1734,6 @@ public class InternalKapLexer extends Lexer {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA17_23 = input.LA(1);
-
-                        s = -1;
-                        if ( ((LA17_23>='\u0000' && LA17_23<='\uFFFF')) ) {s = 60;}
-
-                        else s = 31;
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
                         int LA17_21 = input.LA(1);
 
                         s = -1;
@@ -1786,37 +1743,7 @@ public class InternalKapLexer extends Lexer {
 
                         if ( s>=0 ) return s;
                         break;
-                    case 2 : 
-                        int LA17_27 = input.LA(1);
-
-                        s = -1;
-                        if ( ((LA17_27>='\u0000' && LA17_27<='\uFFFF')) ) {s = 62;}
-
-                        else s = 31;
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 3 : 
-                        int LA17_22 = input.LA(1);
-
-                        s = -1;
-                        if ( ((LA17_22>='\u0000' && LA17_22<='\uFFFF')) ) {s = 59;}
-
-                        else s = 31;
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 4 : 
-                        int LA17_28 = input.LA(1);
-
-                        s = -1;
-                        if ( ((LA17_28>='\u0000' && LA17_28<='\uFFFF')) ) {s = 62;}
-
-                        else s = 31;
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 5 : 
+                    case 1 : 
                         int LA17_0 = input.LA(1);
 
                         s = -1;
@@ -1881,6 +1808,46 @@ public class InternalKapLexer extends Lexer {
                         else if ( ((LA17_0>='\t' && LA17_0<='\n')||LA17_0=='\r'||LA17_0==' ') ) {s = 30;}
 
                         else if ( ((LA17_0>='\u0000' && LA17_0<='\b')||(LA17_0>='\u000B' && LA17_0<='\f')||(LA17_0>='\u000E' && LA17_0<='\u001F')||LA17_0=='!'||(LA17_0>='#' && LA17_0<='$')||LA17_0=='&'||LA17_0=='*'||LA17_0=='<'||(LA17_0>='>' && LA17_0<='@')||(LA17_0>='\\' && LA17_0<=']')||LA17_0=='`'||(LA17_0>='|' && LA17_0<='\uFFFF')) ) {s = 31;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
+                        int LA17_22 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA17_22>='\u0000' && LA17_22<='\uFFFF')) ) {s = 59;}
+
+                        else s = 31;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 3 : 
+                        int LA17_27 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA17_27>='\u0000' && LA17_27<='\uFFFF')) ) {s = 62;}
+
+                        else s = 31;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 4 : 
+                        int LA17_23 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA17_23>='\u0000' && LA17_23<='\uFFFF')) ) {s = 60;}
+
+                        else s = 31;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 5 : 
+                        int LA17_28 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA17_28>='\u0000' && LA17_28<='\uFFFF')) ) {s = 62;}
+
+                        else s = 31;
 
                         if ( s>=0 ) return s;
                         break;

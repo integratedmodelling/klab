@@ -68,8 +68,8 @@ Body: {Body}
 
 Statement:
 	call=Call  |
-//	text='---'ANYTEXT '---'|
-	'(' group+=Call ( group+=Call)* ')'
+	text=EMBEDDEDTEXT |
+	'(' group+=Call (';' group+=Call)* ')'
 ;
 
 Call:
@@ -83,7 +83,6 @@ Actions:
 ;
 
 Match:
-	// error is a special variable instantiated on error, not a keyword
 	id?=LOWERCASE_ID '->' body=Body |
 	regexp?=REGEXP '->' body=Body |
 	observable?=OBSERVABLE '->' body=Body |
@@ -104,6 +103,7 @@ Date:
 terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
+
 terminal EXPR:
 	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
 	
@@ -113,6 +113,6 @@ terminal REGEXP:
 terminal OBSERVABLE:
 	'{' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '}';
 	
-terminal ANYTEXT:
-	('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\'))*;
+terminal EMBEDDEDTEXT:
+	'---' -> '---';
 	
