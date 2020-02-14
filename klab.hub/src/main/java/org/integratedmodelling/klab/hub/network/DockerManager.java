@@ -1,11 +1,9 @@
 package org.integratedmodelling.klab.hub.network;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.network.commands.CreateNodeContainer;
 
 import com.github.dockerjava.api.DockerClient;
@@ -59,18 +57,20 @@ public enum DockerManager {
 	}
 	
 	private boolean checkContainerDependencies (Set<String> containers) {
-        List<Container> allContainers = 
-        		new ListDockerContainersCmd(client).filter(containers);
-        
-		if(allContainers.isEmpty()) {
-			return false;
-		}
-		
-		for(Container container : allContainers) {
-			if(!container.getStatus().toLowerCase().equals("running")) {
-				return false;
-			};
-		}
+		List<Container> hostContainers = client.listContainersCmd().exec();
+		Map<String, Integer> cMap = containers.stream().collect(Collectors.toMap(keyMapper, valueMapper))
+		boolean running[] = new boolean[containers.size()];
+		containers.forEach(name -> {
+			for (Container c : hostContainers) {
+				for (String cName : c.getNames()) {
+					if (cName.equals(name)) {
+						if (c.getStatus().toLowerCase().equals("running")) {
+							
+						}
+					}
+				}
+			}
+		});
 	}
 
 }
