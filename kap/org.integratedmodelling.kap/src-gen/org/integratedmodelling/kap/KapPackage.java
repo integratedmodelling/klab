@@ -68,13 +68,22 @@ public interface KapPackage extends EPackage
   int MODEL = 0;
 
   /**
-   * The feature id for the '<em><b>Greetings</b></em>' containment reference list.
+   * The feature id for the '<em><b>Preamble</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL__GREETINGS = 0;
+  int MODEL__PREAMBLE = 0;
+
+  /**
+   * The feature id for the '<em><b>Definitions</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL__DEFINITIONS = 1;
 
   /**
    * The number of structural features of the '<em>Model</em>' class.
@@ -83,17 +92,17 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_FEATURE_COUNT = 1;
+  int MODEL_FEATURE_COUNT = 2;
 
   /**
-   * The meta object id for the '{@link org.integratedmodelling.kap.impl.GreetingImpl <em>Greeting</em>}' class.
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.PreambleImpl <em>Preamble</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kap.impl.GreetingImpl
-   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getGreeting()
+   * @see org.integratedmodelling.kap.impl.PreambleImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getPreamble()
    * @generated
    */
-  int GREETING = 1;
+  int PREAMBLE = 1;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -102,16 +111,740 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int GREETING__NAME = 0;
+  int PREAMBLE__NAME = 0;
 
   /**
-   * The number of structural features of the '<em>Greeting</em>' class.
+   * The number of structural features of the '<em>Preamble</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int GREETING_FEATURE_COUNT = 1;
+  int PREAMBLE_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.DefinitionImpl <em>Definition</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.DefinitionImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getDefinition()
+   * @generated
+   */
+  int DEFINITION = 2;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEFINITION__NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Arguments</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEFINITION__ARGUMENTS = 1;
+
+  /**
+   * The feature id for the '<em><b>Body</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEFINITION__BODY = 2;
+
+  /**
+   * The number of structural features of the '<em>Definition</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEFINITION_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.ArgumentDeclarationImpl <em>Argument Declaration</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.ArgumentDeclarationImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getArgumentDeclaration()
+   * @generated
+   */
+  int ARGUMENT_DECLARATION = 3;
+
+  /**
+   * The feature id for the '<em><b>Ids</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ARGUMENT_DECLARATION__IDS = 0;
+
+  /**
+   * The number of structural features of the '<em>Argument Declaration</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ARGUMENT_DECLARATION_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.ParameterListImpl <em>Parameter List</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.ParameterListImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getParameterList()
+   * @generated
+   */
+  int PARAMETER_LIST = 4;
+
+  /**
+   * The feature id for the '<em><b>Pairs</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PARAMETER_LIST__PAIRS = 0;
+
+  /**
+   * The number of structural features of the '<em>Parameter List</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PARAMETER_LIST_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.KeyValuePairImpl <em>Key Value Pair</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.KeyValuePairImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getKeyValuePair()
+   * @generated
+   */
+  int KEY_VALUE_PAIR = 5;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Interactive</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__INTERACTIVE = 1;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__VALUE = 2;
+
+  /**
+   * The number of structural features of the '<em>Key Value Pair</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.ValueImpl <em>Value</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.ValueImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getValue()
+   * @generated
+   */
+  int VALUE = 6;
+
+  /**
+   * The feature id for the '<em><b>Literal</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__LITERAL = 0;
+
+  /**
+   * The feature id for the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__ID = 1;
+
+  /**
+   * The feature id for the '<em><b>Observable</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__OBSERVABLE = 2;
+
+  /**
+   * The feature id for the '<em><b>Expression</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__EXPRESSION = 3;
+
+  /**
+   * The number of structural features of the '<em>Value</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_FEATURE_COUNT = 4;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.LiteralImpl <em>Literal</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.LiteralImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getLiteral()
+   * @generated
+   */
+  int LITERAL = 7;
+
+  /**
+   * The feature id for the '<em><b>Number</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LITERAL__NUMBER = 0;
+
+  /**
+   * The feature id for the '<em><b>From</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LITERAL__FROM = 1;
+
+  /**
+   * The feature id for the '<em><b>To</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LITERAL__TO = 2;
+
+  /**
+   * The feature id for the '<em><b>String</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LITERAL__STRING = 3;
+
+  /**
+   * The feature id for the '<em><b>Date</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LITERAL__DATE = 4;
+
+  /**
+   * The feature id for the '<em><b>Boolean</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LITERAL__BOOLEAN = 5;
+
+  /**
+   * The number of structural features of the '<em>Literal</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LITERAL_FEATURE_COUNT = 6;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.BodyImpl <em>Body</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.BodyImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getBody()
+   * @generated
+   */
+  int BODY = 8;
+
+  /**
+   * The feature id for the '<em><b>List</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BODY__LIST = 0;
+
+  /**
+   * The feature id for the '<em><b>Isgroup</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BODY__ISGROUP = 1;
+
+  /**
+   * The feature id for the '<em><b>Group</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BODY__GROUP = 2;
+
+  /**
+   * The number of structural features of the '<em>Body</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BODY_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.StatementImpl <em>Statement</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.StatementImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getStatement()
+   * @generated
+   */
+  int STATEMENT = 9;
+
+  /**
+   * The feature id for the '<em><b>Call</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT__CALL = 0;
+
+  /**
+   * The feature id for the '<em><b>Text</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT__TEXT = 1;
+
+  /**
+   * The feature id for the '<em><b>Group</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT__GROUP = 2;
+
+  /**
+   * The number of structural features of the '<em>Statement</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.CallImpl <em>Call</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.CallImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getCall()
+   * @generated
+   */
+  int CALL = 10;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CALL__NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CALL__PARAMETERS = 1;
+
+  /**
+   * The feature id for the '<em><b>Actions</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CALL__ACTIONS = 2;
+
+  /**
+   * The number of structural features of the '<em>Call</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CALL_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.ActionsImpl <em>Actions</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.ActionsImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getActions()
+   * @generated
+   */
+  int ACTIONS = 11;
+
+  /**
+   * The feature id for the '<em><b>Body</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTIONS__BODY = 0;
+
+  /**
+   * The feature id for the '<em><b>Match</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTIONS__MATCH = 1;
+
+  /**
+   * The feature id for the '<em><b>Matches</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTIONS__MATCHES = 2;
+
+  /**
+   * The number of structural features of the '<em>Actions</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTIONS_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.MatchImpl <em>Match</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.MatchImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getMatch()
+   * @generated
+   */
+  int MATCH = 12;
+
+  /**
+   * The feature id for the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__ID = 0;
+
+  /**
+   * The feature id for the '<em><b>Body</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__BODY = 1;
+
+  /**
+   * The feature id for the '<em><b>Regexp</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__REGEXP = 2;
+
+  /**
+   * The feature id for the '<em><b>Observable</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__OBSERVABLE = 3;
+
+  /**
+   * The feature id for the '<em><b>Literal</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__LITERAL = 4;
+
+  /**
+   * The feature id for the '<em><b>Text</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__TEXT = 5;
+
+  /**
+   * The feature id for the '<em><b>Arguments</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__ARGUMENTS = 6;
+
+  /**
+   * The number of structural features of the '<em>Match</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH_FEATURE_COUNT = 7;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.NumberImpl <em>Number</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.NumberImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getNumber()
+   * @generated
+   */
+  int NUMBER = 13;
+
+  /**
+   * The feature id for the '<em><b>Negative</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER__NEGATIVE = 0;
+
+  /**
+   * The feature id for the '<em><b>Real</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER__REAL = 1;
+
+  /**
+   * The feature id for the '<em><b>Long</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER__LONG = 2;
+
+  /**
+   * The feature id for the '<em><b>Decimal</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER__DECIMAL = 3;
+
+  /**
+   * The feature id for the '<em><b>Decimal Part</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER__DECIMAL_PART = 4;
+
+  /**
+   * The feature id for the '<em><b>Exponential</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER__EXPONENTIAL = 5;
+
+  /**
+   * The feature id for the '<em><b>Exp Negative</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER__EXP_NEGATIVE = 6;
+
+  /**
+   * The feature id for the '<em><b>Exp</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER__EXP = 7;
+
+  /**
+   * The number of structural features of the '<em>Number</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER_FEATURE_COUNT = 8;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.DateImpl <em>Date</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.DateImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getDate()
+   * @generated
+   */
+  int DATE = 14;
+
+  /**
+   * The feature id for the '<em><b>Year</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__YEAR = 0;
+
+  /**
+   * The feature id for the '<em><b>Bc</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__BC = 1;
+
+  /**
+   * The feature id for the '<em><b>Month</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__MONTH = 2;
+
+  /**
+   * The feature id for the '<em><b>Day</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__DAY = 3;
+
+  /**
+   * The feature id for the '<em><b>Hour</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__HOUR = 4;
+
+  /**
+   * The feature id for the '<em><b>Min</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__MIN = 5;
+
+  /**
+   * The feature id for the '<em><b>Sec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__SEC = 6;
+
+  /**
+   * The feature id for the '<em><b>Ms</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE__MS = 7;
+
+  /**
+   * The number of structural features of the '<em>Date</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATE_FEATURE_COUNT = 8;
 
 
   /**
@@ -125,36 +858,760 @@ public interface KapPackage extends EPackage
   EClass getModel();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kap.Model#getGreetings <em>Greetings</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Model#getPreamble <em>Preamble</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Greetings</em>'.
-   * @see org.integratedmodelling.kap.Model#getGreetings()
+   * @return the meta object for the containment reference '<em>Preamble</em>'.
+   * @see org.integratedmodelling.kap.Model#getPreamble()
    * @see #getModel()
    * @generated
    */
-  EReference getModel_Greetings();
+  EReference getModel_Preamble();
 
   /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kap.Greeting <em>Greeting</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kap.Model#getDefinitions <em>Definitions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Greeting</em>'.
-   * @see org.integratedmodelling.kap.Greeting
+   * @return the meta object for the containment reference list '<em>Definitions</em>'.
+   * @see org.integratedmodelling.kap.Model#getDefinitions()
+   * @see #getModel()
    * @generated
    */
-  EClass getGreeting();
+  EReference getModel_Definitions();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Greeting#getName <em>Name</em>}'.
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Preamble <em>Preamble</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Preamble</em>'.
+   * @see org.integratedmodelling.kap.Preamble
+   * @generated
+   */
+  EClass getPreamble();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Preamble#getName <em>Name</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Name</em>'.
-   * @see org.integratedmodelling.kap.Greeting#getName()
-   * @see #getGreeting()
+   * @see org.integratedmodelling.kap.Preamble#getName()
+   * @see #getPreamble()
    * @generated
    */
-  EAttribute getGreeting_Name();
+  EAttribute getPreamble_Name();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Definition <em>Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Definition</em>'.
+   * @see org.integratedmodelling.kap.Definition
+   * @generated
+   */
+  EClass getDefinition();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Definition#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.integratedmodelling.kap.Definition#getName()
+   * @see #getDefinition()
+   * @generated
+   */
+  EAttribute getDefinition_Name();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Definition#getArguments <em>Arguments</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Arguments</em>'.
+   * @see org.integratedmodelling.kap.Definition#getArguments()
+   * @see #getDefinition()
+   * @generated
+   */
+  EReference getDefinition_Arguments();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Definition#getBody <em>Body</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Body</em>'.
+   * @see org.integratedmodelling.kap.Definition#getBody()
+   * @see #getDefinition()
+   * @generated
+   */
+  EReference getDefinition_Body();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.ArgumentDeclaration <em>Argument Declaration</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Argument Declaration</em>'.
+   * @see org.integratedmodelling.kap.ArgumentDeclaration
+   * @generated
+   */
+  EClass getArgumentDeclaration();
+
+  /**
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kap.ArgumentDeclaration#getIds <em>Ids</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Ids</em>'.
+   * @see org.integratedmodelling.kap.ArgumentDeclaration#getIds()
+   * @see #getArgumentDeclaration()
+   * @generated
+   */
+  EAttribute getArgumentDeclaration_Ids();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.ParameterList <em>Parameter List</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Parameter List</em>'.
+   * @see org.integratedmodelling.kap.ParameterList
+   * @generated
+   */
+  EClass getParameterList();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kap.ParameterList#getPairs <em>Pairs</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Pairs</em>'.
+   * @see org.integratedmodelling.kap.ParameterList#getPairs()
+   * @see #getParameterList()
+   * @generated
+   */
+  EReference getParameterList_Pairs();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.KeyValuePair <em>Key Value Pair</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Key Value Pair</em>'.
+   * @see org.integratedmodelling.kap.KeyValuePair
+   * @generated
+   */
+  EClass getKeyValuePair();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.KeyValuePair#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.integratedmodelling.kap.KeyValuePair#getName()
+   * @see #getKeyValuePair()
+   * @generated
+   */
+  EAttribute getKeyValuePair_Name();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.KeyValuePair#isInteractive <em>Interactive</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Interactive</em>'.
+   * @see org.integratedmodelling.kap.KeyValuePair#isInteractive()
+   * @see #getKeyValuePair()
+   * @generated
+   */
+  EAttribute getKeyValuePair_Interactive();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.KeyValuePair#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see org.integratedmodelling.kap.KeyValuePair#getValue()
+   * @see #getKeyValuePair()
+   * @generated
+   */
+  EReference getKeyValuePair_Value();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Value <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Value</em>'.
+   * @see org.integratedmodelling.kap.Value
+   * @generated
+   */
+  EClass getValue();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Value#getLiteral <em>Literal</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Literal</em>'.
+   * @see org.integratedmodelling.kap.Value#getLiteral()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Literal();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Value#getId <em>Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see org.integratedmodelling.kap.Value#getId()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Id();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Value#getObservable <em>Observable</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Observable</em>'.
+   * @see org.integratedmodelling.kap.Value#getObservable()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Observable();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Value#getExpression <em>Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Expression</em>'.
+   * @see org.integratedmodelling.kap.Value#getExpression()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Expression();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Literal <em>Literal</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Literal</em>'.
+   * @see org.integratedmodelling.kap.Literal
+   * @generated
+   */
+  EClass getLiteral();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Literal#getNumber <em>Number</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Number</em>'.
+   * @see org.integratedmodelling.kap.Literal#getNumber()
+   * @see #getLiteral()
+   * @generated
+   */
+  EReference getLiteral_Number();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Literal#getFrom <em>From</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>From</em>'.
+   * @see org.integratedmodelling.kap.Literal#getFrom()
+   * @see #getLiteral()
+   * @generated
+   */
+  EReference getLiteral_From();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Literal#getTo <em>To</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>To</em>'.
+   * @see org.integratedmodelling.kap.Literal#getTo()
+   * @see #getLiteral()
+   * @generated
+   */
+  EReference getLiteral_To();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Literal#getString <em>String</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>String</em>'.
+   * @see org.integratedmodelling.kap.Literal#getString()
+   * @see #getLiteral()
+   * @generated
+   */
+  EAttribute getLiteral_String();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Literal#getDate <em>Date</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Date</em>'.
+   * @see org.integratedmodelling.kap.Literal#getDate()
+   * @see #getLiteral()
+   * @generated
+   */
+  EReference getLiteral_Date();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Literal#getBoolean <em>Boolean</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Boolean</em>'.
+   * @see org.integratedmodelling.kap.Literal#getBoolean()
+   * @see #getLiteral()
+   * @generated
+   */
+  EAttribute getLiteral_Boolean();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Body <em>Body</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Body</em>'.
+   * @see org.integratedmodelling.kap.Body
+   * @generated
+   */
+  EClass getBody();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kap.Body#getList <em>List</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>List</em>'.
+   * @see org.integratedmodelling.kap.Body#getList()
+   * @see #getBody()
+   * @generated
+   */
+  EReference getBody_List();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Body#isIsgroup <em>Isgroup</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Isgroup</em>'.
+   * @see org.integratedmodelling.kap.Body#isIsgroup()
+   * @see #getBody()
+   * @generated
+   */
+  EAttribute getBody_Isgroup();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kap.Body#getGroup <em>Group</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Group</em>'.
+   * @see org.integratedmodelling.kap.Body#getGroup()
+   * @see #getBody()
+   * @generated
+   */
+  EReference getBody_Group();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Statement <em>Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Statement</em>'.
+   * @see org.integratedmodelling.kap.Statement
+   * @generated
+   */
+  EClass getStatement();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Statement#getCall <em>Call</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Call</em>'.
+   * @see org.integratedmodelling.kap.Statement#getCall()
+   * @see #getStatement()
+   * @generated
+   */
+  EReference getStatement_Call();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Statement#getText <em>Text</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Text</em>'.
+   * @see org.integratedmodelling.kap.Statement#getText()
+   * @see #getStatement()
+   * @generated
+   */
+  EAttribute getStatement_Text();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kap.Statement#getGroup <em>Group</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Group</em>'.
+   * @see org.integratedmodelling.kap.Statement#getGroup()
+   * @see #getStatement()
+   * @generated
+   */
+  EReference getStatement_Group();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Call <em>Call</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Call</em>'.
+   * @see org.integratedmodelling.kap.Call
+   * @generated
+   */
+  EClass getCall();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Call#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.integratedmodelling.kap.Call#getName()
+   * @see #getCall()
+   * @generated
+   */
+  EAttribute getCall_Name();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Call#getParameters <em>Parameters</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Parameters</em>'.
+   * @see org.integratedmodelling.kap.Call#getParameters()
+   * @see #getCall()
+   * @generated
+   */
+  EReference getCall_Parameters();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Call#getActions <em>Actions</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Actions</em>'.
+   * @see org.integratedmodelling.kap.Call#getActions()
+   * @see #getCall()
+   * @generated
+   */
+  EReference getCall_Actions();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Actions <em>Actions</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Actions</em>'.
+   * @see org.integratedmodelling.kap.Actions
+   * @generated
+   */
+  EClass getActions();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Actions#getBody <em>Body</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Body</em>'.
+   * @see org.integratedmodelling.kap.Actions#getBody()
+   * @see #getActions()
+   * @generated
+   */
+  EReference getActions_Body();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Actions#getMatch <em>Match</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Match</em>'.
+   * @see org.integratedmodelling.kap.Actions#getMatch()
+   * @see #getActions()
+   * @generated
+   */
+  EReference getActions_Match();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kap.Actions#getMatches <em>Matches</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Matches</em>'.
+   * @see org.integratedmodelling.kap.Actions#getMatches()
+   * @see #getActions()
+   * @generated
+   */
+  EReference getActions_Matches();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Match <em>Match</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Match</em>'.
+   * @see org.integratedmodelling.kap.Match
+   * @generated
+   */
+  EClass getMatch();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Match#isId <em>Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see org.integratedmodelling.kap.Match#isId()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Id();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Match#getBody <em>Body</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Body</em>'.
+   * @see org.integratedmodelling.kap.Match#getBody()
+   * @see #getMatch()
+   * @generated
+   */
+  EReference getMatch_Body();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Match#isRegexp <em>Regexp</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Regexp</em>'.
+   * @see org.integratedmodelling.kap.Match#isRegexp()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Regexp();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Match#isObservable <em>Observable</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Observable</em>'.
+   * @see org.integratedmodelling.kap.Match#isObservable()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Observable();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Match#isLiteral <em>Literal</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Literal</em>'.
+   * @see org.integratedmodelling.kap.Match#isLiteral()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Literal();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Match#isText <em>Text</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Text</em>'.
+   * @see org.integratedmodelling.kap.Match#isText()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Text();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Match#getArguments <em>Arguments</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Arguments</em>'.
+   * @see org.integratedmodelling.kap.Match#getArguments()
+   * @see #getMatch()
+   * @generated
+   */
+  EReference getMatch_Arguments();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Number <em>Number</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Number</em>'.
+   * @see org.integratedmodelling.kap.Number
+   * @generated
+   */
+  EClass getNumber();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Number#isNegative <em>Negative</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Negative</em>'.
+   * @see org.integratedmodelling.kap.Number#isNegative()
+   * @see #getNumber()
+   * @generated
+   */
+  EAttribute getNumber_Negative();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Number#getReal <em>Real</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Real</em>'.
+   * @see org.integratedmodelling.kap.Number#getReal()
+   * @see #getNumber()
+   * @generated
+   */
+  EAttribute getNumber_Real();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Number#isLong <em>Long</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Long</em>'.
+   * @see org.integratedmodelling.kap.Number#isLong()
+   * @see #getNumber()
+   * @generated
+   */
+  EAttribute getNumber_Long();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Number#isDecimal <em>Decimal</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Decimal</em>'.
+   * @see org.integratedmodelling.kap.Number#isDecimal()
+   * @see #getNumber()
+   * @generated
+   */
+  EAttribute getNumber_Decimal();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Number#getDecimalPart <em>Decimal Part</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Decimal Part</em>'.
+   * @see org.integratedmodelling.kap.Number#getDecimalPart()
+   * @see #getNumber()
+   * @generated
+   */
+  EAttribute getNumber_DecimalPart();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Number#isExponential <em>Exponential</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exponential</em>'.
+   * @see org.integratedmodelling.kap.Number#isExponential()
+   * @see #getNumber()
+   * @generated
+   */
+  EAttribute getNumber_Exponential();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Number#isExpNegative <em>Exp Negative</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exp Negative</em>'.
+   * @see org.integratedmodelling.kap.Number#isExpNegative()
+   * @see #getNumber()
+   * @generated
+   */
+  EAttribute getNumber_ExpNegative();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Number#getExp <em>Exp</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exp</em>'.
+   * @see org.integratedmodelling.kap.Number#getExp()
+   * @see #getNumber()
+   * @generated
+   */
+  EAttribute getNumber_Exp();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.Date <em>Date</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Date</em>'.
+   * @see org.integratedmodelling.kap.Date
+   * @generated
+   */
+  EClass getDate();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Date#getYear <em>Year</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Year</em>'.
+   * @see org.integratedmodelling.kap.Date#getYear()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Year();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Date#isBc <em>Bc</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Bc</em>'.
+   * @see org.integratedmodelling.kap.Date#isBc()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Bc();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Date#getMonth <em>Month</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Month</em>'.
+   * @see org.integratedmodelling.kap.Date#getMonth()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Month();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Date#getDay <em>Day</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Day</em>'.
+   * @see org.integratedmodelling.kap.Date#getDay()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Day();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Date#getHour <em>Hour</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Hour</em>'.
+   * @see org.integratedmodelling.kap.Date#getHour()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Hour();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Date#getMin <em>Min</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Min</em>'.
+   * @see org.integratedmodelling.kap.Date#getMin()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Min();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Date#getSec <em>Sec</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Sec</em>'.
+   * @see org.integratedmodelling.kap.Date#getSec()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Sec();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Date#getMs <em>Ms</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ms</em>'.
+   * @see org.integratedmodelling.kap.Date#getMs()
+   * @see #getDate()
+   * @generated
+   */
+  EAttribute getDate_Ms();
 
   /**
    * Returns the factory that creates the instances of the model.
@@ -190,22 +1647,30 @@ public interface KapPackage extends EPackage
     EClass MODEL = eINSTANCE.getModel();
 
     /**
-     * The meta object literal for the '<em><b>Greetings</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Preamble</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference MODEL__GREETINGS = eINSTANCE.getModel_Greetings();
+    EReference MODEL__PREAMBLE = eINSTANCE.getModel_Preamble();
 
     /**
-     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.GreetingImpl <em>Greeting</em>}' class.
+     * The meta object literal for the '<em><b>Definitions</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kap.impl.GreetingImpl
-     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getGreeting()
      * @generated
      */
-    EClass GREETING = eINSTANCE.getGreeting();
+    EReference MODEL__DEFINITIONS = eINSTANCE.getModel_Definitions();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.PreambleImpl <em>Preamble</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.PreambleImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getPreamble()
+     * @generated
+     */
+    EClass PREAMBLE = eINSTANCE.getPreamble();
 
     /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -213,7 +1678,561 @@ public interface KapPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute GREETING__NAME = eINSTANCE.getGreeting_Name();
+    EAttribute PREAMBLE__NAME = eINSTANCE.getPreamble_Name();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.DefinitionImpl <em>Definition</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.DefinitionImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getDefinition()
+     * @generated
+     */
+    EClass DEFINITION = eINSTANCE.getDefinition();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DEFINITION__NAME = eINSTANCE.getDefinition_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Arguments</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference DEFINITION__ARGUMENTS = eINSTANCE.getDefinition_Arguments();
+
+    /**
+     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference DEFINITION__BODY = eINSTANCE.getDefinition_Body();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.ArgumentDeclarationImpl <em>Argument Declaration</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.ArgumentDeclarationImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getArgumentDeclaration()
+     * @generated
+     */
+    EClass ARGUMENT_DECLARATION = eINSTANCE.getArgumentDeclaration();
+
+    /**
+     * The meta object literal for the '<em><b>Ids</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ARGUMENT_DECLARATION__IDS = eINSTANCE.getArgumentDeclaration_Ids();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.ParameterListImpl <em>Parameter List</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.ParameterListImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getParameterList()
+     * @generated
+     */
+    EClass PARAMETER_LIST = eINSTANCE.getParameterList();
+
+    /**
+     * The meta object literal for the '<em><b>Pairs</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference PARAMETER_LIST__PAIRS = eINSTANCE.getParameterList_Pairs();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.KeyValuePairImpl <em>Key Value Pair</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.KeyValuePairImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getKeyValuePair()
+     * @generated
+     */
+    EClass KEY_VALUE_PAIR = eINSTANCE.getKeyValuePair();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute KEY_VALUE_PAIR__NAME = eINSTANCE.getKeyValuePair_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Interactive</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute KEY_VALUE_PAIR__INTERACTIVE = eINSTANCE.getKeyValuePair_Interactive();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference KEY_VALUE_PAIR__VALUE = eINSTANCE.getKeyValuePair_Value();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.ValueImpl <em>Value</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.ValueImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getValue()
+     * @generated
+     */
+    EClass VALUE = eINSTANCE.getValue();
+
+    /**
+     * The meta object literal for the '<em><b>Literal</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__LITERAL = eINSTANCE.getValue_Literal();
+
+    /**
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__ID = eINSTANCE.getValue_Id();
+
+    /**
+     * The meta object literal for the '<em><b>Observable</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__OBSERVABLE = eINSTANCE.getValue_Observable();
+
+    /**
+     * The meta object literal for the '<em><b>Expression</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__EXPRESSION = eINSTANCE.getValue_Expression();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.LiteralImpl <em>Literal</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.LiteralImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getLiteral()
+     * @generated
+     */
+    EClass LITERAL = eINSTANCE.getLiteral();
+
+    /**
+     * The meta object literal for the '<em><b>Number</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LITERAL__NUMBER = eINSTANCE.getLiteral_Number();
+
+    /**
+     * The meta object literal for the '<em><b>From</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LITERAL__FROM = eINSTANCE.getLiteral_From();
+
+    /**
+     * The meta object literal for the '<em><b>To</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LITERAL__TO = eINSTANCE.getLiteral_To();
+
+    /**
+     * The meta object literal for the '<em><b>String</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LITERAL__STRING = eINSTANCE.getLiteral_String();
+
+    /**
+     * The meta object literal for the '<em><b>Date</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LITERAL__DATE = eINSTANCE.getLiteral_Date();
+
+    /**
+     * The meta object literal for the '<em><b>Boolean</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LITERAL__BOOLEAN = eINSTANCE.getLiteral_Boolean();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.BodyImpl <em>Body</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.BodyImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getBody()
+     * @generated
+     */
+    EClass BODY = eINSTANCE.getBody();
+
+    /**
+     * The meta object literal for the '<em><b>List</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference BODY__LIST = eINSTANCE.getBody_List();
+
+    /**
+     * The meta object literal for the '<em><b>Isgroup</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute BODY__ISGROUP = eINSTANCE.getBody_Isgroup();
+
+    /**
+     * The meta object literal for the '<em><b>Group</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference BODY__GROUP = eINSTANCE.getBody_Group();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.StatementImpl <em>Statement</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.StatementImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getStatement()
+     * @generated
+     */
+    EClass STATEMENT = eINSTANCE.getStatement();
+
+    /**
+     * The meta object literal for the '<em><b>Call</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT__CALL = eINSTANCE.getStatement_Call();
+
+    /**
+     * The meta object literal for the '<em><b>Text</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute STATEMENT__TEXT = eINSTANCE.getStatement_Text();
+
+    /**
+     * The meta object literal for the '<em><b>Group</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT__GROUP = eINSTANCE.getStatement_Group();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.CallImpl <em>Call</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.CallImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getCall()
+     * @generated
+     */
+    EClass CALL = eINSTANCE.getCall();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CALL__NAME = eINSTANCE.getCall_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Parameters</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CALL__PARAMETERS = eINSTANCE.getCall_Parameters();
+
+    /**
+     * The meta object literal for the '<em><b>Actions</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CALL__ACTIONS = eINSTANCE.getCall_Actions();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.ActionsImpl <em>Actions</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.ActionsImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getActions()
+     * @generated
+     */
+    EClass ACTIONS = eINSTANCE.getActions();
+
+    /**
+     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTIONS__BODY = eINSTANCE.getActions_Body();
+
+    /**
+     * The meta object literal for the '<em><b>Match</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTIONS__MATCH = eINSTANCE.getActions_Match();
+
+    /**
+     * The meta object literal for the '<em><b>Matches</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTIONS__MATCHES = eINSTANCE.getActions_Matches();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.MatchImpl <em>Match</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.MatchImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getMatch()
+     * @generated
+     */
+    EClass MATCH = eINSTANCE.getMatch();
+
+    /**
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__ID = eINSTANCE.getMatch_Id();
+
+    /**
+     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MATCH__BODY = eINSTANCE.getMatch_Body();
+
+    /**
+     * The meta object literal for the '<em><b>Regexp</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__REGEXP = eINSTANCE.getMatch_Regexp();
+
+    /**
+     * The meta object literal for the '<em><b>Observable</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__OBSERVABLE = eINSTANCE.getMatch_Observable();
+
+    /**
+     * The meta object literal for the '<em><b>Literal</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__LITERAL = eINSTANCE.getMatch_Literal();
+
+    /**
+     * The meta object literal for the '<em><b>Text</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__TEXT = eINSTANCE.getMatch_Text();
+
+    /**
+     * The meta object literal for the '<em><b>Arguments</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MATCH__ARGUMENTS = eINSTANCE.getMatch_Arguments();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.NumberImpl <em>Number</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.NumberImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getNumber()
+     * @generated
+     */
+    EClass NUMBER = eINSTANCE.getNumber();
+
+    /**
+     * The meta object literal for the '<em><b>Negative</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER__NEGATIVE = eINSTANCE.getNumber_Negative();
+
+    /**
+     * The meta object literal for the '<em><b>Real</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER__REAL = eINSTANCE.getNumber_Real();
+
+    /**
+     * The meta object literal for the '<em><b>Long</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER__LONG = eINSTANCE.getNumber_Long();
+
+    /**
+     * The meta object literal for the '<em><b>Decimal</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER__DECIMAL = eINSTANCE.getNumber_Decimal();
+
+    /**
+     * The meta object literal for the '<em><b>Decimal Part</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER__DECIMAL_PART = eINSTANCE.getNumber_DecimalPart();
+
+    /**
+     * The meta object literal for the '<em><b>Exponential</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER__EXPONENTIAL = eINSTANCE.getNumber_Exponential();
+
+    /**
+     * The meta object literal for the '<em><b>Exp Negative</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER__EXP_NEGATIVE = eINSTANCE.getNumber_ExpNegative();
+
+    /**
+     * The meta object literal for the '<em><b>Exp</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER__EXP = eINSTANCE.getNumber_Exp();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.DateImpl <em>Date</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.DateImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getDate()
+     * @generated
+     */
+    EClass DATE = eINSTANCE.getDate();
+
+    /**
+     * The meta object literal for the '<em><b>Year</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__YEAR = eINSTANCE.getDate_Year();
+
+    /**
+     * The meta object literal for the '<em><b>Bc</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__BC = eINSTANCE.getDate_Bc();
+
+    /**
+     * The meta object literal for the '<em><b>Month</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__MONTH = eINSTANCE.getDate_Month();
+
+    /**
+     * The meta object literal for the '<em><b>Day</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__DAY = eINSTANCE.getDate_Day();
+
+    /**
+     * The meta object literal for the '<em><b>Hour</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__HOUR = eINSTANCE.getDate_Hour();
+
+    /**
+     * The meta object literal for the '<em><b>Min</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__MIN = eINSTANCE.getDate_Min();
+
+    /**
+     * The meta object literal for the '<em><b>Sec</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__SEC = eINSTANCE.getDate_Sec();
+
+    /**
+     * The meta object literal for the '<em><b>Ms</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATE__MS = eINSTANCE.getDate_Ms();
 
   }
 

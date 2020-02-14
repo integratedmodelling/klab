@@ -7,10 +7,90 @@
   <genPackages prefix="Kap" basePackage="org.integratedmodelling" disposableProviderFactory="true"
       fileExtensions="kap" ecorePackage="Kap.ecore#/">
     <genClasses ecoreClass="Kap.ecore#//Model">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Model/greetings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Model/preamble"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Model/definitions"/>
     </genClasses>
-    <genClasses ecoreClass="Kap.ecore#//Greeting">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Greeting/name"/>
+    <genClasses ecoreClass="Kap.ecore#//Preamble">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Preamble/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Definition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Definition/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Definition/arguments"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Definition/body"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//ArgumentDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//ArgumentDeclaration/ids"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//ParameterList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//ParameterList/pairs"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//KeyValuePair">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//KeyValuePair/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//KeyValuePair/interactive"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//KeyValuePair/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Value">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Value/literal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Value/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Value/observable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Value/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Literal">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Literal/number"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Literal/from"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Literal/to"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Literal/string"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Literal/date"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Literal/boolean"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Body">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Body/list"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Body/isgroup"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Body/group"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Statement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Statement/call"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Statement/text"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Statement/group"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Call">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Call/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Call/parameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Call/actions"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Actions">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Actions/body"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Actions/match"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Actions/matches"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Match">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Match/id"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Match/body"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Match/regexp"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Match/observable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Match/literal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Match/text"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Match/arguments"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Number">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Number/negative"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Number/real"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Number/long"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Number/decimal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Number/decimalPart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Number/exponential"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Number/expNegative"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Number/exp"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//Date">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Date/year"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Date/bc"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Date/month"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Date/day"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Date/hour"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Date/min"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Date/sec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Date/ms"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

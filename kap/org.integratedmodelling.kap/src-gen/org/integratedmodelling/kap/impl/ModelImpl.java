@@ -5,6 +5,7 @@ package org.integratedmodelling.kap.impl;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
@@ -12,14 +13,16 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.integratedmodelling.kap.Greeting;
+import org.integratedmodelling.kap.Definition;
 import org.integratedmodelling.kap.KapPackage;
 import org.integratedmodelling.kap.Model;
+import org.integratedmodelling.kap.Preamble;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,7 +32,8 @@ import org.integratedmodelling.kap.Model;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kap.impl.ModelImpl#getGreetings <em>Greetings</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.impl.ModelImpl#getPreamble <em>Preamble</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.impl.ModelImpl#getDefinitions <em>Definitions</em>}</li>
  * </ul>
  *
  * @generated
@@ -37,14 +41,24 @@ import org.integratedmodelling.kap.Model;
 public class ModelImpl extends MinimalEObjectImpl.Container implements Model
 {
   /**
-   * The cached value of the '{@link #getGreetings() <em>Greetings</em>}' containment reference list.
+   * The cached value of the '{@link #getPreamble() <em>Preamble</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getGreetings()
+   * @see #getPreamble()
    * @generated
    * @ordered
    */
-  protected EList<Greeting> greetings;
+  protected Preamble preamble;
+
+  /**
+   * The cached value of the '{@link #getDefinitions() <em>Definitions</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDefinitions()
+   * @generated
+   * @ordered
+   */
+  protected EList<Definition> definitions;
 
   /**
    * <!-- begin-user-doc -->
@@ -73,13 +87,63 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * @generated
    */
   @Override
-  public EList<Greeting> getGreetings()
+  public Preamble getPreamble()
   {
-    if (greetings == null)
+    return preamble;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetPreamble(Preamble newPreamble, NotificationChain msgs)
+  {
+    Preamble oldPreamble = preamble;
+    preamble = newPreamble;
+    if (eNotificationRequired())
     {
-      greetings = new EObjectContainmentEList<Greeting>(Greeting.class, this, KapPackage.MODEL__GREETINGS);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KapPackage.MODEL__PREAMBLE, oldPreamble, newPreamble);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
     }
-    return greetings;
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setPreamble(Preamble newPreamble)
+  {
+    if (newPreamble != preamble)
+    {
+      NotificationChain msgs = null;
+      if (preamble != null)
+        msgs = ((InternalEObject)preamble).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KapPackage.MODEL__PREAMBLE, null, msgs);
+      if (newPreamble != null)
+        msgs = ((InternalEObject)newPreamble).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KapPackage.MODEL__PREAMBLE, null, msgs);
+      msgs = basicSetPreamble(newPreamble, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KapPackage.MODEL__PREAMBLE, newPreamble, newPreamble));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EList<Definition> getDefinitions()
+  {
+    if (definitions == null)
+    {
+      definitions = new EObjectContainmentEList<Definition>(Definition.class, this, KapPackage.MODEL__DEFINITIONS);
+    }
+    return definitions;
   }
 
   /**
@@ -92,8 +156,10 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case KapPackage.MODEL__GREETINGS:
-        return ((InternalEList<?>)getGreetings()).basicRemove(otherEnd, msgs);
+      case KapPackage.MODEL__PREAMBLE:
+        return basicSetPreamble(null, msgs);
+      case KapPackage.MODEL__DEFINITIONS:
+        return ((InternalEList<?>)getDefinitions()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -108,8 +174,10 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case KapPackage.MODEL__GREETINGS:
-        return getGreetings();
+      case KapPackage.MODEL__PREAMBLE:
+        return getPreamble();
+      case KapPackage.MODEL__DEFINITIONS:
+        return getDefinitions();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -125,9 +193,12 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case KapPackage.MODEL__GREETINGS:
-        getGreetings().clear();
-        getGreetings().addAll((Collection<? extends Greeting>)newValue);
+      case KapPackage.MODEL__PREAMBLE:
+        setPreamble((Preamble)newValue);
+        return;
+      case KapPackage.MODEL__DEFINITIONS:
+        getDefinitions().clear();
+        getDefinitions().addAll((Collection<? extends Definition>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -143,8 +214,11 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case KapPackage.MODEL__GREETINGS:
-        getGreetings().clear();
+      case KapPackage.MODEL__PREAMBLE:
+        setPreamble((Preamble)null);
+        return;
+      case KapPackage.MODEL__DEFINITIONS:
+        getDefinitions().clear();
         return;
     }
     super.eUnset(featureID);
@@ -160,8 +234,10 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case KapPackage.MODEL__GREETINGS:
-        return greetings != null && !greetings.isEmpty();
+      case KapPackage.MODEL__PREAMBLE:
+        return preamble != null;
+      case KapPackage.MODEL__DEFINITIONS:
+        return definitions != null && !definitions.isEmpty();
     }
     return super.eIsSet(featureID);
   }

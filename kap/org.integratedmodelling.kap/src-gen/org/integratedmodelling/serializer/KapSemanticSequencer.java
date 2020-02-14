@@ -14,9 +14,21 @@ import org.eclipse.xtext.serializer.ISerializationContext;
 import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
 import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
-import org.integratedmodelling.kap.Greeting;
+import org.integratedmodelling.kap.Actions;
+import org.integratedmodelling.kap.ArgumentDeclaration;
+import org.integratedmodelling.kap.Body;
+import org.integratedmodelling.kap.Call;
+import org.integratedmodelling.kap.Date;
+import org.integratedmodelling.kap.Definition;
 import org.integratedmodelling.kap.KapPackage;
+import org.integratedmodelling.kap.KeyValuePair;
+import org.integratedmodelling.kap.Literal;
+import org.integratedmodelling.kap.Match;
 import org.integratedmodelling.kap.Model;
+import org.integratedmodelling.kap.ParameterList;
+import org.integratedmodelling.kap.Preamble;
+import org.integratedmodelling.kap.Statement;
+import org.integratedmodelling.kap.Value;
 import org.integratedmodelling.services.KapGrammarAccess;
 
 @SuppressWarnings("all")
@@ -33,11 +45,50 @@ public class KapSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		Set<Parameter> parameters = context.getEnabledBooleanParameters();
 		if (epackage == KapPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
-			case KapPackage.GREETING:
-				sequence_Greeting(context, (Greeting) semanticObject); 
+			case KapPackage.ACTIONS:
+				sequence_Actions(context, (Actions) semanticObject); 
+				return; 
+			case KapPackage.ARGUMENT_DECLARATION:
+				sequence_ArgumentDeclaration(context, (ArgumentDeclaration) semanticObject); 
+				return; 
+			case KapPackage.BODY:
+				sequence_Body(context, (Body) semanticObject); 
+				return; 
+			case KapPackage.CALL:
+				sequence_Call(context, (Call) semanticObject); 
+				return; 
+			case KapPackage.DATE:
+				sequence_Date(context, (Date) semanticObject); 
+				return; 
+			case KapPackage.DEFINITION:
+				sequence_Definition(context, (Definition) semanticObject); 
+				return; 
+			case KapPackage.KEY_VALUE_PAIR:
+				sequence_KeyValuePair(context, (KeyValuePair) semanticObject); 
+				return; 
+			case KapPackage.LITERAL:
+				sequence_Literal(context, (Literal) semanticObject); 
+				return; 
+			case KapPackage.MATCH:
+				sequence_Match(context, (Match) semanticObject); 
 				return; 
 			case KapPackage.MODEL:
 				sequence_Model(context, (Model) semanticObject); 
+				return; 
+			case KapPackage.NUMBER:
+				sequence_Number(context, (org.integratedmodelling.kap.Number) semanticObject); 
+				return; 
+			case KapPackage.PARAMETER_LIST:
+				sequence_ParameterList(context, (ParameterList) semanticObject); 
+				return; 
+			case KapPackage.PREAMBLE:
+				sequence_Preamble(context, (Preamble) semanticObject); 
+				return; 
+			case KapPackage.STATEMENT:
+				sequence_Statement(context, (Statement) semanticObject); 
+				return; 
+			case KapPackage.VALUE:
+				sequence_Value(context, (Value) semanticObject); 
 				return; 
 			}
 		if (errorAcceptor != null)
@@ -46,19 +97,123 @@ public class KapSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Greeting returns Greeting
+	 *     Actions returns Actions
 	 *
 	 * Constraint:
-	 *     name=ID
+	 *     (body=Body | match=Match | (matches+=Match matches+=Match*))
 	 */
-	protected void sequence_Greeting(ISerializationContext context, Greeting semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, KapPackage.Literals.GREETING__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KapPackage.Literals.GREETING__NAME));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getGreetingAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.finish();
+	protected void sequence_Actions(ISerializationContext context, Actions semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ArgumentDeclaration returns ArgumentDeclaration
+	 *
+	 * Constraint:
+	 *     (ids+=LOWERCASE_ID ids+=LOWERCASE_ID*)?
+	 */
+	protected void sequence_ArgumentDeclaration(ISerializationContext context, ArgumentDeclaration semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Body returns Body
+	 *
+	 * Constraint:
+	 *     ((list+=Statement list+=Statement*) | (isgroup?='(' (group+=Statement group+=Statement*)?))
+	 */
+	protected void sequence_Body(ISerializationContext context, Body semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Call returns Call
+	 *
+	 * Constraint:
+	 *     (name=LOWERCASE_ID parameters=ParameterList? actions=Actions?)
+	 */
+	protected void sequence_Call(ISerializationContext context, Call semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Date returns Date
+	 *
+	 * Constraint:
+	 *     (year=INT bc?='BC'? month=INT day=INT (hour=INT min=INT (sec=INT ms=INT?)?)?)
+	 */
+	protected void sequence_Date(ISerializationContext context, Date semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Definition returns Definition
+	 *
+	 * Constraint:
+	 *     (name=LOWERCASE_ID arguments=ArgumentDeclaration? body=Body)
+	 */
+	protected void sequence_Definition(ISerializationContext context, Definition semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     KeyValuePair returns KeyValuePair
+	 *
+	 * Constraint:
+	 *     ((name=LOWERCASE_ID interactive?='=?'?)? value=Value)
+	 */
+	protected void sequence_KeyValuePair(ISerializationContext context, KeyValuePair semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Literal returns Literal
+	 *
+	 * Constraint:
+	 *     (
+	 *         number=Number | 
+	 *         (from=Number to=Number) | 
+	 *         string=STRING | 
+	 *         date=Date | 
+	 *         boolean='true' | 
+	 *         boolean='false'
+	 *     )
+	 */
+	protected void sequence_Literal(ISerializationContext context, Literal semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Match returns Match
+	 *
+	 * Constraint:
+	 *     (
+	 *         (id?=LOWERCASE_ID body=Body) | 
+	 *         (regexp?=REGEXP body=Body) | 
+	 *         (observable?=OBSERVABLE body=Body) | 
+	 *         (literal?=Literal body=Body) | 
+	 *         (text?=STRING body=Body) | 
+	 *         (arguments=ArgumentDeclaration body=Body)
+	 *     )
+	 */
+	protected void sequence_Match(ISerializationContext context, Match semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -67,9 +222,75 @@ public class KapSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Model returns Model
 	 *
 	 * Constraint:
-	 *     greetings+=Greeting+
+	 *     (preamble=Preamble? definitions+=Definition*)
 	 */
 	protected void sequence_Model(ISerializationContext context, Model semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Number returns Number
+	 *
+	 * Constraint:
+	 *     (negative?='-'? real=INT long?='l'? (decimal?='.' decimalPart=INT)? ((exponential?='e' | exponential?='E') expNegative?='-'? exp=INT)?)
+	 */
+	protected void sequence_Number(ISerializationContext context, org.integratedmodelling.kap.Number semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ParameterList returns ParameterList
+	 *
+	 * Constraint:
+	 *     (pairs+=KeyValuePair pairs+=KeyValuePair*)
+	 */
+	protected void sequence_ParameterList(ISerializationContext context, ParameterList semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Preamble returns Preamble
+	 *
+	 * Constraint:
+	 *     name=LOWERCASE_ID
+	 */
+	protected void sequence_Preamble(ISerializationContext context, Preamble semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, KapPackage.Literals.PREAMBLE__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KapPackage.Literals.PREAMBLE__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getPreambleAccess().getNameLOWERCASE_IDTerminalRuleCall_1_0(), semanticObject.getName());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Statement returns Statement
+	 *
+	 * Constraint:
+	 *     (call=Call | text=EMBEDDEDTEXT | (group+=Call group+=Call*))
+	 */
+	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Value returns Value
+	 *
+	 * Constraint:
+	 *     (literal=Literal | id=LOWERCASE_ID | observable=OBSERVABLE | expression=EXPR)
+	 */
+	protected void sequence_Value(ISerializationContext context, Value semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

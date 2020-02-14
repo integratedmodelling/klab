@@ -2,8 +2,117 @@ grammar org.integratedmodelling.Kap with org.eclipse.xtext.common.Terminals
 
 generate kap "http://www.integratedmodelling.org/Kap"
 
-Model:
-	greetings+=Greeting*;
+Model: {Model}
+	(preamble=Preamble)?
+	definitions+=Definition*;
+
+Preamble:
+	'name' name=LOWERCASE_ID 
+;	
+
+Definition:
+	'def' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=Body;
+
+ArgumentDeclaration: {ArgumentDeclaration}
+	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'
+;
+
+ParameterList:
+	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
 	
-Greeting:
-	'Hello' name=ID '!';
+KeyValuePair:
+	(name=(LOWERCASE_ID) (interactive?='=?' | '='))?
+	value=Value;
+	
+Value:
+	literal=Literal |
+	id=LOWERCASE_ID |
+//	urn=Urn | 
+//	list=List |
+//	map=Map | 
+	observable=OBSERVABLE | 
+	expression=EXPR// |
+//	table=LookupTable
+	;
+
+	
+///**
+// * URN is 4 sections: node (or 'klab' for internal resources), catalog (or adapter for internal resources), namespace and
+// * resource ID. Admits a version number and a fragment (with only lowercase_id chars in it). It is
+// * legal, but not required, to start with the default prefix urn:klab:. The 4th path element (the ID) may be
+// * integer.
+// */
+//UrnId:
+//	('urn:klab:')? PathName ':'  PathName ':' PathName ':' (Path|INT) (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
+//	
+//UrnKvp:
+//	PathName '=' (Path|INT)
+//;		
+//	
+//PathName:
+//	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) ('.' (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
+//;
+//
+//Path:
+//	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
+//;
+
+Literal:
+	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
+
+Body: {Body}
+	list+=Statement (';' list+=Statement)* |
+	// only way to be empty is to be an empty group
+	isgroup?='(' (group+=Statement (';' group += Statement)*)? ')'
+;
+
+Statement:
+	call=Call  |
+//	text='---'ANYTEXT '---'|
+	'(' group+=Call ( group+=Call)* ')'
+;
+
+Call:
+	name=LOWERCASE_ID ('(' (parameters=ParameterList)? ')')? (':' => actions=Actions)? 
+;
+
+Actions: 
+	body=Body |
+	match=Match |
+	'(' matches+=Match (matches+=Match)* ')'
+;
+
+Match:
+	// error is a special variable instantiated on error, not a keyword
+	id?=LOWERCASE_ID '->' body=Body |
+	regexp?=REGEXP '->' body=Body |
+	observable?=OBSERVABLE '->' body=Body |
+	literal?=Literal '->' body=Body |
+	text?=STRING '->' body=Body |
+	arguments=ArgumentDeclaration '->' body=Body
+	// number
+	// list
+;
+
+Number:
+	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
+
+Date:
+	year=INT ('AD' | 'CE' | bc?='BC')? '-' month=INT '-' day=INT (hour=INT ':' min=INT (':' sec=INT ('.' ms=INT)?)?)?
+;
+
+terminal LOWERCASE_ID:
+	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
+
+terminal EXPR:
+	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
+	
+terminal REGEXP:
+	'%' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\') | !('\\' | '%'))* '%';
+	
+terminal OBSERVABLE:
+	'{' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '}';
+	
+terminal ANYTEXT:
+	('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\'))*;
+	

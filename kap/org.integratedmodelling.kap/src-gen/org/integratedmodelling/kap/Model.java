@@ -16,7 +16,8 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kap.Model#getGreetings <em>Greetings</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.Model#getPreamble <em>Preamble</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.Model#getDefinitions <em>Definitions</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kap.KapPackage#getModel()
@@ -26,15 +27,37 @@ import org.eclipse.emf.ecore.EObject;
 public interface Model extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Greetings</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kap.Greeting}.
+   * Returns the value of the '<em><b>Preamble</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Greetings</em>' containment reference list.
-   * @see org.integratedmodelling.kap.KapPackage#getModel_Greetings()
+   * @return the value of the '<em>Preamble</em>' containment reference.
+   * @see #setPreamble(Preamble)
+   * @see org.integratedmodelling.kap.KapPackage#getModel_Preamble()
    * @model containment="true"
    * @generated
    */
-  EList<Greeting> getGreetings();
+  Preamble getPreamble();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kap.Model#getPreamble <em>Preamble</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Preamble</em>' containment reference.
+   * @see #getPreamble()
+   * @generated
+   */
+  void setPreamble(Preamble value);
+
+  /**
+   * Returns the value of the '<em><b>Definitions</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kap.Definition}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Definitions</em>' containment reference list.
+   * @see org.integratedmodelling.kap.KapPackage#getModel_Definitions()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Definition> getDefinitions();
 
 } // Model

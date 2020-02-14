@@ -11,7 +11,22 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
-import org.integratedmodelling.kap.*;
+import org.integratedmodelling.kap.Actions;
+import org.integratedmodelling.kap.ArgumentDeclaration;
+import org.integratedmodelling.kap.Body;
+import org.integratedmodelling.kap.Call;
+import org.integratedmodelling.kap.Date;
+import org.integratedmodelling.kap.Definition;
+import org.integratedmodelling.kap.KapFactory;
+import org.integratedmodelling.kap.KapPackage;
+import org.integratedmodelling.kap.KeyValuePair;
+import org.integratedmodelling.kap.Literal;
+import org.integratedmodelling.kap.Match;
+import org.integratedmodelling.kap.Model;
+import org.integratedmodelling.kap.ParameterList;
+import org.integratedmodelling.kap.Preamble;
+import org.integratedmodelling.kap.Statement;
+import org.integratedmodelling.kap.Value;
 
 /**
  * <!-- begin-user-doc -->
@@ -66,7 +81,20 @@ public class KapFactoryImpl extends EFactoryImpl implements KapFactory
     switch (eClass.getClassifierID())
     {
       case KapPackage.MODEL: return createModel();
-      case KapPackage.GREETING: return createGreeting();
+      case KapPackage.PREAMBLE: return createPreamble();
+      case KapPackage.DEFINITION: return createDefinition();
+      case KapPackage.ARGUMENT_DECLARATION: return createArgumentDeclaration();
+      case KapPackage.PARAMETER_LIST: return createParameterList();
+      case KapPackage.KEY_VALUE_PAIR: return createKeyValuePair();
+      case KapPackage.VALUE: return createValue();
+      case KapPackage.LITERAL: return createLiteral();
+      case KapPackage.BODY: return createBody();
+      case KapPackage.STATEMENT: return createStatement();
+      case KapPackage.CALL: return createCall();
+      case KapPackage.ACTIONS: return createActions();
+      case KapPackage.MATCH: return createMatch();
+      case KapPackage.NUMBER: return createNumber();
+      case KapPackage.DATE: return createDate();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -90,10 +118,166 @@ public class KapFactoryImpl extends EFactoryImpl implements KapFactory
    * @generated
    */
   @Override
-  public Greeting createGreeting()
+  public Preamble createPreamble()
   {
-    GreetingImpl greeting = new GreetingImpl();
-    return greeting;
+    PreambleImpl preamble = new PreambleImpl();
+    return preamble;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Definition createDefinition()
+  {
+    DefinitionImpl definition = new DefinitionImpl();
+    return definition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ArgumentDeclaration createArgumentDeclaration()
+  {
+    ArgumentDeclarationImpl argumentDeclaration = new ArgumentDeclarationImpl();
+    return argumentDeclaration;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ParameterList createParameterList()
+  {
+    ParameterListImpl parameterList = new ParameterListImpl();
+    return parameterList;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public KeyValuePair createKeyValuePair()
+  {
+    KeyValuePairImpl keyValuePair = new KeyValuePairImpl();
+    return keyValuePair;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Value createValue()
+  {
+    ValueImpl value = new ValueImpl();
+    return value;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Literal createLiteral()
+  {
+    LiteralImpl literal = new LiteralImpl();
+    return literal;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Body createBody()
+  {
+    BodyImpl body = new BodyImpl();
+    return body;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Statement createStatement()
+  {
+    StatementImpl statement = new StatementImpl();
+    return statement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Call createCall()
+  {
+    CallImpl call = new CallImpl();
+    return call;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Actions createActions()
+  {
+    ActionsImpl actions = new ActionsImpl();
+    return actions;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Match createMatch()
+  {
+    MatchImpl match = new MatchImpl();
+    return match;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public org.integratedmodelling.kap.Number createNumber()
+  {
+    NumberImpl number = new NumberImpl();
+    return number;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Date createDate()
+  {
+    DateImpl date = new DateImpl();
+    return date;
   }
 
   /**
