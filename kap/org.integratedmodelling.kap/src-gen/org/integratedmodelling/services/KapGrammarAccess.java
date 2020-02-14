@@ -16,6 +16,7 @@ import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.TerminalRule;
+import org.eclipse.xtext.UnorderedGroup;
 import org.eclipse.xtext.common.services.TerminalsGrammarAccess;
 import org.eclipse.xtext.service.AbstractElementFinder.AbstractGrammarElementFinder;
 import org.eclipse.xtext.service.GrammarProvider;
@@ -61,12 +62,31 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cNameKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final UnorderedGroup cUnorderedGroup_2 = (UnorderedGroup)cGroup.eContents().get(2);
+		private final Group cGroup_2_0 = (Group)cUnorderedGroup_2.eContents().get(0);
+		private final Keyword cWorldviewKeyword_2_0_0 = (Keyword)cGroup_2_0.eContents().get(0);
+		private final Assignment cWorldviewAssignment_2_0_1 = (Assignment)cGroup_2_0.eContents().get(1);
+		private final RuleCall cWorldviewLOWERCASE_IDTerminalRuleCall_2_0_1_0 = (RuleCall)cWorldviewAssignment_2_0_1.eContents().get(0);
+		private final Group cGroup_2_1 = (Group)cUnorderedGroup_2.eContents().get(1);
+		private final Keyword cPermissionsKeyword_2_1_0 = (Keyword)cGroup_2_1.eContents().get(0);
+		private final Assignment cPermissionsAssignment_2_1_1 = (Assignment)cGroup_2_1.eContents().get(1);
+		private final RuleCall cPermissionsSTRINGTerminalRuleCall_2_1_1_0 = (RuleCall)cPermissionsAssignment_2_1_1.eContents().get(0);
+		private final Group cGroup_2_2 = (Group)cUnorderedGroup_2.eContents().get(2);
+		private final Keyword cAuthorKeyword_2_2_0 = (Keyword)cGroup_2_2.eContents().get(0);
+		private final Assignment cAuthorsAssignment_2_2_1 = (Assignment)cGroup_2_2.eContents().get(1);
+		private final RuleCall cAuthorsSTRINGTerminalRuleCall_2_2_1_0 = (RuleCall)cAuthorsAssignment_2_2_1.eContents().get(0);
+		private final Group cGroup_2_3 = (Group)cUnorderedGroup_2.eContents().get(3);
+		private final Keyword cVersionKeyword_2_3_0 = (Keyword)cGroup_2_3.eContents().get(0);
+		private final Assignment cVersionAssignment_2_3_1 = (Assignment)cGroup_2_3.eContents().get(1);
+		private final RuleCall cVersionLOWERCASE_IDTerminalRuleCall_2_3_1_0 = (RuleCall)cVersionAssignment_2_3_1.eContents().get(0);
 		
 		//Preamble:
-		//	'name' name=LOWERCASE_ID;
+		//	'name' name=LOWERCASE_ID (('worldview' worldview=LOWERCASE_ID)? & ('permissions' permissions=STRING)? & ('author'
+		//	authors=STRING)? & ('version' version=LOWERCASE_ID)?);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'name' name=LOWERCASE_ID
+		//'name' name=LOWERCASE_ID (('worldview' worldview=LOWERCASE_ID)? & ('permissions' permissions=STRING)? & ('author'
+		//authors=STRING)? & ('version' version=LOWERCASE_ID)?)
 		public Group getGroup() { return cGroup; }
 		
 		//'name'
@@ -77,6 +97,58 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//LOWERCASE_ID
 		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_1_0() { return cNameLOWERCASE_IDTerminalRuleCall_1_0; }
+		
+		//(('worldview' worldview=LOWERCASE_ID)? & ('permissions' permissions=STRING)? & ('author' authors=STRING)? & ('version'
+		//version=LOWERCASE_ID)?)
+		public UnorderedGroup getUnorderedGroup_2() { return cUnorderedGroup_2; }
+		
+		//('worldview' worldview=LOWERCASE_ID)?
+		public Group getGroup_2_0() { return cGroup_2_0; }
+		
+		//'worldview'
+		public Keyword getWorldviewKeyword_2_0_0() { return cWorldviewKeyword_2_0_0; }
+		
+		//worldview=LOWERCASE_ID
+		public Assignment getWorldviewAssignment_2_0_1() { return cWorldviewAssignment_2_0_1; }
+		
+		//LOWERCASE_ID
+		public RuleCall getWorldviewLOWERCASE_IDTerminalRuleCall_2_0_1_0() { return cWorldviewLOWERCASE_IDTerminalRuleCall_2_0_1_0; }
+		
+		//('permissions' permissions=STRING)?
+		public Group getGroup_2_1() { return cGroup_2_1; }
+		
+		//'permissions'
+		public Keyword getPermissionsKeyword_2_1_0() { return cPermissionsKeyword_2_1_0; }
+		
+		//permissions=STRING
+		public Assignment getPermissionsAssignment_2_1_1() { return cPermissionsAssignment_2_1_1; }
+		
+		//STRING
+		public RuleCall getPermissionsSTRINGTerminalRuleCall_2_1_1_0() { return cPermissionsSTRINGTerminalRuleCall_2_1_1_0; }
+		
+		//('author' authors=STRING)?
+		public Group getGroup_2_2() { return cGroup_2_2; }
+		
+		//'author'
+		public Keyword getAuthorKeyword_2_2_0() { return cAuthorKeyword_2_2_0; }
+		
+		//authors=STRING
+		public Assignment getAuthorsAssignment_2_2_1() { return cAuthorsAssignment_2_2_1; }
+		
+		//STRING
+		public RuleCall getAuthorsSTRINGTerminalRuleCall_2_2_1_0() { return cAuthorsSTRINGTerminalRuleCall_2_2_1_0; }
+		
+		//('version' version=LOWERCASE_ID)?
+		public Group getGroup_2_3() { return cGroup_2_3; }
+		
+		//'version'
+		public Keyword getVersionKeyword_2_3_0() { return cVersionKeyword_2_3_0; }
+		
+		//version=LOWERCASE_ID
+		public Assignment getVersionAssignment_2_3_1() { return cVersionAssignment_2_3_1; }
+		
+		//LOWERCASE_ID
+		public RuleCall getVersionLOWERCASE_IDTerminalRuleCall_2_3_1_0() { return cVersionLOWERCASE_IDTerminalRuleCall_2_3_1_0; }
 	}
 	public class DefinitionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Definition");
@@ -259,50 +331,58 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	public class ValueElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Value");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cLiteralAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cLiteralLiteralParserRuleCall_0_0 = (RuleCall)cLiteralAssignment_0.eContents().get(0);
-		private final Assignment cIdAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_1_0 = (RuleCall)cIdAssignment_1.eContents().get(0);
-		private final Assignment cObservableAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
-		private final RuleCall cObservableOBSERVABLETerminalRuleCall_2_0 = (RuleCall)cObservableAssignment_2.eContents().get(0);
-		private final Assignment cExpressionAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
-		private final RuleCall cExpressionEXPRTerminalRuleCall_3_0 = (RuleCall)cExpressionAssignment_3.eContents().get(0);
+		private final Assignment cArgvalueAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cArgvalueARGVALUETerminalRuleCall_0_0 = (RuleCall)cArgvalueAssignment_0.eContents().get(0);
+		private final Assignment cLiteralAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cLiteralLiteralParserRuleCall_1_0 = (RuleCall)cLiteralAssignment_1.eContents().get(0);
+		private final Assignment cIdAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
+		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_2_0 = (RuleCall)cIdAssignment_2.eContents().get(0);
+		private final Assignment cObservableAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
+		private final RuleCall cObservableOBSERVABLETerminalRuleCall_3_0 = (RuleCall)cObservableAssignment_3.eContents().get(0);
+		private final Assignment cExpressionAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_4_0 = (RuleCall)cExpressionAssignment_4.eContents().get(0);
 		
 		//Value:
-		//	literal=Literal | id=LOWERCASE_ID | observable=OBSERVABLE | expression=EXPR // |
-		//	//	table=LookupTable
+		//	argvalue=ARGVALUE | literal=Literal | id=LOWERCASE_ID | observable=OBSERVABLE | expression=EXPR // |
+		//	//	table=LookupTable ???
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//literal=Literal | id=LOWERCASE_ID | observable=OBSERVABLE | expression=EXPR
+		//argvalue=ARGVALUE | literal=Literal | id=LOWERCASE_ID | observable=OBSERVABLE | expression=EXPR
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
+		//argvalue=ARGVALUE
+		public Assignment getArgvalueAssignment_0() { return cArgvalueAssignment_0; }
+		
+		//ARGVALUE
+		public RuleCall getArgvalueARGVALUETerminalRuleCall_0_0() { return cArgvalueARGVALUETerminalRuleCall_0_0; }
+		
 		//literal=Literal
-		public Assignment getLiteralAssignment_0() { return cLiteralAssignment_0; }
+		public Assignment getLiteralAssignment_1() { return cLiteralAssignment_1; }
 		
 		//Literal
-		public RuleCall getLiteralLiteralParserRuleCall_0_0() { return cLiteralLiteralParserRuleCall_0_0; }
+		public RuleCall getLiteralLiteralParserRuleCall_1_0() { return cLiteralLiteralParserRuleCall_1_0; }
 		
 		//id=LOWERCASE_ID
-		public Assignment getIdAssignment_1() { return cIdAssignment_1; }
+		public Assignment getIdAssignment_2() { return cIdAssignment_2; }
 		
 		//LOWERCASE_ID
-		public RuleCall getIdLOWERCASE_IDTerminalRuleCall_1_0() { return cIdLOWERCASE_IDTerminalRuleCall_1_0; }
+		public RuleCall getIdLOWERCASE_IDTerminalRuleCall_2_0() { return cIdLOWERCASE_IDTerminalRuleCall_2_0; }
 		
 		////	urn=Urn | 
 		////	list=List |
-		////	map=Map | 
+		////	map=Map | ???
 		//observable=OBSERVABLE
-		public Assignment getObservableAssignment_2() { return cObservableAssignment_2; }
+		public Assignment getObservableAssignment_3() { return cObservableAssignment_3; }
 		
 		//OBSERVABLE
-		public RuleCall getObservableOBSERVABLETerminalRuleCall_2_0() { return cObservableOBSERVABLETerminalRuleCall_2_0; }
+		public RuleCall getObservableOBSERVABLETerminalRuleCall_3_0() { return cObservableOBSERVABLETerminalRuleCall_3_0; }
 		
 		//expression=EXPR
-		public Assignment getExpressionAssignment_3() { return cExpressionAssignment_3; }
+		public Assignment getExpressionAssignment_4() { return cExpressionAssignment_4; }
 		
 		//EXPR
-		public RuleCall getExpressionEXPRTerminalRuleCall_3_0() { return cExpressionEXPRTerminalRuleCall_3_0; }
+		public RuleCall getExpressionEXPRTerminalRuleCall_4_0() { return cExpressionEXPRTerminalRuleCall_4_0; }
 	}
 	public class LiteralElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Literal");
@@ -324,26 +404,6 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cBooleanTrueKeyword_4_0_0 = (Keyword)cBooleanAlternatives_4_0.eContents().get(0);
 		private final Keyword cBooleanFalseKeyword_4_0_1 = (Keyword)cBooleanAlternatives_4_0.eContents().get(1);
 		
-		/////**
-		//// * URN is 4 sections: node (or 'klab' for internal resources), catalog (or adapter for internal resources), namespace and
-		//// * resource ID. Admits a version number and a fragment (with only lowercase_id chars in it). It is
-		//// * legal, but not required, to start with the default prefix urn:klab:. The 4th path element (the ID) may be
-		//// * integer.
-		//// */
-		////UrnId:
-		////	('urn:klab:')? PathName ':'  PathName ':' PathName ':' (Path|INT) (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
-		////	
-		////UrnKvp:
-		////	PathName '=' (Path|INT)
-		////;		
-		////	
-		////PathName:
-		////	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) ('.' (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
-		////;
-		////
-		////Path:
-		////	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
-		////;
 		//Literal:
 		//	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
 		@Override public ParserRule getRule() { return rule; }
@@ -406,30 +466,26 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		private final Action cBodyAction_0_0 = (Action)cGroup_0.eContents().get(0);
 		private final Assignment cListAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
 		private final RuleCall cListStatementParserRuleCall_0_1_0 = (RuleCall)cListAssignment_0_1.eContents().get(0);
-		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
-		private final Keyword cSemicolonKeyword_0_2_0 = (Keyword)cGroup_0_2.eContents().get(0);
-		private final Assignment cListAssignment_0_2_1 = (Assignment)cGroup_0_2.eContents().get(1);
-		private final RuleCall cListStatementParserRuleCall_0_2_1_0 = (RuleCall)cListAssignment_0_2_1.eContents().get(0);
+		private final Assignment cListAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
+		private final RuleCall cListStatementParserRuleCall_0_2_0 = (RuleCall)cListAssignment_0_2.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
 		private final Assignment cIsgroupAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
 		private final Keyword cIsgroupLeftParenthesisKeyword_1_0_0 = (Keyword)cIsgroupAssignment_1_0.eContents().get(0);
 		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
 		private final Assignment cGroupAssignment_1_1_0 = (Assignment)cGroup_1_1.eContents().get(0);
 		private final RuleCall cGroupStatementParserRuleCall_1_1_0_0 = (RuleCall)cGroupAssignment_1_1_0.eContents().get(0);
-		private final Group cGroup_1_1_1 = (Group)cGroup_1_1.eContents().get(1);
-		private final Keyword cSemicolonKeyword_1_1_1_0 = (Keyword)cGroup_1_1_1.eContents().get(0);
-		private final Assignment cGroupAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
-		private final RuleCall cGroupStatementParserRuleCall_1_1_1_1_0 = (RuleCall)cGroupAssignment_1_1_1_1.eContents().get(0);
+		private final Assignment cGroupAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final RuleCall cGroupStatementParserRuleCall_1_1_1_0 = (RuleCall)cGroupAssignment_1_1_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
 		
 		//Body:
-		//	{Body} list+=Statement (';' list+=Statement)* | isgroup?='(' (group+=Statement (';' group+=Statement)*)? ')';
+		//	{Body} list+=Statement list+=Statement* | isgroup?='(' (group+=Statement group+=Statement*)? ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{Body} list+=Statement (';' list+=Statement)* | isgroup?='(' (group+=Statement (';' group+=Statement)*)? ')'
+		//{Body} list+=Statement list+=Statement* | isgroup?='(' (group+=Statement group+=Statement*)? ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//{Body} list+=Statement (';' list+=Statement)*
+		//{Body} list+=Statement list+=Statement*
 		public Group getGroup_0() { return cGroup_0; }
 		
 		//{Body}
@@ -441,20 +497,14 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		//Statement
 		public RuleCall getListStatementParserRuleCall_0_1_0() { return cListStatementParserRuleCall_0_1_0; }
 		
-		//(';' list+=Statement)*
-		public Group getGroup_0_2() { return cGroup_0_2; }
-		
-		//';'
-		public Keyword getSemicolonKeyword_0_2_0() { return cSemicolonKeyword_0_2_0; }
-		
-		//list+=Statement
-		public Assignment getListAssignment_0_2_1() { return cListAssignment_0_2_1; }
+		//list+=Statement*
+		public Assignment getListAssignment_0_2() { return cListAssignment_0_2; }
 		
 		//Statement
-		public RuleCall getListStatementParserRuleCall_0_2_1_0() { return cListStatementParserRuleCall_0_2_1_0; }
+		public RuleCall getListStatementParserRuleCall_0_2_0() { return cListStatementParserRuleCall_0_2_0; }
 		
 		//// only way to be empty is to be an empty group
-		//isgroup?='(' (group+=Statement (';' group+=Statement)*)? ')'
+		//isgroup?='(' (group+=Statement group+=Statement*)? ')'
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//// only way to be empty is to be an empty group
@@ -464,7 +514,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		//'('
 		public Keyword getIsgroupLeftParenthesisKeyword_1_0_0() { return cIsgroupLeftParenthesisKeyword_1_0_0; }
 		
-		//(group+=Statement (';' group+=Statement)*)?
+		//(group+=Statement group+=Statement*)?
 		public Group getGroup_1_1() { return cGroup_1_1; }
 		
 		//group+=Statement
@@ -473,17 +523,11 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		//Statement
 		public RuleCall getGroupStatementParserRuleCall_1_1_0_0() { return cGroupStatementParserRuleCall_1_1_0_0; }
 		
-		//(';' group+=Statement)*
-		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
-		
-		//';'
-		public Keyword getSemicolonKeyword_1_1_1_0() { return cSemicolonKeyword_1_1_1_0; }
-		
-		//group+=Statement
-		public Assignment getGroupAssignment_1_1_1_1() { return cGroupAssignment_1_1_1_1; }
+		//group+=Statement*
+		public Assignment getGroupAssignment_1_1_1() { return cGroupAssignment_1_1_1; }
 		
 		//Statement
-		public RuleCall getGroupStatementParserRuleCall_1_1_1_1_0() { return cGroupStatementParserRuleCall_1_1_1_1_0; }
+		public RuleCall getGroupStatementParserRuleCall_1_1_1_0() { return cGroupStatementParserRuleCall_1_1_1_0; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
@@ -495,22 +539,26 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cCallCallParserRuleCall_0_0 = (RuleCall)cCallAssignment_0.eContents().get(0);
 		private final Assignment cTextAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
 		private final RuleCall cTextEMBEDDEDTEXTTerminalRuleCall_1_0 = (RuleCall)cTextAssignment_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Keyword cLeftParenthesisKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Assignment cGroupAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cGroupCallParserRuleCall_2_1_0 = (RuleCall)cGroupAssignment_2_1.eContents().get(0);
-		private final Group cGroup_2_2 = (Group)cGroup_2.eContents().get(2);
-		private final Keyword cSemicolonKeyword_2_2_0 = (Keyword)cGroup_2_2.eContents().get(0);
-		private final Assignment cGroupAssignment_2_2_1 = (Assignment)cGroup_2_2.eContents().get(1);
-		private final RuleCall cGroupCallParserRuleCall_2_2_1_0 = (RuleCall)cGroupAssignment_2_2_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_2_3 = (Keyword)cGroup_2.eContents().get(3);
+		private final Assignment cIfAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
+		private final RuleCall cIfIfStatementParserRuleCall_2_0 = (RuleCall)cIfAssignment_2.eContents().get(0);
+		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
+		private final Keyword cLeftParenthesisKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cGroupAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cGroupStatementParserRuleCall_3_1_0 = (RuleCall)cGroupAssignment_3_1.eContents().get(0);
+		private final Assignment cGroupAssignment_3_2 = (Assignment)cGroup_3.eContents().get(2);
+		private final RuleCall cGroupStatementParserRuleCall_3_2_0 = (RuleCall)cGroupAssignment_3_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_3_3 = (Keyword)cGroup_3.eContents().get(3);
 		
 		//Statement:
-		//	call=Call | text=EMBEDDEDTEXT |
-		//	'(' group+=Call (';' group+=Call)* ')';
+		//	call=Call | text=EMBEDDEDTEXT | if=IfStatement |
+		//	'(' group+=Statement group+=Statement* ')'
+		//	//	WhileStatement |
+		//	//	DoStatement |
+		//	//	ForStatement |
+		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//call=Call | text=EMBEDDEDTEXT | '(' group+=Call (';' group+=Call)* ')'
+		//call=Call | text=EMBEDDEDTEXT | if=IfStatement | '(' group+=Statement group+=Statement* ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//call=Call
@@ -525,32 +573,134 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		//EMBEDDEDTEXT
 		public RuleCall getTextEMBEDDEDTEXTTerminalRuleCall_1_0() { return cTextEMBEDDEDTEXTTerminalRuleCall_1_0; }
 		
-		//'(' group+=Call (';' group+=Call)* ')'
-		public Group getGroup_2() { return cGroup_2; }
+		//if=IfStatement
+		public Assignment getIfAssignment_2() { return cIfAssignment_2; }
+		
+		//IfStatement
+		public RuleCall getIfIfStatementParserRuleCall_2_0() { return cIfIfStatementParserRuleCall_2_0; }
+		
+		//'(' group+=Statement group+=Statement* ')'
+		public Group getGroup_3() { return cGroup_3; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_2_0() { return cLeftParenthesisKeyword_2_0; }
+		public Keyword getLeftParenthesisKeyword_3_0() { return cLeftParenthesisKeyword_3_0; }
 		
-		//group+=Call
-		public Assignment getGroupAssignment_2_1() { return cGroupAssignment_2_1; }
+		//group+=Statement
+		public Assignment getGroupAssignment_3_1() { return cGroupAssignment_3_1; }
 		
-		//Call
-		public RuleCall getGroupCallParserRuleCall_2_1_0() { return cGroupCallParserRuleCall_2_1_0; }
+		//Statement
+		public RuleCall getGroupStatementParserRuleCall_3_1_0() { return cGroupStatementParserRuleCall_3_1_0; }
 		
-		//(';' group+=Call)*
-		public Group getGroup_2_2() { return cGroup_2_2; }
+		//group+=Statement*
+		public Assignment getGroupAssignment_3_2() { return cGroupAssignment_3_2; }
 		
-		//';'
-		public Keyword getSemicolonKeyword_2_2_0() { return cSemicolonKeyword_2_2_0; }
-		
-		//group+=Call
-		public Assignment getGroupAssignment_2_2_1() { return cGroupAssignment_2_2_1; }
-		
-		//Call
-		public RuleCall getGroupCallParserRuleCall_2_2_1_0() { return cGroupCallParserRuleCall_2_2_1_0; }
+		//Statement
+		public RuleCall getGroupStatementParserRuleCall_3_2_0() { return cGroupStatementParserRuleCall_3_2_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_2_3() { return cRightParenthesisKeyword_2_3; }
+		public Keyword getRightParenthesisKeyword_3_3() { return cRightParenthesisKeyword_3_3; }
+	}
+	public class IfStatementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.IfStatement");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cIfKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cExpressionAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_1_0 = (RuleCall)cExpressionAssignment_1.eContents().get(0);
+		private final Assignment cBodyAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cBodyIfBodyParserRuleCall_2_0 = (RuleCall)cBodyAssignment_2.eContents().get(0);
+		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
+		private final Keyword cElseKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Keyword cIfKeyword_3_1 = (Keyword)cGroup_3.eContents().get(1);
+		private final Assignment cElseIfExpressionAssignment_3_2 = (Assignment)cGroup_3.eContents().get(2);
+		private final RuleCall cElseIfExpressionEXPRTerminalRuleCall_3_2_0 = (RuleCall)cElseIfExpressionAssignment_3_2.eContents().get(0);
+		private final Assignment cElseIfCallAssignment_3_3 = (Assignment)cGroup_3.eContents().get(3);
+		private final RuleCall cElseIfCallIfBodyParserRuleCall_3_3_0 = (RuleCall)cElseIfCallAssignment_3_3.eContents().get(0);
+		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
+		private final Keyword cElseKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
+		private final Assignment cElseCallAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
+		private final RuleCall cElseCallIfBodyParserRuleCall_4_1_0 = (RuleCall)cElseCallAssignment_4_1.eContents().get(0);
+		
+		//IfStatement:
+		//	'if' expression=EXPR body=IfBody ('else' 'if' elseIfExpression+=EXPR elseIfCall+=IfBody)* ('else' elseCall=IfBody)?;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'if' expression=EXPR body=IfBody ('else' 'if' elseIfExpression+=EXPR elseIfCall+=IfBody)* ('else' elseCall=IfBody)?
+		public Group getGroup() { return cGroup; }
+		
+		//'if'
+		public Keyword getIfKeyword_0() { return cIfKeyword_0; }
+		
+		//expression=EXPR
+		public Assignment getExpressionAssignment_1() { return cExpressionAssignment_1; }
+		
+		//EXPR
+		public RuleCall getExpressionEXPRTerminalRuleCall_1_0() { return cExpressionEXPRTerminalRuleCall_1_0; }
+		
+		//body=IfBody
+		public Assignment getBodyAssignment_2() { return cBodyAssignment_2; }
+		
+		//IfBody
+		public RuleCall getBodyIfBodyParserRuleCall_2_0() { return cBodyIfBodyParserRuleCall_2_0; }
+		
+		//('else' 'if' elseIfExpression+=EXPR elseIfCall+=IfBody)*
+		public Group getGroup_3() { return cGroup_3; }
+		
+		//'else'
+		public Keyword getElseKeyword_3_0() { return cElseKeyword_3_0; }
+		
+		//'if'
+		public Keyword getIfKeyword_3_1() { return cIfKeyword_3_1; }
+		
+		//elseIfExpression+=EXPR
+		public Assignment getElseIfExpressionAssignment_3_2() { return cElseIfExpressionAssignment_3_2; }
+		
+		//EXPR
+		public RuleCall getElseIfExpressionEXPRTerminalRuleCall_3_2_0() { return cElseIfExpressionEXPRTerminalRuleCall_3_2_0; }
+		
+		//elseIfCall+=IfBody
+		public Assignment getElseIfCallAssignment_3_3() { return cElseIfCallAssignment_3_3; }
+		
+		//IfBody
+		public RuleCall getElseIfCallIfBodyParserRuleCall_3_3_0() { return cElseIfCallIfBodyParserRuleCall_3_3_0; }
+		
+		//('else' elseCall=IfBody)?
+		public Group getGroup_4() { return cGroup_4; }
+		
+		//'else'
+		public Keyword getElseKeyword_4_0() { return cElseKeyword_4_0; }
+		
+		//elseCall=IfBody
+		public Assignment getElseCallAssignment_4_1() { return cElseCallAssignment_4_1; }
+		
+		//IfBody
+		public RuleCall getElseCallIfBodyParserRuleCall_4_1_0() { return cElseCallIfBodyParserRuleCall_4_1_0; }
+	}
+	public class IfBodyElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.IfBody");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cCallAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cCallCallParserRuleCall_0_0 = (RuleCall)cCallAssignment_0.eContents().get(0);
+		private final Assignment cBodyAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cBodyBodyParserRuleCall_1_0 = (RuleCall)cBodyAssignment_1.eContents().get(0);
+		
+		//IfBody:
+		//	call=Call | body=Body;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//call=Call | body=Body
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//call=Call
+		public Assignment getCallAssignment_0() { return cCallAssignment_0; }
+		
+		//Call
+		public RuleCall getCallCallParserRuleCall_0_0() { return cCallCallParserRuleCall_0_0; }
+		
+		//body=Body
+		public Assignment getBodyAssignment_1() { return cBodyAssignment_1; }
+		
+		//Body
+		public RuleCall getBodyBodyParserRuleCall_1_0() { return cBodyBodyParserRuleCall_1_0; }
 	}
 	public class CallElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Call");
@@ -562,16 +712,18 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cParametersAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cParametersParameterListParserRuleCall_1_1_0 = (RuleCall)cParametersAssignment_1_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
-		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
-		private final Keyword cColonKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Assignment cActionsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cActionsActionsParserRuleCall_2_1_0 = (RuleCall)cActionsAssignment_2_1.eContents().get(0);
+		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
+		private final Group cGroup_2_0 = (Group)cAlternatives_2.eContents().get(0);
+		private final Keyword cColonKeyword_2_0_0 = (Keyword)cGroup_2_0.eContents().get(0);
+		private final Assignment cActionsAssignment_2_0_1 = (Assignment)cGroup_2_0.eContents().get(1);
+		private final RuleCall cActionsActionsParserRuleCall_2_0_1_0 = (RuleCall)cActionsAssignment_2_0_1.eContents().get(0);
+		private final Keyword cSemicolonKeyword_2_1 = (Keyword)cAlternatives_2.eContents().get(1);
 		
 		//Call:
-		//	name=LOWERCASE_ID ('(' parameters=ParameterList? ')')? (':' => actions=Actions)?;
+		//	name=LOWERCASE_ID ('(' parameters=ParameterList? ')')? (':' actions=Actions | ';')?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=LOWERCASE_ID ('(' parameters=ParameterList? ')')? (':' => actions=Actions)?
+		//name=LOWERCASE_ID ('(' parameters=ParameterList? ')')? (':' actions=Actions | ';')?
 		public Group getGroup() { return cGroup; }
 		
 		//name=LOWERCASE_ID
@@ -595,73 +747,87 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		//')'
 		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
 		
-		//(':' => actions=Actions)?
-		public Group getGroup_2() { return cGroup_2; }
+		//(':' actions=Actions | ';')?
+		public Alternatives getAlternatives_2() { return cAlternatives_2; }
+		
+		//':' actions=Actions
+		public Group getGroup_2_0() { return cGroup_2_0; }
 		
 		//':'
-		public Keyword getColonKeyword_2_0() { return cColonKeyword_2_0; }
+		public Keyword getColonKeyword_2_0_0() { return cColonKeyword_2_0_0; }
 		
-		//=> actions=Actions
-		public Assignment getActionsAssignment_2_1() { return cActionsAssignment_2_1; }
+		//actions=Actions
+		public Assignment getActionsAssignment_2_0_1() { return cActionsAssignment_2_0_1; }
 		
 		//Actions
-		public RuleCall getActionsActionsParserRuleCall_2_1_0() { return cActionsActionsParserRuleCall_2_1_0; }
+		public RuleCall getActionsActionsParserRuleCall_2_0_1_0() { return cActionsActionsParserRuleCall_2_0_1_0; }
+		
+		//';'
+		public Keyword getSemicolonKeyword_2_1() { return cSemicolonKeyword_2_1; }
 	}
 	public class ActionsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Actions");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cBodyAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cBodyBodyParserRuleCall_0_0 = (RuleCall)cBodyAssignment_0.eContents().get(0);
-		private final Assignment cMatchAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cMatchMatchParserRuleCall_1_0 = (RuleCall)cMatchAssignment_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Keyword cLeftParenthesisKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Assignment cMatchesAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cMatchesMatchParserRuleCall_2_1_0 = (RuleCall)cMatchesAssignment_2_1.eContents().get(0);
-		private final Assignment cMatchesAssignment_2_2 = (Assignment)cGroup_2.eContents().get(2);
-		private final RuleCall cMatchesMatchParserRuleCall_2_2_0 = (RuleCall)cMatchesAssignment_2_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_2_3 = (Keyword)cGroup_2.eContents().get(3);
+		private final Assignment cCallAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cCallCallParserRuleCall_0_0 = (RuleCall)cCallAssignment_0.eContents().get(0);
+		private final Assignment cBodyAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cBodyBodyParserRuleCall_1_0 = (RuleCall)cBodyAssignment_1.eContents().get(0);
+		private final Assignment cMatchAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
+		private final RuleCall cMatchMatchParserRuleCall_2_0 = (RuleCall)cMatchAssignment_2.eContents().get(0);
+		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
+		private final Keyword cLeftParenthesisKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cMatchesAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cMatchesMatchParserRuleCall_3_1_0 = (RuleCall)cMatchesAssignment_3_1.eContents().get(0);
+		private final Assignment cMatchesAssignment_3_2 = (Assignment)cGroup_3.eContents().get(2);
+		private final RuleCall cMatchesMatchParserRuleCall_3_2_0 = (RuleCall)cMatchesAssignment_3_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_3_3 = (Keyword)cGroup_3.eContents().get(3);
 		
 		//Actions:
-		//	body=Body | match=Match |
+		//	call=Call | body=Body | match=Match |
 		//	'(' matches+=Match matches+=Match* ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//body=Body | match=Match | '(' matches+=Match matches+=Match* ')'
+		//call=Call | body=Body | match=Match | '(' matches+=Match matches+=Match* ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
+		//call=Call
+		public Assignment getCallAssignment_0() { return cCallAssignment_0; }
+		
+		//Call
+		public RuleCall getCallCallParserRuleCall_0_0() { return cCallCallParserRuleCall_0_0; }
+		
 		//body=Body
-		public Assignment getBodyAssignment_0() { return cBodyAssignment_0; }
+		public Assignment getBodyAssignment_1() { return cBodyAssignment_1; }
 		
 		//Body
-		public RuleCall getBodyBodyParserRuleCall_0_0() { return cBodyBodyParserRuleCall_0_0; }
+		public RuleCall getBodyBodyParserRuleCall_1_0() { return cBodyBodyParserRuleCall_1_0; }
 		
 		//match=Match
-		public Assignment getMatchAssignment_1() { return cMatchAssignment_1; }
+		public Assignment getMatchAssignment_2() { return cMatchAssignment_2; }
 		
 		//Match
-		public RuleCall getMatchMatchParserRuleCall_1_0() { return cMatchMatchParserRuleCall_1_0; }
+		public RuleCall getMatchMatchParserRuleCall_2_0() { return cMatchMatchParserRuleCall_2_0; }
 		
 		//'(' matches+=Match matches+=Match* ')'
-		public Group getGroup_2() { return cGroup_2; }
+		public Group getGroup_3() { return cGroup_3; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_2_0() { return cLeftParenthesisKeyword_2_0; }
+		public Keyword getLeftParenthesisKeyword_3_0() { return cLeftParenthesisKeyword_3_0; }
 		
 		//matches+=Match
-		public Assignment getMatchesAssignment_2_1() { return cMatchesAssignment_2_1; }
+		public Assignment getMatchesAssignment_3_1() { return cMatchesAssignment_3_1; }
 		
 		//Match
-		public RuleCall getMatchesMatchParserRuleCall_2_1_0() { return cMatchesMatchParserRuleCall_2_1_0; }
+		public RuleCall getMatchesMatchParserRuleCall_3_1_0() { return cMatchesMatchParserRuleCall_3_1_0; }
 		
 		//matches+=Match*
-		public Assignment getMatchesAssignment_2_2() { return cMatchesAssignment_2_2; }
+		public Assignment getMatchesAssignment_3_2() { return cMatchesAssignment_3_2; }
 		
 		//Match
-		public RuleCall getMatchesMatchParserRuleCall_2_2_0() { return cMatchesMatchParserRuleCall_2_2_0; }
+		public RuleCall getMatchesMatchParserRuleCall_3_2_0() { return cMatchesMatchParserRuleCall_3_2_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_2_3() { return cRightParenthesisKeyword_2_3; }
+		public Keyword getRightParenthesisKeyword_3_3() { return cRightParenthesisKeyword_3_3; }
 	}
 	public class MatchElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.Match");
@@ -705,10 +871,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Match:
 		//	id?=LOWERCASE_ID '->' body=Body | regexp?=REGEXP '->' body=Body | observable?=OBSERVABLE '->' body=Body |
-		//	literal?=Literal '->' body=Body | text?=STRING '->' body=Body | arguments=ArgumentDeclaration '->' body=Body
-		//	// number
-		//	// list
-		//;
+		//	literal?=Literal '->' body=Body | text?=STRING '->' body=Body | arguments=ArgumentDeclaration '->' body=Body;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//id?=LOWERCASE_ID '->' body=Body | regexp?=REGEXP '->' body=Body | observable?=OBSERVABLE '->' body=Body |
@@ -1071,16 +1234,19 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	private final LiteralElements pLiteral;
 	private final BodyElements pBody;
 	private final StatementElements pStatement;
+	private final IfStatementElements pIfStatement;
+	private final IfBodyElements pIfBody;
 	private final CallElements pCall;
 	private final ActionsElements pActions;
 	private final MatchElements pMatch;
 	private final NumberElements pNumber;
 	private final DateElements pDate;
 	private final TerminalRule tLOWERCASE_ID;
+	private final TerminalRule tARGVALUE;
 	private final TerminalRule tEXPR;
+	private final TerminalRule tEMBEDDEDTEXT;
 	private final TerminalRule tREGEXP;
 	private final TerminalRule tOBSERVABLE;
-	private final TerminalRule tEMBEDDEDTEXT;
 	
 	private final Grammar grammar;
 	
@@ -1101,16 +1267,19 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		this.pLiteral = new LiteralElements();
 		this.pBody = new BodyElements();
 		this.pStatement = new StatementElements();
+		this.pIfStatement = new IfStatementElements();
+		this.pIfBody = new IfBodyElements();
 		this.pCall = new CallElements();
 		this.pActions = new ActionsElements();
 		this.pMatch = new MatchElements();
 		this.pNumber = new NumberElements();
 		this.pDate = new DateElements();
 		this.tLOWERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.LOWERCASE_ID");
+		this.tARGVALUE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.ARGVALUE");
 		this.tEXPR = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.EXPR");
+		this.tEMBEDDEDTEXT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.EMBEDDEDTEXT");
 		this.tREGEXP = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.REGEXP");
 		this.tOBSERVABLE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.OBSERVABLE");
-		this.tEMBEDDEDTEXT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.Kap.EMBEDDEDTEXT");
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -1152,7 +1321,8 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Preamble:
-	//	'name' name=LOWERCASE_ID;
+	//	'name' name=LOWERCASE_ID (('worldview' worldview=LOWERCASE_ID)? & ('permissions' permissions=STRING)? & ('author'
+	//	authors=STRING)? & ('version' version=LOWERCASE_ID)?);
 	public PreambleElements getPreambleAccess() {
 		return pPreamble;
 	}
@@ -1204,8 +1374,8 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Value:
-	//	literal=Literal | id=LOWERCASE_ID | observable=OBSERVABLE | expression=EXPR // |
-	//	//	table=LookupTable
+	//	argvalue=ARGVALUE | literal=Literal | id=LOWERCASE_ID | observable=OBSERVABLE | expression=EXPR // |
+	//	//	table=LookupTable ???
 	//;
 	public ValueElements getValueAccess() {
 		return pValue;
@@ -1215,26 +1385,6 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		return getValueAccess().getRule();
 	}
 	
-	/////**
-	//// * URN is 4 sections: node (or 'klab' for internal resources), catalog (or adapter for internal resources), namespace and
-	//// * resource ID. Admits a version number and a fragment (with only lowercase_id chars in it). It is
-	//// * legal, but not required, to start with the default prefix urn:klab:. The 4th path element (the ID) may be
-	//// * integer.
-	//// */
-	////UrnId:
-	////	('urn:klab:')? PathName ':'  PathName ':' PathName ':' (Path|INT) (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
-	////	
-	////UrnKvp:
-	////	PathName '=' (Path|INT)
-	////;		
-	////	
-	////PathName:
-	////	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) ('.' (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
-	////;
-	////
-	////Path:
-	////	(LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID|LOWERCASE_DASHID))*
-	////;
 	//Literal:
 	//	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
 	public LiteralElements getLiteralAccess() {
@@ -1246,7 +1396,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Body:
-	//	{Body} list+=Statement (';' list+=Statement)* | isgroup?='(' (group+=Statement (';' group+=Statement)*)? ')';
+	//	{Body} list+=Statement list+=Statement* | isgroup?='(' (group+=Statement group+=Statement*)? ')';
 	public BodyElements getBodyAccess() {
 		return pBody;
 	}
@@ -1256,8 +1406,12 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Statement:
-	//	call=Call | text=EMBEDDEDTEXT |
-	//	'(' group+=Call (';' group+=Call)* ')';
+	//	call=Call | text=EMBEDDEDTEXT | if=IfStatement |
+	//	'(' group+=Statement group+=Statement* ')'
+	//	//	WhileStatement |
+	//	//	DoStatement |
+	//	//	ForStatement |
+	//;
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}
@@ -1266,8 +1420,28 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		return getStatementAccess().getRule();
 	}
 	
+	//IfStatement:
+	//	'if' expression=EXPR body=IfBody ('else' 'if' elseIfExpression+=EXPR elseIfCall+=IfBody)* ('else' elseCall=IfBody)?;
+	public IfStatementElements getIfStatementAccess() {
+		return pIfStatement;
+	}
+	
+	public ParserRule getIfStatementRule() {
+		return getIfStatementAccess().getRule();
+	}
+	
+	//IfBody:
+	//	call=Call | body=Body;
+	public IfBodyElements getIfBodyAccess() {
+		return pIfBody;
+	}
+	
+	public ParserRule getIfBodyRule() {
+		return getIfBodyAccess().getRule();
+	}
+	
 	//Call:
-	//	name=LOWERCASE_ID ('(' parameters=ParameterList? ')')? (':' => actions=Actions)?;
+	//	name=LOWERCASE_ID ('(' parameters=ParameterList? ')')? (':' actions=Actions | ';')?;
 	public CallElements getCallAccess() {
 		return pCall;
 	}
@@ -1277,7 +1451,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Actions:
-	//	body=Body | match=Match |
+	//	call=Call | body=Body | match=Match |
 	//	'(' matches+=Match matches+=Match* ')';
 	public ActionsElements getActionsAccess() {
 		return pActions;
@@ -1289,10 +1463,7 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Match:
 	//	id?=LOWERCASE_ID '->' body=Body | regexp?=REGEXP '->' body=Body | observable?=OBSERVABLE '->' body=Body |
-	//	literal?=Literal '->' body=Body | text?=STRING '->' body=Body | arguments=ArgumentDeclaration '->' body=Body
-	//	// number
-	//	// list
-	//;
+	//	literal?=Literal '->' body=Body | text?=STRING '->' body=Body | arguments=ArgumentDeclaration '->' body=Body;
 	public MatchElements getMatchAccess() {
 		return pMatch;
 	}
@@ -1328,10 +1499,22 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 		return tLOWERCASE_ID;
 	}
 	
+	//terminal ARGVALUE:
+	//	'$' '0'..'9'*;
+	public TerminalRule getARGVALUERule() {
+		return tARGVALUE;
+	}
+	
 	//terminal EXPR:
 	//	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
 	public TerminalRule getEXPRRule() {
 		return tEXPR;
+	}
+	
+	//terminal EMBEDDEDTEXT:
+	//	'%%%' (' '* '-')* '\r'->'%%%' (' '* '-')* '\r';
+	public TerminalRule getEMBEDDEDTEXTRule() {
+		return tEMBEDDEDTEXT;
 	}
 	
 	//terminal REGEXP:
@@ -1344,12 +1527,6 @@ public class KapGrammarAccess extends AbstractGrammarElementFinder {
 	//	'{' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '}';
 	public TerminalRule getOBSERVABLERule() {
 		return tOBSERVABLE;
-	}
-	
-	//terminal EMBEDDEDTEXT:
-	//	'---'->'---';
-	public TerminalRule getEMBEDDEDTEXTRule() {
-		return tEMBEDDEDTEXT;
 	}
 	
 	//terminal ID:

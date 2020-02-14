@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kap.Call;
+import org.integratedmodelling.kap.IfStatement;
 import org.integratedmodelling.kap.KapPackage;
 import org.integratedmodelling.kap.Statement;
 
@@ -33,6 +34,7 @@ import org.integratedmodelling.kap.Statement;
  * <ul>
  *   <li>{@link org.integratedmodelling.kap.impl.StatementImpl#getCall <em>Call</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.impl.StatementImpl#getText <em>Text</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.impl.StatementImpl#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.impl.StatementImpl#getGroup <em>Group</em>}</li>
  * </ul>
  *
@@ -71,6 +73,16 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   protected String text = TEXT_EDEFAULT;
 
   /**
+   * The cached value of the '{@link #getIf() <em>If</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getIf()
+   * @generated
+   * @ordered
+   */
+  protected IfStatement if_;
+
+  /**
    * The cached value of the '{@link #getGroup() <em>Group</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -78,7 +90,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @generated
    * @ordered
    */
-  protected EList<Call> group;
+  protected EList<Statement> group;
 
   /**
    * <!-- begin-user-doc -->
@@ -182,11 +194,61 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @generated
    */
   @Override
-  public EList<Call> getGroup()
+  public IfStatement getIf()
+  {
+    return if_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetIf(IfStatement newIf, NotificationChain msgs)
+  {
+    IfStatement oldIf = if_;
+    if_ = newIf;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KapPackage.STATEMENT__IF, oldIf, newIf);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setIf(IfStatement newIf)
+  {
+    if (newIf != if_)
+    {
+      NotificationChain msgs = null;
+      if (if_ != null)
+        msgs = ((InternalEObject)if_).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KapPackage.STATEMENT__IF, null, msgs);
+      if (newIf != null)
+        msgs = ((InternalEObject)newIf).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KapPackage.STATEMENT__IF, null, msgs);
+      msgs = basicSetIf(newIf, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KapPackage.STATEMENT__IF, newIf, newIf));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EList<Statement> getGroup()
   {
     if (group == null)
     {
-      group = new EObjectContainmentEList<Call>(Call.class, this, KapPackage.STATEMENT__GROUP);
+      group = new EObjectContainmentEList<Statement>(Statement.class, this, KapPackage.STATEMENT__GROUP);
     }
     return group;
   }
@@ -203,6 +265,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     {
       case KapPackage.STATEMENT__CALL:
         return basicSetCall(null, msgs);
+      case KapPackage.STATEMENT__IF:
+        return basicSetIf(null, msgs);
       case KapPackage.STATEMENT__GROUP:
         return ((InternalEList<?>)getGroup()).basicRemove(otherEnd, msgs);
     }
@@ -223,6 +287,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return getCall();
       case KapPackage.STATEMENT__TEXT:
         return getText();
+      case KapPackage.STATEMENT__IF:
+        return getIf();
       case KapPackage.STATEMENT__GROUP:
         return getGroup();
     }
@@ -246,9 +312,12 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
       case KapPackage.STATEMENT__TEXT:
         setText((String)newValue);
         return;
+      case KapPackage.STATEMENT__IF:
+        setIf((IfStatement)newValue);
+        return;
       case KapPackage.STATEMENT__GROUP:
         getGroup().clear();
-        getGroup().addAll((Collection<? extends Call>)newValue);
+        getGroup().addAll((Collection<? extends Statement>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -269,6 +338,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return;
       case KapPackage.STATEMENT__TEXT:
         setText(TEXT_EDEFAULT);
+        return;
+      case KapPackage.STATEMENT__IF:
+        setIf((IfStatement)null);
         return;
       case KapPackage.STATEMENT__GROUP:
         getGroup().clear();
@@ -291,6 +363,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return call != null;
       case KapPackage.STATEMENT__TEXT:
         return TEXT_EDEFAULT == null ? text != null : !TEXT_EDEFAULT.equals(text);
+      case KapPackage.STATEMENT__IF:
+        return if_ != null;
       case KapPackage.STATEMENT__GROUP:
         return group != null && !group.isEmpty();
     }

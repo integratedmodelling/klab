@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kap.Value#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.Value#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.Value#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.Value#getObservable <em>Observable</em>}</li>
@@ -26,6 +27,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Value extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Argvalue</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Argvalue</em>' attribute.
+   * @see #setArgvalue(String)
+   * @see org.integratedmodelling.kap.KapPackage#getValue_Argvalue()
+   * @model
+   * @generated
+   */
+  String getArgvalue();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kap.Value#getArgvalue <em>Argvalue</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Argvalue</em>' attribute.
+   * @see #getArgvalue()
+   * @generated
+   */
+  void setArgvalue(String value);
+
   /**
    * Returns the value of the '<em><b>Literal</b></em>' containment reference.
    * <!-- begin-user-doc -->

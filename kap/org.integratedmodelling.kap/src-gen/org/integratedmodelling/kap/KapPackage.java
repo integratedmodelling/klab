@@ -114,13 +114,49 @@ public interface KapPackage extends EPackage
   int PREAMBLE__NAME = 0;
 
   /**
+   * The feature id for the '<em><b>Worldview</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__WORLDVIEW = 1;
+
+  /**
+   * The feature id for the '<em><b>Permissions</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__PERMISSIONS = 2;
+
+  /**
+   * The feature id for the '<em><b>Authors</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__AUTHORS = 3;
+
+  /**
+   * The feature id for the '<em><b>Version</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__VERSION = 4;
+
+  /**
    * The number of structural features of the '<em>Preamble</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE_FEATURE_COUNT = 1;
+  int PREAMBLE_FEATURE_COUNT = 5;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kap.impl.DefinitionImpl <em>Definition</em>}' class.
@@ -281,13 +317,22 @@ public interface KapPackage extends EPackage
   int VALUE = 6;
 
   /**
+   * The feature id for the '<em><b>Argvalue</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__ARGVALUE = 0;
+
+  /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__LITERAL = 0;
+  int VALUE__LITERAL = 1;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -296,7 +341,7 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ID = 1;
+  int VALUE__ID = 2;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' attribute.
@@ -305,7 +350,7 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__OBSERVABLE = 2;
+  int VALUE__OBSERVABLE = 3;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
@@ -314,7 +359,7 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EXPRESSION = 3;
+  int VALUE__EXPRESSION = 4;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -323,7 +368,7 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 4;
+  int VALUE_FEATURE_COUNT = 5;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kap.impl.LiteralImpl <em>Literal</em>}' class.
@@ -473,13 +518,22 @@ public interface KapPackage extends EPackage
   int STATEMENT__TEXT = 1;
 
   /**
+   * The feature id for the '<em><b>If</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT__IF = 2;
+
+  /**
    * The feature id for the '<em><b>Group</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT__GROUP = 2;
+  int STATEMENT__GROUP = 3;
 
   /**
    * The number of structural features of the '<em>Statement</em>' class.
@@ -488,7 +542,108 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT_FEATURE_COUNT = 3;
+  int STATEMENT_FEATURE_COUNT = 4;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.IfStatementImpl <em>If Statement</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.IfStatementImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getIfStatement()
+   * @generated
+   */
+  int IF_STATEMENT = 10;
+
+  /**
+   * The feature id for the '<em><b>Expression</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_STATEMENT__EXPRESSION = 0;
+
+  /**
+   * The feature id for the '<em><b>Body</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_STATEMENT__BODY = 1;
+
+  /**
+   * The feature id for the '<em><b>Else If Expression</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_STATEMENT__ELSE_IF_EXPRESSION = 2;
+
+  /**
+   * The feature id for the '<em><b>Else If Call</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_STATEMENT__ELSE_IF_CALL = 3;
+
+  /**
+   * The feature id for the '<em><b>Else Call</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_STATEMENT__ELSE_CALL = 4;
+
+  /**
+   * The number of structural features of the '<em>If Statement</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_STATEMENT_FEATURE_COUNT = 5;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kap.impl.IfBodyImpl <em>If Body</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kap.impl.IfBodyImpl
+   * @see org.integratedmodelling.kap.impl.KapPackageImpl#getIfBody()
+   * @generated
+   */
+  int IF_BODY = 11;
+
+  /**
+   * The feature id for the '<em><b>Call</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_BODY__CALL = 0;
+
+  /**
+   * The feature id for the '<em><b>Body</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_BODY__BODY = 1;
+
+  /**
+   * The number of structural features of the '<em>If Body</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_BODY_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kap.impl.CallImpl <em>Call</em>}' class.
@@ -498,7 +653,7 @@ public interface KapPackage extends EPackage
    * @see org.integratedmodelling.kap.impl.KapPackageImpl#getCall()
    * @generated
    */
-  int CALL = 10;
+  int CALL = 12;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -544,7 +699,16 @@ public interface KapPackage extends EPackage
    * @see org.integratedmodelling.kap.impl.KapPackageImpl#getActions()
    * @generated
    */
-  int ACTIONS = 11;
+  int ACTIONS = 13;
+
+  /**
+   * The feature id for the '<em><b>Call</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTIONS__CALL = 0;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -553,7 +717,7 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTIONS__BODY = 0;
+  int ACTIONS__BODY = 1;
 
   /**
    * The feature id for the '<em><b>Match</b></em>' containment reference.
@@ -562,7 +726,7 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTIONS__MATCH = 1;
+  int ACTIONS__MATCH = 2;
 
   /**
    * The feature id for the '<em><b>Matches</b></em>' containment reference list.
@@ -571,7 +735,7 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTIONS__MATCHES = 2;
+  int ACTIONS__MATCHES = 3;
 
   /**
    * The number of structural features of the '<em>Actions</em>' class.
@@ -580,7 +744,7 @@ public interface KapPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTIONS_FEATURE_COUNT = 3;
+  int ACTIONS_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kap.impl.MatchImpl <em>Match</em>}' class.
@@ -590,7 +754,7 @@ public interface KapPackage extends EPackage
    * @see org.integratedmodelling.kap.impl.KapPackageImpl#getMatch()
    * @generated
    */
-  int MATCH = 12;
+  int MATCH = 14;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -672,7 +836,7 @@ public interface KapPackage extends EPackage
    * @see org.integratedmodelling.kap.impl.KapPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 13;
+  int NUMBER = 15;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -763,7 +927,7 @@ public interface KapPackage extends EPackage
    * @see org.integratedmodelling.kap.impl.KapPackageImpl#getDate()
    * @generated
    */
-  int DATE = 14;
+  int DATE = 16;
 
   /**
    * The feature id for the '<em><b>Year</b></em>' attribute.
@@ -899,6 +1063,50 @@ public interface KapPackage extends EPackage
    * @generated
    */
   EAttribute getPreamble_Name();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Preamble#getWorldview <em>Worldview</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Worldview</em>'.
+   * @see org.integratedmodelling.kap.Preamble#getWorldview()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_Worldview();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Preamble#getPermissions <em>Permissions</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Permissions</em>'.
+   * @see org.integratedmodelling.kap.Preamble#getPermissions()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_Permissions();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Preamble#getAuthors <em>Authors</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Authors</em>'.
+   * @see org.integratedmodelling.kap.Preamble#getAuthors()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_Authors();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Preamble#getVersion <em>Version</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Version</em>'.
+   * @see org.integratedmodelling.kap.Preamble#getVersion()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_Version();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kap.Definition <em>Definition</em>}'.
@@ -1037,6 +1245,17 @@ public interface KapPackage extends EPackage
    * @generated
    */
   EClass getValue();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.Value#getArgvalue <em>Argvalue</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Argvalue</em>'.
+   * @see org.integratedmodelling.kap.Value#getArgvalue()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Argvalue();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Value#getLiteral <em>Literal</em>}'.
@@ -1234,6 +1453,17 @@ public interface KapPackage extends EPackage
   EAttribute getStatement_Text();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Statement#getIf <em>If</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>If</em>'.
+   * @see org.integratedmodelling.kap.Statement#getIf()
+   * @see #getStatement()
+   * @generated
+   */
+  EReference getStatement_If();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kap.Statement#getGroup <em>Group</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1243,6 +1473,103 @@ public interface KapPackage extends EPackage
    * @generated
    */
   EReference getStatement_Group();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.IfStatement <em>If Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>If Statement</em>'.
+   * @see org.integratedmodelling.kap.IfStatement
+   * @generated
+   */
+  EClass getIfStatement();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kap.IfStatement#getExpression <em>Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Expression</em>'.
+   * @see org.integratedmodelling.kap.IfStatement#getExpression()
+   * @see #getIfStatement()
+   * @generated
+   */
+  EAttribute getIfStatement_Expression();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.IfStatement#getBody <em>Body</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Body</em>'.
+   * @see org.integratedmodelling.kap.IfStatement#getBody()
+   * @see #getIfStatement()
+   * @generated
+   */
+  EReference getIfStatement_Body();
+
+  /**
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kap.IfStatement#getElseIfExpression <em>Else If Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Else If Expression</em>'.
+   * @see org.integratedmodelling.kap.IfStatement#getElseIfExpression()
+   * @see #getIfStatement()
+   * @generated
+   */
+  EAttribute getIfStatement_ElseIfExpression();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kap.IfStatement#getElseIfCall <em>Else If Call</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Else If Call</em>'.
+   * @see org.integratedmodelling.kap.IfStatement#getElseIfCall()
+   * @see #getIfStatement()
+   * @generated
+   */
+  EReference getIfStatement_ElseIfCall();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.IfStatement#getElseCall <em>Else Call</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Else Call</em>'.
+   * @see org.integratedmodelling.kap.IfStatement#getElseCall()
+   * @see #getIfStatement()
+   * @generated
+   */
+  EReference getIfStatement_ElseCall();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kap.IfBody <em>If Body</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>If Body</em>'.
+   * @see org.integratedmodelling.kap.IfBody
+   * @generated
+   */
+  EClass getIfBody();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.IfBody#getCall <em>Call</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Call</em>'.
+   * @see org.integratedmodelling.kap.IfBody#getCall()
+   * @see #getIfBody()
+   * @generated
+   */
+  EReference getIfBody_Call();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.IfBody#getBody <em>Body</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Body</em>'.
+   * @see org.integratedmodelling.kap.IfBody#getBody()
+   * @see #getIfBody()
+   * @generated
+   */
+  EReference getIfBody_Body();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kap.Call <em>Call</em>}'.
@@ -1296,6 +1623,17 @@ public interface KapPackage extends EPackage
    * @generated
    */
   EClass getActions();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Actions#getCall <em>Call</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Call</em>'.
+   * @see org.integratedmodelling.kap.Actions#getCall()
+   * @see #getActions()
+   * @generated
+   */
+  EReference getActions_Call();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kap.Actions#getBody <em>Body</em>}'.
@@ -1681,6 +2019,38 @@ public interface KapPackage extends EPackage
     EAttribute PREAMBLE__NAME = eINSTANCE.getPreamble_Name();
 
     /**
+     * The meta object literal for the '<em><b>Worldview</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__WORLDVIEW = eINSTANCE.getPreamble_Worldview();
+
+    /**
+     * The meta object literal for the '<em><b>Permissions</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__PERMISSIONS = eINSTANCE.getPreamble_Permissions();
+
+    /**
+     * The meta object literal for the '<em><b>Authors</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__AUTHORS = eINSTANCE.getPreamble_Authors();
+
+    /**
+     * The meta object literal for the '<em><b>Version</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__VERSION = eINSTANCE.getPreamble_Version();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kap.impl.DefinitionImpl <em>Definition</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1793,6 +2163,14 @@ public interface KapPackage extends EPackage
      * @generated
      */
     EClass VALUE = eINSTANCE.getValue();
+
+    /**
+     * The meta object literal for the '<em><b>Argvalue</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__ARGVALUE = eINSTANCE.getValue_Argvalue();
 
     /**
      * The meta object literal for the '<em><b>Literal</b></em>' containment reference feature.
@@ -1945,12 +2323,96 @@ public interface KapPackage extends EPackage
     EAttribute STATEMENT__TEXT = eINSTANCE.getStatement_Text();
 
     /**
+     * The meta object literal for the '<em><b>If</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT__IF = eINSTANCE.getStatement_If();
+
+    /**
      * The meta object literal for the '<em><b>Group</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference STATEMENT__GROUP = eINSTANCE.getStatement_Group();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.IfStatementImpl <em>If Statement</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.IfStatementImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getIfStatement()
+     * @generated
+     */
+    EClass IF_STATEMENT = eINSTANCE.getIfStatement();
+
+    /**
+     * The meta object literal for the '<em><b>Expression</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute IF_STATEMENT__EXPRESSION = eINSTANCE.getIfStatement_Expression();
+
+    /**
+     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IF_STATEMENT__BODY = eINSTANCE.getIfStatement_Body();
+
+    /**
+     * The meta object literal for the '<em><b>Else If Expression</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute IF_STATEMENT__ELSE_IF_EXPRESSION = eINSTANCE.getIfStatement_ElseIfExpression();
+
+    /**
+     * The meta object literal for the '<em><b>Else If Call</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IF_STATEMENT__ELSE_IF_CALL = eINSTANCE.getIfStatement_ElseIfCall();
+
+    /**
+     * The meta object literal for the '<em><b>Else Call</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IF_STATEMENT__ELSE_CALL = eINSTANCE.getIfStatement_ElseCall();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kap.impl.IfBodyImpl <em>If Body</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kap.impl.IfBodyImpl
+     * @see org.integratedmodelling.kap.impl.KapPackageImpl#getIfBody()
+     * @generated
+     */
+    EClass IF_BODY = eINSTANCE.getIfBody();
+
+    /**
+     * The meta object literal for the '<em><b>Call</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IF_BODY__CALL = eINSTANCE.getIfBody_Call();
+
+    /**
+     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IF_BODY__BODY = eINSTANCE.getIfBody_Body();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kap.impl.CallImpl <em>Call</em>}' class.
@@ -1995,6 +2457,14 @@ public interface KapPackage extends EPackage
      * @generated
      */
     EClass ACTIONS = eINSTANCE.getActions();
+
+    /**
+     * The meta object literal for the '<em><b>Call</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTIONS__CALL = eINSTANCE.getActions_Call();
 
     /**
      * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.

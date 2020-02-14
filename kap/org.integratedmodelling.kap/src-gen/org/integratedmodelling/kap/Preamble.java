@@ -15,6 +15,10 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kap.Preamble#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.Preamble#getWorldview <em>Worldview</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.Preamble#getPermissions <em>Permissions</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.Preamble#getAuthors <em>Authors</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.Preamble#getVersion <em>Version</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kap.KapPackage#getPreamble()
@@ -44,5 +48,93 @@ public interface Preamble extends EObject
    * @generated
    */
   void setName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Worldview</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Worldview</em>' attribute.
+   * @see #setWorldview(String)
+   * @see org.integratedmodelling.kap.KapPackage#getPreamble_Worldview()
+   * @model
+   * @generated
+   */
+  String getWorldview();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kap.Preamble#getWorldview <em>Worldview</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Worldview</em>' attribute.
+   * @see #getWorldview()
+   * @generated
+   */
+  void setWorldview(String value);
+
+  /**
+   * Returns the value of the '<em><b>Permissions</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Permissions</em>' attribute.
+   * @see #setPermissions(String)
+   * @see org.integratedmodelling.kap.KapPackage#getPreamble_Permissions()
+   * @model
+   * @generated
+   */
+  String getPermissions();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kap.Preamble#getPermissions <em>Permissions</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Permissions</em>' attribute.
+   * @see #getPermissions()
+   * @generated
+   */
+  void setPermissions(String value);
+
+  /**
+   * Returns the value of the '<em><b>Authors</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Authors</em>' attribute.
+   * @see #setAuthors(String)
+   * @see org.integratedmodelling.kap.KapPackage#getPreamble_Authors()
+   * @model
+   * @generated
+   */
+  String getAuthors();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kap.Preamble#getAuthors <em>Authors</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Authors</em>' attribute.
+   * @see #getAuthors()
+   * @generated
+   */
+  void setAuthors(String value);
+
+  /**
+   * Returns the value of the '<em><b>Version</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Version</em>' attribute.
+   * @see #setVersion(String)
+   * @see org.integratedmodelling.kap.KapPackage#getPreamble_Version()
+   * @model
+   * @generated
+   */
+  String getVersion();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kap.Preamble#getVersion <em>Version</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Version</em>' attribute.
+   * @see #getVersion()
+   * @generated
+   */
+  void setVersion(String value);
 
 } // Preamble

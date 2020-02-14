@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kap.Actions;
 import org.integratedmodelling.kap.Body;
+import org.integratedmodelling.kap.Call;
 import org.integratedmodelling.kap.KapPackage;
 import org.integratedmodelling.kap.Match;
 
@@ -32,6 +33,7 @@ import org.integratedmodelling.kap.Match;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kap.impl.ActionsImpl#getCall <em>Call</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.impl.ActionsImpl#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.impl.ActionsImpl#getMatch <em>Match</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.impl.ActionsImpl#getMatches <em>Matches</em>}</li>
@@ -41,6 +43,16 @@ import org.integratedmodelling.kap.Match;
  */
 public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
 {
+  /**
+   * The cached value of the '{@link #getCall() <em>Call</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCall()
+   * @generated
+   * @ordered
+   */
+  protected Call call;
+
   /**
    * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -90,6 +102,56 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   protected EClass eStaticClass()
   {
     return KapPackage.Literals.ACTIONS;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Call getCall()
+  {
+    return call;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetCall(Call newCall, NotificationChain msgs)
+  {
+    Call oldCall = call;
+    call = newCall;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KapPackage.ACTIONS__CALL, oldCall, newCall);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCall(Call newCall)
+  {
+    if (newCall != call)
+    {
+      NotificationChain msgs = null;
+      if (call != null)
+        msgs = ((InternalEObject)call).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KapPackage.ACTIONS__CALL, null, msgs);
+      if (newCall != null)
+        msgs = ((InternalEObject)newCall).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KapPackage.ACTIONS__CALL, null, msgs);
+      msgs = basicSetCall(newCall, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KapPackage.ACTIONS__CALL, newCall, newCall));
   }
 
   /**
@@ -217,6 +279,8 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
+      case KapPackage.ACTIONS__CALL:
+        return basicSetCall(null, msgs);
       case KapPackage.ACTIONS__BODY:
         return basicSetBody(null, msgs);
       case KapPackage.ACTIONS__MATCH:
@@ -237,6 +301,8 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
+      case KapPackage.ACTIONS__CALL:
+        return getCall();
       case KapPackage.ACTIONS__BODY:
         return getBody();
       case KapPackage.ACTIONS__MATCH:
@@ -258,6 +324,9 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
+      case KapPackage.ACTIONS__CALL:
+        setCall((Call)newValue);
+        return;
       case KapPackage.ACTIONS__BODY:
         setBody((Body)newValue);
         return;
@@ -282,6 +351,9 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
+      case KapPackage.ACTIONS__CALL:
+        setCall((Call)null);
+        return;
       case KapPackage.ACTIONS__BODY:
         setBody((Body)null);
         return;
@@ -305,6 +377,8 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
+      case KapPackage.ACTIONS__CALL:
+        return call != null;
       case KapPackage.ACTIONS__BODY:
         return body != null;
       case KapPackage.ACTIONS__MATCH:

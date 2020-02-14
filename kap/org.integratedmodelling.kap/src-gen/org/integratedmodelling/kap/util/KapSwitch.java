@@ -14,6 +14,8 @@ import org.integratedmodelling.kap.Body;
 import org.integratedmodelling.kap.Call;
 import org.integratedmodelling.kap.Date;
 import org.integratedmodelling.kap.Definition;
+import org.integratedmodelling.kap.IfBody;
+import org.integratedmodelling.kap.IfStatement;
 import org.integratedmodelling.kap.KapPackage;
 import org.integratedmodelling.kap.KeyValuePair;
 import org.integratedmodelling.kap.Literal;
@@ -154,6 +156,20 @@ public class KapSwitch<T> extends Switch<T>
       {
         Statement statement = (Statement)theEObject;
         T result = caseStatement(statement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KapPackage.IF_STATEMENT:
+      {
+        IfStatement ifStatement = (IfStatement)theEObject;
+        T result = caseIfStatement(ifStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KapPackage.IF_BODY:
+      {
+        IfBody ifBody = (IfBody)theEObject;
+        T result = caseIfBody(ifBody);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -352,6 +368,38 @@ public class KapSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseStatement(Statement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>If Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>If Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIfStatement(IfStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>If Body</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>If Body</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIfBody(IfBody object)
   {
     return null;
   }

@@ -16,6 +16,8 @@ import org.integratedmodelling.kap.Body;
 import org.integratedmodelling.kap.Call;
 import org.integratedmodelling.kap.Date;
 import org.integratedmodelling.kap.Definition;
+import org.integratedmodelling.kap.IfBody;
+import org.integratedmodelling.kap.IfStatement;
 import org.integratedmodelling.kap.KapPackage;
 import org.integratedmodelling.kap.KeyValuePair;
 import org.integratedmodelling.kap.Literal;
@@ -138,6 +140,16 @@ public class KapAdapterFactory extends AdapterFactoryImpl
       public Adapter caseStatement(Statement object)
       {
         return createStatementAdapter();
+      }
+      @Override
+      public Adapter caseIfStatement(IfStatement object)
+      {
+        return createIfStatementAdapter();
+      }
+      @Override
+      public Adapter caseIfBody(IfBody object)
+      {
+        return createIfBodyAdapter();
       }
       @Override
       public Adapter caseCall(Call object)
@@ -332,6 +344,36 @@ public class KapAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kap.IfStatement <em>If Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kap.IfStatement
+   * @generated
+   */
+  public Adapter createIfStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kap.IfBody <em>If Body</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kap.IfBody
+   * @generated
+   */
+  public Adapter createIfBodyAdapter()
   {
     return null;
   }

@@ -114,6 +114,24 @@ public interface KapFactory extends EFactory
   Statement createStatement();
 
   /**
+   * Returns a new object of class '<em>If Statement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>If Statement</em>'.
+   * @generated
+   */
+  IfStatement createIfStatement();
+
+  /**
+   * Returns a new object of class '<em>If Body</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>If Body</em>'.
+   * @generated
+   */
+  IfBody createIfBody();
+
+  /**
    * Returns a new object of class '<em>Call</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

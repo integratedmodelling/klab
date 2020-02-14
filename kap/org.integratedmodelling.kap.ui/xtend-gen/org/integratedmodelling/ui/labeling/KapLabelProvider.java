@@ -6,6 +6,9 @@ package org.integratedmodelling.ui.labeling;
 import com.google.inject.Inject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
+import org.integratedmodelling.kap.Body;
+import org.integratedmodelling.kap.Call;
+import org.integratedmodelling.kap.Statement;
 
 /**
  * Provides labels for EObjects.
@@ -17,5 +20,40 @@ public class KapLabelProvider extends DefaultEObjectLabelProvider {
   @Inject
   public KapLabelProvider(final AdapterFactoryLabelProvider delegate) {
     super(delegate);
+  }
+  
+  public String text(final Body body) {
+    String _xifexpression = null;
+    boolean _isIsgroup = body.isIsgroup();
+    if (_isIsgroup) {
+      _xifexpression = "asynchronous group";
+    } else {
+      String _xifexpression_1 = null;
+      if (((body.getList() != null) && (body.getList().size() > 0))) {
+        _xifexpression_1 = "synchronous list";
+      }
+      _xifexpression = _xifexpression_1;
+    }
+    return _xifexpression;
+  }
+  
+  public String text(final Statement statement) {
+    String _xifexpression = null;
+    if (((statement.getGroup() != null) && (statement.getGroup().size() > 0))) {
+      _xifexpression = "asynchronous group";
+    } else {
+      String _xifexpression_1 = null;
+      Call _call = statement.getCall();
+      boolean _tripleNotEquals = (_call != null);
+      if (_tripleNotEquals) {
+        _xifexpression_1 = statement.getCall().getName();
+      }
+      _xifexpression = _xifexpression_1;
+    }
+    return _xifexpression;
+  }
+  
+  public String text(final Call call) {
+    return call.getName();
   }
 }

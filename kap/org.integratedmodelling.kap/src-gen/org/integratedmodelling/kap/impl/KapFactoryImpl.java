@@ -17,6 +17,8 @@ import org.integratedmodelling.kap.Body;
 import org.integratedmodelling.kap.Call;
 import org.integratedmodelling.kap.Date;
 import org.integratedmodelling.kap.Definition;
+import org.integratedmodelling.kap.IfBody;
+import org.integratedmodelling.kap.IfStatement;
 import org.integratedmodelling.kap.KapFactory;
 import org.integratedmodelling.kap.KapPackage;
 import org.integratedmodelling.kap.KeyValuePair;
@@ -90,6 +92,8 @@ public class KapFactoryImpl extends EFactoryImpl implements KapFactory
       case KapPackage.LITERAL: return createLiteral();
       case KapPackage.BODY: return createBody();
       case KapPackage.STATEMENT: return createStatement();
+      case KapPackage.IF_STATEMENT: return createIfStatement();
+      case KapPackage.IF_BODY: return createIfBody();
       case KapPackage.CALL: return createCall();
       case KapPackage.ACTIONS: return createActions();
       case KapPackage.MATCH: return createMatch();
@@ -218,6 +222,30 @@ public class KapFactoryImpl extends EFactoryImpl implements KapFactory
   {
     StatementImpl statement = new StatementImpl();
     return statement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public IfStatement createIfStatement()
+  {
+    IfStatementImpl ifStatement = new IfStatementImpl();
+    return ifStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public IfBody createIfBody()
+  {
+    IfBodyImpl ifBody = new IfBodyImpl();
+    return ifBody;
   }
 
   /**

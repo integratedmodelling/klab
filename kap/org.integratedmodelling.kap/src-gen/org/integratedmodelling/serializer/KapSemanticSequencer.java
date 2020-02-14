@@ -11,15 +11,15 @@ import org.eclipse.xtext.Action;
 import org.eclipse.xtext.Parameter;
 import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.serializer.ISerializationContext;
-import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
 import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
-import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
 import org.integratedmodelling.kap.Actions;
 import org.integratedmodelling.kap.ArgumentDeclaration;
 import org.integratedmodelling.kap.Body;
 import org.integratedmodelling.kap.Call;
 import org.integratedmodelling.kap.Date;
 import org.integratedmodelling.kap.Definition;
+import org.integratedmodelling.kap.IfBody;
+import org.integratedmodelling.kap.IfStatement;
 import org.integratedmodelling.kap.KapPackage;
 import org.integratedmodelling.kap.KeyValuePair;
 import org.integratedmodelling.kap.Literal;
@@ -63,6 +63,12 @@ public class KapSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case KapPackage.DEFINITION:
 				sequence_Definition(context, (Definition) semanticObject); 
 				return; 
+			case KapPackage.IF_BODY:
+				sequence_IfBody(context, (IfBody) semanticObject); 
+				return; 
+			case KapPackage.IF_STATEMENT:
+				sequence_IfStatement(context, (IfStatement) semanticObject); 
+				return; 
 			case KapPackage.KEY_VALUE_PAIR:
 				sequence_KeyValuePair(context, (KeyValuePair) semanticObject); 
 				return; 
@@ -100,7 +106,7 @@ public class KapSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Actions returns Actions
 	 *
 	 * Constraint:
-	 *     (body=Body | match=Match | (matches+=Match matches+=Match*))
+	 *     (call=Call | body=Body | match=Match | (matches+=Match matches+=Match*))
 	 */
 	protected void sequence_Actions(ISerializationContext context, Actions semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -163,6 +169,30 @@ public class KapSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     (name=LOWERCASE_ID arguments=ArgumentDeclaration? body=Body)
 	 */
 	protected void sequence_Definition(ISerializationContext context, Definition semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     IfBody returns IfBody
+	 *
+	 * Constraint:
+	 *     (call=Call | body=Body)
+	 */
+	protected void sequence_IfBody(ISerializationContext context, IfBody semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     IfStatement returns IfStatement
+	 *
+	 * Constraint:
+	 *     (expression=EXPR body=IfBody (elseIfExpression+=EXPR elseIfCall+=IfBody)* elseCall=IfBody?)
+	 */
+	protected void sequence_IfStatement(ISerializationContext context, IfStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -258,16 +288,10 @@ public class KapSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Preamble returns Preamble
 	 *
 	 * Constraint:
-	 *     name=LOWERCASE_ID
+	 *     (name=LOWERCASE_ID (worldview=LOWERCASE_ID | permissions=STRING | authors=STRING | version=LOWERCASE_ID)*)
 	 */
 	protected void sequence_Preamble(ISerializationContext context, Preamble semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, KapPackage.Literals.PREAMBLE__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KapPackage.Literals.PREAMBLE__NAME));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getPreambleAccess().getNameLOWERCASE_IDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -276,7 +300,7 @@ public class KapSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Statement returns Statement
 	 *
 	 * Constraint:
-	 *     (call=Call | text=EMBEDDEDTEXT | (group+=Call group+=Call*))
+	 *     (call=Call | text=EMBEDDEDTEXT | if=IfStatement | (group+=Statement group+=Statement*))
 	 */
 	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -288,7 +312,7 @@ public class KapSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Value returns Value
 	 *
 	 * Constraint:
-	 *     (literal=Literal | id=LOWERCASE_ID | observable=OBSERVABLE | expression=EXPR)
+	 *     (argvalue=ARGVALUE | literal=Literal | id=LOWERCASE_ID | observable=OBSERVABLE | expression=EXPR)
 	 */
 	protected void sequence_Value(ISerializationContext context, Value semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

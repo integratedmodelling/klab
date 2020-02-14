@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kap.Statement#getCall <em>Call</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.Statement#getText <em>Text</em>}</li>
+ *   <li>{@link org.integratedmodelling.kap.Statement#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.Statement#getGroup <em>Group</em>}</li>
  * </ul>
  *
@@ -72,8 +73,30 @@ public interface Statement extends EObject
   void setText(String value);
 
   /**
+   * Returns the value of the '<em><b>If</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>If</em>' containment reference.
+   * @see #setIf(IfStatement)
+   * @see org.integratedmodelling.kap.KapPackage#getStatement_If()
+   * @model containment="true"
+   * @generated
+   */
+  IfStatement getIf();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kap.Statement#getIf <em>If</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>If</em>' containment reference.
+   * @see #getIf()
+   * @generated
+   */
+  void setIf(IfStatement value);
+
+  /**
    * Returns the value of the '<em><b>Group</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kap.Call}.
+   * The list contents are of type {@link org.integratedmodelling.kap.Statement}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Group</em>' containment reference list.
@@ -81,6 +104,6 @@ public interface Statement extends EObject
    * @model containment="true"
    * @generated
    */
-  EList<Call> getGroup();
+  EList<Statement> getGroup();
 
 } // Statement

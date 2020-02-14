@@ -6,6 +6,9 @@ package org.integratedmodelling.ui.labeling
 import com.google.inject.Inject
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
+import org.integratedmodelling.kap.Body
+import org.integratedmodelling.kap.Call
+import org.integratedmodelling.kap.Statement
 
 /**
  * Provides labels for EObjects.
@@ -19,8 +22,28 @@ class KapLabelProvider extends DefaultEObjectLabelProvider {
 		super(delegate);
 	}
 
-	// Labels and icons can be computed like this:
+	def text(Body body) {
+		 if (body.isgroup) {
+			'asynchronous group'
+		} else if (body.list !== null && body.list.size > 0) {
+			'synchronous list'
+		} 
+	}
 	
+	// temporary: must skip
+	def text(Statement statement) {
+		if (statement.group !== null && statement.group.size > 0) {
+			'asynchronous group'
+		} else if (statement.call !== null) {
+			statement.call.name
+		}
+	}
+	
+	def text(Call call) {
+		call.name
+	}
+
+// Labels and icons can be computed like this:
 //	def text(Greeting ele) {
 //		'A greeting to ' + ele.name
 //	}

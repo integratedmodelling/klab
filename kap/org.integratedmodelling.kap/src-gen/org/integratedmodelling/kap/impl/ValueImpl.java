@@ -24,6 +24,7 @@ import org.integratedmodelling.kap.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kap.impl.ValueImpl#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.impl.ValueImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.impl.ValueImpl#getObservable <em>Observable</em>}</li>
@@ -34,6 +35,26 @@ import org.integratedmodelling.kap.Value;
  */
 public class ValueImpl extends MinimalEObjectImpl.Container implements Value
 {
+  /**
+   * The default value of the '{@link #getArgvalue() <em>Argvalue</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getArgvalue()
+   * @generated
+   * @ordered
+   */
+  protected static final String ARGVALUE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getArgvalue() <em>Argvalue</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getArgvalue()
+   * @generated
+   * @ordered
+   */
+  protected String argvalue = ARGVALUE_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getLiteral() <em>Literal</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -123,6 +144,31 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected EClass eStaticClass()
   {
     return KapPackage.Literals.VALUE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getArgvalue()
+  {
+    return argvalue;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setArgvalue(String newArgvalue)
+  {
+    String oldArgvalue = argvalue;
+    argvalue = newArgvalue;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KapPackage.VALUE__ARGVALUE, oldArgvalue, argvalue));
   }
 
   /**
@@ -276,6 +322,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KapPackage.VALUE__ARGVALUE:
+        return getArgvalue();
       case KapPackage.VALUE__LITERAL:
         return getLiteral();
       case KapPackage.VALUE__ID:
@@ -298,6 +346,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KapPackage.VALUE__ARGVALUE:
+        setArgvalue((String)newValue);
+        return;
       case KapPackage.VALUE__LITERAL:
         setLiteral((Literal)newValue);
         return;
@@ -324,6 +375,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KapPackage.VALUE__ARGVALUE:
+        setArgvalue(ARGVALUE_EDEFAULT);
+        return;
       case KapPackage.VALUE__LITERAL:
         setLiteral((Literal)null);
         return;
@@ -350,6 +404,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KapPackage.VALUE__ARGVALUE:
+        return ARGVALUE_EDEFAULT == null ? argvalue != null : !ARGVALUE_EDEFAULT.equals(argvalue);
       case KapPackage.VALUE__LITERAL:
         return literal != null;
       case KapPackage.VALUE__ID:
@@ -373,7 +429,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (id: ");
+    result.append(" (argvalue: ");
+    result.append(argvalue);
+    result.append(", id: ");
     result.append(id);
     result.append(", observable: ");
     result.append(observable);

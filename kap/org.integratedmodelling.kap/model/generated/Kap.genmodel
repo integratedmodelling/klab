@@ -12,6 +12,10 @@
     </genClasses>
     <genClasses ecoreClass="Kap.ecore#//Preamble">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Preamble/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Preamble/worldview"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Preamble/permissions"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Preamble/authors"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Preamble/version"/>
     </genClasses>
     <genClasses ecoreClass="Kap.ecore#//Definition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Definition/name"/>
@@ -30,6 +34,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//KeyValuePair/value"/>
     </genClasses>
     <genClasses ecoreClass="Kap.ecore#//Value">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Value/argvalue"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Value/literal"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Value/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Value/observable"/>
@@ -51,7 +56,19 @@
     <genClasses ecoreClass="Kap.ecore#//Statement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Statement/call"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Statement/text"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Statement/if"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Statement/group"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//IfStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//IfStatement/expression"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//IfStatement/body"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//IfStatement/elseIfExpression"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//IfStatement/elseIfCall"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//IfStatement/elseCall"/>
+    </genClasses>
+    <genClasses ecoreClass="Kap.ecore#//IfBody">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//IfBody/call"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//IfBody/body"/>
     </genClasses>
     <genClasses ecoreClass="Kap.ecore#//Call">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kap.ecore#//Call/name"/>
@@ -59,6 +76,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Call/actions"/>
     </genClasses>
     <genClasses ecoreClass="Kap.ecore#//Actions">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Actions/call"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Actions/body"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Actions/match"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kap.ecore#//Actions/matches"/>

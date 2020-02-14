@@ -22,6 +22,7 @@ import org.integratedmodelling.services.KapGrammarAccess;
 public class KapSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected KapGrammarAccess grammarAccess;
+	protected AbstractElementAlias match_Call_SemicolonKeyword_2_1_q;
 	protected AbstractElementAlias match_Call___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
 	protected AbstractElementAlias match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
@@ -30,6 +31,7 @@ public class KapSyntacticSequencer extends AbstractSyntacticSequencer {
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (KapGrammarAccess) access;
+		match_Call_SemicolonKeyword_2_1_q = new TokenAlias(false, true, grammarAccess.getCallAccess().getSemicolonKeyword_2_1());
 		match_Call___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getCallAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getCallAccess().getRightParenthesisKeyword_1_2()));
 		match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q = new AlternativeAlias(false, true, new TokenAlias(false, false, grammarAccess.getDateAccess().getADKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getDateAccess().getCEKeyword_1_1()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
@@ -97,7 +99,9 @@ public class KapSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_Call___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
+			if (match_Call_SemicolonKeyword_2_1_q.equals(syntax))
+				emit_Call_SemicolonKeyword_2_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Call___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
 				emit_Call___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q.equals(syntax))
 				emit_Date___ADKeyword_1_0_or_CEKeyword_1_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
@@ -111,11 +115,23 @@ public class KapSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	/**
 	 * Ambiguous syntax:
+	 *     ';'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     name=LOWERCASE_ID ('(' ')')? (ambiguity) (rule end)
+	 *     parameters=ParameterList ')' (ambiguity) (rule end)
+	 */
+	protected void emit_Call_SemicolonKeyword_2_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
 	 *     ('(' ')')?
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     name=LOWERCASE_ID (ambiguity) ':' actions=Actions
-	 *     name=LOWERCASE_ID (ambiguity) (rule end)
+	 *     name=LOWERCASE_ID (ambiguity) ';'? (rule end)
 	 */
 	protected void emit_Call___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

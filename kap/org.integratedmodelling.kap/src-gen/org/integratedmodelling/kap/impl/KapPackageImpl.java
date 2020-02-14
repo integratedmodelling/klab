@@ -16,6 +16,8 @@ import org.integratedmodelling.kap.Body;
 import org.integratedmodelling.kap.Call;
 import org.integratedmodelling.kap.Date;
 import org.integratedmodelling.kap.Definition;
+import org.integratedmodelling.kap.IfBody;
+import org.integratedmodelling.kap.IfStatement;
 import org.integratedmodelling.kap.KapFactory;
 import org.integratedmodelling.kap.KapPackage;
 import org.integratedmodelling.kap.KeyValuePair;
@@ -104,6 +106,20 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
    * @generated
    */
   private EClass statementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass ifStatementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass ifBodyEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -264,6 +280,50 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
    * @generated
    */
   @Override
+  public EAttribute getPreamble_Worldview()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPreamble_Permissions()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPreamble_Authors()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPreamble_Version()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getDefinition()
   {
     return definitionEClass;
@@ -407,9 +467,20 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
    * @generated
    */
   @Override
+  public EAttribute getValue_Argvalue()
+  {
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getValue_Literal()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(0);
+    return (EReference)valueEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -420,7 +491,7 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
   @Override
   public EAttribute getValue_Id()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -431,7 +502,7 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
   @Override
   public EAttribute getValue_Observable()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -442,7 +513,7 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
   @Override
   public EAttribute getValue_Expression()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -605,9 +676,119 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Group()
+  public EReference getStatement_If()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getStatement_Group()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getIfStatement()
+  {
+    return ifStatementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getIfStatement_Expression()
+  {
+    return (EAttribute)ifStatementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getIfStatement_Body()
+  {
+    return (EReference)ifStatementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getIfStatement_ElseIfExpression()
+  {
+    return (EAttribute)ifStatementEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getIfStatement_ElseIfCall()
+  {
+    return (EReference)ifStatementEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getIfStatement_ElseCall()
+  {
+    return (EReference)ifStatementEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getIfBody()
+  {
+    return ifBodyEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getIfBody_Call()
+  {
+    return (EReference)ifBodyEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getIfBody_Body()
+  {
+    return (EReference)ifBodyEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -671,7 +852,7 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
    * @generated
    */
   @Override
-  public EReference getActions_Body()
+  public EReference getActions_Call()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(0);
   }
@@ -682,7 +863,7 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
    * @generated
    */
   @Override
-  public EReference getActions_Match()
+  public EReference getActions_Body()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(1);
   }
@@ -693,9 +874,20 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
    * @generated
    */
   @Override
-  public EReference getActions_Matches()
+  public EReference getActions_Match()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getActions_Matches()
+  {
+    return (EReference)actionsEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1021,6 +1213,10 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
 
     preambleEClass = createEClass(PREAMBLE);
     createEAttribute(preambleEClass, PREAMBLE__NAME);
+    createEAttribute(preambleEClass, PREAMBLE__WORLDVIEW);
+    createEAttribute(preambleEClass, PREAMBLE__PERMISSIONS);
+    createEAttribute(preambleEClass, PREAMBLE__AUTHORS);
+    createEAttribute(preambleEClass, PREAMBLE__VERSION);
 
     definitionEClass = createEClass(DEFINITION);
     createEAttribute(definitionEClass, DEFINITION__NAME);
@@ -1039,6 +1235,7 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
     createEReference(keyValuePairEClass, KEY_VALUE_PAIR__VALUE);
 
     valueEClass = createEClass(VALUE);
+    createEAttribute(valueEClass, VALUE__ARGVALUE);
     createEReference(valueEClass, VALUE__LITERAL);
     createEAttribute(valueEClass, VALUE__ID);
     createEAttribute(valueEClass, VALUE__OBSERVABLE);
@@ -1060,7 +1257,19 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
     statementEClass = createEClass(STATEMENT);
     createEReference(statementEClass, STATEMENT__CALL);
     createEAttribute(statementEClass, STATEMENT__TEXT);
+    createEReference(statementEClass, STATEMENT__IF);
     createEReference(statementEClass, STATEMENT__GROUP);
+
+    ifStatementEClass = createEClass(IF_STATEMENT);
+    createEAttribute(ifStatementEClass, IF_STATEMENT__EXPRESSION);
+    createEReference(ifStatementEClass, IF_STATEMENT__BODY);
+    createEAttribute(ifStatementEClass, IF_STATEMENT__ELSE_IF_EXPRESSION);
+    createEReference(ifStatementEClass, IF_STATEMENT__ELSE_IF_CALL);
+    createEReference(ifStatementEClass, IF_STATEMENT__ELSE_CALL);
+
+    ifBodyEClass = createEClass(IF_BODY);
+    createEReference(ifBodyEClass, IF_BODY__CALL);
+    createEReference(ifBodyEClass, IF_BODY__BODY);
 
     callEClass = createEClass(CALL);
     createEAttribute(callEClass, CALL__NAME);
@@ -1068,6 +1277,7 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
     createEReference(callEClass, CALL__ACTIONS);
 
     actionsEClass = createEClass(ACTIONS);
+    createEReference(actionsEClass, ACTIONS__CALL);
     createEReference(actionsEClass, ACTIONS__BODY);
     createEReference(actionsEClass, ACTIONS__MATCH);
     createEReference(actionsEClass, ACTIONS__MATCHES);
@@ -1139,6 +1349,10 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
 
     initEClass(preambleEClass, Preamble.class, "Preamble", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getPreamble_Name(), ecorePackage.getEString(), "name", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Worldview(), ecorePackage.getEString(), "worldview", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Permissions(), ecorePackage.getEString(), "permissions", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Authors(), ecorePackage.getEString(), "authors", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Version(), ecorePackage.getEString(), "version", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(definitionEClass, Definition.class, "Definition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getDefinition_Name(), ecorePackage.getEString(), "name", null, 0, 1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1157,6 +1371,7 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
     initEReference(getKeyValuePair_Value(), this.getValue(), null, "value", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(valueEClass, Value.class, "Value", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getValue_Argvalue(), ecorePackage.getEString(), "argvalue", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Id(), ecorePackage.getEString(), "id", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Observable(), ecorePackage.getEString(), "observable", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1178,7 +1393,19 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatement_Call(), this.getCall(), null, "call", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStatement_Text(), ecorePackage.getEString(), "text", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getStatement_Group(), this.getCall(), null, "group", null, 0, -1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_If(), this.getIfStatement(), null, "if", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_Group(), this.getStatement(), null, "group", null, 0, -1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(ifStatementEClass, IfStatement.class, "IfStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIfStatement_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIfStatement_Body(), this.getIfBody(), null, "body", null, 0, 1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getIfStatement_ElseIfExpression(), ecorePackage.getEString(), "elseIfExpression", null, 0, -1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIfStatement_ElseIfCall(), this.getIfBody(), null, "elseIfCall", null, 0, -1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIfStatement_ElseCall(), this.getIfBody(), null, "elseCall", null, 0, 1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(ifBodyEClass, IfBody.class, "IfBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getIfBody_Call(), this.getCall(), null, "call", null, 0, 1, IfBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIfBody_Body(), this.getBody(), null, "body", null, 0, 1, IfBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(callEClass, Call.class, "Call", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getCall_Name(), ecorePackage.getEString(), "name", null, 0, 1, Call.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1186,6 +1413,7 @@ public class KapPackageImpl extends EPackageImpl implements KapPackage
     initEReference(getCall_Actions(), this.getActions(), null, "actions", null, 0, 1, Call.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(actionsEClass, Actions.class, "Actions", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getActions_Call(), this.getCall(), null, "call", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Body(), this.getBody(), null, "body", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Match(), this.getMatch(), null, "match", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Matches(), this.getMatch(), null, "matches", null, 0, -1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

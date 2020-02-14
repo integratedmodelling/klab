@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kap.Actions#getCall <em>Call</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.Actions#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.Actions#getMatch <em>Match</em>}</li>
  *   <li>{@link org.integratedmodelling.kap.Actions#getMatches <em>Matches</em>}</li>
@@ -27,6 +28,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Actions extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Call</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Call</em>' containment reference.
+   * @see #setCall(Call)
+   * @see org.integratedmodelling.kap.KapPackage#getActions_Call()
+   * @model containment="true"
+   * @generated
+   */
+  Call getCall();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kap.Actions#getCall <em>Call</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Call</em>' containment reference.
+   * @see #getCall()
+   * @generated
+   */
+  void setCall(Call value);
+
   /**
    * Returns the value of the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
