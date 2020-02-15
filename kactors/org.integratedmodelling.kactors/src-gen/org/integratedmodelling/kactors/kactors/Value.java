@@ -17,8 +17,12 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getList <em>List</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getExpression <em>Expression</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTable <em>Table</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue()
@@ -94,6 +98,72 @@ public interface Value extends EObject
   void setId(String value);
 
   /**
+   * Returns the value of the '<em><b>Urn</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Urn</em>' containment reference.
+   * @see #setUrn(Urn)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Urn()
+   * @model containment="true"
+   * @generated
+   */
+  Urn getUrn();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Urn</em>' containment reference.
+   * @see #getUrn()
+   * @generated
+   */
+  void setUrn(Urn value);
+
+  /**
+   * Returns the value of the '<em><b>List</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>List</em>' containment reference.
+   * @see #setList(List)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_List()
+   * @model containment="true"
+   * @generated
+   */
+  List getList();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getList <em>List</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>List</em>' containment reference.
+   * @see #getList()
+   * @generated
+   */
+  void setList(List value);
+
+  /**
+   * Returns the value of the '<em><b>Map</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Map</em>' containment reference.
+   * @see #setMap(Map)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Map()
+   * @model containment="true"
+   * @generated
+   */
+  Map getMap();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getMap <em>Map</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Map</em>' containment reference.
+   * @see #getMap()
+   * @generated
+   */
+  void setMap(Map value);
+
+  /**
    * Returns the value of the '<em><b>Observable</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -136,5 +206,27 @@ public interface Value extends EObject
    * @generated
    */
   void setExpression(String value);
+
+  /**
+   * Returns the value of the '<em><b>Table</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Table</em>' containment reference.
+   * @see #setTable(LookupTable)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Table()
+   * @model containment="true"
+   * @generated
+   */
+  LookupTable getTable();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getTable <em>Table</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Table</em>' containment reference.
+   * @see #getTable()
+   * @generated
+   */
+  void setTable(LookupTable value);
 
 } // Value

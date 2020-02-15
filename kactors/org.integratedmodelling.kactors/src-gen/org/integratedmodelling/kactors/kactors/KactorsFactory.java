@@ -87,6 +87,150 @@ public interface KactorsFactory extends EFactory
   Value createValue();
 
   /**
+   * Returns a new object of class '<em>Urn</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Urn</em>'.
+   * @generated
+   */
+  Urn createUrn();
+
+  /**
+   * Returns a new object of class '<em>Annotation</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Annotation</em>'.
+   * @generated
+   */
+  Annotation createAnnotation();
+
+  /**
+   * Returns a new object of class '<em>List</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>List</em>'.
+   * @generated
+   */
+  List createList();
+
+  /**
+   * Returns a new object of class '<em>Map</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Map</em>'.
+   * @generated
+   */
+  Map createMap();
+
+  /**
+   * Returns a new object of class '<em>Map Entry</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Map Entry</em>'.
+   * @generated
+   */
+  MapEntry createMapEntry();
+
+  /**
+   * Returns a new object of class '<em>Classifier</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Classifier</em>'.
+   * @generated
+   */
+  Classifier createClassifier();
+
+  /**
+   * Returns a new object of class '<em>Lookup Table</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Lookup Table</em>'.
+   * @generated
+   */
+  LookupTable createLookupTable();
+
+  /**
+   * Returns a new object of class '<em>Table</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Table</em>'.
+   * @generated
+   */
+  Table createTable();
+
+  /**
+   * Returns a new object of class '<em>Header Row</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Header Row</em>'.
+   * @generated
+   */
+  HeaderRow createHeaderRow();
+
+  /**
+   * Returns a new object of class '<em>Table Row</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Table Row</em>'.
+   * @generated
+   */
+  TableRow createTableRow();
+
+  /**
+   * Returns a new object of class '<em>Table Classifier</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Table Classifier</em>'.
+   * @generated
+   */
+  TableClassifier createTableClassifier();
+
+  /**
+   * Returns a new object of class '<em>Quantity</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Quantity</em>'.
+   * @generated
+   */
+  Quantity createQuantity();
+
+  /**
+   * Returns a new object of class '<em>Unit Element</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Unit Element</em>'.
+   * @generated
+   */
+  UnitElement createUnitElement();
+
+  /**
+   * Returns a new object of class '<em>Unit</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Unit</em>'.
+   * @generated
+   */
+  Unit createUnit();
+
+  /**
+   * Returns a new object of class '<em>Currency</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Currency</em>'.
+   * @generated
+   */
+  Currency createCurrency();
+
+  /**
+   * Returns a new object of class '<em>REL OPERATOR</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>REL OPERATOR</em>'.
+   * @generated
+   */
+  REL_OPERATOR createREL_OPERATOR();
+
+  /**
    * Returns a new object of class '<em>Literal</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

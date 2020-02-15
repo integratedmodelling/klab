@@ -7,16 +7,22 @@ Model: {Model}
 	definitions+=Definition*;
 
 Preamble:
-	'name' name=LOWERCASE_ID // path, too
 	(
-		('worldview' worldview=LOWERCASE_ID)? &
+		('name' name=PathName) &
+		('import' imports+=PathName (',' imports+=PathName)*) &
+		('worldview' worldview=PathName)? &
+		('label' label=(LOWERCASE_ID|ID|STRING))? &
+		('description' description=STRING)? &
 		('permissions' permissions=STRING)? &
-		('author' authors=STRING)? &
-		('version' version=LOWERCASE_ID)? 
+		('author' authors+=STRING)* &
+		('version' version=VersionNumber)? & 
+		('created' created=Date (createcomment=STRING)?)? &
+		('modified' modified=Date (modcomment=STRING)?)? 
 	)
 ;	
 
 Definition:
+	annotations+=Annotation*
 	'def' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=Body;
 
 ArgumentDeclaration: {ArgumentDeclaration}
@@ -34,14 +40,115 @@ Value:
 	argvalue=ARGVALUE |
 	literal=Literal |
 	id=LOWERCASE_ID |
-//	urn=Urn | 
-//	list=List |
-//	map=Map | ???
+	urn=Urn | 
+	list=List |
+	map=Map |
 	observable=OBSERVABLE | 
-	expression=EXPR// |
-//	table=LookupTable ???
+	expression=EXPR |
+	table=LookupTable
 	;
+	
+Urn:
+	// String used when there are strange chars or keywords in the URN.
+	// In actor files, we should only let in well-formed, lowercase path names
+	name=(PathName|UrnId|STRING)
+;
 
+Annotation:
+	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
+	
+/**
+ * URN is 4 sections: node (or 'klab' for internal resources), catalog (or adapter for internal resources), namespace and
+ * resource ID. Admits a version number and a fragment (with only lowercase_id chars in it). It is
+ * legal, but not required, to start with the default prefix urn:klab:. The 4th path element (the ID) may be
+ * integer.
+ */
+UrnId:
+	('urn:klab:')? PathName ':'  PathName ':' PathName ':' (Path|INT) (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
+	
+UrnKvp:
+	PathName '=' (Path|INT)
+;	
+	
+List:
+	{List} '(' contents+=Value* ')';
+	
+Map:
+	{Map} '{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'
+;
+
+MapEntry:
+	classifier=Classifier ':' value=Value
+;	
+
+Classifier:
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	num=Number | 
+	'in' set=List | 
+	string=STRING | 
+	observable=OBSERVABLE | 
+	id = LOWERCASE_ID |
+	op=REL_OPERATOR expression=Number | 
+	nodata='unknown' |
+	star?='*';	
+
+// Lookup table literal. May be overkill.
+LookupTable: {LookupTable}
+	'{{' table=Table? '}}'
+;
+
+Table:
+	(headers=HeaderRow SEPARATOR)? rows+=TableRow (',' rows+=TableRow)*;
+
+HeaderRow:
+	elements+=(LOWERCASE_ID|STRING) ('|' elements+=(LOWERCASE_ID|STRING))*
+;
+
+TableRow:
+	elements+=TableClassifier ('|' elements+=TableClassifier)*
+;
+
+TableClassifier:
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	num=Number | 
+	quantity=Quantity |
+	date=Date |
+	'in' set=List | 
+	string=STRING | 
+	observable=OBSERVABLE | 
+	op=REL_OPERATOR expression=Number | 
+	expr=EXPR |
+	nodata='unknown' |
+	star?='*' |
+	anything?='#';
+
+Quantity:
+	value=Number (over?='/' | '.') (unit=Unit | currency=Currency)
+;
+
+UnitElement:
+	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
+	'(' unit=Unit ')';
+
+enum UnitOp:
+	OVER='/' | CARET='^' | STAR='*';
+
+Unit:
+	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+
+Currency:
+	id=UPPERCASE_ID ('@' year=INT) (=> '/' (units+=UnitElement))*;
+		
+REL_OPERATOR:
+	(gt?='>' |
+	lt?='<' |
+	eq?='=' |
+	ne?='!=' |
+	le?='<=' |
+	ge?='>=');
+	
 Literal:
 	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
 
@@ -99,12 +206,31 @@ Date:
 	year=INT ('AD' | 'CE' | bc?='BC')? '-' month=INT '-' day=INT (hour=INT ':' min=INT (':' sec=INT ('.' ms=INT)?)?)?
 ;
 
+PathName:
+	LOWERCASE_ID ('.' LOWERCASE_ID)*
+;
+
+Path:
+	(LOWERCASE_ID|UPPERCASE_ID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID))*
+;
+
+terminal UPPERCASE_ID:
+	('A'..'Z') ('A'..'Z' | '_')*;
+
+terminal UPPERCASE_PATH:
+	UPPERCASE_ID ('.' UPPERCASE_ID)*;
+
+terminal CAMELCASE_ID:
+	('A'..'Z') ('A'..'z'|'0'..'9')*;
+
+VersionNumber:
+	INT ('.' INT ('.' INT)?)? ('-')? ((LOWERCASE_ID|UPPERCASE_ID))?;
+
 terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
 terminal ARGVALUE:
-	'$' ('0'..'9')*
-;
+	'$' ('0'..'9')*;
 
 terminal EXPR:
 	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
@@ -117,4 +243,9 @@ terminal REGEXP:
 	
 terminal OBSERVABLE:
 	'{' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '}';
-	
+		
+terminal SEPARATOR:
+	'---' ('-')*;
+
+terminal ANNOTATION_ID:
+	'@' LOWERCASE_ID;

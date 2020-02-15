@@ -11,21 +11,37 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Call;
+import org.integratedmodelling.kactors.kactors.Classifier;
+import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
+import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
+import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
+import org.integratedmodelling.kactors.kactors.LookupTable;
+import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
+import org.integratedmodelling.kactors.kactors.Quantity;
+import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.Table;
+import org.integratedmodelling.kactors.kactors.TableClassifier;
+import org.integratedmodelling.kactors.kactors.TableRow;
+import org.integratedmodelling.kactors.kactors.Unit;
+import org.integratedmodelling.kactors.kactors.UnitElement;
+import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
 
 /**
@@ -125,6 +141,86 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseValue(Value object)
       {
         return createValueAdapter();
+      }
+      @Override
+      public Adapter caseUrn(Urn object)
+      {
+        return createUrnAdapter();
+      }
+      @Override
+      public Adapter caseAnnotation(Annotation object)
+      {
+        return createAnnotationAdapter();
+      }
+      @Override
+      public Adapter caseList(List object)
+      {
+        return createListAdapter();
+      }
+      @Override
+      public Adapter caseMap(Map object)
+      {
+        return createMapAdapter();
+      }
+      @Override
+      public Adapter caseMapEntry(MapEntry object)
+      {
+        return createMapEntryAdapter();
+      }
+      @Override
+      public Adapter caseClassifier(Classifier object)
+      {
+        return createClassifierAdapter();
+      }
+      @Override
+      public Adapter caseLookupTable(LookupTable object)
+      {
+        return createLookupTableAdapter();
+      }
+      @Override
+      public Adapter caseTable(Table object)
+      {
+        return createTableAdapter();
+      }
+      @Override
+      public Adapter caseHeaderRow(HeaderRow object)
+      {
+        return createHeaderRowAdapter();
+      }
+      @Override
+      public Adapter caseTableRow(TableRow object)
+      {
+        return createTableRowAdapter();
+      }
+      @Override
+      public Adapter caseTableClassifier(TableClassifier object)
+      {
+        return createTableClassifierAdapter();
+      }
+      @Override
+      public Adapter caseQuantity(Quantity object)
+      {
+        return createQuantityAdapter();
+      }
+      @Override
+      public Adapter caseUnitElement(UnitElement object)
+      {
+        return createUnitElementAdapter();
+      }
+      @Override
+      public Adapter caseUnit(Unit object)
+      {
+        return createUnitAdapter();
+      }
+      @Override
+      public Adapter caseCurrency(Currency object)
+      {
+        return createCurrencyAdapter();
+      }
+      @Override
+      public Adapter caseREL_OPERATOR(REL_OPERATOR object)
+      {
+        return createREL_OPERATORAdapter();
       }
       @Override
       public Adapter caseLiteral(Literal object)
@@ -299,6 +395,246 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createValueAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Urn <em>Urn</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Urn
+   * @generated
+   */
+  public Adapter createUrnAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Annotation <em>Annotation</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Annotation
+   * @generated
+   */
+  public Adapter createAnnotationAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.List <em>List</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.List
+   * @generated
+   */
+  public Adapter createListAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Map <em>Map</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Map
+   * @generated
+   */
+  public Adapter createMapAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.MapEntry <em>Map Entry</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.MapEntry
+   * @generated
+   */
+  public Adapter createMapEntryAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Classifier <em>Classifier</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Classifier
+   * @generated
+   */
+  public Adapter createClassifierAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.LookupTable <em>Lookup Table</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.LookupTable
+   * @generated
+   */
+  public Adapter createLookupTableAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Table <em>Table</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Table
+   * @generated
+   */
+  public Adapter createTableAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.HeaderRow <em>Header Row</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.HeaderRow
+   * @generated
+   */
+  public Adapter createHeaderRowAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.TableRow <em>Table Row</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.TableRow
+   * @generated
+   */
+  public Adapter createTableRowAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.TableClassifier <em>Table Classifier</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.TableClassifier
+   * @generated
+   */
+  public Adapter createTableClassifierAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Quantity <em>Quantity</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Quantity
+   * @generated
+   */
+  public Adapter createQuantityAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.UnitElement <em>Unit Element</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.UnitElement
+   * @generated
+   */
+  public Adapter createUnitElementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Unit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Unit
+   * @generated
+   */
+  public Adapter createUnitAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Currency <em>Currency</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Currency
+   * @generated
+   */
+  public Adapter createCurrencyAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.REL_OPERATOR <em>REL OPERATOR</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.REL_OPERATOR
+   * @generated
+   */
+  public Adapter createREL_OPERATORAdapter()
   {
     return null;
   }

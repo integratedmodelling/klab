@@ -13,7 +13,7 @@ import org.integratedmodelling.kactors.ui.AbstractKactorsUiModule;
 @FinalFieldsConstructor
 @SuppressWarnings("all")
 public class KactorsUiModule extends AbstractKactorsUiModule {
-  public KactorsUiModule(final AbstractUIPlugin plugin) {
-    super(plugin);
+  public KactorsUiModule(final AbstractUIPlugin arg0) {
+    super(arg0);
   }
 }

@@ -4,6 +4,7 @@
 package org.integratedmodelling.kactors.kactors.impl;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -12,22 +13,39 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Call;
+import org.integratedmodelling.kactors.kactors.Classifier;
+import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
+import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsFactory;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
+import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
+import org.integratedmodelling.kactors.kactors.LookupTable;
+import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
+import org.integratedmodelling.kactors.kactors.Quantity;
+import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.Table;
+import org.integratedmodelling.kactors.kactors.TableClassifier;
+import org.integratedmodelling.kactors.kactors.TableRow;
+import org.integratedmodelling.kactors.kactors.Unit;
+import org.integratedmodelling.kactors.kactors.UnitElement;
+import org.integratedmodelling.kactors.kactors.UnitOp;
+import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
 
 /**
@@ -89,6 +107,22 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.PARAMETER_LIST: return createParameterList();
       case KactorsPackage.KEY_VALUE_PAIR: return createKeyValuePair();
       case KactorsPackage.VALUE: return createValue();
+      case KactorsPackage.URN: return createUrn();
+      case KactorsPackage.ANNOTATION: return createAnnotation();
+      case KactorsPackage.LIST: return createList();
+      case KactorsPackage.MAP: return createMap();
+      case KactorsPackage.MAP_ENTRY: return createMapEntry();
+      case KactorsPackage.CLASSIFIER: return createClassifier();
+      case KactorsPackage.LOOKUP_TABLE: return createLookupTable();
+      case KactorsPackage.TABLE: return createTable();
+      case KactorsPackage.HEADER_ROW: return createHeaderRow();
+      case KactorsPackage.TABLE_ROW: return createTableRow();
+      case KactorsPackage.TABLE_CLASSIFIER: return createTableClassifier();
+      case KactorsPackage.QUANTITY: return createQuantity();
+      case KactorsPackage.UNIT_ELEMENT: return createUnitElement();
+      case KactorsPackage.UNIT: return createUnit();
+      case KactorsPackage.CURRENCY: return createCurrency();
+      case KactorsPackage.REL_OPERATOR: return createREL_OPERATOR();
       case KactorsPackage.LITERAL: return createLiteral();
       case KactorsPackage.BODY: return createBody();
       case KactorsPackage.STATEMENT: return createStatement();
@@ -101,6 +135,40 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.DATE: return createDate();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object createFromString(EDataType eDataType, String initialValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case KactorsPackage.UNIT_OP:
+        return createUnitOpFromString(eDataType, initialValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String convertToString(EDataType eDataType, Object instanceValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case KactorsPackage.UNIT_OP:
+        return convertUnitOpToString(eDataType, instanceValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
   }
 
@@ -186,6 +254,198 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     ValueImpl value = new ValueImpl();
     return value;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Urn createUrn()
+  {
+    UrnImpl urn = new UrnImpl();
+    return urn;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Annotation createAnnotation()
+  {
+    AnnotationImpl annotation = new AnnotationImpl();
+    return annotation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public List createList()
+  {
+    ListImpl list = new ListImpl();
+    return list;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Map createMap()
+  {
+    MapImpl map = new MapImpl();
+    return map;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public MapEntry createMapEntry()
+  {
+    MapEntryImpl mapEntry = new MapEntryImpl();
+    return mapEntry;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Classifier createClassifier()
+  {
+    ClassifierImpl classifier = new ClassifierImpl();
+    return classifier;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public LookupTable createLookupTable()
+  {
+    LookupTableImpl lookupTable = new LookupTableImpl();
+    return lookupTable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Table createTable()
+  {
+    TableImpl table = new TableImpl();
+    return table;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public HeaderRow createHeaderRow()
+  {
+    HeaderRowImpl headerRow = new HeaderRowImpl();
+    return headerRow;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public TableRow createTableRow()
+  {
+    TableRowImpl tableRow = new TableRowImpl();
+    return tableRow;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public TableClassifier createTableClassifier()
+  {
+    TableClassifierImpl tableClassifier = new TableClassifierImpl();
+    return tableClassifier;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Quantity createQuantity()
+  {
+    QuantityImpl quantity = new QuantityImpl();
+    return quantity;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public UnitElement createUnitElement()
+  {
+    UnitElementImpl unitElement = new UnitElementImpl();
+    return unitElement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Unit createUnit()
+  {
+    UnitImpl unit = new UnitImpl();
+    return unit;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Currency createCurrency()
+  {
+    CurrencyImpl currency = new CurrencyImpl();
+    return currency;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public REL_OPERATOR createREL_OPERATOR()
+  {
+    REL_OPERATORImpl reL_OPERATOR = new REL_OPERATORImpl();
+    return reL_OPERATOR;
   }
 
   /**
@@ -306,6 +566,28 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     DateImpl date = new DateImpl();
     return date;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public UnitOp createUnitOpFromString(EDataType eDataType, String initialValue)
+  {
+    UnitOp result = UnitOp.get(initialValue);
+    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertUnitOpToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**

@@ -13,7 +13,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
+import org.integratedmodelling.kactors.kactors.LookupTable;
+import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
 
 /**
@@ -27,8 +31,12 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getList <em>List</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getExpression <em>Expression</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTable <em>Table</em>}</li>
  * </ul>
  *
  * @generated
@@ -86,6 +94,36 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected String id = ID_EDEFAULT;
 
   /**
+   * The cached value of the '{@link #getUrn() <em>Urn</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUrn()
+   * @generated
+   * @ordered
+   */
+  protected Urn urn;
+
+  /**
+   * The cached value of the '{@link #getList() <em>List</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getList()
+   * @generated
+   * @ordered
+   */
+  protected List list;
+
+  /**
+   * The cached value of the '{@link #getMap() <em>Map</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMap()
+   * @generated
+   * @ordered
+   */
+  protected Map map;
+
+  /**
    * The default value of the '{@link #getObservable() <em>Observable</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -124,6 +162,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected String expression = EXPRESSION_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getTable() <em>Table</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTable()
+   * @generated
+   * @ordered
+   */
+  protected LookupTable table;
 
   /**
    * <!-- begin-user-doc -->
@@ -252,6 +300,156 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public Urn getUrn()
+  {
+    return urn;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetUrn(Urn newUrn, NotificationChain msgs)
+  {
+    Urn oldUrn = urn;
+    urn = newUrn;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__URN, oldUrn, newUrn);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setUrn(Urn newUrn)
+  {
+    if (newUrn != urn)
+    {
+      NotificationChain msgs = null;
+      if (urn != null)
+        msgs = ((InternalEObject)urn).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__URN, null, msgs);
+      if (newUrn != null)
+        msgs = ((InternalEObject)newUrn).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__URN, null, msgs);
+      msgs = basicSetUrn(newUrn, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__URN, newUrn, newUrn));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public List getList()
+  {
+    return list;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetList(List newList, NotificationChain msgs)
+  {
+    List oldList = list;
+    list = newList;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__LIST, oldList, newList);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setList(List newList)
+  {
+    if (newList != list)
+    {
+      NotificationChain msgs = null;
+      if (list != null)
+        msgs = ((InternalEObject)list).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__LIST, null, msgs);
+      if (newList != null)
+        msgs = ((InternalEObject)newList).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__LIST, null, msgs);
+      msgs = basicSetList(newList, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__LIST, newList, newList));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Map getMap()
+  {
+    return map;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMap(Map newMap, NotificationChain msgs)
+  {
+    Map oldMap = map;
+    map = newMap;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__MAP, oldMap, newMap);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMap(Map newMap)
+  {
+    if (newMap != map)
+    {
+      NotificationChain msgs = null;
+      if (map != null)
+        msgs = ((InternalEObject)map).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__MAP, null, msgs);
+      if (newMap != null)
+        msgs = ((InternalEObject)newMap).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__MAP, null, msgs);
+      msgs = basicSetMap(newMap, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__MAP, newMap, newMap));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getObservable()
   {
     return observable;
@@ -302,12 +500,70 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public LookupTable getTable()
+  {
+    return table;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetTable(LookupTable newTable, NotificationChain msgs)
+  {
+    LookupTable oldTable = table;
+    table = newTable;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__TABLE, oldTable, newTable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTable(LookupTable newTable)
+  {
+    if (newTable != table)
+    {
+      NotificationChain msgs = null;
+      if (table != null)
+        msgs = ((InternalEObject)table).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__TABLE, null, msgs);
+      if (newTable != null)
+        msgs = ((InternalEObject)newTable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__TABLE, null, msgs);
+      msgs = basicSetTable(newTable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__TABLE, newTable, newTable));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
       case KactorsPackage.VALUE__LITERAL:
         return basicSetLiteral(null, msgs);
+      case KactorsPackage.VALUE__URN:
+        return basicSetUrn(null, msgs);
+      case KactorsPackage.VALUE__LIST:
+        return basicSetList(null, msgs);
+      case KactorsPackage.VALUE__MAP:
+        return basicSetMap(null, msgs);
+      case KactorsPackage.VALUE__TABLE:
+        return basicSetTable(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -328,10 +584,18 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getLiteral();
       case KactorsPackage.VALUE__ID:
         return getId();
+      case KactorsPackage.VALUE__URN:
+        return getUrn();
+      case KactorsPackage.VALUE__LIST:
+        return getList();
+      case KactorsPackage.VALUE__MAP:
+        return getMap();
       case KactorsPackage.VALUE__OBSERVABLE:
         return getObservable();
       case KactorsPackage.VALUE__EXPRESSION:
         return getExpression();
+      case KactorsPackage.VALUE__TABLE:
+        return getTable();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -355,11 +619,23 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__ID:
         setId((String)newValue);
         return;
+      case KactorsPackage.VALUE__URN:
+        setUrn((Urn)newValue);
+        return;
+      case KactorsPackage.VALUE__LIST:
+        setList((List)newValue);
+        return;
+      case KactorsPackage.VALUE__MAP:
+        setMap((Map)newValue);
+        return;
       case KactorsPackage.VALUE__OBSERVABLE:
         setObservable((String)newValue);
         return;
       case KactorsPackage.VALUE__EXPRESSION:
         setExpression((String)newValue);
+        return;
+      case KactorsPackage.VALUE__TABLE:
+        setTable((LookupTable)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -384,11 +660,23 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__ID:
         setId(ID_EDEFAULT);
         return;
+      case KactorsPackage.VALUE__URN:
+        setUrn((Urn)null);
+        return;
+      case KactorsPackage.VALUE__LIST:
+        setList((List)null);
+        return;
+      case KactorsPackage.VALUE__MAP:
+        setMap((Map)null);
+        return;
       case KactorsPackage.VALUE__OBSERVABLE:
         setObservable(OBSERVABLE_EDEFAULT);
         return;
       case KactorsPackage.VALUE__EXPRESSION:
         setExpression(EXPRESSION_EDEFAULT);
+        return;
+      case KactorsPackage.VALUE__TABLE:
+        setTable((LookupTable)null);
         return;
     }
     super.eUnset(featureID);
@@ -410,10 +698,18 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return literal != null;
       case KactorsPackage.VALUE__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+      case KactorsPackage.VALUE__URN:
+        return urn != null;
+      case KactorsPackage.VALUE__LIST:
+        return list != null;
+      case KactorsPackage.VALUE__MAP:
+        return map != null;
       case KactorsPackage.VALUE__OBSERVABLE:
         return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
       case KactorsPackage.VALUE__EXPRESSION:
         return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
+      case KactorsPackage.VALUE__TABLE:
+        return table != null;
     }
     return super.eIsSet(featureID);
   }

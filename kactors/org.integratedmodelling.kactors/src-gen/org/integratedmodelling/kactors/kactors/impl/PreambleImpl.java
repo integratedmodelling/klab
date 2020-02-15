@@ -3,13 +3,22 @@
  */
 package org.integratedmodelling.kactors.kactors.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeEList;
+
+import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.Preamble;
 
@@ -23,9 +32,14 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getWorldview <em>Worldview</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getAuthors <em>Authors</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getVersion <em>Version</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreated <em>Created</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getModified <em>Modified</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getModcomment <em>Modcomment</em>}</li>
  * </ul>
  *
  * @generated
@@ -73,6 +87,46 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected String worldview = WORLDVIEW_EDEFAULT;
 
   /**
+   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected static final String LABEL_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected String label = LABEL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDescription()
+   * @generated
+   * @ordered
+   */
+  protected static final String DESCRIPTION_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getDescription() <em>Description</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDescription()
+   * @generated
+   * @ordered
+   */
+  protected String description = DESCRIPTION_EDEFAULT;
+
+  /**
    * The default value of the '{@link #getPermissions() <em>Permissions</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -93,24 +147,14 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected String permissions = PERMISSIONS_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getAuthors() <em>Authors</em>}' attribute.
+   * The cached value of the '{@link #getAuthors() <em>Authors</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getAuthors()
    * @generated
    * @ordered
    */
-  protected static final String AUTHORS_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getAuthors() <em>Authors</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getAuthors()
-   * @generated
-   * @ordered
-   */
-  protected String authors = AUTHORS_EDEFAULT;
+  protected EList<String> authors;
 
   /**
    * The default value of the '{@link #getVersion() <em>Version</em>}' attribute.
@@ -131,6 +175,46 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected String version = VERSION_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getCreated() <em>Created</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCreated()
+   * @generated
+   * @ordered
+   */
+  protected Date created;
+
+  /**
+   * The cached value of the '{@link #getModified() <em>Modified</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getModified()
+   * @generated
+   * @ordered
+   */
+  protected Date modified;
+
+  /**
+   * The default value of the '{@link #getModcomment() <em>Modcomment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getModcomment()
+   * @generated
+   * @ordered
+   */
+  protected static final String MODCOMMENT_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getModcomment() <em>Modcomment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getModcomment()
+   * @generated
+   * @ordered
+   */
+  protected String modcomment = MODCOMMENT_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -209,6 +293,56 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public String getLabel()
+  {
+    return label;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLabel(String newLabel)
+  {
+    String oldLabel = label;
+    label = newLabel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LABEL, oldLabel, label));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getDescription()
+  {
+    return description;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDescription(String newDescription)
+  {
+    String oldDescription = description;
+    description = newDescription;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__DESCRIPTION, oldDescription, description));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getPermissions()
   {
     return permissions;
@@ -234,23 +368,13 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
-  public String getAuthors()
+  public EList<String> getAuthors()
   {
+    if (authors == null)
+    {
+      authors = new EDataTypeEList<String>(String.class, this, KactorsPackage.PREAMBLE__AUTHORS);
+    }
     return authors;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setAuthors(String newAuthors)
-  {
-    String oldAuthors = authors;
-    authors = newAuthors;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__AUTHORS, oldAuthors, authors));
   }
 
   /**
@@ -284,6 +408,149 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public Date getCreated()
+  {
+    return created;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetCreated(Date newCreated, NotificationChain msgs)
+  {
+    Date oldCreated = created;
+    created = newCreated;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__CREATED, oldCreated, newCreated);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCreated(Date newCreated)
+  {
+    if (newCreated != created)
+    {
+      NotificationChain msgs = null;
+      if (created != null)
+        msgs = ((InternalEObject)created).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__CREATED, null, msgs);
+      if (newCreated != null)
+        msgs = ((InternalEObject)newCreated).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__CREATED, null, msgs);
+      msgs = basicSetCreated(newCreated, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__CREATED, newCreated, newCreated));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Date getModified()
+  {
+    return modified;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetModified(Date newModified, NotificationChain msgs)
+  {
+    Date oldModified = modified;
+    modified = newModified;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__MODIFIED, oldModified, newModified);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setModified(Date newModified)
+  {
+    if (newModified != modified)
+    {
+      NotificationChain msgs = null;
+      if (modified != null)
+        msgs = ((InternalEObject)modified).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__MODIFIED, null, msgs);
+      if (newModified != null)
+        msgs = ((InternalEObject)newModified).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__MODIFIED, null, msgs);
+      msgs = basicSetModified(newModified, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__MODIFIED, newModified, newModified));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getModcomment()
+  {
+    return modcomment;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setModcomment(String newModcomment)
+  {
+    String oldModcomment = modcomment;
+    modcomment = newModcomment;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__MODCOMMENT, oldModcomment, modcomment));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case KactorsPackage.PREAMBLE__CREATED:
+        return basicSetCreated(null, msgs);
+      case KactorsPackage.PREAMBLE__MODIFIED:
+        return basicSetModified(null, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
     switch (featureID)
@@ -292,12 +559,22 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return getName();
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         return getWorldview();
+      case KactorsPackage.PREAMBLE__LABEL:
+        return getLabel();
+      case KactorsPackage.PREAMBLE__DESCRIPTION:
+        return getDescription();
       case KactorsPackage.PREAMBLE__PERMISSIONS:
         return getPermissions();
       case KactorsPackage.PREAMBLE__AUTHORS:
         return getAuthors();
       case KactorsPackage.PREAMBLE__VERSION:
         return getVersion();
+      case KactorsPackage.PREAMBLE__CREATED:
+        return getCreated();
+      case KactorsPackage.PREAMBLE__MODIFIED:
+        return getModified();
+      case KactorsPackage.PREAMBLE__MODCOMMENT:
+        return getModcomment();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -307,6 +584,7 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -318,14 +596,30 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         setWorldview((String)newValue);
         return;
+      case KactorsPackage.PREAMBLE__LABEL:
+        setLabel((String)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__DESCRIPTION:
+        setDescription((String)newValue);
+        return;
       case KactorsPackage.PREAMBLE__PERMISSIONS:
         setPermissions((String)newValue);
         return;
       case KactorsPackage.PREAMBLE__AUTHORS:
-        setAuthors((String)newValue);
+        getAuthors().clear();
+        getAuthors().addAll((Collection<? extends String>)newValue);
         return;
       case KactorsPackage.PREAMBLE__VERSION:
         setVersion((String)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__CREATED:
+        setCreated((Date)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__MODIFIED:
+        setModified((Date)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__MODCOMMENT:
+        setModcomment((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -347,14 +641,29 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         setWorldview(WORLDVIEW_EDEFAULT);
         return;
+      case KactorsPackage.PREAMBLE__LABEL:
+        setLabel(LABEL_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__DESCRIPTION:
+        setDescription(DESCRIPTION_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__PERMISSIONS:
         setPermissions(PERMISSIONS_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__AUTHORS:
-        setAuthors(AUTHORS_EDEFAULT);
+        getAuthors().clear();
         return;
       case KactorsPackage.PREAMBLE__VERSION:
         setVersion(VERSION_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__CREATED:
+        setCreated((Date)null);
+        return;
+      case KactorsPackage.PREAMBLE__MODIFIED:
+        setModified((Date)null);
+        return;
+      case KactorsPackage.PREAMBLE__MODCOMMENT:
+        setModcomment(MODCOMMENT_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -374,12 +683,22 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         return WORLDVIEW_EDEFAULT == null ? worldview != null : !WORLDVIEW_EDEFAULT.equals(worldview);
+      case KactorsPackage.PREAMBLE__LABEL:
+        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+      case KactorsPackage.PREAMBLE__DESCRIPTION:
+        return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
       case KactorsPackage.PREAMBLE__PERMISSIONS:
         return PERMISSIONS_EDEFAULT == null ? permissions != null : !PERMISSIONS_EDEFAULT.equals(permissions);
       case KactorsPackage.PREAMBLE__AUTHORS:
-        return AUTHORS_EDEFAULT == null ? authors != null : !AUTHORS_EDEFAULT.equals(authors);
+        return authors != null && !authors.isEmpty();
       case KactorsPackage.PREAMBLE__VERSION:
         return VERSION_EDEFAULT == null ? version != null : !VERSION_EDEFAULT.equals(version);
+      case KactorsPackage.PREAMBLE__CREATED:
+        return created != null;
+      case KactorsPackage.PREAMBLE__MODIFIED:
+        return modified != null;
+      case KactorsPackage.PREAMBLE__MODCOMMENT:
+        return MODCOMMENT_EDEFAULT == null ? modcomment != null : !MODCOMMENT_EDEFAULT.equals(modcomment);
     }
     return super.eIsSet(featureID);
   }
@@ -399,12 +718,18 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(name);
     result.append(", worldview: ");
     result.append(worldview);
+    result.append(", label: ");
+    result.append(label);
+    result.append(", description: ");
+    result.append(description);
     result.append(", permissions: ");
     result.append(permissions);
     result.append(", authors: ");
     result.append(authors);
     result.append(", version: ");
     result.append(version);
+    result.append(", modcomment: ");
+    result.append(modcomment);
     result.append(')');
     return result.toString();
   }

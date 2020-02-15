@@ -3,8 +3,12 @@
  */
 package org.integratedmodelling.kactors.kactors.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -12,6 +16,10 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
+
+import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Definition;
@@ -25,6 +33,7 @@ import org.integratedmodelling.kactors.kactors.KactorsPackage;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#getArguments <em>Arguments</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#getBody <em>Body</em>}</li>
@@ -34,6 +43,16 @@ import org.integratedmodelling.kactors.kactors.KactorsPackage;
  */
 public class DefinitionImpl extends MinimalEObjectImpl.Container implements Definition
 {
+  /**
+   * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnnotations()
+   * @generated
+   * @ordered
+   */
+  protected EList<Annotation> annotations;
+
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -93,6 +112,21 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
   protected EClass eStaticClass()
   {
     return KactorsPackage.Literals.DEFINITION;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EList<Annotation> getAnnotations()
+  {
+    if (annotations == null)
+    {
+      annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KactorsPackage.DEFINITION__ANNOTATIONS);
+    }
+    return annotations;
   }
 
   /**
@@ -230,6 +264,8 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
   {
     switch (featureID)
     {
+      case KactorsPackage.DEFINITION__ANNOTATIONS:
+        return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
       case KactorsPackage.DEFINITION__ARGUMENTS:
         return basicSetArguments(null, msgs);
       case KactorsPackage.DEFINITION__BODY:
@@ -248,6 +284,8 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
   {
     switch (featureID)
     {
+      case KactorsPackage.DEFINITION__ANNOTATIONS:
+        return getAnnotations();
       case KactorsPackage.DEFINITION__NAME:
         return getName();
       case KactorsPackage.DEFINITION__ARGUMENTS:
@@ -263,11 +301,16 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
+      case KactorsPackage.DEFINITION__ANNOTATIONS:
+        getAnnotations().clear();
+        getAnnotations().addAll((Collection<? extends Annotation>)newValue);
+        return;
       case KactorsPackage.DEFINITION__NAME:
         setName((String)newValue);
         return;
@@ -291,6 +334,9 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
   {
     switch (featureID)
     {
+      case KactorsPackage.DEFINITION__ANNOTATIONS:
+        getAnnotations().clear();
+        return;
       case KactorsPackage.DEFINITION__NAME:
         setName(NAME_EDEFAULT);
         return;
@@ -314,6 +360,8 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
   {
     switch (featureID)
     {
+      case KactorsPackage.DEFINITION__ANNOTATIONS:
+        return annotations != null && !annotations.isEmpty();
       case KactorsPackage.DEFINITION__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KactorsPackage.DEFINITION__ARGUMENTS:

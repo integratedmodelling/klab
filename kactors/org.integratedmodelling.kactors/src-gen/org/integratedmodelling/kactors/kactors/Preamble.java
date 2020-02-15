@@ -3,6 +3,8 @@
  */
 package org.integratedmodelling.kactors.kactors;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -16,9 +18,14 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getWorldview <em>Worldview</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getDescription <em>Description</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getAuthors <em>Authors</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersion <em>Version</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getModified <em>Modified</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getModcomment <em>Modcomment</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble()
@@ -72,6 +79,50 @@ public interface Preamble extends EObject
   void setWorldview(String value);
 
   /**
+   * Returns the value of the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Label</em>' attribute.
+   * @see #setLabel(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Label()
+   * @model
+   * @generated
+   */
+  String getLabel();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Label</em>' attribute.
+   * @see #getLabel()
+   * @generated
+   */
+  void setLabel(String value);
+
+  /**
+   * Returns the value of the '<em><b>Description</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Description</em>' attribute.
+   * @see #setDescription(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Description()
+   * @model
+   * @generated
+   */
+  String getDescription();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getDescription <em>Description</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Description</em>' attribute.
+   * @see #getDescription()
+   * @generated
+   */
+  void setDescription(String value);
+
+  /**
    * Returns the value of the '<em><b>Permissions</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -94,26 +145,16 @@ public interface Preamble extends EObject
   void setPermissions(String value);
 
   /**
-   * Returns the value of the '<em><b>Authors</b></em>' attribute.
+   * Returns the value of the '<em><b>Authors</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Authors</em>' attribute.
-   * @see #setAuthors(String)
+   * @return the value of the '<em>Authors</em>' attribute list.
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Authors()
-   * @model
+   * @model unique="false"
    * @generated
    */
-  String getAuthors();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getAuthors <em>Authors</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Authors</em>' attribute.
-   * @see #getAuthors()
-   * @generated
-   */
-  void setAuthors(String value);
+  EList<String> getAuthors();
 
   /**
    * Returns the value of the '<em><b>Version</b></em>' attribute.
@@ -136,5 +177,71 @@ public interface Preamble extends EObject
    * @generated
    */
   void setVersion(String value);
+
+  /**
+   * Returns the value of the '<em><b>Created</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Created</em>' containment reference.
+   * @see #setCreated(Date)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Created()
+   * @model containment="true"
+   * @generated
+   */
+  Date getCreated();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Created</em>' containment reference.
+   * @see #getCreated()
+   * @generated
+   */
+  void setCreated(Date value);
+
+  /**
+   * Returns the value of the '<em><b>Modified</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Modified</em>' containment reference.
+   * @see #setModified(Date)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Modified()
+   * @model containment="true"
+   * @generated
+   */
+  Date getModified();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getModified <em>Modified</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Modified</em>' containment reference.
+   * @see #getModified()
+   * @generated
+   */
+  void setModified(Date value);
+
+  /**
+   * Returns the value of the '<em><b>Modcomment</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Modcomment</em>' attribute.
+   * @see #setModcomment(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Modcomment()
+   * @model
+   * @generated
+   */
+  String getModcomment();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getModcomment <em>Modcomment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Modcomment</em>' attribute.
+   * @see #getModcomment()
+   * @generated
+   */
+  void setModcomment(String value);
 
 } // Preamble

@@ -3,6 +3,8 @@
  */
 package org.integratedmodelling.kactors.kactors;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -14,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#getArguments <em>Arguments</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#getBody <em>Body</em>}</li>
@@ -25,6 +28,18 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Definition extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Annotation}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Annotations</em>' containment reference list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getDefinition_Annotations()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Annotation> getAnnotations();
+
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->

@@ -6,6 +6,11 @@
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.19">
   <genPackages prefix="Kactors" basePackage="org.integratedmodelling.kactors" disposableProviderFactory="true"
       fileExtensions="kactors" ecorePackage="Kactors.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Kactors.ecore#//UnitOp">
+      <genEnumLiterals ecoreEnumLiteral="Kactors.ecore#//UnitOp/OVER"/>
+      <genEnumLiterals ecoreEnumLiteral="Kactors.ecore#//UnitOp/CARET"/>
+      <genEnumLiterals ecoreEnumLiteral="Kactors.ecore#//UnitOp/STAR"/>
+    </genEnums>
     <genClasses ecoreClass="Kactors.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Model/preamble"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Model/definitions"/>
@@ -13,11 +18,17 @@
     <genClasses ecoreClass="Kactors.ecore#//Preamble">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/worldview"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/label"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/description"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/permissions"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/authors"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/version"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Preamble/created"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Preamble/modified"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/modcomment"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Definition">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Definition/annotations"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Definition/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Definition/arguments"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Definition/body"/>
@@ -37,8 +48,105 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/argvalue"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/literal"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/id"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/urn"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/list"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/map"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/observable"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/expression"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/table"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Urn">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Urn/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Annotation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Annotation/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Annotation/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//List">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//List/contents"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Map">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Map/entries"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//MapEntry">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MapEntry/classifier"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MapEntry/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Classifier">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/boolean"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Classifier/int0"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/leftLimit"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Classifier/int1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/rightLimit"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Classifier/num"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Classifier/set"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/string"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/observable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/id"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Classifier/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Classifier/expression"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/nodata"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/star"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//LookupTable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//LookupTable/table"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Table">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Table/headers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Table/rows"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//HeaderRow">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//HeaderRow/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//TableRow">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//TableRow/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//TableClassifier">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//TableClassifier/boolean"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//TableClassifier/int0"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//TableClassifier/leftLimit"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//TableClassifier/int1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//TableClassifier/rightLimit"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//TableClassifier/num"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//TableClassifier/quantity"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//TableClassifier/date"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//TableClassifier/set"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//TableClassifier/string"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//TableClassifier/observable"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//TableClassifier/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//TableClassifier/expression"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//TableClassifier/expr"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//TableClassifier/nodata"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//TableClassifier/star"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//TableClassifier/anything"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Quantity">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Quantity/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Quantity/over"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Quantity/unit"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Quantity/currency"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//UnitElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//UnitElement/id"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//UnitElement/unit"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Unit">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Unit/root"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Unit/connectors"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Unit/units"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Currency">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Currency/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Currency/year"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Currency/units"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//REL_OPERATOR">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//REL_OPERATOR/gt"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//REL_OPERATOR/lt"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//REL_OPERATOR/eq"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//REL_OPERATOR/ne"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//REL_OPERATOR/le"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//REL_OPERATOR/ge"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Literal">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Literal/number"/>

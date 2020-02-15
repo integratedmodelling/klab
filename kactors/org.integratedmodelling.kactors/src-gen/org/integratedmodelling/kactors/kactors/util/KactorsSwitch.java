@@ -9,21 +9,37 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
 
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Call;
+import org.integratedmodelling.kactors.kactors.Classifier;
+import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
+import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
+import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
+import org.integratedmodelling.kactors.kactors.LookupTable;
+import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
+import org.integratedmodelling.kactors.kactors.Quantity;
+import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.Table;
+import org.integratedmodelling.kactors.kactors.TableClassifier;
+import org.integratedmodelling.kactors.kactors.TableRow;
+import org.integratedmodelling.kactors.kactors.Unit;
+import org.integratedmodelling.kactors.kactors.UnitElement;
+import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
 
 /**
@@ -135,6 +151,118 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         Value value = (Value)theEObject;
         T result = caseValue(value);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.URN:
+      {
+        Urn urn = (Urn)theEObject;
+        T result = caseUrn(urn);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.ANNOTATION:
+      {
+        Annotation annotation = (Annotation)theEObject;
+        T result = caseAnnotation(annotation);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.LIST:
+      {
+        List list = (List)theEObject;
+        T result = caseList(list);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.MAP:
+      {
+        Map map = (Map)theEObject;
+        T result = caseMap(map);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.MAP_ENTRY:
+      {
+        MapEntry mapEntry = (MapEntry)theEObject;
+        T result = caseMapEntry(mapEntry);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.CLASSIFIER:
+      {
+        Classifier classifier = (Classifier)theEObject;
+        T result = caseClassifier(classifier);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.LOOKUP_TABLE:
+      {
+        LookupTable lookupTable = (LookupTable)theEObject;
+        T result = caseLookupTable(lookupTable);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.TABLE:
+      {
+        Table table = (Table)theEObject;
+        T result = caseTable(table);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.HEADER_ROW:
+      {
+        HeaderRow headerRow = (HeaderRow)theEObject;
+        T result = caseHeaderRow(headerRow);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.TABLE_ROW:
+      {
+        TableRow tableRow = (TableRow)theEObject;
+        T result = caseTableRow(tableRow);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.TABLE_CLASSIFIER:
+      {
+        TableClassifier tableClassifier = (TableClassifier)theEObject;
+        T result = caseTableClassifier(tableClassifier);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.QUANTITY:
+      {
+        Quantity quantity = (Quantity)theEObject;
+        T result = caseQuantity(quantity);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.UNIT_ELEMENT:
+      {
+        UnitElement unitElement = (UnitElement)theEObject;
+        T result = caseUnitElement(unitElement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.UNIT:
+      {
+        Unit unit = (Unit)theEObject;
+        T result = caseUnit(unit);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.CURRENCY:
+      {
+        Currency currency = (Currency)theEObject;
+        T result = caseCurrency(currency);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.REL_OPERATOR:
+      {
+        REL_OPERATOR reL_OPERATOR = (REL_OPERATOR)theEObject;
+        T result = caseREL_OPERATOR(reL_OPERATOR);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -320,6 +448,262 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseValue(Value object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Urn</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Urn</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUrn(Urn object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Annotation</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Annotation</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseAnnotation(Annotation object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>List</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>List</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseList(List object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Map</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Map</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMap(Map object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Map Entry</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Map Entry</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMapEntry(MapEntry object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Classifier</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Classifier</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseClassifier(Classifier object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Lookup Table</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Lookup Table</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLookupTable(LookupTable object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Table</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Table</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTable(Table object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Header Row</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Header Row</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseHeaderRow(HeaderRow object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Table Row</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Table Row</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTableRow(TableRow object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Table Classifier</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Table Classifier</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTableClassifier(TableClassifier object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Quantity</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Quantity</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseQuantity(Quantity object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Unit Element</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Unit Element</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUnitElement(UnitElement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Unit</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Unit</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUnit(Unit object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Currency</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Currency</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseCurrency(Currency object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>REL OPERATOR</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>REL OPERATOR</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseREL_OPERATOR(REL_OPERATOR object)
   {
     return null;
   }
