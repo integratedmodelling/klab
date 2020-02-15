@@ -153,10 +153,11 @@ REL_OPERATOR:
 Literal:
 	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
 
+// only missing piece: mix statement and groups in group, which probably makes no sense so OK.
 Body: {Body}
 	list+=Statement (list+=Statement)* |
 	// only way to be empty is to be an empty group
-	isgroup?='(' (group+=Statement (group += Statement)*)? ')'
+	isgroup?='(' (list+=Statement (list += Statement)*)? ')'
 ;
 
 Statement:
@@ -193,7 +194,8 @@ ForStatement:
 ;
 
 Call:
-	name=LOWERCASE_ID ('(' (parameters=ParameterList)? ')')? ((':' actions=Actions) | ';')? 
+	// verb can be qualified by receiving actor path if needed, semicolon is optional if no actions
+	name=PathName ('(' (parameters=ParameterList)? ')')? ((':' actions=Actions) | ';')? 
 ;
 
 Actions: 

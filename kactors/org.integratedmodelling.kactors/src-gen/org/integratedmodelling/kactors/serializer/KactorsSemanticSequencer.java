@@ -220,7 +220,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Body returns Body
 	 *
 	 * Constraint:
-	 *     ((list+=Statement list+=Statement*) | (isgroup?='(' (group+=Statement group+=Statement*)?))
+	 *     ((list+=Statement list+=Statement*) | (isgroup?='(' (list+=Statement list+=Statement*)?))
 	 */
 	protected void sequence_Body(ISerializationContext context, Body semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -232,7 +232,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Call returns Call
 	 *
 	 * Constraint:
-	 *     (name=LOWERCASE_ID parameters=ParameterList? actions=Actions?)
+	 *     (name=PathName parameters=ParameterList? actions=Actions?)
 	 */
 	protected void sequence_Call(ISerializationContext context, Call semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

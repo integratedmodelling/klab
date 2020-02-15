@@ -33,7 +33,6 @@ import org.integratedmodelling.kactors.kactors.Statement;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.BodyImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.BodyImpl#isIsgroup <em>Isgroup</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.BodyImpl#getGroup <em>Group</em>}</li>
  * </ul>
  *
  * @generated
@@ -69,16 +68,6 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
    * @ordered
    */
   protected boolean isgroup = ISGROUP_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getGroup() <em>Group</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getGroup()
-   * @generated
-   * @ordered
-   */
-  protected EList<Statement> group;
 
   /**
    * <!-- begin-user-doc -->
@@ -147,29 +136,12 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
    * @generated
    */
   @Override
-  public EList<Statement> getGroup()
-  {
-    if (group == null)
-    {
-      group = new EObjectContainmentEList<Statement>(Statement.class, this, KactorsPackage.BODY__GROUP);
-    }
-    return group;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
       case KactorsPackage.BODY__LIST:
         return ((InternalEList<?>)getList()).basicRemove(otherEnd, msgs);
-      case KactorsPackage.BODY__GROUP:
-        return ((InternalEList<?>)getGroup()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -188,8 +160,6 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
         return getList();
       case KactorsPackage.BODY__ISGROUP:
         return isIsgroup();
-      case KactorsPackage.BODY__GROUP:
-        return getGroup();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -212,10 +182,6 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
       case KactorsPackage.BODY__ISGROUP:
         setIsgroup((Boolean)newValue);
         return;
-      case KactorsPackage.BODY__GROUP:
-        getGroup().clear();
-        getGroup().addAll((Collection<? extends Statement>)newValue);
-        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -236,9 +202,6 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
       case KactorsPackage.BODY__ISGROUP:
         setIsgroup(ISGROUP_EDEFAULT);
         return;
-      case KactorsPackage.BODY__GROUP:
-        getGroup().clear();
-        return;
     }
     super.eUnset(featureID);
   }
@@ -257,8 +220,6 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
         return list != null && !list.isEmpty();
       case KactorsPackage.BODY__ISGROUP:
         return isgroup != ISGROUP_EDEFAULT;
-      case KactorsPackage.BODY__GROUP:
-        return group != null && !group.isEmpty();
     }
     return super.eIsSet(featureID);
   }

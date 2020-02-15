@@ -1788,17 +1788,18 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cIsgroupAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
 		private final Keyword cIsgroupLeftParenthesisKeyword_1_0_0 = (Keyword)cIsgroupAssignment_1_0.eContents().get(0);
 		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
-		private final Assignment cGroupAssignment_1_1_0 = (Assignment)cGroup_1_1.eContents().get(0);
-		private final RuleCall cGroupStatementParserRuleCall_1_1_0_0 = (RuleCall)cGroupAssignment_1_1_0.eContents().get(0);
-		private final Assignment cGroupAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
-		private final RuleCall cGroupStatementParserRuleCall_1_1_1_0 = (RuleCall)cGroupAssignment_1_1_1.eContents().get(0);
+		private final Assignment cListAssignment_1_1_0 = (Assignment)cGroup_1_1.eContents().get(0);
+		private final RuleCall cListStatementParserRuleCall_1_1_0_0 = (RuleCall)cListAssignment_1_1_0.eContents().get(0);
+		private final Assignment cListAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final RuleCall cListStatementParserRuleCall_1_1_1_0 = (RuleCall)cListAssignment_1_1_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
 		
+		//// only missing piece: mix statement and groups in group, which probably makes no sense so OK.
 		//Body:
-		//	{Body} list+=Statement list+=Statement* | isgroup?='(' (group+=Statement group+=Statement*)? ')';
+		//	{Body} list+=Statement list+=Statement* | isgroup?='(' (list+=Statement list+=Statement*)? ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{Body} list+=Statement list+=Statement* | isgroup?='(' (group+=Statement group+=Statement*)? ')'
+		//{Body} list+=Statement list+=Statement* | isgroup?='(' (list+=Statement list+=Statement*)? ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//{Body} list+=Statement list+=Statement*
@@ -1820,7 +1821,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getListStatementParserRuleCall_0_2_0() { return cListStatementParserRuleCall_0_2_0; }
 		
 		//// only way to be empty is to be an empty group
-		//isgroup?='(' (group+=Statement group+=Statement*)? ')'
+		//isgroup?='(' (list+=Statement list+=Statement*)? ')'
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//// only way to be empty is to be an empty group
@@ -1830,20 +1831,20 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//'('
 		public Keyword getIsgroupLeftParenthesisKeyword_1_0_0() { return cIsgroupLeftParenthesisKeyword_1_0_0; }
 		
-		//(group+=Statement group+=Statement*)?
+		//(list+=Statement list+=Statement*)?
 		public Group getGroup_1_1() { return cGroup_1_1; }
 		
-		//group+=Statement
-		public Assignment getGroupAssignment_1_1_0() { return cGroupAssignment_1_1_0; }
+		//list+=Statement
+		public Assignment getListAssignment_1_1_0() { return cListAssignment_1_1_0; }
 		
 		//Statement
-		public RuleCall getGroupStatementParserRuleCall_1_1_0_0() { return cGroupStatementParserRuleCall_1_1_0_0; }
+		public RuleCall getListStatementParserRuleCall_1_1_0_0() { return cListStatementParserRuleCall_1_1_0_0; }
 		
-		//group+=Statement*
-		public Assignment getGroupAssignment_1_1_1() { return cGroupAssignment_1_1_1; }
+		//list+=Statement*
+		public Assignment getListAssignment_1_1_1() { return cListAssignment_1_1_1; }
 		
 		//Statement
-		public RuleCall getGroupStatementParserRuleCall_1_1_1_0() { return cGroupStatementParserRuleCall_1_1_1_0; }
+		public RuleCall getListStatementParserRuleCall_1_1_1_0() { return cListStatementParserRuleCall_1_1_1_0; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
@@ -2170,7 +2171,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Call");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
+		private final RuleCall cNamePathNameParserRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Keyword cLeftParenthesisKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
 		private final Assignment cParametersAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
@@ -2184,17 +2185,19 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSemicolonKeyword_2_1 = (Keyword)cAlternatives_2.eContents().get(1);
 		
 		//Call:
-		//	name=LOWERCASE_ID ('(' parameters=ParameterList? ')')? (':' actions=Actions | ';')?;
+		//	name=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions | ';')?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=LOWERCASE_ID ('(' parameters=ParameterList? ')')? (':' actions=Actions | ';')?
+		//// verb can be qualified by receiving actor path if needed, semicolon is optional if no actions
+		//name=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions | ';')?
 		public Group getGroup() { return cGroup; }
 		
-		//name=LOWERCASE_ID
+		//// verb can be qualified by receiving actor path if needed, semicolon is optional if no actions
+		//name=PathName
 		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
 		
-		//LOWERCASE_ID
-		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_0_0; }
+		//PathName
+		public RuleCall getNamePathNameParserRuleCall_0_0() { return cNamePathNameParserRuleCall_0_0; }
 		
 		//('(' parameters=ParameterList? ')')?
 		public Group getGroup_1() { return cGroup_1; }
@@ -3542,8 +3545,9 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		return getLiteralAccess().getRule();
 	}
 	
+	//// only missing piece: mix statement and groups in group, which probably makes no sense so OK.
 	//Body:
-	//	{Body} list+=Statement list+=Statement* | isgroup?='(' (group+=Statement group+=Statement*)? ')';
+	//	{Body} list+=Statement list+=Statement* | isgroup?='(' (list+=Statement list+=Statement*)? ')';
 	public BodyElements getBodyAccess() {
 		return pBody;
 	}
@@ -3616,7 +3620,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Call:
-	//	name=LOWERCASE_ID ('(' parameters=ParameterList? ')')? (':' actions=Actions | ';')?;
+	//	name=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions | ';')?;
 	public CallElements getCallAccess() {
 		return pCall;
 	}

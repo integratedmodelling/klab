@@ -1434,22 +1434,13 @@ public interface KactorsPackage extends EPackage
   int BODY__ISGROUP = 1;
 
   /**
-   * The feature id for the '<em><b>Group</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int BODY__GROUP = 2;
-
-  /**
    * The number of structural features of the '<em>Body</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int BODY_FEATURE_COUNT = 3;
+  int BODY_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl <em>Statement</em>}' class.
@@ -3591,17 +3582,6 @@ public interface KactorsPackage extends EPackage
   EAttribute getBody_Isgroup();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Body#getGroup <em>Group</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Group</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Body#getGroup()
-   * @see #getBody()
-   * @generated
-   */
-  EReference getBody_Group();
-
-  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Statement <em>Statement</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5483,14 +5463,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute BODY__ISGROUP = eINSTANCE.getBody_Isgroup();
-
-    /**
-     * The meta object literal for the '<em><b>Group</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference BODY__GROUP = eINSTANCE.getBody_Group();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl <em>Statement</em>}' class.

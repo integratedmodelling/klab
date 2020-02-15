@@ -3415,17 +3415,17 @@ ruleBody returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getBodyAccess().getGroupStatementParserRuleCall_1_1_0_0());
+							newCompositeNode(grammarAccess.getBodyAccess().getListStatementParserRuleCall_1_1_0_0());
 						}
-						lv_group_4_0=ruleStatement
+						lv_list_4_0=ruleStatement
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getBodyRule());
 							}
 							add(
 								$current,
-								"group",
-								lv_group_4_0,
+								"list",
+								lv_list_4_0,
 								"org.integratedmodelling.kactors.Kactors.Statement");
 							afterParserOrEnumRuleCall();
 						}
@@ -3434,17 +3434,17 @@ ruleBody returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getBodyAccess().getGroupStatementParserRuleCall_1_1_1_0());
+							newCompositeNode(grammarAccess.getBodyAccess().getListStatementParserRuleCall_1_1_1_0());
 						}
-						lv_group_5_0=ruleStatement
+						lv_list_5_0=ruleStatement
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getBodyRule());
 							}
 							add(
 								$current,
-								"group",
-								lv_group_5_0,
+								"list",
+								lv_list_5_0,
 								"org.integratedmodelling.kactors.Kactors.Statement");
 							afterParserOrEnumRuleCall();
 						}
@@ -4071,19 +4071,20 @@ ruleCall returns [EObject current=null]
 	(
 		(
 			(
-				lv_name_0_0=RULE_LOWERCASE_ID
 				{
-					newLeafNode(lv_name_0_0, grammarAccess.getCallAccess().getNameLOWERCASE_IDTerminalRuleCall_0_0());
+					newCompositeNode(grammarAccess.getCallAccess().getNamePathNameParserRuleCall_0_0());
 				}
+				lv_name_0_0=rulePathName
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getCallRule());
+						$current = createModelElementForParent(grammarAccess.getCallRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"name",
 						lv_name_0_0,
-						"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
+						"org.integratedmodelling.kactors.Kactors.PathName");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)

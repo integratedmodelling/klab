@@ -169,7 +169,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     ';'?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     name=LOWERCASE_ID ('(' ')')? (ambiguity) (rule end)
+	 *     name=PathName ('(' ')')? (ambiguity) (rule end)
 	 *     parameters=ParameterList ')' (ambiguity) (rule end)
 	 */
 	protected void emit_Call_SemicolonKeyword_2_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
@@ -181,8 +181,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     ('(' ')')?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     name=LOWERCASE_ID (ambiguity) ':' actions=Actions
-	 *     name=LOWERCASE_ID (ambiguity) ';'? (rule end)
+	 *     name=PathName (ambiguity) ':' actions=Actions
+	 *     name=PathName (ambiguity) ';'? (rule end)
 	 */
 	protected void emit_Call___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

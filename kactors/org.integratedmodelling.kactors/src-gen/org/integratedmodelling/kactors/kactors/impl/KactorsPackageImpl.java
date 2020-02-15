@@ -1771,17 +1771,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getBody_Group()
-  {
-    return (EReference)bodyEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EClass getStatement()
   {
     return statementEClass;
@@ -2771,7 +2760,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     bodyEClass = createEClass(BODY);
     createEReference(bodyEClass, BODY__LIST);
     createEAttribute(bodyEClass, BODY__ISGROUP);
-    createEReference(bodyEClass, BODY__GROUP);
 
     statementEClass = createEClass(STATEMENT);
     createEReference(statementEClass, STATEMENT__CALL);
@@ -3042,7 +3030,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEClass(bodyEClass, Body.class, "Body", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getBody_List(), this.getStatement(), null, "list", null, 0, -1, Body.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getBody_Isgroup(), ecorePackage.getEBoolean(), "isgroup", null, 0, 1, Body.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getBody_Group(), this.getStatement(), null, "group", null, 0, -1, Body.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatement_Call(), this.getCall(), null, "call", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

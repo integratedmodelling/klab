@@ -6627,9 +6627,9 @@ rule__Body__Group_1_1__0__Impl
 	}
 :
 (
-	{ before(grammarAccess.getBodyAccess().getGroupAssignment_1_1_0()); }
-	(rule__Body__GroupAssignment_1_1_0)
-	{ after(grammarAccess.getBodyAccess().getGroupAssignment_1_1_0()); }
+	{ before(grammarAccess.getBodyAccess().getListAssignment_1_1_0()); }
+	(rule__Body__ListAssignment_1_1_0)
+	{ after(grammarAccess.getBodyAccess().getListAssignment_1_1_0()); }
 )
 ;
 finally {
@@ -6653,9 +6653,9 @@ rule__Body__Group_1_1__1__Impl
 	}
 :
 (
-	{ before(grammarAccess.getBodyAccess().getGroupAssignment_1_1_1()); }
-	(rule__Body__GroupAssignment_1_1_1)*
-	{ after(grammarAccess.getBodyAccess().getGroupAssignment_1_1_1()); }
+	{ before(grammarAccess.getBodyAccess().getListAssignment_1_1_1()); }
+	(rule__Body__ListAssignment_1_1_1)*
+	{ after(grammarAccess.getBodyAccess().getListAssignment_1_1_1()); }
 )
 ;
 finally {
@@ -12374,30 +12374,30 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Body__GroupAssignment_1_1_0
+rule__Body__ListAssignment_1_1_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getBodyAccess().getGroupStatementParserRuleCall_1_1_0_0()); }
+		{ before(grammarAccess.getBodyAccess().getListStatementParserRuleCall_1_1_0_0()); }
 		ruleStatement
-		{ after(grammarAccess.getBodyAccess().getGroupStatementParserRuleCall_1_1_0_0()); }
+		{ after(grammarAccess.getBodyAccess().getListStatementParserRuleCall_1_1_0_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Body__GroupAssignment_1_1_1
+rule__Body__ListAssignment_1_1_1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getBodyAccess().getGroupStatementParserRuleCall_1_1_1_0()); }
+		{ before(grammarAccess.getBodyAccess().getListStatementParserRuleCall_1_1_1_0()); }
 		ruleStatement
-		{ after(grammarAccess.getBodyAccess().getGroupStatementParserRuleCall_1_1_1_0()); }
+		{ after(grammarAccess.getBodyAccess().getListStatementParserRuleCall_1_1_1_0()); }
 	)
 ;
 finally {
@@ -12740,9 +12740,9 @@ rule__Call__NameAssignment_0
 	}
 :
 	(
-		{ before(grammarAccess.getCallAccess().getNameLOWERCASE_IDTerminalRuleCall_0_0()); }
-		RULE_LOWERCASE_ID
-		{ after(grammarAccess.getCallAccess().getNameLOWERCASE_IDTerminalRuleCall_0_0()); }
+		{ before(grammarAccess.getCallAccess().getNamePathNameParserRuleCall_0_0()); }
+		rulePathName
+		{ after(grammarAccess.getCallAccess().getNamePathNameParserRuleCall_0_0()); }
 	)
 ;
 finally {

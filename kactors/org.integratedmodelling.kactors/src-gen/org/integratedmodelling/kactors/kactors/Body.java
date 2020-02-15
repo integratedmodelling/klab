@@ -18,7 +18,6 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Body#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Body#isIsgroup <em>Isgroup</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Body#getGroup <em>Group</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getBody()
@@ -60,17 +59,5 @@ public interface Body extends EObject
    * @generated
    */
   void setIsgroup(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Group</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Statement}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Group</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getBody_Group()
-   * @model containment="true"
-   * @generated
-   */
-  EList<Statement> getGroup();
 
 } // Body
