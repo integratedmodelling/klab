@@ -27,7 +27,7 @@
 		<module>org.integratedmodelling.kactors.feature</module>
 		<module>org.integratedmodelling.kactors.repository</module>
 		<module>org.integratedmodelling.kactors.tests</module>
-		<module>org.integratedmodelling.kactors.ui.tests</module>
+		<!-- <module>org.integratedmodelling.kactors.ui.tests</module> -->
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -96,7 +96,7 @@
 				<configuration>
 					<target>
 						<artifact>
-							<groupId>org.integratedmodelling.kactors</groupId>
+							<groupId>org.integratedmodelling</groupId>
 							<artifactId>org.integratedmodelling.kactors.target</artifactId>
 							<version>${project.version}</version>
 						</artifact>
