@@ -1,0 +1,120 @@
+grammar org.integratedmodelling.kactors.Kactors with org.eclipse.xtext.common.Terminals
+
+generate kactors "http://www.integratedmodelling.org/kactors/Kactors"
+
+Model: {Model}
+	(preamble=Preamble)?
+	definitions+=Definition*;
+
+Preamble:
+	'name' name=LOWERCASE_ID // path, too
+	(
+		('worldview' worldview=LOWERCASE_ID)? &
+		('permissions' permissions=STRING)? &
+		('author' authors=STRING)? &
+		('version' version=LOWERCASE_ID)? 
+	)
+;	
+
+Definition:
+	'def' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=Body;
+
+ArgumentDeclaration: {ArgumentDeclaration}
+	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'
+;
+
+ParameterList:
+	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
+	
+KeyValuePair:
+	(name=(LOWERCASE_ID) (interactive?='=?' | '='))?
+	value=Value;
+	
+Value:
+	argvalue=ARGVALUE |
+	literal=Literal |
+	id=LOWERCASE_ID |
+//	urn=Urn | 
+//	list=List |
+//	map=Map | ???
+	observable=OBSERVABLE | 
+	expression=EXPR// |
+//	table=LookupTable ???
+	;
+
+Literal:
+	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
+
+Body: {Body}
+	list+=Statement (list+=Statement)* |
+	// only way to be empty is to be an empty group
+	isgroup?='(' (group+=Statement (group += Statement)*)? ')'
+;
+
+Statement:
+	call=Call |
+	text=EMBEDDEDTEXT |
+	if=IfStatement |
+	'(' group+=Statement (group+=Statement)* ')'
+//	WhileStatement |
+//	DoStatement |
+//	ForStatement |
+;
+
+IfStatement:
+	'if' expression=EXPR body=IfBody	
+		('else' 'if' elseIfExpression+=EXPR elseIfCall+=IfBody)* 
+		('else' elseCall=IfBody)?
+;
+
+IfBody:
+	call=Call |
+	body=Body
+;
+
+Call:
+	name=LOWERCASE_ID ('(' (parameters=ParameterList)? ')')? ((':' actions=Actions) | ';')? 
+;
+
+Actions: 
+	call=Call |
+	body=Body |
+	match=Match |
+	'(' matches+=Match (matches+=Match)* ')'
+;
+
+Match:
+	id?=LOWERCASE_ID '->' body=Body |
+	regexp?=REGEXP '->' body=Body |
+	observable?=OBSERVABLE '->' body=Body |
+	literal?=Literal '->' body=Body |
+	text?=STRING '->' body=Body |
+	arguments=ArgumentDeclaration '->' body=Body
+;
+
+Number:
+	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
+
+Date:
+	year=INT ('AD' | 'CE' | bc?='BC')? '-' month=INT '-' day=INT (hour=INT ':' min=INT (':' sec=INT ('.' ms=INT)?)?)?
+;
+
+terminal LOWERCASE_ID:
+	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
+
+terminal ARGVALUE:
+	'$' ('0'..'9')*
+;
+
+terminal EXPR:
+	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
+	
+terminal EMBEDDEDTEXT:
+	'%%%'((' ')*'-')*'\r' -> '%%%'((' ')*'-')*'\r';
+
+terminal REGEXP:
+	'%' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\') | !('\\' | '%'))* '%';
+	
+terminal OBSERVABLE:
+	'{' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '}';
+	

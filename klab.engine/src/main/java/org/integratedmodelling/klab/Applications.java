@@ -8,9 +8,9 @@ import java.net.URL;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
-import org.integratedmodelling.kap.api.IKapApplication;
-import org.integratedmodelling.kap.kap.Model;
-import org.integratedmodelling.kap.model.Kap;
+import org.integratedmodelling.kactors.api.IKactorsApplication;
+import org.integratedmodelling.kactors.kactors.Model;
+import org.integratedmodelling.kactors.model.Kactors;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -37,7 +37,7 @@ public enum Applications {
 	}
 
 //	@Override
-	public IKapApplication declare(URL url) throws KlabException {
+	public IKactorsApplication declare(URL url) throws KlabException {
 		try (InputStream stream = url.openStream()) {
 			return declare(stream);
 		} catch (Exception e) {
@@ -46,7 +46,7 @@ public enum Applications {
 	}
 
 //	@Override
-	public IKapApplication declare(File file) throws KlabException {
+	public IKactorsApplication declare(File file) throws KlabException {
 		try (InputStream stream = new FileInputStream(file)) {
 			return declare(stream);
 		} catch (Exception e) {
@@ -55,12 +55,12 @@ public enum Applications {
 	}
 
 //	@Override
-	public IKapApplication declare(InputStream file) throws KlabValidationException {
-		IKapApplication ret = null;
+	public IKactorsApplication declare(InputStream file) throws KlabValidationException {
+		IKactorsApplication ret = null;
 		try {
 			String definition = IOUtils.toString(file);
 			Model model = dataflowParser.parse(definition);
-			ret = Kap.INSTANCE.declare(model);
+			ret = Kactors.INSTANCE.declare(model);
 		} catch (Exception e) {
 			throw new KlabValidationException(e);
 		}

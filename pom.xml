@@ -69,7 +69,7 @@
 		<module>api</module>
 		<module>kdl</module>
 		<module>kim</module>
-		<module>kap</module>
+		<module>kactors</module>
 		<module>klab.engine</module>
 		<module>adapters</module>
 		<module>klab.modeler</module>
@@ -88,8 +88,8 @@
 
 		<klab.version>0.10.0-SNAPSHOT</klab.version>
 
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS 
 			should be the same one that geotools needs.

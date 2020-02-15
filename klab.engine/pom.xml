@@ -617,7 +617,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.kap</artifactId>
+			<artifactId>org.integratedmodelling.kactors</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
 		<dependency>
