@@ -2235,8 +2235,13 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	public class ActionsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Actions");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cCallAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cCallCallParserRuleCall_0_0 = (RuleCall)cCallAssignment_0.eContents().get(0);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Assignment cSequenceAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final RuleCall cSequenceStatementParserRuleCall_0_0_0 = (RuleCall)cSequenceAssignment_0_0.eContents().get(0);
+		private final Group cGroup_0_1 = (Group)cGroup_0.eContents().get(1);
+		private final Keyword cCommaKeyword_0_1_0 = (Keyword)cGroup_0_1.eContents().get(0);
+		private final Assignment cSequenceAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
+		private final RuleCall cSequenceStatementParserRuleCall_0_1_1_0 = (RuleCall)cSequenceAssignment_0_1_1.eContents().get(0);
 		private final Assignment cBodyAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
 		private final RuleCall cBodyBodyParserRuleCall_1_0 = (RuleCall)cBodyAssignment_1.eContents().get(0);
 		private final Assignment cMatchAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
@@ -2249,19 +2254,35 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cMatchesMatchParserRuleCall_3_2_0 = (RuleCall)cMatchesAssignment_3_2.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_3_3 = (Keyword)cGroup_3.eContents().get(3);
 		
+		//// a sequence of actions after a verb is sequential only if comma-separated
 		//Actions:
-		//	call=Call | body=Body | match=Match |
+		//	sequence+=Statement (',' sequence+=Statement)* | body=Body | match=Match |
 		//	'(' matches+=Match matches+=Match* ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//call=Call | body=Body | match=Match | '(' matches+=Match matches+=Match* ')'
+		//sequence+=Statement (',' sequence+=Statement)* | body=Body | match=Match | '(' matches+=Match matches+=Match* ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//call=Call
-		public Assignment getCallAssignment_0() { return cCallAssignment_0; }
+		//sequence+=Statement (',' sequence+=Statement)*
+		public Group getGroup_0() { return cGroup_0; }
 		
-		//Call
-		public RuleCall getCallCallParserRuleCall_0_0() { return cCallCallParserRuleCall_0_0; }
+		//sequence+=Statement
+		public Assignment getSequenceAssignment_0_0() { return cSequenceAssignment_0_0; }
+		
+		//Statement
+		public RuleCall getSequenceStatementParserRuleCall_0_0_0() { return cSequenceStatementParserRuleCall_0_0_0; }
+		
+		//(',' sequence+=Statement)*
+		public Group getGroup_0_1() { return cGroup_0_1; }
+		
+		//','
+		public Keyword getCommaKeyword_0_1_0() { return cCommaKeyword_0_1_0; }
+		
+		//sequence+=Statement
+		public Assignment getSequenceAssignment_0_1_1() { return cSequenceAssignment_0_1_1; }
+		
+		//Statement
+		public RuleCall getSequenceStatementParserRuleCall_0_1_1_0() { return cSequenceStatementParserRuleCall_0_1_1_0; }
 		
 		//body=Body
 		public Assignment getBodyAssignment_1() { return cBodyAssignment_1; }
@@ -3629,8 +3650,9 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		return getCallAccess().getRule();
 	}
 	
+	//// a sequence of actions after a verb is sequential only if comma-separated
 	//Actions:
-	//	call=Call | body=Body | match=Match |
+	//	sequence+=Statement (',' sequence+=Statement)* | body=Body | match=Match |
 	//	'(' matches+=Match matches+=Match* ')';
 	public ActionsElements getActionsAccess() {
 		return pActions;

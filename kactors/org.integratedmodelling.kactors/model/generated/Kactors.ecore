@@ -257,7 +257,8 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Actions">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="call" eType="#//Call" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sequence" upperBound="-1"
+        eType="#//Statement" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//Body" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="match" eType="#//Match"
         containment="true"/>

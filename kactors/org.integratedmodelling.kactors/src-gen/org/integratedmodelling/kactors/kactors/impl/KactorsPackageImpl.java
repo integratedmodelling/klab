@@ -2123,7 +2123,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getActions_Call()
+  public EReference getActions_Sequence()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(0);
   }
@@ -2800,7 +2800,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(callEClass, CALL__ACTIONS);
 
     actionsEClass = createEClass(ACTIONS);
-    createEReference(actionsEClass, ACTIONS__CALL);
+    createEReference(actionsEClass, ACTIONS__SEQUENCE);
     createEReference(actionsEClass, ACTIONS__BODY);
     createEReference(actionsEClass, ACTIONS__MATCH);
     createEReference(actionsEClass, ACTIONS__MATCHES);
@@ -3070,7 +3070,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getCall_Actions(), this.getActions(), null, "actions", null, 0, 1, Call.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(actionsEClass, Actions.class, "Actions", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getActions_Call(), this.getCall(), null, "call", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActions_Sequence(), this.getStatement(), null, "sequence", null, 0, -1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Body(), this.getBody(), null, "body", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Match(), this.getMatch(), null, "match", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Matches(), this.getMatch(), null, "matches", null, 0, -1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

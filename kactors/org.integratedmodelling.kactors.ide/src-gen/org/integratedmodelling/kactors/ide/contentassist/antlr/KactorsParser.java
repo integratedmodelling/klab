@@ -145,6 +145,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getCallAccess().getGroup(), "rule__Call__Group__0");
 			builder.put(grammarAccess.getCallAccess().getGroup_1(), "rule__Call__Group_1__0");
 			builder.put(grammarAccess.getCallAccess().getGroup_2_0(), "rule__Call__Group_2_0__0");
+			builder.put(grammarAccess.getActionsAccess().getGroup_0(), "rule__Actions__Group_0__0");
+			builder.put(grammarAccess.getActionsAccess().getGroup_0_1(), "rule__Actions__Group_0_1__0");
 			builder.put(grammarAccess.getActionsAccess().getGroup_3(), "rule__Actions__Group_3__0");
 			builder.put(grammarAccess.getMatchAccess().getGroup_0(), "rule__Match__Group_0__0");
 			builder.put(grammarAccess.getMatchAccess().getGroup_1(), "rule__Match__Group_1__0");
@@ -314,7 +316,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getCallAccess().getNameAssignment_0(), "rule__Call__NameAssignment_0");
 			builder.put(grammarAccess.getCallAccess().getParametersAssignment_1_1(), "rule__Call__ParametersAssignment_1_1");
 			builder.put(grammarAccess.getCallAccess().getActionsAssignment_2_0_1(), "rule__Call__ActionsAssignment_2_0_1");
-			builder.put(grammarAccess.getActionsAccess().getCallAssignment_0(), "rule__Actions__CallAssignment_0");
+			builder.put(grammarAccess.getActionsAccess().getSequenceAssignment_0_0(), "rule__Actions__SequenceAssignment_0_0");
+			builder.put(grammarAccess.getActionsAccess().getSequenceAssignment_0_1_1(), "rule__Actions__SequenceAssignment_0_1_1");
 			builder.put(grammarAccess.getActionsAccess().getBodyAssignment_1(), "rule__Actions__BodyAssignment_1");
 			builder.put(grammarAccess.getActionsAccess().getMatchAssignment_2(), "rule__Actions__MatchAssignment_2");
 			builder.put(grammarAccess.getActionsAccess().getMatchesAssignment_3_1(), "rule__Actions__MatchesAssignment_3_1");

@@ -184,7 +184,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Actions returns Actions
 	 *
 	 * Constraint:
-	 *     (call=Call | body=Body | match=Match | (matches+=Match matches+=Match*))
+	 *     ((sequence+=Statement sequence+=Statement*) | body=Body | match=Match | (matches+=Match matches+=Match*))
 	 */
 	protected void sequence_Actions(ISerializationContext context, Actions semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

@@ -201,7 +201,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Call/actions"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Actions">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/call"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/sequence"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/body"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/match"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/matches"/>

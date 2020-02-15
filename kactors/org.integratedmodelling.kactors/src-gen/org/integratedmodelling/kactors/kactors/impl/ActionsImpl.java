@@ -21,9 +21,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Body;
-import org.integratedmodelling.kactors.kactors.Call;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.Match;
+import org.integratedmodelling.kactors.kactors.Statement;
 
 /**
  * <!-- begin-user-doc -->
@@ -33,7 +33,7 @@ import org.integratedmodelling.kactors.kactors.Match;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getCall <em>Call</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getSequence <em>Sequence</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getMatch <em>Match</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getMatches <em>Matches</em>}</li>
@@ -44,14 +44,14 @@ import org.integratedmodelling.kactors.kactors.Match;
 public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
 {
   /**
-   * The cached value of the '{@link #getCall() <em>Call</em>}' containment reference.
+   * The cached value of the '{@link #getSequence() <em>Sequence</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getCall()
+   * @see #getSequence()
    * @generated
    * @ordered
    */
-  protected Call call;
+  protected EList<Statement> sequence;
 
   /**
    * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
@@ -110,48 +110,13 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
    * @generated
    */
   @Override
-  public Call getCall()
+  public EList<Statement> getSequence()
   {
-    return call;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetCall(Call newCall, NotificationChain msgs)
-  {
-    Call oldCall = call;
-    call = newCall;
-    if (eNotificationRequired())
+    if (sequence == null)
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__CALL, oldCall, newCall);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
+      sequence = new EObjectContainmentEList<Statement>(Statement.class, this, KactorsPackage.ACTIONS__SEQUENCE);
     }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setCall(Call newCall)
-  {
-    if (newCall != call)
-    {
-      NotificationChain msgs = null;
-      if (call != null)
-        msgs = ((InternalEObject)call).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__CALL, null, msgs);
-      if (newCall != null)
-        msgs = ((InternalEObject)newCall).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__CALL, null, msgs);
-      msgs = basicSetCall(newCall, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__CALL, newCall, newCall));
+    return sequence;
   }
 
   /**
@@ -279,8 +244,8 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__CALL:
-        return basicSetCall(null, msgs);
+      case KactorsPackage.ACTIONS__SEQUENCE:
+        return ((InternalEList<?>)getSequence()).basicRemove(otherEnd, msgs);
       case KactorsPackage.ACTIONS__BODY:
         return basicSetBody(null, msgs);
       case KactorsPackage.ACTIONS__MATCH:
@@ -301,8 +266,8 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__CALL:
-        return getCall();
+      case KactorsPackage.ACTIONS__SEQUENCE:
+        return getSequence();
       case KactorsPackage.ACTIONS__BODY:
         return getBody();
       case KactorsPackage.ACTIONS__MATCH:
@@ -324,8 +289,9 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__CALL:
-        setCall((Call)newValue);
+      case KactorsPackage.ACTIONS__SEQUENCE:
+        getSequence().clear();
+        getSequence().addAll((Collection<? extends Statement>)newValue);
         return;
       case KactorsPackage.ACTIONS__BODY:
         setBody((Body)newValue);
@@ -351,8 +317,8 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__CALL:
-        setCall((Call)null);
+      case KactorsPackage.ACTIONS__SEQUENCE:
+        getSequence().clear();
         return;
       case KactorsPackage.ACTIONS__BODY:
         setBody((Body)null);
@@ -377,8 +343,8 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__CALL:
-        return call != null;
+      case KactorsPackage.ACTIONS__SEQUENCE:
+        return sequence != null && !sequence.isEmpty();
       case KactorsPackage.ACTIONS__BODY:
         return body != null;
       case KactorsPackage.ACTIONS__MATCH:

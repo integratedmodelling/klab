@@ -1802,13 +1802,13 @@ public interface KactorsPackage extends EPackage
   int ACTIONS = 32;
 
   /**
-   * The feature id for the '<em><b>Call</b></em>' containment reference.
+   * The feature id for the '<em><b>Sequence</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTIONS__CALL = 0;
+  int ACTIONS__SEQUENCE = 0;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -3926,15 +3926,15 @@ public interface KactorsPackage extends EPackage
   EClass getActions();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Actions#getCall <em>Call</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Actions#getSequence <em>Sequence</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Call</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Actions#getCall()
+   * @return the meta object for the containment reference list '<em>Sequence</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Actions#getSequence()
    * @see #getActions()
    * @generated
    */
-  EReference getActions_Call();
+  EReference getActions_Sequence();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Actions#getBody <em>Body</em>}'.
@@ -5737,12 +5737,12 @@ public interface KactorsPackage extends EPackage
     EClass ACTIONS = eINSTANCE.getActions();
 
     /**
-     * The meta object literal for the '<em><b>Call</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Sequence</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ACTIONS__CALL = eINSTANCE.getActions_Call();
+    EReference ACTIONS__SEQUENCE = eINSTANCE.getActions_Sequence();
 
     /**
      * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.

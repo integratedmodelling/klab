@@ -198,8 +198,9 @@ Call:
 	name=PathName ('(' (parameters=ParameterList)? ')')? ((':' actions=Actions) | ';')? 
 ;
 
+// a sequence of actions after a verb is sequential only if comma-separated
 Actions: 
-	call=Call |
+	sequence+=Statement (',' sequence+=Statement)* |
 	body=Body |
 	match=Match |
 	'(' matches+=Match (matches+=Match)* ')'
