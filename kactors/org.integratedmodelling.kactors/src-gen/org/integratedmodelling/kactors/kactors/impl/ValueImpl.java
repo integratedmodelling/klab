@@ -17,7 +17,6 @@ import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
-import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
 
 /**
@@ -94,14 +93,24 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected String id = ID_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getUrn() <em>Urn</em>}' containment reference.
+   * The default value of the '{@link #getUrn() <em>Urn</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getUrn()
    * @generated
    * @ordered
    */
-  protected Urn urn;
+  protected static final String URN_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getUrn() <em>Urn</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUrn()
+   * @generated
+   * @ordered
+   */
+  protected String urn = URN_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getList() <em>List</em>}' containment reference.
@@ -300,7 +309,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
-  public Urn getUrn()
+  public String getUrn()
   {
     return urn;
   }
@@ -310,38 +319,13 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetUrn(Urn newUrn, NotificationChain msgs)
+  @Override
+  public void setUrn(String newUrn)
   {
-    Urn oldUrn = urn;
+    String oldUrn = urn;
     urn = newUrn;
     if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__URN, oldUrn, newUrn);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setUrn(Urn newUrn)
-  {
-    if (newUrn != urn)
-    {
-      NotificationChain msgs = null;
-      if (urn != null)
-        msgs = ((InternalEObject)urn).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__URN, null, msgs);
-      if (newUrn != null)
-        msgs = ((InternalEObject)newUrn).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__URN, null, msgs);
-      msgs = basicSetUrn(newUrn, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__URN, newUrn, newUrn));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__URN, oldUrn, urn));
   }
 
   /**
@@ -556,8 +540,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     {
       case KactorsPackage.VALUE__LITERAL:
         return basicSetLiteral(null, msgs);
-      case KactorsPackage.VALUE__URN:
-        return basicSetUrn(null, msgs);
       case KactorsPackage.VALUE__LIST:
         return basicSetList(null, msgs);
       case KactorsPackage.VALUE__MAP:
@@ -620,7 +602,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         setId((String)newValue);
         return;
       case KactorsPackage.VALUE__URN:
-        setUrn((Urn)newValue);
+        setUrn((String)newValue);
         return;
       case KactorsPackage.VALUE__LIST:
         setList((List)newValue);
@@ -661,7 +643,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         setId(ID_EDEFAULT);
         return;
       case KactorsPackage.VALUE__URN:
-        setUrn((Urn)null);
+        setUrn(URN_EDEFAULT);
         return;
       case KactorsPackage.VALUE__LIST:
         setList((List)null);
@@ -699,7 +681,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KactorsPackage.VALUE__URN:
-        return urn != null;
+        return URN_EDEFAULT == null ? urn != null : !URN_EDEFAULT.equals(urn);
       case KactorsPackage.VALUE__LIST:
         return list != null;
       case KactorsPackage.VALUE__MAP:
@@ -729,6 +711,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     result.append(argvalue);
     result.append(", id: ");
     result.append(id);
+    result.append(", urn: ");
+    result.append(urn);
     result.append(", observable: ");
     result.append(observable);
     result.append(", expression: ");

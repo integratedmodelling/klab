@@ -693,8 +693,8 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     (
 	 *         argvalue=ARGVALUE | 
 	 *         literal=Literal | 
-	 *         id=LOWERCASE_ID | 
-	 *         urn=Urn | 
+	 *         id=PathName | 
+	 *         urn=UrnId | 
 	 *         list=List | 
 	 *         map=Map | 
 	 *         observable=OBSERVABLE | 

@@ -98,26 +98,26 @@ public interface Value extends EObject
   void setId(String value);
 
   /**
-   * Returns the value of the '<em><b>Urn</b></em>' containment reference.
+   * Returns the value of the '<em><b>Urn</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Urn</em>' containment reference.
-   * @see #setUrn(Urn)
+   * @return the value of the '<em>Urn</em>' attribute.
+   * @see #setUrn(String)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Urn()
-   * @model containment="true"
+   * @model
    * @generated
    */
-  Urn getUrn();
+  String getUrn();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Urn</em>' containment reference.
+   * @param value the new value of the '<em>Urn</em>' attribute.
    * @see #getUrn()
    * @generated
    */
-  void setUrn(Urn value);
+  void setUrn(String value);
 
   /**
    * Returns the value of the '<em><b>List</b></em>' containment reference.
