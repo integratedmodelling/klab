@@ -23,6 +23,8 @@ import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
+import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -47,6 +49,7 @@ import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.WhileStatement;
 import org.integratedmodelling.kactors.services.KactorsGrammarAccess;
 
 @SuppressWarnings("all")
@@ -89,6 +92,12 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.DEFINITION:
 				sequence_Definition(context, (Definition) semanticObject); 
+				return; 
+			case KactorsPackage.DO_STATEMENT:
+				sequence_DoStatement(context, (DoStatement) semanticObject); 
+				return; 
+			case KactorsPackage.FOR_STATEMENT:
+				sequence_ForStatement(context, (ForStatement) semanticObject); 
 				return; 
 			case KactorsPackage.HEADER_ROW:
 				sequence_HeaderRow(context, (HeaderRow) semanticObject); 
@@ -161,6 +170,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.VALUE:
 				sequence_Value(context, (Value) semanticObject); 
+				return; 
+			case KactorsPackage.WHILE_STATEMENT:
+				sequence_WhileStatement(context, (WhileStatement) semanticObject); 
 				return; 
 			}
 		if (errorAcceptor != null)
@@ -280,9 +292,42 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Definition returns Definition
 	 *
 	 * Constraint:
-	 *     (annotations+=Annotation* name=LOWERCASE_ID arguments=ArgumentDeclaration? body=Body)
+	 *     (annotations+=Annotation* name=LOWERCASE_ID arguments=ArgumentDeclaration? body+=Body+)
 	 */
 	protected void sequence_Definition(ISerializationContext context, Definition semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     DoStatement returns DoStatement
+	 *
+	 * Constraint:
+	 *     (body=IfBody expression=EXPR)
+	 */
+	protected void sequence_DoStatement(ISerializationContext context, DoStatement semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, KactorsPackage.Literals.DO_STATEMENT__BODY) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KactorsPackage.Literals.DO_STATEMENT__BODY));
+			if (transientValues.isValueTransient(semanticObject, KactorsPackage.Literals.DO_STATEMENT__EXPRESSION) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KactorsPackage.Literals.DO_STATEMENT__EXPRESSION));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getDoStatementAccess().getBodyIfBodyParserRuleCall_1_0(), semanticObject.getBody());
+		feeder.accept(grammarAccess.getDoStatementAccess().getExpressionEXPRTerminalRuleCall_3_0(), semanticObject.getExpression());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ForStatement returns ForStatement
+	 *
+	 * Constraint:
+	 *     (id=LOWERCASE_ID? value=Value body=IfBody)
+	 */
+	protected void sequence_ForStatement(ISerializationContext context, ForStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -304,7 +349,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     IfBody returns IfBody
 	 *
 	 * Constraint:
-	 *     (call=Call | body=Body)
+	 *     (call=Call | body+=Body+)
 	 */
 	protected void sequence_IfBody(ISerializationContext context, IfBody semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -422,7 +467,15 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         (observable?=OBSERVABLE body=Body) | 
 	 *         (literal?=Literal body=Body) | 
 	 *         (text?=STRING body=Body) | 
-	 *         (arguments=ArgumentDeclaration body=Body)
+	 *         (arguments=ArgumentDeclaration body=Body) | 
+	 *         (int0=Number leftLimit='inclusive'? int1=Number rightLimit='inclusive'? body=Body) | 
+	 *         (set=List body=Body) | 
+	 *         (quantity=Quantity body=Body) | 
+	 *         (date=Date body=Body) | 
+	 *         (expr=EXPR body=Body) | 
+	 *         (nodata='unknown' body=Body) | 
+	 *         (star?='*' body=Body) | 
+	 *         (anything?='#' body=Body)
 	 *     )
 	 */
 	protected void sequence_Match(ISerializationContext context, Match semanticObject) {
@@ -472,18 +525,23 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         name=PathName | 
-	 *         worldview=PathName | 
-	 *         label=LOWERCASE_ID | 
-	 *         label=ID | 
-	 *         label=STRING | 
-	 *         description=STRING | 
-	 *         permissions=STRING | 
-	 *         authors+=STRING | 
-	 *         version=VersionNumber | 
-	 *         created=Date | 
-	 *         (modified=Date modcomment=STRING?)
-	 *     )+
+	 *         name=PathName? 
+	 *         (
+	 *             (
+	 *                 worldview=PathName | 
+	 *                 label=LOWERCASE_ID | 
+	 *                 label=ID | 
+	 *                 label=STRING | 
+	 *                 description=STRING | 
+	 *                 permissions=STRING | 
+	 *                 authors+=STRING | 
+	 *                 version=VersionNumber
+	 *             )? 
+	 *             (imports+=PathName imports+=PathName*)? 
+	 *             (created=Date createcomment=STRING?)? 
+	 *             (modified=Date modcomment=STRING?)?
+	 *         )+
+	 *     )
 	 */
 	protected void sequence_Preamble(ISerializationContext context, Preamble semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -526,7 +584,14 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Statement returns Statement
 	 *
 	 * Constraint:
-	 *     (call=Call | text=EMBEDDEDTEXT | if=IfStatement | (group+=Statement group+=Statement*))
+	 *     (
+	 *         call=Call | 
+	 *         text=EMBEDDEDTEXT | 
+	 *         if=IfStatement | 
+	 *         (group+=Statement group+=Statement* while=WhileStatement) | 
+	 *         do=DoStatement | 
+	 *         for=ForStatement
+	 *     )
 	 */
 	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -541,14 +606,14 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     (
 	 *         boolean='true' | 
 	 *         boolean='false' | 
-	 *         (int0=Number leftLimit='inclusive'? int1=Number rightLimit='inclusive'?) | 
 	 *         num=Number | 
-	 *         quantity=Quantity | 
-	 *         date=Date | 
-	 *         set=List | 
 	 *         string=STRING | 
 	 *         observable=OBSERVABLE | 
 	 *         (op=REL_OPERATOR expression=Number) | 
+	 *         (int0=Number leftLimit='inclusive'? int1=Number rightLimit='inclusive'?) | 
+	 *         set=List | 
+	 *         quantity=Quantity | 
+	 *         date=Date | 
 	 *         expr=EXPR | 
 	 *         nodata='unknown' | 
 	 *         star?='*' | 
@@ -639,6 +704,27 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 */
 	protected void sequence_Value(ISerializationContext context, Value semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     WhileStatement returns WhileStatement
+	 *
+	 * Constraint:
+	 *     (expression=EXPR body=IfBody)
+	 */
+	protected void sequence_WhileStatement(ISerializationContext context, WhileStatement semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, KactorsPackage.Literals.WHILE_STATEMENT__EXPRESSION) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KactorsPackage.Literals.WHILE_STATEMENT__EXPRESSION));
+			if (transientValues.isValueTransient(semanticObject, KactorsPackage.Literals.WHILE_STATEMENT__BODY) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KactorsPackage.Literals.WHILE_STATEMENT__BODY));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getWhileStatementAccess().getExpressionEXPRTerminalRuleCall_1_0(), semanticObject.getExpression());
+		feeder.accept(grammarAccess.getWhileStatementAccess().getBodyIfBodyParserRuleCall_2_0(), semanticObject.getBody());
+		feeder.finish();
 	}
 	
 	

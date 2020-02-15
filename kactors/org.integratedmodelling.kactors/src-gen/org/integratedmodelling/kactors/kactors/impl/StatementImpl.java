@@ -20,9 +20,12 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kactors.kactors.Call;
+import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
  * <!-- begin-user-doc -->
@@ -36,6 +39,9 @@ import org.integratedmodelling.kactors.kactors.Statement;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getText <em>Text</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getGroup <em>Group</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getWhile <em>While</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getDo <em>Do</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getFor <em>For</em>}</li>
  * </ul>
  *
  * @generated
@@ -91,6 +97,36 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @ordered
    */
   protected EList<Statement> group;
+
+  /**
+   * The cached value of the '{@link #getWhile() <em>While</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getWhile()
+   * @generated
+   * @ordered
+   */
+  protected WhileStatement while_;
+
+  /**
+   * The cached value of the '{@link #getDo() <em>Do</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDo()
+   * @generated
+   * @ordered
+   */
+  protected DoStatement do_;
+
+  /**
+   * The cached value of the '{@link #getFor() <em>For</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getFor()
+   * @generated
+   * @ordered
+   */
+  protected ForStatement for_;
 
   /**
    * <!-- begin-user-doc -->
@@ -259,6 +295,156 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @generated
    */
   @Override
+  public WhileStatement getWhile()
+  {
+    return while_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetWhile(WhileStatement newWhile, NotificationChain msgs)
+  {
+    WhileStatement oldWhile = while_;
+    while_ = newWhile;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__WHILE, oldWhile, newWhile);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setWhile(WhileStatement newWhile)
+  {
+    if (newWhile != while_)
+    {
+      NotificationChain msgs = null;
+      if (while_ != null)
+        msgs = ((InternalEObject)while_).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__WHILE, null, msgs);
+      if (newWhile != null)
+        msgs = ((InternalEObject)newWhile).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__WHILE, null, msgs);
+      msgs = basicSetWhile(newWhile, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__WHILE, newWhile, newWhile));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public DoStatement getDo()
+  {
+    return do_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetDo(DoStatement newDo, NotificationChain msgs)
+  {
+    DoStatement oldDo = do_;
+    do_ = newDo;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__DO, oldDo, newDo);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDo(DoStatement newDo)
+  {
+    if (newDo != do_)
+    {
+      NotificationChain msgs = null;
+      if (do_ != null)
+        msgs = ((InternalEObject)do_).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__DO, null, msgs);
+      if (newDo != null)
+        msgs = ((InternalEObject)newDo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__DO, null, msgs);
+      msgs = basicSetDo(newDo, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__DO, newDo, newDo));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ForStatement getFor()
+  {
+    return for_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetFor(ForStatement newFor, NotificationChain msgs)
+  {
+    ForStatement oldFor = for_;
+    for_ = newFor;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__FOR, oldFor, newFor);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setFor(ForStatement newFor)
+  {
+    if (newFor != for_)
+    {
+      NotificationChain msgs = null;
+      if (for_ != null)
+        msgs = ((InternalEObject)for_).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__FOR, null, msgs);
+      if (newFor != null)
+        msgs = ((InternalEObject)newFor).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__FOR, null, msgs);
+      msgs = basicSetFor(newFor, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__FOR, newFor, newFor));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -269,6 +455,12 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return basicSetIf(null, msgs);
       case KactorsPackage.STATEMENT__GROUP:
         return ((InternalEList<?>)getGroup()).basicRemove(otherEnd, msgs);
+      case KactorsPackage.STATEMENT__WHILE:
+        return basicSetWhile(null, msgs);
+      case KactorsPackage.STATEMENT__DO:
+        return basicSetDo(null, msgs);
+      case KactorsPackage.STATEMENT__FOR:
+        return basicSetFor(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -291,6 +483,12 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return getIf();
       case KactorsPackage.STATEMENT__GROUP:
         return getGroup();
+      case KactorsPackage.STATEMENT__WHILE:
+        return getWhile();
+      case KactorsPackage.STATEMENT__DO:
+        return getDo();
+      case KactorsPackage.STATEMENT__FOR:
+        return getFor();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -319,6 +517,15 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         getGroup().clear();
         getGroup().addAll((Collection<? extends Statement>)newValue);
         return;
+      case KactorsPackage.STATEMENT__WHILE:
+        setWhile((WhileStatement)newValue);
+        return;
+      case KactorsPackage.STATEMENT__DO:
+        setDo((DoStatement)newValue);
+        return;
+      case KactorsPackage.STATEMENT__FOR:
+        setFor((ForStatement)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -345,6 +552,15 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
       case KactorsPackage.STATEMENT__GROUP:
         getGroup().clear();
         return;
+      case KactorsPackage.STATEMENT__WHILE:
+        setWhile((WhileStatement)null);
+        return;
+      case KactorsPackage.STATEMENT__DO:
+        setDo((DoStatement)null);
+        return;
+      case KactorsPackage.STATEMENT__FOR:
+        setFor((ForStatement)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -367,6 +583,12 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return if_ != null;
       case KactorsPackage.STATEMENT__GROUP:
         return group != null && !group.isEmpty();
+      case KactorsPackage.STATEMENT__WHILE:
+        return while_ != null;
+      case KactorsPackage.STATEMENT__DO:
+        return do_ != null;
+      case KactorsPackage.STATEMENT__FOR:
+        return for_ != null;
     }
     return super.eIsSet(featureID);
   }

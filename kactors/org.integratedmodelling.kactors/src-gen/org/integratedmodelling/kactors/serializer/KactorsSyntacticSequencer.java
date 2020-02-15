@@ -28,10 +28,12 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected AbstractElementAlias match_Classifier_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_Classifier_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q;
+	protected AbstractElementAlias match_Match_ExclusiveKeyword_6_1_1_q;
+	protected AbstractElementAlias match_Match_ExclusiveKeyword_6_4_1_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_4_0_1_0_q;
-	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_1_1_q;
-	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_4_1_q;
+	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_5_1_1_q;
+	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_5_4_1_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
@@ -42,10 +44,12 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 		match_Classifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierAccess().getExclusiveKeyword_1_1_1());
 		match_Classifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierAccess().getExclusiveKeyword_1_4_1());
 		match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q = new AlternativeAlias(false, true, new TokenAlias(false, false, grammarAccess.getDateAccess().getADKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getDateAccess().getCEKeyword_1_1()));
+		match_Match_ExclusiveKeyword_6_1_1_q = new TokenAlias(false, true, grammarAccess.getMatchAccess().getExclusiveKeyword_6_1_1());
+		match_Match_ExclusiveKeyword_6_4_1_q = new TokenAlias(false, true, grammarAccess.getMatchAccess().getExclusiveKeyword_6_4_1());
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_4_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_4_0_1_0());
-		match_TableClassifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_1_1());
-		match_TableClassifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_4_1());
+		match_TableClassifier_ExclusiveKeyword_5_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_5_1_1());
+		match_TableClassifier_ExclusiveKeyword_5_4_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_5_4_1());
 	}
 	
 	@Override
@@ -133,14 +137,18 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_Classifier_ExclusiveKeyword_1_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q.equals(syntax))
 				emit_Date___ADKeyword_1_0_or_CEKeyword_1_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Match_ExclusiveKeyword_6_1_1_q.equals(syntax))
+				emit_Match_ExclusiveKeyword_6_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Match_ExclusiveKeyword_6_4_1_q.equals(syntax))
+				emit_Match_ExclusiveKeyword_6_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_0_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_4_0_1_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_4_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_TableClassifier_ExclusiveKeyword_1_1_1_q.equals(syntax))
-				emit_TableClassifier_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_TableClassifier_ExclusiveKeyword_1_4_1_q.equals(syntax))
-				emit_TableClassifier_ExclusiveKeyword_1_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_TableClassifier_ExclusiveKeyword_5_1_1_q.equals(syntax))
+				emit_TableClassifier_ExclusiveKeyword_5_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_TableClassifier_ExclusiveKeyword_5_4_1_q.equals(syntax))
+				emit_TableClassifier_ExclusiveKeyword_5_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
@@ -215,6 +223,28 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Ambiguous syntax:
+	 *     'exclusive'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     int0=Number (ambiguity) 'to' int1=Number
+	 */
+	protected void emit_Match_ExclusiveKeyword_6_1_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     'exclusive'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     int1=Number (ambiguity) '->' body=Body
+	 */
+	protected void emit_Match_ExclusiveKeyword_6_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
 	 *     '+'?
 	 *
 	 * This ambiguous syntax occurs at:
@@ -243,7 +273,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * This ambiguous syntax occurs at:
 	 *     int0=Number (ambiguity) 'to' int1=Number
 	 */
-	protected void emit_TableClassifier_ExclusiveKeyword_1_1_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_TableClassifier_ExclusiveKeyword_5_1_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
@@ -254,7 +284,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * This ambiguous syntax occurs at:
 	 *     int1=Number (ambiguity) (rule end)
 	 */
-	protected void emit_TableClassifier_ExclusiveKeyword_1_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_TableClassifier_ExclusiveKeyword_5_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

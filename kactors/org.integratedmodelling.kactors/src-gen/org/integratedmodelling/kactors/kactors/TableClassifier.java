@@ -15,18 +15,18 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getBoolean <em>Boolean</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getInt0 <em>Int0</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getLeftLimit <em>Left Limit</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getInt1 <em>Int1</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getRightLimit <em>Right Limit</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getNum <em>Num</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getQuantity <em>Quantity</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getDate <em>Date</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getString <em>String</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getOp <em>Op</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getExpression <em>Expression</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getInt0 <em>Int0</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getLeftLimit <em>Left Limit</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getInt1 <em>Int1</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getRightLimit <em>Right Limit</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getSet <em>Set</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.TableClassifier#isStar <em>Star</em>}</li>
@@ -60,6 +60,116 @@ public interface TableClassifier extends EObject
    * @generated
    */
   void setBoolean(String value);
+
+  /**
+   * Returns the value of the '<em><b>Num</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Num</em>' containment reference.
+   * @see #setNum(org.integratedmodelling.kactors.kactors.Number)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Num()
+   * @model containment="true"
+   * @generated
+   */
+  org.integratedmodelling.kactors.kactors.Number getNum();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getNum <em>Num</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Num</em>' containment reference.
+   * @see #getNum()
+   * @generated
+   */
+  void setNum(org.integratedmodelling.kactors.kactors.Number value);
+
+  /**
+   * Returns the value of the '<em><b>String</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>String</em>' attribute.
+   * @see #setString(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_String()
+   * @model
+   * @generated
+   */
+  String getString();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getString <em>String</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>String</em>' attribute.
+   * @see #getString()
+   * @generated
+   */
+  void setString(String value);
+
+  /**
+   * Returns the value of the '<em><b>Observable</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Observable</em>' attribute.
+   * @see #setObservable(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Observable()
+   * @model
+   * @generated
+   */
+  String getObservable();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getObservable <em>Observable</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Observable</em>' attribute.
+   * @see #getObservable()
+   * @generated
+   */
+  void setObservable(String value);
+
+  /**
+   * Returns the value of the '<em><b>Op</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Op</em>' containment reference.
+   * @see #setOp(REL_OPERATOR)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Op()
+   * @model containment="true"
+   * @generated
+   */
+  REL_OPERATOR getOp();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getOp <em>Op</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Op</em>' containment reference.
+   * @see #getOp()
+   * @generated
+   */
+  void setOp(REL_OPERATOR value);
+
+  /**
+   * Returns the value of the '<em><b>Expression</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Expression</em>' containment reference.
+   * @see #setExpression(org.integratedmodelling.kactors.kactors.Number)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Expression()
+   * @model containment="true"
+   * @generated
+   */
+  org.integratedmodelling.kactors.kactors.Number getExpression();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getExpression <em>Expression</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Expression</em>' containment reference.
+   * @see #getExpression()
+   * @generated
+   */
+  void setExpression(org.integratedmodelling.kactors.kactors.Number value);
 
   /**
    * Returns the value of the '<em><b>Int0</b></em>' containment reference.
@@ -150,26 +260,26 @@ public interface TableClassifier extends EObject
   void setRightLimit(String value);
 
   /**
-   * Returns the value of the '<em><b>Num</b></em>' containment reference.
+   * Returns the value of the '<em><b>Set</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Num</em>' containment reference.
-   * @see #setNum(org.integratedmodelling.kactors.kactors.Number)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Num()
+   * @return the value of the '<em>Set</em>' containment reference.
+   * @see #setSet(List)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Set()
    * @model containment="true"
    * @generated
    */
-  org.integratedmodelling.kactors.kactors.Number getNum();
+  List getSet();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getNum <em>Num</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getSet <em>Set</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Num</em>' containment reference.
-   * @see #getNum()
+   * @param value the new value of the '<em>Set</em>' containment reference.
+   * @see #getSet()
    * @generated
    */
-  void setNum(org.integratedmodelling.kactors.kactors.Number value);
+  void setSet(List value);
 
   /**
    * Returns the value of the '<em><b>Quantity</b></em>' containment reference.
@@ -214,116 +324,6 @@ public interface TableClassifier extends EObject
    * @generated
    */
   void setDate(Date value);
-
-  /**
-   * Returns the value of the '<em><b>Set</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Set</em>' containment reference.
-   * @see #setSet(List)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Set()
-   * @model containment="true"
-   * @generated
-   */
-  List getSet();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getSet <em>Set</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Set</em>' containment reference.
-   * @see #getSet()
-   * @generated
-   */
-  void setSet(List value);
-
-  /**
-   * Returns the value of the '<em><b>String</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>String</em>' attribute.
-   * @see #setString(String)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_String()
-   * @model
-   * @generated
-   */
-  String getString();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getString <em>String</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>String</em>' attribute.
-   * @see #getString()
-   * @generated
-   */
-  void setString(String value);
-
-  /**
-   * Returns the value of the '<em><b>Observable</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Observable</em>' attribute.
-   * @see #setObservable(String)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Observable()
-   * @model
-   * @generated
-   */
-  String getObservable();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getObservable <em>Observable</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Observable</em>' attribute.
-   * @see #getObservable()
-   * @generated
-   */
-  void setObservable(String value);
-
-  /**
-   * Returns the value of the '<em><b>Op</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Op</em>' containment reference.
-   * @see #setOp(REL_OPERATOR)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Op()
-   * @model containment="true"
-   * @generated
-   */
-  REL_OPERATOR getOp();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getOp <em>Op</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Op</em>' containment reference.
-   * @see #getOp()
-   * @generated
-   */
-  void setOp(REL_OPERATOR value);
-
-  /**
-   * Returns the value of the '<em><b>Expression</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Expression</em>' containment reference.
-   * @see #setExpression(org.integratedmodelling.kactors.kactors.Number)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getTableClassifier_Expression()
-   * @model containment="true"
-   * @generated
-   */
-  org.integratedmodelling.kactors.kactors.Number getExpression();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getExpression <em>Expression</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Expression</em>' containment reference.
-   * @see #getExpression()
-   * @generated
-   */
-  void setExpression(org.integratedmodelling.kactors.kactors.Number value);
 
   /**
    * Returns the value of the '<em><b>Expr</b></em>' attribute.

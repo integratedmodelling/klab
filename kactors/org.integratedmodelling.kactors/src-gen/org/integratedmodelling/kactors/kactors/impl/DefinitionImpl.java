@@ -84,14 +84,14 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
   protected ArgumentDeclaration arguments;
 
   /**
-   * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
+   * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getBody()
    * @generated
    * @ordered
    */
-  protected Body body;
+  protected EList<Body> body;
 
   /**
    * <!-- begin-user-doc -->
@@ -210,48 +210,13 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
    * @generated
    */
   @Override
-  public Body getBody()
+  public EList<Body> getBody()
   {
+    if (body == null)
+    {
+      body = new EObjectContainmentEList<Body>(Body.class, this, KactorsPackage.DEFINITION__BODY);
+    }
     return body;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetBody(Body newBody, NotificationChain msgs)
-  {
-    Body oldBody = body;
-    body = newBody;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.DEFINITION__BODY, oldBody, newBody);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setBody(Body newBody)
-  {
-    if (newBody != body)
-    {
-      NotificationChain msgs = null;
-      if (body != null)
-        msgs = ((InternalEObject)body).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.DEFINITION__BODY, null, msgs);
-      if (newBody != null)
-        msgs = ((InternalEObject)newBody).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.DEFINITION__BODY, null, msgs);
-      msgs = basicSetBody(newBody, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.DEFINITION__BODY, newBody, newBody));
   }
 
   /**
@@ -269,7 +234,7 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
       case KactorsPackage.DEFINITION__ARGUMENTS:
         return basicSetArguments(null, msgs);
       case KactorsPackage.DEFINITION__BODY:
-        return basicSetBody(null, msgs);
+        return ((InternalEList<?>)getBody()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -318,7 +283,8 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
         setArguments((ArgumentDeclaration)newValue);
         return;
       case KactorsPackage.DEFINITION__BODY:
-        setBody((Body)newValue);
+        getBody().clear();
+        getBody().addAll((Collection<? extends Body>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -344,7 +310,7 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
         setArguments((ArgumentDeclaration)null);
         return;
       case KactorsPackage.DEFINITION__BODY:
-        setBody((Body)null);
+        getBody().clear();
         return;
     }
     super.eUnset(featureID);
@@ -367,7 +333,7 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
       case KactorsPackage.DEFINITION__ARGUMENTS:
         return arguments != null;
       case KactorsPackage.DEFINITION__BODY:
-        return body != null;
+        return body != null && !body.isEmpty();
     }
     return super.eIsSet(featureID);
   }

@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getImports <em>Imports</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getWorldview <em>Worldview</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getDescription <em>Description</em>}</li>
@@ -24,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getAuthors <em>Authors</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersion <em>Version</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreatecomment <em>Createcomment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getModified <em>Modified</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getModcomment <em>Modcomment</em>}</li>
  * </ul>
@@ -55,6 +57,18 @@ public interface Preamble extends EObject
    * @generated
    */
   void setName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Imports</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Imports</em>' attribute list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Imports()
+   * @model unique="false"
+   * @generated
+   */
+  EList<String> getImports();
 
   /**
    * Returns the value of the '<em><b>Worldview</b></em>' attribute.
@@ -199,6 +213,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setCreated(Date value);
+
+  /**
+   * Returns the value of the '<em><b>Createcomment</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Createcomment</em>' attribute.
+   * @see #setCreatecomment(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Createcomment()
+   * @model
+   * @generated
+   */
+  String getCreatecomment();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getCreatecomment <em>Createcomment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Createcomment</em>' attribute.
+   * @see #getCreatecomment()
+   * @generated
+   */
+  void setCreatecomment(String value);
 
   /**
    * Returns the value of the '<em><b>Modified</b></em>' containment reference.

@@ -20,6 +20,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getText <em>Text</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getWhile <em>While</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getDo <em>Do</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getFor <em>For</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement()
@@ -105,5 +108,71 @@ public interface Statement extends EObject
    * @generated
    */
   EList<Statement> getGroup();
+
+  /**
+   * Returns the value of the '<em><b>While</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>While</em>' containment reference.
+   * @see #setWhile(WhileStatement)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_While()
+   * @model containment="true"
+   * @generated
+   */
+  WhileStatement getWhile();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getWhile <em>While</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>While</em>' containment reference.
+   * @see #getWhile()
+   * @generated
+   */
+  void setWhile(WhileStatement value);
+
+  /**
+   * Returns the value of the '<em><b>Do</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Do</em>' containment reference.
+   * @see #setDo(DoStatement)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Do()
+   * @model containment="true"
+   * @generated
+   */
+  DoStatement getDo();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getDo <em>Do</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Do</em>' containment reference.
+   * @see #getDo()
+   * @generated
+   */
+  void setDo(DoStatement value);
+
+  /**
+   * Returns the value of the '<em><b>For</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>For</em>' containment reference.
+   * @see #setFor(ForStatement)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_For()
+   * @model containment="true"
+   * @generated
+   */
+  ForStatement getFor();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getFor <em>For</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>For</em>' containment reference.
+   * @see #getFor()
+   * @generated
+   */
+  void setFor(ForStatement value);
 
 } // Statement

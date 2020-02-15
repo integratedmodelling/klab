@@ -17,6 +17,8 @@ import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
+import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -41,6 +43,7 @@ import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
  * <!-- begin-user-doc -->
@@ -298,6 +301,27 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         IfBody ifBody = (IfBody)theEObject;
         T result = caseIfBody(ifBody);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.WHILE_STATEMENT:
+      {
+        WhileStatement whileStatement = (WhileStatement)theEObject;
+        T result = caseWhileStatement(whileStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.DO_STATEMENT:
+      {
+        DoStatement doStatement = (DoStatement)theEObject;
+        T result = caseDoStatement(doStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.FOR_STATEMENT:
+      {
+        ForStatement forStatement = (ForStatement)theEObject;
+        T result = caseForStatement(forStatement);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -784,6 +808,54 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIfBody(IfBody object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>While Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>While Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseWhileStatement(WhileStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Do Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Do Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDoStatement(DoStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>For Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>For Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseForStatement(ForStatement object)
   {
     return null;
   }

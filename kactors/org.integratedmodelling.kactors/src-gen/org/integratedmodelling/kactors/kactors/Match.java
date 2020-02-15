@@ -21,6 +21,17 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isText <em>Text</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getArguments <em>Arguments</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getInt0 <em>Int0</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getLeftLimit <em>Left Limit</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getInt1 <em>Int1</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getRightLimit <em>Right Limit</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getSet <em>Set</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getDate <em>Date</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getExpr <em>Expr</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getNodata <em>Nodata</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isStar <em>Star</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isAnything <em>Anything</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch()
@@ -182,5 +193,247 @@ public interface Match extends EObject
    * @generated
    */
   void setArguments(ArgumentDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>Int0</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Int0</em>' containment reference.
+   * @see #setInt0(org.integratedmodelling.kactors.kactors.Number)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Int0()
+   * @model containment="true"
+   * @generated
+   */
+  org.integratedmodelling.kactors.kactors.Number getInt0();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getInt0 <em>Int0</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Int0</em>' containment reference.
+   * @see #getInt0()
+   * @generated
+   */
+  void setInt0(org.integratedmodelling.kactors.kactors.Number value);
+
+  /**
+   * Returns the value of the '<em><b>Left Limit</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Left Limit</em>' attribute.
+   * @see #setLeftLimit(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_LeftLimit()
+   * @model
+   * @generated
+   */
+  String getLeftLimit();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getLeftLimit <em>Left Limit</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Left Limit</em>' attribute.
+   * @see #getLeftLimit()
+   * @generated
+   */
+  void setLeftLimit(String value);
+
+  /**
+   * Returns the value of the '<em><b>Int1</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Int1</em>' containment reference.
+   * @see #setInt1(org.integratedmodelling.kactors.kactors.Number)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Int1()
+   * @model containment="true"
+   * @generated
+   */
+  org.integratedmodelling.kactors.kactors.Number getInt1();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getInt1 <em>Int1</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Int1</em>' containment reference.
+   * @see #getInt1()
+   * @generated
+   */
+  void setInt1(org.integratedmodelling.kactors.kactors.Number value);
+
+  /**
+   * Returns the value of the '<em><b>Right Limit</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Right Limit</em>' attribute.
+   * @see #setRightLimit(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_RightLimit()
+   * @model
+   * @generated
+   */
+  String getRightLimit();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getRightLimit <em>Right Limit</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Right Limit</em>' attribute.
+   * @see #getRightLimit()
+   * @generated
+   */
+  void setRightLimit(String value);
+
+  /**
+   * Returns the value of the '<em><b>Set</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Set</em>' containment reference.
+   * @see #setSet(List)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Set()
+   * @model containment="true"
+   * @generated
+   */
+  List getSet();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getSet <em>Set</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Set</em>' containment reference.
+   * @see #getSet()
+   * @generated
+   */
+  void setSet(List value);
+
+  /**
+   * Returns the value of the '<em><b>Quantity</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Quantity</em>' containment reference.
+   * @see #setQuantity(Quantity)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Quantity()
+   * @model containment="true"
+   * @generated
+   */
+  Quantity getQuantity();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getQuantity <em>Quantity</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Quantity</em>' containment reference.
+   * @see #getQuantity()
+   * @generated
+   */
+  void setQuantity(Quantity value);
+
+  /**
+   * Returns the value of the '<em><b>Date</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Date</em>' containment reference.
+   * @see #setDate(Date)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Date()
+   * @model containment="true"
+   * @generated
+   */
+  Date getDate();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getDate <em>Date</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Date</em>' containment reference.
+   * @see #getDate()
+   * @generated
+   */
+  void setDate(Date value);
+
+  /**
+   * Returns the value of the '<em><b>Expr</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Expr</em>' attribute.
+   * @see #setExpr(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Expr()
+   * @model
+   * @generated
+   */
+  String getExpr();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getExpr <em>Expr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Expr</em>' attribute.
+   * @see #getExpr()
+   * @generated
+   */
+  void setExpr(String value);
+
+  /**
+   * Returns the value of the '<em><b>Nodata</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Nodata</em>' attribute.
+   * @see #setNodata(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Nodata()
+   * @model
+   * @generated
+   */
+  String getNodata();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getNodata <em>Nodata</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Nodata</em>' attribute.
+   * @see #getNodata()
+   * @generated
+   */
+  void setNodata(String value);
+
+  /**
+   * Returns the value of the '<em><b>Star</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Star</em>' attribute.
+   * @see #setStar(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Star()
+   * @model
+   * @generated
+   */
+  boolean isStar();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#isStar <em>Star</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Star</em>' attribute.
+   * @see #isStar()
+   * @generated
+   */
+  void setStar(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Anything</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Anything</em>' attribute.
+   * @see #setAnything(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Anything()
+   * @model
+   * @generated
+   */
+  boolean isAnything();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#isAnything <em>Anything</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Anything</em>' attribute.
+   * @see #isAnything()
+   * @generated
+   */
+  void setAnything(boolean value);
 
 } // Match

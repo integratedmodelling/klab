@@ -85,25 +85,15 @@ public interface Definition extends EObject
   void setArguments(ArgumentDeclaration value);
 
   /**
-   * Returns the value of the '<em><b>Body</b></em>' containment reference.
+   * Returns the value of the '<em><b>Body</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Body}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Body</em>' containment reference.
-   * @see #setBody(Body)
+   * @return the value of the '<em>Body</em>' containment reference list.
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getDefinition_Body()
    * @model containment="true"
    * @generated
    */
-  Body getBody();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Definition#getBody <em>Body</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Body</em>' containment reference.
-   * @see #getBody()
-   * @generated
-   */
-  void setBody(Body value);
+  EList<Body> getBody();
 
 } // Definition

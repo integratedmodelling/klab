@@ -6,10 +6,11 @@ Model: {Model}
 	(preamble=Preamble)?
 	definitions+=Definition*;
 
-Preamble:
+Preamble: {Preamble}
+	// name, if there, must be first
+	('name' name=PathName)?
 	(
-		('name' name=PathName) &
-		('import' imports+=PathName (',' imports+=PathName)*) &
+		('import' imports+=PathName (',' imports+=PathName)*)? &
 		('worldview' worldview=PathName)? &
 		('label' label=(LOWERCASE_ID|ID|STRING))? &
 		('description' description=STRING)? &
@@ -23,7 +24,7 @@ Preamble:
 
 Definition:
 	annotations+=Annotation*
-	'def' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=Body;
+	'def' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body+=Body+;
 
 ArgumentDeclaration: {ArgumentDeclaration}
 	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'
@@ -111,14 +112,14 @@ TableRow:
 
 TableClassifier:
 	(boolean='true' | boolean='false') | 
-	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
 	num=Number | 
-	quantity=Quantity |
-	date=Date |
-	'in' set=List | 
 	string=STRING | 
 	observable=OBSERVABLE | 
 	op=REL_OPERATOR expression=Number | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	'in' set=List | 
+	quantity=Quantity |
+	date=Date |
 	expr=EXPR |
 	nodata='unknown' |
 	star?='*' |
@@ -163,9 +164,9 @@ Statement:
 	text=EMBEDDEDTEXT |
 	if=IfStatement |
 	'(' group+=Statement (group+=Statement)* ')'
-//	WhileStatement |
-//	DoStatement |
-//	ForStatement |
+	while=WhileStatement |
+	do=DoStatement |
+	for=ForStatement
 ;
 
 IfStatement:
@@ -176,7 +177,19 @@ IfStatement:
 
 IfBody:
 	call=Call |
-	body=Body
+	'(' body+=Body+ ')'
+;
+
+WhileStatement:
+	'while' expression=EXPR body=IfBody
+;
+
+DoStatement:
+	'do' body=IfBody 'while' expression=EXPR
+;
+
+ForStatement:
+	'for' (id=LOWERCASE_ID 'in')? value=Value body=IfBody
 ;
 
 Call:
@@ -196,7 +209,15 @@ Match:
 	observable?=OBSERVABLE '->' body=Body |
 	literal?=Literal '->' body=Body |
 	text?=STRING '->' body=Body |
-	arguments=ArgumentDeclaration '->' body=Body
+	arguments=ArgumentDeclaration '->' body=Body |
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? '->' body=Body |
+	'in' set=List '->' body=Body | 
+	quantity=Quantity '->' body=Body |
+	date=Date '->' body=Body |
+	expr=EXPR '->' body=Body |
+	nodata='unknown' '->' body=Body |
+	star?='*' '->' body=Body |
+	anything?='#''->' body=Body 
 ;
 
 Number:

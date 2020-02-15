@@ -3,14 +3,21 @@
  */
 package org.integratedmodelling.kactors.kactors.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Call;
@@ -44,14 +51,14 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
   protected Call call;
 
   /**
-   * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
+   * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getBody()
    * @generated
    * @ordered
    */
-  protected Body body;
+  protected EList<Body> body;
 
   /**
    * <!-- begin-user-doc -->
@@ -130,48 +137,13 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
    * @generated
    */
   @Override
-  public Body getBody()
+  public EList<Body> getBody()
   {
+    if (body == null)
+    {
+      body = new EObjectContainmentEList<Body>(Body.class, this, KactorsPackage.IF_BODY__BODY);
+    }
     return body;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetBody(Body newBody, NotificationChain msgs)
-  {
-    Body oldBody = body;
-    body = newBody;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_BODY__BODY, oldBody, newBody);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setBody(Body newBody)
-  {
-    if (newBody != body)
-    {
-      NotificationChain msgs = null;
-      if (body != null)
-        msgs = ((InternalEObject)body).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_BODY__BODY, null, msgs);
-      if (newBody != null)
-        msgs = ((InternalEObject)newBody).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_BODY__BODY, null, msgs);
-      msgs = basicSetBody(newBody, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_BODY__BODY, newBody, newBody));
   }
 
   /**
@@ -187,7 +159,7 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
       case KactorsPackage.IF_BODY__CALL:
         return basicSetCall(null, msgs);
       case KactorsPackage.IF_BODY__BODY:
-        return basicSetBody(null, msgs);
+        return ((InternalEList<?>)getBody()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -215,6 +187,7 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -224,7 +197,8 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
         setCall((Call)newValue);
         return;
       case KactorsPackage.IF_BODY__BODY:
-        setBody((Body)newValue);
+        getBody().clear();
+        getBody().addAll((Collection<? extends Body>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -244,7 +218,7 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
         setCall((Call)null);
         return;
       case KactorsPackage.IF_BODY__BODY:
-        setBody((Body)null);
+        getBody().clear();
         return;
     }
     super.eUnset(featureID);
@@ -263,7 +237,7 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
       case KactorsPackage.IF_BODY__CALL:
         return call != null;
       case KactorsPackage.IF_BODY__BODY:
-        return body != null;
+        return body != null && !body.isEmpty();
     }
     return super.eIsSet(featureID);
   }

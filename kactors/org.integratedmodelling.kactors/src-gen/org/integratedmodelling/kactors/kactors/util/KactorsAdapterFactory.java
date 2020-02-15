@@ -19,6 +19,8 @@ import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
+import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -43,6 +45,7 @@ import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
  * <!-- begin-user-doc -->
@@ -246,6 +249,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseIfBody(IfBody object)
       {
         return createIfBodyAdapter();
+      }
+      @Override
+      public Adapter caseWhileStatement(WhileStatement object)
+      {
+        return createWhileStatementAdapter();
+      }
+      @Override
+      public Adapter caseDoStatement(DoStatement object)
+      {
+        return createDoStatementAdapter();
+      }
+      @Override
+      public Adapter caseForStatement(ForStatement object)
+      {
+        return createForStatementAdapter();
       }
       @Override
       public Adapter caseCall(Call object)
@@ -710,6 +728,51 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIfBodyAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.WhileStatement <em>While Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.WhileStatement
+   * @generated
+   */
+  public Adapter createWhileStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.DoStatement <em>Do Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.DoStatement
+   * @generated
+   */
+  public Adapter createDoStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.ForStatement <em>For Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.ForStatement
+   * @generated
+   */
+  public Adapter createForStatementAdapter()
   {
     return null;
   }

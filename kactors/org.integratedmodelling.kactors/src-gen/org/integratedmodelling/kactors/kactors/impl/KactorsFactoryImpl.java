@@ -21,6 +21,8 @@ import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
+import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -47,6 +49,7 @@ import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.UnitOp;
 import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
  * <!-- begin-user-doc -->
@@ -128,6 +131,9 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.STATEMENT: return createStatement();
       case KactorsPackage.IF_STATEMENT: return createIfStatement();
       case KactorsPackage.IF_BODY: return createIfBody();
+      case KactorsPackage.WHILE_STATEMENT: return createWhileStatement();
+      case KactorsPackage.DO_STATEMENT: return createDoStatement();
+      case KactorsPackage.FOR_STATEMENT: return createForStatement();
       case KactorsPackage.CALL: return createCall();
       case KactorsPackage.ACTIONS: return createActions();
       case KactorsPackage.MATCH: return createMatch();
@@ -506,6 +512,42 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     IfBodyImpl ifBody = new IfBodyImpl();
     return ifBody;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public WhileStatement createWhileStatement()
+  {
+    WhileStatementImpl whileStatement = new WhileStatementImpl();
+    return whileStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public DoStatement createDoStatement()
+  {
+    DoStatementImpl doStatement = new DoStatementImpl();
+    return doStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ForStatement createForStatement()
+  {
+    ForStatementImpl forStatement = new ForStatementImpl();
+    return forStatement;
   }
 
   /**

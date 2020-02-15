@@ -31,6 +31,7 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getImports <em>Imports</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getWorldview <em>Worldview</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getDescription <em>Description</em>}</li>
@@ -38,6 +39,7 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getAuthors <em>Authors</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getVersion <em>Version</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreated <em>Created</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreatecomment <em>Createcomment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getModified <em>Modified</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getModcomment <em>Modcomment</em>}</li>
  * </ul>
@@ -65,6 +67,16 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected String name = NAME_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getImports() <em>Imports</em>}' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getImports()
+   * @generated
+   * @ordered
+   */
+  protected EList<String> imports;
 
   /**
    * The default value of the '{@link #getWorldview() <em>Worldview</em>}' attribute.
@@ -187,6 +199,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected Date created;
 
   /**
+   * The default value of the '{@link #getCreatecomment() <em>Createcomment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCreatecomment()
+   * @generated
+   * @ordered
+   */
+  protected static final String CREATECOMMENT_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getCreatecomment() <em>Createcomment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCreatecomment()
+   * @generated
+   * @ordered
+   */
+  protected String createcomment = CREATECOMMENT_EDEFAULT;
+
+  /**
    * The cached value of the '{@link #getModified() <em>Modified</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -260,6 +292,21 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     name = newName;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EList<String> getImports()
+  {
+    if (imports == null)
+    {
+      imports = new EDataTypeEList<String>(String.class, this, KactorsPackage.PREAMBLE__IMPORTS);
+    }
+    return imports;
   }
 
   /**
@@ -458,6 +505,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public String getCreatecomment()
+  {
+    return createcomment;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCreatecomment(String newCreatecomment)
+  {
+    String oldCreatecomment = createcomment;
+    createcomment = newCreatecomment;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__CREATECOMMENT, oldCreatecomment, createcomment));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Date getModified()
   {
     return modified;
@@ -557,6 +629,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     {
       case KactorsPackage.PREAMBLE__NAME:
         return getName();
+      case KactorsPackage.PREAMBLE__IMPORTS:
+        return getImports();
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         return getWorldview();
       case KactorsPackage.PREAMBLE__LABEL:
@@ -571,6 +645,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return getVersion();
       case KactorsPackage.PREAMBLE__CREATED:
         return getCreated();
+      case KactorsPackage.PREAMBLE__CREATECOMMENT:
+        return getCreatecomment();
       case KactorsPackage.PREAMBLE__MODIFIED:
         return getModified();
       case KactorsPackage.PREAMBLE__MODCOMMENT:
@@ -593,6 +669,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__NAME:
         setName((String)newValue);
         return;
+      case KactorsPackage.PREAMBLE__IMPORTS:
+        getImports().clear();
+        getImports().addAll((Collection<? extends String>)newValue);
+        return;
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         setWorldview((String)newValue);
         return;
@@ -614,6 +694,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__CREATED:
         setCreated((Date)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__CREATECOMMENT:
+        setCreatecomment((String)newValue);
         return;
       case KactorsPackage.PREAMBLE__MODIFIED:
         setModified((Date)newValue);
@@ -638,6 +721,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__NAME:
         setName(NAME_EDEFAULT);
         return;
+      case KactorsPackage.PREAMBLE__IMPORTS:
+        getImports().clear();
+        return;
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         setWorldview(WORLDVIEW_EDEFAULT);
         return;
@@ -658,6 +744,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__CREATED:
         setCreated((Date)null);
+        return;
+      case KactorsPackage.PREAMBLE__CREATECOMMENT:
+        setCreatecomment(CREATECOMMENT_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__MODIFIED:
         setModified((Date)null);
@@ -681,6 +770,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     {
       case KactorsPackage.PREAMBLE__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case KactorsPackage.PREAMBLE__IMPORTS:
+        return imports != null && !imports.isEmpty();
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         return WORLDVIEW_EDEFAULT == null ? worldview != null : !WORLDVIEW_EDEFAULT.equals(worldview);
       case KactorsPackage.PREAMBLE__LABEL:
@@ -695,6 +786,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return VERSION_EDEFAULT == null ? version != null : !VERSION_EDEFAULT.equals(version);
       case KactorsPackage.PREAMBLE__CREATED:
         return created != null;
+      case KactorsPackage.PREAMBLE__CREATECOMMENT:
+        return CREATECOMMENT_EDEFAULT == null ? createcomment != null : !CREATECOMMENT_EDEFAULT.equals(createcomment);
       case KactorsPackage.PREAMBLE__MODIFIED:
         return modified != null;
       case KactorsPackage.PREAMBLE__MODCOMMENT:
@@ -716,6 +809,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (name: ");
     result.append(name);
+    result.append(", imports: ");
+    result.append(imports);
     result.append(", worldview: ");
     result.append(worldview);
     result.append(", label: ");
@@ -728,6 +823,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(authors);
     result.append(", version: ");
     result.append(version);
+    result.append(", createcomment: ");
+    result.append(createcomment);
     result.append(", modcomment: ");
     result.append(modcomment);
     result.append(')');

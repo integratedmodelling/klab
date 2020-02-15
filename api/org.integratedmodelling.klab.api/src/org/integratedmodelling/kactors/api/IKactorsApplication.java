@@ -1,5 +1,5 @@
 package org.integratedmodelling.kactors.api;
 
-public interface IKactorsApplication {
+public interface IKactorsApplication  extends IKactorsStatement, Iterable<IKactor> {
 
 }
