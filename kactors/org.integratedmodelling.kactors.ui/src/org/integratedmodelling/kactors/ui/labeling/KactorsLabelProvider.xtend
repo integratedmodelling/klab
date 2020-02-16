@@ -6,9 +6,13 @@ package org.integratedmodelling.kactors.ui.labeling
 import com.google.inject.Inject
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
-import org.integratedmodelling.kactors.kactors.Body
-import org.integratedmodelling.kactors.kactors.Call
+import org.integratedmodelling.kactors.kactors.Actions
+import org.integratedmodelling.kactors.kactors.Definition
+import org.integratedmodelling.kactors.kactors.Group
+import org.integratedmodelling.kactors.kactors.Match
 import org.integratedmodelling.kactors.kactors.Statement
+import org.integratedmodelling.kactors.kactors.StatementList
+import org.integratedmodelling.kactors.kactors.Verb
 
 /**
  * Provides labels for EObjects.
@@ -22,24 +26,50 @@ class KactorsLabelProvider extends DefaultEObjectLabelProvider {
 		super(delegate);
 	}
 
-	def text(Body body) {
-		 if (body.isgroup) {
-			'asynchronous group'
-		} else if (body.list !== null && body.list.size > 0) {
-			'synchronous list'
-		} 
-	}
-	
-	// temporary: must skip
 	def text(Statement statement) {
-		if (statement.group !== null && statement.group.size > 0) {
-			'asynchronous group'
-		} else if (statement.call !== null) {
-			statement.call.name
+		if (statement.verb !== null) {
+			return text(statement.verb)
+		} else if (statement.getIf() !== null) {
+			return 'if'
+		} else if (statement.getWhile() !== null) {
+			return 'while'
+		} else if (statement.getFor() !== null) {
+			return 'for'
+		} else if (statement.getDo() !== null) {
+			return 'for'
+		} else if (statement.group !== null) {
+			return text(statement.group)
 		}
+		
+	}
+
+	def text(Definition definition) {
+		'Message ' + definition.name
+	}
+
+	def text(StatementList list) {
+		if (list.next !== null) {
+			return 'Sequence'
+		}
+		text(list.first)
+	}
+
+	def text(Match match) {
+		'Match'
 	}
 	
-	def text(Call call) {
+	def text(Actions action) {
+		'Message actions'
+	}
+	
+	def text(Group group) {
+		if (group.body !== null) {
+			return 'Message group'
+		}
+		'Empty message'	
+	}
+	
+	def text(Verb call) {
 		call.name
 	}
 

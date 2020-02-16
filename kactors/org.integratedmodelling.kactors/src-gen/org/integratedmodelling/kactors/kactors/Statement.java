@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kactors.kactors;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -16,10 +14,10 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getCall <em>Call</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getText <em>Text</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getIf <em>If</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getWhile <em>While</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getDo <em>Do</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getFor <em>For</em>}</li>
@@ -32,26 +30,48 @@ import org.eclipse.emf.ecore.EObject;
 public interface Statement extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Call</b></em>' containment reference.
+   * Returns the value of the '<em><b>Verb</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Call</em>' containment reference.
-   * @see #setCall(Call)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Call()
+   * @return the value of the '<em>Verb</em>' containment reference.
+   * @see #setVerb(Verb)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Verb()
    * @model containment="true"
    * @generated
    */
-  Call getCall();
+  Verb getVerb();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getCall <em>Call</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Call</em>' containment reference.
-   * @see #getCall()
+   * @param value the new value of the '<em>Verb</em>' containment reference.
+   * @see #getVerb()
    * @generated
    */
-  void setCall(Call value);
+  void setVerb(Verb value);
+
+  /**
+   * Returns the value of the '<em><b>Group</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Group</em>' containment reference.
+   * @see #setGroup(Group)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Group()
+   * @model containment="true"
+   * @generated
+   */
+  Group getGroup();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Group</em>' containment reference.
+   * @see #getGroup()
+   * @generated
+   */
+  void setGroup(Group value);
 
   /**
    * Returns the value of the '<em><b>Text</b></em>' attribute.
@@ -96,18 +116,6 @@ public interface Statement extends EObject
    * @generated
    */
   void setIf(IfStatement value);
-
-  /**
-   * Returns the value of the '<em><b>Group</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Statement}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Group</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Group()
-   * @model containment="true"
-   * @generated
-   */
-  EList<Statement> getGroup();
 
   /**
    * Returns the value of the '<em><b>While</b></em>' containment reference.

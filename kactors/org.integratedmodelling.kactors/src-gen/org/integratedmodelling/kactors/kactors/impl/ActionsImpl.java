@@ -20,10 +20,10 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kactors.kactors.Actions;
-import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementList;
 
 /**
  * <!-- begin-user-doc -->
@@ -33,8 +33,8 @@ import org.integratedmodelling.kactors.kactors.Statement;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getSequence <em>Sequence</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getStatement <em>Statement</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getStatements <em>Statements</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getMatch <em>Match</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getMatches <em>Matches</em>}</li>
  * </ul>
@@ -44,24 +44,24 @@ import org.integratedmodelling.kactors.kactors.Statement;
 public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
 {
   /**
-   * The cached value of the '{@link #getSequence() <em>Sequence</em>}' containment reference list.
+   * The cached value of the '{@link #getStatement() <em>Statement</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getSequence()
+   * @see #getStatement()
    * @generated
    * @ordered
    */
-  protected EList<Statement> sequence;
+  protected Statement statement;
 
   /**
-   * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
+   * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getBody()
+   * @see #getStatements()
    * @generated
    * @ordered
    */
-  protected Body body;
+  protected StatementList statements;
 
   /**
    * The cached value of the '{@link #getMatch() <em>Match</em>}' containment reference.
@@ -110,13 +110,9 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
    * @generated
    */
   @Override
-  public EList<Statement> getSequence()
+  public Statement getStatement()
   {
-    if (sequence == null)
-    {
-      sequence = new EObjectContainmentEList<Statement>(Statement.class, this, KactorsPackage.ACTIONS__SEQUENCE);
-    }
-    return sequence;
+    return statement;
   }
 
   /**
@@ -124,24 +120,13 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
    * <!-- end-user-doc -->
    * @generated
    */
-  @Override
-  public Body getBody()
+  public NotificationChain basicSetStatement(Statement newStatement, NotificationChain msgs)
   {
-    return body;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetBody(Body newBody, NotificationChain msgs)
-  {
-    Body oldBody = body;
-    body = newBody;
+    Statement oldStatement = statement;
+    statement = newStatement;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__BODY, oldBody, newBody);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__STATEMENT, oldStatement, newStatement);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -153,20 +138,70 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
    * @generated
    */
   @Override
-  public void setBody(Body newBody)
+  public void setStatement(Statement newStatement)
   {
-    if (newBody != body)
+    if (newStatement != statement)
     {
       NotificationChain msgs = null;
-      if (body != null)
-        msgs = ((InternalEObject)body).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__BODY, null, msgs);
-      if (newBody != null)
-        msgs = ((InternalEObject)newBody).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__BODY, null, msgs);
-      msgs = basicSetBody(newBody, msgs);
+      if (statement != null)
+        msgs = ((InternalEObject)statement).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__STATEMENT, null, msgs);
+      if (newStatement != null)
+        msgs = ((InternalEObject)newStatement).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__STATEMENT, null, msgs);
+      msgs = basicSetStatement(newStatement, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__BODY, newBody, newBody));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__STATEMENT, newStatement, newStatement));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public StatementList getStatements()
+  {
+    return statements;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetStatements(StatementList newStatements, NotificationChain msgs)
+  {
+    StatementList oldStatements = statements;
+    statements = newStatements;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__STATEMENTS, oldStatements, newStatements);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setStatements(StatementList newStatements)
+  {
+    if (newStatements != statements)
+    {
+      NotificationChain msgs = null;
+      if (statements != null)
+        msgs = ((InternalEObject)statements).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__STATEMENTS, null, msgs);
+      if (newStatements != null)
+        msgs = ((InternalEObject)newStatements).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__STATEMENTS, null, msgs);
+      msgs = basicSetStatements(newStatements, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__STATEMENTS, newStatements, newStatements));
   }
 
   /**
@@ -244,10 +279,10 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__SEQUENCE:
-        return ((InternalEList<?>)getSequence()).basicRemove(otherEnd, msgs);
-      case KactorsPackage.ACTIONS__BODY:
-        return basicSetBody(null, msgs);
+      case KactorsPackage.ACTIONS__STATEMENT:
+        return basicSetStatement(null, msgs);
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        return basicSetStatements(null, msgs);
       case KactorsPackage.ACTIONS__MATCH:
         return basicSetMatch(null, msgs);
       case KactorsPackage.ACTIONS__MATCHES:
@@ -266,10 +301,10 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__SEQUENCE:
-        return getSequence();
-      case KactorsPackage.ACTIONS__BODY:
-        return getBody();
+      case KactorsPackage.ACTIONS__STATEMENT:
+        return getStatement();
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        return getStatements();
       case KactorsPackage.ACTIONS__MATCH:
         return getMatch();
       case KactorsPackage.ACTIONS__MATCHES:
@@ -289,12 +324,11 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__SEQUENCE:
-        getSequence().clear();
-        getSequence().addAll((Collection<? extends Statement>)newValue);
+      case KactorsPackage.ACTIONS__STATEMENT:
+        setStatement((Statement)newValue);
         return;
-      case KactorsPackage.ACTIONS__BODY:
-        setBody((Body)newValue);
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        setStatements((StatementList)newValue);
         return;
       case KactorsPackage.ACTIONS__MATCH:
         setMatch((Match)newValue);
@@ -317,11 +351,11 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__SEQUENCE:
-        getSequence().clear();
+      case KactorsPackage.ACTIONS__STATEMENT:
+        setStatement((Statement)null);
         return;
-      case KactorsPackage.ACTIONS__BODY:
-        setBody((Body)null);
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        setStatements((StatementList)null);
         return;
       case KactorsPackage.ACTIONS__MATCH:
         setMatch((Match)null);
@@ -343,10 +377,10 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__SEQUENCE:
-        return sequence != null && !sequence.isEmpty();
-      case KactorsPackage.ACTIONS__BODY:
-        return body != null;
+      case KactorsPackage.ACTIONS__STATEMENT:
+        return statement != null;
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        return statements != null;
       case KactorsPackage.ACTIONS__MATCH:
         return match != null;
       case KactorsPackage.ACTIONS__MATCHES:

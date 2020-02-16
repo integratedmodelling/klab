@@ -14,13 +14,13 @@ import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Body;
-import org.integratedmodelling.kactors.kactors.Call;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
+import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -38,13 +38,14 @@ import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
 import org.integratedmodelling.kactors.kactors.TableRow;
 import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
-import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.Verb;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -146,11 +147,6 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
         return createValueAdapter();
       }
       @Override
-      public Adapter caseUrn(Urn object)
-      {
-        return createUrnAdapter();
-      }
-      @Override
       public Adapter caseAnnotation(Annotation object)
       {
         return createAnnotationAdapter();
@@ -236,6 +232,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
         return createBodyAdapter();
       }
       @Override
+      public Adapter caseVerb(Verb object)
+      {
+        return createVerbAdapter();
+      }
+      @Override
+      public Adapter caseGroup(Group object)
+      {
+        return createGroupAdapter();
+      }
+      @Override
+      public Adapter caseStatementList(StatementList object)
+      {
+        return createStatementListAdapter();
+      }
+      @Override
       public Adapter caseStatement(Statement object)
       {
         return createStatementAdapter();
@@ -264,11 +275,6 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseForStatement(ForStatement object)
       {
         return createForStatementAdapter();
-      }
-      @Override
-      public Adapter caseCall(Call object)
-      {
-        return createCallAdapter();
       }
       @Override
       public Adapter caseActions(Actions object)
@@ -413,21 +419,6 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createValueAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Urn <em>Urn</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kactors.kactors.Urn
-   * @generated
-   */
-  public Adapter createUrnAdapter()
   {
     return null;
   }
@@ -688,6 +679,51 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Verb <em>Verb</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Verb
+   * @generated
+   */
+  public Adapter createVerbAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Group <em>Group</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Group
+   * @generated
+   */
+  public Adapter createGroupAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.StatementList <em>Statement List</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.StatementList
+   * @generated
+   */
+  public Adapter createStatementListAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Statement <em>Statement</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -773,21 +809,6 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createForStatementAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Call <em>Call</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kactors.kactors.Call
-   * @generated
-   */
-  public Adapter createCallAdapter()
   {
     return null;
   }

@@ -16,13 +16,13 @@ import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Body;
-import org.integratedmodelling.kactors.kactors.Call;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
+import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -41,14 +41,15 @@ import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
 import org.integratedmodelling.kactors.kactors.TableRow;
 import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.UnitOp;
-import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.Verb;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -110,7 +111,6 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.PARAMETER_LIST: return createParameterList();
       case KactorsPackage.KEY_VALUE_PAIR: return createKeyValuePair();
       case KactorsPackage.VALUE: return createValue();
-      case KactorsPackage.URN: return createUrn();
       case KactorsPackage.ANNOTATION: return createAnnotation();
       case KactorsPackage.LIST: return createList();
       case KactorsPackage.MAP: return createMap();
@@ -128,13 +128,15 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.REL_OPERATOR: return createREL_OPERATOR();
       case KactorsPackage.LITERAL: return createLiteral();
       case KactorsPackage.BODY: return createBody();
+      case KactorsPackage.VERB: return createVerb();
+      case KactorsPackage.GROUP: return createGroup();
+      case KactorsPackage.STATEMENT_LIST: return createStatementList();
       case KactorsPackage.STATEMENT: return createStatement();
       case KactorsPackage.IF_STATEMENT: return createIfStatement();
       case KactorsPackage.IF_BODY: return createIfBody();
       case KactorsPackage.WHILE_STATEMENT: return createWhileStatement();
       case KactorsPackage.DO_STATEMENT: return createDoStatement();
       case KactorsPackage.FOR_STATEMENT: return createForStatement();
-      case KactorsPackage.CALL: return createCall();
       case KactorsPackage.ACTIONS: return createActions();
       case KactorsPackage.MATCH: return createMatch();
       case KactorsPackage.NUMBER: return createNumber();
@@ -260,18 +262,6 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     ValueImpl value = new ValueImpl();
     return value;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Urn createUrn()
-  {
-    UrnImpl urn = new UrnImpl();
-    return urn;
   }
 
   /**
@@ -484,6 +474,42 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
+  public Verb createVerb()
+  {
+    VerbImpl verb = new VerbImpl();
+    return verb;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Group createGroup()
+  {
+    GroupImpl group = new GroupImpl();
+    return group;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public StatementList createStatementList()
+  {
+    StatementListImpl statementList = new StatementListImpl();
+    return statementList;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Statement createStatement()
   {
     StatementImpl statement = new StatementImpl();
@@ -548,18 +574,6 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     ForStatementImpl forStatement = new ForStatementImpl();
     return forStatement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Call createCall()
-  {
-    CallImpl call = new CallImpl();
-    return call;
   }
 
   /**

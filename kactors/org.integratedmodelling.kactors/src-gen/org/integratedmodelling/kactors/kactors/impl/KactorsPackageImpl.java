@@ -15,13 +15,13 @@ import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Body;
-import org.integratedmodelling.kactors.kactors.Call;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
+import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -39,14 +39,15 @@ import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
 import org.integratedmodelling.kactors.kactors.TableRow;
 import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.UnitOp;
-import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.Verb;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -105,13 +106,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass valueEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass urnEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -237,6 +231,27 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass verbEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass groupEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass statementListEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass statementEClass = null;
 
   /**
@@ -273,13 +288,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass forStatementEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass callEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -806,28 +814,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   public EReference getValue_Table()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(8);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EClass getUrn()
-  {
-    return urnEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getUrn_Name()
-  {
-    return (EAttribute)urnEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1749,7 +1735,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getBody_List()
+  public EReference getBody_Lists()
   {
     return (EReference)bodyEClass.getEStructuralFeatures().get(0);
   }
@@ -1760,9 +1746,97 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getBody_Isgroup()
+  public EClass getVerb()
   {
-    return (EAttribute)bodyEClass.getEStructuralFeatures().get(1);
+    return verbEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getVerb_Name()
+  {
+    return (EAttribute)verbEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getVerb_Parameters()
+  {
+    return (EReference)verbEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getVerb_Actions()
+  {
+    return (EReference)verbEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getGroup()
+  {
+    return groupEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getGroup_Body()
+  {
+    return (EReference)groupEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getStatementList()
+  {
+    return statementListEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getStatementList_First()
+  {
+    return (EReference)statementListEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getStatementList_Next()
+  {
+    return (EReference)statementListEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1782,7 +1856,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Call()
+  public EReference getStatement_Verb()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(0);
   }
@@ -1793,9 +1867,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getStatement_Group()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getStatement_Text()
   {
-    return (EAttribute)statementEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)statementEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1805,17 +1890,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    */
   @Override
   public EReference getStatement_If()
-  {
-    return (EReference)statementEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getStatement_Group()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(3);
   }
@@ -1936,7 +2010,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getIfBody_Call()
+  public EReference getIfBody_Verb()
   {
     return (EReference)ifBodyEClass.getEStructuralFeatures().get(0);
   }
@@ -1947,7 +2021,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getIfBody_Body()
+  public EReference getIfBody_Group()
   {
     return (EReference)ifBodyEClass.getEStructuralFeatures().get(1);
   }
@@ -2068,50 +2142,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EClass getCall()
-  {
-    return callEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getCall_Name()
-  {
-    return (EAttribute)callEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getCall_Parameters()
-  {
-    return (EReference)callEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getCall_Actions()
-  {
-    return (EReference)callEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EClass getActions()
   {
     return actionsEClass;
@@ -2123,7 +2153,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getActions_Sequence()
+  public EReference getActions_Statement()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(0);
   }
@@ -2134,7 +2164,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getActions_Body()
+  public EReference getActions_Statements()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(1);
   }
@@ -2200,7 +2230,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Regexp()
+  public EAttribute getMatch_Type()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(2);
   }
@@ -2211,7 +2241,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Observable()
+  public EAttribute getMatch_Regexp()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(3);
   }
@@ -2222,7 +2252,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Literal()
+  public EAttribute getMatch_Observable()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(4);
   }
@@ -2233,7 +2263,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Text()
+  public EAttribute getMatch_Literal()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(5);
   }
@@ -2244,9 +2274,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMatch_Arguments()
+  public EAttribute getMatch_Text()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -2255,7 +2285,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMatch_Int0()
+  public EReference getMatch_Arguments()
   {
     return (EReference)matchEClass.getEStructuralFeatures().get(7);
   }
@@ -2266,9 +2296,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getMatch_Int0()
+  {
+    return (EReference)matchEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getMatch_LeftLimit()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -2279,7 +2320,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMatch_Int1()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(9);
+    return (EReference)matchEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -2290,7 +2331,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_RightLimit()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -2301,7 +2342,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMatch_Set()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(11);
+    return (EReference)matchEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -2312,7 +2353,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMatch_Quantity()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(12);
+    return (EReference)matchEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -2323,7 +2364,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMatch_Date()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(13);
+    return (EReference)matchEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -2334,7 +2375,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Expr()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(14);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -2345,7 +2386,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Nodata()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(15);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -2356,7 +2397,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Star()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(16);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -2367,7 +2408,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Anything()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(17);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -2656,9 +2697,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(valueEClass, VALUE__EXPRESSION);
     createEReference(valueEClass, VALUE__TABLE);
 
-    urnEClass = createEClass(URN);
-    createEAttribute(urnEClass, URN__NAME);
-
     annotationEClass = createEClass(ANNOTATION);
     createEAttribute(annotationEClass, ANNOTATION__NAME);
     createEReference(annotationEClass, ANNOTATION__PARAMETERS);
@@ -2758,14 +2796,25 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(literalEClass, LITERAL__BOOLEAN);
 
     bodyEClass = createEClass(BODY);
-    createEReference(bodyEClass, BODY__LIST);
-    createEAttribute(bodyEClass, BODY__ISGROUP);
+    createEReference(bodyEClass, BODY__LISTS);
+
+    verbEClass = createEClass(VERB);
+    createEAttribute(verbEClass, VERB__NAME);
+    createEReference(verbEClass, VERB__PARAMETERS);
+    createEReference(verbEClass, VERB__ACTIONS);
+
+    groupEClass = createEClass(GROUP);
+    createEReference(groupEClass, GROUP__BODY);
+
+    statementListEClass = createEClass(STATEMENT_LIST);
+    createEReference(statementListEClass, STATEMENT_LIST__FIRST);
+    createEReference(statementListEClass, STATEMENT_LIST__NEXT);
 
     statementEClass = createEClass(STATEMENT);
-    createEReference(statementEClass, STATEMENT__CALL);
+    createEReference(statementEClass, STATEMENT__VERB);
+    createEReference(statementEClass, STATEMENT__GROUP);
     createEAttribute(statementEClass, STATEMENT__TEXT);
     createEReference(statementEClass, STATEMENT__IF);
-    createEReference(statementEClass, STATEMENT__GROUP);
     createEReference(statementEClass, STATEMENT__WHILE);
     createEReference(statementEClass, STATEMENT__DO);
     createEReference(statementEClass, STATEMENT__FOR);
@@ -2778,8 +2827,8 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(ifStatementEClass, IF_STATEMENT__ELSE_CALL);
 
     ifBodyEClass = createEClass(IF_BODY);
-    createEReference(ifBodyEClass, IF_BODY__CALL);
-    createEReference(ifBodyEClass, IF_BODY__BODY);
+    createEReference(ifBodyEClass, IF_BODY__VERB);
+    createEReference(ifBodyEClass, IF_BODY__GROUP);
 
     whileStatementEClass = createEClass(WHILE_STATEMENT);
     createEAttribute(whileStatementEClass, WHILE_STATEMENT__EXPRESSION);
@@ -2794,20 +2843,16 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(forStatementEClass, FOR_STATEMENT__VALUE);
     createEReference(forStatementEClass, FOR_STATEMENT__BODY);
 
-    callEClass = createEClass(CALL);
-    createEAttribute(callEClass, CALL__NAME);
-    createEReference(callEClass, CALL__PARAMETERS);
-    createEReference(callEClass, CALL__ACTIONS);
-
     actionsEClass = createEClass(ACTIONS);
-    createEReference(actionsEClass, ACTIONS__SEQUENCE);
-    createEReference(actionsEClass, ACTIONS__BODY);
+    createEReference(actionsEClass, ACTIONS__STATEMENT);
+    createEReference(actionsEClass, ACTIONS__STATEMENTS);
     createEReference(actionsEClass, ACTIONS__MATCH);
     createEReference(actionsEClass, ACTIONS__MATCHES);
 
     matchEClass = createEClass(MATCH);
     createEAttribute(matchEClass, MATCH__ID);
     createEReference(matchEClass, MATCH__BODY);
+    createEAttribute(matchEClass, MATCH__TYPE);
     createEAttribute(matchEClass, MATCH__REGEXP);
     createEAttribute(matchEClass, MATCH__OBSERVABLE);
     createEAttribute(matchEClass, MATCH__LITERAL);
@@ -2878,6 +2923,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    groupEClass.getESuperTypes().add(this.getVerb());
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -2902,7 +2948,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getDefinition_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDefinition_Name(), ecorePackage.getEString(), "name", null, 0, 1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDefinition_Arguments(), this.getArgumentDeclaration(), null, "arguments", null, 0, 1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getDefinition_Body(), this.getBody(), null, "body", null, 0, -1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDefinition_Body(), this.getBody(), null, "body", null, 0, 1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(argumentDeclarationEClass, ArgumentDeclaration.class, "ArgumentDeclaration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getArgumentDeclaration_Ids(), ecorePackage.getEString(), "ids", null, 0, -1, ArgumentDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2925,9 +2971,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getValue_Observable(), ecorePackage.getEString(), "observable", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Table(), this.getLookupTable(), null, "table", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(urnEClass, Urn.class, "Urn", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getUrn_Name(), ecorePackage.getEString(), "name", null, 0, 1, Urn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(annotationEClass, Annotation.class, "Annotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAnnotation_Name(), ecorePackage.getEString(), "name", null, 0, 1, Annotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3028,14 +3071,25 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getLiteral_Boolean(), ecorePackage.getEString(), "boolean", null, 0, 1, Literal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(bodyEClass, Body.class, "Body", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getBody_List(), this.getStatement(), null, "list", null, 0, -1, Body.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getBody_Isgroup(), ecorePackage.getEBoolean(), "isgroup", null, 0, 1, Body.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getBody_Lists(), this.getStatementList(), null, "lists", null, 0, -1, Body.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(verbEClass, Verb.class, "Verb", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getVerb_Name(), ecorePackage.getEString(), "name", null, 0, 1, Verb.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getVerb_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, Verb.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getVerb_Actions(), this.getActions(), null, "actions", null, 0, 1, Verb.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(groupEClass, Group.class, "Group", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getGroup_Body(), this.getBody(), null, "body", null, 0, 1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(statementListEClass, StatementList.class, "StatementList", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getStatementList_First(), this.getStatement(), null, "first", null, 0, 1, StatementList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatementList_Next(), this.getStatement(), null, "next", null, 0, -1, StatementList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getStatement_Call(), this.getCall(), null, "call", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_Verb(), this.getVerb(), null, "verb", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_Group(), this.getGroup(), null, "group", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStatement_Text(), ecorePackage.getEString(), "text", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_If(), this.getIfStatement(), null, "if", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getStatement_Group(), this.getStatement(), null, "group", null, 0, -1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_While(), this.getWhileStatement(), null, "while", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Do(), this.getDoStatement(), null, "do", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_For(), this.getForStatement(), null, "for", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3048,8 +3102,8 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getIfStatement_ElseCall(), this.getIfBody(), null, "elseCall", null, 0, 1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(ifBodyEClass, IfBody.class, "IfBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIfBody_Call(), this.getCall(), null, "call", null, 0, 1, IfBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIfBody_Body(), this.getBody(), null, "body", null, 0, -1, IfBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIfBody_Verb(), this.getVerb(), null, "verb", null, 0, 1, IfBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIfBody_Group(), this.getGroup(), null, "group", null, 0, 1, IfBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(whileStatementEClass, WhileStatement.class, "WhileStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getWhileStatement_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, WhileStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3064,20 +3118,16 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getForStatement_Value(), this.getValue(), null, "value", null, 0, 1, ForStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getForStatement_Body(), this.getIfBody(), null, "body", null, 0, 1, ForStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(callEClass, Call.class, "Call", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCall_Name(), ecorePackage.getEString(), "name", null, 0, 1, Call.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCall_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, Call.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCall_Actions(), this.getActions(), null, "actions", null, 0, 1, Call.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
     initEClass(actionsEClass, Actions.class, "Actions", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getActions_Sequence(), this.getStatement(), null, "sequence", null, 0, -1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getActions_Body(), this.getBody(), null, "body", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActions_Statement(), this.getStatement(), null, "statement", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActions_Statements(), this.getStatementList(), null, "statements", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Match(), this.getMatch(), null, "match", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Matches(), this.getMatch(), null, "matches", null, 0, -1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(matchEClass, Match.class, "Match", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMatch_Id(), ecorePackage.getEBoolean(), "id", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMatch_Body(), this.getBody(), null, "body", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMatch_Body(), this.getStatementList(), null, "body", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMatch_Type(), ecorePackage.getEBoolean(), "type", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Regexp(), ecorePackage.getEBoolean(), "regexp", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Observable(), ecorePackage.getEBoolean(), "observable", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Literal(), ecorePackage.getEBoolean(), "literal", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -24,9 +24,9 @@
 'CE'=32
 'E'=30
 '^'=34
+'actor'=36
 'author'=43
 'created'=45
-'def'=47
 'description'=41
 'do'=65
 'e'=29
@@ -40,8 +40,8 @@
 'inclusive'=70
 'l'=77
 'label'=40
+'message'=47
 'modified'=46
-'name'=36
 'permissions'=42
 'to'=56
 'true'=25

@@ -7,23 +7,23 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Call</b></em>'.
+ * A representation of the model object '<em><b>Verb</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Call#getName <em>Name</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Call#getParameters <em>Parameters</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Call#getActions <em>Actions</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Verb#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Verb#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Verb#getActions <em>Actions</em>}</li>
  * </ul>
  *
- * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getCall()
+ * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getVerb()
  * @model
  * @generated
  */
-public interface Call extends EObject
+public interface Verb extends EObject
 {
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -31,14 +31,14 @@ public interface Call extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Name</em>' attribute.
    * @see #setName(String)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getCall_Name()
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getVerb_Name()
    * @model
    * @generated
    */
   String getName();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Call#getName <em>Name</em>}' attribute.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Verb#getName <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Name</em>' attribute.
@@ -53,14 +53,14 @@ public interface Call extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Parameters</em>' containment reference.
    * @see #setParameters(ParameterList)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getCall_Parameters()
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getVerb_Parameters()
    * @model containment="true"
    * @generated
    */
   ParameterList getParameters();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Call#getParameters <em>Parameters</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Verb#getParameters <em>Parameters</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Parameters</em>' containment reference.
@@ -75,14 +75,14 @@ public interface Call extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Actions</em>' containment reference.
    * @see #setActions(Actions)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getCall_Actions()
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getVerb_Actions()
    * @model containment="true"
    * @generated
    */
   Actions getActions();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Call#getActions <em>Actions</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Verb#getActions <em>Actions</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Actions</em>' containment reference.
@@ -91,4 +91,4 @@ public interface Call extends EObject
    */
   void setActions(Actions value);
 
-} // Call
+} // Verb

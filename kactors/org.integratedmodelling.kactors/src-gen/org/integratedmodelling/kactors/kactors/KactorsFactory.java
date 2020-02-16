@@ -87,15 +87,6 @@ public interface KactorsFactory extends EFactory
   Value createValue();
 
   /**
-   * Returns a new object of class '<em>Urn</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Urn</em>'.
-   * @generated
-   */
-  Urn createUrn();
-
-  /**
    * Returns a new object of class '<em>Annotation</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -249,6 +240,33 @@ public interface KactorsFactory extends EFactory
   Body createBody();
 
   /**
+   * Returns a new object of class '<em>Verb</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Verb</em>'.
+   * @generated
+   */
+  Verb createVerb();
+
+  /**
+   * Returns a new object of class '<em>Group</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Group</em>'.
+   * @generated
+   */
+  Group createGroup();
+
+  /**
+   * Returns a new object of class '<em>Statement List</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Statement List</em>'.
+   * @generated
+   */
+  StatementList createStatementList();
+
+  /**
    * Returns a new object of class '<em>Statement</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -301,15 +319,6 @@ public interface KactorsFactory extends EFactory
    * @generated
    */
   ForStatement createForStatement();
-
-  /**
-   * Returns a new object of class '<em>Call</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Call</em>'.
-   * @generated
-   */
-  Call createCall();
 
   /**
    * Returns a new object of class '<em>Actions</em>'.

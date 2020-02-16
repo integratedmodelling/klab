@@ -16,8 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Body#getList <em>List</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Body#isIsgroup <em>Isgroup</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Body#getLists <em>Lists</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getBody()
@@ -27,37 +26,15 @@ import org.eclipse.emf.ecore.EObject;
 public interface Body extends EObject
 {
   /**
-   * Returns the value of the '<em><b>List</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Statement}.
+   * Returns the value of the '<em><b>Lists</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.StatementList}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>List</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getBody_List()
+   * @return the value of the '<em>Lists</em>' containment reference list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getBody_Lists()
    * @model containment="true"
    * @generated
    */
-  EList<Statement> getList();
-
-  /**
-   * Returns the value of the '<em><b>Isgroup</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Isgroup</em>' attribute.
-   * @see #setIsgroup(boolean)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getBody_Isgroup()
-   * @model
-   * @generated
-   */
-  boolean isIsgroup();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Body#isIsgroup <em>Isgroup</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Isgroup</em>' attribute.
-   * @see #isIsgroup()
-   * @generated
-   */
-  void setIsgroup(boolean value);
+  EList<StatementList> getLists();
 
 } // Body

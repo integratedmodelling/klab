@@ -8,7 +8,7 @@ Model: {Model}
 
 Preamble: {Preamble}
 	// name, if there, must be first
-	('name' name=PathName)?
+	('actor' name=PathName)?
 	(
 		('import' imports+=PathName (',' imports+=PathName)*)? &
 		('worldview' worldview=PathName)? &
@@ -24,7 +24,7 @@ Preamble: {Preamble}
 
 Definition:
 	annotations+=Annotation*
-	'def' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body+=Body+;
+	'message' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=Body;
 
 ArgumentDeclaration: {ArgumentDeclaration}
 	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'
@@ -49,11 +49,11 @@ Value:
 	table=LookupTable
 	;
 	
-Urn:
-	// String used when there are strange chars or keywords in the URN.
-	// In actor files, we should only let in well-formed, lowercase path names
-	name=(PathName|UrnId|STRING)
-;
+//Urn:
+//	// String used when there are strange chars or keywords in the URN.
+//	// In actor files, we should only let in well-formed, lowercase path names
+//	name=(PathName|UrnId|STRING)
+//;
 
 Annotation:
 	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
@@ -153,21 +153,42 @@ REL_OPERATOR:
 Literal:
 	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
 
-// only missing piece: mix statement and groups in group, which probably makes no sense so OK.
-Body: {Body}
-	list+=Statement (list+=Statement)* |
-	// only way to be empty is to be an empty group
-	isgroup?='(' (list+=Statement (list += Statement)*)? ')'
+//// only missing piece: mix statement and groups in group, which probably makes no sense so OK.
+Body: {Body} lists+=StatementList*;
+
+Verb:
+	(name=PathName ('(' (parameters=ParameterList)? ')')? |
+	  Group) ((':' actions=Actions) | ';')?
+;
+
+Group: {Group}
+	'(' body=Body? ')'
+;
+
+StatementList:
+	first=Statement next+=NextStatement*
 ;
 
 Statement:
-	call=Call |
+	verb=Verb |
+	group=Group |
 	text=EMBEDDEDTEXT |
 	if=IfStatement |
-	'(' group+=Statement (group+=Statement)* ')'
 	while=WhileStatement |
 	do=DoStatement |
 	for=ForStatement
+;
+
+NextStatement returns Statement:
+	',' (
+		verb=Verb |
+		group=Group |
+		text=EMBEDDEDTEXT |
+		if=IfStatement |
+		while=WhileStatement |
+		do=DoStatement |
+		for=ForStatement
+	)
 ;
 
 IfStatement:
@@ -176,10 +197,7 @@ IfStatement:
 		('else' elseCall=IfBody)?
 ;
 
-IfBody:
-	call=Call |
-	'(' body+=Body+ ')'
-;
+IfBody: verb=Verb | group=Group;
 
 WhileStatement:
 	'while' expression=EXPR body=IfBody
@@ -193,34 +211,31 @@ ForStatement:
 	'for' (id=LOWERCASE_ID 'in')? value=Value body=IfBody
 ;
 
-Call:
-	// verb can be qualified by receiving actor path if needed, semicolon is optional if no actions
-	name=PathName ('(' (parameters=ParameterList)? ')')? ((':' actions=Actions) | ';')? 
-;
-
-// a sequence of actions after a verb is sequential only if comma-separated
+// a sequence of actions after a verb is sequential only if comma-separated. No match mean
+// "upon successful firing" (i.e. firing not null, false or error).
 Actions: 
-	sequence+=Statement (',' sequence+=Statement)* |
-	body=Body |
+	statement=Statement |
+	'(' statements=StatementList ')' |
 	match=Match |
 	'(' matches+=Match (matches+=Match)* ')'
 ;
 
 Match:
-	id?=LOWERCASE_ID '->' body=Body |
-	regexp?=REGEXP '->' body=Body |
-	observable?=OBSERVABLE '->' body=Body |
-	literal?=Literal '->' body=Body |
-	text?=STRING '->' body=Body |
-	arguments=ArgumentDeclaration '->' body=Body |
-	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? '->' body=Body |
-	'in' set=List '->' body=Body | 
-	quantity=Quantity '->' body=Body |
-	date=Date '->' body=Body |
-	expr=EXPR '->' body=Body |
-	nodata='unknown' '->' body=Body |
-	star?='*' '->' body=Body |
-	anything?='#''->' body=Body 
+	id?=LOWERCASE_ID '->' body=StatementList |
+	type?=CAMELCASE_ID '->' body=StatementList |
+	regexp?=REGEXP '->' body=StatementList |
+	observable?=OBSERVABLE '->' body=StatementList |
+	literal?=Literal '->' body=StatementList |
+	text?=STRING '->' body=StatementList |
+	arguments=ArgumentDeclaration '->' body=StatementList |
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? '->' body=StatementList |
+	'in' set=List '->' body=StatementList | 
+	quantity=Quantity '->' body=StatementList |
+	date=Date '->' body=StatementList |
+	expr=EXPR '->' body=StatementList |
+	nodata='unknown' '->' body=StatementList |
+	star?='*' '->' body=StatementList |
+	anything?='#''->' body=StatementList 
 ;
 
 Number:
@@ -260,7 +275,7 @@ terminal EXPR:
 	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
 	
 terminal EMBEDDEDTEXT:
-	'%%%'((' ')*'-')*'\r' -> '%%%'((' ')*'-')*'\r';
+	'%%%'((' ')*'-')*'\r' -> '%%%'((' ')*'-')*;
 
 terminal REGEXP:
 	'%' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\') | !('\\' | '%'))* '%';

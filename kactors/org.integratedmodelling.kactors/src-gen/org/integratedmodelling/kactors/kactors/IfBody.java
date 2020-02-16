@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kactors.kactors;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -16,8 +14,8 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.IfBody#getCall <em>Call</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.IfBody#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.IfBody#getVerb <em>Verb</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.IfBody#getGroup <em>Group</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfBody()
@@ -27,37 +25,47 @@ import org.eclipse.emf.ecore.EObject;
 public interface IfBody extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Call</b></em>' containment reference.
+   * Returns the value of the '<em><b>Verb</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Call</em>' containment reference.
-   * @see #setCall(Call)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfBody_Call()
+   * @return the value of the '<em>Verb</em>' containment reference.
+   * @see #setVerb(Verb)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfBody_Verb()
    * @model containment="true"
    * @generated
    */
-  Call getCall();
+  Verb getVerb();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.IfBody#getCall <em>Call</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.IfBody#getVerb <em>Verb</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Call</em>' containment reference.
-   * @see #getCall()
+   * @param value the new value of the '<em>Verb</em>' containment reference.
+   * @see #getVerb()
    * @generated
    */
-  void setCall(Call value);
+  void setVerb(Verb value);
 
   /**
-   * Returns the value of the '<em><b>Body</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Body}.
+   * Returns the value of the '<em><b>Group</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Body</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfBody_Body()
+   * @return the value of the '<em>Group</em>' containment reference.
+   * @see #setGroup(Group)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfBody_Group()
    * @model containment="true"
    * @generated
    */
-  EList<Body> getBody();
+  Group getGroup();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.IfBody#getGroup <em>Group</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Group</em>' containment reference.
+   * @see #getGroup()
+   * @generated
+   */
+  void setGroup(Group value);
 
 } // IfBody

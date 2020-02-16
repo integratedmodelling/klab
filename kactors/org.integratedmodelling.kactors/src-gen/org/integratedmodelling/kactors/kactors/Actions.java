@@ -16,8 +16,8 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getSequence <em>Sequence</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getStatement <em>Statement</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getStatements <em>Statements</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getMatch <em>Match</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getMatches <em>Matches</em>}</li>
  * </ul>
@@ -29,38 +29,48 @@ import org.eclipse.emf.ecore.EObject;
 public interface Actions extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Sequence</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Statement}.
+   * Returns the value of the '<em><b>Statement</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Sequence</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActions_Sequence()
+   * @return the value of the '<em>Statement</em>' containment reference.
+   * @see #setStatement(Statement)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActions_Statement()
    * @model containment="true"
    * @generated
    */
-  EList<Statement> getSequence();
+  Statement getStatement();
 
   /**
-   * Returns the value of the '<em><b>Body</b></em>' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Actions#getStatement <em>Statement</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Body</em>' containment reference.
-   * @see #setBody(Body)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActions_Body()
+   * @param value the new value of the '<em>Statement</em>' containment reference.
+   * @see #getStatement()
+   * @generated
+   */
+  void setStatement(Statement value);
+
+  /**
+   * Returns the value of the '<em><b>Statements</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Statements</em>' containment reference.
+   * @see #setStatements(StatementList)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActions_Statements()
    * @model containment="true"
    * @generated
    */
-  Body getBody();
+  StatementList getStatements();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Actions#getBody <em>Body</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Actions#getStatements <em>Statements</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Body</em>' containment reference.
-   * @see #getBody()
+   * @param value the new value of the '<em>Statements</em>' containment reference.
+   * @see #getStatements()
    * @generated
    */
-  void setBody(Body value);
+  void setStatements(StatementList value);
 
   /**
    * Returns the value of the '<em><b>Match</b></em>' containment reference.

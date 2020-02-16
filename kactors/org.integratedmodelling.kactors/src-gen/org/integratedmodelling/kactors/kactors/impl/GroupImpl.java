@@ -3,55 +3,49 @@
  */
 package org.integratedmodelling.kactors.kactors.impl;
 
-import java.util.Collection;
-
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.integratedmodelling.kactors.kactors.Body;
+import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
-import org.integratedmodelling.kactors.kactors.StatementList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Body</b></em>'.
+ * An implementation of the model object '<em><b>Group</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.BodyImpl#getLists <em>Lists</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.GroupImpl#getBody <em>Body</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class BodyImpl extends MinimalEObjectImpl.Container implements Body
+public class GroupImpl extends VerbImpl implements Group
 {
   /**
-   * The cached value of the '{@link #getLists() <em>Lists</em>}' containment reference list.
+   * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getLists()
+   * @see #getBody()
    * @generated
    * @ordered
    */
-  protected EList<StatementList> lists;
+  protected Body body;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected BodyImpl()
+  protected GroupImpl()
   {
     super();
   }
@@ -64,7 +58,7 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
   @Override
   protected EClass eStaticClass()
   {
-    return KactorsPackage.Literals.BODY;
+    return KactorsPackage.Literals.GROUP;
   }
 
   /**
@@ -73,13 +67,48 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
    * @generated
    */
   @Override
-  public EList<StatementList> getLists()
+  public Body getBody()
   {
-    if (lists == null)
+    return body;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetBody(Body newBody, NotificationChain msgs)
+  {
+    Body oldBody = body;
+    body = newBody;
+    if (eNotificationRequired())
     {
-      lists = new EObjectContainmentEList<StatementList>(StatementList.class, this, KactorsPackage.BODY__LISTS);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.GROUP__BODY, oldBody, newBody);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
     }
-    return lists;
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setBody(Body newBody)
+  {
+    if (newBody != body)
+    {
+      NotificationChain msgs = null;
+      if (body != null)
+        msgs = ((InternalEObject)body).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.GROUP__BODY, null, msgs);
+      if (newBody != null)
+        msgs = ((InternalEObject)newBody).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.GROUP__BODY, null, msgs);
+      msgs = basicSetBody(newBody, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.GROUP__BODY, newBody, newBody));
   }
 
   /**
@@ -92,8 +121,8 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
   {
     switch (featureID)
     {
-      case KactorsPackage.BODY__LISTS:
-        return ((InternalEList<?>)getLists()).basicRemove(otherEnd, msgs);
+      case KactorsPackage.GROUP__BODY:
+        return basicSetBody(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -108,8 +137,8 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
   {
     switch (featureID)
     {
-      case KactorsPackage.BODY__LISTS:
-        return getLists();
+      case KactorsPackage.GROUP__BODY:
+        return getBody();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -119,15 +148,13 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
    * <!-- end-user-doc -->
    * @generated
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
-      case KactorsPackage.BODY__LISTS:
-        getLists().clear();
-        getLists().addAll((Collection<? extends StatementList>)newValue);
+      case KactorsPackage.GROUP__BODY:
+        setBody((Body)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -143,8 +170,8 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
   {
     switch (featureID)
     {
-      case KactorsPackage.BODY__LISTS:
-        getLists().clear();
+      case KactorsPackage.GROUP__BODY:
+        setBody((Body)null);
         return;
     }
     super.eUnset(featureID);
@@ -160,10 +187,10 @@ public class BodyImpl extends MinimalEObjectImpl.Container implements Body
   {
     switch (featureID)
     {
-      case KactorsPackage.BODY__LISTS:
-        return lists != null && !lists.isEmpty();
+      case KactorsPackage.GROUP__BODY:
+        return body != null;
     }
     return super.eIsSet(featureID);
   }
 
-} //BodyImpl
+} //GroupImpl

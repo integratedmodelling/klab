@@ -3,12 +3,8 @@
  */
 package org.integratedmodelling.kactors.kactors.impl;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -16,15 +12,13 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
-
-import org.integratedmodelling.kactors.kactors.Call;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
+import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.Verb;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -35,10 +29,10 @@ import org.integratedmodelling.kactors.kactors.WhileStatement;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getCall <em>Call</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getVerb <em>Verb</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getText <em>Text</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getIf <em>If</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getWhile <em>While</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getDo <em>Do</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getFor <em>For</em>}</li>
@@ -49,14 +43,24 @@ import org.integratedmodelling.kactors.kactors.WhileStatement;
 public class StatementImpl extends MinimalEObjectImpl.Container implements Statement
 {
   /**
-   * The cached value of the '{@link #getCall() <em>Call</em>}' containment reference.
+   * The cached value of the '{@link #getVerb() <em>Verb</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getCall()
+   * @see #getVerb()
    * @generated
    * @ordered
    */
-  protected Call call;
+  protected Verb verb;
+
+  /**
+   * The cached value of the '{@link #getGroup() <em>Group</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getGroup()
+   * @generated
+   * @ordered
+   */
+  protected Group group;
 
   /**
    * The default value of the '{@link #getText() <em>Text</em>}' attribute.
@@ -87,16 +91,6 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @ordered
    */
   protected IfStatement if_;
-
-  /**
-   * The cached value of the '{@link #getGroup() <em>Group</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getGroup()
-   * @generated
-   * @ordered
-   */
-  protected EList<Statement> group;
 
   /**
    * The cached value of the '{@link #getWhile() <em>While</em>}' containment reference.
@@ -155,9 +149,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @generated
    */
   @Override
-  public Call getCall()
+  public Verb getVerb()
   {
-    return call;
+    return verb;
   }
 
   /**
@@ -165,13 +159,13 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetCall(Call newCall, NotificationChain msgs)
+  public NotificationChain basicSetVerb(Verb newVerb, NotificationChain msgs)
   {
-    Call oldCall = call;
-    call = newCall;
+    Verb oldVerb = verb;
+    verb = newVerb;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__CALL, oldCall, newCall);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__VERB, oldVerb, newVerb);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -183,20 +177,70 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @generated
    */
   @Override
-  public void setCall(Call newCall)
+  public void setVerb(Verb newVerb)
   {
-    if (newCall != call)
+    if (newVerb != verb)
     {
       NotificationChain msgs = null;
-      if (call != null)
-        msgs = ((InternalEObject)call).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__CALL, null, msgs);
-      if (newCall != null)
-        msgs = ((InternalEObject)newCall).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__CALL, null, msgs);
-      msgs = basicSetCall(newCall, msgs);
+      if (verb != null)
+        msgs = ((InternalEObject)verb).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__VERB, null, msgs);
+      if (newVerb != null)
+        msgs = ((InternalEObject)newVerb).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__VERB, null, msgs);
+      msgs = basicSetVerb(newVerb, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__CALL, newCall, newCall));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__VERB, newVerb, newVerb));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Group getGroup()
+  {
+    return group;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetGroup(Group newGroup, NotificationChain msgs)
+  {
+    Group oldGroup = group;
+    group = newGroup;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__GROUP, oldGroup, newGroup);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setGroup(Group newGroup)
+  {
+    if (newGroup != group)
+    {
+      NotificationChain msgs = null;
+      if (group != null)
+        msgs = ((InternalEObject)group).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__GROUP, null, msgs);
+      if (newGroup != null)
+        msgs = ((InternalEObject)newGroup).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__GROUP, null, msgs);
+      msgs = basicSetGroup(newGroup, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__GROUP, newGroup, newGroup));
   }
 
   /**
@@ -272,21 +316,6 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__IF, newIf, newIf));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<Statement> getGroup()
-  {
-    if (group == null)
-    {
-      group = new EObjectContainmentEList<Statement>(Statement.class, this, KactorsPackage.STATEMENT__GROUP);
-    }
-    return group;
   }
 
   /**
@@ -449,12 +478,12 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
-      case KactorsPackage.STATEMENT__CALL:
-        return basicSetCall(null, msgs);
+      case KactorsPackage.STATEMENT__VERB:
+        return basicSetVerb(null, msgs);
+      case KactorsPackage.STATEMENT__GROUP:
+        return basicSetGroup(null, msgs);
       case KactorsPackage.STATEMENT__IF:
         return basicSetIf(null, msgs);
-      case KactorsPackage.STATEMENT__GROUP:
-        return ((InternalEList<?>)getGroup()).basicRemove(otherEnd, msgs);
       case KactorsPackage.STATEMENT__WHILE:
         return basicSetWhile(null, msgs);
       case KactorsPackage.STATEMENT__DO:
@@ -475,14 +504,14 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
-      case KactorsPackage.STATEMENT__CALL:
-        return getCall();
+      case KactorsPackage.STATEMENT__VERB:
+        return getVerb();
+      case KactorsPackage.STATEMENT__GROUP:
+        return getGroup();
       case KactorsPackage.STATEMENT__TEXT:
         return getText();
       case KactorsPackage.STATEMENT__IF:
         return getIf();
-      case KactorsPackage.STATEMENT__GROUP:
-        return getGroup();
       case KactorsPackage.STATEMENT__WHILE:
         return getWhile();
       case KactorsPackage.STATEMENT__DO:
@@ -498,24 +527,22 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
-      case KactorsPackage.STATEMENT__CALL:
-        setCall((Call)newValue);
+      case KactorsPackage.STATEMENT__VERB:
+        setVerb((Verb)newValue);
+        return;
+      case KactorsPackage.STATEMENT__GROUP:
+        setGroup((Group)newValue);
         return;
       case KactorsPackage.STATEMENT__TEXT:
         setText((String)newValue);
         return;
       case KactorsPackage.STATEMENT__IF:
         setIf((IfStatement)newValue);
-        return;
-      case KactorsPackage.STATEMENT__GROUP:
-        getGroup().clear();
-        getGroup().addAll((Collection<? extends Statement>)newValue);
         return;
       case KactorsPackage.STATEMENT__WHILE:
         setWhile((WhileStatement)newValue);
@@ -540,17 +567,17 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
-      case KactorsPackage.STATEMENT__CALL:
-        setCall((Call)null);
+      case KactorsPackage.STATEMENT__VERB:
+        setVerb((Verb)null);
+        return;
+      case KactorsPackage.STATEMENT__GROUP:
+        setGroup((Group)null);
         return;
       case KactorsPackage.STATEMENT__TEXT:
         setText(TEXT_EDEFAULT);
         return;
       case KactorsPackage.STATEMENT__IF:
         setIf((IfStatement)null);
-        return;
-      case KactorsPackage.STATEMENT__GROUP:
-        getGroup().clear();
         return;
       case KactorsPackage.STATEMENT__WHILE:
         setWhile((WhileStatement)null);
@@ -575,14 +602,14 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
-      case KactorsPackage.STATEMENT__CALL:
-        return call != null;
+      case KactorsPackage.STATEMENT__VERB:
+        return verb != null;
+      case KactorsPackage.STATEMENT__GROUP:
+        return group != null;
       case KactorsPackage.STATEMENT__TEXT:
         return TEXT_EDEFAULT == null ? text != null : !TEXT_EDEFAULT.equals(text);
       case KactorsPackage.STATEMENT__IF:
         return if_ != null;
-      case KactorsPackage.STATEMENT__GROUP:
-        return group != null && !group.isEmpty();
       case KactorsPackage.STATEMENT__WHILE:
         return while_ != null;
       case KactorsPackage.STATEMENT__DO:

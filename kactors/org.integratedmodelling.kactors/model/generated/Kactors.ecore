@@ -32,8 +32,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" eType="#//ArgumentDeclaration"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="body" upperBound="-1" eType="#//Body"
-        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//Body" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArgumentDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ids" unique="false" upperBound="-1"
@@ -61,9 +60,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="expression" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="table" eType="#//LookupTable"
         containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Urn">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Annotation">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -198,17 +194,32 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="boolean" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Body">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="list" upperBound="-1" eType="#//Statement"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lists" upperBound="-1"
+        eType="#//StatementList" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Verb">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" eType="#//ParameterList"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isgroup" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actions" eType="#//Actions"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Group" eSuperTypes="#//Verb">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//Body" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StatementList">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="first" eType="#//Statement"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" upperBound="-1" eType="#//Statement"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Statement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="call" eType="#//Call" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="verb" eType="#//Verb" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="group" eType="#//Group"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="if" eType="#//IfStatement"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="group" upperBound="-1"
-        eType="#//Statement" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="while" eType="#//WhileStatement"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="do" eType="#//DoStatement"
@@ -228,8 +239,8 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IfBody">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="call" eType="#//Call" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="body" upperBound="-1" eType="#//Body"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="verb" eType="#//Verb" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="group" eType="#//Group"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="WhileStatement">
@@ -249,17 +260,11 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//IfBody"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Call">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" eType="#//ParameterList"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="actions" eType="#//Actions"
-        containment="true"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Actions">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="sequence" upperBound="-1"
-        eType="#//Statement" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//Body" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="statement" eType="#//Statement"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="statements" eType="#//StatementList"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="match" eType="#//Match"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="matches" upperBound="-1"
@@ -267,7 +272,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Match">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//Body" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//StatementList"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="regexp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="observable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="literal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>

@@ -13,12 +13,12 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
-import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.Quantity;
+import org.integratedmodelling.kactors.kactors.StatementList;
 
 /**
  * <!-- begin-user-doc -->
@@ -30,6 +30,7 @@ import org.integratedmodelling.kactors.kactors.Quantity;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isRegexp <em>Regexp</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isLiteral <em>Literal</em>}</li>
@@ -80,7 +81,27 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    * @ordered
    */
-  protected Body body;
+  protected StatementList body;
+
+  /**
+   * The default value of the '{@link #isType() <em>Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isType()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean TYPE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isType() <em>Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isType()
+   * @generated
+   * @ordered
+   */
+  protected boolean type = TYPE_EDEFAULT;
 
   /**
    * The default value of the '{@link #isRegexp() <em>Regexp</em>}' attribute.
@@ -394,7 +415,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public Body getBody()
+  public StatementList getBody()
   {
     return body;
   }
@@ -404,9 +425,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetBody(Body newBody, NotificationChain msgs)
+  public NotificationChain basicSetBody(StatementList newBody, NotificationChain msgs)
   {
-    Body oldBody = body;
+    StatementList oldBody = body;
     body = newBody;
     if (eNotificationRequired())
     {
@@ -422,7 +443,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public void setBody(Body newBody)
+  public void setBody(StatementList newBody)
   {
     if (newBody != body)
     {
@@ -436,6 +457,31 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__BODY, newBody, newBody));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isType()
+  {
+    return type;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setType(boolean newType)
+  {
+    boolean oldType = type;
+    type = newType;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__TYPE, oldType, type));
   }
 
   /**
@@ -1030,6 +1076,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return isId();
       case KactorsPackage.MATCH__BODY:
         return getBody();
+      case KactorsPackage.MATCH__TYPE:
+        return isType();
       case KactorsPackage.MATCH__REGEXP:
         return isRegexp();
       case KactorsPackage.MATCH__OBSERVABLE:
@@ -1080,7 +1128,10 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         setId((Boolean)newValue);
         return;
       case KactorsPackage.MATCH__BODY:
-        setBody((Body)newValue);
+        setBody((StatementList)newValue);
+        return;
+      case KactorsPackage.MATCH__TYPE:
+        setType((Boolean)newValue);
         return;
       case KactorsPackage.MATCH__REGEXP:
         setRegexp((Boolean)newValue);
@@ -1148,7 +1199,10 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         setId(ID_EDEFAULT);
         return;
       case KactorsPackage.MATCH__BODY:
-        setBody((Body)null);
+        setBody((StatementList)null);
+        return;
+      case KactorsPackage.MATCH__TYPE:
+        setType(TYPE_EDEFAULT);
         return;
       case KactorsPackage.MATCH__REGEXP:
         setRegexp(REGEXP_EDEFAULT);
@@ -1216,6 +1270,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return id != ID_EDEFAULT;
       case KactorsPackage.MATCH__BODY:
         return body != null;
+      case KactorsPackage.MATCH__TYPE:
+        return type != TYPE_EDEFAULT;
       case KactorsPackage.MATCH__REGEXP:
         return regexp != REGEXP_EDEFAULT;
       case KactorsPackage.MATCH__OBSERVABLE:
@@ -1265,6 +1321,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (id: ");
     result.append(id);
+    result.append(", type: ");
+    result.append(type);
     result.append(", regexp: ");
     result.append(regexp);
     result.append(", observable: ");

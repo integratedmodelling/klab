@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isRegexp <em>Regexp</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isLiteral <em>Literal</em>}</li>
@@ -67,12 +68,12 @@ public interface Match extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Body</em>' containment reference.
-   * @see #setBody(Body)
+   * @see #setBody(StatementList)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Body()
    * @model containment="true"
    * @generated
    */
-  Body getBody();
+  StatementList getBody();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getBody <em>Body</em>}' containment reference.
@@ -82,7 +83,29 @@ public interface Match extends EObject
    * @see #getBody()
    * @generated
    */
-  void setBody(Body value);
+  void setBody(StatementList value);
+
+  /**
+   * Returns the value of the '<em><b>Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Type</em>' attribute.
+   * @see #setType(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Type()
+   * @model
+   * @generated
+   */
+  boolean isType();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#isType <em>Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Type</em>' attribute.
+   * @see #isType()
+   * @generated
+   */
+  void setType(boolean value);
 
   /**
    * Returns the value of the '<em><b>Regexp</b></em>' attribute.

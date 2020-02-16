@@ -57,9 +57,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/expression"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/table"/>
     </genClasses>
-    <genClasses ecoreClass="Kactors.ecore#//Urn">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Urn/name"/>
-    </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Annotation">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Annotation/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Annotation/parameters"/>
@@ -159,14 +156,25 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Literal/boolean"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Body">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Body/list"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Body/isgroup"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Body/lists"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Verb">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Verb/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Verb/parameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Verb/actions"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Group">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Group/body"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//StatementList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//StatementList/first"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//StatementList/next"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Statement">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/call"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/verb"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/group"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Statement/text"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/if"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/group"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/while"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/do"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/for"/>
@@ -179,8 +187,8 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//IfStatement/elseCall"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//IfBody">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//IfBody/call"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//IfBody/body"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//IfBody/verb"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//IfBody/group"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//WhileStatement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//WhileStatement/expression"/>
@@ -195,20 +203,16 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//ForStatement/value"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//ForStatement/body"/>
     </genClasses>
-    <genClasses ecoreClass="Kactors.ecore#//Call">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Call/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Call/parameters"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Call/actions"/>
-    </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Actions">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/sequence"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/body"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/statement"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/statements"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/match"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Actions/matches"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Match">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/id"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Match/body"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/regexp"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/observable"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/literal"/>

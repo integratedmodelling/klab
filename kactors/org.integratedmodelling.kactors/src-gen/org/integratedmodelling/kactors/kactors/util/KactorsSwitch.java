@@ -12,13 +12,13 @@ import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Body;
-import org.integratedmodelling.kactors.kactors.Call;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
+import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -36,13 +36,14 @@ import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
 import org.integratedmodelling.kactors.kactors.TableRow;
 import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
-import org.integratedmodelling.kactors.kactors.Urn;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.Verb;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -154,13 +155,6 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         Value value = (Value)theEObject;
         T result = caseValue(value);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KactorsPackage.URN:
-      {
-        Urn urn = (Urn)theEObject;
-        T result = caseUrn(urn);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -283,6 +277,28 @@ public class KactorsSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case KactorsPackage.VERB:
+      {
+        Verb verb = (Verb)theEObject;
+        T result = caseVerb(verb);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.GROUP:
+      {
+        Group group = (Group)theEObject;
+        T result = caseGroup(group);
+        if (result == null) result = caseVerb(group);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.STATEMENT_LIST:
+      {
+        StatementList statementList = (StatementList)theEObject;
+        T result = caseStatementList(statementList);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case KactorsPackage.STATEMENT:
       {
         Statement statement = (Statement)theEObject;
@@ -322,13 +338,6 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         ForStatement forStatement = (ForStatement)theEObject;
         T result = caseForStatement(forStatement);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KactorsPackage.CALL:
-      {
-        Call call = (Call)theEObject;
-        T result = caseCall(call);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -472,22 +481,6 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseValue(Value object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Urn</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Urn</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseUrn(Urn object)
   {
     return null;
   }
@@ -765,6 +758,54 @@ public class KactorsSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Verb</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Verb</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseVerb(Verb object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Group</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Group</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseGroup(Group object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Statement List</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Statement List</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseStatementList(StatementList object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Statement</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -856,22 +897,6 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseForStatement(ForStatement object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Call</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Call</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseCall(Call object)
   {
     return null;
   }

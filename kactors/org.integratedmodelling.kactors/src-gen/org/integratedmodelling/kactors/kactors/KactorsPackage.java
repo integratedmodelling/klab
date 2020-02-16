@@ -260,7 +260,7 @@ public interface KactorsPackage extends EPackage
   int DEFINITION__ARGUMENTS = 2;
 
   /**
-   * The feature id for the '<em><b>Body</b></em>' containment reference list.
+   * The feature id for the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -480,34 +480,6 @@ public interface KactorsPackage extends EPackage
   int VALUE_FEATURE_COUNT = 9;
 
   /**
-   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.UrnImpl <em>Urn</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kactors.kactors.impl.UrnImpl
-   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUrn()
-   * @generated
-   */
-  int URN = 7;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int URN__NAME = 0;
-
-  /**
-   * The number of structural features of the '<em>Urn</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int URN_FEATURE_COUNT = 1;
-
-  /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.AnnotationImpl <em>Annotation</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -515,7 +487,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getAnnotation()
    * @generated
    */
-  int ANNOTATION = 8;
+  int ANNOTATION = 7;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -552,7 +524,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getList()
    * @generated
    */
-  int LIST = 9;
+  int LIST = 8;
 
   /**
    * The feature id for the '<em><b>Contents</b></em>' containment reference list.
@@ -580,7 +552,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getMap()
    * @generated
    */
-  int MAP = 10;
+  int MAP = 9;
 
   /**
    * The feature id for the '<em><b>Entries</b></em>' containment reference list.
@@ -608,7 +580,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getMapEntry()
    * @generated
    */
-  int MAP_ENTRY = 11;
+  int MAP_ENTRY = 10;
 
   /**
    * The feature id for the '<em><b>Classifier</b></em>' containment reference.
@@ -645,7 +617,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getClassifier()
    * @generated
    */
-  int CLASSIFIER = 12;
+  int CLASSIFIER = 11;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -790,7 +762,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getLookupTable()
    * @generated
    */
-  int LOOKUP_TABLE = 13;
+  int LOOKUP_TABLE = 12;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -818,7 +790,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTable()
    * @generated
    */
-  int TABLE = 14;
+  int TABLE = 13;
 
   /**
    * The feature id for the '<em><b>Headers</b></em>' containment reference.
@@ -855,7 +827,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getHeaderRow()
    * @generated
    */
-  int HEADER_ROW = 15;
+  int HEADER_ROW = 14;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' attribute list.
@@ -883,7 +855,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTableRow()
    * @generated
    */
-  int TABLE_ROW = 16;
+  int TABLE_ROW = 15;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -911,7 +883,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTableClassifier()
    * @generated
    */
-  int TABLE_CLASSIFIER = 17;
+  int TABLE_CLASSIFIER = 16;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -1083,7 +1055,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getQuantity()
    * @generated
    */
-  int QUANTITY = 18;
+  int QUANTITY = 17;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1138,7 +1110,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 19;
+  int UNIT_ELEMENT = 18;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1175,7 +1147,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 20;
+  int UNIT = 19;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -1221,7 +1193,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 21;
+  int CURRENCY = 20;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1267,7 +1239,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 22;
+  int REL_OPERATOR = 21;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -1340,7 +1312,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getLiteral()
    * @generated
    */
-  int LITERAL = 23;
+  int LITERAL = 22;
 
   /**
    * The feature id for the '<em><b>Number</b></em>' containment reference.
@@ -1413,25 +1385,16 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getBody()
    * @generated
    */
-  int BODY = 24;
+  int BODY = 23;
 
   /**
-   * The feature id for the '<em><b>List</b></em>' containment reference list.
+   * The feature id for the '<em><b>Lists</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int BODY__LIST = 0;
-
-  /**
-   * The feature id for the '<em><b>Isgroup</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int BODY__ISGROUP = 1;
+  int BODY__LISTS = 0;
 
   /**
    * The number of structural features of the '<em>Body</em>' class.
@@ -1440,7 +1403,145 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int BODY_FEATURE_COUNT = 2;
+  int BODY_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.VerbImpl <em>Verb</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.VerbImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getVerb()
+   * @generated
+   */
+  int VERB = 24;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VERB__NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VERB__PARAMETERS = 1;
+
+  /**
+   * The feature id for the '<em><b>Actions</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VERB__ACTIONS = 2;
+
+  /**
+   * The number of structural features of the '<em>Verb</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VERB_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.GroupImpl <em>Group</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.GroupImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getGroup()
+   * @generated
+   */
+  int GROUP = 25;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GROUP__NAME = VERB__NAME;
+
+  /**
+   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GROUP__PARAMETERS = VERB__PARAMETERS;
+
+  /**
+   * The feature id for the '<em><b>Actions</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GROUP__ACTIONS = VERB__ACTIONS;
+
+  /**
+   * The feature id for the '<em><b>Body</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GROUP__BODY = VERB_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Group</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GROUP_FEATURE_COUNT = VERB_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementListImpl <em>Statement List</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.StatementListImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getStatementList()
+   * @generated
+   */
+  int STATEMENT_LIST = 26;
+
+  /**
+   * The feature id for the '<em><b>First</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT_LIST__FIRST = 0;
+
+  /**
+   * The feature id for the '<em><b>Next</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT_LIST__NEXT = 1;
+
+  /**
+   * The number of structural features of the '<em>Statement List</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT_LIST_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl <em>Statement</em>}' class.
@@ -1450,16 +1551,25 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getStatement()
    * @generated
    */
-  int STATEMENT = 25;
+  int STATEMENT = 27;
 
   /**
-   * The feature id for the '<em><b>Call</b></em>' containment reference.
+   * The feature id for the '<em><b>Verb</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT__CALL = 0;
+  int STATEMENT__VERB = 0;
+
+  /**
+   * The feature id for the '<em><b>Group</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT__GROUP = 1;
 
   /**
    * The feature id for the '<em><b>Text</b></em>' attribute.
@@ -1468,7 +1578,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__TEXT = 1;
+  int STATEMENT__TEXT = 2;
 
   /**
    * The feature id for the '<em><b>If</b></em>' containment reference.
@@ -1477,16 +1587,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__IF = 2;
-
-  /**
-   * The feature id for the '<em><b>Group</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int STATEMENT__GROUP = 3;
+  int STATEMENT__IF = 3;
 
   /**
    * The feature id for the '<em><b>While</b></em>' containment reference.
@@ -1532,7 +1633,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getIfStatement()
    * @generated
    */
-  int IF_STATEMENT = 26;
+  int IF_STATEMENT = 28;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
@@ -1596,25 +1697,25 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getIfBody()
    * @generated
    */
-  int IF_BODY = 27;
+  int IF_BODY = 29;
 
   /**
-   * The feature id for the '<em><b>Call</b></em>' containment reference.
+   * The feature id for the '<em><b>Verb</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IF_BODY__CALL = 0;
+  int IF_BODY__VERB = 0;
 
   /**
-   * The feature id for the '<em><b>Body</b></em>' containment reference list.
+   * The feature id for the '<em><b>Group</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IF_BODY__BODY = 1;
+  int IF_BODY__GROUP = 1;
 
   /**
    * The number of structural features of the '<em>If Body</em>' class.
@@ -1633,7 +1734,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getWhileStatement()
    * @generated
    */
-  int WHILE_STATEMENT = 28;
+  int WHILE_STATEMENT = 30;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
@@ -1670,7 +1771,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getDoStatement()
    * @generated
    */
-  int DO_STATEMENT = 29;
+  int DO_STATEMENT = 31;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -1707,7 +1808,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getForStatement()
    * @generated
    */
-  int FOR_STATEMENT = 30;
+  int FOR_STATEMENT = 32;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1746,52 +1847,6 @@ public interface KactorsPackage extends EPackage
   int FOR_STATEMENT_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.CallImpl <em>Call</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kactors.kactors.impl.CallImpl
-   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getCall()
-   * @generated
-   */
-  int CALL = 31;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CALL__NAME = 0;
-
-  /**
-   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CALL__PARAMETERS = 1;
-
-  /**
-   * The feature id for the '<em><b>Actions</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CALL__ACTIONS = 2;
-
-  /**
-   * The number of structural features of the '<em>Call</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CALL_FEATURE_COUNT = 3;
-
-  /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl <em>Actions</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1799,25 +1854,25 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getActions()
    * @generated
    */
-  int ACTIONS = 32;
+  int ACTIONS = 33;
 
   /**
-   * The feature id for the '<em><b>Sequence</b></em>' containment reference list.
+   * The feature id for the '<em><b>Statement</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTIONS__SEQUENCE = 0;
+  int ACTIONS__STATEMENT = 0;
 
   /**
-   * The feature id for the '<em><b>Body</b></em>' containment reference.
+   * The feature id for the '<em><b>Statements</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTIONS__BODY = 1;
+  int ACTIONS__STATEMENTS = 1;
 
   /**
    * The feature id for the '<em><b>Match</b></em>' containment reference.
@@ -1854,7 +1909,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getMatch()
    * @generated
    */
-  int MATCH = 33;
+  int MATCH = 34;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1875,13 +1930,22 @@ public interface KactorsPackage extends EPackage
   int MATCH__BODY = 1;
 
   /**
+   * The feature id for the '<em><b>Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__TYPE = 2;
+
+  /**
    * The feature id for the '<em><b>Regexp</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MATCH__REGEXP = 2;
+  int MATCH__REGEXP = 3;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' attribute.
@@ -1890,7 +1954,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__OBSERVABLE = 3;
+  int MATCH__OBSERVABLE = 4;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' attribute.
@@ -1899,7 +1963,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__LITERAL = 4;
+  int MATCH__LITERAL = 5;
 
   /**
    * The feature id for the '<em><b>Text</b></em>' attribute.
@@ -1908,7 +1972,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__TEXT = 5;
+  int MATCH__TEXT = 6;
 
   /**
    * The feature id for the '<em><b>Arguments</b></em>' containment reference.
@@ -1917,7 +1981,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__ARGUMENTS = 6;
+  int MATCH__ARGUMENTS = 7;
 
   /**
    * The feature id for the '<em><b>Int0</b></em>' containment reference.
@@ -1926,7 +1990,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__INT0 = 7;
+  int MATCH__INT0 = 8;
 
   /**
    * The feature id for the '<em><b>Left Limit</b></em>' attribute.
@@ -1935,7 +1999,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__LEFT_LIMIT = 8;
+  int MATCH__LEFT_LIMIT = 9;
 
   /**
    * The feature id for the '<em><b>Int1</b></em>' containment reference.
@@ -1944,7 +2008,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__INT1 = 9;
+  int MATCH__INT1 = 10;
 
   /**
    * The feature id for the '<em><b>Right Limit</b></em>' attribute.
@@ -1953,7 +2017,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__RIGHT_LIMIT = 10;
+  int MATCH__RIGHT_LIMIT = 11;
 
   /**
    * The feature id for the '<em><b>Set</b></em>' containment reference.
@@ -1962,7 +2026,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__SET = 11;
+  int MATCH__SET = 12;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -1971,7 +2035,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__QUANTITY = 12;
+  int MATCH__QUANTITY = 13;
 
   /**
    * The feature id for the '<em><b>Date</b></em>' containment reference.
@@ -1980,7 +2044,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__DATE = 13;
+  int MATCH__DATE = 14;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
@@ -1989,7 +2053,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__EXPR = 14;
+  int MATCH__EXPR = 15;
 
   /**
    * The feature id for the '<em><b>Nodata</b></em>' attribute.
@@ -1998,7 +2062,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__NODATA = 15;
+  int MATCH__NODATA = 16;
 
   /**
    * The feature id for the '<em><b>Star</b></em>' attribute.
@@ -2007,7 +2071,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__STAR = 16;
+  int MATCH__STAR = 17;
 
   /**
    * The feature id for the '<em><b>Anything</b></em>' attribute.
@@ -2016,7 +2080,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__ANYTHING = 17;
+  int MATCH__ANYTHING = 18;
 
   /**
    * The number of structural features of the '<em>Match</em>' class.
@@ -2025,7 +2089,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH_FEATURE_COUNT = 18;
+  int MATCH_FEATURE_COUNT = 19;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.NumberImpl <em>Number</em>}' class.
@@ -2035,7 +2099,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 34;
+  int NUMBER = 35;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -2126,7 +2190,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getDate()
    * @generated
    */
-  int DATE = 35;
+  int DATE = 36;
 
   /**
    * The feature id for the '<em><b>Year</b></em>' attribute.
@@ -2217,7 +2281,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 36;
+  int UNIT_OP = 37;
 
 
   /**
@@ -2438,10 +2502,10 @@ public interface KactorsPackage extends EPackage
   EReference getDefinition_Arguments();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Definition#getBody <em>Body</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Definition#getBody <em>Body</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Body</em>'.
+   * @return the meta object for the containment reference '<em>Body</em>'.
    * @see org.integratedmodelling.kactors.kactors.Definition#getBody()
    * @see #getDefinition()
    * @generated
@@ -2641,27 +2705,6 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getValue_Table();
-
-  /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Urn <em>Urn</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Urn</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Urn
-   * @generated
-   */
-  EClass getUrn();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Urn#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Urn#getName()
-   * @see #getUrn()
-   * @generated
-   */
-  EAttribute getUrn_Name();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Annotation <em>Annotation</em>}'.
@@ -3560,26 +3603,111 @@ public interface KactorsPackage extends EPackage
   EClass getBody();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Body#getList <em>List</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Body#getLists <em>Lists</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>List</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Body#getList()
+   * @return the meta object for the containment reference list '<em>Lists</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Body#getLists()
    * @see #getBody()
    * @generated
    */
-  EReference getBody_List();
+  EReference getBody_Lists();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Body#isIsgroup <em>Isgroup</em>}'.
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Verb <em>Verb</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Isgroup</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Body#isIsgroup()
-   * @see #getBody()
+   * @return the meta object for class '<em>Verb</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Verb
    * @generated
    */
-  EAttribute getBody_Isgroup();
+  EClass getVerb();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Verb#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Verb#getName()
+   * @see #getVerb()
+   * @generated
+   */
+  EAttribute getVerb_Name();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Verb#getParameters <em>Parameters</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Parameters</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Verb#getParameters()
+   * @see #getVerb()
+   * @generated
+   */
+  EReference getVerb_Parameters();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Verb#getActions <em>Actions</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Actions</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Verb#getActions()
+   * @see #getVerb()
+   * @generated
+   */
+  EReference getVerb_Actions();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Group <em>Group</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Group</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Group
+   * @generated
+   */
+  EClass getGroup();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Group#getBody <em>Body</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Body</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Group#getBody()
+   * @see #getGroup()
+   * @generated
+   */
+  EReference getGroup_Body();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.StatementList <em>Statement List</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Statement List</em>'.
+   * @see org.integratedmodelling.kactors.kactors.StatementList
+   * @generated
+   */
+  EClass getStatementList();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.StatementList#getFirst <em>First</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>First</em>'.
+   * @see org.integratedmodelling.kactors.kactors.StatementList#getFirst()
+   * @see #getStatementList()
+   * @generated
+   */
+  EReference getStatementList_First();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.StatementList#getNext <em>Next</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Next</em>'.
+   * @see org.integratedmodelling.kactors.kactors.StatementList#getNext()
+   * @see #getStatementList()
+   * @generated
+   */
+  EReference getStatementList_Next();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Statement <em>Statement</em>}'.
@@ -3592,15 +3720,26 @@ public interface KactorsPackage extends EPackage
   EClass getStatement();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Statement#getCall <em>Call</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Call</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Statement#getCall()
+   * @return the meta object for the containment reference '<em>Verb</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Statement#getVerb()
    * @see #getStatement()
    * @generated
    */
-  EReference getStatement_Call();
+  EReference getStatement_Verb();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Group</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Statement#getGroup()
+   * @see #getStatement()
+   * @generated
+   */
+  EReference getStatement_Group();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Statement#getText <em>Text</em>}'.
@@ -3623,17 +3762,6 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getStatement_If();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Group</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Statement#getGroup()
-   * @see #getStatement()
-   * @generated
-   */
-  EReference getStatement_Group();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Statement#getWhile <em>While</em>}'.
@@ -3744,26 +3872,26 @@ public interface KactorsPackage extends EPackage
   EClass getIfBody();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.IfBody#getCall <em>Call</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.IfBody#getVerb <em>Verb</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Call</em>'.
-   * @see org.integratedmodelling.kactors.kactors.IfBody#getCall()
+   * @return the meta object for the containment reference '<em>Verb</em>'.
+   * @see org.integratedmodelling.kactors.kactors.IfBody#getVerb()
    * @see #getIfBody()
    * @generated
    */
-  EReference getIfBody_Call();
+  EReference getIfBody_Verb();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.IfBody#getBody <em>Body</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.IfBody#getGroup <em>Group</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Body</em>'.
-   * @see org.integratedmodelling.kactors.kactors.IfBody#getBody()
+   * @return the meta object for the containment reference '<em>Group</em>'.
+   * @see org.integratedmodelling.kactors.kactors.IfBody#getGroup()
    * @see #getIfBody()
    * @generated
    */
-  EReference getIfBody_Body();
+  EReference getIfBody_Group();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.WhileStatement <em>While Statement</em>}'.
@@ -3873,49 +4001,6 @@ public interface KactorsPackage extends EPackage
   EReference getForStatement_Body();
 
   /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Call <em>Call</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Call</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Call
-   * @generated
-   */
-  EClass getCall();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Call#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Call#getName()
-   * @see #getCall()
-   * @generated
-   */
-  EAttribute getCall_Name();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Call#getParameters <em>Parameters</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Parameters</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Call#getParameters()
-   * @see #getCall()
-   * @generated
-   */
-  EReference getCall_Parameters();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Call#getActions <em>Actions</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Actions</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Call#getActions()
-   * @see #getCall()
-   * @generated
-   */
-  EReference getCall_Actions();
-
-  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Actions <em>Actions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3926,26 +4011,26 @@ public interface KactorsPackage extends EPackage
   EClass getActions();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Actions#getSequence <em>Sequence</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Actions#getStatement <em>Statement</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Sequence</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Actions#getSequence()
+   * @return the meta object for the containment reference '<em>Statement</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Actions#getStatement()
    * @see #getActions()
    * @generated
    */
-  EReference getActions_Sequence();
+  EReference getActions_Statement();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Actions#getBody <em>Body</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Actions#getStatements <em>Statements</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Body</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Actions#getBody()
+   * @return the meta object for the containment reference '<em>Statements</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Actions#getStatements()
    * @see #getActions()
    * @generated
    */
-  EReference getActions_Body();
+  EReference getActions_Statements();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Actions#getMatch <em>Match</em>}'.
@@ -4000,6 +4085,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getMatch_Body();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Match#isType <em>Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Type</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Match#isType()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Type();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Match#isRegexp <em>Regexp</em>}'.
@@ -4573,7 +4669,7 @@ public interface KactorsPackage extends EPackage
     EReference DEFINITION__ARGUMENTS = eINSTANCE.getDefinition_Arguments();
 
     /**
-     * The meta object literal for the '<em><b>Body</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -4731,24 +4827,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference VALUE__TABLE = eINSTANCE.getValue_Table();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.UrnImpl <em>Urn</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kactors.kactors.impl.UrnImpl
-     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUrn()
-     * @generated
-     */
-    EClass URN = eINSTANCE.getUrn();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute URN__NAME = eINSTANCE.getUrn_Name();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.AnnotationImpl <em>Annotation</em>}' class.
@@ -5449,20 +5527,90 @@ public interface KactorsPackage extends EPackage
     EClass BODY = eINSTANCE.getBody();
 
     /**
-     * The meta object literal for the '<em><b>List</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Lists</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference BODY__LIST = eINSTANCE.getBody_List();
+    EReference BODY__LISTS = eINSTANCE.getBody_Lists();
 
     /**
-     * The meta object literal for the '<em><b>Isgroup</b></em>' attribute feature.
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.VerbImpl <em>Verb</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.VerbImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getVerb()
+     * @generated
+     */
+    EClass VERB = eINSTANCE.getVerb();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute BODY__ISGROUP = eINSTANCE.getBody_Isgroup();
+    EAttribute VERB__NAME = eINSTANCE.getVerb_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Parameters</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VERB__PARAMETERS = eINSTANCE.getVerb_Parameters();
+
+    /**
+     * The meta object literal for the '<em><b>Actions</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VERB__ACTIONS = eINSTANCE.getVerb_Actions();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.GroupImpl <em>Group</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.GroupImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getGroup()
+     * @generated
+     */
+    EClass GROUP = eINSTANCE.getGroup();
+
+    /**
+     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GROUP__BODY = eINSTANCE.getGroup_Body();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementListImpl <em>Statement List</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.StatementListImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getStatementList()
+     * @generated
+     */
+    EClass STATEMENT_LIST = eINSTANCE.getStatementList();
+
+    /**
+     * The meta object literal for the '<em><b>First</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT_LIST__FIRST = eINSTANCE.getStatementList_First();
+
+    /**
+     * The meta object literal for the '<em><b>Next</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT_LIST__NEXT = eINSTANCE.getStatementList_Next();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl <em>Statement</em>}' class.
@@ -5475,12 +5623,20 @@ public interface KactorsPackage extends EPackage
     EClass STATEMENT = eINSTANCE.getStatement();
 
     /**
-     * The meta object literal for the '<em><b>Call</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Verb</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference STATEMENT__CALL = eINSTANCE.getStatement_Call();
+    EReference STATEMENT__VERB = eINSTANCE.getStatement_Verb();
+
+    /**
+     * The meta object literal for the '<em><b>Group</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT__GROUP = eINSTANCE.getStatement_Group();
 
     /**
      * The meta object literal for the '<em><b>Text</b></em>' attribute feature.
@@ -5497,14 +5653,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference STATEMENT__IF = eINSTANCE.getStatement_If();
-
-    /**
-     * The meta object literal for the '<em><b>Group</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference STATEMENT__GROUP = eINSTANCE.getStatement_Group();
 
     /**
      * The meta object literal for the '<em><b>While</b></em>' containment reference feature.
@@ -5591,20 +5739,20 @@ public interface KactorsPackage extends EPackage
     EClass IF_BODY = eINSTANCE.getIfBody();
 
     /**
-     * The meta object literal for the '<em><b>Call</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Verb</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference IF_BODY__CALL = eINSTANCE.getIfBody_Call();
+    EReference IF_BODY__VERB = eINSTANCE.getIfBody_Verb();
 
     /**
-     * The meta object literal for the '<em><b>Body</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Group</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference IF_BODY__BODY = eINSTANCE.getIfBody_Body();
+    EReference IF_BODY__GROUP = eINSTANCE.getIfBody_Group();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.WhileStatementImpl <em>While Statement</em>}' class.
@@ -5693,40 +5841,6 @@ public interface KactorsPackage extends EPackage
     EReference FOR_STATEMENT__BODY = eINSTANCE.getForStatement_Body();
 
     /**
-     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.CallImpl <em>Call</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kactors.kactors.impl.CallImpl
-     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getCall()
-     * @generated
-     */
-    EClass CALL = eINSTANCE.getCall();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CALL__NAME = eINSTANCE.getCall_Name();
-
-    /**
-     * The meta object literal for the '<em><b>Parameters</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CALL__PARAMETERS = eINSTANCE.getCall_Parameters();
-
-    /**
-     * The meta object literal for the '<em><b>Actions</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CALL__ACTIONS = eINSTANCE.getCall_Actions();
-
-    /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl <em>Actions</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5737,20 +5851,20 @@ public interface KactorsPackage extends EPackage
     EClass ACTIONS = eINSTANCE.getActions();
 
     /**
-     * The meta object literal for the '<em><b>Sequence</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Statement</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ACTIONS__SEQUENCE = eINSTANCE.getActions_Sequence();
+    EReference ACTIONS__STATEMENT = eINSTANCE.getActions_Statement();
 
     /**
-     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Statements</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ACTIONS__BODY = eINSTANCE.getActions_Body();
+    EReference ACTIONS__STATEMENTS = eINSTANCE.getActions_Statements();
 
     /**
      * The meta object literal for the '<em><b>Match</b></em>' containment reference feature.
@@ -5793,6 +5907,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference MATCH__BODY = eINSTANCE.getMatch_Body();
+
+    /**
+     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__TYPE = eINSTANCE.getMatch_Type();
 
     /**
      * The meta object literal for the '<em><b>Regexp</b></em>' attribute feature.

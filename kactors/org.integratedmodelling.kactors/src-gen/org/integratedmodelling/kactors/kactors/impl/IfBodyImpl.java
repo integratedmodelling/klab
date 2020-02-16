@@ -3,12 +3,8 @@
  */
 package org.integratedmodelling.kactors.kactors.impl;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -16,13 +12,10 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
-
-import org.integratedmodelling.kactors.kactors.Body;
-import org.integratedmodelling.kactors.kactors.Call;
+import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.Verb;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,8 +25,8 @@ import org.integratedmodelling.kactors.kactors.KactorsPackage;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfBodyImpl#getCall <em>Call</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfBodyImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfBodyImpl#getVerb <em>Verb</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfBodyImpl#getGroup <em>Group</em>}</li>
  * </ul>
  *
  * @generated
@@ -41,24 +34,24 @@ import org.integratedmodelling.kactors.kactors.KactorsPackage;
 public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
 {
   /**
-   * The cached value of the '{@link #getCall() <em>Call</em>}' containment reference.
+   * The cached value of the '{@link #getVerb() <em>Verb</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getCall()
+   * @see #getVerb()
    * @generated
    * @ordered
    */
-  protected Call call;
+  protected Verb verb;
 
   /**
-   * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference list.
+   * The cached value of the '{@link #getGroup() <em>Group</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getBody()
+   * @see #getGroup()
    * @generated
    * @ordered
    */
-  protected EList<Body> body;
+  protected Group group;
 
   /**
    * <!-- begin-user-doc -->
@@ -87,9 +80,9 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
    * @generated
    */
   @Override
-  public Call getCall()
+  public Verb getVerb()
   {
-    return call;
+    return verb;
   }
 
   /**
@@ -97,13 +90,13 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetCall(Call newCall, NotificationChain msgs)
+  public NotificationChain basicSetVerb(Verb newVerb, NotificationChain msgs)
   {
-    Call oldCall = call;
-    call = newCall;
+    Verb oldVerb = verb;
+    verb = newVerb;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_BODY__CALL, oldCall, newCall);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_BODY__VERB, oldVerb, newVerb);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -115,20 +108,20 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
    * @generated
    */
   @Override
-  public void setCall(Call newCall)
+  public void setVerb(Verb newVerb)
   {
-    if (newCall != call)
+    if (newVerb != verb)
     {
       NotificationChain msgs = null;
-      if (call != null)
-        msgs = ((InternalEObject)call).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_BODY__CALL, null, msgs);
-      if (newCall != null)
-        msgs = ((InternalEObject)newCall).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_BODY__CALL, null, msgs);
-      msgs = basicSetCall(newCall, msgs);
+      if (verb != null)
+        msgs = ((InternalEObject)verb).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_BODY__VERB, null, msgs);
+      if (newVerb != null)
+        msgs = ((InternalEObject)newVerb).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_BODY__VERB, null, msgs);
+      msgs = basicSetVerb(newVerb, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_BODY__CALL, newCall, newCall));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_BODY__VERB, newVerb, newVerb));
   }
 
   /**
@@ -137,13 +130,48 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
    * @generated
    */
   @Override
-  public EList<Body> getBody()
+  public Group getGroup()
   {
-    if (body == null)
+    return group;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetGroup(Group newGroup, NotificationChain msgs)
+  {
+    Group oldGroup = group;
+    group = newGroup;
+    if (eNotificationRequired())
     {
-      body = new EObjectContainmentEList<Body>(Body.class, this, KactorsPackage.IF_BODY__BODY);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_BODY__GROUP, oldGroup, newGroup);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
     }
-    return body;
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setGroup(Group newGroup)
+  {
+    if (newGroup != group)
+    {
+      NotificationChain msgs = null;
+      if (group != null)
+        msgs = ((InternalEObject)group).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_BODY__GROUP, null, msgs);
+      if (newGroup != null)
+        msgs = ((InternalEObject)newGroup).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_BODY__GROUP, null, msgs);
+      msgs = basicSetGroup(newGroup, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_BODY__GROUP, newGroup, newGroup));
   }
 
   /**
@@ -156,10 +184,10 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_BODY__CALL:
-        return basicSetCall(null, msgs);
-      case KactorsPackage.IF_BODY__BODY:
-        return ((InternalEList<?>)getBody()).basicRemove(otherEnd, msgs);
+      case KactorsPackage.IF_BODY__VERB:
+        return basicSetVerb(null, msgs);
+      case KactorsPackage.IF_BODY__GROUP:
+        return basicSetGroup(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -174,10 +202,10 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_BODY__CALL:
-        return getCall();
-      case KactorsPackage.IF_BODY__BODY:
-        return getBody();
+      case KactorsPackage.IF_BODY__VERB:
+        return getVerb();
+      case KactorsPackage.IF_BODY__GROUP:
+        return getGroup();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -187,18 +215,16 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
    * <!-- end-user-doc -->
    * @generated
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_BODY__CALL:
-        setCall((Call)newValue);
+      case KactorsPackage.IF_BODY__VERB:
+        setVerb((Verb)newValue);
         return;
-      case KactorsPackage.IF_BODY__BODY:
-        getBody().clear();
-        getBody().addAll((Collection<? extends Body>)newValue);
+      case KactorsPackage.IF_BODY__GROUP:
+        setGroup((Group)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -214,11 +240,11 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_BODY__CALL:
-        setCall((Call)null);
+      case KactorsPackage.IF_BODY__VERB:
+        setVerb((Verb)null);
         return;
-      case KactorsPackage.IF_BODY__BODY:
-        getBody().clear();
+      case KactorsPackage.IF_BODY__GROUP:
+        setGroup((Group)null);
         return;
     }
     super.eUnset(featureID);
@@ -234,10 +260,10 @@ public class IfBodyImpl extends MinimalEObjectImpl.Container implements IfBody
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_BODY__CALL:
-        return call != null;
-      case KactorsPackage.IF_BODY__BODY:
-        return body != null && !body.isEmpty();
+      case KactorsPackage.IF_BODY__VERB:
+        return verb != null;
+      case KactorsPackage.IF_BODY__GROUP:
+        return group != null;
     }
     return super.eIsSet(featureID);
   }

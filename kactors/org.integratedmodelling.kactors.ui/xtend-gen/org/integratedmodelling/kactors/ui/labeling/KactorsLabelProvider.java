@@ -4,11 +4,21 @@
 package org.integratedmodelling.kactors.ui.labeling;
 
 import com.google.inject.Inject;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
+import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Body;
-import org.integratedmodelling.kactors.kactors.Call;
+import org.integratedmodelling.kactors.kactors.Definition;
+import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ForStatement;
+import org.integratedmodelling.kactors.kactors.Group;
+import org.integratedmodelling.kactors.kactors.IfStatement;
+import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementList;
+import org.integratedmodelling.kactors.kactors.Verb;
+import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
  * Provides labels for EObjects.
@@ -22,38 +32,85 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
     super(delegate);
   }
   
-  public String text(final Body body) {
-    String _xifexpression = null;
-    boolean _isIsgroup = body.isIsgroup();
-    if (_isIsgroup) {
-      _xifexpression = "asynchronous group";
-    } else {
-      String _xifexpression_1 = null;
-      if (((body.getList() != null) && (body.getList().size() > 0))) {
-        _xifexpression_1 = "synchronous list";
-      }
-      _xifexpression = _xifexpression_1;
-    }
-    return _xifexpression;
-  }
-  
   public String text(final Statement statement) {
-    String _xifexpression = null;
-    if (((statement.getGroup() != null) && (statement.getGroup().size() > 0))) {
-      _xifexpression = "asynchronous group";
+    Verb _verb = statement.getVerb();
+    boolean _tripleNotEquals = (_verb != null);
+    if (_tripleNotEquals) {
+      return this.text(statement.getVerb());
     } else {
-      String _xifexpression_1 = null;
-      Call _call = statement.getCall();
-      boolean _tripleNotEquals = (_call != null);
-      if (_tripleNotEquals) {
-        _xifexpression_1 = statement.getCall().getName();
+      IfStatement _if = statement.getIf();
+      boolean _tripleNotEquals_1 = (_if != null);
+      if (_tripleNotEquals_1) {
+        return "if";
+      } else {
+        WhileStatement _while = statement.getWhile();
+        boolean _tripleNotEquals_2 = (_while != null);
+        if (_tripleNotEquals_2) {
+          return "while";
+        } else {
+          ForStatement _for = statement.getFor();
+          boolean _tripleNotEquals_3 = (_for != null);
+          if (_tripleNotEquals_3) {
+            return "for";
+          } else {
+            DoStatement _do = statement.getDo();
+            boolean _tripleNotEquals_4 = (_do != null);
+            if (_tripleNotEquals_4) {
+              return "for";
+            } else {
+              Group _group = statement.getGroup();
+              boolean _tripleNotEquals_5 = (_group != null);
+              if (_tripleNotEquals_5) {
+                return this.text(statement.getGroup());
+              }
+            }
+          }
+        }
       }
-      _xifexpression = _xifexpression_1;
     }
-    return _xifexpression;
+    return null;
   }
   
-  public String text(final Call call) {
+  public String text(final Definition definition) {
+    String _name = definition.getName();
+    return ("Message " + _name);
+  }
+  
+  public String text(final StatementList list) {
+    String _xblockexpression = null;
+    {
+      EList<Statement> _next = list.getNext();
+      boolean _tripleNotEquals = (_next != null);
+      if (_tripleNotEquals) {
+        return "Sequence";
+      }
+      _xblockexpression = this.text(list.getFirst());
+    }
+    return _xblockexpression;
+  }
+  
+  public String text(final Match match) {
+    return "Match";
+  }
+  
+  public String text(final Actions action) {
+    return "Message actions";
+  }
+  
+  public String text(final Group group) {
+    String _xblockexpression = null;
+    {
+      Body _body = group.getBody();
+      boolean _tripleNotEquals = (_body != null);
+      if (_tripleNotEquals) {
+        return "Message group";
+      }
+      _xblockexpression = "Empty message";
+    }
+    return _xblockexpression;
+  }
+  
+  public String text(final Verb call) {
     return call.getName();
   }
 }
