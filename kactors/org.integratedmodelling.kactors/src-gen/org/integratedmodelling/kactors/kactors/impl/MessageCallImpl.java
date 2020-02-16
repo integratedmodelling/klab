@@ -14,25 +14,25 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.ParameterList;
-import org.integratedmodelling.kactors.kactors.Verb;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Verb</b></em>'.
+ * An implementation of the model object '<em><b>Message Call</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.VerbImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.VerbImpl#getParameters <em>Parameters</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.VerbImpl#getActions <em>Actions</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getActions <em>Actions</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
+public class MessageCallImpl extends MinimalEObjectImpl.Container implements MessageCall
 {
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -79,7 +79,7 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
    * <!-- end-user-doc -->
    * @generated
    */
-  protected VerbImpl()
+  protected MessageCallImpl()
   {
     super();
   }
@@ -92,7 +92,7 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
   @Override
   protected EClass eStaticClass()
   {
-    return KactorsPackage.Literals.VERB;
+    return KactorsPackage.Literals.MESSAGE_CALL;
   }
 
   /**
@@ -117,7 +117,7 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VERB__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MESSAGE_CALL__NAME, oldName, name));
   }
 
   /**
@@ -142,7 +142,7 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
     parameters = newParameters;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VERB__PARAMETERS, oldParameters, newParameters);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.MESSAGE_CALL__PARAMETERS, oldParameters, newParameters);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -160,14 +160,14 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
     {
       NotificationChain msgs = null;
       if (parameters != null)
-        msgs = ((InternalEObject)parameters).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VERB__PARAMETERS, null, msgs);
+        msgs = ((InternalEObject)parameters).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MESSAGE_CALL__PARAMETERS, null, msgs);
       if (newParameters != null)
-        msgs = ((InternalEObject)newParameters).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VERB__PARAMETERS, null, msgs);
+        msgs = ((InternalEObject)newParameters).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MESSAGE_CALL__PARAMETERS, null, msgs);
       msgs = basicSetParameters(newParameters, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VERB__PARAMETERS, newParameters, newParameters));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MESSAGE_CALL__PARAMETERS, newParameters, newParameters));
   }
 
   /**
@@ -192,7 +192,7 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
     actions = newActions;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VERB__ACTIONS, oldActions, newActions);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.MESSAGE_CALL__ACTIONS, oldActions, newActions);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -210,14 +210,14 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
     {
       NotificationChain msgs = null;
       if (actions != null)
-        msgs = ((InternalEObject)actions).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VERB__ACTIONS, null, msgs);
+        msgs = ((InternalEObject)actions).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MESSAGE_CALL__ACTIONS, null, msgs);
       if (newActions != null)
-        msgs = ((InternalEObject)newActions).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VERB__ACTIONS, null, msgs);
+        msgs = ((InternalEObject)newActions).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MESSAGE_CALL__ACTIONS, null, msgs);
       msgs = basicSetActions(newActions, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VERB__ACTIONS, newActions, newActions));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MESSAGE_CALL__ACTIONS, newActions, newActions));
   }
 
   /**
@@ -230,9 +230,9 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
   {
     switch (featureID)
     {
-      case KactorsPackage.VERB__PARAMETERS:
+      case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         return basicSetParameters(null, msgs);
-      case KactorsPackage.VERB__ACTIONS:
+      case KactorsPackage.MESSAGE_CALL__ACTIONS:
         return basicSetActions(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -248,11 +248,11 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
   {
     switch (featureID)
     {
-      case KactorsPackage.VERB__NAME:
+      case KactorsPackage.MESSAGE_CALL__NAME:
         return getName();
-      case KactorsPackage.VERB__PARAMETERS:
+      case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         return getParameters();
-      case KactorsPackage.VERB__ACTIONS:
+      case KactorsPackage.MESSAGE_CALL__ACTIONS:
         return getActions();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -268,13 +268,13 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
   {
     switch (featureID)
     {
-      case KactorsPackage.VERB__NAME:
+      case KactorsPackage.MESSAGE_CALL__NAME:
         setName((String)newValue);
         return;
-      case KactorsPackage.VERB__PARAMETERS:
+      case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         setParameters((ParameterList)newValue);
         return;
-      case KactorsPackage.VERB__ACTIONS:
+      case KactorsPackage.MESSAGE_CALL__ACTIONS:
         setActions((Actions)newValue);
         return;
     }
@@ -291,13 +291,13 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
   {
     switch (featureID)
     {
-      case KactorsPackage.VERB__NAME:
+      case KactorsPackage.MESSAGE_CALL__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case KactorsPackage.VERB__PARAMETERS:
+      case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         setParameters((ParameterList)null);
         return;
-      case KactorsPackage.VERB__ACTIONS:
+      case KactorsPackage.MESSAGE_CALL__ACTIONS:
         setActions((Actions)null);
         return;
     }
@@ -314,11 +314,11 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
   {
     switch (featureID)
     {
-      case KactorsPackage.VERB__NAME:
+      case KactorsPackage.MESSAGE_CALL__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case KactorsPackage.VERB__PARAMETERS:
+      case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         return parameters != null;
-      case KactorsPackage.VERB__ACTIONS:
+      case KactorsPackage.MESSAGE_CALL__ACTIONS:
         return actions != null;
     }
     return super.eIsSet(featureID);
@@ -341,4 +341,4 @@ public class VerbImpl extends MinimalEObjectImpl.Container implements Verb
     return result.toString();
   }
 
-} //VerbImpl
+} //MessageCallImpl

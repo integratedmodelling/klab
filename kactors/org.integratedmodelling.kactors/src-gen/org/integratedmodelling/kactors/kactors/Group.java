@@ -20,19 +20,19 @@ package org.integratedmodelling.kactors.kactors;
  * @model
  * @generated
  */
-public interface Group extends Verb
+public interface Group extends StatementGroup
 {
   /**
    * Returns the value of the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Body</em>' containment reference.
-   * @see #setBody(Body)
+   * @see #setBody(MessageBody)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getGroup_Body()
    * @model containment="true"
    * @generated
    */
-  Body getBody();
+  MessageBody getBody();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Group#getBody <em>Body</em>}' containment reference.
@@ -42,6 +42,6 @@ public interface Group extends Verb
    * @see #getBody()
    * @generated
    */
-  void setBody(Body value);
+  void setBody(MessageBody value);
 
 } // Group

@@ -10,9 +10,9 @@ import org.integratedmodelling.kactors.kactors.Actions
 import org.integratedmodelling.kactors.kactors.Definition
 import org.integratedmodelling.kactors.kactors.Group
 import org.integratedmodelling.kactors.kactors.Match
+import org.integratedmodelling.kactors.kactors.MessageCall
 import org.integratedmodelling.kactors.kactors.Statement
 import org.integratedmodelling.kactors.kactors.StatementList
-import org.integratedmodelling.kactors.kactors.Verb
 
 /**
  * Provides labels for EObjects.
@@ -69,7 +69,7 @@ class KactorsLabelProvider extends DefaultEObjectLabelProvider {
 		'Empty message'	
 	}
 	
-	def text(Verb call) {
+	def text(MessageCall call) {
 		call.name
 	}
 

@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseIfExpression <em>Else If Expression</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseIfCall <em>Else If Call</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseIfBody <em>Else If Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseCall <em>Else Call</em>}</li>
  * </ul>
  *
@@ -56,12 +56,12 @@ public interface IfStatement extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Body</em>' containment reference.
-   * @see #setBody(IfBody)
+   * @see #setBody(StatementBody)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfStatement_Body()
    * @model containment="true"
    * @generated
    */
-  IfBody getBody();
+  StatementBody getBody();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.IfStatement#getBody <em>Body</em>}' containment reference.
@@ -71,7 +71,7 @@ public interface IfStatement extends EObject
    * @see #getBody()
    * @generated
    */
-  void setBody(IfBody value);
+  void setBody(StatementBody value);
 
   /**
    * Returns the value of the '<em><b>Else If Expression</b></em>' attribute list.
@@ -86,28 +86,28 @@ public interface IfStatement extends EObject
   EList<String> getElseIfExpression();
 
   /**
-   * Returns the value of the '<em><b>Else If Call</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.IfBody}.
+   * Returns the value of the '<em><b>Else If Body</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.StatementBody}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Else If Call</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfStatement_ElseIfCall()
+   * @return the value of the '<em>Else If Body</em>' containment reference list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfStatement_ElseIfBody()
    * @model containment="true"
    * @generated
    */
-  EList<IfBody> getElseIfCall();
+  EList<StatementBody> getElseIfBody();
 
   /**
    * Returns the value of the '<em><b>Else Call</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Else Call</em>' containment reference.
-   * @see #setElseCall(IfBody)
+   * @see #setElseCall(StatementBody)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfStatement_ElseCall()
    * @model containment="true"
    * @generated
    */
-  IfBody getElseCall();
+  StatementBody getElseCall();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseCall <em>Else Call</em>}' containment reference.
@@ -117,6 +117,6 @@ public interface IfStatement extends EObject
    * @see #getElseCall()
    * @generated
    */
-  void setElseCall(IfBody value);
+  void setElseCall(StatementBody value);
 
 } // IfStatement

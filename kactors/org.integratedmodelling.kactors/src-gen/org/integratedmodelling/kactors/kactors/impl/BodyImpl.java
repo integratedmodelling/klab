@@ -12,8 +12,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -34,7 +32,7 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  *
  * @generated
  */
-public class BodyImpl extends MinimalEObjectImpl.Container implements Body
+public class BodyImpl extends MessageBodyImpl implements Body
 {
   /**
    * The cached value of the '{@link #getLists() <em>Lists</em>}' containment reference list.

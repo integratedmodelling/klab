@@ -8,16 +8,17 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import org.integratedmodelling.kactors.kactors.Actions;
-import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.Match;
+import org.integratedmodelling.kactors.kactors.MessageBody;
+import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementGroup;
 import org.integratedmodelling.kactors.kactors.StatementList;
-import org.integratedmodelling.kactors.kactors.Verb;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -33,7 +34,7 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
   }
   
   public String text(final Statement statement) {
-    Verb _verb = statement.getVerb();
+    MessageCall _verb = statement.getVerb();
     boolean _tripleNotEquals = (_verb != null);
     if (_tripleNotEquals) {
       return this.text(statement.getVerb());
@@ -58,7 +59,7 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
             if (_tripleNotEquals_4) {
               return "for";
             } else {
-              Group _group = statement.getGroup();
+              StatementGroup _group = statement.getGroup();
               boolean _tripleNotEquals_5 = (_group != null);
               if (_tripleNotEquals_5) {
                 return this.text(statement.getGroup());
@@ -100,7 +101,7 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
   public String text(final Group group) {
     String _xblockexpression = null;
     {
-      Body _body = group.getBody();
+      MessageBody _body = group.getBody();
       boolean _tripleNotEquals = (_body != null);
       if (_tripleNotEquals) {
         return "Message group";
@@ -110,7 +111,7 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
     return _xblockexpression;
   }
   
-  public String text(final Verb call) {
+  public String text(final MessageCall call) {
     return call.getName();
   }
 }

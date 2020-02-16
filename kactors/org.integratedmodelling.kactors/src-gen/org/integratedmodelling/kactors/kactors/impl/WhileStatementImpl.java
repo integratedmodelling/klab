@@ -12,8 +12,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.StatementBody;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -60,7 +60,7 @@ public class WhileStatementImpl extends MinimalEObjectImpl.Container implements 
    * @generated
    * @ordered
    */
-  protected IfBody body;
+  protected StatementBody body;
 
   /**
    * <!-- begin-user-doc -->
@@ -114,7 +114,7 @@ public class WhileStatementImpl extends MinimalEObjectImpl.Container implements 
    * @generated
    */
   @Override
-  public IfBody getBody()
+  public StatementBody getBody()
   {
     return body;
   }
@@ -124,9 +124,9 @@ public class WhileStatementImpl extends MinimalEObjectImpl.Container implements 
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetBody(IfBody newBody, NotificationChain msgs)
+  public NotificationChain basicSetBody(StatementBody newBody, NotificationChain msgs)
   {
-    IfBody oldBody = body;
+    StatementBody oldBody = body;
     body = newBody;
     if (eNotificationRequired())
     {
@@ -142,7 +142,7 @@ public class WhileStatementImpl extends MinimalEObjectImpl.Container implements 
    * @generated
    */
   @Override
-  public void setBody(IfBody newBody)
+  public void setBody(StatementBody newBody)
   {
     if (newBody != body)
     {
@@ -206,7 +206,7 @@ public class WhileStatementImpl extends MinimalEObjectImpl.Container implements 
         setExpression((String)newValue);
         return;
       case KactorsPackage.WHILE_STATEMENT__BODY:
-        setBody((IfBody)newValue);
+        setBody((StatementBody)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -226,7 +226,7 @@ public class WhileStatementImpl extends MinimalEObjectImpl.Container implements 
         setExpression(EXPRESSION_EDEFAULT);
         return;
       case KactorsPackage.WHILE_STATEMENT__BODY:
-        setBody((IfBody)null);
+        setBody((StatementBody)null);
         return;
     }
     super.eUnset(featureID);

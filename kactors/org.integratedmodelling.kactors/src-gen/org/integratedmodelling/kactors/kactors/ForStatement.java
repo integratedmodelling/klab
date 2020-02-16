@@ -74,12 +74,12 @@ public interface ForStatement extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Body</em>' containment reference.
-   * @see #setBody(IfBody)
+   * @see #setBody(StatementBody)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getForStatement_Body()
    * @model containment="true"
    * @generated
    */
-  IfBody getBody();
+  StatementBody getBody();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.ForStatement#getBody <em>Body</em>}' containment reference.
@@ -89,6 +89,6 @@ public interface ForStatement extends EObject
    * @see #getBody()
    * @generated
    */
-  void setBody(IfBody value);
+  void setBody(StatementBody value);
 
 } // ForStatement

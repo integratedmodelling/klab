@@ -11,9 +11,9 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
-import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.MessageBody;
 
 /**
  * <!-- begin-user-doc -->
@@ -28,7 +28,7 @@ import org.integratedmodelling.kactors.kactors.KactorsPackage;
  *
  * @generated
  */
-public class GroupImpl extends VerbImpl implements Group
+public class GroupImpl extends StatementGroupImpl implements Group
 {
   /**
    * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
@@ -38,7 +38,7 @@ public class GroupImpl extends VerbImpl implements Group
    * @generated
    * @ordered
    */
-  protected Body body;
+  protected MessageBody body;
 
   /**
    * <!-- begin-user-doc -->
@@ -67,7 +67,7 @@ public class GroupImpl extends VerbImpl implements Group
    * @generated
    */
   @Override
-  public Body getBody()
+  public MessageBody getBody()
   {
     return body;
   }
@@ -77,9 +77,9 @@ public class GroupImpl extends VerbImpl implements Group
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetBody(Body newBody, NotificationChain msgs)
+  public NotificationChain basicSetBody(MessageBody newBody, NotificationChain msgs)
   {
-    Body oldBody = body;
+    MessageBody oldBody = body;
     body = newBody;
     if (eNotificationRequired())
     {
@@ -95,7 +95,7 @@ public class GroupImpl extends VerbImpl implements Group
    * @generated
    */
   @Override
-  public void setBody(Body newBody)
+  public void setBody(MessageBody newBody)
   {
     if (newBody != body)
     {
@@ -154,7 +154,7 @@ public class GroupImpl extends VerbImpl implements Group
     switch (featureID)
     {
       case KactorsPackage.GROUP__BODY:
-        setBody((Body)newValue);
+        setBody((MessageBody)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -171,7 +171,7 @@ public class GroupImpl extends VerbImpl implements Group
     switch (featureID)
     {
       case KactorsPackage.GROUP__BODY:
-        setBody((Body)null);
+        setBody((MessageBody)null);
         return;
     }
     super.eUnset(featureID);

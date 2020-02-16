@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
 
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Preamble;
 
 /**
@@ -30,9 +31,15 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isApp <em>App</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isUser <em>User</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isLib <em>Lib</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isActor <em>Actor</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getImports <em>Imports</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getWorldview <em>Worldview</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getObservable <em>Observable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getObservables <em>Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getPermissions <em>Permissions</em>}</li>
@@ -48,6 +55,86 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  */
 public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamble
 {
+  /**
+   * The default value of the '{@link #isApp() <em>App</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isApp()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean APP_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isApp() <em>App</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isApp()
+   * @generated
+   * @ordered
+   */
+  protected boolean app = APP_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isUser() <em>User</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isUser()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean USER_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isUser() <em>User</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isUser()
+   * @generated
+   * @ordered
+   */
+  protected boolean user = USER_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isLib() <em>Lib</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isLib()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean LIB_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isLib() <em>Lib</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isLib()
+   * @generated
+   * @ordered
+   */
+  protected boolean lib = LIB_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isActor() <em>Actor</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isActor()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean ACTOR_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isActor() <em>Actor</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isActor()
+   * @generated
+   * @ordered
+   */
+  protected boolean actor = ACTOR_EDEFAULT;
+
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -97,6 +184,36 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected String worldview = WORLDVIEW_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getObservable() <em>Observable</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getObservable()
+   * @generated
+   * @ordered
+   */
+  protected static final String OBSERVABLE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getObservable() <em>Observable</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getObservable()
+   * @generated
+   * @ordered
+   */
+  protected String observable = OBSERVABLE_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getObservables() <em>Observables</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getObservables()
+   * @generated
+   * @ordered
+   */
+  protected List observables;
 
   /**
    * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
@@ -275,6 +392,106 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public boolean isApp()
+  {
+    return app;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setApp(boolean newApp)
+  {
+    boolean oldApp = app;
+    app = newApp;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__APP, oldApp, app));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isUser()
+  {
+    return user;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setUser(boolean newUser)
+  {
+    boolean oldUser = user;
+    user = newUser;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__USER, oldUser, user));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isLib()
+  {
+    return lib;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLib(boolean newLib)
+  {
+    boolean oldLib = lib;
+    lib = newLib;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LIB, oldLib, lib));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isActor()
+  {
+    return actor;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setActor(boolean newActor)
+  {
+    boolean oldActor = actor;
+    actor = newActor;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__ACTOR, oldActor, actor));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getName()
   {
     return name;
@@ -332,6 +549,81 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     worldview = newWorldview;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__WORLDVIEW, oldWorldview, worldview));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getObservable()
+  {
+    return observable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setObservable(String newObservable)
+  {
+    String oldObservable = observable;
+    observable = newObservable;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLE, oldObservable, observable));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public List getObservables()
+  {
+    return observables;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetObservables(List newObservables, NotificationChain msgs)
+  {
+    List oldObservables = observables;
+    observables = newObservables;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLES, oldObservables, newObservables);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setObservables(List newObservables)
+  {
+    if (newObservables != observables)
+    {
+      NotificationChain msgs = null;
+      if (observables != null)
+        msgs = ((InternalEObject)observables).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__OBSERVABLES, null, msgs);
+      if (newObservables != null)
+        msgs = ((InternalEObject)newObservables).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__OBSERVABLES, null, msgs);
+      msgs = basicSetObservables(newObservables, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLES, newObservables, newObservables));
   }
 
   /**
@@ -609,6 +901,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__OBSERVABLES:
+        return basicSetObservables(null, msgs);
       case KactorsPackage.PREAMBLE__CREATED:
         return basicSetCreated(null, msgs);
       case KactorsPackage.PREAMBLE__MODIFIED:
@@ -627,12 +921,24 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__APP:
+        return isApp();
+      case KactorsPackage.PREAMBLE__USER:
+        return isUser();
+      case KactorsPackage.PREAMBLE__LIB:
+        return isLib();
+      case KactorsPackage.PREAMBLE__ACTOR:
+        return isActor();
       case KactorsPackage.PREAMBLE__NAME:
         return getName();
       case KactorsPackage.PREAMBLE__IMPORTS:
         return getImports();
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         return getWorldview();
+      case KactorsPackage.PREAMBLE__OBSERVABLE:
+        return getObservable();
+      case KactorsPackage.PREAMBLE__OBSERVABLES:
+        return getObservables();
       case KactorsPackage.PREAMBLE__LABEL:
         return getLabel();
       case KactorsPackage.PREAMBLE__DESCRIPTION:
@@ -666,6 +972,18 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__APP:
+        setApp((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__USER:
+        setUser((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__LIB:
+        setLib((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__ACTOR:
+        setActor((Boolean)newValue);
+        return;
       case KactorsPackage.PREAMBLE__NAME:
         setName((String)newValue);
         return;
@@ -675,6 +993,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         setWorldview((String)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__OBSERVABLE:
+        setObservable((String)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__OBSERVABLES:
+        setObservables((List)newValue);
         return;
       case KactorsPackage.PREAMBLE__LABEL:
         setLabel((String)newValue);
@@ -718,6 +1042,18 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__APP:
+        setApp(APP_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__USER:
+        setUser(USER_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__LIB:
+        setLib(LIB_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__ACTOR:
+        setActor(ACTOR_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__NAME:
         setName(NAME_EDEFAULT);
         return;
@@ -726,6 +1062,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         setWorldview(WORLDVIEW_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__OBSERVABLE:
+        setObservable(OBSERVABLE_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__OBSERVABLES:
+        setObservables((List)null);
         return;
       case KactorsPackage.PREAMBLE__LABEL:
         setLabel(LABEL_EDEFAULT);
@@ -768,12 +1110,24 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__APP:
+        return app != APP_EDEFAULT;
+      case KactorsPackage.PREAMBLE__USER:
+        return user != USER_EDEFAULT;
+      case KactorsPackage.PREAMBLE__LIB:
+        return lib != LIB_EDEFAULT;
+      case KactorsPackage.PREAMBLE__ACTOR:
+        return actor != ACTOR_EDEFAULT;
       case KactorsPackage.PREAMBLE__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KactorsPackage.PREAMBLE__IMPORTS:
         return imports != null && !imports.isEmpty();
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         return WORLDVIEW_EDEFAULT == null ? worldview != null : !WORLDVIEW_EDEFAULT.equals(worldview);
+      case KactorsPackage.PREAMBLE__OBSERVABLE:
+        return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
+      case KactorsPackage.PREAMBLE__OBSERVABLES:
+        return observables != null;
       case KactorsPackage.PREAMBLE__LABEL:
         return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case KactorsPackage.PREAMBLE__DESCRIPTION:
@@ -807,12 +1161,22 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (name: ");
+    result.append(" (app: ");
+    result.append(app);
+    result.append(", user: ");
+    result.append(user);
+    result.append(", lib: ");
+    result.append(lib);
+    result.append(", actor: ");
+    result.append(actor);
+    result.append(", name: ");
     result.append(name);
     result.append(", imports: ");
     result.append(imports);
     result.append(", worldview: ");
     result.append(worldview);
+    result.append(", observable: ");
+    result.append(observable);
     result.append(", label: ");
     result.append(label);
     result.append(", description: ");

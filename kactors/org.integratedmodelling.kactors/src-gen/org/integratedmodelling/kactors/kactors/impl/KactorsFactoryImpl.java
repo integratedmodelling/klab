@@ -24,7 +24,6 @@ import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
-import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsFactory;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
@@ -35,12 +34,16 @@ import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
 import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
+import org.integratedmodelling.kactors.kactors.MessageBody;
+import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementBody;
+import org.integratedmodelling.kactors.kactors.StatementGroup;
 import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
@@ -49,7 +52,6 @@ import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.UnitOp;
 import org.integratedmodelling.kactors.kactors.Value;
-import org.integratedmodelling.kactors.kactors.Verb;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -108,10 +110,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.PREAMBLE: return createPreamble();
       case KactorsPackage.DEFINITION: return createDefinition();
       case KactorsPackage.ARGUMENT_DECLARATION: return createArgumentDeclaration();
-      case KactorsPackage.PARAMETER_LIST: return createParameterList();
-      case KactorsPackage.KEY_VALUE_PAIR: return createKeyValuePair();
-      case KactorsPackage.VALUE: return createValue();
-      case KactorsPackage.ANNOTATION: return createAnnotation();
+      case KactorsPackage.MESSAGE_BODY: return createMessageBody();
+      case KactorsPackage.MESSAGE_CALL: return createMessageCall();
+      case KactorsPackage.STATEMENT_GROUP: return createStatementGroup();
+      case KactorsPackage.STATEMENT_LIST: return createStatementList();
+      case KactorsPackage.STATEMENT: return createStatement();
+      case KactorsPackage.IF_STATEMENT: return createIfStatement();
+      case KactorsPackage.STATEMENT_BODY: return createStatementBody();
+      case KactorsPackage.WHILE_STATEMENT: return createWhileStatement();
+      case KactorsPackage.DO_STATEMENT: return createDoStatement();
+      case KactorsPackage.FOR_STATEMENT: return createForStatement();
+      case KactorsPackage.ACTIONS: return createActions();
+      case KactorsPackage.MATCH: return createMatch();
       case KactorsPackage.LIST: return createList();
       case KactorsPackage.MAP: return createMap();
       case KactorsPackage.MAP_ENTRY: return createMapEntry();
@@ -122,25 +132,19 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.TABLE_ROW: return createTableRow();
       case KactorsPackage.TABLE_CLASSIFIER: return createTableClassifier();
       case KactorsPackage.QUANTITY: return createQuantity();
+      case KactorsPackage.ANNOTATION: return createAnnotation();
+      case KactorsPackage.LITERAL: return createLiteral();
+      case KactorsPackage.PARAMETER_LIST: return createParameterList();
+      case KactorsPackage.KEY_VALUE_PAIR: return createKeyValuePair();
+      case KactorsPackage.VALUE: return createValue();
       case KactorsPackage.UNIT_ELEMENT: return createUnitElement();
       case KactorsPackage.UNIT: return createUnit();
       case KactorsPackage.CURRENCY: return createCurrency();
       case KactorsPackage.REL_OPERATOR: return createREL_OPERATOR();
-      case KactorsPackage.LITERAL: return createLiteral();
-      case KactorsPackage.BODY: return createBody();
-      case KactorsPackage.VERB: return createVerb();
-      case KactorsPackage.GROUP: return createGroup();
-      case KactorsPackage.STATEMENT_LIST: return createStatementList();
-      case KactorsPackage.STATEMENT: return createStatement();
-      case KactorsPackage.IF_STATEMENT: return createIfStatement();
-      case KactorsPackage.IF_BODY: return createIfBody();
-      case KactorsPackage.WHILE_STATEMENT: return createWhileStatement();
-      case KactorsPackage.DO_STATEMENT: return createDoStatement();
-      case KactorsPackage.FOR_STATEMENT: return createForStatement();
-      case KactorsPackage.ACTIONS: return createActions();
-      case KactorsPackage.MATCH: return createMatch();
       case KactorsPackage.NUMBER: return createNumber();
       case KactorsPackage.DATE: return createDate();
+      case KactorsPackage.BODY: return createBody();
+      case KactorsPackage.GROUP: return createGroup();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -234,10 +238,10 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
-  public ParameterList createParameterList()
+  public MessageBody createMessageBody()
   {
-    ParameterListImpl parameterList = new ParameterListImpl();
-    return parameterList;
+    MessageBodyImpl messageBody = new MessageBodyImpl();
+    return messageBody;
   }
 
   /**
@@ -246,10 +250,10 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
-  public KeyValuePair createKeyValuePair()
+  public MessageCall createMessageCall()
   {
-    KeyValuePairImpl keyValuePair = new KeyValuePairImpl();
-    return keyValuePair;
+    MessageCallImpl messageCall = new MessageCallImpl();
+    return messageCall;
   }
 
   /**
@@ -258,10 +262,10 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
-  public Value createValue()
+  public StatementGroup createStatementGroup()
   {
-    ValueImpl value = new ValueImpl();
-    return value;
+    StatementGroupImpl statementGroup = new StatementGroupImpl();
+    return statementGroup;
   }
 
   /**
@@ -270,10 +274,106 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
-  public Annotation createAnnotation()
+  public StatementList createStatementList()
   {
-    AnnotationImpl annotation = new AnnotationImpl();
-    return annotation;
+    StatementListImpl statementList = new StatementListImpl();
+    return statementList;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Statement createStatement()
+  {
+    StatementImpl statement = new StatementImpl();
+    return statement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public IfStatement createIfStatement()
+  {
+    IfStatementImpl ifStatement = new IfStatementImpl();
+    return ifStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public StatementBody createStatementBody()
+  {
+    StatementBodyImpl statementBody = new StatementBodyImpl();
+    return statementBody;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public WhileStatement createWhileStatement()
+  {
+    WhileStatementImpl whileStatement = new WhileStatementImpl();
+    return whileStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public DoStatement createDoStatement()
+  {
+    DoStatementImpl doStatement = new DoStatementImpl();
+    return doStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ForStatement createForStatement()
+  {
+    ForStatementImpl forStatement = new ForStatementImpl();
+    return forStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Actions createActions()
+  {
+    ActionsImpl actions = new ActionsImpl();
+    return actions;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Match createMatch()
+  {
+    MatchImpl match = new MatchImpl();
+    return match;
   }
 
   /**
@@ -402,6 +502,66 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
+  public Annotation createAnnotation()
+  {
+    AnnotationImpl annotation = new AnnotationImpl();
+    return annotation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Literal createLiteral()
+  {
+    LiteralImpl literal = new LiteralImpl();
+    return literal;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ParameterList createParameterList()
+  {
+    ParameterListImpl parameterList = new ParameterListImpl();
+    return parameterList;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public KeyValuePair createKeyValuePair()
+  {
+    KeyValuePairImpl keyValuePair = new KeyValuePairImpl();
+    return keyValuePair;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Value createValue()
+  {
+    ValueImpl value = new ValueImpl();
+    return value;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public UnitElement createUnitElement()
   {
     UnitElementImpl unitElement = new UnitElementImpl();
@@ -450,10 +610,22 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
-  public Literal createLiteral()
+  public org.integratedmodelling.kactors.kactors.Number createNumber()
   {
-    LiteralImpl literal = new LiteralImpl();
-    return literal;
+    NumberImpl number = new NumberImpl();
+    return number;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Date createDate()
+  {
+    DateImpl date = new DateImpl();
+    return date;
   }
 
   /**
@@ -474,154 +646,10 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
-  public Verb createVerb()
-  {
-    VerbImpl verb = new VerbImpl();
-    return verb;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public Group createGroup()
   {
     GroupImpl group = new GroupImpl();
     return group;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public StatementList createStatementList()
-  {
-    StatementListImpl statementList = new StatementListImpl();
-    return statementList;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Statement createStatement()
-  {
-    StatementImpl statement = new StatementImpl();
-    return statement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public IfStatement createIfStatement()
-  {
-    IfStatementImpl ifStatement = new IfStatementImpl();
-    return ifStatement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public IfBody createIfBody()
-  {
-    IfBodyImpl ifBody = new IfBodyImpl();
-    return ifBody;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public WhileStatement createWhileStatement()
-  {
-    WhileStatementImpl whileStatement = new WhileStatementImpl();
-    return whileStatement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public DoStatement createDoStatement()
-  {
-    DoStatementImpl doStatement = new DoStatementImpl();
-    return doStatement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public ForStatement createForStatement()
-  {
-    ForStatementImpl forStatement = new ForStatementImpl();
-    return forStatement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Actions createActions()
-  {
-    ActionsImpl actions = new ActionsImpl();
-    return actions;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Match createMatch()
-  {
-    MatchImpl match = new MatchImpl();
-    return match;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public org.integratedmodelling.kactors.kactors.Number createNumber()
-  {
-    NumberImpl number = new NumberImpl();
-    return number;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Date createDate()
-  {
-    DateImpl date = new DateImpl();
-    return date;
   }
 
   /**

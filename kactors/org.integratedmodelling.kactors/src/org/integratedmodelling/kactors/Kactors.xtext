@@ -7,11 +7,15 @@ Model: {Model}
 	definitions+=Definition*;
 
 Preamble: {Preamble}
-	// name, if there, must be first
-	('actor' name=PathName)?
+	// name, if there, must be first. Can be an actor (which may select an observable),
+	// or a message library that may be imported by other actors, as long as the type 
+	// is compatible or not given. An app is an actor that represents a
+	// session, a user represents the user and gets any messages we don't recognize.
+	((app?='app' | user?='user' | lib?='lib' | actor?='actor') name=PathName)?
 	(
 		('import' imports+=PathName (',' imports+=PathName)*)? &
 		('worldview' worldview=PathName)? &
+		('observable' (observable=OBSERVABLE | observables=List))? &
 		('label' label=(LOWERCASE_ID|ID|STRING))? &
 		('description' description=STRING)? &
 		('permissions' permissions=STRING)? &
@@ -20,44 +24,117 @@ Preamble: {Preamble}
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 
 	)
-;	
+;
 
 Definition:
 	annotations+=Annotation*
-	'message' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=Body;
+	'message' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
 
 ArgumentDeclaration: {ArgumentDeclaration}
 	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'
 ;
 
-ParameterList:
-	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
-	
-KeyValuePair:
-	(name=(LOWERCASE_ID) (interactive?='=?' | '='))?
-	value=Value;
-	
-Value:
-	argvalue=ARGVALUE |
-	literal=Literal |
-	id=PathName |
-	urn=UrnId | 
-	list=List |
-	map=Map |
-	observable=OBSERVABLE | 
-	expression=EXPR |
-	table=LookupTable
-	;
-	
-//Urn:
-//	// String used when there are strange chars or keywords in the URN.
-//	// In actor files, we should only let in well-formed, lowercase path names
-//	name=(PathName|UrnId|STRING)
+/**
+ * Message body is as many statements of groups we want, ends at the next message or EOF.
+ */
+MessageBody: {Body} lists+=StatementList*;
+
+MessageCall:
+	(name=PathName ('(' (parameters=ParameterList)? ')')? |
+	  StatementGroup) ((':' actions=Actions) | ';')?
+;
+
+StatementGroup: {Group}
+	'(' body=MessageBody? ')'
+;
+
+StatementList:
+	first=Statement next+=NextStatement*
+;
+
+Statement:
+	verb=MessageCall |
+	group=StatementGroup |
+	text=EMBEDDEDTEXT |
+	if=IfStatement |
+	while=WhileStatement |
+	do=DoStatement |
+	for=ForStatement |
+	// this means "fire this" 
+	value=Value
+;
+
+NextStatement returns Statement:
+	',' (
+		verb=MessageCall |
+		group=StatementGroup |
+		text=EMBEDDEDTEXT |
+		if=IfStatement |
+		while=WhileStatement |
+		do=DoStatement |
+		for=ForStatement |
+		// this means "fire this" 
+		value=Value
+	)
+;
+
+IfStatement:
+	'if' expression=EXPR body=StatementBody	
+		('else' 'if' elseIfExpression+=EXPR elseIfBody+=StatementBody)* 
+		('else' elseCall=StatementBody)?
+;
+
+/** 
+ * Body of a statement is either a single message call (or fired value) or a set thereof in a group.
+ * */
+StatementBody: verb=MessageCall | value=Value | group=StatementGroup;
+
+///*
+// * Body of a statement that can also contain a value which gets fired
+// */
+//StatementBodyOrFiredValue returns StatementBody:
+//	verb=MessageCall | group=StatementGroup | value=Value
 //;
 
-Annotation:
-	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
-	
+WhileStatement:
+	'while' expression=EXPR body=StatementBody
+;
+
+DoStatement:
+	'do' body=StatementBody 'while' expression=EXPR
+;
+
+ForStatement:
+	'for' (id=LOWERCASE_ID 'in')? value=Value body=StatementBody
+;
+
+// a sequence of actions after a verb is sequential only if comma-separated. No match mean
+// "upon successful firing" (i.e. firing not null, false or error).
+Actions: 
+	statement=Statement |
+	'(' statements=StatementList ')' |
+	match=Match |
+	'(' matches+=Match (matches+=Match)* ')'
+;
+
+Match:
+	id?=LOWERCASE_ID '->' body=StatementList  |
+	type?=CAMELCASE_ID '->' body=StatementList |
+	regexp?=REGEXP '->' body=StatementList |
+	observable?=OBSERVABLE '->' body=StatementList |
+	literal?=Literal '->' body=StatementList |
+	text?=STRING '->' body=StatementList |
+	arguments=ArgumentDeclaration '->' body=StatementList |
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? '->' body=StatementList |
+	'in' set=List '->' body=StatementList | 
+	quantity=Quantity '->' body=StatementList |
+	date=Date '->' body=StatementList |
+	expr=EXPR '->' body=StatementList |
+	nodata='unknown' '->' body=StatementList |
+	star?='*' '->' body=StatementList |
+	anything?='#''->' body=StatementList 
+;
+
 /**
  * URN is 4 sections: node (or 'klab' for internal resources), catalog (or adapter for internal resources), namespace and
  * resource ID. Admits a version number and a fragment (with only lowercase_id chars in it). It is
@@ -128,6 +205,30 @@ TableClassifier:
 Quantity:
 	value=Number (over?='/' | '.') (unit=Unit | currency=Currency)
 ;
+Annotation:
+	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
+	
+Literal:
+	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
+	
+ParameterList:
+	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
+	
+KeyValuePair:
+	(name=(LOWERCASE_ID) (interactive?='=?' | '='))?
+	value=Value;
+	
+Value:
+	argvalue=ARGVALUE |
+	literal=Literal |
+	id=PathName |
+	urn=UrnId | 
+	list=List |
+	map=Map |
+	observable=OBSERVABLE | 
+	expression=EXPR |
+	table=LookupTable
+	;
 
 UnitElement:
 	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
@@ -150,94 +251,6 @@ REL_OPERATOR:
 	le?='<=' |
 	ge?='>=');
 	
-Literal:
-	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
-
-//// only missing piece: mix statement and groups in group, which probably makes no sense so OK.
-Body: {Body} lists+=StatementList*;
-
-Verb:
-	(name=PathName ('(' (parameters=ParameterList)? ')')? |
-	  Group) ((':' actions=Actions) | ';')?
-;
-
-Group: {Group}
-	'(' body=Body? ')'
-;
-
-StatementList:
-	first=Statement next+=NextStatement*
-;
-
-Statement:
-	verb=Verb |
-	group=Group |
-	text=EMBEDDEDTEXT |
-	if=IfStatement |
-	while=WhileStatement |
-	do=DoStatement |
-	for=ForStatement
-;
-
-NextStatement returns Statement:
-	',' (
-		verb=Verb |
-		group=Group |
-		text=EMBEDDEDTEXT |
-		if=IfStatement |
-		while=WhileStatement |
-		do=DoStatement |
-		for=ForStatement
-	)
-;
-
-IfStatement:
-	'if' expression=EXPR body=IfBody	
-		('else' 'if' elseIfExpression+=EXPR elseIfCall+=IfBody)* 
-		('else' elseCall=IfBody)?
-;
-
-IfBody: verb=Verb | group=Group;
-
-WhileStatement:
-	'while' expression=EXPR body=IfBody
-;
-
-DoStatement:
-	'do' body=IfBody 'while' expression=EXPR
-;
-
-ForStatement:
-	'for' (id=LOWERCASE_ID 'in')? value=Value body=IfBody
-;
-
-// a sequence of actions after a verb is sequential only if comma-separated. No match mean
-// "upon successful firing" (i.e. firing not null, false or error).
-Actions: 
-	statement=Statement |
-	'(' statements=StatementList ')' |
-	match=Match |
-	'(' matches+=Match (matches+=Match)* ')'
-;
-
-Match:
-	id?=LOWERCASE_ID '->' body=StatementList |
-	type?=CAMELCASE_ID '->' body=StatementList |
-	regexp?=REGEXP '->' body=StatementList |
-	observable?=OBSERVABLE '->' body=StatementList |
-	literal?=Literal '->' body=StatementList |
-	text?=STRING '->' body=StatementList |
-	arguments=ArgumentDeclaration '->' body=StatementList |
-	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? '->' body=StatementList |
-	'in' set=List '->' body=StatementList | 
-	quantity=Quantity '->' body=StatementList |
-	date=Date '->' body=StatementList |
-	expr=EXPR '->' body=StatementList |
-	nodata='unknown' '->' body=StatementList |
-	star?='*' '->' body=StatementList |
-	anything?='#''->' body=StatementList 
-;
-
 Number:
 	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
 

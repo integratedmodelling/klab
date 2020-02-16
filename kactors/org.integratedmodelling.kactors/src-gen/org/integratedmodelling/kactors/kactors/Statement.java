@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getWhile <em>While</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getDo <em>Do</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getFor <em>For</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement()
@@ -34,12 +35,12 @@ public interface Statement extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Verb</em>' containment reference.
-   * @see #setVerb(Verb)
+   * @see #setVerb(MessageCall)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Verb()
    * @model containment="true"
    * @generated
    */
-  Verb getVerb();
+  MessageCall getVerb();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}' containment reference.
@@ -49,19 +50,19 @@ public interface Statement extends EObject
    * @see #getVerb()
    * @generated
    */
-  void setVerb(Verb value);
+  void setVerb(MessageCall value);
 
   /**
    * Returns the value of the '<em><b>Group</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Group</em>' containment reference.
-   * @see #setGroup(Group)
+   * @see #setGroup(StatementGroup)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Group()
    * @model containment="true"
    * @generated
    */
-  Group getGroup();
+  StatementGroup getGroup();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}' containment reference.
@@ -71,7 +72,7 @@ public interface Statement extends EObject
    * @see #getGroup()
    * @generated
    */
-  void setGroup(Group value);
+  void setGroup(StatementGroup value);
 
   /**
    * Returns the value of the '<em><b>Text</b></em>' attribute.
@@ -182,5 +183,27 @@ public interface Statement extends EObject
    * @generated
    */
   void setFor(ForStatement value);
+
+  /**
+   * Returns the value of the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Value</em>' containment reference.
+   * @see #setValue(Value)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Value()
+   * @model containment="true"
+   * @generated
+   */
+  Value getValue();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getValue <em>Value</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Value</em>' containment reference.
+   * @see #getValue()
+   * @generated
+   */
+  void setValue(Value value);
 
 } // Statement

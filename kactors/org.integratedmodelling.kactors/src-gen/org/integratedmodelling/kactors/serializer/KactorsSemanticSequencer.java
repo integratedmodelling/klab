@@ -26,7 +26,6 @@ import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
-import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
@@ -36,12 +35,14 @@ import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
 import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
+import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementBody;
 import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
@@ -49,7 +50,6 @@ import org.integratedmodelling.kactors.kactors.TableRow;
 import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.Value;
-import org.integratedmodelling.kactors.kactors.Verb;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 import org.integratedmodelling.kactors.services.KactorsGrammarAccess;
 
@@ -77,7 +77,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				sequence_ArgumentDeclaration(context, (ArgumentDeclaration) semanticObject); 
 				return; 
 			case KactorsPackage.BODY:
-				sequence_Body(context, (Body) semanticObject); 
+				sequence_MessageBody(context, (Body) semanticObject); 
 				return; 
 			case KactorsPackage.CLASSIFIER:
 				sequence_Classifier(context, (Classifier) semanticObject); 
@@ -98,20 +98,17 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				sequence_ForStatement(context, (ForStatement) semanticObject); 
 				return; 
 			case KactorsPackage.GROUP:
-				if (rule == grammarAccess.getGroupRule()) {
-					sequence_Group(context, (Group) semanticObject); 
+				if (rule == grammarAccess.getMessageCallRule()) {
+					sequence_MessageCall_StatementGroup(context, (Group) semanticObject); 
 					return; 
 				}
-				else if (rule == grammarAccess.getVerbRule()) {
-					sequence_Group_Verb(context, (Group) semanticObject); 
+				else if (rule == grammarAccess.getStatementGroupRule()) {
+					sequence_StatementGroup(context, (Group) semanticObject); 
 					return; 
 				}
 				else break;
 			case KactorsPackage.HEADER_ROW:
 				sequence_HeaderRow(context, (HeaderRow) semanticObject); 
-				return; 
-			case KactorsPackage.IF_BODY:
-				sequence_IfBody(context, (IfBody) semanticObject); 
 				return; 
 			case KactorsPackage.IF_STATEMENT:
 				sequence_IfStatement(context, (IfStatement) semanticObject); 
@@ -136,6 +133,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.MATCH:
 				sequence_Match(context, (Match) semanticObject); 
+				return; 
+			case KactorsPackage.MESSAGE_CALL:
+				sequence_MessageCall(context, (MessageCall) semanticObject); 
 				return; 
 			case KactorsPackage.MODEL:
 				sequence_Model(context, (Model) semanticObject); 
@@ -165,6 +165,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 					return; 
 				}
 				else break;
+			case KactorsPackage.STATEMENT_BODY:
+				sequence_StatementBody(context, (StatementBody) semanticObject); 
+				return; 
 			case KactorsPackage.STATEMENT_LIST:
 				sequence_StatementList(context, (StatementList) semanticObject); 
 				return; 
@@ -185,9 +188,6 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.VALUE:
 				sequence_Value(context, (Value) semanticObject); 
-				return; 
-			case KactorsPackage.VERB:
-				sequence_Verb(context, (Verb) semanticObject); 
 				return; 
 			case KactorsPackage.WHILE_STATEMENT:
 				sequence_WhileStatement(context, (WhileStatement) semanticObject); 
@@ -229,18 +229,6 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     (ids+=LOWERCASE_ID ids+=LOWERCASE_ID*)?
 	 */
 	protected void sequence_ArgumentDeclaration(ISerializationContext context, ArgumentDeclaration semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Body returns Body
-	 *
-	 * Constraint:
-	 *     lists+=StatementList*
-	 */
-	protected void sequence_Body(ISerializationContext context, Body semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -298,7 +286,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Definition returns Definition
 	 *
 	 * Constraint:
-	 *     (annotations+=Annotation* name=LOWERCASE_ID arguments=ArgumentDeclaration? body=Body)
+	 *     (annotations+=Annotation* name=LOWERCASE_ID arguments=ArgumentDeclaration? body=MessageBody)
 	 */
 	protected void sequence_Definition(ISerializationContext context, Definition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -310,7 +298,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     DoStatement returns DoStatement
 	 *
 	 * Constraint:
-	 *     (body=IfBody expression=EXPR)
+	 *     (body=StatementBody expression=EXPR)
 	 */
 	protected void sequence_DoStatement(ISerializationContext context, DoStatement semanticObject) {
 		if (errorAcceptor != null) {
@@ -320,7 +308,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KactorsPackage.Literals.DO_STATEMENT__EXPRESSION));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getDoStatementAccess().getBodyIfBodyParserRuleCall_1_0(), semanticObject.getBody());
+		feeder.accept(grammarAccess.getDoStatementAccess().getBodyStatementBodyParserRuleCall_1_0(), semanticObject.getBody());
 		feeder.accept(grammarAccess.getDoStatementAccess().getExpressionEXPRTerminalRuleCall_3_0(), semanticObject.getExpression());
 		feeder.finish();
 	}
@@ -331,33 +319,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     ForStatement returns ForStatement
 	 *
 	 * Constraint:
-	 *     (id=LOWERCASE_ID? value=Value body=IfBody)
+	 *     (id=LOWERCASE_ID? value=Value body=StatementBody)
 	 */
 	protected void sequence_ForStatement(ISerializationContext context, ForStatement semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Group returns Group
-	 *
-	 * Constraint:
-	 *     body=Body?
-	 */
-	protected void sequence_Group(ISerializationContext context, Group semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Verb returns Group
-	 *
-	 * Constraint:
-	 *     (body=Body? actions=Actions?)
-	 */
-	protected void sequence_Group_Verb(ISerializationContext context, Group semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -376,22 +340,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
-	 *     IfBody returns IfBody
-	 *
-	 * Constraint:
-	 *     (verb=Verb | group=Group)
-	 */
-	protected void sequence_IfBody(ISerializationContext context, IfBody semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     IfStatement returns IfStatement
 	 *
 	 * Constraint:
-	 *     (expression=EXPR body=IfBody (elseIfExpression+=EXPR elseIfCall+=IfBody)* elseCall=IfBody?)
+	 *     (expression=EXPR body=StatementBody (elseIfExpression+=EXPR elseIfBody+=StatementBody)* elseCall=StatementBody?)
 	 */
 	protected void sequence_IfStatement(ISerializationContext context, IfStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -516,6 +468,42 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
+	 *     MessageBody returns Body
+	 *
+	 * Constraint:
+	 *     lists+=StatementList*
+	 */
+	protected void sequence_MessageBody(ISerializationContext context, Body semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     MessageCall returns MessageCall
+	 *
+	 * Constraint:
+	 *     (name=PathName parameters=ParameterList? actions=Actions?)
+	 */
+	protected void sequence_MessageCall(ISerializationContext context, MessageCall semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     MessageCall returns Group
+	 *
+	 * Constraint:
+	 *     (body=MessageBody? actions=Actions?)
+	 */
+	protected void sequence_MessageCall_StatementGroup(ISerializationContext context, Group semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Model returns Model
 	 *
 	 * Constraint:
@@ -532,13 +520,14 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         verb=Verb | 
-	 *         group=Group | 
+	 *         verb=MessageCall | 
+	 *         group=StatementGroup | 
 	 *         text=EMBEDDEDTEXT | 
 	 *         if=IfStatement | 
 	 *         while=WhileStatement | 
 	 *         do=DoStatement | 
-	 *         for=ForStatement
+	 *         for=ForStatement | 
+	 *         value=Value
 	 *     )
 	 */
 	protected void sequence_NextStatement(ISerializationContext context, Statement semanticObject) {
@@ -576,10 +565,12 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         name=PathName? 
+	 *         ((app?='app' | user?='user' | lib?='lib' | actor?='actor') name=PathName)? 
 	 *         (
 	 *             (
 	 *                 worldview=PathName | 
+	 *                 observable=OBSERVABLE | 
+	 *                 observables=List | 
 	 *                 label=LOWERCASE_ID | 
 	 *                 label=ID | 
 	 *                 label=STRING | 
@@ -632,6 +623,30 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
+	 *     StatementBody returns StatementBody
+	 *
+	 * Constraint:
+	 *     (verb=MessageCall | value=Value | group=StatementGroup)
+	 */
+	protected void sequence_StatementBody(ISerializationContext context, StatementBody semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     StatementGroup returns Group
+	 *
+	 * Constraint:
+	 *     body=MessageBody?
+	 */
+	protected void sequence_StatementGroup(ISerializationContext context, Group semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     StatementList returns StatementList
 	 *
 	 * Constraint:
@@ -648,13 +663,14 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         verb=Verb | 
-	 *         group=Group | 
+	 *         verb=MessageCall | 
+	 *         group=StatementGroup | 
 	 *         text=EMBEDDEDTEXT | 
 	 *         if=IfStatement | 
 	 *         while=WhileStatement | 
 	 *         do=DoStatement | 
-	 *         for=ForStatement
+	 *         for=ForStatement | 
+	 *         value=Value
 	 *     )
 	 */
 	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
@@ -761,22 +777,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
-	 *     Verb returns Verb
-	 *
-	 * Constraint:
-	 *     (name=PathName parameters=ParameterList? actions=Actions?)
-	 */
-	protected void sequence_Verb(ISerializationContext context, Verb semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     WhileStatement returns WhileStatement
 	 *
 	 * Constraint:
-	 *     (expression=EXPR body=IfBody)
+	 *     (expression=EXPR body=StatementBody)
 	 */
 	protected void sequence_WhileStatement(ISerializationContext context, WhileStatement semanticObject) {
 		if (errorAcceptor != null) {
@@ -787,7 +791,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getWhileStatementAccess().getExpressionEXPRTerminalRuleCall_1_0(), semanticObject.getExpression());
-		feeder.accept(grammarAccess.getWhileStatementAccess().getBodyIfBodyParserRuleCall_2_0(), semanticObject.getBody());
+		feeder.accept(grammarAccess.getWhileStatementAccess().getBodyStatementBodyParserRuleCall_2_0(), semanticObject.getBody());
 		feeder.finish();
 	}
 	

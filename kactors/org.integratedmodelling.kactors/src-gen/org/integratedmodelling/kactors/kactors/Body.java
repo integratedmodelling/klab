@@ -5,8 +5,6 @@ package org.integratedmodelling.kactors.kactors;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Body</b></em>'.
@@ -23,7 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface Body extends EObject
+public interface Body extends MessageBody
 {
   /**
    * Returns the value of the '<em><b>Lists</b></em>' containment reference list.

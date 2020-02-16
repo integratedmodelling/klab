@@ -13,8 +13,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.integratedmodelling.kactors.kactors.DoStatement;
-import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.StatementBody;
 
 /**
  * <!-- begin-user-doc -->
@@ -40,7 +40,7 @@ public class DoStatementImpl extends MinimalEObjectImpl.Container implements DoS
    * @generated
    * @ordered
    */
-  protected IfBody body;
+  protected StatementBody body;
 
   /**
    * The default value of the '{@link #getExpression() <em>Expression</em>}' attribute.
@@ -89,7 +89,7 @@ public class DoStatementImpl extends MinimalEObjectImpl.Container implements DoS
    * @generated
    */
   @Override
-  public IfBody getBody()
+  public StatementBody getBody()
   {
     return body;
   }
@@ -99,9 +99,9 @@ public class DoStatementImpl extends MinimalEObjectImpl.Container implements DoS
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetBody(IfBody newBody, NotificationChain msgs)
+  public NotificationChain basicSetBody(StatementBody newBody, NotificationChain msgs)
   {
-    IfBody oldBody = body;
+    StatementBody oldBody = body;
     body = newBody;
     if (eNotificationRequired())
     {
@@ -117,7 +117,7 @@ public class DoStatementImpl extends MinimalEObjectImpl.Container implements DoS
    * @generated
    */
   @Override
-  public void setBody(IfBody newBody)
+  public void setBody(StatementBody newBody)
   {
     if (newBody != body)
     {
@@ -203,7 +203,7 @@ public class DoStatementImpl extends MinimalEObjectImpl.Container implements DoS
     switch (featureID)
     {
       case KactorsPackage.DO_STATEMENT__BODY:
-        setBody((IfBody)newValue);
+        setBody((StatementBody)newValue);
         return;
       case KactorsPackage.DO_STATEMENT__EXPRESSION:
         setExpression((String)newValue);
@@ -223,7 +223,7 @@ public class DoStatementImpl extends MinimalEObjectImpl.Container implements DoS
     switch (featureID)
     {
       case KactorsPackage.DO_STATEMENT__BODY:
-        setBody((IfBody)null);
+        setBody((StatementBody)null);
         return;
       case KactorsPackage.DO_STATEMENT__EXPRESSION:
         setExpression(EXPRESSION_EDEFAULT);

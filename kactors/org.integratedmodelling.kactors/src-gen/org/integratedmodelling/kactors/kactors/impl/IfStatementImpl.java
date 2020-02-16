@@ -20,9 +20,9 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.integratedmodelling.kactors.kactors.IfBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.StatementBody;
 
 /**
  * <!-- begin-user-doc -->
@@ -35,7 +35,7 @@ import org.integratedmodelling.kactors.kactors.KactorsPackage;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getElseIfExpression <em>Else If Expression</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getElseIfCall <em>Else If Call</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getElseIfBody <em>Else If Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getElseCall <em>Else Call</em>}</li>
  * </ul>
  *
@@ -71,7 +71,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    * @ordered
    */
-  protected IfBody body;
+  protected StatementBody body;
 
   /**
    * The cached value of the '{@link #getElseIfExpression() <em>Else If Expression</em>}' attribute list.
@@ -84,14 +84,14 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   protected EList<String> elseIfExpression;
 
   /**
-   * The cached value of the '{@link #getElseIfCall() <em>Else If Call</em>}' containment reference list.
+   * The cached value of the '{@link #getElseIfBody() <em>Else If Body</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getElseIfCall()
+   * @see #getElseIfBody()
    * @generated
    * @ordered
    */
-  protected EList<IfBody> elseIfCall;
+  protected EList<StatementBody> elseIfBody;
 
   /**
    * The cached value of the '{@link #getElseCall() <em>Else Call</em>}' containment reference.
@@ -101,7 +101,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    * @ordered
    */
-  protected IfBody elseCall;
+  protected StatementBody elseCall;
 
   /**
    * <!-- begin-user-doc -->
@@ -155,7 +155,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    */
   @Override
-  public IfBody getBody()
+  public StatementBody getBody()
   {
     return body;
   }
@@ -165,9 +165,9 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetBody(IfBody newBody, NotificationChain msgs)
+  public NotificationChain basicSetBody(StatementBody newBody, NotificationChain msgs)
   {
-    IfBody oldBody = body;
+    StatementBody oldBody = body;
     body = newBody;
     if (eNotificationRequired())
     {
@@ -183,7 +183,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    */
   @Override
-  public void setBody(IfBody newBody)
+  public void setBody(StatementBody newBody)
   {
     if (newBody != body)
     {
@@ -220,13 +220,13 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    */
   @Override
-  public EList<IfBody> getElseIfCall()
+  public EList<StatementBody> getElseIfBody()
   {
-    if (elseIfCall == null)
+    if (elseIfBody == null)
     {
-      elseIfCall = new EObjectContainmentEList<IfBody>(IfBody.class, this, KactorsPackage.IF_STATEMENT__ELSE_IF_CALL);
+      elseIfBody = new EObjectContainmentEList<StatementBody>(StatementBody.class, this, KactorsPackage.IF_STATEMENT__ELSE_IF_BODY);
     }
-    return elseIfCall;
+    return elseIfBody;
   }
 
   /**
@@ -235,7 +235,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    */
   @Override
-  public IfBody getElseCall()
+  public StatementBody getElseCall()
   {
     return elseCall;
   }
@@ -245,9 +245,9 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetElseCall(IfBody newElseCall, NotificationChain msgs)
+  public NotificationChain basicSetElseCall(StatementBody newElseCall, NotificationChain msgs)
   {
-    IfBody oldElseCall = elseCall;
+    StatementBody oldElseCall = elseCall;
     elseCall = newElseCall;
     if (eNotificationRequired())
     {
@@ -263,7 +263,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    */
   @Override
-  public void setElseCall(IfBody newElseCall)
+  public void setElseCall(StatementBody newElseCall)
   {
     if (newElseCall != elseCall)
     {
@@ -291,8 +291,8 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     {
       case KactorsPackage.IF_STATEMENT__BODY:
         return basicSetBody(null, msgs);
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_CALL:
-        return ((InternalEList<?>)getElseIfCall()).basicRemove(otherEnd, msgs);
+      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
+        return ((InternalEList<?>)getElseIfBody()).basicRemove(otherEnd, msgs);
       case KactorsPackage.IF_STATEMENT__ELSE_CALL:
         return basicSetElseCall(null, msgs);
     }
@@ -315,8 +315,8 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
         return getBody();
       case KactorsPackage.IF_STATEMENT__ELSE_IF_EXPRESSION:
         return getElseIfExpression();
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_CALL:
-        return getElseIfCall();
+      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
+        return getElseIfBody();
       case KactorsPackage.IF_STATEMENT__ELSE_CALL:
         return getElseCall();
     }
@@ -338,18 +338,18 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
         setExpression((String)newValue);
         return;
       case KactorsPackage.IF_STATEMENT__BODY:
-        setBody((IfBody)newValue);
+        setBody((StatementBody)newValue);
         return;
       case KactorsPackage.IF_STATEMENT__ELSE_IF_EXPRESSION:
         getElseIfExpression().clear();
         getElseIfExpression().addAll((Collection<? extends String>)newValue);
         return;
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_CALL:
-        getElseIfCall().clear();
-        getElseIfCall().addAll((Collection<? extends IfBody>)newValue);
+      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
+        getElseIfBody().clear();
+        getElseIfBody().addAll((Collection<? extends StatementBody>)newValue);
         return;
       case KactorsPackage.IF_STATEMENT__ELSE_CALL:
-        setElseCall((IfBody)newValue);
+        setElseCall((StatementBody)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -369,16 +369,16 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
         setExpression(EXPRESSION_EDEFAULT);
         return;
       case KactorsPackage.IF_STATEMENT__BODY:
-        setBody((IfBody)null);
+        setBody((StatementBody)null);
         return;
       case KactorsPackage.IF_STATEMENT__ELSE_IF_EXPRESSION:
         getElseIfExpression().clear();
         return;
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_CALL:
-        getElseIfCall().clear();
+      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
+        getElseIfBody().clear();
         return;
       case KactorsPackage.IF_STATEMENT__ELSE_CALL:
-        setElseCall((IfBody)null);
+        setElseCall((StatementBody)null);
         return;
     }
     super.eUnset(featureID);
@@ -400,8 +400,8 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
         return body != null;
       case KactorsPackage.IF_STATEMENT__ELSE_IF_EXPRESSION:
         return elseIfExpression != null && !elseIfExpression.isEmpty();
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_CALL:
-        return elseIfCall != null && !elseIfCall.isEmpty();
+      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
+        return elseIfBody != null && !elseIfBody.isEmpty();
       case KactorsPackage.IF_STATEMENT__ELSE_CALL:
         return elseCall != null;
     }

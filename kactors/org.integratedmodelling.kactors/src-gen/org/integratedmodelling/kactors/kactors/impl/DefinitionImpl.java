@@ -21,9 +21,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
-import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.MessageBody;
 
 /**
  * <!-- begin-user-doc -->
@@ -91,7 +91,7 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
    * @generated
    * @ordered
    */
-  protected Body body;
+  protected MessageBody body;
 
   /**
    * <!-- begin-user-doc -->
@@ -210,7 +210,7 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
    * @generated
    */
   @Override
-  public Body getBody()
+  public MessageBody getBody()
   {
     return body;
   }
@@ -220,9 +220,9 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetBody(Body newBody, NotificationChain msgs)
+  public NotificationChain basicSetBody(MessageBody newBody, NotificationChain msgs)
   {
-    Body oldBody = body;
+    MessageBody oldBody = body;
     body = newBody;
     if (eNotificationRequired())
     {
@@ -238,7 +238,7 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
    * @generated
    */
   @Override
-  public void setBody(Body newBody)
+  public void setBody(MessageBody newBody)
   {
     if (newBody != body)
     {
@@ -318,7 +318,7 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
         setArguments((ArgumentDeclaration)newValue);
         return;
       case KactorsPackage.DEFINITION__BODY:
-        setBody((Body)newValue);
+        setBody((MessageBody)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -344,7 +344,7 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
         setArguments((ArgumentDeclaration)null);
         return;
       case KactorsPackage.DEFINITION__BODY:
-        setBody((Body)null);
+        setBody((MessageBody)null);
         return;
     }
     super.eUnset(featureID);

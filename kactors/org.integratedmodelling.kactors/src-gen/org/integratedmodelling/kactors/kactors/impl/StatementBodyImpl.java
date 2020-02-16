@@ -12,47 +12,38 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.StatementBody;
+import org.integratedmodelling.kactors.kactors.StatementGroup;
 import org.integratedmodelling.kactors.kactors.Value;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>For Statement</b></em>'.
+ * An implementation of the model object '<em><b>Statement Body</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ForStatementImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ForStatementImpl#getValue <em>Value</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ForStatementImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementBodyImpl#getVerb <em>Verb</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementBodyImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementBodyImpl#getGroup <em>Group</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class ForStatementImpl extends MinimalEObjectImpl.Container implements ForStatement
+public class StatementBodyImpl extends MinimalEObjectImpl.Container implements StatementBody
 {
   /**
-   * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+   * The cached value of the '{@link #getVerb() <em>Verb</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getId()
+   * @see #getVerb()
    * @generated
    * @ordered
    */
-  protected static final String ID_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getId()
-   * @generated
-   * @ordered
-   */
-  protected String id = ID_EDEFAULT;
+  protected MessageCall verb;
 
   /**
    * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
@@ -65,21 +56,21 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
   protected Value value;
 
   /**
-   * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
+   * The cached value of the '{@link #getGroup() <em>Group</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getBody()
+   * @see #getGroup()
    * @generated
    * @ordered
    */
-  protected StatementBody body;
+  protected StatementGroup group;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ForStatementImpl()
+  protected StatementBodyImpl()
   {
     super();
   }
@@ -92,7 +83,7 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
   @Override
   protected EClass eStaticClass()
   {
-    return KactorsPackage.Literals.FOR_STATEMENT;
+    return KactorsPackage.Literals.STATEMENT_BODY;
   }
 
   /**
@@ -101,9 +92,9 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
    * @generated
    */
   @Override
-  public String getId()
+  public MessageCall getVerb()
   {
-    return id;
+    return verb;
   }
 
   /**
@@ -111,13 +102,38 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
    * <!-- end-user-doc -->
    * @generated
    */
-  @Override
-  public void setId(String newId)
+  public NotificationChain basicSetVerb(MessageCall newVerb, NotificationChain msgs)
   {
-    String oldId = id;
-    id = newId;
+    MessageCall oldVerb = verb;
+    verb = newVerb;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.FOR_STATEMENT__ID, oldId, id));
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_BODY__VERB, oldVerb, newVerb);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setVerb(MessageCall newVerb)
+  {
+    if (newVerb != verb)
+    {
+      NotificationChain msgs = null;
+      if (verb != null)
+        msgs = ((InternalEObject)verb).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_BODY__VERB, null, msgs);
+      if (newVerb != null)
+        msgs = ((InternalEObject)newVerb).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_BODY__VERB, null, msgs);
+      msgs = basicSetVerb(newVerb, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_BODY__VERB, newVerb, newVerb));
   }
 
   /**
@@ -142,7 +158,7 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
     value = newValue;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.FOR_STATEMENT__VALUE, oldValue, newValue);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_BODY__VALUE, oldValue, newValue);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -160,14 +176,14 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
     {
       NotificationChain msgs = null;
       if (value != null)
-        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.FOR_STATEMENT__VALUE, null, msgs);
+        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_BODY__VALUE, null, msgs);
       if (newValue != null)
-        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.FOR_STATEMENT__VALUE, null, msgs);
+        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_BODY__VALUE, null, msgs);
       msgs = basicSetValue(newValue, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.FOR_STATEMENT__VALUE, newValue, newValue));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_BODY__VALUE, newValue, newValue));
   }
 
   /**
@@ -176,9 +192,9 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
    * @generated
    */
   @Override
-  public StatementBody getBody()
+  public StatementGroup getGroup()
   {
-    return body;
+    return group;
   }
 
   /**
@@ -186,13 +202,13 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetBody(StatementBody newBody, NotificationChain msgs)
+  public NotificationChain basicSetGroup(StatementGroup newGroup, NotificationChain msgs)
   {
-    StatementBody oldBody = body;
-    body = newBody;
+    StatementGroup oldGroup = group;
+    group = newGroup;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.FOR_STATEMENT__BODY, oldBody, newBody);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_BODY__GROUP, oldGroup, newGroup);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -204,20 +220,20 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
    * @generated
    */
   @Override
-  public void setBody(StatementBody newBody)
+  public void setGroup(StatementGroup newGroup)
   {
-    if (newBody != body)
+    if (newGroup != group)
     {
       NotificationChain msgs = null;
-      if (body != null)
-        msgs = ((InternalEObject)body).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.FOR_STATEMENT__BODY, null, msgs);
-      if (newBody != null)
-        msgs = ((InternalEObject)newBody).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.FOR_STATEMENT__BODY, null, msgs);
-      msgs = basicSetBody(newBody, msgs);
+      if (group != null)
+        msgs = ((InternalEObject)group).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_BODY__GROUP, null, msgs);
+      if (newGroup != null)
+        msgs = ((InternalEObject)newGroup).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_BODY__GROUP, null, msgs);
+      msgs = basicSetGroup(newGroup, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.FOR_STATEMENT__BODY, newBody, newBody));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_BODY__GROUP, newGroup, newGroup));
   }
 
   /**
@@ -230,10 +246,12 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
   {
     switch (featureID)
     {
-      case KactorsPackage.FOR_STATEMENT__VALUE:
+      case KactorsPackage.STATEMENT_BODY__VERB:
+        return basicSetVerb(null, msgs);
+      case KactorsPackage.STATEMENT_BODY__VALUE:
         return basicSetValue(null, msgs);
-      case KactorsPackage.FOR_STATEMENT__BODY:
-        return basicSetBody(null, msgs);
+      case KactorsPackage.STATEMENT_BODY__GROUP:
+        return basicSetGroup(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -248,12 +266,12 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
   {
     switch (featureID)
     {
-      case KactorsPackage.FOR_STATEMENT__ID:
-        return getId();
-      case KactorsPackage.FOR_STATEMENT__VALUE:
+      case KactorsPackage.STATEMENT_BODY__VERB:
+        return getVerb();
+      case KactorsPackage.STATEMENT_BODY__VALUE:
         return getValue();
-      case KactorsPackage.FOR_STATEMENT__BODY:
-        return getBody();
+      case KactorsPackage.STATEMENT_BODY__GROUP:
+        return getGroup();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -268,14 +286,14 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
   {
     switch (featureID)
     {
-      case KactorsPackage.FOR_STATEMENT__ID:
-        setId((String)newValue);
+      case KactorsPackage.STATEMENT_BODY__VERB:
+        setVerb((MessageCall)newValue);
         return;
-      case KactorsPackage.FOR_STATEMENT__VALUE:
+      case KactorsPackage.STATEMENT_BODY__VALUE:
         setValue((Value)newValue);
         return;
-      case KactorsPackage.FOR_STATEMENT__BODY:
-        setBody((StatementBody)newValue);
+      case KactorsPackage.STATEMENT_BODY__GROUP:
+        setGroup((StatementGroup)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -291,14 +309,14 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
   {
     switch (featureID)
     {
-      case KactorsPackage.FOR_STATEMENT__ID:
-        setId(ID_EDEFAULT);
+      case KactorsPackage.STATEMENT_BODY__VERB:
+        setVerb((MessageCall)null);
         return;
-      case KactorsPackage.FOR_STATEMENT__VALUE:
+      case KactorsPackage.STATEMENT_BODY__VALUE:
         setValue((Value)null);
         return;
-      case KactorsPackage.FOR_STATEMENT__BODY:
-        setBody((StatementBody)null);
+      case KactorsPackage.STATEMENT_BODY__GROUP:
+        setGroup((StatementGroup)null);
         return;
     }
     super.eUnset(featureID);
@@ -314,31 +332,14 @@ public class ForStatementImpl extends MinimalEObjectImpl.Container implements Fo
   {
     switch (featureID)
     {
-      case KactorsPackage.FOR_STATEMENT__ID:
-        return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-      case KactorsPackage.FOR_STATEMENT__VALUE:
+      case KactorsPackage.STATEMENT_BODY__VERB:
+        return verb != null;
+      case KactorsPackage.STATEMENT_BODY__VALUE:
         return value != null;
-      case KactorsPackage.FOR_STATEMENT__BODY:
-        return body != null;
+      case KactorsPackage.STATEMENT_BODY__GROUP:
+        return group != null;
     }
     return super.eIsSet(featureID);
   }
 
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (id: ");
-    result.append(id);
-    result.append(')');
-    return result.toString();
-  }
-
-} //ForStatementImpl
+} //StatementBodyImpl

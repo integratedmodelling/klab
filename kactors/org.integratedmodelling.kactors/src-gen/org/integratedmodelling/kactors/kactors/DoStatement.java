@@ -29,12 +29,12 @@ public interface DoStatement extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Body</em>' containment reference.
-   * @see #setBody(IfBody)
+   * @see #setBody(StatementBody)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getDoStatement_Body()
    * @model containment="true"
    * @generated
    */
-  IfBody getBody();
+  StatementBody getBody();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.DoStatement#getBody <em>Body</em>}' containment reference.
@@ -44,7 +44,7 @@ public interface DoStatement extends EObject
    * @see #getBody()
    * @generated
    */
-  void setBody(IfBody value);
+  void setBody(StatementBody value);
 
   /**
    * Returns the value of the '<em><b>Expression</b></em>' attribute.

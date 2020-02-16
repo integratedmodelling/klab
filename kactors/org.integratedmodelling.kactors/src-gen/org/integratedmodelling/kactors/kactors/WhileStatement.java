@@ -51,12 +51,12 @@ public interface WhileStatement extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Body</em>' containment reference.
-   * @see #setBody(IfBody)
+   * @see #setBody(StatementBody)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getWhileStatement_Body()
    * @model containment="true"
    * @generated
    */
-  IfBody getBody();
+  StatementBody getBody();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.WhileStatement#getBody <em>Body</em>}' containment reference.
@@ -66,6 +66,6 @@ public interface WhileStatement extends EObject
    * @see #getBody()
    * @generated
    */
-  void setBody(IfBody value);
+  void setBody(StatementBody value);
 
 } // WhileStatement
