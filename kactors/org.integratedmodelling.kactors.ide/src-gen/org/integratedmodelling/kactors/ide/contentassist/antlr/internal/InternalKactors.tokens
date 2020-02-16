@@ -8,7 +8,7 @@
 ','=37
 '-'=68
 '->'=57
-'.'=24
+'.'=26
 '/'=33
 ':'=48
 ';'=22
@@ -32,8 +32,8 @@
 'do'=54
 'e'=29
 'else'=52
-'exclusive'=23
-'false'=26
+'exclusive'=25
+'false'=24
 'for'=55
 'if'=51
 'import'=36
@@ -47,7 +47,7 @@
 'observable'=39
 'permissions'=42
 'to'=58
-'true'=25
+'true'=23
 'unknown'=74
 'urn:klab:'=59
 'user'=70

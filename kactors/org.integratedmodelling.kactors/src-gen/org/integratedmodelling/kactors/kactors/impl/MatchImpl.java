@@ -30,6 +30,7 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getBoolean <em>Boolean</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isRegexp <em>Regexp</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isObservable <em>Observable</em>}</li>
@@ -82,6 +83,26 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @ordered
    */
   protected StatementList body;
+
+  /**
+   * The default value of the '{@link #getBoolean() <em>Boolean</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getBoolean()
+   * @generated
+   * @ordered
+   */
+  protected static final String BOOLEAN_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getBoolean() <em>Boolean</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getBoolean()
+   * @generated
+   * @ordered
+   */
+  protected String boolean_ = BOOLEAN_EDEFAULT;
 
   /**
    * The default value of the '{@link #isType() <em>Type</em>}' attribute.
@@ -457,6 +478,31 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__BODY, newBody, newBody));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getBoolean()
+  {
+    return boolean_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setBoolean(String newBoolean)
+  {
+    String oldBoolean = boolean_;
+    boolean_ = newBoolean;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__BOOLEAN, oldBoolean, boolean_));
   }
 
   /**
@@ -1076,6 +1122,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return isId();
       case KactorsPackage.MATCH__BODY:
         return getBody();
+      case KactorsPackage.MATCH__BOOLEAN:
+        return getBoolean();
       case KactorsPackage.MATCH__TYPE:
         return isType();
       case KactorsPackage.MATCH__REGEXP:
@@ -1129,6 +1177,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return;
       case KactorsPackage.MATCH__BODY:
         setBody((StatementList)newValue);
+        return;
+      case KactorsPackage.MATCH__BOOLEAN:
+        setBoolean((String)newValue);
         return;
       case KactorsPackage.MATCH__TYPE:
         setType((Boolean)newValue);
@@ -1201,6 +1252,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
       case KactorsPackage.MATCH__BODY:
         setBody((StatementList)null);
         return;
+      case KactorsPackage.MATCH__BOOLEAN:
+        setBoolean(BOOLEAN_EDEFAULT);
+        return;
       case KactorsPackage.MATCH__TYPE:
         setType(TYPE_EDEFAULT);
         return;
@@ -1270,6 +1324,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return id != ID_EDEFAULT;
       case KactorsPackage.MATCH__BODY:
         return body != null;
+      case KactorsPackage.MATCH__BOOLEAN:
+        return BOOLEAN_EDEFAULT == null ? boolean_ != null : !BOOLEAN_EDEFAULT.equals(boolean_);
       case KactorsPackage.MATCH__TYPE:
         return type != TYPE_EDEFAULT;
       case KactorsPackage.MATCH__REGEXP:
@@ -1321,6 +1377,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (id: ");
     result.append(id);
+    result.append(", boolean: ");
+    result.append(boolean_);
     result.append(", type: ");
     result.append(type);
     result.append(", regexp: ");

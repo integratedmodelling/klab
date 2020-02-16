@@ -33,36 +33,16 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getStatement <em>Statement</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getStatements <em>Statements</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getMatch <em>Match</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getMatches <em>Matches</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getStatement <em>Statement</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActionsImpl#getStatements <em>Statements</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
 {
-  /**
-   * The cached value of the '{@link #getStatement() <em>Statement</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getStatement()
-   * @generated
-   * @ordered
-   */
-  protected Statement statement;
-
-  /**
-   * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getStatements()
-   * @generated
-   * @ordered
-   */
-  protected StatementList statements;
-
   /**
    * The cached value of the '{@link #getMatch() <em>Match</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -84,6 +64,26 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   protected EList<Match> matches;
 
   /**
+   * The cached value of the '{@link #getStatement() <em>Statement</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getStatement()
+   * @generated
+   * @ordered
+   */
+  protected Statement statement;
+
+  /**
+   * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getStatements()
+   * @generated
+   * @ordered
+   */
+  protected StatementList statements;
+
+  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -102,6 +102,71 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   protected EClass eStaticClass()
   {
     return KactorsPackage.Literals.ACTIONS;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Match getMatch()
+  {
+    return match;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMatch(Match newMatch, NotificationChain msgs)
+  {
+    Match oldMatch = match;
+    match = newMatch;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__MATCH, oldMatch, newMatch);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMatch(Match newMatch)
+  {
+    if (newMatch != match)
+    {
+      NotificationChain msgs = null;
+      if (match != null)
+        msgs = ((InternalEObject)match).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__MATCH, null, msgs);
+      if (newMatch != null)
+        msgs = ((InternalEObject)newMatch).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__MATCH, null, msgs);
+      msgs = basicSetMatch(newMatch, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__MATCH, newMatch, newMatch));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EList<Match> getMatches()
+  {
+    if (matches == null)
+    {
+      matches = new EObjectContainmentEList<Match>(Match.class, this, KactorsPackage.ACTIONS__MATCHES);
+    }
+    return matches;
   }
 
   /**
@@ -210,83 +275,18 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
    * @generated
    */
   @Override
-  public Match getMatch()
-  {
-    return match;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetMatch(Match newMatch, NotificationChain msgs)
-  {
-    Match oldMatch = match;
-    match = newMatch;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__MATCH, oldMatch, newMatch);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setMatch(Match newMatch)
-  {
-    if (newMatch != match)
-    {
-      NotificationChain msgs = null;
-      if (match != null)
-        msgs = ((InternalEObject)match).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__MATCH, null, msgs);
-      if (newMatch != null)
-        msgs = ((InternalEObject)newMatch).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTIONS__MATCH, null, msgs);
-      msgs = basicSetMatch(newMatch, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTIONS__MATCH, newMatch, newMatch));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<Match> getMatches()
-  {
-    if (matches == null)
-    {
-      matches = new EObjectContainmentEList<Match>(Match.class, this, KactorsPackage.ACTIONS__MATCHES);
-    }
-    return matches;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__STATEMENT:
-        return basicSetStatement(null, msgs);
-      case KactorsPackage.ACTIONS__STATEMENTS:
-        return basicSetStatements(null, msgs);
       case KactorsPackage.ACTIONS__MATCH:
         return basicSetMatch(null, msgs);
       case KactorsPackage.ACTIONS__MATCHES:
         return ((InternalEList<?>)getMatches()).basicRemove(otherEnd, msgs);
+      case KactorsPackage.ACTIONS__STATEMENT:
+        return basicSetStatement(null, msgs);
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        return basicSetStatements(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -301,14 +301,14 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__STATEMENT:
-        return getStatement();
-      case KactorsPackage.ACTIONS__STATEMENTS:
-        return getStatements();
       case KactorsPackage.ACTIONS__MATCH:
         return getMatch();
       case KactorsPackage.ACTIONS__MATCHES:
         return getMatches();
+      case KactorsPackage.ACTIONS__STATEMENT:
+        return getStatement();
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        return getStatements();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -324,18 +324,18 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__STATEMENT:
-        setStatement((Statement)newValue);
-        return;
-      case KactorsPackage.ACTIONS__STATEMENTS:
-        setStatements((StatementList)newValue);
-        return;
       case KactorsPackage.ACTIONS__MATCH:
         setMatch((Match)newValue);
         return;
       case KactorsPackage.ACTIONS__MATCHES:
         getMatches().clear();
         getMatches().addAll((Collection<? extends Match>)newValue);
+        return;
+      case KactorsPackage.ACTIONS__STATEMENT:
+        setStatement((Statement)newValue);
+        return;
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        setStatements((StatementList)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -351,17 +351,17 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__STATEMENT:
-        setStatement((Statement)null);
-        return;
-      case KactorsPackage.ACTIONS__STATEMENTS:
-        setStatements((StatementList)null);
-        return;
       case KactorsPackage.ACTIONS__MATCH:
         setMatch((Match)null);
         return;
       case KactorsPackage.ACTIONS__MATCHES:
         getMatches().clear();
+        return;
+      case KactorsPackage.ACTIONS__STATEMENT:
+        setStatement((Statement)null);
+        return;
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        setStatements((StatementList)null);
         return;
     }
     super.eUnset(featureID);
@@ -377,14 +377,14 @@ public class ActionsImpl extends MinimalEObjectImpl.Container implements Actions
   {
     switch (featureID)
     {
-      case KactorsPackage.ACTIONS__STATEMENT:
-        return statement != null;
-      case KactorsPackage.ACTIONS__STATEMENTS:
-        return statements != null;
       case KactorsPackage.ACTIONS__MATCH:
         return match != null;
       case KactorsPackage.ACTIONS__MATCHES:
         return matches != null && !matches.isEmpty();
+      case KactorsPackage.ACTIONS__STATEMENT:
+        return statement != null;
+      case KactorsPackage.ACTIONS__STATEMENTS:
+        return statements != null;
     }
     return super.eIsSet(featureID);
   }

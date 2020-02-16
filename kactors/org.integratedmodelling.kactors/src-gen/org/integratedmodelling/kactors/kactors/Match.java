@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getBoolean <em>Boolean</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isRegexp <em>Regexp</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isObservable <em>Observable</em>}</li>
@@ -84,6 +85,28 @@ public interface Match extends EObject
    * @generated
    */
   void setBody(StatementList value);
+
+  /**
+   * Returns the value of the '<em><b>Boolean</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Boolean</em>' attribute.
+   * @see #setBoolean(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Boolean()
+   * @model
+   * @generated
+   */
+  String getBoolean();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getBoolean <em>Boolean</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Boolean</em>' attribute.
+   * @see #getBoolean()
+   * @generated
+   */
+  void setBoolean(String value);
 
   /**
    * Returns the value of the '<em><b>Type</b></em>' attribute.

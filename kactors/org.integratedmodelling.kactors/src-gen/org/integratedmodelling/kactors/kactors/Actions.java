@@ -16,10 +16,10 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getStatement <em>Statement</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getStatements <em>Statements</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getMatch <em>Match</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getMatches <em>Matches</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getStatement <em>Statement</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Actions#getStatements <em>Statements</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActions()
@@ -28,6 +28,40 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Actions extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Match</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Match</em>' containment reference.
+   * @see #setMatch(Match)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActions_Match()
+   * @model containment="true"
+   * @generated
+   */
+  Match getMatch();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Actions#getMatch <em>Match</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Match</em>' containment reference.
+   * @see #getMatch()
+   * @generated
+   */
+  void setMatch(Match value);
+
+  /**
+   * Returns the value of the '<em><b>Matches</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Match}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Matches</em>' containment reference list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActions_Matches()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Match> getMatches();
+
   /**
    * Returns the value of the '<em><b>Statement</b></em>' containment reference.
    * <!-- begin-user-doc -->
@@ -71,39 +105,5 @@ public interface Actions extends EObject
    * @generated
    */
   void setStatements(StatementList value);
-
-  /**
-   * Returns the value of the '<em><b>Match</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Match</em>' containment reference.
-   * @see #setMatch(Match)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActions_Match()
-   * @model containment="true"
-   * @generated
-   */
-  Match getMatch();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Actions#getMatch <em>Match</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Match</em>' containment reference.
-   * @see #getMatch()
-   * @generated
-   */
-  void setMatch(Match value);
-
-  /**
-   * Returns the value of the '<em><b>Matches</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Match}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Matches</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActions_Matches()
-   * @model containment="true"
-   * @generated
-   */
-  EList<Match> getMatches();
 
 } // Actions

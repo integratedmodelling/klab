@@ -202,7 +202,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Actions returns Actions
 	 *
 	 * Constraint:
-	 *     (statement=Statement | statements=StatementList | match=Match | (matches+=Match matches+=Match*))
+	 *     (match=Match | (matches+=Match matches+=Match*) | statement=Statement | statements=StatementList)
 	 */
 	protected void sequence_Actions(ISerializationContext context, Actions semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -445,6 +445,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 * Constraint:
 	 *     (
 	 *         (id?=LOWERCASE_ID body=StatementList) | 
+	 *         ((boolean='true' | boolean='false') body=StatementList) | 
 	 *         (type?=CAMELCASE_ID body=StatementList) | 
 	 *         (regexp?=REGEXP body=StatementList) | 
 	 *         (observable?=OBSERVABLE body=StatementList) | 

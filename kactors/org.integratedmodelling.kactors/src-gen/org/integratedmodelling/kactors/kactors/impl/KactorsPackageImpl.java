@@ -1157,7 +1157,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getActions_Statement()
+  public EReference getActions_Match()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(0);
   }
@@ -1168,7 +1168,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getActions_Statements()
+  public EReference getActions_Matches()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(1);
   }
@@ -1179,7 +1179,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getActions_Match()
+  public EReference getActions_Statement()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(2);
   }
@@ -1190,7 +1190,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getActions_Matches()
+  public EReference getActions_Statements()
   {
     return (EReference)actionsEClass.getEStructuralFeatures().get(3);
   }
@@ -1234,7 +1234,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Type()
+  public EAttribute getMatch_Boolean()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(2);
   }
@@ -1245,7 +1245,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Regexp()
+  public EAttribute getMatch_Type()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(3);
   }
@@ -1256,7 +1256,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Observable()
+  public EAttribute getMatch_Regexp()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(4);
   }
@@ -1267,7 +1267,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Literal()
+  public EAttribute getMatch_Observable()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(5);
   }
@@ -1278,7 +1278,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Text()
+  public EAttribute getMatch_Literal()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(6);
   }
@@ -1289,9 +1289,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMatch_Arguments()
+  public EAttribute getMatch_Text()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(7);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1300,7 +1300,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMatch_Int0()
+  public EReference getMatch_Arguments()
   {
     return (EReference)matchEClass.getEStructuralFeatures().get(8);
   }
@@ -1311,9 +1311,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getMatch_Int0()
+  {
+    return (EReference)matchEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getMatch_LeftLimit()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -1324,7 +1335,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMatch_Int1()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(10);
+    return (EReference)matchEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -1335,7 +1346,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_RightLimit()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -1346,7 +1357,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMatch_Set()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(12);
+    return (EReference)matchEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -1357,7 +1368,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMatch_Quantity()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(13);
+    return (EReference)matchEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -1368,7 +1379,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMatch_Date()
   {
-    return (EReference)matchEClass.getEStructuralFeatures().get(14);
+    return (EReference)matchEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -1379,7 +1390,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Expr()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(15);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -1390,7 +1401,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Nodata()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(16);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -1401,7 +1412,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Star()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(17);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -1412,7 +1423,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Anything()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(18);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(19);
   }
 
   /**
@@ -2859,14 +2870,15 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(forStatementEClass, FOR_STATEMENT__BODY);
 
     actionsEClass = createEClass(ACTIONS);
-    createEReference(actionsEClass, ACTIONS__STATEMENT);
-    createEReference(actionsEClass, ACTIONS__STATEMENTS);
     createEReference(actionsEClass, ACTIONS__MATCH);
     createEReference(actionsEClass, ACTIONS__MATCHES);
+    createEReference(actionsEClass, ACTIONS__STATEMENT);
+    createEReference(actionsEClass, ACTIONS__STATEMENTS);
 
     matchEClass = createEClass(MATCH);
     createEAttribute(matchEClass, MATCH__ID);
     createEReference(matchEClass, MATCH__BODY);
+    createEAttribute(matchEClass, MATCH__BOOLEAN);
     createEAttribute(matchEClass, MATCH__TYPE);
     createEAttribute(matchEClass, MATCH__REGEXP);
     createEAttribute(matchEClass, MATCH__OBSERVABLE);
@@ -3148,14 +3160,15 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getForStatement_Body(), this.getStatementBody(), null, "body", null, 0, 1, ForStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(actionsEClass, Actions.class, "Actions", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getActions_Statement(), this.getStatement(), null, "statement", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getActions_Statements(), this.getStatementList(), null, "statements", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Match(), this.getMatch(), null, "match", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActions_Matches(), this.getMatch(), null, "matches", null, 0, -1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActions_Statement(), this.getStatement(), null, "statement", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActions_Statements(), this.getStatementList(), null, "statements", null, 0, 1, Actions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(matchEClass, Match.class, "Match", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMatch_Id(), ecorePackage.getEBoolean(), "id", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_Body(), this.getStatementList(), null, "body", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMatch_Boolean(), ecorePackage.getEString(), "boolean", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Type(), ecorePackage.getEBoolean(), "type", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Regexp(), ecorePackage.getEBoolean(), "regexp", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Observable(), ecorePackage.getEBoolean(), "observable", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

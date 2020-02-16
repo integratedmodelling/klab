@@ -26,8 +26,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected AbstractElementAlias match_Classifier_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_Classifier_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q;
-	protected AbstractElementAlias match_Match_ExclusiveKeyword_7_1_1_q;
-	protected AbstractElementAlias match_Match_ExclusiveKeyword_7_4_1_q;
+	protected AbstractElementAlias match_Match_ExclusiveKeyword_8_1_1_q;
+	protected AbstractElementAlias match_Match_ExclusiveKeyword_8_4_1_q;
 	protected AbstractElementAlias match_MessageCall_SemicolonKeyword_1_1_q;
 	protected AbstractElementAlias match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
@@ -42,8 +42,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 		match_Classifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierAccess().getExclusiveKeyword_1_1_1());
 		match_Classifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierAccess().getExclusiveKeyword_1_4_1());
 		match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q = new AlternativeAlias(false, true, new TokenAlias(false, false, grammarAccess.getDateAccess().getADKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getDateAccess().getCEKeyword_1_1()));
-		match_Match_ExclusiveKeyword_7_1_1_q = new TokenAlias(false, true, grammarAccess.getMatchAccess().getExclusiveKeyword_7_1_1());
-		match_Match_ExclusiveKeyword_7_4_1_q = new TokenAlias(false, true, grammarAccess.getMatchAccess().getExclusiveKeyword_7_4_1());
+		match_Match_ExclusiveKeyword_8_1_1_q = new TokenAlias(false, true, grammarAccess.getMatchAccess().getExclusiveKeyword_8_1_1());
+		match_Match_ExclusiveKeyword_8_4_1_q = new TokenAlias(false, true, grammarAccess.getMatchAccess().getExclusiveKeyword_8_4_1());
 		match_MessageCall_SemicolonKeyword_1_1_q = new TokenAlias(false, true, grammarAccess.getMessageCallAccess().getSemicolonKeyword_1_1());
 		match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getLeftParenthesisKeyword_0_0_1_0()), new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getRightParenthesisKeyword_0_0_1_2()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
@@ -145,10 +145,10 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_Classifier_ExclusiveKeyword_1_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q.equals(syntax))
 				emit_Date___ADKeyword_1_0_or_CEKeyword_1_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Match_ExclusiveKeyword_7_1_1_q.equals(syntax))
-				emit_Match_ExclusiveKeyword_7_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Match_ExclusiveKeyword_7_4_1_q.equals(syntax))
-				emit_Match_ExclusiveKeyword_7_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Match_ExclusiveKeyword_8_1_1_q.equals(syntax))
+				emit_Match_ExclusiveKeyword_8_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Match_ExclusiveKeyword_8_4_1_q.equals(syntax))
+				emit_Match_ExclusiveKeyword_8_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_MessageCall_SemicolonKeyword_1_1_q.equals(syntax))
 				emit_MessageCall_SemicolonKeyword_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q.equals(syntax))
@@ -216,7 +216,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * This ambiguous syntax occurs at:
 	 *     int0=Number (ambiguity) 'to' int1=Number
 	 */
-	protected void emit_Match_ExclusiveKeyword_7_1_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_Match_ExclusiveKeyword_8_1_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
@@ -227,7 +227,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * This ambiguous syntax occurs at:
 	 *     int1=Number (ambiguity) '->' body=StatementList
 	 */
-	protected void emit_Match_ExclusiveKeyword_7_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_Match_ExclusiveKeyword_8_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
