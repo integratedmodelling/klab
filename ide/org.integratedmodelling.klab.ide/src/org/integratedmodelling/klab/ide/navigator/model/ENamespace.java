@@ -19,9 +19,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
-import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.utils.Pair;
 
