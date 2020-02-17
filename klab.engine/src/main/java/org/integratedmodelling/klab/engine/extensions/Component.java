@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
@@ -427,6 +428,18 @@ public class Component implements IComponent {
 
 	@Override
 	public IResource getLocalResource(String urn) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<IBehavior> getBehaviors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<IBehavior> getApps() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -259,7 +259,7 @@ public class ResolutionScope implements IResolutionScope {
 	}
 
 	private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
-		this.coverage = Coverage.full(Scale.create(observer.getBehavior().getExtents(monitor)));
+		this.coverage = Coverage.full(Scale.create(observer.getContextualization().getExtents(monitor)));
 		this.scenarios.addAll(scenarios);
 		this.resolutionNamespace = observer.getNamespace();
 		this.observer = observer;
@@ -455,8 +455,8 @@ public class ResolutionScope implements IResolutionScope {
 		ret.observer = observer;
 		ret.resolutionNamespace = (Namespace) observer.getNamespace();
 
-		if (observer.getBehavior().hasScale()) {
-			ret = new ResolutionScope(Scale.create(observer.getBehavior().getExtents(monitor)), 1.0, ret, false);
+		if (observer.getContextualization().hasScale()) {
+			ret = new ResolutionScope(Scale.create(observer.getContextualization().getExtents(monitor)), 1.0, ret, false);
 		} else {
 			ret.coverage = new Coverage(this.coverage);
 			ret.coverage.setCoverage(1.0);

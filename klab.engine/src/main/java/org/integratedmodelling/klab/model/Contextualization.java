@@ -15,14 +15,14 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IActiveKimObject;
-import org.integratedmodelling.klab.api.model.IBehavior;
+import org.integratedmodelling.klab.api.model.IContextualization;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
-public class Behavior implements IBehavior {
+public class Contextualization implements IContextualization {
 
 	List<IAction> actions = new ArrayList<>();
 	List<IExtent> extents;
@@ -30,7 +30,7 @@ public class Behavior implements IBehavior {
 	boolean spatial;
 	boolean temporal;
 
-	public Behavior(IKimBehavior behavior, IActiveKimObject model) {
+	public Contextualization(IKimBehavior behavior, IActiveKimObject model) {
 		this.statement = behavior;
 		if (behavior != null) {
 			for (IKimAction action : behavior) {

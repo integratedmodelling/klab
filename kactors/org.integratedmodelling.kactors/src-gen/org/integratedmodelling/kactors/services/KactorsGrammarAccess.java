@@ -1037,6 +1037,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//// a sequence of actions after a verb is sequential only if comma-separated. No match mean
 		//// "upon successful firing" (i.e. firing not null, false or error).
+		//// Don't switch the order or firing statements will take over the matches and not parse
 		//Actions:
 		//	match=Match |
 		//	'(' matches+=Match matches+=Match* ')' | statement=Statement |
@@ -3638,6 +3639,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//// a sequence of actions after a verb is sequential only if comma-separated. No match mean
 	//// "upon successful firing" (i.e. firing not null, false or error).
+	//// Don't switch the order or firing statements will take over the matches and not parse
 	//Actions:
 	//	match=Match |
 	//	'(' matches+=Match matches+=Match* ')' | statement=Statement |

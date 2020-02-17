@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.templates.KimTemplates;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -198,6 +199,18 @@ public class Project implements IProject {
 				return Resources.INSTANCE.resolveResource(u);
 			}
 		}
+		return null;
+	}
+
+	@Override
+	public List<IBehavior> getBehaviors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<IBehavior> getApps() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

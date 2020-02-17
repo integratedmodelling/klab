@@ -308,7 +308,7 @@ public class Unit implements IUnit {
 		/*
 		 * Contextualize the passed unit and find the base unit that matches it
 		 */
-		Contextualization contextualization = Units.INSTANCE.getContextualization(observable, scale, null);
+		UnitContextualization contextualization = Units.INSTANCE.getContextualization(observable, scale, null);
 
 		IUnit matching = null;
 		for (IUnit unit : contextualization.getCandidateUnits()) {

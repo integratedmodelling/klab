@@ -27,6 +27,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- Rename model's IBehavior to IContextualization to free up IBehavior for the product 
+  of parsing an actor specification. Change all the implementations and accessors too.
 - Implement API for modification logging as part of provenance model with provenance nodes
    having getActions() -> List<IActivity>. This will be used to ensure recomputation of 
    artifacts whose dependencies have changed during the latest transition.

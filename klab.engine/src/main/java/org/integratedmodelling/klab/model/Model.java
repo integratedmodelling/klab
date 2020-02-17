@@ -33,7 +33,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
+import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -74,7 +74,7 @@ public class Model extends KimObject implements IModel {
 	private List<IObservable> dependencies = new ArrayList<>();
 	private Map<String, IObservable> attributeObservables = new HashMap<>();
 	private Namespace namespace;
-	private Behavior behavior;
+	private Contextualization contextualization;
 	private List<IContextualizable> resources = new ArrayList<>();
 	private boolean instantiator;
 	private boolean reinterpreter;
@@ -279,12 +279,12 @@ public class Model extends KimObject implements IModel {
 			}
 		}
 
-		this.behavior = new Behavior(model.getBehavior(), this);
+		this.contextualization = new Contextualization(model.getBehavior(), this);
 
 		/*
 		 * post-process the actions so that any accessory variable is tagged as such
 		 */
-		for (IAction action : this.behavior) {
+		for (IAction action : this.contextualization) {
 			for (IContextualizable ct : action.getComputation()) {
 				if (ct.getTargetId() != null) {
 					if (isKnownDependency(ct.getTargetId())) {
@@ -310,7 +310,7 @@ public class Model extends KimObject implements IModel {
 		/*
 		 * validate all actions
 		 */
-		for (IAction action : this.behavior) {
+		for (IAction action : this.contextualization) {
 			validateAction(action, monitor);
 		}
 
@@ -494,7 +494,7 @@ public class Model extends KimObject implements IModel {
 				return;
 			}
 
-			Contextualization contextualization = Units.INSTANCE.getContextualization(baseUnit, this.geometry,
+			UnitContextualization contextualization = Units.INSTANCE.getContextualization(baseUnit, this.geometry,
 					getExtentConstraints(observable, monitor));
 
 			/*
@@ -633,7 +633,7 @@ public class Model extends KimObject implements IModel {
 		this.derived = true;
 		this.id = mainObservable.getName() + "_derived";
 		this.namespace = scope.getResolutionNamespace();
-		this.behavior = new Behavior(null, this);
+		this.contextualization = new Contextualization(null, this);
 		this.observables.add(mainObservable);
 		this.dependencies.addAll(candidateObservable.getObservables());
 		if (candidateObservable.getComputation() != null) {
@@ -985,8 +985,8 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public Behavior getBehavior() {
-		return behavior;
+	public Contextualization getContextualization() {
+		return contextualization;
 	}
 
 	@Override
@@ -1010,8 +1010,8 @@ public class Model extends KimObject implements IModel {
 
 			try {
 				Collection<IExtent> extents = new ArrayList<>();
-				if (behavior != null) {
-					extents.addAll(behavior.getExtents(monitor));
+				if (contextualization != null) {
+					extents.addAll(contextualization.getExtents(monitor));
 					for (IExtent extent : extents) {
 						dims.add(extent.getType());
 					}
@@ -1076,7 +1076,7 @@ public class Model extends KimObject implements IModel {
 			ret.add(res);
 		}
 		for (Trigger trigger : Trigger.values()) {
-			for (IAction action : behavior.getActions(trigger)) {
+			for (IAction action : contextualization.getActions(trigger)) {
 				for (IContextualizable resource : action.getComputation()) {
 					ComputableResource res = ((ComputableResource) resource).copy();
 					if (parameters.size() > 0) {
