@@ -1,15 +1,14 @@
 package org.integratedmodelling.kactors.model;
 
-import org.integratedmodelling.kactors.api.IKactorsApplication;
+import org.integratedmodelling.kactors.api.IKActorBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 
-public enum Kactors {
+public enum KActors {
 
 	INSTANCE;
 	
-
-	public IKactorsApplication declare(Model model) {
-		return new KactorsApplication(model);
+	public IKActorBehavior declare(Model model) {
+		return new KActorsBehavior(model);
 	}
     
 //    public IKdlDataflow declare(Model dataflow) {

@@ -35,7 +35,6 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getAlternatives_2_2_1(), "rule__Preamble__Alternatives_2_2_1");
 			builder.put(grammarAccess.getPreambleAccess().getLabelAlternatives_2_3_1_0(), "rule__Preamble__LabelAlternatives_2_3_1_0");
 			builder.put(grammarAccess.getMessageCallAccess().getAlternatives_0(), "rule__MessageCall__Alternatives_0");
-			builder.put(grammarAccess.getMessageCallAccess().getAlternatives_1(), "rule__MessageCall__Alternatives_1");
 			builder.put(grammarAccess.getStatementAccess().getAlternatives(), "rule__Statement__Alternatives");
 			builder.put(grammarAccess.getNextStatementAccess().getAlternatives_1(), "rule__NextStatement__Alternatives_1");
 			builder.put(grammarAccess.getStatementBodyAccess().getAlternatives(), "rule__StatementBody__Alternatives");
@@ -98,7 +97,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMessageCallAccess().getGroup(), "rule__MessageCall__Group__0");
 			builder.put(grammarAccess.getMessageCallAccess().getGroup_0_0(), "rule__MessageCall__Group_0_0__0");
 			builder.put(grammarAccess.getMessageCallAccess().getGroup_0_0_1(), "rule__MessageCall__Group_0_0_1__0");
-			builder.put(grammarAccess.getMessageCallAccess().getGroup_1_0(), "rule__MessageCall__Group_1_0__0");
+			builder.put(grammarAccess.getMessageCallAccess().getGroup_1(), "rule__MessageCall__Group_1__0");
 			builder.put(grammarAccess.getStatementGroupAccess().getGroup(), "rule__StatementGroup__Group__0");
 			builder.put(grammarAccess.getStatementListAccess().getGroup(), "rule__StatementList__Group__0");
 			builder.put(grammarAccess.getNextStatementAccess().getGroup(), "rule__NextStatement__Group__0");
@@ -213,7 +212,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMessageBodyAccess().getListsAssignment_1(), "rule__MessageBody__ListsAssignment_1");
 			builder.put(grammarAccess.getMessageCallAccess().getNameAssignment_0_0_0(), "rule__MessageCall__NameAssignment_0_0_0");
 			builder.put(grammarAccess.getMessageCallAccess().getParametersAssignment_0_0_1_1(), "rule__MessageCall__ParametersAssignment_0_0_1_1");
-			builder.put(grammarAccess.getMessageCallAccess().getActionsAssignment_1_0_1(), "rule__MessageCall__ActionsAssignment_1_0_1");
+			builder.put(grammarAccess.getMessageCallAccess().getActionsAssignment_1_1(), "rule__MessageCall__ActionsAssignment_1_1");
 			builder.put(grammarAccess.getStatementGroupAccess().getBodyAssignment_2(), "rule__StatementGroup__BodyAssignment_2");
 			builder.put(grammarAccess.getStatementListAccess().getFirstAssignment_0(), "rule__StatementList__FirstAssignment_0");
 			builder.put(grammarAccess.getStatementListAccess().getNextAssignment_1(), "rule__StatementList__NextAssignment_1");

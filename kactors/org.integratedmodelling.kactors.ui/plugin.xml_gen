@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1252"?>
+<?xml version="1.0" encoding="utf-8"?>
 <?eclipse version="3.0"?>
 <plugin>
 	<extension
@@ -207,7 +207,7 @@
 	<extension point="org.eclipse.core.contenttype.contentTypes">
 		<content-type
 			base-type="org.eclipse.core.runtime.text"
-			file-extensions="kactors"
+			file-extensions="kactor"
 			id="org.integratedmodelling.kactors.Kactors.contenttype"
 			name="Kactors File"
 			priority="normal">
@@ -218,13 +218,13 @@
 		point="org.eclipse.emf.ecore.extension_parser">
 		<parser
 			class="org.integratedmodelling.kactors.ui.KactorsExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
-			type="kactors">
+			type="kactor">
 		</parser>
 	</extension>
 	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
 		<resourceServiceProvider
 			class="org.integratedmodelling.kactors.ui.KactorsExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
-			uriExtension="kactors">
+			uriExtension="kactor">
 		</resourceServiceProvider>
 	</extension>
 	<!-- marker definitions for org.integratedmodelling.kactors.Kactors -->
@@ -261,7 +261,7 @@
 	<extension point="org.eclipse.xtext.builder.participant">
 		<participant
 			class="org.integratedmodelling.kactors.ui.KactorsExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
-			fileExtensions="kactors"/>
+			fileExtensions="kactor"/>
 	</extension>
 	<extension point="org.eclipse.ui.preferencePages">
 		<page
@@ -404,7 +404,7 @@
 	<extension point="org.eclipse.compare.contentViewers">
 		<viewer id="org.integratedmodelling.kactors.Kactors.compare.contentViewers"
 			class="org.integratedmodelling.kactors.ui.KactorsExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-			extensions="kactors">
+			extensions="kactor">
 		</viewer>
 		<contentTypeBinding
 			contentTypeId="org.integratedmodelling.kactors.Kactors.contenttype"
@@ -413,7 +413,7 @@
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer id="org.integratedmodelling.kactors.Kactors.compare.contentMergeViewers"
 			class="org.integratedmodelling.kactors.ui.KactorsExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-			extensions="kactors" label="Kactors Compare">
+			extensions="kactor" label="Kactors Compare">
 		</viewer>
 		<contentTypeBinding
 			contentTypeId="org.integratedmodelling.kactors.Kactors.contenttype"
@@ -422,12 +422,12 @@
 	<extension point="org.eclipse.ui.editors.documentProviders">
 		<provider id="org.integratedmodelling.kactors.Kactors.editors.documentProviders"
 			class="org.integratedmodelling.kactors.ui.KactorsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-			extensions="kactors">
+			extensions="kactor">
 		</provider>
 	</extension>
 	<extension point="org.eclipse.team.core.fileTypes">
 		<fileTypes
-			extension="kactors"
+			extension="kactor"
 			type="text">
 		</fileTypes>
 	</extension>

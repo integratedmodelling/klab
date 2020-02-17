@@ -496,18 +496,16 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cParametersParameterListParserRuleCall_0_0_1_1_0 = (RuleCall)cParametersAssignment_0_0_1_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_0_0_1_2 = (Keyword)cGroup_0_0_1.eContents().get(2);
 		private final RuleCall cStatementGroupParserRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
-		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Group cGroup_1_0 = (Group)cAlternatives_1.eContents().get(0);
-		private final Keyword cColonKeyword_1_0_0 = (Keyword)cGroup_1_0.eContents().get(0);
-		private final Assignment cActionsAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
-		private final RuleCall cActionsActionsParserRuleCall_1_0_1_0 = (RuleCall)cActionsAssignment_1_0_1.eContents().get(0);
-		private final Keyword cSemicolonKeyword_1_1 = (Keyword)cAlternatives_1.eContents().get(1);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cColonKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cActionsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cActionsActionsParserRuleCall_1_1_0 = (RuleCall)cActionsAssignment_1_1.eContents().get(0);
 		
 		//MessageCall:
-		//	(name=PathName ('(' parameters=ParameterList? ')')? | StatementGroup) (':' actions=Actions | ';')?;
+		//	(name=PathName ('(' parameters=ParameterList? ')')? | StatementGroup) (':' actions=Actions)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(name=PathName ('(' parameters=ParameterList? ')')? | StatementGroup) (':' actions=Actions | ';')?
+		//(name=PathName ('(' parameters=ParameterList? ')')? | StatementGroup) (':' actions=Actions)?
 		public Group getGroup() { return cGroup; }
 		
 		//(name=PathName ('(' parameters=ParameterList? ')')? | StatementGroup)
@@ -540,23 +538,17 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementGroup
 		public RuleCall getStatementGroupParserRuleCall_0_1() { return cStatementGroupParserRuleCall_0_1; }
 		
-		//(':' actions=Actions | ';')?
-		public Alternatives getAlternatives_1() { return cAlternatives_1; }
-		
-		//':' actions=Actions
-		public Group getGroup_1_0() { return cGroup_1_0; }
+		//(':' actions=Actions)?
+		public Group getGroup_1() { return cGroup_1; }
 		
 		//':'
-		public Keyword getColonKeyword_1_0_0() { return cColonKeyword_1_0_0; }
+		public Keyword getColonKeyword_1_0() { return cColonKeyword_1_0; }
 		
 		//actions=Actions
-		public Assignment getActionsAssignment_1_0_1() { return cActionsAssignment_1_0_1; }
+		public Assignment getActionsAssignment_1_1() { return cActionsAssignment_1_1; }
 		
 		//Actions
-		public RuleCall getActionsActionsParserRuleCall_1_0_1_0() { return cActionsActionsParserRuleCall_1_0_1_0; }
-		
-		//';'
-		public Keyword getSemicolonKeyword_1_1() { return cSemicolonKeyword_1_1; }
+		public RuleCall getActionsActionsParserRuleCall_1_1_0() { return cActionsActionsParserRuleCall_1_1_0; }
 	}
 	public class StatementGroupElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.StatementGroup");
@@ -3526,7 +3518,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MessageCall:
-	//	(name=PathName ('(' parameters=ParameterList? ')')? | StatementGroup) (':' actions=Actions | ';')?;
+	//	(name=PathName ('(' parameters=ParameterList? ')')? | StatementGroup) (':' actions=Actions)?;
 	public MessageCallElements getMessageCallAccess() {
 		return pMessageCall;
 	}

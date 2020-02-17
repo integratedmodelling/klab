@@ -41,7 +41,7 @@ MessageBody: {Body} lists+=StatementList*;
 
 MessageCall:
 	(name=PathName ('(' (parameters=ParameterList)? ')')? |
-	  StatementGroup) ((':' actions=Actions) | ';')?
+	  StatementGroup) (':' actions=Actions)?
 ;
 
 StatementGroup: {Group}
