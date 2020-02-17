@@ -27,6 +27,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- Actor language design and support (k.Actors) and stubs for integration in engine. 
+  This is the component that will enable full-scale IBM and allow building palettes 
+   and applications by interacting with system, context and view actors.
 - Implement API for modification logging as part of provenance model with provenance nodes
    having getActions() -> List<IActivity>. This will be used to ensure recomputation of 
    artifacts whose dependencies have changed during the latest transition.
