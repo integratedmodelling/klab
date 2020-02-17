@@ -33,7 +33,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @author Ferd
  * @version $Id: $Id
  */
-public interface IBehavior extends Iterable<IAction> {
+public interface IContextualization extends Iterable<IAction> {
 
     /**
      * All extents specified in the behavior, which may or may not be associated to transitions

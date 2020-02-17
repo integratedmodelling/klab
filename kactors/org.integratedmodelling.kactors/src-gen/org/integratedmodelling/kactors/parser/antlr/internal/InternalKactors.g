@@ -1035,36 +1035,29 @@ ruleMessageCall returns [EObject current=null]
 			}
 		)
 		(
+			otherlv_5=':'
+			{
+				newLeafNode(otherlv_5, grammarAccess.getMessageCallAccess().getColonKeyword_1_0());
+			}
 			(
-				otherlv_5=':'
-				{
-					newLeafNode(otherlv_5, grammarAccess.getMessageCallAccess().getColonKeyword_1_0_0());
-				}
 				(
-					(
-						{
-							newCompositeNode(grammarAccess.getMessageCallAccess().getActionsActionsParserRuleCall_1_0_1_0());
+					{
+						newCompositeNode(grammarAccess.getMessageCallAccess().getActionsActionsParserRuleCall_1_1_0());
+					}
+					lv_actions_6_0=ruleActions
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getMessageCallRule());
 						}
-						lv_actions_6_0=ruleActions
-						{
-							if ($current==null) {
-								$current = createModelElementForParent(grammarAccess.getMessageCallRule());
-							}
-							set(
-								$current,
-								"actions",
-								lv_actions_6_0,
-								"org.integratedmodelling.kactors.Kactors.Actions");
-							afterParserOrEnumRuleCall();
-						}
-					)
+						set(
+							$current,
+							"actions",
+							lv_actions_6_0,
+							"org.integratedmodelling.kactors.Kactors.Actions");
+						afterParserOrEnumRuleCall();
+					}
 				)
 			)
-			    |
-			otherlv_7=';'
-			{
-				newLeafNode(otherlv_7, grammarAccess.getMessageCallAccess().getSemicolonKeyword_1_1());
-			}
 		)?
 	)
 ;

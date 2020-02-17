@@ -6,7 +6,7 @@ import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 
-public class ObservationPeer extends AbstractActor {
+public class ObservationActor extends AbstractActor {
 
 
 	static public ActorRef create(IObservation observation) {
@@ -16,12 +16,12 @@ public class ObservationPeer extends AbstractActor {
 	}
 	
 	static Props props(IObservation observation) {
-		return Props.create(ObservationPeer.class, () -> new ObservationPeer(observation));
+		return Props.create(ObservationActor.class, () -> new ObservationActor(observation));
 	}
 
 	private final IObservation observation;
 
-	public ObservationPeer(IObservation observation) {
+	public ObservationActor(IObservation observation) {
 		this.observation = observation;
 	}
 

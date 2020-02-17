@@ -2,7 +2,7 @@ package org.integratedmodelling.kactors.api;
 
 import org.integratedmodelling.klab.utils.Pair;
 
-public interface IKactorsStatement {
+public interface IKActorStatement {
 
 	String getSourceCode();
 	

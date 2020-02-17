@@ -7,7 +7,7 @@
 			class="org.integratedmodelling.kactors.ui.KactorsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
 			contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
 			default="true"
-			extensions="kactors"
+			extensions="kactor"
 			id="org.integratedmodelling.kactors.Kactors"
 			name="Kactors Editor">
 		</editor>

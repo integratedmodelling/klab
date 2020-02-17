@@ -16,9 +16,9 @@
 package org.integratedmodelling.klab.api.model;
 
 /**
- * A {@code IActiveKimObject} is a {@link org.integratedmodelling.klab.api.model.IKimObject} that exposes a {@link IBehavior behavior},
+ * A {@code IActiveKimObject} is a {@link org.integratedmodelling.klab.api.model.IKimObject} that exposes a {@link IContextualization behavior},
  * i.e. a set of runtime actions tied to contextualization events. The behavior may be
- * {@link org.integratedmodelling.klab.api.model.IBehavior#isEmpty() empty}.
+ * {@link org.integratedmodelling.klab.api.model.IContextualization#isEmpty() empty}.
  *
  * @author Ferd
  * @version $Id: $Id
@@ -28,8 +28,8 @@ public interface IActiveKimObject extends IKimObject {
   /**
    * <p>getBehavior.</p>
    *
-   * @return a {@link org.integratedmodelling.klab.api.model.IBehavior} object.
+   * @return a {@link org.integratedmodelling.klab.api.model.IContextualization} object.
    */
-  IBehavior getBehavior();
+  IContextualization getContextualization();
 
 }

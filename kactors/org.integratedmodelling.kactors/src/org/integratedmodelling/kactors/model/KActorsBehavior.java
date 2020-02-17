@@ -1,9 +1,6 @@
 package org.integratedmodelling.kactors.model;
 
-import java.util.Iterator;
-
-import org.integratedmodelling.kactors.api.IKactor;
-import org.integratedmodelling.kactors.api.IKactorsApplication;
+import org.integratedmodelling.kactors.api.IKActorBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -14,9 +11,9 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  *
  */
-public class KactorsApplication implements IKactorsApplication {
+public class KActorsBehavior implements IKActorBehavior {
 
-	public KactorsApplication(Model model) {
+	public KActorsBehavior(Model model) {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -34,12 +31,6 @@ public class KactorsApplication implements IKactorsApplication {
 
 	@Override
 	public Pair<Integer, Integer> getEnd() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Iterator<IKactor> iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}

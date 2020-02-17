@@ -8,9 +8,10 @@ import java.net.URL;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
-import org.integratedmodelling.kactors.api.IKactorsApplication;
+import org.integratedmodelling.kactors.api.IKActorBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
-import org.integratedmodelling.kactors.model.Kactors;
+import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -20,14 +21,14 @@ import org.integratedmodelling.klab.utils.xtext.DataflowInjectorProvider;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-public enum Applications {
+public enum Actors implements IActorsService {
 
 	INSTANCE;
 	
 	@Inject
 	ParseHelper<Model> dataflowParser;
 
-	private Applications() {
+	private Actors() {
 		IInjectorProvider injectorProvider = new DataflowInjectorProvider();
 		Injector injector = injectorProvider.getInjector();
 		if (injector != null) {
@@ -36,8 +37,8 @@ public enum Applications {
 		Services.INSTANCE.registerService(this, IDataflowService.class);
 	}
 
-//	@Override
-	public IKactorsApplication declare(URL url) throws KlabException {
+	@Override
+	public IKActorBehavior declare(URL url) throws KlabException {
 		try (InputStream stream = url.openStream()) {
 			return declare(stream);
 		} catch (Exception e) {
@@ -45,8 +46,8 @@ public enum Applications {
 		}
 	}
 
-//	@Override
-	public IKactorsApplication declare(File file) throws KlabException {
+	@Override
+	public IKActorBehavior declare(File file) throws KlabException {
 		try (InputStream stream = new FileInputStream(file)) {
 			return declare(stream);
 		} catch (Exception e) {
@@ -54,13 +55,13 @@ public enum Applications {
 		}
 	}
 
-//	@Override
-	public IKactorsApplication declare(InputStream file) throws KlabValidationException {
-		IKactorsApplication ret = null;
+	@Override
+	public IKActorBehavior declare(InputStream file) throws KlabValidationException {
+		IKActorBehavior ret = null;
 		try {
 			String definition = IOUtils.toString(file);
 			Model model = dataflowParser.parse(definition);
-			ret = Kactors.INSTANCE.declare(model);
+			ret = KActors.INSTANCE.declare(model);
 		} catch (Exception e) {
 			throw new KlabValidationException(e);
 		}

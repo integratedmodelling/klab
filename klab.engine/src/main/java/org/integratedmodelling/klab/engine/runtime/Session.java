@@ -1289,22 +1289,5 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		return ret;
 	}
 
-	/**
-	 * TARIK this is the root actor in a Session, created on demand and child of the
-	 * root actor in the engine, which is held by the runtime system. Probably a
-	 * different call should be used (and maybe even a different type - no idea)!
-	 * The {@link EventBus} (part of {@link RuntimeScope} should call this as the
-	 * father of the context's actor, to create it and all the successive ones as
-	 * new observations are created.
-	 * 
-	 * @return
-	 */
-	public ActorRef getRootActor() {
-		if (this.rootActor == null) {
-			this.rootActor = ((DefaultRuntimeProvider) Klab.INSTANCE.getRuntimeProvider()).getActorSystem()
-					.actorFor(getId());
-		}
-		return this.rootActor;
-	}
-
+	
 }

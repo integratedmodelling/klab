@@ -5,7 +5,7 @@
     updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.19">
   <genPackages prefix="Kactors" basePackage="org.integratedmodelling.kactors" disposableProviderFactory="true"
-      fileExtensions="kactors" ecorePackage="Kactors.ecore#/">
+      fileExtensions="kactor" ecorePackage="Kactors.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="Kactors.ecore#//UnitOp">
       <genEnumLiterals ecoreEnumLiteral="Kactors.ecore#//UnitOp/OVER"/>
       <genEnumLiterals ecoreEnumLiteral="Kactors.ecore#//UnitOp/CARET"/>
