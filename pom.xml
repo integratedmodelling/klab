@@ -116,8 +116,9 @@
 		<jackson-version>2.9.5</jackson-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
 			issues -->
-
-		<joda-time-version>2.3</joda-time-version>
+	
+<!--     	<scala.version>2.13.1</scala.version>
+ -->		<joda-time-version>2.3</joda-time-version>
 		<javax.mail-api.version>1.5.2</javax.mail-api.version>
 		<jung.version>2.1.1</jung.version>
 		

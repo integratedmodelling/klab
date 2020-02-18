@@ -550,10 +550,11 @@
 			caching) <dependency> <groupId>org.dizitart</groupId> <artifactId>nitrite</artifactId> 
 			<version>3.0.0</version> </dependency> -->
 
-		<!-- Actor system (for the default runtime provider) -->
+		<!-- Actor system (for the default runtime provider). Use 2_12 or the Json 
+			schema generator won't find scala.Serializable. -->
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-actor-typed_2.13</artifactId>
+			<artifactId>akka-actor-typed_2.12</artifactId>
 			<version>2.6.3</version>
 		</dependency>
 
@@ -581,7 +582,13 @@
 		<dependency>
 			<groupId>com.kjetland</groupId>
 			<artifactId>mbknor-jackson-jsonschema_2.12</artifactId>
-			<version>1.0.29</version>
+			<version>1.0.36</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.scala-lang</groupId>
+					<artifactId>scala-library</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- swagger for API docs -->
