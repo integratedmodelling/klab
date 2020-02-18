@@ -10,8 +10,10 @@ Preamble: {Preamble}
 	// name, if there, must be first. Can be an actor (which may select an observable),
 	// or a message library that may be imported by other actors, as long as the type 
 	// is compatible or not given. An app is an actor that represents a
-	// session, a user represents the user and gets any messages we don't recognize.
-	((app?='app' | user?='user' | library?=('trait'|'library') | behavior?=('behavior'|'behaviour')) name=PathName)?
+	// session, a user represents the user and gets any messages we don't recognize. Apps
+	// can be called jobs (for automation w/o a view) or testcases (same for testing, in which case they will
+	// identify test actions with @test and execute them with assertions enabled).
+	((app?=('app'|'job'|'testcase') | user?='user' | library?=('trait'|'library') | behavior?=('behavior'|'behaviour')) name=PathName)?
 	(
 		('import' imports+=PathName (',' imports+=PathName)*)? &
 		('worldview' worldview=PathName)? &

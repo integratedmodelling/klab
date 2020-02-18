@@ -1174,6 +1174,33 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__Preamble__AppAlternatives_1_0_0_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_0_0()); }
+		'app'
+		{ after(grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_0_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getPreambleAccess().getAppJobKeyword_1_0_0_0_1()); }
+		'job'
+		{ after(grammarAccess.getPreambleAccess().getAppJobKeyword_1_0_0_0_1()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getPreambleAccess().getAppTestcaseKeyword_1_0_0_0_2()); }
+		'testcase'
+		{ after(grammarAccess.getPreambleAccess().getAppTestcaseKeyword_1_0_0_0_2()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__Preamble__LibraryAlternatives_1_0_2_0
 	@init {
 		int stackSize = keepStackSize();
@@ -11038,13 +11065,9 @@ rule__Preamble__AppAssignment_1_0_0
 	}
 :
 	(
-		{ before(grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_0()); }
-		(
-			{ before(grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_0()); }
-			'app'
-			{ after(grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_0()); }
-		)
-		{ after(grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_0()); }
+		{ before(grammarAccess.getPreambleAccess().getAppAlternatives_1_0_0_0()); }
+		(rule__Preamble__AppAlternatives_1_0_0_0)
+		{ after(grammarAccess.getPreambleAccess().getAppAlternatives_1_0_0_0()); }
 	)
 ;
 finally {

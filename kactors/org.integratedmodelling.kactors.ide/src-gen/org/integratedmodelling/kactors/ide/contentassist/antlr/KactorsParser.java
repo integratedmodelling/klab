@@ -32,6 +32,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 		
 		private static void init(ImmutableMap.Builder<AbstractElement, String> builder, KactorsGrammarAccess grammarAccess) {
 			builder.put(grammarAccess.getPreambleAccess().getAlternatives_1_0(), "rule__Preamble__Alternatives_1_0");
+			builder.put(grammarAccess.getPreambleAccess().getAppAlternatives_1_0_0_0(), "rule__Preamble__AppAlternatives_1_0_0_0");
 			builder.put(grammarAccess.getPreambleAccess().getLibraryAlternatives_1_0_2_0(), "rule__Preamble__LibraryAlternatives_1_0_2_0");
 			builder.put(grammarAccess.getPreambleAccess().getBehaviorAlternatives_1_0_3_0(), "rule__Preamble__BehaviorAlternatives_1_0_3_0");
 			builder.put(grammarAccess.getPreambleAccess().getAlternatives_2_2_1(), "rule__Preamble__Alternatives_2_2_1");

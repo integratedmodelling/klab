@@ -61,10 +61,10 @@ public class WeatherAdapter implements IUrnAdapter {
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
 		case stations:
-			// TODO check catalog!
+			// TODO check catalog and args before saying OK!
 			return WeatherFactory.INSTANCE.isOnline();
 		case storms:
-			// TODO check catalog!
+			// TODO check catalog and args before saying OK!
 			return WeatherEvents.INSTANCE.isOnline();
 		}
 		return false;

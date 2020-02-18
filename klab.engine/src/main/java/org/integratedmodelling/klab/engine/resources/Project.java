@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.templates.KimTemplates;
@@ -127,6 +128,42 @@ public class Project implements IProject {
 		try (PrintWriter out = new PrintWriter(ret)) {
 			out.print((createScenario ? "scenario " : (isPrivate ? "private " : "")) + "namespace " + namespaceId
 					+ ";\n\n");
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+
+		return ret;
+
+	}
+
+	/**
+	 * Create a namespace file and return it (do not load it).
+	 * 
+	 * @param namespaceId
+	 */
+	public File createBehavior(String namespaceId, IKActorsBehavior.Type type, boolean isApp) {
+
+		File ret = new File(getRoot() + File.separator + IKimProject.SOURCE_FOLDER + File.separator
+				+ namespaceId.replace('.', File.separatorChar) + ".kactor");
+		File npath = new File(MiscUtilities.getFilePath(ret.toString()));
+		npath.mkdirs();
+		String statement = "behavior";
+		switch (type) {
+		case APP:
+			statement = "app";
+			break;
+		case TRAITS:
+			statement = isApp ? "library" : "trait";
+			break;
+		case USER:
+			statement = "user";
+			break;
+		default:
+			break;
+		
+		}
+		try (PrintWriter out = new PrintWriter(ret)) {
+			out.print(statement + " " + namespaceId + ";\n\n");
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}

@@ -26,6 +26,8 @@ public abstract class AbstractKactorsProposalProvider extends TerminalsProposalP
 	}
 	public void completePreamble_App(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		// subclasses may override
+		// subclasses may override
+		// subclasses may override
 	}
 	public void completePreamble_User(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		// subclasses may override

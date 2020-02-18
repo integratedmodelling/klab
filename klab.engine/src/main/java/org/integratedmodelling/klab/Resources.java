@@ -434,7 +434,15 @@ public enum Resources implements IResourceService {
 		} else if (urn.isUniversal()) {
 			IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
 			if (adapter != null) {
+				// locally available, use local
 				return adapter.getResource(urns);
+			} else {
+				// if 1+ nodes provide the adapter, ask it for the 
+				// resource descriptor.
+				INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
+				if (node != null) {
+					
+				}
 			}
 		} else {
 			ret = publicResourceCatalog.get(urn.getUrn());

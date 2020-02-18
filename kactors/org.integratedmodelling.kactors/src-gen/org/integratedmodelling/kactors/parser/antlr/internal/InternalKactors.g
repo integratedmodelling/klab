@@ -175,16 +175,40 @@ rulePreamble returns [EObject current=null]
 			(
 				(
 					(
-						lv_app_1_0='app'
-						{
-							newLeafNode(lv_app_1_0, grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getPreambleRule());
+						(
+							lv_app_1_1='app'
+							{
+								newLeafNode(lv_app_1_1, grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_0_0());
 							}
-							setWithLastConsumed($current, "app", true, "app");
-						}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getPreambleRule());
+								}
+								setWithLastConsumed($current, "app", true, null);
+							}
+							    |
+							lv_app_1_2='job'
+							{
+								newLeafNode(lv_app_1_2, grammarAccess.getPreambleAccess().getAppJobKeyword_1_0_0_0_1());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getPreambleRule());
+								}
+								setWithLastConsumed($current, "app", true, null);
+							}
+							    |
+							lv_app_1_3='testcase'
+							{
+								newLeafNode(lv_app_1_3, grammarAccess.getPreambleAccess().getAppTestcaseKeyword_1_0_0_0_2());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getPreambleRule());
+								}
+								setWithLastConsumed($current, "app", true, null);
+							}
+						)
 					)
 				)
 				    |
