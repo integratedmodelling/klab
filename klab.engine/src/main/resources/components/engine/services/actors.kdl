@@ -1,0 +1,19 @@
+/**
+ * Annotations to bind observations to behaviors. For now just bind().
+ */
+@klab 0.10.0
+@version 0.10.0
+
+annotation bind for models, dependencies
+	"Defines associations for the outputs of a model or a dependency used in it. Can be used to define any 
+	 allowed associations in k.LAB."
+{
+	text behavior
+		"The path name of a behavior to associate, creating an actor within the k.LAB 
+	     session where the observation is created. Only non-associated observations will be given 
+	     a behavior, unless the behavior is a compatible trait (library) and is not already associated."
+		
+	optional boolean expression 'filter'
+		"A boolean expression to select the instances that should be associated. The instance is available as 'self' and
+		 returning true will associate it to the behavior."
+}

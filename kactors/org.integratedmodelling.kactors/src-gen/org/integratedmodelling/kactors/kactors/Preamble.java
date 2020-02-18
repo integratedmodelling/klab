@@ -18,8 +18,8 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isApp <em>App</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isUser <em>User</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isLib <em>Lib</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isActor <em>Actor</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isLibrary <em>Library</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getImports <em>Imports</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getWorldview <em>Worldview</em>}</li>
@@ -87,48 +87,48 @@ public interface Preamble extends EObject
   void setUser(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Lib</b></em>' attribute.
+   * Returns the value of the '<em><b>Library</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Lib</em>' attribute.
-   * @see #setLib(boolean)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Lib()
+   * @return the value of the '<em>Library</em>' attribute.
+   * @see #setLibrary(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Library()
    * @model
    * @generated
    */
-  boolean isLib();
+  boolean isLibrary();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isLib <em>Lib</em>}' attribute.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isLibrary <em>Library</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Lib</em>' attribute.
-   * @see #isLib()
+   * @param value the new value of the '<em>Library</em>' attribute.
+   * @see #isLibrary()
    * @generated
    */
-  void setLib(boolean value);
+  void setLibrary(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Actor</b></em>' attribute.
+   * Returns the value of the '<em><b>Behavior</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Actor</em>' attribute.
-   * @see #setActor(boolean)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Actor()
+   * @return the value of the '<em>Behavior</em>' attribute.
+   * @see #setBehavior(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Behavior()
    * @model
    * @generated
    */
-  boolean isActor();
+  boolean isBehavior();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isActor <em>Actor</em>}' attribute.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isBehavior <em>Behavior</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Actor</em>' attribute.
-   * @see #isActor()
+   * @param value the new value of the '<em>Behavior</em>' attribute.
+   * @see #isBehavior()
    * @generated
    */
-  void setActor(boolean value);
+  void setBehavior(boolean value);
 
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.

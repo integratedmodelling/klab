@@ -205,31 +205,57 @@ rulePreamble returns [EObject current=null]
 				    |
 				(
 					(
-						lv_lib_3_0='lib'
-						{
-							newLeafNode(lv_lib_3_0, grammarAccess.getPreambleAccess().getLibLibKeyword_1_0_2_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getPreambleRule());
+						(
+							lv_library_3_1='trait'
+							{
+								newLeafNode(lv_library_3_1, grammarAccess.getPreambleAccess().getLibraryTraitKeyword_1_0_2_0_0());
 							}
-							setWithLastConsumed($current, "lib", true, "lib");
-						}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getPreambleRule());
+								}
+								setWithLastConsumed($current, "library", true, null);
+							}
+							    |
+							lv_library_3_2='library'
+							{
+								newLeafNode(lv_library_3_2, grammarAccess.getPreambleAccess().getLibraryLibraryKeyword_1_0_2_0_1());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getPreambleRule());
+								}
+								setWithLastConsumed($current, "library", true, null);
+							}
+						)
 					)
 				)
 				    |
 				(
 					(
-						lv_actor_4_0='actor'
-						{
-							newLeafNode(lv_actor_4_0, grammarAccess.getPreambleAccess().getActorActorKeyword_1_0_3_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getPreambleRule());
+						(
+							lv_behavior_4_1='behavior'
+							{
+								newLeafNode(lv_behavior_4_1, grammarAccess.getPreambleAccess().getBehaviorBehaviorKeyword_1_0_3_0_0());
 							}
-							setWithLastConsumed($current, "actor", true, "actor");
-						}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getPreambleRule());
+								}
+								setWithLastConsumed($current, "behavior", true, null);
+							}
+							    |
+							lv_behavior_4_2='behaviour'
+							{
+								newLeafNode(lv_behavior_4_2, grammarAccess.getPreambleAccess().getBehaviorBehaviourKeyword_1_0_3_0_1());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getPreambleRule());
+								}
+								setWithLastConsumed($current, "behavior", true, null);
+							}
+						)
 					)
 				)
 			)
@@ -758,9 +784,9 @@ ruleDefinition returns [EObject current=null]
 				}
 			)
 		)*
-		otherlv_1='message'
+		otherlv_1='action'
 		{
-			newLeafNode(otherlv_1, grammarAccess.getDefinitionAccess().getMessageKeyword_1());
+			newLeafNode(otherlv_1, grammarAccess.getDefinitionAccess().getActionKeyword_1());
 		}
 		(
 			(

@@ -475,7 +475,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Lib()
+  public EAttribute getPreamble_Library()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(2);
   }
@@ -486,7 +486,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Actor()
+  public EAttribute getPreamble_Behavior()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(3);
   }
@@ -2795,8 +2795,8 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     preambleEClass = createEClass(PREAMBLE);
     createEAttribute(preambleEClass, PREAMBLE__APP);
     createEAttribute(preambleEClass, PREAMBLE__USER);
-    createEAttribute(preambleEClass, PREAMBLE__LIB);
-    createEAttribute(preambleEClass, PREAMBLE__ACTOR);
+    createEAttribute(preambleEClass, PREAMBLE__LIBRARY);
+    createEAttribute(preambleEClass, PREAMBLE__BEHAVIOR);
     createEAttribute(preambleEClass, PREAMBLE__NAME);
     createEAttribute(preambleEClass, PREAMBLE__IMPORTS);
     createEAttribute(preambleEClass, PREAMBLE__WORLDVIEW);
@@ -3085,8 +3085,8 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEClass(preambleEClass, Preamble.class, "Preamble", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getPreamble_App(), ecorePackage.getEBoolean(), "app", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_User(), ecorePackage.getEBoolean(), "user", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getPreamble_Lib(), ecorePackage.getEBoolean(), "lib", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getPreamble_Actor(), ecorePackage.getEBoolean(), "actor", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Library(), ecorePackage.getEBoolean(), "library", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Behavior(), ecorePackage.getEBoolean(), "behavior", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Name(), ecorePackage.getEString(), "name", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Imports(), ecorePackage.getEString(), "imports", null, 0, -1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Worldview(), ecorePackage.getEString(), "worldview", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

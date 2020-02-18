@@ -33,8 +33,8 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isApp <em>App</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isUser <em>User</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isLib <em>Lib</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isActor <em>Actor</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isLibrary <em>Library</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getImports <em>Imports</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getWorldview <em>Worldview</em>}</li>
@@ -96,44 +96,44 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected boolean user = USER_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isLib() <em>Lib</em>}' attribute.
+   * The default value of the '{@link #isLibrary() <em>Library</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isLib()
+   * @see #isLibrary()
    * @generated
    * @ordered
    */
-  protected static final boolean LIB_EDEFAULT = false;
+  protected static final boolean LIBRARY_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isLib() <em>Lib</em>}' attribute.
+   * The cached value of the '{@link #isLibrary() <em>Library</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isLib()
+   * @see #isLibrary()
    * @generated
    * @ordered
    */
-  protected boolean lib = LIB_EDEFAULT;
+  protected boolean library = LIBRARY_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isActor() <em>Actor</em>}' attribute.
+   * The default value of the '{@link #isBehavior() <em>Behavior</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isActor()
+   * @see #isBehavior()
    * @generated
    * @ordered
    */
-  protected static final boolean ACTOR_EDEFAULT = false;
+  protected static final boolean BEHAVIOR_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isActor() <em>Actor</em>}' attribute.
+   * The cached value of the '{@link #isBehavior() <em>Behavior</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isActor()
+   * @see #isBehavior()
    * @generated
    * @ordered
    */
-  protected boolean actor = ACTOR_EDEFAULT;
+  protected boolean behavior = BEHAVIOR_EDEFAULT;
 
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -442,9 +442,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
-  public boolean isLib()
+  public boolean isLibrary()
   {
-    return lib;
+    return library;
   }
 
   /**
@@ -453,12 +453,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
-  public void setLib(boolean newLib)
+  public void setLibrary(boolean newLibrary)
   {
-    boolean oldLib = lib;
-    lib = newLib;
+    boolean oldLibrary = library;
+    library = newLibrary;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LIB, oldLib, lib));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LIBRARY, oldLibrary, library));
   }
 
   /**
@@ -467,9 +467,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
-  public boolean isActor()
+  public boolean isBehavior()
   {
-    return actor;
+    return behavior;
   }
 
   /**
@@ -478,12 +478,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
-  public void setActor(boolean newActor)
+  public void setBehavior(boolean newBehavior)
   {
-    boolean oldActor = actor;
-    actor = newActor;
+    boolean oldBehavior = behavior;
+    behavior = newBehavior;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__ACTOR, oldActor, actor));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__BEHAVIOR, oldBehavior, behavior));
   }
 
   /**
@@ -925,10 +925,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return isApp();
       case KactorsPackage.PREAMBLE__USER:
         return isUser();
-      case KactorsPackage.PREAMBLE__LIB:
-        return isLib();
-      case KactorsPackage.PREAMBLE__ACTOR:
-        return isActor();
+      case KactorsPackage.PREAMBLE__LIBRARY:
+        return isLibrary();
+      case KactorsPackage.PREAMBLE__BEHAVIOR:
+        return isBehavior();
       case KactorsPackage.PREAMBLE__NAME:
         return getName();
       case KactorsPackage.PREAMBLE__IMPORTS:
@@ -978,11 +978,11 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__USER:
         setUser((Boolean)newValue);
         return;
-      case KactorsPackage.PREAMBLE__LIB:
-        setLib((Boolean)newValue);
+      case KactorsPackage.PREAMBLE__LIBRARY:
+        setLibrary((Boolean)newValue);
         return;
-      case KactorsPackage.PREAMBLE__ACTOR:
-        setActor((Boolean)newValue);
+      case KactorsPackage.PREAMBLE__BEHAVIOR:
+        setBehavior((Boolean)newValue);
         return;
       case KactorsPackage.PREAMBLE__NAME:
         setName((String)newValue);
@@ -1048,11 +1048,11 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__USER:
         setUser(USER_EDEFAULT);
         return;
-      case KactorsPackage.PREAMBLE__LIB:
-        setLib(LIB_EDEFAULT);
+      case KactorsPackage.PREAMBLE__LIBRARY:
+        setLibrary(LIBRARY_EDEFAULT);
         return;
-      case KactorsPackage.PREAMBLE__ACTOR:
-        setActor(ACTOR_EDEFAULT);
+      case KactorsPackage.PREAMBLE__BEHAVIOR:
+        setBehavior(BEHAVIOR_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__NAME:
         setName(NAME_EDEFAULT);
@@ -1114,10 +1114,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return app != APP_EDEFAULT;
       case KactorsPackage.PREAMBLE__USER:
         return user != USER_EDEFAULT;
-      case KactorsPackage.PREAMBLE__LIB:
-        return lib != LIB_EDEFAULT;
-      case KactorsPackage.PREAMBLE__ACTOR:
-        return actor != ACTOR_EDEFAULT;
+      case KactorsPackage.PREAMBLE__LIBRARY:
+        return library != LIBRARY_EDEFAULT;
+      case KactorsPackage.PREAMBLE__BEHAVIOR:
+        return behavior != BEHAVIOR_EDEFAULT;
       case KactorsPackage.PREAMBLE__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KactorsPackage.PREAMBLE__IMPORTS:
@@ -1165,10 +1165,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(app);
     result.append(", user: ");
     result.append(user);
-    result.append(", lib: ");
-    result.append(lib);
-    result.append(", actor: ");
-    result.append(actor);
+    result.append(", library: ");
+    result.append(library);
+    result.append(", behavior: ");
+    result.append(behavior);
     result.append(", name: ");
     result.append(name);
     result.append(", imports: ");

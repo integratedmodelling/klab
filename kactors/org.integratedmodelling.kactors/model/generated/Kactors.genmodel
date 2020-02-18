@@ -18,8 +18,8 @@
     <genClasses ecoreClass="Kactors.ecore#//Preamble">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/app"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/user"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/lib"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/actor"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/library"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/behavior"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/imports"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/worldview"/>

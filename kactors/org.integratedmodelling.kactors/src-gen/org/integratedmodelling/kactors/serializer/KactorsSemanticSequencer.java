@@ -566,7 +566,17 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         ((app?='app' | user?='user' | lib?='lib' | actor?='actor') name=PathName)? 
+	 *         (
+	 *             (
+	 *                 app?='app' | 
+	 *                 user?='user' | 
+	 *                 library?='trait' | 
+	 *                 library?='library' | 
+	 *                 behavior?='behavior' | 
+	 *                 behavior?='behaviour'
+	 *             ) 
+	 *             name=PathName
+	 *         )? 
 	 *         (
 	 *             (
 	 *                 worldview=PathName | 

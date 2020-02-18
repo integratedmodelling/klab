@@ -11,7 +11,7 @@ Preamble: {Preamble}
 	// or a message library that may be imported by other actors, as long as the type 
 	// is compatible or not given. An app is an actor that represents a
 	// session, a user represents the user and gets any messages we don't recognize.
-	((app?='app' | user?='user' | lib?='lib' | actor?='actor') name=PathName)?
+	((app?='app' | user?='user' | library?=('trait'|'library') | behavior?=('behavior'|'behaviour')) name=PathName)?
 	(
 		('import' imports+=PathName (',' imports+=PathName)*)? &
 		('worldview' worldview=PathName)? &
@@ -28,7 +28,7 @@ Preamble: {Preamble}
 
 Definition:
 	annotations+=Annotation*
-	'message' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
+	'action' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
 
 ArgumentDeclaration: {ArgumentDeclaration}
 	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'

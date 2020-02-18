@@ -124,22 +124,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__USER = 1;
 
   /**
-   * The feature id for the '<em><b>Lib</b></em>' attribute.
+   * The feature id for the '<em><b>Library</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__LIB = 2;
+  int PREAMBLE__LIBRARY = 2;
 
   /**
-   * The feature id for the '<em><b>Actor</b></em>' attribute.
+   * The feature id for the '<em><b>Behavior</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__ACTOR = 3;
+  int PREAMBLE__BEHAVIOR = 3;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2495,26 +2495,26 @@ public interface KactorsPackage extends EPackage
   EAttribute getPreamble_User();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#isLib <em>Lib</em>}'.
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#isLibrary <em>Library</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Lib</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Preamble#isLib()
+   * @return the meta object for the attribute '<em>Library</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#isLibrary()
    * @see #getPreamble()
    * @generated
    */
-  EAttribute getPreamble_Lib();
+  EAttribute getPreamble_Library();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#isActor <em>Actor</em>}'.
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#isBehavior <em>Behavior</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Actor</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Preamble#isActor()
+   * @return the meta object for the attribute '<em>Behavior</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#isBehavior()
    * @see #getPreamble()
    * @generated
    */
-  EAttribute getPreamble_Actor();
+  EAttribute getPreamble_Behavior();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getName <em>Name</em>}'.
@@ -4820,20 +4820,20 @@ public interface KactorsPackage extends EPackage
     EAttribute PREAMBLE__USER = eINSTANCE.getPreamble_User();
 
     /**
-     * The meta object literal for the '<em><b>Lib</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Library</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute PREAMBLE__LIB = eINSTANCE.getPreamble_Lib();
+    EAttribute PREAMBLE__LIBRARY = eINSTANCE.getPreamble_Library();
 
     /**
-     * The meta object literal for the '<em><b>Actor</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Behavior</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute PREAMBLE__ACTOR = eINSTANCE.getPreamble_Actor();
+    EAttribute PREAMBLE__BEHAVIOR = eINSTANCE.getPreamble_Behavior();
 
     /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
