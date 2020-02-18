@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.integratedmodelling.kactors.api.IKActorBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 
 public interface IActorsService {
 
@@ -14,7 +14,7 @@ public interface IActorsService {
 	 * @param url
 	 * @return the actor
 	 */
-	IKActorBehavior declare(URL url);
+	IKActorsBehavior declare(URL url);
 
 	/**
 	 * Read a k.Actor specification from a file.
@@ -22,7 +22,7 @@ public interface IActorsService {
 	 * @param file
 	 * @return the actor
 	 */
-	IKActorBehavior declare(File file);
+	IKActorsBehavior declare(File file);
 
 	/**
 	 * Read a k.Actor specification from a stream.
@@ -30,6 +30,6 @@ public interface IActorsService {
 	 * @param file
 	 * @return the actor
 	 */
-	IKActorBehavior declare(InputStream file);
+	IKActorsBehavior declare(InputStream file);
 
 }

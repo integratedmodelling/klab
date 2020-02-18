@@ -8,7 +8,7 @@ import java.net.URL;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
-import org.integratedmodelling.kactors.api.IKActorBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.klab.api.services.IActorsService;
@@ -38,7 +38,7 @@ public enum Actors implements IActorsService {
 	}
 
 	@Override
-	public IKActorBehavior declare(URL url) throws KlabException {
+	public IKActorsBehavior declare(URL url) throws KlabException {
 		try (InputStream stream = url.openStream()) {
 			return declare(stream);
 		} catch (Exception e) {
@@ -47,7 +47,7 @@ public enum Actors implements IActorsService {
 	}
 
 	@Override
-	public IKActorBehavior declare(File file) throws KlabException {
+	public IKActorsBehavior declare(File file) throws KlabException {
 		try (InputStream stream = new FileInputStream(file)) {
 			return declare(stream);
 		} catch (Exception e) {
@@ -56,8 +56,8 @@ public enum Actors implements IActorsService {
 	}
 
 	@Override
-	public IKActorBehavior declare(InputStream file) throws KlabValidationException {
-		IKActorBehavior ret = null;
+	public IKActorsBehavior declare(InputStream file) throws KlabValidationException {
+		IKActorsBehavior ret = null;
 		try {
 			String definition = IOUtils.toString(file);
 			Model model = dataflowParser.parse(definition);

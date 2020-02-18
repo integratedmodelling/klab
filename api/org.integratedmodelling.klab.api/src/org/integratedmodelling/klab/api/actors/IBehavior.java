@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.actors;
 
 import java.util.List;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespaceQualified;
@@ -14,33 +15,6 @@ import org.integratedmodelling.klab.api.model.INamespaceQualified;
  *
  */
 public interface IBehavior extends IKimObject, INamespaceQualified {
-
-	enum Destination {
-		/**
-		 * The behavior will be incorporated in an observed actor
-		 */
-		ACTOR,
-		/**
-		 * The behavior will be incorporated in a session actor
-		 */
-		SESSION,
-		/**
-		 * The behavior will be incorporated in a user actor
-		 */
-		USER,
-		/**
-		 * The behavior is a collection of messages to be incorporated in another actor
-		 * definition
-		 */
-		LIBRARY
-	}
-
-	/**
-	 * Who this behavior is for
-	 * 
-	 * @return
-	 */
-	Destination getDestination();
 
 	/**
 	 * All messages defined in the actor.
@@ -56,5 +30,12 @@ public interface IBehavior extends IKimObject, INamespaceQualified {
 	 * @return
 	 */
 	IMetadata getMetadata();
+	
+	/**
+	 * Who this is for.
+	 * 
+	 * @return
+	 */
+	IKActorsBehavior.Type getDestination();
 
 }

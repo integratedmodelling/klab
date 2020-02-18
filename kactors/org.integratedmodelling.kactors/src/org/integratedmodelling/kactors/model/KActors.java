@@ -1,13 +1,13 @@
 package org.integratedmodelling.kactors.model;
 
-import org.integratedmodelling.kactors.api.IKActorBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 
 public enum KActors {
 
 	INSTANCE;
 	
-	public IKActorBehavior declare(Model model) {
+	public IKActorsBehavior declare(Model model) {
 		return new KActorsBehavior(model);
 	}
     
