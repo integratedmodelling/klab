@@ -71,6 +71,7 @@ public enum DockerManager {
 				return false;
 			};
 		}
+		return true;
 	}
 
 }
