@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
+import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -34,6 +35,7 @@ import org.integratedmodelling.weather.data.WeatherFactory;
  * @author Ferd
  *
  */
+@UrnAdapter(type = "weather", version=Version.CURRENT)
 public class WeatherAdapter implements IUrnAdapter {
 
 	public enum Services {
@@ -184,7 +186,7 @@ public class WeatherAdapter implements IUrnAdapter {
 		// TODO Auto-generated method stub
 		Urn kurn = new Urn(urn);
 		ResourceReference ref = new ResourceReference();
-		ref.setUrn(urn.toString());
+		ref.setUrn(kurn.getUrn());
 		ref.setAdapterType(getName());
 		ref.setLocalName(kurn.getResourceId());
 		ref.setGeometry("#"); // getGeometry(urn)
