@@ -891,7 +891,7 @@ public enum Resources implements IResourceService {
 			IContextualizationScope context) {
 
 		boolean local = Urns.INSTANCE.isLocal(resource.getUrn());
-		Urn urn = new Urn(resource.getUrn());
+		Urn urn = new Urn(resource.getUrn(), urnParameters);
 		if (urn.isUniversal()) {
 			// use it locally only if we have the adapter.
 			local = getResourceAdapter(urn.getCatalog()) != null;
@@ -936,7 +936,8 @@ public enum Resources implements IResourceService {
 			INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
 			if (node != null) {
 				ResourceDataRequest request = new ResourceDataRequest();
-				request.setUrn(urn.getUrn());
+				// send toString() with all parameters!
+				request.setUrn(urn.toString());
 				request.setGeometry(geometry.encode());
 				DecodingDataBuilder builder = new DecodingDataBuilder(
 						node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class), context);

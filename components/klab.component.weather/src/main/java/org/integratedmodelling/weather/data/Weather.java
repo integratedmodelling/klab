@@ -142,7 +142,7 @@ public class Weather {
 	 */
 	private static final int MIN_STATIONS = 5;
 	List<WeatherStation> _stations = new ArrayList<WeatherStation>();
-	private Collection<Map<String, Object>> _stationData;
+	private Collection<Map<String, Object>> stationData;
 
 	/**
 	 * This one is for the service - the resulting weather won't have any spatial
@@ -187,7 +187,7 @@ public class Weather {
 			}
 		}
 
-		_stationData = new ArrayList<>();
+		stationData = new ArrayList<>();
 
 		for (WeatherStation ws : _stations) {
 
@@ -205,10 +205,19 @@ public class Weather {
 				}
 				wmap.put(var, copyData(vdata));
 			}
-			_stationData.add(wmap);
+			stationData.add(wmap);
 		}
 	}
 
+	/**
+	 * Get all the stations we retained from the original set.
+	 * 
+	 * @return
+	 */
+	List<WeatherStation> getStations() {
+		return _stations;
+	}
+	
 	/**
 	 * Return the result of aggregating the daily data between two timepoints. If
 	 * the first and last day partially overlap the interval, adjust the values
@@ -279,7 +288,7 @@ public class Weather {
 	}
 
 	public Collection<Map<String, Object>> getStationData() {
-		return _stationData;
+		return stationData;
 	}
 
 }

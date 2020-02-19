@@ -16,6 +16,8 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.weather.WeatherComponent;
+import org.integratedmodelling.weather.data.Weather;
 import org.integratedmodelling.weather.data.WeatherEvent;
 import org.integratedmodelling.weather.data.WeatherEvents;
 import org.integratedmodelling.weather.data.WeatherFactory;
@@ -35,7 +37,7 @@ import org.integratedmodelling.weather.data.WeatherFactory;
  * @author Ferd
  *
  */
-@UrnAdapter(type = "weather", version=Version.CURRENT)
+@UrnAdapter(type = "weather", version = Version.CURRENT)
 public class WeatherAdapter implements IUrnAdapter {
 
 	public enum Services {
@@ -78,13 +80,13 @@ public class WeatherAdapter implements IUrnAdapter {
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
 			getInterpolatedData(urn, builder, geometry, context);
-			break;
+			return;
 		case stations:
 			getStations(urn, builder, geometry, context);
-			break;
+			return;
 		case storms:
 			getStorms(urn, builder, geometry, context);
-			break;
+			return;
 		default:
 			break;
 		}
@@ -96,6 +98,10 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	private void getStations(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 		// TODO Auto-generated method stub
+		Scale scale = Scale.create(geometry);
+		Weather weather = WeatherComponent.getWeather(scale.getSpace(), scale.getTime(), "ALL",
+				urn.getSplitParameter(Urn.SINGLE_PARAMETER_KEY));
+		
 		System.out.println("ZIOPOP");
 	}
 
