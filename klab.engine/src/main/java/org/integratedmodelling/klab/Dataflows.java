@@ -14,7 +14,6 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.dataflow.Dataflow;

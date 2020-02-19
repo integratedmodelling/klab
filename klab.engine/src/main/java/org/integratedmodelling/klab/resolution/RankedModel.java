@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.model.Behavior;
+import org.integratedmodelling.klab.model.Contextualization;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
@@ -178,8 +178,8 @@ public class RankedModel extends Model implements IRankedModel {
 		getDelegate().setNamespace(namespace);
 	}
 
-	public Behavior getBehavior() {
-		return getDelegate().getBehavior();
+	public Contextualization getContextualization() {
+		return getDelegate().getContextualization();
 	}
 
 	public Scope getScope() {

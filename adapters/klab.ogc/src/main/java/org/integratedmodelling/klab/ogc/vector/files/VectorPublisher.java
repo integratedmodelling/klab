@@ -16,22 +16,15 @@
 package org.integratedmodelling.klab.ogc.vector.files;
 
 import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.Properties;
 
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
-import org.geotools.data.DataUtilities;
-import org.geotools.data.FileDataStore;
-import org.geotools.data.FileDataStoreFinder;
-import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.data.simple.SimpleFeatureStore;
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
+import org.integratedmodelling.klab.api.data.adapters.IResourceEnhancer;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.ogc.integration.Geoserver;
 import org.integratedmodelling.klab.ogc.integration.Postgis;
 
@@ -42,78 +35,56 @@ import org.integratedmodelling.klab.ogc.integration.Postgis;
  * @author ferdinando.villa
  *
  */
-public class VectorPublisher implements IResourcePublisher {
+public class VectorPublisher implements IResourceEnhancer {
 
 	@Override
 	public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
+		return enhanceResource(localResource);
+	}
 
-		IResource ret = localResource;
-
+	@Override
+	public boolean isEnhanced(IResource resource) {
 		/*
-		 * If we have Postgis + Geoserver dedicated to this node instance, publish in
-		 * them and turn the resource into a WFS one.
+		 * a vector resource is not enhanced; the enhanced resource is WFS which cannot
+		 * be further enhanced. This means "keep trying to push to GS/Postgis if so
+		 * configured
 		 */
-		if (Postgis.isEnabled()) {
-			
-			
-			
-			try {
+		return false;
+	}
 
-				// TODO resource shp path
-				FileDataStore ds = FileDataStoreFinder.getDataStore(new File("/home/ian/Data/states/states.shp"));
+	@Override
+	public IResource enhanceResource(IResource resource) {
 
-				/*
-				 * TODO one database per catalog? In all cases, ensure it exists.
-				 */
-				
-				// TODO configured properties
-				Properties params = new Properties();
-				params.put("user", "postgres");
-				params.put("passwd", "postgres");
-				params.put("port", "5432");
-				params.put("host", "127.0.0.1");
-				params.put("database", "test");
-				params.put("dbtype", "postgis");
+		Resource ret = (Resource) resource;
 
-				DataStore dataStore = DataStoreFinder.getDataStore(params);
-				SimpleFeatureSource source = dataStore.getFeatureSource("tablename");
-				if (source instanceof SimpleFeatureStore) {
-					SimpleFeatureStore store = (SimpleFeatureStore) source;
-					store.addFeatures(DataUtilities.collection(ds.getFeatureSource().getFeatures().features()));
-				} else {
-					throw new KlabIOException("vector publisher: cannot write to Postgis database");
-				}
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
-		}
-		
 		if (Geoserver.isEnabled()) {
-			
-			/* 
-			 * ensure database is published as a PG store
-			 */
-			
-			/*
-			 * remove the layer if there
-			 */
-			
-			/*
-			 * add as new layer
-			 */
-		}
-		
-		if (false /* published in GS */) {
-			
-			/*
-			 * turn resource into WFS and save it
-			 */
-			
+
+			Geoserver geoserver = Geoserver.create();
+			Urn urn = new Urn(resource.getUrn());
+
+			if (Postgis.isEnabled()) {
+				Postgis postgis = Postgis.create(urn);
+				if (postgis.isOnline()) {
+
+					File file = ((VectorAdapter) Resources.INSTANCE.getResourceAdapter(VectorAdapter.ID))
+							.getMainFile(resource);
+
+					String table = postgis.publish(file, urn);
+					if (table != null && geoserver.publishPostgisVector(postgis, urn.getNamespace(), table)) {
+
+						ret = new Resource(((Resource) resource).getReference());
+						// fix resource adapter and parameters			
+						// TODO add message with date and results
+						ret.copyToHistory("Enhanced by vector adapter");
+						// return fixed resource
+//						ret.setAdapter(VectorAdapter.ID);
+					}
+				}
+			}
+
 		}
 
 		return ret;
 	}
-	
-
 
 }

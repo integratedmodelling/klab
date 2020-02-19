@@ -6,12 +6,6 @@ import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 
-/**
- * Create any observation actor as
- * 
- * @author ferdinando.villa
- *
- */
 public class ObservationActor extends AbstractActor {
 
 

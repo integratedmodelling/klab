@@ -83,8 +83,8 @@ public class EngineController {
 		return ret;
 	}
 
-	private boolean isAuthorized(EngineAuthorization user, String permissions) {
-		// TODO switch to KlabPermission class
+	public static boolean isAuthorized(EngineAuthorization user, String permissions) {
+
 		if ("*".equals(permissions)) {
 			return true;
 		} else if ("NONE".equals(permissions)) {

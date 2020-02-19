@@ -10,27 +10,32 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
+import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.weather.WeatherComponent;
 import org.integratedmodelling.weather.data.WeatherEvent;
 import org.integratedmodelling.weather.data.WeatherEvents;
 import org.integratedmodelling.weather.data.WeatherFactory;
-import org.integratedmodelling.weather.data.WeatherStation;
 
 /**
- * Urns:
+ * Handles URNs:
  * 
- * klab:weather:data:<all|catalog> (handles primary output as parameter, e.g.
- * #precipitation, and others as additional attributes)
- * klab:weather:stations:<all|catalog> klab:weather:storms:<all|catalog>
+ * <ul>
+ * <li>klab:weather:data:{all|catalog} (handles primary output as parameter,
+ * e.g. #precipitation, and others as additional attributes)</li>
+ * <li>klab:weather:stations:{all|catalog}</li>
+ * <li>klab:weather:storms:{all|catalog}</li>
+ * </ul>
+ * <p>
+ * "Catalog" may depend on the setup, should be ghdnc (or noaa), ....
  * 
  * @author Ferd
  *
  */
+@UrnAdapter(type = "weather", version=Version.CURRENT)
 public class WeatherAdapter implements IUrnAdapter {
 
 	public enum Services {
@@ -58,8 +63,10 @@ public class WeatherAdapter implements IUrnAdapter {
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
 		case stations:
+			// TODO check catalog and args before saying OK!
 			return WeatherFactory.INSTANCE.isOnline();
 		case storms:
+			// TODO check catalog and args before saying OK!
 			return WeatherEvents.INSTANCE.isOnline();
 		}
 		return false;
@@ -93,18 +100,18 @@ public class WeatherAdapter implements IUrnAdapter {
 	}
 
 	private void getStorms(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
-		
+
 		double minPrecipitation = 0;
-		
+
 		if (urn.getParameters().containsKey("minprec")) {
 			minPrecipitation = Double.parseDouble(urn.getParameters().get("minprec").toString());
 		}
-		
+
 		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation)) {
-			
+
 			Builder ob = builder.startObject("result", "storm_" + event.asData().get(WeatherEvent.ID),
 					(IGeometry) event.asData().get(WeatherEvent.BOUNDING_BOX));
-			
+
 			Builder sb = ob.startState("precipitation");
 			sb.add(event.asData().get(WeatherEvent.PRECIPITATION_MM));
 			sb.finishState();
@@ -112,7 +119,7 @@ public class WeatherAdapter implements IUrnAdapter {
 			Builder db = ob.startState("duration");
 			db.add(event.asData().get(WeatherEvent.DURATION_HOURS));
 			db.finishState();
-			
+
 			ob.finishObject();
 		}
 
@@ -179,7 +186,7 @@ public class WeatherAdapter implements IUrnAdapter {
 		// TODO Auto-generated method stub
 		Urn kurn = new Urn(urn);
 		ResourceReference ref = new ResourceReference();
-		ref.setUrn(urn.toString());
+		ref.setUrn(kurn.getUrn());
 		ref.setAdapterType(getName());
 		ref.setLocalName(kurn.getResourceId());
 		ref.setGeometry("#"); // getGeometry(urn)

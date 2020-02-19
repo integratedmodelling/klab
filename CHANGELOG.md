@@ -27,6 +27,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- Actor language design and support (k.Actors) and stubs for integration in engine. 
+  This is the component that will enable full-scale IBM and allow building palettes 
+   and applications by interacting with system, context and view actors.
+- Rename model's IBehavior to IContextualization to free up IBehavior for the product 
+  of parsing an actor specification. Change all the implementations and accessors too.
 - Implement API for modification logging as part of provenance model with provenance nodes
    having getActions() -> List<IActivity>. This will be used to ensure recomputation of 
    artifacts whose dependencies have changed during the latest transition.
@@ -40,6 +45,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   of change for a quality (dQ/dt).
 - Allow concept declarations using 'equals' in test and script namespaces.
 - Enable support for auxiliary variables (https://integratedmodelling.org/jira/browse/KEN-16)
+- Extend IResourcePublisher with an IResourceEnhancer interface that can postprocess
+  resources (in asynchronous, arbitrarily long operations) and modify them for better 
+  accessibility, performance or content. 
+- Implement publishing of vector and raster files to node-connected Geoserver and enhancement
+  of vector/raster public resources to WFS/WCS ones.
   
 ## [0.10.0.222] -- 2020/02/01
 ### Added

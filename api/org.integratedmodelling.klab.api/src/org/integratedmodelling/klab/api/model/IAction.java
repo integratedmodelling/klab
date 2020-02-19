@@ -20,25 +20,32 @@ import org.integratedmodelling.kim.api.IKimAction.Type;
 import org.integratedmodelling.klab.api.resolution.IComputationProvider;
 
 /**
- * Action execution is deferred to dataflow through their {@link org.integratedmodelling.klab.api.resolution.IContextualizable} identity.
+ * Contextualization actions like 'set to'. Action execution is deferred to
+ * dataflow through their
+ * {@link org.integratedmodelling.klab.api.resolution.IContextualizable}
+ * identity.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IAction extends IComputationProvider {
 
-  /**
-   * <p>getTrigger.</p>
-   *
-   * @return a {@link org.integratedmodelling.kim.api.IKimAction.Trigger} object.
-   */
-  Trigger getTrigger();
+	/**
+	 * <p>
+	 * getTrigger.
+	 * </p>
+	 *
+	 * @return a {@link org.integratedmodelling.kim.api.IKimAction.Trigger} object.
+	 */
+	Trigger getTrigger();
 
-  /**
-   * <p>getType.</p>
-   *
-   * @return a {@link org.integratedmodelling.kim.api.IKimAction.Type} object.
-   */
-  Type getType();
-  
+	/**
+	 * <p>
+	 * getType.
+	 * </p>
+	 *
+	 * @return a {@link org.integratedmodelling.kim.api.IKimAction.Type} object.
+	 */
+	Type getType();
+
 }

@@ -22,6 +22,7 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.api.resources.ResourceUtils;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
@@ -51,11 +52,15 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(project) -> KlabNavigatorActions.deleteProject(project));
 		action("New namespace...", "Create a new namespace", "namespace-checked.png", EProject.class,
 				(project) -> KlabNavigatorActions.addNamespace(project));
+		action("New behavior...", "Create a new behavior", "cog_add.png", EProject.class,
+				(project) -> KlabNavigatorActions.addBehavior(project));
 		action("Edit references", "Edit the bibliographic references and sections linked to the project",
 				"documentation.gif", EProject.class, (project) -> KlabNavigatorActions.editReferences(project))
 						.activate();
 		action("Delete namespace", "Delete the selected namespace", "namespace-checked.png", ENamespace.class,
 				(namespace) -> KlabNavigatorActions.deleteNamespace(namespace, wSite.getPage()));
+		action("New application...", "Create a new application", "application_add.png", EScriptFolder.class,
+				(folder) -> KlabNavigatorActions.addApplication(folder));
 		action("New script...", "Create a new script file", "script.gif", EScriptFolder.class,
 				(folder) -> KlabNavigatorActions.addScript(folder));
 		action("New test case...", "Create a new test case", "test.gif", ETestFolder.class,
@@ -68,6 +73,10 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(namespace) -> KlabNavigatorActions.runScript(namespace));
 		action("Run test case", "Delete the selected test case", "test.gif", ETestCase.class,
 				(namespace) -> KlabNavigatorActions.runTestCase(namespace));
+		action("Delete script", "Delete the selected script", "script.gif", EScript.class,
+				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
+		action("Delete behavior", "Delete the selected behavior", "cog_delete.png", EActorBehavior.class,
+				(namespace) -> KlabNavigatorActions.deleteBehavior(namespace, wSite.getPage()));
 		action("Delete script", "Delete the selected script", "script.gif", EScript.class,
 				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
 		action("Delete test case", "Delete the selected test case", "test.gif", ETestCase.class,

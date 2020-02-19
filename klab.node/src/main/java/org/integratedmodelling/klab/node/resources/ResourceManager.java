@@ -21,13 +21,14 @@ import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.EncodingDataBuilder;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.node.NodeApplication;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
+import org.integratedmodelling.klab.node.controllers.EngineController;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.Pair;
@@ -183,7 +184,13 @@ public class ResourceManager {
 	}
 
 	public IResource getResource(String urn, Set<Group> groups) {
-		// TODO permission check
+		if (Urns.INSTANCE.isUniversal(urn)) {
+			Urn u = new Urn(urn);
+			IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(u.getCatalog());
+			if (adapter != null) {
+				return adapter.getResource(urn);
+			}
+		}
 		return catalog.get(urn);
 	}
 
@@ -206,6 +213,26 @@ public class ResourceManager {
 	}
 
 	public boolean canAccess(String urn, EngineAuthorization user) {
+		
+		if (Urns.INSTANCE.isUniversal(urn)) {
+
+			Urn u = new Urn(urn);
+			
+			/*
+			 * just check if the adapter is allowed
+			 */
+			IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(u.getCatalog());
+			if (adapter != null) {
+				// TODO FIXME streamline this into extensions or resource service and handle adapter authorizations 
+				// there; refactor code in EngineController and (maybe) ResourceManager to use that.
+				String authorized = Configuration.INSTANCE
+						.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "");
+				if (EngineController.isAuthorized(user, authorized)) {
+					return true;
+				}
+			}
+		}
+		
 		IResource resource = catalog.get(urn);
 		if (resource != null) {
 			if (user.getRoles().contains(Role.ROLE_ADMINISTRATOR)) {

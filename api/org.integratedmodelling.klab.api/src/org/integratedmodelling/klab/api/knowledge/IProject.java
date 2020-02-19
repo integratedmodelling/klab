@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.INamespace;
 
@@ -61,6 +62,20 @@ public interface IProject {
 	List<INamespace> getNamespaces();
 
 	/**
+	 * The behaviors defined in the projects (within namespaces).
+	 * 
+	 * @return
+	 */
+	List<IBehavior> getBehaviors();
+
+	/**
+	 * The behaviors defined in the Apps folder. These are for session actors only.
+	 * 
+	 * @return
+	 */
+	List<IBehavior> getApps();
+
+	/**
 	 * <p>
 	 * getPrerequisites.
 	 * </p>
@@ -68,7 +83,7 @@ public interface IProject {
 	 * @return a {@link java.util.List} object.
 	 */
 	List<IProject> getPrerequisites();
-	
+
 	/**
 	 * The URNs of all local resources defined in the project.
 	 * 
@@ -116,20 +131,20 @@ public interface IProject {
 	boolean isRemote();
 
 	/**
-	 * Find a local resource by local name and return it. 
+	 * Find a local resource by local name and return it.
 	 * 
 	 * @param urn the local resource name
 	 * @return local resource or null
 	 */
 	IResource getLocalResource(String urn);
-	
+
 	/**
 	 * Name of originating node. Not null implies {@link #isRemote()} == true.
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	String getOriginatingNodeId();
-	
+
 	/**
 	 * Get the workspace where this project resides.
 	 * 
