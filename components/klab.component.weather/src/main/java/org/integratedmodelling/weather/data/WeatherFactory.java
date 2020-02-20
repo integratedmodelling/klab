@@ -437,7 +437,7 @@ public enum WeatherFactory {
 		for (String id : stationIds) {
 			WeatherStation ws = INSTANCE.wbox.retrieve(id);
 			try {
-				if (ws.cacheData()) {
+				if (ws.cacheData(false)) {
 					Logging.INSTANCE.info("Data for station " + ws.getId() + " updated to " + ws.getLastKnownYear());
 				}
 			} catch (Throwable e) {

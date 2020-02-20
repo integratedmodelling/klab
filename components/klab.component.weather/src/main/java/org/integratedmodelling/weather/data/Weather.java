@@ -160,10 +160,18 @@ public class Weather {
 		for (WeatherStation s : stations) {
 			s.setMaxYearsBack(maxYearsBack);
 			try {
+				
+				/*
+				 * FIXME use vars, not these
+				 */
 				if (s.hasUsableDataFor(year, PRECIPITATION_MM, MAX_TEMPERATURE_C, MIN_TEMPERATURE_C)) {
 
-					s.cacheData();
+					// fast check
+					s.cacheData(true);
 
+					/*
+					 * FIXME use vars, not the predefined ones
+					 */
 					if (!s.hasEnoughDataFor(start, end, maxAcceptableNodataPercentage, PRECIPITATION_MM,
 							MAX_TEMPERATURE_C, MIN_TEMPERATURE_C)) {
 						/*
@@ -214,7 +222,7 @@ public class Weather {
 	 * 
 	 * @return
 	 */
-	List<WeatherStation> getStations() {
+	public List<WeatherStation> getStations() {
 		return _stations;
 	}
 	

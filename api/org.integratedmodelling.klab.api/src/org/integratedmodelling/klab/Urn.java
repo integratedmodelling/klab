@@ -61,6 +61,15 @@ public class Urn {
 	public Urn(String urn, Map<String, String> urnParameters) {
 		this(urn);
 		this.parameters.putAll(urnParameters);
+		if (urnParameters != null && !urnParameters.isEmpty()) {
+			String s = "";
+			for (String key : urnParameters.keySet()) {
+				s += (s.isEmpty() ? "" : "&") + ("value".equals(key) ? "" : (key + "="));
+				String val = urnParameters.get(key);
+				s += val.replace(",", "&");
+			}
+			this.fullUrn += "#" + s;
+		}
 	}
 
 	/**
@@ -158,7 +167,7 @@ public class Urn {
 
 	@Override
 	public String toString() {
-		return urn;
+		return fullUrn;
 	}
 
 	public Map<String, String> getParameters() {

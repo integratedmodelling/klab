@@ -29,6 +29,8 @@ public enum UnarySemanticOperator {
     OCCURRENCE(new Type[] { Type.COUNTABLE }, "occurrence of"),
     ASSESSMENT(new Type[] { Type.QUALITY }, "assessment of"),
     CHANGE(new Type[] { Type.QUALITY }, "change in"),
+    CHANGED(new Type[] { Type.QUALITY }, "changed"),
+    CHANGERATE(new Type[] { Type.QUALITY }, "change rate of"),
     OBSERVABILITY(new Type[] { Type.OBSERVABLE }, "observability of"),
     MAGNITUDE(new Type[] { Type.QUANTIFIABLE }, "magnitude of"),
     LEVEL(new Type[] { Type.QUANTIFIABLE }, "level of"),

@@ -3,6 +3,7 @@ package org.integratedmodelling.weather.adapters;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -13,6 +14,9 @@ import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
@@ -21,6 +25,7 @@ import org.integratedmodelling.weather.data.Weather;
 import org.integratedmodelling.weather.data.WeatherEvent;
 import org.integratedmodelling.weather.data.WeatherEvents;
 import org.integratedmodelling.weather.data.WeatherFactory;
+import org.integratedmodelling.weather.data.WeatherStation;
 
 /**
  * Handles URNs:
@@ -97,12 +102,33 @@ public class WeatherAdapter implements IUrnAdapter {
 	}
 
 	private void getStations(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
-		// TODO Auto-generated method stub
+
 		Scale scale = Scale.create(geometry);
-		Weather weather = WeatherComponent.getWeather(scale.getSpace(), scale.getTime(), "ALL",
-				urn.getSplitParameter(Urn.SINGLE_PARAMETER_KEY));
-		
-		System.out.println("ZIOPOP");
+		String[] originalVariables = urn.getSplitParameter(Urn.SINGLE_PARAMETER_KEY);
+		String[] variables = WeatherComponent.normalizeVariableNames(originalVariables);
+		Weather weather = WeatherComponent.getWeather(scale.getSpace(), scale.getTime(), "ALL", variables);
+
+		for (Map<String, Object> sd : weather.getStationData()) {
+
+			Scale stationScale = Scale.create(scale.getTime(),
+					Shape.create((Double) sd.get("lon"), (Double) sd.get("lat"), Projection.getLatLon()));
+
+			Builder ob = builder.startObject("result", sd.get("id").toString(), stationScale.asGeometry());
+
+			for (int i = 0; i < originalVariables.length; i++) {
+
+				if (sd.containsKey(variables[i])) {
+					double[] data = (double[]) sd.get(variables[i]);
+					Builder sb = ob.startState(originalVariables[i]);
+					for (double d : data) {
+						sb.add(d);
+					}
+					sb.finishState();
+				}
+			}
+
+			ob.finishObject();
+		}
 	}
 
 	private void getStorms(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
@@ -148,11 +174,10 @@ public class WeatherAdapter implements IUrnAdapter {
 
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
-			break;
-		case stations:
-			break;
+			return Type.NUMBER;
 		case storms:
-			break;
+		case stations:
+			return Type.OBJECT;
 		default:
 			break;
 		}
@@ -166,16 +191,11 @@ public class WeatherAdapter implements IUrnAdapter {
 
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
-			// S2
-			break;
+			return Geometry.create("T1S2");
 		case stations:
-			// #T0S0(nstations - according to catalog)
-			break;
+			return Geometry.create("#T1S0");
 		case storms:
-			// #T0S2
-			break;
-		default:
-			break;
+			return Geometry.create("#T1S2");
 		}
 
 		throw new IllegalArgumentException(
@@ -189,15 +209,15 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	@Override
 	public IResource getResource(String urn) {
-		// TODO Auto-generated method stub
+
 		Urn kurn = new Urn(urn);
 		ResourceReference ref = new ResourceReference();
 		ref.setUrn(kurn.getUrn());
 		ref.setAdapterType(getName());
 		ref.setLocalName(kurn.getResourceId());
-		ref.setGeometry("#"); // getGeometry(urn)
+		ref.setGeometry(getGeometry(kurn).encode());
 		ref.setVersion(Version.CURRENT);
-		ref.setType(Type.VALUE); // getType(urn)
+		ref.setType(getType(kurn));
 		return new Resource(ref);
 	}
 
