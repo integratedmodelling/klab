@@ -13,12 +13,12 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -40,6 +40,7 @@ public class LocalData implements IKlabData {
 	static {
 		reservedFields = new HashSet<>();
 		reservedFields.add("objects");
+		reservedFields.add("states");
 		reservedFields.add("geometry");
 		reservedFields.add("name");
 	}
@@ -60,13 +61,13 @@ public class LocalData implements IKlabData {
 	}
 
 	/**
-	 * Used after a remote resource/contextualize call. Passes the JSON map
-	 * equivalent in structure to the protobuf message from a node.
+	 * Special constructor used after a remote resource/contextualize call. Passes
+	 * the JSON map equivalent in structure to the protobuf message from a node.
 	 * 
 	 * @param data
 	 * @param context
 	 */
-	public LocalData(Map<?, ?> data, IContextualizationScope context) {
+	public LocalData(Map<?, ?> data, IRuntimeScope context) {
 
 		if (data.containsKey("states")) {
 			for (Object s : (Iterable<?>) data.get("states")) {
@@ -114,10 +115,6 @@ public class LocalData implements IKlabData {
 
 				IScale scale = Scale.create(Geometry.create(obj.get("geometry").toString()));
 
-				/*
-				 * Gather states from model IDs and prepare to record them later.
-				 */
-				Set<String> interpreted = new HashSet<>();
 				IObjectArtifact output = null;
 
 				if (context.getTargetSemantics().is(Type.RELATIONSHIP)) {
@@ -125,11 +122,28 @@ public class LocalData implements IKlabData {
 					IDirectObservation source = null; // TODO
 					IDirectObservation target = null; // TODO
 					output = context.newRelationship(context.getTargetSemantics(), obj.get("name").toString(), scale,
-							source, target, extractMetadata(obj, interpreted));
+							source, target, extractMetadata(obj));
 				} else {
 
 					output = context.newObservation(context.getTargetSemantics(), obj.get("name").toString(), scale,
-							extractMetadata(obj, interpreted));
+							extractMetadata(obj));
+				}
+
+				/*
+				 * add any states or other artifacts. TODO not sure how this works with object
+				 * structures, or even whether it should at all.
+				 */
+				if (output != null && obj.containsKey("states") && context.getModel() != null) {
+					for (Object state : (List<?>) obj.get("states")) {
+
+						Map<?, ?> sob = (Map<?, ?>) state;
+						String stateName = sob.get("name").toString();
+						IObservable observable = context.getModel().getAttributeObservables().get(stateName);
+						if (observable != null) {
+							context.addState((IDirectObservation)output, observable, getData(sob));
+						}
+
+					}
 				}
 
 				if (this.object == null) {
@@ -138,8 +152,7 @@ public class LocalData implements IKlabData {
 					if (!(this.object instanceof ObservationGroup)) {
 						IObservation obs = this.object;
 						this.object = new ObservationGroup((Observable) context.getTargetSemantics(),
-								(Scale) context.getScale(), (IRuntimeScope) context,
-								context.getTargetSemantics().getArtifactType());
+								(Scale) context.getScale(), context, context.getTargetSemantics().getArtifactType());
 						((ObservationGroup) this.object).chain(obs);
 					}
 					((Artifact) this.object).chain(output);
@@ -150,11 +163,15 @@ public class LocalData implements IKlabData {
 		}
 	}
 
-	private IMetadata extractMetadata(Map<?, ?> obj, Set<String> interpreted) {
+	private Object getData(Map<?, ?> sob) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private IMetadata extractMetadata(Map<?, ?> obj) {
 		Metadata ret = new Metadata();
 		for (Object k : obj.keySet()) {
-			if (!reservedFields.contains(k.toString())
-					&& !(interpreted != null && interpreted.contains(k.toString()))) {
+			if (!reservedFields.contains(k.toString())) {
 				ret.put(k.toString(), obj.get(k));
 			}
 		}

@@ -886,6 +886,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				parent instanceof ObservationGroup ? ((ObservationGroup) parent).getContext() : parent);
 	}
 
+	@Override
+	public IState addState(IDirectObservation target, IObservable observable, Object data) {
+		return null;
+	}
+	
 	/**
 	 * Pre-fill the artifact catalog with the artifact relevant to the passed
 	 * actuator and scope.

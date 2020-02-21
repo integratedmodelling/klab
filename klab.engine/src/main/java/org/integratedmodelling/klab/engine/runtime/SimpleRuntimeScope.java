@@ -675,4 +675,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public IState addState(IDirectObservation target, IObservable observable, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
