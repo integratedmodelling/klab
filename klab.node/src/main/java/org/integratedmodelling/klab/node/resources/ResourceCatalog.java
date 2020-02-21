@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +35,6 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.ZipUtils;
-import org.joda.time.DateTime;
 
 import com.google.common.html.types.SafeUrl;
 import com.google.common.html.types.SafeUrls;
@@ -182,7 +182,7 @@ public class ResourceCatalog implements IResourceCatalog {
 		reference.getLocalPaths().addAll(localpaths);
 
 		reference.setVersion("1.0.0");
-		reference.getMetadata().put(IMetadata.DC_DATE_AVAILABLE, new DateTime().toString());
+		reference.getMetadata().put(IMetadata.DC_DATE_AVAILABLE, "" + new Date().getTime());
 		reference.getMetadata().put(IMetadata.DC_CONTRIBUTOR, user.getUsername());
 
 		String catalog = getCatalogName(reference);

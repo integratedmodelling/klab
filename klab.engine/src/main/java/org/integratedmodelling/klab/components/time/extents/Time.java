@@ -154,14 +154,17 @@ public class Time extends Extent implements ITime {
 		return ret;
 	}
 
-	public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
+	public static Time create(ITime.Type type, Resolution.Type resolutionType, Double resolutionMultiplier,
 			ITimeInstant start, ITimeInstant end, ITimeDuration period, Resolution.Type coverageUnit,
-			long coverageStart, long coverageEnd) {
+			Long coverageStart, Long coverageEnd) {
+
 		Time ret = new Time();
 		ret.extentType = type;
 		ret.start = start;
 		ret.end = end;
-		ret.resolution = new ResolutionImpl(resolutionType, resolutionMultiplier);
+		if (resolutionType != null) {
+			ret.resolution = new ResolutionImpl(resolutionType, resolutionMultiplier);
+		}
 		ret.step = period;
 		if (ret.step != null) {
 			if (type == ITime.Type.REAL && ret.end == null) {
@@ -184,7 +187,7 @@ public class Time extends Extent implements ITime {
 
 	public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
 			ITimeInstant start, ITimeInstant end, ITimeDuration period) {
-		return create(type, resolutionType, resolutionMultiplier, start, end, period, null, -1, -1);
+		return create(type, resolutionType, resolutionMultiplier, start, end, period, null, null, null);
 	}
 
 	/**
@@ -376,7 +379,8 @@ public class Time extends Extent implements ITime {
 	public Time collapse() {
 		return isConsistent()
 				? create(this.extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL,
-						this.resolution.getType(), resolution.getMultiplier(start, end), start, end, null,
+						(this.resolution == null ? null : this.resolution.getType()),
+						(this.resolution == null ? null : this.resolution.getMultiplier(start, end)), start, end, null,
 						(this.coverageResolution == null ? null : this.coverageResolution.getType()),
 						this.coverageStart, this.coverageEnd)
 				: this;
@@ -655,6 +659,10 @@ public class Time extends Extent implements ITime {
 			return initialization((Scale) null);
 		}
 
+		if (dimension.isGeneric()) {
+			type = ITime.Type.LOGICAL;
+		}
+
 		TimeInstant start = tstart == null ? null : new TimeInstant(tstart);
 		TimeInstant end = tend == null ? null : new TimeInstant(tend);
 		if (period != null) {
@@ -672,7 +680,7 @@ public class Time extends Extent implements ITime {
 		Resolution.Type resType = unit == null ? null : Resolution.Type.parse(unit);
 		ITimeDuration step = tstep == null ? null : TimeDuration.create(tstep, resType);
 
-		return create(type, resType, scope == null ? null : 1.0, start, end, step, coverage,
+		return create(type, resType, (scope == null ? null : 1.0), start, end, step, coverage,
 				(cstart == null ? -1 : cstart), (cend == null ? -1 : cend));
 	}
 

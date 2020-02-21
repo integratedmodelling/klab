@@ -176,6 +176,7 @@ public class WeatherAdapter implements IUrnAdapter {
 		case data:
 			return Type.NUMBER;
 		case storms:
+			return Type.EVENT;
 		case stations:
 			return Type.OBJECT;
 		default:
@@ -191,11 +192,11 @@ public class WeatherAdapter implements IUrnAdapter {
 
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
-			return Geometry.create("T1S2");
+			return Geometry.create("\u03c41\u03c32");
 		case stations:
-			return Geometry.create("#T1S0");
+			return Geometry.create("#\u03c41\u03c30");
 		case storms:
-			return Geometry.create("#T1S2");
+			return Geometry.create("#\u03c41\u03c32");
 		}
 
 		throw new IllegalArgumentException(
