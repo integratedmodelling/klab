@@ -103,7 +103,9 @@ public class WeatherComponent {
 	public static Weather getWeather(ISpace space, ITime time, String source, String... vars) {
 		Collection<WeatherStation> wss = WeatherFactory.INSTANCE.within(space.getShape(), source, vars);
 		return new Weather(wss, time.getStart().getMilliseconds(), time.getEnd().getMilliseconds(),
-				time.getStep().getMilliseconds(), 10, vars, 75, true);
+				(time.getStep() == null ? (time.getEnd().getMilliseconds() - time.getStart().getMilliseconds())
+						: time.getStep().getMilliseconds()),
+				10, vars, 75, true);
 	}
 
 }
