@@ -107,7 +107,7 @@ public class Time extends Extent implements ITime {
 		this.extentType = time.extentType;
 		this.multiplicity = time.multiplicity;
 		this.realtime = time.realtime;
-		this.resolution = ((ResolutionImpl) time.resolution).copy();
+		this.resolution = time.resolution == null ? null : ((ResolutionImpl) time.resolution).copy();
 		this.start = time.start;
 		this.step = time.step;
 	}
