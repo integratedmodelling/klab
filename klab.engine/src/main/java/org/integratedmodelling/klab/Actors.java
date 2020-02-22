@@ -24,9 +24,27 @@ import com.google.inject.Injector;
 public enum Actors implements IActorsService {
 
 	INSTANCE;
-	
+
 	@Inject
 	ParseHelper<Model> dataflowParser;
+
+
+//	public ActorSystem<Void> getActorSystem() {
+//		 Behavior<Void> root = Actor.deferred(ctx -> {
+//		      ActorRef<Greeter1.Command> greeter =
+//		        ctx.spawn(Greeter1.greeterBehavior(), "greeter");
+//		      greeter.tell(new Greeter1.WhoToGreet("World"));
+//		      greeter.tell(new Greeter1.Greet());
+//		      return Actor.empty();
+//		    });
+//		    ActorSystem<Void> system = ActorSystem.create(root, "HelloWorld");
+//		    try {
+//		      System.out.println("Press ENTER to exit the system");
+//		      System.in.read();
+//		    } finally {
+//		      system.terminate();
+//		    }
+//		  }
 
 	private Actors() {
 		IInjectorProvider injectorProvider = new DataflowInjectorProvider();
@@ -67,5 +85,5 @@ public enum Actors implements IActorsService {
 		}
 		return ret;
 	}
-	
+
 }

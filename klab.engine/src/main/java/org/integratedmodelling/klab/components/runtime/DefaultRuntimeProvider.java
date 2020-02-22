@@ -191,20 +191,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		});
 	}
 
-	/**
-	 * TARIK this is the root, created on demand.
-	 * 
-	 * @return
-	 */
-	public ActorSystem getActorSystem() {
-		if (rootActorSystem == null) {
-			Logging.INSTANCE.info("Creating root actor system...");
-			rootActorSystem = ActorSystem
-					.create(Authentication.INSTANCE.getAuthenticatedIdentity(IEngine.class).getId());
-		}
-		return rootActorSystem;
-	}
-
 	@Override
 	public RuntimeScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
 			IMonitor monitor) {

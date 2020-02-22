@@ -1046,11 +1046,11 @@ public class Geometry implements IGeometry {
 	@Override
 	public boolean isGeneric() {
 		for (Dimension dimension : dimensions) {
-			if (dimension.isGeneric()) {
-				return true;
+			if (!dimension.isGeneric()) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -1075,7 +1075,7 @@ public class Geometry implements IGeometry {
 			return create(geometry.encode());
 		}
 
-		if (geometry.isScalar()) {
+		if (geometry.isScalar() && geometry.isGeneric()) {
 			return this;
 		}
 

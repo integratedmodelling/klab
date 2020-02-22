@@ -29,7 +29,7 @@ import org.integratedmodelling.klab.rest.Group;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public abstract interface IUserIdentity extends IIdentity, IKlabActor {
+public abstract interface IUserIdentity extends IIdentity {
 
 	/**
 	 * Never null, may be ANONYMOUS_USER_ID when isAnonymous() returns true.

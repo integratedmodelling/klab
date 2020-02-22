@@ -680,7 +680,7 @@ public class Space extends Extent implements ISpace {
 		if (this.features != null) {
 			return new long[] { this.features.size() };
 		}
-		return shape.shape();
+		return shape == null ? null : shape.shape();
 	}
 
 	@Override

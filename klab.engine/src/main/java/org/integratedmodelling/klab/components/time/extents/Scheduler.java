@@ -308,7 +308,7 @@ public class Scheduler implements IScheduler {
 		 * and the like but keeping the resolution and representation.
 		 */
 		IScale scale = modelScale.merge(overall);
-
+		
 		ITimeInstant start = scale.getTime().getStart();
 		ITimeInstant end = scale.getTime().getStart();
 		ITimeDuration step = scale.getTime().getStep();
@@ -356,12 +356,15 @@ public class Scheduler implements IScheduler {
 		List<Number> periods = new ArrayList<>();
 
 		/*
-		 * figure out the MCD resolution
+		 * figure out the MCD resolution. TODO this must change to reflect irregular intervals
 		 */
 		for (Registration registration : registrations) {
-			periods.add(registration.scale.getTime().getStep().getCommonDivisorMilliseconds());
-			if (longest < registration.scale.getTime().getStep().getMaxMilliseconds()) {
-				longest = registration.scale.getTime().getStep().getMaxMilliseconds();
+			long interval = registration.scale.getTime().getStep() == null ?
+					(registration.scale.getTime().getEnd().getMilliseconds() - registration.scale.getTime().getStart().getMilliseconds()) :
+					registration.scale.getTime().getStep().getCommonDivisorMilliseconds();
+			periods.add(interval);
+			if (longest < interval) {
+				longest = interval;
 			}
 		}
 
