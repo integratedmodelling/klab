@@ -436,7 +436,7 @@ public enum Resources implements IResourceService {
 		Urn urn = new Urn(urns);
 
 		if (urn.isLocal()) {
-			ret = getLocalResourceCatalog().get(urn.toString());
+			ret = getLocalResourceCatalog().get(urn.getUrn());
 		} else if (urn.isUniversal()) {
 				
 			// TODO this should periodically expire resources whose timestamp is > x

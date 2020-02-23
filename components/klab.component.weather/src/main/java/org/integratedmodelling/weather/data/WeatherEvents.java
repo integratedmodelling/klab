@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable.PersistentTableBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.weather.WeatherComponent;
 import org.joda.time.DateTime;
 
@@ -35,9 +36,13 @@ public enum WeatherEvents {
 	public final static String TRMM_EVENTS_LOCATION = "trmm.catalog.location";
 	public final static String TRMM_PRECIPITATION_THRESHOLD = "trmm.precipitation.threshold";
 
+	public final static String TRMM_FIRSTEVENT_PROPERTY = "trmm.eventtime.first";
+	public final static String TRMM_LASTEVENT_PROPERTY = "trmm.eventtime.last";
+
 	DateTime trmmStart = new DateTime(1998, 1, 1, 0, 0, 0);
 	DateTime trmmEnd = new DateTime(2015, 1, 1, 0, 0, 0);
-	
+	Range eventRange = null;
+
 	/*
 	 * the DB
 	 */
@@ -60,9 +65,9 @@ public enum WeatherEvents {
 	public void setup() {
 
 		if (ebox.count() > 1000000) {
-			
+
 			Logging.INSTANCE.info("Weather event kbox is initialized.");
-			
+
 		} else {
 
 			Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
@@ -125,6 +130,9 @@ public enum WeatherEvents {
 
 			DateTime start = new DateTime(1998, 1, 1, 0, 0);
 
+			long firstEvent = 0;
+			long lastEvent = 0;
+
 			/*
 			 * Loop; one event per 'row'
 			 */
@@ -166,6 +174,13 @@ public enum WeatherEvents {
 				long startTimeMs = start.getMillis() + ((long) tstartv * 3 * 60 * 60 * 1000);
 				long durationMs = (long) timespanv * 60 * 60 * 1000;
 
+				if (firstEvent == 0 || firstEvent > startTimeMs) {
+					firstEvent = startTimeMs;
+				}
+				if (lastEvent == 0 || lastEvent < startTimeMs) {
+					lastEvent = startTimeMs;
+				}
+
 				Map<String, Object> data = new HashMap<>();
 				data.put(WeatherEvent.BOUNDING_BOX, boundingBox);
 				data.put(WeatherEvent.PRECIPITATION_MM, mmPerHour);
@@ -184,6 +199,13 @@ public enum WeatherEvents {
 						+ NumberFormat.getInstance().format(spacespanv / 1000000.0) + "km2.\nBounding box is "
 						+ boundingBox);
 			}
+
+			// record first and last event time to adjust for sloppy queries
+			Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID).setProperty(TRMM_FIRSTEVENT_PROPERTY,
+					firstEvent + "");
+			Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID).setProperty(TRMM_LASTEVENT_PROPERTY,
+					lastEvent + "");
+			Extensions.INSTANCE.saveComponentProperties(WeatherComponent.ID);
 
 		} catch (Throwable t) {
 			throw new KlabIOException(t);
@@ -224,10 +246,10 @@ public enum WeatherEvents {
 	public static void main(String[] args) {
 		INSTANCE.setup();
 	}
-	
+
 	/**
-	 * For now, substitute 2014 to any year after it, and 1998 to any year before, and adjust intervals 
-	 * so that the same season is covered in the closest year.
+	 * For now, substitute 2014 to any year after it, and 1998 to any year before,
+	 * and adjust intervals so that the same season is covered in the closest year.
 	 * 
 	 * @param scale
 	 * @return
@@ -237,10 +259,29 @@ public enum WeatherEvents {
 	}
 
 	/**
-	 * For now, substitute 2014 to any year after it, and 1998 to any year before, and adjust intervals 
-	 * so that the same season is covered in the closest year.
+	 * Temporal range of event start in milliseconds
+	 * 
+	 * @return
+	 */
+	public Range getEventRange() {
+		if (this.eventRange == null) {
+			long start = Long.parseLong(Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID)
+					.getProperty(TRMM_FIRSTEVENT_PROPERTY, "0"));
+			long end = Long.parseLong(Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID)
+					.getProperty(TRMM_LASTEVENT_PROPERTY, "0"));
+			this.eventRange = new Range((double) start, (double) end, false, false);
+		}
+		return this.eventRange;
+	}
+
+	/**
+	 * Get all weather events for a particular space and time. If we have no data
+	 * coverage for the intended period, at least for now, substitute the events in
+	 * the closest year ensuring that the same seasonal sequence is covered.
 	 * 
 	 * @param scale
+	 * @param minPrecipitation pass the minimum precipitation in mm per event, or
+	 *                         NaN for any accepted.
 	 * @return
 	 */
 	public Iterable<WeatherEvent> getEvents(IScale scale, double minPrecipitation) {
@@ -248,22 +289,34 @@ public enum WeatherEvents {
 		if (scale.getSpace() == null || scale.getTime() == null) {
 			return new ArrayList<>();
 		}
-		
+
 		Geometry shape = ((Shape) scale.getSpace().getShape()).getStandardizedGeometry();
 		ITimeInstant start = scale.getTime().getStart();
 		ITimeInstant end = scale.getTime().getEnd();
-		
+
 		if (start == null || end == null || start.equals(end)) {
 			return new ArrayList<>();
 		}
-		
+
+		long startTime = start.getMilliseconds();
+		long endTime = end.getMilliseconds();
+
+		/*
+		 * TODO adjust if needed
+		 */
+		if (!getEventRange().contains(startTime) || !getEventRange().contains(endTime)) {
+			// ACH
+			// find the closest year in series and get that same span starting the same
+			// Julian day
+		}
+
 		String precQuery = "";
 		if (!Double.isNaN(minPrecipitation)) {
 			precQuery = " AND precipitation_mm >= " + minPrecipitation;
 		}
 
-		String query = "SELECT * from " + ebox.getName() + " WHERE " + "location && '" + shape + "'" + precQuery + " AND ("
-				+ start.getMilliseconds() + " BETWEEN start_long AND end_long OR " + end.getMilliseconds()
+		String query = "SELECT * from " + ebox.getName() + " WHERE " + "location && '" + shape + "'" + precQuery
+				+ " AND (" + (long) startTime + " BETWEEN start_long AND end_long OR " + (long) endTime
 				+ "  BETWEEN start_long AND end_long);";
 
 		return ebox.query(query + ";");
