@@ -144,6 +144,8 @@ public class WeatherAdapter implements IUrnAdapter {
 			Builder ob = builder.startObject("result", "storm_" + event.asData().get(WeatherEvent.ID),
 					(IGeometry) event.asData().get(WeatherEvent.BOUNDING_BOX));
 
+			// TODO use urn parameters, set attributes
+			
 			Builder sb = ob.startState("precipitation");
 			sb.add(event.asData().get(WeatherEvent.PRECIPITATION_MM));
 			sb.finishState();

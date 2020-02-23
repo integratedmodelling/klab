@@ -16,12 +16,15 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable.PersistentTableBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.weather.WeatherComponent;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.Days;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -291,8 +294,8 @@ public enum WeatherEvents {
 		}
 
 		Geometry shape = ((Shape) scale.getSpace().getShape()).getStandardizedGeometry();
-		ITimeInstant start = scale.getTime().getStart();
-		ITimeInstant end = scale.getTime().getEnd();
+		TimeInstant start = (TimeInstant) scale.getTime().getStart();
+		TimeInstant end = (TimeInstant) scale.getTime().getEnd();
 
 		if (start == null || end == null || start.equals(end)) {
 			return new ArrayList<>();
@@ -302,12 +305,44 @@ public enum WeatherEvents {
 		long endTime = end.getMilliseconds();
 
 		/*
-		 * TODO adjust if needed
+		 * adjust if needed
 		 */
 		if (!getEventRange().contains(startTime) || !getEventRange().contains(endTime)) {
-			// ACH
 			// find the closest year in series and get that same span starting the same
 			// Julian day
+			long span = endTime - startTime;
+			if (span > getEventRange().getWidth()) {
+				// sorry, not enough observations
+				return new ArrayList<>();
+			}
+			// unadjusted period to fit the span. We can only move backwards from here.
+			TimeInstant startDate = new TimeInstant((long) getEventRange().getUpperBound() - (endTime - startTime));
+
+			// year we must actually start from
+			int startYear = startDate.asDate().getYear();
+
+			// this is the day in the year we have to start from
+			int startDay = start.getDayOfYear();
+			// corresponding to the n-th year in the span, which we adjust backwards if
+			// we're beyond
+			if (startDay > startDate.getDayOfYear()) {
+				startYear--;
+			}
+
+			// compute the new start
+			DateTime newstart = new DateTime(startYear, 1, 1, 0, 0, 0).plusDays(startDay)
+					.plusHours(start.asDate().getHourOfDay()).plusMinutes(start.asDate().getMinuteOfDay())
+					.plusSeconds(start.asDate().getSecondOfDay());
+
+			// new start goes back this number of days
+			startTime = newstart.getMillis();
+			endTime = startTime + span;
+
+			// TODO this should go to the notifications, I guess through a specialized
+			// adapter monitor passed upstream.
+			Logging.INSTANCE.warn("storm events database: original range " + start + " to " + end + " adjusted to "
+					+ new TimeInstant(startTime) + " to " + new TimeInstant(endTime)
+					+ " to ensure coverage in timeseries");
 		}
 
 		String precQuery = "";
@@ -315,7 +350,7 @@ public enum WeatherEvents {
 			precQuery = " AND precipitation_mm >= " + minPrecipitation;
 		}
 
-		String query = "SELECT * from " + ebox.getName() + " WHERE " + "location && '" + shape + "'" + precQuery
+		String query = "SELECT * from " + ebox.getName() + " WHERE " + "bounding_box && '" + shape + "'" + precQuery
 				+ " AND (" + (long) startTime + " BETWEEN start_long AND end_long OR " + (long) endTime
 				+ "  BETWEEN start_long AND end_long);";
 
