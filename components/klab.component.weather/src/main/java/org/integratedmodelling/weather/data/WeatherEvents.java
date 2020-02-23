@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -11,7 +12,6 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -23,8 +23,6 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.weather.WeatherComponent;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.Days;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -289,6 +287,12 @@ public enum WeatherEvents {
 	 */
 	public Iterable<WeatherEvent> getEvents(IScale scale, double minPrecipitation) {
 
+//		System.out.println(""+ebox.count());
+		
+//		for (Iterator<WeatherEvent> dio = ebox.iterator(); dio.hasNext(); ) {
+//			System.out.println(dio.next());
+//		}
+		
 		if (scale.getSpace() == null || scale.getTime() == null) {
 			return new ArrayList<>();
 		}
@@ -351,8 +355,8 @@ public enum WeatherEvents {
 		}
 
 		String query = "SELECT * from " + ebox.getName() + " WHERE " + "bounding_box && '" + shape + "'" + precQuery
-				+ " AND (" + (long) startTime + " BETWEEN start_long AND end_long OR " + (long) endTime
-				+ "  BETWEEN start_long AND end_long);";
+				+ " AND ((" + (long) startTime + " BETWEEN start_long AND end_long) OR (" + (long) endTime
+				+ "  BETWEEN start_long AND end_long));";
 
 		return ebox.query(query + ";");
 	}

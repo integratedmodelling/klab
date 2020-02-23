@@ -154,6 +154,16 @@ public class Time extends Extent implements ITime {
 		return ret;
 	}
 
+	public static Time create(long startMillis, long endMillis) {
+		Time ret = new Time();
+		ret.extentType = ITime.Type.PHYSICAL;
+		ret.start = new TimeInstant(startMillis);
+		ret.end = new TimeInstant(endMillis);
+		ret.resolution = resolution(ret.start, ret.end);
+		return ret;
+	}
+
+	
 	public static Time create(ITime.Type type, Resolution.Type resolutionType, Double resolutionMultiplier,
 			ITimeInstant start, ITimeInstant end, ITimeDuration period, Resolution.Type coverageUnit,
 			Long coverageStart, Long coverageEnd) {

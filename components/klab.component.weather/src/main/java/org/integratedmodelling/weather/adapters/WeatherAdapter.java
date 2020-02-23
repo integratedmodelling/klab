@@ -17,6 +17,8 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
@@ -25,7 +27,6 @@ import org.integratedmodelling.weather.data.Weather;
 import org.integratedmodelling.weather.data.WeatherEvent;
 import org.integratedmodelling.weather.data.WeatherEvents;
 import org.integratedmodelling.weather.data.WeatherFactory;
-import org.integratedmodelling.weather.data.WeatherStation;
 
 /**
  * Handles URNs:
@@ -141,18 +142,24 @@ public class WeatherAdapter implements IUrnAdapter {
 
 		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation)) {
 
+			Scale eventScale = Scale.create(
+					Time.create((long) event.asData().get(WeatherEvent.START_LONG),
+							(long) event.asData().get(WeatherEvent.START_LONG)),
+					Shape.create((com.vividsolutions.jts.geom.Geometry) event.asData().get(WeatherEvent.BOUNDING_BOX),
+							Projection.getLatLon()));
+
 			Builder ob = builder.startObject("result", "storm_" + event.asData().get(WeatherEvent.ID),
-					(IGeometry) event.asData().get(WeatherEvent.BOUNDING_BOX));
+					eventScale.asGeometry());
 
 			// TODO use urn parameters, set attributes
-			
-			Builder sb = ob.startState("precipitation");
-			sb.add(event.asData().get(WeatherEvent.PRECIPITATION_MM));
-			sb.finishState();
-
-			Builder db = ob.startState("duration");
-			db.add(event.asData().get(WeatherEvent.DURATION_HOURS));
-			db.finishState();
+//
+//			Builder sb = ob.startState("precipitation");
+//			sb.add(event.asData().get(WeatherEvent.PRECIPITATION_MM));
+//			sb.finishState();
+//
+//			Builder db = ob.startState("duration");
+//			db.add(event.asData().get(WeatherEvent.DURATION_HOURS));
+//			db.finishState();
 
 			ob.finishObject();
 		}

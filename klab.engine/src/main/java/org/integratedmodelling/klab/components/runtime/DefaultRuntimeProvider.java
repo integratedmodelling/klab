@@ -16,10 +16,8 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -28,7 +26,6 @@ import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
-import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -109,11 +106,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
-			IResolutionScope scope/* , IDirectObservation context */, IMonitor monitor) throws KlabException {
-
-		if (((Actuator) actuator).getObservable().is(Type.RELATIONSHIP) && scope.getMode() == Mode.RESOLUTION) {
-			System.out.println("ZANA MADONNA");
-		}
+			IResolutionScope scope, IMonitor monitor) throws KlabException {
 
 		return executor.submit(new Callable<IArtifact>() {
 
@@ -211,7 +204,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 		/*
 		 * if (resource.isVariable()) { ret = Evaluator.getServiceCall(resource); } else
-		 */ 
+		 */
 		if (resource.getServiceCall() != null) {
 			if (resource.getCondition() != null) {
 				ret = ConditionalContextualizer.getServiceCall(resource);
