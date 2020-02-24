@@ -119,8 +119,8 @@ public enum WeatherEvents {
 	 */
 	public void setup(String url, double threshold, IMonitor monitor) {
 
-		int lower = 0;
-		int higher = 0;
+//		int lower = 0;
+//		int higher = 0;
 
 		/*
 		 * Open the THREDDS fucker. It's got 65 million events.
@@ -206,7 +206,7 @@ public enum WeatherEvents {
 
 				System.out.println("#" + used + "/" + n + ": event at " + longitude + "," + latitude + " went from "
 						+ new Date(startTimeMs) + " to " + new Date(startTimeMs + durationMs) + " dropping "
-						+ totalprecipv + " mm of shit" + " over "
+						+ totalprecipv + " mm of precipitation" + " over "
 						+ NumberFormat.getInstance().format(spacespanv / 1000000.0) + "km2.\nBounding box is "
 						+ boundingBox);
 			}
@@ -222,7 +222,7 @@ public enum WeatherEvents {
 			throw new KlabIOException(t);
 		}
 
-		System.out.println("GOT " + lower + " rain events and " + higher + " flood events");
+//		System.out.println("GOT " + lower + " rain events and " + higher + " flood events");
 	}
 
 	private final static int MIN = 0;
@@ -295,7 +295,7 @@ public enum WeatherEvents {
 	 * @return
 	 */
 	public Iterable<WeatherEvent> getEvents(IScale scale) {
-		return getEvents(scale, Double.NaN);
+		return getEvents(scale, Double.NaN, true);
 	}
 
 	/**
@@ -330,7 +330,7 @@ public enum WeatherEvents {
 	 *                         NaN for any accepted.
 	 * @return
 	 */
-	public Iterable<WeatherEvent> getEvents(IScale scale, double minPrecipitation) {
+	public Iterable<WeatherEvent> getEvents(IScale scale, double minPrecipitation, boolean adjustDates) {
 
 		if (scale.getSpace() == null || scale.getTime() == null) {
 			return new ArrayList<>();

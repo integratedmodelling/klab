@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -17,7 +18,6 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceReference;
@@ -139,8 +139,16 @@ public class WeatherAdapter implements IUrnAdapter {
 		if (urn.getParameters().containsKey("minprec")) {
 			minPrecipitation = Double.parseDouble(urn.getParameters().get("minprec").toString());
 		}
-
-		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation)) {
+		
+		boolean adjustDates = true;
+		if (urn.getParameters().containsKey("realdate")) {
+			adjustDates = false;
+		}
+		
+		
+		int nEvents = 0;
+		
+		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation, adjustDates)) {
 
 			Scale eventScale = Scale.create(
 					Time.create((long) event.asData().get(WeatherEvent.START_LONG),
@@ -162,8 +170,12 @@ public class WeatherAdapter implements IUrnAdapter {
 //			db.finishState();
 
 			ob.finishObject();
+			
+			nEvents ++;
 		}
 
+		Logging.INSTANCE.info("query for storm events returned " + nEvents + " instances");
+		
 	}
 
 	private void getInterpolatedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
