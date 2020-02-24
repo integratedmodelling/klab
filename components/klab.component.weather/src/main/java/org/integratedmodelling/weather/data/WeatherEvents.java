@@ -1,10 +1,12 @@
 package org.integratedmodelling.weather.data;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -21,6 +23,7 @@ import org.integratedmodelling.klab.data.table.persistent.PersistentTable;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable.PersistentTableBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.URLUtils;
 import org.integratedmodelling.weather.WeatherComponent;
 import org.joda.time.DateTime;
 
@@ -33,6 +36,9 @@ import ucar.nc2.Variable;
 public enum WeatherEvents {
 
 	INSTANCE;
+
+	static private String[] trmm_urls = new String[] {
+			"http://www.integratedmodelling.org/downloads/All_Precip_1998-2014_TRMM_Standard.nc" };
 
 	public final static String TRMM_EVENTS_LOCATION = "trmm.catalog.location";
 	public final static String TRMM_PRECIPITATION_THRESHOLD = "trmm.precipitation.threshold";
@@ -74,6 +80,10 @@ public enum WeatherEvents {
 			Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
 			if (properties.containsKey(TRMM_EVENTS_LOCATION)) {
 				Logging.INSTANCE.info("Initializing weather event kbox from local file.");
+				setup(properties.getProperty(TRMM_EVENTS_LOCATION),
+						Double.parseDouble(properties.getProperty(TRMM_PRECIPITATION_THRESHOLD, "0.1")), null);
+			} else if (retrieveEventDatabase()) {
+				Logging.INSTANCE.info("Initializing weather event kbox from downloaded file.");
 				setup(properties.getProperty(TRMM_EVENTS_LOCATION),
 						Double.parseDouble(properties.getProperty(TRMM_PRECIPITATION_THRESHOLD, "0.1")), null);
 			} else {
@@ -244,6 +254,35 @@ public enum WeatherEvents {
 
 	}
 
+	/**
+	 * Try getting the events file and putting it somewhere so we don't need to set
+	 * up from the outside.
+	 * 
+	 * @return
+	 */
+	public static boolean retrieveEventDatabase() {
+
+		boolean ret = false;
+		for (String url : trmm_urls) {
+			try {
+				File output = File.createTempFile("trmm", ".nc");
+				Logging.INSTANCE.info("Attempting retrieval of ~5GB source data from " + url + " into " + output);
+				Logging.INSTANCE.info("Expect tens of minutes of wait or more. Interrupting the download will"
+						+ " cause trouble unless the output file is cleaned.");
+				URLUtils.copyChanneled(new URL(url), output);
+				Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID).setProperty(TRMM_EVENTS_LOCATION,
+						output.toURI().toURL().toString());
+				Extensions.INSTANCE.saveComponentProperties(WeatherComponent.ID);
+				Logging.INSTANCE.info("Data retrieval successful");
+				ret = true;
+				break;
+			} catch (IOException e) {
+			}
+		}
+
+		return ret;
+	}
+
 	public static void main(String[] args) {
 		INSTANCE.setup();
 	}
@@ -279,6 +318,12 @@ public enum WeatherEvents {
 	 * Get all weather events for a particular space and time. If we have no data
 	 * coverage for the intended period, at least for now, substitute the events in
 	 * the closest year ensuring that the same seasonal sequence is covered.
+	 * <p>
+	 * TODO pass a parameter (from the URN, defaulting at true) to enable adjusting
+	 * the timestamps in the events to the requested time in case substitutions were
+	 * made. This should be used by time-bound event contextualizers as the
+	 * timestamps will be used to schedule each event and resolve it.
+	 * <p>
 	 * 
 	 * @param scale
 	 * @param minPrecipitation pass the minimum precipitation in mm per event, or
@@ -287,12 +332,6 @@ public enum WeatherEvents {
 	 */
 	public Iterable<WeatherEvent> getEvents(IScale scale, double minPrecipitation) {
 
-//		System.out.println(""+ebox.count());
-		
-//		for (Iterator<WeatherEvent> dio = ebox.iterator(); dio.hasNext(); ) {
-//			System.out.println(dio.next());
-//		}
-		
 		if (scale.getSpace() == null || scale.getTime() == null) {
 			return new ArrayList<>();
 		}

@@ -28,6 +28,7 @@ public class WeatherComponent {
 	public boolean setup() {
 		// TODO get the stuff from the net if the properties aren't set. Only way to
 		// get through the Docker deployment without pain.
+		
 		return false;
 	}
 

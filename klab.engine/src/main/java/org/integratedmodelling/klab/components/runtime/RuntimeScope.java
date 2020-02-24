@@ -1488,7 +1488,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		/*
 		 * TODO wrap all temporal states into a temporal rescaling state - works both to
-		 * subset and to aggregate
+		 * subset and to aggregate. This must apply also to event folders, which must only
+		 * show the current events.
 		 */
 
 		return ret;
