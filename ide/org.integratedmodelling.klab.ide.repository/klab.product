@@ -42,7 +42,6 @@
       </win>
    </launcher>
 
-
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
       <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</macos>
@@ -611,6 +610,7 @@ You should also get your employer (if you work as a programmer) or school, if an
    </features>
 
    <configurations>
+      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
@@ -618,8 +618,6 @@ You should also get your employer (if you work as a programmer) or school, if an
    </configurations>
 
    <repositories>
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
       <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
    </repositories>
 
