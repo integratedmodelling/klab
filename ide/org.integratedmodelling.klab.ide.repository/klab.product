@@ -42,6 +42,7 @@
       </win>
    </launcher>
 
+
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
       <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</macos>
@@ -604,6 +605,9 @@ You should also get your employer (if you work as a programmer) or school, if an
       <feature id="org.eclipse.jgit"/>
       <feature id="org.eclipse.rcp"/>
       <feature id="org.eclipse.jdt"/>
+      <feature id="org.eclipse.jgit.http.apache" installMode="root"/>
+      <feature id="org.eclipse.jgit.ssh.apache" installMode="root"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient45.feature" installMode="root"/>
    </features>
 
    <configurations>
@@ -615,6 +619,8 @@ You should also get your employer (if you work as a programmer) or school, if an
    </configurations>
 
    <repositories>
+      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
+      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
       <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
    </repositories>
 
