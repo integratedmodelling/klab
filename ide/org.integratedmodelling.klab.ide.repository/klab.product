@@ -591,9 +591,7 @@ You should also get your employer (if you work as a programmer) or school, if an
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.integratedmodelling.klab.ide.feature" version="0.10.0.qualifier"/>
       <feature id="org.eclipse.emf.ecore"/>
-      <feature id="org.eclipse.ecf.filetransfer.httpclient4.feature"/>
       <feature id="org.integratedmodelling.kdl.feature"/>
-      <feature id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"/>
       <feature id="org.integratedmodelling.klab.feature"/>
       <feature id="org.integratedmodelling.kim.sdk"/>
       <feature id="org.eclipse.emf.common"/>
@@ -606,14 +604,16 @@ You should also get your employer (if you work as a programmer) or school, if an
       <feature id="org.eclipse.jgit"/>
       <feature id="org.eclipse.rcp"/>
       <feature id="org.eclipse.jdt"/>
+      <feature id="org.eclipse.jgit.http.apache" installMode="root"/>
+      <feature id="org.eclipse.jgit.ssh.apache" installMode="root"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient45.feature" installMode="root"/>
    </features>
 
    <configurations>
+      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
    </configurations>
 

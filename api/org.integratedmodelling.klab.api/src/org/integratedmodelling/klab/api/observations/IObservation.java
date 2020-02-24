@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.api.runtime.IScheduler;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IObservation extends IArtifactIdentity, IArtifact, IKlabActor {
+public interface IObservation extends IArtifactIdentity, IArtifact {
 
 	/**
 	 * Return the observable.

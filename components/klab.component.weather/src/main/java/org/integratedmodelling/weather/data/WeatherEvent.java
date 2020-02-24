@@ -30,8 +30,8 @@ public class WeatherEvent {
 		this.areaMd = d.get(AREA_M2, Double.class);
 		this.startMs = d.get(START_LONG, Long.class);
 		this.endMs = d.get(END_LONG, Long.class);
-		this.precMmHour = d.get(PRECIPITATION_MM, Double.class);
-		this.durationHours = d.get(DURATION_HOURS, Integer.class);
+		this.precMmHour = d.getNotNull(PRECIPITATION_MM, Double.class);
+		this.durationHours = d.getNotNull(DURATION_HOURS, Integer.class);
 		this.boundingBox = d.get(BOUNDING_BOX, Geometry.class);
 		this.id = d.get(ID, Long.class);
 	}
@@ -44,6 +44,7 @@ public class WeatherEvent {
 		ret.put(PRECIPITATION_MM, this.precMmHour);
 		ret.put(DURATION_HOURS, this.durationHours);
 		ret.put(ID, this.id);
+		ret.put(BOUNDING_BOX, this.boundingBox);
 		return ret;
 	}
 
@@ -51,4 +52,10 @@ public class WeatherEvent {
 		return id;
 	}
 
+	@Override
+	public String toString() {
+		return "WeatherEvent [id=" + id + ", boundingBox=" + boundingBox + ", startMs=" + startMs + ", endMs=" + endMs
+				+ ", durationHours=" + durationHours + ", areaMd=" + areaMd + ", precMmHour=" + precMmHour + "]";
+	}
+	
 }

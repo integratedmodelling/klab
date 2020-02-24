@@ -58,7 +58,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface ISession extends IKlabActor, IEngineSessionIdentity, Closeable {
+public interface ISession extends IEngineSessionIdentity, Closeable {
 
 	/**
 	 * The observation action called on ISession always creates a new root subject.

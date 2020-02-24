@@ -3,7 +3,9 @@ package org.integratedmodelling.weather.adapters;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -13,9 +15,15 @@ import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.weather.WeatherComponent;
+import org.integratedmodelling.weather.data.Weather;
 import org.integratedmodelling.weather.data.WeatherEvent;
 import org.integratedmodelling.weather.data.WeatherEvents;
 import org.integratedmodelling.weather.data.WeatherFactory;
@@ -35,7 +43,7 @@ import org.integratedmodelling.weather.data.WeatherFactory;
  * @author Ferd
  *
  */
-@UrnAdapter(type = "weather", version=Version.CURRENT)
+@UrnAdapter(type = "weather", version = Version.CURRENT)
 public class WeatherAdapter implements IUrnAdapter {
 
 	public enum Services {
@@ -78,13 +86,13 @@ public class WeatherAdapter implements IUrnAdapter {
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
 			getInterpolatedData(urn, builder, geometry, context);
-			break;
+			return;
 		case stations:
 			getStations(urn, builder, geometry, context);
-			break;
+			return;
 		case storms:
 			getStorms(urn, builder, geometry, context);
-			break;
+			return;
 		default:
 			break;
 		}
@@ -95,8 +103,33 @@ public class WeatherAdapter implements IUrnAdapter {
 	}
 
 	private void getStations(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
-		// TODO Auto-generated method stub
-		System.out.println("ZIOPOP");
+
+		Scale scale = Scale.create(geometry);
+		String[] originalVariables = urn.getSplitParameter(Urn.SINGLE_PARAMETER_KEY);
+		String[] variables = WeatherComponent.normalizeVariableNames(originalVariables);
+		Weather weather = WeatherComponent.getWeather(scale.getSpace(), scale.getTime(), "ALL", variables);
+
+		for (Map<String, Object> sd : weather.getStationData()) {
+
+			Scale stationScale = Scale.create(scale.getTime(),
+					Shape.create((Double) sd.get("lon"), (Double) sd.get("lat"), Projection.getLatLon()));
+
+			Builder ob = builder.startObject("result", sd.get("id").toString(), stationScale.asGeometry());
+
+			for (int i = 0; i < originalVariables.length; i++) {
+
+				if (sd.containsKey(variables[i])) {
+					double[] data = (double[]) sd.get(variables[i]);
+					Builder sb = ob.startState(originalVariables[i]);
+					for (double d : data) {
+						sb.add(d);
+					}
+					sb.finishState();
+				}
+			}
+
+			ob.finishObject();
+		}
 	}
 
 	private void getStorms(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
@@ -106,23 +139,43 @@ public class WeatherAdapter implements IUrnAdapter {
 		if (urn.getParameters().containsKey("minprec")) {
 			minPrecipitation = Double.parseDouble(urn.getParameters().get("minprec").toString());
 		}
+		
+		boolean adjustDates = true;
+		if (urn.getParameters().containsKey("realdate")) {
+			adjustDates = false;
+		}
+		
+		
+		int nEvents = 0;
+		
+		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation, adjustDates)) {
 
-		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation)) {
+			Scale eventScale = Scale.create(
+					Time.create((long) event.asData().get(WeatherEvent.START_LONG),
+							(long) event.asData().get(WeatherEvent.START_LONG)),
+					Shape.create((com.vividsolutions.jts.geom.Geometry) event.asData().get(WeatherEvent.BOUNDING_BOX),
+							Projection.getLatLon()));
 
 			Builder ob = builder.startObject("result", "storm_" + event.asData().get(WeatherEvent.ID),
-					(IGeometry) event.asData().get(WeatherEvent.BOUNDING_BOX));
+					eventScale.asGeometry());
 
-			Builder sb = ob.startState("precipitation");
-			sb.add(event.asData().get(WeatherEvent.PRECIPITATION_MM));
-			sb.finishState();
-
-			Builder db = ob.startState("duration");
-			db.add(event.asData().get(WeatherEvent.DURATION_HOURS));
-			db.finishState();
+			// TODO use urn parameters, set attributes
+//
+//			Builder sb = ob.startState("precipitation");
+//			sb.add(event.asData().get(WeatherEvent.PRECIPITATION_MM));
+//			sb.finishState();
+//
+//			Builder db = ob.startState("duration");
+//			db.add(event.asData().get(WeatherEvent.DURATION_HOURS));
+//			db.finishState();
 
 			ob.finishObject();
+			
+			nEvents ++;
 		}
 
+		Logging.INSTANCE.info("query for storm events returned " + nEvents + " instances");
+		
 	}
 
 	private void getInterpolatedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
@@ -142,11 +195,11 @@ public class WeatherAdapter implements IUrnAdapter {
 
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
-			break;
-		case stations:
-			break;
+			return Type.NUMBER;
 		case storms:
-			break;
+			return Type.EVENT;
+		case stations:
+			return Type.OBJECT;
 		default:
 			break;
 		}
@@ -160,16 +213,11 @@ public class WeatherAdapter implements IUrnAdapter {
 
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
-			// S2
-			break;
+			return Geometry.create("\u03c41\u03c32");
 		case stations:
-			// #T0S0(nstations - according to catalog)
-			break;
+			return Geometry.create("#\u03c41\u03c30");
 		case storms:
-			// #T0S2
-			break;
-		default:
-			break;
+			return Geometry.create("#\u03c41\u03c32");
 		}
 
 		throw new IllegalArgumentException(
@@ -183,15 +231,15 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	@Override
 	public IResource getResource(String urn) {
-		// TODO Auto-generated method stub
+
 		Urn kurn = new Urn(urn);
 		ResourceReference ref = new ResourceReference();
 		ref.setUrn(kurn.getUrn());
 		ref.setAdapterType(getName());
 		ref.setLocalName(kurn.getResourceId());
-		ref.setGeometry("#"); // getGeometry(urn)
+		ref.setGeometry(getGeometry(kurn).encode());
 		ref.setVersion(Version.CURRENT);
-		ref.setType(Type.VALUE); // getType(urn)
+		ref.setType(getType(kurn));
 		return new Resource(ref);
 	}
 

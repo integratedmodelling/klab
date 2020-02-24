@@ -728,4 +728,16 @@ public class ResourceScope implements IRuntimeScope {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public IState addState(IDirectObservation target, IObservable observable, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <K> K getNotNull(String name, Class<? extends K> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -1347,16 +1347,16 @@ public class Scale implements IScale {
 	public boolean isGeneric() {
 		for (IExtent extent : getExtents()) {
 			if (!extent.isGeneric()) {
-				return true;
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	@Override
 	public Scale merge(IScale scale) {
 
-		if (scale == this || scale.isEmpty() || hasEqualExtents(scale)) {
+		if (scale == this || scale.isEmpty() || scale.isGeneric() || hasEqualExtents(scale)) {
 			return this;
 		}
 
@@ -1367,7 +1367,14 @@ public class Scale implements IScale {
 			ArrayList<IExtent> common = new ArrayList<>();
 			HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
+			Map<IExtent.Type, IExtent> ownGeneric = new HashMap<>();
+			
 			for (IExtent e : extents) {
+				if (e.isGeneric()) {
+					// only add the generic extents back if the incoming scale does not have them
+					ownGeneric.put(e.getType(), e);
+					continue;
+				}
 				if (other.getDimension(e.getType()) != null) {
 					common.add(e);
 					commonConcepts.add(e.getType());
@@ -1387,6 +1394,14 @@ public class Scale implements IScale {
 				IExtent merged = (IExtent) e.merge(oext);
 				ret.mergeExtent(merged);
 			}
+			
+			// add back any generic extents we have lost
+			for (IExtent.Type type : ownGeneric.keySet()) {
+				if (ret.getExtent(type) == null) {
+					ret.mergeExtent(ownGeneric.get(type));
+				}
+			}
+			
 			ret.scaleId = this.scaleId;
 
 			return ret;
