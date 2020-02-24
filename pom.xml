@@ -252,7 +252,7 @@
 		<repository>
 			<id>im</id>
 			<name>Integrated Modelling Partnership Repository</name>
-			<url>http://www.integratedmodelling.org/nexus/content/repositories/releases/</url>
+			<url>https://integratedmodelling.org/nexus/repository/releases/</url>
 		</repository>
 		<repository>
 			<snapshots>
