@@ -47,7 +47,7 @@ public class VectorPublisher implements IResourceEnhancer {
 		/*
 		 * a vector resource is not enhanced; the enhanced resource is WFS which cannot
 		 * be further enhanced. This means "keep trying to push to GS/Postgis if so
-		 * configured
+		 * configured".
 		 */
 		return false;
 	}

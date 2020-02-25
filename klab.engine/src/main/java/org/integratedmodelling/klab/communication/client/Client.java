@@ -60,6 +60,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.client.support.HttpRequestWrapper;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -532,7 +533,12 @@ public class Client extends RestTemplate implements IClient {
 
 		try {
 
-			ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+			final RestTemplate restTemplate = new RestTemplate();
+			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+			// without this, large files will eat up the heap
+			requestFactory.setBufferRequestBody(false);
+			restTemplate.setRequestFactory(requestFactory);
+			ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
 
 			switch (response.getStatusCodeValue()) {
 			case 302:
