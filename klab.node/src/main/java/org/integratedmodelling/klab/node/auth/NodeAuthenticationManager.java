@@ -4,6 +4,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
@@ -52,6 +52,7 @@ public enum NodeAuthenticationManager {
     private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
     private static final String JWT_CLAIM_TOKEN_TYPE = "cls";
     private static final String ENGINE_AUDIENCE = "engine";
+    private static final String JWT_CLAIM_KEY_ROLES = "roles";
 
     Map<String, Group> groups = new HashMap<>();
 
@@ -182,10 +183,12 @@ public enum NodeAuthenticationManager {
             JwtClaims claims = jwtVerifier.processToClaims(token);
             String username = claims.getSubject();
             List<String> groupStrings = claims.getStringListClaimValue(JWT_CLAIM_KEY_PERMISSIONS);
+            List<String> roleStrings = claims.getStringListClaimValue(JWT_CLAIM_KEY_ROLES);
 
             // didn't throw an exception, so token is valid. Update the result and validate
             // claims. This is an engine-only entry point so the role is obvious.
-            result = new EngineAuthorization(hubId, username, Collections.singletonList(Role.ROLE_ENGINE));
+            result = new EngineAuthorization(hubId, username, 
+            		Collections.unmodifiableList(filterRoles(roleStrings)));
 
             /*
              * Audience (aud) - The "aud" (audience) claim identifies the recipients that
@@ -226,7 +229,24 @@ public enum NodeAuthenticationManager {
 
         return result;
     }
-
+    
+    //As of now the node and hub have different roles.  It maybe best to unify this.
+    //I add the Role.ROLE_ENGINE because they hub does not give this to users.  In the future
+    //we may need to create engines with no user, and as of now the hub would not know how to
+    //do that...
+    private List<Role> filterRoles(List<String> roleStrings) {
+    	List<Role> ret = new ArrayList<>();
+    	for(String roleString : roleStrings) {
+    		for(Role r : Role.values()) {
+    			if(r.getAuthority().equals(roleString)) {
+    				ret.add(r);
+    			}
+    		}
+    	}
+    	ret.add(Role.ROLE_ENGINE);
+    	return ret;
+    }
+    
     private Set<Group> filterGroups(List<String> groupStrings) {
         Set<Group> ret = new HashSet<>();
         for (String groupId : groupStrings) {

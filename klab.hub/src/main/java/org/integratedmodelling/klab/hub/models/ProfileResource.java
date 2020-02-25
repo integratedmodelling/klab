@@ -114,6 +114,10 @@ public class ProfileResource implements OAuth2User{
 		this.groups = groups;
 	}
 
+	public List<Role> getRoles() {
+		return roles;
+	}
+
 	public void setToken(String token) {
 		this.Token = token;
 	}
