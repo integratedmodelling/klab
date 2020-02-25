@@ -277,10 +277,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 					sequence_ObservableSemantics(context, (ObservableSemantics) semanticObject); 
 					return; 
 				}
-				else if (rule == grammarAccess.getSimpleObservableSemanticsRule()) {
-					sequence_SimpleObservableSemantics(context, (ObservableSemantics) semanticObject); 
-					return; 
-				}
 				else break;
 			case KimPackage.OBSERVE_STATEMENT:
 				sequence_ObserveStatement(context, (ObserveStatement) semanticObject); 
@@ -513,16 +509,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         properties+=PropertyStatement
 	 *                     )? 
 	 *                     (implications+=Implication implications+=Implication*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
+	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
@@ -688,8 +684,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 during=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
@@ -719,8 +715,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 during=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
@@ -1510,33 +1506,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     (name=STRING? main+=Concept+)
 	 */
 	protected void sequence_SimpleConceptDeclaration(ISerializationContext context, ConceptDeclaration semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     SimpleObservableSemantics returns ObservableSemantics
-	 *
-	 * Constraint:
-	 *     (
-	 *         declaration=ConceptDeclaration 
-	 *         (
-	 *             (
-	 *                 accordingTo=PropertyId | 
-	 *                 unit=Unit | 
-	 *                 currency=Currency | 
-	 *                 unit=Unit | 
-	 *                 optional?='optional' | 
-	 *                 name=LOWERCASE_ID | 
-	 *                 name=STRING
-	 *             )? 
-	 *             (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? 
-	 *             (from=Number to=Number)?
-	 *         )+
-	 *     )
-	 */
-	protected void sequence_SimpleObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
