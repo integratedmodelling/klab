@@ -6,6 +6,7 @@ import java.util.List;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.models.ProfileResource;
+import org.integratedmodelling.klab.hub.models.Role;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.Group;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenManager {
 	
 	private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
+	private static final String JWT_CLAIM_KEY_ROLES = "roles";
 	private static final String ENGINE_AUDIENCE = "engine";
 	private static final int EXPIRATION_DAYS = 10;
 	
@@ -39,11 +41,19 @@ public class JwtTokenManager {
 		claims.setGeneratedJwtId();
 		
 		List<String> roleStrings = new ArrayList<>();
-		for (Group role : profile.getGroupsList()) {
-			roleStrings.add(role.getId());
+		for (Role role: profile.getRoles()) {
+			roleStrings.add(role.getAuthority());
 		}
 		
-		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
+		
+		List<String> groupStrings = new ArrayList<>();
+		for (Group group : profile.getGroupsList()) {
+			groupStrings.add(group.getId());
+		}
+		
+		claims.setStringListClaim(JWT_CLAIM_KEY_ROLES, roleStrings);
+		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, groupStrings);
+		
 		JsonWebSignature jws = new JsonWebSignature();
 		jws.setPayload(claims.toJson());
 		jws.setKey(NetworkKeyManager.INSTANCE.getPrivateKey());
