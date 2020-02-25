@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
@@ -29,6 +30,10 @@ public class KimProject implements IKimProject {
 	 * Namespace IDs. The actual namespaces are held in Kim.INSTANCE.
 	 */
 	private Set<String> namespaces = new HashSet<>();
+	/**
+	 * Behavior IDs. The actual behaviors are in KActors.INSTANCE. (eventually)
+	 */
+	private Set<String> behaviors = new HashSet<>();
 
 	public KimProject(KimWorkspace workspace, String name, File dir) {
 		this.workspace = workspace;
@@ -225,5 +230,14 @@ public class KimProject implements IKimProject {
 	@Override
 	public boolean isWarnings() {
 		return warnings > 0;
+	}
+
+	@Override
+	public List<IKActorsBehavior> getBehaviors() {
+		List<IKActorsBehavior> ret = new ArrayList<>();
+		for (String namespace : behaviors) {
+//			ret.add(Kim.INSTANCE.getNamespace(namespace));
+		}
+		return ret;
 	}
 }

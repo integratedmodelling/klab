@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
@@ -1051,6 +1052,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			case CreateNamespace:
 				file = project.createNamespace(request.getAssetId(), false, request.getParameters() != null
 						&& "true".equals(request.getParameters().get(ProjectModificationRequest.PRIVATE_OPTION)));
+				break;
+			case CreateBehavior:
+				file = project.createBehavior(request.getAssetId(), IKActorsBehavior.Type.BEHAVIOR, false);
 				break;
 			default:
 				// shut up

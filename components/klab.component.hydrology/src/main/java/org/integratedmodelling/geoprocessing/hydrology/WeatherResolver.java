@@ -44,25 +44,30 @@ public class WeatherResolver implements IResolver<IState>, IExpression {
 	 */
 	private IKlabData data;
 
+	public WeatherResolver() {
+	}
+
 	public WeatherResolver(IParameters<String> parameters, IContextualizationScope context) {
-		
-		String urn = "klab:weather:station:";
-		
+
+		String urn = "klab:weather:stations:";
+
 		/*
-		 * TODO
-		 * use the source we have chosen, or all if no choice. Add all the requested observables.
+		 * TODO use the source we have chosen, or all if no choice. Add all the
+		 * requested observables.
 		 */
+		urn += "all";
 		IResource resource = Resources.INSTANCE.resolveResource(urn);
 		Urn kurn = new Urn(urn);
 		if (resource == null || !Resources.INSTANCE.isResourceOnline(resource)) {
 			throw new KlabResourceNotFoundException(
 					"k.LAB weather services are not online on any server at the moment");
 		}
-		
+
 		/*
 		 * put away station data
 		 */
-		this.data = Resources.INSTANCE.getResourceData(resource, kurn.getParameters(), context.getScale(), context);
+		this.data = Resources.INSTANCE.getResourceData(resource, kurn.getParameters(),
+				context.getDataflow().getResolutionScale(), context);
 	}
 
 	@Override

@@ -101,12 +101,6 @@ public enum Kim {
 
 	INSTANCE;
 
-	/**
-	 * This ID is used for a common project where all namespaces read from isolated
-	 * files will be added.
-	 */
-	public final static String COMMON_PROJECT_ID = "klab.internal.common.project";
-
 	private Validator validatorCallback = null;
 
 	@Inject
