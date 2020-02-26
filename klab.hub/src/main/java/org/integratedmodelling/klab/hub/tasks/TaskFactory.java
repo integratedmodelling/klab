@@ -10,10 +10,12 @@ public class TaskFactory {
 	private static TaskFactory INSTANCE;
 	private Map<Class<? extends Task>, TaskBuilder> taskBuilders;
 	
-	private TaskFactory(Map<Class<? extends Task>, TaskBuilder> taskBuilders) {
-		if (INSTANCE == null) {
-			INSTANCE = new TaskFactory(new HashMap<Class<? extends Task>, TaskBuilder>());
-		}
+	static {
+		INSTANCE = new TaskFactory();
+	}
+	
+	private TaskFactory() {
+		taskBuilders = new HashMap<Class<? extends Task>, TaskBuilder>();
 	}
 	
 	public static TaskBuilder getBuilder(Class<? extends Task> clazz) {
@@ -22,7 +24,13 @@ public class TaskFactory {
 			if (CreateGroupTask.class.equals(clazz)) {
 				builder = new CreateGroupTask.Builder();
 				INSTANCE.addBuilder(CreateGroupTask.class, builder);
-			}
+			} else if (GroupRequestTask.class.equals(clazz)) {
+				builder = new GroupRequestTask.Builder();
+				INSTANCE.addBuilder(GroupRequestTask.class, builder);
+			} if (RemoveGroupTask.class.equals(clazz)) {
+				builder = new RemoveGroupTask.Builder();
+				INSTANCE.addBuilder(RemoveGroupTask.class, builder);
+			} 
 		}
 		return builder;
 	}

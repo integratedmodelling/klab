@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.hub.tasks;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
@@ -9,6 +11,16 @@ public class RemoveGroupTask extends Task{
 	
 	@Reference
 	ClickbackToken token;
+	
+	public static class Builder extends TaskBuilder {
+
+		@Override
+		public List<Task> build(TaskParameters parameters) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
 
 	public RemoveGroupTask(String requestee) {
 		super(requestee);

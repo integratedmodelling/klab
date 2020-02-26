@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,14 +37,13 @@ public class GroupsRequestController {
 	@PreAuthorize("authentication.getPrincipal() == #requestee or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> requestGroupsResponse(
 			@PathVariable("id") String requestee,
-			@RequestParam("requestGroups") List<String> groupNames,
+			@RequestBody List<String> groupNames,
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
 		
 		List<Task> tasks = service.createTasks(
 				GroupRequestTask.class,
 				new GroupRequestTask.Parameters(requestee, request, groupNames));
-	    
 	    return new ResponseEntity<>(tasks, HttpStatus.CREATED);
 	}
 	
@@ -72,6 +72,7 @@ public class GroupsRequestController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> groupRequestList() {
 		HashMap<String, List<Task> > tasks = new HashMap<>();
+		List<Task> list = service.getTasks(GroupRequestTask.class);
 		tasks.put("Group Request Tasks", service.getTasks(GroupRequestTask.class));
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;

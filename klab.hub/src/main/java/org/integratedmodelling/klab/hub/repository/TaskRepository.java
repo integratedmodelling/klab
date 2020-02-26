@@ -23,8 +23,10 @@ public interface TaskRepository extends MongoRepository<Task, ObjectId>{
 	@Query(value="{ '_class' : ?0, 'token' : ?1 }")
 	Optional<Task> findByToken(Class<? extends Task> clazz, ClickbackToken token);
 	
+	@Query("{'_class' : ?0 }")
 	List<Task> findByClass(Class<? extends Task> clazz);
 	
 	@Query("{'_class' : ?0 , 'status' : ?1}")
 	List<Task> findByClassAndStatus(Class<? extends Task> clazz, TaskStatus status);
+	
 }

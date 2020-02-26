@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.tasks;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import org.integratedmodelling.klab.hub.users.Role;
 import org.integratedmodelling.klab.hub.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.stereotype.Component;
 
 @TypeAlias("GroupRequestTask")
 public class GroupRequestTask extends Task{
@@ -32,15 +34,20 @@ public class GroupRequestTask extends Task{
 		}
 	}
 	
+	@Component
 	public static class Builder extends TaskBuilder {
 		
-		@Autowired
-		private MongoGroupRepository groupRepository;
-		@Autowired
-		private UserRepository userRepository;
-
+		MongoGroupRepository groupRepository;
+		UserRepository userRepository;
+		
+		public Builder() {
+			groupRepository = BeanUtil.getBean(MongoGroupRepository.class);
+			userRepository = BeanUtil.getBean(UserRepository.class);
+		}
+		
 		@Override
 		public List<Task> build(TaskParameters parameters) {
+			
 			GroupRequestTask.Parameters param;
 			if (parameters instanceof GroupRequestTask.Parameters) {
 				param = (GroupRequestTask.Parameters)parameters;
@@ -52,7 +59,8 @@ public class GroupRequestTask extends Task{
 			Set<GroupEntry> optIn = new HashSet<>();
 			Set<GroupEntry> requestGroups = new HashSet<GroupEntry>();
 			
-			Set<GroupEntry> userGroupEntries = userRepository.findByUsernameIgnoreCase(param.getRequestee())
+			Optional<User> user = userRepository.findByUsernameIgnoreCase(param.getRequestee());
+			Set<GroupEntry> userGroupEntries = user
 					.map(User::getGroupEntries)
 					.orElse(new HashSet<>());
 			
