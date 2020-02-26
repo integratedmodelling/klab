@@ -60,7 +60,6 @@ import org.integratedmodelling.kim.model.KimNamespace
 import org.integratedmodelling.kim.model.KimObservable
 import org.integratedmodelling.kim.model.KimObserver
 import org.integratedmodelling.kim.model.KimProject
-import org.integratedmodelling.kim.model.KimServiceCall
 import org.integratedmodelling.kim.model.KimSymbolDefinition
 import org.integratedmodelling.kim.model.KimTable
 import org.integratedmodelling.kim.model.KimWorkspace

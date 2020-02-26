@@ -42,7 +42,7 @@ public class WeatherResolver implements IResolver<IState>, IExpression {
 	 * The station artifacts contextualized to the full distributed spatio/temporal
 	 * context.
 	 */
-	private IKlabData data;
+	private IKlabData weatherStations;
 
 	public WeatherResolver() {
 	}
@@ -56,6 +56,10 @@ public class WeatherResolver implements IResolver<IState>, IExpression {
 		 * requested observables.
 		 */
 		urn += "all";
+		
+		// TODO add all outputs according to our model's observables.
+		urn += "#precipitation";
+		
 		IResource resource = Resources.INSTANCE.resolveResource(urn);
 		Urn kurn = new Urn(urn);
 		if (resource == null || !Resources.INSTANCE.isResourceOnline(resource)) {
@@ -64,10 +68,10 @@ public class WeatherResolver implements IResolver<IState>, IExpression {
 		}
 
 		/*
-		 * put away station data
+		 * retrieve and put away station data
 		 */
-		this.data = Resources.INSTANCE.getResourceData(resource, kurn.getParameters(),
-				context.getDataflow().getResolutionScale(), context);
+		this.weatherStations = Resources.INSTANCE.getResourceData(urn, context.getDataflow().getResolutionScale(),
+				context.getMonitor());
 	}
 
 	@Override

@@ -61,7 +61,12 @@ public class DecodingDataBuilder implements IKlabData.Builder {
 
 	@Override
 	public IKlabData build() {
-		return new LocalData(data, (IRuntimeScope)context);
+		if (context instanceof IRuntimeScope) {
+			return new LocalData(data, (IRuntimeScope)context);
+		} else {
+			// dumb version
+			return new LocalData(data, context.getMonitor());
+		}
 	}
 
 	@Override

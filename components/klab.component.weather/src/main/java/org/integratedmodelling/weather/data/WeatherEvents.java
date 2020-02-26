@@ -294,8 +294,8 @@ public enum WeatherEvents {
 	 * @param scale
 	 * @return
 	 */
-	public Iterable<WeatherEvent> getEvents(IScale scale) {
-		return getEvents(scale, Double.NaN, true);
+	public Iterable<WeatherEvent> getEvents(IScale scale, IMonitor monitor) {
+		return getEvents(scale, Double.NaN, true, monitor);
 	}
 
 	/**
@@ -330,7 +330,8 @@ public enum WeatherEvents {
 	 *                         NaN for any accepted.
 	 * @return
 	 */
-	public Iterable<WeatherEvent> getEvents(IScale scale, double minPrecipitation, boolean adjustDates) {
+	public Iterable<WeatherEvent> getEvents(IScale scale, double minPrecipitation, boolean adjustDates,
+			IMonitor monitor) {
 
 		if (scale.getSpace() == null || scale.getTime() == null) {
 			return new ArrayList<>();

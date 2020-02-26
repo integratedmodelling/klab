@@ -23,10 +23,10 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 
 /**
- * Encoded k.LAB data resulting from decoding a resource URN in a specified
- * geometry. The interface supports both direct building within an existing
- * artifact or setting of data into the Protobuf-based encoding for remote
- * consumption.
+ * Encoded k.LAB data object, resulting from decoding a resource URN in a
+ * specified geometry. The interface supports both direct building within an
+ * existing artifact or setting of data into the Protobuf-based encoding for
+ * remote consumption.
  * <p>
  * A builder is passed to each {@link IResourceEncoder encoder} by the runtime.
  * The builder is then used to build a {@code IKlabData} object which is in turn
@@ -55,12 +55,11 @@ public interface IKlabData {
 		 * If this was called before at the same level, the new artifact will be chained
 		 * to the previous when built.
 		 * 
-		 * @param name
-		 *            TODO
+		 * @param name TODO
 		 * @return a builder on which the add() functions can be called.
-		 * @throws IllegalArgumentException
-		 *             if the state being build has a name not recognized by the context
-		 *             associated with this builder.
+		 * @throws IllegalArgumentException if the state being build has a name not
+		 *                                  recognized by the context associated with
+		 *                                  this builder.
 		 */
 		Builder startState(String name);
 
@@ -70,18 +69,18 @@ public interface IKlabData {
 		 * starting at an offset of 0 and moving up by 1 at every add.
 		 * 
 		 * @param value
-		 * @throws IllegalStateException
-		 *             if {@link #startState(String)} has not been called.
+		 * @throws IllegalStateException if {@link #startState(String)} has not been
+		 *                               called.
 		 */
 		void add(Object value);
-		
+
 		/**
 		 * Add a value to the state being defined by this builder at the passed locator.
 		 * 
 		 * @param value
 		 * @param locator
-		 * @throws IllegalStateException
-		 *             if {@link #startState(String)} has not been called.
+		 * @throws IllegalStateException if {@link #startState(String)} has not been
+		 *                               called.
 		 */
 		void add(Object value, ILocator locator);
 
@@ -90,8 +89,7 @@ public interface IKlabData {
 		 * {@link #startState(String)} was called.
 		 * 
 		 * @return the builder on which {@link startState()} was called.
-		 * @throws IllegalStateException
-		 *             if {@link startState()} was not called before.
+		 * @throws IllegalStateException if {@link startState()} was not called before.
 		 */
 		Builder finishState();
 
@@ -103,17 +101,13 @@ public interface IKlabData {
 		 * If this was called before at the same level, the new artifact will be chained
 		 * to the previous when built.
 		 * 
-		 * @param artifactName
-		 *            the name of the target artifact (obtained through the runtime
-		 *            context)
-		 * @param objectName
-		 *            the name of the object (which should be unique)
-		 * @param scale
-		 *            the scale for the new object
+		 * @param artifactName the name of the target artifact (obtained through the
+		 *                     runtime context)
+		 * @param objectName   the name of the object (which should be unique)
+		 * @param scale        the scale for the new object
 		 * @return an object builder
-		 * @throws IllegalArgumentException
-		 *             if the artifact name is not recognized by the context
-		 *             associated with this builder.		 
+		 * @throws IllegalArgumentException if the artifact name is not recognized by
+		 *                                  the context associated with this builder.
 		 */
 		Builder startObject(String artifactName, String objectName, IGeometry scale);
 
@@ -122,8 +116,7 @@ public interface IKlabData {
 		 * original builder.
 		 * 
 		 * @return the builder on which startObject() was called.
-		 * @throws IllegalStateException
-		 *             if {@link startState()} was not called before.
+		 * @throws IllegalStateException if {@link startState()} was not called before.
 		 */
 		Builder finishObject();
 

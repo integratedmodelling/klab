@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -412,6 +413,23 @@ public class Utils {
 
 	public static boolean isFloatingPoint(Number number) {
 		return number instanceof Double || number instanceof Float;
+	}
+
+	/**
+	 * Choose the first non-null object among the passed ones.
+	 * 
+	 * @param <T>
+	 * @param objects
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T chooseNotNull(T... objects) {
+		for (T o : objects) {
+			if (o != null) {
+				return o;
+			}
+		}
+		return null;
 	}
 
 }

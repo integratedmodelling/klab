@@ -72,5 +72,4 @@ Export-Package: org.integratedmodelling.contrib,
  org.integratedmodelling.klab.monitoring,
  org.integratedmodelling.klab.organizer,
  org.integratedmodelling.klab.rest,
- org.integratedmodelling.klab.utils,
- org.integratedmodelling.klab.utils.parallel
+ org.integratedmodelling.klab.utils
