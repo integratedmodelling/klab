@@ -58,6 +58,8 @@ import org.jgrapht.Graph;
  */
 public class ResourceScope implements IRuntimeScope {
 
+	IMonitor monitor;
+	
 	/**
 	 * Use when called from a JSON post request without additional inputs. May build
 	 * dummy artifacts for any additional outputs.
@@ -65,8 +67,8 @@ public class ResourceScope implements IRuntimeScope {
 	 * @param resource
 	 * @param geometry
 	 */
-	public ResourceScope(IResource resource, IGeometry geometry) {
-
+	public ResourceScope(IResource resource, IGeometry geometry, IMonitor monitor) {
+		this.monitor = monitor;
 	}
 
 	/**
@@ -160,8 +162,7 @@ public class ResourceScope implements IRuntimeScope {
 
 	@Override
 	public IMonitor getMonitor() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.monitor;
 	}
 
 	@Override
