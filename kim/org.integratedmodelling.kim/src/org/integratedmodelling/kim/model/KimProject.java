@@ -53,12 +53,7 @@ public class KimProject implements IKimProject {
 
 	@Override
 	public List<File> getSourceFiles() {
-		List<File> ret = getSourceFiles(new File(root + File.separator + IKimProject.SOURCE_FOLDER));
-//		File kkim = new File(root + File.separator + "META-INF" + File.separator + "knowledge.kim");
-//		if (kkim.isFile()) {
-//			ret.add(kkim);
-//		}
-		return ret;
+		return getSourceFiles(new File(root + File.separator + IKimProject.SOURCE_FOLDER));
 	}
 
 	@Override
