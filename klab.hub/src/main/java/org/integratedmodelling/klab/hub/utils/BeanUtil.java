@@ -1,10 +1,15 @@
-package org.integratedmodelling.klab.hub.tasks;
+package org.integratedmodelling.klab.hub.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
+/**
+ * 
+ * @author Enrico Girotto
+ *
+ */
 @Service
 public class BeanUtil implements ApplicationContextAware {
     private static ApplicationContext context;

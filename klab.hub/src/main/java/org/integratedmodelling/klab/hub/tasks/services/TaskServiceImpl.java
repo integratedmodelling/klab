@@ -161,7 +161,7 @@ public class TaskServiceImpl implements TaskService{
 
 	@Override
 	public List<Task> getTasks(Class<? extends Task> clazz) {
-		return taskRepository.findByClass(clazz);
+		return taskRepository.findByClass(clazz.getSimpleName());
 	}
 
 	@Override
@@ -171,10 +171,10 @@ public class TaskServiceImpl implements TaskService{
 
 	@Override
 	public List<Task> getTasks(Class<? extends Task> clazz, TaskStatus status) {
-		return taskRepository.findByClassAndStatus(clazz, status);
+		return taskRepository.findByClassAndStatus(clazz.getSimpleName(), status);
 	}
 	
 	public Optional<Task> getTaskByToken(Class<? extends Task> clazz, ClickbackToken token) {
-		return taskRepository.findByToken(clazz, token);
+		return taskRepository.findByToken(clazz.getSimpleName(), token);
 	}
 }

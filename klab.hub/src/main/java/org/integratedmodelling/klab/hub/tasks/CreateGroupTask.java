@@ -9,7 +9,9 @@ import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.Role;
+import org.integratedmodelling.klab.hub.utils.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
@@ -22,8 +24,8 @@ public class CreateGroupTask extends Task{
 	public static class Parameters extends TaskParameters.TaskParametersWithRoleRequirement {
 		MongoGroup group;
 		
-		public Parameters(String requestee, Role requiredRole, HttpServletRequest request, MongoGroup group) {
-			super(requestee, request, requiredRole);
+		public Parameters(String requestee, Role roleRequirement, HttpServletRequest request, MongoGroup group) {
+			super(requestee, request, roleRequirement);
 			this.group = group;
 		}
 		/**
@@ -37,8 +39,11 @@ public class CreateGroupTask extends Task{
 	
 	public static class Builder extends TaskBuilder {
 		
-		@Autowired
 		private MongoGroupRepository groupRepository;
+		
+		public Builder() {
+			groupRepository = BeanUtil.getBean(MongoGroupRepository.class);
+		}
 
 		@Override
 		public List<Task> build(TaskParameters parameters) {
@@ -56,7 +61,7 @@ public class CreateGroupTask extends Task{
 			if(exists) {
 				throw new BadRequestException("Group by that name already present.");
 			}
-			ret.add(new CreateGroupTask(param.getRequestee(), param.getRoleRequirement(), param.getRequest(), param.getGroup()));
+			ret.add(new CreateGroupTask(param.getRequestee(), param.getRoleRequirement(), param.getGroup()));
 			return ret;
 		}
 		
@@ -64,8 +69,11 @@ public class CreateGroupTask extends Task{
 	
 	public static class Command extends TaskCommand {
 		
-		@Autowired
 		private GroupService service;
+
+		public Command() {
+			service = BeanUtil.getBean(GroupService.class);
+		}
 		
 		
 		@Override
@@ -82,8 +90,9 @@ public class CreateGroupTask extends Task{
 	}
 
 	
-	private CreateGroupTask(String requestee, Role requiredRole, HttpServletRequest request, MongoGroup group) {
-		super(requestee);
+	private CreateGroupTask(String requestee, Role roleRequirement, MongoGroup group) {
+		super(requestee, roleRequirement);
+		this.group = group;
 	}
 
 	@Reference
@@ -99,12 +108,16 @@ public class CreateGroupTask extends Task{
 
 	@Override
 	public void acceptTaskAction(HttpServletRequest request) {
-		command.executeAccept(this);
+		if (request.isUserInRole(this.getRoleRequirement())) {
+			command.executeAccept(this);
+		}
 	}
 
 	@Override
 	public void denyTaskAction(HttpServletRequest request) {
-		command.executeDeny(this);
+		if (request.isUserInRole(this.getRoleRequirement())) {
+			command.executeDeny(this);
+		}
 	}
 
 }

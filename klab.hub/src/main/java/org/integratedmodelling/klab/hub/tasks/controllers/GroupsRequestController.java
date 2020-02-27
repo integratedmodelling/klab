@@ -72,7 +72,6 @@ public class GroupsRequestController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> groupRequestList() {
 		HashMap<String, List<Task> > tasks = new HashMap<>();
-		List<Task> list = service.getTasks(GroupRequestTask.class);
 		tasks.put("Group Request Tasks", service.getTasks(GroupRequestTask.class));
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;
@@ -82,7 +81,7 @@ public class GroupsRequestController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> groupsRequestsByStatus(TaskStatus status) {
 		HashMap<String, List<Task> > tasks = new HashMap<>();
-		tasks.put("Pending Group Request Tasks", service.getTasks(GroupRequestTask.class, status));
+		tasks.put("Pending Group Request Tasks with status "+status, service.getTasks(GroupRequestTask.class, status));
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;
 	}

@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
 import org.integratedmodelling.klab.hub.users.Role;
 import org.integratedmodelling.klab.hub.users.User;
+import org.integratedmodelling.klab.hub.utils.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,6 @@ public class GroupRequestTask extends Task{
 		}
 	}
 	
-	@Component
 	public static class Builder extends TaskBuilder {
 		
 		MongoGroupRepository groupRepository;
@@ -114,8 +114,11 @@ public class GroupRequestTask extends Task{
 	
 	public static class Command extends TaskCommand {
 		
-		@Autowired
 		private UserRepository userRepository;
+				
+		public Command() {
+			userRepository = BeanUtil.getBean(UserRepository.class);
+		}
 		
 		@Override
 		public void executeAccept(Task task) {

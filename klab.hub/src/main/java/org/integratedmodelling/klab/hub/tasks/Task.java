@@ -50,11 +50,19 @@ public abstract class Task {
     boolean autoAccepted;
     
     public Task(String requestee) {
-    	this(requestee, null);
+    	this(requestee, null, null);
+    }
+    
+    public Task(String requestee, Role roleRequirement) {
+    	this(requestee, roleRequirement, null);
     }
     
     public Task(String requestee, TaskStatus parentStatus) {
+    	this(requestee, null, parentStatus);
+    }
+    public Task(String requestee, Role roleRequirement, TaskStatus parentStatus) {
     	this.requestee = requestee;
+    	this.roleRequirement = roleRequirement;
     	this.setIssued();
 		this.setStatus(TaskStatus.pending);
 		this.setParentStatus(parentStatus);
