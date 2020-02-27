@@ -129,6 +129,13 @@ public class LocalData implements IKlabData {
 			}
 
 		}
+		
+		if (data.containsKey("notifications")) {
+			// TODO send them over to the monitor
+			for (Object state : (List<?>) data.get("notification")) {
+				
+			}
+	}
 
 	}
 

@@ -22,6 +22,7 @@ import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.KimStandaloneSetup;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -41,7 +42,6 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 public class KimLoader implements IKimLoader {
@@ -73,9 +73,11 @@ public class KimLoader implements IKimLoader {
 	private Map<File, NsInfo> dependentResources = new HashMap<>();
 	private Map<File, NsInfo> nonDependentResources = new HashMap<>();
 	private Map<String, File> namespaceFiles = new HashMap<>();
+	private List<File> behaviorFiles = new ArrayList<>();
 	private List<String> sortedNames = new ArrayList<>();
 	private IResourceValidator validator;
 	private Graph<File, DefaultEdge> dependencyGraph;
+	private Graph<File, DefaultEdge> behaviorGraph;
 	private Set<File> projectLocations = new HashSet<>();
 
 	public KimLoader() {
@@ -400,7 +402,12 @@ public class KimLoader implements IKimLoader {
 
 	private void loadResources(IKimProject project) {
 		for (File file : project.getSourceFiles()) {
-			dependentResources.put(file, new NsInfo(project));
+			if (Kim.INSTANCE.isKimFile(file)) {
+				dependentResources.put(file, new NsInfo(project));
+			} else if (KActors.INSTANCE.isKActorsFile(file)) {
+				// these are loaded last after all the knowledge is in.
+				behaviorFiles.add(file);
+			}
 		}
 		for (String subdir : new String[] { IKimProject.SCRIPT_FOLDER, IKimProject.TESTS_FOLDER }) {
 			File pdir = new File(project.getRoot() + File.separator + subdir);

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.time.extents;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.scale.Scale.Mediator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
 public class Time extends Extent implements ITime {
 
@@ -163,7 +165,6 @@ public class Time extends Extent implements ITime {
 		return ret;
 	}
 
-	
 	public static Time create(ITime.Type type, Resolution.Type resolutionType, Double resolutionMultiplier,
 			ITimeInstant start, ITimeInstant end, ITimeDuration period, Resolution.Type coverageUnit,
 			Long coverageStart, Long coverageEnd) {
@@ -186,13 +187,26 @@ public class Time extends Extent implements ITime {
 				ret.multiplicity = 0;
 			}
 		}
+
 		if (coverageUnit != null) {
 			ret.coverageResolution = new ResolutionImpl(coverageUnit, 1);
 			ret.coverageStart = coverageStart;
 			ret.coverageEnd = coverageEnd;
 		}
 
+		if (ret.extentType == ITime.Type.GRID) {
+			ret.setupExtents();
+		}
+
 		return ret;
+	}
+
+	private void setupExtents() {
+		if (step == null) {
+			if (resolution != null && !resolution.getType().isRegular()) {
+
+			}
+		}
 	}
 
 	public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
@@ -427,6 +441,74 @@ public class Time extends Extent implements ITime {
 		if (stateIndex == 0) {
 			ret = initialization(this);
 		} else {
+
+			/*
+			 * break down the step into an integer offset and a fraction
+			 */
+			long intStep = (long) resolution.getMultiplier() * (stateIndex - 1);
+			double leftover = 0;
+			if (resolution.getMultiplier() > (double) intStep) {
+				leftover = (resolution.getMultiplier() - (double) intStep) * (stateIndex - 1);
+			}
+
+			/*
+			 * merge back the integer part in the offset to obtain a fractional part that is
+			 * less than 1
+			 */
+			if (leftover > 1) {
+				BigDecimal bigDecimal = new BigDecimal(leftover);
+				intStep += bigDecimal.longValue();
+				leftover = bigDecimal.subtract(new BigDecimal(bigDecimal.longValue())).doubleValue();
+			}
+
+			DateTime start = ((TimeInstant) this.start).asDate();
+			DateTime end = null;
+
+			if (!resolution.getType().isRegular()) {
+
+				switch (resolution.getType()) {
+				case CENTURY:
+					start = start.plusYears((int) (100 * intStep));
+					if (leftover > 0) {
+//						long millis = ;
+//						start = start.plusMillis(millis);
+					}
+					end = start.plusYears(100);
+					break;
+				case DAY:
+					start = start.plusDays((int) intStep);
+					break;
+				case DECADE:
+					start = start.plusYears((int) (10 * intStep));
+					break;
+				case HOUR:
+					start = start.plusHours((int) (100 * intStep));
+					break;
+				case MILLENNIUM:
+					start = start.plusYears((int) (1000 * intStep));
+					break;
+				case MILLISECOND:
+					start = start.plusMillis((int)intStep);
+					break;
+				case MINUTE:
+					start = start.plusMinutes((int) intStep);
+					break;
+				case MONTH:
+					start = start.plusMonths((int) intStep);
+					break;
+				case SECOND:
+					start = start.plusSeconds((int) intStep);
+					break;
+				case WEEK:
+					start = start.plusWeeks((int) intStep);
+					break;
+				case YEAR:
+					start = start.plusYears((int) intStep);
+					break;
+				default:
+					break;
+				}
+			}
 
 			// we're a grid, the state we use is
 			stateIndex--;
@@ -814,6 +896,17 @@ public class Time extends Extent implements ITime {
 	@Override
 	public long getCoverageLocatorEnd() {
 		return coverageEnd;
+	}
+
+	/**
+	 * Create a grid extent with the passed extremes and resolution
+	 * 
+	 * @param start
+	 * @param end
+	 * @param resolution2
+	 */
+	public static Time create(ITimeInstant start, ITimeInstant end, Resolution resolution) {
+		return create(ITime.Type.GRID, resolution.getType(), resolution.getMultiplier(), start, end, null);
 	}
 
 }

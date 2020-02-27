@@ -1938,4 +1938,8 @@ public enum Kim {
 		}
 	}
 
+	public boolean isKimFile(File file) {
+		return file.toString().endsWith(".kim") ||  file.toString().endsWith(".tql");
+	}
+
 }

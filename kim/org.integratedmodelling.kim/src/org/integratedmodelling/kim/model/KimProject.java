@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
@@ -134,7 +135,9 @@ public class KimProject implements IKimProject {
 		File[] files = folder == null ? null : folder.listFiles();
 		if (files != null) {
 			for (File f : files) {
-				if (isModelFile(f)) {
+				if (Kim.INSTANCE.isKimFile(f)) {
+					result.add(f);
+				} else if (KActors.INSTANCE.isKActorsFile(f)) {
 					result.add(f);
 				} else if (f.isDirectory()) {
 					result.addAll(getSourceFiles(f));
@@ -143,11 +146,7 @@ public class KimProject implements IKimProject {
 		}
 		return result;
 	}
-
-	private boolean isModelFile(File f) {
-		return f.isFile() && f.getName().endsWith(".kim");
-	}
-
+	
 	@Override
 	public String getName() {
 		return name;

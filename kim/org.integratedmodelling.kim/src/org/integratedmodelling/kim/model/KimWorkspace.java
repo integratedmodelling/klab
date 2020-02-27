@@ -198,13 +198,13 @@ public class KimWorkspace implements IKimWorkspace {
 		return null;
 	}
 
-	public List<File> getAllKimResources() {
-		List<File> ret = new ArrayList<>();
-		for (IKimProject project : projects.values()) {
-			ret.addAll(project.getSourceFiles());
-		}
-		return ret;
-	}
+//	public List<File> getAllKimResources() {
+//		List<File> ret = new ArrayList<>();
+//		for (IKimProject project : projects.values()) {
+//			ret.addAll(project.getSourceFiles());
+//		}
+//		return ret;
+//	}
 
 	/**
 	 * Return all the pre-loaded namespace IDs based on the presence of the

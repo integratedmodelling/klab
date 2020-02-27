@@ -3,28 +3,23 @@ package org.integratedmodelling.geoprocessing.hydrology;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.Urn;
-import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
-import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-
-import com.vividsolutions.jts.geom.Point;
+import org.integratedmodelling.klab.scale.Scale;
 
 /**
  * Resolve any of the observables provided by the weather component into
@@ -36,42 +31,27 @@ import com.vividsolutions.jts.geom.Point;
  * @author Ferd
  *
  */
-public class WeatherResolver implements IResolver<IState>, IExpression {
+public class WeatherResolver implements IResolver<IProcess>, IExpression {
 
 	/**
 	 * The station artifacts contextualized to the full distributed spatio/temporal
 	 * context.
 	 */
-	private IKlabData weatherStations;
+	private IArtifact weatherStations;
+	// we store this to get our weather stations at the first resolution
+	private IScale resolutionScale;
+	private String source = "all";
 
 	public WeatherResolver() {
 	}
 
 	public WeatherResolver(IParameters<String> parameters, IContextualizationScope context) {
-
-		String urn = "klab:weather:stations:";
-
-		/*
-		 * TODO use the source we have chosen, or all if no choice. Add all the
-		 * requested observables.
-		 */
-		urn += "all";
-		
-		// TODO add all outputs according to our model's observables.
-		urn += "#precipitation";
-		
-		IResource resource = Resources.INSTANCE.resolveResource(urn);
-		Urn kurn = new Urn(urn);
-		if (resource == null || !Resources.INSTANCE.isResourceOnline(resource)) {
-			throw new KlabResourceNotFoundException(
-					"k.LAB weather services are not online on any server at the moment");
+		// put this away: we get the resources in one shot with all the data for
+		// efficiency
+		resolutionScale = context.getDataflow().getResolutionScale();
+		if (parameters.containsKey("source")) {
+			this.source = parameters.get("source", String.class);
 		}
-
-		/*
-		 * retrieve and put away station data
-		 */
-		this.weatherStations = Resources.INSTANCE.getResourceData(urn, context.getDataflow().getResolutionScale(),
-				context.getMonitor());
 	}
 
 	@Override
@@ -80,7 +60,28 @@ public class WeatherResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public IState resolve(IState target, IContextualizationScope context) throws KlabException {
+	public IProcess resolve(IProcess target, IContextualizationScope context) throws KlabException {
+
+		if (weatherStations == null) {
+
+			/*
+			 * the entire scale with the current resolution
+			 */
+			IScale wscale = Scale.create(Time.create(resolutionScale.getTime().getStart(),
+					resolutionScale.getTime().getEnd(), context.getScale().getTime().getResolution()),
+					resolutionScale.getSpace());
+
+			String urn = "klab:weather:stations:" + source;
+			String fragment = "";
+
+			// add all outputs according to our model's observables.
+			for (String obs : context.getModel().getAttributeObservables().keySet()) {
+				fragment += (fragment.isEmpty() ? "" : "&") + obs;
+			}
+			urn += "#" + fragment;
+
+			this.weatherStations = Resources.INSTANCE.getResourceData(urn, wscale, context.getMonitor()).getArtifact();
+		}
 
 		IState flowdirection = context.getArtifact("flow_directions_d8", IState.class);
 		IState precipitation = context.getArtifact("precipitation_volume", IState.class);
@@ -100,16 +101,16 @@ public class WeatherResolver implements IResolver<IState>, IExpression {
 
 		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
 
-			ISpace space = ((IObservation) artifact).getSpace();
-
-			if (space == null) {
-				continue;
-			}
-
-			Point point = ((Shape) space.getShape()).getJTSGeometry().getCentroid();
-			long xy = grid.getOffsetFromWorldCoordinates(point.getX(), point.getY());
-			Cell start = grid.getCell(xy);
-			computeRunoff(start, flowdirection, precipitation, curvenumber, target);
+//			ISpace space = ((IObservation) artifact).getSpace();
+//
+//			if (space == null) {
+//				continue;
+//			}
+//
+//			Point point = ((Shape) space.getShape()).getJTSGeometry().getCentroid();
+//			long xy = grid.getOffsetFromWorldCoordinates(point.getX(), point.getY());
+//			Cell start = grid.getCell(xy);
+//			computeRunoff(start, flowdirection, precipitation, curvenumber, target);
 		}
 
 		return target;

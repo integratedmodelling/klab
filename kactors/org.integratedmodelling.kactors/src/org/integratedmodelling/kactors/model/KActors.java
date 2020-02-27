@@ -1,5 +1,7 @@
 package org.integratedmodelling.kactors.model;
 
+import java.io.File;
+
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 
@@ -9,6 +11,10 @@ public enum KActors {
 	
 	public IKActorsBehavior declare(Model model) {
 		return new KActorsBehavior(model);
+	}
+
+	public boolean isKActorsFile(File file) {
+		return file.toString().endsWith(".kactor");
 	}
     
 //    public IKdlDataflow declare(Model dataflow) {
