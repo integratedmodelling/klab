@@ -1,13 +1,29 @@
 package org.integratedmodelling.kactors.model;
 
 import java.io.File;
+import java.util.List;
 
+import org.eclipse.emf.ecore.resource.Resource;
+import org.integratedmodelling.kactors.KactorsStandaloneSetup;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
+import org.integratedmodelling.kactors.utils.KActorsResourceSorter;
+
+import com.google.inject.Injector;
 
 public enum KActors {
 
 	INSTANCE;
+	
+	Injector injector;
+	
+	private Injector getInjector() {
+		if (this.injector == null) {
+			this.injector = new KactorsStandaloneSetup().createInjectorAndDoEMFRegistration();
+		}
+		return this.injector;
+	}
+
 	
 	public IKActorsBehavior declare(Model model) {
 		return new KActorsBehavior(model);
@@ -15,6 +31,15 @@ public enum KActors {
 
 	public boolean isKActorsFile(File file) {
 		return file.toString().endsWith(".kactor");
+	}
+
+	public void loadResources(List<File> behaviorFiles) {
+		// TODO Auto-generated method stub
+		KActorsResourceSorter bsort = new KActorsResourceSorter(behaviorFiles);
+		for (Resource b : bsort.getResources()) {
+			
+		}
+
 	}
     
 //    public IKdlDataflow declare(Model dataflow) {

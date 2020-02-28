@@ -23,6 +23,7 @@ import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kactors.utils.KActorsResourceSorter;
 import org.integratedmodelling.kim.KimStandaloneSetup;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -545,7 +546,12 @@ public class KimLoader implements IKimLoader {
 		}
 
 		computeDependencies();
-
+		
+		/**
+		 * Load all behavior files in order of dependency after all the knowledge is in.
+		 */
+		KActors.INSTANCE.loadResources(behaviorFiles);
+		
 		return ret;
 	}
 

@@ -28,5 +28,6 @@ Export-Package: org.integratedmodelling.kactors,
  org.integratedmodelling.kactors.scoping,
  org.integratedmodelling.kactors.serializer,
  org.integratedmodelling.kactors.services,
+ org.integratedmodelling.kactors.utils,
  org.integratedmodelling.kactors.validation
 Import-Package: org.apache.log4j
