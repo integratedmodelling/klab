@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.common.Geometry;
 
 import com.google.common.collect.Lists;
 
@@ -128,12 +129,6 @@ public abstract class Artifact implements IArtifact {
 	}
 
 	@Override
-	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IMetadata getMetadata() {
 		// TODO Auto-generated method stub
 		return null;
@@ -177,6 +172,11 @@ public abstract class Artifact implements IArtifact {
 			@Override
 			public String getId() {
 				return "emptyArtifact";
+			}
+
+			@Override
+			public IGeometry getGeometry() {
+				return Geometry.empty();
 			}
 		};
 		ret.empty = true;

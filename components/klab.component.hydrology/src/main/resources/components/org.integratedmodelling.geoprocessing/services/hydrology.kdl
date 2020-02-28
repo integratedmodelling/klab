@@ -225,5 +225,5 @@ export process weather
 		
 	geometry T1S2
 		
-	class org.integratedmodelling.geoprocessing.hydrology.WeatherResolver
+	class org.integratedmodelling.geoprocessing.weather.WeatherResolver
 }

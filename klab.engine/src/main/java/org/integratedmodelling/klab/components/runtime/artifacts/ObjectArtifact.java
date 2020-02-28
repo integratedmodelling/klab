@@ -39,6 +39,7 @@ public class ObjectArtifact extends Artifact implements IObjectArtifact {
 		return Type.OBJECT;
 	}
 
+	
 	@Override
 	public String getId() {
 		return id;

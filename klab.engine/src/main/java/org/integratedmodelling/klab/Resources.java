@@ -1615,6 +1615,9 @@ public enum Resources implements IResourceService {
 	@Override
 	public IKlabData getResourceData(String urn, IGeometry geometry, IMonitor monitor) {
 		IResource resource = resolveResource(urn);
+		if (resource == null) {
+			return null;
+		}
 		Urn kurn = new Urn(urn);
 		return getResourceData(resource, kurn.getParameters(), geometry, Expression.emptyContext(monitor));
 	}

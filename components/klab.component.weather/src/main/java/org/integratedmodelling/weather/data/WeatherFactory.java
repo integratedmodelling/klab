@@ -507,4 +507,16 @@ public enum WeatherFactory {
 		return wbox.count() > 100000;
 	}
 
+	public void setupCRUStations() {
+		// TODO Auto-generated method stub
+		// download data if needed and set properties
+		// call setup
+	}
+
+	public void setupGHCNDStations() {
+		// TODO Auto-generated method stub
+		// download data if needed, set properties
+		// call setup
+	}
+
 }

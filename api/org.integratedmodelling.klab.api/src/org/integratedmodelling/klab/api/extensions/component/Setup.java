@@ -22,9 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Tags methods that are executed during the explicitly invoked setup
- * phase for the component. The method should return a boolean and may
- * throw exceptions.
+ * Tags methods that are executed during the regular maintenance of a component.
+ * Specifies the default maintenance interval, which can be overridden by a
+ * property.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -33,14 +33,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Setup {
-
-    /**
-     * if true, the task will be executed asynchronously, without
-     * waiting for the method to finish, and the return value to the
-     * client will be a task.
-     * 
-     * @return true if setup requires asynchronous operation
-     */
-    boolean asynchronous();
+	/**
+	 * if true, the task will be executed asynchronously, without waiting for the
+	 * method to finish, and the return value to the client will be a task.
+	 * 
+	 * @return true if setup requires asynchronous operation
+	 */
+	boolean asynchronous();
 
 }
