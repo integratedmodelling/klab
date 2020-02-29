@@ -544,9 +544,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		ResourcePublishResponse response = new ResourcePublishResponse();
 		if (type == IMessage.Type.PublishLocalResource) {
-			
+
 			Map<String, String> publicationData = new HashMap<>();
-			
+
 			if (request.getPermissions() != null) {
 				publicationData.put(IMetadata.IM_PERMISSIONS, request.getPermissions());
 			}
@@ -559,7 +559,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			if (request.getSuggestedCatalog() != null) {
 				publicationData.put(IMetadata.IM_SUGGESTED_CATALOG_ID, request.getSuggestedCatalog());
 			}
-			
+
 			response.setOriginalUrn(request.getUrn());
 			IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
 			if (resource == null || resource.hasErrors()) {
@@ -573,7 +573,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					response.setError(e.getMessage());
 				}
 			}
-			
+
 		} else {
 			response.setError("Updating of public resources is still unimplemented");
 		}
@@ -1053,9 +1053,6 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				file = project.createNamespace(request.getAssetId(), false, request.getParameters() != null
 						&& "true".equals(request.getParameters().get(ProjectModificationRequest.PRIVATE_OPTION)));
 				break;
-			case CreateBehavior:
-				file = project.createBehavior(request.getAssetId(), IKActorsBehavior.Type.BEHAVIOR, false);
-				break;
 			default:
 				// shut up
 				break;
@@ -1069,6 +1066,14 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			// message which would cause
 			// an issue
 			Resources.INSTANCE.getLoader().add(file);
+			break;
+
+		case CreateBehavior:
+			file = project.createBehavior(request.getAssetId(),
+					"true".equals(request.getParameters().get(ProjectModificationRequest.LIBRARY_OPTION))
+							? IKActorsBehavior.Type.TRAITS
+							: IKActorsBehavior.Type.BEHAVIOR,
+					false);
 			break;
 
 		case CreateProject:
@@ -1293,5 +1298,4 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		return ret;
 	}
 
-	
 }

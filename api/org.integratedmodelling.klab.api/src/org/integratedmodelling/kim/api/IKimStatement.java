@@ -1,13 +1,13 @@
 package org.integratedmodelling.kim.api;
 
-import java.util.List;
+import org.integratedmodelling.klab.api.IStatement;
 
 /**
  * 
  * @author Ferd
  *
  */
-public interface IKimStatement extends IKimScope {
+public interface IKimStatement extends IStatement, IKimScope {
 
 	/**
 	 * Scope is relevant to models and namespaces, where it affects resolution
@@ -33,35 +33,6 @@ public interface IKimStatement extends IKimScope {
 		}
 	}
 
-	/**
-	 * 
-	 * @return the first line number
-	 */
-	int getFirstLine();
-
-	/**
-	 * 
-	 * @return the last line number
-	 */
-	int getLastLine();
-
-	/**
-	 * 
-	 * @return the start offset in the document
-	 */
-	int getFirstCharOffset();
-
-	/**
-	 * 
-	 * @return the last offset in the document
-	 */
-	int getLastCharOffset();
-
-	/**
-	 * 
-	 * @return the annotations
-	 */
-	List<IKimAnnotation> getAnnotations();
 
 	/**
 	 * 
@@ -75,23 +46,6 @@ public interface IKimStatement extends IKimScope {
 	 */
 	IKimMetadata getDocumentationMetadata();
 
-	/**
-	 * 
-	 * @return true if deprecated
-	 */
-	boolean isDeprecated();
-
-	/**
-	 * 
-	 * @return the reason for deprecation
-	 */
-	String getDeprecation();
-
-	/**
-	 * 
-	 * @return the source code
-	 */
-	String getSourceCode();
 
 	/**
 	 * The namespace ID for this object. Coincides with getName() if this is a
@@ -118,8 +72,6 @@ public interface IKimStatement extends IKimScope {
 	 */
 	String getResourceId();
 
-	boolean isErrors();
 
-	boolean isWarnings();
 
 }

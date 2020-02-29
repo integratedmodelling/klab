@@ -71,9 +71,9 @@ public class NewBehaviorWizard extends Wizard {
 			ProjectModificationRequest request = new ProjectModificationRequest(page.getTargetProject().getText(),
 					nspc);
 
-			if (page.getIsPrivate().getSelection()) {
+			if (page.getIsLibrary().getSelection()) {
 				Map<String, String> options = new HashMap<>();
-				options.put(ProjectModificationRequest.PRIVATE_OPTION, "true");
+				options.put(ProjectModificationRequest.LIBRARY_OPTION, "true");
 				request.setParameters(options);
 			}
 

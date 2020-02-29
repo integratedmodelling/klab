@@ -1,22 +1,50 @@
 package org.integratedmodelling.kactors.model;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
 
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.validation.CheckMode;
+import org.eclipse.xtext.validation.IResourceValidator;
+import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kactors.KactorsStandaloneSetup;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.utils.KActorsResourceSorter;
+import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
+import org.integratedmodelling.klab.common.CompileNotification;
 
 import com.google.inject.Injector;
 
 public enum KActors {
 
 	INSTANCE;
-	
+
+	class BehaviorDescriptor {
+		String name;
+		File file;
+		List<ICompileNotification> notifications;
+		int nInfo;
+		int nWarning;
+		int nErrors;
+		IKActorsBehavior behavior;
+		String projectName;
+	}
+
 	Injector injector;
-	
+	IResourceValidator validator;
+
+	Map<String, BehaviorDescriptor> behaviors = new HashMap<>();
+
 	private Injector getInjector() {
 		if (this.injector == null) {
 			this.injector = new KactorsStandaloneSetup().createInjectorAndDoEMFRegistration();
@@ -24,7 +52,6 @@ public enum KActors {
 		return this.injector;
 	}
 
-	
 	public IKActorsBehavior declare(Model model) {
 		return new KActorsBehavior(model);
 	}
@@ -33,15 +60,61 @@ public enum KActors {
 		return file.toString().endsWith(".kactor");
 	}
 
+	private IResourceValidator getValidator() {
+		if (this.validator == null) {
+			this.validator = getInjector().getInstance(IResourceValidator.class);
+		}
+		return this.validator;
+	}
+
 	public void loadResources(List<File> behaviorFiles) {
-		// TODO Auto-generated method stub
+
 		KActorsResourceSorter bsort = new KActorsResourceSorter(behaviorFiles);
-		for (Resource b : bsort.getResources()) {
+		IResourceValidator validator = getValidator();
+
+		for (Resource resource : bsort.getResources()) {
+
+			BehaviorDescriptor ret = new BehaviorDescriptor();
+
+			ret.name = ((Model) resource.getContents().get(0)).getPreamble().getName();
+			ret.file = bsort.getFile(resource);
 			
+//			removeNamespace();
+//			Kim.INSTANCE.setCurrentLoader(this);
+			List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+//			String name = Kim.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
+//
+//			NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
+//			info.name = name;
+//			info.namespace = Kim.INSTANCE.getNamespace(name);
+//			info.issues.clear();
+//
+			for (Issue issue : issues) {
+				ICompileNotification notification = getNotification(ret.name, issue, ret);
+				if (notification != null) {
+					ret.notifications.add(notification);
+				}
+			}
+//
+//			if (info.namespace == null) {
+//				throw new KlabInternalErrorException(
+//						"namespace is not found after validation. This should never happen.");
+//			}
+//
+//			((KimNamespace) info.namespace).setLoader(this);
+//			((KimProject) info.project).addNamespace(info.namespace);
+//
+//			if (!reloading) {
+//				this.namespaceFiles.put(name, fileMap.get(resource.getURI()));
+//				this.sortedNames.add(name);
+//			}
+//
+//			ret.add(info.namespace);
+
 		}
 
 	}
-    
+
 //    public IKdlDataflow declare(Model dataflow) {
 //        return new KdlDataflow(dataflow);
 //    }
@@ -95,4 +168,77 @@ public enum KActors {
 //        }
 //        return null;
 //    }
+
+	/**
+	 * Get the project name from the string form of any Xtext resource URI.
+	 * 
+	 * @param resourceURI
+	 * @return
+	 */
+	public String getProjectName(String resourceURI) {
+
+		String ret = null;
+		try {
+			URL url = new URL(resourceURI);
+			String path = url.getPath();
+			Properties properties = null;
+			URL purl = null;
+			while ((path = chopLastPathElement(path)) != null) {
+				purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
+						path + "/META-INF/klab.properties");
+				try (InputStream is = purl.openStream()) {
+					properties = new Properties();
+					properties.load(is);
+					break;
+				} catch (IOException exception) {
+					continue;
+				}
+			}
+			if (properties != null) {
+				ret = path.substring(path.lastIndexOf('/') + 1);
+			}
+
+		} catch (Exception e) {
+			// just return null;
+		}
+
+		return ret;
+	}
+
+	private ICompileNotification getNotification(String name, Issue issue, BehaviorDescriptor desc) {
+
+		Level level = null;
+		ICompileNotification ret = null;
+
+		switch (issue.getSeverity()) {
+		case ERROR:
+			desc.nErrors ++;
+			level = Level.SEVERE;
+			break;
+		case INFO:
+			desc.nInfo ++;
+			level = Level.INFO;
+			break;
+		case WARNING:
+			desc.nWarning ++;
+			level = Level.WARNING;
+			break;
+		default:
+			break;
+		}
+
+		if (level != null) {
+			ret = CompileNotification.create(level, issue.getMessage(), name, KActorStatement.createDummy(issue));
+		}
+
+		return ret;
+	}
+
+	private String chopLastPathElement(String path) {
+		int idx = path.lastIndexOf('/');
+		if (idx <= 0) {
+			return null;
+		}
+		return path.substring(0, idx);
+	}
 }

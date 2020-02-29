@@ -1,13 +1,8 @@
 package org.integratedmodelling.kactors.api;
 
-import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.api.IStatement;
 
-public interface IKActorStatement {
+public interface IKActorStatement extends IStatement {
 
-	String getSourceCode();
-	
-	Pair<Integer, Integer> getBegin();
-	
-	Pair<Integer, Integer> getEnd();
 	
 }

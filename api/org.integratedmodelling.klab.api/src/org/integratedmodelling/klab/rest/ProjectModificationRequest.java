@@ -1,17 +1,19 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ProjectModificationRequest {
 
 	public static final String SCENARIO_OPTION = "scenario";
 	public static final String PRIVATE_OPTION = "private";
+	public static final String LIBRARY_OPTION = "library";
 
 	private String projectId;
 	private String assetId;
 	private String scriptName;
 	private String scriptPath;
-	private Map<String, String> parameters;
+	private Map<String, String> parameters = new HashMap<>();
 
 	public ProjectModificationRequest() {
 	}

@@ -6,16 +6,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.resource.XtextResourceSet;
+import org.integratedmodelling.kactors.KactorsStandaloneSetup;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.klab.utils.DirectedGraph;
 import org.integratedmodelling.klab.utils.KimCircularDependencyException;
 import org.integratedmodelling.klab.utils.TopologicalSort;
 
+import com.google.inject.Injector;
+
 /**
- * Ingests k.Actors Xtext resources and returns them topologically sorted based on
- * their internal dependencies.
+ * Ingests k.Actors Xtext resources and returns them topologically sorted based
+ * on their internal dependencies.
  * 
  * @author fvilla
  *
@@ -24,13 +30,56 @@ public class KActorsResourceSorter {
 
 	DirectedGraph<String> graph = new DirectedGraph<>();
 	Map<String, Resource> resources = new HashMap<>();
+	Map<URI, File> fileMap = new HashMap<>();
 	List<File> workspace;
 
 	// available in order of dependency after getResources() is called
 	List<String> namespaceIds;
 
+	Injector injector;
+
+	private Injector getInjector() {
+		if (this.injector == null) {
+			this.injector = new KactorsStandaloneSetup().createInjectorAndDoEMFRegistration();
+		}
+		return this.injector;
+	}
+
+	private XtextResourceSet getResourceSet() {
+		// don't save this! It's an actual set and won't reload resources when called
+		// again
+		XtextResourceSet ret = getInjector().getInstance(XtextResourceSet.class);
+		ret.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+		return ret;
+	}
+
 	public KActorsResourceSorter(List<File> workspace) {
+
 		this.workspace = workspace;
+
+		XtextResourceSet resourceSet = getResourceSet();
+		this.fileMap = new HashMap<>();
+
+		for (File file : workspace) {
+
+			if (/* !forceUpdate && */ isUpToDate(file)) {
+				continue;
+			}
+
+			URI uri = URI.createFileURI(file.toString());
+			Resource resource = resourceSet.getResource(uri, true);
+			if (resource != null) {
+				add(resource);
+				fileMap.put(uri, file);
+			} else {
+				System.out.println("Unrecoverable parse errors in " + file);
+			}
+		}
+	}
+
+	private boolean isUpToDate(File file) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public KActorsResourceSorter() {
@@ -89,6 +138,10 @@ public class KActorsResourceSorter {
 					"internal: ResourceSorter: getResources() has not been called: cannot return namespace order");
 		}
 		return namespaceIds;
+	}
+
+	public File getFile(Resource resource) {
+		return fileMap.get(resource.getURI());
 	}
 
 }

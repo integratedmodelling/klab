@@ -1,7 +1,10 @@
 package org.integratedmodelling.kactors.model;
 
+import java.util.List;
+
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -23,17 +26,6 @@ public class KActorsBehavior implements IKActorsBehavior {
 		return null;
 	}
 
-	@Override
-	public Pair<Integer, Integer> getBegin() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Pair<Integer, Integer> getEnd() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public String getName() {
@@ -45,6 +37,60 @@ public class KActorsBehavior implements IKActorsBehavior {
 	public Type getType() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getFirstLine() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getLastLine() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getFirstCharOffset() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getLastCharOffset() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<IKimAnnotation> getAnnotations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getDeprecation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isDeprecated() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isErrors() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isWarnings() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -48,9 +48,8 @@ public class NewBehavior extends WizardPage {
 
 	private Text    text;
     private Combo   combo;
-    private Button  btnCreateAScenario;
+    private Button  btnCreateALibrary;
     private IKimProject targetProject;
-    private Button btnPrivateNamespace;
 
     public NewBehavior(IKimProject targetProject) {
         super("wizardPage");
@@ -111,24 +110,17 @@ public class NewBehavior extends WizardPage {
         }
         combo.select(selection);
 
-        btnCreateAScenario = new Button(container, SWT.CHECK);
-        btnCreateAScenario.addSelectionListener(new SelectionAdapter() {
+        btnCreateALibrary = new Button(container, SWT.CHECK);
+        btnCreateALibrary.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         	}
         });
-        FormData fd_btnCreateAScenario = new FormData();
-        fd_btnCreateAScenario.top = new FormAttachment(text, 24);
-        fd_btnCreateAScenario.left = new FormAttachment(text, 0, SWT.LEFT);
-        btnCreateAScenario.setLayoutData(fd_btnCreateAScenario);
-        btnCreateAScenario.setText("Create a library");
-        
-        btnPrivateNamespace = new Button(container, SWT.CHECK);
-        FormData fd_btnPrivateNamespace = new FormData();
-        fd_btnPrivateNamespace.top = new FormAttachment(btnCreateAScenario, 16);
-        fd_btnPrivateNamespace.left = new FormAttachment(0, 160);
-        btnPrivateNamespace.setLayoutData(fd_btnPrivateNamespace);
-        btnPrivateNamespace.setText("Private namespace");
+        FormData fd_btnCreateALibrary = new FormData();
+        fd_btnCreateALibrary.top = new FormAttachment(text, 24);
+        fd_btnCreateALibrary.left = new FormAttachment(text, 0, SWT.LEFT);
+        btnCreateALibrary.setLayoutData(fd_btnCreateALibrary);
+        btnCreateALibrary.setText("Create a trait library");
 
     }
 
@@ -140,11 +132,11 @@ public class NewBehavior extends WizardPage {
         return text;
     }
 
-    public Button getCreateScenario() {
-        return btnCreateAScenario;
+    public Button getCreateLibrary() {
+        return btnCreateALibrary;
     }
     
-    public Button getIsPrivate() {
-    	return btnPrivateNamespace;
+    public Button getIsLibrary() {
+    	return btnCreateALibrary;
     }
 }

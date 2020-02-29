@@ -31,19 +31,7 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public Pair<Integer, Integer> getBegin() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Pair<Integer, Integer> getEnd() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public String getNamespace() {
 		// TODO Auto-generated method stub
