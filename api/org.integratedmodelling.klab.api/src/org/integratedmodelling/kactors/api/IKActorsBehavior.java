@@ -1,5 +1,7 @@
 package org.integratedmodelling.kactors.api;
 
+import java.io.File;
+
 import org.integratedmodelling.klab.api.actors.IBehavior;
 
 /**
@@ -47,5 +49,7 @@ public interface IKActorsBehavior extends IKActorStatement {
 	 * @return
 	 */
 	Type getType();
+
+	File getFile();
 
 }

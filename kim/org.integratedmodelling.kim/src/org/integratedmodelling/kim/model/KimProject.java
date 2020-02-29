@@ -228,10 +228,6 @@ public class KimProject implements IKimProject {
 
 	@Override
 	public List<IKActorsBehavior> getBehaviors() {
-		List<IKActorsBehavior> ret = new ArrayList<>();
-		for (String namespace : behaviors) {
-//			ret.add(Kim.INSTANCE.getNamespace(namespace));
-		}
-		return ret;
+		return KActors.INSTANCE.getBehaviors(this.name);
 	}
 }

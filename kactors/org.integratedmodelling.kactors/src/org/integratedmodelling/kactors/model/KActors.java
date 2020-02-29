@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,6 @@ import org.integratedmodelling.kactors.KactorsStandaloneSetup;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.utils.KActorsResourceSorter;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.common.CompileNotification;
 
@@ -53,7 +53,7 @@ public enum KActors {
 	}
 
 	public IKActorsBehavior declare(Model model) {
-		return new KActorsBehavior(model);
+		return new KActorsBehavior(model, null);
 	}
 
 	public boolean isKActorsFile(File file) {
@@ -78,41 +78,37 @@ public enum KActors {
 
 			ret.name = ((Model) resource.getContents().get(0)).getPreamble().getName();
 			ret.file = bsort.getFile(resource);
+			ret.projectName = getProjectName(resource.getURI().toString());
 			
-//			removeNamespace();
-//			Kim.INSTANCE.setCurrentLoader(this);
 			List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-//			String name = Kim.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
-//
-//			NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
-//			info.name = name;
-//			info.namespace = Kim.INSTANCE.getNamespace(name);
-//			info.issues.clear();
-//
 			for (Issue issue : issues) {
 				ICompileNotification notification = getNotification(ret.name, issue, ret);
 				if (notification != null) {
 					ret.notifications.add(notification);
 				}
 			}
-//
-//			if (info.namespace == null) {
-//				throw new KlabInternalErrorException(
-//						"namespace is not found after validation. This should never happen.");
-//			}
-//
-//			((KimNamespace) info.namespace).setLoader(this);
-//			((KimProject) info.project).addNamespace(info.namespace);
-//
-//			if (!reloading) {
-//				this.namespaceFiles.put(name, fileMap.get(resource.getURI()));
-//				this.sortedNames.add(name);
-//			}
-//
-//			ret.add(info.namespace);
-
+			
+			ret.behavior = new KActorsBehavior(((Model) resource.getContents().get(0)), ret);
+			
+			behaviors.put(ret.name, ret);
 		}
-
+	}
+	
+	/**
+	 * Return all regular behaviors defined in the src/ directory alongside models for
+	 * the project.
+	 * 
+	 * @param project
+	 * @return
+	 */
+	public List<IKActorsBehavior> getBehaviors(String project) {
+		List<IKActorsBehavior> ret = new ArrayList<>();
+		for (BehaviorDescriptor bd : behaviors.values()) {
+			if (project.equals(bd.projectName)) {
+				ret.add(bd.behavior);
+			}
+		}
+		return ret;
 	}
 
 //    public IKdlDataflow declare(Model dataflow) {

@@ -1,11 +1,12 @@
 package org.integratedmodelling.kactors.model;
 
+import java.io.File;
 import java.util.List;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
+import org.integratedmodelling.kactors.model.KActors.BehaviorDescriptor;
 import org.integratedmodelling.kim.api.IKimAnnotation;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Syntactic peer for a k.Actors application, to be turned into an
@@ -16,8 +17,14 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class KActorsBehavior implements IKActorsBehavior {
 
-	public KActorsBehavior(Model model) {
-		// TODO Auto-generated constructor stub
+	String name;
+	private File file;
+	
+	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
+		this.name = model.getPreamble().getName();
+		if (descriptor != null) {
+			this.file = descriptor.file;
+		}
 	}
 
 	@Override
@@ -25,12 +32,16 @@ public class KActorsBehavior implements IKActorsBehavior {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public File getFile() {
+		return this.file;
+	}
 
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.name;
 	}
 
 	@Override
