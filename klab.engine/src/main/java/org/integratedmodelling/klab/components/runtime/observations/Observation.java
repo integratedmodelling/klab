@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -14,8 +15,10 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.model.Namespace;
@@ -24,6 +27,8 @@ import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Path;
 
+import akka.actor.typed.ActorRef;
+
 /**
  * The base class for all observations can only be instantiated as the empty
  * observation.
@@ -31,7 +36,7 @@ import org.integratedmodelling.klab.utils.Path;
  * @author ferdinando.villa
  *
  */
-public abstract class Observation extends ObservedArtifact implements IObservation {
+public abstract class Observation extends ObservedArtifact implements IObservation, IActorIdentity<KlabMessage> {
 
     private Observable       observable;
     private ObservationGroup group     = null;
@@ -250,4 +255,36 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		// does nothing here; overridden in each final class
 	}
 
+	@Override
+	public ActorRef<KlabMessage> getActor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void load(IBehavior behavior) {
+		// TODO Auto-generated method stub
+		
+	}
+
+//	 CompletionStage<CookieFabric.Reply> result =
+//		        AskPattern.ask(
+//		            cookieFabric,
+//		            replyTo -> new CookieFabric.GiveMeCookies(3, replyTo),
+//		            // asking someone requires a timeout and a scheduler, if the timeout hits without
+//		            // response the ask is failed with a TimeoutException
+//		            Duration.ofSeconds(3),
+//		            system.scheduler());
+//
+//		    result.whenComplete(
+//		        (reply, failure) -> {
+//		          if (reply instanceof CookieFabric.Cookies)
+//		            System.out.println("Yay, " + ((CookieFabric.Cookies) reply).count + " cookies!");
+//		          else if (reply instanceof CookieFabric.InvalidRequest)
+//		            System.out.println(
+//		                "No cookies for me. " + ((CookieFabric.InvalidRequest) reply).reason);
+//		          else System.out.println("Boo! didn't get cookies in time. " + failure);
+//		        });
+	
+	
 }

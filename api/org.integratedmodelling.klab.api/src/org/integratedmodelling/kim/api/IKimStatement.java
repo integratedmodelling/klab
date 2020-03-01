@@ -33,13 +33,6 @@ public interface IKimStatement extends IStatement, IKimScope {
 		}
 	}
 
-
-	/**
-	 * 
-	 * @return the metadata
-	 */
-	IKimMetadata getMetadata();
-
 	/**
 	 * 
 	 * @return the documentation

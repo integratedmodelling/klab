@@ -5,7 +5,6 @@ import java.util.List;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.INamespaceQualified;
 
 /**
  * The result of parsing an actor specification within the engine. Provides
@@ -14,7 +13,7 @@ import org.integratedmodelling.klab.api.model.INamespaceQualified;
  * @author Ferd
  *
  */
-public interface IBehavior extends IKimObject, INamespaceQualified {
+public interface IBehavior extends IKimObject {
 
 	/**
 	 * All messages defined in the actor.

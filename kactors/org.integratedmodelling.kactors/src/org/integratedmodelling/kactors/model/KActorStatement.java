@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kactors.api.IKActorStatement;
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -159,6 +160,12 @@ public class KActorStatement implements IKActorStatement {
 	public boolean isWarnings() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public IKimMetadata getMetadata() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

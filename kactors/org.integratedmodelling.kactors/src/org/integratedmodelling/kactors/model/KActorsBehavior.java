@@ -7,6 +7,7 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors.BehaviorDescriptor;
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimMetadata;
 
 /**
  * Syntactic peer for a k.Actors application, to be turned into an
@@ -102,6 +103,12 @@ public class KActorsBehavior implements IKActorsBehavior {
 	public boolean isWarnings() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public IKimMetadata getMetadata() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

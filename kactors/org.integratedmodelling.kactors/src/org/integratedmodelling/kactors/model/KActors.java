@@ -29,6 +29,10 @@ public enum KActors {
 
 	INSTANCE;
 
+	public interface Notifier {
+		void notify(IKActorsBehavior behavior);
+	}
+	
 	class BehaviorDescriptor {
 		String name;
 		File file;
@@ -43,6 +47,7 @@ public enum KActors {
 	Injector injector;
 	IResourceValidator validator;
 
+	List<Notifier> notifiers = new ArrayList<>();
 	Map<String, BehaviorDescriptor> behaviors = new HashMap<>();
 
 	private Injector getInjector() {
@@ -65,6 +70,10 @@ public enum KActors {
 			this.validator = getInjector().getInstance(IResourceValidator.class);
 		}
 		return this.validator;
+	}
+	
+	public void addNotifier(Notifier notifier) {
+		this.notifiers.add(notifier);
 	}
 
 	public void loadResources(List<File> behaviorFiles) {
@@ -91,6 +100,10 @@ public enum KActors {
 			ret.behavior = new KActorsBehavior(((Model) resource.getContents().get(0)), ret);
 			
 			behaviors.put(ret.name, ret);
+			
+			for (Notifier notifier : notifiers) {
+				notifier.notify(ret.behavior);
+			}
 		}
 	}
 	

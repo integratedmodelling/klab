@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimMetadata;
 
 public interface IStatement {
 	/**
@@ -56,4 +57,11 @@ public interface IStatement {
 	boolean isErrors();
 
 	boolean isWarnings();
+
+	/**
+	 * 
+	 * @return the metadata
+	 */
+	IKimMetadata getMetadata();
+
 }
