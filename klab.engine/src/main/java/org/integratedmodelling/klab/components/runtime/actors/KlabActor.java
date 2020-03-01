@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.components.runtime.actors.KlabMessages.Load;
 
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.AbstractBehavior;
@@ -23,9 +24,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * @author Ferd
 	 *
 	 */
-	public static final class KlabMessage {
-		String name;
-		Object[] arguments;
+	public interface KlabMessage {
+		
+	}
+
+	protected IIdentity getIdentity() {
+		return this.identity;
 	}
 	
 	protected KlabActor(ActorContext<KlabMessage> context, IIdentity identity, IBehavior... behaviors) {
@@ -42,7 +46,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	public Receive<KlabMessage> createReceive() {
 
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
-		builder.onMessage(KlabMessage.class, this::onKlabMessage);
+		builder.onMessage(Load.class, this::loadBehavior);
 //		// TODO create all messages from the behavior specs
 //		for (IMessageHandler message : behavior.getMessageHandlers()) {
 //			// call .onMessage(ReadTemperature.class, this::onReadTemperature)
@@ -51,7 +55,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return builder.build();
 	}
 
-	private Behavior<KlabMessage> onKlabMessage(KlabMessage message) {
+	private Behavior<KlabMessage> loadBehavior(Load message) {
+		this.behaviors.add(message.behavior);
 		return this;
 	}
 	

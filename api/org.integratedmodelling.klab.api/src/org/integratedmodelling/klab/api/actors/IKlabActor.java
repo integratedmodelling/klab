@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.api.actors;
 
-import org.integratedmodelling.klab.api.auth.IIdentity;
-
 /**
  * Tag (for now) interface that is adopted by anything in k.LAB that can have a
  * behavior associated with it. It extends any IIdentity that is enabled to have
@@ -10,7 +8,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
  * @author Ferd
  *
  */
-public interface IKlabActor extends IIdentity {
+public interface IKlabActor {
 
 	/**
 	 * An empty actor does nothing and quietly ignores any message sent to it. An

@@ -26,6 +26,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
@@ -39,6 +40,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
@@ -73,8 +75,9 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder.Location;
-import org.integratedmodelling.klab.components.runtime.DefaultRuntimeProvider;
-import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabMessages;
+import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
@@ -82,6 +85,7 @@ import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.Project;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -131,7 +135,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.ibm.icu.text.NumberFormat;
 
-import akka.actor.ActorRef;
+import akka.actor.typed.ActorRef;
 
 /**
  * Engine session. Implements UserDetails to be directly usable as a principal
@@ -140,7 +144,7 @@ import akka.actor.ActorRef;
  * @author ferdinando.villa
  *
  */
-public class Session implements ISession, UserDetails, IMessageBus.Relay {
+public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetails, IMessageBus.Relay {
 
 	private static final long serialVersionUID = -1571090827271892549L;
 
@@ -156,6 +160,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	boolean isDefault = false;
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
+	ActorRef<KlabMessage> actor;
 
 	/**
 	 * A scheduler to periodically collect observation and task garbage
@@ -703,22 +708,20 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			} else {
 				new Thread() {
 
-					@Override
-					public void run() {
-						if (Resources.INSTANCE.importIntoResource(request.getImportUrl(), resource, getMonitor())) {
-							monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
-									((Resource) resource).getReference());
-						} else {
-							// TODO complain to client
-						}
-					}
-
-				}.start();
-			}
-
-			// TODO
+	@Override
+	public void run() {
+		if (Resources.INSTANCE.importIntoResource(request.getImportUrl(), resource, getMonitor())) {
+			monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
+					((Resource) resource).getReference());
+		} else {
+			// TODO complain to client
 		}
 	}
+
+	}.start();}
+
+	// TODO
+	}}
 
 	@MessageHandler
 	private void setRegionOfInterest(SpatialExtent extent) {
@@ -1296,6 +1299,19 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					((Resource) ret).getReference());
 		}
 		return ret;
+	}
+
+	@Override
+	public ActorRef<KlabMessage> getActor() {
+		if (this.actor == null) {
+			this.actor = Actors.INSTANCE.createActor(SessionActor.create(this), this);
+		}
+		return this.actor;
+	}
+
+	@Override
+	public void load(IBehavior behavior) {
+		getActor().tell(new KlabMessages.Load(behavior));
 	}
 
 }

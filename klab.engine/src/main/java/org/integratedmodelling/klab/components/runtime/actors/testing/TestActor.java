@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors.testing;
 
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 
 import akka.actor.typed.Behavior;
@@ -17,17 +18,17 @@ import akka.actor.typed.javadsl.Receive;
  */
 public class TestActor extends SessionActor {
 
-	public static Behavior<Void> create() {
-		return Behaviors.setup(TestActor::new);
+	public static Behavior<KlabMessage> create(ISession session) {
+		return Behaviors.setup(ctx -> new TestActor(ctx, session));
 	}
 
-	public TestActor(ActorContext<Void> context) {
-		super(context);
+	public TestActor(ActorContext<KlabMessage> context, ISession session) {
+		super(context, session);
 		// session actor started
 	}
 
 	@Override
-	public Receive<Void> createReceive() {
+	public Receive<KlabMessage> createReceive() {
 		return newReceiveBuilder().onSignal(PostStop.class, signal -> onPostStop()).build();
 	}
 

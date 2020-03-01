@@ -11,7 +11,9 @@ import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.services.IActorsService;
+import org.integratedmodelling.klab.components.runtime.actors.SessionActor.SessionCommand;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -119,6 +121,10 @@ public enum Actors implements IActorsService {
 	 */
 	public ActorRef<Void> getSupervisor() {
 		return this.supervisor;
+	}
+
+	public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
+		return ActorSystem.create(create, identity.getId());
 	}
 
 }
