@@ -32,7 +32,7 @@ public enum KActors {
 	class BehaviorDescriptor {
 		String name;
 		File file;
-		List<ICompileNotification> notifications;
+		List<ICompileNotification> notifications = new ArrayList<>();
 		int nInfo;
 		int nWarning;
 		int nErrors;
