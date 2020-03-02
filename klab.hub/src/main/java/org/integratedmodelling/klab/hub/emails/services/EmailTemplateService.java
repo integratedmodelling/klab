@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.service;
+package org.integratedmodelling.klab.hub.emails.services;
 
 import java.util.Collection;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.manager;
+package org.integratedmodelling.klab.hub.emails.services;
 
 import java.io.File;
 import java.net.URL;

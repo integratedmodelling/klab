@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.controllers;
+package org.integratedmodelling.klab.hub.emails.controllers;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -8,12 +8,12 @@ import javax.annotation.security.RolesAllowed;
 import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.config.EmailConfig.EmailType;
 import org.integratedmodelling.klab.hub.emails.EmailTemplate;
+import org.integratedmodelling.klab.hub.emails.services.EmailManager;
+import org.integratedmodelling.klab.hub.emails.services.EmailTemplateService;
 import org.integratedmodelling.klab.hub.exception.SendEmailException;
-import org.integratedmodelling.klab.hub.manager.EmailManager;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.payload.KlabEmail;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.service.EmailTemplateService;
 import org.integratedmodelling.klab.hub.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;

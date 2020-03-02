@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.service.implementation;
+package org.integratedmodelling.klab.hub.emails.services;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.emails.EmailTemplate;
 import org.integratedmodelling.klab.hub.repository.EmailTemplateRepository;
-import org.integratedmodelling.klab.hub.service.EmailTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
