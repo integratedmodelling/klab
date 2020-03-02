@@ -651,12 +651,18 @@ public class ModelKbox extends ObservableKbox {
 					continue;
 				}
 				
-				// attribute type must have inherent type added
-				IConcept type = attr.getBuilder(monitor).within(model.getObservables().get(0).getType()).buildConcept();
+				// attribute type must have inherent type added if it's an instantiated quality
+				IConcept type = attr.getType();
+				if (model.isInstantiator()) {
+					IConcept context = Observables.INSTANCE.getContextType(type);
+					if (!context.is(model.getObservables().get(0))) {
+						type = attr.getBuilder(monitor).within(model.getObservables().get(0).getType()).buildConcept();
+					}
+				}
 				ModelReference m = ret.get(0).copy();
 				m.setObservable(type.getDefinition());
 				m.setObservableConcept(type.getType());
-				m.setObservationType(attr.getDescription().name());
+				m.setObservationType(attr.getArtifactType().name());
 				m.setDereifyingAttribute(attr.getName());
 				m.setMediation(Mediation.DEREIFY_QUALITY);
 				m.setPrimaryObservable(!model.isInstantiator());
