@@ -141,7 +141,7 @@ public class KlabSession extends KlabPeer {
 		protected IStatus run(IProgressMonitor monitor) {
 			schedule(TICKET_CHECK_INTERVAL_SECONDS * 1000);
 			for (ITicket ticket : ticketManager.get()) {
-				
+				System.out.println("AAAH! TICKET! " + ticket);
 			}
 			return Status.OK_STATUS;
 		}

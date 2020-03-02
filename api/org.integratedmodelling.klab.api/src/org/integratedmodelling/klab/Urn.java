@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
  * Simple helper to decompose a URN into its constituents and access them with
@@ -19,6 +22,7 @@ public class Urn {
 	final public static String SINGLE_PARAMETER_KEY = "value";
 
 	private String urn;
+	private String fullUrn;
 	private String[] tokens;
 	private Map<String, String> parameters = new HashMap<>();
 
@@ -28,6 +32,7 @@ public class Urn {
 	 * @param urn
 	 */
 	public Urn(String urn) {
+		fullUrn = urn;
 		if (urn.startsWith(Urns.KLAB_URN_PREFIX)) {
 			urn = urn.substring(Urns.KLAB_URN_PREFIX.length());
 		}
@@ -40,13 +45,31 @@ public class Urn {
 						String[] kv = s.split("=");
 						parameters.put(kv[0], kv[1]);
 					} else {
-						parameters.put(SINGLE_PARAMETER_KEY, s);
+						if (parameters.containsKey(SINGLE_PARAMETER_KEY)) {
+							parameters.put(SINGLE_PARAMETER_KEY, parameters.get(SINGLE_PARAMETER_KEY) + "," + s);
+						} else {
+							parameters.put(SINGLE_PARAMETER_KEY, s);
+						}
 					}
 				}
 			}
 		}
 		this.urn = urn;
 		this.tokens = urn.split(":");
+	}
+
+	public Urn(String urn, Map<String, String> urnParameters) {
+		this(urn);
+		this.parameters.putAll(urnParameters);
+		if (urnParameters != null && !urnParameters.isEmpty()) {
+			String s = "";
+			for (String key : urnParameters.keySet()) {
+				s += (s.isEmpty() ? "" : "&") + ("value".equals(key) ? "" : (key + "="));
+				String val = urnParameters.get(key);
+				s += val.replace(",", "&");
+			}
+			this.fullUrn += "#" + s;
+		}
 	}
 
 	/**
@@ -66,6 +89,24 @@ public class Urn {
 	 */
 	public boolean isLocal() {
 		return getNodeName().equals("local");
+	}
+	
+	/**
+	 * Return either an empty array for no parameter present, or an array of
+	 * values with one or more values for the passed parameter set in the url
+	 * as independent parts. E.g. url#a&b&C would return a, b, C.
+	 * @param parameter
+	 * @return
+	 */
+	public String[] getSplitParameter(String parameter) {
+		if (parameters.containsKey(parameter)) {
+			String ss = parameters.get(parameter);
+			if (ss == null) {
+				ss = "";
+			}
+			return ss.split(",");
+		}
+		return new String[] {};
 	}
 
 	/**
@@ -126,7 +167,7 @@ public class Urn {
 
 	@Override
 	public String toString() {
-		return urn;
+		return fullUrn;
 	}
 
 	public Map<String, String> getParameters() {

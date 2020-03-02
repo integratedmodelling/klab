@@ -8,12 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.templates.KimTemplates;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -121,10 +123,47 @@ public class Project implements IProject {
 
 		File ret = new File(getRoot() + File.separator + IKimProject.SOURCE_FOLDER + File.separator
 				+ namespaceId.replace('.', File.separatorChar) + ".kim");
-		new File(MiscUtilities.getFilePath(ret.toString())).mkdirs();
+		File npath = new File(MiscUtilities.getFilePath(ret.toString()));
+		npath.mkdirs();
 		try (PrintWriter out = new PrintWriter(ret)) {
-			out.print((createScenario ? "scenario " : (isPrivate ? "private " : "") + "namespace ") + namespaceId
+			out.print((createScenario ? "scenario " : (isPrivate ? "private " : "")) + "namespace " + namespaceId
 					+ ";\n\n");
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+
+		return ret;
+
+	}
+
+	/**
+	 * Create a namespace file and return it (do not load it).
+	 * 
+	 * @param namespaceId
+	 */
+	public File createBehavior(String namespaceId, IKActorsBehavior.Type type, boolean isApp) {
+
+		File ret = new File(getRoot() + File.separator + IKimProject.SOURCE_FOLDER + File.separator
+				+ namespaceId.replace('.', File.separatorChar) + ".kactor");
+		File npath = new File(MiscUtilities.getFilePath(ret.toString()));
+		npath.mkdirs();
+		String statement = "behavior";
+		switch (type) {
+		case APP:
+			statement = "app";
+			break;
+		case TRAITS:
+			statement = isApp ? "library" : "trait";
+			break;
+		case USER:
+			statement = "user";
+			break;
+		default:
+			break;
+		
+		}
+		try (PrintWriter out = new PrintWriter(ret)) {
+			out.print(statement + " " + namespaceId + ";\n\n");
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}
@@ -197,6 +236,18 @@ public class Project implements IProject {
 				return Resources.INSTANCE.resolveResource(u);
 			}
 		}
+		return null;
+	}
+
+	@Override
+	public List<IBehavior> getBehaviors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<IBehavior> getApps() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

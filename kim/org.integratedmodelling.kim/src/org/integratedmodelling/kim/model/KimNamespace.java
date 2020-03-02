@@ -55,7 +55,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	
 	public KimNamespace(Namespace namespace, KimProject project) {
 		super(namespace, null);
-		this.name = this.namespace = Kim.getNamespaceId(namespace);
+		this.name = this.namespaceId = Kim.getNamespaceId(namespace);
 //		this.projectKnowledge = namespace.eResource().getURI().toString().contains("META-INF/knowledge.kim");
 		if (namespace.eResource().getURI().isFile()) {
 			this.file = new File(namespace.eResource().getURI().toFileString());
@@ -136,7 +136,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	}
 
 	public KimNamespace(String id, File file) {
-		this.name = this.namespace = id;
+		this.name = this.namespaceId = id;
 		this.file = file;
 		// TODO resource URI from file
 	}

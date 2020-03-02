@@ -1,20 +1,35 @@
 package org.integratedmodelling.klab.hub.tasks.services;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.tasks.Task;
+import org.integratedmodelling.klab.hub.tasks.TaskParameters;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
-import org.integratedmodelling.klab.hub.users.Role;
 
 public interface TaskService {
-	public abstract Task createTask(String requestee, Class<? extends Task> taskType);
-	public abstract Task createTask(String requestee, Class<? extends Task> taskType, Role requiredRole);
-	public abstract Task saveTask(Task task);
-	public abstract Task changeTaskStatus(String id, TaskStatus status);
+	/**
+	 * Create a new task based on the given class
+	 * @param clazz the class of task
+	 * @param request HttpSevletRequest is needed to check the role in case of accept
+	 * @param parameters
+	 * @return
+	 */
+	public abstract List<Task> createTasks(Class<? extends Task> clazz, TaskParameters parameters);
+	public abstract void saveTask(Task task);
+	public abstract void saveAllTasks(Iterable<Task> tasks);
+	public abstract Task closeTask(String id, TaskStatus status);
+	public abstract void closeTask(Task task, TaskStatus status);
 	public abstract void deleteTask(String id);
+	public abstract Task acceptTask(String id, HttpServletRequest request);
+	public abstract Task denyTask(String id, HttpServletRequest request);
+	public abstract Optional<Task> getTask(String id);
 	public abstract List<Task> getTasks();
-	public abstract Task getTask(String id);
-	public abstract List<Task> getPendingTasks();
-	public abstract Task getGroupRequestTaskByToken(ClickbackToken token);
+	public abstract List<Task> getTasks(Class<? extends Task> clazz);
+	public abstract List<Task> getTasks(TaskStatus status);
+	public abstract List<Task> getTasks(Class<? extends Task> clazz, TaskStatus status);
+	public abstract Optional<Task> getTaskByToken(Class<? extends Task> type, ClickbackToken token);
 }

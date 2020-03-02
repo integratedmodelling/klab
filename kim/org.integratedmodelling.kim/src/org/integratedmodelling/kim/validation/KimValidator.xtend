@@ -101,7 +101,7 @@ class KimValidator extends AbstractKimValidator {
 	def checkDate(Date date) {
 		val dt = new KimDate(date);
 		if (!dt.isValid()) {
-				error("invalid date", date.eContainer, KimPackage.Literals.VALUE__DATE)
+			error("invalid date", date.eContainer, KimPackage.Literals.VALUE__DATE)
 		}
 	}
 
@@ -126,8 +126,10 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			var i = 0
-			var dependencies = if(namespace.imported.size() > 0) Kim.INSTANCE.currentLoader.dependencyGraph.
-					copy() else null
+			var dependencies = if (namespace.imported.size() > 0)
+					Kim.INSTANCE.currentLoader.dependencyGraph.copy()
+				else
+					null
 			for (import : namespace.imported) {
 				var importedNs = Kim.INSTANCE.getNamespace(import.name)
 				if (importedNs === null) {
@@ -370,9 +372,10 @@ class KimValidator extends AbstractKimValidator {
 
 				if (observable.main !== null && observable.main.is(Type.ABSTRACT) &&
 					!(observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE))) {
-					error("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or" +
-                          " resolve attributes or roles).",
-						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+					error(
+						"Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or" +
+							" resolve attributes or roles).", KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES,
+						obsIdx, REASONING_PROBLEM)
 				}
 
 				var definition = observable.descriptor
@@ -605,17 +608,17 @@ class KimValidator extends AbstractKimValidator {
 
 		for (contextualizer : model.contextualizers) {
 			// TODO validate required arguments from prototype and dependencies
-			if (contextualizer.execValue.model !== null) {
-				
-			 if (!model.merging) {
-			 	// error
-			 }
-			 
-			 // TODO check for recognized model
-				
-			} else if (model.merging && contextualizer.execValue.urn === null) {
-				
-			}
+//			if (contextualizer.execValue.model !== null) {
+//				
+////			 if (!model.merging) {
+////			 	// error
+////			 }
+//			 
+//			 // TODO check for recognized model
+//				
+//			} else if (model.merging && contextualizer.execValue.urn === null) {
+//				
+//			}
 		}
 
 		/*
@@ -639,19 +642,19 @@ class KimValidator extends AbstractKimValidator {
 				descriptor.dependencies.addAll(dependencies)
 				descriptor.instantiator = model.isInstantiator || hasDistributedAttributeObservable
 				descriptor.docstring = model.docstring
-				descriptor.resourceMerger = model.merging
-				
+//				descriptor.resourceMerger = model.merging
 				// data source - function or literal/remote URN
 				for (urn : model.urns) {
 					descriptor.resourceUrns.add(urn.name)
 				}
 
-				if (model.function !== null) {
-					descriptor.resourceFunction = new KimServiceCall(model.function, descriptor)
-					for (notification : (descriptor.resourceFunction.get() as KimServiceCall).validateUsage(null)) {
-						notify(notification, model.function, KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION)
-					}
-				} else if (model.getBoolean() !== null) {
+				/* if (model.function !== null) {
+				 * 	descriptor.resourceFunction = new KimServiceCall(model.function, descriptor)
+				 * 	for (notification : (descriptor.resourceFunction.get() as KimServiceCall).validateUsage(null)) {
+				 * 		notify(notification, model.function, KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION)
+				 * 	}
+				 } else */
+				if (model.getBoolean() !== null) {
 					descriptor.inlineValue = Boolean.parseBoolean(model.getBoolean())
 				} else if (model.number !== null) {
 					descriptor.inlineValue = Kim.INSTANCE.parseNumber(model.number)
@@ -1349,9 +1352,8 @@ class KimValidator extends AbstractKimValidator {
 					var rtype = macro.getType(Field.ADJACENT);
 					var ctype = Kim.intersection(rtype.type, flags)
 					if (!ctype.containsAll(rtype.type)) {
-						error(
-							"The adjacent type (adjacent to) does not match the type requested by the " + macro.name +
-								" macro", declaration.adjacent, null, KimPackage.CONCEPT_DECLARATION__ADJACENT)
+						error("The adjacent type (adjacent to) does not match the type requested by the " + macro.name +
+							" macro", declaration.adjacent, null, KimPackage.CONCEPT_DECLARATION__ADJACENT)
 						error = true
 					} else {
 						macro.setField(Field.ADJACENT, declaration.adjacent)
@@ -1401,9 +1403,8 @@ class KimValidator extends AbstractKimValidator {
 					var rtype = macro.getType(Field.COOCCURRENT);
 					var ctype = Kim.intersection(rtype.type, flags)
 					if (!ctype.containsAll(rtype.type)) {
-						error(
-							"The co-occurrent type (for) does not match the type requested by the " + macro.name +
-								" macro", declaration.motivation, null, KimPackage.CONCEPT_DECLARATION__MOTIVATION)
+						error("The co-occurrent type (for) does not match the type requested by the " + macro.name +
+							" macro", declaration.motivation, null, KimPackage.CONCEPT_DECLARATION__MOTIVATION)
 						error = true
 					} else {
 						macro.setField(Field.COOCCURRENT, declaration.motivation)
@@ -1479,7 +1480,7 @@ class KimValidator extends AbstractKimValidator {
 			} else {
 
 				if (!concept.name.name.contains(":")) {
-					
+
 					var namespace = KimValidator.getNamespace(concept);
 					concept.name.name = (if (namespace === null)
 						"UNDEFINED"
@@ -1645,8 +1646,9 @@ class KimValidator extends AbstractKimValidator {
 
 		var ok = true
 		var ns = KimValidator.getNamespace(statement);
-		if (ns !== null && ns.isWorldviewBound) {
-			error('Concept definitions are not admitted in secondary namespaces', KimPackage.Literals.CONCEPT_STATEMENT__BODY)
+		if (ns !== null && ns.isWorldviewBound && !(statement.body !== null && statement.body.alias)) {
+			error('Concept definitions are not admitted in secondary namespaces: use \'equals\' to declare aliases',
+				KimPackage.Literals.CONCEPT_STATEMENT__BODY)
 			ok = false;
 		}
 
@@ -2285,9 +2287,8 @@ class KimValidator extends AbstractKimValidator {
 				for (decl : concept.qualitiesAffected) {
 					var quality = Kim.INSTANCE.declareConcept(decl)
 					if (!quality.is(Type.QUALITY)) {
-						error(
-							"only quality types can be affected by a process",
-							concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i)
+						error("only quality types can be affected by a process", concept,
+							KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i)
 					} else {
 						ret.qualitiesAffected.add(quality)
 					}
@@ -2300,7 +2301,6 @@ class KimValidator extends AbstractKimValidator {
 //		for (restriction : concept.restrictions) {
 //			// TODO process restriction
 //		}
-
 		if (concept.metadata !== null) {
 			ret.metadata = new KimMetadata(concept.metadata, ret)
 		}

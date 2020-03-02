@@ -37,7 +37,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<!-- 2.8.0-01 and later require maven-compiler-plugin 3.1 or higher -->
-					<version>3.1</version>
+					<version>3.8.0</version>
 					<configuration>
 						<compilerId>groovy-eclipse-compiler</compilerId>
 						<source>1.8</source>
@@ -47,14 +47,15 @@
 						<dependency>
 							<groupId>org.codehaus.groovy</groupId>
 							<artifactId>groovy-eclipse-compiler</artifactId>
-							<version>2.9.2-01</version>
+							<version>3.6.0-03</version>
 						</dependency>
 						<!-- for 2.8.0-01 and later you must have an explicit dependency on 
 							groovy-eclipse-batch -->
 						<dependency>
 							<groupId>org.codehaus.groovy</groupId>
 							<artifactId>groovy-eclipse-batch</artifactId>
-							<version>2.4.3-01</version>
+							<version>2.5.9-01</version>
+							<!-- <version>2.5.9-01</version> -->
 							<!-- or choose a different compiler version -->
 							<!-- <version>1.8.6-01</version> -->
 							<!-- <version>1.7.10-06</version> -->
@@ -75,6 +76,20 @@
 		</plugins>
 	</build>
 	<dependencies>
+
+		<!-- Unirest, while redundant with Spring templates, removes a lot of pain 
+			when doing quick REST interactions -->
+		<dependency>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>3.4.03</version>
+			<classifier>standalone</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-objectmapper-jackson</artifactId>
+			<version>3.4.03</version>
+		</dependency>
 
 		<!-- tiny Jar to pluralize subject names for folder IDs -->
 		<dependency>
@@ -444,8 +459,10 @@
 		<!-- Groovy -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.5.0-beta-2</version>
+			<artifactId>groovy</artifactId>
+			<!-- <version>2.5.0-beta-2</version> -->
+			<version>2.5.9</version>
+			<classifier>indy</classifier>
 		</dependency>
 
 		<!-- basic graph API -->
@@ -533,11 +550,12 @@
 			caching) <dependency> <groupId>org.dizitart</groupId> <artifactId>nitrite</artifactId> 
 			<version>3.0.0</version> </dependency> -->
 
-		<!-- Actor system (for the default runtime provider) -->
+		<!-- Actor system (for the default runtime provider). Use 2_12 or the Json 
+			schema generator won't find scala.Serializable. -->
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-actor_2.12</artifactId>
-			<version>2.5.11</version>
+			<artifactId>akka-actor-typed_2.12</artifactId>
+			<version>2.6.3</version>
 		</dependency>
 
 		<!-- ENGINE DEBUGGING/VISUALIZATION DEPS -->
@@ -564,7 +582,13 @@
 		<dependency>
 			<groupId>com.kjetland</groupId>
 			<artifactId>mbknor-jackson-jsonschema_2.12</artifactId>
-			<version>1.0.29</version>
+			<version>1.0.36</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.scala-lang</groupId>
+					<artifactId>scala-library</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- swagger for API docs -->
@@ -600,13 +624,19 @@
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.kdl</artifactId>
+			<artifactId>org.integratedmodelling.kactors</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.verhas</groupId>
-			<artifactId>license3j</artifactId>
-			<version>1.0.7</version>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.kdl</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.verhas/license3j -->
+		<dependency>
+		    <groupId>com.verhas</groupId>
+		    <artifactId>license3j</artifactId>
+		    <version>2.0.0-JVM8</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>

@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.api.data.adapters;
 
+import java.io.File;
+
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;

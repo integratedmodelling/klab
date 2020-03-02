@@ -355,12 +355,25 @@ public interface IRuntimeScope extends IContextualizationScope {
 	IRuntimeScope locate(ILocator transitionScale);
 
 	/**
-	 * Get all the artifacts known to this context indexed by their local name in the
-	 * context of execution. An actuator must have been specified for the context.
+	 * Get all the artifacts known to this context indexed by their local name in
+	 * the context of execution. An actuator must have been specified for the
+	 * context.
 	 * 
 	 * @param <T>
 	 * @param cls
 	 * @return
 	 */
 	<T extends IArtifact> Map<String, T> getLocalCatalog(Class<T> cls);
+
+	/**
+	 * Manually add a state to a target observation, updating structure and
+	 * notifying what needs to be notified.
+	 * 
+	 * @param target the direct observation that will receive the state.
+	 * @param observable for the state. The scale will be the same as the target.
+	 * @param data any kind of content for the state - either a scalar to be redistributed or
+	 *        
+	 * @return
+	 */
+	IState addState(IDirectObservation target, IObservable observable, Object data);
 }

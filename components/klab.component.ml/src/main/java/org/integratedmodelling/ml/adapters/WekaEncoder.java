@@ -119,16 +119,6 @@ public class WekaEncoder implements IResourceEncoder {
 				}
 			}
 
-			if (resource.getParameters().containsKey("key." + dependency.getName())) {
-				// build predictor datakey
-				try {
-					File file = ((Resource) resource).getLocalFile("key." + dependency.getName());
-					List<String> key = FileUtils.readLines(file);
-					instances.setDatakey(dependency.getName(), key);
-				} catch (IOException e) {
-					throw new KlabIOException(e);
-				}
-			}
 
 			/*
 			 * we may have less predictors than during training, so we put them in the
@@ -144,6 +134,16 @@ public class WekaEncoder implements IResourceEncoder {
 							.named(dependency.getName()),
 					null, index, discretizer);
 
+			if (resource.getParameters().containsKey("key." + dependency.getName())) {
+				// build predictor datakey
+				try {
+					File file = ((Resource) resource).getLocalFile("key." + dependency.getName());
+					List<String> key = FileUtils.readLines(file);
+					instances.setDatakey(dependency.getName(), key);
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
 		}
 
 		/*
@@ -154,6 +154,7 @@ public class WekaEncoder implements IResourceEncoder {
 	}
 
 	public void initialize(IState predictedState, IResource resource, IContextualizationScope context) {
+		
 		/*
 		 * load the classifier
 		 */

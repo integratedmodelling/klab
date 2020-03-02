@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
@@ -189,6 +190,12 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
+	}
+
+	@Override
+	public void touch(ITime time) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

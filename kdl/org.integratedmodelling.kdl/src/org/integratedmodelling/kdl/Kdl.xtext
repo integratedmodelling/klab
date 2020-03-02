@@ -140,6 +140,7 @@ Value:
 	expression=EXPR |
 	table=LookupTable | 
 	enumId=UPPERCASE_ID;
+	
 Urn:
 // String used when there are strange chars or keywords in the URN.
 	name=(UrnId | STRING | LocalFilePath);

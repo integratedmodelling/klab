@@ -39,11 +39,12 @@ ModelBodyStatement:
 	(instantiator?='each')? 
 		(
 			(
+//				(models+=PathName (',' models+=PathName)*) | 
 				(urns+=Urn (',' urns+=Urn)*) | 
-				function=Function | 
+//				function=Function | 
 				number=Number | 
-				boolean=('true' | 'false') | 
-				concept=SimpleObservableSemantics
+				boolean=('true' | 'false') //| 
+//				concept=SimpleObservableSemantics
 			)
 			 'as'
 		)? 
@@ -54,7 +55,7 @@ ModelBodyStatement:
 		 ( (name=LOWERCASE_ID | (observables+=AnnotatedObservableSemantics (',' observables+=AnnotatedObservableSemantics)*)))
 		 (docstring=STRING)?
 		 ('observing' dependencies+=Dependency (',' dependencies+=Dependency)* )?
-		 (('using' | merging?='merging') contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+		 ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		 (('classified' | discretization?='discretized') (('into' classification=Classification) | ('according' 'to' classificationProperty=PropertyId)))?
 	     // arg ? means result field, arg * means ignore column. If not given, will match self in the first column and result in last, ignoring anything in between
 		 ('lookup' 
@@ -98,7 +99,7 @@ ClassifierRHSWithId returns ClassifierRHS:
 	
 Urn:
 	// String used when there are strange chars or keywords in the URN.
-	name=(UrnId|STRING|LocalFilePath)
+	name=(PathName|UrnId|STRING|LocalFilePath)
 ;
 
 // Lookup table literal
@@ -194,8 +195,8 @@ ExecutableValue returns ComputableValue:
 	(
 		function=Function |
 		expr=EXPR ('in' language=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID))? |
-		urn=(UrnId|STRING) |
-		model=Path
+		urn=(UrnId|STRING) // |
+//		model=Path
 	) (('if'|conditionNegated?='unless') condition=Value)?
 ;
 
@@ -444,7 +445,7 @@ Concept:
 	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
 	probability?='probability' 'of' concept=SimpleConceptDeclaration |
 	assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
-	(change?='change' 'in' | change?='next') concept=SimpleConceptDeclaration |
+	('change' (change?='in' | rate?='rate' 'of') | change?='changed') concept=SimpleConceptDeclaration |
 	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
 	magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
 	level?='level' 'of' concept=SimpleConceptDeclaration |
@@ -891,24 +892,24 @@ PROPERTY_TYPE:
 terminal ANNOTATION_ID:
 	'@' LOWERCASE_ID;
 
-/*
- * Observable without the 'as' to use in model declarations and without the 'optional' that
- * is only for dependencies.
- */
-SimpleObservableSemantics returns ObservableSemantics:
-	
-	declaration=ConceptDeclaration
-	(
-		('according' 'to' accordingTo=PropertyId)? &
-		(
-			('in' (unit=Unit | currency=Currency)) |
-			('per' unit=Unit)
-		)? &
-		(from=Number 'to' to=Number)? &
-		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		(optional?='optional' | 'required')? &
-		('named' name=(LOWERCASE_ID|STRING))?
-	);
+///*
+// * Observable without the 'as' to use in model declarations and without the 'optional' that
+// * is only for dependencies.
+// */
+//SimpleObservableSemantics returns ObservableSemantics:
+//	
+//	declaration=ConceptDeclaration
+//	(
+//		('according' 'to' accordingTo=PropertyId)? &
+//		(
+//			('in' (unit=Unit | currency=Currency)) |
+//			('per' unit=Unit)
+//		)? &
+//		(from=Number 'to' to=Number)? &
+//		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+//		(optional?='optional' | 'required')? &
+//		('named' name=(LOWERCASE_ID|STRING))?
+//	);
 
 /*
  * Full observable without the 'as <role>' but with 'optional'

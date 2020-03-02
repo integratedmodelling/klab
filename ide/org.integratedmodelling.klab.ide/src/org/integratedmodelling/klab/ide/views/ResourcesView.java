@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.views;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -376,6 +377,8 @@ public class ResourcesView extends ViewPart {
 	}
 
 	public void showPending() {
-		System.out.println("Showing the fucking pending resources");
+		//TODO
+		//Need to dome something to show status of pending resources
+		targetSelector.select(1);
 	}
 }

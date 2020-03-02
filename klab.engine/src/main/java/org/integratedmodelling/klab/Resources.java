@@ -69,6 +69,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.ComponentsWorkspace;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.resources.PublicResourceCatalog;
@@ -126,7 +127,6 @@ public enum Resources implements IResourceService {
 	}
 
 	private Map<String, ResourceData> statusCache = Collections.synchronizedMap(new HashMap<>());
-//	private ExecutorService resourceTaskExecutor;
 	private IKimLoader loader = null;
 
 	/**
@@ -137,6 +137,13 @@ public enum Resources implements IResourceService {
 
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
 	Map<String, IUrnAdapter> urnAdapters = Collections.synchronizedMap(new HashMap<>());
+	
+	/**
+	 * Cache for universal resources coming from nodes, to avoid continuous retrieval.
+	 * TODO FIXME expire these regularly based on timestamp and store original node for
+	 * a quick node check before use.
+	 */
+	Map<String, IResource> remoteCache = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * The local resource catalog is a map that can be set by the engine according
@@ -429,11 +436,32 @@ public enum Resources implements IResourceService {
 		Urn urn = new Urn(urns);
 
 		if (urn.isLocal()) {
-			ret = getLocalResourceCatalog().get(urn.toString());
+			ret = getLocalResourceCatalog().get(urn.getUrn());
 		} else if (urn.isUniversal()) {
+				
+			// TODO this should periodically expire resources whose timestamp is > x
+			if (this.remoteCache.containsKey(urn.getUrn())) {
+				ret = this.remoteCache.get(urn.getUrn());
+			} else {
+			
 			IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
 			if (adapter != null) {
+				// locally available, use local
 				return adapter.getResource(urns);
+			} else {
+				// if 1+ nodes provide the adapter, ask it for the
+				// resource descriptor.
+				INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
+				if (node != null) {
+					/*
+					 * get the resource descriptor directly from the node
+					 */
+					ResourceReference reference = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN,
+							ResourceReference.class, "urn", urn.getUrn());
+					ret = new Resource(reference);
+					this.remoteCache.put(urn.getUrn(), ret);
+				}
+			}
 			}
 		} else {
 			ret = publicResourceCatalog.get(urn.getUrn());
@@ -863,7 +891,7 @@ public enum Resources implements IResourceService {
 			IContextualizationScope context) {
 
 		boolean local = Urns.INSTANCE.isLocal(resource.getUrn());
-		Urn urn = new Urn(resource.getUrn());
+		Urn urn = new Urn(resource.getUrn(), urnParameters);
 		if (urn.isUniversal()) {
 			// use it locally only if we have the adapter.
 			local = getResourceAdapter(urn.getCatalog()) != null;
@@ -908,7 +936,8 @@ public enum Resources implements IResourceService {
 			INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
 			if (node != null) {
 				ResourceDataRequest request = new ResourceDataRequest();
-				request.setUrn(urn.getUrn());
+				// send toString() with all parameters!
+				request.setUrn(urn.toString());
 				request.setGeometry(geometry.encode());
 				DecodingDataBuilder builder = new DecodingDataBuilder(
 						node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class), context);
@@ -1073,6 +1102,10 @@ public enum Resources implements IResourceService {
 
 	public boolean isResourceOnline(IResource resource, boolean forceUpdate) {
 
+		if (resource instanceof MergedResource) {
+			return ((MergedResource) resource).isOnline();
+		}
+
 		if (Configuration.INSTANCE.forceResourcesOnline()) {
 			return true;
 		}
@@ -1102,6 +1135,9 @@ public enum Resources implements IResourceService {
 			Urn urn = new Urn(resource.getUrn());
 			if (getUrnAdapter(urn.getCatalog()) != null) {
 				return getUrnAdapter(urn.getCatalog()).isOnline(urn);
+			} else {
+				// can only have come from a remote node, assumed online
+				return true;
 			}
 		} else {
 			return publicResourceCatalog.isOnline(resource.getUrn());

@@ -15,15 +15,21 @@
  */
 package org.integratedmodelling.klab.api.observations;
 
+import org.integratedmodelling.klab.api.actors.IKlabActor;
 import org.integratedmodelling.klab.api.auth.IArtifactIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IScheduler;
 
 /**
- * The Interface IObservation.
+ * The Interface IObservation, which is the semantic equivalent of an IArtifact
+ * and once created in a k.LAB session, can be made reactive by supplementing it
+ * with a behavior. Models may bind instantiated observations to actor files
+ * that will provide behaviors for their instances (or a subset thereof). Once
+ * made reactive, they can interact with each other and the system.
  *
  * @author ferdinando.villa
  * @version $Id: $Id

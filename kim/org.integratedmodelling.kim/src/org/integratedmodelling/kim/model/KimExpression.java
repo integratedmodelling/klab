@@ -77,5 +77,15 @@ public class KimExpression implements IKimExpression {
 	public void setForcedScalar(boolean forcedScalar) {
 		this.forcedScalar = forcedScalar;
 	}
+
+	@Override
+	public String getSourceCode() {
+		String ret = (forcedScalar ? "#" : "") + "[";
+		ret += code + "]";
+		if (language != null) {
+			ret += " in " + language;
+		}
+		return ret;
+	}
 	
 }

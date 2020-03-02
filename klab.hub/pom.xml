@@ -32,23 +32,29 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/com.github.docker-java/docker-java -->
+		<dependency>
+		    <groupId>com.github.docker-java</groupId>
+		    <artifactId>docker-java</artifactId>
+		    <version>3.1.5</version>
+		</dependency>			
 		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on -->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.59</version>
+			 <version>1.64</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.59</version>
+			 <version>1.64</version>
 		</dependency>
 		<!-- GPG generation -->
 	    <dependency>
 	      <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
 	      <artifactId>bouncy-gpg</artifactId>
-	      <version>2.1.0</version>
+	      <version>2.2.0</version>
 	    </dependency>
 		<!-- JWT token generation -->
 		<dependency>

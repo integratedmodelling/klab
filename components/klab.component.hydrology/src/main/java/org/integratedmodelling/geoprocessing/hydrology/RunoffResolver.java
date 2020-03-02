@@ -22,11 +22,6 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import com.vividsolutions.jts.geom.Point;
 
 public class RunoffResolver implements IResolver<IState>, IExpression {
-	
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.create("S2");
-//	}
 
 	@Override
 	public Type getType() {

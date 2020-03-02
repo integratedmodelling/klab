@@ -27,6 +27,7 @@
 package org.integratedmodelling.weather.data;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -74,6 +75,9 @@ public enum WeatherFactory {
 	static Set<String> stationIds;
 	static Map<String, Integer> nansMap;
 	static Map<String, Long> datasizeMap;
+
+	public static String[] ghcnd_archive_urls = new String[] {
+			"https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd_all.tar.gz" };
 
 	public static String[] GHCN_URLS = { "https://www1.ncdc.noaa.gov/pub/data/ghcn/daily",
 			"http://150.241.222.1/ghcn" };
@@ -129,6 +133,35 @@ public enum WeatherFactory {
 			stationIds = db.treeSet("stationids", Serializer.STRING).createOrOpen();
 			datasizeMap = db.treeMap("timestamps", Serializer.STRING, Serializer.LONG).createOrOpen();
 		}
+	}
+	
+	/**
+	 * Try getting the events file and putting it somewhere so we don't need to set
+	 * up from the outside.
+	 * 
+	 * @return
+	 */
+	public static boolean retrieveEventDatabase() {
+
+		boolean ret = false;
+		for (String url : ghcnd_archive_urls) {
+			try {
+				File output = File.createTempFile("ghcnd", ".tar.gz");
+				Logging.INSTANCE.info("Attempting retrieval of ~5GB source data from " + url + " into " + output);
+				Logging.INSTANCE.info("Expect several minutes of wait or more.");
+				URLUtils.copyChanneled(new URL(url), output);
+				// TODO uncompress and unpack
+//				Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID).setProperty(TRMM_EVENTS_LOCATION,
+//						output.toURI().toURL().toString());
+//				Extensions.INSTANCE.saveComponentProperties(WeatherComponent.ID);
+				Logging.INSTANCE.info("Data retrieval successful");
+				ret = true;
+				break;
+			} catch (IOException e) {
+			}
+		}
+
+		return ret;
 	}
 
 	/**
@@ -419,8 +452,7 @@ public enum WeatherFactory {
 		 * This should be in a thread of its own
 		 */
 		setupTRRMEvents();
-		
-		
+
 		setupContributedStations();
 
 		/**
@@ -431,33 +463,34 @@ public enum WeatherFactory {
 		}
 
 		/**
-		 * This should be timed by a scheduler and split. Commit every 50 stations for speed.
+		 * This should be timed by a scheduler and split. Commit every 50 stations for
+		 * speed.
 		 */
 		int i = 0;
 		for (String id : stationIds) {
 			WeatherStation ws = INSTANCE.wbox.retrieve(id);
 			try {
-				if (ws.cacheData()) {
+				if (ws.cacheData(false)) {
 					Logging.INSTANCE.info("Data for station " + ws.getId() + " updated to " + ws.getLastKnownYear());
 				}
 			} catch (Throwable e) {
 				Logging.INSTANCE.error("Weather station " + id + " data read failed: " + e.getMessage());
 			}
-			
+
 			i++;
-			
+
 			if ((i % 50) == 0) {
 				db.commit();
 			}
 		}
-		
+
 		cruReader.finalizeRead();
-		
+
 		// reentrant for repeated execution
 		WeatherStation.setLocalGHCNDLocation(null);
 
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		INSTANCE.setup();
 	}

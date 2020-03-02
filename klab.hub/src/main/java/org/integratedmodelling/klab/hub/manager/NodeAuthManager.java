@@ -37,9 +37,6 @@ public class NodeAuthManager {
 	@Autowired
 	KlabNodeManager klabNodeManager;
 	
-	@Autowired
-	NetworkManager networkManager;
-	
 	public NodeAuthenticationResponse processNodeCert(NodeAuthenticationRequest request, String ip) {
 		switch (request.getLevel()) {
 		case TEST:
@@ -76,7 +73,7 @@ public class NodeAuthManager {
 		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
 				hub.getId(), Groups,
 				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
-		networkManager.notifyAuthorizedNode(node, true);
+		NetworkManager.INSTANCE.notifyAuthorizedNode(node, true);
 		return response;
 	}
 
@@ -120,7 +117,7 @@ public class NodeAuthManager {
 		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
 				hub.getId(), Groups,
 				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
-		networkManager.notifyAuthorizedNode(node, true);
+		NetworkManager.INSTANCE.notifyAuthorizedNode(node, true);
 		return response;
 		}
 

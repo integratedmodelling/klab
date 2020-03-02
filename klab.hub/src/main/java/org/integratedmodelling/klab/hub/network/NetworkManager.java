@@ -14,12 +14,12 @@ import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
 
-@Component
-public class NetworkManager {
+public enum NetworkManager {
 
 
+	INSTANCE;
+	
 	private Set<INodeIdentity> onlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Map<String, NodeReference> allNodes = new HashMap<>();

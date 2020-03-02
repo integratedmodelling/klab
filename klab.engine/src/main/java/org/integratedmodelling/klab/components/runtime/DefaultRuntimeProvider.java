@@ -16,10 +16,8 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -28,7 +26,6 @@ import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
-import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -53,7 +50,6 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.CastingSt
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
-import org.integratedmodelling.klab.components.runtime.contextualizers.Evaluator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
@@ -64,8 +60,6 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.ValueOper
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver;
-import org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnInstantiator;
-import org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.wrappers.ConditionalContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -112,11 +106,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
-			IResolutionScope scope/* , IDirectObservation context */, IMonitor monitor) throws KlabException {
-
-		if (((Actuator) actuator).getObservable().is(Type.RELATIONSHIP) && scope.getMode() == Mode.RESOLUTION) {
-			System.out.println("ZANA MADONNA");
-		}
+			IResolutionScope scope, IMonitor monitor) throws KlabException {
 
 		return executor.submit(new Callable<IArtifact>() {
 
@@ -194,20 +184,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		});
 	}
 
-	/**
-	 * TARIK this is the root, created on demand.
-	 * 
-	 * @return
-	 */
-	public ActorSystem getActorSystem() {
-		if (rootActorSystem == null) {
-			Logging.INSTANCE.info("Creating root actor system...");
-			rootActorSystem = ActorSystem
-					.create(Authentication.INSTANCE.getAuthenticatedIdentity(IEngine.class).getId());
-		}
-		return rootActorSystem;
-	}
-
 	@Override
 	public RuntimeScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
 			IMonitor monitor) {
@@ -226,9 +202,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 		IServiceCall ret = null;
 
-		if (resource.isVariable()) {
-			ret = Evaluator.getServiceCall(resource);
-		} else if (resource.getServiceCall() != null) {
+		/*
+		 * if (resource.isVariable()) { ret = Evaluator.getServiceCall(resource); } else
+		 */
+		if (resource.getServiceCall() != null) {
 			if (resource.getCondition() != null) {
 				ret = ConditionalContextualizer.getServiceCall(resource);
 			} else {
@@ -264,13 +241,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			ret = LookupStateResolver.getServiceCall(
 					((ComputableResource) resource).getValidatedResource(ILookupTable.class), resource.getCondition(),
 					resource.isNegated());
-		} else if (resource.getMergedUrns() != null) {
-			if (resource.getComputationMode() == Mode.INSTANTIATION) {
-				ret = MergedUrnInstantiator.getServiceCall(resource.getMergedUrns());
-			} else {
-				ret = MergedUrnResolver.getServiceCall(resource.getMergedUrns());
-			}
-		} else {
+		} /*
+			 * else if (resource.getMergedUrns() != null) { if
+			 * (resource.getComputationMode() == Mode.INSTANTIATION) { ret =
+			 * MergedUrnInstantiator.getServiceCall(resource.getMergedUrns()); } else { ret
+			 * = MergedUrnResolver.getServiceCall(resource.getMergedUrns()); } }
+			 */else {
 			throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
 		}
 
@@ -296,7 +272,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
 		IArtifact self = context.get("self", IArtifact.class);
-		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context);
+		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context, context.getVariables());
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 
 //		System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " + resolver);

@@ -193,7 +193,7 @@ export object delineatewatersheds
 	class org.integratedmodelling.geoprocessing.hydrology.WatershedInstantiator
 }
 
-export number runoff
+export process runoff
 	"Computes runoff water volume from precipitation in the time unit, using the curve number method."
 {
 
@@ -210,7 +210,20 @@ export number runoff
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"
 		
-	geometry S2
+	geometry T1S2
 		
 	class org.integratedmodelling.geoprocessing.hydrology.RunoffResolver
+}
+
+export process weather
+	"Extracts and interpolates observations from weather stations from the k.LAB weather service to build
+	 interpolated surfaces of temporal observation data."
+	 label 'Weather station interpolator'
+{
+	import number elevation
+		"An observation of the elevation for the region."
+		
+	geometry T1S2
+		
+	class org.integratedmodelling.geoprocessing.hydrology.WeatherResolver
 }

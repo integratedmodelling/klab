@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.resolution;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
@@ -320,7 +322,12 @@ public enum Resolver {
 								? Models.INSTANCE.resolve(strategy.getObservables().get(0),
 										ret.getChildScope(strategy.getObservables().get(0), strategy.getMode()))
 								: Models.INSTANCE.createDerivedModel(observable, strategy, ret);
-
+						
+						/*
+						 * set the partition flag after we are sure we have > 1 link
+						 */
+						List<Link> links = new ArrayList<>();
+						
 						for (IRankedModel model : candidateModels) {
 
 							ResolutionScope mscope = resolve((RankedModel) model, ret);
@@ -349,7 +356,7 @@ public enum Resolver {
 								 * partition of the context. The actual scale of computation for the model will
 								 * be established by the dataflow compiler.
 								 */
-								ret.link(mscope).withOrder(order++).withPartition(coverageDelta < 1);
+								links.add(ret.link(mscope).withOrder(order++));
 							}
 
 							if (coverage.isComplete()) {
@@ -358,6 +365,12 @@ public enum Resolver {
 							}
 						}
 
+						if (links.size() > 1) {
+							for (Link link : links) {
+								link.withPartition(true);
+							}
+						}
+						
 						if (done) {
 							break;
 						}

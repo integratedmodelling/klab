@@ -14,7 +14,7 @@ public class MongoGroupAdapter {
 	
 	public Group convertGroup() {
 		Group group = new Group();
-		group.setId(mongoGroup.getId());
+		group.setId(mongoGroup.getGroupName());
 		group.setProjectUrls(mongoGroup.getProjectUrls());
 		group.setSshKey(mongoGroup.getSshKey());
 		group.setObservables(mongoGroup.getObservableReferences());

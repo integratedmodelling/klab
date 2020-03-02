@@ -7,10 +7,11 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.tasks.CreateGroupTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
-import org.integratedmodelling.klab.hub.tasks.TaskType;
-import org.integratedmodelling.klab.hub.tasks.services.CreateGroupService;
+import org.integratedmodelling.klab.hub.tasks.services.TaskService;
+import org.integratedmodelling.klab.hub.users.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class CreateGroupsController {
 	
 	@Autowired
-	CreateGroupService service;
+	TaskService service;
 	
 	@PostMapping(value= "/{id}", produces = "application/json", params="create-group")
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
@@ -40,13 +41,11 @@ public class CreateGroupsController {
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
 		
-		Task task = service.createTask(requestee, group, request);
+		List<Task> tasks = service.createTasks(
+				CreateGroupTask.class,
+				new CreateGroupTask.Parameters(requestee, Role.ROLE_ADMINISTRATOR, request, group));
 	    
-		UriComponents uriComponents = b.path("/api/tasks/{id}").buildAndExpand(task.getId());
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.setLocation(uriComponents.toUri());
-	    
-	    return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+	    return new ResponseEntity<>(tasks.get(0), HttpStatus.CREATED);
 	}
 	
 	@PostMapping(value= "/{id}", produces = "application/json", params= {"create-group", "accept"})
@@ -74,7 +73,7 @@ public class CreateGroupsController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> createGroupList() {
 		HashMap<String, List<Task> > tasks = new HashMap<>();
-		tasks.put("Create Group Tasks", service.getTasks(TaskType.createGroup));
+		tasks.put("Create Group Tasks", service.getTasks(CreateGroupTask.class));
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;
 	}
@@ -83,7 +82,7 @@ public class CreateGroupsController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> createGroupByStatus(@RequestParam("status") TaskStatus status) {
 		HashMap<String, List<Task> > tasks = new HashMap<>();
-		tasks.put("Pending Group Request Tasks", service.getTasksByStatus(TaskType.createGroup, status));
+		tasks.put("Pending Group Request Tasks", service.getTasks(CreateGroupTask.class, status));
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;
 	}

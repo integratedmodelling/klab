@@ -35,7 +35,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
-import org.integratedmodelling.klab.api.model.contextualization.IEvaluator;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IPredicateClassifier;
 import org.integratedmodelling.klab.api.model.contextualization.IPredicateResolver;
@@ -53,6 +52,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
@@ -90,11 +90,22 @@ public class Actuator implements IActuator {
 	 * can be recalled at transitions.
 	 */
 	public class Computation {
+
 		public IContextualizer contextualizer;
 		public IContextualizable resource;
 		public IArtifact target;
 		public IObservable observable;
 		public String targetId;
+		public IVariable variable;
+
+		public Computation() {
+		}
+
+		public Computation(String targetId, Variable variable) {
+			this.targetId = targetId;
+			this.variable = variable;
+		}
+
 	}
 
 	// these are part of graphs so they should behave wrt. equality. Adding an ID
@@ -157,7 +168,11 @@ public class Actuator implements IActuator {
 	public void addComputation(IContextualizable resource) {
 		((ComputableResource) resource).setOriginalObservable(this.observable);
 		computedResources.add(resource);
-		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, observable, session);
+		// the call is null if we are just building a variable to use downstream.
+		IServiceCall serviceCall = null;
+		if (!resource.isVariable()) {
+			serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, observable, session);
+		}
 		computationStrategy.add(new Pair<>(serviceCall, resource));
 	}
 
@@ -165,7 +180,8 @@ public class Actuator implements IActuator {
 		((ComputableResource) resource).setTargetId(target.getAlias() == null ? target.getName() : target.getAlias());
 		((ComputableResource) resource).setMediation(true);
 		computedResources.add(resource);
-		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target.observable, session);
+		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target.observable,
+				session);
 		mediationStrategy.add(new Pair<>(serviceCall, resource));
 	}
 
@@ -321,6 +337,12 @@ public class Actuator implements IActuator {
 
 			IServiceCall function = service.getFirst();
 
+			if (function == null) {
+				// aux variable: just keep for later
+				computation.add(new Pair<>(null, service.getSecond()));
+				continue;
+			}
+
 			if (((ComputableResource) service.getSecond()).getModifiedParameters() != null) {
 				function.getParameters().putAll(((ComputableResource) service.getSecond()).getModifiedParameters());
 			}
@@ -354,6 +376,8 @@ public class Actuator implements IActuator {
 		Map<String, IArtifact> artifactTable = new HashMap<>();
 		artifactTable.put("self_", target);
 
+		Set<String> knownVariables = new HashSet<>();
+
 		/*
 		 * run the contextualization strategy with the localized context. Each
 		 * contextualizer may produce/require something else than the actuator's target
@@ -363,11 +387,15 @@ public class Actuator implements IActuator {
 		for (Pair<IContextualizer, IContextualizable> contextualizer : computation) {
 
 			/*
-			 * Aux variables are computed and recorded, that's it.
+			 * Aux variables: record to allow lazy evaluation driven by contextualizers
+			 * downstream.
 			 */
-			if (contextualizer.getFirst() instanceof IEvaluator) {
-				ctx.getSymbolTable().put(contextualizer.getSecond().getTargetId(),
-						(((IEvaluator) contextualizer.getFirst()).evaluate(ctx)));
+			if (contextualizer.getFirst() == null) {
+
+				Variable variable = Variable.create(contextualizer.getSecond(), knownVariables, this);
+				knownVariables.add(contextualizer.getSecond().getTargetId());
+				ctx.getVariables().put(contextualizer.getSecond().getTargetId(), variable);
+				this.computation.add(new Computation(contextualizer.getSecond().getTargetId(), variable));
 				continue;
 			}
 
@@ -713,6 +741,7 @@ public class Actuator implements IActuator {
 			ret.set("self", self);
 		}
 		ret.setModel(model);
+		ret.getVariables().putAll(ctx.getVariables());
 		for (String name : resource.getParameters().keySet()) {
 			ret.set(name, resource.getParameters().get(name));
 		}
@@ -832,9 +861,12 @@ public class Actuator implements IActuator {
 
 			for (int i = 0; i < computationStrategy.size(); i++) {
 				ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     "))) : ofs + "     ")
-						+ (computationStrategy.get(i).getSecond()
-								.isVariable() ? (computationStrategy.get(i).getSecond().getTargetId() + " <- ") : "")
-						+ computationStrategy.get(i).getFirst().getSourceCode()
+						+ (computationStrategy.get(i).getSecond().isVariable()
+								? (computationStrategy.get(i).getSecond().getTargetId() + " <- ")
+								: "")
+						+ (computationStrategy.get(i).getSecond().isVariable()
+								? computationStrategy.get(i).getSecond().getSourceCode()
+								: computationStrategy.get(i).getFirst().getSourceCode())
 						+ ((computationStrategy.get(i).getSecond().getTarget() == null
 								|| computationStrategy.get(i).getSecond().isVariable()
 								|| computationStrategy.get(i).getSecond().getTarget().equals(observable)) ? ""
@@ -1416,10 +1448,10 @@ public class Actuator implements IActuator {
 	public void resetScales() {
 		this.runtimeScale = null;
 		for (IActuator actuator : actuators) {
-			((Actuator)actuator).resetScales();
+			((Actuator) actuator).resetScales();
 		}
 	}
-	
+
 	/**
 	 * The name of the observable of the model that generated this. If it's a
 	 * multi-model partitioning actuator, keep the name of the observable.

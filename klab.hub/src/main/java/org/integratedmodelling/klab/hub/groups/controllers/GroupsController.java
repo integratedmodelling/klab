@@ -23,8 +23,12 @@ import net.minidev.json.JSONObject;
 @RequestMapping("/api/v2/groups")
 public class GroupsController {
 	
+	private GroupService groupService;
+	
 	@Autowired
-	GroupService groupService;
+	public GroupsController(GroupService groupService) {
+		this.groupService = groupService;
+	}
 	
 	@GetMapping(value = "")
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
@@ -75,4 +79,5 @@ public class GroupsController {
 		group = groupService.createGroup(group);
 		return new ResponseEntity<>(group, HttpStatus.CREATED);
 	}
+
 }

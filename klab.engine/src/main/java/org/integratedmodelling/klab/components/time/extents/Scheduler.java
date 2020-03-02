@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -126,11 +127,26 @@ public class Scheduler implements IScheduler {
 					Set<IObservation> changed = new HashSet<>();
 
 					/*
+					 * TODO if the target is a group of events, it has been filtered to only contain
+					 * those that occur in this transition. They must now be resolved in the
+					 * localized scope (either using a cached dataset or from scratch) and be
+					 * notified as they appear.
+					 */
+					if (target instanceof ObservationGroup && target.getObservable().is(IKimConcept.Type.EVENT)) {
+						System.out.println("SOCCMEL resolve the events");
+					}
+
+					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
 					 * for signs of life at each step. Anything enqueued here is active so no
 					 * further check is necessary.
 					 */
 					for (Actuator.Computation computation : computations) {
+
+						if (computation.variable != null) {
+							transitionContext.getVariables().put(computation.targetId, computation.variable);
+							continue;
+						}
 
 						actuator.runContextualizer(computation.contextualizer, computation.observable,
 								computation.resource, computation.target, transitionContext, (IScale) transitionScale);
@@ -290,8 +306,8 @@ public class Scheduler implements IScheduler {
 		 * should not be the case if we get here at all, but who knows. TODO: if there
 		 * is no explicit temporal nature, a contextualizer should check if any of the
 		 * dependencies have changed OR has changed data at T (even if computed before)
-		 * and exec again only if so. This should be done by inserting change event
-		 * points in each artifact and checking those, rather than using a value change
+		 * and exec again only if so. This should be done by using the provenance graph
+		 * for each artifact and checking those, rather than using a value change
 		 * resulting from the actual update.
 		 */
 		if (overall.getTime() == null || modelScale.getTime() == null) {
@@ -351,12 +367,17 @@ public class Scheduler implements IScheduler {
 		List<Number> periods = new ArrayList<>();
 
 		/*
-		 * figure out the MCD resolution
+		 * figure out the MCD resolution. TODO this must change to reflect irregular
+		 * intervals
 		 */
 		for (Registration registration : registrations) {
-			periods.add(registration.scale.getTime().getStep().getCommonDivisorMilliseconds());
-			if (longest < registration.scale.getTime().getStep().getMaxMilliseconds()) {
-				longest = registration.scale.getTime().getStep().getMaxMilliseconds();
+			long interval = registration.scale.getTime().getStep() == null
+					? (registration.scale.getTime().getEnd().getMilliseconds()
+							- registration.scale.getTime().getStart().getMilliseconds())
+					: registration.scale.getTime().getStep().getCommonDivisorMilliseconds();
+			periods.add(interval);
+			if (longest < interval) {
+				longest = interval;
 			}
 		}
 
@@ -429,7 +450,7 @@ public class Scheduler implements IScheduler {
 						}
 
 						registration.run(time + registration.delayInSlot);
-						reschedule(registration, time + resolution, false);
+						reschedule(registration, time, false);
 
 					} else {
 						registration.rounds--;
@@ -460,6 +481,12 @@ public class Scheduler implements IScheduler {
 	}
 
 	private void reschedule(Registration registration, long startTime, boolean first) {
+
+		/*
+		 * FIXME this must become the next() time, adjusted to fit the resolution if
+		 * necessary (should not be necessary).
+		 */
+		startTime = startTime + resolution;
 
 		if (stopped.get()) {
 			return;

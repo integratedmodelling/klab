@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.api.IKimNamespace.Role;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
@@ -73,6 +74,14 @@ public class KlabNavigatorActions {
 		dialog.create();
 		dialog.open();
 	}
+	
+	public static void addBehavior(EProject project) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+				new NewNamespaceWizard(project.getProject()));
+		dialog.create();
+		dialog.open();
+	}
+
 
 	public static void addScenario(EProject project) {
 
@@ -98,6 +107,13 @@ public class KlabNavigatorActions {
 		dialog.open();
 	}
 
+	public static void addApplication(EScriptFolder folder) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+				new NewScriptWizard(folder, folder.getEParent(EProject.class).getProject(), Role.SCRIPT));
+		dialog.create();
+		dialog.open();
+	}
+	
 	public static void deleteScript(EScript script, IWorkbenchPage page) {
 		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
 				"Delete script " + script.getName() + "? This action cannot be recovered.")) {
@@ -109,6 +125,19 @@ public class KlabNavigatorActions {
 			}, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteScript,
 					new ProjectModificationRequest(script.getProject().getName(), script.getName()));
 		}
+	}
+	
+	public static void deleteBehavior(EActorBehavior script, IWorkbenchPage page) {
+//		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
+//				"Delete script " + script.getName() + "? This action cannot be recovered.")) {
+//			Activator.post((message) -> {
+//				File file = message.getPayload(ProjectModificationNotification.class).getFile();
+//				Activator.loader().delete(file);
+//				Eclipse.INSTANCE.closeEditor(file, page);
+//				KlabNavigator.refresh();
+//			}, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteScript,
+//					new ProjectModificationRequest(script.getProject().getName(), script.getName()));
+//		}
 	}
 
 	public static void addTestCase(ETestFolder folder) {

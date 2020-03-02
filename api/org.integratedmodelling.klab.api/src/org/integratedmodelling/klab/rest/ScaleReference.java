@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.rest;
 
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+
 /**
  * Used to communicate spatio/temporal regions of interest. Space values should
  * be in decimal latitude and longitude.
@@ -18,9 +20,6 @@ public class ScaleReference {
 	private double west;
 	private double north;
 	private double south;
-	private long start;
-	private long end;
-	private long step;
 	private int spaceScale;
 	private int timeScale;
 	/**
@@ -33,20 +32,23 @@ public class ScaleReference {
 	private String spaceResolutionDescription;
 	private double spaceResolutionConverted;
 	private String spaceUnit;
-	private double timeResolution;
+	private double timeResolutionMultiplier;
+	private ITime.Resolution.Type timeUnit;
 	private String timeResolutionDescription;
-	private String timeUnit;
-	
+
+	private long start;
+	private long end;
+
+	// unused for now, or enabled in developer mode
+	private long step;
+
 	/*
-	 * If this is not empty, user wants to change the scale for an existing
-	 * context.
+	 * If this is not empty, user wants to change the scale for an existing context.
 	 */
 	private String contextId = null;
-	
-//	private boolean unlockSpace;
-//	private boolean unlockTime;
+
 	// FIXME REMOVE
-    private String resolutionDescription;
+	private String resolutionDescription;
 
 	public double getEast() {
 		return east;
@@ -59,42 +61,6 @@ public class ScaleReference {
 	public void setSpaceUnit(String spaceUnit) {
 		this.spaceUnit = spaceUnit;
 	}
-
-	public String getTimeUnit() {
-		return timeUnit;
-	}
-
-	public void setTimeUnit(String timeUnit) {
-		this.timeUnit = timeUnit;
-	}
-
-//	/**
-//	 * Sent from front end when user wants to go back to automatic spatial scale
-//	 * resolution.
-//	 * 
-//	 * @return
-//	 */
-//	public boolean isUnlockSpace() {
-//		return unlockSpace;
-//	}
-//
-//	/**
-//	 * Sent from front end when user wants to go back to automatic spatial scale
-//	 * resolution.
-//	 * 
-//	 * @return
-//	 */
-//	public void setUnlockSpace(boolean unlockSpace) {
-//		this.unlockSpace = unlockSpace;
-//	}
-//
-//	public boolean isUnlockTime() {
-//		return unlockTime;
-//	}
-//
-//	public void setUnlockTime(boolean unlockTime) {
-//		this.unlockTime = unlockTime;
-//	}
 
 	public void setEast(double east) {
 		this.east = east;
@@ -186,29 +152,13 @@ public class ScaleReference {
 				+ ", spaceScale=" + spaceScale + ", resolutionDescription=" + spaceResolutionDescription + "]";
 	}
 
-	public double getTimeResolution() {
-		return timeResolution;
+	public void setResolutionDescription(String string) {
+		this.resolutionDescription = string;
 	}
 
-	public void setTimeResolution(double timeResolution) {
-		this.timeResolution = timeResolution;
+	public String getResolutionDescription() {
+		return this.resolutionDescription;
 	}
-
-	public String getTimeResolutionDescription() {
-		return timeResolutionDescription;
-	}
-
-	public void setTimeResolutionDescription(String timeResolutionDescription) {
-		this.timeResolutionDescription = timeResolutionDescription;
-	}
-
-    public void setResolutionDescription(String string) {
-        this.resolutionDescription = string;
-    }
-
-    public String getResolutionDescription() {
-        return this.resolutionDescription;
-    }
 
 	public double getSpaceResolutionConverted() {
 		return spaceResolutionConverted;
@@ -225,4 +175,29 @@ public class ScaleReference {
 	public void setContextId(String contextId) {
 		this.contextId = contextId;
 	}
+
+	public double getTimeResolutionMultiplier() {
+		return timeResolutionMultiplier;
+	}
+
+	public void setTimeResolutionMultiplier(double timeResolutionMultiplier) {
+		this.timeResolutionMultiplier = timeResolutionMultiplier;
+	}
+
+	public ITime.Resolution.Type getTimeUnit() {
+		return timeUnit;
+	}
+
+	public void setTimeUnit(ITime.Resolution.Type timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+
+	public String getTimeResolutionDescription() {
+		return timeResolutionDescription;
+	}
+
+	public void setTimeResolutionDescription(String timeResolutionDescription) {
+		this.timeResolutionDescription = timeResolutionDescription;
+	}
+
 }

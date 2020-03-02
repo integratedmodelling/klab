@@ -9,6 +9,7 @@ import java.nio.channels.FileChannel;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.components.localstorage.LocalStorageComponent;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
@@ -367,6 +368,12 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	@Override
 	public Type getType() {
 		return Utils.getArtifactType(valueClass);
+	}
+
+	@Override
+	public void touch(ITime time) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

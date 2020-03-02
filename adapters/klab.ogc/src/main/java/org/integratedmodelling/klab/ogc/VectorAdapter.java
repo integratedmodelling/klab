@@ -15,6 +15,7 @@
  */
 package org.integratedmodelling.klab.ogc;
 
+import java.io.File;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IPrototype;
@@ -33,16 +34,19 @@ import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.ogc.vector.files.VectorImporter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorPublisher;
 import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 import com.google.common.collect.Sets;
 
 /**
  * The Class VectorAdapter.
  */
-@ResourceAdapter(type = "vector", version = Version.CURRENT, requires = { "fileUrl" }, optional = { "computeUnion",
+@ResourceAdapter(type = VectorAdapter.ID, version = Version.CURRENT, requires = { "fileUrl" }, optional = { "computeUnion",
 		"computeHull", "filter", "nameAttribute", "sanitize" })
 public class VectorAdapter implements IFileResourceAdapter {
 
+	public static final String ID = "vector";
+	
 	/**
 	 * All recognized primary file extensions.
 	 */
@@ -78,13 +82,30 @@ public class VectorAdapter implements IFileResourceAdapter {
 	public IResourceImporter getImporter() {
 		return new VectorImporter();
 	}
-	
+
 	@Override
 	public IPrototype getResourceConfiguration() {
 		return new Prototype(
 				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/vector.kdl"))
 						.getActuators().iterator().next(),
 				null);
+	}
+
+	/**
+	 * Return the full path of the main file in a vector file resource. Unless the
+	 * resource is in error, this should always return a valid file.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	public File getMainFile(IResource resource) {
+		for (String file : resource.getLocalPaths()) {
+			File f = new File(resource.getLocalPath() + File.separator + file);
+			if (f.exists() && fileExtensions.contains(MiscUtilities.getFileExtension(file))) {
+				return f;
+			}
+		}
+		return null;
 	}
 
 	@Override

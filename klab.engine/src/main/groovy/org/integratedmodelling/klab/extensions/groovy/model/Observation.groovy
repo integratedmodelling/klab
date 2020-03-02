@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.engine.runtime.code.groovy.Wrapper
 
 abstract class Observation<T extends IObservation> extends Wrapper<T> {
 
-//    String name;
+    String name;
     IModel model;
 
     def Observation(IObservation observation, Binding binding) {

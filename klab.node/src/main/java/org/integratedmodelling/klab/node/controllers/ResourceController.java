@@ -44,7 +44,8 @@ public class ResourceController {
 
 	/**
 	 * Controller for the main operation of retrieving resource data. Unique in
-	 * k.LAB for returning a Protobuf object.
+	 * k.LAB for returning a Protobuf object instead of JSON, although so far
+	 * only the JSON encoding for protobuf has worked.
 	 * 
 	 * TODO another similar one should be provided that accepts a KlabData object,
 	 * encoding everything but with the option of providing data for the

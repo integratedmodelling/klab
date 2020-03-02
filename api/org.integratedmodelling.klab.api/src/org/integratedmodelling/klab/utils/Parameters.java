@@ -92,8 +92,18 @@ public class Parameters<T> implements IParameters<T> {
         }
         return Utils.asType(ret, cls);
     }
+    
+    @Override
+    public <K> K getNotNull(T name, Class<? extends K> cls) {
+        Object ret = get(name);
+        if (ret == null) {
+            return Utils.notNull(cls);
+        }
+        return Utils.asType(ret, cls);
+    }
 
-    public Parameters() {
+
+	public Parameters() {
         this.delegate = new LinkedHashMap<>();
     }
 

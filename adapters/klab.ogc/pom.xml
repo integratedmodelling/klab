@@ -10,13 +10,24 @@
 	<artifactId>klab.ogc</artifactId>
 	<name>OGC and GIS data adapters for k.LAB (files, WCS and WFS) </name>
 	<dependencies>
+		<!-- <dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.10</version>
+		</dependency>
+		https://mvnrepository.com/artifact/net.postgis/postgis-jdbc
+		<dependency>
+			<groupId>net.postgis</groupId>
+			<artifactId>postgis-jdbc</artifactId>
+			<version>2.3.0</version>
+		</dependency>  -->
+
 		<!-- Postgis for publishing -->
-<!-- 		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-postgis</artifactId>
+		<dependency>
+			<groupId>org.geotools.jdbc</groupId>
+			<artifactId>gt-jdbc-postgis</artifactId>
 			<version>${geotools.version}</version>
-		</dependency> -->
-		<!-- https://mvnrepository.com/artifact/org.geotools.xsd/gt-xsd-wcs -->
+		</dependency>
 		<dependency>
 			<groupId>org.geotools.xsd</groupId>
 			<artifactId>gt-xsd-wcs</artifactId>

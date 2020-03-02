@@ -27,7 +27,7 @@ public enum SetupNetwork {
 	private boolean started = false;
 
 	/**
-	 * Start a test network with one hub (on localhost:8284/klab) and one node (on
+	 * Start a test network with one hub (on localhost:8284/hub) and one node (on
 	 * localhost:8287/node). The hub will authenticate anything local (including an
 	 * anonymous certificate) and provide a network with the node in it.
 	 */

@@ -36,7 +36,7 @@ public class Observer extends KimObject implements IObserver {
 	private Observable observable;
 	private String name;
 	private Namespace namespace;
-	private Behavior behavior;
+	private Contextualization behavior;
 	private List<IObservable> states = new ArrayList<>();
 	private String urn = null;
 
@@ -50,7 +50,7 @@ public class Observer extends KimObject implements IObserver {
 		this.observable.setOptional(true);
 		this.namespace = namespace;
 		this.name = statement.getName();
-		this.behavior = new Behavior(statement.getBehavior(), this);
+		this.behavior = new Contextualization(statement.getBehavior(), this);
 		this.urn = statement.getUrn();
 		this.setErrors(statement.isErrors());
 	}
@@ -61,7 +61,7 @@ public class Observer extends KimObject implements IObserver {
 		this.namespace = namespace;
 		this.observable = observable;
 		this.name = "Region of interest";
-		this.behavior = new Behavior(null, this) {
+		this.behavior = new Contextualization(null, this) {
 
 			@Override
 			public Collection<IExtent> getExtents(IMonitor monitor) throws KlabException {
@@ -97,7 +97,7 @@ public class Observer extends KimObject implements IObserver {
 		this.namespace = namespace;
 		this.observable = observable;
 		this.name = "Region of interest";
-		this.behavior = new Behavior(null, this) {
+		this.behavior = new Contextualization(null, this) {
 
 			@Override
 			public Collection<IExtent> getExtents(IMonitor monitor) throws KlabException {
@@ -142,7 +142,7 @@ public class Observer extends KimObject implements IObserver {
 	}
 
 	@Override
-	public Behavior getBehavior() {
+	public Contextualization getContextualization() {
 		return behavior;
 	}
 

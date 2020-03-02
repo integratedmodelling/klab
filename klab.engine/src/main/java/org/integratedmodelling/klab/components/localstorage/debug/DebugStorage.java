@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -151,6 +152,12 @@ public class DebugStorage<T> implements IDataStorage<T> {
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
+	}
+
+	@Override
+	public void touch(ITime time) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

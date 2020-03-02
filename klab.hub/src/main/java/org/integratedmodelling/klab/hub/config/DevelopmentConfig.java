@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.config;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -14,11 +13,8 @@ import java.util.Set;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
-import org.integratedmodelling.klab.hub.license.ArmoredKeyPair;
-import org.integratedmodelling.klab.hub.license.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.licenses.services.PgpKeyService;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.service.LdapService;
@@ -33,10 +29,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.google.common.hash.Hashing;
-import com.mongodb.MongoClient;
 
 
 
@@ -67,7 +59,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	private static final User hades = testUser("hades", "password", "hades@integratedmodelling.org", "Hades",
             "of Greece", Role.ROLE_USER, Role.ROLE_ADMINISTRATOR);
     
-	private static final User hercules = testUser("hercules", "password", "hercules@integratedmodelling.org",
+	private static final User developer = testUser("srwohl", "password", "steven.wohl@bc3research.org",
             "Hercules", "of Rome", Role.ROLE_USER);
     
 	private static final User achilles_activeMissingLdap = testUser("achilles", "password",
@@ -127,14 +119,8 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     			u.addRoles(Role.ROLE_DATA_MANAGER); // less than 7% are data manager
     		x = (int)(Math.random()*100+1);
     		if (x <= 80) {
-    			u.addGroupEntries(entries); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
-    			
-        		for (int j = 0; j<entries.size(); j++) {
-        			x = (int)(Math.random()*100+1);
-            		if (x <= 33) {
-            			u.addGroupEntries(aries);
-            		}
-        		}
+    			u.addGroupEntries(im); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
+    			u.addGroupEntries(aries);
         		x = (int)(Math.random()*100+1);
         		if (x < 22) {
         			for (int j = 0; j<=x; j++) {
@@ -168,11 +154,14 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
         system.addGroupEntries(alice);
         hades.addGroupEntries(aries);
         hades.addGroupEntries(im);
+        developer.addGroupEntries(aries);
+        developer.addGroupEntries(im);
         achilles_activeMissingLdap.addGroupEntries(im);
         triton_pendingMissingLdap.addGroupEntries(aries);
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);
         initialUsers.add(system);
         initialUsers.add(hades);
+        initialUsers.add(developer);
         initialUsers.add(achilles_activeMissingLdap);
         initialUsers.add(triton_pendingMissingLdap);
         return initialUsers;

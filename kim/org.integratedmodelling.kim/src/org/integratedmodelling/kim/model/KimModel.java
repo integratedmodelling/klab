@@ -43,13 +43,10 @@ public class KimModel extends KimStatement implements IKimModel {
 	private IKimBehavior behavior = new KimBehavior();
 	private String docstring;
 
-	// next four represent the datasource/inline value/URN given before 'as
-	// <observable>'. They are
-	// translated into the one IResource in IModel.
+	// next two represent the datasource/inline value/URN given before 'as
+	// <observable>'. They are merged into one IResource in IModel.
 	private List<String> resourceUrns = new ArrayList<>();
-	private IServiceCall resourceFunction;
 	private Object inlineValue;
-	private boolean resourceMerger;
 	
 	// contextualizer/processing given after 'using'
 	private List<IContextualizable> contextualization = new ArrayList<>();
@@ -169,14 +166,14 @@ public class KimModel extends KimStatement implements IKimModel {
 		this.resourceUrns = resourceUrn;
 	}
 
-	@Override
-	public Optional<IServiceCall> getResourceFunction() {
-		return resourceFunction == null ? Optional.empty() : Optional.of(resourceFunction);
-	}
+//	@Override
+//	public Optional<IServiceCall> getResourceFunction() {
+//		return resourceFunction == null ? Optional.empty() : Optional.of(resourceFunction);
+//	}
 
-	public void setResourceFunction(IServiceCall resourceFunction) {
-		this.resourceFunction = resourceFunction;
-	}
+//	public void setResourceFunction(IServiceCall resourceFunction) {
+//		this.resourceFunction = resourceFunction;
+//	}
 
 	@Override
 	public Optional<Object> getInlineValue() {
@@ -235,13 +232,13 @@ public class KimModel extends KimStatement implements IKimModel {
 		this.scope = scope;
 	}
 
-	@Override
-	public boolean isResourceMerger() {
-		return resourceMerger;
-	}
-
-	public void setResourceMerger(boolean resourceMerger) {
-		this.resourceMerger = resourceMerger;
-	}
+//	@Override
+//	public boolean isResourceMerger() {
+//		return resourceMerger;
+//	}
+//
+//	public void setResourceMerger(boolean resourceMerger) {
+//		this.resourceMerger = resourceMerger;
+//	}
 
 }

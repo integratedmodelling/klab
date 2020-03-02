@@ -55,7 +55,7 @@ public class Range implements IValueMediator {
 			lowerBound = upperBound;
 			upperBound = s;
 		}
-		
+
 		lowerExclusive = leftExclusive;
 		upperExclusive = rightExclusive;
 	}
@@ -458,6 +458,21 @@ public class Range implements IValueMediator {
 			double newUpper = (upperCmp >= 0) ? upperBound : other.upperBound;
 			return create(newLower, newUpper);
 		}
+	}
+
+	/**
+	 * Return a range that contains as much as possible of the span of the second
+	 * argument constrained to the span of this, changing the values so that the
+	 * boundaries may change with the least possible error, and keeping the span as
+	 * much as possible. The output may be different from both but will never be
+	 * outside this, or span larger than the argument.
+	 * 
+	 * @param constraint
+	 * @param other
+	 * @return
+	 */
+	public Range match(Range other) {
+		return null;
 	}
 
 	/**

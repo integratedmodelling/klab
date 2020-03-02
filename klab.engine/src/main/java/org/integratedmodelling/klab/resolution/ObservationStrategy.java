@@ -96,15 +96,16 @@ public class ObservationStrategy {
 
 		/*
 		 * If we're observing change in a quality, ensure we have the initial value as a
-		 * dependency.
+		 * dependency unless the model is resolved, in which case any needed inputs will
+		 * have to be explicit, and the model should have the quality as an output.
 		 */
-		if (observable.is(Type.CHANGE)) {
+		if (observable.is(Type.CHANGE) && !model.isResolved()) {
 			IConcept dep = observable.getInherentType();
 			if (((Model) model).findDependency(dep) == null && ((Model) model).findOutput(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep), Mode.RESOLUTION));
 			}
 		}
-		
+
 		/**
 		 * Add dependencies for anything mentioned in operators if needed
 		 */
