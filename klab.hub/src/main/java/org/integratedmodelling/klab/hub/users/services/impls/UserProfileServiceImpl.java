@@ -39,14 +39,22 @@ public class UserProfileServiceImpl implements UserProfileService {
 		ProfileResource updatedProfile = objectMapper.convertValue(updatedUser, ProfileResource.class);
 		return updatedProfile.getSafeProfile();
 	}
+	
+	@Override
+	public ProfileResource getUserSafeProfile(User user) {
+		if (user == null) {
+			throw new BadRequestException("No user define");
+		}
+		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
+		return profile.getSafeProfile();
+	}
 
 	@Override
 	public ProfileResource getUserProfile(String username) {
 		User user = userRepository.findByUsernameIgnoreCase(username)
 				.orElseThrow(() ->  
 					new BadRequestException("User does not exist"));
-		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
-		return profile.getSafeProfile();
+		return getUserSafeProfile(user);
 	}
 
 	@Override

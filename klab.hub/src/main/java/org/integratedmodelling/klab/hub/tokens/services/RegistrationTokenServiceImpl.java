@@ -54,6 +54,15 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 			.isPresent();
 	}
 	
+	@Override
+	public boolean verifyTokens(String username, String id, TokenType ...types) {
+		for (TokenType type: types) {
+			if (verifyToken(username, id, type)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	private AuthenticationToken setAuthentication(AuthenticationToken token) {
 		SecurityContextHolder.getContext().setAuthentication(token);
 		return token;
