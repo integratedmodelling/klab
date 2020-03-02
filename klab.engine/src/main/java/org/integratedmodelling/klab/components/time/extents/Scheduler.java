@@ -172,7 +172,8 @@ public class Scheduler implements IScheduler {
 
 						/*
 						 * report only states for now - must become discriminating and intelligent. If
-						 * in folder
+						 * in folder...
+						 *
 						 */
 						if (computation.target instanceof IState /*
 																	 * TODO check if changes happened independent of

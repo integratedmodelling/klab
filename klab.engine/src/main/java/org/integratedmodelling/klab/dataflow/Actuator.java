@@ -1486,4 +1486,9 @@ public class Actuator implements IActuator {
 
 		return this.runtimeScale;
 	}
+
+	public void addNotifiable(IState state) {
+		// TODO Auto-generated method stub
+		this.products.add(state);
+	}
 }

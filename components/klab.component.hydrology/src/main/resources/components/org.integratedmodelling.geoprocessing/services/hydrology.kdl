@@ -223,6 +223,30 @@ export process weather
 	import number elevation
 		"An observation of the elevation for the region."
 		
+	optional export number precipitation
+		"Precipitation volume"
+
+	optional export number tmin
+		"Minimum temperature"
+
+	optional export number tmax
+		"Maximum temperature"
+
+	optional export number snowfall
+		"Snowfall volume"
+
+	optional export number snowdepth
+		"Snow depth"
+
+	optional export number evapotranspiration
+		"Potential evapotranspiration"
+		
+	optional export number relhumidity
+		"Relative humidity"
+		
+	optional export number cloudcover
+		"Cloud cover"
+		
 	geometry T1S2
 		
 	class org.integratedmodelling.geoprocessing.weather.WeatherResolver

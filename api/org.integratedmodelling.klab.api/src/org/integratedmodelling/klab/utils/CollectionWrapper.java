@@ -79,6 +79,10 @@ public class CollectionWrapper implements Iterable<Object> {
 			}
 		}
 	}
+
+	public <T> T get(long offset, Class<T> cls) {
+		return Utils.asType(get(offset), cls);
+	}
 	
 	public Object get(long offset) {
 		if (isArray) {

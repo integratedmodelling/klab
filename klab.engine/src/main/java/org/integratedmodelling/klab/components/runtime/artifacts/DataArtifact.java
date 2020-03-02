@@ -41,6 +41,10 @@ public class DataArtifact extends Artifact implements IDataArtifact {
 		this.scale = scale;
 	}
 
+	public CollectionWrapper getData() {
+		return data;
+	}
+	
 	@Override
 	public Type getType() {
 		return type;

@@ -240,6 +240,7 @@ public class WeatherAdapter implements IUrnAdapter {
 		ref.setGeometry(getGeometry(kurn).encode());
 		ref.setVersion(Version.CURRENT);
 		ref.setType(getType(kurn));
+		
 		return new Resource(ref);
 	}
 

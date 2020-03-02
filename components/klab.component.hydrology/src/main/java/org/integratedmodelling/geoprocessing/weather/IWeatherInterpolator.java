@@ -3,6 +3,7 @@ package org.integratedmodelling.geoprocessing.weather;
 import java.util.function.Function;
 
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 public interface IWeatherInterpolator {
 
@@ -14,6 +15,7 @@ public interface IWeatherInterpolator {
 	 * @param timeOffset
 	 * @param transformation
 	 */
-	void computeState(IState target, String artifactName, long timeOffset, Function<Double, Double> transformation);
+	void computeState(IState target, String artifactName, long timeOffset, IScale scale,
+			Function<Double, Double> transformation);
 
 }

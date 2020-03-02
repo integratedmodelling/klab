@@ -100,7 +100,7 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 		 */
 		for (String obs : context.getModel().getAttributeObservables().keySet()) {
 			this.interpolator.computeState(context.getArtifact(obs, IState.class), obs,
-					offset.getOffset(Dimension.Type.TIME) - 1,
+					offset.getOffset(Dimension.Type.TIME) - 1, context.getScale(),
 					null /* TODO whatever is needed to turn into required units */);
 		}
 

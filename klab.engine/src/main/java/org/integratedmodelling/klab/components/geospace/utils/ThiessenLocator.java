@@ -1,4 +1,5 @@
 package org.integratedmodelling.klab.components.geospace.utils;
+
 /*******************************************************************************
  *  Copyright (C) 2007, 2015:
  *  
@@ -106,7 +107,8 @@ public class ThiessenLocator<T extends ISpatial> {
 				Geometry g = diag.getGeometryN(pols);
 				debug.add(Shape.create(g, Projection.getDefault()), "original");
 				for (int s = 0; s < objects.size(); s++) {
-					if (g.intersects(((Shape) objects.get(s)).getStandardizedGeometry()) && g instanceof Polygon) {
+					if (g.intersects(((Shape) ((ISpatial) objects.get(s)).getShape()).getStandardizedGeometry())
+							&& g instanceof Polygon) {
 						pairs.add(new Pair<>((Polygon) g, objects.get(s)));
 					}
 				}
@@ -128,11 +130,13 @@ public class ThiessenLocator<T extends ISpatial> {
 					}
 				}
 			}
+			
+			debug.show();
 		}
 	}
 
 	public T get(long offset) {
-		return object == null ? (index == null ? null : pairs.get(index[(int)offset] - 1).getSecond()) : object;
+		return object == null ? (index == null ? null : pairs.get(index[(int) offset] - 1).getSecond()) : object;
 	}
 
 }
