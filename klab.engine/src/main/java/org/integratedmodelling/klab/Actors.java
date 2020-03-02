@@ -136,7 +136,7 @@ public enum Actors implements IActorsService {
 	 * 
 	 * @return
 	 */
-	public ActorRef<Void> getSupervisor() {
+	public ActorSystem<Void> getSupervisor() {
 		return this.supervisor;
 	}
 

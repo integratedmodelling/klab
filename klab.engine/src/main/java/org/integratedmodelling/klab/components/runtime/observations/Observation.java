@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CompletionStage;
 
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -16,11 +19,14 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabMessages.Load;
+import org.integratedmodelling.klab.components.runtime.actors.KlabMessages.Spawn;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
@@ -28,6 +34,7 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Path;
 
 import akka.actor.typed.ActorRef;
+import akka.actor.typed.javadsl.AskPattern;
 
 /**
  * The base class for all observations can only be instantiated as the empty
@@ -38,203 +45,204 @@ import akka.actor.typed.ActorRef;
  */
 public abstract class Observation extends ObservedArtifact implements IObservation, IActorIdentity<KlabMessage> {
 
-    private Observable       observable;
-    private ObservationGroup group     = null;
-    // last modification. Must be correct for any cache to work.
-    private long             timestamp = System.currentTimeMillis();
-    // used to store the "main" status from annotations or because of directly observed. Should eventually
-    // come from provenance.
-    private boolean          main;
-    // only kept updated in the root observation
-    private long             lastUpdate;
-    // separately kept time of creation and exit, using timestamp if non-temporal
-    private long             creationTime;
-    private long             exitTime;
+	private Observable observable;
+	private ObservationGroup group = null;
+	// last modification. Must be correct for any cache to work.
+	private long timestamp = System.currentTimeMillis();
+	// used to store the "main" status from annotations or because of directly
+	// observed. Should eventually
+	// come from provenance.
+	private boolean main;
+	// only kept updated in the root observation
+	private long lastUpdate;
+	// separately kept time of creation and exit, using timestamp if non-temporal
+	private long creationTime;
+	private long exitTime;
 
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
 	 */
 	protected List<ObservationChange> modificationsToReport = new ArrayList<>();
 	protected List<IModificationListener> modificationListeners = new ArrayList<>();
-    
-    public String getUrn() {
-        return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
-    }
+	private ActorRef<KlabMessage> actor;
 
-    public static IObservation empty(IObservable observable, IContextualizationScope context) {
-        return ((IRuntimeScope)context).getObservationGroup(observable, context.getScale());
-    }
+	public String getUrn() {
+		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
+	}
 
-    protected Observation(Observable observable, Scale scale, IRuntimeScope context) {
-        super(scale, context);
-        this.observable = observable;
+	public static IObservation empty(IObservable observable, IContextualizationScope context) {
+		return ((IRuntimeScope) context).getObservationGroup(observable, context.getScale());
+	}
+
+	protected Observation(Observable observable, Scale scale, IRuntimeScope context) {
+		super(scale, context);
+		this.observable = observable;
 		this.setCreationTime(/* context.getScheduler() != null ? context.getScheduler().getTime() : */ timestamp);
-        this.setExitTime(-1);
-    }
+		this.setExitTime(-1);
+	}
 
-    protected void reportChange(ObservationChange change) {
-    	this.modificationsToReport.add(change);
-    }
-    
-    protected void touch() {
-        this.timestamp = System.currentTimeMillis();
-    }
+	protected void reportChange(ObservationChange change) {
+		this.modificationsToReport.add(change);
+	}
 
-    public long getTimestamp() {
-        return timestamp;
-    }
+	protected void touch() {
+		this.timestamp = System.currentTimeMillis();
+	}
 
-    @Override
-    public Observable getObservable() {
-        return observable;
-    }
+	public long getTimestamp() {
+		return timestamp;
+	}
 
-    @Override
-    public Scale getScale() {
-        return (Scale) getGeometry();
-    }
+	@Override
+	public Observable getObservable() {
+		return observable;
+	}
 
-    @Override
-    public boolean isSpatiallyDistributed() {
-        return getScale().isSpatiallyDistributed();
-    }
+	@Override
+	public Scale getScale() {
+		return (Scale) getGeometry();
+	}
 
-    @Override
-    public boolean isTemporallyDistributed() {
-        return getScale().isTemporallyDistributed();
-    }
+	@Override
+	public boolean isSpatiallyDistributed() {
+		return getScale().isSpatiallyDistributed();
+	}
 
-    @Override
-    public boolean isTemporal() {
-        return getScale().getTime() != null;
-    }
+	@Override
+	public boolean isTemporallyDistributed() {
+		return getScale().isTemporallyDistributed();
+	}
 
-    @Override
-    public boolean isSpatial() {
-        return getScale().getSpace() != null;
-    }
+	@Override
+	public boolean isTemporal() {
+		return getScale().getTime() != null;
+	}
 
-    @Override
-    public ISpace getSpace() {
-        return getScale().getSpace();
-    }
+	@Override
+	public boolean isSpatial() {
+		return getScale().getSpace() != null;
+	}
 
-    @Override
-    public IEngineSessionIdentity getParentIdentity() {
-        return getMonitor().getIdentity().getParentIdentity(IEngineSessionIdentity.class);
-    }
+	@Override
+	public ISpace getSpace() {
+		return getScale().getSpace();
+	}
 
-    @Override
-    public Monitor getMonitor() {
-        return (Monitor) getRuntimeScope().getMonitor();
-    }
+	@Override
+	public IEngineSessionIdentity getParentIdentity() {
+		return getMonitor().getIdentity().getParentIdentity(IEngineSessionIdentity.class);
+	}
 
-    @Override
-    public boolean is(IIdentity.Type type) {
-        return type == IIdentity.Type.OBSERVATION;
-    }
+	@Override
+	public Monitor getMonitor() {
+		return (Monitor) getRuntimeScope().getMonitor();
+	}
 
-    @Override
-    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-        return IIdentity.findParent(this, type);
-    }
+	@Override
+	public boolean is(IIdentity.Type type) {
+		return type == IIdentity.Type.OBSERVATION;
+	}
 
-    @Override
-    public IProvenance getProvenance() {
-        return getRuntimeScope().getProvenance();
-    }
+	@Override
+	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+		return IIdentity.findParent(this, type);
+	}
 
-    public void setObservable(Observable observable) {
-        this.observable = observable;
-    }
+	@Override
+	public IProvenance getProvenance() {
+		return getRuntimeScope().getProvenance();
+	}
 
-    public Namespace getNamespace() {
-        return (Namespace) getRuntimeScope().getNamespace();
-    }
+	public void setObservable(Observable observable) {
+		this.observable = observable;
+	}
 
-    @Override
-    public DirectObservation getContext() {
-        return (DirectObservation) getRuntimeScope().getParentOf(this);
-    }
+	public Namespace getNamespace() {
+		return (Namespace) getRuntimeScope().getNamespace();
+	}
 
-    public String toString() {
-        return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getId() + ": "
-                + getObservable()
-                + "}";
-    }
+	@Override
+	public DirectObservation getContext() {
+		return (DirectObservation) getRuntimeScope().getParentOf(this);
+	}
 
-    void setGroup(ObservationGroup group) {
-        this.group = group;
-    }
+	public String toString() {
+		return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getId() + ": " + getObservable()
+				+ "}";
+	}
 
-    /**
-     * Get the group this is part of, if any.
-     * 
-     * @return
-     */
-    public ObservationGroup getGroup() {
-        return group;
-    }
+	void setGroup(ObservationGroup group) {
+		this.group = group;
+	}
 
-    @Override
-    public IArtifact.Type getType() {
-        return observable.getArtifactType();
-    }
+	/**
+	 * Get the group this is part of, if any.
+	 * 
+	 * @return
+	 */
+	public ObservationGroup getGroup() {
+		return group;
+	}
 
-    @Override
-    public Iterator<IArtifact> iterator() {
-        if (group == null) {
-            List<IArtifact> list = new ArrayList<>();
-            list.add(this);
-            return list.iterator();
-        }
-        return group.iterator();
-    }
+	@Override
+	public IArtifact.Type getType() {
+		return observable.getArtifactType();
+	}
 
-    @Override
-    public int groupSize() {
-        return group == null ? 1 : group.groupSize();
-    }
+	@Override
+	public Iterator<IArtifact> iterator() {
+		if (group == null) {
+			List<IArtifact> list = new ArrayList<>();
+			list.add(this);
+			return list.iterator();
+		}
+		return group.iterator();
+	}
 
-    public boolean isMain() {
-        return main;
-    }
+	@Override
+	public int groupSize() {
+		return group == null ? 1 : group.groupSize();
+	}
 
-    public void setMain(boolean main) {
-        this.main = main;
-    }
+	public boolean isMain() {
+		return main;
+	}
 
-    public long getLastUpdate() {
-        return lastUpdate;
-    }
+	public void setMain(boolean main) {
+		this.main = main;
+	}
 
-    public void setLastUpdate(long lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
+	public long getLastUpdate() {
+		return lastUpdate;
+	}
 
-    @Override
-    public ISubjectiveObservation reinterpret(IDirectObservation observer) {
-        throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
-    }
+	public void setLastUpdate(long lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
 
-    @Override
-    public long getCreationTime() {
-        return creationTime;
-    }
+	@Override
+	public ISubjectiveObservation reinterpret(IDirectObservation observer) {
+		throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
+	}
 
-    public void setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
-    }
+	@Override
+	public long getCreationTime() {
+		return creationTime;
+	}
 
-    @Override
-    public long getExitTime() {
-        return exitTime;
-    }
+	public void setCreationTime(long creationTime) {
+		this.creationTime = creationTime;
+	}
 
-    public void setExitTime(long exitTime) {
-        this.exitTime = exitTime;
-    }
-    
+	@Override
+	public long getExitTime() {
+		return exitTime;
+	}
+
+	public void setExitTime(long exitTime) {
+		this.exitTime = exitTime;
+	}
+
 	/**
 	 * Get any modification that still needs to be reported and reset our list to
 	 * empty.
@@ -250,41 +258,40 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public void addModificationListener(IModificationListener listener) {
 		this.modificationListeners.add(listener);
 	}
-	
+
 	public void evaluateChanges() {
 		// does nothing here; overridden in each final class
 	}
 
 	@Override
 	public ActorRef<KlabMessage> getActor() {
-		// TODO Auto-generated method stub
-		return null;
+
+		IActorIdentity<KlabMessage> parent = null;
+
+		if (this.actor == null) {
+			if (this.getRuntimeScope().getParentOf(this) == null) {
+				// I'm the context: get our actor from the session
+				parent = getParentIdentity(Session.class);
+			} else {
+				parent = (Observation) getRuntimeScope().getRootSubject();
+			}
+
+			CompletionStage<Spawn> result = AskPattern.ask(parent.getActor(),
+					replyTo -> new Spawn(this),
+					Duration.ofSeconds(1), Actors.INSTANCE.getSupervisor().scheduler());
+
+			try {
+				this.actor = result.toCompletableFuture().get().getActor();
+			} catch (Exception e) {
+				throw new KlabInternalErrorException(e);
+			}
+
+		}
+		return this.actor;
 	}
 
 	@Override
 	public void load(IBehavior behavior) {
-		// TODO Auto-generated method stub
-		
+		getActor().tell(new Load(behavior));
 	}
-
-//	 CompletionStage<CookieFabric.Reply> result =
-//		        AskPattern.ask(
-//		            cookieFabric,
-//		            replyTo -> new CookieFabric.GiveMeCookies(3, replyTo),
-//		            // asking someone requires a timeout and a scheduler, if the timeout hits without
-//		            // response the ask is failed with a TimeoutException
-//		            Duration.ofSeconds(3),
-//		            system.scheduler());
-//
-//		    result.whenComplete(
-//		        (reply, failure) -> {
-//		          if (reply instanceof CookieFabric.Cookies)
-//		            System.out.println("Yay, " + ((CookieFabric.Cookies) reply).count + " cookies!");
-//		          else if (reply instanceof CookieFabric.InvalidRequest)
-//		            System.out.println(
-//		                "No cookies for me. " + ((CookieFabric.InvalidRequest) reply).reason);
-//		          else System.out.println("Boo! didn't get cookies in time. " + failure);
-//		        });
-	
-	
 }
