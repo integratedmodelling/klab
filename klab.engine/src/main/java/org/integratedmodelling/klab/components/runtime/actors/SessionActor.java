@@ -12,10 +12,6 @@ import akka.actor.typed.javadsl.Receive;
 
 public class SessionActor extends KlabActor {
 
-	public interface SessionCommand extends KlabMessage {
-
-	}
-
 	public static Behavior<KlabMessage> create(ISession session) {
 		return Behaviors.setup(ctx -> new SessionActor(ctx, session));
 	}
@@ -26,7 +22,9 @@ public class SessionActor extends KlabActor {
 
 	@Override
 	public Receive<KlabMessage> createReceive() {
-		return newReceiveBuilder().onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
+		return newReceiveBuilder()
+				.onMessage(Load.class, this::loadBehavior)
+				.onMessage(Spawn.class, this::createChild)
 				.onSignal(PostStop.class, signal -> onPostStop()).build();
 	}
 
