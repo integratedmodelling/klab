@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
 import org.integratedmodelling.klab.hub.users.GroupEntry;
 import org.integratedmodelling.klab.hub.users.Role;
 import org.integratedmodelling.klab.hub.users.User;
-import org.integratedmodelling.klab.hub.utils.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @TypeAlias("GroupRequestTask")
 public class GroupRequestTask extends Task{
 
-	private static GroupRequestTask.Command command = new GroupRequestTask.Command();
+	private static TaskCommand command = CommandFactory.getCommand(GroupRequestTask.class);
 
 	public static class Parameters extends TaskParameters {
 		
@@ -35,15 +35,20 @@ public class GroupRequestTask extends Task{
 		}
 	}
 	
+	@Component
 	public static class Builder extends TaskBuilder {
 		
+		@Autowired
 		MongoGroupRepository groupRepository;
+		@Autowired
 		UserRepository userRepository;
 		
+		/*
 		public Builder() {
 			groupRepository = BeanUtil.getBean(MongoGroupRepository.class);
 			userRepository = BeanUtil.getBean(UserRepository.class);
 		}
+		*/
 		
 		@Override
 		public List<Task> build(TaskParameters parameters) {
@@ -112,13 +117,11 @@ public class GroupRequestTask extends Task{
 		
 	}
 	
+	@Component
 	public static class Command extends TaskCommand {
 		
+		@Autowired
 		private UserRepository userRepository;
-				
-		public Command() {
-			userRepository = BeanUtil.getBean(UserRepository.class);
-		}
 		
 		@Override
 		public void executeAccept(Task task) {

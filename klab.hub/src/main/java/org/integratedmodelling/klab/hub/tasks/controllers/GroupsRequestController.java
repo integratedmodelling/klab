@@ -67,7 +67,7 @@ public class GroupsRequestController {
 	
 	    return new ResponseEntity<Void>(headers, HttpStatus.CREATED); 	 
 	}
-	
+	/*
 	@GetMapping(value="", produces = "application/json", params="request-groups")
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> groupRequestList() {
@@ -85,4 +85,5 @@ public class GroupsRequestController {
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;
 	}
+	*/
 }

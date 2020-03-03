@@ -62,13 +62,13 @@ public class CreateGroupsController {
 	    	service.denyTask(id, request);
 	    }
 	    
-		UriComponents uriComponents = b.path("/api/tasks/{id}").buildAndExpand(id);
+		UriComponents uriComponents = b.path("/api/v2/tasks/{id}").buildAndExpand(id);
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setLocation(uriComponents.toUri());
 	
 	    return new ResponseEntity<Void>(headers, HttpStatus.CREATED); 	 
 	}
-	
+	/*
 	@GetMapping(value="", produces = "application/json", params="create-group")
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> createGroupList() {
@@ -86,4 +86,5 @@ public class CreateGroupsController {
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;
 	}
+	*/
 }

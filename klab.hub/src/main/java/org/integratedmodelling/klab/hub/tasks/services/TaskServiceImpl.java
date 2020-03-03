@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskBuilder;
-import org.integratedmodelling.klab.hub.tasks.TaskFactory;
 import org.integratedmodelling.klab.hub.tasks.TaskParameters;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tokens.ClickbackToken;

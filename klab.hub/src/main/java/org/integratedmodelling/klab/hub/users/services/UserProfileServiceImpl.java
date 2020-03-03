@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.users.services.impls;
+package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,7 +9,6 @@ import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
-import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

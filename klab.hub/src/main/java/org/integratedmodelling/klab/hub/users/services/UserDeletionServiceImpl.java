@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.users.services.impls;
+package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.List;
 
@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.hub.users.DeletedUser;
 import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.hub.users.commands.DeleteUser;
-import org.integratedmodelling.klab.hub.users.services.UserDeletionService;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.users.services.impls;
+package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -6,12 +6,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
 import org.springframework.data.annotation.Reference;
+import org.springframework.stereotype.Component;
 
 public class RemoveGroupTask extends Task{
 	
 	@Reference
 	ClickbackToken token;
 	
+	@Component
 	public static class Builder extends TaskBuilder {
 
 		@Override
@@ -21,6 +23,9 @@ public class RemoveGroupTask extends Task{
 		}
 		
 	}
+	
+	@Component
+	public static class Command extends TaskCommand {}
 
 	public RemoveGroupTask(String requestee) {
 		super(requestee);

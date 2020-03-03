@@ -9,17 +9,17 @@ import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
-import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
 import org.integratedmodelling.klab.hub.users.Role;
-import org.integratedmodelling.klab.hub.utils.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.stereotype.Component;
 
 @TypeAlias("CreateGroupTask")
 public class CreateGroupTask extends Task{
 	
-	private static CreateGroupTask.Command command = new CreateGroupTask.Command();
+	private static CreateGroupTask.Command command = (CreateGroupTask.Command)CommandFactory.getCommand(CreateGroupTask.class);
 
 	public static class Parameters extends TaskParameters.TaskParametersWithRoleRequirement {
 		MongoGroup group;
@@ -37,13 +37,17 @@ public class CreateGroupTask extends Task{
 
 	}
 	
+	@Component
 	public static class Builder extends TaskBuilder {
 		
+		@Autowired
 		private MongoGroupRepository groupRepository;
 		
+		/*
 		public Builder() {
 			groupRepository = BeanUtil.getBean(MongoGroupRepository.class);
 		}
+		*/
 
 		@Override
 		public List<Task> build(TaskParameters parameters) {
@@ -67,14 +71,17 @@ public class CreateGroupTask extends Task{
 		
 	}
 	
+	@Component
 	public static class Command extends TaskCommand {
 		
+		@Autowired
 		private GroupService service;
 
+		/*
 		public Command() {
 			service = BeanUtil.getBean(GroupService.class);
 		}
-		
+		*/
 		
 		@Override
 		public void executeAccept(Task task) {
