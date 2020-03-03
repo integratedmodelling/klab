@@ -20,9 +20,11 @@ public class KlabMessages {
 	public static class Spawn implements KlabMessage {
 		IIdentity identity;
 		ActorRef<KlabMessage> ref;
+		ActorRef<KlabMessage> replyTo; 
 		
-		public Spawn(IIdentity identity) {
+		public Spawn(IIdentity identity, ActorRef<KlabMessage> replyTo) {
 			this.identity = identity;
+			this.replyTo = replyTo;
 		}
 
 		public ActorRef<KlabMessage> getActor() {

@@ -275,9 +275,11 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 			} else {
 				parent = (Observation) getRuntimeScope().getRootSubject();
 			}
+			
+			final ActorRef<KlabMessage> parentActor = parent.getActor();
 
-			CompletionStage<Spawn> result = AskPattern.ask(parent.getActor(),
-					replyTo -> new Spawn(this),
+			CompletionStage<Spawn> result = AskPattern.ask(parentActor,
+					replyTo -> new Spawn(this, parentActor),
 					Duration.ofSeconds(1), Actors.INSTANCE.getSupervisor().scheduler());
 
 			try {

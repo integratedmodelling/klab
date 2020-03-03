@@ -817,7 +817,7 @@ public class Geometry implements IGeometry {
 						String dimspec = dims[d].trim();
 						long dsize = NONDIMENSIONAL;
 						if (!dimspec.isEmpty()) {
-							dsize =  dimspec.equals("\u221E") ? INFINITE_SIZE : Long.parseLong(dimspec);
+							dsize = dimspec.equals("\u221E") ? INFINITE_SIZE : Long.parseLong(dimspec);
 						}
 						sdimss[d] = dsize;
 					}
@@ -856,13 +856,14 @@ public class Geometry implements IGeometry {
 			Object v = null;
 			if (val.startsWith("[") && val.endsWith("]")) {
 				v = NumberUtils.podArrayFromString(val, "\\s+");
-			} else if (NumberUtils.encodesLong(val)) {
+			} else if (!PARAMETER_SPACE_SHAPE.equals(key) && NumberUtils.encodesLong(val)) {
 				// This way all integers will be longs and the next won't be called - check if
-				// that's OK
+				// that's OK. Must avoid shape parameters with WKB values that should stay
+				// strings.
 				v = Long.parseLong(val);
-			} else if (NumberUtils.encodesInteger(val)) {
+			} else if (!PARAMETER_SPACE_SHAPE.equals(key) && NumberUtils.encodesInteger(val)) {
 				v = Integer.parseInt(val);
-			} else if (NumberUtils.encodesDouble(((String) val))) {
+			} else if (!PARAMETER_SPACE_SHAPE.equals(key) && NumberUtils.encodesDouble(((String) val))) {
 				v = Double.parseDouble(val);
 			} else {
 				v = val;

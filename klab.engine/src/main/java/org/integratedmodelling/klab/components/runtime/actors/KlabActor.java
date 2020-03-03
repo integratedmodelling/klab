@@ -6,10 +6,12 @@ import java.util.List;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.components.runtime.actors.KlabMessages.Load;
+import org.integratedmodelling.klab.components.runtime.actors.KlabMessages.Spawn;
 
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
+import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.javadsl.ReceiveBuilder;
 
@@ -46,18 +48,23 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	public Receive<KlabMessage> createReceive() {
 
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
-		builder.onMessage(Load.class, this::loadBehavior);
-//		// TODO create all messages from the behavior specs
-//		for (IMessageHandler message : behavior.getMessageHandlers()) {
-//			// call .onMessage(ReadTemperature.class, this::onReadTemperature)
-//			// .onSignal(PostStop.class, signal -> onPostStop()), whatever
-//		}
-		return builder.build();
+		return builder
+			.onMessage(Load.class, this::loadBehavior)
+			.onMessage(Spawn.class, this::createChild)
+			.build();
 	}
 
 	private Behavior<KlabMessage> loadBehavior(Load message) {
 		this.behaviors.add(message.behavior);
-		return this;
+		// TODO
+		return Behaviors.same();
+	}
+	
+	private Behavior<KlabMessage> createChild(Spawn message) {
+		Behavior<KlabMessage> behavior = null;
+		message.ref = getContext().spawn(behavior, message.identity.getId());
+		message.replyTo.tell(message);
+		return Behaviors.same();
 	}
 	
 }

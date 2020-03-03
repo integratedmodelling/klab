@@ -361,8 +361,8 @@ public enum WeatherFactory {
 
 		final List<WeatherStation> ret = new ArrayList<>();
 
-		String query = "SELECT * FROM weatherstations WHERE location && '" + ((Shape) context).getStandardizedGeometry()
-				+ "'";
+		String query = "SELECT * FROM weatherstations WHERE ST_Intersects('" + ((Shape) context).getStandardizedGeometry()
+				+ "', location)";
 		if (source != null && !source.equals("ALL")) {
 			switch (source) {
 			case "CRU":
