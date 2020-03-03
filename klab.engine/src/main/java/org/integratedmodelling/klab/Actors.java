@@ -44,6 +44,10 @@ public enum Actors implements IActorsService {
 	private ActorSystem<Void> supervisor;
 	private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
 
+	public IBehavior getBehavior(String behaviorId) {
+		return behaviors.get(behaviorId);
+	}
+	
 	/**
 	 * The actor system entry point at /user and available as getSupervisor(). It
 	 * will be the (direct for now) father of all session actors. We create this to

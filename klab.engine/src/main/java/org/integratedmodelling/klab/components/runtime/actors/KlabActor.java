@@ -19,52 +19,43 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	private List<IBehavior> behaviors = new ArrayList<>();
 	private IIdentity identity;
-	
+
 	/**
 	 * The main message for anything sent through k.Actors
-	 *  
+	 * 
 	 * @author Ferd
 	 *
 	 */
 	public interface KlabMessage {
-		
+
 	}
 
 	protected IIdentity getIdentity() {
 		return this.identity;
 	}
-	
-	protected KlabActor(ActorContext<KlabMessage> context, IIdentity identity, IBehavior... behaviors) {
+
+	protected KlabActor(ActorContext<KlabMessage> context, IIdentity identity) {
 		super(context);
 		this.identity = identity;
-		if (behaviors != null) {
-			for (IBehavior behavior : behaviors) {
-				this.behaviors.add(behavior);
-			}
-		}
 	}
 
 	@Override
 	public Receive<KlabMessage> createReceive() {
-
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
-		return builder
-			.onMessage(Load.class, this::loadBehavior)
-			.onMessage(Spawn.class, this::createChild)
-			.build();
+		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild).build();
 	}
 
-	private Behavior<KlabMessage> loadBehavior(Load message) {
+	protected Behavior<KlabMessage> loadBehavior(Load message) {
 		this.behaviors.add(message.behavior);
 		// TODO
 		return Behaviors.same();
 	}
-	
-	private Behavior<KlabMessage> createChild(Spawn message) {
+
+	protected Behavior<KlabMessage> createChild(Spawn message) {
 		Behavior<KlabMessage> behavior = null;
 		message.ref = getContext().spawn(behavior, message.identity.getId());
 		message.replyTo.tell(message);
 		return Behaviors.same();
 	}
-	
+
 }

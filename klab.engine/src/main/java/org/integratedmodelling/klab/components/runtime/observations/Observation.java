@@ -280,7 +280,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 			CompletionStage<Spawn> result = AskPattern.ask(parentActor,
 					replyTo -> new Spawn(this, parentActor),
-					Duration.ofSeconds(1), Actors.INSTANCE.getSupervisor().scheduler());
+					Duration.ofSeconds(3), Actors.INSTANCE.getSupervisor().scheduler());
 
 			try {
 				this.actor = result.toCompletableFuture().get().getActor();

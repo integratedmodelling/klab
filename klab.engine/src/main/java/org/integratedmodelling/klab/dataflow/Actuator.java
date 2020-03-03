@@ -18,11 +18,13 @@ import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
@@ -624,8 +626,13 @@ public class Actuator implements IActuator {
 			ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
 					(IState) ret, addParameters(ctx, self, resource), scale);
 
+			addBehaviors(ret);
+
 		} else if (contextualizer instanceof IResolver) {
+
 			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
+			addBehaviors(ret);
+
 		} else if (contextualizer instanceof IInstantiator) {
 
 			List<IObjectArtifact> objects = ((IInstantiator) contextualizer).instantiate(observable,
@@ -649,6 +656,9 @@ public class Actuator implements IActuator {
 					}
 
 					((Artifact) ret).chain(object);
+
+					addBehaviors(object);
+
 				}
 				if (ret.groupSize() == 0) {
 					// manually add the empty artifact to the structure; this is not done when a
@@ -727,6 +737,26 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
+	private void addBehaviors(IArtifact ret) {
+		if (this.model != null && ret instanceof Observation) {
+			for (IAnnotation annotation : model.getAnnotations()) {
+				if (annotation.getName().equals("bind")) {
+					String behavior = annotation.containsKey("behavior") ? annotation.get("behavior", String.class)
+							: annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, String.class);
+					if (behavior != null) {
+						IBehavior b = Actors.INSTANCE.getBehavior(behavior);
+						if (b != null) {
+							if (annotation.contains("filter")) {
+								// TODO build/cache and run filter, skip if false
+							}
+							((Observation) ret).load(b);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Set the call parameters, if any, into the context data so that they can be
 	 * found by the contextualizer.
@@ -794,16 +824,16 @@ public class Actuator implements IActuator {
 
 		return ret;
 	}
-	
+
 	/**
-	 * Done above for the initialization run; this is called in the scheduler to ensure
-	 * names are appropriate for the actuator being run.
+	 * Done above for the initialization run; this is called in the scheduler to
+	 * ensure names are appropriate for the actuator being run.
 	 * 
 	 * @param context
 	 * @return
 	 */
 	public IRuntimeScope localizeNames(IRuntimeScope context) {
-		
+
 		IRuntimeScope ret = context.copy();
 		for (IActuator input : getActuators()) {
 			if (ret.getArtifact(input.getName()) != null) {
