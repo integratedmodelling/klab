@@ -926,15 +926,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		/*
 		 * add any other outputs from the model, which will be dealt with by the
-		 * contextualizers
+		 * contextualizers - NO. these are added to the dataflow only when requested
+		 * by other models.
 		 */
-		if (actuator.getModel() != null && !actuator.getModel().isInstantiator()) {
-			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
-				IObservable output = actuator.getModel().getObservables().get(i);
-				targetObservables.put(output.getName(),
-						new Triple<>((Observable) output, output.getDescription().getResolutionMode(), false));
-			}
-		}
+//		if (actuator.getModel() != null && !actuator.getModel().isInstantiator()) {
+//			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
+//				IObservable output = actuator.getModel().getObservables().get(i);
+//				targetObservables.put(output.getName(),
+//						new Triple<>((Observable) output, output.getDescription().getResolutionMode(), false));
+//			}
+//		}
 
 		/*
 		 * add any target of indirect computations

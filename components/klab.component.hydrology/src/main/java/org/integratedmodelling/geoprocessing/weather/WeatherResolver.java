@@ -1,5 +1,8 @@
 package org.integratedmodelling.geoprocessing.weather;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.integratedmodelling.geoprocessing.weather.interpolation.ThiessenInterpolator;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
@@ -18,6 +21,7 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Resolve any of the observables provided by the weather component into
@@ -40,6 +44,7 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 	private IScale resolutionScale;
 	private String source = "all";
 	private IWeatherInterpolator interpolator = null;
+	private List<Pair<String, IState>> states = new ArrayList<>();
 
 	public WeatherResolver() {
 	}
@@ -74,8 +79,15 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 			String fragment = "";
 
 			// add all outputs according to our model's observables.
-			for (String obs : context.getModel().getAttributeObservables().keySet()) {
-				fragment += (fragment.isEmpty() ? "" : "&") + obs;
+			for (int i = 1; i < context.getModel().getObservables().size(); i++) {
+				String variable = context.getModel().getObservables().get(i).getName();
+				fragment += (fragment.isEmpty() ? "" : "&") + variable;
+				IState state = context.getArtifact(variable, IState.class);
+				if (state == null) {
+					context.getMonitor().warn("weather: cannot find state for " + variable);
+				} else {
+					states.add(new Pair<>(variable, state));
+				}
 			}
 			urn += "#" + fragment;
 
@@ -98,10 +110,12 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 		/**
 		 * Interpolate the station data for all requested variables.
 		 */
-		for (String obs : context.getModel().getAttributeObservables().keySet()) {
-			this.interpolator.computeState(context.getArtifact(obs, IState.class), obs,
-					offset.getOffset(Dimension.Type.TIME) - 1, context.getScale(),
-					null /* TODO whatever is needed to turn into required units */);
+		for (Pair<String, IState> ps : states) {
+			this.interpolator.computeState(ps.getSecond(), ps.getFirst(), offset.getOffset(Dimension.Type.TIME) - 1,
+					context.getScale(), null /*
+												 * TODO whatever is needed to turn into required units, potentially
+												 * including recontextualization - must interoperate with the resource
+												 */);
 		}
 
 		return target;

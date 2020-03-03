@@ -603,11 +603,14 @@ public class Actuator implements IActuator {
 		 */
 		IArtifact self = ret;
 
-		if (ret instanceof IState) {
+		if (ret instanceof IState && contextualizer.getType().isState()) {
 			/*
 			 * Establish the container for the output: switch the storage in the state to
 			 * the type needed in the compute chain, creating a layer if necessary. This is
 			 * the layer to WRITE INTO.
+			 * 
+			 * If we're looking at a secondary output of a process or other non-state
+			 * contextualizer, we don't go through here.
 			 */
 			ret = ((IState) ret).as(contextualizer.getType());
 		}
@@ -789,6 +792,25 @@ public class Actuator implements IActuator {
 			}
 		}
 
+		return ret;
+	}
+	
+	/**
+	 * Done above for the initialization run; this is called in the scheduler to ensure
+	 * names are appropriate for the actuator being run.
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public IRuntimeScope localizeNames(IRuntimeScope context) {
+		
+		IRuntimeScope ret = context.copy();
+		for (IActuator input : getActuators()) {
+			if (ret.getArtifact(input.getName()) != null) {
+				// no effect if not aliased
+				ret.rename(input.getName(), input.getAlias());
+			}
+		}
 		return ret;
 	}
 
