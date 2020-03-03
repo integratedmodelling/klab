@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
+import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
-import org.integratedmodelling.klab.hub.manager.EmailManager;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.SignupRequest;
 import org.integratedmodelling.klab.hub.tokens.NewUserClickbackToken;

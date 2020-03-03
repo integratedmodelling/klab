@@ -143,6 +143,10 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	    			u.setLastLogin(null);
 	    		}
     		}
+    		x = (int)(Math.random()*100+1);
+    		if (x<=20) {
+    			u.setSendUpdates(false);
+    		}
     		initialUsers.add(u);
     	}
         system.addGroupEntries(aries);
@@ -172,7 +176,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     				int x = (int)(Math.random()*100+1);
     				if (x>=5) // less than 5% not connected
     					user.setLastEngineConnection(generateRandomDate(user.getLastLogin()));
-    				}
+    			}
     			KlabUserManager.updateKlabUser(user);
     		} catch (Exception e) {
     			Logging.INSTANCE.error(e);

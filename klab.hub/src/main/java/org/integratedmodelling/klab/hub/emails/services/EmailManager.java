@@ -1,7 +1,11 @@
-package org.integratedmodelling.klab.hub.manager;
+package org.integratedmodelling.klab.hub.emails.services;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -39,7 +43,7 @@ public class EmailManager {
                         + "please let us know by replying to this email.",
                         linkConfig.getSiteName(), clickbackUrl);
         //logger.info("Sending email verification email to " + to + "...");
-        send(emailConfig.replyableAdminEmailAddress(), to, subject, msg);
+        sendInternalEmail(emailConfig.replyableAdminEmailAddress(), to, subject, msg);
     }
 
 	public void sendPasswordChangeConfirmation(String to) {
@@ -50,22 +54,9 @@ public class EmailManager {
                         + "Log in at: %s/#%s",
                         linkConfig.getSiteName(), linkConfig.getSiteUrl(), LOGIN_ROUTE);
         //logger.info("Sending password change confirmation email to " + to + "...");
-		send(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
+        sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
 	}
     
-    private void send(String from, String to, String subject, String msg, File... attachments) {
-    	try {
-			MimeMessage message = mailSender.createMimeMessage();
-			message.setFrom(new InternetAddress(from));
-			message.setRecipients(RecipientType.TO, to);
-			message.setSubject(subject);
-			message.setText(msg);
-			mailSender.send(message);
-    	} catch (MessagingException | MailException e) {
-    		throw new SendEmailException("[send]: Unable to send email.  Plase check email address and message");
-		}
-    }
-
     public void sendNewUser(String to, String username, URL clickbackUrl) {
         String subject = String.format("Welcome to %s!", linkConfig.getSiteName());
         String msg = String.format(
@@ -74,12 +65,12 @@ public class EmailManager {
                         + "\n\nIf you did not create an account here, please let us know by replying to this email.",
                         linkConfig.getSiteName(), username, clickbackUrl.toExternalForm());
         //logger.info("Sending new user email to " + to + "...");
-        send(emailConfig.replyableAdminEmailAddress(), to, subject, msg);
+        sendInternalEmail(emailConfig.replyableAdminEmailAddress(), to, subject, msg);
     }
 
-    public void sendFromMainEmailAddress(String to, String subject, String msg, File... attachments)
+    public void sendFromMainEmailAddress(String to, String subject, String msg)
             throws MessagingException {
-        send(emailConfig.replyableGeneralEmailAddress(), to, subject, msg, attachments);
+    	sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
     }
     
     public void sendGroupRequestEmail(String username, URL clickbackUrl, String groups) {
@@ -89,10 +80,10 @@ public class EmailManager {
     				+ "\n\nPlease make sure those groups are appropriate for %s" 
     				+ "and if so click on the following link: %s",
     			username, groups, username,clickbackUrl);
-    	send(emailConfig.replyableGeneralEmailAddress(), emailConfig.replyableGeneralEmailAddress(), subject,msg);
+    	sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), emailConfig.replyableGeneralEmailAddress(), subject,msg);
     }
     
-    public void sendInviteWithGroupsEmail(String email, URL clickbackUrl) throws MessagingException {
+    public void sendInviteWithGroupsEmail(String to, URL clickbackUrl) throws MessagingException {
     	String subject = "Join the Integrated Modelling Team";
     	String msg = String.format(
     			"We would like to welcome you into the Integrated Modelling team." +
@@ -102,18 +93,58 @@ public class EmailManager {
     					"forward to working with you!" + 
     					"\n\n Please click the following link: %s",
     			clickbackUrl);
-    	sendFromMainEmailAddress(email, subject, msg);
+    	sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
     }
 
-	public void sendLostPasswordEmail(String email, URL clickbackUrl) throws MessagingException {
+	public void sendLostPasswordEmail(String to, URL clickbackUrl) throws MessagingException {
 		String subject = "New Password Request for you Integrated Modelling Account";
 		String msg = String.format(
 				"You have requested a new password for your Integrated Modelling Account" +
 						"Please click the following link: %s \n\n",
 				clickbackUrl);
-		sendFromMainEmailAddress(email, subject, msg);
+		sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
 		
 	}
+	
+	private void sendInternalEmail(String from, String to, String subject, String message) {
+		Set<String> receipts = new HashSet<>(Arrays.asList(to));
+		send(from, receipts, null, subject, message, false);
+	}
+	
+	/**
+	 * Send an email
+	 * @param from from email address
+	 * @param to one or more receipts
+	 * @param subject the subject
+	 * @param msg the message
+	 * @param attachments the attachments
+	 */
+	public void send(String from, Set<String> to, Set<String> replayTo, String subject, String msg, boolean isHtml, File... attachments) {
+    	try {
+			MimeMessage message = mailSender.createMimeMessage();
+			message.setFrom(new InternetAddress(from));
+			for (String recipient: to) {
+				message.setRecipients(RecipientType.TO, recipient);
+			}
+			if (replayTo != null && replayTo.size() > 0) {
+				InternetAddress[] replayReceipts = new InternetAddress[replayTo.size()];
+				int i = 0;
+				for (String rr: replayTo) {
+					replayReceipts[i++] = new InternetAddress(rr);
+				}
+				message.setReplyTo(replayReceipts);
+			}
+			message.setSubject(subject);
+			if (isHtml) {
+				message.setContent(msg, "text/html");
+			} else {
+				message.setText(msg);
+			}
+			mailSender.send(message);
+    	} catch (MessagingException | MailException e) {
+    		throw new SendEmailException("[send]: Unable to send email.  Plase check email address and message");
+		}
+    }
 
     
 }
