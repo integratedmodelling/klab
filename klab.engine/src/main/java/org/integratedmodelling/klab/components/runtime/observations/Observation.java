@@ -17,8 +17,8 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.KlabMessages.Load;
-import org.integratedmodelling.klab.components.runtime.actors.KlabMessages.Spawn;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -277,11 +277,12 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 			final ActorRef<KlabMessage> parentActor = parent.getActor();
 
-			parentActor.tell(new Spawn(this, parentActor));
+			parentActor.tell(new Spawn(this));
 
 			/*
-			 * wait for this to succeed. Couldn't figure out the ask pattern. TODO when this
-			 * has a chance to fail (e.g. in a cluster situation), add a timeout.
+			 * wait for instrumentation to succeed. Couldn't figure out the ask pattern. TODO when this
+			 * has a chance to fail (e.g. in a cluster situation), add a timeout, or figure
+			 * out the ask pattern.
 			 */
 			while (!this.actorSet.get()) {
 				try {
@@ -299,8 +300,14 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		getActor().tell(new Load(behavior));
 	}
 
-	public void setActor(ActorRef<KlabMessage> actor) {
+	@Override
+	public void instrument(ActorRef<KlabMessage> actor) {
 		this.actor = actor;
 		this.actorSet.set(Boolean.TRUE);
+	}
+
+	public boolean isAlive() {
+		// TODO check if terminated (use ActorSelection apparently).
+		return this.actor != null;
 	}
 }

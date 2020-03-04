@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.extensions;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
@@ -28,12 +30,14 @@ import org.integratedmodelling.klab.api.extensions.component.Setup;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -48,8 +52,7 @@ public class Component implements IComponent {
 	Map<String, IPrototype> annotations = new HashMap<>();
 
 	private String initMethod = null;
-	private String setupMethod = null;
-	private boolean isSetupAsynchronous = false;
+	private List<Pair<String, Boolean>> setupMethods = new ArrayList<>();
 	private boolean binaryAssetsLoaded;
 	private Class<?> implementingClass;
 	private Object implementation;
@@ -72,9 +75,8 @@ public class Component implements IComponent {
 					this.initMethod = method.getName();
 				}
 				if (method.isAnnotationPresent(Setup.class)) {
-					this.setupMethod = method.getName();
 					Setup setup = method.getAnnotation(Setup.class);
-					this.isSetupAsynchronous = setup.asynchronous();
+					this.setupMethods.add(new Pair<>(method.getName(), setup.asynchronous()));
 				}
 			}
 		} catch (Exception e) {
@@ -193,13 +195,15 @@ public class Component implements IComponent {
 		Logging.INSTANCE.info("component " + name + " initialized successfully and ready for operation");
 	}
 
-	public void setup() throws KlabException {
+	public ITicket setup() throws KlabException {
+
+		ITicket ret = null;
 
 		if (implementingClass == null) {
-			return;
+			return null;
 		}
-		if (setupMethod == null) {
-			return;
+		if (setupMethods.isEmpty()) {
+			return null;
 		}
 		Object executor = null;
 		try {
@@ -215,24 +219,45 @@ public class Component implements IComponent {
 		/*
 		 * find executing method and call it
 		 */
-		Method method = null;
+		List<Method> methods = new ArrayList<>();
 
 		try {
-			method = executor.getClass().getMethod(setupMethod);
+			for (Pair<String, Boolean> m : setupMethods) {
+				methods.add(executor.getClass().getMethod(m.getFirst()));
+			}
 		} catch (NoSuchMethodException | SecurityException e) {
-			return;
+			return null;
 		}
 
 		try {
-			/*
-			 * TODO do the task thing if isSetupAsynchronous
-			 */
-			active = (Boolean) method.invoke(executor);
-		} catch (Exception e) {
-			throw (e instanceof KlabException ? (KlabException) e
-					: new KlabInternalErrorException("error calling component initializer for " + name + ": "
-							+ ExceptionUtils.getRootCauseMessage(e)));
+
+			ret = Klab.INSTANCE.getTicketManager().open("component", this.getName(), ITicket.Type.ComponentSetup);
+			final ITicket ticket = ret;
+			final Object exec = executor;
+
+			new Thread() {
+				@Override
+				public void run() {
+					try {
+						for (Method code : methods) {
+							active = (Boolean) code.invoke(exec);
+						}
+						ticket.resolve();
+					} catch (Throwable e) {
+						ticket.error(e.getMessage());
+					}
+				}
+			}.start();
+		} catch (Throwable e) {
+			ret.error(e.getMessage());
+
+//			throw (e instanceof KlabException ? (KlabException) e
+//					: new KlabInternalErrorException("error calling component initializer for " + name + ": "
+//							+ ExceptionUtils.getRootCauseMessage(e)));
 		}
+
+		return ret;
+
 	}
 
 	public void loadBinaryAssets() {

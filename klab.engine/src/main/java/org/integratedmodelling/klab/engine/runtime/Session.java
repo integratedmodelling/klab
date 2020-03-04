@@ -76,7 +76,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder.Location;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.KlabMessages;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
@@ -1309,10 +1309,10 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@Override
 	public void load(IBehavior behavior) {
-		getActor().tell(new KlabMessages.Load(behavior));
+		getActor().tell(new SystemBehavior.Load(behavior));
 	}
 	
-	public void setActor(ActorRef<KlabMessage> actor) {
+	public void instrument(ActorRef<KlabMessage> actor) {
 		this.actor = actor;
 	}
 

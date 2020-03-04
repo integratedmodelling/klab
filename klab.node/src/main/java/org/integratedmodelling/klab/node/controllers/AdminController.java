@@ -1,9 +1,14 @@
 package org.integratedmodelling.klab.node.controllers;
 
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.common.monitoring.TicketManager;
+import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +24,10 @@ public class AdminController {
 		return "You have made it to the admin interface";
 	}
 	
-	public TicketResponse.Ticket setupComponent() {
-		return null;
+	@GetMapping(value = API.NODE.ADMIN.COMPONENT_SETUP, produces = "application/json")
+	public TicketResponse.Ticket setupComponent(@PathVariable String component) {
+		Component comp = Extensions.INSTANCE.getComponent(component);
+		return TicketManager.encode(comp.setup());
 	}
 
 	public String getProperty() {

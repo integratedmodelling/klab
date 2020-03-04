@@ -34,6 +34,6 @@ public interface IActorIdentity<T> extends IIdentity {
 	 * 
 	 * @param actor
 	 */
-	void setActor(ActorRef<T> actor);
+	void instrument(ActorRef<T> actor);
 
 }

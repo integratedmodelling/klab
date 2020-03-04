@@ -56,4 +56,11 @@ public @interface Behavior {
      */
     String[] requires() default {};
 
+    /**
+     * Color for the messages belonging to this behavior in the editor. Default is
+     * black.
+     * 
+     * @return
+     */
+    String color() default "0x000000";
 }

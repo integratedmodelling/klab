@@ -117,7 +117,7 @@ public enum Actors implements IActorsService {
 		KActors.INSTANCE.addNotifier(new Notifier() {
 			@Override
 			public void notify(IKActorsBehavior behavior) {
-				behaviors.put(behavior.getName(), new org.integratedmodelling.klab.behavior.Behavior(behavior));
+				behaviors.put(behavior.getName(), new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior));
 			}
 		});
 	}

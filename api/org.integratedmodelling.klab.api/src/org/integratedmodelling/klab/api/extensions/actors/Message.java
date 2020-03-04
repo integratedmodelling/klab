@@ -41,14 +41,7 @@ public @interface Message {
      * 
      * @return component id
      */
-    String id();
-
-    /**
-     * Version number, parseable by {@link org.integratedmodelling.klab.Version}.
-     * 
-     * @return version string
-     */
-    String version();
+    String[] id();
 
     /**
      * List of other project or component IDs that this one depends on.
@@ -56,5 +49,10 @@ public @interface Message {
      */
     String[] requires() default {};
 
+    /**
+     * Descriptions should be given as they percolate to the k.Actors editor
+     * @return
+     */
+    String description() default "";
 
 }

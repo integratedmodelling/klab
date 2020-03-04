@@ -14,7 +14,7 @@ import java.util.Map;
 public interface ITicket {
 
 	enum Type {
-		ResourceSubmission, ResourcePublication
+		ResourceSubmission, ResourcePublication, ComponentSetup
 	}
 
 	enum Status {
