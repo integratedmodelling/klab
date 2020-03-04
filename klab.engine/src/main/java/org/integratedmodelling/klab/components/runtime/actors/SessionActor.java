@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.actors.KlabMessages.Load;
 import org.integratedmodelling.klab.components.runtime.actors.KlabMessages.Spawn;
+import org.integratedmodelling.klab.engine.runtime.Session;
 
 import akka.actor.typed.Behavior;
 import akka.actor.typed.PostStop;
@@ -12,11 +12,11 @@ import akka.actor.typed.javadsl.Receive;
 
 public class SessionActor extends KlabActor {
 
-	public static Behavior<KlabMessage> create(ISession session) {
+	public static Behavior<KlabMessage> create(Session session) {
 		return Behaviors.setup(ctx -> new SessionActor(ctx, session));
 	}
 
-	public SessionActor(ActorContext<KlabMessage> context, ISession identity) {
+	public SessionActor(ActorContext<KlabMessage> context, Session identity) {
 		super(context, identity);
 	}
 

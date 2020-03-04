@@ -161,7 +161,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
-
+	
 	/**
 	 * A scheduler to periodically collect observation and task garbage
 	 */
@@ -205,8 +205,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
 	private AtomicLong lastNetworkCheck = new AtomicLong(0);
-
-	private ActorRef rootActor;
 
 	public interface Listener {
 
@@ -1312,6 +1310,10 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@Override
 	public void load(IBehavior behavior) {
 		getActor().tell(new KlabMessages.Load(behavior));
+	}
+	
+	public void setActor(ActorRef<KlabMessage> actor) {
+		this.actor = actor;
 	}
 
 }

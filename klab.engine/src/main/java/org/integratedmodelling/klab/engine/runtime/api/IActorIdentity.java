@@ -29,4 +29,11 @@ public interface IActorIdentity<T> extends IIdentity {
 	 */
 	void load(IBehavior behavior);
 
+	/**
+	 * Set the actor in the identity.
+	 * 
+	 * @param actor
+	 */
+	void setActor(ActorRef<T> actor);
+
 }

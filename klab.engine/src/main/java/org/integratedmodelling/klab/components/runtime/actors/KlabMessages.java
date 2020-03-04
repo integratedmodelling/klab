@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
-import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 
 import akka.actor.typed.ActorRef;
 
@@ -18,17 +18,15 @@ public class KlabMessages {
 	}
 	
 	public static class Spawn implements KlabMessage {
-		IIdentity identity;
+		
+		IActorIdentity<KlabMessage> identity;
 		ActorRef<KlabMessage> ref;
 		ActorRef<KlabMessage> replyTo; 
 		
-		public Spawn(IIdentity identity, ActorRef<KlabMessage> replyTo) {
+		public Spawn(IActorIdentity<KlabMessage> identity, ActorRef<KlabMessage> replyTo) {
 			this.identity = identity;
 			this.replyTo = replyTo;
 		}
-
-		public ActorRef<KlabMessage> getActor() {
-			return ref;
-		}
+		
 	}
 }

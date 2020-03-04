@@ -1,12 +1,10 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletionStage;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -26,7 +24,6 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
@@ -34,7 +31,6 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Path;
 
 import akka.actor.typed.ActorRef;
-import akka.actor.typed.javadsl.AskPattern;
 
 /**
  * The base class for all observations can only be instantiated as the empty
@@ -65,6 +61,9 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	protected List<ObservationChange> modificationsToReport = new ArrayList<>();
 	protected List<IModificationListener> modificationListeners = new ArrayList<>();
 	private ActorRef<KlabMessage> actor;
+
+	// tracks the setting of the actor so we can avoid the ask pattern
+	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
 
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
@@ -275,19 +274,22 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 			} else {
 				parent = (Observation) getRuntimeScope().getRootSubject();
 			}
-			
+
 			final ActorRef<KlabMessage> parentActor = parent.getActor();
 
-			CompletionStage<Spawn> result = AskPattern.ask(parentActor,
-					replyTo -> new Spawn(this, parentActor),
-					Duration.ofSeconds(3), Actors.INSTANCE.getSupervisor().scheduler());
+			parentActor.tell(new Spawn(this, parentActor));
 
-			try {
-				this.actor = result.toCompletableFuture().get().getActor();
-			} catch (Exception e) {
-				throw new KlabInternalErrorException(e);
+			/*
+			 * wait for this to succeed. Couldn't figure out the ask pattern. TODO when this
+			 * has a chance to fail (e.g. in a cluster situation), add a timeout.
+			 */
+			while (!this.actorSet.get()) {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					break;
+				}
 			}
-
 		}
 		return this.actor;
 	}
@@ -295,5 +297,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	@Override
 	public void load(IBehavior behavior) {
 		getActor().tell(new Load(behavior));
+	}
+
+	public void setActor(ActorRef<KlabMessage> actor) {
+		this.actor = actor;
+		this.actorSet.set(Boolean.TRUE);
 	}
 }
