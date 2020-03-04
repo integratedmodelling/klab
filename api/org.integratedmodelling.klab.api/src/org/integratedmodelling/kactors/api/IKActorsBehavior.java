@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
  * @author Ferd
  *
  */
-public interface IKActorsBehavior extends IKActorStatement {
+public interface IKActorsBehavior extends IKActorsStatement {
 
 	enum Type {
 		/**
@@ -50,6 +50,13 @@ public interface IKActorsBehavior extends IKActorStatement {
 	 */
 	Type getType();
 
+	/**
+	 * Where it comes from. Always a file resource for now.
+	 * 
+	 * @return
+	 */
 	File getFile();
+	
+	
 
 }

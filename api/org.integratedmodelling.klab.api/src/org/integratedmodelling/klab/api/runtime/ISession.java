@@ -19,7 +19,6 @@ import java.io.Closeable;
 import java.net.URL;
 import java.util.concurrent.Future;
 
-import org.integratedmodelling.klab.api.actors.IKlabActor;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;

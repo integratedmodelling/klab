@@ -15,7 +15,6 @@
  */
 package org.integratedmodelling.klab.api.observations;
 
-import org.integratedmodelling.klab.api.actors.IKlabActor;
 import org.integratedmodelling.klab.api.auth.IArtifactIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;

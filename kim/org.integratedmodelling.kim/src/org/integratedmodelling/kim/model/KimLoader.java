@@ -330,8 +330,14 @@ public class KimLoader implements IKimLoader {
 
 	@Override
 	public IKimNamespace add(Object namespaceResource) {
-
+		
 		File file = getFile(namespaceResource);
+		
+		if (file.toString().endsWith(".kactor")) {
+			System.out.println("HANDLE THIS NEW ACTOR FILE PLEASE");
+			return null;
+		}
+		
 		NamespaceLocation location = WorkspaceUtils.getNamespaceLocation(file);
 		if (location == null) {
 			throw new IllegalArgumentException(

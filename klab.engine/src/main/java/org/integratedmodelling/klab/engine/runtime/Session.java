@@ -161,7 +161,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
-	
+
 	/**
 	 * A scheduler to periodically collect observation and task garbage
 	 */
@@ -706,20 +706,22 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			} else {
 				new Thread() {
 
-	@Override
-	public void run() {
-		if (Resources.INSTANCE.importIntoResource(request.getImportUrl(), resource, getMonitor())) {
-			monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
-					((Resource) resource).getReference());
-		} else {
-			// TODO complain to client
+					@Override
+					public void run() {
+						if (Resources.INSTANCE.importIntoResource(request.getImportUrl(), resource, getMonitor())) {
+							monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
+									((Resource) resource).getReference());
+						} else {
+							// TODO complain to client
+						}
+					}
+
+				}.start();
+			}
+
+			// TODO
 		}
 	}
-
-	}.start();}
-
-	// TODO
-	}}
 
 	@MessageHandler
 	private void setRegionOfInterest(SpatialExtent extent) {
@@ -1070,11 +1072,20 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			break;
 
 		case CreateBehavior:
+			
 			file = project.createBehavior(request.getAssetId(),
 					"true".equals(request.getParameters().get(ProjectModificationRequest.LIBRARY_OPTION))
 							? IKActorsBehavior.Type.TRAITS
 							: IKActorsBehavior.Type.BEHAVIOR,
 					false);
+			monitor.send(
+					Message.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateBehavior,
+							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
+									file))
+							.inResponseTo(message));
+
+			Resources.INSTANCE.getLoader().add(file);
+			
 			break;
 
 		case CreateProject:
@@ -1302,6 +1313,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@Override
 	public ActorRef<KlabMessage> getActor() {
 		if (this.actor == null) {
+			// TODO if we have a user behavior, which we should always have, the actor
+			// should be a child of the user actor.
 			this.actor = Actors.INSTANCE.createActor(SessionActor.create(this), this);
 		}
 		return this.actor;
@@ -1311,7 +1324,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public void load(IBehavior behavior) {
 		getActor().tell(new SystemBehavior.Load(behavior));
 	}
-	
+
 	public void instrument(ActorRef<KlabMessage> actor) {
 		this.actor = actor;
 	}

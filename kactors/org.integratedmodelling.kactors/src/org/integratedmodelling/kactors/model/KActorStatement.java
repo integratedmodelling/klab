@@ -7,13 +7,13 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.validation.Issue;
-import org.integratedmodelling.kactors.api.IKActorStatement;
+import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class KActorStatement implements IKActorStatement {
+public class KActorStatement implements IKActorsStatement {
 
     // ACHTUNG if these are added to, ensure that the copy constructor is updated.
     protected int firstLine;

@@ -108,6 +108,17 @@ public enum KActors {
 	}
 	
 	/**
+	 * Get a behavior by name.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public IKActorsBehavior getBehavior(String id) {
+		BehaviorDescriptor desc = behaviors.get(id);
+		return desc == null ? null : desc.behavior;
+	}
+	
+	/**
 	 * Return all regular behaviors defined in the src/ directory alongside models for
 	 * the project.
 	 * 

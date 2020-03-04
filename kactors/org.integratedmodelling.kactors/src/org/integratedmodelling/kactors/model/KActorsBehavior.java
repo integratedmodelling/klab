@@ -1,10 +1,14 @@
 package org.integratedmodelling.kactors.model;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.Model;
+import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.model.KActors.BehaviorDescriptor;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimMetadata;
@@ -20,11 +24,29 @@ public class KActorsBehavior implements IKActorsBehavior {
 
 	String name;
 	private File file;
+	private List<IKActorsBehavior> imports = new ArrayList<>();
+	private List<IKActorsAction> actions = new ArrayList<>();
 	
 	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
-		this.name = model.getPreamble().getName();
+		if (model.getPreamble() != null) {
+			loadPreamble(model.getPreamble());
+		}
 		if (descriptor != null) {
 			this.file = descriptor.file;
+		}
+		for (Definition definition : model.getDefinitions()) {
+			actions.add(new KActorsAction(definition, this));
+		}
+	}
+
+	private void loadPreamble(Preamble preamble) {
+		this.name = preamble.getName();
+		// TODO the rest
+		for (String s : preamble.getImports()) {
+			IKActorsBehavior imported = KActors.INSTANCE.getBehavior(s);
+			if (imported != null) {
+				this.imports.add(imported);
+			}
 		}
 	}
 

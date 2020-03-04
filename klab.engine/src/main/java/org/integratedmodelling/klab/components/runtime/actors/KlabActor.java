@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -53,7 +54,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	protected ReceiveBuilder<KlabMessage> configure() {
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
-		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild);
+		return builder
+				.onMessage(Load.class, this::loadBehavior)
+				.onMessage(Spawn.class, this::createChild)
+				.onMessage(KActorsMessage.class, this::executeCall);
 	}
 
 	@Override
@@ -66,6 +70,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return Behaviors.same();
 	}
 
+	protected Behavior<KlabMessage> executeCall(KActorsMessage message) {
+		return Behaviors.same();
+	}
+	
 	/**
 	 * Set the appropriate actor in the identity. Asking end may wait until that is
 	 * done but we do not reply otherwise.
