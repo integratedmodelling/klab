@@ -357,15 +357,6 @@ public interface KactorsFactory extends EFactory
   Date createDate();
 
   /**
-   * Returns a new object of class '<em>Body</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Body</em>'.
-   * @generated
-   */
-  Body createBody();
-
-  /**
    * Returns a new object of class '<em>Group</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

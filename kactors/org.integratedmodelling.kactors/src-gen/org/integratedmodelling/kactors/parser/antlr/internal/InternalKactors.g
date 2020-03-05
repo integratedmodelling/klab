@@ -978,7 +978,7 @@ ruleMessageBody returns [EObject current=null]
 			}
 			{
 				$current = forceCreateModelElement(
-					grammarAccess.getMessageBodyAccess().getBodyAction_0(),
+					grammarAccess.getMessageBodyAccess().getMessageBodyAction_0(),
 					$current);
 			}
 		)

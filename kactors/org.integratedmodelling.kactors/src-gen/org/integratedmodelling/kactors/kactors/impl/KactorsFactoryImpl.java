@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
-import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
@@ -143,7 +142,6 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.REL_OPERATOR: return createREL_OPERATOR();
       case KactorsPackage.NUMBER: return createNumber();
       case KactorsPackage.DATE: return createDate();
-      case KactorsPackage.BODY: return createBody();
       case KactorsPackage.GROUP: return createGroup();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -626,18 +624,6 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     DateImpl date = new DateImpl();
     return date;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Body createBody()
-  {
-    BodyImpl body = new BodyImpl();
-    return body;
   }
 
   /**

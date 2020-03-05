@@ -493,21 +493,21 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	public class MessageBodyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.MessageBody");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cBodyAction_0 = (Action)cGroup.eContents().get(0);
+		private final Action cMessageBodyAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cListsAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cListsStatementListParserRuleCall_1_0 = (RuleCall)cListsAssignment_1.eContents().get(0);
 		
 		///**
 		// * Message body is as many statements of groups we want, ends at the next message or EOF.
 		// */ MessageBody:
-		//	{Body} lists+=StatementList*;
+		//	{MessageBody} lists+=StatementList*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{Body} lists+=StatementList*
+		//{MessageBody} lists+=StatementList*
 		public Group getGroup() { return cGroup; }
 		
-		//{Body}
-		public Action getBodyAction_0() { return cBodyAction_0; }
+		//{MessageBody}
+		public Action getMessageBodyAction_0() { return cMessageBodyAction_0; }
 		
 		//lists+=StatementList*
 		public Assignment getListsAssignment_1() { return cListsAssignment_1; }
@@ -3541,7 +3541,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	///**
 	// * Message body is as many statements of groups we want, ends at the next message or EOF.
 	// */ MessageBody:
-	//	{Body} lists+=StatementList*;
+	//	{MessageBody} lists+=StatementList*;
 	public MessageBodyElements getMessageBodyAccess() {
 		return pMessageBody;
 	}

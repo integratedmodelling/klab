@@ -11,7 +11,6 @@ import org.eclipse.emf.ecore.util.Switch;
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
-import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
@@ -368,14 +367,6 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         Date date = (Date)theEObject;
         T result = caseDate(date);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KactorsPackage.BODY:
-      {
-        Body body = (Body)theEObject;
-        T result = caseBody(body);
-        if (result == null) result = caseMessageBody(body);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -980,22 +971,6 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseDate(Date object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Body</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Body</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseBody(Body object)
   {
     return null;
   }

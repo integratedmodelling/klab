@@ -17,7 +17,6 @@ import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransi
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
-import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
@@ -35,6 +34,7 @@ import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
 import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
+import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
@@ -75,9 +75,6 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.ARGUMENT_DECLARATION:
 				sequence_ArgumentDeclaration(context, (ArgumentDeclaration) semanticObject); 
-				return; 
-			case KactorsPackage.BODY:
-				sequence_MessageBody(context, (Body) semanticObject); 
 				return; 
 			case KactorsPackage.CLASSIFIER:
 				sequence_Classifier(context, (Classifier) semanticObject); 
@@ -133,6 +130,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.MATCH:
 				sequence_Match(context, (Match) semanticObject); 
+				return; 
+			case KactorsPackage.MESSAGE_BODY:
+				sequence_MessageBody(context, (MessageBody) semanticObject); 
 				return; 
 			case KactorsPackage.MESSAGE_CALL:
 				sequence_MessageCall(context, (MessageCall) semanticObject); 
@@ -469,12 +469,12 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
-	 *     MessageBody returns Body
+	 *     MessageBody returns MessageBody
 	 *
 	 * Constraint:
 	 *     lists+=StatementList*
 	 */
-	protected void sequence_MessageBody(ISerializationContext context, Body semanticObject) {
+	protected void sequence_MessageBody(ISerializationContext context, MessageBody semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

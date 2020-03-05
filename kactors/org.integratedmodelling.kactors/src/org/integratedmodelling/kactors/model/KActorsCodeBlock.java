@@ -1,0 +1,22 @@
+package org.integratedmodelling.kactors.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.integratedmodelling.kactors.kactors.StatementList;
+
+/**
+ * A code block is a list of concurrent sequences, each being a list of serial
+ * calls representing a single statement.
+ * 
+ * @author Ferd
+ *
+ */
+public class KActorsCodeBlock {
+
+	List<List<KActorsCall>> sequences = new ArrayList<>();
+
+	public KActorsCodeBlock(List<StatementList> statements) {
+		
+	}
+}

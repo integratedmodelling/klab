@@ -39,7 +39,7 @@ ArgumentDeclaration: {ArgumentDeclaration}
 /**
  * Message body is as many statements of groups we want, ends at the next message or EOF.
  */
-MessageBody: {Body} lists+=StatementList*;
+MessageBody: {MessageBody} lists+=StatementList*;
 
 MessageCall:
 	(name=PathName ('(' (parameters=ParameterList)? ')')? |

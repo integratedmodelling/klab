@@ -20,7 +20,7 @@ import org.integratedmodelling.kim.api.IKimMetadata;
  * @author Ferd
  *
  */
-public class KActorsBehavior implements IKActorsBehavior {
+public class KActorsBehavior extends KActorStatement implements IKActorsBehavior  {
 
 	String name;
 	private File file;
@@ -73,29 +73,29 @@ public class KActorsBehavior implements IKActorsBehavior {
 		return null;
 	}
 
-	@Override
-	public int getFirstLine() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getLastLine() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getFirstCharOffset() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getLastCharOffset() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+//	@Override
+//	public int getFirstLine() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+//
+//	@Override
+//	public int getLastLine() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+//
+//	@Override
+//	public int getFirstCharOffset() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+//
+//	@Override
+//	public int getLastCharOffset() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
 
 	@Override
 	public List<IKimAnnotation> getAnnotations() {
@@ -103,34 +103,34 @@ public class KActorsBehavior implements IKActorsBehavior {
 		return null;
 	}
 
-	@Override
-	public String getDeprecation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isDeprecated() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isErrors() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isWarnings() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public IKimMetadata getMetadata() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public String getDeprecation() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public boolean isDeprecated() {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
+//
+//	@Override
+//	public boolean isErrors() {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
+//
+//	@Override
+//	public boolean isWarnings() {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
+//
+//	@Override
+//	public IKimMetadata getMetadata() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 }

@@ -44,7 +44,9 @@
     <genClasses ecoreClass="Kactors.ecore#//ArgumentDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//ArgumentDeclaration/ids"/>
     </genClasses>
-    <genClasses ecoreClass="Kactors.ecore#//MessageBody"/>
+    <genClasses ecoreClass="Kactors.ecore#//MessageBody">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MessageBody/lists"/>
+    </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//MessageCall">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//MessageCall/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MessageCall/parameters"/>
@@ -254,9 +256,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Date/min"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Date/sec"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Date/ms"/>
-    </genClasses>
-    <genClasses ecoreClass="Kactors.ecore#//Body">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Body/lists"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Group">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Group/body"/>

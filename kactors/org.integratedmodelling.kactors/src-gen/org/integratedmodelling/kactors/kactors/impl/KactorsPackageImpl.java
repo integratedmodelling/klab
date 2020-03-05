@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
-import org.integratedmodelling.kactors.kactors.Body;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
@@ -318,13 +317,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass dateEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass bodyEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -731,6 +723,17 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   public EClass getMessageBody()
   {
     return messageBodyEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getMessageBody_Lists()
+  {
+    return (EReference)messageBodyEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2708,28 +2711,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EClass getBody()
-  {
-    return bodyEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getBody_Lists()
-  {
-    return (EReference)bodyEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EClass getGroup()
   {
     return groupEClass;
@@ -2822,6 +2803,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(argumentDeclarationEClass, ARGUMENT_DECLARATION__IDS);
 
     messageBodyEClass = createEClass(MESSAGE_BODY);
+    createEReference(messageBodyEClass, MESSAGE_BODY__LISTS);
 
     messageCallEClass = createEClass(MESSAGE_CALL);
     createEAttribute(messageCallEClass, MESSAGE_CALL__NAME);
@@ -3034,9 +3016,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(dateEClass, DATE__SEC);
     createEAttribute(dateEClass, DATE__MS);
 
-    bodyEClass = createEClass(BODY);
-    createEReference(bodyEClass, BODY__LISTS);
-
     groupEClass = createEClass(GROUP);
     createEReference(groupEClass, GROUP__BODY);
 
@@ -3074,7 +3053,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     // Add supertypes to classes
     statementGroupEClass.getESuperTypes().add(this.getMessageCall());
-    bodyEClass.getESuperTypes().add(this.getMessageBody());
     groupEClass.getESuperTypes().add(this.getStatementGroup());
 
     // Initialize classes and features; add operations and parameters
@@ -3112,6 +3090,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getArgumentDeclaration_Ids(), ecorePackage.getEString(), "ids", null, 0, -1, ArgumentDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(messageBodyEClass, MessageBody.class, "MessageBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMessageBody_Lists(), this.getStatementList(), null, "lists", null, 0, -1, MessageBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(messageCallEClass, MessageCall.class, "MessageCall", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMessageCall_Name(), ecorePackage.getEString(), "name", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3323,9 +3302,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getDate_Min(), ecorePackage.getEInt(), "min", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDate_Sec(), ecorePackage.getEInt(), "sec", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDate_Ms(), ecorePackage.getEInt(), "ms", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(bodyEClass, Body.class, "Body", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getBody_Lists(), this.getStatementList(), null, "lists", null, 0, -1, Body.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(groupEClass, Group.class, "Group", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getGroup_Body(), this.getMessageBody(), null, "body", null, 0, 1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

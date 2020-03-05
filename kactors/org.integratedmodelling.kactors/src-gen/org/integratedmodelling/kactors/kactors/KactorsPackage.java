@@ -370,13 +370,22 @@ public interface KactorsPackage extends EPackage
   int MESSAGE_BODY = 4;
 
   /**
+   * The feature id for the '<em><b>Lists</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MESSAGE_BODY__LISTS = 0;
+
+  /**
    * The number of structural features of the '<em>Message Body</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MESSAGE_BODY_FEATURE_COUNT = 0;
+  int MESSAGE_BODY_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl <em>Message Call</em>}' class.
@@ -2337,34 +2346,6 @@ public interface KactorsPackage extends EPackage
   int DATE_FEATURE_COUNT = 8;
 
   /**
-   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.BodyImpl <em>Body</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kactors.kactors.impl.BodyImpl
-   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getBody()
-   * @generated
-   */
-  int BODY = 37;
-
-  /**
-   * The feature id for the '<em><b>Lists</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int BODY__LISTS = MESSAGE_BODY_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Body</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int BODY_FEATURE_COUNT = MESSAGE_BODY_FEATURE_COUNT + 1;
-
-  /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.GroupImpl <em>Group</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2372,7 +2353,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getGroup()
    * @generated
    */
-  int GROUP = 38;
+  int GROUP = 37;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2427,7 +2408,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 39;
+  int UNIT_OP = 38;
 
 
   /**
@@ -2754,6 +2735,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EClass getMessageBody();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.MessageBody#getLists <em>Lists</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Lists</em>'.
+   * @see org.integratedmodelling.kactors.kactors.MessageBody#getLists()
+   * @see #getMessageBody()
+   * @generated
+   */
+  EReference getMessageBody_Lists();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.MessageCall <em>Message Call</em>}'.
@@ -4693,27 +4685,6 @@ public interface KactorsPackage extends EPackage
   EAttribute getDate_Ms();
 
   /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Body <em>Body</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Body</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Body
-   * @generated
-   */
-  EClass getBody();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Body#getLists <em>Lists</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Lists</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Body#getLists()
-   * @see #getBody()
-   * @generated
-   */
-  EReference getBody_Lists();
-
-  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Group <em>Group</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5016,6 +4987,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EClass MESSAGE_BODY = eINSTANCE.getMessageBody();
+
+    /**
+     * The meta object literal for the '<em><b>Lists</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MESSAGE_BODY__LISTS = eINSTANCE.getMessageBody_Lists();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl <em>Message Call</em>}' class.
@@ -6512,24 +6491,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute DATE__MS = eINSTANCE.getDate_Ms();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.BodyImpl <em>Body</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kactors.kactors.impl.BodyImpl
-     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getBody()
-     * @generated
-     */
-    EClass BODY = eINSTANCE.getBody();
-
-    /**
-     * The meta object literal for the '<em><b>Lists</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference BODY__LISTS = eINSTANCE.getBody_Lists();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.GroupImpl <em>Group</em>}' class.

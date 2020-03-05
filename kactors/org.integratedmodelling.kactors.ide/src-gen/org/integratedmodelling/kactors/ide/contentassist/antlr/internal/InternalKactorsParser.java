@@ -14134,7 +14134,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:3832:2: ()
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getMessageBodyAccess().getBodyAction_0()); 
+               before(grammarAccess.getMessageBodyAccess().getMessageBodyAction_0()); 
             }
             // InternalKactors.g:3833:2: ()
             // InternalKactors.g:3833:3: 
@@ -14142,7 +14142,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getMessageBodyAccess().getBodyAction_0()); 
+               after(grammarAccess.getMessageBodyAccess().getMessageBodyAction_0()); 
             }
 
             }

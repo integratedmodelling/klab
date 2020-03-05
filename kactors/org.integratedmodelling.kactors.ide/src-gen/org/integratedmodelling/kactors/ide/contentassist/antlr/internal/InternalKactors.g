@@ -3829,9 +3829,9 @@ rule__MessageBody__Group__0__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMessageBodyAccess().getBodyAction_0()); }
+	{ before(grammarAccess.getMessageBodyAccess().getMessageBodyAction_0()); }
 	()
-	{ after(grammarAccess.getMessageBodyAccess().getBodyAction_0()); }
+	{ after(grammarAccess.getMessageBodyAccess().getMessageBodyAction_0()); }
 )
 ;
 finally {

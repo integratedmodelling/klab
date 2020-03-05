@@ -38,6 +38,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	}
 
+	protected void waitForCompletion(KlabMessage message) {
+		
+	}
+	
 	protected IIdentity getIdentity() {
 		return this.identity;
 	}

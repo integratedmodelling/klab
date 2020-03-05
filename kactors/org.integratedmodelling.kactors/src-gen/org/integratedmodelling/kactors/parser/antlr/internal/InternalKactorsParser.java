@@ -2649,7 +2649,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
             if ( state.backtracking==0 ) {
 
               				current = forceCreateModelElement(
-              					grammarAccess.getMessageBodyAccess().getBodyAction_0(),
+              					grammarAccess.getMessageBodyAccess().getMessageBodyAction_0(),
               					current);
               			
             }
