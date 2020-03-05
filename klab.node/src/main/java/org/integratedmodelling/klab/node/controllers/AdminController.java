@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.node.controllers;
 
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.common.monitoring.Ticket;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.node.auth.Role;
@@ -27,7 +28,10 @@ public class AdminController {
 	@GetMapping(value = API.NODE.ADMIN.COMPONENT_SETUP, produces = "application/json")
 	public TicketResponse.Ticket setupComponent(@PathVariable String component) {
 		Component comp = Extensions.INSTANCE.getComponent(component);
-		return TicketManager.encode(comp.setup());
+		if (comp != null) {
+			return TicketManager.encode(comp.setup());
+		}
+		return null;
 	}
 
 	public String getProperty() {
