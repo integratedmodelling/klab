@@ -25,7 +25,7 @@ public interface TaskService {
 	public abstract void closeTask(Task task, TaskStatus status);
 	public abstract void deleteTask(String id);
 	public abstract Task acceptTask(String id, HttpServletRequest request);
-	public abstract Task denyTask(String id, HttpServletRequest request);
+	public abstract Task denyTask(String id, HttpServletRequest request, String deniedMessage);
 	public abstract Optional<Task> getTask(String id);
 	public abstract List<Task> getTasks();
 	public abstract List<Task> getTasks(Class<? extends Task> clazz);

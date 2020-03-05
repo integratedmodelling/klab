@@ -1,12 +1,14 @@
 package org.integratedmodelling.klab.hub.tasks.controllers;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
+import org.integratedmodelling.klab.hub.tasks.ModifyGroupsTask;
+import org.integratedmodelling.klab.hub.tasks.RemoveGroupTask;
 import org.integratedmodelling.klab.hub.tasks.Task;
 import org.integratedmodelling.klab.hub.tasks.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.services.TaskService;
@@ -15,7 +17,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,44 +29,61 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RequestMapping("/api/v2/tasks")
 @RestController
-public class GroupsRequestController {
+public class ModifyGroupsController {
 	
 	@Autowired
 	TaskService service;
 	
-	@PostMapping(value= "/{id}", produces = "application/json", params="request-groups")
-	@PreAuthorize("authentication.getPrincipal() == #requestee or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
+	@PostMapping(value= "", produces = "application/json", params="request-groups")
+	@PreAuthorize("authentication.principal == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> requestGroupsResponse(
-			@PathVariable("id") String requestee,
+			@RequestParam("request-groups") String username,
+			@RequestBody List<String> groupNames,
+			HttpServletRequest request,
+			UriComponentsBuilder b) {
+		List<Task> tasks = service.createTasks(
+				GroupRequestTask.class,
+				new ModifyGroupsTask.Parameters(request, username, groupNames, GroupRequestTask.class));
+	    return new ResponseEntity<>(tasks, HttpStatus.ACCEPTED);
+	}
+	
+	@PostMapping(value= "", produces = "application/json", params="remove-groups")
+	@PreAuthorize("authentication.principal == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
+	public ResponseEntity<?> removeGroupsResponse(
+			@RequestParam("remove-groups") String username,
 			@RequestBody List<String> groupNames,
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
 		
 		List<Task> tasks = service.createTasks(
-				GroupRequestTask.class,
-				new GroupRequestTask.Parameters(requestee, request, groupNames));
-	    return new ResponseEntity<>(tasks, HttpStatus.CREATED);
+				RemoveGroupTask.class,
+				new ModifyGroupsTask.Parameters(request, username, groupNames, RemoveGroupTask.class));
+	    return new ResponseEntity<>(tasks, HttpStatus.ACCEPTED);
 	}
 	
-	@PostMapping(value= "/{id}", produces = "application/json", params= {"request-groups", "accept"})
+	@PostMapping(value= "/{id}", produces = "application/json", params= {"accept", "deniedMessage"})
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> requestGroupsDecision(
 			@PathVariable("id") String id,
 			@RequestParam("accept") Boolean decision,
+			@RequestParam(value="deniedMessage", required=false) Optional<String> deniedMessage,
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
-		
+		Task task;
 		if (decision) {
-	    	service.acceptTask(id, request);
+	    	task = service.acceptTask(id, request);
 	    } else {
-	    	service.denyTask(id, request);
+	    	task = service.denyTask(id, request, deniedMessage.isPresent() ? deniedMessage.get() : null);
 	    }
 	    
 		UriComponents uriComponents = b.path("/api/v2/tasks/{id}").buildAndExpand(id);
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setLocation(uriComponents.toUri());
-	
-	    return new ResponseEntity<Void>(headers, HttpStatus.CREATED); 	 
+	    if (task.getStatus() == TaskStatus.accepted) {
+	    	return new ResponseEntity<Void>(headers, HttpStatus.ACCEPTED);
+	    } else {
+	    	return new ResponseEntity<String>(task.getDeniedMessage() == null ? "Task denied" : task.getDeniedMessage(), headers, HttpStatus.ACCEPTED);
+	    }
 	}
 	/*
 	@GetMapping(value="", produces = "application/json", params="request-groups")

@@ -50,11 +50,14 @@ public class TaskServiceImpl implements TaskService{
 	}
 
 	@Override
-	public Task denyTask(String id, HttpServletRequest request) {
+	public Task denyTask(String id, HttpServletRequest request, String deniedMessage) {
 		return doAction(id, request, Actions.DENY);
 	}
 	
 	private Task doAction(String id, HttpServletRequest request, Actions action) {
+		return doAction(id, request, action, null);
+	}
+	private Task doAction(String id, HttpServletRequest request, Actions action, String deniedMessage) {
 		Optional<Task> optTask = getTask(id);
 		if (optTask.isPresent()) {
 			Task task = optTask.get();
@@ -63,7 +66,7 @@ public class TaskServiceImpl implements TaskService{
 					if (action == Actions.ACCEPT) {
 						task.acceptTaskAction(request);
 					} else if (action == Actions.DENY) {
-						task.denyTaskAction(request);
+						task.denyTaskAction(request, deniedMessage);
 					}  
 					closeTask(task, task.getStatus());
 					List<Task> next = task.getNext();

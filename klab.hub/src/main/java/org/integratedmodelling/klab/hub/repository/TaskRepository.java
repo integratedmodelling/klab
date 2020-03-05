@@ -16,8 +16,6 @@ public interface TaskRepository extends MongoRepository<Task, ObjectId>{
 	
 	Optional<Task> findById(String id);
 	
-	List<Task> findByRequesteeIgnoreCase(String username);
-	
 	List<Task> findByStatus(TaskStatus status);
 	
 	@Query(value="{ '_class' : ?0, 'token' : ?1 }")

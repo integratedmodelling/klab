@@ -1,0 +1,152 @@
+/**
+ * 
+ */
+package org.integratedmodelling.klab.hub.tasks;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.users.GroupEntry;
+import org.integratedmodelling.klab.hub.users.Role;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+/**
+ * @author Enrico Girotto
+ *
+ */
+public abstract class ModifyGroupsTask extends Task {
+
+public static class Parameters extends TaskParameters {
+		
+		String username;
+		List<String> groupNames;
+		 Class<? extends ModifyGroupsTask> clazz;
+		
+		public Parameters(HttpServletRequest request, String username, List<String> groupNames, Class<? extends ModifyGroupsTask> clazz) {
+			super(request);
+			this.username = username;
+			this.groupNames = groupNames;
+			this.clazz = clazz;
+		}
+	}
+	
+	@Component
+	public static class Builder extends TaskBuilder {
+		
+		@Autowired
+		MongoGroupRepository groupRepository;
+		@Autowired
+		UserRepository userRepository;
+		
+		@Override
+		public List<Task> build(TaskParameters parameters) {
+			
+			ModifyGroupsTask.Parameters param;
+			if (parameters instanceof ModifyGroupsTask.Parameters) {
+				param = (ModifyGroupsTask.Parameters)parameters;
+			} else {
+				throw new ClassCastException();
+			}
+			ArrayList<Task> ret = new ArrayList<Task>(2);
+			
+			Set<GroupEntry> optIn = new HashSet<>();
+			Set<GroupEntry> requestGroups = new HashSet<GroupEntry>();
+			
+			List<Boolean> exists = param.groupNames.stream()
+					.map(groupRepository::existsByGroupNameIgnoreCase)
+					.collect(Collectors.toList());
+			
+			if(exists.contains(false) | param.groupNames.size() == 0) {
+				throw new BadRequestException("A requested Group does not exist or no groups requested");
+			}
+			for (String groupName : param.groupNames) {
+				groupRepository
+					.findByGroupNameIgnoreCase(groupName)
+					.filter(group -> param.getRequest().isUserInRole(group.getRoleRequirement().toString()))
+					.ifPresent(group -> optIn.add(new GroupEntry(group)));
+				
+				groupRepository
+					.findByGroupNameIgnoreCase(groupName)
+					.filter(group -> !param.getRequest().isUserInRole(group.getRoleRequirement().toString()))
+					.ifPresent(group -> requestGroups.add(new GroupEntry(group)));
+			}
+			Constructor<? extends ModifyGroupsTask> constructor = null;
+			try {
+				constructor = param.clazz.getConstructor(String.class, Set.class);
+			} catch (IllegalArgumentException
+					| NoSuchMethodException | SecurityException e) {
+				throw new RuntimeException("Problem creating modify groups task", e);
+			}
+			try {
+				if(!optIn.isEmpty()) {
+					Task optInTask = constructor.newInstance(param.username, optIn);
+					optInTask.setAutoAccepted(true);
+					optInTask.setRoleRequirement(optIn.iterator().next().getGroup().getRoleRequirement());
+					ret.add(optInTask);
+				}
+				if(!requestGroups.isEmpty()) {
+					Task requestGroupsTask = constructor.newInstance(param.username, requestGroups);
+					requestGroupsTask.setRoleRequirement(Role.ROLE_ADMINISTRATOR);
+					ret.add(requestGroupsTask);
+				}
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				throw new RuntimeException("Problem creating modify groups task", e);
+			}
+			return ret;
+		}
+		
+	}
+	
+	String username;
+	Set<GroupEntry> requestGroups;
+	
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return this.username;
+	}
+	
+	/**
+	 * @return the requestGroups
+	 */
+	public Set<GroupEntry> getRequestGroups() {
+		return requestGroups;
+	}
+
+	protected ModifyGroupsTask(String username, Set<GroupEntry> requestGroups) {
+		super();
+		this.username = username;
+		this.requestGroups = requestGroups;
+	}
+
+	@Override
+	public void acceptTaskAction(HttpServletRequest request) {
+		if (request.isUserInRole(this.getRoleRequirement())) {
+			getCommand().executeAccept(this);
+		}
+	}
+
+	@Override
+	public void denyTaskAction(HttpServletRequest request, String deniedMessage) {
+		if (request.isUserInRole(this.getRoleRequirement())) {
+			getCommand().executeDeny(this, deniedMessage);
+		}
+	}
+
+	protected abstract TaskCommand getCommand();
+
+}

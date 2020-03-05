@@ -6,13 +6,15 @@ import java.util.List;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotEmpty;
 
 import org.integratedmodelling.klab.hub.users.Role;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Document(collection = "Tasks")
 public abstract class Task {
@@ -20,10 +22,7 @@ public abstract class Task {
 	@Id
 	String id;
 	
-	@NotEmpty
-	String requestee;
-	
-    DateTime issued;
+	DateTime issued;
     
     DateTime closed;
     
@@ -35,6 +34,8 @@ public abstract class Task {
     
     @Enumerated(EnumType.STRING)
     TaskStatus parentStatus;
+    
+    String deniedMessage;
     
     DateTime expirationDate;
     
@@ -49,23 +50,27 @@ public abstract class Task {
      */
     boolean autoAccepted;
     
-    public Task(String requestee) {
-    	this(requestee, null, null);
+    @JsonInclude()
+    @Transient
+    private TaskType type;
+    
+    protected Task() {
+    	this(null, null);
     }
     
-    public Task(String requestee, Role roleRequirement) {
-    	this(requestee, roleRequirement, null);
+    protected Task(Role roleRequirement) {
+    	this(roleRequirement, null);
     }
     
-    public Task(String requestee, TaskStatus parentStatus) {
-    	this(requestee, null, parentStatus);
+    protected Task(TaskStatus parentStatus) {
+    	this(null, parentStatus);
     }
-    public Task(String requestee, Role roleRequirement, TaskStatus parentStatus) {
-    	this.requestee = requestee;
+    protected Task(Role roleRequirement, TaskStatus parentStatus) {
     	this.roleRequirement = roleRequirement;
     	this.setIssued();
 		this.setStatus(TaskStatus.pending);
 		this.setParentStatus(parentStatus);
+		this.setType(); // force to set the type
     }
 
 	public String getId() {
@@ -74,14 +79,6 @@ public abstract class Task {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getRequestee() {
-		return requestee;
-	}
-
-	public void setRequestee(String requestee) {
-		this.requestee = requestee;
 	}
 
 	public DateTime getIssued() {
@@ -147,6 +144,20 @@ public abstract class Task {
 	}
 
 	/**
+	 * @return the deniedMessage
+	 */
+	public String getDeniedMessage() {
+		return deniedMessage;
+	}
+
+	/**
+	 * @param deniedMessage the deniedMessage to set
+	 */
+	public void setDeniedMessage(String deniedMessage) {
+		this.deniedMessage = deniedMessage;
+	}
+
+	/**
 	 * @return the next
 	 */
 	public List<Task> getNext() {
@@ -165,6 +176,7 @@ public abstract class Task {
 	 * The status of task after this operation is the final one, it will be change inside the method 
 	 * The new status is not persisted
 	 * @param request the request, used if needed to check roles
+	 * @throws DeniedException 
 	 */
 	abstract public void acceptTaskAction(HttpServletRequest request);
 	/**
@@ -172,6 +184,24 @@ public abstract class Task {
 	 * The status of task after this operation is the final one, it must be changed inside the method
 	 * The new status is not persisted
 	 * @param request the request, used if needed to check roles
+	 * @return message is necessary or null
 	 */
-	abstract public void denyTaskAction(HttpServletRequest request);
+	abstract public void denyTaskAction(HttpServletRequest request, String message);
+	
+	/**
+	 * Return the type
+	 * @return the TaskType, 
+	 */
+	public TaskType getType() {
+		return type;
+	}
+	
+	public void setType(TaskType type) {
+		this.type = type;
+	}
+	
+	/**
+	 * Added to force inmplementation to set the type, is called in constructor
+	 */
+	public abstract void setType();
 }

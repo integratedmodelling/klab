@@ -24,8 +24,8 @@ public class CreateGroupTask extends Task{
 	public static class Parameters extends TaskParameters.TaskParametersWithRoleRequirement {
 		MongoGroup group;
 		
-		public Parameters(String requestee, Role roleRequirement, HttpServletRequest request, MongoGroup group) {
-			super(requestee, request, roleRequirement);
+		public Parameters(Role roleRequirement, HttpServletRequest request, MongoGroup group) {
+			super(request, roleRequirement);
 			this.group = group;
 		}
 		/**
@@ -65,7 +65,7 @@ public class CreateGroupTask extends Task{
 			if(exists) {
 				throw new BadRequestException("Group by that name already present.");
 			}
-			ret.add(new CreateGroupTask(param.getRequestee(), param.getRoleRequirement(), param.getGroup()));
+			ret.add(new CreateGroupTask(param.getRoleRequirement(), param.getGroup()));
 			return ret;
 		}
 		
@@ -89,16 +89,11 @@ public class CreateGroupTask extends Task{
 			task.setStatus(TaskStatus.accepted);
 		}
 
-		@Override
-		public void executeDeny(Task task) {
-			task.setStatus(TaskStatus.denied);
-		}
-
 	}
 
 	
-	private CreateGroupTask(String requestee, Role roleRequirement, MongoGroup group) {
-		super(requestee, roleRequirement);
+	private CreateGroupTask(Role roleRequirement, MongoGroup group) {
+		super(roleRequirement);
 		this.group = group;
 	}
 
@@ -121,10 +116,15 @@ public class CreateGroupTask extends Task{
 	}
 
 	@Override
-	public void denyTaskAction(HttpServletRequest request) {
+	public void denyTaskAction(HttpServletRequest request, String deniedMessage) {
 		if (request.isUserInRole(this.getRoleRequirement())) {
-			command.executeDeny(this);
+			command.executeDeny(this, deniedMessage);
 		}
+	}
+
+	@Override
+	public void setType() {
+		this.setType(TaskType.createGroup);
 	}
 
 }

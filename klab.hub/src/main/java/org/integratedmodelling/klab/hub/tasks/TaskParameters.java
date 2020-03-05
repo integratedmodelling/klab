@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.hub.users.Role;
  */
 public abstract class TaskParameters {
 	
-	private String requestee;
 	/**
 	 * The http request neede to make operation with role.
 	 * Sometimes is not needed, but we pass to create task, so we give it to the task even if is not used
@@ -22,25 +21,10 @@ public abstract class TaskParameters {
 	private HttpServletRequest request;
 	
 	
-	public TaskParameters(String requestee, HttpServletRequest request) {
-		this.requestee = requestee;
+	public TaskParameters(HttpServletRequest request) {
 		this.request = request;
 	}
 
-	/**
-	 * @return the requestee
-	 */
-	public String getRequestee() {
-		return requestee;
-	}
-
-	/**
-	 * @param requestee the requestee to set
-	 */
-	public void setRequestee(String requestee) {
-		this.requestee = requestee;
-	}
-	
 	/**
 	 * @return the request
 	 */
@@ -52,8 +36,8 @@ public abstract class TaskParameters {
 		
 		private Role roleRequirement;
 		
-		public TaskParametersWithRoleRequirement(String requestee, HttpServletRequest request, Role roleRequirement) {
-			super(requestee, request);
+		public TaskParametersWithRoleRequirement(HttpServletRequest request, Role roleRequirement) {
+			super(request);
 			this.roleRequirement = roleRequirement;
 		}
 

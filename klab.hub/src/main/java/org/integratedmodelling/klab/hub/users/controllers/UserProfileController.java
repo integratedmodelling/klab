@@ -50,7 +50,8 @@ public class UserProfileController {
 	}
 	
 	@GetMapping("/me")
-	@PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
+	// TODO this is call from single user, not need PreAuthorize
+	// @PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> getCurrentUserProfile() {
 		ProfileResource profile = userService.getCurrentUserProfile();
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);

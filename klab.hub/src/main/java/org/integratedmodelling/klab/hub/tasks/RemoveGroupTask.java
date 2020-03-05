@@ -1,54 +1,72 @@
 package org.integratedmodelling.klab.hub.tasks;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
-import org.springframework.data.annotation.Reference;
+import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
+import org.integratedmodelling.klab.hub.users.GroupEntry;
+import org.integratedmodelling.klab.hub.users.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-public class RemoveGroupTask extends Task{
+public class RemoveGroupTask extends ModifyGroupsTask{
 	
-	@Reference
-	ClickbackToken token;
-	
-	@Component
-	public static class Builder extends TaskBuilder {
+	private static TaskCommand command = CommandFactory.getCommand(RemoveGroupTask.class);
 
+	@Component
+	public static class Command extends TaskCommand {
+		
+		@Autowired
+		private UserRepository userRepository;
+		
 		@Override
-		public List<Task> build(TaskParameters parameters) {
-			// TODO Auto-generated method stub
-			return null;
+		public void executeAccept(Task task) {
+			RemoveGroupTask rgt = (RemoveGroupTask)task;
+			User user = userRepository.findByUsernameIgnoreCase(rgt.getUsername()).get();
+			
+			Set<GroupEntry> currentGroupEntries = user.getGroupEntries();
+			
+			Set<String> currentGroupNameList = new HashSet<>();
+			currentGroupEntries.forEach(e -> {
+				currentGroupNameList.add(e.getGroupName());
+			});
+			
+			
+			Set<String> removeGroupNameList = new HashSet<>();
+			rgt.getRequestGroups().forEach(e -> {
+				removeGroupNameList.add(e.getGroupName());
+			});
+			
+			for (String groupName : removeGroupNameList) {
+				if(currentGroupNameList.contains(groupName)) {
+					currentGroupEntries.stream()
+							.filter(e -> e.getGroupName().equals(groupName))
+							.findFirst()
+							.ifPresent(grpEntry -> currentGroupEntries.remove(grpEntry));
+				} else {
+					executeDeny(task, "Try to remove unassigned group "+groupName+" to user "+user.getUsername());
+				}
+			}
+			user.setGroupEntries(currentGroupEntries);
+			userRepository.save(user);
+			task.setStatus(TaskStatus.accepted);
 		}
-		
-	}
-	
-	@Component
-	public static class Command extends TaskCommand {}
 
-	public RemoveGroupTask(String requestee) {
-		super(requestee);
-	}
-	
-	public ClickbackToken getToken() {
-		return token;
 	}
 
-	public void setToken(ClickbackToken token) {
-		this.token = token;
+	public RemoveGroupTask(String username, Set<GroupEntry> requestGroups) {
+		super(username, requestGroups);
+	}
+	
+		@Override
+	public void setType() {
+		setType(TaskType.removeGroupRequest);
 	}
 
 	@Override
-	public void acceptTaskAction(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void denyTaskAction(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		
+	protected TaskCommand getCommand() {
+		return command;
 	}
 
 }
