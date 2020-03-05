@@ -34,14 +34,8 @@ public class WeatherComponent {
 	}
 
 	@Setup(asynchronous = true)
-	public boolean setupCRUStations() {
-		WeatherFactory.INSTANCE.setupCRUStations();
-		return true;
-	}
-
-	@Setup(asynchronous = true)
-	public boolean setupGHNCDStations() {
-		WeatherFactory.INSTANCE.setupGHCNDStations();
+	public boolean setupStations() {
+		WeatherFactory.INSTANCE.setup();
 		return true;
 	}
 
