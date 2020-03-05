@@ -53,6 +53,8 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FixedReader;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.URLUtils;
+import org.integratedmodelling.klab.utils.UntarUtils;
+import org.integratedmodelling.klab.utils.ZipUtils;
 import org.integratedmodelling.weather.WeatherComponent;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -60,6 +62,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
+import com.google.common.io.Files;
 import com.ibm.icu.util.Calendar;
 
 public enum WeatherFactory {
@@ -79,8 +82,11 @@ public enum WeatherFactory {
 	public static String[] ghcnd_archive_urls = new String[] {
 			"https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd_all.tar.gz" };
 
-	public static String[] GHCN_URLS = { "https://www1.ncdc.noaa.gov/pub/data/ghcn/daily",
-			"http://150.241.222.1/ghcn" };
+	public static String[] cru_archive_urls = new String[] {
+			"http://www.integratedmodelling.org/downloads/crugz.zip" };
+
+	public static String[] GHCN_URLS = { "https://www1.ncdc.noaa.gov/pub/data/ghcn/daily" };
+	
 	private CRUReader cruReader;
 
 	private final static String GHNCD_LAST_UPDATE_PROPERTY = "ghncd.catalog.update";
@@ -134,7 +140,7 @@ public enum WeatherFactory {
 			datasizeMap = db.treeMap("timestamps", Serializer.STRING, Serializer.LONG).createOrOpen();
 		}
 	}
-	
+
 	/**
 	 * Try getting the events file and putting it somewhere so we don't need to set
 	 * up from the outside.
@@ -361,8 +367,8 @@ public enum WeatherFactory {
 
 		final List<WeatherStation> ret = new ArrayList<>();
 
-		String query = "SELECT * FROM weatherstations WHERE ST_Intersects('" + ((Shape) context).getStandardizedGeometry()
-				+ "', location)";
+		String query = "SELECT * FROM weatherstations WHERE ST_Intersects('"
+				+ ((Shape) context).getStandardizedGeometry() + "', location)";
 		if (source != null && !source.equals("ALL")) {
 			switch (source) {
 			case "CRU":
@@ -436,63 +442,54 @@ public enum WeatherFactory {
 
 	public void setup() {
 
-		Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
+//		Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
 
-		if (properties.containsKey(CRU_CATALOG_LOCATION)) {
-			setupCRUStations(new File(properties.getProperty(CRU_CATALOG_LOCATION)), null);
-		}
-
-		try {
-			INSTANCE.setupGHCNDStation(new URL(GHCN_URLS[0]), null);
-		} catch (MalformedURLException e1) {
-			// give me a break
-		}
-
-		/**
-		 * This should be in a thread of its own
-		 */
+		setupCRUStations();
+		setupGHCNDStations();
 		setupTRRMEvents();
-
 		setupContributedStations();
 
-		/**
-		 * Local data are only used at initialization
-		 */
-		if (properties.containsKey(GHNCD_CATALOG_LOCATION)) {
-			WeatherStation.setLocalGHCNDLocation(new File(properties.getProperty(GHNCD_CATALOG_LOCATION)));
-		}
-
-		/**
-		 * This should be timed by a scheduler and split. Commit every 50 stations for
-		 * speed.
-		 */
-		int i = 0;
-		for (String id : stationIds) {
-			WeatherStation ws = INSTANCE.wbox.retrieve(id);
-			try {
-				if (ws.cacheData(false)) {
-					Logging.INSTANCE.info("Data for station " + ws.getId() + " updated to " + ws.getLastKnownYear());
-				}
-			} catch (Throwable e) {
-				Logging.INSTANCE.error("Weather station " + id + " data read failed: " + e.getMessage());
-			}
-
-			i++;
-
-			if ((i % 50) == 0) {
-				db.commit();
-			}
-		}
-
 		cruReader.finalizeRead();
-
-		// reentrant for repeated execution
-		WeatherStation.setLocalGHCNDLocation(null);
-
+//
+//		
+//		/**
+//		 * Local data are only used at initialization
+//		 */
+//		if (properties.containsKey(GHNCD_CATALOG_LOCATION)) {
+//			WeatherStation.setLocalGHCNDLocation(new File(properties.getProperty(GHNCD_CATALOG_LOCATION)));
+//		}
+//
+//		/**
+//		 * This should be timed by a scheduler and split. Commit every 50 stations for
+//		 * speed.
+//		 */
+//		int i = 0;
+//		for (String id : stationIds) {
+//			WeatherStation ws = INSTANCE.wbox.retrieve(id);
+//			try {
+//				if (ws.cacheData(false)) {
+//					Logging.INSTANCE.info("Data for station " + ws.getId() + " updated to " + ws.getLastKnownYear());
+//				}
+//			} catch (Throwable e) {
+//				Logging.INSTANCE.error("Weather station " + id + " data read failed: " + e.getMessage());
+//			}
+//
+//			i++;
+//
+//			if ((i % 50) == 0) {
+//				db.commit();
+//			}
+//		}
+//
+//		cruReader.finalizeRead();
+//
+//		// reentrant for repeated execution
+//		WeatherStation.setLocalGHCNDLocation(null);
+//
 	}
 
 	public static void main(String[] args) throws Exception {
-		INSTANCE.setup();
+		INSTANCE.setupCRUStations();
 	}
 
 	public long getStationsCount() {
@@ -508,15 +505,134 @@ public enum WeatherFactory {
 	}
 
 	public void setupCRUStations() {
-		// TODO Auto-generated method stub
-		// download data if needed and set properties
-		// call setup
+
+		Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
+		File cruDir = null;
+		if (!properties.containsKey(CRU_CATALOG_LOCATION)) {
+			cruDir = Configuration.INSTANCE.getDataPath("cru");
+			for (String url : cru_archive_urls) {
+				try {
+					File archive = File.createTempFile("cru", ".zip");
+					archive.deleteOnExit();
+					Logging.INSTANCE.info("Retrieving most recent CRU data archive from integratedmodelling.org");
+					URLUtils.copyChanneled(new URL(url), archive);
+					ZipUtils.unzip(archive, cruDir);
+					Logging.INSTANCE.info("CRU data archives locally available in " + cruDir);
+					properties.setProperty(CRU_CATALOG_LOCATION, cruDir.toString());
+					Extensions.INSTANCE.saveComponentProperties(WeatherComponent.ID);
+					break;
+				} catch (Throwable t) {
+					Logging.INSTANCE.error(t);
+				}
+			}
+		} else {
+			cruDir = new File(properties.getProperty(CRU_CATALOG_LOCATION));
+		}
+
+		setupCRUStations(cruDir, null);
 	}
 
 	public void setupGHCNDStations() {
-		// TODO Auto-generated method stub
-		// download data if needed, set properties
-		// call setup
+
+		Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
+		File catalogDir = null;
+		if (!properties.containsKey(GHNCD_CATALOG_LOCATION)) {
+			catalogDir = Configuration.INSTANCE.getDataPath("ghncd");
+			for (String url : ghcnd_archive_urls) {
+				try {
+
+					Logging.INSTANCE.info("Retrieving GHCND data from NOAA");
+					String siteUrl = url.substring(0, url.lastIndexOf('/'));
+					URLUtils.copyChanneled(new URL(siteUrl + "/ghcnd-inventory.txt"),
+							new File(catalogDir + File.separator + "ghcnd-inventory.txt"));
+					URLUtils.copyChanneled(new URL(siteUrl + "/ghcnd-stations.txt"),
+							new File(catalogDir + File.separator + "ghcnd-stations.txt"));
+					Logging.INSTANCE.info("Retrieved GHCND data inventory");
+					File destination = File.createTempFile("ghncd", ".tar.gz");
+					URLUtils.copyChanneled(new URL(url), destination);
+					Logging.INSTANCE.info("Retrieved GHCND daily data archive; unpacking in klab directory");
+					destination.deleteOnExit();
+					File destDir = Files.createTempDir();
+					destDir.deleteOnExit();
+					UntarUtils.unpack(destination, destDir, catalogDir);
+					properties.setProperty(GHNCD_CATALOG_LOCATION, catalogDir.toString());
+					Extensions.INSTANCE.saveComponentProperties(WeatherComponent.ID);
+					WeatherStation.setLocalGHCNDLocation(catalogDir);
+
+					/**
+					 * This should be timed by a scheduler and split. Commit every 50 stations for
+					 * speed.
+					 * 
+					 * CHECK this will also try to setup the CRU stations, so they should have been
+					 * generated before.
+					 */
+
+					Logging.INSTANCE.info("Building GHCND station database...");
+
+					setupGHCNDStation(catalogDir.toURI().toURL(), null);
+
+					Logging.INSTANCE.info("Storing weather data from daily observation files...");
+
+					int i = 0;
+					for (String id : stationIds) {
+						WeatherStation ws = INSTANCE.wbox.retrieve(id);
+						try {
+							if (ws.cacheData(false)) {
+								Logging.INSTANCE.info(
+										"Data for station " + ws.getId() + " updated to " + ws.getLastKnownYear());
+							}
+						} catch (Throwable e) {
+							Logging.INSTANCE.error("Weather station " + id + " data read failed: " + e.getMessage());
+						}
+
+						i++;
+
+						if ((i % 50) == 0) {
+							db.commit();
+						}
+					}
+					db.commit();
+
+					Logging.INSTANCE.info("All stations up to date.");
+
+					// don't use these any longer, go online for updates.
+					WeatherStation.setLocalGHCNDLocation(null);
+
+					break;
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
+		} else {
+
+			catalogDir = new File(properties.getProperty(GHNCD_CATALOG_LOCATION));
+			Logging.INSTANCE.info("GHCND data have been initialized before. Checking for updates.");
+
+			int i = 0;
+			for (String id : stationIds) {
+				WeatherStation ws = INSTANCE.wbox.retrieve(id);
+				try {
+					if (ws.cacheData(false)) {
+						Logging.INSTANCE
+								.info("Data for station " + ws.getId() + " updated to " + ws.getLastKnownYear());
+					}
+				} catch (Throwable e) {
+					Logging.INSTANCE.error("Weather station " + id + " data read failed: " + e.getMessage());
+				}
+
+				i++;
+
+				if ((i % 50) == 0) {
+					db.commit();
+				}
+			}
+
+			db.commit();
+
+			Logging.INSTANCE.info("All stations up to date.");
+
+		}
+
 	}
 
 }

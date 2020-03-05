@@ -311,7 +311,7 @@ public class WeatherStation implements ISpatial {
 					long size = -1;
 
 					if (localGHCNDLocation != null) {
-						dataFile = new File(localGHCNDLocation + File.separator + _id + ".dly");
+						dataFile = new File(localGHCNDLocation + File.separator + "ghcnd_all" + File.separator + _id + ".dly");
 						if (dataFile.exists()) {
 							size = dataFile.length();
 						}
