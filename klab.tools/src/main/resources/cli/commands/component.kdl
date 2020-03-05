@@ -1,0 +1,22 @@
+/**
+ * This file defines the contract for all commands recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace component
+
+// create ID
+// delete ID
+// list 
+// list ID
+
+void setup
+	"Start component setup in a given node. Requires admin permissions/"
+{
+	text node
+		"The node where to invoke the component setup."
+
+	class org.integratedmodelling.klab.clitool.console.commands.component.Setup
+}

@@ -479,11 +479,17 @@ public class Client extends RestTemplate implements IClient {
 			String params = "";
 			for (int i = 0; i < parameters.length; i++) {
 				String key = parameters[i].toString();
+				String nakedKey = key;
 				String val = parameters[++i].toString();
-				if (url.contains("{" + key + "}")) {
-					url = url.replace("{" + key + "}", val);
+				if (!(key.startsWith("{") && key.endsWith("}"))) {
+					key = "{" + key + "}";
 				} else {
-					params += (params.isEmpty() ? "" : "&") + key + "=" + Escape.forURL(val);
+					nakedKey = key.substring(1, key.length() - 1);
+				}
+				if (url.contains(key)) {
+					url = url.replace(key, val);
+				} else {
+					params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + Escape.forURL(val);
 				}
 			}
 			if (!params.isEmpty()) {
