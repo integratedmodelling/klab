@@ -47,14 +47,14 @@ public class TasksController {
 		HashMap<String, List<Task> > tasks = new HashMap<>();
 		if (type.isPresent()) {
 			if (status.isPresent()) {
-				tasks.put(type.get().getClazz().getSimpleName() + " tasks with status "+status.get(), service.getTasks(type.get().getClazz(), status.get()));
+				tasks.put("tasks", service.getTasks(type.get().getClazz(), status.get()));
 			} else {
-				tasks.put(type.get().getClazz().getSimpleName() + " tasks", service.getTasks(type.get().getClazz()));
+				tasks.put("tasks", service.getTasks(type.get().getClazz()));
 			}
 		} else if (status.isPresent()){
-			tasks.put("Tasks with status "+status.get(), service.getTasks(status.get()));
+			tasks.put("tasks", service.getTasks(status.get()));
 		} else {
-			tasks.put("Tasks", service.getTasks());
+			tasks.put("tasks", service.getTasks());
 		}
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;

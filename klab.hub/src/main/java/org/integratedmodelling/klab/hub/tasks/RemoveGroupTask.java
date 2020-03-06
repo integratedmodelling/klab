@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.tasks;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
@@ -26,17 +27,37 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 			User user = userRepository.findByUsernameIgnoreCase(rgt.getUsername()).get();
 			
 			Set<GroupEntry> currentGroupEntries = user.getGroupEntries();
+			Set<GroupEntry> toRemoveGroupEntries = rgt.getRequestGroups();
 			
-			Set<String> currentGroupNameList = new HashSet<>();
-			currentGroupEntries.forEach(e -> {
-				currentGroupNameList.add(e.getGroupName());
+			// check dependencies
+			Set<String> dependent = new HashSet<String>();
+			currentGroupEntries.forEach(group -> {
+				if (group.getGroup().getDependsOn() != null) {
+					group.getGroup().getDependsOn().forEach(dep -> {
+						toRemoveGroupEntries.stream()
+							.filter(ge -> ge.getGroup().getGroupName().equals(dep))
+							.findFirst()
+							.ifPresent(ge -> dependent.add(group.getGroup().getGroupName()));
+					});
+				}
 			});
+			if (dependent.size() > 0) {
+				for (String d : dependent) {
+					if (toRemoveGroupEntries.stream().filter(ge -> ge.getGroup().getGroupName().equals(d)).count() == 0) {
+						task.setStatus(TaskStatus.error);
+						task.addToLog("Try to remove a group that is dependecy of another");
+						return;
+					}
+				}
+			}
 			
+			Set<String> currentGroupNameList = currentGroupEntries.stream()
+					.map(GroupEntry::getGroupName)
+					.collect(Collectors.toCollection(HashSet<String>::new));
+			Set<String> removeGroupNameList = toRemoveGroupEntries.stream()
+					.map(GroupEntry::getGroupName)
+					.collect(Collectors.toCollection(HashSet<String>::new));
 			
-			Set<String> removeGroupNameList = new HashSet<>();
-			rgt.getRequestGroups().forEach(e -> {
-				removeGroupNameList.add(e.getGroupName());
-			});
 			boolean removed = false;
 			for (String groupName : removeGroupNameList) {
 				if(currentGroupNameList.contains(groupName)) {

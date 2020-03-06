@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.tasks;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
@@ -29,16 +30,15 @@ public class GroupRequestTask extends ModifyGroupsTask{
 			Set<GroupEntry> newGroupEntries = grt.getRequestGroups();
 			Set<GroupEntry> currentGroupEntries = user.getGroupEntries();
 			
-			Set<String> currentGroupNameList = new HashSet<>();
-			currentGroupEntries.forEach(e -> {
-				currentGroupNameList.add(e.getGroupName());
-			});
+			Set<String> currentGroupNameList = currentGroupEntries.stream()
+					.map(GroupEntry::getGroupName)
+					.collect(Collectors.toCollection(HashSet<String>::new));
 			
 			
-			Set<String> newGroupNameList = new HashSet<>();
-			newGroupEntries.forEach(e -> {
-				newGroupNameList.add(e.getGroupName());
-			});
+			Set<String> newGroupNameList = newGroupEntries.stream()
+					.map(GroupEntry::getGroupName)
+					.collect(Collectors.toCollection(HashSet<String>::new));
+			
 			boolean added = false;
 			for (String groupName : newGroupNameList) {
 				if(currentGroupNameList.contains(groupName)) {
