@@ -39,7 +39,7 @@ public class GroupRequestTask extends ModifyGroupsTask{
 			newGroupEntries.forEach(e -> {
 				newGroupNameList.add(e.getGroupName());
 			});
-			
+			boolean added = false;
 			for (String groupName : newGroupNameList) {
 				if(currentGroupNameList.contains(groupName)) {
 					
@@ -53,11 +53,11 @@ public class GroupRequestTask extends ModifyGroupsTask{
 							.findFirst()
 							.get();
 					
-					if(userGrpEntry.getExperation() !=null) {
-						if (!userGrpEntry.getExperation().isAfter(newGrpEntry.getExperation())) {
-							currentGroupEntries.remove(userGrpEntry);
-							currentGroupEntries.add(newGrpEntry);
-						}
+					if(userGrpEntry.getExperation() !=null && !userGrpEntry.getExperation().isAfter(newGrpEntry.getExperation())) {
+						currentGroupEntries.remove(userGrpEntry);
+						currentGroupEntries.add(newGrpEntry);
+						task.addToLog("Group "+newGrpEntry.getGroupName()+" experation updated to "+newGrpEntry.getExperation());
+						added = true;
 					}
 					
 				} else {
@@ -66,10 +66,16 @@ public class GroupRequestTask extends ModifyGroupsTask{
 							.findFirst()
 							.get();
 					currentGroupEntries.add(newGrpEntry);
+					task.addToLog("Group "+newGrpEntry.getGroupName()+" added with experation "+newGrpEntry.getExperation());
+					added = true;
 				}
 			}
-			user.setGroupEntries(currentGroupEntries);
-			userRepository.save(user);
+			if (added) {
+				user.setGroupEntries(currentGroupEntries);
+				userRepository.save(user);
+			} else {
+				task.addToLog("No group(s) added");
+			}
 			task.setStatus(TaskStatus.accepted);
 		}
 

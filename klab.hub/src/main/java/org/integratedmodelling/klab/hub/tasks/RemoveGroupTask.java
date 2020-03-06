@@ -37,20 +37,27 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 			rgt.getRequestGroups().forEach(e -> {
 				removeGroupNameList.add(e.getGroupName());
 			});
-			
+			boolean removed = false;
 			for (String groupName : removeGroupNameList) {
 				if(currentGroupNameList.contains(groupName)) {
 					currentGroupEntries.stream()
 							.filter(e -> e.getGroupName().equals(groupName))
 							.findFirst()
 							.ifPresent(grpEntry -> currentGroupEntries.remove(grpEntry));
+					removed = true;
+					task.addToLog("Group "+groupName+" removed");
 				} else {
-					executeDeny(task, "Try to remove unassigned group "+groupName+" to user "+user.getUsername());
+					task.addToLog("Try to remove unassigned group "+groupName);
 				}
 			}
-			user.setGroupEntries(currentGroupEntries);
-			userRepository.save(user);
-			task.setStatus(TaskStatus.accepted);
+			if (removed) {
+				user.setGroupEntries(currentGroupEntries);
+				userRepository.save(user);
+				task.setStatus(TaskStatus.accepted);
+			} else {
+				task.setStatus(TaskStatus.error);
+			}
+			
 		}
 
 	}

@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import net.minidev.json.JSONObject;
+
 
 @RequestMapping("/api/v2/tasks")
 @RestController
@@ -61,12 +63,12 @@ public class ModifyGroupsController {
 	    return new ResponseEntity<>(tasks, HttpStatus.ACCEPTED);
 	}
 	
-	@PostMapping(value= "/{id}", produces = "application/json", params= {"accept", "deniedMessage"})
+	@PostMapping(value= "/{id}", produces = "application/json", params= "accept")
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> requestGroupsDecision(
 			@PathVariable("id") String id,
 			@RequestParam("accept") Boolean decision,
-			@RequestParam(value="deniedMessage", required=false) Optional<String> deniedMessage,
+			@RequestBody Optional<String> deniedMessage,
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
 		Task task;
@@ -79,10 +81,15 @@ public class ModifyGroupsController {
 		UriComponents uriComponents = b.path("/api/v2/tasks/{id}").buildAndExpand(id);
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setLocation(uriComponents.toUri());
-	    if (task.getStatus() == TaskStatus.accepted) {
-	    	return new ResponseEntity<Void>(headers, HttpStatus.ACCEPTED);
+	    JSONObject resp = new JSONObject();
+	    if (task.getLog().size() > 0) {
+	    	resp.appendField("log", task.getLog());
+	    }
+	    resp.appendField("result", task.getStatus());
+	    if (task.getStatus() == TaskStatus.error) {
+	    	return new ResponseEntity<JSONObject>(resp, headers, HttpStatus.INTERNAL_SERVER_ERROR);
 	    } else {
-	    	return new ResponseEntity<String>(task.getDeniedMessage() == null ? "Task denied" : task.getDeniedMessage(), headers, HttpStatus.ACCEPTED);
+	    	return new ResponseEntity<JSONObject>(resp, headers, HttpStatus.ACCEPTED);
 	    }
 	}
 	/*

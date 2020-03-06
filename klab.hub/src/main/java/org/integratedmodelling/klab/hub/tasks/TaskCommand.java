@@ -17,7 +17,7 @@ public abstract class TaskCommand {
 	 * @return a DeniedMessage object or null if there is nothing to say
 	 */
 	public void executeDeny(Task task, String deniedMessage) {
-		task.setDeniedMessage(deniedMessage);
+		task.addToLog(deniedMessage);
 		task.setStatus(TaskStatus.denied);
 	}
 	

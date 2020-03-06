@@ -38,59 +38,73 @@ public class TaskServiceImpl implements TaskService{
 		saveAllTasks(tasks);
 		for(Task task: tasks) {
 			if (task.getParentStatus() != TaskStatus.pending && task.isAutoAccepted()) {
-				acceptTask(task.getId(), parameters.getRequest());
+				acceptTask(task, parameters.getRequest());
 			}
 		}
 		return tasks;
 	}
 	
 	@Override
+	public void acceptTask(Task task, HttpServletRequest request) {
+		doAction(task, request, Actions.ACCEPT);
+	}
+	
+	@Override
 	public Task acceptTask(String id, HttpServletRequest request) {
-		return doAction(id, request, Actions.ACCEPT);
+		return doAction(findTask(id), request, Actions.ACCEPT);
+	}
+	
+	@Override
+	public void denyTask(Task task, HttpServletRequest request, String deniedMessage) {
+		doAction(task, request, Actions.DENY, deniedMessage);
 	}
 
 	@Override
 	public Task denyTask(String id, HttpServletRequest request, String deniedMessage) {
-		return doAction(id, request, Actions.DENY);
+		return doAction(findTask(id), request, Actions.DENY, deniedMessage);
 	}
 	
-	private Task doAction(String id, HttpServletRequest request, Actions action) {
-		return doAction(id, request, action, null);
-	}
-	private Task doAction(String id, HttpServletRequest request, Actions action, String deniedMessage) {
+	private Task findTask(String id) {
 		Optional<Task> optTask = getTask(id);
 		if (optTask.isPresent()) {
-			Task task = optTask.get();
-			if (task.getStatus() == TaskStatus.pending) {
-				if (request.isUserInRole(task.getRoleRequirement())) {
-					if (action == Actions.ACCEPT) {
-						task.acceptTaskAction(request);
-					} else if (action == Actions.DENY) {
-						task.denyTaskAction(request, deniedMessage);
-					}  
-					closeTask(task, task.getStatus());
-					List<Task> next = task.getNext();
-					if (next.size() > 0) {
-						if (TaskStatus.denied.equals(task.getStatus()) || TaskStatus.error.equals(task.getStatus())) {
-							cascadeErrorOrDeny(task);
-						} else {
-							for(Task t: next) {
-								t.setParentStatus(task.getStatus());
-								if (t.isAutoAccepted()) {
-									acceptTask(t.getId(), request);
-								}
+			return optTask.get();
+		} else {
+			throw new BadRequestException("Task already handled or does not exist.");
+		}
+	}
+	
+	private Task doAction(Task task, HttpServletRequest request, Actions action) {
+		return doAction(task, request, action, null);
+	}
+	
+	private Task doAction(Task task, HttpServletRequest request, Actions action, String deniedMessage) {
+		if (task.getStatus() == TaskStatus.pending) {
+			if (request.isUserInRole(task.getRoleRequirement())) {
+				if (action == Actions.ACCEPT) {
+					task.acceptTaskAction(request);
+				} else if (action == Actions.DENY) {
+					task.denyTaskAction(request, deniedMessage);
+				}  
+				closeTask(task, task.getStatus());
+				List<Task> next = task.getNext();
+				if (next.size() > 0) {
+					if (TaskStatus.denied.equals(task.getStatus()) || TaskStatus.error.equals(task.getStatus())) {
+						cascadeErrorOrDeny(task);
+					} else {
+						for(Task t: next) {
+							t.setParentStatus(task.getStatus());
+							if (t.isAutoAccepted()) {
+								acceptTask(t, request);
 							}
 						}
 					}
-					return task;
-				} else {
-					return task;
 				}
+				return task;
 			} else {
-				throw new BadRequestException("Task already handled");
+				return task;
 			}
 		} else {
-			throw new BadRequestException("Task already handled or does not exist.");
+			throw new BadRequestException("Task already handled");
 		}
 	}
 			

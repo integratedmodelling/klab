@@ -16,6 +16,8 @@ import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 @TypeAlias("CreateGroupTask")
 public class CreateGroupTask extends Task{
 	
@@ -102,6 +104,14 @@ public class CreateGroupTask extends Task{
 	
 	public MongoGroup getGroup() {
 		return group;
+	}
+	
+	@JsonGetter("group")
+	public String getGroupName() {
+		if (this.group != null) {
+			return this.group.getGroupName();
+		}
+		return null;
 	}
 
 	public void setGroup(MongoGroup group) {

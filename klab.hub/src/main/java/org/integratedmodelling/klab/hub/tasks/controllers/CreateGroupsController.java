@@ -39,45 +39,4 @@ public class CreateGroupsController {
 	    
 	    return new ResponseEntity<>(tasks.get(0), HttpStatus.CREATED);
 	}
-	
-	/*
-	@PostMapping(value= "/{id}", produces = "application/json", params= {"create-group", "accept"})
-	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	public ResponseEntity<?> createGroupsDecision(
-			@PathVariable("id") String id,
-			@RequestParam("accept") Boolean decision,
-			HttpServletRequest request,
-			UriComponentsBuilder b) {
-			
-		if (decision) {
-	    	service.acceptTask(id, request);
-	    } else {
-	    	service.denyTask(id, request);
-	    }
-	    
-		UriComponents uriComponents = b.path("/api/v2/tasks/{id}").buildAndExpand(id);
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.setLocation(uriComponents.toUri());
-	
-	    return new ResponseEntity<Void>(headers, HttpStatus.CREATED); 	 
-	}
-	/*
-	@GetMapping(value="", produces = "application/json", params="create-group")
-	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	public ResponseEntity<?> createGroupList() {
-		HashMap<String, List<Task> > tasks = new HashMap<>();
-		tasks.put("Create Group Tasks", service.getTasks(CreateGroupTask.class));
-		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
-		return resp;
-	}
-	
-	@GetMapping(value="", produces = "application/json", params = {"create-group", "status"})
-	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	public ResponseEntity<?> createGroupByStatus(@RequestParam("status") TaskStatus status) {
-		HashMap<String, List<Task> > tasks = new HashMap<>();
-		tasks.put("Pending Group Request Tasks", service.getTasks(CreateGroupTask.class, status));
-		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
-		return resp;
-	}
-	*/
 }

@@ -8,7 +8,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,6 +20,8 @@ import org.integratedmodelling.klab.hub.users.GroupEntry;
 import org.integratedmodelling.klab.hub.users.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonGetter;
 
 /**
  * @author Enrico Girotto
@@ -125,6 +126,16 @@ public static class Parameters extends TaskParameters {
 	 */
 	public Set<GroupEntry> getRequestGroups() {
 		return requestGroups;
+	}
+	
+	@JsonGetter("requestGroups")
+	public List<String> getGroupsName() {
+		if (this.requestGroups.size() == 0) {
+			return null;
+		}
+		return this.requestGroups.stream()
+        	.map(GroupEntry::getGroupName)
+        	.collect(Collectors.toList());
 	}
 
 	protected ModifyGroupsTask(String username, Set<GroupEntry> requestGroups) {

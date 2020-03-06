@@ -35,7 +35,7 @@ public abstract class Task {
     @Enumerated(EnumType.STRING)
     TaskStatus parentStatus;
     
-    String deniedMessage;
+    List<String> log = new ArrayList<String>();
     
     DateTime expirationDate;
     
@@ -146,15 +146,15 @@ public abstract class Task {
 	/**
 	 * @return the deniedMessage
 	 */
-	public String getDeniedMessage() {
-		return deniedMessage;
+	public List<String> getLog() {
+		return log;
 	}
 
 	/**
 	 * @param deniedMessage the deniedMessage to set
 	 */
-	public void setDeniedMessage(String deniedMessage) {
-		this.deniedMessage = deniedMessage;
+	public void addToLog(String message) {
+		this.log.add(message);
 	}
 
 	/**
