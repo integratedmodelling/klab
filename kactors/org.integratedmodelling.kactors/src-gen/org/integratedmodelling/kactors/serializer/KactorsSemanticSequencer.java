@@ -17,6 +17,7 @@ import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransi
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
+import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
@@ -75,6 +76,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.ARGUMENT_DECLARATION:
 				sequence_ArgumentDeclaration(context, (ArgumentDeclaration) semanticObject); 
+				return; 
+			case KactorsPackage.ASSIGNMENT:
+				sequence_Assignment(context, (Assignment) semanticObject); 
 				return; 
 			case KactorsPackage.CLASSIFIER:
 				sequence_Classifier(context, (Classifier) semanticObject); 
@@ -230,6 +234,27 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 */
 	protected void sequence_ArgumentDeclaration(ISerializationContext context, ArgumentDeclaration semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Assignment returns Assignment
+	 *
+	 * Constraint:
+	 *     (variable=LOWERCASE_ID value=Value)
+	 */
+	protected void sequence_Assignment(ISerializationContext context, Assignment semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, KactorsPackage.Literals.ASSIGNMENT__VARIABLE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KactorsPackage.Literals.ASSIGNMENT__VARIABLE));
+			if (transientValues.isValueTransient(semanticObject, KactorsPackage.Literals.ASSIGNMENT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KactorsPackage.Literals.ASSIGNMENT__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_1_0(), semanticObject.getVariable());
+		feeder.accept(grammarAccess.getAssignmentAccess().getValueValueParserRuleCall_2_0(), semanticObject.getValue());
+		feeder.finish();
 	}
 	
 	
@@ -521,6 +546,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
+	 *         assignment=Assignment | 
 	 *         verb=MessageCall | 
 	 *         group=StatementGroup | 
 	 *         text=EMBEDDEDTEXT | 
@@ -676,6 +702,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
+	 *         assignment=Assignment | 
 	 *         verb=MessageCall | 
 	 *         group=StatementGroup | 
 	 *         text=EMBEDDEDTEXT | 

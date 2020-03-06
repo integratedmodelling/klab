@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getAssignment <em>Assignment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getText <em>Text</em>}</li>
@@ -30,6 +31,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Statement extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Assignment</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Assignment</em>' containment reference.
+   * @see #setAssignment(Assignment)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Assignment()
+   * @model containment="true"
+   * @generated
+   */
+  Assignment getAssignment();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getAssignment <em>Assignment</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Assignment</em>' containment reference.
+   * @see #getAssignment()
+   * @generated
+   */
+  void setAssignment(Assignment value);
+
   /**
    * Returns the value of the '<em><b>Verb</b></em>' containment reference.
    * <!-- begin-user-doc -->

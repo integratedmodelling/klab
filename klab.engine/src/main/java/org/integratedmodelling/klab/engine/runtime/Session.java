@@ -1322,7 +1322,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@Override
 	public void load(IBehavior behavior) {
-		getActor().tell(new SystemBehavior.Load(behavior));
+		getActor().tell(new SystemBehavior.Load(behavior.getId()));
 	}
 
 	public void instrument(ActorRef<KlabMessage> actor) {

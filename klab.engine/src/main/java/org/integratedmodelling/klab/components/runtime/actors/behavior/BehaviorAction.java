@@ -3,10 +3,11 @@ package org.integratedmodelling.klab.components.runtime.actors.behavior;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.IStatement;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 
-public class Action implements IKimObject {
+public class BehaviorAction implements IBehavior.Action {
 	
 	/**
 	 * Each action is a sequence of asynchronous call groups.

@@ -644,167 +644,214 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	public class StatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Statement");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cVerbAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cVerbMessageCallParserRuleCall_0_0 = (RuleCall)cVerbAssignment_0.eContents().get(0);
-		private final Assignment cGroupAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cGroupStatementGroupParserRuleCall_1_0 = (RuleCall)cGroupAssignment_1.eContents().get(0);
-		private final Assignment cTextAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
-		private final RuleCall cTextEMBEDDEDTEXTTerminalRuleCall_2_0 = (RuleCall)cTextAssignment_2.eContents().get(0);
-		private final Assignment cIfAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
-		private final RuleCall cIfIfStatementParserRuleCall_3_0 = (RuleCall)cIfAssignment_3.eContents().get(0);
-		private final Assignment cWhileAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
-		private final RuleCall cWhileWhileStatementParserRuleCall_4_0 = (RuleCall)cWhileAssignment_4.eContents().get(0);
-		private final Assignment cDoAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
-		private final RuleCall cDoDoStatementParserRuleCall_5_0 = (RuleCall)cDoAssignment_5.eContents().get(0);
-		private final Assignment cForAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
-		private final RuleCall cForForStatementParserRuleCall_6_0 = (RuleCall)cForAssignment_6.eContents().get(0);
-		private final Assignment cValueAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
-		private final RuleCall cValueValueParserRuleCall_7_0 = (RuleCall)cValueAssignment_7.eContents().get(0);
+		private final Assignment cAssignmentAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cAssignmentAssignmentParserRuleCall_0_0 = (RuleCall)cAssignmentAssignment_0.eContents().get(0);
+		private final Assignment cVerbAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cVerbMessageCallParserRuleCall_1_0 = (RuleCall)cVerbAssignment_1.eContents().get(0);
+		private final Assignment cGroupAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
+		private final RuleCall cGroupStatementGroupParserRuleCall_2_0 = (RuleCall)cGroupAssignment_2.eContents().get(0);
+		private final Assignment cTextAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
+		private final RuleCall cTextEMBEDDEDTEXTTerminalRuleCall_3_0 = (RuleCall)cTextAssignment_3.eContents().get(0);
+		private final Assignment cIfAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
+		private final RuleCall cIfIfStatementParserRuleCall_4_0 = (RuleCall)cIfAssignment_4.eContents().get(0);
+		private final Assignment cWhileAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
+		private final RuleCall cWhileWhileStatementParserRuleCall_5_0 = (RuleCall)cWhileAssignment_5.eContents().get(0);
+		private final Assignment cDoAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
+		private final RuleCall cDoDoStatementParserRuleCall_6_0 = (RuleCall)cDoAssignment_6.eContents().get(0);
+		private final Assignment cForAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
+		private final RuleCall cForForStatementParserRuleCall_7_0 = (RuleCall)cForAssignment_7.eContents().get(0);
+		private final Assignment cValueAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
+		private final RuleCall cValueValueParserRuleCall_8_0 = (RuleCall)cValueAssignment_8.eContents().get(0);
 		
 		//Statement:
-		//	verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement | while=WhileStatement | do=DoStatement
-		//	| for=ForStatement | value=Value;
+		//	assignment=Assignment | verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement |
+		//	while=WhileStatement | do=DoStatement | for=ForStatement | value=Value;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement | while=WhileStatement | do=DoStatement |
-		//for=ForStatement | value=Value
+		//assignment=Assignment | verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement |
+		//while=WhileStatement | do=DoStatement | for=ForStatement | value=Value
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
+		//assignment=Assignment
+		public Assignment getAssignmentAssignment_0() { return cAssignmentAssignment_0; }
+		
+		//Assignment
+		public RuleCall getAssignmentAssignmentParserRuleCall_0_0() { return cAssignmentAssignmentParserRuleCall_0_0; }
+		
 		//verb=MessageCall
-		public Assignment getVerbAssignment_0() { return cVerbAssignment_0; }
+		public Assignment getVerbAssignment_1() { return cVerbAssignment_1; }
 		
 		//MessageCall
-		public RuleCall getVerbMessageCallParserRuleCall_0_0() { return cVerbMessageCallParserRuleCall_0_0; }
+		public RuleCall getVerbMessageCallParserRuleCall_1_0() { return cVerbMessageCallParserRuleCall_1_0; }
 		
 		//group=StatementGroup
-		public Assignment getGroupAssignment_1() { return cGroupAssignment_1; }
+		public Assignment getGroupAssignment_2() { return cGroupAssignment_2; }
 		
 		//StatementGroup
-		public RuleCall getGroupStatementGroupParserRuleCall_1_0() { return cGroupStatementGroupParserRuleCall_1_0; }
+		public RuleCall getGroupStatementGroupParserRuleCall_2_0() { return cGroupStatementGroupParserRuleCall_2_0; }
 		
 		//text=EMBEDDEDTEXT
-		public Assignment getTextAssignment_2() { return cTextAssignment_2; }
+		public Assignment getTextAssignment_3() { return cTextAssignment_3; }
 		
 		//EMBEDDEDTEXT
-		public RuleCall getTextEMBEDDEDTEXTTerminalRuleCall_2_0() { return cTextEMBEDDEDTEXTTerminalRuleCall_2_0; }
+		public RuleCall getTextEMBEDDEDTEXTTerminalRuleCall_3_0() { return cTextEMBEDDEDTEXTTerminalRuleCall_3_0; }
 		
 		//if=IfStatement
-		public Assignment getIfAssignment_3() { return cIfAssignment_3; }
+		public Assignment getIfAssignment_4() { return cIfAssignment_4; }
 		
 		//IfStatement
-		public RuleCall getIfIfStatementParserRuleCall_3_0() { return cIfIfStatementParserRuleCall_3_0; }
+		public RuleCall getIfIfStatementParserRuleCall_4_0() { return cIfIfStatementParserRuleCall_4_0; }
 		
 		//while=WhileStatement
-		public Assignment getWhileAssignment_4() { return cWhileAssignment_4; }
+		public Assignment getWhileAssignment_5() { return cWhileAssignment_5; }
 		
 		//WhileStatement
-		public RuleCall getWhileWhileStatementParserRuleCall_4_0() { return cWhileWhileStatementParserRuleCall_4_0; }
+		public RuleCall getWhileWhileStatementParserRuleCall_5_0() { return cWhileWhileStatementParserRuleCall_5_0; }
 		
 		//do=DoStatement
-		public Assignment getDoAssignment_5() { return cDoAssignment_5; }
+		public Assignment getDoAssignment_6() { return cDoAssignment_6; }
 		
 		//DoStatement
-		public RuleCall getDoDoStatementParserRuleCall_5_0() { return cDoDoStatementParserRuleCall_5_0; }
+		public RuleCall getDoDoStatementParserRuleCall_6_0() { return cDoDoStatementParserRuleCall_6_0; }
 		
 		//for=ForStatement
-		public Assignment getForAssignment_6() { return cForAssignment_6; }
+		public Assignment getForAssignment_7() { return cForAssignment_7; }
 		
 		//ForStatement
-		public RuleCall getForForStatementParserRuleCall_6_0() { return cForForStatementParserRuleCall_6_0; }
+		public RuleCall getForForStatementParserRuleCall_7_0() { return cForForStatementParserRuleCall_7_0; }
 		
 		//// this means "fire this" 
 		//value=Value
-		public Assignment getValueAssignment_7() { return cValueAssignment_7; }
+		public Assignment getValueAssignment_8() { return cValueAssignment_8; }
 		
 		//Value
-		public RuleCall getValueValueParserRuleCall_7_0() { return cValueValueParserRuleCall_7_0; }
+		public RuleCall getValueValueParserRuleCall_8_0() { return cValueValueParserRuleCall_8_0; }
 	}
 	public class NextStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.NextStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cCommaKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Assignment cVerbAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
-		private final RuleCall cVerbMessageCallParserRuleCall_1_0_0 = (RuleCall)cVerbAssignment_1_0.eContents().get(0);
-		private final Assignment cGroupAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final RuleCall cGroupStatementGroupParserRuleCall_1_1_0 = (RuleCall)cGroupAssignment_1_1.eContents().get(0);
-		private final Assignment cTextAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
-		private final RuleCall cTextEMBEDDEDTEXTTerminalRuleCall_1_2_0 = (RuleCall)cTextAssignment_1_2.eContents().get(0);
-		private final Assignment cIfAssignment_1_3 = (Assignment)cAlternatives_1.eContents().get(3);
-		private final RuleCall cIfIfStatementParserRuleCall_1_3_0 = (RuleCall)cIfAssignment_1_3.eContents().get(0);
-		private final Assignment cWhileAssignment_1_4 = (Assignment)cAlternatives_1.eContents().get(4);
-		private final RuleCall cWhileWhileStatementParserRuleCall_1_4_0 = (RuleCall)cWhileAssignment_1_4.eContents().get(0);
-		private final Assignment cDoAssignment_1_5 = (Assignment)cAlternatives_1.eContents().get(5);
-		private final RuleCall cDoDoStatementParserRuleCall_1_5_0 = (RuleCall)cDoAssignment_1_5.eContents().get(0);
-		private final Assignment cForAssignment_1_6 = (Assignment)cAlternatives_1.eContents().get(6);
-		private final RuleCall cForForStatementParserRuleCall_1_6_0 = (RuleCall)cForAssignment_1_6.eContents().get(0);
-		private final Assignment cValueAssignment_1_7 = (Assignment)cAlternatives_1.eContents().get(7);
-		private final RuleCall cValueValueParserRuleCall_1_7_0 = (RuleCall)cValueAssignment_1_7.eContents().get(0);
+		private final Assignment cAssignmentAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
+		private final RuleCall cAssignmentAssignmentParserRuleCall_1_0_0 = (RuleCall)cAssignmentAssignment_1_0.eContents().get(0);
+		private final Assignment cVerbAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
+		private final RuleCall cVerbMessageCallParserRuleCall_1_1_0 = (RuleCall)cVerbAssignment_1_1.eContents().get(0);
+		private final Assignment cGroupAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
+		private final RuleCall cGroupStatementGroupParserRuleCall_1_2_0 = (RuleCall)cGroupAssignment_1_2.eContents().get(0);
+		private final Assignment cTextAssignment_1_3 = (Assignment)cAlternatives_1.eContents().get(3);
+		private final RuleCall cTextEMBEDDEDTEXTTerminalRuleCall_1_3_0 = (RuleCall)cTextAssignment_1_3.eContents().get(0);
+		private final Assignment cIfAssignment_1_4 = (Assignment)cAlternatives_1.eContents().get(4);
+		private final RuleCall cIfIfStatementParserRuleCall_1_4_0 = (RuleCall)cIfAssignment_1_4.eContents().get(0);
+		private final Assignment cWhileAssignment_1_5 = (Assignment)cAlternatives_1.eContents().get(5);
+		private final RuleCall cWhileWhileStatementParserRuleCall_1_5_0 = (RuleCall)cWhileAssignment_1_5.eContents().get(0);
+		private final Assignment cDoAssignment_1_6 = (Assignment)cAlternatives_1.eContents().get(6);
+		private final RuleCall cDoDoStatementParserRuleCall_1_6_0 = (RuleCall)cDoAssignment_1_6.eContents().get(0);
+		private final Assignment cForAssignment_1_7 = (Assignment)cAlternatives_1.eContents().get(7);
+		private final RuleCall cForForStatementParserRuleCall_1_7_0 = (RuleCall)cForAssignment_1_7.eContents().get(0);
+		private final Assignment cValueAssignment_1_8 = (Assignment)cAlternatives_1.eContents().get(8);
+		private final RuleCall cValueValueParserRuleCall_1_8_0 = (RuleCall)cValueAssignment_1_8.eContents().get(0);
 		
 		//NextStatement Statement:
-		//	',' (verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement | while=WhileStatement |
-		//	do=DoStatement | for=ForStatement | value=Value);
+		//	',' (assignment=Assignment | verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement |
+		//	while=WhileStatement | do=DoStatement | for=ForStatement | value=Value);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//',' (verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement | while=WhileStatement |
-		//do=DoStatement | for=ForStatement | value=Value)
+		//',' (assignment=Assignment | verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement |
+		//while=WhileStatement | do=DoStatement | for=ForStatement | value=Value)
 		public Group getGroup() { return cGroup; }
 		
 		//','
 		public Keyword getCommaKeyword_0() { return cCommaKeyword_0; }
 		
-		//(verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement | while=WhileStatement | do=DoStatement |
-		//for=ForStatement | value=Value)
+		//(assignment=Assignment | verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement |
+		//while=WhileStatement | do=DoStatement | for=ForStatement | value=Value)
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 		
+		//assignment=Assignment
+		public Assignment getAssignmentAssignment_1_0() { return cAssignmentAssignment_1_0; }
+		
+		//Assignment
+		public RuleCall getAssignmentAssignmentParserRuleCall_1_0_0() { return cAssignmentAssignmentParserRuleCall_1_0_0; }
+		
 		//verb=MessageCall
-		public Assignment getVerbAssignment_1_0() { return cVerbAssignment_1_0; }
+		public Assignment getVerbAssignment_1_1() { return cVerbAssignment_1_1; }
 		
 		//MessageCall
-		public RuleCall getVerbMessageCallParserRuleCall_1_0_0() { return cVerbMessageCallParserRuleCall_1_0_0; }
+		public RuleCall getVerbMessageCallParserRuleCall_1_1_0() { return cVerbMessageCallParserRuleCall_1_1_0; }
 		
 		//group=StatementGroup
-		public Assignment getGroupAssignment_1_1() { return cGroupAssignment_1_1; }
+		public Assignment getGroupAssignment_1_2() { return cGroupAssignment_1_2; }
 		
 		//StatementGroup
-		public RuleCall getGroupStatementGroupParserRuleCall_1_1_0() { return cGroupStatementGroupParserRuleCall_1_1_0; }
+		public RuleCall getGroupStatementGroupParserRuleCall_1_2_0() { return cGroupStatementGroupParserRuleCall_1_2_0; }
 		
 		//text=EMBEDDEDTEXT
-		public Assignment getTextAssignment_1_2() { return cTextAssignment_1_2; }
+		public Assignment getTextAssignment_1_3() { return cTextAssignment_1_3; }
 		
 		//EMBEDDEDTEXT
-		public RuleCall getTextEMBEDDEDTEXTTerminalRuleCall_1_2_0() { return cTextEMBEDDEDTEXTTerminalRuleCall_1_2_0; }
+		public RuleCall getTextEMBEDDEDTEXTTerminalRuleCall_1_3_0() { return cTextEMBEDDEDTEXTTerminalRuleCall_1_3_0; }
 		
 		//if=IfStatement
-		public Assignment getIfAssignment_1_3() { return cIfAssignment_1_3; }
+		public Assignment getIfAssignment_1_4() { return cIfAssignment_1_4; }
 		
 		//IfStatement
-		public RuleCall getIfIfStatementParserRuleCall_1_3_0() { return cIfIfStatementParserRuleCall_1_3_0; }
+		public RuleCall getIfIfStatementParserRuleCall_1_4_0() { return cIfIfStatementParserRuleCall_1_4_0; }
 		
 		//while=WhileStatement
-		public Assignment getWhileAssignment_1_4() { return cWhileAssignment_1_4; }
+		public Assignment getWhileAssignment_1_5() { return cWhileAssignment_1_5; }
 		
 		//WhileStatement
-		public RuleCall getWhileWhileStatementParserRuleCall_1_4_0() { return cWhileWhileStatementParserRuleCall_1_4_0; }
+		public RuleCall getWhileWhileStatementParserRuleCall_1_5_0() { return cWhileWhileStatementParserRuleCall_1_5_0; }
 		
 		//do=DoStatement
-		public Assignment getDoAssignment_1_5() { return cDoAssignment_1_5; }
+		public Assignment getDoAssignment_1_6() { return cDoAssignment_1_6; }
 		
 		//DoStatement
-		public RuleCall getDoDoStatementParserRuleCall_1_5_0() { return cDoDoStatementParserRuleCall_1_5_0; }
+		public RuleCall getDoDoStatementParserRuleCall_1_6_0() { return cDoDoStatementParserRuleCall_1_6_0; }
 		
 		//for=ForStatement
-		public Assignment getForAssignment_1_6() { return cForAssignment_1_6; }
+		public Assignment getForAssignment_1_7() { return cForAssignment_1_7; }
 		
 		//ForStatement
-		public RuleCall getForForStatementParserRuleCall_1_6_0() { return cForForStatementParserRuleCall_1_6_0; }
+		public RuleCall getForForStatementParserRuleCall_1_7_0() { return cForForStatementParserRuleCall_1_7_0; }
 		
 		//// this means "fire this" 
 		//value=Value
-		public Assignment getValueAssignment_1_7() { return cValueAssignment_1_7; }
+		public Assignment getValueAssignment_1_8() { return cValueAssignment_1_8; }
 		
 		//Value
-		public RuleCall getValueValueParserRuleCall_1_7_0() { return cValueValueParserRuleCall_1_7_0; }
+		public RuleCall getValueValueParserRuleCall_1_8_0() { return cValueValueParserRuleCall_1_8_0; }
+	}
+	public class AssignmentElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Assignment");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cSetKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cVariableAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_1_0 = (RuleCall)cVariableAssignment_1.eContents().get(0);
+		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cValueValueParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
+		
+		//Assignment:
+		//	'set' variable=LOWERCASE_ID value=Value;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'set' variable=LOWERCASE_ID value=Value
+		public Group getGroup() { return cGroup; }
+		
+		//'set'
+		public Keyword getSetKeyword_0() { return cSetKeyword_0; }
+		
+		//variable=LOWERCASE_ID
+		public Assignment getVariableAssignment_1() { return cVariableAssignment_1; }
+		
+		//LOWERCASE_ID
+		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_1_0() { return cVariableLOWERCASE_IDTerminalRuleCall_1_0; }
+		
+		//value=Value
+		public Assignment getValueAssignment_2() { return cValueAssignment_2; }
+		
+		//Value
+		public RuleCall getValueValueParserRuleCall_2_0() { return cValueValueParserRuleCall_2_0; }
 	}
 	public class IfStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.IfStatement");
@@ -3351,6 +3398,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	private final StatementListElements pStatementList;
 	private final StatementElements pStatement;
 	private final NextStatementElements pNextStatement;
+	private final AssignmentElements pAssignment;
 	private final IfStatementElements pIfStatement;
 	private final StatementBodyElements pStatementBody;
 	private final WhileStatementElements pWhileStatement;
@@ -3416,6 +3464,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		this.pStatementList = new StatementListElements();
 		this.pStatement = new StatementElements();
 		this.pNextStatement = new NextStatementElements();
+		this.pAssignment = new AssignmentElements();
 		this.pIfStatement = new IfStatementElements();
 		this.pStatementBody = new StatementBodyElements();
 		this.pWhileStatement = new WhileStatementElements();
@@ -3582,8 +3631,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Statement:
-	//	verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement | while=WhileStatement | do=DoStatement
-	//	| for=ForStatement | value=Value;
+	//	assignment=Assignment | verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement |
+	//	while=WhileStatement | do=DoStatement | for=ForStatement | value=Value;
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}
@@ -3593,14 +3642,24 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//NextStatement Statement:
-	//	',' (verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement | while=WhileStatement |
-	//	do=DoStatement | for=ForStatement | value=Value);
+	//	',' (assignment=Assignment | verb=MessageCall | group=StatementGroup | text=EMBEDDEDTEXT | if=IfStatement |
+	//	while=WhileStatement | do=DoStatement | for=ForStatement | value=Value);
 	public NextStatementElements getNextStatementAccess() {
 		return pNextStatement;
 	}
 	
 	public ParserRule getNextStatementRule() {
 		return getNextStatementAccess().getRule();
+	}
+	
+	//Assignment:
+	//	'set' variable=LOWERCASE_ID value=Value;
+	public AssignmentElements getAssignmentAccess() {
+		return pAssignment;
+	}
+	
+	public ParserRule getAssignmentRule() {
+		return getAssignmentAccess().getRule();
 	}
 	
 	//IfStatement:

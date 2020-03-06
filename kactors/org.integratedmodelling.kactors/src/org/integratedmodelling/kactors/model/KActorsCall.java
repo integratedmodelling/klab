@@ -11,11 +11,17 @@ public class KActorsCall extends KActorStatement {
 		WHILE_STATEMENT,
 		TEXT_BLOCK,
 		VALUE,
+		ASSIGNMENT,
 		CALL_GROUP
 	}
 	
 	public KActorsCall(Statement statement, KActorStatement parent) {
 		super(statement, parent);
+	}
+
+	public static KActorsCall create(Statement first) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

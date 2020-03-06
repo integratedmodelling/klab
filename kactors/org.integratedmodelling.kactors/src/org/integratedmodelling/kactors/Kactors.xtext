@@ -55,6 +55,7 @@ StatementList:
 ;
 
 Statement:
+	assignment=Assignment |
 	verb=MessageCall |
 	group=StatementGroup |
 	text=EMBEDDEDTEXT |
@@ -68,6 +69,7 @@ Statement:
 
 NextStatement returns Statement:
 	',' (
+		assignment=Assignment |
 		verb=MessageCall |
 		group=StatementGroup |
 		text=EMBEDDEDTEXT |
@@ -78,6 +80,10 @@ NextStatement returns Statement:
 		// this means "fire this" 
 		value=Value
 	)
+;
+
+Assignment:
+	'set' variable=LOWERCASE_ID value=Value
 ;
 
 IfStatement:

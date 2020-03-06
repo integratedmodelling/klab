@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
+import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
@@ -114,6 +115,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.STATEMENT_GROUP: return createStatementGroup();
       case KactorsPackage.STATEMENT_LIST: return createStatementList();
       case KactorsPackage.STATEMENT: return createStatement();
+      case KactorsPackage.ASSIGNMENT: return createAssignment();
       case KactorsPackage.IF_STATEMENT: return createIfStatement();
       case KactorsPackage.STATEMENT_BODY: return createStatementBody();
       case KactorsPackage.WHILE_STATEMENT: return createWhileStatement();
@@ -288,6 +290,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     StatementImpl statement = new StatementImpl();
     return statement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Assignment createAssignment()
+  {
+    AssignmentImpl assignment = new AssignmentImpl();
+    return assignment;
   }
 
   /**

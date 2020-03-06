@@ -1,8 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
@@ -22,7 +21,7 @@ import akka.actor.typed.scaladsl.Behaviors;
 
 public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
-	private List<IBehavior> behaviors = new ArrayList<>();
+	private IBehavior behavior;
 	private IActorIdentity<KlabMessage> identity;
 
 	/**
@@ -70,8 +69,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
-		this.behaviors.add(message.behavior);
+		this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
+		for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
+			run(action);
+		}
 		return Behaviors.same();
+	}
+	
+	protected void run(IBehavior.Action action) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	protected Behavior<KlabMessage> executeCall(KActorsMessage message) {

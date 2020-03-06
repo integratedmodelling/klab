@@ -9,17 +9,18 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.klab.api.IStatement;
 import org.integratedmodelling.klab.api.actors.IBehavior;
-import org.integratedmodelling.klab.api.actors.IMessageHandler;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.data.Metadata;
 
 public class Behavior implements IBehavior {
 
 	IKActorsBehavior statement;
 	// action IDs in order of declaration
 	List<String> actionIds = new ArrayList<>();
-	Map<String, Action> actions = new HashMap<>();
+	Map<String, BehaviorAction> actions = new HashMap<>();
+	IMetadata metadata = new Metadata();
 	
 	public Behavior(IKActorsBehavior statement) {
 		this.statement = statement;
@@ -68,20 +69,19 @@ public class Behavior implements IBehavior {
 	}
 
 	@Override
-	public List<IMessageHandler> getMessageHandlers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IMetadata getMetadata() {
-		// TODO Auto-generated method stub
-		return null;
+		return metadata;
 	}
 
 	@Override
 	public Type getDestination() {
 		return statement.getType();
+	}
+
+	@Override
+	public List<Action> getActions(String... match) {
+		List<Action> ret = new ArrayList<>();
+		return ret;
 	}
 
 }

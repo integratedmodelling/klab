@@ -15,13 +15,10 @@ import org.integratedmodelling.klab.api.model.IKimObject;
  */
 public interface IBehavior extends IKimObject {
 
-	/**
-	 * All messages defined in the actor.
-	 * 
-	 * @return
-	 */
-	List<IMessageHandler> getMessageHandlers();
-
+	public interface Action extends IKimObject {
+		
+	}
+	
 	/**
 	 * Metadata, following the (forthcoming) actor-specific schema in
 	 * IMetadata.Schema.
@@ -29,12 +26,22 @@ public interface IBehavior extends IKimObject {
 	 * @return
 	 */
 	IMetadata getMetadata();
-	
+
 	/**
 	 * Who this is for.
 	 * 
 	 * @return
 	 */
 	IKActorsBehavior.Type getDestination();
+
+	/**
+	 * Get all the actions in order of declaration. If a string is passed, match it
+	 * to the action name; if it starts with "@", match it to the ID of annotations
+	 * associated to it. All parameters are in OR.
+	 *
+	 * 
+	 * @return
+	 */
+	List<Action> getActions(String... match);
 
 }

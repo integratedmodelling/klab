@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -30,6 +31,7 @@ import org.integratedmodelling.kactors.kactors.WhileStatement;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getAssignment <em>Assignment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getVerb <em>Verb</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getText <em>Text</em>}</li>
@@ -44,6 +46,16 @@ import org.integratedmodelling.kactors.kactors.WhileStatement;
  */
 public class StatementImpl extends MinimalEObjectImpl.Container implements Statement
 {
+  /**
+   * The cached value of the '{@link #getAssignment() <em>Assignment</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAssignment()
+   * @generated
+   * @ordered
+   */
+  protected Assignment assignment;
+
   /**
    * The cached value of the '{@link #getVerb() <em>Verb</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -153,6 +165,56 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   protected EClass eStaticClass()
   {
     return KactorsPackage.Literals.STATEMENT;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Assignment getAssignment()
+  {
+    return assignment;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetAssignment(Assignment newAssignment, NotificationChain msgs)
+  {
+    Assignment oldAssignment = assignment;
+    assignment = newAssignment;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__ASSIGNMENT, oldAssignment, newAssignment);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setAssignment(Assignment newAssignment)
+  {
+    if (newAssignment != assignment)
+    {
+      NotificationChain msgs = null;
+      if (assignment != null)
+        msgs = ((InternalEObject)assignment).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__ASSIGNMENT, null, msgs);
+      if (newAssignment != null)
+        msgs = ((InternalEObject)newAssignment).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__ASSIGNMENT, null, msgs);
+      msgs = basicSetAssignment(newAssignment, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__ASSIGNMENT, newAssignment, newAssignment));
   }
 
   /**
@@ -540,6 +602,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
+      case KactorsPackage.STATEMENT__ASSIGNMENT:
+        return basicSetAssignment(null, msgs);
       case KactorsPackage.STATEMENT__VERB:
         return basicSetVerb(null, msgs);
       case KactorsPackage.STATEMENT__GROUP:
@@ -568,6 +632,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
+      case KactorsPackage.STATEMENT__ASSIGNMENT:
+        return getAssignment();
       case KactorsPackage.STATEMENT__VERB:
         return getVerb();
       case KactorsPackage.STATEMENT__GROUP:
@@ -598,6 +664,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
+      case KactorsPackage.STATEMENT__ASSIGNMENT:
+        setAssignment((Assignment)newValue);
+        return;
       case KactorsPackage.STATEMENT__VERB:
         setVerb((MessageCall)newValue);
         return;
@@ -636,6 +705,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
+      case KactorsPackage.STATEMENT__ASSIGNMENT:
+        setAssignment((Assignment)null);
+        return;
       case KactorsPackage.STATEMENT__VERB:
         setVerb((MessageCall)null);
         return;
@@ -674,6 +746,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
+      case KactorsPackage.STATEMENT__ASSIGNMENT:
+        return assignment != null;
       case KactorsPackage.STATEMENT__VERB:
         return verb != null;
       case KactorsPackage.STATEMENT__GROUP:
