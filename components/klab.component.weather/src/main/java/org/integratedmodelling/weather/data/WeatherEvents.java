@@ -405,4 +405,8 @@ public enum WeatherEvents {
 		return ebox.count() > 100000;
 	}
 
+	public long getEventsCount() {
+		return ebox.count();
+	}
+
 }

@@ -211,6 +211,7 @@ public interface API {
 		public static interface ADMIN {
 
 			public static final String P_COMPONENT = "{component}";
+			public static final String P_PROPERTY = "{component}";
 						
 			/**
 			 * 
@@ -225,17 +226,12 @@ public interface API {
 			/**
 			 * 
 			 */
-			public static final String COMPONENT_SET_STATUS = "/component/setstatus/" + P_COMPONENT;
-
-			/**
-			 * 
-			 */
-			public static final String SET_PROPERTY = "/properties/set";
+			public static final String SET_PROPERTY = "/properties/set/" + P_PROPERTY;
 			
 			/**
 			 * 
 			 */
-			public static final String GET_PROPERTY = "/properties/get";
+			public static final String GET_PROPERTY = "/properties/get/" + P_PROPERTY;
 			
 		}
 

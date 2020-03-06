@@ -24,14 +24,17 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.extensions.component.GetStatus;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.extensions.component.Setup;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -53,6 +56,7 @@ public class Component implements IComponent {
 
 	private String initMethod = null;
 	private List<Pair<String, Boolean>> setupMethods = new ArrayList<>();
+	private List<String> statusMethods = new ArrayList<>();
 	private boolean binaryAssetsLoaded;
 	private Class<?> implementingClass;
 	private Object implementation;
@@ -77,6 +81,9 @@ public class Component implements IComponent {
 				if (method.isAnnotationPresent(Setup.class)) {
 					Setup setup = method.getAnnotation(Setup.class);
 					this.setupMethods.add(new Pair<>(method.getName(), setup.asynchronous()));
+				}
+				if (method.isAnnotationPresent(GetStatus.class)) {
+					this.statusMethods.add(method.getName());
 				}
 			}
 		} catch (Exception e) {
@@ -195,6 +202,7 @@ public class Component implements IComponent {
 		Logging.INSTANCE.info("component " + name + " initialized successfully and ready for operation");
 	}
 
+	@Override
 	public ITicket setup() throws KlabException {
 
 		ITicket ret = null;
@@ -467,6 +475,22 @@ public class Component implements IComponent {
 	public List<IBehavior> getApps() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IMetadata getStatus() {
+		IMetadata ret = new Metadata();
+		if (getImplementation() != null) {
+			for (String method : statusMethods) {
+				try {
+					Method m = getImplementation().getClass().getMethod(method, IMetadata.class);
+					m.invoke(getImplementation(), ret);
+				} catch (Throwable e) {
+					throw new KlabInternalErrorException(e);
+				}
+			}
+		}
+		return ret;
 	}
 
 }

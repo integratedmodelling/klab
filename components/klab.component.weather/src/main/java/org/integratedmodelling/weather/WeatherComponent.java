@@ -5,9 +5,11 @@ import java.util.Collection;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.extensions.component.GetStatus;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.extensions.component.Maintain;
 import org.integratedmodelling.klab.api.extensions.component.Setup;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.weather.data.Weather;
@@ -37,6 +39,12 @@ public class WeatherComponent {
 	public boolean setupStations() {
 		WeatherFactory.INSTANCE.setup();
 		return true;
+	}
+	
+	@GetStatus
+	public void getStatus(IMetadata metadata) {
+		metadata.put("stations.count", "" + WeatherFactory.INSTANCE.getStationsCount());
+		metadata.put("events.count", "" + WeatherEvents.INSTANCE.getEventsCount());
 	}
 
 	/**

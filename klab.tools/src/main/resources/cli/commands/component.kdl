@@ -7,16 +7,20 @@
 @version 0.10.0
 @namespace component
 
-// create ID
-// delete ID
-// list 
-// list ID
-
 void setup
-	"Start component setup in a given node. Requires admin permissions/"
+	"Start component setup, locally or on a given node. Requires admin permissions for the node."
 {
-	text node
+	optional text node
 		"The node where to invoke the component setup."
 
 	class org.integratedmodelling.klab.clitool.console.commands.component.Setup
+}
+
+void status
+	"Check status of named component, locally or on a node. Requires admin permission for the node."
+{
+	optional text node
+		"The node where to invoke the component setup."
+
+	class org.integratedmodelling.klab.clitool.console.commands.component.Status
 }

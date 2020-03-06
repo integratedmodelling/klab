@@ -26,7 +26,7 @@ public class KActorStatement implements IKActorsStatement {
     protected boolean deprecated = false;
     protected String deprecation = null;
     protected String sourceCode = null;
-    protected IKimStatement parent = null;
+    protected KActorStatement parent = null;
     protected boolean errors = false;
     protected boolean warnings = false;
 
@@ -52,7 +52,7 @@ public class KActorStatement implements IKActorsStatement {
         this.uri = statement.uri;
     }
     
-    public KActorStatement(EObject statement, IKimStatement parent) {
+    public KActorStatement(EObject statement, KActorStatement parent) {
         this.eObject = statement;
         if (statement != null) {
             setCode(statement);
@@ -71,6 +71,10 @@ public class KActorStatement implements IKActorsStatement {
 		// TODO Auto-generated method stub
 		
 	}
+    
+    EObject getEStatement() {
+    	return this.eObject;
+    }
 
 	/**
      * Create a dummy statement uniquely to carry the line numbers for a compile notification.

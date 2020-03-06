@@ -12,11 +12,11 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  * @author Ferd
  *
  */
-public class KActorsCodeBlock {
+public class KActorsCodeBlock extends KActorStatement {
 
 	List<List<KActorsCall>> sequences = new ArrayList<>();
 
-	public KActorsCodeBlock(List<StatementList> statements) {
-		
+	public KActorsCodeBlock(List<StatementList> statements, KActorStatement parent) {
+		super(parent.getEStatement(), parent);
 	}
 }

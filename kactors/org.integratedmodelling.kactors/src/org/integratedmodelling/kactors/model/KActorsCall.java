@@ -2,7 +2,7 @@ package org.integratedmodelling.kactors.model;
 
 import org.integratedmodelling.kactors.kactors.Statement;
 
-public class KActorsCall {
+public class KActorsCall extends KActorStatement {
 
 	public enum Type {
 		ACTION_CALL,
@@ -14,8 +14,8 @@ public class KActorsCall {
 		CALL_GROUP
 	}
 	
-	public KActorsCall(Statement statement) {
-		
+	public KActorsCall(Statement statement, KActorStatement parent) {
+		super(statement, parent);
 	}
 	
 }

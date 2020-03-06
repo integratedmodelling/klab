@@ -11,7 +11,6 @@ import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.model.KActors.BehaviorDescriptor;
 import org.integratedmodelling.kim.api.IKimAnnotation;
-import org.integratedmodelling.kim.api.IKimMetadata;
 
 /**
  * Syntactic peer for a k.Actors application, to be turned into an
@@ -28,6 +27,7 @@ public class KActorsBehavior extends KActorStatement implements IKActorsBehavior
 	private List<IKActorsAction> actions = new ArrayList<>();
 	
 	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
+		super(model, null);
 		if (model.getPreamble() != null) {
 			loadPreamble(model.getPreamble());
 		}

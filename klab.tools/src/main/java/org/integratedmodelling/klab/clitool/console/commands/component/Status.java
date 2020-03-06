@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.clitool.console.commands.component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
@@ -9,15 +10,14 @@ import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.cli.ICommand;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.api.runtime.ITicket;
-import org.integratedmodelling.klab.api.runtime.ITicket.Status;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
-import org.integratedmodelling.klab.rest.TicketResponse;
-import org.integratedmodelling.klab.rest.TicketResponse.Ticket;
+import org.integratedmodelling.klab.utils.MapUtils;
 
-public class Setup implements ICommand {
+public class Status implements ICommand {
 
 	@Override
 	public Object execute(IServiceCall call, ISession session) throws Exception {
@@ -42,33 +42,20 @@ public class Setup implements ICommand {
 
 				Component c = Extensions.INSTANCE.getComponent(component);
 				if (c == null) {
-					throw new KlabResourceNotFoundException("component "  + component + " is not installed in engine");
+					throw new KlabResourceNotFoundException("component " + component + " is not installed in engine");
 				}
-				
-				ITicket ticket = c.setup();
-				
-				if (ticket.getStatus() == Status.ERROR) {
-					ret += "\n   Component " + component + " setup failed: component reported '" + ticket.getStatusMessage()
-							+ "'";
-				} else if (ticket.getStatus() == Status.RESOLVED) {
-					ret += "\n   Component " + component + " setup finished";
-				} else {
-					ret += "\n   Component " + component + " setup requested: follow ticket " + ticket.getId();
-				}
-				
+
+				IMetadata data = c.getStatus();
+
+				ret += MapUtils.dump(((Metadata)data).getData());
+
 			} else {
 
-				Ticket ticket = node.getClient().get(API.NODE.ADMIN.COMPONENT_SETUP, TicketResponse.Ticket.class,
+				Map<?, ?> data = node.getClient().get(API.NODE.ADMIN.COMPONENT_GET_STATUS, Map.class,
 						API.NODE.ADMIN.P_COMPONENT, component);
-
-				if (ticket.getStatus() == Status.ERROR) {
-					ret += "\n   Component " + component + " setup failed: node reported '" + ticket.getStatusMessage()
-							+ "'";
-				} else if (ticket.getStatus() == Status.RESOLVED) {
-					ret += "\n   Component " + component + " setup finished";
-				} else {
-					ret += "\n   Component " + component + " setup requested: follow ticket " + ticket.getId();
-				}
+				
+				ret += MapUtils.dump(data);
+				
 			}
 		}
 
