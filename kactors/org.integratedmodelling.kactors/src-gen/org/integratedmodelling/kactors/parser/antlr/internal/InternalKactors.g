@@ -1134,7 +1134,7 @@ ruleStatementGroup returns [EObject current=null]
 			}
 			{
 				$current = forceCreateModelElement(
-					grammarAccess.getStatementGroupAccess().getGroupAction_0(),
+					grammarAccess.getStatementGroupAccess().getStatementGroupAction_0(),
 					$current);
 			}
 		)

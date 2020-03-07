@@ -4163,9 +4163,9 @@ rule__StatementGroup__Group__0__Impl
 	}
 :
 (
-	{ before(grammarAccess.getStatementGroupAccess().getGroupAction_0()); }
+	{ before(grammarAccess.getStatementGroupAccess().getStatementGroupAction_0()); }
 	()
-	{ after(grammarAccess.getStatementGroupAccess().getGroupAction_0()); }
+	{ after(grammarAccess.getStatementGroupAccess().getStatementGroupAction_0()); }
 )
 ;
 finally {

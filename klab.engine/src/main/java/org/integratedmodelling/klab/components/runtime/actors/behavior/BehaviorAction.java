@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.components.runtime.actors.behavior;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.api.IStatement;
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -12,29 +12,32 @@ public class BehaviorAction implements IBehavior.Action {
 	/**
 	 * Each action is a sequence of asynchronous call groups.
 	 */
+	private IKActorsAction statement;
+	private Behavior behavior;
 	private CallSequence calls;
+
+	public BehaviorAction(IKActorsAction action, Behavior behavior) {
+		this.statement = action;
+		this.behavior = behavior;
+	}
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return statement.getName();
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return behavior.getName() + "." + getName();
 	}
 
 	@Override
-	public IStatement getStatement() {
-		// TODO Auto-generated method stub
-		return null;
+	public IKActorsAction getStatement() {
+		return statement;
 	}
 
 	@Override
 	public List<IKimObject> getChildren() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

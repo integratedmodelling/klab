@@ -6,6 +6,7 @@ package org.integratedmodelling.kactors.api;
  * @author Ferd
  *
  */
-public interface IKActorsAction extends IKActorsStatement {
+public interface IKActorsAction extends IKActorsCodeStatement {
 
+	String getName();
 }

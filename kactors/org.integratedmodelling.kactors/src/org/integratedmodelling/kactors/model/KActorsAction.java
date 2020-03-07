@@ -8,7 +8,7 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 
-public class KActorsAction extends KActorStatement implements IKActorsAction {
+public class KActorsAction extends KActorCodeStatement implements IKActorsAction {
 
 	private IKActorsBehavior behavior;
 	private String name;
@@ -20,6 +20,11 @@ public class KActorsAction extends KActorStatement implements IKActorsAction {
 		this.behavior = parent;
 		this.name = definition.getName();
 		this.code = new KActorsCodeBlock(definition.getBody().getLists(), this);
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 }

@@ -1,6 +1,7 @@
 package org.integratedmodelling.kactors.api;
 
 import java.io.File;
+import java.util.List;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
 
@@ -11,7 +12,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
  * @author Ferd
  *
  */
-public interface IKActorsBehavior extends IKActorsStatement {
+public interface IKActorsBehavior extends IKActorsCodeStatement {
 
 	enum Type {
 		/**
@@ -57,6 +58,19 @@ public interface IKActorsBehavior extends IKActorsStatement {
 	 */
 	File getFile();
 	
+	/**
+	 * All behaviors imported, resolved and parsed.
+	 * 
+	 * @return
+	 */
+	List<IKActorsBehavior> getImports();
+	
+	/**
+	 * All the actions declared in this behavior (not in the imported ones)
+	 * 
+	 * @return
+	 */
+	List<IKActorsAction> getActions();
 	
 
 }

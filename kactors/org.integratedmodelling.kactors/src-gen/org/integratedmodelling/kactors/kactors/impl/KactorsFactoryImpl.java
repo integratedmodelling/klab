@@ -22,7 +22,6 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
-import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsFactory;
@@ -144,7 +143,6 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.REL_OPERATOR: return createREL_OPERATOR();
       case KactorsPackage.NUMBER: return createNumber();
       case KactorsPackage.DATE: return createDate();
-      case KactorsPackage.GROUP: return createGroup();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -638,18 +636,6 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     DateImpl date = new DateImpl();
     return date;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Group createGroup()
-  {
-    GroupImpl group = new GroupImpl();
-    return group;
   }
 
   /**

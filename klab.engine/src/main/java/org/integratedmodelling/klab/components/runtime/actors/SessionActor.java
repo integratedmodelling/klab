@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.runtime.actors;
 import org.integratedmodelling.klab.engine.runtime.Session;
 
 import akka.actor.typed.Behavior;
-import akka.actor.typed.PostStop;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.ReceiveBuilder;
@@ -21,10 +20,11 @@ public class SessionActor extends KlabActor {
 	@Override
 	protected ReceiveBuilder<KlabMessage> configure() {
 		// TODO add all view messages and runtime messages
-		return super.configure().onSignal(PostStop.class, signal -> onPostStop());
+		return super.configure();
 	}
 
-	private SessionActor onPostStop() {
+	@Override
+	protected SessionActor onPostStop() {
 		// TODO do something
 		return this;
 	}

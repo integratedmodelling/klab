@@ -18,7 +18,6 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
-import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
@@ -375,15 +374,6 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         Date date = (Date)theEObject;
         T result = caseDate(date);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KactorsPackage.GROUP:
-      {
-        Group group = (Group)theEObject;
-        T result = caseGroup(group);
-        if (result == null) result = caseStatementGroup(group);
-        if (result == null) result = caseMessageCall(group);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -995,22 +985,6 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseDate(Date object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Group</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Group</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseGroup(Group object)
   {
     return null;
   }

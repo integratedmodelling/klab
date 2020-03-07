@@ -11,6 +11,13 @@ import org.integratedmodelling.kactors.kactors.Value;
 import org.integratedmodelling.kdl.api.IKdlAnnotation;
 import org.integratedmodelling.klab.utils.Parameters;
 
+/**
+ * We use KDL annotations as they're the most flexible. TODO put these in the API package and 
+ * share them across the three languages.
+ * 
+ * @author Ferd
+ *
+ */
 public class KActorsAnnotation extends Parameters<String> implements IKdlAnnotation {
 
 	private String name;

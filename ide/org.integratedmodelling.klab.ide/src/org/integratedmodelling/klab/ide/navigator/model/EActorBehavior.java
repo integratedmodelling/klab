@@ -1,11 +1,13 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 
@@ -74,6 +76,16 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 	@Override
 	public File getFile() {
 		return behavior.getFile();
+	}
+
+	@Override
+	public List<IKActorsBehavior> getImports() {
+		return behavior.getImports();
+	}
+
+	@Override
+	public List<IKActorsAction> getActions() {
+		return behavior.getActions();
 	}
 
 }

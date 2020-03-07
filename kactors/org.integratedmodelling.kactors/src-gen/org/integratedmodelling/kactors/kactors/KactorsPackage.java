@@ -471,13 +471,22 @@ public interface KactorsPackage extends EPackage
   int STATEMENT_GROUP__ACTIONS = MESSAGE_CALL__ACTIONS;
 
   /**
+   * The feature id for the '<em><b>Body</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT_GROUP__BODY = MESSAGE_CALL_FEATURE_COUNT + 0;
+
+  /**
    * The number of structural features of the '<em>Statement Group</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT_GROUP_FEATURE_COUNT = MESSAGE_CALL_FEATURE_COUNT + 0;
+  int STATEMENT_GROUP_FEATURE_COUNT = MESSAGE_CALL_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementListImpl <em>Statement List</em>}' class.
@@ -2392,61 +2401,6 @@ public interface KactorsPackage extends EPackage
   int DATE_FEATURE_COUNT = 8;
 
   /**
-   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.GroupImpl <em>Group</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kactors.kactors.impl.GroupImpl
-   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getGroup()
-   * @generated
-   */
-  int GROUP = 38;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int GROUP__NAME = STATEMENT_GROUP__NAME;
-
-  /**
-   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int GROUP__PARAMETERS = STATEMENT_GROUP__PARAMETERS;
-
-  /**
-   * The feature id for the '<em><b>Actions</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int GROUP__ACTIONS = STATEMENT_GROUP__ACTIONS;
-
-  /**
-   * The feature id for the '<em><b>Body</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int GROUP__BODY = STATEMENT_GROUP_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Group</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int GROUP_FEATURE_COUNT = STATEMENT_GROUP_FEATURE_COUNT + 1;
-
-  /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.UnitOp <em>Unit Op</em>}' enum.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2454,7 +2408,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 39;
+  int UNIT_OP = 38;
 
 
   /**
@@ -2845,6 +2799,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EClass getStatementGroup();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.StatementGroup#getBody <em>Body</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Body</em>'.
+   * @see org.integratedmodelling.kactors.kactors.StatementGroup#getBody()
+   * @see #getStatementGroup()
+   * @generated
+   */
+  EReference getStatementGroup_Body();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.StatementList <em>Statement List</em>}'.
@@ -4774,27 +4739,6 @@ public interface KactorsPackage extends EPackage
   EAttribute getDate_Ms();
 
   /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Group <em>Group</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Group</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Group
-   * @generated
-   */
-  EClass getGroup();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Group#getBody <em>Body</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Body</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Group#getBody()
-   * @see #getGroup()
-   * @generated
-   */
-  EReference getGroup_Body();
-
-  /**
    * Returns the meta object for enum '{@link org.integratedmodelling.kactors.kactors.UnitOp <em>Unit Op</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5128,6 +5072,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EClass STATEMENT_GROUP = eINSTANCE.getStatementGroup();
+
+    /**
+     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT_GROUP__BODY = eINSTANCE.getStatementGroup_Body();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementListImpl <em>Statement List</em>}' class.
@@ -6614,24 +6566,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute DATE__MS = eINSTANCE.getDate_Ms();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.GroupImpl <em>Group</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kactors.kactors.impl.GroupImpl
-     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getGroup()
-     * @generated
-     */
-    EClass GROUP = eINSTANCE.getGroup();
-
-    /**
-     * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference GROUP__BODY = eINSTANCE.getGroup_Body();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.UnitOp <em>Unit Op</em>}' enum.

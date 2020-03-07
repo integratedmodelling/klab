@@ -585,22 +585,21 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	public class StatementGroupElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.StatementGroup");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cGroupAction_0 = (Action)cGroup.eContents().get(0);
+		private final Action cStatementGroupAction_0 = (Action)cGroup.eContents().get(0);
 		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Assignment cBodyAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cBodyMessageBodyParserRuleCall_2_0 = (RuleCall)cBodyAssignment_2.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		//StatementGroup:
-		//	{Group}
-		//	'(' body=MessageBody? ')';
+		//	{StatementGroup} '(' body=MessageBody? ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{Group} '(' body=MessageBody? ')'
+		//{StatementGroup} '(' body=MessageBody? ')'
 		public Group getGroup() { return cGroup; }
 		
-		//{Group}
-		public Action getGroupAction_0() { return cGroupAction_0; }
+		//{StatementGroup}
+		public Action getStatementGroupAction_0() { return cStatementGroupAction_0; }
 		
 		//'('
 		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
@@ -3610,8 +3609,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//StatementGroup:
-	//	{Group}
-	//	'(' body=MessageBody? ')';
+	//	{StatementGroup} '(' body=MessageBody? ')';
 	public StatementGroupElements getStatementGroupAccess() {
 		return pStatementGroup;
 	}

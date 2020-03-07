@@ -21,7 +21,6 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
-import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsFactory;
@@ -325,13 +324,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass dateEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass groupEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -797,6 +789,17 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   public EClass getStatementGroup()
   {
     return statementGroupEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getStatementGroup_Body()
+  {
+    return (EReference)statementGroupEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2763,28 +2766,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EClass getGroup()
-  {
-    return groupEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getGroup_Body()
-  {
-    return (EReference)groupEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EEnum getUnitOp()
   {
     return unitOpEEnum;
@@ -2863,6 +2844,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(messageCallEClass, MESSAGE_CALL__ACTIONS);
 
     statementGroupEClass = createEClass(STATEMENT_GROUP);
+    createEReference(statementGroupEClass, STATEMENT_GROUP__BODY);
 
     statementListEClass = createEClass(STATEMENT_LIST);
     createEReference(statementListEClass, STATEMENT_LIST__FIRST);
@@ -3073,9 +3055,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(dateEClass, DATE__SEC);
     createEAttribute(dateEClass, DATE__MS);
 
-    groupEClass = createEClass(GROUP);
-    createEReference(groupEClass, GROUP__BODY);
-
     // Create enums
     unitOpEEnum = createEEnum(UNIT_OP);
   }
@@ -3110,7 +3089,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     // Add supertypes to classes
     statementGroupEClass.getESuperTypes().add(this.getMessageCall());
-    groupEClass.getESuperTypes().add(this.getStatementGroup());
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -3155,6 +3133,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getMessageCall_Actions(), this.getActions(), null, "actions", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementGroupEClass, StatementGroup.class, "StatementGroup", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getStatementGroup_Body(), this.getMessageBody(), null, "body", null, 0, 1, StatementGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementListEClass, StatementList.class, "StatementList", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatementList_First(), this.getStatement(), null, "first", null, 0, 1, StatementList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3364,9 +3343,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getDate_Min(), ecorePackage.getEInt(), "min", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDate_Sec(), ecorePackage.getEInt(), "sec", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDate_Ms(), ecorePackage.getEInt(), "ms", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(groupEClass, Group.class, "Group", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getGroup_Body(), this.getMessageBody(), null, "body", null, 0, 1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
     initEEnum(unitOpEEnum, UnitOp.class, "UnitOp");

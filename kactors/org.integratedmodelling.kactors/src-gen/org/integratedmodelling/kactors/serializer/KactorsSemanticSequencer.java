@@ -24,7 +24,6 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
-import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
@@ -44,6 +43,7 @@ import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementBody;
+import org.integratedmodelling.kactors.kactors.StatementGroup;
 import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
@@ -98,16 +98,6 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 			case KactorsPackage.FOR_STATEMENT:
 				sequence_ForStatement(context, (ForStatement) semanticObject); 
 				return; 
-			case KactorsPackage.GROUP:
-				if (rule == grammarAccess.getMessageCallRule()) {
-					sequence_MessageCall_StatementGroup(context, (Group) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getStatementGroupRule()) {
-					sequence_StatementGroup(context, (Group) semanticObject); 
-					return; 
-				}
-				else break;
 			case KactorsPackage.HEADER_ROW:
 				sequence_HeaderRow(context, (HeaderRow) semanticObject); 
 				return; 
@@ -172,6 +162,16 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 			case KactorsPackage.STATEMENT_BODY:
 				sequence_StatementBody(context, (StatementBody) semanticObject); 
 				return; 
+			case KactorsPackage.STATEMENT_GROUP:
+				if (rule == grammarAccess.getMessageCallRule()) {
+					sequence_MessageCall_StatementGroup(context, (StatementGroup) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getStatementGroupRule()) {
+					sequence_StatementGroup(context, (StatementGroup) semanticObject); 
+					return; 
+				}
+				else break;
 			case KactorsPackage.STATEMENT_LIST:
 				sequence_StatementList(context, (StatementList) semanticObject); 
 				return; 
@@ -518,12 +518,12 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
-	 *     MessageCall returns Group
+	 *     MessageCall returns StatementGroup
 	 *
 	 * Constraint:
 	 *     (body=MessageBody? actions=Actions?)
 	 */
-	protected void sequence_MessageCall_StatementGroup(ISerializationContext context, Group semanticObject) {
+	protected void sequence_MessageCall_StatementGroup(ISerializationContext context, StatementGroup semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -674,12 +674,12 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
-	 *     StatementGroup returns Group
+	 *     StatementGroup returns StatementGroup
 	 *
 	 * Constraint:
 	 *     body=MessageBody?
 	 */
-	protected void sequence_StatementGroup(ISerializationContext context, Group semanticObject) {
+	protected void sequence_StatementGroup(ISerializationContext context, StatementGroup semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

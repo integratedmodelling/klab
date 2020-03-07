@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.klab.api.IStatement;
@@ -24,6 +25,9 @@ public class Behavior implements IBehavior {
 	
 	public Behavior(IKActorsBehavior statement) {
 		this.statement = statement;
+		for (IKActorsAction a : statement.getActions()) {
+			BehaviorAction action = new BehaviorAction(a, this);
+		}
 	}
 
 	@Override

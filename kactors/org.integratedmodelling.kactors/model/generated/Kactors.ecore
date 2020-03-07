@@ -57,7 +57,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="actions" eType="#//Actions"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="StatementGroup" eSuperTypes="#//MessageCall"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StatementGroup" eSuperTypes="#//MessageCall">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//MessageBody"
+        containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StatementList">
     <eStructuralFeatures xsi:type="ecore:EReference" name="first" eType="#//Statement"
         containment="true"/>
@@ -335,9 +338,5 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="min" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="sec" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ms" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Group" eSuperTypes="#//StatementGroup">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//MessageBody"
-        containment="true"/>
   </eClassifiers>
 </ecore:EPackage>

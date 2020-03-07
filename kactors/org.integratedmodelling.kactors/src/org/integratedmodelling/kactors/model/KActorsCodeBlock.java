@@ -13,18 +13,18 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  * @author Ferd
  *
  */
-public class KActorsCodeBlock extends KActorStatement {
+public class KActorsCodeBlock extends KActorsStatement {
 
-	List<List<KActorsCall>> sequences = new ArrayList<>();
+	List<List<KActorsStatement>> sequences = new ArrayList<>();
 
-	public KActorsCodeBlock(List<StatementList> statements, KActorStatement parent) {
-		super(parent.getEStatement(), parent);
+	public KActorsCodeBlock(List<StatementList> statements, KActorCodeStatement parent) {
+		super(parent, Type.STATEMENT_GROUP);
 		for (StatementList list : statements) {
-			List<KActorsCall> sequence = new ArrayList<>();
-			sequence.add(KActorsCall.create(list.getFirst()));
+			List<KActorsStatement> sequence = new ArrayList<>();
+			sequence.add(KActorsStatement.create(list.getFirst(), parent));
 			if (list.getNext() != null) {
 				for (Statement statement : list.getNext()) {
-					sequence.add(KActorsCall.create(statement));
+					sequence.add(KActorsStatement.create(statement, parent));
 				}
 			}
 		}

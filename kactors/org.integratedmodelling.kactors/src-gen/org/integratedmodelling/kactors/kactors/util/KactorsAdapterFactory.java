@@ -20,7 +20,6 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
-import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
@@ -302,11 +301,6 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseDate(Date object)
       {
         return createDateAdapter();
-      }
-      @Override
-      public Adapter caseGroup(Group object)
-      {
-        return createGroupAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -896,21 +890,6 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createDateAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Group <em>Group</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kactors.kactors.Group
-   * @generated
-   */
-  public Adapter createGroupAdapter()
   {
     return null;
   }

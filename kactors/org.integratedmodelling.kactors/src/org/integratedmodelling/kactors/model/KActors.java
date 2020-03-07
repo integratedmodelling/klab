@@ -25,6 +25,12 @@ import org.integratedmodelling.klab.common.CompileNotification;
 
 import com.google.inject.Injector;
 
+/**
+ * Singleton holding the results of parsing behaviors across the workspace.
+ * 
+ * @author Ferd
+ *
+ */
 public enum KActors {
 
 	INSTANCE;
@@ -248,7 +254,7 @@ public enum KActors {
 		}
 
 		if (level != null) {
-			ret = CompileNotification.create(level, issue.getMessage(), name, KActorStatement.createDummy(issue));
+			ret = CompileNotification.create(level, issue.getMessage(), name, KActorCodeStatement.createDummy(issue));
 		}
 
 		return ret;

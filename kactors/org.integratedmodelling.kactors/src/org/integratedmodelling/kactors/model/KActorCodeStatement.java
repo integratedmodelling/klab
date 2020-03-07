@@ -6,13 +6,14 @@ import java.util.List;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.xtext.nodemodel.ICompositeNode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
-import org.integratedmodelling.kactors.api.IKActorsStatement;
+import org.integratedmodelling.kactors.api.IKActorsCodeStatement;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimMetadata;
-import org.integratedmodelling.kim.api.IKimStatement;
 
-public class KActorStatement implements IKActorsStatement {
+public class KActorCodeStatement implements IKActorsCodeStatement {
 
     // ACHTUNG if these are added to, ensure that the copy constructor is updated.
     protected int firstLine;
@@ -26,17 +27,17 @@ public class KActorStatement implements IKActorsStatement {
     protected boolean deprecated = false;
     protected String deprecation = null;
     protected String sourceCode = null;
-    protected KActorStatement parent = null;
+    protected KActorCodeStatement parent = null;
     protected boolean errors = false;
     protected boolean warnings = false;
 
     EObject eObject;
 	private URI uri;
 
-    public KActorStatement() {
+    public KActorCodeStatement() {
     }
 
-    public KActorStatement(KActorStatement statement) {
+    public KActorCodeStatement(KActorCodeStatement statement) {
         this.firstCharOffset = statement.firstCharOffset;
         this.lastCharOffset = statement.lastCharOffset;
         this.firstLine = statement.firstLine;
@@ -52,7 +53,7 @@ public class KActorStatement implements IKActorsStatement {
         this.uri = statement.uri;
     }
     
-    public KActorStatement(EObject statement, KActorStatement parent) {
+    public KActorCodeStatement(EObject statement, KActorCodeStatement parent) {
         this.eObject = statement;
         if (statement != null) {
             setCode(statement);
@@ -68,8 +69,15 @@ public class KActorStatement implements IKActorsStatement {
     }
 	
     private void setCode(EObject statement) {
-		// TODO Auto-generated method stub
-		
+        this.eObject = statement;
+        ICompositeNode node = NodeModelUtils.findActualNodeFor(statement);
+        this.firstLine = node.getStartLine();
+        this.lastLine = node.getEndLine();
+        this.firstCharOffset = node.getOffset();
+        this.lastCharOffset = node.getEndOffset();
+        this.uri = EcoreUtil.getURI(statement);
+        this.resource = statement.eResource() == null ? "" : statement.eResource().getURI().path();
+        sourceCode = node.getText().trim();
 	}
     
     EObject getEStatement() {
@@ -82,8 +90,8 @@ public class KActorStatement implements IKActorsStatement {
      * @param issue
      * @return
      */
-    public static KActorStatement createDummy(Issue issue) {
-        KActorStatement ret = new KActorStatement(null, null);
+    public static KActorCodeStatement createDummy(Issue issue) {
+        KActorCodeStatement ret = new KActorCodeStatement(null, null);
         ret.setFirstLine(issue.getLineNumber() == null ? -1 : issue.getLineNumber());
         ret.setFirstCharOffset(issue.getOffset() == null ? -1 : issue.getOffset());
         ret.setLastCharOffset(issue.getOffset() == null ? -1 : issue.getOffset() + issue.getLength());
@@ -107,38 +115,32 @@ public class KActorStatement implements IKActorsStatement {
 
 	@Override
 	public String getSourceCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return sourceCode;
 	}
 
 	@Override
 	public int getFirstLine() {
-		// TODO Auto-generated method stub
-		return 0;
+		return firstLine;
 	}
 
 	@Override
 	public int getLastLine() {
-		// TODO Auto-generated method stub
-		return 0;
+		return lastLine;
 	}
 
 	@Override
 	public int getFirstCharOffset() {
-		// TODO Auto-generated method stub
-		return 0;
+		return firstCharOffset;
 	}
 
 	@Override
 	public int getLastCharOffset() {
-		// TODO Auto-generated method stub
-		return 0;
+		return lastCharOffset;
 	}
 
 	@Override
 	public List<IKimAnnotation> getAnnotations() {
-		// TODO Auto-generated method stub
-		return null;
+		return annotations;
 	}
 
 	@Override

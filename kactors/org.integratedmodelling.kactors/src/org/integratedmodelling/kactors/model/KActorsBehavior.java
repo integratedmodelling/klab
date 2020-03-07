@@ -10,23 +10,27 @@ import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.model.KActors.BehaviorDescriptor;
-import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.klab.Version;
 
 /**
- * Syntactic peer for a k.Actors application, to be turned into an
- * appropriate actor system in the engine.
+ * Syntactic peer for a k.Actors application, to be turned into an appropriate
+ * actor system in the engine.
  * 
  * @author Ferd
  *
  */
-public class KActorsBehavior extends KActorStatement implements IKActorsBehavior  {
+public class KActorsBehavior extends KActorCodeStatement implements IKActorsBehavior {
 
-	String name;
+	private String name;
+	private Version version;
+	private String observable;
+	private Type type = Type.BEHAVIOR;
 	private File file;
 	private List<IKActorsBehavior> imports = new ArrayList<>();
 	private List<IKActorsAction> actions = new ArrayList<>();
-	
+
 	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
+		
 		super(model, null);
 		if (model.getPreamble() != null) {
 			loadPreamble(model.getPreamble());
@@ -40,27 +44,37 @@ public class KActorsBehavior extends KActorStatement implements IKActorsBehavior
 	}
 
 	private void loadPreamble(Preamble preamble) {
+		
 		this.name = preamble.getName();
-		// TODO the rest
+		
+		// TODO metadata and the like
+		if (preamble.getVersion() != null) {
+			this.version = Version.create(preamble.getVersion());
+		}
+		
+		this.observable = preamble.getObservable();
+		
+		if (preamble.isApp()) {
+			this.type = Type.APP;
+		} else if (preamble.isLibrary()) {
+			this.type = Type.TRAITS;
+		} else if (preamble.isUser()) {
+			this.type = Type.USER;
+		}
+
 		for (String s : preamble.getImports()) {
 			IKActorsBehavior imported = KActors.INSTANCE.getBehavior(s);
 			if (imported != null) {
 				this.imports.add(imported);
 			}
 		}
+		
 	}
 
-	@Override
-	public String getSourceCode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	@Override
 	public File getFile() {
 		return this.file;
 	}
-
 
 	@Override
 	public String getName() {
@@ -69,68 +83,17 @@ public class KActorsBehavior extends KActorStatement implements IKActorsBehavior
 
 	@Override
 	public Type getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
-
-//	@Override
-//	public int getFirstLine() {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
-//
-//	@Override
-//	public int getLastLine() {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
-//
-//	@Override
-//	public int getFirstCharOffset() {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
-//
-//	@Override
-//	public int getLastCharOffset() {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
 
 	@Override
-	public List<IKimAnnotation> getAnnotations() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IKActorsBehavior> getImports() {
+		return imports;
 	}
 
-//	@Override
-//	public String getDeprecation() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	@Override
-//	public boolean isDeprecated() {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-//
-//	@Override
-//	public boolean isErrors() {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-//
-//	@Override
-//	public boolean isWarnings() {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-//
-//	@Override
-//	public IKimMetadata getMetadata() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	@Override
+	public List<IKActorsAction> getActions() {
+		return actions;
+	}
 
 }

@@ -3120,7 +3120,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
             if ( state.backtracking==0 ) {
 
               				current = forceCreateModelElement(
-              					grammarAccess.getStatementGroupAccess().getGroupAction_0(),
+              					grammarAccess.getStatementGroupAccess().getStatementGroupAction_0(),
               					current);
               			
             }

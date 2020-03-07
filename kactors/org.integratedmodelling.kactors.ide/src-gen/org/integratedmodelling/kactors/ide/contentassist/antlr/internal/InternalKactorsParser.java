@@ -15239,7 +15239,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:4166:2: ()
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getStatementGroupAccess().getGroupAction_0()); 
+               before(grammarAccess.getStatementGroupAccess().getStatementGroupAction_0()); 
             }
             // InternalKactors.g:4167:2: ()
             // InternalKactors.g:4167:3: 
@@ -15247,7 +15247,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getStatementGroupAccess().getGroupAction_0()); 
+               after(grammarAccess.getStatementGroupAccess().getStatementGroupAction_0()); 
             }
 
             }

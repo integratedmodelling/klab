@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -13,6 +12,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.PostStop;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Receive;
@@ -31,16 +31,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 *
 	 */
 	public interface KlabMessage {
-		
+
 		// unique ID to ensure reply and notification
 		String getId();
 
 	}
 
 	protected void waitForCompletion(KlabMessage message) {
-		
+
 	}
-	
+
 	protected IIdentity getIdentity() {
 		return this.identity;
 	}
@@ -60,7 +60,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return builder
 				.onMessage(Load.class, this::loadBehavior)
 				.onMessage(Spawn.class, this::createChild)
-				.onMessage(KActorsMessage.class, this::executeCall);
+				.onMessage(KActorsMessage.class, this::executeCall)
+				.onSignal(PostStop.class, signal -> onPostStop());
+	}
+
+	protected KlabActor onPostStop() {
+		// TODO deactivate the underlying observation, send changes
+		return this;
 	}
 
 	@Override
@@ -75,16 +81,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 		return Behaviors.same();
 	}
-	
+
 	protected void run(IBehavior.Action action) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	protected Behavior<KlabMessage> executeCall(KActorsMessage message) {
 		return Behaviors.same();
 	}
-	
+
 	/**
 	 * Set the appropriate actor in the identity. Asking end may wait until that is
 	 * done but we do not reply otherwise.

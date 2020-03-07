@@ -52,7 +52,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MessageCall/parameters"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MessageCall/actions"/>
     </genClasses>
-    <genClasses ecoreClass="Kactors.ecore#//StatementGroup"/>
+    <genClasses ecoreClass="Kactors.ecore#//StatementGroup">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//StatementGroup/body"/>
+    </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//StatementList">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//StatementList/first"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//StatementList/next"/>
@@ -261,9 +263,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Date/min"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Date/sec"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Date/ms"/>
-    </genClasses>
-    <genClasses ecoreClass="Kactors.ecore#//Group">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Group/body"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

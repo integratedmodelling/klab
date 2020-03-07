@@ -10,7 +10,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  * @author Ferd
  *
  */
-public class KActorsValue extends KActorStatement {
+public class KActorsValue extends KActorCodeStatement {
 
 	public enum Type {
 		REGEXP, LITERAL, OBSERVABLE, VARIABLE, EXPRESSION, LIST, CLASS, ANYVALUE, ANYTHING, NODATA
@@ -19,7 +19,7 @@ public class KActorsValue extends KActorStatement {
 	private Type type;
 	private Object value;
 	
-	public KActorsValue(Value value, KActorStatement parent) {
+	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
 	}
 }

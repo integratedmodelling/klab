@@ -9,6 +9,12 @@ package org.integratedmodelling.kactors.kactors;
  * A representation of the model object '<em><b>Statement Group</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <p>
+ * The following features are supported:
+ * </p>
+ * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.StatementGroup#getBody <em>Body</em>}</li>
+ * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatementGroup()
  * @model
@@ -16,4 +22,26 @@ package org.integratedmodelling.kactors.kactors;
  */
 public interface StatementGroup extends MessageCall
 {
+  /**
+   * Returns the value of the '<em><b>Body</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Body</em>' containment reference.
+   * @see #setBody(MessageBody)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatementGroup_Body()
+   * @model containment="true"
+   * @generated
+   */
+  MessageBody getBody();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.StatementGroup#getBody <em>Body</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Body</em>' containment reference.
+   * @see #getBody()
+   * @generated
+   */
+  void setBody(MessageBody value);
+
 } // StatementGroup

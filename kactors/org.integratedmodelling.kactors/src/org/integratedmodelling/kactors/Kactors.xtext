@@ -46,8 +46,7 @@ MessageCall:
 	  StatementGroup) (':' actions=Actions)?
 ;
 
-StatementGroup: {Group}
-	'(' body=MessageBody? ')'
+StatementGroup: {StatementGroup} '(' body=MessageBody? ')'
 ;
 
 StatementList:
