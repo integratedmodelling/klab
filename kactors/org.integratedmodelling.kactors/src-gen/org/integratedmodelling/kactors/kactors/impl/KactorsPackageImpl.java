@@ -1468,7 +1468,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMatch_Arguments()
+  public EReference getMatch_Set()
   {
     return (EReference)matchEClass.getEStructuralFeatures().get(7);
   }
@@ -1479,7 +1479,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMatch_Set()
+  public EReference getMatch_Quantity()
   {
     return (EReference)matchEClass.getEStructuralFeatures().get(8);
   }
@@ -1490,20 +1490,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMatch_Quantity()
-  {
-    return (EReference)matchEClass.getEStructuralFeatures().get(9);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EAttribute getMatch_Expr()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -1514,7 +1503,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Nodata()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -1525,7 +1514,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Star()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -1536,7 +1525,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getMatch_Anything()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -2861,7 +2850,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(matchEClass, MATCH__REGEXP);
     createEAttribute(matchEClass, MATCH__OBSERVABLE);
     createEReference(matchEClass, MATCH__LITERAL);
-    createEReference(matchEClass, MATCH__ARGUMENTS);
     createEReference(matchEClass, MATCH__SET);
     createEReference(matchEClass, MATCH__QUANTITY);
     createEAttribute(matchEClass, MATCH__EXPR);
@@ -3145,7 +3133,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getMatch_Regexp(), ecorePackage.getEString(), "regexp", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Observable(), ecorePackage.getEString(), "observable", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMatch_Arguments(), this.getArgumentDeclaration(), null, "arguments", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_Set(), this.getList(), null, "set", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_Quantity(), this.getQuantity(), null, "quantity", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Expr(), ecorePackage.getEString(), "expr", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

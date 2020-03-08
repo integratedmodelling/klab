@@ -45,13 +45,17 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.type = Type.LIST;
 			this.value = parseList(value.getList());
 		} else if (value.getArgvalue() != null) {
-
+			this.type = Type.NUMBERED_PATTERN;
+			this.value = value.getArgvalue();
 		} else if (value.getMap() != null) {
-
+			this.type = Type.MAP;
+			// TODO
 		} else if (value.getTable() != null) {
-
+			this.type = Type.TABLE;
+			// TODO
 		} else if (value.getUrn() != null) {
-
+			this.type = Type.URN;
+			this.value = value.getUrn();
 		}
 	}
 

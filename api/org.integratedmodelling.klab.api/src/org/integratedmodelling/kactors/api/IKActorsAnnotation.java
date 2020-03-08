@@ -1,4 +1,4 @@
-package org.integratedmodelling.kdl.api;
+package org.integratedmodelling.kactors.api;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.IAnnotationStatement;
@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.IAnnotationStatement;
  * @deprecated use {@link IAnnotationStatement}
  *
  */
-public interface IKdlAnnotation extends IParameters<String> {
+public interface IKActorsAnnotation extends IParameters<String> {
 	
 	public static final String DEFAULT_PARAMETER_NAME = "value";
 	

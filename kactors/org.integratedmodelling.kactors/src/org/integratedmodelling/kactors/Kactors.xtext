@@ -144,7 +144,7 @@ Match:
 	regexp=REGEXP '->' body=StatementList |
 	observable=OBSERVABLE '->' body=StatementList |
 	literal=Literal '->' body=StatementList |
-	arguments=ArgumentDeclaration '->' body=StatementList |
+//	arguments=ArgumentDeclaration '->' body=StatementList |
 	'in' set=List '->' body=StatementList | 
 	quantity=Quantity '->' body=StatementList |
 	expr=EXPR '->' body=StatementList |
@@ -294,7 +294,7 @@ terminal EXPR:
 	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
 	
 terminal EMBEDDEDTEXT:
-	'%%%'(' ')?('-')*('\r'|'\n')('\r'|'\n')? -> '%%%'(' ')?('-')*;
+	'%%%'(' ')?('-')*('\r'|'\n') -> '%%%'(' ')?('-')*;
 
 terminal REGEXP:
 	'%' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\') | !('\\' | '%'))* '%';

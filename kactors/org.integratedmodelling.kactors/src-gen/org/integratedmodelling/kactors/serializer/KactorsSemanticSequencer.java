@@ -475,7 +475,6 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         (regexp=REGEXP body=StatementList) | 
 	 *         (observable=OBSERVABLE body=StatementList) | 
 	 *         (literal=Literal body=StatementList) | 
-	 *         (arguments=ArgumentDeclaration body=StatementList) | 
 	 *         (set=List body=StatementList) | 
 	 *         (quantity=Quantity body=StatementList) | 
 	 *         (expr=EXPR body=StatementList) | 

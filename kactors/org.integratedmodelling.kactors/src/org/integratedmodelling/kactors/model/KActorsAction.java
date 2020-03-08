@@ -12,7 +12,6 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 
 	private IKActorsBehavior behavior;
 	private String name;
-	List<IKimAnnotation> annotations = new ArrayList<>();
 	KActorsCodeBlock code;
 
 	public KActorsAction(Definition definition, KActorsBehavior parent) {

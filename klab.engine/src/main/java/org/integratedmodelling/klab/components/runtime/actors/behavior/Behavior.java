@@ -87,10 +87,13 @@ public class Behavior implements IBehavior {
 		for (Action action : actions.values()) {
 			boolean ok = false;
 			for (String m : match) {
-				if (m.startsWith("@")) {
+				if (!ok && m.startsWith("@")) {
 					ok = Annotations.INSTANCE.hasAnnotation(action, m.substring(1));
 				} else if (!ok) {
 					ok = m.equals(action.getId()) || m.equals(action.getName());
+				}
+				if (ok) {
+					break;
 				}
 			}
 			if (ok) {

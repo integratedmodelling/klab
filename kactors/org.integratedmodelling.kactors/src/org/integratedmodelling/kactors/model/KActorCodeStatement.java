@@ -50,6 +50,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
         this.sourceCode = statement.sourceCode;
         this.errors = statement.errors;
         this.warnings = statement.warnings;
+        this.parent = statement.parent;
         this.uri = statement.uri;
     }
     
