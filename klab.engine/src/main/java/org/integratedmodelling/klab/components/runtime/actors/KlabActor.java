@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -83,8 +84,33 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected void run(IBehavior.Action action) {
-		// TODO Auto-generated method stub
+		execute(action.getStatement().getCode());
+	}
+
+	private void execute(IKActorsStatement code) {
+		switch (code.getType()) {
+		case ACTION_CALL:
+			break;
+		case ASSIGNMENT:
+			break;
+		case DO_STATEMENT:
+			break;
+		case FIRE_VALUE:
+			break;
+		case FOR_STATEMENT:
+			break;
+		case IF_STATEMENT:
+			break;
+		case STATEMENT_GROUP:
+			break;
+		case TEXT_BLOCK:
+			break;
+		case WHILE_STATEMENT:
+			break;
+		default:
+			break;
 		
+		}
 	}
 
 	protected Behavior<KlabMessage> executeCall(KActorsMessage message) {

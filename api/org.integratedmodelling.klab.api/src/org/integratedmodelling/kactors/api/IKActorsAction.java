@@ -9,4 +9,11 @@ package org.integratedmodelling.kactors.api;
 public interface IKActorsAction extends IKActorsCodeStatement {
 
 	String getName();
+
+	/**
+	 * The code for the action, most likely a group at this level.
+	 * 
+	 * @return
+	 */
+	IKActorsStatement getCode();
 }
