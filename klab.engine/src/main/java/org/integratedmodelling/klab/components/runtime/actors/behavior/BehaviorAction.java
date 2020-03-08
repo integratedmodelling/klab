@@ -1,11 +1,14 @@
 package org.integratedmodelling.klab.components.runtime.actors.behavior;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.model.Annotation;
 
 public class BehaviorAction implements IBehavior.Action {
 	
@@ -15,10 +18,14 @@ public class BehaviorAction implements IBehavior.Action {
 	private IKActorsAction statement;
 	private Behavior behavior;
 	private CallSequence calls;
+	private List<IAnnotation> annotations = new ArrayList<>();
 
 	public BehaviorAction(IKActorsAction action, Behavior behavior) {
 		this.statement = action;
 		this.behavior = behavior;
+		for (IKimAnnotation annotation : action.getAnnotations()) {
+			this.annotations.add(new Annotation(annotation));
+		}
 	}
 
 	@Override
@@ -43,20 +50,17 @@ public class BehaviorAction implements IBehavior.Action {
 
 	@Override
 	public List<IAnnotation> getAnnotations() {
-		// TODO Auto-generated method stub
-		return null;
+		return annotations;
 	}
 
 	@Override
 	public boolean isDeprecated() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.statement.isDeprecated();
 	}
 
 	@Override
 	public boolean isErrors() {
-		// TODO Auto-generated method stub
-		return false;
+		return false; // this.statement.getErrors().size() > 0;
 	}
 
 }

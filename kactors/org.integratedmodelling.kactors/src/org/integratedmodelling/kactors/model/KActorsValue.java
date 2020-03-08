@@ -10,7 +10,6 @@ import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Value;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.utils.Range;
 
 /**

@@ -84,7 +84,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected void run(IBehavior.Action action) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	protected Behavior<KlabMessage> executeCall(KActorsMessage message) {
