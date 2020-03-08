@@ -121,6 +121,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.DO_STATEMENT: return createDoStatement();
       case KactorsPackage.FOR_STATEMENT: return createForStatement();
       case KactorsPackage.ACTIONS: return createActions();
+      case KactorsPackage.VALUE: return createValue();
       case KactorsPackage.MATCH: return createMatch();
       case KactorsPackage.LIST: return createList();
       case KactorsPackage.MAP: return createMap();
@@ -136,7 +137,6 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.LITERAL: return createLiteral();
       case KactorsPackage.PARAMETER_LIST: return createParameterList();
       case KactorsPackage.KEY_VALUE_PAIR: return createKeyValuePair();
-      case KactorsPackage.VALUE: return createValue();
       case KactorsPackage.UNIT_ELEMENT: return createUnitElement();
       case KactorsPackage.UNIT: return createUnit();
       case KactorsPackage.CURRENCY: return createCurrency();
@@ -380,6 +380,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
+  public Value createValue()
+  {
+    ValueImpl value = new ValueImpl();
+    return value;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Match createMatch()
   {
     MatchImpl match = new MatchImpl();
@@ -552,18 +564,6 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     KeyValuePairImpl keyValuePair = new KeyValuePairImpl();
     return keyValuePair;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Value createValue()
-  {
-    ValueImpl value = new ValueImpl();
-    return value;
   }
 
   /**

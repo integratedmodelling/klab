@@ -1165,6 +1165,99 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//')'
 		public Keyword getRightParenthesisKeyword_3_2() { return cRightParenthesisKeyword_3_2; }
 	}
+	public class ValueElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Value");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cArgvalueAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cArgvalueARGVALUETerminalRuleCall_0_0 = (RuleCall)cArgvalueAssignment_0.eContents().get(0);
+		private final Assignment cLiteralAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cLiteralLiteralParserRuleCall_1_0 = (RuleCall)cLiteralAssignment_1.eContents().get(0);
+		private final Assignment cIdAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
+		private final RuleCall cIdPathNameParserRuleCall_2_0 = (RuleCall)cIdAssignment_2.eContents().get(0);
+		private final Assignment cUrnAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
+		private final RuleCall cUrnUrnIdParserRuleCall_3_0 = (RuleCall)cUrnAssignment_3.eContents().get(0);
+		private final Assignment cListAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
+		private final RuleCall cListListParserRuleCall_4_0 = (RuleCall)cListAssignment_4.eContents().get(0);
+		private final Assignment cMapAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
+		private final RuleCall cMapMapParserRuleCall_5_0 = (RuleCall)cMapAssignment_5.eContents().get(0);
+		private final Assignment cObservableAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
+		private final RuleCall cObservableOBSERVABLETerminalRuleCall_6_0 = (RuleCall)cObservableAssignment_6.eContents().get(0);
+		private final Assignment cExpressionAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_7_0 = (RuleCall)cExpressionAssignment_7.eContents().get(0);
+		private final Assignment cTableAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
+		private final RuleCall cTableLookupTableParserRuleCall_8_0 = (RuleCall)cTableAssignment_8.eContents().get(0);
+		private final Assignment cQuantityAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
+		private final RuleCall cQuantityQuantityParserRuleCall_9_0 = (RuleCall)cQuantityAssignment_9.eContents().get(0);
+		
+		//Value:
+		//	argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map | observable=OBSERVABLE |
+		//	expression=EXPR | table=LookupTable | quantity=Quantity;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map | observable=OBSERVABLE |
+		//expression=EXPR | table=LookupTable | quantity=Quantity
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//argvalue=ARGVALUE
+		public Assignment getArgvalueAssignment_0() { return cArgvalueAssignment_0; }
+		
+		//ARGVALUE
+		public RuleCall getArgvalueARGVALUETerminalRuleCall_0_0() { return cArgvalueARGVALUETerminalRuleCall_0_0; }
+		
+		//literal=Literal
+		public Assignment getLiteralAssignment_1() { return cLiteralAssignment_1; }
+		
+		//Literal
+		public RuleCall getLiteralLiteralParserRuleCall_1_0() { return cLiteralLiteralParserRuleCall_1_0; }
+		
+		//id=PathName
+		public Assignment getIdAssignment_2() { return cIdAssignment_2; }
+		
+		//PathName
+		public RuleCall getIdPathNameParserRuleCall_2_0() { return cIdPathNameParserRuleCall_2_0; }
+		
+		//urn=UrnId
+		public Assignment getUrnAssignment_3() { return cUrnAssignment_3; }
+		
+		//UrnId
+		public RuleCall getUrnUrnIdParserRuleCall_3_0() { return cUrnUrnIdParserRuleCall_3_0; }
+		
+		//list=List
+		public Assignment getListAssignment_4() { return cListAssignment_4; }
+		
+		//List
+		public RuleCall getListListParserRuleCall_4_0() { return cListListParserRuleCall_4_0; }
+		
+		//map=Map
+		public Assignment getMapAssignment_5() { return cMapAssignment_5; }
+		
+		//Map
+		public RuleCall getMapMapParserRuleCall_5_0() { return cMapMapParserRuleCall_5_0; }
+		
+		//observable=OBSERVABLE
+		public Assignment getObservableAssignment_6() { return cObservableAssignment_6; }
+		
+		//OBSERVABLE
+		public RuleCall getObservableOBSERVABLETerminalRuleCall_6_0() { return cObservableOBSERVABLETerminalRuleCall_6_0; }
+		
+		//expression=EXPR
+		public Assignment getExpressionAssignment_7() { return cExpressionAssignment_7; }
+		
+		//EXPR
+		public RuleCall getExpressionEXPRTerminalRuleCall_7_0() { return cExpressionEXPRTerminalRuleCall_7_0; }
+		
+		//table=LookupTable
+		public Assignment getTableAssignment_8() { return cTableAssignment_8; }
+		
+		//LookupTable
+		public RuleCall getTableLookupTableParserRuleCall_8_0() { return cTableLookupTableParserRuleCall_8_0; }
+		
+		//quantity=Quantity
+		public Assignment getQuantityAssignment_9() { return cQuantityAssignment_9; }
+		
+		//Quantity
+		public RuleCall getQuantityQuantityParserRuleCall_9_0() { return cQuantityQuantityParserRuleCall_9_0; }
+	}
 	public class MatchElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Match");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
@@ -1207,102 +1300,69 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cBodyAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_5_2_0 = (RuleCall)cBodyAssignment_5_2.eContents().get(0);
 		private final Group cGroup_6 = (Group)cAlternatives.eContents().get(6);
-		private final Assignment cTextAssignment_6_0 = (Assignment)cGroup_6.eContents().get(0);
-		private final RuleCall cTextSTRINGTerminalRuleCall_6_0_0 = (RuleCall)cTextAssignment_6_0.eContents().get(0);
+		private final Assignment cArgumentsAssignment_6_0 = (Assignment)cGroup_6.eContents().get(0);
+		private final RuleCall cArgumentsArgumentDeclarationParserRuleCall_6_0_0 = (RuleCall)cArgumentsAssignment_6_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_6_1 = (Keyword)cGroup_6.eContents().get(1);
 		private final Assignment cBodyAssignment_6_2 = (Assignment)cGroup_6.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_6_2_0 = (RuleCall)cBodyAssignment_6_2.eContents().get(0);
 		private final Group cGroup_7 = (Group)cAlternatives.eContents().get(7);
-		private final Assignment cArgumentsAssignment_7_0 = (Assignment)cGroup_7.eContents().get(0);
-		private final RuleCall cArgumentsArgumentDeclarationParserRuleCall_7_0_0 = (RuleCall)cArgumentsAssignment_7_0.eContents().get(0);
-		private final Keyword cHyphenMinusGreaterThanSignKeyword_7_1 = (Keyword)cGroup_7.eContents().get(1);
-		private final Assignment cBodyAssignment_7_2 = (Assignment)cGroup_7.eContents().get(2);
-		private final RuleCall cBodyStatementListParserRuleCall_7_2_0 = (RuleCall)cBodyAssignment_7_2.eContents().get(0);
+		private final Keyword cInKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
+		private final Assignment cSetAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
+		private final RuleCall cSetListParserRuleCall_7_1_0 = (RuleCall)cSetAssignment_7_1.eContents().get(0);
+		private final Keyword cHyphenMinusGreaterThanSignKeyword_7_2 = (Keyword)cGroup_7.eContents().get(2);
+		private final Assignment cBodyAssignment_7_3 = (Assignment)cGroup_7.eContents().get(3);
+		private final RuleCall cBodyStatementListParserRuleCall_7_3_0 = (RuleCall)cBodyAssignment_7_3.eContents().get(0);
 		private final Group cGroup_8 = (Group)cAlternatives.eContents().get(8);
-		private final Assignment cInt0Assignment_8_0 = (Assignment)cGroup_8.eContents().get(0);
-		private final RuleCall cInt0NumberParserRuleCall_8_0_0 = (RuleCall)cInt0Assignment_8_0.eContents().get(0);
-		private final Alternatives cAlternatives_8_1 = (Alternatives)cGroup_8.eContents().get(1);
-		private final Assignment cLeftLimitAssignment_8_1_0 = (Assignment)cAlternatives_8_1.eContents().get(0);
-		private final Keyword cLeftLimitInclusiveKeyword_8_1_0_0 = (Keyword)cLeftLimitAssignment_8_1_0.eContents().get(0);
-		private final Keyword cExclusiveKeyword_8_1_1 = (Keyword)cAlternatives_8_1.eContents().get(1);
-		private final Keyword cToKeyword_8_2 = (Keyword)cGroup_8.eContents().get(2);
-		private final Assignment cInt1Assignment_8_3 = (Assignment)cGroup_8.eContents().get(3);
-		private final RuleCall cInt1NumberParserRuleCall_8_3_0 = (RuleCall)cInt1Assignment_8_3.eContents().get(0);
-		private final Alternatives cAlternatives_8_4 = (Alternatives)cGroup_8.eContents().get(4);
-		private final Assignment cRightLimitAssignment_8_4_0 = (Assignment)cAlternatives_8_4.eContents().get(0);
-		private final Keyword cRightLimitInclusiveKeyword_8_4_0_0 = (Keyword)cRightLimitAssignment_8_4_0.eContents().get(0);
-		private final Keyword cExclusiveKeyword_8_4_1 = (Keyword)cAlternatives_8_4.eContents().get(1);
-		private final Keyword cHyphenMinusGreaterThanSignKeyword_8_5 = (Keyword)cGroup_8.eContents().get(5);
-		private final Assignment cBodyAssignment_8_6 = (Assignment)cGroup_8.eContents().get(6);
-		private final RuleCall cBodyStatementListParserRuleCall_8_6_0 = (RuleCall)cBodyAssignment_8_6.eContents().get(0);
+		private final Assignment cQuantityAssignment_8_0 = (Assignment)cGroup_8.eContents().get(0);
+		private final RuleCall cQuantityQuantityParserRuleCall_8_0_0 = (RuleCall)cQuantityAssignment_8_0.eContents().get(0);
+		private final Keyword cHyphenMinusGreaterThanSignKeyword_8_1 = (Keyword)cGroup_8.eContents().get(1);
+		private final Assignment cBodyAssignment_8_2 = (Assignment)cGroup_8.eContents().get(2);
+		private final RuleCall cBodyStatementListParserRuleCall_8_2_0 = (RuleCall)cBodyAssignment_8_2.eContents().get(0);
 		private final Group cGroup_9 = (Group)cAlternatives.eContents().get(9);
-		private final Keyword cInKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
-		private final Assignment cSetAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
-		private final RuleCall cSetListParserRuleCall_9_1_0 = (RuleCall)cSetAssignment_9_1.eContents().get(0);
-		private final Keyword cHyphenMinusGreaterThanSignKeyword_9_2 = (Keyword)cGroup_9.eContents().get(2);
-		private final Assignment cBodyAssignment_9_3 = (Assignment)cGroup_9.eContents().get(3);
-		private final RuleCall cBodyStatementListParserRuleCall_9_3_0 = (RuleCall)cBodyAssignment_9_3.eContents().get(0);
+		private final Assignment cExprAssignment_9_0 = (Assignment)cGroup_9.eContents().get(0);
+		private final RuleCall cExprEXPRTerminalRuleCall_9_0_0 = (RuleCall)cExprAssignment_9_0.eContents().get(0);
+		private final Keyword cHyphenMinusGreaterThanSignKeyword_9_1 = (Keyword)cGroup_9.eContents().get(1);
+		private final Assignment cBodyAssignment_9_2 = (Assignment)cGroup_9.eContents().get(2);
+		private final RuleCall cBodyStatementListParserRuleCall_9_2_0 = (RuleCall)cBodyAssignment_9_2.eContents().get(0);
 		private final Group cGroup_10 = (Group)cAlternatives.eContents().get(10);
-		private final Assignment cQuantityAssignment_10_0 = (Assignment)cGroup_10.eContents().get(0);
-		private final RuleCall cQuantityQuantityParserRuleCall_10_0_0 = (RuleCall)cQuantityAssignment_10_0.eContents().get(0);
+		private final Assignment cNodataAssignment_10_0 = (Assignment)cGroup_10.eContents().get(0);
+		private final Keyword cNodataUnknownKeyword_10_0_0 = (Keyword)cNodataAssignment_10_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_10_1 = (Keyword)cGroup_10.eContents().get(1);
 		private final Assignment cBodyAssignment_10_2 = (Assignment)cGroup_10.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_10_2_0 = (RuleCall)cBodyAssignment_10_2.eContents().get(0);
 		private final Group cGroup_11 = (Group)cAlternatives.eContents().get(11);
-		private final Assignment cDateAssignment_11_0 = (Assignment)cGroup_11.eContents().get(0);
-		private final RuleCall cDateDateParserRuleCall_11_0_0 = (RuleCall)cDateAssignment_11_0.eContents().get(0);
+		private final Assignment cStarAssignment_11_0 = (Assignment)cGroup_11.eContents().get(0);
+		private final Keyword cStarAsteriskKeyword_11_0_0 = (Keyword)cStarAssignment_11_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_11_1 = (Keyword)cGroup_11.eContents().get(1);
 		private final Assignment cBodyAssignment_11_2 = (Assignment)cGroup_11.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_11_2_0 = (RuleCall)cBodyAssignment_11_2.eContents().get(0);
 		private final Group cGroup_12 = (Group)cAlternatives.eContents().get(12);
-		private final Assignment cExprAssignment_12_0 = (Assignment)cGroup_12.eContents().get(0);
-		private final RuleCall cExprEXPRTerminalRuleCall_12_0_0 = (RuleCall)cExprAssignment_12_0.eContents().get(0);
+		private final Assignment cAnythingAssignment_12_0 = (Assignment)cGroup_12.eContents().get(0);
+		private final Keyword cAnythingNumberSignKeyword_12_0_0 = (Keyword)cAnythingAssignment_12_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_12_1 = (Keyword)cGroup_12.eContents().get(1);
 		private final Assignment cBodyAssignment_12_2 = (Assignment)cGroup_12.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_12_2_0 = (RuleCall)cBodyAssignment_12_2.eContents().get(0);
-		private final Group cGroup_13 = (Group)cAlternatives.eContents().get(13);
-		private final Assignment cNodataAssignment_13_0 = (Assignment)cGroup_13.eContents().get(0);
-		private final Keyword cNodataUnknownKeyword_13_0_0 = (Keyword)cNodataAssignment_13_0.eContents().get(0);
-		private final Keyword cHyphenMinusGreaterThanSignKeyword_13_1 = (Keyword)cGroup_13.eContents().get(1);
-		private final Assignment cBodyAssignment_13_2 = (Assignment)cGroup_13.eContents().get(2);
-		private final RuleCall cBodyStatementListParserRuleCall_13_2_0 = (RuleCall)cBodyAssignment_13_2.eContents().get(0);
-		private final Group cGroup_14 = (Group)cAlternatives.eContents().get(14);
-		private final Assignment cStarAssignment_14_0 = (Assignment)cGroup_14.eContents().get(0);
-		private final Keyword cStarAsteriskKeyword_14_0_0 = (Keyword)cStarAssignment_14_0.eContents().get(0);
-		private final Keyword cHyphenMinusGreaterThanSignKeyword_14_1 = (Keyword)cGroup_14.eContents().get(1);
-		private final Assignment cBodyAssignment_14_2 = (Assignment)cGroup_14.eContents().get(2);
-		private final RuleCall cBodyStatementListParserRuleCall_14_2_0 = (RuleCall)cBodyAssignment_14_2.eContents().get(0);
-		private final Group cGroup_15 = (Group)cAlternatives.eContents().get(15);
-		private final Assignment cAnythingAssignment_15_0 = (Assignment)cGroup_15.eContents().get(0);
-		private final Keyword cAnythingNumberSignKeyword_15_0_0 = (Keyword)cAnythingAssignment_15_0.eContents().get(0);
-		private final Keyword cHyphenMinusGreaterThanSignKeyword_15_1 = (Keyword)cGroup_15.eContents().get(1);
-		private final Assignment cBodyAssignment_15_2 = (Assignment)cGroup_15.eContents().get(2);
-		private final RuleCall cBodyStatementListParserRuleCall_15_2_0 = (RuleCall)cBodyAssignment_15_2.eContents().get(0);
 		
 		//Match:
-		//	id?=LOWERCASE_ID '->' body=StatementList | boolean=('true' | 'false') '->' body=StatementList | type?=CAMELCASE_ID
-		//	'->' body=StatementList | regexp?=REGEXP '->' body=StatementList | observable?=OBSERVABLE '->' body=StatementList |
-		//	literal?=Literal '->' body=StatementList | text?=STRING '->' body=StatementList | arguments=ArgumentDeclaration '->'
-		//	body=StatementList | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-		//	(rightLimit='inclusive' | 'exclusive')? '->' body=StatementList |
-		//	'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | date=Date '->' body=StatementList
-		//	| expr=EXPR '->' body=StatementList | nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList |
-		//	anything?='#' '->' body=StatementList;
+		//	id=LOWERCASE_ID '->' body=StatementList | boolean=('true' | 'false') '->' body=StatementList | type=CAMELCASE_ID '->'
+		//	body=StatementList | regexp=REGEXP '->' body=StatementList | observable=OBSERVABLE '->' body=StatementList |
+		//	literal=Literal '->' body=StatementList | arguments=ArgumentDeclaration '->' body=StatementList |
+		//	'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | expr=EXPR '->' body=StatementList
+		//	| nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList | anything?='#' '->'
+		//	body=StatementList;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//id?=LOWERCASE_ID '->' body=StatementList | boolean=('true' | 'false') '->' body=StatementList | type?=CAMELCASE_ID '->'
-		//body=StatementList | regexp?=REGEXP '->' body=StatementList | observable?=OBSERVABLE '->' body=StatementList |
-		//literal?=Literal '->' body=StatementList | text?=STRING '->' body=StatementList | arguments=ArgumentDeclaration '->'
-		//body=StatementList | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive'
-		//| 'exclusive')? '->' body=StatementList | 'in' set=List '->' body=StatementList | quantity=Quantity '->'
-		//body=StatementList | date=Date '->' body=StatementList | expr=EXPR '->' body=StatementList | nodata='unknown' '->'
-		//body=StatementList | star?='*' '->' body=StatementList | anything?='#' '->' body=StatementList
+		//id=LOWERCASE_ID '->' body=StatementList | boolean=('true' | 'false') '->' body=StatementList | type=CAMELCASE_ID '->'
+		//body=StatementList | regexp=REGEXP '->' body=StatementList | observable=OBSERVABLE '->' body=StatementList |
+		//literal=Literal '->' body=StatementList | arguments=ArgumentDeclaration '->' body=StatementList | 'in' set=List '->'
+		//body=StatementList | quantity=Quantity '->' body=StatementList | expr=EXPR '->' body=StatementList | nodata='unknown'
+		//'->' body=StatementList | star?='*' '->' body=StatementList | anything?='#' '->' body=StatementList
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//id?=LOWERCASE_ID '->' body=StatementList
+		//id=LOWERCASE_ID '->' body=StatementList
 		public Group getGroup_0() { return cGroup_0; }
 		
-		//id?=LOWERCASE_ID
+		//id=LOWERCASE_ID
 		public Assignment getIdAssignment_0_0() { return cIdAssignment_0_0; }
 		
 		//LOWERCASE_ID
@@ -1341,10 +1401,10 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_1_2_0() { return cBodyStatementListParserRuleCall_1_2_0; }
 		
-		//type?=CAMELCASE_ID '->' body=StatementList
+		//type=CAMELCASE_ID '->' body=StatementList
 		public Group getGroup_2() { return cGroup_2; }
 		
-		//type?=CAMELCASE_ID
+		//type=CAMELCASE_ID
 		public Assignment getTypeAssignment_2_0() { return cTypeAssignment_2_0; }
 		
 		//CAMELCASE_ID
@@ -1359,10 +1419,10 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_2_2_0() { return cBodyStatementListParserRuleCall_2_2_0; }
 		
-		//regexp?=REGEXP '->' body=StatementList
+		//regexp=REGEXP '->' body=StatementList
 		public Group getGroup_3() { return cGroup_3; }
 		
-		//regexp?=REGEXP
+		//regexp=REGEXP
 		public Assignment getRegexpAssignment_3_0() { return cRegexpAssignment_3_0; }
 		
 		//REGEXP
@@ -1377,10 +1437,10 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_3_2_0() { return cBodyStatementListParserRuleCall_3_2_0; }
 		
-		//observable?=OBSERVABLE '->' body=StatementList
+		//observable=OBSERVABLE '->' body=StatementList
 		public Group getGroup_4() { return cGroup_4; }
 		
-		//observable?=OBSERVABLE
+		//observable=OBSERVABLE
 		public Assignment getObservableAssignment_4_0() { return cObservableAssignment_4_0; }
 		
 		//OBSERVABLE
@@ -1395,10 +1455,10 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_4_2_0() { return cBodyStatementListParserRuleCall_4_2_0; }
 		
-		//literal?=Literal '->' body=StatementList
+		//literal=Literal '->' body=StatementList
 		public Group getGroup_5() { return cGroup_5; }
 		
-		//literal?=Literal
+		//literal=Literal
 		public Assignment getLiteralAssignment_5_0() { return cLiteralAssignment_5_0; }
 		
 		//Literal
@@ -1413,14 +1473,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_5_2_0() { return cBodyStatementListParserRuleCall_5_2_0; }
 		
-		//text?=STRING '->' body=StatementList
+		//arguments=ArgumentDeclaration '->' body=StatementList
 		public Group getGroup_6() { return cGroup_6; }
 		
-		//text?=STRING
-		public Assignment getTextAssignment_6_0() { return cTextAssignment_6_0; }
+		//arguments=ArgumentDeclaration
+		public Assignment getArgumentsAssignment_6_0() { return cArgumentsAssignment_6_0; }
 		
-		//STRING
-		public RuleCall getTextSTRINGTerminalRuleCall_6_0_0() { return cTextSTRINGTerminalRuleCall_6_0_0; }
+		//ArgumentDeclaration
+		public RuleCall getArgumentsArgumentDeclarationParserRuleCall_6_0_0() { return cArgumentsArgumentDeclarationParserRuleCall_6_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_6_1() { return cHyphenMinusGreaterThanSignKeyword_6_1; }
@@ -1431,105 +1491,71 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_6_2_0() { return cBodyStatementListParserRuleCall_6_2_0; }
 		
-		//arguments=ArgumentDeclaration '->' body=StatementList
+		//'in' set=List '->' body=StatementList
 		public Group getGroup_7() { return cGroup_7; }
 		
-		//arguments=ArgumentDeclaration
-		public Assignment getArgumentsAssignment_7_0() { return cArgumentsAssignment_7_0; }
-		
-		//ArgumentDeclaration
-		public RuleCall getArgumentsArgumentDeclarationParserRuleCall_7_0_0() { return cArgumentsArgumentDeclarationParserRuleCall_7_0_0; }
-		
-		//'->'
-		public Keyword getHyphenMinusGreaterThanSignKeyword_7_1() { return cHyphenMinusGreaterThanSignKeyword_7_1; }
-		
-		//body=StatementList
-		public Assignment getBodyAssignment_7_2() { return cBodyAssignment_7_2; }
-		
-		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_7_2_0() { return cBodyStatementListParserRuleCall_7_2_0; }
-		
-		//int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? '->'
-		//body=StatementList
-		public Group getGroup_8() { return cGroup_8; }
-		
-		//int0=Number
-		public Assignment getInt0Assignment_8_0() { return cInt0Assignment_8_0; }
-		
-		//Number
-		public RuleCall getInt0NumberParserRuleCall_8_0_0() { return cInt0NumberParserRuleCall_8_0_0; }
-		
-		//(leftLimit='inclusive' | 'exclusive')?
-		public Alternatives getAlternatives_8_1() { return cAlternatives_8_1; }
-		
-		//leftLimit='inclusive'
-		public Assignment getLeftLimitAssignment_8_1_0() { return cLeftLimitAssignment_8_1_0; }
-		
-		//'inclusive'
-		public Keyword getLeftLimitInclusiveKeyword_8_1_0_0() { return cLeftLimitInclusiveKeyword_8_1_0_0; }
-		
-		//'exclusive'
-		public Keyword getExclusiveKeyword_8_1_1() { return cExclusiveKeyword_8_1_1; }
-		
-		//=> 'to'
-		public Keyword getToKeyword_8_2() { return cToKeyword_8_2; }
-		
-		//=> int1=Number
-		public Assignment getInt1Assignment_8_3() { return cInt1Assignment_8_3; }
-		
-		//Number
-		public RuleCall getInt1NumberParserRuleCall_8_3_0() { return cInt1NumberParserRuleCall_8_3_0; }
-		
-		//(rightLimit='inclusive' | 'exclusive')?
-		public Alternatives getAlternatives_8_4() { return cAlternatives_8_4; }
-		
-		//rightLimit='inclusive'
-		public Assignment getRightLimitAssignment_8_4_0() { return cRightLimitAssignment_8_4_0; }
-		
-		//'inclusive'
-		public Keyword getRightLimitInclusiveKeyword_8_4_0_0() { return cRightLimitInclusiveKeyword_8_4_0_0; }
-		
-		//'exclusive'
-		public Keyword getExclusiveKeyword_8_4_1() { return cExclusiveKeyword_8_4_1; }
-		
-		//'->'
-		public Keyword getHyphenMinusGreaterThanSignKeyword_8_5() { return cHyphenMinusGreaterThanSignKeyword_8_5; }
-		
-		//body=StatementList
-		public Assignment getBodyAssignment_8_6() { return cBodyAssignment_8_6; }
-		
-		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_8_6_0() { return cBodyStatementListParserRuleCall_8_6_0; }
-		
-		//'in' set=List '->' body=StatementList
-		public Group getGroup_9() { return cGroup_9; }
-		
 		//'in'
-		public Keyword getInKeyword_9_0() { return cInKeyword_9_0; }
+		public Keyword getInKeyword_7_0() { return cInKeyword_7_0; }
 		
 		//set=List
-		public Assignment getSetAssignment_9_1() { return cSetAssignment_9_1; }
+		public Assignment getSetAssignment_7_1() { return cSetAssignment_7_1; }
 		
 		//List
-		public RuleCall getSetListParserRuleCall_9_1_0() { return cSetListParserRuleCall_9_1_0; }
+		public RuleCall getSetListParserRuleCall_7_1_0() { return cSetListParserRuleCall_7_1_0; }
 		
 		//'->'
-		public Keyword getHyphenMinusGreaterThanSignKeyword_9_2() { return cHyphenMinusGreaterThanSignKeyword_9_2; }
+		public Keyword getHyphenMinusGreaterThanSignKeyword_7_2() { return cHyphenMinusGreaterThanSignKeyword_7_2; }
 		
 		//body=StatementList
-		public Assignment getBodyAssignment_9_3() { return cBodyAssignment_9_3; }
+		public Assignment getBodyAssignment_7_3() { return cBodyAssignment_7_3; }
 		
 		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_9_3_0() { return cBodyStatementListParserRuleCall_9_3_0; }
+		public RuleCall getBodyStatementListParserRuleCall_7_3_0() { return cBodyStatementListParserRuleCall_7_3_0; }
 		
 		//quantity=Quantity '->' body=StatementList
-		public Group getGroup_10() { return cGroup_10; }
+		public Group getGroup_8() { return cGroup_8; }
 		
 		//quantity=Quantity
-		public Assignment getQuantityAssignment_10_0() { return cQuantityAssignment_10_0; }
+		public Assignment getQuantityAssignment_8_0() { return cQuantityAssignment_8_0; }
 		
 		//Quantity
-		public RuleCall getQuantityQuantityParserRuleCall_10_0_0() { return cQuantityQuantityParserRuleCall_10_0_0; }
+		public RuleCall getQuantityQuantityParserRuleCall_8_0_0() { return cQuantityQuantityParserRuleCall_8_0_0; }
+		
+		//'->'
+		public Keyword getHyphenMinusGreaterThanSignKeyword_8_1() { return cHyphenMinusGreaterThanSignKeyword_8_1; }
+		
+		//body=StatementList
+		public Assignment getBodyAssignment_8_2() { return cBodyAssignment_8_2; }
+		
+		//StatementList
+		public RuleCall getBodyStatementListParserRuleCall_8_2_0() { return cBodyStatementListParserRuleCall_8_2_0; }
+		
+		//expr=EXPR '->' body=StatementList
+		public Group getGroup_9() { return cGroup_9; }
+		
+		//expr=EXPR
+		public Assignment getExprAssignment_9_0() { return cExprAssignment_9_0; }
+		
+		//EXPR
+		public RuleCall getExprEXPRTerminalRuleCall_9_0_0() { return cExprEXPRTerminalRuleCall_9_0_0; }
+		
+		//'->'
+		public Keyword getHyphenMinusGreaterThanSignKeyword_9_1() { return cHyphenMinusGreaterThanSignKeyword_9_1; }
+		
+		//body=StatementList
+		public Assignment getBodyAssignment_9_2() { return cBodyAssignment_9_2; }
+		
+		//StatementList
+		public RuleCall getBodyStatementListParserRuleCall_9_2_0() { return cBodyStatementListParserRuleCall_9_2_0; }
+		
+		//nodata='unknown' '->' body=StatementList
+		public Group getGroup_10() { return cGroup_10; }
+		
+		//nodata='unknown'
+		public Assignment getNodataAssignment_10_0() { return cNodataAssignment_10_0; }
+		
+		//'unknown'
+		public Keyword getNodataUnknownKeyword_10_0_0() { return cNodataUnknownKeyword_10_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_10_1() { return cHyphenMinusGreaterThanSignKeyword_10_1; }
@@ -1540,14 +1566,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_10_2_0() { return cBodyStatementListParserRuleCall_10_2_0; }
 		
-		//date=Date '->' body=StatementList
+		//star?='*' '->' body=StatementList
 		public Group getGroup_11() { return cGroup_11; }
 		
-		//date=Date
-		public Assignment getDateAssignment_11_0() { return cDateAssignment_11_0; }
+		//star?='*'
+		public Assignment getStarAssignment_11_0() { return cStarAssignment_11_0; }
 		
-		//Date
-		public RuleCall getDateDateParserRuleCall_11_0_0() { return cDateDateParserRuleCall_11_0_0; }
+		//'*'
+		public Keyword getStarAsteriskKeyword_11_0_0() { return cStarAsteriskKeyword_11_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_11_1() { return cHyphenMinusGreaterThanSignKeyword_11_1; }
@@ -1558,14 +1584,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_11_2_0() { return cBodyStatementListParserRuleCall_11_2_0; }
 		
-		//expr=EXPR '->' body=StatementList
+		//anything?='#' '->' body=StatementList
 		public Group getGroup_12() { return cGroup_12; }
 		
-		//expr=EXPR
-		public Assignment getExprAssignment_12_0() { return cExprAssignment_12_0; }
+		//anything?='#'
+		public Assignment getAnythingAssignment_12_0() { return cAnythingAssignment_12_0; }
 		
-		//EXPR
-		public RuleCall getExprEXPRTerminalRuleCall_12_0_0() { return cExprEXPRTerminalRuleCall_12_0_0; }
+		//'#'
+		public Keyword getAnythingNumberSignKeyword_12_0_0() { return cAnythingNumberSignKeyword_12_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_12_1() { return cHyphenMinusGreaterThanSignKeyword_12_1; }
@@ -1575,60 +1601,6 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_12_2_0() { return cBodyStatementListParserRuleCall_12_2_0; }
-		
-		//nodata='unknown' '->' body=StatementList
-		public Group getGroup_13() { return cGroup_13; }
-		
-		//nodata='unknown'
-		public Assignment getNodataAssignment_13_0() { return cNodataAssignment_13_0; }
-		
-		//'unknown'
-		public Keyword getNodataUnknownKeyword_13_0_0() { return cNodataUnknownKeyword_13_0_0; }
-		
-		//'->'
-		public Keyword getHyphenMinusGreaterThanSignKeyword_13_1() { return cHyphenMinusGreaterThanSignKeyword_13_1; }
-		
-		//body=StatementList
-		public Assignment getBodyAssignment_13_2() { return cBodyAssignment_13_2; }
-		
-		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_13_2_0() { return cBodyStatementListParserRuleCall_13_2_0; }
-		
-		//star?='*' '->' body=StatementList
-		public Group getGroup_14() { return cGroup_14; }
-		
-		//star?='*'
-		public Assignment getStarAssignment_14_0() { return cStarAssignment_14_0; }
-		
-		//'*'
-		public Keyword getStarAsteriskKeyword_14_0_0() { return cStarAsteriskKeyword_14_0_0; }
-		
-		//'->'
-		public Keyword getHyphenMinusGreaterThanSignKeyword_14_1() { return cHyphenMinusGreaterThanSignKeyword_14_1; }
-		
-		//body=StatementList
-		public Assignment getBodyAssignment_14_2() { return cBodyAssignment_14_2; }
-		
-		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_14_2_0() { return cBodyStatementListParserRuleCall_14_2_0; }
-		
-		//anything?='#' '->' body=StatementList
-		public Group getGroup_15() { return cGroup_15; }
-		
-		//anything?='#'
-		public Assignment getAnythingAssignment_15_0() { return cAnythingAssignment_15_0; }
-		
-		//'#'
-		public Keyword getAnythingNumberSignKeyword_15_0_0() { return cAnythingNumberSignKeyword_15_0_0; }
-		
-		//'->'
-		public Keyword getHyphenMinusGreaterThanSignKeyword_15_1() { return cHyphenMinusGreaterThanSignKeyword_15_1; }
-		
-		//body=StatementList
-		public Assignment getBodyAssignment_15_2() { return cBodyAssignment_15_2; }
-		
-		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_15_2_0() { return cBodyStatementListParserRuleCall_15_2_0; }
 	}
 	public class UrnIdElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.UrnId");
@@ -2687,91 +2659,6 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//Value
 		public RuleCall getValueValueParserRuleCall_1_0() { return cValueValueParserRuleCall_1_0; }
 	}
-	public class ValueElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Value");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cArgvalueAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cArgvalueARGVALUETerminalRuleCall_0_0 = (RuleCall)cArgvalueAssignment_0.eContents().get(0);
-		private final Assignment cLiteralAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cLiteralLiteralParserRuleCall_1_0 = (RuleCall)cLiteralAssignment_1.eContents().get(0);
-		private final Assignment cIdAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
-		private final RuleCall cIdPathNameParserRuleCall_2_0 = (RuleCall)cIdAssignment_2.eContents().get(0);
-		private final Assignment cUrnAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
-		private final RuleCall cUrnUrnIdParserRuleCall_3_0 = (RuleCall)cUrnAssignment_3.eContents().get(0);
-		private final Assignment cListAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
-		private final RuleCall cListListParserRuleCall_4_0 = (RuleCall)cListAssignment_4.eContents().get(0);
-		private final Assignment cMapAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
-		private final RuleCall cMapMapParserRuleCall_5_0 = (RuleCall)cMapAssignment_5.eContents().get(0);
-		private final Assignment cObservableAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
-		private final RuleCall cObservableOBSERVABLETerminalRuleCall_6_0 = (RuleCall)cObservableAssignment_6.eContents().get(0);
-		private final Assignment cExpressionAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
-		private final RuleCall cExpressionEXPRTerminalRuleCall_7_0 = (RuleCall)cExpressionAssignment_7.eContents().get(0);
-		private final Assignment cTableAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
-		private final RuleCall cTableLookupTableParserRuleCall_8_0 = (RuleCall)cTableAssignment_8.eContents().get(0);
-		
-		//Value:
-		//	argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map | observable=OBSERVABLE |
-		//	expression=EXPR | table=LookupTable;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map | observable=OBSERVABLE |
-		//expression=EXPR | table=LookupTable
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//argvalue=ARGVALUE
-		public Assignment getArgvalueAssignment_0() { return cArgvalueAssignment_0; }
-		
-		//ARGVALUE
-		public RuleCall getArgvalueARGVALUETerminalRuleCall_0_0() { return cArgvalueARGVALUETerminalRuleCall_0_0; }
-		
-		//literal=Literal
-		public Assignment getLiteralAssignment_1() { return cLiteralAssignment_1; }
-		
-		//Literal
-		public RuleCall getLiteralLiteralParserRuleCall_1_0() { return cLiteralLiteralParserRuleCall_1_0; }
-		
-		//id=PathName
-		public Assignment getIdAssignment_2() { return cIdAssignment_2; }
-		
-		//PathName
-		public RuleCall getIdPathNameParserRuleCall_2_0() { return cIdPathNameParserRuleCall_2_0; }
-		
-		//urn=UrnId
-		public Assignment getUrnAssignment_3() { return cUrnAssignment_3; }
-		
-		//UrnId
-		public RuleCall getUrnUrnIdParserRuleCall_3_0() { return cUrnUrnIdParserRuleCall_3_0; }
-		
-		//list=List
-		public Assignment getListAssignment_4() { return cListAssignment_4; }
-		
-		//List
-		public RuleCall getListListParserRuleCall_4_0() { return cListListParserRuleCall_4_0; }
-		
-		//map=Map
-		public Assignment getMapAssignment_5() { return cMapAssignment_5; }
-		
-		//Map
-		public RuleCall getMapMapParserRuleCall_5_0() { return cMapMapParserRuleCall_5_0; }
-		
-		//observable=OBSERVABLE
-		public Assignment getObservableAssignment_6() { return cObservableAssignment_6; }
-		
-		//OBSERVABLE
-		public RuleCall getObservableOBSERVABLETerminalRuleCall_6_0() { return cObservableOBSERVABLETerminalRuleCall_6_0; }
-		
-		//expression=EXPR
-		public Assignment getExpressionAssignment_7() { return cExpressionAssignment_7; }
-		
-		//EXPR
-		public RuleCall getExpressionEXPRTerminalRuleCall_7_0() { return cExpressionEXPRTerminalRuleCall_7_0; }
-		
-		//table=LookupTable
-		public Assignment getTableAssignment_8() { return cTableAssignment_8; }
-		
-		//LookupTable
-		public RuleCall getTableLookupTableParserRuleCall_8_0() { return cTableLookupTableParserRuleCall_8_0; }
-	}
 	public class UnitElementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.UnitElement");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
@@ -3404,6 +3291,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	private final DoStatementElements pDoStatement;
 	private final ForStatementElements pForStatement;
 	private final ActionsElements pActions;
+	private final ValueElements pValue;
 	private final MatchElements pMatch;
 	private final UrnIdElements pUrnId;
 	private final UrnKvpElements pUrnKvp;
@@ -3421,7 +3309,6 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	private final LiteralElements pLiteral;
 	private final ParameterListElements pParameterList;
 	private final KeyValuePairElements pKeyValuePair;
-	private final ValueElements pValue;
 	private final UnitElementElements pUnitElement;
 	private final UnitOpElements eUnitOp;
 	private final UnitElements pUnit;
@@ -3470,6 +3357,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		this.pDoStatement = new DoStatementElements();
 		this.pForStatement = new ForStatementElements();
 		this.pActions = new ActionsElements();
+		this.pValue = new ValueElements();
 		this.pMatch = new MatchElements();
 		this.pUrnId = new UrnIdElements();
 		this.pUrnKvp = new UrnKvpElements();
@@ -3487,7 +3375,6 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		this.pLiteral = new LiteralElements();
 		this.pParameterList = new ParameterListElements();
 		this.pKeyValuePair = new KeyValuePairElements();
-		this.pValue = new ValueElements();
 		this.pUnitElement = new UnitElementElements();
 		this.eUnitOp = new UnitOpElements();
 		this.pUnit = new UnitElements();
@@ -3734,15 +3621,24 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		return getActionsAccess().getRule();
 	}
 	
+	//Value:
+	//	argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map | observable=OBSERVABLE |
+	//	expression=EXPR | table=LookupTable | quantity=Quantity;
+	public ValueElements getValueAccess() {
+		return pValue;
+	}
+	
+	public ParserRule getValueRule() {
+		return getValueAccess().getRule();
+	}
+	
 	//Match:
-	//	id?=LOWERCASE_ID '->' body=StatementList | boolean=('true' | 'false') '->' body=StatementList | type?=CAMELCASE_ID
-	//	'->' body=StatementList | regexp?=REGEXP '->' body=StatementList | observable?=OBSERVABLE '->' body=StatementList |
-	//	literal?=Literal '->' body=StatementList | text?=STRING '->' body=StatementList | arguments=ArgumentDeclaration '->'
-	//	body=StatementList | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-	//	(rightLimit='inclusive' | 'exclusive')? '->' body=StatementList |
-	//	'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | date=Date '->' body=StatementList
-	//	| expr=EXPR '->' body=StatementList | nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList |
-	//	anything?='#' '->' body=StatementList;
+	//	id=LOWERCASE_ID '->' body=StatementList | boolean=('true' | 'false') '->' body=StatementList | type=CAMELCASE_ID '->'
+	//	body=StatementList | regexp=REGEXP '->' body=StatementList | observable=OBSERVABLE '->' body=StatementList |
+	//	literal=Literal '->' body=StatementList | arguments=ArgumentDeclaration '->' body=StatementList |
+	//	'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | expr=EXPR '->' body=StatementList
+	//	| nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList | anything?='#' '->'
+	//	body=StatementList;
 	public MatchElements getMatchAccess() {
 		return pMatch;
 	}
@@ -3924,17 +3820,6 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getKeyValuePairRule() {
 		return getKeyValuePairAccess().getRule();
-	}
-	
-	//Value:
-	//	argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map | observable=OBSERVABLE |
-	//	expression=EXPR | table=LookupTable;
-	public ValueElements getValueAccess() {
-		return pValue;
-	}
-	
-	public ParserRule getValueRule() {
-		return getValueAccess().getRule();
 	}
 	
 	//UnitElement:

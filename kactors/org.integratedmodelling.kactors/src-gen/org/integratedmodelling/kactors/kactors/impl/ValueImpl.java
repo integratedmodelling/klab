@@ -17,6 +17,7 @@ import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Value;
 
 /**
@@ -36,6 +37,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTable <em>Table</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getQuantity <em>Quantity</em>}</li>
  * </ul>
  *
  * @generated
@@ -181,6 +183,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected LookupTable table;
+
+  /**
+   * The cached value of the '{@link #getQuantity() <em>Quantity</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getQuantity()
+   * @generated
+   * @ordered
+   */
+  protected Quantity quantity;
 
   /**
    * <!-- begin-user-doc -->
@@ -534,6 +546,56 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public Quantity getQuantity()
+  {
+    return quantity;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetQuantity(Quantity newQuantity, NotificationChain msgs)
+  {
+    Quantity oldQuantity = quantity;
+    quantity = newQuantity;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__QUANTITY, oldQuantity, newQuantity);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setQuantity(Quantity newQuantity)
+  {
+    if (newQuantity != quantity)
+    {
+      NotificationChain msgs = null;
+      if (quantity != null)
+        msgs = ((InternalEObject)quantity).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__QUANTITY, null, msgs);
+      if (newQuantity != null)
+        msgs = ((InternalEObject)newQuantity).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__QUANTITY, null, msgs);
+      msgs = basicSetQuantity(newQuantity, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__QUANTITY, newQuantity, newQuantity));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -546,6 +608,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetMap(null, msgs);
       case KactorsPackage.VALUE__TABLE:
         return basicSetTable(null, msgs);
+      case KactorsPackage.VALUE__QUANTITY:
+        return basicSetQuantity(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -578,6 +642,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getExpression();
       case KactorsPackage.VALUE__TABLE:
         return getTable();
+      case KactorsPackage.VALUE__QUANTITY:
+        return getQuantity();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -618,6 +684,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__TABLE:
         setTable((LookupTable)newValue);
+        return;
+      case KactorsPackage.VALUE__QUANTITY:
+        setQuantity((Quantity)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -660,6 +729,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__TABLE:
         setTable((LookupTable)null);
         return;
+      case KactorsPackage.VALUE__QUANTITY:
+        setQuantity((Quantity)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -692,6 +764,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
       case KactorsPackage.VALUE__TABLE:
         return table != null;
+      case KactorsPackage.VALUE__QUANTITY:
+        return quantity != null;
     }
     return super.eIsSet(featureID);
   }

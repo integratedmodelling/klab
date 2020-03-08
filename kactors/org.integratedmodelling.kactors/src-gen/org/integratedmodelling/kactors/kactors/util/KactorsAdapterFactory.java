@@ -193,6 +193,11 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
         return createActionsAdapter();
       }
       @Override
+      public Adapter caseValue(Value object)
+      {
+        return createValueAdapter();
+      }
+      @Override
       public Adapter caseMatch(Match object)
       {
         return createMatchAdapter();
@@ -266,11 +271,6 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseKeyValuePair(KeyValuePair object)
       {
         return createKeyValuePairAdapter();
-      }
-      @Override
-      public Adapter caseValue(Value object)
-      {
-        return createValueAdapter();
       }
       @Override
       public Adapter caseUnitElement(UnitElement object)
@@ -565,6 +565,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Value <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Value
+   * @generated
+   */
+  public Adapter createValueAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Match <em>Match</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -785,21 +800,6 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createKeyValuePairAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Value <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kactors.kactors.Value
-   * @generated
-   */
-  public Adapter createValueAdapter()
   {
     return null;
   }

@@ -1,5 +1,6 @@
 package org.integratedmodelling.kim.api;
 
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.utils.Parameters;
@@ -54,6 +55,17 @@ public interface IParameters<T> extends Map<T, Object> {
 	 *                                  the type.
 	 */
 	<K> K get(T name, K defaultValue);
+
+	/**
+	 * When used as a parameter list parsed from a function call, this may contain
+	 * arguments that are unnamed. These are given default names and if any is
+	 * present, their names are returned here. Usage of this functionality is
+	 * restricted to T == String.class and any usage outside of that will generate
+	 * runtime errors.
+	 * 
+	 * @return a list of unnamed argument keys, possibly empty.
+	 */
+	List<T> getUnnamedKeys();
 
 	/**
 	 * Like {@link #containsKey(Object)}, except it returns false also if the key is

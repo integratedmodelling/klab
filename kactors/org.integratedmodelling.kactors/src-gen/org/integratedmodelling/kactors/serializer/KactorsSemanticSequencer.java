@@ -469,18 +469,15 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         (id?=LOWERCASE_ID body=StatementList) | 
+	 *         (id=LOWERCASE_ID body=StatementList) | 
 	 *         ((boolean='true' | boolean='false') body=StatementList) | 
-	 *         (type?=CAMELCASE_ID body=StatementList) | 
-	 *         (regexp?=REGEXP body=StatementList) | 
-	 *         (observable?=OBSERVABLE body=StatementList) | 
-	 *         (literal?=Literal body=StatementList) | 
-	 *         (text?=STRING body=StatementList) | 
+	 *         (type=CAMELCASE_ID body=StatementList) | 
+	 *         (regexp=REGEXP body=StatementList) | 
+	 *         (observable=OBSERVABLE body=StatementList) | 
+	 *         (literal=Literal body=StatementList) | 
 	 *         (arguments=ArgumentDeclaration body=StatementList) | 
-	 *         (int0=Number leftLimit='inclusive'? int1=Number rightLimit='inclusive'? body=StatementList) | 
 	 *         (set=List body=StatementList) | 
 	 *         (quantity=Quantity body=StatementList) | 
-	 *         (date=Date body=StatementList) | 
 	 *         (expr=EXPR body=StatementList) | 
 	 *         (nodata='unknown' body=StatementList) | 
 	 *         (star?='*' body=StatementList) | 
@@ -807,7 +804,8 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         map=Map | 
 	 *         observable=OBSERVABLE | 
 	 *         expression=EXPR | 
-	 *         table=LookupTable
+	 *         table=LookupTable | 
+	 *         quantity=Quantity
 	 *     )
 	 */
 	protected void sequence_Value(ISerializationContext context, Value semanticObject) {

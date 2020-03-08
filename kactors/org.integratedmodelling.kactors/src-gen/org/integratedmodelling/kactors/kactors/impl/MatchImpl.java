@@ -13,9 +13,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
-import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.List;
+import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.StatementList;
@@ -28,22 +28,16 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isId <em>Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getBoolean <em>Boolean</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isType <em>Type</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isRegexp <em>Regexp</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isObservable <em>Observable</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isLiteral <em>Literal</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isText <em>Text</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getType <em>Type</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getRegexp <em>Regexp</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getObservable <em>Observable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getArguments <em>Arguments</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getInt0 <em>Int0</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getLeftLimit <em>Left Limit</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getInt1 <em>Int1</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getRightLimit <em>Right Limit</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getQuantity <em>Quantity</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isStar <em>Star</em>}</li>
@@ -55,24 +49,24 @@ import org.integratedmodelling.kactors.kactors.StatementList;
 public class MatchImpl extends MinimalEObjectImpl.Container implements Match
 {
   /**
-   * The default value of the '{@link #isId() <em>Id</em>}' attribute.
+   * The default value of the '{@link #getId() <em>Id</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isId()
+   * @see #getId()
    * @generated
    * @ordered
    */
-  protected static final boolean ID_EDEFAULT = false;
+  protected static final String ID_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #isId() <em>Id</em>}' attribute.
+   * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isId()
+   * @see #getId()
    * @generated
    * @ordered
    */
-  protected boolean id = ID_EDEFAULT;
+  protected String id = ID_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
@@ -105,104 +99,74 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
   protected String boolean_ = BOOLEAN_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isType() <em>Type</em>}' attribute.
+   * The default value of the '{@link #getType() <em>Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isType()
+   * @see #getType()
    * @generated
    * @ordered
    */
-  protected static final boolean TYPE_EDEFAULT = false;
+  protected static final String TYPE_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #isType() <em>Type</em>}' attribute.
+   * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isType()
+   * @see #getType()
    * @generated
    * @ordered
    */
-  protected boolean type = TYPE_EDEFAULT;
+  protected String type = TYPE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isRegexp() <em>Regexp</em>}' attribute.
+   * The default value of the '{@link #getRegexp() <em>Regexp</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isRegexp()
+   * @see #getRegexp()
    * @generated
    * @ordered
    */
-  protected static final boolean REGEXP_EDEFAULT = false;
+  protected static final String REGEXP_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #isRegexp() <em>Regexp</em>}' attribute.
+   * The cached value of the '{@link #getRegexp() <em>Regexp</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isRegexp()
+   * @see #getRegexp()
    * @generated
    * @ordered
    */
-  protected boolean regexp = REGEXP_EDEFAULT;
+  protected String regexp = REGEXP_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isObservable() <em>Observable</em>}' attribute.
+   * The default value of the '{@link #getObservable() <em>Observable</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isObservable()
+   * @see #getObservable()
    * @generated
    * @ordered
    */
-  protected static final boolean OBSERVABLE_EDEFAULT = false;
+  protected static final String OBSERVABLE_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #isObservable() <em>Observable</em>}' attribute.
+   * The cached value of the '{@link #getObservable() <em>Observable</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isObservable()
+   * @see #getObservable()
    * @generated
    * @ordered
    */
-  protected boolean observable = OBSERVABLE_EDEFAULT;
+  protected String observable = OBSERVABLE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isLiteral() <em>Literal</em>}' attribute.
+   * The cached value of the '{@link #getLiteral() <em>Literal</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isLiteral()
+   * @see #getLiteral()
    * @generated
    * @ordered
    */
-  protected static final boolean LITERAL_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isLiteral() <em>Literal</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isLiteral()
-   * @generated
-   * @ordered
-   */
-  protected boolean literal = LITERAL_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isText() <em>Text</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isText()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean TEXT_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isText() <em>Text</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isText()
-   * @generated
-   * @ordered
-   */
-  protected boolean text = TEXT_EDEFAULT;
+  protected Literal literal;
 
   /**
    * The cached value of the '{@link #getArguments() <em>Arguments</em>}' containment reference.
@@ -213,66 +177,6 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @ordered
    */
   protected ArgumentDeclaration arguments;
-
-  /**
-   * The cached value of the '{@link #getInt0() <em>Int0</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getInt0()
-   * @generated
-   * @ordered
-   */
-  protected org.integratedmodelling.kactors.kactors.Number int0;
-
-  /**
-   * The default value of the '{@link #getLeftLimit() <em>Left Limit</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLeftLimit()
-   * @generated
-   * @ordered
-   */
-  protected static final String LEFT_LIMIT_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getLeftLimit() <em>Left Limit</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLeftLimit()
-   * @generated
-   * @ordered
-   */
-  protected String leftLimit = LEFT_LIMIT_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getInt1() <em>Int1</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getInt1()
-   * @generated
-   * @ordered
-   */
-  protected org.integratedmodelling.kactors.kactors.Number int1;
-
-  /**
-   * The default value of the '{@link #getRightLimit() <em>Right Limit</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getRightLimit()
-   * @generated
-   * @ordered
-   */
-  protected static final String RIGHT_LIMIT_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getRightLimit() <em>Right Limit</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getRightLimit()
-   * @generated
-   * @ordered
-   */
-  protected String rightLimit = RIGHT_LIMIT_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getSet() <em>Set</em>}' containment reference.
@@ -293,16 +197,6 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @ordered
    */
   protected Quantity quantity;
-
-  /**
-   * The cached value of the '{@link #getDate() <em>Date</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDate()
-   * @generated
-   * @ordered
-   */
-  protected Date date;
 
   /**
    * The default value of the '{@link #getExpr() <em>Expr</em>}' attribute.
@@ -411,7 +305,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public boolean isId()
+  public String getId()
   {
     return id;
   }
@@ -422,9 +316,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public void setId(boolean newId)
+  public void setId(String newId)
   {
-    boolean oldId = id;
+    String oldId = id;
     id = newId;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__ID, oldId, id));
@@ -511,7 +405,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public boolean isType()
+  public String getType()
   {
     return type;
   }
@@ -522,9 +416,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public void setType(boolean newType)
+  public void setType(String newType)
   {
-    boolean oldType = type;
+    String oldType = type;
     type = newType;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__TYPE, oldType, type));
@@ -536,7 +430,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public boolean isRegexp()
+  public String getRegexp()
   {
     return regexp;
   }
@@ -547,9 +441,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public void setRegexp(boolean newRegexp)
+  public void setRegexp(String newRegexp)
   {
-    boolean oldRegexp = regexp;
+    String oldRegexp = regexp;
     regexp = newRegexp;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__REGEXP, oldRegexp, regexp));
@@ -561,7 +455,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public boolean isObservable()
+  public String getObservable()
   {
     return observable;
   }
@@ -572,9 +466,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public void setObservable(boolean newObservable)
+  public void setObservable(String newObservable)
   {
-    boolean oldObservable = observable;
+    String oldObservable = observable;
     observable = newObservable;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__OBSERVABLE, oldObservable, observable));
@@ -586,7 +480,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public boolean isLiteral()
+  public Literal getLiteral()
   {
     return literal;
   }
@@ -596,13 +490,16 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * <!-- end-user-doc -->
    * @generated
    */
-  @Override
-  public void setLiteral(boolean newLiteral)
+  public NotificationChain basicSetLiteral(Literal newLiteral, NotificationChain msgs)
   {
-    boolean oldLiteral = literal;
+    Literal oldLiteral = literal;
     literal = newLiteral;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__LITERAL, oldLiteral, literal));
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__LITERAL, oldLiteral, newLiteral);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
   }
 
   /**
@@ -611,23 +508,20 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public boolean isText()
+  public void setLiteral(Literal newLiteral)
   {
-    return text;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setText(boolean newText)
-  {
-    boolean oldText = text;
-    text = newText;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__TEXT, oldText, text));
+    if (newLiteral != literal)
+    {
+      NotificationChain msgs = null;
+      if (literal != null)
+        msgs = ((InternalEObject)literal).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__LITERAL, null, msgs);
+      if (newLiteral != null)
+        msgs = ((InternalEObject)newLiteral).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__LITERAL, null, msgs);
+      msgs = basicSetLiteral(newLiteral, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__LITERAL, newLiteral, newLiteral));
   }
 
   /**
@@ -678,156 +572,6 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__ARGUMENTS, newArguments, newArguments));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public org.integratedmodelling.kactors.kactors.Number getInt0()
-  {
-    return int0;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetInt0(org.integratedmodelling.kactors.kactors.Number newInt0, NotificationChain msgs)
-  {
-    org.integratedmodelling.kactors.kactors.Number oldInt0 = int0;
-    int0 = newInt0;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__INT0, oldInt0, newInt0);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setInt0(org.integratedmodelling.kactors.kactors.Number newInt0)
-  {
-    if (newInt0 != int0)
-    {
-      NotificationChain msgs = null;
-      if (int0 != null)
-        msgs = ((InternalEObject)int0).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__INT0, null, msgs);
-      if (newInt0 != null)
-        msgs = ((InternalEObject)newInt0).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__INT0, null, msgs);
-      msgs = basicSetInt0(newInt0, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__INT0, newInt0, newInt0));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String getLeftLimit()
-  {
-    return leftLimit;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setLeftLimit(String newLeftLimit)
-  {
-    String oldLeftLimit = leftLimit;
-    leftLimit = newLeftLimit;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__LEFT_LIMIT, oldLeftLimit, leftLimit));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public org.integratedmodelling.kactors.kactors.Number getInt1()
-  {
-    return int1;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetInt1(org.integratedmodelling.kactors.kactors.Number newInt1, NotificationChain msgs)
-  {
-    org.integratedmodelling.kactors.kactors.Number oldInt1 = int1;
-    int1 = newInt1;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__INT1, oldInt1, newInt1);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setInt1(org.integratedmodelling.kactors.kactors.Number newInt1)
-  {
-    if (newInt1 != int1)
-    {
-      NotificationChain msgs = null;
-      if (int1 != null)
-        msgs = ((InternalEObject)int1).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__INT1, null, msgs);
-      if (newInt1 != null)
-        msgs = ((InternalEObject)newInt1).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__INT1, null, msgs);
-      msgs = basicSetInt1(newInt1, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__INT1, newInt1, newInt1));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String getRightLimit()
-  {
-    return rightLimit;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setRightLimit(String newRightLimit)
-  {
-    String oldRightLimit = rightLimit;
-    rightLimit = newRightLimit;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__RIGHT_LIMIT, oldRightLimit, rightLimit));
   }
 
   /**
@@ -928,56 +672,6 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__QUANTITY, newQuantity, newQuantity));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Date getDate()
-  {
-    return date;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDate(Date newDate, NotificationChain msgs)
-  {
-    Date oldDate = date;
-    date = newDate;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__DATE, oldDate, newDate);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setDate(Date newDate)
-  {
-    if (newDate != date)
-    {
-      NotificationChain msgs = null;
-      if (date != null)
-        msgs = ((InternalEObject)date).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__DATE, null, msgs);
-      if (newDate != null)
-        msgs = ((InternalEObject)newDate).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__DATE, null, msgs);
-      msgs = basicSetDate(newDate, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__DATE, newDate, newDate));
   }
 
   /**
@@ -1092,18 +786,14 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     {
       case KactorsPackage.MATCH__BODY:
         return basicSetBody(null, msgs);
+      case KactorsPackage.MATCH__LITERAL:
+        return basicSetLiteral(null, msgs);
       case KactorsPackage.MATCH__ARGUMENTS:
         return basicSetArguments(null, msgs);
-      case KactorsPackage.MATCH__INT0:
-        return basicSetInt0(null, msgs);
-      case KactorsPackage.MATCH__INT1:
-        return basicSetInt1(null, msgs);
       case KactorsPackage.MATCH__SET:
         return basicSetSet(null, msgs);
       case KactorsPackage.MATCH__QUANTITY:
         return basicSetQuantity(null, msgs);
-      case KactorsPackage.MATCH__DATE:
-        return basicSetDate(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -1119,37 +809,25 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     switch (featureID)
     {
       case KactorsPackage.MATCH__ID:
-        return isId();
+        return getId();
       case KactorsPackage.MATCH__BODY:
         return getBody();
       case KactorsPackage.MATCH__BOOLEAN:
         return getBoolean();
       case KactorsPackage.MATCH__TYPE:
-        return isType();
+        return getType();
       case KactorsPackage.MATCH__REGEXP:
-        return isRegexp();
+        return getRegexp();
       case KactorsPackage.MATCH__OBSERVABLE:
-        return isObservable();
+        return getObservable();
       case KactorsPackage.MATCH__LITERAL:
-        return isLiteral();
-      case KactorsPackage.MATCH__TEXT:
-        return isText();
+        return getLiteral();
       case KactorsPackage.MATCH__ARGUMENTS:
         return getArguments();
-      case KactorsPackage.MATCH__INT0:
-        return getInt0();
-      case KactorsPackage.MATCH__LEFT_LIMIT:
-        return getLeftLimit();
-      case KactorsPackage.MATCH__INT1:
-        return getInt1();
-      case KactorsPackage.MATCH__RIGHT_LIMIT:
-        return getRightLimit();
       case KactorsPackage.MATCH__SET:
         return getSet();
       case KactorsPackage.MATCH__QUANTITY:
         return getQuantity();
-      case KactorsPackage.MATCH__DATE:
-        return getDate();
       case KactorsPackage.MATCH__EXPR:
         return getExpr();
       case KactorsPackage.MATCH__NODATA:
@@ -1173,7 +851,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     switch (featureID)
     {
       case KactorsPackage.MATCH__ID:
-        setId((Boolean)newValue);
+        setId((String)newValue);
         return;
       case KactorsPackage.MATCH__BODY:
         setBody((StatementList)newValue);
@@ -1182,43 +860,25 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         setBoolean((String)newValue);
         return;
       case KactorsPackage.MATCH__TYPE:
-        setType((Boolean)newValue);
+        setType((String)newValue);
         return;
       case KactorsPackage.MATCH__REGEXP:
-        setRegexp((Boolean)newValue);
+        setRegexp((String)newValue);
         return;
       case KactorsPackage.MATCH__OBSERVABLE:
-        setObservable((Boolean)newValue);
+        setObservable((String)newValue);
         return;
       case KactorsPackage.MATCH__LITERAL:
-        setLiteral((Boolean)newValue);
-        return;
-      case KactorsPackage.MATCH__TEXT:
-        setText((Boolean)newValue);
+        setLiteral((Literal)newValue);
         return;
       case KactorsPackage.MATCH__ARGUMENTS:
         setArguments((ArgumentDeclaration)newValue);
-        return;
-      case KactorsPackage.MATCH__INT0:
-        setInt0((org.integratedmodelling.kactors.kactors.Number)newValue);
-        return;
-      case KactorsPackage.MATCH__LEFT_LIMIT:
-        setLeftLimit((String)newValue);
-        return;
-      case KactorsPackage.MATCH__INT1:
-        setInt1((org.integratedmodelling.kactors.kactors.Number)newValue);
-        return;
-      case KactorsPackage.MATCH__RIGHT_LIMIT:
-        setRightLimit((String)newValue);
         return;
       case KactorsPackage.MATCH__SET:
         setSet((List)newValue);
         return;
       case KactorsPackage.MATCH__QUANTITY:
         setQuantity((Quantity)newValue);
-        return;
-      case KactorsPackage.MATCH__DATE:
-        setDate((Date)newValue);
         return;
       case KactorsPackage.MATCH__EXPR:
         setExpr((String)newValue);
@@ -1265,34 +925,16 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         setObservable(OBSERVABLE_EDEFAULT);
         return;
       case KactorsPackage.MATCH__LITERAL:
-        setLiteral(LITERAL_EDEFAULT);
-        return;
-      case KactorsPackage.MATCH__TEXT:
-        setText(TEXT_EDEFAULT);
+        setLiteral((Literal)null);
         return;
       case KactorsPackage.MATCH__ARGUMENTS:
         setArguments((ArgumentDeclaration)null);
-        return;
-      case KactorsPackage.MATCH__INT0:
-        setInt0((org.integratedmodelling.kactors.kactors.Number)null);
-        return;
-      case KactorsPackage.MATCH__LEFT_LIMIT:
-        setLeftLimit(LEFT_LIMIT_EDEFAULT);
-        return;
-      case KactorsPackage.MATCH__INT1:
-        setInt1((org.integratedmodelling.kactors.kactors.Number)null);
-        return;
-      case KactorsPackage.MATCH__RIGHT_LIMIT:
-        setRightLimit(RIGHT_LIMIT_EDEFAULT);
         return;
       case KactorsPackage.MATCH__SET:
         setSet((List)null);
         return;
       case KactorsPackage.MATCH__QUANTITY:
         setQuantity((Quantity)null);
-        return;
-      case KactorsPackage.MATCH__DATE:
-        setDate((Date)null);
         return;
       case KactorsPackage.MATCH__EXPR:
         setExpr(EXPR_EDEFAULT);
@@ -1321,37 +963,25 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     switch (featureID)
     {
       case KactorsPackage.MATCH__ID:
-        return id != ID_EDEFAULT;
+        return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KactorsPackage.MATCH__BODY:
         return body != null;
       case KactorsPackage.MATCH__BOOLEAN:
         return BOOLEAN_EDEFAULT == null ? boolean_ != null : !BOOLEAN_EDEFAULT.equals(boolean_);
       case KactorsPackage.MATCH__TYPE:
-        return type != TYPE_EDEFAULT;
+        return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
       case KactorsPackage.MATCH__REGEXP:
-        return regexp != REGEXP_EDEFAULT;
+        return REGEXP_EDEFAULT == null ? regexp != null : !REGEXP_EDEFAULT.equals(regexp);
       case KactorsPackage.MATCH__OBSERVABLE:
-        return observable != OBSERVABLE_EDEFAULT;
+        return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
       case KactorsPackage.MATCH__LITERAL:
-        return literal != LITERAL_EDEFAULT;
-      case KactorsPackage.MATCH__TEXT:
-        return text != TEXT_EDEFAULT;
+        return literal != null;
       case KactorsPackage.MATCH__ARGUMENTS:
         return arguments != null;
-      case KactorsPackage.MATCH__INT0:
-        return int0 != null;
-      case KactorsPackage.MATCH__LEFT_LIMIT:
-        return LEFT_LIMIT_EDEFAULT == null ? leftLimit != null : !LEFT_LIMIT_EDEFAULT.equals(leftLimit);
-      case KactorsPackage.MATCH__INT1:
-        return int1 != null;
-      case KactorsPackage.MATCH__RIGHT_LIMIT:
-        return RIGHT_LIMIT_EDEFAULT == null ? rightLimit != null : !RIGHT_LIMIT_EDEFAULT.equals(rightLimit);
       case KactorsPackage.MATCH__SET:
         return set != null;
       case KactorsPackage.MATCH__QUANTITY:
         return quantity != null;
-      case KactorsPackage.MATCH__DATE:
-        return date != null;
       case KactorsPackage.MATCH__EXPR:
         return EXPR_EDEFAULT == null ? expr != null : !EXPR_EDEFAULT.equals(expr);
       case KactorsPackage.MATCH__NODATA:
@@ -1385,14 +1015,6 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     result.append(regexp);
     result.append(", observable: ");
     result.append(observable);
-    result.append(", literal: ");
-    result.append(literal);
-    result.append(", text: ");
-    result.append(text);
-    result.append(", leftLimit: ");
-    result.append(leftLimit);
-    result.append(", rightLimit: ");
-    result.append(rightLimit);
     result.append(", expr: ");
     result.append(expr);
     result.append(", nodata: ");

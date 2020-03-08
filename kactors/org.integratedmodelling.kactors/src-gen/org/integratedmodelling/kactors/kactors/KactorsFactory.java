@@ -168,6 +168,15 @@ public interface KactorsFactory extends EFactory
   Actions createActions();
 
   /**
+   * Returns a new object of class '<em>Value</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Value</em>'.
+   * @generated
+   */
+  Value createValue();
+
+  /**
    * Returns a new object of class '<em>Match</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -301,15 +310,6 @@ public interface KactorsFactory extends EFactory
    * @generated
    */
   KeyValuePair createKeyValuePair();
-
-  /**
-   * Returns a new object of class '<em>Value</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Value</em>'.
-   * @generated
-   */
-  Value createValue();
 
   /**
    * Returns a new object of class '<em>Unit Element</em>'.

@@ -741,4 +741,10 @@ public class ResourceScope implements IRuntimeScope {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<String> getUnnamedKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

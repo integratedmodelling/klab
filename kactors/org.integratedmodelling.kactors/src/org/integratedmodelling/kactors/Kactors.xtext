@@ -124,19 +124,29 @@ Actions:
 	'(' statements=StatementList ')' 
 ;
 
+Value:
+	argvalue=ARGVALUE |
+	literal=Literal |
+	id=PathName |
+	urn=UrnId | 
+	list=List |
+	map=Map |
+	observable=OBSERVABLE | 
+	expression=EXPR |
+	table=LookupTable |
+	quantity=Quantity
+	;
+
 Match:
-	id?=LOWERCASE_ID '->' body=StatementList  |
+	id=LOWERCASE_ID '->' body=StatementList  |
 	boolean=('true'|'false') '->' body=StatementList  |
-	type?=CAMELCASE_ID '->' body=StatementList |
-	regexp?=REGEXP '->' body=StatementList |
-	observable?=OBSERVABLE '->' body=StatementList |
-	literal?=Literal '->' body=StatementList |
-	text?=STRING '->' body=StatementList |
+	type=CAMELCASE_ID '->' body=StatementList |
+	regexp=REGEXP '->' body=StatementList |
+	observable=OBSERVABLE '->' body=StatementList |
+	literal=Literal '->' body=StatementList |
 	arguments=ArgumentDeclaration '->' body=StatementList |
-	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? '->' body=StatementList |
 	'in' set=List '->' body=StatementList | 
 	quantity=Quantity '->' body=StatementList |
-	date=Date '->' body=StatementList |
 	expr=EXPR '->' body=StatementList |
 	nodata='unknown' '->' body=StatementList |
 	star?='*' '->' body=StatementList |
@@ -225,18 +235,6 @@ ParameterList:
 KeyValuePair:
 	(name=(LOWERCASE_ID) (interactive?='=?' | '='))?
 	value=Value;
-	
-Value:
-	argvalue=ARGVALUE |
-	literal=Literal |
-	id=PathName |
-	urn=UrnId | 
-	list=List |
-	map=Map |
-	observable=OBSERVABLE | 
-	expression=EXPR |
-	table=LookupTable
-	;
 
 UnitElement:
 	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |

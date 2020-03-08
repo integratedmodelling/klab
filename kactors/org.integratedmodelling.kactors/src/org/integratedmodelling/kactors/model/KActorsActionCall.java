@@ -1,17 +1,59 @@
 package org.integratedmodelling.kactors.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageCall;
 
 public class KActorsActionCall extends KActorsStatement {
-	
+
+	private class ActionDescriptor {
+		// no match means "on any firing" (should be a defaulted value, maybe with
+		// validation).
+		KActorsValue match;
+		KActorsStatement action;
+	}
+
 	private String message;
+	private List<ActionDescriptor> actions = new ArrayList<>();
+	private KActorsArguments arguments;
 
 	public KActorsActionCall(MessageCall messageCall, KActorCodeStatement parent) {
+
 		super(messageCall, parent, Type.ACTION_CALL);
-		
+
 		this.message = messageCall.getName();
+		if (messageCall.getParameters() != null) {
+			this.arguments = new KActorsArguments(messageCall.getParameters());
+		}
+
 		if (messageCall.getActions() != null) {
-//			for (messageCall.getActions().get
+			if (messageCall.getActions().getStatement() != null) {
+				ActionDescriptor action = new ActionDescriptor();
+				action.action = KActorsStatement.create(messageCall.getActions().getStatement(), this);
+				actions.add(action);
+			} else if (messageCall.getActions().getStatements() != null) {
+				ActionDescriptor action = new ActionDescriptor();
+				action.action = new KActorsCodeBlock(
+						Collections.singletonList(messageCall.getActions().getStatements()), this);
+				actions.add(action);
+			} else if (messageCall.getActions().getMatch() != null) {
+				ActionDescriptor action = new ActionDescriptor();
+				action.match = new KActorsValue(messageCall.getActions().getMatch(), this);
+				action.action = new KActorsCodeBlock(
+						Collections.singletonList(messageCall.getActions().getMatch().getBody()), this);
+				actions.add(action);
+			} else if (messageCall.getActions().getMatches() != null) {
+				for (Match match : messageCall.getActions().getMatches()) {
+					ActionDescriptor action = new ActionDescriptor();
+					action.match = new KActorsValue(messageCall.getActions().getMatch(), this);
+					action.action = new KActorsCodeBlock(
+							Collections.singletonList(messageCall.getActions().getMatch().getBody()), this);
+					actions.add(action);
+				}
+			}
 		}
 	}
 
