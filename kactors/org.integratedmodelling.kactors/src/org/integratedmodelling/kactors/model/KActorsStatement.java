@@ -38,7 +38,7 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 		} else if (statement.getVerb() != null) {
 			return new KActorsActionCall(statement.getVerb(), parent);
 		} else if (statement.getGroup() != null) {
-			return new KActorsCodeBlock(statement.getGroup().getBody().getLists(), parent);
+			return new KActorsConcurrentGroup(statement.getGroup().getBody().getLists(), parent);
 		}
 
 		throw new KlabInternalErrorException("unexpected k.Actors statement type");

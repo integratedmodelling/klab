@@ -35,7 +35,7 @@ public class BehaviorAction implements IBehavior.Action {
 
 	@Override
 	public String getName() {
-		return behavior.getName() + "." + getName();
+		return behavior.getName() + "." + this.getId();
 	}
 
 	@Override

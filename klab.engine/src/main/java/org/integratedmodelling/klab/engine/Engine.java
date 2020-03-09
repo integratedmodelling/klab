@@ -651,6 +651,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 				new File(Configuration.INSTANCE.getDataPath("language") + File.separator + "prototypes.json"));
 		Annotations.INSTANCE.exportPrototypes(
 				new File(Configuration.INSTANCE.getDataPath("language") + File.separator + "annotations.json"));
+		Actors.INSTANCE.exportBehaviors(
+				new File(Configuration.INSTANCE.getDataPath("language") + File.separator + "behaviors.json"));
 	}
 
 	private void scanClasspath() throws KlabException {

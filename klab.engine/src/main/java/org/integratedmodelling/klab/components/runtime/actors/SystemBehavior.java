@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.utils.Parameters;
 
 import akka.actor.typed.ActorRef;
 
@@ -11,6 +12,7 @@ import akka.actor.typed.ActorRef;
  * Messages not accessible to users but necessary to enable the base runtime
  * actor communication protocols. Includes spawning appropriate child actors,
  * loading behavior files, firing things and sending k.Actors message calls.
+ * Their initialize() method won't be called.
  * 
  * @author Ferd
  *
@@ -30,6 +32,10 @@ public class SystemBehavior {
 		public Load(String behavior) {
 			this.behavior = behavior;
 		}
+
+		@Override
+		public void initialize(Parameters<String> arguments) {
+		}
 	}
 
 	/**
@@ -44,6 +50,12 @@ public class SystemBehavior {
 
 		public Spawn(IActorIdentity<KlabMessage> identity) {
 			this.identity = identity;
+		}
+
+		@Override
+		public void initialize(Parameters<String> arguments) {
+			// TODO Auto-generated method stub
+
 		}
 
 	}
@@ -64,6 +76,12 @@ public class SystemBehavior {
 			this.listenerId = listenerId;
 			this.value = firedValue;
 		}
+
+		@Override
+		public void initialize(Parameters<String> arguments) {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	/**
@@ -79,6 +97,12 @@ public class SystemBehavior {
 
 		public KActorsMessage(ActorRef<KlabMessage> sender, String actionId, List<Object> parameters) {
 			this.sender = sender;
+		}
+
+		@Override
+		public void initialize(Parameters<String> arguments) {
+			// TODO Auto-generated method stub
+
 		}
 
 	}

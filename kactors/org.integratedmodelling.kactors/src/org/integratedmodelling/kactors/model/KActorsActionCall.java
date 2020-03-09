@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.integratedmodelling.kactors.api.IKActorsStatement;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.utils.Pair;
 
-public class KActorsActionCall extends KActorsStatement {
+public class KActorsActionCall extends KActorsStatement implements Call {
 
 	private class ActionDescriptor {
 		// no match means "on any firing" (should be a defaulted value, maybe with
@@ -36,20 +41,20 @@ public class KActorsActionCall extends KActorsStatement {
 				actions.add(action);
 			} else if (messageCall.getActions().getStatements() != null) {
 				ActionDescriptor action = new ActionDescriptor();
-				action.action = new KActorsCodeBlock(
+				action.action = new KActorsConcurrentGroup(
 						Collections.singletonList(messageCall.getActions().getStatements()), this);
 				actions.add(action);
 			} else if (messageCall.getActions().getMatch() != null) {
 				ActionDescriptor action = new ActionDescriptor();
 				action.match = new KActorsValue(messageCall.getActions().getMatch(), this);
-				action.action = new KActorsCodeBlock(
+				action.action = new KActorsConcurrentGroup(
 						Collections.singletonList(messageCall.getActions().getMatch().getBody()), this);
 				actions.add(action);
 			} else if (messageCall.getActions().getMatches() != null) {
 				for (Match match : messageCall.getActions().getMatches()) {
 					ActionDescriptor action = new ActionDescriptor();
 					action.match = new KActorsValue(messageCall.getActions().getMatch(), this);
-					action.action = new KActorsCodeBlock(
+					action.action = new KActorsConcurrentGroup(
 							Collections.singletonList(messageCall.getActions().getMatch().getBody()), this);
 					actions.add(action);
 				}
@@ -59,6 +64,24 @@ public class KActorsActionCall extends KActorsStatement {
 
 	public String getMessage() {
 		return message;
+	}
+
+	@Override
+	public String getRecipient() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IParameters<String> getArguments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Pair<IKActorsValue, IKActorsStatement>> getActions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

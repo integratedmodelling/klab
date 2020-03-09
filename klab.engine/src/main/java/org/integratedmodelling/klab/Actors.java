@@ -2,6 +2,7 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
@@ -17,12 +18,20 @@ import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.extensions.actors.Message;
 import org.integratedmodelling.klab.api.services.IActorsService;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -41,13 +50,16 @@ public enum Actors implements IActorsService {
 
 	@Inject
 	ParseHelper<Model> kActorsParser;
+
 	private ActorSystem<Void> supervisor;
 	private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Class<? extends KlabMessage>> messageClasses = Collections.synchronizedMap(new HashMap<>());
 
 	public IBehavior getBehavior(String behaviorId) {
 		return behaviors.get(behaviorId);
 	}
-	
+
 	/**
 	 * The actor system entry point at /user and available as getSupervisor(). It
 	 * will be the (direct for now) father of all session actors. We create this to
@@ -117,7 +129,8 @@ public enum Actors implements IActorsService {
 		KActors.INSTANCE.addNotifier(new Notifier() {
 			@Override
 			public void notify(IKActorsBehavior behavior) {
-				behaviors.put(behavior.getName(), new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior));
+				behaviors.put(behavior.getName(),
+						new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior));
 			}
 		});
 	}
@@ -156,6 +169,53 @@ public enum Actors implements IActorsService {
 	 */
 	public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
 		return ActorSystem.create(create, identity.getId());
+	}
+
+	/**
+	 * Called when a class annotated as a behavior is found.
+	 * 
+	 * @param annotation
+	 * @param cls
+	 */
+	@SuppressWarnings("unchecked")
+	public void registerBehavior(org.integratedmodelling.klab.api.extensions.actors.Behavior annotation, Class<?> cls) {
+
+		BehaviorReference descriptor = behaviorDescriptors.get(annotation.id());
+		if (descriptor == null) {
+			descriptor = new BehaviorReference();
+			behaviorDescriptors.put(annotation.id(), descriptor);
+			descriptor.setName(annotation.id());
+		}
+
+		if (!annotation.description().isEmpty()) {
+			descriptor.setDescription(annotation.description());
+		}
+		if (!annotation.color().isEmpty()) {
+			descriptor.setColor(annotation.color());
+		}
+
+		for (Class<?> cl : cls.getDeclaredClasses()) {
+			Message message = cl.getAnnotation(Message.class);
+			if (message != null) {
+				BehaviorReference.Action ad = new BehaviorReference.Action();
+				ad.setName(message.id());
+				ad.setDescription(message.description());
+				descriptor.getActions().add(ad);
+				this.messageClasses.put(message.id(), (Class<? extends KlabMessage>) cl);
+			}
+		}
+	}
+
+	public void exportBehaviors(File file) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
+			mapper.setSerializationInclusion(Include.NON_NULL);
+			JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, BehaviorReference.class);
+			mapper.writerFor(type).writeValue(file, this.behaviorDescriptors);
+		} catch (IOException e) {
+			Logging.INSTANCE.error(e);
+		}
 	}
 
 }

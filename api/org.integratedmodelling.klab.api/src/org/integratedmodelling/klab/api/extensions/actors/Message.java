@@ -41,7 +41,7 @@ public @interface Message {
      * 
      * @return component id
      */
-    String[] id();
+    String id();
 
     /**
      * List of other project or component IDs that this one depends on.

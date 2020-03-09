@@ -8,7 +8,7 @@
 			contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
 			default="true"
 			extensions="kactor"
-	        icon="icons/cog.png"
+	        icon="icons/behavior.png"
 			id="org.integratedmodelling.kactors.Kactors"
 			name="Kactors Editor">
 		</editor>

@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.utils.NameGenerator;
  * @author Ferd
  *
  */
-public class AbstractKlabMessage implements KlabMessage {
+public abstract class AbstractKlabMessage implements KlabMessage {
 
 	private String id = NameGenerator.shortUUID();
 	
