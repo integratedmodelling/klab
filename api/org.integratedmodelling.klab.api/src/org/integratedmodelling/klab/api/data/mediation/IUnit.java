@@ -45,7 +45,7 @@ public interface IUnit extends IValueMediator {
 	 * @author Ferd
 	 *
 	 */
-	public interface Contextualization {
+	public interface UnitContextualization {
 
 		/**
 		 * All the admissible units corresponding to the contextualization of another to

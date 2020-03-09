@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
+import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -213,7 +213,7 @@ public class DataflowCompiler {
 			/*
 			 * recover any instantiation actions
 			 */
-			for (IAction action : contextModel.getBehavior().getActions(Trigger.INSTANTIATION)) {
+			for (IAction action : contextModel.getContextualization().getActions(Trigger.INSTANTIATION)) {
 				for (IContextualizable resource : action.getComputation()) {
 					actuator.addComputation(((ComputableResource) resource).copy());
 				}
@@ -608,7 +608,7 @@ public class DataflowCompiler {
 						} else {
 							if (!chosenUnits.containsKey(baseUnit.toString())) {
 								if (Units.INSTANCE.needsUnitScaling(observable)) {
-									Contextualization contextualization = Units.INSTANCE
+									UnitContextualization contextualization = Units.INSTANCE
 											.getContextualization(modelObservable, scale, null);
 									observable.withUnit(contextualization.getChosenUnit());
 								} else {
@@ -722,7 +722,7 @@ public class DataflowCompiler {
 		Node ret = new Node(resolvable, mode);
 
 		if (scale == null && resolvable instanceof Observer) {
-			scale = (Scale.create(((Observer) resolvable).getBehavior().getExtents(monitor)));
+			scale = (Scale.create(((Observer) resolvable).getContextualization().getExtents(monitor)));
 		}
 
 		ret.scale = scale;

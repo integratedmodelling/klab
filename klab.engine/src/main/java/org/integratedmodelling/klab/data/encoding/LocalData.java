@@ -1,18 +1,32 @@
 package org.integratedmodelling.klab.data.encoding;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.provenance.Artifact;
+import org.integratedmodelling.klab.scale.Scale;
 
 public class LocalData implements IKlabData {
 
@@ -20,6 +34,16 @@ public class LocalData implements IKlabData {
 	IObservation object;
 	List<INotification> notifications = new ArrayList<>();
 	boolean error = false;
+
+	static Set<String> reservedFields = null;
+
+	static {
+		reservedFields = new HashSet<>();
+		reservedFields.add("objects");
+		reservedFields.add("states");
+		reservedFields.add("geometry");
+		reservedFields.add("name");
+	}
 
 	public LocalData(LocalDataBuilder builder) {
 		if (builder.state != null) {
@@ -37,13 +61,13 @@ public class LocalData implements IKlabData {
 	}
 
 	/**
-	 * Used after a remote resource/contextualize call. Passes the JSON map
-	 * equivalent in structure to the protobuf message from a node.
+	 * Special constructor used after a remote resource/contextualize call. Passes
+	 * the JSON map equivalent in structure to the protobuf message from a node.
 	 * 
 	 * @param data
 	 * @param context
 	 */
-	public LocalData(Map<?, ?> data, IContextualizationScope context) {
+	public LocalData(Map<?, ?> data, IRuntimeScope context) {
 
 		if (data.containsKey("states")) {
 			for (Object s : (Iterable<?>) data.get("states")) {
@@ -84,8 +108,74 @@ public class LocalData implements IKlabData {
 
 			}
 		} else if (data.containsKey("objects")) {
-			// TODO Auto-generated constructor stub
+
+			for (Object object : ((List<?>) data.get("objects"))) {
+
+				Map<?, ?> obj = (Map<?, ?>) object;
+
+				IScale scale = Scale.create(Geometry.create(obj.get("geometry").toString()));
+
+				IObjectArtifact output = null;
+
+				if (context.getTargetSemantics().is(Type.RELATIONSHIP)) {
+
+					IDirectObservation source = null; // TODO
+					IDirectObservation target = null; // TODO
+					output = context.newRelationship(context.getTargetSemantics(), obj.get("name").toString(), scale,
+							source, target, extractMetadata(obj));
+				} else {
+
+					output = context.newObservation(context.getTargetSemantics(), obj.get("name").toString(), scale,
+							extractMetadata(obj));
+				}
+
+				/*
+				 * add any states or other artifacts. TODO not sure how this works with object
+				 * structures, or even whether it should at all.
+				 */
+				if (output != null && obj.containsKey("states") && context.getModel() != null) {
+					for (Object state : (List<?>) obj.get("states")) {
+
+						Map<?, ?> sob = (Map<?, ?>) state;
+						String stateName = sob.get("name").toString();
+						IObservable observable = context.getModel().getAttributeObservables().get(stateName);
+						if (observable != null) {
+							context.addState((IDirectObservation)output, observable, getData(sob));
+						}
+
+					}
+				}
+
+				if (this.object == null) {
+					this.object = (IObservation) output;
+				} else {
+					if (!(this.object instanceof ObservationGroup)) {
+						IObservation obs = this.object;
+						this.object = new ObservationGroup((Observable) context.getTargetSemantics(),
+								(Scale) context.getScale(), context, context.getTargetSemantics().getArtifactType());
+						((ObservationGroup) this.object).chain(obs);
+					}
+					((Artifact) this.object).chain(output);
+				}
+
+			}
+
 		}
+	}
+
+	private Object getData(Map<?, ?> sob) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private IMetadata extractMetadata(Map<?, ?> obj) {
+		Metadata ret = new Metadata();
+		for (Object k : obj.keySet()) {
+			if (!reservedFields.contains(k.toString())) {
+				ret.put(k.toString(), obj.get(k));
+			}
+		}
+		return ret;
 	}
 
 	@Override

@@ -119,14 +119,8 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     			u.addRoles(Role.ROLE_DATA_MANAGER); // less than 7% are data manager
     		x = (int)(Math.random()*100+1);
     		if (x <= 80) {
-    			u.addGroupEntries(entries); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
-    			
-        		for (int j = 0; j<entries.size(); j++) {
-        			x = (int)(Math.random()*100+1);
-            		if (x <= 33) {
-            			u.addGroupEntries(aries);
-            		}
-        		}
+    			u.addGroupEntries(im); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
+    			u.addGroupEntries(aries);
         		x = (int)(Math.random()*100+1);
         		if (x < 22) {
         			for (int j = 0; j<=x; j++) {
@@ -148,6 +142,10 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
 	    		if (x < 5) { // less than 5% with no last login 
 	    			u.setLastLogin(null);
 	    		}
+    		}
+    		x = (int)(Math.random()*100+1);
+    		if (x<=20) {
+    			u.setSendUpdates(false);
     		}
     		initialUsers.add(u);
     	}
@@ -178,7 +176,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
     				int x = (int)(Math.random()*100+1);
     				if (x>=5) // less than 5% not connected
     					user.setLastEngineConnection(generateRandomDate(user.getLastLogin()));
-    				}
+    			}
     			KlabUserManager.updateKlabUser(user);
     		} catch (Exception e) {
     			Logging.INSTANCE.error(e);

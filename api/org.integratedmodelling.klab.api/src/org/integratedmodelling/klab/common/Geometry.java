@@ -811,10 +811,15 @@ public class Geometry implements IGeometry {
 						shape.append(geometry.charAt(idx));
 						idx++;
 					}
-					String[] dims = shape.toString().split(",");
+					String[] dims = shape.toString().trim().split(",");
 					long[] sdimss = new long[dims.length];
 					for (int d = 0; d < dims.length; d++) {
-						sdimss[d] = dims[d].trim().equals("\u221E") ? INFINITE_SIZE : Long.parseLong(dims[d].trim());
+						String dimspec = dims[d].trim();
+						long dsize = NONDIMENSIONAL;
+						if (!dimspec.isEmpty()) {
+							dsize =  dimspec.equals("\u221E") ? INFINITE_SIZE : Long.parseLong(dimspec);
+						}
+						sdimss[d] = dsize;
 					}
 					dimensionality.dimensionality = sdimss.length;
 					dimensionality.shape = sdimss;
@@ -1041,11 +1046,11 @@ public class Geometry implements IGeometry {
 	@Override
 	public boolean isGeneric() {
 		for (Dimension dimension : dimensions) {
-			if (dimension.isGeneric()) {
-				return true;
+			if (!dimension.isGeneric()) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -1070,7 +1075,7 @@ public class Geometry implements IGeometry {
 			return create(geometry.encode());
 		}
 
-		if (geometry.isScalar()) {
+		if (geometry.isScalar() && geometry.isGeneric()) {
 			return this;
 		}
 

@@ -615,6 +615,22 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#ChangeEvent -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ChangeEvent">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ChangeRate -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ChangeRate">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#Charge -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Charge">

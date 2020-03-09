@@ -49,6 +49,11 @@ public class TimeInstant implements ITimeInstant {
 	}
 
 	@Override
+	public int getDayOfYear() {
+		return this.time.getDayOfYear() - 1;
+	}
+	
+	@Override
 	public boolean isBefore(ITimeInstant t) {
 		return this.time.isBefore(((TimeInstant)t).time);
 	}

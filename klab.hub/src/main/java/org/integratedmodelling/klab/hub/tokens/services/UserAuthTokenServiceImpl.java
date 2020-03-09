@@ -72,6 +72,12 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public boolean verifyTokens(String username, String tokenString, TokenType... verify) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	@Override
 	public void deleteToken(String tokenString) {

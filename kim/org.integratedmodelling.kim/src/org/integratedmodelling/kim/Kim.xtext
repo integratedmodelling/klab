@@ -892,24 +892,24 @@ PROPERTY_TYPE:
 terminal ANNOTATION_ID:
 	'@' LOWERCASE_ID;
 
-/*
- * Observable without the 'as' to use in model declarations and without the 'optional' that
- * is only for dependencies.
- */
-SimpleObservableSemantics returns ObservableSemantics:
-	
-	declaration=ConceptDeclaration
-	(
-		('according' 'to' accordingTo=PropertyId)? &
-		(
-			('in' (unit=Unit | currency=Currency)) |
-			('per' unit=Unit)
-		)? &
-		(from=Number 'to' to=Number)? &
-		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		(optional?='optional' | 'required')? &
-		('named' name=(LOWERCASE_ID|STRING))?
-	);
+///*
+// * Observable without the 'as' to use in model declarations and without the 'optional' that
+// * is only for dependencies.
+// */
+//SimpleObservableSemantics returns ObservableSemantics:
+//	
+//	declaration=ConceptDeclaration
+//	(
+//		('according' 'to' accordingTo=PropertyId)? &
+//		(
+//			('in' (unit=Unit | currency=Currency)) |
+//			('per' unit=Unit)
+//		)? &
+//		(from=Number 'to' to=Number)? &
+//		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+//		(optional?='optional' | 'required')? &
+//		('named' name=(LOWERCASE_ID|STRING))?
+//	);
 
 /*
  * Full observable without the 'as <role>' but with 'optional'

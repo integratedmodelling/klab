@@ -16,7 +16,7 @@ import javax.measure.unit.ProductUnit;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
+import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -651,7 +651,7 @@ public enum Units implements IUnitService {
 	 *            a map of requested constraints on the chosen unit (may be null)
 	 * @return
 	 */
-	public Contextualization getContextualization(IObservable observable, IGeometry geometry,
+	public UnitContextualization getContextualization(IObservable observable, IGeometry geometry,
 			Map<ExtentDimension, ExtentDistribution> constraints) {
 
 		if (geometry instanceof Scale) {
@@ -663,7 +663,7 @@ public enum Units implements IUnitService {
 		return getContextualization(unit, geometry, constraints);
 	}
 	
-	public Contextualization getContextualization(IUnit baseUnit, IGeometry geometry,
+	public UnitContextualization getContextualization(IUnit baseUnit, IGeometry geometry,
 			Map<ExtentDimension, ExtentDistribution> constraints) {
 		
 		/*
@@ -714,7 +714,7 @@ public enum Units implements IUnitService {
 		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
 		final IUnit correctUnit = chosen;
 
-		return new Contextualization() {
+		return new UnitContextualization() {
 
 			@Override
 			public IUnit getChosenUnit() {

@@ -886,6 +886,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				parent instanceof ObservationGroup ? ((ObservationGroup) parent).getContext() : parent);
 	}
 
+	@Override
+	public IState addState(IDirectObservation target, IObservable observable, Object data) {
+		return null;
+	}
+	
 	/**
 	 * Pre-fill the artifact catalog with the artifact relevant to the passed
 	 * actuator and scope.
@@ -1483,7 +1488,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		/*
 		 * TODO wrap all temporal states into a temporal rescaling state - works both to
-		 * subset and to aggregate
+		 * subset and to aggregate. This must apply also to event folders, which must only
+		 * show the current events.
 		 */
 
 		return ret;

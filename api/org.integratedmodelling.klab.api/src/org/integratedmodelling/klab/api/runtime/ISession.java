@@ -19,6 +19,7 @@ import java.io.Closeable;
 import java.net.URL;
 import java.util.concurrent.Future;
 
+import org.integratedmodelling.klab.api.actors.IKlabActor;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
@@ -48,6 +49,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * A session is also an {@link org.integratedmodelling.klab.api.auth.IIdentity},
  * and its token must authenticate those engine API calls that are
  * session-aware. All sessions have a {@link IUserIdentity} as parent.
+ * <p>
+ * If a session has a behavior associated (bound in the connection REST call by 
+ * name), it becomes an actor and implements it by setting priorities, views and
+ * whatever else the behavior specifies.
  * <p>
  *
  * @author ferdinando.villa

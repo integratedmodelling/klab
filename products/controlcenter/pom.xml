@@ -113,6 +113,12 @@
 			<artifactId>unirest-java</artifactId>
 			<version>3.1.00</version>
 		</dependency>
+		<dependency>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-objectmapper-jackson</artifactId>
+			<version>3.1.00</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -140,11 +146,7 @@
 			<!-- <systemPath>C:\Program Files\Java\jdk1.8.0_181/jre/lib/ext/jfxrt.jar</systemPath> -->
 			<scope>system</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.konghq</groupId>
-			<artifactId>unirest-objectmapper-jackson</artifactId>
-			<version>3.1.00</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.klab.api</artifactId>

@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
-import org.integratedmodelling.klab.hub.manager.TaskManager;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
@@ -40,15 +39,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import net.minidev.json.JSONObject;
 
 @RestController
 @RequestMapping("/api/users")
 public class KUserController {
 	
-	@Autowired
-	TaskManager taskManager;
-
 	@Autowired
 	TokenManager tokenManager;
 	
@@ -73,7 +70,8 @@ public class KUserController {
 			return new ResponseEntity<JSONObject>(clickback,HttpStatus.CREATED);
 		}	
 	}
-	
+	// Now managed by org.integratedmodelling.klab.hub.tasks.controllers.GroupsRequestController
+	/*
 	@GetMapping(value= "/{id}", produces = "application/json", params= {"groups","addGroups"})
 	public ResponseEntity<?> activateResponse(
 			@PathVariable("id") String userId,
@@ -83,7 +81,7 @@ public class KUserController {
 		ProfileResource profile = klabUserManager.getLoggedInUserProfile().getSafeProfile();
 		return new ResponseEntity<>(profile,HttpStatus.CREATED);
 	}
-	
+	*/
 	@GetMapping(value= "/{id}", produces = "application/json", params= {"roles"})
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> rolesResponse(
@@ -92,7 +90,8 @@ public class KUserController {
 		ProfileResource profile = klabUserManager.updateUserRoles(userId, roles);
 		return new ResponseEntity<>(profile,HttpStatus.CREATED);
 	}
-	
+	// Now managed by org.integratedmodelling.klab.hub.tasks.controllers.GroupsRequestController
+	/*
 	@PostMapping(value= "/{id}", produces = "application/json", params="requestGroups")
 	@PreAuthorize("authentication.getPrincipal() == #username")
 	public ResponseEntity<?> requestGroupsResponse(
@@ -102,7 +101,7 @@ public class KUserController {
 		taskManager.userRequestGroupsTask(username, groupNames, request);
 		return new ResponseEntity<>("Sent email to system adminstrator requesting additional groups",HttpStatus.CREATED);
 	}
-	
+	*/
 	@PostMapping(value="/{id}", produces = "application/json", params="lostPassword")
 	public ResponseEntity<?> lostPasswordResponse(@PathVariable("id") String username) {
 		tokenManager.sendLostPasswordToken(username);

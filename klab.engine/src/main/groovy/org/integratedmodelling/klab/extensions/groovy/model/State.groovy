@@ -4,8 +4,6 @@ import org.integratedmodelling.klab.Observations
 import org.integratedmodelling.klab.api.data.ILocator
 import org.integratedmodelling.klab.api.knowledge.IConcept
 import org.integratedmodelling.klab.api.observations.IState
-import org.integratedmodelling.klab.api.observations.scale.IScale
-import org.integratedmodelling.klab.api.observations.scale.time.ITime
 import org.integratedmodelling.klab.api.provenance.IArtifact
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException
 import org.integratedmodelling.klab.exceptions.KlabValidationException
@@ -15,24 +13,25 @@ class State extends Observation<IState> {
 
 	// only used to tag a state for reduction when transformed
 	IConcept dataReduction = null;
-//	ILocator timePointer = org.integratedmodelling.klab.components.time.extents.Time.INITIALIZATION;
+//	ILocator timePointer = ITime.INITIALIZATION;
 	StateSummary summary;
 
 	State(IState obs, Binding binding) {
 		super(obs, binding);
 	}
 
-	State(String id, Binding binding) {
-		super(id, binding)
-	}
-
+    State(String id, Binding binding) {
+        super(id, binding)
+    }
+    
 	String toString() {
 		return unwrap().toString();
 	}
 
 	private StateSummary getStateSummary() {
 		if (summary == null) {
-			summary = Observations.INSTANCE.getStateSummary(unwrap(), getTransitionScale());
+			// FIXME is initialization() OK? 
+			summary = Observations.INSTANCE.getStateSummary(unwrap(), unwrap().getScale().initialization());
 		}
 		return summary;
 	}
@@ -46,7 +45,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : getTransitionScale()) {
+				for (ILocator locator : unwrap().getScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = summary.getRange().get(1) - d + summary.getRange().get(0);
@@ -62,7 +61,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : getTransitionScale()) {
+				for (ILocator locator : unwrap().getScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));
@@ -74,7 +73,7 @@ class State extends Observation<IState> {
 		return this;
 	}
 
-
+	
 	/**
 	 * Return the state with the appropriate type, aggregating as necessary. If we
 	 * have a time pointer, use that.
@@ -138,14 +137,9 @@ class State extends Observation<IState> {
 	 * @return
 	 */
 	def leftShift(Object value) {
-		if (value instanceof Concept ) {
-			value = ((Concept)value).concept;
-		}
-		if (value instanceof IConcept || value instanceof Number || value instanceof Boolean || value instanceof String) {
-			unwrap().fill(value);
-		} else {
-			throw new KlabUnimplementedException("groovy:State:leftShift: value not recognizable POD");
-		}
+		throw new KlabUnimplementedException("groovy.State:leftShift");
+		setTimePointer();
+		States.set(unwrap(), value, timePointer);
 	}
 
 

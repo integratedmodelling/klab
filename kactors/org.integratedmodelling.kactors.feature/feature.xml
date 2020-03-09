@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.integratedmodelling.kactors.feature"
+      label="Kactors Feature "
+      version="0.10.0.qualifier"
+      provider-name="Integrated Modelling Partnership">
+
+   <plugin
+         id="org.integratedmodelling.kactors"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.integratedmodelling.kactors.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.integratedmodelling.kactors.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

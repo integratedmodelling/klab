@@ -14,6 +14,7 @@ import javax.mail.MessagingException;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
+import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
@@ -400,7 +401,7 @@ public class TokenManager {
 		tokenRepository.save(token);
 		return token;
 	}
-	
+	/*
 	public GroupsClickbackToken sendGroupClickbackToken(String username, List<GroupEntry> groupEntries) {
 		GroupsClickbackToken token = createGroupsClickbackToken(username, groupEntries);
 		String grpString = groupEntries.stream()
@@ -419,7 +420,7 @@ public class TokenManager {
 		emailManager.sendGroupRequestEmail(username, clickbackWithGroups, grpString);
 		return token;
 	}
-	
+	*/
 	public InviteUserClickbackToken createInviteUserClickbackToken(String email, List<String> groups) {
 		InviteUserClickbackToken token = (InviteUserClickbackToken) createClickbackToken(email, InviteUserClickbackToken.class);
 		token.setCallbackUrl(linkConfig);
@@ -451,7 +452,7 @@ public class TokenManager {
 			sendInviteUserClickbackToken(email, groups);
 		}
 	}
-	
+	/*
 	public ClickbackToken handleGroupsClickbackToken(String tokenString, Set<String> groups) {
 		User user = klabUserManager.getLoggedInUser();
 		ClickbackToken groupsClickbackToken = tokenRepository
@@ -469,12 +470,12 @@ public class TokenManager {
 			throw new BadRequestException("A Group was included that does not exist in the database");
 		}
 		klabUserManager.addUserGroupsFromNames(user.getUsername(), groups, null);
-		Task task = taskService.getGroupRequestTaskByToken(groupsClickbackToken);
-		taskService.changeTaskStatus(task.getId(), TaskStatus.acceptedEmail);
+		Task task = taskService.getTaskByToken(GroupRequestTask.class, groupsClickbackToken).get();
+		taskService.changeTaskStatus(task.getId(), TaskStatus.accepted);
 		deleteToken(tokenString);
 		return groupsClickbackToken;
 	}
-	
+	*/
 	public ClickbackToken handleInviteClickbackToken(String tokenString, List<String> groups) {
 		ClickbackToken inviteClickToken = tokenRepository
 				.findByTokenString(tokenString)
