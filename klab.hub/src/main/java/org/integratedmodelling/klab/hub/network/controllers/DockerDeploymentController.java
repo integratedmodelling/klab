@@ -1,8 +1,9 @@
 package org.integratedmodelling.klab.hub.network.controllers;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.network.DockerManager;
+import org.integratedmodelling.klab.hub.network.Docker;
 import org.integratedmodelling.klab.hub.network.DockerNode;
+import org.integratedmodelling.klab.hub.network.commands.CreateContainerAndRun;
 import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.repository.DockerConfigurationRepository;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
@@ -23,14 +24,17 @@ public class DockerDeploymentController {
 	
 	private MongoNodeRepository nodeRepo;
 	private DockerConfigurationRepository dockerRepo;
+	private Docker docker;
 	
 	
 	@Autowired
 	public DockerDeploymentController(MongoNodeRepository nodeRepo,
-			DockerConfigurationRepository dockerRepo) {
+			DockerConfigurationRepository dockerRepo,
+			Docker docker) {
 		super();
 		this.nodeRepo = nodeRepo;
 		this.dockerRepo = dockerRepo;
+		this.docker = docker;
 	}
 
 
@@ -53,10 +57,9 @@ public class DockerDeploymentController {
 		DockerNode config = (DockerNode) dockerRepo.findById(id)
 				.orElseThrow(() -> new BadRequestException("Could not match node configuration id to one in database."));
 		
-		DockerManager.INSTANCE.configureClient(config.getHostConfig());
-		
-		String containerId = DockerManager.INSTANCE.createAndDeploy(config);
-		
+		docker.configureClient(config.getHostConfig());
+		String containerId = new CreateContainerAndRun(config, docker.getClient()).exec();
+
 		return new ResponseEntity<>(containerId,HttpStatus.CREATED);
 	}
 
