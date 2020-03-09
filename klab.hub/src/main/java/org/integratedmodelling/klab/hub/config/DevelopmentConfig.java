@@ -157,7 +157,7 @@ public class DevelopmentConfig implements ApplicationListener<ContextRefreshedEv
         developer.addGroupEntries(aries);
         developer.addGroupEntries(im);
         achilles_activeMissingLdap.addGroupEntries(im);
-        triton_pendingMissingLdap.addGroupEntries(aries);
+        triton_pendingMissingLdap.addGroupEntries(im, aries);
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);
         initialUsers.add(system);
         initialUsers.add(hades);
