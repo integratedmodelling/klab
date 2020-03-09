@@ -192,7 +192,8 @@ public class ObservationReference implements IObservationReference {
 	private List<ExportFormat> exportFormats = new ArrayList<>();
 	// only non-null in views
 	private String originalGroupId;
-	
+	private boolean alive;
+
 	/*
 	 * Only sent when the observation redefines the scale (new context)
 	 */
@@ -845,6 +846,19 @@ public class ObservationReference implements IObservationReference {
 
 	public void setOriginalGroupId(String originalGroupId) {
 		this.originalGroupId = originalGroupId;
+	}
+
+	/**
+	 * True if there is a live actor associated.
+	 * 
+	 * @return
+	 */
+	public boolean isAlive() {
+		return alive;
+	}
+
+	public void setAlive(boolean alive) {
+		this.alive = alive;
 	}
 
 }

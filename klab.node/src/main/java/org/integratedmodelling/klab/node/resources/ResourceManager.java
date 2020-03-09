@@ -30,7 +30,7 @@ import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.controllers.EngineController;
 import org.integratedmodelling.klab.rest.Group;
-import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.ResourceReference;	
 import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -107,6 +107,11 @@ public class ResourceManager {
 
 		Urn kurn = new Urn(urn);
 
+		/*
+		 * The monitor passed to the encoder notifies the client through the returned
+		 * data object.
+		 */
+
 		if (kurn.isUniversal()) {
 
 			IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(kurn.getCatalog());
@@ -115,7 +120,8 @@ public class ResourceManager {
 			}
 
 			EncodingDataBuilder builder = new EncodingDataBuilder();
-			adapter.getEncodedData(kurn, builder, geometry, new ResourceScope(adapter.getResource(urn), null));
+			adapter.getEncodedData(kurn, builder, geometry,
+					new ResourceScope(adapter.getResource(urn), null, builder.getMonitor()));
 			return builder.buildEncoded();
 
 		}
@@ -131,8 +137,9 @@ public class ResourceManager {
 			throw new KlabUnsupportedFeatureException(
 					"adapter for resource of type " + resource.getAdapterType() + " not available");
 		}
+
 		adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
-				new ResourceScope(resource, null));
+				new ResourceScope(resource, null, builder.getMonitor()));
 
 		return builder.buildEncoded();
 
@@ -213,18 +220,20 @@ public class ResourceManager {
 	}
 
 	public boolean canAccess(String urn, EngineAuthorization user) {
-		
+
 		if (Urns.INSTANCE.isUniversal(urn)) {
 
 			Urn u = new Urn(urn);
-			
+
 			/*
 			 * just check if the adapter is allowed
 			 */
 			IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(u.getCatalog());
 			if (adapter != null) {
-				// TODO FIXME streamline this into extensions or resource service and handle adapter authorizations 
-				// there; refactor code in EngineController and (maybe) ResourceManager to use that.
+				// TODO FIXME streamline this into extensions or resource service and handle
+				// adapter authorizations
+				// there; refactor code in EngineController and (maybe) ResourceManager to use
+				// that.
 				String authorized = Configuration.INSTANCE
 						.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "");
 				if (EngineController.isAuthorized(user, authorized)) {
@@ -232,7 +241,7 @@ public class ResourceManager {
 				}
 			}
 		}
-		
+
 		IResource resource = catalog.get(urn);
 		if (resource != null) {
 			if (user.getRoles().contains(Role.ROLE_ADMINISTRATOR)) {

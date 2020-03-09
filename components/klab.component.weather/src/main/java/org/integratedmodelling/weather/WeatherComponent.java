@@ -2,13 +2,18 @@ package org.integratedmodelling.weather;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.extensions.component.GetStatus;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
+import org.integratedmodelling.klab.api.extensions.component.Maintain;
 import org.integratedmodelling.klab.api.extensions.component.Setup;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.weather.data.Weather;
+import org.integratedmodelling.weather.data.WeatherEvents;
 import org.integratedmodelling.weather.data.WeatherFactory;
 import org.integratedmodelling.weather.data.WeatherStation;
 
@@ -19,17 +24,36 @@ public class WeatherComponent {
 
 	@Initialize
 	public boolean initialize() {
-		System.out.println("Initializing storage for weather caches");
+		Logging.INSTANCE.info("Initializing storage for weather caches");
 		WeatherFactory.checkStorage();
 		return true;
 	}
 
 	@Setup(asynchronous = true)
-	public boolean setup() {
-		// TODO get the stuff from the net if the properties aren't set. Only way to
-		// get through the Docker deployment without pain.
-		
-		return false;
+	public boolean setupEvents() {
+		WeatherEvents.INSTANCE.setup();
+		return true;
+	}
+
+	@Setup(asynchronous = true)
+	public boolean setupStations() {
+		WeatherFactory.INSTANCE.setup();
+		return true;
+	}
+	
+	@GetStatus
+	public void getStatus(IMetadata metadata) {
+		metadata.put("stations.count", "" + WeatherFactory.INSTANCE.getStationsCount());
+		metadata.put("events.count", "" + WeatherEvents.INSTANCE.getEventsCount());
+	}
+
+	/**
+	 * Default maintenance of GHCND stations is every 3 days. Should also eventually
+	 * schedule a storm detection step.
+	 */
+	@Maintain(intervalMinutes = 60 * 24 * 3)
+	public void updateStations() {
+//		WeatherFactory.INSTANCE.setupGHCNDStations();
 	}
 
 	public static String[] normalizeVariableNames(String[] vars) {
@@ -105,10 +129,7 @@ public class WeatherComponent {
 
 	public static Weather getWeather(ISpace space, ITime time, String source, String... vars) {
 		Collection<WeatherStation> wss = WeatherFactory.INSTANCE.within(space.getShape(), source, vars);
-		return new Weather(wss, time.getStart().getMilliseconds(), time.getEnd().getMilliseconds(),
-				(time.getStep() == null ? (time.getEnd().getMilliseconds() - time.getStart().getMilliseconds())
-						: time.getStep().getMilliseconds()),
-				10, vars, 75, true);
+		return new Weather(wss, time, 10, vars, 75, true);
 	}
 
 }

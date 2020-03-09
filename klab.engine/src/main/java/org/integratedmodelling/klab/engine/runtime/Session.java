@@ -21,10 +21,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
@@ -38,6 +40,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
@@ -72,8 +75,9 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder.Location;
-import org.integratedmodelling.klab.components.runtime.DefaultRuntimeProvider;
-import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
+import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
@@ -81,6 +85,7 @@ import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.Project;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -130,7 +135,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.ibm.icu.text.NumberFormat;
 
-import akka.actor.ActorRef;
+import akka.actor.typed.ActorRef;
 
 /**
  * Engine session. Implements UserDetails to be directly usable as a principal
@@ -139,7 +144,7 @@ import akka.actor.ActorRef;
  * @author ferdinando.villa
  *
  */
-public class Session implements ISession, UserDetails, IMessageBus.Relay {
+public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetails, IMessageBus.Relay {
 
 	private static final long serialVersionUID = -1571090827271892549L;
 
@@ -155,6 +160,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	boolean isDefault = false;
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
+	ActorRef<KlabMessage> actor;
 
 	/**
 	 * A scheduler to periodically collect observation and task garbage
@@ -199,8 +205,6 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
 	private AtomicLong lastNetworkCheck = new AtomicLong(0);
-
-	private ActorRef rootActor;
 
 	public interface Listener {
 
@@ -543,9 +547,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		ResourcePublishResponse response = new ResourcePublishResponse();
 		if (type == IMessage.Type.PublishLocalResource) {
-			
+
 			Map<String, String> publicationData = new HashMap<>();
-			
+
 			if (request.getPermissions() != null) {
 				publicationData.put(IMetadata.IM_PERMISSIONS, request.getPermissions());
 			}
@@ -558,7 +562,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			if (request.getSuggestedCatalog() != null) {
 				publicationData.put(IMetadata.IM_SUGGESTED_CATALOG_ID, request.getSuggestedCatalog());
 			}
-			
+
 			response.setOriginalUrn(request.getUrn());
 			IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
 			if (resource == null || resource.hasErrors()) {
@@ -572,7 +576,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					response.setError(e.getMessage());
 				}
 			}
-			
+
 		} else {
 			response.setError("Updating of public resources is still unimplemented");
 		}
@@ -1067,6 +1071,23 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			Resources.INSTANCE.getLoader().add(file);
 			break;
 
+		case CreateBehavior:
+			
+			file = project.createBehavior(request.getAssetId(),
+					"true".equals(request.getParameters().get(ProjectModificationRequest.LIBRARY_OPTION))
+							? IKActorsBehavior.Type.TRAITS
+							: IKActorsBehavior.Type.BEHAVIOR,
+					false);
+			monitor.send(
+					Message.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateBehavior,
+							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
+									file))
+							.inResponseTo(message));
+
+			Resources.INSTANCE.getLoader().add(file);
+			
+			break;
+
 		case CreateProject:
 
 			project = (Project) Resources.INSTANCE.getLocalWorkspace().createProject(request.getProjectId(), monitor);
@@ -1289,5 +1310,23 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		return ret;
 	}
 
-	
+	@Override
+	public ActorRef<KlabMessage> getActor() {
+		if (this.actor == null) {
+			// TODO if we have a user behavior, which we should always have, the actor
+			// should be a child of the user actor.
+			this.actor = Actors.INSTANCE.createActor(SessionActor.create(this), this);
+		}
+		return this.actor;
+	}
+
+	@Override
+	public void load(IBehavior behavior) {
+		getActor().tell(new SystemBehavior.Load(behavior.getId()));
+	}
+
+	public void instrument(ActorRef<KlabMessage> actor) {
+		this.actor = actor;
+	}
+
 }

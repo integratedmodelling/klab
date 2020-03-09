@@ -202,6 +202,39 @@ public interface API {
 
 	public static interface NODE {
 
+		/**
+		 * Protected admin endpoints for configuration and component setup.
+		 * 
+		 * @author Ferd
+		 *
+		 */
+		public static interface ADMIN {
+
+			public static final String P_COMPONENT = "{component}";
+			public static final String P_PROPERTY = "{component}";
+						
+			/**
+			 * 
+			 */
+			public static final String COMPONENT_SETUP = "/component/setup/" + P_COMPONENT;
+			
+			/**
+			 * 
+			 */
+			public static final String COMPONENT_GET_STATUS = "/component/getstatus/" + P_COMPONENT;
+
+			/**
+			 * 
+			 */
+			public static final String SET_PROPERTY = "/properties/set/" + P_PROPERTY;
+			
+			/**
+			 * 
+			 */
+			public static final String GET_PROPERTY = "/properties/get/" + P_PROPERTY;
+			
+		}
+
 		public static interface RESOURCE {
 
 			/**
@@ -310,8 +343,8 @@ public interface API {
 	public static final String SCHEMA = "/schema";
 
 	/**
-	 * All authority endpoints are public, although some may limit access
-	 * according to the principal.
+	 * All authority endpoints are public, although some may limit access according
+	 * to the principal.
 	 *
 	 * @author ferdinando.villa
 	 */

@@ -215,8 +215,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
 		long timeOffset = trivial ? 0 : offsets.pos[0];
 
-		// can only be the closest at this point.
-		return getClosest(timeOffset).getAt(sliceOffset);
+		// can only be the closest at this point, unless there was no slice at all
+		Slice slice = getClosest(timeOffset);
+		return slice == null ? null : slice.getAt(sliceOffset);
 	}
 
 	public long put(T value, ILocator locator) {

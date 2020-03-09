@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EReference
 import org.integratedmodelling.klab.ide.ui.wizards.BulkImportResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.ExportResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.MoveResourceWizard;
+import org.integratedmodelling.klab.ide.ui.wizards.NewBehaviorWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewDocumentationFolderWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewDocumentationSectionWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewNamespaceWizard;
@@ -77,7 +78,7 @@ public class KlabNavigatorActions {
 	
 	public static void addBehavior(EProject project) {
 		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
-				new NewNamespaceWizard(project.getProject()));
+				new NewBehaviorWizard(project.getProject()));
 		dialog.create();
 		dialog.open();
 	}

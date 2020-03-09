@@ -1,36 +1,19 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 
-import akka.actor.AbstractActor;
-import akka.actor.ActorRef;
-import akka.actor.Props;
+import akka.actor.typed.Behavior;
+import akka.actor.typed.javadsl.ActorContext;
+import akka.actor.typed.javadsl.Behaviors;
 
-public class ObservationActor extends AbstractActor {
+public class ObservationActor extends KlabActor {
 
-
-	static public ActorRef create(IObservation observation) {
-		// context = (get context from runtime context)
-		// return context.actorOf(ObservationActor.props(observation), observation.getId());
-		return null;
-	}
-	
-	static Props props(IObservation observation) {
-		return Props.create(ObservationActor.class, () -> new ObservationActor(observation));
+	static Behavior<KlabMessage> create(Observation observation) {
+		return Behaviors.setup(ctx -> new ObservationActor(ctx, observation));
 	}
 
-	private final IObservation observation;
-
-	public ObservationActor(IObservation observation) {
-		this.observation = observation;
-	}
-
-	// add all message classes as serializable public static final
-	
-	@Override
-	public Receive createReceive() {
-		// TODO Auto-generated method stub
-		return null; // receiveBuilder().match(MessageClass.class, request -> { getSender().tell(new Response(....)); });
+	public ObservationActor(ActorContext<KlabMessage> context, Observation observation) {
+		super(context, observation);
 	}
 
 }

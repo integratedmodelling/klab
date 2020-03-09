@@ -1,4 +1,5 @@
 package org.integratedmodelling.klab.components.geospace.utils;
+
 /*******************************************************************************
  *  Copyright (C) 2007, 2015:
  *  
@@ -75,7 +76,7 @@ public class ThiessenLocator<T extends ISpatial> {
 
 		this.objects = objects;
 
-		SpatialDisplay debug = new SpatialDisplay(scale.getSpace());
+//		SpatialDisplay debug = new SpatialDisplay(scale.getSpace());
 
 		if (objects.size() == 1) {
 
@@ -93,7 +94,7 @@ public class ThiessenLocator<T extends ISpatial> {
 				IShape s = o.getShape();
 				Point point = ((Shape) s).getStandardizedGeometry().getCentroid();
 				sites.add(new Coordinate(point.getX(), point.getY()));
-				debug.add(Shape.create(((Shape) s).getStandardizedGeometry(), Projection.getDefault()));
+//				debug.add(Shape.create(((Shape) s).getStandardizedGeometry(), Projection.getDefault()));
 			}
 			db.setSites(sites);
 			Geometry diag = db.getDiagram(new GeometryFactory());
@@ -104,9 +105,10 @@ public class ThiessenLocator<T extends ISpatial> {
 			int pols = 0;
 			for (pols = 0; pols < diag.getNumGeometries(); pols++) {
 				Geometry g = diag.getGeometryN(pols);
-				debug.add(Shape.create(g, Projection.getDefault()), "original");
+//				debug.add(Shape.create(g, Projection.getDefault()), "original");
 				for (int s = 0; s < objects.size(); s++) {
-					if (g.intersects(((Shape) objects.get(s)).getStandardizedGeometry()) && g instanceof Polygon) {
+					if (g.intersects(((Shape) ((ISpatial) objects.get(s)).getShape()).getStandardizedGeometry())
+							&& g instanceof Polygon) {
 						pairs.add(new Pair<>((Polygon) g, objects.get(s)));
 					}
 				}
@@ -128,11 +130,13 @@ public class ThiessenLocator<T extends ISpatial> {
 					}
 				}
 			}
+			
+//			debug.show();
 		}
 	}
 
 	public T get(long offset) {
-		return object == null ? (index == null ? null : pairs.get(index[(int)offset] - 1).getSecond()) : object;
+		return object == null ? (index == null ? null : pairs.get(index[(int) offset] - 1).getSecond()) : object;
 	}
 
 }

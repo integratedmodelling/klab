@@ -116,6 +116,10 @@ public class ProfileResource implements OAuth2User{
 		this.groupEntries = groups;
 	}
 
+	public List<Role> getRoles() {
+		return roles;
+	}
+
 	public void setToken(String token) {
 		this.Token = token;
 	}
@@ -227,9 +231,5 @@ public class ProfileResource implements OAuth2User{
 		}
 		cleanedProfile.groupEntries = safeGroups;
 		return cleanedProfile;
-	}
-
-	public List<Role> getRoles() {
-		return roles;
 	}
 }

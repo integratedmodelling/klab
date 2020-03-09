@@ -18,7 +18,6 @@ package org.integratedmodelling.klab.api.auth;
 import java.util.Date;
 import java.util.Set;
 
-import org.integratedmodelling.klab.api.actors.IKlabActor;
 import org.integratedmodelling.klab.rest.Group;
 
 /**

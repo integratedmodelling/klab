@@ -82,7 +82,7 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	@Override
 	public void getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
-		// TODO Auto-generated method stub
+
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
 			getInterpolatedData(urn, builder, geometry, context);
@@ -139,16 +139,16 @@ public class WeatherAdapter implements IUrnAdapter {
 		if (urn.getParameters().containsKey("minprec")) {
 			minPrecipitation = Double.parseDouble(urn.getParameters().get("minprec").toString());
 		}
-		
+
 		boolean adjustDates = true;
 		if (urn.getParameters().containsKey("realdate")) {
 			adjustDates = false;
 		}
-		
-		
+
 		int nEvents = 0;
-		
-		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation, adjustDates)) {
+
+		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation,
+				adjustDates, context.getMonitor())) {
 
 			Scale eventScale = Scale.create(
 					Time.create((long) event.asData().get(WeatherEvent.START_LONG),
@@ -170,12 +170,12 @@ public class WeatherAdapter implements IUrnAdapter {
 //			db.finishState();
 
 			ob.finishObject();
-			
-			nEvents ++;
+
+			nEvents++;
 		}
 
 		Logging.INSTANCE.info("query for storm events returned " + nEvents + " instances");
-		
+
 	}
 
 	private void getInterpolatedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
@@ -240,6 +240,7 @@ public class WeatherAdapter implements IUrnAdapter {
 		ref.setGeometry(getGeometry(kurn).encode());
 		ref.setVersion(Version.CURRENT);
 		ref.setType(getType(kurn));
+		
 		return new Resource(ref);
 	}
 

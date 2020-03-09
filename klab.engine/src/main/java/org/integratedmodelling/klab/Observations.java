@@ -271,7 +271,7 @@ public enum Observations implements IObservationService {
 		ret.setId(observation.getId());
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
-
+		ret.setAlive(((Observation)observation).isAlive());
 		ret.setLabel(getDisplayLabel(observation));
 
 		ret.setObservable(observation.getObservable().getDefinition());

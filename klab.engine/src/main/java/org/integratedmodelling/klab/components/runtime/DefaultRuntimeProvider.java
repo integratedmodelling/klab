@@ -92,8 +92,8 @@ import akka.actor.ActorSystem;
  * <p>
  * The initialization dataflow will build simple objects (essentially
  * storage-only observations) when the context is not temporal. If the context
- * is temporal, it will create Akka actors for all direct observations and
- * prepare them for temporal contextualization.
+ * is temporal, it will create Akka actors for all direct observations where a
+ * behavior is specified, and prepare them for temporal contextualization.
  * 
  * @author Ferd
  *

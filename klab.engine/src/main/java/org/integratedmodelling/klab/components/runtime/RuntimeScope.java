@@ -184,7 +184,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this(scope);
 		this.getVariables().putAll(variables);
 	}
-	
+
 	RuntimeScope(RuntimeScope context) {
 		this.putAll(context);
 		this.namespace = context.namespace;
@@ -881,16 +881,22 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public void link(IArtifact parent, IArtifact child) {
+
+		if (parent instanceof ObservationGroup) {
+			parent = ((ObservationGroup) parent).getContext();
+		} else if (parent instanceof IProcess) {
+			parent = ((IProcess) parent).getContext();
+		}
+
 		this.structure.addVertex(child);
-		this.structure.addEdge(child,
-				parent instanceof ObservationGroup ? ((ObservationGroup) parent).getContext() : parent);
+		this.structure.addEdge(child, parent);
 	}
 
 	@Override
 	public IState addState(IDirectObservation target, IObservable observable, Object data) {
 		return null;
 	}
-	
+
 	/**
 	 * Pre-fill the artifact catalog with the artifact relevant to the passed
 	 * actuator and scope.
@@ -920,15 +926,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		/*
 		 * add any other outputs from the model, which will be dealt with by the
-		 * contextualizers
+		 * contextualizers - NO. these are added to the dataflow only when requested
+		 * by other models.
 		 */
-		if (actuator.getModel() != null && !actuator.getModel().isInstantiator()) {
-			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
-				IObservable output = actuator.getModel().getObservables().get(i);
-				targetObservables.put(output.getName(),
-						new Triple<>((Observable) output, output.getDescription().getResolutionMode(), false));
-			}
-		}
+//		if (actuator.getModel() != null && !actuator.getModel().isInstantiator()) {
+//			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
+//				IObservable output = actuator.getModel().getObservables().get(i);
+//				targetObservables.put(output.getName(),
+//						new Triple<>((Observable) output, output.getDescription().getResolutionMode(), false));
+//			}
+//		}
 
 		/*
 		 * add any target of indirect computations
@@ -993,6 +1000,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					observation.getMetadata().putAll(metadata);
 				}
 
+
 				if (parent != null && actuator.getDataflow().getModel() != null) {
 					for (String attr : actuator.getDataflow().getModel().getAttributeObservables().keySet()) {
 
@@ -1029,9 +1037,78 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						}
 					}
 				}
+				
+////////// REVISED - 
+//
+//				/*
+//				 * model that may carry our additional outputs is either the upstream
+//				 * instantiator that has resolved our root subject, or the resolver we are
+//				 * using.
+//				 */
+//				IModel upstreamModel = parent == null ? null : actuator.getDataflow().getModel();
+//				boolean direct = false;
+//				if (upstreamModel != null && !upstreamModel.isInstantiator()) {
+//					upstreamModel = null;
+//				}
+//				if (upstreamModel == null && actuator.getModel() != null && !actuator.getModel().isInstantiator()) {
+//					upstreamModel = actuator.getModel();
+//					direct = true;
+//				}
+//
+//				if (upstreamModel != null) {
+//					for (String attr : upstreamModel.getAttributeObservables().keySet()) {
+//
+//						boolean done = false;
+//						Object obj = null;
+//						if (metadata != null) {
+//							/* state specs may be in metadata from resource attributes */
+//							obj = metadata.getCaseInsensitive(attr);
+//							direct = obj == null;
+//						}
+//						if (direct) {
+//
+//							/*
+//							 * new obs that must get to all levels and be reported when changed
+//							 */
+//							Observable obs = new Observable(
+//									(Observable) upstreamModel.getAttributeObservables().get(attr)).named(attr);
+//
+//							IState state = (IState) DefaultRuntimeProvider.createObservation(obs, scale, this);
+//							this.catalog.put(attr, state);
+//							this.observations.put(state.getId(), state);
+//							
+//							if (obj != null) {
+//								((State) state).distributeScalar(obj);
+//							}
+//							predefinedStates.add(state);
+//							actuator.addNotifiable(state);
+//							done = true;
+//						}
+//
+//						if (!done) {
+//							// look up in the first context that has the root subject as a target, or get
+//							// the parent if none does.
+//							RuntimeScope p = getParentWithTarget(rootSubject);
+//							IArtifact artifact = p.findArtifactByObservableName(attr);
+//							if (artifact == null) {
+//								Pair<String, IArtifact> art = p
+//										.findArtifact(upstreamModel.getAttributeObservables().get(attr));
+//								artifact = art == null ? null : art.getSecond();
+//							}
+//							if (artifact instanceof IState) {
+//								// observable may be different or use data reduction traits
+//								IState stateView = Observations.INSTANCE.getStateViewAs(
+//										upstreamModel.getAttributeObservables().get(attr), (IState) artifact, scale,
+//										this);
+//								predefinedStates.add(stateView);
+//							}
+//						}
+//					}
+//				}
 			}
 
 			if (preexisting == null) {
+				
 				// transmit all annotations and any interpretation keys to the artifact
 				actuator.notifyNewObservation(observation);
 
@@ -1072,7 +1149,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-		return preexisting == null ? this.catalog.get(actuator.getName()) : preexisting;
+	return preexisting==null ? this.catalog.get(actuator.getName()) : preexisting;
 
 	}
 
@@ -1488,8 +1565,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		/*
 		 * TODO wrap all temporal states into a temporal rescaling state - works both to
-		 * subset and to aggregate. This must apply also to event folders, which must only
-		 * show the current events.
+		 * subset and to aggregate. This must apply also to event folders, which must
+		 * only show the current events.
 		 */
 
 		return ret;

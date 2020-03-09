@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
@@ -11,6 +14,9 @@ import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kactors.model.KActors.Notifier;
+import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -36,7 +42,12 @@ public enum Actors implements IActorsService {
 	@Inject
 	ParseHelper<Model> kActorsParser;
 	private ActorSystem<Void> supervisor;
+	private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
 
+	public IBehavior getBehavior(String behaviorId) {
+		return behaviors.get(behaviorId);
+	}
+	
 	/**
 	 * The actor system entry point at /user and available as getSupervisor(). It
 	 * will be the (direct for now) father of all session actors. We create this to
@@ -99,6 +110,18 @@ public enum Actors implements IActorsService {
 		}
 	}
 
+	/**
+	 * Install listeners to build behaviors on read and organize them by project
+	 */
+	public void setup() {
+		KActors.INSTANCE.addNotifier(new Notifier() {
+			@Override
+			public void notify(IKActorsBehavior behavior) {
+				behaviors.put(behavior.getName(), new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior));
+			}
+		});
+	}
+
 	@Override
 	public IKActorsBehavior declare(InputStream file) throws KlabValidationException {
 		IKActorsBehavior ret = null;
@@ -117,8 +140,22 @@ public enum Actors implements IActorsService {
 	 * 
 	 * @return
 	 */
-	public ActorRef<Void> getSupervisor() {
+	public ActorSystem<Void> getSupervisor() {
 		return this.supervisor;
+	}
+
+	/**
+	 * Create a direct child of the supervisor with the specified identity.
+	 * Implementations should only call this for top-level actors and have the
+	 * others created through messages to them.
+	 * 
+	 * @param <T>
+	 * @param create
+	 * @param identity
+	 * @return
+	 */
+	public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
+		return ActorSystem.create(create, identity.getId());
 	}
 
 }

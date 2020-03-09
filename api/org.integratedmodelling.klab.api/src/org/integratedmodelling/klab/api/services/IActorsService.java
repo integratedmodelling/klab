@@ -5,14 +5,23 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 
 public interface IActorsService {
 
 	/**
+	 * Return the behavior identified by the passed string.
+	 * 
+	 * @param id
+	 * @return a behavior or null
+	 */
+	IBehavior getBehavior(String id);
+	
+	/**
 	 * Read a k.Actor specification from a URL.
 	 * 
 	 * @param url
-	 * @return the actor
+	 * @return the actor specification
 	 */
 	IKActorsBehavior declare(URL url);
 
@@ -20,7 +29,7 @@ public interface IActorsService {
 	 * Read a k.Actor specification from a file.
 	 * 
 	 * @param file
-	 * @return the actor
+	 * @return the actor specification
 	 */
 	IKActorsBehavior declare(File file);
 
@@ -28,7 +37,7 @@ public interface IActorsService {
 	 * Read a k.Actor specification from a stream.
 	 * 
 	 * @param file
-	 * @return the actor
+	 * @return the actor specification
 	 */
 	IKActorsBehavior declare(InputStream file);
 

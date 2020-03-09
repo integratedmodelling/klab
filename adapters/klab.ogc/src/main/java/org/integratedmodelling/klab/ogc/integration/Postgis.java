@@ -21,6 +21,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.Hints;
 import org.geotools.jdbc.JDBCDataStore;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
@@ -209,6 +210,8 @@ public class Postgis {
 			JDBCDataStore datastore = factory.createDataStore(params);
 			datastore.createSchema(schema);
 
+			long added = 0, errors = 0;
+			
 			try (FeatureWriter<SimpleFeatureType, SimpleFeature> writer = datastore.getFeatureWriterAppend(ret,
 					Transaction.AUTO_COMMIT)) {
 
@@ -218,12 +221,22 @@ public class Postgis {
 					toWrite.setAttributes(feature.getAttributes());
 					toWrite.getUserData().put(Hints.PROVIDED_FID, feature.getID());
 					toWrite.getUserData().putAll(feature.getUserData());
-					writer.write();
+					try {
+						writer.write();
+						added ++;
+					} catch (Throwable t) {
+						// just testing
+						if (errors == 0) {
+							Logging.INSTANCE.error(t);
+						}
+						errors++;
+						
+					}
 				}
+			} finally {
+				Logging.INSTANCE.info("import finished with " + added + " features and " + errors + "  errors");
+				datastore.dispose();
 			}
-			
-			datastore.dispose();
-
 		} catch (Throwable t) {
 			throw new KlabStorageException(t.getMessage());
 		}

@@ -371,6 +371,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		if (element instanceof EProject) {
 			return ((EProject) element).getName();
 		}
+		if (element instanceof EActorBehavior) {
+			return ((EActorBehavior) element).getName();
+		}
 		if (element instanceof EDefinition) {
 			return ((EDefinition) element).getName();
 		}

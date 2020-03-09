@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -19,19 +20,30 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.runtime.artifacts.DataArtifact;
+import org.integratedmodelling.klab.components.runtime.artifacts.ObjectArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Utils;
 
+/**
+ * A flexible data container that can be initialized and built both in a
+ * semantic scope and in a data-only, artifact-only scope.
+ * 
+ * @author Ferd
+ *
+ */
 public class LocalData implements IKlabData {
 
-	IState state;
-	IObservation object;
+	IDataArtifact state;
+	IArtifact object;
 	List<INotification> notifications = new ArrayList<>();
 	boolean error = false;
 
@@ -58,6 +70,83 @@ public class LocalData implements IKlabData {
 			}
 			notifications.add(notification);
 		}
+	}
+
+	/**
+	 * Dumb version that produces artifacts directly and does not use a scope to
+	 * incarnate them in an observation structure. Monitor gets the notifications
+	 * unless null.
+	 * 
+	 * @param data
+	 */
+	public LocalData(Map<?, ?> data, IMonitor monitor) {
+
+		if (data.containsKey("states")) {
+			for (Object s : (Iterable<?>) data.get("states")) {
+
+				Map<?, ?> state = (Map<?, ?>) s;
+				IScale scale = Scale.create(Geometry.create(state.get("geometry").toString()));
+				String name = state.get("name").toString();
+
+				IDataArtifact art = new DataArtifact(name, getDataType(state), scale, getData(state));
+				if (this.state == null) {
+					this.state = art;
+				} else {
+					((Artifact) this.state).chain(art);
+				}
+
+			}
+		} else if (data.containsKey("objects")) {
+
+			for (Object object : ((List<?>) data.get("objects"))) {
+
+				Map<?, ?> obj = (Map<?, ?>) object;
+
+				IScale scale = Scale.create(Geometry.create(obj.get("geometry").toString()));
+
+				IObjectArtifact output = new ObjectArtifact(obj.get("name").toString(), scale);
+
+				/*
+				 * add any states or other artifacts. TODO not sure how this works with object
+				 * structures, or even whether it should at all.
+				 */
+				if (obj.containsKey("states")) {
+					for (Object state : (List<?>) obj.get("states")) {
+
+						Map<?, ?> sob = (Map<?, ?>) state;
+						String stateName = sob.get("name").toString();
+						IDataArtifact st = new DataArtifact(stateName, getDataType(sob), scale, getData(sob));
+						((ObjectArtifact) output).addChild(st);
+					}
+				}
+
+				if (this.object == null) {
+					this.object = output;
+				} else {
+					((Artifact) this.object).chain(output);
+				}
+
+			}
+
+		}
+		
+		if (data.containsKey("notifications")) {
+			// TODO send them over to the monitor
+			for (Object state : (List<?>) data.get("notification")) {
+				
+			}
+	}
+
+	}
+
+	private IArtifact.Type getDataType(Map<?, ?> data) {
+		if (data.containsKey("doubledata") || data.containsKey("intdata")) {
+			return IArtifact.Type.NUMBER;
+		} else if (data.containsKey("booleandata")) {
+			return IArtifact.Type.BOOLEAN;
+		}
+		// TODO categories
+		return IArtifact.Type.VALUE;
 	}
 
 	/**
@@ -140,7 +229,7 @@ public class LocalData implements IKlabData {
 						String stateName = sob.get("name").toString();
 						IObservable observable = context.getModel().getAttributeObservables().get(stateName);
 						if (observable != null) {
-							context.addState((IDirectObservation)output, observable, getData(sob));
+							context.addState((IDirectObservation) output, observable, getData(sob));
 						}
 
 					}
@@ -150,7 +239,7 @@ public class LocalData implements IKlabData {
 					this.object = (IObservation) output;
 				} else {
 					if (!(this.object instanceof ObservationGroup)) {
-						IObservation obs = this.object;
+						IObservation obs = (IObservation) this.object;
 						this.object = new ObservationGroup((Observable) context.getTargetSemantics(),
 								(Scale) context.getScale(), context, context.getTargetSemantics().getArtifactType());
 						((ObservationGroup) this.object).chain(obs);
@@ -163,9 +252,21 @@ public class LocalData implements IKlabData {
 		}
 	}
 
-	private Object getData(Map<?, ?> sob) {
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings("unchecked")
+	private Object getData(Map<?, ?> data) {
+
+		Iterator<?> doubles = data.containsKey("doubledata") ? ((Iterable<?>) data.get("doubledata")).iterator() : null;
+		// TODO tabledata + lookup table
+		Iterator<?> floats = data.containsKey("intdata") ? ((Iterable<?>) data.get("intdata")).iterator() : null;
+		Iterator<?> booleans = data.containsKey("booleandata") ? ((Iterable<?>) data.get("booleandata")).iterator()
+				: null;
+
+		List<Object> ret = new ArrayList<>();
+		for (Iterator<?> it = Utils.chooseNotNull(doubles, floats, booleans); it.hasNext();) {
+			Object o = it.next();
+			ret.add("NaN".equals(o) ? null : o);
+		}
+		return ret.size() == 1 ? ret.get(0) : ret;
 	}
 
 	private IMetadata extractMetadata(Map<?, ?> obj) {

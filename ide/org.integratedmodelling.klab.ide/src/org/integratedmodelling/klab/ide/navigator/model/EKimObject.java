@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.navigator.model;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -18,6 +19,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.KimStatement;
+import org.integratedmodelling.klab.api.IStatement;
 
 /**
  * Root class for tree elements that are linked to a k.IM statement.
@@ -29,15 +31,15 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 
 	private static final long serialVersionUID = -3445237513834410884L;
 
-	IKimStatement delegate_;
+	IStatement delegate_;
 
-	EKimObject(String id, IKimStatement statement, ENavigatorItem parent) {
+	EKimObject(String id, IStatement statement, ENavigatorItem parent) {
 		super(id, parent);
 		this.delegate_ = statement;
 	}
 
 	public IKimStatement getKimStatement() {
-		return this.delegate_;
+		return this.delegate_ instanceof IKimStatement ? (IKimStatement) this.delegate_ : null;
 	}
 
 	public int getFirstLine() {
@@ -45,11 +47,12 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	}
 
 	public List<IKimScope> getChildren() {
-		return delegate_.getChildren();
+		return this.delegate_ instanceof IKimStatement ? ((IKimStatement) delegate_).getChildren()
+				: new ArrayList<>() /* TODO */;
 	}
 
 	public String getLocationDescriptor() {
-		return delegate_.getLocationDescriptor();
+		return this.delegate_ instanceof IKimStatement ? ((IKimStatement) delegate_).getLocationDescriptor() : "DIO";
 	}
 
 	public int getLastLine() {
@@ -69,11 +72,11 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	}
 
 	public IKimMetadata getMetadata() {
-		return delegate_.getMetadata();
+		return this.delegate_ instanceof IKimStatement ? ((IKimStatement) delegate_).getMetadata() : null;
 	}
 
 	public IKimMetadata getDocumentationMetadata() {
-		return delegate_.getDocumentationMetadata();
+		return this.delegate_ instanceof IKimStatement ? ((IKimStatement) delegate_).getDocumentationMetadata() : null;
 	}
 
 	public boolean isDeprecated() {
@@ -89,12 +92,12 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	}
 
 	public IKimStatement getParent() {
-		return delegate_.getParent();
+		return this.delegate_ instanceof IKimStatement ? ((IKimStatement) delegate_).getParent() : null;
 	}
 
 	@Override
 	public String getURI() {
-		return delegate_.getURI();
+		return this.delegate_ instanceof IKimStatement ? ((IKimStatement) delegate_).getURI() : "POPOA";
 	}
 
 	@Override
@@ -108,7 +111,8 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 
 	@Override
 	public String getResourceId() {
-		return delegate_ == null ? null : delegate_.getResourceId();
+		return delegate_ == null ? null
+				: (this.delegate_ instanceof IKimStatement ? ((IKimStatement) delegate_).getResourceId() : "ZAMPARON");
 	}
 
 	public IFile getIFile() {
@@ -145,27 +149,32 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	public boolean isWarnings() {
 		return delegate_.isWarnings();
 	}
-	
+
 	public void visit(Visitor visitor) {
-		delegate_.visit(visitor);
+		if (this.delegate_ instanceof IKimStatement) {
+			((IKimStatement) delegate_).visit(visitor);
+		}
 	}
 
-	// create correspondent object without parent. Method in KimData also creates parents.
+	// create correspondent object without parent. Method in KimData also creates
+	// parents.
 	public static ENavigatorItem create(Object focus) {
-        if (focus instanceof IKimConceptStatement) {
-            return new EConcept(((IKimConceptStatement) focus).getNamespace() + ":" + ((IKimConceptStatement) focus).getName(),
-                    ((IKimConceptStatement) focus), null, null);
-        } else if (focus instanceof IKimModel) {
-            return new EModel(((IKimModel)focus).getNamespace() + "." + ((IKimModel) focus).getName(), ((IKimModel) focus), null);
-        } else if (focus instanceof IKimObserver) {
-            return new EObserver(((IKimObserver)focus).getNamespace() + "." + ((IKimObserver) focus).getName(),
-                    ((IKimObserver) focus), null, null);
-        } else if (focus instanceof IKimNamespace) {
-        	return new ENamespace((IKimNamespace)focus, null);
-        } else if (focus instanceof IKimProject) {
-        	return new EProject((IKimProject)focus, null);
-        }
+		if (focus instanceof IKimConceptStatement) {
+			return new EConcept(
+					((IKimConceptStatement) focus).getNamespace() + ":" + ((IKimConceptStatement) focus).getName(),
+					((IKimConceptStatement) focus), null, null);
+		} else if (focus instanceof IKimModel) {
+			return new EModel(((IKimModel) focus).getNamespace() + "." + ((IKimModel) focus).getName(),
+					((IKimModel) focus), null);
+		} else if (focus instanceof IKimObserver) {
+			return new EObserver(((IKimObserver) focus).getNamespace() + "." + ((IKimObserver) focus).getName(),
+					((IKimObserver) focus), null, null);
+		} else if (focus instanceof IKimNamespace) {
+			return new ENamespace((IKimNamespace) focus, null);
+		} else if (focus instanceof IKimProject) {
+			return new EProject((IKimProject) focus, null);
+		}
 		return null;
 	}
-	
+
 }

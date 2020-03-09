@@ -8,10 +8,10 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 import org.integratedmodelling.kactors.kactors.Actions
 import org.integratedmodelling.kactors.kactors.Definition
-import org.integratedmodelling.kactors.kactors.Group
 import org.integratedmodelling.kactors.kactors.Match
 import org.integratedmodelling.kactors.kactors.MessageCall
 import org.integratedmodelling.kactors.kactors.Statement
+import org.integratedmodelling.kactors.kactors.StatementGroup
 import org.integratedmodelling.kactors.kactors.StatementList
 
 /**
@@ -62,7 +62,7 @@ class KactorsLabelProvider extends DefaultEObjectLabelProvider {
 		'Message actions'
 	}
 	
-	def text(Group group) {
+	def text(StatementGroup group) {
 		if (group.body !== null) {
 			return 'Message group'
 		}

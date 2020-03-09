@@ -163,7 +163,7 @@ public class Project implements IProject {
 		
 		}
 		try (PrintWriter out = new PrintWriter(ret)) {
-			out.print(statement + " " + namespaceId + ";\n\n");
+			out.print(statement + " " + namespaceId + "\n\n");
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}

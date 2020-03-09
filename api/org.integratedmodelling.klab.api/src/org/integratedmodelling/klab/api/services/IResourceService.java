@@ -121,7 +121,9 @@ public interface IResourceService {
 
 	/**
 	 * Resolve a resource with the option of passing a local URN with just the local
-	 * name and a target project to look into.
+	 * name and a target project to look into. This enables resolution of
+	 * project-local resources using only the local name as URN, which for
+	 * file-based resources will just be the file name.
 	 * 
 	 * @param urn
 	 * @param project
@@ -130,79 +132,35 @@ public interface IResourceService {
 	IResource resolveResource(String urn, IProject project);
 
 	/**
-	 * Resolve a resource to data in a passed geometry. This involves retrieval of
-	 * the adapter, decoding of the resource (remotely or locally according to the
-	 * resource itself) and building of the data object. If no exceptions are
-	 * thrown, the result is guaranteed consistent with the geometry and free of
-	 * errors.
+	 * Low-level data retrieval using a URN and a geometry. The result is set in the
+	 * returned IKlabData and won't have any semantics.
 	 * 
-	 * @param resource
-	 * @param urnParameters
+	 * @param urn
 	 * @param geometry
-	 * @param context
-	 * @return KlabException if anything goes wrong
+	 * @param monitor
+	 * @return
 	 */
-	IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			IContextualizationScope context);
+	IKlabData getResourceData(String urn, IGeometry geometry, IMonitor monitor);
 
 	/**
-	 * Create or update a locally available resource from a specification or/and by
-	 * examining a local file. This is the beginning of a resource's life cycle.
-	 * When a resource is successfully created, its data will be stored in the
-	 * project under the resources folder, and synchronized with the local resource
-	 * catalog. If the file has been seen already, the resource is updated in the
-	 * local catalog with full history records.
-	 * <p>
-	 * The local resource will have a
-	 * {@code [urn:klab:]local:user:project:resourceid.version} URN which is visible
-	 * only within the project. All files and needed info are copied within the
-	 * resources project area.
-	 * <p>
-	 * The resource ID is created from the file name if an id field is not present
-	 * in the parameters. It is an error to pass a null file and no id.
-	 * <p>
-	 * The update parameter controls whether revisions are possible with files that
-	 * don't have a newer timestamp than the resource. It will normally be set to
-	 * true only when the resource creation is created explicitly. This function is
-	 * also used when reading or updating a resource for a file named in a k.IM
-	 * model.
-	 * <p>
-	 * Local resource versions are in the form 0.0.build with the build starting at
-	 * 1 and increasing at each update. Publishing them modifies the minor version,
-	 * starting at 0.1.build. Only their owners' explicit action, or peer review in
-	 * a reviewed repository, modifies the major version to make them 1.x.b or
-	 * anything higher than the initial version.
+	 * High-level data retrieval, using the scope and the scale it contains to
+	 * create the artifact according to whatever semantic context it represents.
+	 * Return the main artifact built from the resource.
 	 * 
-	 * @param resourceId   the ID for the resource, which will be part of the URN
-	 *                     and must be unique within a project.
-	 * @param file         a {@link java.io.File} object. May be null if userData
-	 *                     contain all relevant info. The local path of the file
-	 *                     (starting at the project folder, inclusive) is stored in
-	 *                     metadata and checked in case of redefinition, so that the
-	 *                     URN is versioned rather than recreated.
-	 * @param userData     user data. May be empty (if all that's needed is the
-	 *                     file). Must contain a suitable id if the file is null.
-	 *                     These are used to define URN parameters at the discretion
-	 *                     of the adapter.
-	 * @param project      the project for the resource. Can't be null. All local
-	 *                     resources are project-local; only public resources are
-	 *                     visible globally.
-	 * @param adapterType  pass null to interrogate all adapters and choose the
-	 *                     first fitting adapter. Must be passed if file is null.
-	 * @param update       if true, allow updating of the resource every time this
-	 *                     is called. Otherwise just create if absent or update when
-	 *                     the timestamp on the resource is older than that of the
-	 *                     file.
-	 * @param asynchronous if true, spawn a validator thread and return a proxy for
-	 *                     the resource without blocking.
-	 * @param monitor      a
-	 *                     {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
-	 *                     object.
-	 * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
-	 *         with a local URN if successful.
+	 * @param urn
+	 * @param geometry
+	 * @param scope
+	 * @return
 	 */
-	IResource createLocalResource(String resourceId, File file, IParameters<String> userData, IProject project,
-			String adapterType, boolean update, boolean asynchronous, IMonitor monitor);
+	IArtifact contextualizeResource(String urn, IContextualizationScope scope);
+
+
+//	IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+//			IContextualizationScope context);
+
+
+//	IResource createLocalResource(String resourceId, File file, IParameters<String> userData, IProject project,
+//			String adapterType, boolean update, boolean asynchronous, IMonitor monitor);
 
 	/**
 	 * The workspace with all local projects. The only workspace that is not read
@@ -264,7 +222,7 @@ public interface IResourceService {
 
 	/**
 	 * Retrieve a resolvable object identified by a URN, promoting any resource that
-	 * is not directly resolvable to the correspondent resolvable when possible.
+	 * is not directly resolvable to a correspondent resolvable when possible.
 	 *
 	 * @param urn   either a formal URN or one of the abbreviated forms recognized
 	 *              in k.IM (such as a concept identifier)
@@ -282,18 +240,7 @@ public interface IResourceService {
 	 */
 	IProject getProject(String name);
 
-	/**
-	 * Resolve a URN to data using default builder and context, using the full
-	 * geometry of the resource and a suitable scale (i.e. downscaling if the
-	 * resulting artifact is too big to handle). Return the resulting artifact, or
-	 * null if things go wrong.
-	 * 
-	 * @param urn
-	 * @param monitor
-	 * @return a pair containing the context artifact and the artifact built by the
-	 *         resource (iterable if objects)
-	 */
-	Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor);
+//	Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor);
 
 	/**
 	 * Resolve the URN and return true if the resolution is successful and the
@@ -307,13 +254,13 @@ public interface IResourceService {
 	/**
 	 * Submit a resource for publication to the node identified by nodeId, which
 	 * must be an online node on the network. Return an open ticket that will be
-	 * closed when publication is done.
+	 * closed when publication is finished.
 	 * 
 	 * @param resource
 	 * @param nodeId
 	 * @param publicationData any user suggestions about name, namespace, catalog
 	 *                        and permissions.
-	 * @return a temporary ID to track the publishing.
+	 * @return a temporary ID to track the publishing process.
 	 */
 	ITicket submitResource(IResource resource, String nodeId, Map<String, String> publicationData);
 

@@ -9136,190 +9136,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'structural'
 		public Keyword getStructuralKeyword_1() { return cStructuralKeyword_1; }
 	}
-	public class SimpleObservableSemanticsElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.SimpleObservableSemantics");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cDeclarationAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cDeclarationConceptDeclarationParserRuleCall_0_0 = (RuleCall)cDeclarationAssignment_0.eContents().get(0);
-		private final UnorderedGroup cUnorderedGroup_1 = (UnorderedGroup)cGroup.eContents().get(1);
-		private final Group cGroup_1_0 = (Group)cUnorderedGroup_1.eContents().get(0);
-		private final Keyword cAccordingKeyword_1_0_0 = (Keyword)cGroup_1_0.eContents().get(0);
-		private final Keyword cToKeyword_1_0_1 = (Keyword)cGroup_1_0.eContents().get(1);
-		private final Assignment cAccordingToAssignment_1_0_2 = (Assignment)cGroup_1_0.eContents().get(2);
-		private final RuleCall cAccordingToPropertyIdParserRuleCall_1_0_2_0 = (RuleCall)cAccordingToAssignment_1_0_2.eContents().get(0);
-		private final Alternatives cAlternatives_1_1 = (Alternatives)cUnorderedGroup_1.eContents().get(1);
-		private final Group cGroup_1_1_0 = (Group)cAlternatives_1_1.eContents().get(0);
-		private final Keyword cInKeyword_1_1_0_0 = (Keyword)cGroup_1_1_0.eContents().get(0);
-		private final Alternatives cAlternatives_1_1_0_1 = (Alternatives)cGroup_1_1_0.eContents().get(1);
-		private final Assignment cUnitAssignment_1_1_0_1_0 = (Assignment)cAlternatives_1_1_0_1.eContents().get(0);
-		private final RuleCall cUnitUnitParserRuleCall_1_1_0_1_0_0 = (RuleCall)cUnitAssignment_1_1_0_1_0.eContents().get(0);
-		private final Assignment cCurrencyAssignment_1_1_0_1_1 = (Assignment)cAlternatives_1_1_0_1.eContents().get(1);
-		private final RuleCall cCurrencyCurrencyParserRuleCall_1_1_0_1_1_0 = (RuleCall)cCurrencyAssignment_1_1_0_1_1.eContents().get(0);
-		private final Group cGroup_1_1_1 = (Group)cAlternatives_1_1.eContents().get(1);
-		private final Keyword cPerKeyword_1_1_1_0 = (Keyword)cGroup_1_1_1.eContents().get(0);
-		private final Assignment cUnitAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
-		private final RuleCall cUnitUnitParserRuleCall_1_1_1_1_0 = (RuleCall)cUnitAssignment_1_1_1_1.eContents().get(0);
-		private final Group cGroup_1_2 = (Group)cUnorderedGroup_1.eContents().get(2);
-		private final Assignment cFromAssignment_1_2_0 = (Assignment)cGroup_1_2.eContents().get(0);
-		private final RuleCall cFromNumberParserRuleCall_1_2_0_0 = (RuleCall)cFromAssignment_1_2_0.eContents().get(0);
-		private final Keyword cToKeyword_1_2_1 = (Keyword)cGroup_1_2.eContents().get(1);
-		private final Assignment cToAssignment_1_2_2 = (Assignment)cGroup_1_2.eContents().get(2);
-		private final RuleCall cToNumberParserRuleCall_1_2_2_0 = (RuleCall)cToAssignment_1_2_2.eContents().get(0);
-		private final Group cGroup_1_3 = (Group)cUnorderedGroup_1.eContents().get(3);
-		private final Assignment cValueOperatorsAssignment_1_3_0 = (Assignment)cGroup_1_3.eContents().get(0);
-		private final RuleCall cValueOperatorsValueOperatorParserRuleCall_1_3_0_0 = (RuleCall)cValueOperatorsAssignment_1_3_0.eContents().get(0);
-		private final Assignment cValueOperatorsAssignment_1_3_1 = (Assignment)cGroup_1_3.eContents().get(1);
-		private final RuleCall cValueOperatorsValueOperatorParserRuleCall_1_3_1_0 = (RuleCall)cValueOperatorsAssignment_1_3_1.eContents().get(0);
-		private final Alternatives cAlternatives_1_4 = (Alternatives)cUnorderedGroup_1.eContents().get(4);
-		private final Assignment cOptionalAssignment_1_4_0 = (Assignment)cAlternatives_1_4.eContents().get(0);
-		private final Keyword cOptionalOptionalKeyword_1_4_0_0 = (Keyword)cOptionalAssignment_1_4_0.eContents().get(0);
-		private final Keyword cRequiredKeyword_1_4_1 = (Keyword)cAlternatives_1_4.eContents().get(1);
-		private final Group cGroup_1_5 = (Group)cUnorderedGroup_1.eContents().get(5);
-		private final Keyword cNamedKeyword_1_5_0 = (Keyword)cGroup_1_5.eContents().get(0);
-		private final Assignment cNameAssignment_1_5_1 = (Assignment)cGroup_1_5.eContents().get(1);
-		private final Alternatives cNameAlternatives_1_5_1_0 = (Alternatives)cNameAssignment_1_5_1.eContents().get(0);
-		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_1_5_1_0_0 = (RuleCall)cNameAlternatives_1_5_1_0.eContents().get(0);
-		private final RuleCall cNameSTRINGTerminalRuleCall_1_5_1_0_1 = (RuleCall)cNameAlternatives_1_5_1_0.eContents().get(1);
-		
-		///*
-		// * Observable without the 'as' to use in model declarations and without the 'optional' that
-		// * is only for dependencies.
-		// */ SimpleObservableSemantics ObservableSemantics:
-		//	declaration=ConceptDeclaration (('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) |
-		//	'per' unit=Unit)? & (from=Number 'to' to=Number)? & (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? &
-		//	(optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
-		@Override public ParserRule getRule() { return rule; }
-		
-		//declaration=ConceptDeclaration (('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) |
-		//'per' unit=Unit)? & (from=Number 'to' to=Number)? & (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? &
-		//(optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?)
-		public Group getGroup() { return cGroup; }
-		
-		//declaration=ConceptDeclaration
-		public Assignment getDeclarationAssignment_0() { return cDeclarationAssignment_0; }
-		
-		//ConceptDeclaration
-		public RuleCall getDeclarationConceptDeclarationParserRuleCall_0_0() { return cDeclarationConceptDeclarationParserRuleCall_0_0; }
-		
-		//('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number
-		//'to' to=Number)? & (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? & (optional?='optional' |
-		//'required')? & ('named' name=(LOWERCASE_ID | STRING))?
-		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
-		
-		//('according' 'to' accordingTo=PropertyId)?
-		public Group getGroup_1_0() { return cGroup_1_0; }
-		
-		//'according'
-		public Keyword getAccordingKeyword_1_0_0() { return cAccordingKeyword_1_0_0; }
-		
-		//'to'
-		public Keyword getToKeyword_1_0_1() { return cToKeyword_1_0_1; }
-		
-		//accordingTo=PropertyId
-		public Assignment getAccordingToAssignment_1_0_2() { return cAccordingToAssignment_1_0_2; }
-		
-		//PropertyId
-		public RuleCall getAccordingToPropertyIdParserRuleCall_1_0_2_0() { return cAccordingToPropertyIdParserRuleCall_1_0_2_0; }
-		
-		//('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)?
-		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
-		
-		//'in' (unit=Unit | currency=Currency)
-		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
-		
-		//'in'
-		public Keyword getInKeyword_1_1_0_0() { return cInKeyword_1_1_0_0; }
-		
-		//unit=Unit | currency=Currency
-		public Alternatives getAlternatives_1_1_0_1() { return cAlternatives_1_1_0_1; }
-		
-		//unit=Unit
-		public Assignment getUnitAssignment_1_1_0_1_0() { return cUnitAssignment_1_1_0_1_0; }
-		
-		//Unit
-		public RuleCall getUnitUnitParserRuleCall_1_1_0_1_0_0() { return cUnitUnitParserRuleCall_1_1_0_1_0_0; }
-		
-		//currency=Currency
-		public Assignment getCurrencyAssignment_1_1_0_1_1() { return cCurrencyAssignment_1_1_0_1_1; }
-		
-		//Currency
-		public RuleCall getCurrencyCurrencyParserRuleCall_1_1_0_1_1_0() { return cCurrencyCurrencyParserRuleCall_1_1_0_1_1_0; }
-		
-		//'per' unit=Unit
-		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
-		
-		//'per'
-		public Keyword getPerKeyword_1_1_1_0() { return cPerKeyword_1_1_1_0; }
-		
-		//unit=Unit
-		public Assignment getUnitAssignment_1_1_1_1() { return cUnitAssignment_1_1_1_1; }
-		
-		//Unit
-		public RuleCall getUnitUnitParserRuleCall_1_1_1_1_0() { return cUnitUnitParserRuleCall_1_1_1_1_0; }
-		
-		//(from=Number 'to' to=Number)?
-		public Group getGroup_1_2() { return cGroup_1_2; }
-		
-		//from=Number
-		public Assignment getFromAssignment_1_2_0() { return cFromAssignment_1_2_0; }
-		
-		//Number
-		public RuleCall getFromNumberParserRuleCall_1_2_0_0() { return cFromNumberParserRuleCall_1_2_0_0; }
-		
-		//'to'
-		public Keyword getToKeyword_1_2_1() { return cToKeyword_1_2_1; }
-		
-		//to=Number
-		public Assignment getToAssignment_1_2_2() { return cToAssignment_1_2_2; }
-		
-		//Number
-		public RuleCall getToNumberParserRuleCall_1_2_2_0() { return cToNumberParserRuleCall_1_2_2_0; }
-		
-		//(valueOperators+=ValueOperator valueOperators+=ValueOperator*)?
-		public Group getGroup_1_3() { return cGroup_1_3; }
-		
-		//valueOperators+=ValueOperator
-		public Assignment getValueOperatorsAssignment_1_3_0() { return cValueOperatorsAssignment_1_3_0; }
-		
-		//ValueOperator
-		public RuleCall getValueOperatorsValueOperatorParserRuleCall_1_3_0_0() { return cValueOperatorsValueOperatorParserRuleCall_1_3_0_0; }
-		
-		//valueOperators+=ValueOperator*
-		public Assignment getValueOperatorsAssignment_1_3_1() { return cValueOperatorsAssignment_1_3_1; }
-		
-		//ValueOperator
-		public RuleCall getValueOperatorsValueOperatorParserRuleCall_1_3_1_0() { return cValueOperatorsValueOperatorParserRuleCall_1_3_1_0; }
-		
-		//(optional?='optional' | 'required')?
-		public Alternatives getAlternatives_1_4() { return cAlternatives_1_4; }
-		
-		//optional?='optional'
-		public Assignment getOptionalAssignment_1_4_0() { return cOptionalAssignment_1_4_0; }
-		
-		//'optional'
-		public Keyword getOptionalOptionalKeyword_1_4_0_0() { return cOptionalOptionalKeyword_1_4_0_0; }
-		
-		//'required'
-		public Keyword getRequiredKeyword_1_4_1() { return cRequiredKeyword_1_4_1; }
-		
-		//('named' name=(LOWERCASE_ID | STRING))?
-		public Group getGroup_1_5() { return cGroup_1_5; }
-		
-		//'named'
-		public Keyword getNamedKeyword_1_5_0() { return cNamedKeyword_1_5_0; }
-		
-		//name=(LOWERCASE_ID | STRING)
-		public Assignment getNameAssignment_1_5_1() { return cNameAssignment_1_5_1; }
-		
-		//(LOWERCASE_ID | STRING)
-		public Alternatives getNameAlternatives_1_5_1_0() { return cNameAlternatives_1_5_1_0; }
-		
-		//LOWERCASE_ID
-		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_1_5_1_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_1_5_1_0_0; }
-		
-		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_1_5_1_0_1() { return cNameSTRINGTerminalRuleCall_1_5_1_0_1; }
-	}
 	public class DependencyObservableSemanticsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.DependencyObservableSemantics");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -9371,6 +9187,24 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_3_5_1_0_0 = (RuleCall)cNameAlternatives_3_5_1_0.eContents().get(0);
 		private final RuleCall cNameSTRINGTerminalRuleCall_3_5_1_0_1 = (RuleCall)cNameAlternatives_3_5_1_0.eContents().get(1);
 		
+		/////*
+		//// * Observable without the 'as' to use in model declarations and without the 'optional' that
+		//// * is only for dependencies.
+		//// */
+		////SimpleObservableSemantics returns ObservableSemantics:
+		////	
+		////	declaration=ConceptDeclaration
+		////	(
+		////		('according' 'to' accordingTo=PropertyId)? &
+		////		(
+		////			('in' (unit=Unit | currency=Currency)) |
+		////			('per' unit=Unit)
+		////		)? &
+		////		(from=Number 'to' to=Number)? &
+		////		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		////		(optional?='optional' | 'required')? &
+		////		('named' name=(LOWERCASE_ID|STRING))?
+		////	);
 		///*
 		// * Full observable without the 'as <role>' but with 'optional'
 		// */ DependencyObservableSemantics ObservableSemantics:
@@ -10672,7 +10506,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	private final AGENT_TYPEElements pAGENT_TYPE;
 	private final PROPERTY_TYPEElements pPROPERTY_TYPE;
 	private final TerminalRule tANNOTATION_ID;
-	private final SimpleObservableSemanticsElements pSimpleObservableSemantics;
 	private final DependencyObservableSemanticsElements pDependencyObservableSemantics;
 	private final AlternativeDependencyObservableSemanticsElements pAlternativeDependencyObservableSemantics;
 	private final NamedObservableSemanticsElements pNamedObservableSemantics;
@@ -10786,7 +10619,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		this.pAGENT_TYPE = new AGENT_TYPEElements();
 		this.pPROPERTY_TYPE = new PROPERTY_TYPEElements();
 		this.tANNOTATION_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ANNOTATION_ID");
-		this.pSimpleObservableSemantics = new SimpleObservableSemanticsElements();
 		this.pDependencyObservableSemantics = new DependencyObservableSemanticsElements();
 		this.pAlternativeDependencyObservableSemantics = new AlternativeDependencyObservableSemanticsElements();
 		this.pNamedObservableSemantics = new NamedObservableSemanticsElements();
@@ -11914,21 +11746,24 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		return tANNOTATION_ID;
 	}
 	
-	///*
-	// * Observable without the 'as' to use in model declarations and without the 'optional' that
-	// * is only for dependencies.
-	// */ SimpleObservableSemantics ObservableSemantics:
-	//	declaration=ConceptDeclaration (('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) |
-	//	'per' unit=Unit)? & (from=Number 'to' to=Number)? & (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? &
-	//	(optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
-	public SimpleObservableSemanticsElements getSimpleObservableSemanticsAccess() {
-		return pSimpleObservableSemantics;
-	}
-	
-	public ParserRule getSimpleObservableSemanticsRule() {
-		return getSimpleObservableSemanticsAccess().getRule();
-	}
-	
+	/////*
+	//// * Observable without the 'as' to use in model declarations and without the 'optional' that
+	//// * is only for dependencies.
+	//// */
+	////SimpleObservableSemantics returns ObservableSemantics:
+	////	
+	////	declaration=ConceptDeclaration
+	////	(
+	////		('according' 'to' accordingTo=PropertyId)? &
+	////		(
+	////			('in' (unit=Unit | currency=Currency)) |
+	////			('per' unit=Unit)
+	////		)? &
+	////		(from=Number 'to' to=Number)? &
+	////		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+	////		(optional?='optional' | 'required')? &
+	////		('named' name=(LOWERCASE_ID|STRING))?
+	////	);
 	///*
 	// * Full observable without the 'as <role>' but with 'optional'
 	// */ DependencyObservableSemantics ObservableSemantics:

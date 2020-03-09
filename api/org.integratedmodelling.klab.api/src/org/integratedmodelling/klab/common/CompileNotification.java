@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
+import org.integratedmodelling.klab.api.IStatement;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
@@ -16,7 +17,7 @@ public class CompileNotification implements ICompileNotification {
 
     private Level level;
     private String namespaceId;
-    private IKimStatement statement;
+    private IStatement statement;
     // scope at root level for error propagation
     private IKimScope mainScope;
     private String message;
@@ -25,7 +26,7 @@ public class CompileNotification implements ICompileNotification {
     private CompileNotification() {
     }
 
-    public static CompileNotification create(Level level, String message, String namespace, IKimStatement statement) {
+    public static CompileNotification create(Level level, String message, String namespace, IStatement statement) {
         CompileNotification ret = new CompileNotification();
         ret.level = level;
         ret.message = message;
@@ -35,7 +36,7 @@ public class CompileNotification implements ICompileNotification {
     }
 
     // TODO allow passing a kim object and set the URN from there
-    public static CompileNotification error(String message, String namespace, IKimStatement statement) {
+    public static CompileNotification error(String message, String namespace, IStatement statement) {
         CompileNotification ret = new CompileNotification();
         ret.level = Level.SEVERE;
         ret.message = message;
@@ -44,7 +45,7 @@ public class CompileNotification implements ICompileNotification {
         return ret;
     }
 
-    public static CompileNotification warning(String message, String namespace, IKimStatement statement) {
+    public static CompileNotification warning(String message, String namespace, IStatement statement) {
         CompileNotification ret = new CompileNotification();
         ret.level = Level.WARNING;
         ret.message = message;
@@ -53,7 +54,7 @@ public class CompileNotification implements ICompileNotification {
         return ret;
     }
 
-    public static CompileNotification info(String message, String namespace, IKimStatement statement) {
+    public static CompileNotification info(String message, String namespace, IStatement statement) {
         CompileNotification ret = new CompileNotification();
         ret.level = Level.INFO;
         ret.message = message;
@@ -62,7 +63,7 @@ public class CompileNotification implements ICompileNotification {
         return ret;
     }
 
-    public static CompileNotification debug(String message, String namespace, IKimStatement statement) {
+    public static CompileNotification debug(String message, String namespace, IStatement statement) {
         CompileNotification ret = new CompileNotification();
         ret.level = Level.FINE;
         ret.message = message;
@@ -112,7 +113,7 @@ public class CompileNotification implements ICompileNotification {
     }
 
     @Override
-    public IKimStatement getStatement() {
+    public IStatement getStatement() {
         return statement;
     }
 

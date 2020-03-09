@@ -1,12 +1,20 @@
 package org.integratedmodelling.klab.data.encoding;
 
+import java.util.concurrent.Future;
+
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
+import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Notification;
+import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity;
+import org.integratedmodelling.klab.utils.NotificationUtils;
 
 /**
  * A builder that encodes the data into a Protobuf object which will be sent
@@ -25,6 +33,79 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	EncodingDataBuilder parent = null;
 
 	public EncodingDataBuilder() {
+	}
+
+	class Monitor implements IMonitor {
+
+		@Override
+		public void info(Object... info) {
+			Notification.Builder nb = Notification.newBuilder();
+			nb.setSeverity(Severity.INFO);
+			nb.setText(NotificationUtils.getMessage(info).getFirst());
+			builder.addNotifications(nb.build());
+		}
+
+		@Override
+		public void warn(Object... o) {
+			Notification.Builder nb = Notification.newBuilder();
+			nb.setSeverity(Severity.WARNING);
+			nb.setText(NotificationUtils.getMessage(o).getFirst());
+			builder.addNotifications(nb.build());
+		}
+
+		@Override
+		public void error(Object... o) {
+			Notification.Builder nb = Notification.newBuilder();
+			nb.setSeverity(Severity.ERROR);
+			nb.setText(NotificationUtils.getMessage(o).getFirst());
+			builder.addNotifications(nb.build());
+		}
+
+		@Override
+		public void debug(Object... o) {
+			Notification.Builder nb = Notification.newBuilder();
+			nb.setSeverity(Severity.DEBUG);
+			nb.setText(NotificationUtils.getMessage(o).getFirst());
+			builder.addNotifications(nb.build());
+		}
+
+		@Override
+		public void send(Object... message) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public Future<IMessage> ask(Object... message) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IIdentity getIdentity() {
+			return null;
+		}
+
+		@Override
+		public boolean isInterrupted() {
+			return false;
+		}
+
+		@Override
+		public boolean hasErrors() {
+			return false;
+		}
+
+	}
+	
+	/**
+	 * Use this monitor to build a context that will notify any notification to
+	 * the underlying KlabData object.
+	 * 
+	 * @return
+	 */
+	public IMonitor getMonitor() {
+		return new Monitor();
 	}
 
 	public EncodingDataBuilder(EncodingDataBuilder root) {
@@ -114,19 +195,20 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	public void add(Object value, ILocator offset) {
 		if (this.stateBuilder != null) {
 			long index = -1;
-			// TODO there should be a simpler way to turn a locator into an index, given that this is a 
+			// TODO there should be a simpler way to turn a locator into an index, given
+			// that this is a
 			// universal feature of locators.
 			if (offset instanceof Offset) {
-				index = ((Offset)offset).linear;
+				index = ((Offset) offset).linear;
 			} else {
 				throw new IllegalArgumentException("EncodingDataBuilder only accepts offset locators");
 			}
 			if (value instanceof Number) {
-				this.stateBuilder.setDoubledata((int)index, ((Number)value).doubleValue());
+				this.stateBuilder.setDoubledata((int) index, ((Number) value).doubleValue());
 			} else if (value instanceof Boolean) {
-				this.stateBuilder.setBooleandata((int)index, (Boolean)value);
+				this.stateBuilder.setBooleandata((int) index, (Boolean) value);
 			} else if (value instanceof String) {
-				this.stateBuilder.setTabledata((int)index, getTableValue((String)value, this.builder));
+				this.stateBuilder.setTabledata((int) index, getTableValue((String) value, this.builder));
 			}
 		}
 	}

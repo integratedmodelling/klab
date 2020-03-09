@@ -1,30 +1,31 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import org.integratedmodelling.klab.engine.runtime.Session;
+
 import akka.actor.typed.Behavior;
-import akka.actor.typed.PostStop;
-import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
-import akka.actor.typed.javadsl.Receive;
+import akka.actor.typed.javadsl.ReceiveBuilder;
 
-public class SessionActor extends AbstractBehavior<Void> {
+public class SessionActor extends KlabActor {
 
-	public static Behavior<Void> create() {
-		return Behaviors.setup(SessionActor::new);
+	public static Behavior<KlabMessage> create(Session session) {
+		return Behaviors.setup(ctx -> new SessionActor(ctx, session));
 	}
 
-	public SessionActor(ActorContext<Void> context) {
-		super(context);
-		// session actor started
+	public SessionActor(ActorContext<KlabMessage> context, Session identity) {
+		super(context, identity);
 	}
 
 	@Override
-	public Receive<Void> createReceive() {
-		return newReceiveBuilder().onSignal(PostStop.class, signal -> onPostStop()).build();
+	protected ReceiveBuilder<KlabMessage> configure() {
+		// TODO add all view messages and runtime messages
+		return super.configure();
 	}
 
-	private SessionActor onPostStop() {
-		// TODO Auto-generated method stub
+	@Override
+	protected SessionActor onPostStop() {
+		// TODO do something
 		return this;
 	}
 

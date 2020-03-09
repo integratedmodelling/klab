@@ -11,7 +11,6 @@ import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
-import org.integratedmodelling.kactors.kactors.Group;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
@@ -98,7 +97,7 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
     return "Message actions";
   }
   
-  public String text(final Group group) {
+  public String text(final StatementGroup group) {
     String _xblockexpression = null;
     {
       MessageBody _body = group.getBody();

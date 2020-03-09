@@ -12,6 +12,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
@@ -29,6 +31,10 @@ public class KimProject implements IKimProject {
 	 * Namespace IDs. The actual namespaces are held in Kim.INSTANCE.
 	 */
 	private Set<String> namespaces = new HashSet<>();
+	/**
+	 * Behavior IDs. The actual behaviors are in KActors.INSTANCE. (eventually)
+	 */
+	private Set<String> behaviors = new HashSet<>();
 
 	public KimProject(KimWorkspace workspace, String name, File dir) {
 		this.workspace = workspace;
@@ -48,12 +54,7 @@ public class KimProject implements IKimProject {
 
 	@Override
 	public List<File> getSourceFiles() {
-		List<File> ret = getSourceFiles(new File(root + File.separator + IKimProject.SOURCE_FOLDER));
-//		File kkim = new File(root + File.separator + "META-INF" + File.separator + "knowledge.kim");
-//		if (kkim.isFile()) {
-//			ret.add(kkim);
-//		}
-		return ret;
+		return getSourceFiles(new File(root + File.separator + IKimProject.SOURCE_FOLDER));
 	}
 
 	@Override
@@ -134,7 +135,9 @@ public class KimProject implements IKimProject {
 		File[] files = folder == null ? null : folder.listFiles();
 		if (files != null) {
 			for (File f : files) {
-				if (isModelFile(f)) {
+				if (Kim.INSTANCE.isKimFile(f)) {
+					result.add(f);
+				} else if (KActors.INSTANCE.isKActorsFile(f)) {
 					result.add(f);
 				} else if (f.isDirectory()) {
 					result.addAll(getSourceFiles(f));
@@ -143,11 +146,7 @@ public class KimProject implements IKimProject {
 		}
 		return result;
 	}
-
-	private boolean isModelFile(File f) {
-		return f.isFile() && f.getName().endsWith(".kim");
-	}
-
+	
 	@Override
 	public String getName() {
 		return name;
@@ -225,5 +224,10 @@ public class KimProject implements IKimProject {
 	@Override
 	public boolean isWarnings() {
 		return warnings > 0;
+	}
+
+	@Override
+	public List<IKActorsBehavior> getBehaviors() {
+		return KActors.INSTANCE.getBehaviors(this.name);
 	}
 }

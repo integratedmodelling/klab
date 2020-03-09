@@ -23,6 +23,7 @@ import org.eclipse.ui.navigator.ILinkHelper;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.kim.KimData;
+import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
@@ -94,6 +95,8 @@ public class LinkHelper implements ILinkHelper {
 
 		if (aSelection.getFirstElement() instanceof ENamespace) {
 			Eclipse.INSTANCE.openFile(((ENamespace) aSelection.getFirstElement()).getIFile(), 0);
+		} else if (aSelection.getFirstElement() instanceof EActorBehavior) {
+			Eclipse.INSTANCE.openFile(((EActorBehavior) aSelection.getFirstElement()).getIFile(), 0);
 		} else if (aSelection.getFirstElement() instanceof EKimObject) {
 			EKimObject kob = (EKimObject) aSelection.getFirstElement();
 			ENamespace kns = kob.getEParent(ENamespace.class);

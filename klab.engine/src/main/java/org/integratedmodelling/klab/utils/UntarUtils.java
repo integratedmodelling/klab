@@ -31,21 +31,17 @@ public class UntarUtils {
 	 * @param destinationFolderForUnpackedFiles
 	 * @throws IOException 
 	 */
-	public static void unpack(String inputTarGz, String existingDestinationFolderForTarFile,
-			String destinationFolderForUnpackedFiles) throws IOException {
+	public static void unpack(File inputFile, File existingDestinationFolderForTarFile,
+			File destFile) throws IOException {
 
 		UntarUtils unTarDemo = new UntarUtils();
-		File inputFile = new File(inputTarGz);
-		String outputFile = getFileName(inputFile, existingDestinationFolderForTarFile);
-		System.out.println("outputFile " + outputFile);
+		String outputFile = getFileName(inputFile, existingDestinationFolderForTarFile.toString());
 		File tarFile = new File(outputFile);
 		// Calling method to decompress file
 		tarFile = unTarDemo.deCompressGZipFile(inputFile, tarFile);
-		File destFile = new File(destinationFolderForUnpackedFiles);
 		if (!destFile.exists()) {
 			destFile.mkdir();
 		}
-		// Calling method to untar file
 		unTarDemo.unTarFile(tarFile, destFile);
 	}
 

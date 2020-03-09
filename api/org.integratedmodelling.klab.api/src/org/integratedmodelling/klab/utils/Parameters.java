@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -21,6 +23,7 @@ import org.integratedmodelling.kim.api.IParameters;
 public class Parameters<T> implements IParameters<T> {
 
     private Map<T, Object> delegate;
+    private List<T> unnamedKeys = new ArrayList<>();
 
     public Parameters(Map<T, Object> delegate) {
         this.delegate = delegate;
@@ -179,6 +182,13 @@ public class Parameters<T> implements IParameters<T> {
         return delegate.putIfAbsent(key, value);
     }
 
+    @SuppressWarnings("unchecked")
+	public Object putUnnamed(Object value) {
+    	String name = "_p" + (unnamedKeys.size() + 1);
+    	unnamedKeys.add((T)name);
+    	return put((T)name, value);
+    }
+    
     public boolean remove(Object key, Object value) {
         return delegate.remove(key, value);
     }
@@ -217,5 +227,10 @@ public class Parameters<T> implements IParameters<T> {
         Object obj = delegate.get(key);
         return obj != null && cls.isAssignableFrom(obj.getClass());
     }
+
+	@Override
+	public List<T> getUnnamedKeys() {
+		return unnamedKeys;
+	}
 
 }

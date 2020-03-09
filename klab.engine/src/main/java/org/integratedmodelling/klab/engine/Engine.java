@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
@@ -459,6 +460,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		this.monitor = new Monitor(this);
 
+		/*
+		 * boot the actor system
+		 */
+		Actors.INSTANCE.setup();
+		
 		/**
 		 * Annotation prototypes
 		 */

@@ -17,7 +17,7 @@ package org.integratedmodelling.klab.api.errormanagement;
 
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.klab.api.IStatement;
 
 /**
  * Base class for anything that needs to be notified linked to a line of k.IM code - info, error, warning.
@@ -46,9 +46,9 @@ public abstract interface ICompileNotification {
      * Get the most specific statement where the notification originated. May be an incomplete proxy in
      * notifications sent over the wire, only mentioning coordinates in the originating document.
      *
-     * @return a {@link org.integratedmodelling.kim.api.IKimStatement} object.
+     * @return a {@link org.integratedmodelling.api.IStatement} object.
      */
-    IKimStatement getStatement();
+    IStatement getStatement();
 
     /**
      * <p>getMessage.</p>

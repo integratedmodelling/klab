@@ -1,0 +1,106 @@
+package org.integratedmodelling.klab.components.runtime.actors.behavior;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
+import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.api.IStatement;
+import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.data.Metadata;
+
+public class Behavior implements IBehavior {
+
+	IKActorsBehavior statement;
+	Map<String, BehaviorAction> actions = new LinkedHashMap<>();
+	IMetadata metadata = new Metadata();
+	List<IAnnotation> annotations = new ArrayList<>();
+	
+	public Behavior(IKActorsBehavior statement) {
+		this.statement = statement;
+		for (IKActorsAction a : statement.getActions()) {
+			BehaviorAction action = new BehaviorAction(a, this);
+			actions.put(action.getId(), action);
+		}
+	}
+
+	@Override
+	public String getId() {
+		return this.statement.getName();
+	}
+
+	@Override
+	public String getName() {
+		return statement.getName();
+	}
+
+	@Override
+	public IStatement getStatement() {
+		return this.statement;
+	}
+
+	@Override
+	public List<IKimObject> getChildren() {
+		List<IKimObject> ret = new ArrayList<>();
+		for (String id : actions.keySet()) {
+			ret.add(actions.get(id));
+		}
+		return ret;
+	}
+
+	@Override
+	public List<IAnnotation> getAnnotations() {
+		return annotations;
+	}
+
+	@Override
+	public boolean isDeprecated() {
+		return statement.isDeprecated();
+	}
+
+	@Override
+	public boolean isErrors() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IMetadata getMetadata() {
+		return metadata;
+	}
+
+	@Override
+	public Type getDestination() {
+		return statement.getType();
+	}
+
+	@Override
+	public List<Action> getActions(String... match) {
+		List<Action> ret = new ArrayList<>();
+		for (Action action : actions.values()) {
+			boolean ok = false;
+			for (String m : match) {
+				if (!ok && m.startsWith("@")) {
+					ok = Annotations.INSTANCE.hasAnnotation(action, m.substring(1));
+				} else if (!ok) {
+					ok = m.equals(action.getId()) || m.equals(action.getName());
+				}
+				if (ok) {
+					break;
+				}
+			}
+			if (ok) {
+				ret.add(action);
+			}
+		}
+		return ret;
+	}
+
+}

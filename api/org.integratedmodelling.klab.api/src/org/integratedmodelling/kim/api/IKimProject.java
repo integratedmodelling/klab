@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
+
 public interface IKimProject {
 
 	static final String KLAB_CONFIGURATION_DEFINED_WORLDVIEW_ID = "klab.defined.worldview";
@@ -70,6 +72,12 @@ public interface IKimProject {
 	 */
 	List<IKimNamespace> getNamespaces();
 
+	/**
+	 * 
+	 * @return
+	 */
+	List<IKActorsBehavior> getBehaviors();
+	
 	/**
 	 * 
 	 * @return

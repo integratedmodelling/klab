@@ -520,6 +520,11 @@ ConceptStatement:
  * deniable is for traits only. If a trait is deniable, 'not Trait' is a trait (of not being Trait).
  * if not deniable, 'not Trait' means being any of the other concrete traits; if there is only one 
  * concrete trait it's an error. If there are two, it means being the other.
+ * 
+ * Many of the verbs like "confers" or "creates" can also qualify actions in k.Actors, so that
+ * attributes and objects can be assigned/created/destroyed (and resolved) as the result of
+ * behavior actions.
+ *
  * ------------------------------------------------------------------------------------------
  */
 ConceptStatementBody:
@@ -621,8 +626,8 @@ ConceptStatementBody:
 		(('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
 
 	/*
-               * for processes: creates countable in context.
-               */
+     * for processes: creates countable in context.
+     */
 		('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
 
 	/*

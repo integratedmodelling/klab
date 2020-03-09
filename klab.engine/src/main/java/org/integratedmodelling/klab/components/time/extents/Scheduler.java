@@ -136,6 +136,9 @@ public class Scheduler implements IScheduler {
 						System.out.println("SOCCMEL resolve the events");
 					}
 
+					// ensure we have the names we expect
+					transitionContext = actuator.localizeNames(transitionContext);
+					
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
 					 * for signs of life at each step. Anything enqueued here is active so no
@@ -149,7 +152,8 @@ public class Scheduler implements IScheduler {
 						}
 
 						actuator.runContextualizer(computation.contextualizer, computation.observable,
-								computation.resource, computation.target, transitionContext, (IScale) transitionScale);
+								computation.resource, computation.target, transitionContext,
+								(IScale) transitionScale);
 
 						if (computation.target instanceof IDirectObservation
 								&& !((IDirectObservation) computation.target).isActive()) {
@@ -172,7 +176,8 @@ public class Scheduler implements IScheduler {
 
 						/*
 						 * report only states for now - must become discriminating and intelligent. If
-						 * in folder
+						 * in folder...
+						 *
 						 */
 						if (computation.target instanceof IState /*
 																	 * TODO check if changes happened independent of
@@ -231,10 +236,6 @@ public class Scheduler implements IScheduler {
 			}
 
 		}
-
-//		private Scheduler getEnclosingInstance() {
-//			return Scheduler.this;
-//		}
 
 		@Override
 		public int compareTo(Registration o) {

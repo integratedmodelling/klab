@@ -518,7 +518,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				}
 
 				// set the dataflow to autostart transitions if we only have one
-				if (this.resolutionScale.getTime().size() == 2) {
+				if (this.resolutionScale.getTime().size() >= 2) {
 					autoStartTransitions = true;
 				}
 			}
