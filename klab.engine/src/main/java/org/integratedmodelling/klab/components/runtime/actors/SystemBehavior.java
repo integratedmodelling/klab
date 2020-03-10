@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.Collection;
+
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -58,7 +61,7 @@ public class SystemBehavior {
 		public void initialize(Parameters<String> arguments) {
 		}
 	}
-	
+
 	/**
 	 * Spawn an appropriate child actor.
 	 * 
@@ -79,6 +82,34 @@ public class SystemBehavior {
 
 		}
 
+	}
+
+	/**
+	 * The message installs a listener in a context that will fire an object to the
+	 * sender whenever it is resolved and matches a pattern.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class When extends AbstractKlabMessage {
+
+		String listenerId;
+		Collection<KActorsValue> value;
+		ActorRef<KlabMessage> sender;
+
+		public When(ActorRef<KlabMessage> replyTo, Collection<KActorsValue> matches, String listenerId,
+				IRuntimeScope scope) {
+			this.listenerId = listenerId;
+			this.value = matches;
+			this.sender = replyTo;
+			// TODO install a listener
+		}
+
+		@Override
+		public void initialize(Parameters<String> arguments) {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	/**
