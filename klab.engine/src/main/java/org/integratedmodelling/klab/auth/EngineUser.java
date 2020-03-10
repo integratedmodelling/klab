@@ -2,15 +2,25 @@ package org.integratedmodelling.klab.auth;
 
 import java.util.Date;
 
+import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
+import org.integratedmodelling.klab.components.runtime.actors.UserActor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import akka.actor.typed.ActorRef;
 
 public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 
     private static final long serialVersionUID = -134196454400472128L;
     private IEngineIdentity parent;
+    private ActorRef<KlabMessage> actor;
 
     public EngineUser(String username, IEngineIdentity parent) {
         super(username);
@@ -105,5 +115,25 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
         // TODO Auto-generated method stub
         return false;
     }
+
+	@Override
+	public ActorRef<KlabMessage> getActor() {
+		if (this.actor == null) {
+			this.actor = Actors.INSTANCE.createActor(UserActor.create(this), this);
+		}
+		return this.actor;
+	}
+
+
+	@Override
+	public void load(IBehavior behavior) {
+		// TODO this gets a sucky runtime scope that is used to run main messages.
+		getActor().tell(new SystemBehavior.Load(behavior.getId(), new SimpleRuntimeScope(Klab.INSTANCE.getRootMonitor())));
+	}
+
+	@Override
+	public void instrument(ActorRef<KlabMessage> actor) {
+		this.actor = actor;
+	}
 
 }

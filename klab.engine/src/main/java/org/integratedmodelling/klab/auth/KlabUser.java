@@ -4,10 +4,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.springframework.security.core.GrantedAuthority;
+
+import akka.actor.typed.ActorRef;
 
 public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 
@@ -93,5 +97,23 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
     public void setOnline(boolean b) {
         this.online = b;
     }
+
+	@Override
+	public ActorRef<KlabMessage> getActor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void load(IBehavior behavior) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void instrument(ActorRef<KlabMessage> actor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

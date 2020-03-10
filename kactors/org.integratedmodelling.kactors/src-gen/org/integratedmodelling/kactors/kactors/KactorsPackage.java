@@ -416,13 +416,22 @@ public interface KactorsPackage extends EPackage
   int MESSAGE_CALL__PARAMETERS = 1;
 
   /**
+   * The feature id for the '<em><b>Group</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MESSAGE_CALL__GROUP = 2;
+
+  /**
    * The feature id for the '<em><b>Actions</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MESSAGE_CALL__ACTIONS = 2;
+  int MESSAGE_CALL__ACTIONS = 3;
 
   /**
    * The number of structural features of the '<em>Message Call</em>' class.
@@ -431,7 +440,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MESSAGE_CALL_FEATURE_COUNT = 3;
+  int MESSAGE_CALL_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementGroupImpl <em>Statement Group</em>}' class.
@@ -444,40 +453,13 @@ public interface KactorsPackage extends EPackage
   int STATEMENT_GROUP = 6;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int STATEMENT_GROUP__NAME = MESSAGE_CALL__NAME;
-
-  /**
-   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int STATEMENT_GROUP__PARAMETERS = MESSAGE_CALL__PARAMETERS;
-
-  /**
-   * The feature id for the '<em><b>Actions</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int STATEMENT_GROUP__ACTIONS = MESSAGE_CALL__ACTIONS;
-
-  /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT_GROUP__BODY = MESSAGE_CALL_FEATURE_COUNT + 0;
+  int STATEMENT_GROUP__BODY = 0;
 
   /**
    * The number of structural features of the '<em>Statement Group</em>' class.
@@ -486,7 +468,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT_GROUP_FEATURE_COUNT = MESSAGE_CALL_FEATURE_COUNT + 1;
+  int STATEMENT_GROUP_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementListImpl <em>Statement List</em>}' class.
@@ -545,22 +527,22 @@ public interface KactorsPackage extends EPackage
   int STATEMENT__ASSIGNMENT = 0;
 
   /**
-   * The feature id for the '<em><b>Verb</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int STATEMENT__VERB = 1;
-
-  /**
    * The feature id for the '<em><b>Group</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT__GROUP = 2;
+  int STATEMENT__GROUP = 1;
+
+  /**
+   * The feature id for the '<em><b>Verb</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT__VERB = 2;
 
   /**
    * The feature id for the '<em><b>Text</b></em>' attribute.
@@ -2726,6 +2708,17 @@ public interface KactorsPackage extends EPackage
   EReference getMessageCall_Parameters();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.MessageCall#getGroup <em>Group</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Group</em>'.
+   * @see org.integratedmodelling.kactors.kactors.MessageCall#getGroup()
+   * @see #getMessageCall()
+   * @generated
+   */
+  EReference getMessageCall_Group();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.MessageCall#getActions <em>Actions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2811,17 +2804,6 @@ public interface KactorsPackage extends EPackage
   EReference getStatement_Assignment();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Verb</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Statement#getVerb()
-   * @see #getStatement()
-   * @generated
-   */
-  EReference getStatement_Verb();
-
-  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2831,6 +2813,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getStatement_Group();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Verb</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Statement#getVerb()
+   * @see #getStatement()
+   * @generated
+   */
+  EReference getStatement_Verb();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Statement#getText <em>Text</em>}'.
@@ -4936,6 +4929,14 @@ public interface KactorsPackage extends EPackage
     EReference MESSAGE_CALL__PARAMETERS = eINSTANCE.getMessageCall_Parameters();
 
     /**
+     * The meta object literal for the '<em><b>Group</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MESSAGE_CALL__GROUP = eINSTANCE.getMessageCall_Group();
+
+    /**
      * The meta object literal for the '<em><b>Actions</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5006,20 +5007,20 @@ public interface KactorsPackage extends EPackage
     EReference STATEMENT__ASSIGNMENT = eINSTANCE.getStatement_Assignment();
 
     /**
-     * The meta object literal for the '<em><b>Verb</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference STATEMENT__VERB = eINSTANCE.getStatement_Verb();
-
-    /**
      * The meta object literal for the '<em><b>Group</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference STATEMENT__GROUP = eINSTANCE.getStatement_Group();
+
+    /**
+     * The meta object literal for the '<em><b>Verb</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT__VERB = eINSTANCE.getStatement_Verb();
 
     /**
      * The meta object literal for the '<em><b>Text</b></em>' attribute feature.

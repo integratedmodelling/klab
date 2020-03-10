@@ -1072,17 +1072,25 @@ ruleMessageCall returns [EObject current=null]
 				)?
 			)
 			    |
-			{
-				/* */
-			}
-			{
-				newCompositeNode(grammarAccess.getMessageCallAccess().getStatementGroupParserRuleCall_0_1());
-			}
-			this_StatementGroup_4=ruleStatementGroup
-			{
-				$current = $this_StatementGroup_4.current;
-				afterParserOrEnumRuleCall();
-			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getMessageCallAccess().getGroupStatementGroupParserRuleCall_0_1_0());
+					}
+					lv_group_4_0=ruleStatementGroup
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getMessageCallRule());
+						}
+						set(
+							$current,
+							"group",
+							lv_group_4_0,
+							"org.integratedmodelling.kactors.Kactors.StatementGroup");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
 		)
 		(
 			otherlv_5=':'
@@ -1264,18 +1272,18 @@ ruleStatement returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getStatementAccess().getVerbMessageCallParserRuleCall_1_0());
+					newCompositeNode(grammarAccess.getStatementAccess().getGroupStatementGroupParserRuleCall_1_0());
 				}
-				lv_verb_1_0=ruleMessageCall
+				lv_group_1_0=ruleStatementGroup
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getStatementRule());
 					}
 					set(
 						$current,
-						"verb",
-						lv_verb_1_0,
-						"org.integratedmodelling.kactors.Kactors.MessageCall");
+						"group",
+						lv_group_1_0,
+						"org.integratedmodelling.kactors.Kactors.StatementGroup");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1284,18 +1292,18 @@ ruleStatement returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getStatementAccess().getGroupStatementGroupParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getStatementAccess().getVerbMessageCallParserRuleCall_2_0());
 				}
-				lv_group_2_0=ruleStatementGroup
+				lv_verb_2_0=ruleMessageCall
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getStatementRule());
 					}
 					set(
 						$current,
-						"group",
-						lv_group_2_0,
-						"org.integratedmodelling.kactors.Kactors.StatementGroup");
+						"verb",
+						lv_verb_2_0,
+						"org.integratedmodelling.kactors.Kactors.MessageCall");
 					afterParserOrEnumRuleCall();
 				}
 			)

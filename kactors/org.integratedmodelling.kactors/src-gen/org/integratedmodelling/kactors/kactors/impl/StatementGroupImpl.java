@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.MessageBody;
@@ -28,7 +29,7 @@ import org.integratedmodelling.kactors.kactors.StatementGroup;
  *
  * @generated
  */
-public class StatementGroupImpl extends MessageCallImpl implements StatementGroup
+public class StatementGroupImpl extends MinimalEObjectImpl.Container implements StatementGroup
 {
   /**
    * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.

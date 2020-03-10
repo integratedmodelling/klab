@@ -546,7 +546,12 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * load component knowledge after all binary content is registered.
 			 */
 			Resources.INSTANCE.getComponentsWorkspace().load(getMonitor());
-
+			
+			/*
+			 * save cache of function prototypes and resolved URNs for clients
+			 */
+			saveClientInformation();
+			
 			/*
 			 * now we can finally load the workspace
 			 */
@@ -568,10 +573,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * run any init scripts from parameters
 			 */
 
-			/*
-			 * save cache of function prototypes and resolved URNs for clients
-			 */
-			saveClientInformation();
+
 
 			/*
 			 * Schedule the session reaper

@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.util.List;
-
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import akka.actor.typed.ActorRef;
@@ -28,9 +28,11 @@ public class SystemBehavior {
 	public static class Load extends AbstractKlabMessage {
 
 		String behavior;
+		IRuntimeScope scope;
 
-		public Load(String behavior) {
+		public Load(String behavior, IRuntimeScope scope) {
 			this.behavior = behavior;
+			this.scope = scope;
 		}
 
 		@Override
@@ -38,6 +40,25 @@ public class SystemBehavior {
 		}
 	}
 
+	/**
+	 * Report a temporal transition
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class Transition extends AbstractKlabMessage {
+
+		IRuntimeScope scope;
+
+		public Transition(IRuntimeScope scope) {
+			this.scope = scope;
+		}
+
+		@Override
+		public void initialize(Parameters<String> arguments) {
+		}
+	}
+	
 	/**
 	 * Spawn an appropriate child actor.
 	 * 
@@ -95,7 +116,7 @@ public class SystemBehavior {
 
 		ActorRef<KlabMessage> sender;
 
-		public KActorsMessage(ActorRef<KlabMessage> sender, String actionId, List<Object> parameters) {
+		public KActorsMessage(ActorRef<KlabMessage> sender, String actionId, IParameters<String> parameters) {
 			this.sender = sender;
 		}
 

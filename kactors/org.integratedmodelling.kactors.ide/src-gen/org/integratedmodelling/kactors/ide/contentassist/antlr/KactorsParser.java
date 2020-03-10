@@ -210,13 +210,14 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMessageBodyAccess().getListsAssignment_1(), "rule__MessageBody__ListsAssignment_1");
 			builder.put(grammarAccess.getMessageCallAccess().getNameAssignment_0_0_0(), "rule__MessageCall__NameAssignment_0_0_0");
 			builder.put(grammarAccess.getMessageCallAccess().getParametersAssignment_0_0_1_1(), "rule__MessageCall__ParametersAssignment_0_0_1_1");
+			builder.put(grammarAccess.getMessageCallAccess().getGroupAssignment_0_1(), "rule__MessageCall__GroupAssignment_0_1");
 			builder.put(grammarAccess.getMessageCallAccess().getActionsAssignment_1_1(), "rule__MessageCall__ActionsAssignment_1_1");
 			builder.put(grammarAccess.getStatementGroupAccess().getBodyAssignment_2(), "rule__StatementGroup__BodyAssignment_2");
 			builder.put(grammarAccess.getStatementListAccess().getFirstAssignment_0(), "rule__StatementList__FirstAssignment_0");
 			builder.put(grammarAccess.getStatementListAccess().getNextAssignment_1(), "rule__StatementList__NextAssignment_1");
 			builder.put(grammarAccess.getStatementAccess().getAssignmentAssignment_0(), "rule__Statement__AssignmentAssignment_0");
-			builder.put(grammarAccess.getStatementAccess().getVerbAssignment_1(), "rule__Statement__VerbAssignment_1");
-			builder.put(grammarAccess.getStatementAccess().getGroupAssignment_2(), "rule__Statement__GroupAssignment_2");
+			builder.put(grammarAccess.getStatementAccess().getGroupAssignment_1(), "rule__Statement__GroupAssignment_1");
+			builder.put(grammarAccess.getStatementAccess().getVerbAssignment_2(), "rule__Statement__VerbAssignment_2");
 			builder.put(grammarAccess.getStatementAccess().getTextAssignment_3(), "rule__Statement__TextAssignment_3");
 			builder.put(grammarAccess.getStatementAccess().getIfAssignment_4(), "rule__Statement__IfAssignment_4");
 			builder.put(grammarAccess.getStatementAccess().getWhileAssignment_5(), "rule__Statement__WhileAssignment_5");

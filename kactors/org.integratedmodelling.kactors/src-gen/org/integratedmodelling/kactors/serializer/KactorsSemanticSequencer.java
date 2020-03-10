@@ -163,15 +163,8 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				sequence_StatementBody(context, (StatementBody) semanticObject); 
 				return; 
 			case KactorsPackage.STATEMENT_GROUP:
-				if (rule == grammarAccess.getMessageCallRule()) {
-					sequence_MessageCall_StatementGroup(context, (StatementGroup) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getStatementGroupRule()) {
-					sequence_StatementGroup(context, (StatementGroup) semanticObject); 
-					return; 
-				}
-				else break;
+				sequence_StatementGroup(context, (StatementGroup) semanticObject); 
+				return; 
 			case KactorsPackage.STATEMENT_LIST:
 				sequence_StatementList(context, (StatementList) semanticObject); 
 				return; 
@@ -505,21 +498,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     MessageCall returns MessageCall
 	 *
 	 * Constraint:
-	 *     (name=PathName parameters=ParameterList? actions=Actions?)
+	 *     (((name=PathName parameters=ParameterList?) | group=StatementGroup) actions=Actions?)
 	 */
 	protected void sequence_MessageCall(ISerializationContext context, MessageCall semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     MessageCall returns StatementGroup
-	 *
-	 * Constraint:
-	 *     (body=MessageBody? actions=Actions?)
-	 */
-	protected void sequence_MessageCall_StatementGroup(ISerializationContext context, StatementGroup semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -699,8 +680,8 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 * Constraint:
 	 *     (
 	 *         assignment=Assignment | 
-	 *         verb=MessageCall | 
 	 *         group=StatementGroup | 
+	 *         verb=MessageCall | 
 	 *         text=EMBEDDEDTEXT | 
 	 *         if=IfStatement | 
 	 *         while=WhileStatement | 

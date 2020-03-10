@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.utils.KActorsResourceSorter;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.common.CompileNotification;
+import org.integratedmodelling.klab.rest.BehaviorReference;
 
 import com.google.inject.Injector;
 
@@ -35,10 +37,12 @@ public enum KActors {
 
 	INSTANCE;
 
+	private Map<String, BehaviorReference> behaviorManifest = Collections.synchronizedMap(new HashMap<>());
+
 	public interface Notifier {
 		void notify(IKActorsBehavior behavior);
 	}
-	
+
 	class BehaviorDescriptor {
 		String name;
 		File file;
@@ -77,7 +81,7 @@ public enum KActors {
 		}
 		return this.validator;
 	}
-	
+
 	public void addNotifier(Notifier notifier) {
 		this.notifiers.add(notifier);
 	}
@@ -94,7 +98,7 @@ public enum KActors {
 			ret.name = ((Model) resource.getContents().get(0)).getPreamble().getName();
 			ret.file = bsort.getFile(resource);
 			ret.projectName = getProjectName(resource.getURI().toString());
-			
+
 			List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
 			for (Issue issue : issues) {
 				ICompileNotification notification = getNotification(ret.name, issue, ret);
@@ -102,17 +106,17 @@ public enum KActors {
 					ret.notifications.add(notification);
 				}
 			}
-			
+
 			ret.behavior = new KActorsBehavior(((Model) resource.getContents().get(0)), ret);
-			
+
 			behaviors.put(ret.name, ret);
-			
+
 			for (Notifier notifier : notifiers) {
 				notifier.notify(ret.behavior);
 			}
 		}
 	}
-	
+
 	/**
 	 * Get a behavior by name.
 	 * 
@@ -123,10 +127,19 @@ public enum KActors {
 		BehaviorDescriptor desc = behaviors.get(id);
 		return desc == null ? null : desc.behavior;
 	}
+
+	/**
+	 * This will be filled in by the implementation, differently in the engine or the client.
+	 * 
+	 * @return
+	 */
+	public Map<String, BehaviorReference> getBehaviorManifest() {
+		return behaviorManifest;
+	}
 	
 	/**
-	 * Return all regular behaviors defined in the src/ directory alongside models for
-	 * the project.
+	 * Return all regular behaviors defined in the src/ directory alongside models
+	 * for the project.
 	 * 
 	 * @param project
 	 * @return
@@ -238,15 +251,15 @@ public enum KActors {
 
 		switch (issue.getSeverity()) {
 		case ERROR:
-			desc.nErrors ++;
+			desc.nErrors++;
 			level = Level.SEVERE;
 			break;
 		case INFO:
-			desc.nInfo ++;
+			desc.nInfo++;
 			level = Level.INFO;
 			break;
 		case WARNING:
-			desc.nWarning ++;
+			desc.nWarning++;
 			level = Level.WARNING;
 			break;
 		default:

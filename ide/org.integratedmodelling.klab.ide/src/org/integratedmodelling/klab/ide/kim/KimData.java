@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.ide.kim;
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -36,6 +37,7 @@ public enum KimData {
 	private File bookmarkFile;
 
 	KimData() {
+		
 		File protoFile = new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator
 				+ "language" + File.separator + "prototypes.json");
 		File annotFile = new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator
@@ -45,6 +47,11 @@ public enum KimData {
 		prototypes = new FileCatalog<IPrototype>(protoFile, IPrototype.class, Prototype.class);
 		annotations = new FileCatalog<IPrototype>(annotFile, IPrototype.class, Prototype.class);
 		behaviors = new FileCatalog<BehaviorReference>(behaviorFile, BehaviorReference.class, BehaviorReference.class);
+		
+		/*
+		 * fill in the catalog in the parser helper
+		 */
+		KActors.INSTANCE.getBehaviorManifest().putAll(behaviors);
 		
 		this.bookmarkFile = new File(
 				System.getProperty("user.home") + File.separator + ".klab" + File.separator + "bookmarks.json");

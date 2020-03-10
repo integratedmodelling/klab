@@ -58,15 +58,14 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		IKActorsStatement getBody();
 
 	}
-	
+
 	public interface For extends IKActorsStatement {
 
 		// TODO
-		
+
 		IKActorsStatement getBody();
 
 	}
-
 
 	public interface Assignment extends IKActorsStatement {
 
@@ -90,14 +89,26 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 	public interface Call extends IKActorsStatement {
 
 		/**
-		 * Null means self
+		 * If group != null, name will be null and the actions will refer to any of the
+		 * messages in the group.
+		 * 
+		 * @return
+		 */
+		ConcurrentGroup getGroup();
+
+		/**
+		 * Parsed after checking with the loaded behavior manifest unless there is an
+		 * explicit recipient. If the message is unrecognized this will be null and the
+		 * engine will have to match it.
 		 * 
 		 * @return
 		 */
 		String getRecipient();
 
 		/**
-		 * The message ID
+		 * The message ID. Must contain the recipient when understood through behavior
+		 * manifest.
+		 * 
 		 * @return
 		 */
 		String getMessage();

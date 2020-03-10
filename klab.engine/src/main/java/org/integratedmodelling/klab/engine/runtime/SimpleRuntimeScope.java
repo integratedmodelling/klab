@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -127,6 +128,30 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 			this.artifacts.put(this.getTargetName(), this.target);
 			this.observations.put(this.target.getId(), this.target);
 		}
+	}
+
+	/**
+	 * Just meant to carry around a monitor and identity for actors. Useless and
+	 * likely to break when used in contextualization!
+	 * 
+	 * @param session
+	 */
+	public SimpleRuntimeScope(ISession session) {
+		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
+		this.network = new DefaultDirectedGraph<>(Relationship.class);
+		this.artifacts = new HashMap<>();
+		this.observations = new HashMap<>();
+		this.semantics = new HashMap<>();
+		this.monitor = session.getMonitor();
+	}
+	
+	public SimpleRuntimeScope(IMonitor monitor) {
+		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
+		this.network = new DefaultDirectedGraph<>(Relationship.class);
+		this.artifacts = new HashMap<>();
+		this.observations = new HashMap<>();
+		this.semantics = new HashMap<>();
+		this.monitor = monitor;
 	}
 
 	public SimpleRuntimeScope(SimpleRuntimeScope parent) {

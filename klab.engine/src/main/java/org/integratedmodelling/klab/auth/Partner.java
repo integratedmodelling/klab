@@ -3,9 +3,13 @@ package org.integratedmodelling.klab.auth;
 import java.util.Date;
 
 import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import akka.actor.typed.ActorRef;
 
 public class Partner extends UserIdentity implements IPartnerIdentity, UserDetails {
 
@@ -81,5 +85,23 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
     public String getName() {
         return getUsername();
     }
+
+	@Override
+	public ActorRef<KlabMessage> getActor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void load(IBehavior behavior) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void instrument(ActorRef<KlabMessage> actor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

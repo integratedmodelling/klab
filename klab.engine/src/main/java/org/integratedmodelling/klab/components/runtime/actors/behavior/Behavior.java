@@ -85,6 +85,10 @@ public class Behavior implements IBehavior {
 	public List<Action> getActions(String... match) {
 		List<Action> ret = new ArrayList<>();
 		for (Action action : actions.values()) {
+			if (match == null || match.length == 0) {
+				ret.add(action);
+				continue;
+			}
 			boolean ok = false;
 			for (String m : match) {
 				if (!ok && m.startsWith("@")) {

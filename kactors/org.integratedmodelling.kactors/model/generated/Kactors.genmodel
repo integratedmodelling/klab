@@ -50,6 +50,7 @@
     <genClasses ecoreClass="Kactors.ecore#//MessageCall">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//MessageCall/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MessageCall/parameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MessageCall/group"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MessageCall/actions"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//StatementGroup">
@@ -61,8 +62,8 @@
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Statement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/assignment"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/verb"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/group"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/verb"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Statement/text"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/if"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/while"/>

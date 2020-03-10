@@ -22,14 +22,27 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 	}
 
 	private String message;
+	private String recipient;
 	private List<ActionDescriptor> actions = new ArrayList<>();
 	private KActorsArguments arguments;
+	private KActorsConcurrentGroup group;
 
 	public KActorsActionCall(MessageCall messageCall, KActorCodeStatement parent) {
 
 		super(messageCall, parent, Type.ACTION_CALL);
 
+		if (messageCall.getGroup() != null) {
+			// TODO use the same ID for the entire group, must have actions
+			this.group = new KActorsConcurrentGroup(messageCall.getGroup().getBody().getLists(), this);
+		}
+		
 		this.message = messageCall.getName();
+		
+		/*
+		 * TODO look into manifest and add the recipient if not in this message.
+		 */
+		
+		
 		if (messageCall.getParameters() != null) {
 			this.arguments = new KActorsArguments(messageCall.getParameters());
 		}
@@ -53,9 +66,9 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 			} else if (messageCall.getActions().getMatches() != null) {
 				for (Match match : messageCall.getActions().getMatches()) {
 					ActionDescriptor action = new ActionDescriptor();
-					action.match = new KActorsValue(messageCall.getActions().getMatch(), this);
+					action.match = new KActorsValue(match, this);
 					action.action = new KActorsConcurrentGroup(
-							Collections.singletonList(messageCall.getActions().getMatch().getBody()), this);
+							Collections.singletonList(match.getBody()), this);
 					actions.add(action);
 				}
 			}
@@ -65,23 +78,26 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 	public String getMessage() {
 		return message;
 	}
-
+	
 	@Override
 	public String getRecipient() {
-		// TODO Auto-generated method stub
-		return null;
+		return recipient;
 	}
 
 	@Override
 	public IParameters<String> getArguments() {
-		// TODO Auto-generated method stub
-		return null;
+		return arguments;
 	}
 
 	@Override
 	public List<Pair<IKActorsValue, IKActorsStatement>> getActions() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public KActorsConcurrentGroup getGroup() {
+		return group;
 	}
 
 }

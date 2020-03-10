@@ -18,14 +18,19 @@ import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.extensions.actors.Message;
 import org.integratedmodelling.klab.api.services.IActorsService;
+import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.auth.UserIdentity;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.rest.BehaviorReference;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -54,7 +59,8 @@ public enum Actors implements IActorsService {
 	private ActorSystem<Void> supervisor;
 	private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
-	private Map<String, Class<? extends KlabMessage>> messageClasses = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Pair<String, Class<? extends KlabMessage>>> messageClasses = Collections
+			.synchronizedMap(new HashMap<>());
 
 	public IBehavior getBehavior(String behaviorId) {
 		return behaviors.get(behaviorId);
@@ -123,7 +129,7 @@ public enum Actors implements IActorsService {
 	}
 
 	/**
-	 * Install listeners to build behaviors on read and organize them by project
+	 * Install listeners to build behaviors on read and organize them by project.
 	 */
 	public void setup() {
 		KActors.INSTANCE.addNotifier(new Notifier() {
@@ -160,7 +166,8 @@ public enum Actors implements IActorsService {
 	/**
 	 * Create a direct child of the supervisor with the specified identity.
 	 * Implementations should only call this for top-level actors and have the
-	 * others created through messages to them.
+	 * others created through messages to them. The top-level identities for now are
+	 * user actors.
 	 * 
 	 * @param <T>
 	 * @param create
@@ -168,7 +175,14 @@ public enum Actors implements IActorsService {
 	 * @return
 	 */
 	public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
-		return ActorSystem.create(create, identity.getId());
+		return ActorSystem.create(create,
+				identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername())
+						: identity.getId());
+	}
+
+	private String sanitize(String username) {
+		// should be enough
+		return username.replace('.', '_');
 	}
 
 	/**
@@ -201,21 +215,59 @@ public enum Actors implements IActorsService {
 				ad.setName(message.id());
 				ad.setDescription(message.description());
 				descriptor.getActions().add(ad);
-				this.messageClasses.put(message.id(), (Class<? extends KlabMessage>) cl);
+				this.messageClasses.put(message.id(), new Pair<>(annotation.id(), (Class<? extends KlabMessage>) cl));
 			}
 		}
 	}
 
 	public void exportBehaviors(File file) {
+
+		/*
+		 * Fill this in so we can read actor files with the actual knowledge of the
+		 * installed behaviors. This is called at the right time, after loading and
+		 * before reading behaviors.
+		 */
+		KActors.INSTANCE.getBehaviorManifest().putAll(behaviorDescriptors);
+
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
 			mapper.setSerializationInclusion(Include.NON_NULL);
-			JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, BehaviorReference.class);
+			JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class,
+					BehaviorReference.class);
 			mapper.writerFor(type).writeValue(file, this.behaviorDescriptors);
 		} catch (IOException e) {
 			Logging.INSTANCE.error(e);
 		}
+	}
+
+	/**
+	 * Find the recipient for a message directed to self that does not match any
+	 * messages. This done at runtime to support shorthand syntax in k.Actors; any
+	 * unknown messages should go to the user actor using the UnknownMessage
+	 * pattern.
+	 * 
+	 * @param message
+	 * @param identity the identity that does not have the message. Look it up in
+	 *                 the identities above it.
+	 * @return an actor reference or null. If null, the asker should send an unknown
+	 *         message to the user actor.
+	 */
+	public ActorRef<KlabMessage> lookupRecipient(String message, IActorIdentity<KlabMessage> identity) {
+
+		Pair<String, Class<? extends KlabMessage>> record = messageClasses.get(message);
+		if (record != null) {
+			// it's one of the system behaviors: lookup the recipient based on behavior ID
+			switch (record.getFirst()) {
+			case "view":
+			case "session":
+				return identity.getParentIdentity(Session.class).getActor();
+			case "user":
+				return identity.getParentIdentity(EngineUser.class).getActor();
+			}
+		}
+
+		return null;
 	}
 
 }

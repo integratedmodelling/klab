@@ -67,6 +67,7 @@ import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
+import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
@@ -76,8 +77,10 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder.Location;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
@@ -162,6 +165,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
 
+	// tracks the setting of the actor so we can avoid the ask pattern
+	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
 	/**
 	 * A scheduler to periodically collect observation and task garbage
 	 */
@@ -1072,20 +1077,19 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			break;
 
 		case CreateBehavior:
-			
+
 			file = project.createBehavior(request.getAssetId(),
 					"true".equals(request.getParameters().get(ProjectModificationRequest.LIBRARY_OPTION))
 							? IKActorsBehavior.Type.TRAITS
 							: IKActorsBehavior.Type.BEHAVIOR,
 					false);
-			monitor.send(
-					Message.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateBehavior,
-							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
-									file))
-							.inResponseTo(message));
+			monitor.send(Message
+					.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateBehavior,
+							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
+					.inResponseTo(message));
 
 			Resources.INSTANCE.getLoader().add(file);
-			
+
 			break;
 
 		case CreateProject:
@@ -1312,21 +1316,47 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@Override
 	public ActorRef<KlabMessage> getActor() {
+
 		if (this.actor == null) {
-			// TODO if we have a user behavior, which we should always have, the actor
-			// should be a child of the user actor.
+
+			EngineUser engine = getParentIdentity(EngineUser.class);
+			if (engine != null) {
+				
+				ActorRef<KlabMessage> parentActor = engine.getActor();
+				parentActor.tell(new Spawn(this));
+
+				/*
+				 * wait for instrumentation to succeed. Couldn't figure out the ask pattern.
+				 * TODO when this has a chance to fail (e.g. in a cluster situation), add a
+				 * timeout, or figure out the ask pattern.
+				 */
+				while (!this.actorSet.get()) {
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						break;
+					}
+				}
+			}
+		}
+
+		if (this.actor == null) {
+			// no upstream actor (should not happen), create directly
 			this.actor = Actors.INSTANCE.createActor(SessionActor.create(this), this);
 		}
+
 		return this.actor;
 	}
 
 	@Override
 	public void load(IBehavior behavior) {
-		getActor().tell(new SystemBehavior.Load(behavior.getId()));
+		// TODO this gets a sucky runtime scope which is used to run main messages.
+		getActor().tell(new SystemBehavior.Load(behavior.getId(), new SimpleRuntimeScope(this)));
 	}
 
 	public void instrument(ActorRef<KlabMessage> actor) {
 		this.actor = actor;
+		this.actorSet.set(true);
 	}
 
 }

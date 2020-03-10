@@ -15,8 +15,8 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getAssignment <em>Assignment</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getText <em>Text</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getWhile <em>While</em>}</li>
@@ -54,28 +54,6 @@ public interface Statement extends EObject
   void setAssignment(Assignment value);
 
   /**
-   * Returns the value of the '<em><b>Verb</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Verb</em>' containment reference.
-   * @see #setVerb(MessageCall)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Verb()
-   * @model containment="true"
-   * @generated
-   */
-  MessageCall getVerb();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Verb</em>' containment reference.
-   * @see #getVerb()
-   * @generated
-   */
-  void setVerb(MessageCall value);
-
-  /**
    * Returns the value of the '<em><b>Group</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -96,6 +74,28 @@ public interface Statement extends EObject
    * @generated
    */
   void setGroup(StatementGroup value);
+
+  /**
+   * Returns the value of the '<em><b>Verb</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Verb</em>' containment reference.
+   * @see #setVerb(MessageCall)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Verb()
+   * @model containment="true"
+   * @generated
+   */
+  MessageCall getVerb();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Verb</em>' containment reference.
+   * @see #getVerb()
+   * @generated
+   */
+  void setVerb(MessageCall value);
 
   /**
    * Returns the value of the '<em><b>Text</b></em>' attribute.
