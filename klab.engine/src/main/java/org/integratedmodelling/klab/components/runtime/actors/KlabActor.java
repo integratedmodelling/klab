@@ -1,5 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assignment;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
@@ -18,6 +22,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
@@ -42,6 +47,18 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected IBehavior behavior;
 	protected IActorIdentity<KlabMessage> identity;
+	protected Map<String, MatchActions> matchActions = Collections.synchronizedMap(new HashMap<>());
+
+	/**
+	 * Descriptor for actions to be taken when a fire is recorded with the ID used
+	 * as key in matchActions.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	class MatchActions {
+
+	}
 
 	/**
 	 * The main message for anything sent through k.Actors
@@ -72,7 +89,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
 		String notifyId;
-		
+
 		public Scope(Action action, IRuntimeScope scope) {
 			this.action = action;
 			this.runtimeScope = scope;
@@ -150,13 +167,30 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	protected ReceiveBuilder<KlabMessage> configure() {
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
-		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
-				.onMessage(KActorsMessage.class, this::executeCall).onSignal(PostStop.class, signal -> onPostStop());
+		return builder
+				.onMessage(Load.class, this::loadBehavior)
+				.onMessage(Spawn.class, this::createChild)
+				.onMessage(Fire.class, this::reactToFire)
+				.onMessage(KActorsMessage.class, this::executeCall)
+				.onSignal(PostStop.class, signal -> onPostStop());
 	}
 
 	protected KlabActor onPostStop() {
 		// TODO deactivate the underlying observation, send changes
 		return this;
+	}
+	
+	protected Behavior<KlabMessage> reactToFire(Fire message) {
+		if (message.listenerId != null) {
+			MatchActions actions = matchActions.get(message.listenerId);
+			if (actions != null) {
+				// TODO
+				if (message.finalize) {
+					matchActions.remove(message.listenerId);
+				}
+			}
+		}
+		return Behaviors.same();
 	}
 
 	@Override
@@ -268,16 +302,15 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		/*
 		 * TODO establish message reply ID for listeners. Must be same for every
-		 * internal message if there is a group: in that case, set the ID in the
-		 * scope.
+		 * internal message if there is a group: in that case, set the ID in the scope.
 		 */
 
 		String notifyId = scope.notifyId;
-		
+
 		if (code.getActions().size() > 0) {
 
 			notifyId = NameGenerator.newName();
-			
+
 			/*
 			 * TODO install own action listeners
 			 */

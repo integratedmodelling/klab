@@ -114,7 +114,8 @@ public class SystemBehavior {
 
 	/**
 	 * The message sent back to a listening actor when an actor fires, triggering
-	 * pattern matching.
+	 * pattern matching. If finalize == true, the listener in the actor must be
+	 * removed as the sending actor won't fire again.
 	 * 
 	 * @author Ferd
 	 *
@@ -123,10 +124,12 @@ public class SystemBehavior {
 
 		String listenerId;
 		Object value;
+		boolean finalize;
 
-		public Fire(String listenerId, Object firedValue) {
+		public Fire(String listenerId, Object firedValue, boolean isFinal) {
 			this.listenerId = listenerId;
 			this.value = firedValue;
+			this.finalize = isFinal;
 		}
 
 		@Override

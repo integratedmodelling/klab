@@ -78,6 +78,7 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
+import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.scale.Coverage;
@@ -1379,7 +1380,7 @@ public class Actuator implements IActuator {
 	 * @param filter
 	 * @param existingActuators
 	 */
-	public void adoptFilter(Actuator filter, Map<String, Actuator> existingActuators) {
+	public void adoptFilter(Actuator filter, Map<String, Actuator> existingActuators, IMonitor monitor) {
 
 		/*
 		 * the observable is in the primary actuator, reference or not

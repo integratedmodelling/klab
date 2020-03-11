@@ -124,18 +124,18 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	}
 
 	@Override
-	public void handleFrame(StompHeaders headers, Object payload) {
+	public synchronized void handleFrame(StompHeaders headers, Object payload) {
 		// won't happen
 		System.out.println("stomp message bus: what won't happen happened");
 	}
 
 	@Override
-	public void post(IMessage message) {
+	public synchronized void post(IMessage message) {
 		session.send("/klab/message", message);
 	}
 
 	@Override
-	public void post(IMessage message, Consumer<IMessage> responder) {
+	public synchronized void post(IMessage message, Consumer<IMessage> responder) {
 		responders.put(((Message) message).getId(), responder);
 		post(message);
 	}
@@ -215,7 +215,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	}
 
 	@Override
-	public void unsubscribe(String identity) {
+	public synchronized void unsubscribe(String identity) {
 
 		if (subscriptions.containsKey(identity)) {
 			subscriptions.get(identity).unsubscribe();

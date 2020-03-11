@@ -63,6 +63,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
+import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
@@ -105,6 +106,7 @@ public class Model extends KimObject implements IModel {
 	private long lastResourceCheck;
 	private boolean available = true;
 	private Scope scope = Scope.PUBLIC;
+	private Strategy observationStrategy = Strategy.DIRECT;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -635,6 +637,7 @@ public class Model extends KimObject implements IModel {
 		this.namespace = scope.getResolutionNamespace();
 		this.contextualization = new Contextualization(null, this);
 		this.observables.add(mainObservable);
+		this.observationStrategy = candidateObservable.getStrategy();
 		this.dependencies.addAll(candidateObservable.getObservables());
 		if (candidateObservable.getComputation() != null) {
 			this.resources.addAll(candidateObservable.getComputation());
@@ -1167,16 +1170,14 @@ public class Model extends KimObject implements IModel {
 		return geometry;
 	}
 
-//	@Override
-//	public boolean isResourceMerger() {
-//		return merger;
-//	}
-//
-//	/**
-//	 * @param merger the merger to set
-//	 */
-//	public void setMerger(boolean merger) {
-//		this.merger = merger;
-//	}
-
+	/**
+	 * The observation strategy implemented by this model. This will always be
+	 * DIRECT unless the model comes from a derived observation, in which case it
+	 * may also be FILTERING or DEREIFYING.
+	 * 
+	 * @return
+	 */
+	public Strategy getObservationStrategy() {
+		return observationStrategy;
+	}
 }

@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
+import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
@@ -274,6 +275,7 @@ public class DataflowCompiler {
 		String alias;
 		Object inlineValue;
 		ResolvedArtifact resolvedArtifact;
+		Strategy strategy = Strategy.DIRECT;
 
 		public String toString() {
 			return (root ? "ROOT " : "") + ("[" + children.size() + "]")
@@ -330,7 +332,7 @@ public class DataflowCompiler {
 			if (!models.isEmpty()) {
 				modelObservable = models.iterator().next().model.getObservables().get(0);
 				if (!modelObservable.equals(this.observable)) {
-					
+
 					/**
 					 * Secondary output! We may be already part of the actuator for this (in which
 					 * case we just add our empty actuator to create the observation and leave it to
@@ -353,7 +355,7 @@ public class DataflowCompiler {
 					}
 				}
 			}
-			
+
 			ret.setObservable(observable);
 			ret.setName(observable.getReferenceName());
 			ret.setAlias(observable.getName());
@@ -557,34 +559,44 @@ public class DataflowCompiler {
 				 */
 				IConcept directContext = Observables.INSTANCE.getDirectContextType(this.observable.getType());
 
-				for (Node child : sortChildren()) {
+				if (this.strategy == Strategy.FILTERING) {
 
-					IConcept childContext = Observables.INSTANCE.getDirectContextType(child.observable.getType());
+					/*
+					 * compile in the child providing the filtered observable, then add the
+					 * dependencies and computations in the others.
+					 */
 
-					if (directContext != null && directContext.equals(childContext)) {
-						/*
-						 * can only be resolved through the instantiator of the object. TODO we should
-						 * ensure that a dependency for the primary observable is included, in the
-						 * ObservableReasoner of course.
-						 */
-						continue;
-					}
+				} else {
 
-					// this may be a new actuator or a reference to an existing one.
-					Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
+					for (Node child : sortChildren()) {
 
-					if (achild.isFilter()) {
+						IConcept childContext = Observables.INSTANCE.getDirectContextType(child.observable.getType());
 
-						ret.adoptFilter(achild, actuatorCatalog);
+						if (directContext != null && directContext.equals(childContext)) {
+							/*
+							 * can only be resolved through the instantiator of the object. TODO we should
+							 * ensure that a dependency for the primary observable is included, in the
+							 * ObservableReasoner of course.
+							 */
+							continue;
+						}
 
-					} else {
+						// this may be a new actuator or a reference to an existing one.
+						Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
 
-						ret.getActuators().add(achild);
-						recordUnits(achild, chosenUnits);
-						if (sources.containsKey(achild.getName())) {
-							for (IContextualizable mediator : computeMediators(sources.get(achild.getName()),
-									achild.getObservable(), scale)) {
-								ret.addMediation(mediator, achild);
+						if (achild.isFilter()) {
+
+							ret.adoptFilter(achild, actuatorCatalog, monitor);
+
+						} else {
+
+							ret.getActuators().add(achild);
+							recordUnits(achild, chosenUnits);
+							if (sources.containsKey(achild.getName())) {
+								for (IContextualizable mediator : computeMediators(sources.get(achild.getName()),
+										achild.getObservable(), scale)) {
+									ret.addMediation(mediator, achild);
+								}
 							}
 						}
 					}
@@ -811,6 +823,8 @@ public class DataflowCompiler {
 					compatibleOutput = new Observable(compatibleOutput);
 				}
 				// observableCatalog.put(compatibleOutput.getName(), compatibleOutput);
+
+				ret.strategy = model.getObservationStrategy();
 
 				ModelD md = compileModel(model, /* d.indirectAdapters, */ d.isPartition && honorPartitions);
 				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
