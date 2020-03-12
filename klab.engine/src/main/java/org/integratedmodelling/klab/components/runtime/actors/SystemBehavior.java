@@ -37,10 +37,6 @@ public class SystemBehavior {
 			this.behavior = behavior;
 			this.scope = scope;
 		}
-
-		@Override
-		public void initialize(Parameters<String> arguments) {
-		}
 	}
 
 	/**
@@ -55,10 +51,6 @@ public class SystemBehavior {
 
 		public Transition(IRuntimeScope scope) {
 			this.scope = scope;
-		}
-
-		@Override
-		public void initialize(Parameters<String> arguments) {
 		}
 	}
 
@@ -76,37 +68,8 @@ public class SystemBehavior {
 			this.identity = identity;
 		}
 
-		@Override
-		public void initialize(Parameters<String> arguments) {
-		}
-
 	}
 
-	/**
-	 * The message installs a listener in a context that will fire an object to the
-	 * sender whenever it is resolved and matches a pattern.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	public static class When extends AbstractKlabMessage {
-
-		String listenerId;
-		Collection<KActorsValue> value;
-		ActorRef<KlabMessage> sender;
-
-		public When(ActorRef<KlabMessage> replyTo, Collection<KActorsValue> matches, String listenerId,
-				IRuntimeScope scope) {
-			this.listenerId = listenerId;
-			this.value = matches;
-			this.sender = replyTo;
-			// TODO install a listener
-		}
-
-		@Override
-		public void initialize(Parameters<String> arguments) {
-		}
-	}
 
 	/**
 	 * The message sent back to a listening actor when an actor fires, triggering
@@ -127,10 +90,6 @@ public class SystemBehavior {
 			this.value = firedValue;
 			this.finalize = isFinal;
 		}
-
-		@Override
-		public void initialize(Parameters<String> arguments) {
-		}
 	}
 
 	/**
@@ -150,10 +109,6 @@ public class SystemBehavior {
 			this.sender = sender;
 			this.message = actionId;
 			this.arguments = parameters;
-		}
-
-		@Override
-		public void initialize(Parameters<String> arguments) {
 		}
 
 	}

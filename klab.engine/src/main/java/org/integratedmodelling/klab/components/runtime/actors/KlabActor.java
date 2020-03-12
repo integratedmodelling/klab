@@ -68,8 +68,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	public interface KlabMessage {
 
-		void initialize(Parameters<String> arguments);
-
 		// unique ID to ensure reply and notification
 		String getId();
 

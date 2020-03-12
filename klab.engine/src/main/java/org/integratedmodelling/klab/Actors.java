@@ -19,7 +19,7 @@ import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
-import org.integratedmodelling.klab.api.extensions.actors.Message;
+import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.UserIdentity;
@@ -209,7 +209,7 @@ public enum Actors implements IActorsService {
 		}
 
 		for (Class<?> cl : cls.getDeclaredClasses()) {
-			Message message = cl.getAnnotation(Message.class);
+			Action message = cl.getAnnotation(Action.class);
 			if (message != null) {
 				BehaviorReference.Action ad = new BehaviorReference.Action();
 				ad.setName(message.id());
