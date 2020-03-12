@@ -91,8 +91,9 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 
 	@Override
 	public List<Pair<IKActorsValue, IKActorsStatement>> getActions() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Pair<IKActorsValue, IKActorsStatement>> ret = new ArrayList<>();
+		// TODO
+		return ret;
 	}
 
 	@Override

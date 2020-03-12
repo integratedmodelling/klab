@@ -361,6 +361,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected Behavior<KlabMessage> executeCall(KActorsMessage message) {
 		System.out.println("ECCOMI DIO CANE");
+		// message can be one of ours or a system one.
 		return Behaviors.same();
 	}
 

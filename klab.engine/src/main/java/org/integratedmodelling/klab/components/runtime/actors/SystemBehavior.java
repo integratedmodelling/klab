@@ -78,8 +78,6 @@ public class SystemBehavior {
 
 		@Override
 		public void initialize(Parameters<String> arguments) {
-			// TODO Auto-generated method stub
-
 		}
 
 	}
@@ -107,8 +105,6 @@ public class SystemBehavior {
 
 		@Override
 		public void initialize(Parameters<String> arguments) {
-			// TODO Auto-generated method stub
-
 		}
 	}
 
@@ -134,8 +130,6 @@ public class SystemBehavior {
 
 		@Override
 		public void initialize(Parameters<String> arguments) {
-			// TODO Auto-generated method stub
-
 		}
 	}
 
@@ -149,15 +143,17 @@ public class SystemBehavior {
 	public static class KActorsMessage extends AbstractKlabMessage {
 
 		ActorRef<KlabMessage> sender;
+		String message;
+		IParameters<String> arguments;
 
 		public KActorsMessage(ActorRef<KlabMessage> sender, String actionId, IParameters<String> parameters) {
 			this.sender = sender;
+			this.message = actionId;
+			this.arguments = parameters;
 		}
 
 		@Override
 		public void initialize(Parameters<String> arguments) {
-			// TODO Auto-generated method stub
-
 		}
 
 	}
