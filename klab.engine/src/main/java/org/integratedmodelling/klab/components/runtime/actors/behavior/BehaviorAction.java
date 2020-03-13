@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -11,7 +12,7 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.model.Annotation;
 
 public class BehaviorAction implements IBehavior.Action {
-	
+
 	/**
 	 * Each action is a sequence of asynchronous call groups.
 	 */

@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.actors;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 
 @Behavior(id = "user", version = Version.CURRENT)
 public class UserBehavior {
@@ -14,6 +15,10 @@ public class UserBehavior {
 	 *
 	 */
 	public static class UnknownMessage extends AbstractKlabMessage {
+		KActorsMessage call;
+		public UnknownMessage(KActorsMessage message) {
+			this.call = message;
+		}
 	}
 
 }

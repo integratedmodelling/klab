@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,13 +18,15 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.auth.EngineUser;
-import org.integratedmodelling.klab.auth.UserIdentity;
+import org.integratedmodelling.klab.components.runtime.actors.KlabAction;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -59,7 +63,7 @@ public enum Actors implements IActorsService {
 	private ActorSystem<Void> supervisor;
 	private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
-	private Map<String, Pair<String, Class<? extends KlabMessage>>> messageClasses = Collections
+	private Map<String, Pair<String, Class<? extends KlabAction>>> actionClasses = Collections
 			.synchronizedMap(new HashMap<>());
 
 	public IBehavior getBehavior(String behaviorId) {
@@ -215,7 +219,7 @@ public enum Actors implements IActorsService {
 				ad.setName(message.id());
 				ad.setDescription(message.description());
 				descriptor.getActions().add(ad);
-				this.messageClasses.put(message.id(), new Pair<>(annotation.id(), (Class<? extends KlabMessage>) cl));
+				this.actionClasses.put(message.id(), new Pair<>(annotation.id(), (Class<? extends KlabAction>) cl));
 			}
 		}
 	}
@@ -253,21 +257,52 @@ public enum Actors implements IActorsService {
 	 * @return an actor reference or null. If null, the asker should send an unknown
 	 *         message to the user actor.
 	 */
-	public ActorRef<KlabMessage> lookupRecipient(String message, IActorIdentity<KlabMessage> identity) {
+	public Pair<String, ActorRef<KlabMessage>> lookupRecipient(String message, IActorIdentity<KlabMessage> identity) {
 
-		Pair<String, Class<? extends KlabMessage>> record = messageClasses.get(message);
+		Pair<String, Class<? extends KlabAction>> record = actionClasses.get(message);
 		if (record != null) {
 			// it's one of the system behaviors: lookup the recipient based on behavior ID
 			switch (record.getFirst()) {
 			case "view":
 			case "session":
-				return identity.getParentIdentity(Session.class).getActor();
+				return new Pair<>(record.getFirst(), identity.getParentIdentity(Session.class).getActor());
 			case "user":
-				return identity.getParentIdentity(EngineUser.class).getActor();
+				return new Pair<>(record.getFirst(), identity.getParentIdentity(EngineUser.class).getActor());
 			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * Create and return an action from one of the system behaviors.
+	 * 
+	 * @param behavior
+	 * @param id
+	 * @param sender
+	 * @param arguments
+	 * @param messageId
+	 * @param scope
+	 * @return
+	 */
+	public KlabAction getSystemAction(String id, ActorRef<KlabMessage> sender, IParameters<String> arguments,
+			KlabActor.Scope scope) {
+		
+		Pair<String, Class<? extends KlabAction>> cls = actionClasses.get(id);
+		if (cls != null) {
+			try {
+				Constructor<? extends KlabAction> constructor = cls.getSecond().getConstructor(ActorRef.class,
+						IParameters.class, KlabActor.Scope.class);
+				return constructor.newInstance(sender, arguments, scope);
+			} catch (Throwable e) {
+				scope.getMonitor().error("Error while creating action " + id + ": " + e.getMessage());
+			}
+		}
+		return null;
+	}
+
+	public Collection<String> getBehaviorIds() {
+		return behaviors.keySet();
 	}
 
 }

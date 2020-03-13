@@ -16,20 +16,24 @@ import akka.actor.typed.ActorRef;
  * @author Ferd
  *
  */
-public class KlabAction {
+public abstract class KlabAction {
 
 	private ActorRef<KlabMessage> sender;
 	protected IParameters<String> arguments;
-	private String messageId;
+	private KlabActor.Scope scope;
 
-	public KlabAction(ActorRef<KlabMessage> sender, IParameters<String> arguments, String messageId) {
+	protected final Boolean DEFAULT_FIRE = Boolean.TRUE;
+	
+	public KlabAction(ActorRef<KlabMessage> sender, IParameters<String> arguments, KlabActor.Scope scope) {
 		this.sender = sender;
 		this.arguments = arguments;
-		this.messageId = messageId;
+		this.scope = scope;
 	}
 
 	public void fire(Object value, boolean isFinal) {
-		this.sender.tell(new Fire(messageId, value, isFinal));
+		this.sender.tell(new Fire(scope.getNotifyId(), value, isFinal));
 	}
+	
+	abstract void run();
 
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.IStatement;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -18,6 +19,22 @@ import org.integratedmodelling.klab.data.Metadata;
 
 public class Behavior implements IBehavior {
 
+
+	/**
+	 * Pre-processed match value optimized for matching.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class Match {
+
+		KActorsValue value;
+
+		Match(KActorsValue value) {
+			this.value = value;
+		}
+	}
+	
 	IKActorsBehavior statement;
 	Map<String, BehaviorAction> actions = new LinkedHashMap<>();
 	IMetadata metadata = new Metadata();
@@ -105,6 +122,11 @@ public class Behavior implements IBehavior {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public Action getAction(String actionId) {
+		return actions.get(actionId);
 	}
 
 }

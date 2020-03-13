@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class KActorsActionCall extends KActorsStatement implements Call {
 
-	private class ActionDescriptor {
+	public class ActionDescriptor {
 		// no match means "on any firing" (should be a defaulted value, maybe with
 		// validation).
 		KActorsValue match;
@@ -92,7 +92,9 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 	@Override
 	public List<Pair<IKActorsValue, IKActorsStatement>> getActions() {
 		List<Pair<IKActorsValue, IKActorsStatement>> ret = new ArrayList<>();
-		// TODO
+		for (ActionDescriptor ad : actions) {
+			ret.add(new Pair<>(ad.match, ad.action));
+		}
 		return ret;
 	}
 

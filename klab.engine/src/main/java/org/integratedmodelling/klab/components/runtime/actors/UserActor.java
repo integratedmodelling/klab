@@ -25,7 +25,7 @@ public class UserActor extends KlabActor {
 	}
 
 	private Behavior<KlabMessage> onUnknownMessage(UnknownMessage message) {
-		// TODO find a handler in our behavior or log 
+		System.out.println("ZIO PAPA UNKNOWN MESSAGE " + message);
 		return Behaviors.same();
 	}
 	

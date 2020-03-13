@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement;
@@ -16,6 +18,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Sequence;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.model.KActorsStatement;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
@@ -26,11 +29,14 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fir
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
+import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 
@@ -50,7 +56,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Map<String, MatchActions> matchActions = Collections.synchronizedMap(new HashMap<>());
 
 	/**
-	 * Descriptor for actions to be taken when a fire is recorded with the ID used
+	 * Descriptor for actions to be taken when a firing is recorded with the ID used
 	 * as key in matchActions.
 	 * 
 	 * @author Ferd
@@ -58,6 +64,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	class MatchActions {
 
+		List<Pair<Match, KActorsStatement>> matches = new ArrayList<>();
 	}
 
 	/**
@@ -80,7 +87,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * @author Ferd
 	 *
 	 */
-	class Scope extends Parameters<String> {
+	public class Scope extends Parameters<String> {
 
 		Action action;
 		boolean synchronous = false;
@@ -103,21 +110,28 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		Scope get(IKActorsStatement statement) {
+			// TODO check if we need a new one every time - there's no change here.
 			return new Scope(this);
 		}
 
 		public Scope synchronous() {
-			this.synchronous = true;
-			return this;
+			Scope ret = new Scope(this);
+			ret.synchronous = true;
+			return ret;
 		}
 
 		public Scope withNotifyId(String id) {
-			this.notifyId = id;
-			return this;
+			Scope ret = new Scope(this);
+			ret.notifyId = id;
+			return ret;
 		}
 
 		public IIdentity getIdentity() {
 			return identity;
+		}
+
+		public String getNotifyId() {
+			return notifyId;
 		}
 
 		public IMonitor getMonitor() {
@@ -165,11 +179,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	protected ReceiveBuilder<KlabMessage> configure() {
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
-		return builder
-				.onMessage(Load.class, this::loadBehavior)
-				.onMessage(Spawn.class, this::createChild)
-				.onMessage(Fire.class, this::reactToFire)
-				.onMessage(KActorsMessage.class, this::executeCall)
+		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
+				.onMessage(Fire.class, this::reactToFire).onMessage(KActorsMessage.class, this::executeCall)
 				.onSignal(PostStop.class, signal -> onPostStop());
 	}
 
@@ -177,7 +188,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		// TODO deactivate the underlying observation, send changes
 		return this;
 	}
-	
+
 	protected Behavior<KlabMessage> reactToFire(Fire message) {
 		if (message.listenerId != null) {
 			MatchActions actions = matchActions.get(message.listenerId);
@@ -199,13 +210,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
 		this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
 		for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
-			run(action, message.scope);
+			run(action, new Scope(action, message.scope));
 		}
 		return Behaviors.same();
 	}
 
-	protected void run(IBehavior.Action action, IRuntimeScope scope) {
-		execute(action.getStatement().getCode(), new Scope(action, scope));
+	protected void run(IBehavior.Action action, Scope scope) {
+		execute(action.getStatement().getCode(), scope);
 	}
 
 	private void execute(IKActorsStatement code, Scope scope) {
@@ -261,6 +272,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		} else {
 			for (IKActorsStatement statement : code.getStatements()) {
 				execute(statement, scope.synchronous());
+				// TODO waitForCompletion(message);
 			}
 		}
 	}
@@ -312,6 +324,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			/*
 			 * TODO install own action listeners
 			 */
+			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
+
+			}
 		}
 
 		if (code.getGroup() == null) {
@@ -336,11 +351,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				recipient = identity.getParentIdentity(Session.class).getActor();
 				break;
 			case "user":
-				recipient = Actors.INSTANCE.lookupRecipient(message, this.identity);
+				recipient = identity.getParentIdentity(EngineUser.class).getActor();
 			}
 
 			if (recipient == null || ("self".equals(receiver) && this.behavior.getActions(message) == null)) {
-				recipient = Actors.INSTANCE.lookupRecipient(message, this.identity);
+				Pair<String, ActorRef<KlabMessage>> resolved = Actors.INSTANCE.lookupRecipient(message, this.identity);
+				receiver = resolved.getFirst();
+				recipient = resolved.getSecond();
 			}
 
 			if (recipient == null) {
@@ -348,7 +365,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				recipient = identity.getParentIdentity(EngineUser.class).getActor();
 			}
 
-			recipient.tell(new KActorsMessage(getContext().getSelf(), message, code.getArguments()).withId(notifyId));
+			recipient.tell(new KActorsMessage(getContext().getSelf(), receiver, message, code.getArguments(), scope)
+					.withId(notifyId));
 
 		} else {
 
@@ -358,8 +376,25 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected Behavior<KlabMessage> executeCall(KActorsMessage message) {
-		System.out.println("ECCOMI DIO CANE");
 		// message can be one of ours or a system one.
+		boolean ran = false;
+		Action action = this.behavior == null ? null : this.behavior.getAction(message.message);
+		if (action != null) {
+			ran = true;
+			run(action, message.scope);
+		} else {
+			KlabAction a = Actors.INSTANCE.getSystemAction(message.message, message.sender, message.arguments,
+					message.scope);
+			if (a != null) {
+				ran = true;
+				a.run();
+			}
+		}
+
+		if (!ran) {
+			this.identity.getParentIdentity(EngineUser.class).getActor().tell(new UnknownMessage(message));
+		}
+
 		return Behaviors.same();
 	}
 

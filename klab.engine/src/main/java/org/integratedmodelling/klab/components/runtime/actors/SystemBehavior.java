@@ -1,8 +1,5 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.util.Collection;
-
-import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -47,9 +44,9 @@ public class SystemBehavior {
 	 */
 	public static class Transition extends AbstractKlabMessage {
 
-		IRuntimeScope scope;
+		KlabActor.Scope scope;
 
-		public Transition(IRuntimeScope scope) {
+		public Transition(KlabActor.Scope scope) {
 			this.scope = scope;
 		}
 	}
@@ -69,7 +66,6 @@ public class SystemBehavior {
 		}
 
 	}
-
 
 	/**
 	 * The message sent back to a listening actor when an actor fires, triggering
@@ -103,12 +99,19 @@ public class SystemBehavior {
 
 		ActorRef<KlabMessage> sender;
 		String message;
-		IParameters<String> arguments;
+		String receiver;
+		IParameters<String> arguments = Parameters.create();
+		KlabActor.Scope scope;
 
-		public KActorsMessage(ActorRef<KlabMessage> sender, String actionId, IParameters<String> parameters) {
+		public KActorsMessage(ActorRef<KlabMessage> sender, String receiver, String actionId,
+				IParameters<String> arguments, KlabActor.Scope scope) {
 			this.sender = sender;
+			this.receiver = receiver;
 			this.message = actionId;
-			this.arguments = parameters;
+			if (arguments != null) {
+				this.arguments.putAll(arguments);
+			}
+			this.scope = scope;
 		}
 
 	}
