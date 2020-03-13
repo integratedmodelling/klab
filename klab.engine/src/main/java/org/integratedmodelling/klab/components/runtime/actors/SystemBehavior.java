@@ -25,7 +25,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Load extends AbstractKlabMessage {
+	public static class Load implements KlabMessage {
 
 		String behavior;
 		IRuntimeScope scope;
@@ -42,7 +42,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Transition extends AbstractKlabMessage {
+	public static class Transition implements KlabMessage {
 
 		KlabActor.Scope scope;
 
@@ -57,7 +57,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Spawn extends AbstractKlabMessage {
+	public static class Spawn implements KlabMessage {
 
 		IActorIdentity<KlabMessage> identity;
 
@@ -75,16 +75,18 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Fire extends AbstractKlabMessage {
+	public static class Fire implements KlabMessage {
 
 		String listenerId;
 		Object value;
 		boolean finalize;
+		KlabActor.Scope scope;
 
-		public Fire(String listenerId, Object firedValue, boolean isFinal) {
+		public Fire(String listenerId, Object firedValue, boolean isFinal, KlabActor.Scope scope) {
 			this.listenerId = listenerId;
 			this.value = firedValue;
 			this.finalize = isFinal;
+			this.scope = scope;
 		}
 	}
 
@@ -95,7 +97,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class KActorsMessage extends AbstractKlabMessage {
+	public static class KActorsMessage implements KlabMessage {
 
 		ActorRef<KlabMessage> sender;
 		String message;

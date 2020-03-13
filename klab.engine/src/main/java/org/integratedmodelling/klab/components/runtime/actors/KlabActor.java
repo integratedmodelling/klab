@@ -18,7 +18,6 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Sequence;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
-import org.integratedmodelling.kactors.model.KActorsStatement;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
@@ -64,7 +63,15 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	class MatchActions {
 
-		List<Pair<Match, KActorsStatement>> matches = new ArrayList<>();
+		List<Pair<Match, IKActorsStatement>> matches = new ArrayList<>();
+
+		public void match(Object value, Scope scope) {
+			for (Pair<Match, IKActorsStatement> match : matches) {
+				if (match.getFirst().matches(value)) {
+					execute(match.getSecond(), scope);
+				}
+			}
+		}
 	}
 
 	/**
@@ -74,10 +81,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 *
 	 */
 	public interface KlabMessage {
-
-		// unique ID to ensure reply and notification
-		String getId();
-
 	}
 
 	/**
@@ -140,24 +143,24 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	}
 
-	/**
-	 * Get the recipient actor for a named recipient. This will be matched to known
-	 * behavior declarations and to any actors set into the context by previous
-	 * actions. A null recipient will respond a reference to self.
-	 * 
-	 * @param recipient
-	 * @return
-	 */
-	ActorRef<KlabMessage> getRecipient(String recipient) {
-		if (recipient == null || "self".equals(recipient)) {
-			return getContext().getSelf();
-		} else if ("session".equals(recipient) || "view".equals(recipient)) {
-
-		} else if ("user".equals(recipient)) {
-
-		}
-		return null;
-	}
+//	/**
+//	 * Get the recipient actor for a named recipient. This will be matched to known
+//	 * behavior declarations and to any actors set into the context by previous
+//	 * actions. A null recipient will respond a reference to self.
+//	 * 
+//	 * @param recipient
+//	 * @return
+//	 */
+//	ActorRef<KlabMessage> getRecipient(String recipient) {
+//		if (recipient == null || "self".equals(recipient)) {
+//			return getContext().getSelf();
+//		} else if ("session".equals(recipient) || "view".equals(recipient)) {
+//
+//		} else if ("user".equals(recipient)) {
+//
+//		}
+//		return null;
+//	}
 
 	protected void waitForCompletion(KlabMessage message) {
 
@@ -193,7 +196,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		if (message.listenerId != null) {
 			MatchActions actions = matchActions.get(message.listenerId);
 			if (actions != null) {
-				// TODO
+				actions.match(message.value, message.scope);
 				if (message.finalize) {
 					matchActions.remove(message.listenerId);
 				}
@@ -324,9 +327,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			/*
 			 * TODO install own action listeners
 			 */
+			MatchActions actions = new MatchActions();
 			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
-
+				actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
 			}
+			this.matchActions.put(notifyId, actions);
 		}
 
 		if (code.getGroup() == null) {
@@ -365,8 +370,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				recipient = identity.getParentIdentity(EngineUser.class).getActor();
 			}
 
-			recipient.tell(new KActorsMessage(getContext().getSelf(), receiver, message, code.getArguments(), scope)
-					.withId(notifyId));
+			recipient.tell(new KActorsMessage(getContext().getSelf(), receiver, message, code.getArguments(),
+					scope.withNotifyId(notifyId)));
 
 		} else {
 

@@ -59,7 +59,7 @@ public class RuntimeBehavior {
 			for (String key : arguments.getUnnamedKeys()) {
 				Object o = arguments.get(key);
 				if (o instanceof Double && !pdef && ((Double) o) <= 1 && ((Double) o) >= 0) {
-					probability = 1 - (Double) o;
+					probability = (Double) o;
 					pdef = true;
 				} else {
 					fired = o;

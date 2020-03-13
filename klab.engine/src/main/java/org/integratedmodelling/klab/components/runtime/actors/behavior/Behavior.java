@@ -8,6 +8,7 @@ import java.util.Map;
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.IStatement;
@@ -30,8 +31,57 @@ public class Behavior implements IBehavior {
 
 		KActorsValue value;
 
-		Match(KActorsValue value) {
-			this.value = value;
+		public Match(IKActorsValue ikActorsValue) {
+			this.value = (KActorsValue) ikActorsValue;
+		}
+
+		public boolean matches(Object value) {
+			switch (this.value.getType()) {
+			case ANYTHING:
+				return true;
+			case ANYVALUE:
+				return value != null;
+			case BOOLEAN:
+				break;
+			case CLASS:
+				break;
+			case DATE:
+				break;
+			case EXPRESSION:
+				break;
+			case IDENTIFIER:
+				break;
+			case LIST:
+				break;
+			case MAP:
+				break;
+			case NODATA:
+				break;
+			case NUMBER:
+				break;
+			case NUMBERED_PATTERN:
+				break;
+			case OBSERVABLE:
+				break;
+			case QUANTITY:
+				break;
+			case RANGE:
+				break;
+			case REGEXP:
+				break;
+			case STRING:
+				break;
+			case TABLE:
+				break;
+			case TYPE:
+				break;
+			case URN:
+				break;
+			default:
+				break;
+			
+			}
+			return false;
 		}
 	}
 	
