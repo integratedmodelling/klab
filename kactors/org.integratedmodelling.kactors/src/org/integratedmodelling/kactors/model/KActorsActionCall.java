@@ -38,11 +38,6 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		
 		this.message = messageCall.getName();
 		
-		/*
-		 * TODO look into manifest and add the recipient if not in this message.
-		 */
-		
-		
 		if (messageCall.getParameters() != null) {
 			this.arguments = new KActorsArguments(messageCall.getParameters());
 		}
@@ -50,10 +45,12 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		if (messageCall.getActions() != null) {
 			if (messageCall.getActions().getStatement() != null) {
 				ActionDescriptor action = new ActionDescriptor();
+				action.match = KActorsValue.anyvalue();
 				action.action = KActorsStatement.create(messageCall.getActions().getStatement(), this);
 				actions.add(action);
 			} else if (messageCall.getActions().getStatements() != null) {
 				ActionDescriptor action = new ActionDescriptor();
+				action.match = KActorsValue.anyvalue();
 				action.action = new KActorsConcurrentGroup(
 						Collections.singletonList(messageCall.getActions().getStatements()), this);
 				actions.add(action);

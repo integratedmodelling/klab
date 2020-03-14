@@ -43,6 +43,19 @@ public enum KActors {
 		void notify(IKActorsBehavior behavior);
 	}
 
+	public interface ValueTranslator {
+
+		/**
+		 * Translate to whatever the type requires. If needed, the setData() function of
+		 * the container can be used to store costly objects.
+		 * 
+		 * @param container
+		 * @param value
+		 * @return
+		 */
+		Object translate(KActorsValue container, Object value);
+	}
+
 	class BehaviorDescriptor {
 		String name;
 		File file;
@@ -58,6 +71,7 @@ public enum KActors {
 	IResourceValidator validator;
 
 	List<Notifier> notifiers = new ArrayList<>();
+	private ValueTranslator valueTranslator = null;
 	Map<String, BehaviorDescriptor> behaviors = new HashMap<>();
 
 	private Injector getInjector() {
@@ -129,14 +143,15 @@ public enum KActors {
 	}
 
 	/**
-	 * This will be filled in by the implementation, differently in the engine or the client.
+	 * This will be filled in by the implementation, differently in the engine or
+	 * the client.
 	 * 
 	 * @return
 	 */
 	public Map<String, BehaviorReference> getBehaviorManifest() {
 		return behaviorManifest;
 	}
-	
+
 	/**
 	 * Return all regular behaviors defined in the src/ directory alongside models
 	 * for the project.
@@ -279,5 +294,19 @@ public enum KActors {
 			return null;
 		}
 		return path.substring(0, idx);
+	}
+
+	public ValueTranslator getValueTranslator() {
+		return valueTranslator;
+	}
+
+	/**
+	 * Installing one of these will enable translation of a value to a type suitable
+	 * for the implementation.
+	 * 
+	 * @param valueTranslator
+	 */
+	public void setValueTranslator(ValueTranslator valueTranslator) {
+		this.valueTranslator = valueTranslator;
 	}
 }
