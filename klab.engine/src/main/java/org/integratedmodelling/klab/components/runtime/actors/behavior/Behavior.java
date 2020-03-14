@@ -17,9 +17,9 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.utils.Range;
 
 public class Behavior implements IBehavior {
-
 
 	/**
 	 * Pre-processed match value optimized for matching.
@@ -42,23 +42,26 @@ public class Behavior implements IBehavior {
 			case ANYVALUE:
 				return value != null;
 			case BOOLEAN:
-				break;
+				return value instanceof Boolean && value.equals(this.value.getValue());
 			case CLASS:
 				break;
 			case DATE:
 				break;
 			case EXPRESSION:
+				System.out.println("PORCODIO AN EXPRESSION");
 				break;
 			case IDENTIFIER:
+				// TODO match and put the value in scope as named ID
 				break;
 			case LIST:
+				// TODO differentiate between multi-identifier and OR match for values in list
 				break;
 			case MAP:
 				break;
 			case NODATA:
-				break;
+				return value == null || value instanceof Number && Double.isNaN(((Number)value).doubleValue());
 			case NUMBER:
-				break;
+				return value instanceof Number && value.equals(this.value.getValue());
 			case NUMBERED_PATTERN:
 				break;
 			case OBSERVABLE:
@@ -66,11 +69,12 @@ public class Behavior implements IBehavior {
 			case QUANTITY:
 				break;
 			case RANGE:
-				break;
+				return value instanceof Number
+						&& ((Range) (this.value.getValue())).contains(((Number) value).doubleValue());
 			case REGEXP:
 				break;
 			case STRING:
-				break;
+				return value instanceof String && value.equals(this.value.getValue());
 			case TABLE:
 				break;
 			case TYPE:
@@ -79,17 +83,17 @@ public class Behavior implements IBehavior {
 				break;
 			default:
 				break;
-			
+
 			}
 			return false;
 		}
 	}
-	
+
 	IKActorsBehavior statement;
 	Map<String, BehaviorAction> actions = new LinkedHashMap<>();
 	IMetadata metadata = new Metadata();
 	List<IAnnotation> annotations = new ArrayList<>();
-	
+
 	public Behavior(IKActorsBehavior statement) {
 		this.statement = statement;
 		for (IKActorsAction a : statement.getActions()) {

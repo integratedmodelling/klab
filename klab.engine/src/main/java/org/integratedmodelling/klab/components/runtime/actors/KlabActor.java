@@ -63,14 +63,22 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	class MatchActions {
 
+		String notifyId;
 		List<Pair<Match, IKActorsStatement>> matches = new ArrayList<>();
 
 		public void match(Object value, Scope scope) {
+
+			Scope s = scope.withNotifyId(scope.notifyId);
+
 			for (Pair<Match, IKActorsStatement> match : matches) {
 				if (match.getFirst().matches(value)) {
-					execute(match.getSecond(), scope);
+					execute(match.getSecond(), s);
 				}
 			}
+		}
+
+		public MatchActions(String notifyId) {
+			this.notifyId = notifyId;
 		}
 	}
 
@@ -97,6 +105,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
 		String notifyId;
+		private ActorRef<KlabMessage> sender;
 
 		public Scope(Action action, IRuntimeScope scope) {
 			this.action = action;
@@ -109,13 +118,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.runtimeScope = scope.runtimeScope;
 			this.parent = scope;
 			this.notifyId = scope.notifyId;
-			// TODO Auto-generated constructor stub
+			this.sender = scope.sender;
 		}
 
-		Scope get(IKActorsStatement statement) {
-			// TODO check if we need a new one every time - there's no change here.
-			return new Scope(this);
-		}
+//		Scope get(IKActorsStatement statement) {
+//			// TODO check if we need a new one every time - there's no change here.
+//			return new Scope(this);
+//		}
 
 		public Scope synchronous() {
 			Scope ret = new Scope(this);
@@ -139,6 +148,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		public IMonitor getMonitor() {
 			return this.runtimeScope == null ? null : this.runtimeScope.getMonitor();
+		}
+
+		public Scope withSender(ActorRef<KlabMessage> sender) {
+			Scope ret = new Scope(this);
+			ret.sender = sender;
+			return ret;
 		}
 
 	}
@@ -225,34 +240,34 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private void execute(IKActorsStatement code, Scope scope) {
 		switch (code.getType()) {
 		case ACTION_CALL:
-			executeCall((IKActorsStatement.Call) code, scope.get(code));
+			executeCall((IKActorsStatement.Call) code, scope/* .get(code) */);
 			break;
 		case ASSIGNMENT:
-			executeAssignment((IKActorsStatement.Assignment) code, scope.get(code));
+			executeAssignment((IKActorsStatement.Assignment) code, scope/* .get(code) */);
 			break;
 		case DO_STATEMENT:
-			executeDo((IKActorsStatement.Do) code, scope.get(code));
+			executeDo((IKActorsStatement.Do) code, scope/* .get(code) */);
 			break;
 		case FIRE_VALUE:
-			executeFire((IKActorsStatement.FireValue) code, scope.get(code));
+			executeFire((IKActorsStatement.FireValue) code, scope/* .get(code) */);
 			break;
 		case FOR_STATEMENT:
-			executeFor((IKActorsStatement.For) code, scope.get(code));
+			executeFor((IKActorsStatement.For) code, scope/* .get(code) */);
 			break;
 		case IF_STATEMENT:
-			executeIf((IKActorsStatement.If) code, scope.get(code));
+			executeIf((IKActorsStatement.If) code, scope/* .get(code) */);
 			break;
 		case CONCURRENT_GROUP:
-			executeGroup((IKActorsStatement.ConcurrentGroup) code, scope.get(code));
+			executeGroup((IKActorsStatement.ConcurrentGroup) code, scope/* .get(code) */);
 			break;
 		case SEQUENCE:
-			executeSequence((IKActorsStatement.Sequence) code, scope.get(code));
+			executeSequence((IKActorsStatement.Sequence) code, scope/* .get(code) */);
 			break;
 		case TEXT_BLOCK:
-			executeText((IKActorsStatement.TextBlock) code, scope.get(code));
+			executeText((IKActorsStatement.TextBlock) code, scope/* .get(code) */);
 			break;
 		case WHILE_STATEMENT:
-			executeWhile((IKActorsStatement.While) code, scope.get(code));
+			executeWhile((IKActorsStatement.While) code, scope/* .get(code) */);
 			break;
 		default:
 			break;
@@ -293,12 +308,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	private void executeFor(For code, Scope scope) {
 		// TODO Auto-generated method stub
-
 	}
 
 	private void executeFire(FireValue code, Scope scope) {
-		// TODO Auto-generated method stub
-
+		if (scope.sender != null) {
+			scope.sender.tell(new Fire((scope.notifyId),
+					code.getValue().getValue(), /* TODO FIXME boh */true, scope));
+		}
 	}
 
 	private void executeDo(Do code, Scope scope) {
@@ -327,7 +343,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			/*
 			 * TODO install own action listeners
 			 */
-			MatchActions actions = new MatchActions();
+			MatchActions actions = new MatchActions(notifyId);
 			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
 				actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
 			}
@@ -386,7 +402,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Action action = this.behavior == null ? null : this.behavior.getAction(message.message);
 		if (action != null) {
 			ran = true;
-			run(action, message.scope);
+			run(action, message.scope.withSender(message.sender));
 		} else {
 			KlabAction a = Actors.INSTANCE.getSystemAction(message.message, message.sender, message.arguments,
 					message.scope);
@@ -401,10 +417,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		return Behaviors.same();
-	}
-
-	private Object evaluate(IKActorsValue value, Scope scope) {
-		return null;
 	}
 
 	/**

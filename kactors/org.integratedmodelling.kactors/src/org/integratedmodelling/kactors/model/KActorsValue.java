@@ -24,6 +24,27 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	private Type type;
 	private Object value;
+	
+	// to support costly translations from implementations
+	private Object data;
+
+	/**
+	 * Create a value that will be matched by anything except errors or null.
+	 * 
+	 * @return
+	 */
+	public static KActorsValue anyvalue() {
+		return new KActorsValue(Type.ANYVALUE, null);
+	}
+
+	/**
+	 * Create an error value. Pass an exception, string, or nothing.
+	 * 
+	 * @return
+	 */
+	public static KActorsValue error(Object o) {
+		return new KActorsValue(Type.ERROR, o);
+	}
 
 	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
@@ -85,6 +106,11 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.type = Type.TYPE;
 			this.value = match.getType();
 		}
+	}
+
+	private KActorsValue(Type type, Object value) {
+		this.type = type;
+		this.value = value;
 	}
 
 	private KActorsQuantity parseQuantity(Quantity quantity) {
@@ -159,6 +185,27 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	@Override
 	public Object getValue() {
+		if (KActors.INSTANCE.getValueTranslator() != null) {
+			return KActors.INSTANCE.getValueTranslator().translate(this, this.value);
+		}
 		return value;
+	}
+
+	/**
+	 * Use in translators to support complex and costly data processing.
+	 * 
+	 * @return
+	 */
+	public Object getData() {
+		return data;
+	}
+
+	/**
+	 * Use in translators to support complex and costly data processing.
+	 * 
+	 * @return
+	 */
+	public void setData(Object data) {
+		this.data = data;
 	}
 }
