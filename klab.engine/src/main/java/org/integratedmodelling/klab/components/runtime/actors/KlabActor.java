@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assignment;
@@ -52,8 +53,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected IBehavior behavior;
 	protected IActorIdentity<KlabMessage> identity;
-	protected Map<String, MatchActions> matchActions = Collections.synchronizedMap(new HashMap<>());
+	protected Map<Long, MatchActions> matchActions = Collections.synchronizedMap(new HashMap<>());
 
+	AtomicLong nextId = new AtomicLong(0);
+	
 	/**
 	 * Descriptor for actions to be taken when a firing is recorded with the ID used
 	 * as key in matchActions.
@@ -96,7 +99,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		boolean synchronous = false;
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
-		String notifyId;
+		Long notifyId;
 
 		public Scope(Action action, IRuntimeScope scope) {
 			this.action = action;
@@ -123,7 +126,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			return ret;
 		}
 
-		public Scope withNotifyId(String id) {
+		public Scope withNotifyId(Long id) {
 			Scope ret = new Scope(this);
 			ret.notifyId = id;
 			return ret;
@@ -133,7 +136,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			return identity;
 		}
 
-		public String getNotifyId() {
+		public Long getNotifyId() {
 			return notifyId;
 		}
 
@@ -318,11 +321,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * internal message if there is a group: in that case, set the ID in the scope.
 		 */
 
-		String notifyId = scope.notifyId;
+		Long notifyId = scope.notifyId;
 
 		if (code.getActions().size() > 0) {
 
-			notifyId = NameGenerator.newName();
+			notifyId = nextId.incrementAndGet();
 
 			/*
 			 * TODO install own action listeners

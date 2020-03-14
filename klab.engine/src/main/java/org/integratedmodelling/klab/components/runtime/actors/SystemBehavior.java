@@ -77,12 +77,12 @@ public class SystemBehavior {
 	 */
 	public static class Fire implements KlabMessage {
 
-		String listenerId;
+		Long listenerId;
 		Object value;
 		boolean finalize;
 		KlabActor.Scope scope;
 
-		public Fire(String listenerId, Object firedValue, boolean isFinal, KlabActor.Scope scope) {
+		public Fire(Long listenerId, Object firedValue, boolean isFinal, KlabActor.Scope scope) {
 			this.listenerId = listenerId;
 			this.value = firedValue;
 			this.finalize = isFinal;
