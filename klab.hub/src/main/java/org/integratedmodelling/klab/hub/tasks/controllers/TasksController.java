@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.tasks.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -44,17 +45,17 @@ public class TasksController {
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> getTasks(@RequestParam("type") Optional<TaskType> type,
 			@RequestParam("status") Optional<TaskStatus> status) {
-		HashMap<String, List<Task> > tasks = new HashMap<>();
+		List<Task> tasks = new ArrayList<>();
 		if (type.isPresent()) {
 			if (status.isPresent()) {
-				tasks.put("tasks", service.getTasks(type.get().getClazz(), status.get()));
+				tasks.addAll(service.getTasks(type.get().getClazz(), status.get()));
 			} else {
-				tasks.put("tasks", service.getTasks(type.get().getClazz()));
+				tasks.addAll(service.getTasks(type.get().getClazz()));
 			}
 		} else if (status.isPresent()){
-			tasks.put("tasks", service.getTasks(status.get()));
+			tasks.addAll(service.getTasks(status.get()));
 		} else {
-			tasks.put("tasks", service.getTasks());
+			tasks.addAll(service.getTasks());
 		}
 		ResponseEntity<?> resp = new ResponseEntity<>(tasks, HttpStatus.OK);
 		return resp;
