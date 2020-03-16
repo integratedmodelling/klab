@@ -156,7 +156,6 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         StatementGroup statementGroup = (StatementGroup)theEObject;
         T result = caseStatementGroup(statementGroup);
-        if (result == null) result = caseMessageCall(statementGroup);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }

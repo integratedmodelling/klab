@@ -8,6 +8,8 @@ import java.util.Map;
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
+import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.IStatement;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -15,14 +17,83 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.utils.Range;
 
 public class Behavior implements IBehavior {
+
+	/**
+	 * Pre-processed match value optimized for matching.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class Match {
+
+		KActorsValue value;
+
+		public Match(IKActorsValue ikActorsValue) {
+			this.value = (KActorsValue) ikActorsValue;
+		}
+
+		public boolean matches(Object value) {
+			switch (this.value.getType()) {
+			case ANYTHING:
+				return true;
+			case ANYVALUE:
+				return value != null;
+			case BOOLEAN:
+				return value instanceof Boolean && value.equals(this.value.getValue());
+			case CLASS:
+				break;
+			case DATE:
+				break;
+			case EXPRESSION:
+				System.out.println("PORCODIO AN EXPRESSION");
+				break;
+			case IDENTIFIER:
+				// TODO match and put the value in scope as named ID
+				break;
+			case LIST:
+				// TODO differentiate between multi-identifier and OR match for values in list
+				break;
+			case MAP:
+				break;
+			case NODATA:
+				return value == null || value instanceof Number && Double.isNaN(((Number)value).doubleValue());
+			case NUMBER:
+				return value instanceof Number && value.equals(this.value.getValue());
+			case NUMBERED_PATTERN:
+				break;
+			case OBSERVABLE:
+				break;
+			case QUANTITY:
+				break;
+			case RANGE:
+				return value instanceof Number
+						&& ((Range) (this.value.getValue())).contains(((Number) value).doubleValue());
+			case REGEXP:
+				break;
+			case STRING:
+				return value instanceof String && value.equals(this.value.getValue());
+			case TABLE:
+				break;
+			case TYPE:
+				break;
+			case URN:
+				break;
+			default:
+				break;
+
+			}
+			return false;
+		}
+	}
 
 	IKActorsBehavior statement;
 	Map<String, BehaviorAction> actions = new LinkedHashMap<>();
 	IMetadata metadata = new Metadata();
 	List<IAnnotation> annotations = new ArrayList<>();
-	
+
 	public Behavior(IKActorsBehavior statement) {
 		this.statement = statement;
 		for (IKActorsAction a : statement.getActions()) {
@@ -85,6 +156,10 @@ public class Behavior implements IBehavior {
 	public List<Action> getActions(String... match) {
 		List<Action> ret = new ArrayList<>();
 		for (Action action : actions.values()) {
+			if (match == null || match.length == 0) {
+				ret.add(action);
+				continue;
+			}
 			boolean ok = false;
 			for (String m : match) {
 				if (!ok && m.startsWith("@")) {
@@ -101,6 +176,11 @@ public class Behavior implements IBehavior {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public Action getAction(String actionId) {
+		return actions.get(actionId);
 	}
 
 }

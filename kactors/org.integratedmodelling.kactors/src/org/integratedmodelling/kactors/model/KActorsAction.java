@@ -9,13 +9,13 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 
 	private IKActorsBehavior behavior;
 	private String name;
-	KActorsCodeBlock code;
+	KActorsConcurrentGroup code;
 
 	public KActorsAction(Definition definition, KActorsBehavior parent) {
 		super(definition, parent);
 		this.behavior = parent;
 		this.name = definition.getName();
-		this.code = new KActorsCodeBlock(definition.getBody().getLists(), this);
+		this.code = new KActorsConcurrentGroup(definition.getBody().getLists(), this);
 	}
 
 	@Override

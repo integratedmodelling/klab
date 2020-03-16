@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Message {
+public @interface Action {
 
     /**
      * ID of the component. Must be unique, please use unambiguous paths like package or
@@ -41,7 +41,7 @@ public @interface Message {
      * 
      * @return component id
      */
-    String[] id();
+    String id();
 
     /**
      * List of other project or component IDs that this one depends on.

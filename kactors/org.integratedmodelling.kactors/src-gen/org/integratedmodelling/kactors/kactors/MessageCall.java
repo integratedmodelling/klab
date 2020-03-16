@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.MessageCall#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.MessageCall#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.MessageCall#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.MessageCall#getActions <em>Actions</em>}</li>
  * </ul>
  *
@@ -68,6 +69,28 @@ public interface MessageCall extends EObject
    * @generated
    */
   void setParameters(ParameterList value);
+
+  /**
+   * Returns the value of the '<em><b>Group</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Group</em>' containment reference.
+   * @see #setGroup(StatementGroup)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMessageCall_Group()
+   * @model containment="true"
+   * @generated
+   */
+  StatementGroup getGroup();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.MessageCall#getGroup <em>Group</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Group</em>' containment reference.
+   * @see #getGroup()
+   * @generated
+   */
+  void setGroup(StatementGroup value);
 
   /**
    * Returns the value of the '<em><b>Actions</b></em>' containment reference.

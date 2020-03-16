@@ -54,10 +54,12 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" eType="#//ParameterList"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="group" eType="#//StatementGroup"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="actions" eType="#//Actions"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="StatementGroup" eSuperTypes="#//MessageCall">
+  <eClassifiers xsi:type="ecore:EClass" name="StatementGroup">
     <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//MessageBody"
         containment="true"/>
   </eClassifiers>
@@ -70,9 +72,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="Statement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="assignment" eType="#//Assignment"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="verb" eType="#//MessageCall"
-        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="group" eType="#//StatementGroup"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="verb" eType="#//MessageCall"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="if" eType="#//IfStatement"

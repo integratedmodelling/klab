@@ -3,6 +3,7 @@
  */
 package org.integratedmodelling.kactors.kactors;
 
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,7 +21,7 @@ package org.integratedmodelling.kactors.kactors;
  * @model
  * @generated
  */
-public interface StatementGroup extends MessageCall
+public interface StatementGroup extends EObject
 {
   /**
    * Returns the value of the '<em><b>Body</b></em>' containment reference.

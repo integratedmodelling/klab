@@ -9,7 +9,7 @@ public class KActorsQuantity {
 	private String currency;
 	private Number value;
 
-	public KActorsQuantity() {
+	KActorsQuantity() {
 	}
 
 	public Number getValue() {

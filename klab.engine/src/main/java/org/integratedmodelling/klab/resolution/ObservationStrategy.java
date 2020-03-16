@@ -47,9 +47,36 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class ObservationStrategy {
 
+	/**
+	 * The observation strategy incarnated by this object. Used by the dataflow
+	 * compiler to properly assemble the dataflow.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public enum Strategy {
+		/**
+		 * Observable is directly observed; dependencies may have been added
+		 */
+		DIRECT,
+		/**
+		 * Observable has been decomposed into a legitimate observable and one or more
+		 * filters provided by an attribute resolver, to be applied to it in sequence if
+		 * resolving.
+		 */
+		FILTERING,
+		/**
+		 * Observable will be contextualized by resolving a set of objects to which the
+		 * observable is inherent, then applying a dereifying transformation chosen by
+		 * the runtime.
+		 */
+		DEREIFICATION
+	}
+
 	private List<Observable> observables = new ArrayList<>();
 	private Mode mode;
 	private List<IContextualizable> computation = new ArrayList<>();
+	private Strategy strategy = Strategy.DIRECT;
 
 	public ObservationStrategy(Observable observable, Mode mode) {
 		this.mode = mode;
@@ -226,6 +253,7 @@ public class ObservationStrategy {
 						observable.getDescription().getResolutionMode());
 
 				alternative.observables.add(filter);
+				alternative.strategy = Strategy.FILTERING;
 
 				ret.add(alternative);
 			}
@@ -236,6 +264,7 @@ public class ObservationStrategy {
 
 			List<IContextualizable> computations = new ArrayList<>();
 			IConcept inherent = null;
+			Strategy strategy = Strategy.DIRECT;
 
 			if (observable.is(Type.PRESENCE)) {
 
@@ -243,6 +272,7 @@ public class ObservationStrategy {
 				if (inherent != null && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
 					computations.addAll(Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
 							Mode.RESOLUTION, observable));
+					strategy = Strategy.DEREIFICATION;
 				}
 
 			} else if (scope.getCoverage().getSpace() != null && scope.getCoverage().getSpace().getDimensionality() >= 2
@@ -252,6 +282,7 @@ public class ObservationStrategy {
 				if (inherent != null && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
 					computations.addAll(Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
 							Mode.RESOLUTION, observable));
+					strategy = Strategy.DEREIFICATION;
 				}
 
 			} else if (observable.is(Type.RATIO)) {
@@ -272,6 +303,8 @@ public class ObservationStrategy {
 				ObservationStrategy alternative = new ObservationStrategy(inherentObservable, mode);
 
 				alternative.computation.addAll(computations);
+				alternative.strategy = strategy;
+
 				ret.add(alternative);
 			}
 
@@ -323,6 +356,16 @@ public class ObservationStrategy {
 	public String dump(String spacer) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Tells the model and the dataflow compiler how to handle the
+	 * contextualization.
+	 * 
+	 * @return
+	 */
+	public Strategy getStrategy() {
+		return strategy;
 	}
 
 }

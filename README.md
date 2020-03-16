@@ -1,6 +1,6 @@
 # k.LAB: a software stack for semantic modeling
 
-This project contains version 0.10.0 of k.LAB. The k.LAB software stack implements 
+This project contains version 0.10.x of k.LAB. The k.LAB software stack implements 
 a semantic web platform for integrated, distributed semantic modeling. See http://www.integratedmodelling.org 
 for details on k.LAB and the mission behind it.
 
@@ -14,21 +14,21 @@ knowledge. The resulting user experience enables workflows that only use the sem
 of the information in order to obtain results, making the need for modeling skills 
 a choice rather than a necessity for most users.
 
-While k.LAB has been in use for several years, this repository is a pre-alpha release 
-of a fully rewritten codebase, intended as the first production-level code to fully 
-implement the semantic meta-modeling paradigm. This repository does not provide useful 
-software yet. The first operational release of k.LAB v 0.10.0 is expected in Fall 
-or Winter 2018. It will include the following software components, most of which 
-have working prototypes in the distribution:
+While k.LAB has been in use for several years, k.LAB v 0.10.0 should be considered a 
+preview release and all APIs and code structure are subject to change at this time. 
+It includes the following software components:
 
 - Semantic modeling engine (klab.engine) providing:
     - support for the basic semantic modeling workflow: k.IM language support with 
-      reasoning, resolver, dataflow compiler and runtime.
+      reasoning, resolver, dataflow compiler and runtime;
     - support for creating and using URN-based non-semantic resources and for their 
-      semantic annotation in k.IM
+      semantic annotation in k.IM;
+    - support for instrumenting "live" sessions, users and observations with behaviors 
+      using the k.Actors language, enabling complex individual-based models and specialized 
+      applications;
     - support for 2D regular and irregular spatial extents (GIS functionalities) 
-      through Geotools, including OGC services
-    - support for regular and irregular temporal extents
+      through Geotools, including OGC services;
+    - support for regular and irregular temporal extents;
     - support for tabular resources with interfaces for common (XLS, Access, JDBC, 
       text) and specialized (weather stations) formats;
     - configurable runtime for local, enhanced local (using GPU and virtual memory) 
@@ -39,26 +39,35 @@ have working prototypes in the distribution:
     - support for machine learning through WEKA integration;
     - support for calibration and data assimilation through OpenDA integration;
     - REST API and UI for web-based modeling and administration
-- node
+- Node server software that can be installed on a network server to create a node of 
+  the k.LAB semantic web, with the option of spawning networked knowledge servers 
+  and modelling engines as seen fit by the node administrators.
 - Command-line tooling, including:
     - Command line engine interface for debugging and expert operations;
-    - OWL processor to save k.IM worldviews as OWL ontologies and perform inquiries
+    - OWL processor to save k.IM worldviews as OWL ontologies and perform inquiries 
+      and alignments
     - Bulk import, validation, publishing and CRUD operations on resources
 - Eclipse IDE for modelers, providing:
 - Component development tools:
     - Maven component archetype
-- Web UI
 - Web explorer application
-- User and developer documentation (based on Sphinx)
+- User and developer documentation (Asciidoc, in early stages of development)
 
-Users of the current released version (0.9.11) will not find anything useful in this 
-repository until the date of release. This repository contains a complete rewrite 
-of k.LAB which is entirely incompatible with previous versions, and is only released 
-for documentation at this time. Development takes place on Bitbucket; major releases 
-are also pushed to Github, at the discretion of the developers, when milestones are 
-reached.
+A working distribution of k.LAB is not easily obtainable by merely downloading and compiling 
+the code, as using the software requires registration to access the k.LAB semantic 
+web. Prospective users should consult https://www.integratedmodelling.org/statics/pages/gettingstarted.html 
+to access binary distributions, licensing information and registration instructions.
 
-Inquiries should be directed to info@integratedmodelling.org.
+The development of k.LAB has been or is being supported by the US National Science Foundation, the 
+European Union, UNEP-WCMC, the UK NERC, the Basque Government, the Interamerican Development Bank, 
+the United Nations and other actors, starting in 2007.
 
-## Authors
+The main active developers are:
+
+* Ferdinando Villa (lead developer and designer)
+* Enrico Girotto (Web development, release engineering)
+* Steven Wohl (authentication, server infrastructure)
+
+Any inquiries should be directed to info@integratedmodelling.org.
+
 

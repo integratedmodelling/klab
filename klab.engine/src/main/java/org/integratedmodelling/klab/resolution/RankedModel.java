@@ -10,7 +10,6 @@ import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -27,6 +26,7 @@ import org.integratedmodelling.klab.model.Contextualization;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -263,4 +263,8 @@ public class RankedModel extends Model implements IRankedModel {
 		return delegate.isDerived();
 	}
 
+	@Override
+	public Strategy getObservationStrategy() {
+		return delegate.getObservationStrategy();
+	}
 }

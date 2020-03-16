@@ -775,9 +775,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMessageCall_Actions()
+  public EReference getMessageCall_Group()
   {
     return (EReference)messageCallEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getMessageCall_Actions()
+  {
+    return (EReference)messageCallEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -863,7 +874,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Verb()
+  public EReference getStatement_Group()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(1);
   }
@@ -874,7 +885,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Group()
+  public EReference getStatement_Verb()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(2);
   }
@@ -2775,6 +2786,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     messageCallEClass = createEClass(MESSAGE_CALL);
     createEAttribute(messageCallEClass, MESSAGE_CALL__NAME);
     createEReference(messageCallEClass, MESSAGE_CALL__PARAMETERS);
+    createEReference(messageCallEClass, MESSAGE_CALL__GROUP);
     createEReference(messageCallEClass, MESSAGE_CALL__ACTIONS);
 
     statementGroupEClass = createEClass(STATEMENT_GROUP);
@@ -2786,8 +2798,8 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     statementEClass = createEClass(STATEMENT);
     createEReference(statementEClass, STATEMENT__ASSIGNMENT);
-    createEReference(statementEClass, STATEMENT__VERB);
     createEReference(statementEClass, STATEMENT__GROUP);
+    createEReference(statementEClass, STATEMENT__VERB);
     createEAttribute(statementEClass, STATEMENT__TEXT);
     createEReference(statementEClass, STATEMENT__IF);
     createEReference(statementEClass, STATEMENT__WHILE);
@@ -3016,7 +3028,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    statementGroupEClass.getESuperTypes().add(this.getMessageCall());
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -3058,6 +3069,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEClass(messageCallEClass, MessageCall.class, "MessageCall", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMessageCall_Name(), ecorePackage.getEString(), "name", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMessageCall_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMessageCall_Group(), this.getStatementGroup(), null, "group", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMessageCall_Actions(), this.getActions(), null, "actions", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementGroupEClass, StatementGroup.class, "StatementGroup", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -3069,8 +3081,8 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatement_Assignment(), this.getAssignment(), null, "assignment", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getStatement_Verb(), this.getMessageCall(), null, "verb", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Group(), this.getStatementGroup(), null, "group", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_Verb(), this.getMessageCall(), null, "verb", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStatement_Text(), ecorePackage.getEString(), "text", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_If(), this.getIfStatement(), null, "if", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_While(), this.getWhileStatement(), null, "while", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

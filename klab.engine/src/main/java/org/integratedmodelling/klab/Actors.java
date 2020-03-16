@@ -2,8 +2,11 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,14 +18,29 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.services.IActorsService;
+import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.components.runtime.actors.KlabAction;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.BehaviorReference;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -41,13 +59,17 @@ public enum Actors implements IActorsService {
 
 	@Inject
 	ParseHelper<Model> kActorsParser;
+
 	private ActorSystem<Void> supervisor;
 	private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Pair<String, Class<? extends KlabAction>>> actionClasses = Collections
+			.synchronizedMap(new HashMap<>());
 
 	public IBehavior getBehavior(String behaviorId) {
 		return behaviors.get(behaviorId);
 	}
-	
+
 	/**
 	 * The actor system entry point at /user and available as getSupervisor(). It
 	 * will be the (direct for now) father of all session actors. We create this to
@@ -111,13 +133,14 @@ public enum Actors implements IActorsService {
 	}
 
 	/**
-	 * Install listeners to build behaviors on read and organize them by project
+	 * Install listeners to build behaviors on read and organize them by project.
 	 */
 	public void setup() {
 		KActors.INSTANCE.addNotifier(new Notifier() {
 			@Override
 			public void notify(IKActorsBehavior behavior) {
-				behaviors.put(behavior.getName(), new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior));
+				behaviors.put(behavior.getName(),
+						new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior));
 			}
 		});
 	}
@@ -147,7 +170,8 @@ public enum Actors implements IActorsService {
 	/**
 	 * Create a direct child of the supervisor with the specified identity.
 	 * Implementations should only call this for top-level actors and have the
-	 * others created through messages to them.
+	 * others created through messages to them. The top-level identities for now are
+	 * user actors.
 	 * 
 	 * @param <T>
 	 * @param create
@@ -155,7 +179,130 @@ public enum Actors implements IActorsService {
 	 * @return
 	 */
 	public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
-		return ActorSystem.create(create, identity.getId());
+		return ActorSystem.create(create,
+				identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername())
+						: identity.getId());
+	}
+
+	private String sanitize(String username) {
+		// should be enough
+		return username.replace('.', '_');
+	}
+
+	/**
+	 * Called when a class annotated as a behavior is found.
+	 * 
+	 * @param annotation
+	 * @param cls
+	 */
+	@SuppressWarnings("unchecked")
+	public void registerBehavior(org.integratedmodelling.klab.api.extensions.actors.Behavior annotation, Class<?> cls) {
+
+		BehaviorReference descriptor = behaviorDescriptors.get(annotation.id());
+		if (descriptor == null) {
+			descriptor = new BehaviorReference();
+			behaviorDescriptors.put(annotation.id(), descriptor);
+			descriptor.setName(annotation.id());
+		}
+
+		if (!annotation.description().isEmpty()) {
+			descriptor.setDescription(annotation.description());
+		}
+		if (!annotation.color().isEmpty()) {
+			descriptor.setColor(annotation.color());
+		}
+
+		for (Class<?> cl : cls.getDeclaredClasses()) {
+			Action message = cl.getAnnotation(Action.class);
+			if (message != null) {
+				BehaviorReference.Action ad = new BehaviorReference.Action();
+				ad.setName(message.id());
+				ad.setDescription(message.description());
+				descriptor.getActions().add(ad);
+				this.actionClasses.put(message.id(), new Pair<>(annotation.id(), (Class<? extends KlabAction>) cl));
+			}
+		}
+	}
+
+	public void exportBehaviors(File file) {
+
+		/*
+		 * Fill this in so we can read actor files with the actual knowledge of the
+		 * installed behaviors. This is called at the right time, after loading and
+		 * before reading behaviors.
+		 */
+		KActors.INSTANCE.getBehaviorManifest().putAll(behaviorDescriptors);
+
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
+			mapper.setSerializationInclusion(Include.NON_NULL);
+			JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class,
+					BehaviorReference.class);
+			mapper.writerFor(type).writeValue(file, this.behaviorDescriptors);
+		} catch (IOException e) {
+			Logging.INSTANCE.error(e);
+		}
+	}
+
+	/**
+	 * Find the recipient for a message directed to self that does not match any
+	 * messages. This done at runtime to support shorthand syntax in k.Actors; any
+	 * unknown messages should go to the user actor using the UnknownMessage
+	 * pattern.
+	 * 
+	 * @param message
+	 * @param identity the identity that does not have the message. Look it up in
+	 *                 the identities above it.
+	 * @return an actor reference or null. If null, the asker should send an unknown
+	 *         message to the user actor.
+	 */
+	public Pair<String, ActorRef<KlabMessage>> lookupRecipient(String message, IActorIdentity<KlabMessage> identity) {
+
+		Pair<String, Class<? extends KlabAction>> record = actionClasses.get(message);
+		if (record != null) {
+			// it's one of the system behaviors: lookup the recipient based on behavior ID
+			switch (record.getFirst()) {
+			case "view":
+			case "session":
+				return new Pair<>(record.getFirst(), identity.getParentIdentity(Session.class).getActor());
+			case "user":
+				return new Pair<>(record.getFirst(), identity.getParentIdentity(EngineUser.class).getActor());
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Create and return an action from one of the system behaviors.
+	 * 
+	 * @param behavior
+	 * @param id
+	 * @param sender
+	 * @param arguments
+	 * @param messageId
+	 * @param scope
+	 * @return
+	 */
+	public KlabAction getSystemAction(String id, ActorRef<KlabMessage> sender, IParameters<String> arguments,
+			KlabActor.Scope scope) {
+		
+		Pair<String, Class<? extends KlabAction>> cls = actionClasses.get(id);
+		if (cls != null) {
+			try {
+				Constructor<? extends KlabAction> constructor = cls.getSecond().getConstructor(ActorRef.class,
+						IParameters.class, KlabActor.Scope.class);
+				return constructor.newInstance(sender, arguments, scope);
+			} catch (Throwable e) {
+				scope.getMonitor().error("Error while creating action " + id + ": " + e.getMessage());
+			}
+		}
+		return null;
+	}
+
+	public Collection<String> getBehaviorIds() {
+		return behaviors.keySet();
 	}
 
 }

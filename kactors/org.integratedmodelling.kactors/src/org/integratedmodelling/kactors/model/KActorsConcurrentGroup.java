@@ -3,6 +3,8 @@ package org.integratedmodelling.kactors.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.kactors.api.IKActorsStatement;
+import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementList;
 
@@ -13,21 +15,29 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  * @author Ferd
  *
  */
-public class KActorsCodeBlock extends KActorsStatement {
+public class KActorsConcurrentGroup extends KActorsStatement implements ConcurrentGroup {
 
-	List<List<KActorsStatement>> sequences = new ArrayList<>();
+	List<IKActorsStatement> sequences = new ArrayList<>();
 
-	public KActorsCodeBlock(List<StatementList> statements, KActorCodeStatement parent) {
-		super(parent, Type.STATEMENT_GROUP);
+	public KActorsConcurrentGroup(List<StatementList> statements, KActorCodeStatement parent) {
+		super(parent, Type.CONCURRENT_GROUP);
 		for (StatementList list : statements) {
-			List<KActorsStatement> sequence = new ArrayList<>();
+			List<IKActorsStatement> sequence = new ArrayList<>();
 			sequence.add(KActorsStatement.create(list.getFirst(), parent));
 			if (list.getNext() != null) {
 				for (Statement statement : list.getNext()) {
 					sequence.add(KActorsStatement.create(statement, parent));
 				}
 			}
+			if (!sequence.isEmpty()) {
+				this.sequences.add(new KActorsSequence(sequence, this));
+			}
 		}
+	}
+
+	@Override
+	public List<IKActorsStatement> getStatements() {
+		return this.sequences;
 	}
 
 }

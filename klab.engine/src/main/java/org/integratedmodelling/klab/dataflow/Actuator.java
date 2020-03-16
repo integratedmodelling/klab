@@ -78,6 +78,7 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
+import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.scale.Coverage;
@@ -204,8 +205,8 @@ public class Actuator implements IActuator {
 	 * Each list contains a service call and its local target name, null for the
 	 * main observable.
 	 */
-	private List<Pair<IServiceCall, IContextualizable>> computationStrategy = new ArrayList<>();
-	private List<Pair<IServiceCall, IContextualizable>> mediationStrategy = new ArrayList<>();
+	List<Pair<IServiceCall, IContextualizable>> computationStrategy = new ArrayList<>();
+	List<Pair<IServiceCall, IContextualizable>> mediationStrategy = new ArrayList<>();
 
 	/**
 	 * Documentation extracted from the models and other objects used and compiled
@@ -1379,7 +1380,7 @@ public class Actuator implements IActuator {
 	 * @param filter
 	 * @param existingActuators
 	 */
-	public void adoptFilter(Actuator filter, Map<String, Actuator> existingActuators) {
+	public void adoptFilter(Actuator filter, Map<String, Actuator> existingActuators, IMonitor monitor) {
 
 		/*
 		 * the observable is in the primary actuator, reference or not
@@ -1438,7 +1439,7 @@ public class Actuator implements IActuator {
 
 	}
 
-	private boolean hasDependency(IActuator dependency) {
+	boolean hasDependency(IActuator dependency) {
 		for (IActuator actuator : actuators) {
 			if (((Actuator) actuator).getObservable().canResolve(((Actuator) dependency).observable)) {
 				return true;
@@ -1447,7 +1448,7 @@ public class Actuator implements IActuator {
 		return false;
 	}
 
-	private KimServiceCall setFilteredArgument(IServiceCall function, String filteredArgument) {
+	KimServiceCall setFilteredArgument(IServiceCall function, String filteredArgument) {
 
 		IPrototype p = Extensions.INSTANCE.getPrototype(function.getName());
 		if (p != null && p.isFilter()) {
@@ -1464,7 +1465,7 @@ public class Actuator implements IActuator {
 		return (KimServiceCall) function;
 	}
 
-	private IContextualizable setFilteredArgument(IContextualizable resource, String filteredArgument) {
+	IContextualizable setFilteredArgument(IContextualizable resource, String filteredArgument) {
 		if (resource.getServiceCall() != null) {
 			resource = ((ComputableResource) resource).copy();
 			((ComputableResource) resource)

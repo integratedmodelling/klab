@@ -14,11 +14,12 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IKimStatement.Scope;
-import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.EActorAction;
 import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
 import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
@@ -319,7 +320,10 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		if (element instanceof EActorBehavior) {
 			// TODO make it an app if app, add the component/puzzle thingy if trait and a user if
 			// user
-			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/cog.png");
+			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/behavior.png");
+		}
+		if (element instanceof EActorAction) {
+			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/action.gif");
 		}
 		if (element instanceof EScriptFolder) {
 			return ResourceManager.decorateImage(
@@ -373,6 +377,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		}
 		if (element instanceof EActorBehavior) {
 			return ((EActorBehavior) element).getName();
+		}
+		if (element instanceof EActorAction) {
+			return ((EActorAction) element).getName();
 		}
 		if (element instanceof EDefinition) {
 			return ((EDefinition) element).getName();

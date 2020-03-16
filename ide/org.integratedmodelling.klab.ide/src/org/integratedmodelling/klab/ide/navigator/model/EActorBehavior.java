@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -47,14 +48,16 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 
 	@Override
 	public ENavigatorItem[] getEChildren() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ENavigatorItem> ret = new ArrayList<>();
+		for (IKActorsAction action : behavior.getActions()) {
+			ret.add(new EActorAction(action, this));
+		}
+		return ret.toArray(new ENavigatorItem[ret.size()]);
 	}
 
 	@Override
 	public boolean hasEChildren() {
-		// TODO Auto-generated method stub
-		return false;
+		return behavior.getActions().size() > 0;
 	}
 
 	@Override

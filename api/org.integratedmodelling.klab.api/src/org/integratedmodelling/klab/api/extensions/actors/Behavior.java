@@ -44,6 +44,12 @@ public @interface Behavior {
     String id();
 
     /**
+     * For the editor
+     * @return
+     */
+    String description() default "";
+    
+    /**
      * Version number, parseable by {@link org.integratedmodelling.klab.Version}.
      * 
      * @return version string

@@ -42,7 +42,7 @@ ArgumentDeclaration: {ArgumentDeclaration}
 MessageBody: {MessageBody} lists+=StatementList*;
 
 MessageCall:
-	(name=PathName ('(' (parameters=ParameterList)? ')')? |  StatementGroup) (':' actions=Actions)?
+	(name=PathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 ;
 
 StatementGroup: {StatementGroup} '(' body=MessageBody? ')'
@@ -54,8 +54,8 @@ StatementList:
 
 Statement:
 	assignment=Assignment |
-	verb=MessageCall |
 	group=StatementGroup |
+	verb=MessageCall |
 	text=EMBEDDEDTEXT |
 	if=IfStatement |
 	while=WhileStatement |

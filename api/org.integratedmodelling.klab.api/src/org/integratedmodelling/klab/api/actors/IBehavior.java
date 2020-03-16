@@ -48,4 +48,12 @@ public interface IBehavior extends IKimObject {
 	 */
 	List<Action> getActions(String... match);
 
+	/**
+	 * Get an action by name.
+	 * 
+	 * @param actionId local name of the action (no path)
+	 * @return the action or null
+	 */
+	Action getAction(String actionId);
+	
 }

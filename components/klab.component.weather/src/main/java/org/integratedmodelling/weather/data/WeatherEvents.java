@@ -57,16 +57,17 @@ public enum WeatherEvents {
 
 	private WeatherEvents() {
 		ebox = new PersistentTableBuilder<Long, WeatherEvent>("weatherevents", Long.class, WeatherEvent.class)
-				.column("precipitation_mm", DataType.DOUBLE, true).column("id", DataType.LONG, true)
-				.column("area_m2", DataType.DOUBLE).column("start_long", DataType.LONG, true)
-				.column("end_long", DataType.LONG, true).column("duration_hours", DataType.INT)
-				.column("bounding_box", DataType.SHAPE, true).build((event) -> {
-					return event.asData();
-				}, (data) -> {
-					return new WeatherEvent(data);
-				}, (event) -> {
-					return event.getId();
-				});
+				.column("precipitation_mm", DataType.DOUBLE, true)
+				.column("id", DataType.LONG, true)
+				.column("area_m2", DataType.DOUBLE)
+				.column("start_long", DataType.LONG, true)
+				.column("end_long", DataType.LONG, true)
+				.column("duration_hours", DataType.INT)
+				.column("bounding_box", DataType.SHAPE, true)
+				.build(
+						(event) -> { return event.asData(); }, 
+						(data)  -> { return new WeatherEvent(data);}, 
+						(event) -> { return event.getId(); });
 	}
 
 	public void setup() {

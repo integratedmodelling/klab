@@ -67,8 +67,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 			if (imported != null) {
 				this.imports.add(imported);
 			}
-		}
-		
+		}	
 	}
 
 	@Override

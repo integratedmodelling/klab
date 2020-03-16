@@ -16,6 +16,7 @@ import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.ParameterList;
+import org.integratedmodelling.kactors.kactors.StatementGroup;
 
 /**
  * <!-- begin-user-doc -->
@@ -27,6 +28,7 @@ import org.integratedmodelling.kactors.kactors.ParameterList;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getActions <em>Actions</em>}</li>
  * </ul>
  *
@@ -63,6 +65,16 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
    * @ordered
    */
   protected ParameterList parameters;
+
+  /**
+   * The cached value of the '{@link #getGroup() <em>Group</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getGroup()
+   * @generated
+   * @ordered
+   */
+  protected StatementGroup group;
 
   /**
    * The cached value of the '{@link #getActions() <em>Actions</em>}' containment reference.
@@ -176,6 +188,56 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
    * @generated
    */
   @Override
+  public StatementGroup getGroup()
+  {
+    return group;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetGroup(StatementGroup newGroup, NotificationChain msgs)
+  {
+    StatementGroup oldGroup = group;
+    group = newGroup;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.MESSAGE_CALL__GROUP, oldGroup, newGroup);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setGroup(StatementGroup newGroup)
+  {
+    if (newGroup != group)
+    {
+      NotificationChain msgs = null;
+      if (group != null)
+        msgs = ((InternalEObject)group).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MESSAGE_CALL__GROUP, null, msgs);
+      if (newGroup != null)
+        msgs = ((InternalEObject)newGroup).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MESSAGE_CALL__GROUP, null, msgs);
+      msgs = basicSetGroup(newGroup, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MESSAGE_CALL__GROUP, newGroup, newGroup));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Actions getActions()
   {
     return actions;
@@ -232,6 +294,8 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
     {
       case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         return basicSetParameters(null, msgs);
+      case KactorsPackage.MESSAGE_CALL__GROUP:
+        return basicSetGroup(null, msgs);
       case KactorsPackage.MESSAGE_CALL__ACTIONS:
         return basicSetActions(null, msgs);
     }
@@ -252,6 +316,8 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
         return getName();
       case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         return getParameters();
+      case KactorsPackage.MESSAGE_CALL__GROUP:
+        return getGroup();
       case KactorsPackage.MESSAGE_CALL__ACTIONS:
         return getActions();
     }
@@ -273,6 +339,9 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
         return;
       case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         setParameters((ParameterList)newValue);
+        return;
+      case KactorsPackage.MESSAGE_CALL__GROUP:
+        setGroup((StatementGroup)newValue);
         return;
       case KactorsPackage.MESSAGE_CALL__ACTIONS:
         setActions((Actions)newValue);
@@ -297,6 +366,9 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
       case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         setParameters((ParameterList)null);
         return;
+      case KactorsPackage.MESSAGE_CALL__GROUP:
+        setGroup((StatementGroup)null);
+        return;
       case KactorsPackage.MESSAGE_CALL__ACTIONS:
         setActions((Actions)null);
         return;
@@ -318,6 +390,8 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         return parameters != null;
+      case KactorsPackage.MESSAGE_CALL__GROUP:
+        return group != null;
       case KactorsPackage.MESSAGE_CALL__ACTIONS:
         return actions != null;
     }
