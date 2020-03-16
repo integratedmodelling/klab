@@ -77,17 +77,21 @@ public class SystemBehavior {
 	 */
 	public static class Fire implements KlabMessage {
 
-		Long listenerId;
 		Object value;
 		boolean finalize;
 		KlabActor.Scope scope;
 
-		public Fire(Long listenerId, Object firedValue, boolean isFinal, KlabActor.Scope scope) {
-			this.listenerId = listenerId;
+		public Fire(Object firedValue, boolean isFinal, KlabActor.Scope scope) {
 			this.value = firedValue;
 			this.finalize = isFinal;
 			this.scope = scope;
 		}
+		
+		@Override
+		public String toString() {
+			return "[FIRE" + value + " @" + scope + "]";
+		}
+
 	}
 
 	/**
@@ -114,6 +118,11 @@ public class SystemBehavior {
 				this.arguments.putAll(arguments);
 			}
 			this.scope = scope;
+		}
+		
+		@Override
+		public String toString() {
+			return "[" + message + " @" + scope + "]";
 		}
 
 	}

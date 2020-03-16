@@ -56,7 +56,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Map<Long, MatchActions> matchActions = Collections.synchronizedMap(new HashMap<>());
 
 	AtomicLong nextId = new AtomicLong(0);
-	
+
 	/**
 	 * Descriptor for actions to be taken when a firing is recorded with the ID used
 	 * as key in matchActions.
@@ -71,7 +71,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		public void match(Object value, Scope scope) {
 
-			Scope s = scope.withNotifyId(scope.notifyId);
+			Scope s = scope.withNotifyId(notifyId);
 
 			for (Pair<Match, IKActorsStatement> match : matches) {
 				if (match.getFirst().matches(value)) {
@@ -124,10 +124,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.sender = scope.sender;
 		}
 
-//		Scope get(IKActorsStatement statement) {
-//			// TODO check if we need a new one every time - there's no change here.
-//			return new Scope(this);
-//		}
+		public String toString() {
+			return "{S " + notifyId + " " + action + "}";
+		}
 
 		public Scope synchronous() {
 			Scope ret = new Scope(this);
@@ -211,12 +210,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected Behavior<KlabMessage> reactToFire(Fire message) {
-		if (message.listenerId != null) {
-			MatchActions actions = matchActions.get(message.listenerId);
+		if (message.scope.notifyId != null) {
+			MatchActions actions = matchActions.get(message.scope.notifyId);
 			if (actions != null) {
 				actions.match(message.value, message.scope);
 				if (message.finalize) {
-					matchActions.remove(message.listenerId);
+					matchActions.remove(message.scope.notifyId);
 				}
 			}
 		}
@@ -315,8 +314,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	private void executeFire(FireValue code, Scope scope) {
 		if (scope.sender != null) {
-			scope.sender.tell(new Fire((scope.notifyId),
-					code.getValue().getValue(), /* TODO FIXME boh */true, scope));
+			scope.sender.tell(new Fire(code.getValue().getValue(), /* TODO FIXME boh */true, scope.parent));
 		}
 	}
 

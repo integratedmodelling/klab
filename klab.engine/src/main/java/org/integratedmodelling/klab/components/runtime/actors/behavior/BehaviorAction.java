@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.model.Annotation;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public class BehaviorAction implements IBehavior.Action {
 
@@ -27,6 +28,7 @@ public class BehaviorAction implements IBehavior.Action {
 		for (IKimAnnotation annotation : action.getAnnotations()) {
 			this.annotations.add(new Annotation(annotation));
 		}
+		
 	}
 
 	@Override
@@ -34,6 +36,11 @@ public class BehaviorAction implements IBehavior.Action {
 		return statement.getName();
 	}
 
+	@Override
+	public String toString() {
+		return "#(" + StringUtils.abbreviate(statement.getSourceCode(), 26) + ")";
+	}
+	
 	@Override
 	public String getName() {
 		return behavior.getName() + "." + this.getId();

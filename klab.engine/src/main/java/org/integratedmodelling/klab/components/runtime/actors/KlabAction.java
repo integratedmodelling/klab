@@ -31,7 +31,7 @@ public abstract class KlabAction {
 	}
 
 	public void fire(Object value, boolean isFinal) {
-		this.sender.tell(new Fire(scope.getNotifyId(), value, isFinal, scope));
+		this.sender.tell(new Fire(value, isFinal, scope));
 	}
 	
 	abstract void run();

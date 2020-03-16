@@ -15,6 +15,7 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
@@ -37,10 +38,12 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
@@ -331,7 +334,7 @@ public class DataflowCompiler {
 			IObservable modelObservable = null;
 			if (!models.isEmpty()) {
 				modelObservable = models.iterator().next().model.getObservables().get(0);
-				if (!modelObservable.equals(this.observable)) {
+				if (modelObservable.getType().resolves(this.observable.getType()) < 0) {
 
 					/**
 					 * Secondary output! We may be already part of the actuator for this (in which
@@ -538,6 +541,7 @@ public class DataflowCompiler {
 //			System.out.println(StringUtils.spaces(level * 3) + this);
 
 			Actuator ret = createActuator(dataflow, monitor, generated);
+			
 			if (!ret.isReference()) {
 
 //				if (Units.INSTANCE.needsUnits(this.observable)) {
@@ -565,6 +569,56 @@ public class DataflowCompiler {
 					 * compile in the child providing the filtered observable, then add the
 					 * dependencies and computations in the others.
 					 */
+					List<Actuator> observ = new ArrayList<>();
+					List<Actuator> filters = new ArrayList<>();
+					for (Node child : sortChildren()) {
+						Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
+						if (achild.isFilter()) {
+							filters.add(achild);
+						} else {
+							observ.add(achild);
+						}
+					}
+					
+					if (observ.size() != 1) {
+						throw new KlabInternalErrorException("unexpected >1 observables in filtering actuator");
+					}
+					
+					ret.actuators.add(observ.get(0));
+					
+					for (Actuator filter : filters) {
+
+						/*
+						 * adopt any dependencies from the filter; if the dependency exists in the
+						 * passed catalog and we don't already have it, compile in a reference to it,
+						 * otherwise put it in here.
+						 */
+						for (IActuator dependency : filter.actuators) {
+							if (((Actuator)ret).hasDependency(dependency)) {
+								continue;
+							}
+//							if (!((Actuator) dependency).isReference() && existingActuators.containsKey(dependency.getName())
+//									&& !haveActuatorNamed(dependency.getName())) {
+//								dependency = ((Actuator) dependency).getReference();
+//							}
+							ret.actuators.add(dependency);
+						}
+//
+						// compile in all mediations as they are
+						for (Pair<IServiceCall, IContextualizable> mediator : filter.mediationStrategy) {
+							ret.mediationStrategy.add(mediator);
+						}
+
+						/*
+						 * compile in all filter computations, making a copy and ensuring the target is
+						 * our filtered observable. These can only be filters by virtue of validation.
+						 */
+						for (Pair<IServiceCall, IContextualizable> computation : filter.computationStrategy) {
+							ret.computationStrategy.add(new Pair<>(ret.setFilteredArgument(computation.getFirst(), observ.get(0).getName()),
+									ret.setFilteredArgument(computation.getSecond(), observ.get(0).getName())));
+						}
+					}
+					
 
 				} else {
 
@@ -584,11 +638,11 @@ public class DataflowCompiler {
 						// this may be a new actuator or a reference to an existing one.
 						Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
 
-						if (achild.isFilter()) {
-
-							ret.adoptFilter(achild, actuatorCatalog, monitor);
-
-						} else {
+//						if (achild.isFilter()) {
+//
+//							ret.adoptFilter(achild, actuatorCatalog, monitor);
+//
+//						} else {
 
 							ret.getActuators().add(achild);
 							recordUnits(achild, chosenUnits);
@@ -598,7 +652,7 @@ public class DataflowCompiler {
 									ret.addMediation(mediator, achild);
 								}
 							}
-						}
+//						}
 					}
 				}
 
