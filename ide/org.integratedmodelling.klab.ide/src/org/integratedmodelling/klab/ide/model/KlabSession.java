@@ -124,8 +124,13 @@ public class KlabSession extends KlabPeer {
 		}
 
 		protected IStatus run(IProgressMonitor monitor) {
-			if (Activator.engineMonitor().isRunning()) {
-				Activator.post(IMessage.MessageClass.Authorization, IMessage.Type.NetworkStatus, "networkStatus");
+			try {
+				if (Activator.engineMonitor().isRunning()) {
+					Activator.post(IMessage.MessageClass.Authorization, IMessage.Type.NetworkStatus, "networkStatus");
+				}
+			} catch (Throwable t) {
+				// shut up
+				System.out.println("Error while checking network: " + t.getMessage());
 			}
 			schedule(NETWORK_CHECK_INTERVAL_SECONDS * 1000);
 			return Status.OK_STATUS;
