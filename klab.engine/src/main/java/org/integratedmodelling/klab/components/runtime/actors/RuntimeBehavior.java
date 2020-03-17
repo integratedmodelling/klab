@@ -1,16 +1,13 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.util.Collection;
 import java.util.Random;
 
-import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-
-import akka.actor.typed.ActorRef;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 
 /**
  * 
@@ -34,8 +31,8 @@ public class RuntimeBehavior {
 	@Action(id = "observe")
 	public static class Observe extends KlabAction {
 
-		public Observe(ActorRef<KlabMessage> sender, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(sender, arguments, scope);
+		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
+			super(identity, arguments, scope);
 		}
 
 		@Override
@@ -53,8 +50,8 @@ public class RuntimeBehavior {
 		double probability = 0.5;
 		Object fired = null;
 
-		public Maybe(ActorRef<KlabMessage> sender, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(sender, arguments, scope);
+		public Maybe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
+			super(identity, arguments, scope);
 			boolean pdef = false;
 			for (String key : arguments.getUnnamedKeys()) {
 				Object o = arguments.get(key);
@@ -86,12 +83,8 @@ public class RuntimeBehavior {
 	@Action(id = "when")
 	public static class When extends KlabAction {
 
-		String listenerId;
-		Collection<KActorsValue> value;
-		ActorRef<KlabMessage> sender;
-
-		public When(ActorRef<KlabMessage> sender, IParameters<String> arguments,  KlabActor.Scope scope) {
-			super(sender, arguments, scope);
+		public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,  KlabActor.Scope scope) {
+			super(identity, arguments, scope);
 //
 //			this.listenerId = listenerId;
 //			this.value = matches;

@@ -18,6 +18,8 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
+import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -112,6 +114,13 @@ public enum Actors implements IActorsService {
 		}
 		this.supervisor = ActorSystem.create(KlabSupervisor.create(), "klab-system");
 		Services.INSTANCE.registerService(this, IActorsService.class);
+		KActors.INSTANCE.setValueTranslator(new ValueTranslator() {
+			@Override
+			public Object translate(KActorsValue container, Object value) {
+				// TODO Auto-generated method stub
+				return value;
+			}
+		});
 	}
 
 	@Override
@@ -285,15 +294,15 @@ public enum Actors implements IActorsService {
 	 * @param scope
 	 * @return
 	 */
-	public KlabAction getSystemAction(String id, ActorRef<KlabMessage> sender, IParameters<String> arguments,
+	public KlabAction getSystemAction(String id, IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
 			KlabActor.Scope scope) {
-		
+
 		Pair<String, Class<? extends KlabAction>> cls = actionClasses.get(id);
 		if (cls != null) {
 			try {
-				Constructor<? extends KlabAction> constructor = cls.getSecond().getConstructor(ActorRef.class,
+				Constructor<? extends KlabAction> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
 						IParameters.class, KlabActor.Scope.class);
-				return constructor.newInstance(sender, arguments, scope);
+				return constructor.newInstance(identity, arguments, scope);
 			} catch (Throwable e) {
 				scope.getMonitor().error("Error while creating action " + id + ": " + e.getMessage());
 			}

@@ -5,6 +5,7 @@ import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 
 import akka.actor.typed.ActorRef;
 
@@ -18,22 +19,25 @@ import akka.actor.typed.ActorRef;
  */
 public abstract class KlabAction {
 
-	private ActorRef<KlabMessage> sender;
+	protected ActorRef<KlabMessage> sender;
 	protected IParameters<String> arguments;
-	private KlabActor.Scope scope;
-
-	protected final Boolean DEFAULT_FIRE = Boolean.TRUE;
+	protected KlabActor.Scope scope;
+	protected IActorIdentity<KlabMessage> identity;
 	
-	public KlabAction(ActorRef<KlabMessage> sender, IParameters<String> arguments, KlabActor.Scope scope) {
-		this.sender = sender;
+	protected final Boolean DEFAULT_FIRE = Boolean.TRUE;
+
+	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
+			KlabActor.Scope scope) {
+		this.sender = identity.getActor();
 		this.arguments = arguments;
 		this.scope = scope;
+		this.identity = identity;
 	}
 
 	public void fire(Object value, boolean isFinal) {
-		this.sender.tell(new Fire(value, isFinal, scope));
+		this.sender.tell(new Fire(scope.listenerId, value, isFinal));
 	}
-	
+
 	abstract void run();
 
 }

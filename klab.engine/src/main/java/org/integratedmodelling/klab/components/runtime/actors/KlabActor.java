@@ -81,8 +81,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			}
 		}
 
-		public MatchActions(Long listenerId) {
+		public MatchActions(Long listenerId, Scope scope) {
 			this.listenerId = listenerId;
+			this.scope = scope;
 		}
 	}
 
@@ -184,7 +185,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	}
 
-	protected IIdentity getIdentity() {
+	protected IActorIdentity<KlabMessage> getIdentity() {
 		return this.identity;
 	}
 
@@ -211,12 +212,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected Behavior<KlabMessage> reactToFire(Fire message) {
-		if (message.scope.listenerId != null) {
-			MatchActions actions = listeners.get(message.scope.listenerId);
+		if (message.listenerId != null) {
+			MatchActions actions = listeners.get(message.listenerId);
 			if (actions != null) {
 				actions.match(message.value);
 				if (message.finalize) {
-					listeners.remove(message.scope.listenerId);
+					listeners.remove(message.listenerId);
 				}
 			}
 		}
@@ -315,7 +316,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	private void executeFire(FireValue code, Scope scope) {
 		if (scope.sender != null) {
-			scope.sender.tell(new Fire(code.getValue().getValue(), /* TODO FIXME boh */true, scope.parent));
+			scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), /* TODO FIXME boh */true));
 		}
 	}
 
@@ -345,7 +346,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			/*
 			 * TODO install own action listeners
 			 */
-			MatchActions actions = new MatchActions(notifyId);
+			MatchActions actions = new MatchActions(notifyId, scope);
 			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
 				actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
 			}
@@ -406,7 +407,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			ran = true;
 			run(action, message.scope.withSender(message.sender));
 		} else {
-			KlabAction a = Actors.INSTANCE.getSystemAction(message.message, message.sender, message.arguments,
+			KlabAction a = Actors.INSTANCE.getSystemAction(message.message, this.getIdentity(), message.arguments,
 					message.scope);
 			if (a != null) {
 				ran = true;
