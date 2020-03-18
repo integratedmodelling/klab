@@ -655,7 +655,7 @@ public class ModelKbox extends ObservableKbox {
 				IConcept type = attr.getType();
 				if (model.isInstantiator()) {
 					IConcept context = Observables.INSTANCE.getContextType(type);
-					if (!context.is(model.getObservables().get(0))) {
+					if (context == null || !context.is(model.getObservables().get(0))) {
 						type = attr.getBuilder(monitor).within(model.getObservables().get(0).getType()).buildConcept();
 					}
 				}
