@@ -5,6 +5,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 
 /**
@@ -30,6 +31,14 @@ public class ViewBehavior {
 
 		@Override
 		void run() {
+			
+			
+			
+			Session session = this.identity.getParentIdentity(Session.class);
+//			session.getMonitor().send(o);
+			
+			
+			
 			// TODO Auto-generated method stub
 			System.out.println("ALERT! ALERT! SENT BY " + sender);
 		}
