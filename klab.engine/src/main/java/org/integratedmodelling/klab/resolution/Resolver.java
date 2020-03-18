@@ -456,13 +456,12 @@ public enum Resolver {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
 			// should be resolving a CandidateObservable
 			ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
-			Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
-			if (newCoverage.isEmpty()) {
+			coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+			if (coverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
 						+ strategy.getObservables().get(0).getName());
 				break;
 			}
-			coverage = newCoverage;
 		}
 
 		ret.setCoverage(coverage);
