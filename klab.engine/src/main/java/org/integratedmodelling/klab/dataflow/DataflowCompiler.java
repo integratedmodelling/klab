@@ -541,7 +541,7 @@ public class DataflowCompiler {
 //			System.out.println(StringUtils.spaces(level * 3) + this);
 
 			Actuator ret = createActuator(dataflow, monitor, generated);
-			
+
 			if (!ret.isReference()) {
 
 //				if (Units.INSTANCE.needsUnits(this.observable)) {
@@ -579,13 +579,13 @@ public class DataflowCompiler {
 							observ.add(achild);
 						}
 					}
-					
+
 					if (observ.size() != 1) {
 						throw new KlabInternalErrorException("unexpected >1 observables in filtering actuator");
 					}
-					
+
 					ret.actuators.add(observ.get(0));
-					
+
 					for (Actuator filter : filters) {
 
 						/*
@@ -594,7 +594,7 @@ public class DataflowCompiler {
 						 * otherwise put it in here.
 						 */
 						for (IActuator dependency : filter.actuators) {
-							if (((Actuator)ret).hasDependency(dependency)) {
+							if (((Actuator) ret).hasDependency(dependency)) {
 								continue;
 							}
 //							if (!((Actuator) dependency).isReference() && existingActuators.containsKey(dependency.getName())
@@ -614,11 +614,19 @@ public class DataflowCompiler {
 						 * our filtered observable. These can only be filters by virtue of validation.
 						 */
 						for (Pair<IServiceCall, IContextualizable> computation : filter.computationStrategy) {
-							ret.computationStrategy.add(new Pair<>(ret.setFilteredArgument(computation.getFirst(), observ.get(0).getName()),
-									ret.setFilteredArgument(computation.getSecond(), observ.get(0).getName())));
+							ret.computationStrategy.add(
+									new Pair<>(ret.setFilteredArgument(computation.getFirst(), observ.get(0).getName()),
+											ret.setFilteredArgument(computation.getSecond(), observ.get(0).getName())));
 						}
 					}
-					
+
+				} else if (this.strategy == Strategy.DISTRIBUTION) {
+
+					/*
+					 * Should create an independent sub-dataflow per object after resolution; main
+					 * resolver should just assess the existence of coverage
+					 */
+					System.out.println("ZIOOIA");
 
 				} else {
 
@@ -644,14 +652,14 @@ public class DataflowCompiler {
 //
 //						} else {
 
-							ret.getActuators().add(achild);
-							recordUnits(achild, chosenUnits);
-							if (sources.containsKey(achild.getName())) {
-								for (IContextualizable mediator : computeMediators(sources.get(achild.getName()),
-										achild.getObservable(), scale)) {
-									ret.addMediation(mediator, achild);
-								}
+						ret.getActuators().add(achild);
+						recordUnits(achild, chosenUnits);
+						if (sources.containsKey(achild.getName())) {
+							for (IContextualizable mediator : computeMediators(sources.get(achild.getName()),
+									achild.getObservable(), scale)) {
+								ret.addMediation(mediator, achild);
 							}
+						}
 //						}
 					}
 				}
@@ -770,7 +778,7 @@ public class DataflowCompiler {
 
 		/*
 		 * sort by reverse refcount of model, so that actuators are always output before
-		 * any references to them. Ensure that filters are output last.
+		 * any references to them.
 		 */
 		private List<Node> sortChildren() {
 			List<Node> ret = new ArrayList<>(children);
@@ -778,14 +786,14 @@ public class DataflowCompiler {
 
 				@Override
 				public int compare(DataflowCompiler.Node o1, DataflowCompiler.Node o2) {
-					if (o1.observable.getFilteredObservable() != null
-							&& o2.observable.getFilteredObservable() == null) {
-						return 1;
-					}
-					if (o1.observable.getFilteredObservable() == null
-							&& o2.observable.getFilteredObservable() != null) {
-						return -1;
-					}
+//					if (o1.observable.getFilteredObservable() != null
+//							&& o2.observable.getFilteredObservable() == null) {
+//						return 1;
+//					}
+//					if (o1.observable.getFilteredObservable() == null
+//							&& o2.observable.getFilteredObservable() != null) {
+//						return -1;
+//					}
 					if (o2.models.isEmpty() && o1.models.isEmpty()) {
 						return 0;
 					}

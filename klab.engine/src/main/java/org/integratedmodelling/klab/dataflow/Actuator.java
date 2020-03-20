@@ -1373,71 +1373,71 @@ public class Actuator implements IActuator {
 				|| observable.getDescription() == IActivity.Description.CLASSIFICATION;
 	}
 
-	/**
-	 * Set things up to use the filter model compiled into the passed actuator. The
-	 * actuator sorting strategy ensures filters are called last.
-	 * 
-	 * @param filter
-	 * @param existingActuators
-	 */
-	public void adoptFilter(Actuator filter, Map<String, Actuator> existingActuators, IMonitor monitor) {
-
-		/*
-		 * the observable is in the primary actuator, reference or not
-		 */
-		IObservable filtered = filter.observable.getFilteredObservable();
-
-		/*
-		 * match it to one of our dependencies. If not there, we have a screwup.
-		 */
-		for (IActuator actuator : actuators) {
-			if (((Actuator) actuator).observable.canResolve((Observable) filtered)) {
-				filtered = ((Actuator) actuator).observable;
-				break;
-			}
-		}
-
-		if (filter.isReference()) {
-			// switch to original actuator
-			filter = existingActuators.get(filter.getReferenceName());
-		}
-
-		if (filter == null || !existingActuators.containsKey(filter.getReferenceName())) {
-			// should never happen - remove when we're certain that it doesn't indeed
-			throw new KlabInternalErrorException("UNRESOLVED FILTER REFERENCE!");
-		}
-
-		/*
-		 * adopt any dependencies from the filter; if the dependency exists in the
-		 * passed catalog and we don't already have it, compile in a reference to it,
-		 * otherwise put it in here.
-		 */
-		for (IActuator dependency : filter.actuators) {
-			if (hasDependency(dependency)) {
-				continue;
-			}
-			if (!((Actuator) dependency).isReference() && existingActuators.containsKey(dependency.getName())
-					&& !haveActuatorNamed(dependency.getName())) {
-				dependency = ((Actuator) dependency).getReference();
-			}
-			this.actuators.add(dependency);
-		}
-
-		// compile in all mediations as they are
-		for (Pair<IServiceCall, IContextualizable> mediator : filter.mediationStrategy) {
-			this.mediationStrategy.add(mediator);
-		}
-
-		/*
-		 * compile in all filter computations, making a copy and ensuring the target is
-		 * our filtered observable. These can only be filters by virtue of validation.
-		 */
-		for (Pair<IServiceCall, IContextualizable> computation : filter.computationStrategy) {
-			this.computationStrategy.add(new Pair<>(setFilteredArgument(computation.getFirst(), filtered.getName()),
-					setFilteredArgument(computation.getSecond(), filtered.getName())));
-		}
-
-	}
+//	/**
+//	 * Set things up to use the filter model compiled into the passed actuator. The
+//	 * actuator sorting strategy ensures filters are called last.
+//	 * 
+//	 * @param filter
+//	 * @param existingActuators
+//	 */
+//	private void adoptFilter(Actuator filter, Map<String, Actuator> existingActuators, IMonitor monitor) {
+//
+//		/*
+//		 * the observable is in the primary actuator, reference or not
+//		 */
+//		IObservable filtered = filter.observable.getFilteredObservable();
+//
+//		/*
+//		 * match it to one of our dependencies. If not there, we have a screwup.
+//		 */
+//		for (IActuator actuator : actuators) {
+//			if (((Actuator) actuator).observable.canResolve((Observable) filtered)) {
+//				filtered = ((Actuator) actuator).observable;
+//				break;
+//			}
+//		}
+//
+//		if (filter.isReference()) {
+//			// switch to original actuator
+//			filter = existingActuators.get(filter.getReferenceName());
+//		}
+//
+//		if (filter == null || !existingActuators.containsKey(filter.getReferenceName())) {
+//			// should never happen - remove when we're certain that it doesn't indeed
+//			throw new KlabInternalErrorException("UNRESOLVED FILTER REFERENCE!");
+//		}
+//
+//		/*
+//		 * adopt any dependencies from the filter; if the dependency exists in the
+//		 * passed catalog and we don't already have it, compile in a reference to it,
+//		 * otherwise put it in here.
+//		 */
+//		for (IActuator dependency : filter.actuators) {
+//			if (hasDependency(dependency)) {
+//				continue;
+//			}
+//			if (!((Actuator) dependency).isReference() && existingActuators.containsKey(dependency.getName())
+//					&& !haveActuatorNamed(dependency.getName())) {
+//				dependency = ((Actuator) dependency).getReference();
+//			}
+//			this.actuators.add(dependency);
+//		}
+//
+//		// compile in all mediations as they are
+//		for (Pair<IServiceCall, IContextualizable> mediator : filter.mediationStrategy) {
+//			this.mediationStrategy.add(mediator);
+//		}
+//
+//		/*
+//		 * compile in all filter computations, making a copy and ensuring the target is
+//		 * our filtered observable. These can only be filters by virtue of validation.
+//		 */
+//		for (Pair<IServiceCall, IContextualizable> computation : filter.computationStrategy) {
+//			this.computationStrategy.add(new Pair<>(setFilteredArgument(computation.getFirst(), filtered.getName()),
+//					setFilteredArgument(computation.getSecond(), filtered.getName())));
+//		}
+//
+//	}
 
 	boolean hasDependency(IActuator dependency) {
 		for (IActuator actuator : actuators) {

@@ -8,7 +8,6 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.ValueOperator;
-import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Traits;
@@ -18,8 +17,8 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.services.IObservableService;
-import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
@@ -70,7 +69,14 @@ public class ObservationStrategy {
 		 * observable is inherent, then applying a dereifying transformation chosen by
 		 * the runtime.
 		 */
-		DEREIFICATION
+		DEREIFICATION,
+
+		/**
+		 * Observable must be distributed across a set of objects (which must also be
+		 * observed), as the context of the observable is not compatible with the
+		 * context it was observed into.
+		 */
+		DISTRIBUTION
 	}
 
 	private List<Observable> observables = new ArrayList<>();
@@ -81,6 +87,12 @@ public class ObservationStrategy {
 	public ObservationStrategy(Observable observable, Mode mode) {
 		this.mode = mode;
 		this.observables.add(observable);
+	}
+
+	public ObservationStrategy(Observable observable, Mode mode, Strategy strategy) {
+		this.mode = mode;
+		this.observables.add(observable);
+		this.strategy = strategy;
 	}
 
 	/**
@@ -169,8 +181,22 @@ public class ObservationStrategy {
 		List<ObservationStrategy> ret = new ArrayList<>();
 
 		Observable target = (Observable) observable;
-
 		List<Pair<ValueOperator, Object>> operators = observable.getValueOperators();
+		Strategy strategy = Strategy.DIRECT;
+
+		IConcept context = observable.getContext();
+		if (context != null
+				&& Observables.INSTANCE.isCompatible(context, scope.getContext().getObservable().getType())) {
+
+			/*
+			 * Change observable to distributed observable and correct the observation
+			 * strategy; will add it later according to cases below.
+			 */
+			target = target.distributeIn(context);
+			strategy = Strategy.DISTRIBUTION;
+
+		}
+
 		if (!operators.isEmpty()) {
 
 			/*
@@ -208,7 +234,7 @@ public class ObservationStrategy {
 
 		} else if (target.hasResolvableTraits()) {
 
-			ret.add(new ObservationStrategy((Observable) observable, mode));
+			ret.add(new ObservationStrategy((Observable) observable, mode, strategy));
 
 			Pair<IConcept, Observable> resolvables = target.popResolvableTrait(scope.getMonitor());
 
@@ -245,7 +271,7 @@ public class ObservationStrategy {
 			if (attribute != null) {
 
 				Observable filter = (Observable) new ObservableBuilder(attribute)
-						.of(Observables.INSTANCE.getBaseObservable(target.getType())).filtering(target)
+						.of(Observables.INSTANCE.getBaseObservable(target.getType()))/* .filtering(target) */
 						.withTargetPredicate(targetAttribute).withDistributedInherency(observable.is(Type.COUNTABLE))
 						.buildObservable();
 
@@ -260,11 +286,12 @@ public class ObservationStrategy {
 
 		} else if (hasResolvableInherency(target, scope)) {
 
-			ret.add(new ObservationStrategy((Observable) observable, mode));
+			// direct
+			ret.add(new ObservationStrategy((Observable) observable, mode, strategy));
 
 			List<IContextualizable> computations = new ArrayList<>();
 			IConcept inherent = null;
-			Strategy strategy = Strategy.DIRECT;
+			strategy = Strategy.DIRECT;
 
 			if (observable.is(Type.PRESENCE)) {
 
@@ -300,10 +327,9 @@ public class ObservationStrategy {
 					inherentObservable = Observable.promote(inherent);
 				}
 
-				ObservationStrategy alternative = new ObservationStrategy(inherentObservable, mode);
+				ObservationStrategy alternative = new ObservationStrategy(inherentObservable, mode, strategy);
 
 				alternative.computation.addAll(computations);
-				alternative.strategy = strategy;
 
 				ret.add(alternative);
 			}
@@ -313,7 +339,7 @@ public class ObservationStrategy {
 			/*
 			 * just add as is
 			 */
-			ret.add(new ObservationStrategy((Observable) observable, mode));
+			ret.add(new ObservationStrategy(target, mode, strategy));
 
 		}
 
@@ -366,6 +392,14 @@ public class ObservationStrategy {
 	 */
 	public Strategy getStrategy() {
 		return strategy;
+	}
+
+	public IObservable getDistributingObservable() {
+		
+		/*
+		 * if we have a distributing observable, it's always the first due to the way it's coded.
+		 */
+		return Observable.promote(this.observables.get(0).getDistributionContext());
 	}
 
 }

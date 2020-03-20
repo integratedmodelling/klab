@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Coverage;
@@ -310,6 +311,15 @@ public enum Resolver {
 
 					try {
 
+						if (strategy.getStrategy() == Strategy.DISTRIBUTION) {
+							// must resolve the distributing observable first
+							ResolutionScope dscope = resolve(strategy.getDistributingObservable(), ret);
+							if (!dscope.getCoverage().isRelevant()) {
+								continue;
+							}
+						}
+						
+						
 						// candidate may switch resolution mode
 						double percentCovered = 0;
 

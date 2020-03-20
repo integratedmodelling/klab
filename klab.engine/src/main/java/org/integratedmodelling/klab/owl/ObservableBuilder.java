@@ -64,8 +64,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IConcept relationshipTarget;
 	private boolean optional;
 	private String name;
-	private IObservable filteredObservable;
+//	private IObservable filteredObservable;
 	private IConcept targetPredicate;
+	private IConcept distributedIn;
 	private boolean mustContextualize = false;
 
 	private List<IConcept> traits = new ArrayList<>();
@@ -141,6 +142,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 		this.mustContextualize = observable.mustContextualizeAtResolution();
+		this.distributedIn = observable.getDistributionContext();
 
 		this.annotations.addAll(observable.getAnnotations());
 
@@ -160,7 +162,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.currency = observable.getCurrency();
 		this.valueOperators.addAll(observable.getValueOperators());
 		this.monitor = monitor;
-		this.filteredObservable = observable.getFilteredObservable();
+//		this.filteredObservable = observable.getFilteredObservable();
 	}
 
 	public String computeDeclaration() {
@@ -226,7 +228,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.declaration = other.declaration;
 		this.monitor = other.monitor;
 		this.valueOperators.addAll(other.valueOperators);
-		this.filteredObservable = other.filteredObservable;
+//		this.filteredObservable = other.filteredObservable;
 		this.mustContextualize = other.mustContextualize;
 		this.annotations.addAll(other.annotations);
 
@@ -307,11 +309,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		return this;
 	}
 
-	@Override
-	public Builder filtering(IObservable observable) {
-		this.filteredObservable = observable;
-		return this;
-	}
+//	@Override
+//	public Builder filtering(IObservable observable) {
+//		this.filteredObservable = observable;
+//		return this;
+//	}
 
 	@Override
 	public Builder withGoal(IConcept goal) {
@@ -480,7 +482,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.valueOperators.addAll(valueOperators);
 		ret.name = name;
 		ret.targetPredicate = targetPredicate;
-		ret.filteredObservable = filteredObservable;
+//		ret.filteredObservable = filteredObservable;
 		ret.optional = this.optional;
 		ret.mustContextualize = mustContextualize;
 		ret.annotations.addAll(annotations);
@@ -1979,10 +1981,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		}
 
 		ret.setTargetPredicate(targetPredicate);
-		ret.setfilteredObservable(filteredObservable);
+//		ret.setfilteredObservable(filteredObservable);
 		ret.setOptional(this.optional);
 		ret.setMustContextualizeAtResolution(mustContextualize);
 		ret.getAnnotations().addAll(annotations);
+		ret.setDistributionContext(distributedIn);
 
 		return ret;
 	}
