@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
@@ -38,6 +39,11 @@ public abstract class KlabAction {
 		this.sender.tell(new Fire(scope.listenerId, value, isFinal));
 	}
 
+	protected Object evaluateArgument(KActorsValue argument) {
+		// TODO
+		return argument.getValue();
+	}
+	
 	abstract void run();
 
 }

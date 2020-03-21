@@ -45,12 +45,12 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		if (messageCall.getActions() != null) {
 			if (messageCall.getActions().getStatement() != null) {
 				ActionDescriptor action = new ActionDescriptor();
-				action.match = KActorsValue.anyvalue();
+				action.match = KActorsValue.anytrue();
 				action.action = KActorsStatement.create(messageCall.getActions().getStatement(), this);
 				actions.add(action);
 			} else if (messageCall.getActions().getStatements() != null) {
 				ActionDescriptor action = new ActionDescriptor();
-				action.match = KActorsValue.anyvalue();
+				action.match = KActorsValue.anytrue();
 				action.action = new KActorsConcurrentGroup(
 						Collections.singletonList(messageCall.getActions().getStatements()), this);
 				actions.add(action);

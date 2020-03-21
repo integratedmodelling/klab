@@ -99,6 +99,11 @@ public interface IMessage {
 		 * Run-class messages start scripts and tests.
 		 */
 		Run,
+		
+		/**
+		 * Messages sent or received by the view actor, called from behaviors.
+		 */
+		ViewActor
 	}
 
 	/**
@@ -314,7 +319,12 @@ public interface IMessage {
 		/*
 		 * --- ResourceLifecycle-class types, B->F
 		 */
-		ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated, ResourceCreated
+		ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated, ResourceCreated,
+		
+		/*
+		 * --- View actor messages 
+		 */
+		CreateViewComponent, SetupInterface
 
 	}
 

@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.rest;
 
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
 
 /**
  * The message used by the view actor to request view components. Any number of
@@ -13,16 +15,21 @@ import java.util.Map;
 public class ViewComponent {
 
 	public static enum Type {
-		Panel, Header, Footer, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree, TreeItem,
+		Panel, Header, Footer, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree,
+		TreeItem,
 		// etc
 	}
 
 	private String id;
+	private String parentId;
 	private Type type;
 	private String name;
 	private String style;
-	private Map<String, String> data = new LinkedHashMap<>();
-
+	private String title;
+	private ValueType contentType;
+	private String content;
+	private List<String> possibleContent;
+	
 	public String getId() {
 		return id;
 	}
@@ -42,11 +49,7 @@ public class ViewComponent {
 	public String getName() {
 		return name;
 	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	
 	public String getStyle() {
 		return style;
 	}
@@ -55,11 +58,49 @@ public class ViewComponent {
 		this.style = style;
 	}
 
-	public Map<String, String> getData() {
-		return data;
+	public String getParentId() {
+		return parentId;
 	}
 
-	public void setData(Map<String, String> data) {
-		this.data = data;
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
 	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public ValueType getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(ValueType contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public List<String> getPossibleContent() {
+		return possibleContent;
+	}
+
+	public void setPossibleContent(List<String> possibleContent) {
+		this.possibleContent = possibleContent;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 }

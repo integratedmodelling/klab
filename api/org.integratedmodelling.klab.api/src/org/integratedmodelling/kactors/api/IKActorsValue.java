@@ -18,7 +18,11 @@ public interface IKActorsValue extends IKActorsCodeStatement {
 
 	public enum Type {
 		REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, CLASS, ANYVALUE, ANYTHING, NODATA,
-		RANGE, MAP, TABLE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN, ERROR
+		RANGE, MAP, TABLE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN, ERROR, 
+		/**
+		 * Matcher for anything that isn't null, false or error
+		 */
+		ANYTRUE
 	}
 
 	/**

@@ -36,6 +36,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	public static KActorsValue anyvalue() {
 		return new KActorsValue(Type.ANYVALUE, null);
 	}
+	
+	public static KActorsValue anytrue() {
+		return new KActorsValue(Type.ANYTRUE, null);
+	}
 
 	/**
 	 * Create an error value. Pass an exception, string, or nothing.

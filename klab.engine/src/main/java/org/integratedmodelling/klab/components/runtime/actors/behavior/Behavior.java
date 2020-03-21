@@ -40,7 +40,9 @@ public class Behavior implements IBehavior {
 			case ANYTHING:
 				return true;
 			case ANYVALUE:
-				return value != null;
+				return value != null && !(value instanceof Throwable);
+			case ANYTRUE:
+				return value != null && !(value instanceof Throwable) && !(value instanceof Boolean && !((Boolean)value));
 			case BOOLEAN:
 				return value instanceof Boolean && value.equals(this.value.getValue());
 			case CLASS:

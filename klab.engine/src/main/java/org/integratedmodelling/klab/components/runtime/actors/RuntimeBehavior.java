@@ -68,6 +68,9 @@ public class RuntimeBehavior {
 		void run() {
 			if (random.nextDouble() < probability) {
 				fire(fired == null ? DEFAULT_FIRE : fired, true);
+			} else {
+				// fire anyway so that anything that's waiting can continue
+				fire(false, true);
 			}
 		}
 	}

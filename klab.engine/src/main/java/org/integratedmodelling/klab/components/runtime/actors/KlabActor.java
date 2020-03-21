@@ -53,7 +53,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected IBehavior behavior;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
-
+	/*
+	 * matches the name of the annotation declaring it to the ID of a base div that
+	 * is sent to the view upon loading. If the annotation contains a name, that
+	 * name is used as a key, otherwise the annotation itself is used (e.g. "panel",
+	 * "footer").
+	 */
+	private Map<String, String> viewIds = Collections.synchronizedMap(new HashMap<>());
 	AtomicLong nextId = new AtomicLong(0);
 
 	/**
@@ -65,13 +71,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	class MatchActions {
 
-		Long listenerId;
 		ActorRef<KlabMessage> caller;
 		List<Pair<Match, IKActorsStatement>> matches = new ArrayList<>();
 
-		// this must be the scope when the listening action was called.
+		// this is the original calling scope, to use when the listening action is
+		// executed upon a match.
 		Scope scope;
-		
+
 		public void match(Object value) {
 
 			for (Pair<Match, IKActorsStatement> match : matches) {
@@ -81,8 +87,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			}
 		}
 
-		public MatchActions(Long listenerId, Scope scope) {
-			this.listenerId = listenerId;
+		public MatchActions(Scope scope) {
 			this.scope = scope;
 		}
 	}
@@ -110,6 +115,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
 		Long listenerId;
+
+		/**
+		 * Set when the action being run is tagged to have a specific panel (footer,
+		 * header, modal etc), which is reported to the view before the action is run
+		 * and its ID set in the scope so that components created by view messages know
+		 * where to go.
+		 */
+		String viewId;
 		private ActorRef<KlabMessage> sender;
 
 		public Scope(Action action, IRuntimeScope scope) {
@@ -162,25 +175,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	}
 
-//	/**
-//	 * Get the recipient actor for a named recipient. This will be matched to known
-//	 * behavior declarations and to any actors set into the context by previous
-//	 * actions. A null recipient will respond a reference to self.
-//	 * 
-//	 * @param recipient
-//	 * @return
-//	 */
-//	ActorRef<KlabMessage> getRecipient(String recipient) {
-//		if (recipient == null || "self".equals(recipient)) {
-//			return getContext().getSelf();
-//		} else if ("session".equals(recipient) || "view".equals(recipient)) {
-//
-//		} else if ("user".equals(recipient)) {
-//
-//		}
-//		return null;
-//	}
-
 	protected void waitForCompletion(KlabMessage message) {
 
 	}
@@ -230,14 +224,28 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
+
 		this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
+		/*
+		 * TODO check annotations and send view message to setup UI if it contains any
+		 * of @panel, @modal, @header, @footer. Annotation should have a name, if not
+		 * use the ID itself and ensure there is no more than one; use the name as key
+		 * in this.viewIds.
+		 */
 		for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
 			run(action, new Scope(action, message.scope));
 		}
+
 		return Behaviors.same();
 	}
 
 	protected void run(IBehavior.Action action, Scope scope) {
+		/*
+		 * TODO if this contains any of @panel, @modal, @header, @footer set the viewId
+		 * in the scope to the ID of the component created upon loading the behavior.
+		 * Look that up in viewIds using the name in the annotation or the annotation
+		 * ID.
+		 */
 		execute(action.getStatement().getCode(), scope);
 	}
 
@@ -333,8 +341,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private void executeCall(Call code, Scope scope) {
 
 		/*
-		 * TODO establish message reply ID for listeners. Must be same for every
-		 * internal message if there is a group: in that case, set the ID in the scope.
+		 * TODO message reply ID for listeners must be same for every internal message
+		 * if there is a group: in that case, set the ID in the scope.
 		 */
 
 		Long notifyId = scope.listenerId;
@@ -342,11 +350,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		if (code.getActions().size() > 0) {
 
 			notifyId = nextId.incrementAndGet();
-
-			/*
-			 * TODO install own action listeners
-			 */
-			MatchActions actions = new MatchActions(notifyId, scope);
+			MatchActions actions = new MatchActions(/* notifyId, */scope);
 			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
 				actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
 			}
