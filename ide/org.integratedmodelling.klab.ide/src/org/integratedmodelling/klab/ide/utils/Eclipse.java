@@ -121,10 +121,8 @@ public enum Eclipse {
 	 * Open the passed view. Optionally pass an action to call when the view has
 	 * been shown.
 	 * 
-	 * @param id
-	 *            ID of the view
-	 * @param action
-	 *            an action to perform on the view once open, or null
+	 * @param id     ID of the view
+	 * @param action an action to perform on the view once open, or null
 	 */
 	public void openView(final String id, final Consumer<IViewPart> action) {
 
@@ -428,18 +426,37 @@ public enum Eclipse {
 	}
 
 	public boolean confirm(String message) {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		return MessageDialog.openQuestion(shell, "Confirmation", message);
+		try {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			Shell shell = window == null ? new Shell(new Display()) : window.getShell();
+			return MessageDialog.openQuestion(shell, "Confirmation", message);
+		} catch (Throwable e) {
+			// last resort
+			System.out.println("ERROR in Eclipse.confirm(): " + message);
+		}
+		return false;
 	}
 
 	public void warning(String message) {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		MessageDialog.openWarning(shell, "Warning", message);
+		try {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			Shell shell = window == null ? new Shell(new Display()) : window.getShell();
+			MessageDialog.openWarning(shell, "Warning", message);
+		} catch (Throwable e) {
+			// last resort
+			System.out.println("WARNING: " + message);
+		}
 	}
 
 	public void info(String message) {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		MessageDialog.openInformation(shell, "Information", message);
+		try {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			Shell shell = window == null ? new Shell(new Display()) : window.getShell();
+			MessageDialog.openInformation(shell, "Information", message);
+		} catch (Throwable e) {
+			// last resort
+			System.out.println("INFO: " + message);
+		}
 	}
 
 	public <T> T chooseOne(String question, Collection<T> alternatives) {
@@ -512,7 +529,7 @@ public enum Eclipse {
 							// leave it alone if dirty or we'll lose changes
 							IPath path = ((FileEditorInput) xte.getEditorInput()).getPath();
 							if (path.toString().endsWith(namespaceId.replaceAll("\\.", "/") + ".kim")) {
-	
+
 								ITextSelection textSelection = (ITextSelection) xte.getSite().getSelectionProvider()
 										.getSelection();
 								int offset = textSelection.getOffset();

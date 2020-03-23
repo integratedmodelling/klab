@@ -834,7 +834,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.links.clear();
 		this.resolvedObservables.clear();
 	}
-
+	
 	public void acceptArtifact(Observable observable, IObservation artifact, String artifactId) {
 		this.resolvedArtifact = new ResolvedArtifact(observable, artifact, artifactId);
 		this.coverage.setCoverage(1.0);
@@ -1069,6 +1069,10 @@ public class ResolutionScope implements IResolutionScope {
 		ResolutionScope ret = new ResolutionScope(this);
 		ret.coverage = Coverage.full(scale);
 		return ret;
+	}
+
+	public void distribute(IObservable distributingObservable) {
+		this.observable = this.observable.distributeIn(distributingObservable.getType());
 	}
 
 }

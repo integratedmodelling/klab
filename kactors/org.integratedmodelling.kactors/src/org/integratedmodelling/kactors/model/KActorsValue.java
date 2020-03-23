@@ -59,13 +59,13 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.value = parseLiteral(value.getLiteral());
 		} else if (value.getExpression() != null) {
 			this.type = Type.EXPRESSION;
-			this.value = value.getExpression().substring(0, value.getExpression().length() - 1);
+			this.value = value.getExpression().substring(1, value.getExpression().length() - 1);
 		} else if (value.getQuantity() != null) {
 			this.type = Type.QUANTITY;
 			this.value = parseQuantity(value.getQuantity());
 		} else if (value.getObservable() != null) {
 			this.type = Type.OBSERVABLE;
-			this.value = value.getObservable().substring(0, value.getObservable().length() - 1);
+			this.value = value.getObservable().substring(1, value.getObservable().length() - 1);
 		} else if (value.getList() != null) {
 			this.type = Type.LIST;
 			this.value = parseList(value.getList());

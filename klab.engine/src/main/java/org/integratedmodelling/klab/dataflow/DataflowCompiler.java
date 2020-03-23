@@ -304,6 +304,9 @@ public class DataflowCompiler {
 
 				this.observable = (Observable) resolvable;
 				this.inlineValue = observable.getValue();
+				if (this.observable.getDistributionContext() != null) {
+					this.strategy = Strategy.DISTRIBUTION;
+				}
 
 			} else if (resolvable instanceof Observer) {
 
@@ -349,7 +352,9 @@ public class DataflowCompiler {
 								this.observable.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 						child.setObservable(this.observable);
 						child.setName(observable.getReferenceName());
-						child.setAlias(models.iterator().next().model.getCompatibleOutput(observable).getName());
+						if (models.size() > 0) {
+							child.setAlias(models.iterator().next().model.getCompatibleOutput(observable).getName());
+						}
 						child.setType(this.observable.getArtifactType());
 						child.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
 						ret.actuators.add(child);
@@ -538,19 +543,14 @@ public class DataflowCompiler {
 		 */
 		Actuator getActuatorTree(Dataflow dataflow, IMonitor monitor, Set<ModelD> generated, int level) {
 
-//			System.out.println(StringUtils.spaces(level * 3) + this);
-
 			Actuator ret = createActuator(dataflow, monitor, generated);
 
 			if (!ret.isReference()) {
 
-//				if (Units.INSTANCE.needsUnits(this.observable)) {
-//					System.out.println(StringUtils.spaces(level * 3) + "UNITS BEFORE:" + this.observable.getUnit()
-//							+ (this.observable.isFluidUnits() ? ", fluid" : ", fixed"));
-//				}
-
-				// collect units from dependent models to ensure consistency across unspecified
-				// ones
+				/*
+				 * collect units from dependent models to ensure consistency across unspecified
+				 * ones
+				 */
 				Map<String, IUnit> chosenUnits = new HashMap<>();
 
 				/*
@@ -597,13 +597,9 @@ public class DataflowCompiler {
 							if (((Actuator) ret).hasDependency(dependency)) {
 								continue;
 							}
-//							if (!((Actuator) dependency).isReference() && existingActuators.containsKey(dependency.getName())
-//									&& !haveActuatorNamed(dependency.getName())) {
-//								dependency = ((Actuator) dependency).getReference();
-//							}
 							ret.actuators.add(dependency);
 						}
-//
+
 						// compile in all mediations as they are
 						for (Pair<IServiceCall, IContextualizable> mediator : filter.mediationStrategy) {
 							ret.mediationStrategy.add(mediator);
@@ -623,8 +619,12 @@ public class DataflowCompiler {
 				} else if (this.strategy == Strategy.DISTRIBUTION) {
 
 					/*
-					 * Should create an independent sub-dataflow per object after resolution; main
-					 * resolver should just assess the existence of coverage
+					 * Compile the child that refers to the instantiation of the context objects
+					 * (create from the child, or locate it and create a reference actuator); then
+					 * compile this node, without that child, into a void dataflow to resolve the
+					 * observable (without the context if explicit) in each of them and insert it
+					 * into the actuator.
+					 * 
 					 */
 					System.out.println("ZIOOIA");
 
@@ -646,12 +646,6 @@ public class DataflowCompiler {
 						// this may be a new actuator or a reference to an existing one.
 						Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
 
-//						if (achild.isFilter()) {
-//
-//							ret.adoptFilter(achild, actuatorCatalog, monitor);
-//
-//						} else {
-
 						ret.getActuators().add(achild);
 						recordUnits(achild, chosenUnits);
 						if (sources.containsKey(achild.getName())) {
@@ -660,16 +654,10 @@ public class DataflowCompiler {
 								ret.addMediation(mediator, achild);
 							}
 						}
-//						}
 					}
 				}
 
 				inferUnits(ret, chosenUnits);
-
-//				if (Units.INSTANCE.needsUnits(this.observable)) {
-//					System.out.println(StringUtils.spaces(level * 3) + "UNITS AFTER:" + this.observable.getUnit()
-//							+ " using " + chosenUnits);
-//				}
 
 			}
 			return ret;
@@ -884,9 +872,11 @@ public class DataflowCompiler {
 				} else {
 					compatibleOutput = new Observable(compatibleOutput);
 				}
-				// observableCatalog.put(compatibleOutput.getName(), compatibleOutput);
 
-				ret.strategy = model.getObservationStrategy();
+				// take it from the model unless the resolver has directed to distribute
+				if (ret.strategy != Strategy.DISTRIBUTION) {
+					ret.strategy = model.getObservationStrategy();
+				}
 
 				ModelD md = compileModel(model, /* d.indirectAdapters, */ d.isPartition && honorPartitions);
 				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
@@ -968,6 +958,7 @@ public class DataflowCompiler {
 		if (resource.getClassification() != null || resource.getAccordingTo() != null) {
 			return Type.CONCEPT;
 		}
+
 		if (resource.getLookupTable() != null) {
 			return resource.getLookupTable().getLookupType();
 		}

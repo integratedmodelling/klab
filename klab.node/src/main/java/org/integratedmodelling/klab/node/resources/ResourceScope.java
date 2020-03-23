@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
@@ -744,6 +745,12 @@ public class ResourceScope implements IRuntimeScope {
 
 	@Override
 	public List<String> getUnnamedKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDataflow<IArtifact> resolve(IObservable observable, IScale scale, ITaskTree<?> task) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -395,22 +395,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return ret;
 	}
 
-	/**
-	 * TODO move the dataflow caching logics of all the new-.... functions into a
-	 * DataflowPool object or something like that.
-	 */
+	// pass a modified observable if needed: add the object's name if direct, etc.
 	@Override
-	public ICountableObservation newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
-			throws KlabException {
-
-		if (!observable.is(Type.COUNTABLE)) {
-			throw new IllegalArgumentException(
-					"RuntimeContext: cannot create a non-countable observation with newObservation()");
-		}
-
-		ICountableObservation ret = null;
-		Observable obs = new Observable((Observable) observable);
-		obs.setName(name);
+	public Dataflow resolve(IObservable observable, IScale scale, ITaskTree<?> subtask) {
 
 		/*
 		 * preload all the possible resolvers in the wider scope before specializing the
@@ -420,11 +407,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.resolutionScope.preloadResolvers(observable);
 
 		Dataflow dataflow = null;
-		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 
 		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
 				.get(new ResolvedObservable((Observable) observable, Mode.RESOLUTION));
+
+		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 
 		if (pairs != null) {
 			for (Pair<ICoverage, Dataflow> pair : pairs) {
@@ -441,7 +428,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
 			}
 
-			ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, Mode.RESOLUTION, scale, model);
+			ResolutionScope scope = Resolver.INSTANCE.resolve((Observable)observable, this.resolutionScope, Mode.RESOLUTION, scale, model);
 			if (scope.getCoverage().isRelevant()) {
 
 				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope)
@@ -461,11 +448,41 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				 * are no preloaded resolvers in this scale, so we are certain that other
 				 * subjects will encounter the same conditions.
 				 */
-				pairs.add(new Pair<>(null, dataflow = Dataflow.empty(observable, name, scope)));
+				pairs.add(new Pair<>(null, dataflow = Dataflow.empty(observable, observable.getName(), scope)));
 				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
 			}
 		}
+		
+		return dataflow;
+	}
+	
+	/**
+	 * TODO move the dataflow caching logics of all the new-.... functions into a
+	 * DataflowPool object or something like that.
+	 */
+	@Override
+	public ICountableObservation newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
+			throws KlabException {
 
+		if (!observable.is(Type.COUNTABLE)) {
+			throw new IllegalArgumentException(
+					"RuntimeContext: cannot create a non-countable observation with newObservation()");
+		}
+
+		ICountableObservation ret = null;
+		Observable obs = new Observable((Observable) observable);
+		obs.setName(name);
+
+		/*
+		 * SO ---- ALL this piece below can go into a "resolve(observable, scale) ->
+		 * dataflow which we have in the scope. We reuse it in all the new() functions
+		 * AND by the actuator when resolving a distributed observable. Each new
+		 * dataflow becomes a void child of the actuator being run.
+		 */
+
+		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
+		Dataflow dataflow = resolve(obs, scale, subtask);
+		
 		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
 				((Monitor) monitor).get(subtask));
 
@@ -559,66 +576,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					"RuntimeContext: cannot create a relationship of type " + observable.getType());
 		}
 
-		IRelationship ret = null;
 		Observable obs = new Observable((Observable) observable);
 		obs.setName(name);
-
-		/*
-		 * preload all the possible resolvers in the wider scope before specializing the
-		 * scope to the child observation. Then leave it to the kbox to use the context
-		 * with the preloaded cache.
-		 */
-		this.resolutionScope.preloadResolvers(observable);
-
-		Dataflow dataflow = null;
-		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
-
-		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
-				.get(new ResolvedObservable((Observable) observable, Mode.RESOLUTION));
-
-		if (pairs != null) {
-			for (Pair<ICoverage, Dataflow> pair : pairs) {
-				if (pair.getFirst() == null || pair.getFirst().contains(scale)) {
-					dataflow = pair.getSecond();
-					break;
-				}
-			}
-		}
-
-		if (dataflow == null) {
-
-			if (pairs == null) {
-				pairs = new ArrayList<>();
-				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
-			}
-
-			ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, (Subject) source,
-					(Subject) target, scale, model);
-
-			if (scope.getCoverage().isRelevant()) {
-
-				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope)
-						.setPrimary(false);
-				dataflow.setModel((Model) model);
-
-				// TODO this must be added to the computational strategy and linked to the
-				// original context.
-				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
-
-			} else if (resolutionScope.getPreresolvedModels(observable) == null
-					|| this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
-				/*
-				 * Add an empty dataflow to create the observation. This is only done if there
-				 * are no preloaded resolvers in this scale, so we are certain that other
-				 * subjects will encounter the same conditions.
-				 */
-				pairs.add(new Pair<>(null, dataflow = Dataflow.empty(observable, name, scope)));
-				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
-			}
-		}
-
-		ret = (IRelationship) dataflow.withMetadata(metadata).withScopeScale(scale)
+		Dataflow dataflow = resolve(obs, scale, subtask);
+		IRelationship ret = (IRelationship) dataflow.withMetadata(metadata).withScopeScale(scale)
 				.connecting((IDirectObservation) source, (IDirectObservation) target)
 				.run(scale.initialization(), ((Monitor) monitor).get(subtask));
 
@@ -926,8 +888,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		/*
 		 * add any other outputs from the model, which will be dealt with by the
-		 * contextualizers - NO. these are added to the dataflow only when requested
-		 * by other models.
+		 * contextualizers - NO. these are added to the dataflow only when requested by
+		 * other models.
 		 */
 //		if (actuator.getModel() != null && !actuator.getModel().isInstantiator()) {
 //			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
@@ -1000,7 +962,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					observation.getMetadata().putAll(metadata);
 				}
 
-
 				if (parent != null && actuator.getDataflow().getModel() != null) {
 					for (String attr : actuator.getDataflow().getModel().getAttributeObservables().keySet()) {
 
@@ -1037,7 +998,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						}
 					}
 				}
-				
+
 ////////// REVISED - 
 //
 //				/*
@@ -1108,7 +1069,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 
 			if (preexisting == null) {
-				
+
 				// transmit all annotations and any interpretation keys to the artifact
 				actuator.notifyNewObservation(observation);
 
@@ -1149,7 +1110,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
-	return preexisting==null ? this.catalog.get(actuator.getName()) : preexisting;
+		return preexisting == null ? this.catalog.get(actuator.getName()) : preexisting;
 
 	}
 

@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -54,6 +53,10 @@ import org.integratedmodelling.klab.utils.Utils;
  * provide commodity semantics to use this one so that k.LAB servers can serve
  * indirectAdapters through URNs.
  * <p>
+ * A dataflow is a void actuator in k.DL. A void actuator resolves the context
+ * it's run into. When objects are created, the containing actuator may contain
+ * the dataflow(s) to resolve it and/or specific qualities declared "within" the
+ * object.
  * 
  * @author Ferd
  *
@@ -120,7 +123,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
 		reset();
-		
+
 		/*
 		 * we need the initialization scale for the dataflow but we must create our
 		 * targets with the overall scale. Problem is, occurrent actuators must create
@@ -540,6 +543,5 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 		return this;
 	}
-
 
 }

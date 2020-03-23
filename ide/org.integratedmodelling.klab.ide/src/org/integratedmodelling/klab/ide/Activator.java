@@ -119,9 +119,9 @@ public class Activator extends AbstractUIPlugin {
 							ret.setOnline();
 						}
 						if (resource.getDependencies() != null) {
-						    for (AttributeReference dependency : resource.getDependencies()) {
-						        ret.addDependency(dependency.getName(), dependency.getType());
-						    }
+							for (AttributeReference dependency : resource.getDependencies()) {
+								ret.addDependency(dependency.getName(), dependency.getType());
+							}
 						}
 					}
 				}
@@ -171,12 +171,11 @@ public class Activator extends AbstractUIPlugin {
 			}
 
 		});
-		
+
 		/*
 		 * this tells us when a project is being closed
 		 */
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(new KimResourceListener());
-        
 
 		/*
 		 * install link helper
@@ -257,11 +256,11 @@ public class Activator extends AbstractUIPlugin {
 		 * ensure we can be stopped by an external controller
 		 */
 		new FileBasedMonitor(5).start(5);
-		
+
 		this.engineStatusMonitor.start(relayId);
 
 	}
-	
+
 	/**
 	 * Call this after adding or removing projects
 	 */
@@ -403,7 +402,7 @@ public class Activator extends AbstractUIPlugin {
 	public static EngineClient client() {
 		return engineMonitor().getClient();
 	}
-	
+
 	public static IKimLoader loader() {
 		return get().loader;
 	}
@@ -425,12 +424,19 @@ public class Activator extends AbstractUIPlugin {
 		if (get().engineStatusMonitor.isRunning()) {
 			client().with(session().getIdentity()).download(url, file);
 		}
-		
+
 	}
-	
+
 	public static void post(Object... object) {
 		if (get().engineStatusMonitor.isRunning()) {
 			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object));
+		}
+	}
+
+	public static void reply(IMessage original, Object... object) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().post(
+					Message.create(get().engineStatusMonitor.getSessionId(), object).inResponseTo(original.getId()));
 		}
 	}
 

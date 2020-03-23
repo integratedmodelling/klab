@@ -115,6 +115,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
 		Long listenerId;
+		Map<String, Object> symbolTable = new HashMap<>();
 
 		/**
 		 * Set when the action being run is tagged to have a specific panel (footer,
@@ -123,7 +124,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * where to go.
 		 */
 		String viewId;
-		private ActorRef<KlabMessage> sender;
+		ActorRef<KlabMessage> sender;
 
 		public Scope(Action action, IRuntimeScope scope) {
 			this.action = action;
@@ -137,6 +138,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.parent = scope;
 			this.listenerId = scope.listenerId;
 			this.sender = scope.sender;
+			this.viewId = scope.viewId;
+			this.symbolTable.putAll(scope.symbolTable);
 		}
 
 		public String toString() {

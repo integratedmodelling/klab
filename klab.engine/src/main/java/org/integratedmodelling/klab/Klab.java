@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.API;
@@ -352,6 +353,19 @@ public enum Klab implements IRuntimeService {
 				}
 			}
 			return null;
+		}
+
+		@Override
+		public void post(Consumer<IMessage> handler, Object... o) {
+			if (o != null && o.length > 0) {
+				if (messageBus != null) {
+					if (o.length == 1 && o[0] instanceof IMessage) {
+						messageBus.post((IMessage) o[0], handler);
+					} else {
+						messageBus.post(Message.create(rootIdentity.getId(), o), handler);
+					}
+				}
+			}
 		}
 
 		@Override

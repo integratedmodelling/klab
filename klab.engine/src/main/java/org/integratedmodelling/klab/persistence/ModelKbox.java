@@ -156,7 +156,8 @@ public class ModelKbox extends ObservableKbox {
 		initialize(context.getMonitor());
 
 		// Contextualize the observable if needed
-		if (context.getContext() != null && ((Observable) observable).mustContextualizeAtResolution()) {
+		if (context.getContext() != null && ((Observable) observable).getDistributionContext() == null
+				&& ((Observable) observable).mustContextualizeAtResolution()) {
 			observable = Observables.INSTANCE.contextualizeTo(observable,
 					context.getContext().getObservable().getType(), true, context.getMonitor());
 		}
@@ -643,14 +644,14 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		if (ret.size() > 0) {
-			
+
 			for (IObservable attr : model.getAttributeObservables().values()) {
 
 				if (attr == null) {
 					// only in error
 					continue;
 				}
-				
+
 				// attribute type must have inherent type added if it's an instantiated quality
 				IConcept type = attr.getType();
 				if (model.isInstantiator()) {

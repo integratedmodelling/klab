@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.List;
-import java.util.Map;
 
 import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
 
@@ -16,7 +15,7 @@ public class ViewComponent {
 
 	public static enum Type {
 		Panel, Header, Footer, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree,
-		TreeItem,
+		TreeItem, Confirm,
 		// etc
 	}
 

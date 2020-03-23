@@ -51,6 +51,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.OWL;
@@ -704,6 +705,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public IState addState(IDirectObservation target, IObservable observable, Object data) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDataflow<IArtifact> resolve(IObservable observable, IScale scale, ITaskTree<?> task) {
+		// TODO find the relevant dataflow among the "void" subactuators
 		return null;
 	}
 }

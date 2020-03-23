@@ -51,6 +51,8 @@ import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
+import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
@@ -493,6 +495,33 @@ public class KlabSession extends KlabPeer {
 		send(message);
 		recordTask(task, Type.TaskAborted);
 		bus.unsubscribe(task.getId());
+	}
+	
+	@MessageHandler(type = Type.CreateViewComponent)
+	public void handleTaskAborted(IMessage message, ViewComponent component) {
+		switch (component.getType()) {
+		case Alert:
+			Eclipse.INSTANCE.alert(component.getContent());
+			break;
+		case Confirm:
+			boolean choice = Eclipse.INSTANCE.confirm(component.getContent());
+			Activator.reply(message, IMessage.MessageClass.Run, IMessage.Type.RunScript, new ViewAction(choice));
+			break;
+		case TextInput:
+			break;
+		case CheckButton:
+		case Combo:
+		case Footer:
+		case Group:
+		case Header:
+		case Map:
+		case Panel:
+		case PushButton:
+		case RadioButton:
+		case Tree:
+		case TreeItem:
+			break;
+		}
 	}
 
 	@MessageHandler

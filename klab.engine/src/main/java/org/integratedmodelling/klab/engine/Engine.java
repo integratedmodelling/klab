@@ -206,6 +206,22 @@ public class Engine extends Server implements IEngine, UserDetails {
 			}
 			return null;
 		}
+		
+		@Override
+		public void post(Consumer<IMessage> handler, Object... o) {
+			if (o != null && o.length > 0) {
+				IMessageBus bus = Klab.INSTANCE.getMessageBus();
+				if (bus != null) {
+					if (o.length == 1 && o[0] instanceof IMessage) {
+						bus.post((IMessage) o[0], handler);
+					} else if (o.length == 1 && o[0] instanceof INotification) {
+						bus.post(Message.create((INotification) o[0], this.identity.getId()), handler);
+					} else {
+						bus.post(Message.create(this.identity.getId(), o), handler);
+					}
+				}
+			}
+		}
 
 		@Override
 		public IIdentity getIdentity() {

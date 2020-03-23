@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.data.encoding;
 
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -94,6 +95,12 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 		@Override
 		public boolean hasErrors() {
 			return false;
+		}
+
+		@Override
+		public void post(Consumer<IMessage> handler, Object... message) {
+			// TODO Auto-generated method stub
+			
 		}
 
 	}

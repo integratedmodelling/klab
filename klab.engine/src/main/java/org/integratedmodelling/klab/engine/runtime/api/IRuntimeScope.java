@@ -376,4 +376,16 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	IState addState(IDirectObservation target, IObservable observable, Object data);
+
+	/**
+	 * Resolve the passed observable in the passed scale using the passed task (which will
+	 * later run the resulting dataflow). Must cache dataflows by scale and retrieve them 
+	 * quickly as it may be called many times at each new direct observation.
+	 * 
+	 * @param observable
+	 * @param scale
+	 * @param task
+	 * @return a dataflow to resolve the observable.
+	 */
+	IDataflow<IArtifact> resolve(IObservable observable, IScale scale, ITaskTree<?> task);
 }

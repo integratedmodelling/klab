@@ -16,9 +16,9 @@ public class KActorsArguments extends Parameters<String> {
 	public KActorsArguments(ParameterList parameters) {
 		for (KeyValuePair pair : parameters.getPairs()) {
 			if (pair.getName() == null) {
-				putUnnamed(new KActorsValue(pair.getValue(), null).getValue());
+				putUnnamed(new KActorsValue(pair.getValue(), null));
 			} else {
-				put(pair.getName(), new KActorsValue(pair.getValue(), null).getValue());
+				put(pair.getName(), new KActorsValue(pair.getValue(), null));
 			}
 		}
 	}

@@ -109,7 +109,14 @@ public class ObservationStrategy {
 		for (IObservable dep : model.getDependencies()) {
 			ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
 		}
-
+		
+		
+		IConcept context = observable.getContext();
+		if (context != null
+				&& !Observables.INSTANCE.isCompatible(scope.getContext().getObservable().getType(), context)) {
+			ret.add(new ObservationStrategy(Observable.promote(context), Mode.INSTANTIATION));
+		}
+		
 		if (observable.is(Type.RELATIONSHIP)) {
 			IConcept source = Observables.INSTANCE.getRelationshipSource(observable.getType());
 			IConcept target = Observables.INSTANCE.getRelationshipTarget(observable.getType());
@@ -186,7 +193,7 @@ public class ObservationStrategy {
 
 		IConcept context = observable.getContext();
 		if (context != null
-				&& Observables.INSTANCE.isCompatible(context, scope.getContext().getObservable().getType())) {
+				&& !Observables.INSTANCE.isCompatible(scope.getContext().getObservable().getType(), context)) {
 
 			/*
 			 * Change observable to distributed observable and correct the observation

@@ -311,15 +311,6 @@ public enum Resolver {
 
 					try {
 
-						if (strategy.getStrategy() == Strategy.DISTRIBUTION) {
-							// must resolve the distributing observable first
-							ResolutionScope dscope = resolve(strategy.getDistributingObservable(), ret);
-							if (!dscope.getCoverage().isRelevant()) {
-								continue;
-							}
-						}
-						
-						
 						// candidate may switch resolution mode
 						double percentCovered = 0;
 
@@ -332,12 +323,12 @@ public enum Resolver {
 								? Models.INSTANCE.resolve(strategy.getObservables().get(0),
 										ret.getChildScope(strategy.getObservables().get(0), strategy.getMode()))
 								: Models.INSTANCE.createDerivedModel(observable, strategy, ret);
-						
+
 						/*
 						 * set the partition flag after we are sure we have > 1 link
 						 */
 						List<Link> links = new ArrayList<>();
-						
+
 						for (IRankedModel model : candidateModels) {
 
 							ResolutionScope mscope = resolve((RankedModel) model, ret);
@@ -348,7 +339,13 @@ public enum Resolver {
 								if (!newCoverage.isRelevant()) {
 									continue;
 								}
-
+								
+								if (strategy.getStrategy() == Strategy.DISTRIBUTION) {
+									// record the distribution in the scope observable so that the dataflow compiler
+									// can find it.
+									ret.distribute(strategy.getDistributingObservable());
+								}
+								
 								// for reporting
 								boolean wasZero = percentCovered == 0;
 								// percent covered by new model
@@ -380,7 +377,7 @@ public enum Resolver {
 								link.withPartition(true);
 							}
 						}
-						
+
 						if (done) {
 							break;
 						}
@@ -450,8 +447,8 @@ public enum Resolver {
 				 * In this case, warn and force the coverage to full so that resolution can
 				 * continue at the modeler's risk.
 				 */
-				parentScope.getMonitor().warn(
-						"Model " + model.getName() + " is being observed outside its coverage! Expect problems.");
+				parentScope.getMonitor()
+						.warn("Model " + model.getName() + " is being observed outside its coverage! Expect problems.");
 				coverage.setCoverage(1.0);
 			} else {
 				parentScope.getMonitor().error(new KlabInternalErrorException(
