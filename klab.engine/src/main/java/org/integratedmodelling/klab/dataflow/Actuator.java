@@ -72,13 +72,11 @@ import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
-import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.scale.Coverage;
@@ -252,6 +250,12 @@ public class Actuator implements IActuator {
 	 * observable's name, e.g. the dependency name.
 	 */
 	private String referenceName;
+
+	/**
+	 * The dataflows built from the void actuators in our children. Non-empty only in
+	 * object actuators that contain 
+	 */
+	private ArrayList<Dataflow> dataflows;
 
 	@Override
 	public String getName() {
@@ -495,6 +499,7 @@ public class Actuator implements IActuator {
 		}
 
 		if (!runtimeContext.getTargetArtifact().equals(ret)) {
+			
 			/*
 			 * Computation has changed the artifact: reset into catalog unless it's a proxy
 			 * artifact.
@@ -658,6 +663,13 @@ public class Actuator implements IActuator {
 
 					((Artifact) ret).chain(object);
 
+					/*
+					 * run any secondary dataflows
+					 */
+					for (Dataflow df : getDataflows(object, ctx)) {
+						
+					}
+					
 					addBehaviors(object);
 
 				}
@@ -736,6 +748,19 @@ public class Actuator implements IActuator {
 				IMessage.Type.DataflowStateChanged, state));
 
 		return ret;
+	}
+
+	/**
+	 * Take any void actuators whose scale matches the 
+	 * @param object
+	 * @param ctx
+	 * @return
+	 */
+	private List<Dataflow> getDataflows(IObjectArtifact object, IRuntimeScope ctx) {
+		if (this.dataflows == null) {
+			this.dataflows = new ArrayList<>();
+		}
+		return this.dataflows;
 	}
 
 	private void addBehaviors(IArtifact ret) {
@@ -1246,9 +1271,16 @@ public class Actuator implements IActuator {
 	 * @return
 	 */
 	private List<IActuator> getSortedChildren(Actuator actuator) {
+		
 		List<IActuator> ret = new ArrayList<>();
 		List<IActuator> partitions = new ArrayList<>();
 		for (IActuator act : actuator.getActuators()) {
+			
+			// these are sub-dataflow that are run after instantiation
+			if (act.getType() == IArtifact.Type.VOID) {
+				continue;
+			}
+			
 			if (((Actuator) act).observable.equals(actuator.observable)) {
 				partitions.add(act);
 			} else {

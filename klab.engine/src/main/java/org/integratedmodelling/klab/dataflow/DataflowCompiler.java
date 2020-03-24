@@ -382,42 +382,18 @@ public class DataflowCompiler {
 					 * - no state should be generated in the context.
 					 */
 					ret.setType(Type.VOID);
-				} else {
+				} else if (this.observable.getDistributionContext() == null) {
 					/*
-					 * if not learning, we remove the inherency in the dataflow as it was needed to
-					 * resolve the inherent observable, but the model is run in an object's context
-					 * and we don't maintain the inherency when the semantics is local to the
-					 * object.
+					 * if not learning and not explicitly inherent, we remove the inherency in the
+					 * dataflow as it was needed to resolve the inherent observable, but the model
+					 * is run in an object's context and we don't maintain the inherency when the
+					 * semantics is local to the object.
 					 */
 					this.observable = (Observable) ObservableBuilder.getBuilder(this.observable, monitor)
 							.without(ObservableRole.CONTEXT).buildObservable();
 				}
 			} else {
-
-				switch (observable.getDescription()) {
-				case CATEGORIZATION:
-					ret.setType(Type.CONCEPT);
-					break;
-				case DETECTION:
-				case INSTANTIATION:
-					ret.setType(observable.getArtifactType());
-					break;
-				case QUANTIFICATION:
-					ret.setType(Type.NUMBER);
-					break;
-				case SIMULATION:
-					ret.setType(Type.PROCESS);
-					break;
-				case VERIFICATION:
-					ret.setType(Type.BOOLEAN);
-					break;
-				case CHARACTERIZATION:
-				case CLASSIFICATION:
-					ret.setType(Type.VOID);
-					break;
-				default:
-					break;
-				}
+				assignType(ret, this.observable);
 			}
 
 			if (observer != null) {
@@ -509,6 +485,34 @@ public class DataflowCompiler {
 			}
 
 			return ret;
+		}
+
+		private void assignType(Actuator ret, Observable observable) {
+
+			switch (observable.getDescription()) {
+			case CATEGORIZATION:
+				ret.setType(Type.CONCEPT);
+				break;
+			case DETECTION:
+			case INSTANTIATION:
+				ret.setType(observable.getArtifactType());
+				break;
+			case QUANTIFICATION:
+				ret.setType(Type.NUMBER);
+				break;
+			case SIMULATION:
+				ret.setType(Type.PROCESS);
+				break;
+			case VERIFICATION:
+				ret.setType(Type.BOOLEAN);
+				break;
+			case CHARACTERIZATION:
+			case CLASSIFICATION:
+				ret.setType(Type.VOID);
+				break;
+			default:
+				break;
+			}
 		}
 
 		private void defineActuator(Actuator ret, String name, ModelD theModel, Set<ModelD> generated) {
@@ -618,6 +622,10 @@ public class DataflowCompiler {
 
 				} else if (this.strategy == Strategy.DISTRIBUTION) {
 
+					assignType(ret, this.observable);
+
+					IConcept distributionContext = this.observable.getDistributionContext();
+
 					/*
 					 * Compile the child that refers to the instantiation of the context objects
 					 * (create from the child, or locate it and create a reference actuator); then
@@ -626,7 +634,58 @@ public class DataflowCompiler {
 					 * into the actuator.
 					 * 
 					 */
-					System.out.println("ZIOOIA");
+					Node outnode = null;
+					List<Node> ownch = new ArrayList<>();
+					for (Node child : sortChildren()) {
+						if (child.observable.getType().resolves(distributionContext) >= 0) {
+							outnode = child;
+						} else {
+							ownch.add(child);
+						}
+					}
+
+					/*
+					 * should never be null except in error.
+					 */
+					if (outnode != null) {
+
+						/*
+						 * add any legitimate children before rearranging. This is identical to the
+						 * normal case except the context observation is skipped.
+						 */
+						for (Node child : ownch) {
+
+							IConcept childContext = Observables.INSTANCE
+									.getDirectContextType(child.observable.getType());
+
+							if (directContext != null && directContext.equals(childContext)) {
+								continue;
+							}
+
+							Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
+							ret.getActuators().add(achild);
+							recordUnits(achild, chosenUnits);
+							if (sources.containsKey(achild.getName())) {
+								for (IContextualizable mediator : computeMediators(sources.get(achild.getName()),
+										achild.getObservable(), scale)) {
+									ret.addMediation(mediator, achild);
+								}
+							}
+						}
+
+						/*
+						 * reference node will still need to be used to carry our dataflow for secondary
+						 * contextualization. So we should output exactly in the same way.
+						 */
+
+						Actuator outactuator = outnode.getActuatorTree(dataflow, monitor, generated, level + 1);
+						Actuator subdataflow = newDataflow(new Observable(outactuator.getObservable()), dataflow);
+						subdataflow.actuators.add(ret);
+						outactuator.actuators.add(subdataflow);
+
+						ret = outactuator;
+
+					}
 
 				} else {
 
@@ -660,6 +719,16 @@ public class DataflowCompiler {
 				inferUnits(ret, chosenUnits);
 
 			}
+			return ret;
+		}
+
+		private Actuator newDataflow(Observable observable, Dataflow dataflow) {
+
+			Actuator ret = Actuator.create(dataflow, Mode.RESOLUTION);
+			ret.setObservable(observable);
+			ret.setName(observable.getReferenceName());
+			ret.setAlias(observable.getName());
+			ret.setType(Type.VOID);
 			return ret;
 		}
 
