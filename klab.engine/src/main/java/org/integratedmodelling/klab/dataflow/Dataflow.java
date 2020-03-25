@@ -102,6 +102,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	List<AnnotationParameterValue> annotationParameters = new ArrayList<>();
 	private Scale resolutionScale;
+	private boolean secondary;
 
 	private Dataflow() {
 	}
@@ -542,6 +543,31 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			this.resolutionScope = this.resolutionScope.rescale(scale);
 		}
 		return this;
+	}
+
+	public ResolutionScope getResolutionScope() {
+		return this.resolutionScope;
+	}
+	
+	public void setSecondary(boolean b) {
+		this.secondary = b;
+	}
+
+	public boolean isSecondary() {
+		return this.secondary;
+	}
+
+	public void reattributeActuators() {
+		for (IActuator actuator : actuators) {
+			reattributeActuator(actuator);
+		}
+	}
+
+	private void reattributeActuator(IActuator actuator) {
+		((Actuator)actuator).setDataflow(this);
+		for (IActuator a : actuator.getActuators()) {
+			reattributeActuator(a);
+		}
 	}
 
 }

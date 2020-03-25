@@ -161,7 +161,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					if (active.isComputed() || ((Actuator) active).isMerging()) {
 						active.compute(ctx.getTargetArtifact(), ctx);
 					}
-					if (!(monitor.getIdentity().is(IIdentity.Type.TASK)
+					if (!((Actuator) active).getDataflow().isSecondary() && !(monitor.getIdentity().is(IIdentity.Type.TASK)
 							&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
 						((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
 					}

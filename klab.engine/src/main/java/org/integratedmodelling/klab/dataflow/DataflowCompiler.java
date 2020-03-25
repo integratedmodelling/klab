@@ -622,6 +622,13 @@ public class DataflowCompiler {
 
 				} else if (this.strategy == Strategy.DISTRIBUTION) {
 
+					if (Observables.INSTANCE.getDirectContextType(this.observable.getType()) != null) {
+						// if the distribution context is explicit (direct), remove it as we are observing
+						// the observable within the context.
+						ret.setObservable((Observable) this.observable.getBuilder(monitor)
+								.without(ObservableRole.CONTEXT).buildObservable());
+					}
+
 					assignType(ret, this.observable);
 
 					IConcept distributionContext = this.observable.getDistributionContext();

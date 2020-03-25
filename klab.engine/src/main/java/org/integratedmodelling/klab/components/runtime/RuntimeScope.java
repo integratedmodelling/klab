@@ -128,6 +128,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	Set<String> notifiedObservations;
 	Map<IConcept, ObservationGroup> groups;
 	Map<String, IVariable> symbolTable = new HashMap<>();
+	Dataflow dataflow;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -212,6 +213,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.actuator = context.actuator;
 		this.target = context.target;
 		this.notifiedObservations = context.notifiedObservations;
+		this.dataflow = context.dataflow;
 	}
 
 	@Override
@@ -428,7 +430,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
 			}
 
-			ResolutionScope scope = Resolver.INSTANCE.resolve((Observable)observable, this.resolutionScope, Mode.RESOLUTION, scale, model);
+			ResolutionScope scope = Resolver.INSTANCE.resolve((Observable) observable, this.resolutionScope,
+					Mode.RESOLUTION, scale, model);
 			if (scope.getCoverage().isRelevant()) {
 
 				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope)
@@ -452,10 +455,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
 			}
 		}
-		
+
 		return dataflow;
 	}
-	
+
 	/**
 	 * TODO move the dataflow caching logics of all the new-.... functions into a
 	 * DataflowPool object or something like that.
@@ -482,7 +485,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 		Dataflow dataflow = resolve(obs, scale, subtask);
-		
+
 		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
 				((Monitor) monitor).get(subtask));
 
@@ -881,23 +884,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			return this.catalog.get(actuator.getName());
 		}
 
-		if (/* this.catalog.get(actuator.getName()) == null && */ !actuator.isPartition()) {
+		if (!actuator.isPartition()) {
 			targetObservables.put(actuator.getName(), new Triple<>(actuator.getObservable(), actuator.getMode(),
 					actuator.getType() == IArtifact.Type.VOID));
 		}
-
-		/*
-		 * add any other outputs from the model, which will be dealt with by the
-		 * contextualizers - NO. these are added to the dataflow only when requested by
-		 * other models.
-		 */
-//		if (actuator.getModel() != null && !actuator.getModel().isInstantiator()) {
-//			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
-//				IObservable output = actuator.getModel().getObservables().get(i);
-//				targetObservables.put(output.getName(),
-//						new Triple<>((Observable) output, output.getDescription().getResolutionMode(), false));
-//			}
-//		}
 
 		/*
 		 * add any target of indirect computations
@@ -969,13 +959,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						if (metadata != null) {
 							/* state specs may be in metadata from resource attributes */
 							Object obj = metadata.getCaseInsensitive(attr);
-//							if (obj != null) {
 							IState state = (IState) DefaultRuntimeProvider.createObservation(
 									actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale, this);
 							((State) state).distributeScalar(obj);
 							predefinedStates.add(state);
 							done = true;
-//							}
 						}
 
 						if (!done) {
@@ -998,74 +986,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						}
 					}
 				}
-
-////////// REVISED - 
-//
-//				/*
-//				 * model that may carry our additional outputs is either the upstream
-//				 * instantiator that has resolved our root subject, or the resolver we are
-//				 * using.
-//				 */
-//				IModel upstreamModel = parent == null ? null : actuator.getDataflow().getModel();
-//				boolean direct = false;
-//				if (upstreamModel != null && !upstreamModel.isInstantiator()) {
-//					upstreamModel = null;
-//				}
-//				if (upstreamModel == null && actuator.getModel() != null && !actuator.getModel().isInstantiator()) {
-//					upstreamModel = actuator.getModel();
-//					direct = true;
-//				}
-//
-//				if (upstreamModel != null) {
-//					for (String attr : upstreamModel.getAttributeObservables().keySet()) {
-//
-//						boolean done = false;
-//						Object obj = null;
-//						if (metadata != null) {
-//							/* state specs may be in metadata from resource attributes */
-//							obj = metadata.getCaseInsensitive(attr);
-//							direct = obj == null;
-//						}
-//						if (direct) {
-//
-//							/*
-//							 * new obs that must get to all levels and be reported when changed
-//							 */
-//							Observable obs = new Observable(
-//									(Observable) upstreamModel.getAttributeObservables().get(attr)).named(attr);
-//
-//							IState state = (IState) DefaultRuntimeProvider.createObservation(obs, scale, this);
-//							this.catalog.put(attr, state);
-//							this.observations.put(state.getId(), state);
-//							
-//							if (obj != null) {
-//								((State) state).distributeScalar(obj);
-//							}
-//							predefinedStates.add(state);
-//							actuator.addNotifiable(state);
-//							done = true;
-//						}
-//
-//						if (!done) {
-//							// look up in the first context that has the root subject as a target, or get
-//							// the parent if none does.
-//							RuntimeScope p = getParentWithTarget(rootSubject);
-//							IArtifact artifact = p.findArtifactByObservableName(attr);
-//							if (artifact == null) {
-//								Pair<String, IArtifact> art = p
-//										.findArtifact(upstreamModel.getAttributeObservables().get(attr));
-//								artifact = art == null ? null : art.getSecond();
-//							}
-//							if (artifact instanceof IState) {
-//								// observable may be different or use data reduction traits
-//								IState stateView = Observations.INSTANCE.getStateViewAs(
-//										upstreamModel.getAttributeObservables().get(attr), (IState) artifact, scale,
-//										this);
-//								predefinedStates.add(stateView);
-//							}
-//						}
-//					}
-//				}
 			}
 
 			if (preexisting == null) {
@@ -1104,9 +1024,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				for (IState state : predefinedStates) {
 					link(observation, state);
 				}
-
-//				System.out.println("Created "+ observation + " for " + actuator.getObservable());
-
+				
 			}
 		}
 

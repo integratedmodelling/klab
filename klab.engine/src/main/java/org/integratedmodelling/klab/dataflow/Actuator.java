@@ -50,6 +50,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -77,6 +78,7 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.scale.Coverage;
@@ -250,12 +252,6 @@ public class Actuator implements IActuator {
 	 * observable's name, e.g. the dependency name.
 	 */
 	private String referenceName;
-
-	/**
-	 * The dataflows built from the void actuators in our children. Non-empty only in
-	 * object actuators that contain 
-	 */
-	private ArrayList<Dataflow> dataflows;
 
 	@Override
 	public String getName() {
@@ -499,7 +495,7 @@ public class Actuator implements IActuator {
 		}
 
 		if (!runtimeContext.getTargetArtifact().equals(ret)) {
-			
+
 			/*
 			 * Computation has changed the artifact: reset into catalog unless it's a proxy
 			 * artifact.
@@ -666,10 +662,13 @@ public class Actuator implements IActuator {
 					/*
 					 * run any secondary dataflows
 					 */
-					for (Dataflow df : getDataflows(object, ctx)) {
-						
+					for (Dataflow dataflow : getDataflows(object, ctx)) {
+						dataflow.run(((Observation) object).getScale(), ctx.getMonitor());
 					}
-					
+
+					/*
+					 * everything is resolved, now add any behavior specified in annotations
+					 */
 					addBehaviors(object);
 
 				}
@@ -751,16 +750,36 @@ public class Actuator implements IActuator {
 	}
 
 	/**
-	 * Take any void actuators whose scale matches the 
+	 * Take any void actuators whose scale matches the
+	 * 
 	 * @param object
 	 * @param ctx
 	 * @return
 	 */
 	private List<Dataflow> getDataflows(IObjectArtifact object, IRuntimeScope ctx) {
-		if (this.dataflows == null) {
-			this.dataflows = new ArrayList<>();
+
+		List<Dataflow> ret = new ArrayList<>();
+		for (IActuator actuator : actuators) {
+			if (actuator.getType() == Type.VOID) {
+
+				Dataflow dataflow = new Dataflow(session);
+				dataflow.setName(this.name);
+				dataflow.setReferenceName(this.name);
+				dataflow.setContext((DirectObservation) object);
+				// ugly, meant to avoid notifications before the parents have been notified
+				dataflow.setSecondary(true);
+				dataflow.setResolutionScope(
+						getDataflow().getResolutionScope().getChildScope((DirectObservation) object, Mode.RESOLUTION));
+				dataflow.actuators.addAll(actuator.getActuators());
+				
+				// actuators have been repurposed to a different dataflow; reattribute so that
+				// notifiers work properly
+				dataflow.reattributeActuators();
+				
+				ret.add(dataflow);
+			}
 		}
-		return this.dataflows;
+		return ret;
 	}
 
 	private void addBehaviors(IArtifact ret) {
@@ -922,7 +941,7 @@ public class Actuator implements IActuator {
 
 			ret = " {\n";
 
-			for (IActuator actuator : getSortedChildren(this)) {
+			for (IActuator actuator : getSortedChildren(this, false)) {
 				ret += ((Actuator) actuator).encode(offset + 3) + "\n";
 			}
 
@@ -1060,9 +1079,11 @@ public class Actuator implements IActuator {
 		return annotations;
 	}
 
-	// coverage in an actuator is only set when it covers a sub-scale compared to
-	// that of resolution.
-	// The same field is used in a dataflow to define the overall coverage.
+	/**
+	 * coverage in an actuator is only set when it covers a sub-scale compared to
+	 * that of resolution. The same field is used in a dataflow to define the
+	 * overall coverage.
+	 */
 	public void setCoverage(Coverage coverage) {
 		this.coverage = coverage;
 	}
@@ -1164,9 +1185,9 @@ public class Actuator implements IActuator {
 		return getId();
 	}
 
-	public void setDataflowId(String dataflowId) {
-		_actuatorId = dataflowId;
-	}
+//	public void setDataflowId(String dataflowId) {
+//		_actuatorId = dataflowId;
+//	}
 
 	public IResolutionScope.Mode getMode() {
 		return this.mode;
@@ -1249,7 +1270,7 @@ public class Actuator implements IActuator {
 
 		boolean add = !added.contains(actuator);
 
-		for (IActuator child : getSortedChildren(actuator)) {
+		for (IActuator child : getSortedChildren(actuator, true)) {
 			_dependencyOrder((Actuator) child, ret, added, catalog);
 		}
 
@@ -1270,17 +1291,17 @@ public class Actuator implements IActuator {
 	 * 
 	 * @return
 	 */
-	private List<IActuator> getSortedChildren(Actuator actuator) {
-		
+	private List<IActuator> getSortedChildren(Actuator actuator, boolean skipSubdataflows) {
+
 		List<IActuator> ret = new ArrayList<>();
 		List<IActuator> partitions = new ArrayList<>();
 		for (IActuator act : actuator.getActuators()) {
-			
+
 			// these are sub-dataflow that are run after instantiation
-			if (act.getType() == IArtifact.Type.VOID) {
+			if (skipSubdataflows && act.getType() == IArtifact.Type.VOID) {
 				continue;
 			}
-			
+
 			if (((Actuator) act).observable.equals(actuator.observable)) {
 				partitions.add(act);
 			} else {
@@ -1405,72 +1426,6 @@ public class Actuator implements IActuator {
 				|| observable.getDescription() == IActivity.Description.CLASSIFICATION;
 	}
 
-//	/**
-//	 * Set things up to use the filter model compiled into the passed actuator. The
-//	 * actuator sorting strategy ensures filters are called last.
-//	 * 
-//	 * @param filter
-//	 * @param existingActuators
-//	 */
-//	private void adoptFilter(Actuator filter, Map<String, Actuator> existingActuators, IMonitor monitor) {
-//
-//		/*
-//		 * the observable is in the primary actuator, reference or not
-//		 */
-//		IObservable filtered = filter.observable.getFilteredObservable();
-//
-//		/*
-//		 * match it to one of our dependencies. If not there, we have a screwup.
-//		 */
-//		for (IActuator actuator : actuators) {
-//			if (((Actuator) actuator).observable.canResolve((Observable) filtered)) {
-//				filtered = ((Actuator) actuator).observable;
-//				break;
-//			}
-//		}
-//
-//		if (filter.isReference()) {
-//			// switch to original actuator
-//			filter = existingActuators.get(filter.getReferenceName());
-//		}
-//
-//		if (filter == null || !existingActuators.containsKey(filter.getReferenceName())) {
-//			// should never happen - remove when we're certain that it doesn't indeed
-//			throw new KlabInternalErrorException("UNRESOLVED FILTER REFERENCE!");
-//		}
-//
-//		/*
-//		 * adopt any dependencies from the filter; if the dependency exists in the
-//		 * passed catalog and we don't already have it, compile in a reference to it,
-//		 * otherwise put it in here.
-//		 */
-//		for (IActuator dependency : filter.actuators) {
-//			if (hasDependency(dependency)) {
-//				continue;
-//			}
-//			if (!((Actuator) dependency).isReference() && existingActuators.containsKey(dependency.getName())
-//					&& !haveActuatorNamed(dependency.getName())) {
-//				dependency = ((Actuator) dependency).getReference();
-//			}
-//			this.actuators.add(dependency);
-//		}
-//
-//		// compile in all mediations as they are
-//		for (Pair<IServiceCall, IContextualizable> mediator : filter.mediationStrategy) {
-//			this.mediationStrategy.add(mediator);
-//		}
-//
-//		/*
-//		 * compile in all filter computations, making a copy and ensuring the target is
-//		 * our filtered observable. These can only be filters by virtue of validation.
-//		 */
-//		for (Pair<IServiceCall, IContextualizable> computation : filter.computationStrategy) {
-//			this.computationStrategy.add(new Pair<>(setFilteredArgument(computation.getFirst(), filtered.getName()),
-//					setFilteredArgument(computation.getSecond(), filtered.getName())));
-//		}
-//
-//	}
-
 	boolean hasDependency(IActuator dependency) {
 		for (IActuator actuator : actuators) {
 			if (((Actuator) actuator).getObservable().canResolve(((Actuator) dependency).observable)) {
@@ -1517,18 +1472,17 @@ public class Actuator implements IActuator {
 		ret.namespace = this.namespace;
 		ret.session = this.session;
 		ret.mode = this.mode;
-		// ret.partitionedTarget = this.partitionedTarget;
 		return ret;
 	}
 
-	private boolean haveActuatorNamed(String name) {
-		for (IActuator actuator : actuators) {
-			if (actuator.getName().equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	private boolean haveActuatorNamed(String name) {
+//		for (IActuator actuator : actuators) {
+//			if (actuator.getName().equals(name)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	public void resetScales() {
 		this.runtimeScale = null;
@@ -1573,7 +1527,10 @@ public class Actuator implements IActuator {
 	}
 
 	public void addNotifiable(IState state) {
-		// TODO Auto-generated method stub
 		this.products.add(state);
+	}
+
+	public void setDataflow(Dataflow dataflow) {
+		this.dataflow = dataflow;
 	}
 }
