@@ -5,17 +5,17 @@ import java.util.Optional;
 
 import javax.naming.Name;
 
-import org.integratedmodelling.klab.hub.users.User;
+import org.integratedmodelling.klab.hub.api.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import net.minidev.json.JSONObject;
 
 public interface LdapService {
-	public abstract List<JSONObject> findAllGroups();
-	public abstract List<String> findAllUsers();
-	public abstract Optional<UserDetails> getUserByCn(String cn);
-	public abstract void updateUser(UserDetails user);
-	public abstract void deleteUser(String username);
-	public abstract void createUser(UserDetails user);
-	public abstract Name buildDn(String username );
-	public abstract boolean userExists(String username, String email);
+	abstract List<JSONObject> findAllGroups();
+	abstract List<String> findAllUsers();
+	abstract Optional<UserDetails> getUserByCn(String cn);
+	abstract void updateUser(UserDetails user);
+	abstract void deleteUser(String username);
+	abstract void createUser(UserDetails user);
+	abstract Name buildDn(String username );
+	abstract boolean userExists(String username, String email);
 }

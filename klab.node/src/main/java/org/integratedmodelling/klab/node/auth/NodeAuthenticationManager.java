@@ -102,9 +102,10 @@ public enum NodeAuthenticationManager {
         NodeAuthenticationRequest request = new NodeAuthenticationRequest();
 
         request.setCertificate(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE));
-        request.setNodeName(nodeName);
-        request.setNodeKey(certificate.getProperty(KlabCertificate.KEY_SIGNATURE));
+        request.setName(nodeName);
+        request.setKey(certificate.getProperty(KlabCertificate.KEY_SIGNATURE));
         request.setLevel(certificate.getLevel());
+        request.setEmail(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
 
         /*
          * response contains the groupset for validation and the Base64-encoded public

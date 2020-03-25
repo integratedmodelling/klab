@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.hub.nodes.services;
 
 import java.util.Collection;
 
-import org.integratedmodelling.klab.hub.nodes.MongoNode;
+import org.integratedmodelling.klab.hub.api.MongoNode;
 
 public interface NodeService {
 	public abstract MongoNode createNode(MongoNode node);

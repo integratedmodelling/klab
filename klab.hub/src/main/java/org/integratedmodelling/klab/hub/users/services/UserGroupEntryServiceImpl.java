@@ -3,13 +3,13 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.integratedmodelling.klab.hub.api.GroupEntry;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.commands.UpdateUsers;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.GroupEntry;
-import org.integratedmodelling.klab.hub.users.User;
-import org.integratedmodelling.klab.hub.users.commands.UpdateUsers;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +35,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		for (String username: updateRequest.getUsernames()) {
 			users.add(
 				userRepository
-					.findByUsernameIgnoreCase(username)
+					.findByNameIgnoreCase(username)
 					.map(user -> {
 						user.setGroupEntries(groupEntries);
 						return user;
@@ -57,7 +57,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		for (String username: updateRequest.getUsernames()) {
 			users.add(
 				userRepository
-					.findByUsernameIgnoreCase(username)
+					.findByNameIgnoreCase(username)
 					.map(user -> {
 						user.addGroupEntries(groupEntries);
 						return user;
@@ -74,7 +74,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		Set<GroupEntry> groupEntries = new HashSet<>();
 		for (String groupname : groupnames) {
 			groupRepository
-				.findByGroupNameIgnoreCase(groupname)
+				.findByNameIgnoreCase(groupname)
 				.map(grp -> 
 					groupEntries.add(
 						new GroupEntry(grp, experiation))

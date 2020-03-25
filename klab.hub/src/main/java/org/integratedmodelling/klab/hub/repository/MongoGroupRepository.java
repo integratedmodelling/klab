@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
-import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,7 @@ public interface MongoGroupRepository extends MongoRepository<MongoGroup, Object
 	
 	List<MongoGroup> findAll();
 	Optional<MongoGroup> findById(String id);
-	Optional<MongoGroup> findByGroupNameIgnoreCase(String groupName);
-	boolean existsByGroupNameIgnoreCase(String groupName);
+	Optional<MongoGroup> findByNameIgnoreCase(String groupName);
+	boolean existsByNameIgnoreCase(String groupName);
 	
 }

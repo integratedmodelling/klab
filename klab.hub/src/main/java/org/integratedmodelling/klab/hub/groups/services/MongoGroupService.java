@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.rest.Group;
 
 public interface MongoGroupService {

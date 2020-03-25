@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.config.BeanIds;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
@@ -128,9 +129,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.permitAll()
 			.antMatchers(HttpMethod.POST, "/api/v2/engines/auth-cert")
 			.permitAll()
-			.regexMatchers("/api/v2/users/.*?(verify|activate|lostPassword|setPassword|requestNewPassword|groups).*")
+			.regexMatchers("/api/v2/users/.*?(activate|certificate|groups|lostPassword|requestNewPassword|setPassword|verify).*")
 			.permitAll()
-			.regexMatchers("/api/v2/users/?(log-in|log-out)")
+			.regexMatchers(HttpMethod.POST, API.HUB.AUTHENTICATE_USER)
 			.permitAll()
 			.antMatchers("/api/auth-cert/engine", "/api/auth-cert/node")
 			.permitAll()

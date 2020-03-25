@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.nodes.controllers;
 
+import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +36,7 @@ public class MongoNodeController {
 	@PutMapping(value = "/{nodeName}", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> updateNode(@PathVariable("nodeName") String nodeName, @RequestBody MongoNode node) {
-		if(nodeName.equals(node.getNode())) {
+		if(nodeName.equals(node.getName())) {
 			nodeService.updateNode(node);	
 		} else {
 			throw new BadRequestException("Node name does not match url");
@@ -47,7 +47,7 @@ public class MongoNodeController {
 	@DeleteMapping(value = "/{nodeName}", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> deleteNode(@PathVariable("nodeName") String nodeName,  @RequestBody MongoNode node) {
-		if(nodeName.equals(node.getNode())) {
+		if(nodeName.equals(node.getName())) {
 			nodeService.deleteNode(node);	
 		} else {
 			throw new BadRequestException("Group name does not match name");

@@ -12,6 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
+import org.integratedmodelling.klab.hub.api.ClickbackAction;
+import org.integratedmodelling.klab.hub.api.TokenClickback;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.Role;
+import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.manager.TokenManager;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
@@ -19,12 +25,6 @@ import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
-import org.integratedmodelling.klab.hub.tokens.ChangePasswordClickbackToken;
-import org.integratedmodelling.klab.hub.tokens.ClickbackAction;
-import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
-import org.integratedmodelling.klab.hub.users.ProfileResource;
-import org.integratedmodelling.klab.hub.users.Role;
-import org.integratedmodelling.klab.hub.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -57,7 +57,7 @@ public class KUserController {
 
 	@GetMapping(value= "/{id}", produces = "application/json", params="activate")
 	public ResponseEntity<?> activateResponse(@PathVariable("id") String userId, @RequestParam("activate") String tokenString) throws URISyntaxException {
-		ClickbackToken newUserToken = (ClickbackToken) tokenManager
+		TokenClickback newUserToken = (TokenClickback) tokenManager
 				.handleVerificationToken(userId, tokenString);
 		ProfileResource profile = klabUserManager.getLoggedInUserProfile();
 		JSONObject clickback = new JSONObject();	
@@ -111,7 +111,7 @@ public class KUserController {
 	@PostMapping(value = "/{id}", produces = "application/json", params="requestNewPassword")
 	@PreAuthorize("authentication.getPrincipal() == #username")
 	public ResponseEntity<?> requestNewPasswordResponse(@PathVariable("id") String username) {
-		ChangePasswordClickbackToken token = tokenManager.createNewPasswordClickbackToken(username);
+		TokenChangePasswordClickback token = tokenManager.createNewPasswordClickbackToken(username);
 		JSONObject clickback = new JSONObject();
 		clickback.appendField("user", username);
 		clickback.appendField("clickback", token.getTokenString());

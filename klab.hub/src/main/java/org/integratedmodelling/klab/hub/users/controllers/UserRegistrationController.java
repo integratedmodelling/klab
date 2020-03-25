@@ -1,15 +1,15 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
+import org.integratedmodelling.klab.hub.api.TokenNewUserClickback;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.TokenType;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.api.TokenVerifyAccountClickback;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.SignupRequest;
-import org.integratedmodelling.klab.hub.tokens.NewUserClickbackToken;
-import org.integratedmodelling.klab.hub.tokens.TokenType;
-import org.integratedmodelling.klab.hub.tokens.VerifyAccountClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
-import org.integratedmodelling.klab.hub.users.ProfileResource;
-import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.hub.users.services.UserRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class UserRegistrationController {
 	@PostMapping(value= "", produces = "application/json")
 	public ResponseEntity<?> newUserRegistration(@RequestBody SignupRequest request) {
 		User user = userService.registerNewUser(request.getUsername(), request.getEmail());
-		VerifyAccountClickbackToken token = (VerifyAccountClickbackToken)
+		TokenVerifyAccountClickback token = (TokenVerifyAccountClickback)
 				tokenService.createToken(user.getUsername()
 						, TokenType.verify);
 		emailManager.sendNewUser(user.getEmail(), user.getUsername(), token.getCallbackUrl());
@@ -62,8 +62,8 @@ public class UserRegistrationController {
 		User user = userService.verifyNewUser(username);
 		// user cannot be null, verifyNewUser throw exception if this
 		ProfileResource profile = profileService.getUserSafeProfile(user);
-		NewUserClickbackToken token = 
-				(NewUserClickbackToken) tokenService
+		TokenNewUserClickback token = 
+				(TokenNewUserClickback) tokenService
 					.createChildToken(username, verify, TokenType.newUser);
 		
 		JSONObject resp = new JSONObject();

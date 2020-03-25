@@ -1,10 +1,10 @@
 package org.integratedmodelling.klab.hub.network.controllers;
 
+import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.network.Docker;
 import org.integratedmodelling.klab.hub.network.DockerNode;
 import org.integratedmodelling.klab.hub.network.commands.CreateContainerAndRun;
-import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.repository.DockerConfigurationRepository;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class DockerDeploymentController {
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> createNodeConfiguration(@RequestBody DockerNode config)  {
 		MongoNode node = nodeRepo
-				.findByNodeIgnoreCase(config.getNode().getNode())
+				.findByNameIgnoreCase(config.getNode().getName())
 				.orElseThrow(() -> new BadRequestException("Could not match node to one in database."));
 		config.setNode(node);
 		

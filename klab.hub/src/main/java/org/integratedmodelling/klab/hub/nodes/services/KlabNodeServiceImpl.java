@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -52,7 +52,7 @@ public class KlabNodeServiceImpl implements KlabNodeService{
 		List<MongoNode> found = mongoTemplate.find(query, MongoNode.class);
 		if (found.size() == 1) {
 			MongoNode savedNode = found.get(0);
-			savedNode.setLastNodeConnection();
+			savedNode.setLastConnection();
 			mongoTemplate.save(savedNode);
 		} else {
 			throw new BadRequestException("Found more than one node of that name");

@@ -7,8 +7,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.manager.KlabNodeManager;
-import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -81,7 +81,7 @@ public class KNodeController {
 	
 	@PostMapping(value = "", produces = "application/json")
 	public ResponseEntity<Object> createNode(@RequestBody MongoNode node) {
-		klabNodeManager.createNode(node.getNode(), node);
+		klabNodeManager.createNode(node.getName(), node);
 		return new ResponseEntity<>(node, HttpStatus.CREATED);
 	}
 }

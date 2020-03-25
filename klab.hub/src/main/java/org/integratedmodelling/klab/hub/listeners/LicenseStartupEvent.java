@@ -10,19 +10,34 @@ import java.security.NoSuchProviderException;
 
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
+import org.integratedmodelling.klab.hub.api.ArmoredKeyPair;
+import org.integratedmodelling.klab.hub.api.BouncyConfiguration;
+import org.integratedmodelling.klab.hub.api.LegacyConfiguration;
+import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.commands.GenerateLicenseFactory;
 import org.integratedmodelling.klab.hub.config.LegacyLicenseConfig;
-import org.integratedmodelling.klab.hub.license.ArmoredKeyPair;
-import org.integratedmodelling.klab.hub.license.BouncyConfiguration;
-import org.integratedmodelling.klab.hub.license.LegacyConfiguration;
-import org.integratedmodelling.klab.hub.license.LicenseConfiguration;
-import org.integratedmodelling.klab.hub.license.commands.GenerateLicenseFactory;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
 
+/*
+ * This components will create a new license key for utilization of the hub on startup, if none exists.
+ * This is essential for deploying new hubs, and not having to include complicated setup configurations
+ * that require the user generation of pgp keys.  It also cuts down on the number of secret files that
+ * are needed to deploy the hub.  
+ * 
+ * It also can read in the legacy configuration and add that to the database for licenses if it is 
+ * not present.  ALso greatly reduces the complication in development of testing license generation 
+ * and verification.
+ * 
+ * Problem  is that during testing the framework firesoff an context refresh before the context has
+ * been built.  This took an hour and half of my time to discover and fix.
+ * 
+ * @author: Steve
+ */
 @Component
 public class LicenseStartupEvent {
 	
@@ -37,7 +52,7 @@ public class LicenseStartupEvent {
 	private LegacyLicenseConfig legacy;
 	
 	@EventListener
-	public void startup(ContextRefreshedEvent event) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException, DecoderException {
+	public void startup(ApplicationReadyEvent event) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException, DecoderException {
 		
 		if(repository.findAll().isEmpty()) {
 			LicenseConfiguration config =

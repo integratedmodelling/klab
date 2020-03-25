@@ -12,8 +12,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -32,9 +32,9 @@ public class TokenAuthenticationFilter implements Filter {
         	String tokenString = ((HttpServletRequest) request)
                     .getHeader(WebSecurityConfig.AUTHENTICATION_TOKEN_HEADER_NAME);
             if (tokenString != null) {
-            	Optional<AuthenticationToken> token = tokenRepository.findByTokenString(tokenString);
+            	Optional<TokenAuthentication> token = tokenRepository.findByTokenString(tokenString);
             	if(token.isPresent()) {
-            		AuthenticationToken storedToken = token.get();
+            		TokenAuthentication storedToken = token.get();
                     if (storedToken.isAuthenticated()) {
                         // successful match. token should contain everything the security context needs.
                         SecurityContextHolder.getContext().setAuthentication(storedToken);

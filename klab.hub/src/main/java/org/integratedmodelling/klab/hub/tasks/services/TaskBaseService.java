@@ -4,9 +4,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.integratedmodelling.klab.hub.tasks.Task;
-import org.integratedmodelling.klab.hub.tasks.TaskStatus;
-import org.integratedmodelling.klab.hub.tasks.TaskType;
+import org.integratedmodelling.klab.hub.api.Task;
+import org.integratedmodelling.klab.hub.api.TaskStatus;
+import org.integratedmodelling.klab.hub.api.TaskType;
 
 public interface TaskBaseService {
 	public abstract Task acceptTask(String id, HttpServletRequest request);

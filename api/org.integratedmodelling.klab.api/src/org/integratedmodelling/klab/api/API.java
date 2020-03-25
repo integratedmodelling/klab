@@ -93,7 +93,7 @@ public interface API {
 
 	/**
 	 * STOMP endpoint for client/server notifications. Handled through Websockets
-	 * protocol.
+	 * protocol.Drugs and Aging
 	 * 
 	 * <br/>
 	 * <b>Response type:</b> {@link Message}
@@ -169,13 +169,61 @@ public interface API {
 		 * <br/>
 		 * <b>Authentication:</b> open
 		 */
-		public static final String AUTHENTICATE_ENGINE = "/api/v2/engines/auth-cert";
-
+		/**
+		 * Base URL path for node on the hub.
+		 */
+		public static final String NODE_BASE = "/api/v2/nodes";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String USER_BASE = "/api/v2/users";
+		/**
+		 * Base URL path for lever resources on the hub.
+		 */
+		public static final String LEVER_BASE = "/api/v2/lever";
+		/**
+		 * Base URL path for engine resources on the hub.
+		 */		
+		public static final String ENGINE_BASE = "/api/v2/engines";
+		/**
+		 * Base URL path for authenticating resources.
+		 */		
+		public static final String AUTH_BASE = "/auth-cert";
+		
+		public static final String AUTHENTICATE_ENGINE = ENGINE_BASE + AUTH_BASE;
 		/**
 		 * Called by nodes on hubs when authenticating with them. Parameters like the
 		 * engine version.
 		 */
-		public static final String AUTHENTICATE_NODE = "/api/v2/nodes/auth-cert";
+		public static final String AUTHENTICATE_NODE = NODE_BASE + AUTH_BASE;
+		/**
+		 * Called by levers on hubs when authenticating with them. Parameters like the
+		 * engine version.
+		 */
+		public static final String AUTHENTICATE_LEVER = LEVER_BASE + AUTH_BASE;
+		/**
+		 * Called by users to log into the hub and recieve an authentication token.
+		 */
+		public static final String AUTHENTICATE_USER = USER_BASE + "/log-in";
+		/**
+		 * Called by users to log into the hub and recieve an authentication token.
+		 */
+		public static final String DEAUTHENTICATE_USER = USER_BASE + "/log-out";
+		
+		/**
+		 * Base URL path for node resources on the hub.
+		 */
+		public static final String NODE_BASE_ID = NODE_BASE + "/{id}";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String USER_BASE_ID = USER_BASE+ "/{id}";
+		/**
+		 * Base URL path for lever resources on the hub.
+		 */
+		public static final String LEVER_BASE_ID = LEVER_BASE + "/{id}";
+
+		
 
 		public static interface INDEXING {
 

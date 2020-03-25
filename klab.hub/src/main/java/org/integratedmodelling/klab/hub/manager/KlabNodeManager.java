@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.hub.groups.MongoGroup;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
+import org.integratedmodelling.klab.hub.api.MongoNode;
+import org.integratedmodelling.klab.hub.api.adapters.MongoGroupAdapter;
 import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
-import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.services.KlabNodeService;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class KlabNodeManager {
 	public void updateLastEngineConnection(String nodename) {
 		MongoNode node = klabNodeService.getNode(nodename)
 				.orElseThrow(IllegalArgumentException::new);
-		node.setLastNodeConnection();
+		node.setLastConnection();
 		klabNodeService.updateNodeLastConnection(nodename);
 	}
 
@@ -43,18 +44,9 @@ public class KlabNodeManager {
 		MongoNode node = klabNodeService.getNode(nodename)
 				.orElseThrow(IllegalArgumentException::new);
 		List<Group> listOfGroups = new ArrayList<>();
-		for (String groupName : node.getGroups()) {
-			if(groupName != null) {
-				Group group = new Group();
-				MongoGroup klabGroup = klabGroupService.getGroup(groupName)
-						.orElseThrow(IllegalArgumentException::new);
-				group.setId(klabGroup.getId());
-				group.setProjectUrls(klabGroup.getProjectUrls());
-				group.setSshKey(klabGroup.getSshKey());
-				group.setObservables(klabGroup.getObservableReferences());
-				group.setWorldview(klabGroup.getWorldview());
-				listOfGroups.add(group);
-			}
+		for (MongoGroup mGroup : node.getGroups()) {
+			Group group = new MongoGroupAdapter(mGroup).convertGroup();
+			listOfGroups.add(group);
 		}
 		return listOfGroups;
 	}
@@ -79,7 +71,7 @@ public class KlabNodeManager {
 		Collection<MongoNode> nodes = getNodes();
 		List<String> nodeNames = new ArrayList<String>();
 		for (MongoNode node : nodes) {
-			nodeNames.add(node.getNode());
+			nodeNames.add(node.getName());
 		}
 		return nodeNames;
 	}

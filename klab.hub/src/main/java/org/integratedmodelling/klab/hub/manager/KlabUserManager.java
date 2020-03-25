@@ -9,17 +9,17 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.hub.api.DeletedUser;
+import org.integratedmodelling.klab.hub.api.GroupEntry;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.Role;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.groups.services.MongoGroupService;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.DeletedUserRepository;
 import org.integratedmodelling.klab.hub.service.UserService;
-import org.integratedmodelling.klab.hub.users.DeletedUser;
-import org.integratedmodelling.klab.hub.users.GroupEntry;
-import org.integratedmodelling.klab.hub.users.ProfileResource;
-import org.integratedmodelling.klab.hub.users.Role;
-import org.integratedmodelling.klab.hub.users.User;
-import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.integratedmodelling.klab.rest.Group;
 import org.joda.time.DateTime;
 import org.integratedmodelling.klab.hub.service.LdapService;
@@ -143,7 +143,7 @@ public class KlabUserManager implements UserDetailsService{
 	}
 
 	public void updateLastEngineConnection(User user) {
-		user.setLastEngineConnection();
+		user.setLastConnection();
 		userService.updateUser(user);
 	}
 	

@@ -5,10 +5,10 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.integratedmodelling.klab.hub.tasks.Task;
-import org.integratedmodelling.klab.hub.tasks.TaskParameters;
-import org.integratedmodelling.klab.hub.tasks.TaskStatus;
-import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
+import org.integratedmodelling.klab.hub.api.Task;
+import org.integratedmodelling.klab.hub.api.TaskParameters;
+import org.integratedmodelling.klab.hub.api.TaskStatus;
+import org.integratedmodelling.klab.hub.api.TokenClickback;
 
 public interface TaskService {
 	/**
@@ -57,5 +57,5 @@ public interface TaskService {
 	public abstract List<Task> getTasks(Class<? extends Task> clazz);
 	public abstract List<Task> getTasks(TaskStatus status);
 	public abstract List<Task> getTasks(Class<? extends Task> clazz, TaskStatus status);
-	public abstract Optional<Task> getTaskByToken(Class<? extends Task> type, ClickbackToken token);
+	public abstract Optional<Task> getTaskByToken(Class<? extends Task> type, TokenClickback token);
 }

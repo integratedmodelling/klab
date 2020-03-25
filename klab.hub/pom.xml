@@ -62,6 +62,13 @@
 			<artifactId>jose4j</artifactId>
 			<version>0.6.3</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-test</artifactId>
+		    <version>2.0.1.RELEASE</version>
+		    <scope>test</scope>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -146,7 +153,7 @@
 		<dependency>
 		    <groupId>org.hibernate</groupId>
 		    <artifactId>hibernate-validator</artifactId>
-		    <version>6.1.0.Final</version>
+		    <version>6.0.7.Final</version>
 		</dependency>
 	</dependencies>
 </project>

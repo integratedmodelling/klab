@@ -2,11 +2,11 @@ package org.integratedmodelling.klab.hub.users.controllers;
 
 import java.util.Set;
 
+import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
-import org.integratedmodelling.klab.hub.tokens.TokenType;
-import org.integratedmodelling.klab.hub.tokens.ChangePasswordClickbackToken;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
-import org.integratedmodelling.klab.hub.users.ProfileResource;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class UserProfileController {
 	@GetMapping("")
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> getAllUserProfiles() {
-		Set<ProfileResource> profiles = userService.getAllUserProfiles();
+		JSONObject profiles = new JSONObject().appendField("profiles", userService.getAllUserProfiles());
 		return new ResponseEntity<>(profiles,HttpStatus.OK);
 	}
 	
@@ -66,7 +66,7 @@ public class UserProfileController {
 	
 	@PostMapping(value="/{username}", params = "requestNewPassword")
 	public ResponseEntity<?> newUserRegistration(@PathVariable String username) {
-		ChangePasswordClickbackToken token = (ChangePasswordClickbackToken)
+		TokenChangePasswordClickback token = (TokenChangePasswordClickback)
 				tokenService.createToken(username, TokenType.password);
 		JSONObject resp = new JSONObject();
 		resp.appendField("User", username).appendField("clickback", token.getTokenString());

@@ -7,14 +7,14 @@ import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.hub.api.GroupEntry;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.service.UserService;
-import org.integratedmodelling.klab.hub.users.GroupEntry;
-import org.integratedmodelling.klab.hub.users.User;
-import org.integratedmodelling.klab.hub.users.User.AccountStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService{
 	UserRepository userRepository;
 
 	public Optional<User> getUserFromMongo(String usernameOrEmail) {
-		Optional<User> user = userRepository.findByUsernameIgnoreCaseOrEmailIgnoreCase(usernameOrEmail, usernameOrEmail);
+		Optional<User> user = userRepository.findByNameIgnoreCaseOrEmailIgnoreCase(usernameOrEmail, usernameOrEmail);
 		return user;
 	}
 
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	public boolean usernameExists(String username) {
-		Optional<User> user = userRepository.findByUsernameIgnoreCase(username);
+		Optional<User> user = userRepository.findByNameIgnoreCase(username);
 		return user.isPresent();
 	}
 

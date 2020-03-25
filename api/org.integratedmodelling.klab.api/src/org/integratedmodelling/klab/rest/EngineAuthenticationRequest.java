@@ -2,20 +2,16 @@ package org.integratedmodelling.klab.rest;
 
 import org.integratedmodelling.klab.api.auth.ICertificate;
 
-public class EngineAuthenticationRequest {
+public class EngineAuthenticationRequest extends AuthenticationRequest {
 
-	private String username;
-	private String userKey;
 	private String userType;
-	private String certificate;
-	private String email;
 	private ICertificate.Level level = ICertificate.Level.USER;
 
-	public EngineAuthenticationRequest(String username, String userKey, String userType, String certificate,
+	public EngineAuthenticationRequest(String name, String key, String userType, String certificate,
 			ICertificate.Level level) {
 		super();
-		this.username = username;
-		this.userKey = userKey;
+		this.name = name;
+		this.key = key;
 		this.userType = userType;
 		this.certificate = certificate;
 		this.level = level;
@@ -32,20 +28,12 @@ public class EngineAuthenticationRequest {
 	public EngineAuthenticationRequest() {
 	}
 
-	public String getUsername() {
-		return username;
+	public String getKey() {
+		return key;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getUserKey() {
-		return userKey;
-	}
-
-	public void setUserKey(String userKey) {
-		this.userKey = userKey;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getUserType() {
@@ -77,9 +65,9 @@ public class EngineAuthenticationRequest {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((certificate == null) ? 0 : certificate.hashCode());
-		result = prime * result + ((userKey == null) ? 0 : userKey.hashCode());
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		result = prime * result + ((userType == null) ? 0 : userType.hashCode());
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -97,20 +85,20 @@ public class EngineAuthenticationRequest {
 				return false;
 		} else if (!certificate.equals(other.certificate))
 			return false;
-		if (userKey == null) {
-			if (other.userKey != null)
+		if (key == null) {
+			if (other.key != null)
 				return false;
-		} else if (!userKey.equals(other.userKey))
+		} else if (!key.equals(other.key))
 			return false;
 		if (userType == null) {
 			if (other.userType != null)
 				return false;
 		} else if (!userType.equals(other.userType))
 			return false;
-		if (username == null) {
-			if (other.username != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!username.equals(other.username))
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}

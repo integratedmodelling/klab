@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.integratedmodelling.klab.hub.api.DeletedUser;
 import org.integratedmodelling.klab.hub.repository.DeletedUserRepository;
-import org.integratedmodelling.klab.hub.users.DeletedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

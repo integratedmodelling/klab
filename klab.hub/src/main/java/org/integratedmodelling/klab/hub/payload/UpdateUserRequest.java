@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.payload;
 
-import org.integratedmodelling.klab.hub.users.ProfileResource;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
 
 public class UpdateUserRequest {
 	public ProfileResource profile;

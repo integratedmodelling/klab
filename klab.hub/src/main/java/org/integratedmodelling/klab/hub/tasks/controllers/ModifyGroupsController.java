@@ -6,11 +6,11 @@ import java.util.Optional;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 
-import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
-import org.integratedmodelling.klab.hub.tasks.ModifyGroupsTask;
-import org.integratedmodelling.klab.hub.tasks.RemoveGroupTask;
-import org.integratedmodelling.klab.hub.tasks.Task;
-import org.integratedmodelling.klab.hub.tasks.TaskStatus;
+import org.integratedmodelling.klab.hub.api.GroupRequestTask;
+import org.integratedmodelling.klab.hub.api.ModifyGroupsTask;
+import org.integratedmodelling.klab.hub.api.RemoveGroupTask;
+import org.integratedmodelling.klab.hub.api.Task;
+import org.integratedmodelling.klab.hub.api.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

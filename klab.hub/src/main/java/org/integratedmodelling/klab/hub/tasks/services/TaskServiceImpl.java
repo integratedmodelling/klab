@@ -6,13 +6,13 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.hub.api.Task;
+import org.integratedmodelling.klab.hub.api.TaskBuilder;
+import org.integratedmodelling.klab.hub.api.TaskParameters;
+import org.integratedmodelling.klab.hub.api.TaskStatus;
+import org.integratedmodelling.klab.hub.api.TokenClickback;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
-import org.integratedmodelling.klab.hub.tasks.Task;
-import org.integratedmodelling.klab.hub.tasks.TaskBuilder;
-import org.integratedmodelling.klab.hub.tasks.TaskParameters;
-import org.integratedmodelling.klab.hub.tasks.TaskStatus;
-import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -190,7 +190,7 @@ public class TaskServiceImpl implements TaskService{
 		return taskRepository.findByClassAndStatus(clazz.getSimpleName(), status);
 	}
 	
-	public Optional<Task> getTaskByToken(Class<? extends Task> clazz, ClickbackToken token) {
+	public Optional<Task> getTaskByToken(Class<? extends Task> clazz, TokenClickback token) {
 		return taskRepository.findByToken(clazz.getSimpleName(), token);
 	}
 }

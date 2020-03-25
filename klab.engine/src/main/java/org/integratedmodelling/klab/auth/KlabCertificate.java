@@ -121,7 +121,7 @@ public class KlabCertificate implements ICertificate {
 		this.file = file;
 	}
 
-	private KlabCertificate(String resource) {
+	public KlabCertificate(String resource) {
 		this.resource = resource;
 	}
 

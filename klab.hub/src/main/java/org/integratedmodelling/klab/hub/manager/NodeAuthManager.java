@@ -9,9 +9,9 @@ import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
-import org.integratedmodelling.klab.hub.nodes.MongoNode;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
 import org.integratedmodelling.klab.auth.Hub;
@@ -63,8 +63,8 @@ public class NodeAuthManager {
 		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
 		INodeIdentity node = authenticateNodeCert(request.getCertificate());
 		Logging.INSTANCE.info(node.getName());
-		List<Group> Groups = klabNodeManager.getNodeGroups(request.getNodeName());
-		node.getUrls().add(klabNodeManager.getNode(request.getNodeName()).getUrl());
+		List<Group> Groups = klabNodeManager.getNodeGroups(request.getName());
+		node.getUrls().add(klabNodeManager.getNode(request.getName()).getUrl());
 		Logging.INSTANCE.info("authorized node " + node.getName());
 		IdentityReference userIdentity = new IdentityReference(node.getName()
 				,node.getParentIdentity().getEmailAddress(), now.toString());		
@@ -107,7 +107,7 @@ public class NodeAuthManager {
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
 		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
-		INodeIdentity node = authenticateLocalNodeCert(request.getNodeName());
+		INodeIdentity node = authenticateLocalNodeCert(request.getName());
 		List<Group> Groups = klabNodeManager.getGroups();
 		Logging.INSTANCE.info("authorized installed node " + node.getName());
 		IdentityReference userIdentity = new IdentityReference(node.getName()

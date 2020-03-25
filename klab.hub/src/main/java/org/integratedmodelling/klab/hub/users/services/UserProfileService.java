@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.Set;
 
-import org.integratedmodelling.klab.hub.users.ProfileResource;
-import org.integratedmodelling.klab.hub.users.User;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.User;
 import org.springframework.stereotype.Service;
 
 @Service

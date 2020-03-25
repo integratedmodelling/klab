@@ -1,0 +1,104 @@
+package org.integratedmodelling.klab.hub.license.controllers;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.NoSuchProviderException;
+import java.util.Properties;
+
+import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.openpgp.PGPException;
+import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.hub.api.BouncyLicense;
+import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.api.MongoNode;
+import org.integratedmodelling.klab.hub.api.NodeAuthResponeFactory;
+import org.integratedmodelling.klab.hub.api.PropertiesFactory;
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.nodes.services.NodeService;
+import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
+import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
+import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class NodeLicenseController extends LicenseController<NodeAuthenticationRequest>{
+	
+	private NodeService nodeService;
+	private LicenseConfigRepository licenseRepo;
+	private MongoGroupRepository groupRepository;
+	
+	@Autowired
+	NodeLicenseController(NodeService nodeService,
+			LicenseConfigRepository licenseRepo,
+			MongoGroupRepository groupRepository) {
+		this.nodeService = nodeService;
+		this.licenseRepo = licenseRepo;
+		this.groupRepository = groupRepository;
+	}
+	
+	@GetMapping(value= API.HUB.NODE_BASE_ID, params = "certificate")
+	@RolesAllowed({ "ROLE_SYSTEM" })
+	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
+		MongoNode node = nodeService.getNode(id);
+		LicenseConfiguration configuration = licenseRepo.findAll().get(0);
+
+		Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();
+
+
+		byte[] certFileContent = new BouncyLicense().generate(nodeProperties, configuration);;
+
+		String certFileString = String.format("attachment; filename=%s", KlabCertificate.DEFAULT_NODE_CERTIFICATE_FILENAME);
+
+		response.setHeader("Content-disposition", certFileString);
+		response.setContentType("text/plain;charset=utf-8");
+		response.setContentLength(certFileContent.length);
+		try {
+			IOUtils.copy(new ByteArrayInputStream(certFileContent), response.getOutputStream());
+			response.flushBuffer();
+		} finally {
+			response.getOutputStream().close();
+		}
+		//IOUtils.closeQuietly(response.getOutputStream());
+	}
+	
+	@PostMapping(value= API.HUB.AUTHENTICATE_NODE)
+	public ResponseEntity<NodeAuthenticationResponse> processCertificate(@RequestBody NodeAuthenticationRequest request,
+			HttpServletRequest httpRequest) {
+		String remoteAddr = "";
+		if (httpRequest != null) {
+			remoteAddr = httpRequest.getHeader("X-FORWARDED-FOR");
+			if (remoteAddr == null || "".equals(remoteAddr)) {
+				remoteAddr = httpRequest.getRemoteAddr();
+			}
+		}
+
+		LicenseConfiguration config = licenseRepo.findByKeyString(request.getKey())
+				.orElseGet(() -> new LicenseConfiguration());
+
+		NodeAuthenticationResponse response;
+
+		try {
+			//this is to many arguments, the groups are only needed because local nodes do not use dbrefs for groups.
+			//this would be an improvement and remove lines of code which are only there to combine the two.
+			response = new NodeAuthResponeFactory().getRespone(request, remoteAddr, config, nodeService, groupRepository);
+		} catch (NoSuchProviderException | IOException | PGPException e) {
+			throw new BadRequestException("Make a more useful message to help fiqure out what happened.");
+		}
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+}

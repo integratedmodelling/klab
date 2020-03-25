@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.users.services;
 
-import org.integratedmodelling.klab.hub.users.User;
+import org.integratedmodelling.klab.hub.api.User;
 import org.springframework.stereotype.Service;
 
 @Service

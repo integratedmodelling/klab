@@ -10,13 +10,13 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.hub.authentication.commands.GenerateHubReference;
+import org.integratedmodelling.klab.hub.api.JwtToken;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
-import org.integratedmodelling.klab.hub.license.JwtToken;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
-import org.integratedmodelling.klab.hub.users.ProfileResource;
-import org.integratedmodelling.klab.hub.users.User;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
@@ -121,7 +121,7 @@ public class EngineAuthManager {
 	private EngineAuthenticationResponse processLocalEngineUser(EngineAuthenticationRequest request) {
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
-		EngineUser engineUser = authenticateLocalEngineCert(request.getUsername());
+		EngineUser engineUser = authenticateLocalEngineCert(request.getName());
 		IdentityReference userIdentity = new IdentityReference(engineUser.getUsername(), engineUser.getEmailAddress(),
 				now.toString());
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engineUser.getGroups(),

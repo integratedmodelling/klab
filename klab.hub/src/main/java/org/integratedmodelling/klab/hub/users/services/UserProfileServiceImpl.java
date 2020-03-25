@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.ProfileResource;
-import org.integratedmodelling.klab.hub.users.User;
-import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Override
 	public ProfileResource updateUserByProfile(ProfileResource profile) {
-		User user = userRepository.findByUsernameIgnoreCase(profile.getUsername())
+		User user = userRepository.findByNameIgnoreCase(profile.getUsername())
 				.filter(u -> u.getUsername().equals(profile.getUsername()))
 				.orElseThrow(() ->  
 					new KlabException("Current User context does match updated profile username"));
@@ -50,7 +50,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Override
 	public ProfileResource getUserProfile(String username) {
-		User user = userRepository.findByUsernameIgnoreCase(username)
+		User user = userRepository.findByNameIgnoreCase(username)
 				.orElseThrow(() ->  
 					new BadRequestException("User does not exist"));
 		return getUserSafeProfile(user);
@@ -59,7 +59,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	public ProfileResource getCurrentUserProfile() {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userRepository.findByUsernameIgnoreCase(username)
+		User user = userRepository.findByNameIgnoreCase(username)
 				.orElseThrow(() ->  
 					new BadRequestException("User does not exist"));
 		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
@@ -76,7 +76,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Override
 	public ProfileResource getRawUserProfile(String username) {
-		User user = userRepository.findByUsernameIgnoreCase(username)
+		User user = userRepository.findByNameIgnoreCase(username)
 				.orElseThrow(() ->  
 					new BadRequestException("User does not exist"));
 		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);

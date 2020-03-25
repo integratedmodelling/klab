@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
-import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
-import org.integratedmodelling.klab.hub.tokens.TokenType;
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.TokenType;
 
 public interface TokenBaseService {
-	public AuthenticationToken createToken(String username, TokenType verify);
-	public AuthenticationToken createChildToken(String username, String parentToken, TokenType verify);
+	public TokenAuthentication createToken(String username, TokenType verify);
+	public TokenAuthentication createChildToken(String username, String parentToken, TokenType verify);
 	public abstract boolean verifyToken(String username, String tokenString, TokenType verify);
 	public abstract boolean verifyTokens(String username, String tokenString, TokenType ...verify);
 	public abstract void deleteToken(String tokenString);

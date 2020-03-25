@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.groups.MongoGroup;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -28,7 +28,7 @@ public class MongoGroupServiceImpl implements MongoGroupService {
     
 	@Override
 	public void createGroup(String id, MongoGroup group) {
-		Query query = new Query(Criteria.where("groupName").is(id));
+		Query query = new Query(Criteria.where("name").is(id));
 		List<MongoGroup> found = mongoTemplate.find(query, MongoGroup.class);
 		if (found.size() == 0) {
 			mongoTemplate.save(group);
@@ -65,8 +65,8 @@ public class MongoGroupServiceImpl implements MongoGroupService {
 	}
 
 	@Override
-	public Optional<MongoGroup> getGroup(String groupName) {
-		Query query = new Query(Criteria.where("groupName").is(groupName));
+	public Optional<MongoGroup> getGroup(String name) {
+		Query query = new Query(Criteria.where("name").is(name));
 		List<MongoGroup> found = mongoTemplate.find(query, MongoGroup.class);
 		if (found.size() == 1) {
 			Optional<MongoGroup> group = Optional.of(found.get(0));
