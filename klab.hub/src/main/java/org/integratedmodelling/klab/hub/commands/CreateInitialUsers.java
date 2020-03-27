@@ -16,7 +16,9 @@ import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 
 public class CreateInitialUsers {
@@ -24,13 +26,16 @@ public class CreateInitialUsers {
 	private MongoGroupRepository groupRepository;
 	private UserRepository userRepository;
 	private	LdapUserDetailsManager ldapUserDetailsManager;
-
-	public CreateInitialUsers(MongoGroupRepository groupRepository, UserRepository userRepository,
-			LdapUserDetailsManager ldapUserDetailsManager) {
-		super();
+	private DelegatingPasswordEncoder passwordEncoder;
+	
+	public CreateInitialUsers(MongoGroupRepository groupRepository,
+			UserRepository userRepository,
+			LdapUserDetailsManager ldapUserDetailsManager,
+			DelegatingPasswordEncoder passwordEncoder) {
 		this.groupRepository = groupRepository;
 		this.userRepository = userRepository;
 		this.ldapUserDetailsManager = ldapUserDetailsManager;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	public void execute() {
@@ -58,7 +63,6 @@ public class CreateInitialUsers {
             Role... roles) {
         User result = new User();
         result.setUsername(username);
-        result.setPasswordHash(password);
         result.setEmail(email);
         result.setRoles(Arrays.asList(roles));
         result.setAccountStatus(AccountStatus.active);
@@ -66,6 +70,7 @@ public class CreateInitialUsers {
         result.setLastName(lastName);
         result.setRegistrationDate(generateRandomDate(null));
         result.setLastLogin(generateRandomDate(result.getRegistrationDate()));
+        result.setPasswordHash(password);
         return result;
     }
     
@@ -157,6 +162,8 @@ public class CreateInitialUsers {
     	List<User> users = getInitialUsers();
     	for(User user : users) {
     		try {
+    			//This is our legacy password encoding
+    			user = new SetUserPasswordHash(user, user.getPasswordHash(),new LdapShaPasswordEncoder()).execute();
     			User newUser = new CreateUserWithRolesAndStatus(user, userRepository, ldapUserDetailsManager).execute();
     			if (newUser.getLastLogin() != null) {
     				int x = (int)(Math.random()*100+1);
@@ -168,7 +175,6 @@ public class CreateInitialUsers {
     			Logging.INSTANCE.error(e);
     		}
     	}
-    }
-        
+    }   
 
 }

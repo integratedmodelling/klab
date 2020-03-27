@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.license.controllers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.NoSuchProviderException;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.annotation.security.RolesAllowed;
@@ -89,7 +90,10 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 				remoteAddr = httpRequest.getRemoteAddr();
 			}
 		}
-
+		if(httpRequest.getHeader("test") != null) {
+			remoteAddr = "128.0.0.1";
+		}
+		
 		LicenseConfiguration config = licenseRepo.findByKeyString(request.getKey())
 				.orElseGet(() -> new LicenseConfiguration());
 

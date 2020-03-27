@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.hub.security;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +29,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -44,7 +48,7 @@ import com.google.common.net.HttpHeaders;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	KlabUserManager klabUserManager;
+	KlabUserManager KlabUserManager;
 
 	@Autowired
 	private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -96,13 +100,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(klabUserManager).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(KlabUserManager).passwordEncoder(passwordEncoder());
 	}
 
-	//This should be changed to something like Bcrypt, but 
+	
+	/**
+	 * The allows our password encoder to have multiple entries.  Allowing us to upgrade user
+	 * passwords without needing to do some serious migration effort.  It is possible that
+	 * we will need to have users set a new password, or force the system to rehash the password
+	 * when the user logs in.
+	 */	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		return new LdapShaPasswordEncoder();
+        String encodingId = "bcrypt";
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+        encoders.put(encodingId, new BCryptPasswordEncoder());
+        encoders.put("SHA512", new  LdapShaPasswordEncoder());
+        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
+        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new LdapShaPasswordEncoder());
+        return delegatingPasswordEncoder;
 	}
 
 	@Override

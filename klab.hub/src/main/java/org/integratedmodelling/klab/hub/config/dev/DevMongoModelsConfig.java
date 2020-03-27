@@ -9,6 +9,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 
 @Profile("development")
@@ -16,24 +18,28 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshedEvent>{
 	
 	private MongoGroupRepository groupRepo;
-	private UserRepository UserRepository;
-	private LdapUserDetailsManager LdapUserDetailsManager;
+	private UserRepository userRepository;
+	private LdapUserDetailsManager ldapUserDetailsManager;
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	public DevMongoModelsConfig(MongoGroupRepository groupRepo,
 			UserRepository userRepository,
-			LdapUserDetailsManager ldapUserDetailsManager) {
+			LdapUserDetailsManager ldapUserDetailsManager,
+			PasswordEncoder passwordEncoder) {
 		super();
 		this.groupRepo = groupRepo;
-		UserRepository = userRepository;
-		LdapUserDetailsManager = ldapUserDetailsManager;
+		this.userRepository = userRepository;
+		this.ldapUserDetailsManager = ldapUserDetailsManager;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		URL url = DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json");
 		new CreateIntialGroups(url, groupRepo).execute();
-		new CreateInitialUsers(groupRepo, UserRepository, LdapUserDetailsManager).execute();
+		new CreateInitialUsers(groupRepo, userRepository, ldapUserDetailsManager, (DelegatingPasswordEncoder) passwordEncoder).execute();
 	}
+    
 
 }

@@ -121,7 +121,7 @@ public class KlabCertificate implements ICertificate {
 		this.file = file;
 	}
 
-	public KlabCertificate(String resource) {
+	private KlabCertificate(String resource) {
 		this.resource = resource;
 	}
 
@@ -168,7 +168,7 @@ public class KlabCertificate implements ICertificate {
 	}
 
 	/**
-	 * Check if the certificate is an old version and try to upgrade it by
+	 * Check if the certificate is an old version and try to ubikeshoppgrade it by
 	 * authenticating to the collaboration server and writing a new one for a
 	 * generic hub. If successful, finish authentication and return true to signal
 	 * that everything is done.

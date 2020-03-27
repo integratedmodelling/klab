@@ -7,6 +7,8 @@ import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.TokenVerifyAccountClickback;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
+import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
+import org.integratedmodelling.klab.hub.exception.UserExistsException;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.SignupRequest;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
@@ -45,7 +47,7 @@ public class UserRegistrationController {
 	}
 	
 	@PostMapping(value= "", produces = "application/json")
-	public ResponseEntity<?> newUserRegistration(@RequestBody SignupRequest request) {
+	public ResponseEntity<?> newUserRegistration(@RequestBody SignupRequest request) throws UserExistsException, UserEmailExistsException {
 		User user = userService.registerNewUser(request.getUsername(), request.getEmail());
 		TokenVerifyAccountClickback token = (TokenVerifyAccountClickback)
 				tokenService.createToken(user.getUsername()

@@ -25,6 +25,7 @@ public class LdapConfigDev {
         contextSource.setPassword("password");
         contextSource.setBase("dc=integratedmodelling,dc=org");
         contextSource.setUrl("ldap://127.0.0.1:8389");
+        contextSource.afterPropertiesSet();
         return contextSource;
     }
     

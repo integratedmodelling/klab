@@ -6,6 +6,7 @@ import java.util.Set;
 import org.integratedmodelling.klab.hub.api.Role;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,6 +14,7 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
 public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	private UserRepository userRepository;
