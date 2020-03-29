@@ -157,6 +157,10 @@ public class ResolutionScope implements IResolutionScope {
 	private DirectObservation context;
 	private Collection<String> scenarios = new ArrayList<>();
 	private boolean interactive;
+	
+	// true = resolution is deferred to after instantiation
+	private boolean deferred;
+	
 	private IMonitor monitor;
 	private Scope originalScope;
 
@@ -1073,6 +1077,14 @@ public class ResolutionScope implements IResolutionScope {
 
 	public void distribute(IObservable distributingObservable) {
 		this.observable = this.observable.distributeIn(distributingObservable.getType());
+	}
+
+	public boolean isDeferred() {
+		return deferred;
+	}
+
+	public void setDeferred(boolean deferred) {
+		this.deferred = deferred;
 	}
 
 }
