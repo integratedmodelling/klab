@@ -883,11 +883,11 @@ public class Space extends Extent implements ISpace {
 						 */
 						double resolution = ((Envelope) resultShape.getEnvelope()).getResolutionForZoomLevel(50, 2)
 								.getFirst();
-						
-						return create((Shape)resultShape, resolution);
-						
+
+						return create((Shape) resultShape, resolution);
+
 					} else {
-						
+
 						// what we want is the destination, already fully defined
 						return destination;
 					}
@@ -899,21 +899,23 @@ public class Space extends Extent implements ISpace {
 						/*
 						 * make a grid according to specs
 						 */
-						double resolution = org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(((Space) destination).gridSpecs);
-						return create((Shape)resultShape, resolution);
-						
+						double resolution = org.integratedmodelling.klab.components.geospace.services.Space
+								.parseResolution(((Space) destination).gridSpecs);
+						return create((Shape) resultShape, resolution);
+
 					} else {
-						
+
 						/*
 						 * if we have same resolution, keep the grid from the source, otherwise make a
 						 * different one and hope for mediators.
 						 */
-						double resolution = org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(((Space) destination).gridSpecs);
-						if (NumberUtils.equal(((Grid)resultGrid).linearResolutionMeters, resolution)) {
+						double resolution = org.integratedmodelling.klab.components.geospace.services.Space
+								.parseResolution(((Space) destination).gridSpecs);
+						if (NumberUtils.equal(((Grid) resultGrid).linearResolutionMeters, resolution)) {
 							return destination;
 						}
-						
-						return create((Shape)resultShape, resolution);
+
+						return create((Shape) resultShape, resolution);
 					}
 				}
 
@@ -1028,6 +1030,29 @@ public class Space extends Extent implements ISpace {
 	public IExtent adopt(IExtent extent, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return this;
+	}
+
+	@Override
+	protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
+	/**
+	 * Create a new spatial extent from a shape using an existing grid as a model
+	 * for gridding. The grid is only a model and does not necessarily cover or
+	 * intersect the shape.
+	 * 
+	 * @param shape the shape for the extent
+	 * @param grid  the definition of a grid, which may or may not extend to cover
+	 *              or intersect the shape
+	 * @param align if true, try to align the grids so that cells may overlap, even
+	 *              if the extents do not
+	 * @return a new spatial extent
+	 */
+	public static Space create(Shape shape, Grid grid, boolean align) {
+		// TODO this ignores everything
+		return create(shape.copy(), grid.linearResolutionMeters);
 	}
 
 }

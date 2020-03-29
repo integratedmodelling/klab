@@ -6,10 +6,9 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.common.Geometry.DimensionTarget;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 
 /**
  * Common superclass for all Extents.
@@ -68,14 +67,16 @@ public abstract class AbstractExtent implements IExtent {
 
 	/**
 	 * Located offsets wrt the dimensionality of the extent, or null.
+	 * 
 	 * @return
 	 */
 	public long[] getLocatedOffsets() {
 		return locatedOffsets;
 	}
-	
+
 	/**
 	 * Linear located offset or -1
+	 * 
 	 * @return
 	 */
 	public long getLocatedOffset() {
@@ -107,7 +108,7 @@ public abstract class AbstractExtent implements IExtent {
 	 * @return whether there is an observable world at the given location.
 	 */
 	public abstract boolean isCovered(long stateIndex);
-	
+
 	public abstract boolean isEmpty();
 
 	/**
@@ -170,5 +171,15 @@ public abstract class AbstractExtent implements IExtent {
 	public void setDimension(Dimension dimension) {
 		this.baseDimension = dimension;
 	}
+
+	/**
+	 * Apply the default contextualization to this extent that will make it match
+	 * the passed extent from the context observation, ensuring that any constraints
+	 * from the passed annotation (from k.IM and potentially null) are honored.
+	 * 
+	 * @param other
+	 * @param constraint
+	 */
+	protected abstract IExtent contextualizeTo(IExtent other, IAnnotation constraint);
 
 }

@@ -906,7 +906,7 @@ public class Actuator implements IActuator {
 		if (!isPartition()) {
 			ret = ofs + "@semantics('" + getObservable().getDeclaration() + "')\n";
 		}
-		return ret + ofs + (input ? "import " : "") + (isPartition() ? "partition" : getType().name().toLowerCase())
+		return ret + ofs + (input ? "import " : "") + (exported ? "export " : "") + (isPartition() ? "partition" : getType().name().toLowerCase())
 				+ " " + getName() + encodeBody(offset, ofs);
 	}
 
@@ -1037,6 +1037,9 @@ public class Actuator implements IActuator {
 	}
 
 	public void setName(String name) {
+		if ("runoff_water_volume".equals(name)) {
+			System.out.println("PUPPAPPERA");
+		}
 		this.name = name;
 	}
 
@@ -1532,5 +1535,9 @@ public class Actuator implements IActuator {
 
 	public void setDataflow(Dataflow dataflow) {
 		this.dataflow = dataflow;
+	}
+
+	public void setExport(boolean b) {
+		this.exported = true;
 	}
 }

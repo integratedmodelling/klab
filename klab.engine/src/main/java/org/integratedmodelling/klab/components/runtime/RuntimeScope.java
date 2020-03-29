@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
@@ -92,10 +91,10 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 /**
- * A runtime context is installed in the root subject to keep track of what
- * happens during contextualization.
- * 
- * TODO Agent graphs, schedules etc should be here.
+ * A runtime scope is installed in the root subject to keep track of what
+ * happens during contextualization. Children of the root scope are used across
+ * the entire lifetime of a context and carry all the information about the
+ * runtime environment during computation.
  * 
  * @author ferdinando.villa
  *
@@ -477,11 +476,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		obs.setName(name);
 
 		/*
-		 * SO ---- ALL this piece below can go into a "resolve(observable, scale) ->
-		 * dataflow which we have in the scope. We reuse it in all the new() functions
-		 * AND by the actuator when resolving a distributed observable. Each new
-		 * dataflow becomes a void child of the actuator being run.
+		 * harmonize the scale according to what the model wants and the context's
 		 */
+		scale = Scale.contextualize(scale, contextSubject.getScale(), model == null ? null : model.getAnnotations(),
+				monitor);
 
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 		Dataflow dataflow = resolve(obs, scale, subtask);
@@ -581,6 +579,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		Observable obs = new Observable((Observable) observable);
 		obs.setName(name);
+		scale = Scale.contextualize(scale, contextSubject.getScale(), model == null ? null : model.getAnnotations(),
+				monitor);
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 		Dataflow dataflow = resolve(obs, scale, subtask);
 		IRelationship ret = (IRelationship) dataflow.withMetadata(metadata).withScopeScale(scale)
@@ -658,8 +658,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
 
-				IArtifact merging = createTarget(mergingActuator, /* this.getDataflow().getResolutionScale() */scale,
-						scope, rootSubject);
+				IArtifact merging = createTarget(mergingActuator, scale, scope, rootSubject);
 
 				/*
 				 * partition sub-state does not go in the catalog
@@ -1024,7 +1023,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				for (IState state : predefinedStates) {
 					link(observation, state);
 				}
-				
+
 			}
 		}
 

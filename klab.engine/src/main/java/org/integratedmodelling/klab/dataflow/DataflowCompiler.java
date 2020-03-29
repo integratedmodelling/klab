@@ -356,6 +356,7 @@ public class DataflowCompiler {
 							child.setAlias(models.iterator().next().model.getCompatibleOutput(observable).getName());
 						}
 						child.setType(this.observable.getArtifactType());
+						child.setExport(true);
 						child.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
 						ret.actuators.add(child);
 
@@ -631,7 +632,7 @@ public class DataflowCompiler {
 
 					assignType(ret, this.observable);
 
-					IConcept distributionContext = this.observable.getDistributionContext();
+					IConcept distributionContext = this.observable.getContext();
 
 					/*
 					 * Compile the child that refers to the instantiation of the context objects
@@ -644,7 +645,8 @@ public class DataflowCompiler {
 					Node outnode = null;
 					List<Node> ownch = new ArrayList<>();
 					for (Node child : sortChildren()) {
-						if (child.observable.getType().resolves(distributionContext) >= 0) {
+						// observable.getType() == null means non-semantic model, which is certainly a legitimate dependency
+						if (child.observable.getType() != null && child.observable.getType().resolves(distributionContext) >= 0) {
 							outnode = child;
 						} else {
 							ownch.add(child);

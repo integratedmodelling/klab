@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -743,6 +744,12 @@ public class Grid extends Area implements IGrid {
 			if (stateIndex != 0) {
 				throw new IllegalArgumentException("cannot access state #" + stateIndex + " in a Cell");
 			}
+			return this;
+		}
+
+		@Override
+		protected CellImpl contextualizeTo(IExtent other, IAnnotation constraint) {
+			// TODO Auto-generated method stub
 			return this;
 		}
 	}

@@ -1037,4 +1037,10 @@ public class Time extends Extent implements ITime {
 		}
 	}
 
+	@Override
+	protected Time contextualizeTo(IExtent other, IAnnotation constraint) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
 }

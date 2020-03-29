@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
@@ -149,7 +150,7 @@ public class Scale implements IScale {
 	public Scale getParentScale() {
 		return parentScale;
 	}
-	
+
 	protected Scale(Collection<IExtent> extents) {
 		for (IExtent e : extents) {
 			mergeExtent(e);
@@ -197,7 +198,7 @@ public class Scale implements IScale {
 	 * Call ONLY on a scale locator created with the above constructor, to reset the
 	 * offsets to the passed one. The offset scans ONE dimension.
 	 * 
-	 * TODO if supporting >1 dimensions (i.e. more than just time and space), we 
+	 * TODO if supporting >1 dimensions (i.e. more than just time and space), we
 	 * will need to fully support the scanning using the mdcursor rather than the
 	 * fast strategy adopted here.
 	 * 
@@ -231,10 +232,10 @@ public class Scale implements IScale {
 			}
 			parent = parent.parentScale;
 		}
-		
+
 		/*
-		 * If >1 offset is -1, set all but the last @0. This will wreak havoc if we ever have >2 
-		 * extents.
+		 * If >1 offset is -1, set all but the last @0. This will wreak havoc if we ever
+		 * have >2 extents.
 		 */
 		boolean multiple = false;
 		for (int i = 0; i < locatedOffsets.length; i++) {
@@ -245,13 +246,14 @@ public class Scale implements IScale {
 				} else {
 					locatedOffsets[i] = 0;
 					if (multiple) {
-						throw new KlabUnimplementedException("Scanning of multiple dimensions in subscales is unsupported");
+						throw new KlabUnimplementedException(
+								"Scanning of multiple dimensions in subscales is unsupported");
 					}
 					multiple = true;
 				}
 			}
 		}
-		
+
 		this.originalScaleOffset = this.originalScale.cursor.getElementOffset(locatedOffsets);
 //		
 //		this.originalScaleOffset = offset;
@@ -261,7 +263,7 @@ public class Scale implements IScale {
 		for (int i = 0; i < this.locatedOffsets.length; i++) {
 			IExtent ext = fixed[i];
 			if (ext == null) {
-				ext = ((AbstractExtent)this.originalScale.extents.get(i)).getExtent(this.locatedOffsets[i]);
+				ext = ((AbstractExtent) this.originalScale.extents.get(i)).getExtent(this.locatedOffsets[i]);
 			}
 			extents.add(ext);
 			if (ext instanceof ISpace) {
@@ -271,7 +273,6 @@ public class Scale implements IScale {
 			}
 		}
 
-		
 //		for (int i = 0; i < this.parentScale.extents.size(); i++) {
 //			IExtent ext = this.parentScale.extents.get(i) instanceof Extent
 //					? ((Extent) this.parentScale.extents.get(i)).getExtent(this.locatedOffsets[i])
@@ -719,7 +720,7 @@ public class Scale implements IScale {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * true if the passed scale has the same extents as we do.
 	 */
@@ -1053,9 +1054,9 @@ public class Scale implements IScale {
 	}
 
 	/**
-	 * Convert any parameters in the dimension to locators that we can use
-	 * directly. If none are specific of the implementation, default to the
-	 * result of the implementation in {@link Geometry}.
+	 * Convert any parameters in the dimension to locators that we can use directly.
+	 * If none are specific of the implementation, default to the result of the
+	 * implementation in {@link Geometry}.
 	 * 
 	 * @param dimension
 	 * @return
@@ -1065,12 +1066,12 @@ public class Scale implements IScale {
 		if (dimension.getType() == Dimension.Type.TIME) {
 			if (dimension.getParameters().containsKey(Geometry.PARAMETER_TIME_LOCATOR)) {
 				Object value = dimension.getParameters().get(Geometry.PARAMETER_TIME_LOCATOR);
-				if (value instanceof Long && ((Long)value) > 0) {
-					return new Object[] { new TimeInstant((Long)value) };
+				if (value instanceof Long && ((Long) value) > 0) {
+					return new Object[] { new TimeInstant((Long) value) };
 				}
 			}
 		}
-		
+
 		return Geometry.getLocatorParameters(dimension);
 	}
 
@@ -1368,7 +1369,7 @@ public class Scale implements IScale {
 			HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
 			Map<IExtent.Type, IExtent> ownGeneric = new HashMap<>();
-			
+
 			for (IExtent e : extents) {
 				if (e.isGeneric()) {
 					// only add the generic extents back if the incoming scale does not have them
@@ -1394,14 +1395,14 @@ public class Scale implements IScale {
 				IExtent merged = (IExtent) e.merge(oext);
 				ret.mergeExtent(merged);
 			}
-			
+
 			// add back any generic extents we have lost
 			for (IExtent.Type type : ownGeneric.keySet()) {
 				if (ret.getExtent(type) == null) {
 					ret.mergeExtent(ownGeneric.get(type));
 				}
 			}
-			
+
 			ret.scaleId = this.scaleId;
 
 			return ret;
@@ -1581,6 +1582,72 @@ public class Scale implements IScale {
 	@Override
 	public IScale without(Type dimension) {
 		return removeExtent(dimension);
+	}
+
+	/**
+	 * Harmonize the scale of a new object to that of the context that is to receive
+	 * it. This will by default impose the same representation on anything that has
+	 * the dimensionality to receive it, unless there are constraints expressed in
+	 * space/time annotations that request otherwise. The difference between this
+	 * one and adopt() is the honoring of constraints and the dimensional analysis
+	 * to check for inheritance (done by the extents) as the two scales are
+	 * potentially completely different.
+	 * <p>
+	 * Won't touch extents that are missing in scale but are in contextScale; this
+	 * should be called after the required inheritances have been explicitly
+	 * addressed.
+	 * <p>
+	 * This is called by the runtime contexts every time a new observation is
+	 * requested by a contextualizer or through the contextualization of a resource.
+	 * 
+	 * @param scale        the stated scale of the new object, usually (but not
+	 *                     necessarily) only containing extent
+	 * @param contextScale the scale of the context that will receive the object.
+	 *                     There is no guarantee that this contains
+	 *                     <param>scale</param>!
+	 * @param annotations  Annotations, if any, that may constrain the
+	 *                     harmonization. The list may be null or contain annotation
+	 *                     of different types than the ones we care for.
+	 * @return
+	 */
+	public static IScale contextualize(IScale scale, IScale contextScale, List<IAnnotation> annotations,
+			IMonitor monitor) {
+
+		if (!scale.equals(contextScale)) {
+
+			Scale other = (Scale) contextScale;
+			Scale ret = new Scale();
+			ArrayList<IExtent> common = new ArrayList<>();
+			HashSet<Dimension.Type> commonConcepts = new HashSet<>();
+
+			for (IExtent e : ((Scale) scale).extents) {
+				if (other.getDimension(e.getType()) != null) {
+					common.add(e);
+					commonConcepts.add(e.getType());
+				}
+			}
+
+			for (IExtent e : common) {
+				IExtent oext = other.getDimension(e.getType());
+				IExtent merged = ((AbstractExtent) e).contextualizeTo(oext, getConstraint(annotations, e.getType()));
+				ret.mergeExtent(merged);
+			}
+
+			return ret;
+		}
+			
+		return scale;
+	}
+
+	private static IAnnotation getConstraint(List<IAnnotation> annotations, Type type) {
+		for (IAnnotation annotation : annotations) {
+			if (type == Type.SPACE && "space".equals(annotation.getName())) {
+				return annotation;
+			} else if (type == Type.TIME && "time".equals(annotation.getName())) {
+				return annotation;
+			}
+		}
+		return null;
 	}
 
 }
