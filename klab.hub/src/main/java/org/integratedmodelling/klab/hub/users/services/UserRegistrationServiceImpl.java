@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.commands.CreateLdapUser;
 import org.integratedmodelling.klab.hub.commands.CreatePendingUser;
+import org.integratedmodelling.klab.hub.commands.CreateUserWithRolesAndStatus;
 import org.integratedmodelling.klab.hub.commands.SetUserPasswordHash;
 import org.integratedmodelling.klab.hub.commands.UpdateLdapUser;
 import org.integratedmodelling.klab.hub.commands.UpdateUser;
@@ -57,6 +58,18 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 			newUser.setUsername(username);
 			newUser.setEmail(email);
 			newUser = new CreatePendingUser(userRepository, newUser).execute();
+			return newUser;
+		}
+		
+	}
+	
+	@Override
+	public User registerUser(User user) {
+		Optional<User> pendingUser = checkIfUserPending(user.getName(), user.getEmail());
+		if (pendingUser.isPresent()) {
+			return pendingUser.get();
+		} else {
+			User newUser = new CreateUserWithRolesAndStatus(user, userRepository, ldapUserDetailsManager).execute();
 			return newUser;
 		}
 		
@@ -190,6 +203,5 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 			return userAttributes;
 		}
 	}
-	
 
 }

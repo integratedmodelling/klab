@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 public abstract interface UserDeletionService {
 	
 	abstract void deleteUser(String username);
+	
+	abstract void deleteUserLdap(String username);
 
 	abstract List<DeletedUser> getDeletedUsers();
 

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
 
+import org.integratedmodelling.klab.hub.exception.DeletedUserNotFoundException;
 import org.integratedmodelling.klab.hub.exception.LoginFailedExcepetion;
 import org.integratedmodelling.klab.hub.exception.ResponseEntityAdapter;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
@@ -33,6 +34,13 @@ public class UserControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUserEmailExistsException(
     		UserExistsException ex, WebRequest request) {
     	return new ResponseEntityAdapter<UserExistsException>
+    		(HttpStatus.CONFLICT, ex).getResponse();
+    }
+    
+    @ExceptionHandler(DeletedUserNotFoundException.class)
+    public ResponseEntity<Object> handleUserEmailExistsException(
+    		DeletedUserNotFoundException ex, WebRequest request) {
+    	return new ResponseEntityAdapter<DeletedUserNotFoundException>
     		(HttpStatus.CONFLICT, ex).getResponse();
     }
 

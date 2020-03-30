@@ -12,9 +12,9 @@ import org.integratedmodelling.klab.hub.config.EmailConfig.EmailType;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.emails.services.EmailTemplateService;
 import org.integratedmodelling.klab.hub.exception.SendEmailException;
-import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.payload.KlabEmail;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -45,7 +45,7 @@ public class EmailController {
 	UserRepository userRepository;
 	
 	@Autowired
-	KlabUserManager klabUserManager;
+	UserProfileService profileService;
 	
 	@Autowired
 	EmailManager emailManager;
@@ -136,7 +136,7 @@ public class EmailController {
 	
 	private void checkUserName(EmailTemplate emailTemplate) {
 		if (emailTemplate.getAuthorUsername() == null) {
-			emailTemplate.setAuthorUsername(klabUserManager.getLoggedInUsername());
+			emailTemplate.setAuthorUsername(profileService.getCurrentUserProfile().getUsername());
 		} else {
 			Optional<User> user = userRepository.findByName(emailTemplate.getAuthorUsername());
 			if (!user.isPresent()) {

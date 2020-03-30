@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
 import org.integratedmodelling.klab.hub.api.TokenNewUserClickback;
+
 import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
 import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.TokenVerifyAccountClickback;
@@ -86,6 +88,15 @@ public class UserRegistrationController {
 		}
 		JSONObject resp = new JSONObject();
 		resp.appendField("User", user);
+		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
+	}
+	
+	@PostMapping(value="/{username}", params = "requestNewPassword")
+	public ResponseEntity<?> newUserRegistration(@PathVariable String username) {
+		TokenChangePasswordClickback token = (TokenChangePasswordClickback)
+				tokenService.createToken(username, TokenType.password);
+		JSONObject resp = new JSONObject();
+		resp.appendField("User", username).appendField("clickback", token.getTokenString());
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 

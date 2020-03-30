@@ -1,12 +1,7 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
-import java.util.Set;
-
-import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
-import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
-import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +21,10 @@ import net.minidev.json.JSONObject;
 public class UserProfileController {
 	
 	private UserProfileService userService;
-	private RegistrationTokenService tokenService;
 	
 	@Autowired
-	UserProfileController(UserProfileService userService, RegistrationTokenService tokenService) {
+	UserProfileController(UserProfileService userService) {
 		this.userService = userService;
-		this.tokenService = tokenService;
 	}
 	
 	@GetMapping("")
@@ -62,15 +54,6 @@ public class UserProfileController {
 	public ResponseEntity<?> updateUserProfile(@PathVariable("username") String username, @RequestBody UpdateUserRequest updateRequest) {
 		ProfileResource profile = userService.updateUserByProfile(updateRequest.getProfile());
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
-	}
-	
-	@PostMapping(value="/{username}", params = "requestNewPassword")
-	public ResponseEntity<?> newUserRegistration(@PathVariable String username) {
-		TokenChangePasswordClickback token = (TokenChangePasswordClickback)
-				tokenService.createToken(username, TokenType.password);
-		JSONObject resp = new JSONObject();
-		resp.appendField("User", username).appendField("clickback", token.getTokenString());
-		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 	
 }

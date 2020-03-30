@@ -169,22 +169,24 @@ public interface API {
 		 * <br/>
 		 * <b>Authentication:</b> open
 		 */
+		
+		public static final String API_BASE = "/api/v2";
 		/**
 		 * Base URL path for node on the hub.
 		 */
-		public static final String NODE_BASE = "/api/v2/nodes";
+		public static final String NODE_BASE = API_BASE + "/nodes";
 		/**
 		 * Base URL path for user resources on the hub.
 		 */
-		public static final String USER_BASE = "/api/v2/users";
+		public static final String USER_BASE = API_BASE + "/users";
 		/**
 		 * Base URL path for lever resources on the hub.
 		 */
-		public static final String LEVER_BASE = "/api/v2/lever";
+		public static final String LEVER_BASE = API_BASE + "/lever";
 		/**
 		 * Base URL path for engine resources on the hub.
 		 */		
-		public static final String ENGINE_BASE = "/api/v2/engines";
+		public static final String ENGINE_BASE = API_BASE + "/engines";
 		/**
 		 * Base URL path for authenticating resources.
 		 */		
@@ -209,7 +211,6 @@ public interface API {
 		 * Called by users to log into the hub and recieve an authentication token.
 		 */
 		public static final String DEAUTHENTICATE_USER = USER_BASE + "/log-out";
-		
 		/**
 		 * Base URL path for node resources on the hub.
 		 */
@@ -222,6 +223,19 @@ public interface API {
 		 * Base URL path for lever resources on the hub.
 		 */
 		public static final String LEVER_BASE_ID = LEVER_BASE + "/{id}";
+		/**
+		 * Base URL path application logs.
+		 */	
+		public static final String LOGS = API_BASE + "/system/logs";
+		/**
+		 * Base URL path for deleted users.
+		 */			
+		public static final String DELETED_USERS = USER_BASE + "/deleted-users";
+		/**
+		 * URL path for deleted users by id.
+		 */			
+		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";		
+		
 
 		
 

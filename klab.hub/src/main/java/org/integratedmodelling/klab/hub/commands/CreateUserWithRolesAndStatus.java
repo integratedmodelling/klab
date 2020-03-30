@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.commands;
 
+import org.integratedmodelling.klab.hub.api.AuthProvider;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
@@ -20,9 +21,13 @@ public class CreateUserWithRolesAndStatus implements UserCommand {
 
 	@Override
 	public User execute() {
-		User newUser = userRepository.insert(user);
+		User newUser = userRepository.insert(user); 
+		if (newUser.getProvider() != null && newUser.getProvider() != AuthProvider.local) {
+			return newUser;
+		}
 		new CreateLdapUser(newUser, ldapUserDetailsManager).execute();
 		return newUser;
+		
 	}
 
 }
