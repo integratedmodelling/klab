@@ -12,7 +12,6 @@ import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;

@@ -336,8 +336,8 @@ public class DataflowCompiler {
 			 */
 			Actuator ret = Actuator.create(dataflow, mode);
 
-			boolean secondaryOutput = false;
-			boolean skipContextualization = false;
+//			boolean secondaryOutput = false;
+//			boolean skipContextualization = false;
 			IObservable modelObservable = null;
 			if (!models.isEmpty()) {
 				modelObservable = models.iterator().next().model.getObservables().get(0);
@@ -349,8 +349,8 @@ public class DataflowCompiler {
 					 * the outer actuator) or we may not, in which case we must create the outer
 					 * actuator and put the empty actuator in it.
 					 */
-					secondaryOutput = true;
-					if (!(skipContextualization = generated.contains(models.iterator().next()))) {
+//					secondaryOutput = true;
+					if (!(/* skipContextualization = */generated.contains(models.iterator().next()))) {
 
 						Actuator child = Actuator.create(dataflow,
 								this.observable.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
