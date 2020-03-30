@@ -78,7 +78,6 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
-import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.scale.Coverage;
@@ -155,6 +154,13 @@ public class Actuator implements IActuator {
 	private boolean exported;
 
 	protected ISession session;
+
+	/**
+	 * these are added when observations should be made "within" resolved objects
+	 * after instantiation and initial resolution. Resolution and dataflow caching
+	 * is done in the runtime scope.
+	 */
+	private List<Observable> deferredObservables = new ArrayList<>();
 
 	// this is only for the API
 	private List<IContextualizable> computedResources = new ArrayList<>();
@@ -771,11 +777,11 @@ public class Actuator implements IActuator {
 				dataflow.setResolutionScope(
 						getDataflow().getResolutionScope().getChildScope((DirectObservation) object, Mode.RESOLUTION));
 				dataflow.actuators.addAll(actuator.getActuators());
-				
+
 				// actuators have been repurposed to a different dataflow; reattribute so that
 				// notifiers work properly
 				dataflow.reattributeActuators();
-				
+
 				ret.add(dataflow);
 			}
 		}
@@ -906,8 +912,9 @@ public class Actuator implements IActuator {
 		if (!isPartition()) {
 			ret = ofs + "@semantics('" + getObservable().getDeclaration() + "')\n";
 		}
-		return ret + ofs + (input ? "import " : "") + (exported ? "export " : "") + (isPartition() ? "partition" : getType().name().toLowerCase())
-				+ " " + getName() + encodeBody(offset, ofs);
+		return ret + ofs + (input ? "import " : "") + (exported ? "export " : "")
+				+ (isPartition() ? "partition" : getType().name().toLowerCase()) + " " + getName()
+				+ encodeBody(offset, ofs);
 	}
 
 	public boolean isPartition() {
@@ -1539,5 +1546,9 @@ public class Actuator implements IActuator {
 
 	public void setExport(boolean b) {
 		this.exported = true;
+	}
+
+	public List<Observable> getDeferredObservables() {
+		return deferredObservables;
 	}
 }

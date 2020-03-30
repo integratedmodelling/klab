@@ -156,8 +156,7 @@ public class ModelKbox extends ObservableKbox {
 		initialize(context.getMonitor());
 
 		// Contextualize the observable if needed
-		if (context.getContext() != null && ((Observable) observable).getDistributionContext() == null
-				&& ((Observable) observable).mustContextualizeAtResolution()) {
+		if (context.getContext() != null && ((Observable) observable).mustContextualizeAtResolution()) {
 			observable = Observables.INSTANCE.contextualizeTo(observable,
 					context.getContext().getObservable().getType(), true, context.getMonitor());
 		}

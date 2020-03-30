@@ -93,6 +93,8 @@ public class DataflowCompiler {
 		Coverage coverage;
 		IResolutionScope.Mode mode;
 		boolean isPartition = false;
+		// deferred resolution
+		boolean deferred = false;
 
 		/*
 		 * order of computation, relevant for scaling with partitioned resolvers
@@ -107,6 +109,7 @@ public class DataflowCompiler {
 			this.mode = link.getTarget().getMode();
 			this.order = link.getOrder();
 			this.isPartition = link.isPartition();
+			this.deferred = link.getTarget().isDeferred();
 		}
 
 		public String toString() {
@@ -279,6 +282,7 @@ public class DataflowCompiler {
 		Object inlineValue;
 		ResolvedArtifact resolvedArtifact;
 		Strategy strategy = Strategy.DIRECT;
+		List<Observable> deferredObservables = new ArrayList<>();
 
 		public String toString() {
 			return (root ? "ROOT " : "") + ("[" + children.size() + "]")
@@ -304,9 +308,9 @@ public class DataflowCompiler {
 
 				this.observable = (Observable) resolvable;
 				this.inlineValue = observable.getValue();
-				if (this.observable.getDistributionContext() != null) {
-					this.strategy = Strategy.DISTRIBUTION;
-				}
+//				if (this.observable.getDistributionContext() != null) {
+//					this.strategy = Strategy.DISTRIBUTION;
+//				}
 
 			} else if (resolvable instanceof Observer) {
 
@@ -368,6 +372,7 @@ public class DataflowCompiler {
 			ret.setObservable(observable);
 			ret.setName(observable.getReferenceName());
 			ret.setAlias(observable.getName());
+			ret.getDeferredObservables().addAll(deferredObservables);
 
 			/*
 			 * FIXME this condition is silly; also there will be more problems due to this
@@ -383,7 +388,7 @@ public class DataflowCompiler {
 					 * - no state should be generated in the context.
 					 */
 					ret.setType(Type.VOID);
-				} else if (this.observable.getDistributionContext() == null) {
+				} else {
 					/*
 					 * if not learning and not explicitly inherent, we remove the inherency in the
 					 * dataflow as it was needed to resolve the inherent observable, but the model
@@ -621,82 +626,72 @@ public class DataflowCompiler {
 						}
 					}
 
-				} else if (this.strategy == Strategy.DISTRIBUTION) {
-
-					if (Observables.INSTANCE.getDirectContextType(this.observable.getType()) != null) {
-						// if the distribution context is explicit (direct), remove it as we are observing
-						// the observable within the context.
-						ret.setObservable((Observable) this.observable.getBuilder(monitor)
-								.without(ObservableRole.CONTEXT).buildObservable());
-					}
-
-					assignType(ret, this.observable);
-
-					IConcept distributionContext = this.observable.getContext();
-
-					/*
+				} /*
+					 * else if (this.strategy == Strategy.DISTRIBUTION) {
+					 * 
+					 * if (Observables.INSTANCE.getDirectContextType(this.observable.getType()) !=
+					 * null) { // if the distribution context is explicit (direct), remove it as we
+					 * are observing // the observable within the context.
+					 * ret.setObservable((Observable) this.observable.getBuilder(monitor)
+					 * .without(ObservableRole.CONTEXT).buildObservable()); }
+					 * 
+					 * assignType(ret, this.observable);
+					 * 
+					 * IConcept distributionContext = this.observable.getContext();
+					 * 
+					 * 
 					 * Compile the child that refers to the instantiation of the context objects
 					 * (create from the child, or locate it and create a reference actuator); then
 					 * compile this node, without that child, into a void dataflow to resolve the
 					 * observable (without the context if explicit) in each of them and insert it
 					 * into the actuator.
 					 * 
-					 */
-					Node outnode = null;
-					List<Node> ownch = new ArrayList<>();
-					for (Node child : sortChildren()) {
-						// observable.getType() == null means non-semantic model, which is certainly a legitimate dependency
-						if (child.observable.getType() != null && child.observable.getType().resolves(distributionContext) >= 0) {
-							outnode = child;
-						} else {
-							ownch.add(child);
-						}
-					}
-
-					/*
+					 * 
+					 * Node outnode = null; List<Node> ownch = new ArrayList<>(); for (Node child :
+					 * sortChildren()) { // observable.getType() == null means non-semantic model,
+					 * which is certainly a legitimate dependency if (child.observable.getType() !=
+					 * null && child.observable.getType().resolves(distributionContext) >= 0) {
+					 * outnode = child; } else { ownch.add(child); } }
+					 * 
+					 * 
 					 * should never be null except in error.
-					 */
-					if (outnode != null) {
-
-						/*
-						 * add any legitimate children before rearranging. This is identical to the
-						 * normal case except the context observation is skipped.
-						 */
-						for (Node child : ownch) {
-
-							IConcept childContext = Observables.INSTANCE
-									.getDirectContextType(child.observable.getType());
-
-							if (directContext != null && directContext.equals(childContext)) {
-								continue;
-							}
-
-							Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
-							ret.getActuators().add(achild);
-							recordUnits(achild, chosenUnits);
-							if (sources.containsKey(achild.getName())) {
-								for (IContextualizable mediator : computeMediators(sources.get(achild.getName()),
-										achild.getObservable(), scale)) {
-									ret.addMediation(mediator, achild);
-								}
-							}
-						}
-
-						/*
-						 * reference node will still need to be used to carry our dataflow for secondary
-						 * contextualization. So we should output exactly in the same way.
-						 */
-
-						Actuator outactuator = outnode.getActuatorTree(dataflow, monitor, generated, level + 1);
-						Actuator subdataflow = newDataflow(new Observable(outactuator.getObservable()), dataflow);
-						subdataflow.actuators.add(ret);
-						outactuator.actuators.add(subdataflow);
-
-						ret = outactuator;
-
-					}
-
-				} else {
+					 * 
+					 * if (outnode != null) {
+					 * 
+					 * 
+					 * add any legitimate children before rearranging. This is identical to the
+					 * normal case except the context observation is skipped.
+					 * 
+					 * for (Node child : ownch) {
+					 * 
+					 * IConcept childContext = Observables.INSTANCE
+					 * .getDirectContextType(child.observable.getType());
+					 * 
+					 * if (directContext != null && directContext.equals(childContext)) { continue;
+					 * }
+					 * 
+					 * Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level +
+					 * 1); ret.getActuators().add(achild); recordUnits(achild, chosenUnits); if
+					 * (sources.containsKey(achild.getName())) { for (IContextualizable mediator :
+					 * computeMediators(sources.get(achild.getName()), achild.getObservable(),
+					 * scale)) { ret.addMediation(mediator, achild); } } }
+					 * 
+					 * 
+					 * reference node will still need to be used to carry our dataflow for secondary
+					 * contextualization. So we should output exactly in the same way.
+					 * 
+					 * 
+					 * Actuator outactuator = outnode.getActuatorTree(dataflow, monitor, generated,
+					 * level + 1); Actuator subdataflow = newDataflow(new
+					 * Observable(outactuator.getObservable()), dataflow);
+					 * subdataflow.actuators.add(ret); outactuator.actuators.add(subdataflow);
+					 * 
+					 * ret = outactuator;
+					 * 
+					 * }
+					 * 
+					 * }
+					 */else {
 
 					for (Node child : sortChildren()) {
 
@@ -731,15 +726,15 @@ public class DataflowCompiler {
 			return ret;
 		}
 
-		private Actuator newDataflow(Observable observable, Dataflow dataflow) {
-
-			Actuator ret = Actuator.create(dataflow, Mode.RESOLUTION);
-			ret.setObservable(observable);
-			ret.setName(observable.getReferenceName());
-			ret.setAlias(observable.getName());
-			ret.setType(Type.VOID);
-			return ret;
-		}
+//		private Actuator newDataflow(Observable observable, Dataflow dataflow) {
+//
+//			Actuator ret = Actuator.create(dataflow, Mode.RESOLUTION);
+//			ret.setObservable(observable);
+//			ret.setName(observable.getReferenceName());
+//			ret.setAlias(observable.getName());
+//			ret.setType(Type.VOID);
+//			return ret;
+//		}
 
 		private void recordUnits(Actuator achild, Map<String, IUnit> chosenUnits) {
 			if (Units.INSTANCE.needsUnits(achild.getObservable()) && achild.getObservable().getUnit() != null) {
@@ -922,9 +917,29 @@ public class DataflowCompiler {
 			IResolvable source = graph.getEdgeSource(d);
 
 			if (source instanceof IObservable) {
-				Set<ResolutionEdge> sources = graph.incomingEdgesOf(source);
-				if (sources.size() == 1) {
-					source = graph.getEdgeSource(sources.iterator().next());
+
+				if (d.deferred) {
+
+					// if the distribution context is explicit (direct), remove it as we
+					// will be observing the observable within the context.
+					Observable deferred = ((Observable) source);
+					if (Observables.INSTANCE.getDirectContextType(deferred.getType()) != null) {
+						deferred = (Observable) deferred.getBuilder(monitor).without(ObservableRole.CONTEXT)
+								.buildObservable();
+					}
+
+					/*
+					 * Add the additional resolution step to the node, to be merged into the
+					 * actuator.
+					 */
+					ret.deferredObservables.add(deferred);
+
+				} else {
+
+					Set<ResolutionEdge> sources = graph.incomingEdgesOf(source);
+					if (sources.size() == 1) {
+						source = graph.getEdgeSource(sources.iterator().next());
+					}
 				}
 			}
 
@@ -949,11 +964,6 @@ public class DataflowCompiler {
 					compatibleOutput = ret.observable;
 				} else {
 					compatibleOutput = new Observable(compatibleOutput);
-				}
-
-				// take it from the model unless the resolver has directed to distribute
-				if (ret.strategy != Strategy.DISTRIBUTION) {
-					ret.strategy = model.getObservationStrategy();
 				}
 
 				ModelD md = compileModel(model, /* d.indirectAdapters, */ d.isPartition && honorPartitions);

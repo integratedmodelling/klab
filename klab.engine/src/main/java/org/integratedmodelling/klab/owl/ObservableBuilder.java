@@ -66,7 +66,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private String name;
 //	private IObservable filteredObservable;
 	private IConcept targetPredicate;
-	private IConcept distributedIn;
+//	private IConcept distributedIn;
 	private boolean mustContextualize = false;
 
 	private List<IConcept> traits = new ArrayList<>();
@@ -142,7 +142,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 		this.mustContextualize = observable.mustContextualizeAtResolution();
-		this.distributedIn = observable.getDistributionContext();
+//		this.distributedIn = observable.getDistributionContext();
 
 		this.annotations.addAll(observable.getAnnotations());
 
@@ -1985,7 +1985,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.setOptional(this.optional);
 		ret.setMustContextualizeAtResolution(mustContextualize);
 		ret.getAnnotations().addAll(annotations);
-		ret.setDistributionContext(distributedIn);
+//		ret.setDistributionContext(distributedIn);
 
 		return ret;
 	}

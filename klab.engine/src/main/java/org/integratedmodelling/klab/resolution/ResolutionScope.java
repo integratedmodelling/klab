@@ -1075,9 +1075,9 @@ public class ResolutionScope implements IResolutionScope {
 		return ret;
 	}
 
-	public void distribute(IObservable distributingObservable) {
-		this.observable = this.observable.distributeIn(distributingObservable.getType());
-	}
+//	public void distribute(IObservable distributingObservable) {
+//		this.observable = this.observable.distributeIn(distributingObservable.getType());
+//	}
 
 	public boolean isDeferred() {
 		return deferred;

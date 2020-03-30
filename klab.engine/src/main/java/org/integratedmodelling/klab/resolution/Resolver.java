@@ -9,8 +9,10 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -248,12 +250,35 @@ public enum Resolver {
 	private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
 
 		/*
+		 * Check first if we need to redistribute the observable, in which case we only
+		 * resolve the distribution context and we leave it to the runtime context to
+		 * finish the job, as we do with the resolution of the individual instances.
+		 */
+		IConcept context = observable.getContext();
+		if (context != null && parentScope.getContext() != null && !Observables.INSTANCE
+				.isCompatible(observable.getType(), parentScope.getContext().getObservable().getType())) {
+
+			/*
+			 * Distribute the observable over the observation of its context. We don't know
+			 * what the context observation will produce
+			 */
+			ResolutionScope ret = resolve(Observable.promote(context), parentScope, Mode.INSTANTIATION);
+			if (ret.getCoverage().isRelevant()) {
+				ResolutionScope deferred = ret.getChildScope(observable, mode);
+				deferred.setDeferred(true);
+				deferred.setCoverage(ret.getCoverage());
+				ret.link(deferred);
+			}
+			return ret;
+		}
+
+		ResolutionScope ret = parentScope.getChildScope(observable, mode);
+
+		/*
 		 * ensure the reference name represents unique semantics across the resolution
 		 * tree
 		 */
 		observable = parentScope.disambiguateObservable(observable);
-
-		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
 		/*
 		 * pre-resolved artifacts contain a number, concept, boolean, expression or
@@ -339,13 +364,13 @@ public enum Resolver {
 								if (!newCoverage.isRelevant()) {
 									continue;
 								}
-								
-								if (strategy.getStrategy() == Strategy.DISTRIBUTION) {
-									// record the distribution in the scope observable so that the dataflow compiler
-									// can find it.
-									ret.distribute(strategy.getDistributingObservable());
-								}
-								
+
+//								if (strategy.getStrategy() == Strategy.DISTRIBUTION) {
+//									// record the distribution in the scope observable so that the dataflow compiler
+//									// can find it.
+//									ret.distribute(strategy.getDistributingObservable());
+//								}
+
 								// for reporting
 								boolean wasZero = percentCovered == 0;
 								// percent covered by new model

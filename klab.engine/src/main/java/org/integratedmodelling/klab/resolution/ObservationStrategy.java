@@ -71,12 +71,12 @@ public class ObservationStrategy {
 		 */
 		DEREIFICATION,
 
-		/**
-		 * Observable must be distributed across a set of objects (which must also be
-		 * observed), as the context of the observable is not compatible with the
-		 * context it was observed into.
-		 */
-		DISTRIBUTION
+//		/**
+//		 * Observable must be distributed across a set of objects (which must also be
+//		 * observed), as the context of the observable is not compatible with the
+//		 * context it was observed into.
+//		 */
+//		DISTRIBUTION
 	}
 
 	private List<Observable> observables = new ArrayList<>();
@@ -109,14 +109,7 @@ public class ObservationStrategy {
 		for (IObservable dep : model.getDependencies()) {
 			ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
 		}
-		
-		
-		IConcept context = observable.getContext();
-		if (context != null
-				&& !Observables.INSTANCE.isCompatible(scope.getContext().getObservable().getType(), context)) {
-			ret.add(new ObservationStrategy(Observable.promote(context), Mode.INSTANTIATION));
-		}
-		
+
 		if (observable.is(Type.RELATIONSHIP)) {
 			IConcept source = Observables.INSTANCE.getRelationshipSource(observable.getType());
 			IConcept target = Observables.INSTANCE.getRelationshipTarget(observable.getType());
@@ -190,19 +183,6 @@ public class ObservationStrategy {
 		Observable target = (Observable) observable;
 		List<Pair<ValueOperator, Object>> operators = observable.getValueOperators();
 		Strategy strategy = Strategy.DIRECT;
-
-		IConcept context = observable.getContext();
-		if (context != null
-				&& !Observables.INSTANCE.isCompatible(scope.getContext().getObservable().getType(), context)) {
-
-			/*
-			 * Change observable to distributed observable and correct the observation
-			 * strategy; will add it later according to cases below.
-			 */
-			target = target.distributeIn(context);
-			strategy = Strategy.DISTRIBUTION;
-
-		}
 
 		if (!operators.isEmpty()) {
 
@@ -401,12 +381,12 @@ public class ObservationStrategy {
 		return strategy;
 	}
 
-	public IObservable getDistributingObservable() {
-		
-		/*
-		 * if we have a distributing observable, it's always the first due to the way it's coded.
-		 */
-		return Observable.promote(this.observables.get(0).getDistributionContext());
-	}
+//	public IObservable getDistributingObservable() {
+//		
+//		/*
+//		 * if we have a distributing observable, it's always the first due to the way it's coded.
+//		 */
+//		return Observable.promote(this.observables.get(0).getDistributionContext());
+//	}
 
 }
