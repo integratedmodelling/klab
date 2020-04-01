@@ -395,8 +395,12 @@ public class DataflowCompiler {
 					 * is run in an object's context and we don't maintain the inherency when the
 					 * semantics is local to the object.
 					 */
-					this.observable = (Observable) ObservableBuilder.getBuilder(this.observable, monitor)
-							.without(ObservableRole.CONTEXT).buildObservable();
+					ret.setObservable((Observable) ObservableBuilder.getBuilder(this.observable, monitor)
+							.without(ObservableRole.CONTEXT).buildObservable());
+					
+					if (ret.getType() == null) {
+						assignType(ret, this.observable);
+					}
 				}
 			} else {
 				assignType(ret, this.observable);
@@ -923,10 +927,10 @@ public class DataflowCompiler {
 					// if the distribution context is explicit (direct), remove it as we
 					// will be observing the observable within the context.
 					Observable deferred = ((Observable) source);
-					if (Observables.INSTANCE.getDirectContextType(deferred.getType()) != null) {
-						deferred = (Observable) deferred.getBuilder(monitor).without(ObservableRole.CONTEXT)
-								.buildObservable();
-					}
+//					if (Observables.INSTANCE.getDirectContextType(deferred.getType()) != null) {
+//						deferred = (Observable) deferred.getBuilder(monitor).without(ObservableRole.CONTEXT)
+//								.buildObservable();
+//					}
 
 					/*
 					 * Add the additional resolution step to the node, to be merged into the
@@ -1148,7 +1152,7 @@ public class DataflowCompiler {
 	public List<IContextualizable> computeMediators(Observable from, Observable to, IScale scale) {
 
 		if (OWL.INSTANCE.isSemantic(from)) {
-			if (!((Observable) to).canResolve((Observable) from)) {
+			if (to.getType().resolves(from.getType()) < 0) {
 				throw new IllegalArgumentException(
 						"cannot compute mediators from an observable to another that does not resolve it: " + from
 								+ " can not mediate to " + to);

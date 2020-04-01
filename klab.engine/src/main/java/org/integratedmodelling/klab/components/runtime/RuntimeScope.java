@@ -396,8 +396,71 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return ret;
 	}
 
-	// pass a modified observable if needed: add the object's name if direct, etc.
+	//
+
+	@SuppressWarnings("unchecked")
 	@Override
+	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation, ITaskTree<?> task) {
+
+		/*
+		 * preload all the possible resolvers in the wider scope before specializing the
+		 * scope to the child observation. Then leave it to the kbox to use the context
+		 * with the preloaded cache.
+		 */
+		this.resolutionScope.preloadResolvers(observable);
+		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+
+		Dataflow dataflow = null;
+
+		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
+				.get(new ResolvedObservable((Observable) observable, Mode.RESOLUTION));
+
+		if (pairs != null) {
+			for (Pair<ICoverage, Dataflow> pair : pairs) {
+				if (pair.getFirst() == null || pair.getFirst().contains(scale)) {
+					dataflow = pair.getSecond();
+					break;
+				}
+			}
+		}
+		if (dataflow == null) {
+
+			if (pairs == null) {
+				pairs = new ArrayList<>();
+				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+			}
+
+			ResolutionScope scope = Resolver.INSTANCE.resolve((Observable) observable,
+					this.resolutionScope.getDeferredChildScope(observation, Mode.RESOLUTION), Mode.RESOLUTION, scale,
+					model);
+
+			if (scope.getCoverage().isRelevant()) {
+				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope)
+						.setPrimary(false);
+				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
+			}
+		}
+
+		IArtifact ret = null;
+		if (dataflow == null) {
+			if (observable.isOptional()) {
+				monitor.warn("cannot resolve optional observable " + observable + " in " + observation);
+			} else {
+				monitor.error("cannot resolve mandatory observable " + observable + " in " + observation);
+				// don't stop so we know which objects don't resolve, although >1 may be
+				// annoying.
+			}
+		} else {
+			ret = dataflow
+					.withScope(this.resolutionScope.getDeferredChildScope(observation, Mode.RESOLUTION))
+					.withScopeScale(observation.getScale()).withMetadata(observation.getMetadata())
+					.run(observation.getScale(), ((Monitor) monitor).get(task));
+		}
+
+		return (T) ret;
+	}
+
+	// pass a modified observable if needed: add the object's name if direct, etc.
 	public Dataflow resolve(IObservable observable, IScale scale, ITaskTree<?> subtask) {
 
 		/*

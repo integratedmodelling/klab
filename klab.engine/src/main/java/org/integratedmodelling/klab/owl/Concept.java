@@ -683,7 +683,7 @@ public class Concept extends Knowledge implements IConcept {
 		if (distance < 0) {
 			return distance;
 		}
-
+		
 		// should have all the same traits - additional traits are allowed only
 		// in contextual types
 		for (IConcept t : Traits.INSTANCE.getTraits(this)) {

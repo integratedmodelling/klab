@@ -157,10 +157,10 @@ public class ResolutionScope implements IResolutionScope {
 	private DirectObservation context;
 	private Collection<String> scenarios = new ArrayList<>();
 	private boolean interactive;
-	
+
 	// true = resolution is deferred to after instantiation
 	private boolean deferred;
-	
+
 	private IMonitor monitor;
 	private Scope originalScope;
 
@@ -311,6 +311,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.beingResolved.addAll(other.beingResolved);
 		this.contextModel = other.contextModel;
 		this.originalScope = other.originalScope;
+		this.deferred = other.deferred;
 		if (copyResolution) {
 			this.observable = other.observable;
 			this.model = other.model;
@@ -460,7 +461,8 @@ public class ResolutionScope implements IResolutionScope {
 		ret.resolutionNamespace = (Namespace) observer.getNamespace();
 
 		if (observer.getContextualization().hasScale()) {
-			ret = new ResolutionScope(Scale.create(observer.getContextualization().getExtents(monitor)), 1.0, ret, false);
+			ret = new ResolutionScope(Scale.create(observer.getContextualization().getExtents(monitor)), 1.0, ret,
+					false);
 		} else {
 			ret.coverage = new Coverage(this.coverage);
 			ret.coverage.setCoverage(1.0);
@@ -475,7 +477,7 @@ public class ResolutionScope implements IResolutionScope {
 	 * @return a scope to resolve the passed observer
 	 * @throws KlabException
 	 */
-	public ResolutionScope getChildScope(IDirectObservation observer, Mode mode) throws KlabException {
+	public ResolutionScope getChildScope(IDirectObservation observer, Mode mode) {
 
 		ResolutionScope ret = new ResolutionScope(this, true);
 		ret.context = (DirectObservation) observer;
@@ -483,7 +485,19 @@ public class ResolutionScope implements IResolutionScope {
 		ret.mode = mode;
 		return ret;
 	}
-	
+
+	/**
+	 * 
+	 * @param observer
+	 * @return a scope to resolve the passed observer
+	 * @throws KlabException
+	 */
+	public ResolutionScope getDeferredChildScope(IDirectObservation observer, Mode mode) {
+		ResolutionScope ret = getChildScope(observer, mode);
+		ret.deferred = true;
+		return ret;
+	}
+
 	@Override
 	public Collection<String> getScenarios() {
 		return scenarios;
@@ -838,7 +852,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.links.clear();
 		this.resolvedObservables.clear();
 	}
-	
+
 	public void acceptArtifact(Observable observable, IObservation artifact, String artifactId) {
 		this.resolvedArtifact = new ResolvedArtifact(observable, artifact, artifactId);
 		this.coverage.setCoverage(1.0);
@@ -853,7 +867,9 @@ public class ResolutionScope implements IResolutionScope {
 	 * Called before each instance resolution when the passed observable is
 	 * instantiated in our context. Should fill in the resolver set in our scale
 	 * only once, so the same resolvers can be used above. The models will then be
-	 * ranked in the scale of each instance.
+	 * ranked in the scale of each instance. The resulting dataflows will need to
+	 * swap their resolution scope before being usable to resolve any direct
+	 * observation different from the original.
 	 * 
 	 * @param observable
 	 */

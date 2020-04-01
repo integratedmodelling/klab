@@ -750,8 +750,9 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public IDataflow<IArtifact> resolve(IObservable observable, IScale scale, ITaskTree<?> task) {
+	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

@@ -538,13 +538,31 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return this.autoStartTransitions;
 	}
 
+	/**
+	 * TODO/FIXME if withScope is called, it must be called before this one.
+	 * 
+	 * @param scale
+	 * @return
+	 */
 	public Dataflow withScopeScale(IScale scale) {
 		if (this.resolutionScope != null) {
 			this.resolutionScope = this.resolutionScope.rescale(scale);
 		}
 		return this;
 	}
-
+	
+	/**
+	 * TODO this should create a new dataflow if we want concurrent execution of dataflows
+	 * with different scopes. Also this MUST be called before withScopeScale if that is used.
+	 * 
+	 * @param scope
+	 * @return
+	 */
+	public Dataflow withScope(ResolutionScope scope) {
+		this.resolutionScope = scope;
+		return this;
+	}
+	
 	public ResolutionScope getResolutionScope() {
 		return this.resolutionScope;
 	}

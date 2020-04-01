@@ -369,23 +369,26 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * Manually add a state to a target observation, updating structure and
 	 * notifying what needs to be notified.
 	 * 
-	 * @param target the direct observation that will receive the state.
+	 * @param target     the direct observation that will receive the state.
 	 * @param observable for the state. The scale will be the same as the target.
-	 * @param data any kind of content for the state - either a scalar to be redistributed or
-	 *        
+	 * @param data       any kind of content for the state - either a scalar to be
+	 *                   redistributed or
+	 * 
 	 * @return
 	 */
 	IState addState(IDirectObservation target, IObservable observable, Object data);
 
 	/**
-	 * Resolve the passed observable in the passed scale using the passed task (which will
-	 * later run the resulting dataflow). Must cache dataflows by scale and retrieve them 
-	 * quickly as it may be called many times at each new direct observation.
+	 * Resolve the passed observable in the passed context and return the resulting
+	 * dataflow. If the observable cannot be resolved, return null without error.
+	 * Must cache dataflows by scale and retrieve them quickly as it may be called
+	 * many times at each new direct observation.
 	 * 
 	 * @param observable
-	 * @param scale
-	 * @param task
-	 * @return a dataflow to resolve the observable.
+	 * @param context
+	 * @param task the task to register the resolution to
+	 * 
+	 * @return a dataflow to resolve the observable, or null if there is no coverage
 	 */
-	IDataflow<IArtifact> resolve(IObservable observable, IScale scale, ITaskTree<?> task);
+	<T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task);
 }

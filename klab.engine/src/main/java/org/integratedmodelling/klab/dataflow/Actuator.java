@@ -50,14 +50,12 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -69,7 +67,6 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.Report;
-import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -670,20 +667,17 @@ public class Actuator implements IActuator {
 					/*
 					 * resolve and compute any distributed observables
 					 */
-
-					ITaskTree<?> subtask = ((ITaskTree<?>) ctx.getMonitor().getIdentity()).createChild();
+					ITaskTree<?> task = null;
 					for (Observable deferred : deferredObservables) {
-						Dataflow dflow = (Dataflow) ctx.resolve(deferred, ((Observation) object).getScale(), subtask);
-						dflow.withScopeScale(((Observation) object).getScale()).withMetadata(object.getMetadata())
-								.run(((Observation) object).getScale(), ((Monitor) ctx.getMonitor()).get(subtask));
+
+						if (task == null) {
+							task = ((ITaskTree<?>) ctx.getMonitor().getIdentity()).createChild();
+						}
+						ctx.resolve(deferred, (IDirectObservation) object, task);
 					}
 
-//					for (Dataflow dataflow : getDataflows(object, ctx)) {
-//						dataflow.run(((Observation) object).getScale(), ctx.getMonitor());
-//					}
-
 					/*
-					 * everything is resolved, now add any behavior specified in annotations
+					 * everything is resolved, now add any behaviors specified in annotations
 					 */
 					addBehaviors(object);
 
@@ -694,7 +688,9 @@ public class Actuator implements IActuator {
 					ctx.link(ctx.getContextObservation(), ret);
 				}
 			}
-		} else if (contextualizer instanceof IPredicateClassifier) {
+		} else if (contextualizer instanceof IPredicateClassifier)
+
+		{
 
 			/*
 			 * these are filters, so ret must be filled in already
@@ -764,39 +760,6 @@ public class Actuator implements IActuator {
 
 		return ret;
 	}
-
-//	/**
-//	 * Take any void actuators whose scale matches the
-//	 * 
-//	 * @param object
-//	 * @param ctx
-//	 * @return
-//	 */
-//	private List<Dataflow> getDataflows(IObjectArtifact object, IRuntimeScope ctx) {
-//
-//		List<Dataflow> ret = new ArrayList<>();
-//		for (IActuator actuator : actuators) {
-//			if (actuator.getType() == Type.VOID) {
-//
-//				Dataflow dataflow = new Dataflow(session);
-//				dataflow.setName(this.name);
-//				dataflow.setReferenceName(this.name);
-//				dataflow.setContext((DirectObservation) object);
-//				// ugly, meant to avoid notifications before the parents have been notified
-//				dataflow.setSecondary(true);
-//				dataflow.setResolutionScope(
-//						getDataflow().getResolutionScope().getChildScope((DirectObservation) object, Mode.RESOLUTION));
-//				dataflow.actuators.addAll(actuator.getActuators());
-//
-//				// actuators have been repurposed to a different dataflow; reattribute so that
-//				// notifiers work properly
-//				dataflow.reattributeActuators();
-//
-//				ret.add(dataflow);
-//			}
-//		}
-//		return ret;
-//	}
 
 	private void addBehaviors(IArtifact ret) {
 		if (this.model != null && ret instanceof Observation) {
@@ -1204,11 +1167,7 @@ public class Actuator implements IActuator {
 	public String getDataflowId() {
 		return getId();
 	}
-
-//	public void setDataflowId(String dataflowId) {
-//		_actuatorId = dataflowId;
-//	}
-
+	
 	public IResolutionScope.Mode getMode() {
 		return this.mode;
 	}
@@ -1494,16 +1453,7 @@ public class Actuator implements IActuator {
 		ret.mode = this.mode;
 		return ret;
 	}
-
-//	private boolean haveActuatorNamed(String name) {
-//		for (IActuator actuator : actuators) {
-//			if (actuator.getName().equals(name)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-
+	
 	public void resetScales() {
 		this.runtimeScale = null;
 		for (IActuator actuator : actuators) {

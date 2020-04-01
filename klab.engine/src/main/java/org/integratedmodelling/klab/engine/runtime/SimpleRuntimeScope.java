@@ -709,8 +709,9 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IDataflow<IArtifact> resolve(IObservable observable, IScale scale, ITaskTree<?> task) {
-		// TODO find the relevant dataflow among the "void" subactuators
+	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task) {
+		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
