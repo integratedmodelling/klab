@@ -1188,15 +1188,7 @@ public enum Resources implements IResourceService {
 	public Builder createResourceBuilder() {
 		return new ResourceBuilder();
 	}
-
-//	public ExecutorService getResourceTaskExecutor() {
-//		if (resourceTaskExecutor == null) {
-//			// TODO condition both the type and the parameters of the executor to options
-//			resourceTaskExecutor = Executors.newFixedThreadPool(Configuration.INSTANCE.getResourceThreadCount());
-//		}
-//		return resourceTaskExecutor;
-//	}
-
+	
 	@Override
 	public boolean isResourceOnline(String urn) {
 		if (!Urns.INSTANCE.isLocal(urn) && !Urns.INSTANCE.isUniversal(urn)) {
@@ -1318,7 +1310,6 @@ public enum Resources implements IResourceService {
 		if (rdef.exists()) {
 			ResourceReference rref = JsonUtils.load(rdef, ResourceReference.class);
 			if (!getLocalResourceCatalog().containsKey(rref.getUrn())) {
-				// Logging.INSTANCE.info("synchronizing project resource " + rref.getUrn());
 				getLocalResourceCatalog().put(rref.getUrn(), new Resource(rref));
 			}
 			return rref;

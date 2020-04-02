@@ -419,7 +419,9 @@ public class WCSService {
 								.doubleArrayFromString(((Map<?, ?>) bbox).get(LOWER_CORNER).toString(), "\\s+");
 						layer.wgs84envelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1],
 								upperCorner[1], Projection.getLatLon());
-
+//						if (serviceUrl.contains("integratedmodelling.org")) {
+//							System.out.println("LAYER " + layer.name + " from " + serviceUrl);
+//						}					
 						layers.put(layer.name, layer);
 					}
 				}

@@ -391,7 +391,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
 			dataflow.setModel((Model) model);
 			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets)
-					.run(scale.initialization(), ((Monitor) monitor).get(subtask));
+					.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 		}
 		return ret;
 	}
@@ -451,10 +451,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				// annoying.
 			}
 		} else {
-			ret = dataflow
-					.withScope(this.resolutionScope.getDeferredChildScope(observation, Mode.RESOLUTION))
+			ret = dataflow.withScope(this.resolutionScope.getDeferredChildScope(observation, Mode.RESOLUTION))
 					.withScopeScale(observation.getScale()).withMetadata(observation.getMetadata())
-					.run(observation.getScale(), ((Monitor) monitor).get(task));
+					.run(observation.getScale(), (Actuator) this.actuator, ((Monitor) monitor).get(task));
 		}
 
 		return (T) ret;
@@ -494,20 +493,17 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 			ResolutionScope scope = Resolver.INSTANCE.resolve((Observable) observable, this.resolutionScope,
 					Mode.RESOLUTION, scale, model);
+			
 			if (scope.getCoverage().isRelevant()) {
 
 				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope)
 						.setPrimary(false);
 				dataflow.setModel((Model) model);
-
-//				System.out.println("secondary dataflow for " + obs + ":\n" + dataflow.getKdlCode());
-
-				// TODO this must be added to the computational strategy and linked to the
-				// original context.
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 
 			} else if (resolutionScope.getPreresolvedModels(observable) == null
 					|| this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+
 				/*
 				 * Add an empty dataflow to create the observation. This is only done if there
 				 * are no preloaded resolvers in this scale, so we are certain that other
@@ -545,10 +541,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				monitor);
 
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
-		Dataflow dataflow = resolve(obs, scale, subtask);
+		Dataflow dataflow = resolve(observable, scale, subtask);
 
 		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
-				((Monitor) monitor).get(subtask));
+				(Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
@@ -626,7 +622,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		if (dataflow != null) {
-			dataflow.run(scale.initialization(), ((Monitor) monitor).get(subtask));
+			dataflow.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 		}
 
 	}
@@ -648,7 +644,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		Dataflow dataflow = resolve(obs, scale, subtask);
 		IRelationship ret = (IRelationship) dataflow.withMetadata(metadata).withScopeScale(scale)
 				.connecting((IDirectObservation) source, (IDirectObservation) target)
-				.run(scale.initialization(), ((Monitor) monitor).get(subtask));
+				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
@@ -1561,4 +1557,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		List<IObservable> ret = new ArrayList<>();
 		return ret;
 	}
+
+	public void setDataflow(Dataflow dataflow) {
+		this.dataflow = dataflow;
+	}
+
 }

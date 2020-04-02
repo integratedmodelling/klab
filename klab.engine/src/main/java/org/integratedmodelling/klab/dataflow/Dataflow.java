@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.IContextualizable;
@@ -26,6 +28,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -47,6 +50,15 @@ import org.integratedmodelling.klab.utils.Utils;
  * k.LAB runtime as a result of a semantic resolution. Its
  * {@link #run(IScale, IMonitor)} produces {@link IObservation observations}
  * unless the dataflow is {@link #isEmpty() empty}.
+ * <p>
+ * Each context has a single, hierarchically organized dataflow made up of
+ * sub-dataflow. The root dataflow resolves the context (object resolvers are
+ * void as they do not produce observations, the object type is reserved for
+ * instantiators). Each actuator that instantiates objects also has the void
+ * dataflow(s) that resolve them, plus any other actuator run in the context of
+ * the instantiated objects. Successive observations add dataflows to the parent
+ * actuator, according to the scope of each resolution, contributing to one
+ * overall dataflow which is visualized to the user as it changes.
  * <p>
  * A matching implementation may be provided to run non-semantic workflows in
  * semantically unaware computation engines, or a translator could be used to
@@ -104,6 +116,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private Scale resolutionScale;
 	private boolean secondary;
 
+	/*
+	 * keep the IDs of the dataflows already merged (during run()) so that we only
+	 * merge each dataflow once when reusing them for multiple instances.
+	 */
+	Set<String> dataflowIds = new HashSet<>();
+
 	private Dataflow() {
 	}
 
@@ -122,6 +140,19 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
+		return run(scale, null, monitor);
+	}
+
+	/**
+	 * Pass an actuator to use to register ourselves into.
+	 * 
+	 * @param scale
+	 * @param parentComputation
+	 * @param monitor
+	 * @return
+	 * @throws KlabException
+	 */
+	public IArtifact run(IScale scale, Actuator parentComputation, IMonitor monitor) throws KlabException {
 
 		reset();
 
@@ -241,6 +272,51 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			}
 		}
 
+		Dataflow rootDataflow = null;
+		boolean added = false;
+		if (parentComputation == null) {
+			rootDataflow = this;
+			((RuntimeScope) ((Observation) ret).getRuntimeScope()).setDataflow(this);
+		} else {
+
+			rootDataflow = (Dataflow) ((Observation) ret).getRuntimeScope().getDataflow();
+
+			if (!rootDataflow.dataflowIds.contains(this.getName())) {
+
+				added = true;
+				rootDataflow.dataflowIds.add(this.getName());
+				
+				Actuator parent = parentComputation;
+
+				// again, this is currently just one actuator
+				for (IActuator actuator : actuators) {
+
+					// I am the resolver
+					if (actuator.getType() == Type.VOID) {
+						parent.getActuators().add(actuator);
+					} else if (parent.getType() != Type.VOID) {
+						/*
+						 * should be the instantiator and have a void child with the same name
+						 */
+						for (IActuator pc : parent.getActuators()) {
+							if (pc.getType() == Type.VOID && pc.getName().equals(parent.getName())) {
+								parent = (Actuator) pc;
+								break;
+							}
+						}
+						if (parent.getType() == Type.VOID) {
+							parent.getActuators().add(actuator);
+						}
+					}
+				}
+			}
+		}
+
+		if (added) {
+			// TODO further reporting of final dataflow after execution
+			System.out.println(rootDataflow.getKdlCode());
+		}
+		
 		return ret;
 	}
 
@@ -550,10 +626,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 		return this;
 	}
-	
+
 	/**
-	 * TODO this should create a new dataflow if we want concurrent execution of dataflows
-	 * with different scopes. Also this MUST be called before withScopeScale if that is used.
+	 * TODO this should create a new dataflow if we want concurrent execution of
+	 * dataflows with different scopes. Also this MUST be called before
+	 * withScopeScale if that is used.
 	 * 
 	 * @param scope
 	 * @return
@@ -562,15 +639,22 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.resolutionScope = scope;
 		return this;
 	}
-	
+
 	public ResolutionScope getResolutionScope() {
 		return this.resolutionScope;
 	}
-	
+
+	/*
+	 * FIXME this shouldn't be necessary - use the hierarchy
+	 */
 	public void setSecondary(boolean b) {
 		this.secondary = b;
 	}
 
+	/*
+	 * FIXME this shouldn't be necessary - use the hierarchy. Also conflicts with
+	 * isPrimary() in meaning.
+	 */
 	public boolean isSecondary() {
 		return this.secondary;
 	}
@@ -582,7 +666,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	private void reattributeActuator(IActuator actuator) {
-		((Actuator)actuator).setDataflow(this);
+		((Actuator) actuator).setDataflow(this);
 		for (IActuator a : actuator.getActuators()) {
 			reattributeActuator(a);
 		}

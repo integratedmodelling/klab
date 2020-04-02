@@ -130,7 +130,8 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		 */
 		LIST,
 		/**
-		 * No value - used only for options in command prototypes
+		 * No value - the type of computations that resolve objects (acknowledgements),
+		 * and for options in command prototypes
 		 */
 		VOID,
 

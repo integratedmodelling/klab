@@ -1009,6 +1009,7 @@ public class Actuator implements IActuator {
 	}
 
 	public IArtifact.Type getType() {
+		// FIXME generate them this way instead.
 		return (mode == IResolutionScope.Mode.RESOLUTION && type == IArtifact.Type.OBJECT) ? IArtifact.Type.VOID : type;
 	}
 
@@ -1017,9 +1018,6 @@ public class Actuator implements IActuator {
 	}
 
 	public void setName(String name) {
-		if ("runoff_water_volume".equals(name)) {
-			System.out.println("PUPPAPPERA");
-		}
 		this.name = name;
 	}
 

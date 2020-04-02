@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -118,7 +119,14 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving properly
 						// at merge.
-						IArtifact result = dataflow.run(scope.getCoverage(), monitor);
+						/*
+						 * pass the first actuator in the father context as the parent for this
+						 * resolution - this must be at primary level, i.e. the root is the first (and
+						 * only) actuator in the root context
+						 */
+						Actuator actuator = (Actuator) (ctx.getDataflow().getActuators().isEmpty() ? null
+								: ctx.getDataflow().getActuators().get(0));
+						IArtifact result = dataflow.run(scope.getCoverage(), actuator, monitor);
 						if (result instanceof IObservation) {
 							ret = (IObservation) result;
 						} else {

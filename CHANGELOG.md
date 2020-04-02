@@ -22,6 +22,16 @@ of vulnerabilities.) [comment]: <>   () [comment]: <>   (Next build: [0.10.0.xxx
 
 ## Unreleased
 ### Added
+- Direct observations with suitable dimensionality inherit the context's 
+  scale by default, inheriting grid specifications. Implementation is still incomplete
+  but the @space and @time annotation can be used on the instantiators to change
+  the defaults.
+- There is now just one dataflow per context, with hierarchical structure, and each
+  new resolution below the root level creates a new (void) resolver at the level
+  it pertains to. Distributed resolution is now done by reasoning on the contexts
+  of the observation, creating the context as an observation of it if not the same
+  as the root context and distributing the resolution over all the observations
+  instantiated.
 - All IIdentities now have the option of becoming actors by loading a IBehavior. 
   If behavior isn't loaded but actors exist in the session, they automatically become 
   "dumb" actors that do nothing but do take messages. Declaration statement in k.Actor 
