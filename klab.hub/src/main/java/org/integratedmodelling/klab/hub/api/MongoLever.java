@@ -1,36 +1,50 @@
 package org.integratedmodelling.klab.hub.api;
 
-import org.joda.time.DateTime;
-import org.springframework.data.annotation.Id;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Transient;
+
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Levers")
-public class MongoLever extends GenericModel{
+public class MongoLever extends IdentityModel{
 	
     @Indexed(unique = false)
     String email;
     
     String baseUrl;
     
-    DateTime registrationDate;
+    @Transient //There is only one role of a lever
+    final Set<Role> roles = new HashSet<>();
     
-    DateTime lastConnection;
 
-	public void setLlastConnection() {
-		lastConnection = DateTime.now();
-	}
-
-	public String getNode() {
+	public String getName() {
 		return this.name;
 	}
 
 	public String getEmail() {
 		return this.email;
 	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-	public String getUrl() {
+	public String getBaseUrl() {
 		return this.baseUrl;
+	}
+
+	public Collection<Role> getAuthorities() {
+		return new HashSet<>(getRoles());
+	}
+
+	private Set<Role> getRoles() {
+		this.roles.clear();
+        this.roles.add(Role.ROLE_LEVER);
+        return this.roles;
 	}
 
 }

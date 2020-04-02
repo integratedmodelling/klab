@@ -5,8 +5,6 @@ public enum TokenType {
     		TokenVerifyAccountClickback.class),
     auth(
             TokenAuthentication.class),
-    engine(
-            TokenEngine.class),
     password(
             TokenChangePasswordClickback.class),
     groups(
@@ -16,7 +14,9 @@ public enum TokenType {
 	newUser(
 			TokenNewUserClickback.class),
 	lostPassword(
-			TokenLostPasswordClickback.class);
+			TokenLostPasswordClickback.class),
+	lever(
+			TokenLever.class);
 
     private final Class<? extends TokenAuthentication> clazz;
 

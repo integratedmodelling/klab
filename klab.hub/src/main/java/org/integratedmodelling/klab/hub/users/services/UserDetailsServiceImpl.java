@@ -15,6 +15,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Primary
+/*
+ * This is needed for login authentication.  It is used to load the user and
+ * populate the password hash from the ldap.  It is than compared to password
+ * in the request.
+ */
 public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	private UserRepository userRepository;

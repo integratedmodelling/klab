@@ -4,5 +4,9 @@ public interface ILeverIdentity extends IServerIdentity {
 	
     /** Constant <code>type</code> */
     Type type = Type.LEVER;
+    
+    /** {@inheritDoc} */
+    @Override
+    IPartnerIdentity getParentIdentity();
 
 }

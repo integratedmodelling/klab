@@ -12,7 +12,8 @@ public enum Role implements GrantedAuthority {
     ROLE_CLICKBACK,
     ROLE_ENGINE,
     ROLE_SYSTEM,
-    ROLE_TEMPORARY,;
+    ROLE_TEMPORARY,
+    ROLE_LEVER,;
 
     public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
 
@@ -27,6 +28,8 @@ public enum Role implements GrantedAuthority {
     public static final String SYSTEM = "ROLE_SYSTEM";
     
     public static final String HUB = "ROLE_HUB";
+    
+    public static final String LEVER = "ROLE_LEVER";
 
     // no privileges - only used for fake/temporary auth during LDAP operations
     public static final String TEMPORARY = "ROLE_TEMPORARY";

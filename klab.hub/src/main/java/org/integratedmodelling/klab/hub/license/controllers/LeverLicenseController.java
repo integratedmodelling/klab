@@ -6,25 +6,34 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.hub.api.LeverAuthResponseFactory;
+import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
-import org.integratedmodelling.klab.hub.repository.MongoLeverRepository;
+import org.integratedmodelling.klab.hub.tokens.services.LeverAuthTokenService;
 import org.integratedmodelling.klab.rest.LeverAuthenticationRequest;
 import org.integratedmodelling.klab.rest.LeverAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LeverLicenseController extends LicenseController<LeverAuthenticationRequest>{
+	
+	private LeverService leverService;
 	private LicenseConfigRepository licenseRepo;
-	private MongoLeverRepository leverRepo;
+	private LeverAuthTokenService tokenService;
 	
 	@Autowired
-	public LeverLicenseController(LicenseConfigRepository licenseRepo,
-			MongoLeverRepository leverRepo)  {
+	public LeverLicenseController(LeverService leverService,
+			LicenseConfigRepository licenseRepo,
+			LeverAuthTokenService tokenService)  {
+		this.leverService = leverService;
 		this.licenseRepo = licenseRepo;
-		this.leverRepo = leverRepo;
+		this.tokenService = tokenService;
 	}
 
 	@Override
@@ -35,10 +44,33 @@ public class LeverLicenseController extends LicenseController<LeverAuthenticatio
 	}
 
 	@Override
-	@GetMapping(value= API.HUB.AUTHENTICATE_LEVER)
-	ResponseEntity<?> processCertificate(LeverAuthenticationRequest request, HttpServletRequest httpRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	@PostMapping(value= API.HUB.AUTHENTICATE_LEVER)
+	ResponseEntity<?> processCertificate(@RequestBody LeverAuthenticationRequest request, HttpServletRequest httpRequest) {
+		String remoteAddr = "";
+
+		if (httpRequest != null) {
+			remoteAddr = httpRequest.getHeader("X-FORWARDED-FOR");
+			if (remoteAddr == null || "".equals(remoteAddr)) {
+				remoteAddr = httpRequest.getRemoteAddr();
+			}
+		}
+		
+		request.setIp(remoteAddr);
+		/*
+		 * This is so we can do production style tests and ignore local certificate processing
+		 */
+		if(httpRequest.getHeader("test") != null) {
+			request.setCycle("production");
+		}
+		
+		LicenseConfiguration config = licenseRepo.findByKeyString(request.getKey())
+				.orElseGet(() -> new LicenseConfiguration());
+		
+		LeverAuthenticationResponse response;
+		
+		response = new LeverAuthResponseFactory().getResponse(request, config, leverService, tokenService);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+		
 	}
 	
 	

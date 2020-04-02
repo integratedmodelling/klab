@@ -233,8 +233,42 @@ public interface API {
 		public static final String DELETED_USERS = USER_BASE + "/deleted-users";
 		/**
 		 * URL path for deleted users by id.
-		 */			
-		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";		
+		 */
+		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";
+		
+		public static final String CURRENT_PROFILE = USER_BASE + "/me";	
+		
+		public static interface PARAMETERS {
+			/**
+			 * URL PARAMETER for user activation tokens.
+			 */
+			public static final String USER_ACTIVATION = "activate";
+			/**
+			 * URL PARAMETER for user requesting groups.  Should be deprecated tokens.
+			 */
+			@Deprecated
+			public static final String USER_GROUPS = "groups";
+			/**
+			 * URL PARAMETER for user requesting a lost password email.
+			 */
+			public static final String USER_LOST_PASSWORD = "lost-password";
+			/**
+			 * URL PARAMETER for user setting a new password.
+			 */
+			public static final String USER_REQUEST_PASSWORD = "new-password";
+			/**
+			 * URL PARAMETER for user setting a password from set password token.
+			 */
+			public static final String USER_SET_PASSWORD = "set-password";
+			/**
+			 * URL PARAMETER for user to verify account.
+			 */
+			public static final String USER_VERIFICATION = "verify";
+			/**
+			 * URL PARAMETER for user to request a new certificate.
+			 */
+			public static final String USER_CERTIFICATE = "certificate";
+		}
 		
 
 		
@@ -422,7 +456,7 @@ public interface API {
 		 */
 		public static final String P_IDENTIFIER = "{identifier}";
 
-		/**
+		/**requestNewP
 		 * Authority capabilities.
 		 * 
 		 * GET JSON

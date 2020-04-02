@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface UserAuthTokenService extends TokenBaseService {
+public interface UserAuthTokenService extends TokenBaseService<TokenAuthentication> {
 	public TokenAuthentication getUserAuthenticationToken(String username, String password);
 
 	public LoginResponse getAuthResponse(String username, String password);

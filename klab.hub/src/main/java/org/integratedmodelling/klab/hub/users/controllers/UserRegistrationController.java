@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
 import org.integratedmodelling.klab.hub.api.TokenNewUserClickback;
-
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
 import org.integratedmodelling.klab.hub.api.TokenType;
@@ -22,13 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.minidev.json.JSONObject;
 
-@RequestMapping("/api/v2/users")
 @RestController
 public class UserRegistrationController {
 	
@@ -48,7 +46,7 @@ public class UserRegistrationController {
 		this.emailManager = emailManager;
 	}
 	
-	@PostMapping(value= "", produces = "application/json")
+	@PostMapping(value= API.HUB.USER_BASE, produces = "application/json")
 	public ResponseEntity<?> newUserRegistration(@RequestBody SignupRequest request) throws UserExistsException, UserEmailExistsException {
 		User user = userService.registerNewUser(request.getUsername(), request.getEmail());
 		TokenVerifyAccountClickback token = (TokenVerifyAccountClickback)
@@ -58,31 +56,31 @@ public class UserRegistrationController {
 		return new ResponseEntity<String>("Please Check your email for account verification email.", HttpStatus.CREATED);
 	}
 	
-	@PostMapping(value="/{username}", params = "verify")
-	public ResponseEntity<?> newUserVerification(@PathVariable String username, @RequestParam String verify) {
-		if (!tokenService.verifyToken(username, verify, TokenType.verify)) {
+	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_VERIFICATION)
+	public ResponseEntity<?> newUserVerification(@PathVariable String id, @RequestParam String verify) {
+		if (!tokenService.verifyToken(id, verify, TokenType.verify)) {
 			throw new ActivationTokenFailedException("User Verification token failed");
 		}
-		User user = userService.verifyNewUser(username);
+		User user = userService.verifyNewUser(id);
 		// user cannot be null, verifyNewUser throw exception if this
 		ProfileResource profile = profileService.getUserSafeProfile(user);
 		TokenNewUserClickback token = 
 				(TokenNewUserClickback) tokenService
-					.createChildToken(username, verify, TokenType.newUser);
+					.createChildToken(id, verify, TokenType.newUser);
 		
 		JSONObject resp = new JSONObject();
 		resp.appendField("profile", profile).appendField("clickback", token.getTokenString());
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 	
-	@PostMapping(value="/{username}", params = "setPassword")
-	public ResponseEntity<?> newUserPassword(@PathVariable String username, @RequestParam String setPassword,
+	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_SET_PASSWORD)
+	public ResponseEntity<?> newUserPassword(@PathVariable String id, @RequestParam String setPassword,
 			@RequestBody PasswordChangeRequest passwordRequest) {
 		TokenType[] types = { TokenType.newUser, TokenType.password };
-		if (!tokenService.verifyTokens(username, setPassword, types)) {
+		if (!tokenService.verifyTokens(id, setPassword, types)) {
 			throw new ActivationTokenFailedException("User Verification token failed");
 		}
-		User user = userService.setPassword(username, passwordRequest.getNewPassword(), passwordRequest.getConfirm());
+		User user = userService.setPassword(id, passwordRequest.getNewPassword(), passwordRequest.getConfirm());
 		if(user != null) {
 			tokenService.deleteToken(setPassword);
 		}
@@ -91,8 +89,8 @@ public class UserRegistrationController {
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 	
-	@PostMapping(value="/{username}", params = "requestNewPassword")
-	public ResponseEntity<?> newUserRegistration(@PathVariable String username) {
+	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_REQUEST_PASSWORD)
+	public ResponseEntity<?> authorizedPasswordChange(@PathVariable String username) {
 		TokenChangePasswordClickback token = (TokenChangePasswordClickback)
 				tokenService.createToken(username, TokenType.password);
 		JSONObject resp = new JSONObject();

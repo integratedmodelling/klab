@@ -64,7 +64,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 
 		byte[] certFileContent = new BouncyLicense().generate(engineProperties, configuration);;
 
-		String certFileString = String.format("attachment; filename=%s", KlabCertificate.DEFAULT_NODE_CERTIFICATE_FILENAME);
+		String certFileString = String.format("attachment; filename=%s", KlabCertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
 
 		response.setHeader("Content-disposition", certFileString);
 		response.setContentType("text/plain;charset=utf-8");

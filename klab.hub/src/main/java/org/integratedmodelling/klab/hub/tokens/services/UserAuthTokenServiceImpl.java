@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.hub.commands.CreateUserAuthenticationToken;
 import org.integratedmodelling.klab.hub.commands.DeleteAuthenticationToken;
 import org.integratedmodelling.klab.hub.commands.GetUserProfile;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
-import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.LoginFailedExcepetion;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
@@ -62,23 +61,6 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		}
 	}
 
-	@Override
-	public TokenAuthentication createChildToken(String username, String parentToken, TokenType type) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean verifyToken(String username, String tokenString, TokenType type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public boolean verifyTokens(String username, String tokenString, TokenType... verify) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public void deleteToken(String tokenString) {

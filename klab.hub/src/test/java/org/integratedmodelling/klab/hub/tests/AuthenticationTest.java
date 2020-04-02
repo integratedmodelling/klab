@@ -133,7 +133,7 @@ public class AuthenticationTest extends ApplicationCheck {
 		URI authUri = new URI(authUrl);
 		ResponseEntity<EngineAuthenticationResponse> engineAuth = 
 				restTemplate.exchange(authUri, HttpMethod.POST, authRequestEntity, EngineAuthenticationResponse.class);
-		Assert.assertEquals(200, engineAuth.getStatusCode());
+		Assert.assertEquals(200, engineAuth.getStatusCodeValue());
 	}
 
 	private ResponseEntity<JSONObject> loginRsponse(String username, String password) throws URISyntaxException {

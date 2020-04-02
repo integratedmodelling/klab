@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.auth;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.ILeverIdentity;
@@ -15,11 +17,11 @@ public class Lever implements ILeverIdentity{
 	private boolean online;
 	private IPartnerIdentity parent;
 	private String authenticatingHub;
-	private String token;
+	private List<String> urls = new ArrayList<>();
 	private Date bootTime = new Date();
-
 	public Lever(String name, IPartnerIdentity rootIdentity) {
 		this.name = name;
+		this.parent = rootIdentity;
 	}
 
 	@Override
@@ -35,8 +37,11 @@ public class Lever implements ILeverIdentity{
 
 	@Override
 	public Collection<String> getUrls() {
-		// TODO Auto-generated method stub
-		return null;
+		return urls;
+	}
+	
+	public void setUrls(List<String> urls) {
+		this.urls = urls;
 	}
 
 	@Override
@@ -63,9 +68,8 @@ public class Lever implements ILeverIdentity{
 	}
 
 	@Override
-	public IIdentity getParentIdentity() {
-		// TODO Auto-generated method stub
-		return null;
+	public IPartnerIdentity getParentIdentity() {
+		return parent;
 	}
 
 	@Override

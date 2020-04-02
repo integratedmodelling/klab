@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.security.NoSuchProviderException;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.hub.api.adapters.MongoGroupAdapter;
 import org.integratedmodelling.klab.hub.commands.GetINodeIdentity;
 import org.integratedmodelling.klab.hub.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.commands.GetNodesGroups;
+import org.integratedmodelling.klab.hub.exception.CertificateCipherExcepetion;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -38,23 +40,23 @@ public class NodeAuthResponeFactory {
 			String ip,
 			LicenseConfiguration config, 
 			NodeService nodeService, 
-			MongoGroupRepository groupRepo) throws NoSuchProviderException, IOException, PGPException {
+			MongoGroupRepository groupRepo) {
 		
 		switch (request.getLevel()) {
 		case TEST:
 			if (IPUtils.isLocal(ip)) {
-				return localNode(request, groupRepo);
+				return local(request, groupRepo);
 			} else {
 				break;	
 			}
 		default:
 			if (IPUtils.isLocalhost(ip)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
-				return localNode(request, groupRepo);
+				return local(request, groupRepo);
 			} else {
 				MongoNode node = nodeService.getNode(request.getName());
-				Set<Group> groups = new GetNodesGroups(node, groupRepo).execute();
-				NodeAuthenticationResponse response = processNode(request.getCertificate(),node, groups, config);
+				Set<Group> groups = new GetNodesGroups(node).execute();
+				NodeAuthenticationResponse response = process(request.getCertificate(),node, groups, config);
 				if(response.getUserData() != null) {
 		    		node.setLastConnection();
 		    		nodeService.updateNode(node);
@@ -66,10 +68,15 @@ public class NodeAuthResponeFactory {
 		return null;
 	}
 	
-	private NodeAuthenticationResponse processNode(String cipher, MongoNode node, Set<Group> groups,
-			LicenseConfiguration configuration) throws NoSuchProviderException, IOException, PGPException {
+	private NodeAuthenticationResponse process(String cipher, MongoNode node, Set<Group> groups,
+			LicenseConfiguration configuration) {
 		Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();
-		Properties cipherProperties =  new CipherProperties().getCipherProperties(configuration, cipher);
+		Properties cipherProperties = null;
+		try {
+			cipherProperties = new CipherProperties().getCipherProperties(configuration, cipher);
+		} catch (NoSuchProviderException | IOException | PGPException e) {
+			throw new CertificateCipherExcepetion(node.getName());
+		}
         nodeProperties.remove(KlabCertificate.KEY_EXPIRATION);
         cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
 
@@ -93,7 +100,7 @@ public class NodeAuthResponeFactory {
         }
 	}
 	
-	private NodeAuthenticationResponse localNode(NodeAuthenticationRequest request, MongoGroupRepository groupRepository) {
+	private NodeAuthenticationResponse local(NodeAuthenticationRequest request, MongoGroupRepository groupRepository) {
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
 		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
@@ -104,28 +111,42 @@ public class NodeAuthResponeFactory {
 		mongoGroups.forEach(
 				mongoGroup -> groups.add(new MongoGroupAdapter(mongoGroup).convertGroup()));
 		
-		INodeIdentity node = authenticateLocalNodeCert(request.getName());
+		INodeIdentity node = authenticateLocal(request.getName());
 
 		Logging.INSTANCE.info("authorized installed node " + node.getName());
-		IdentityReference userIdentity = new IdentityReference(node.getName()
-				,node.getParentIdentity().getEmailAddress(), now.toString());	
-		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
-				groups, tomorrow.toString(), node.getId());
-		NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
-				hub.getName(), groups,
-				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
+		
+		IdentityReference userIdentity = 
+				new IdentityReference(
+						node.getName(),
+						node.getParentIdentity().getEmailAddress(), 
+						now.toString());
+		
+		AuthenticatedIdentity authenticatedIdentity = 
+				new AuthenticatedIdentity(
+						userIdentity,
+						groups,
+						tomorrow.toString(),
+						node.getId());
+		
+		NodeAuthenticationResponse response = 
+				new NodeAuthenticationResponse(
+						authenticatedIdentity,
+						hub.getName(),
+						groups,
+						NetworkKeyManager.INSTANCE.getEncodedPublicKey());
+		
 		NetworkManager.INSTANCE.notifyAuthorizedNode(node, true);
 		return response;
 	}
 	
-	private INodeIdentity authenticateLocalNodeCert(String nodeName) {
+	private INodeIdentity authenticateLocal(String name) {
 		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
-		INodeIdentity node = new Node(hub.getName() + "." + nodeName, hub.getParentIdentity());
+		INodeIdentity node = new Node(hub.getName() + "." + name, hub.getParentIdentity());
 		try {
 			node.getUrls().add("http://"+IPUtils.getLocalIp()+":8287/node");
-		} catch (Exception e) {
-			throw new KlabAuthorizationException(e.toString());
-		}
+		} catch (SocketException e) {
+			throw new KlabAuthorizationException(node.getName());
+		}	
 		return node;
 	}
 

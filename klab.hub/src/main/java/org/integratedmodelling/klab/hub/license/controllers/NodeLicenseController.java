@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.hub.license.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.NoSuchProviderException;
 import java.util.Properties;
 
 import javax.annotation.security.RolesAllowed;
@@ -10,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.api.BouncyLicense;
@@ -18,7 +16,6 @@ import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.api.NodeAuthResponeFactory;
 import org.integratedmodelling.klab.hub.api.PropertiesFactory;
-import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -90,13 +87,7 @@ public class NodeLicenseController extends LicenseController<NodeAuthenticationR
 
 		NodeAuthenticationResponse response;
 
-		try {
-			//this is to many arguments, the groups are only needed because local nodes do not use dbrefs for groups.
-			//this would be an improvement and remove lines of code which are only there to combine the two.
-			response = new NodeAuthResponeFactory().getRespone(request, remoteAddr, config, nodeService, groupRepository);
-		} catch (NoSuchProviderException | IOException | PGPException e) {
-			throw new BadRequestException("Make a more useful message to help fiqure out what happened.");
-		}
+		response = new NodeAuthResponeFactory().getRespone(request, remoteAddr, config, nodeService, groupRepository);
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

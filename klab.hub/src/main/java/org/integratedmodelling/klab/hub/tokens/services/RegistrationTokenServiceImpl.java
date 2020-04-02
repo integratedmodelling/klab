@@ -25,7 +25,7 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 	}
 
 	@Override
-	public TokenAuthentication createToken(String username, TokenType type) {
+	public TokenClickback createToken(String username, TokenType type) {
 		if (type.equals(TokenType.verify)) {
 			return new CreateVerifyAccountToken(repository, username, linkConfig).execute();
 		} else if (type.equals(TokenType.password)) {
@@ -36,7 +36,7 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 	}
 
 	@Override
-	public TokenAuthentication createChildToken(String username, String parentToken, TokenType type) {
+	public TokenClickback createChildToken(String username, String parentToken, TokenType type) {
 		if (type.equals(TokenType.newUser)) {
 			return new CreateNewUserAccountToken(repository, username, linkConfig).execute();
 		} else {

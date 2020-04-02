@@ -12,16 +12,14 @@ import org.integratedmodelling.klab.rest.Group;
 public class GetNodesGroups {
 	
 	private MongoNode node;
-	private MongoGroupRepository repository;	
 	
-	public GetNodesGroups(MongoNode node, MongoGroupRepository repository) {
+	public GetNodesGroups(MongoNode node) {
 		super();
 		this.node = node;
-		this.repository = repository;
 	}
 
 	public Set<Group> execute() {
-		Set<MongoGroup> mongoGroups = new GetNodesMongoGroups(node, repository).execute();
+		Set<MongoGroup> mongoGroups = node.getGroups();
 		Set<Group> groups = new HashSet<>();
 		
 		mongoGroups.forEach(

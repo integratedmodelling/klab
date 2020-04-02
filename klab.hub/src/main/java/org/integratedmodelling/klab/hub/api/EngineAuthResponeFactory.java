@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.api.adapters.MongoGroupAdapter;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
@@ -86,7 +87,7 @@ public class EngineAuthResponeFactory {
 	    				NetworkManager.INSTANCE.getNodes(engine.getGroups()));
 	        }
 		} else {
-			throw new BadRequestException("License has expired");
+			throw new LicenseExpiredException(profile.getUsername());
 		}
 		return null;
 	}

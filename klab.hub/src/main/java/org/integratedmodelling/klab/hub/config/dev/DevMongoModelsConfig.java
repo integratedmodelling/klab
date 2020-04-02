@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.config.dev;
 import java.net.URL;
 import org.integratedmodelling.klab.hub.commands.CreateInitialUsers;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.repository.MongoLeverRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -21,24 +22,34 @@ public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshe
 	private UserRepository userRepository;
 	private LdapUserDetailsManager ldapUserDetailsManager;
 	private PasswordEncoder passwordEncoder;
+	private MongoLeverRepository leverRepo;
 
 	@Autowired
 	public DevMongoModelsConfig(MongoGroupRepository groupRepo,
 			UserRepository userRepository,
 			LdapUserDetailsManager ldapUserDetailsManager,
-			PasswordEncoder passwordEncoder) {
+			PasswordEncoder passwordEncoder,
+			MongoLeverRepository leverRepo) {
 		super();
 		this.groupRepo = groupRepo;
 		this.userRepository = userRepository;
 		this.ldapUserDetailsManager = ldapUserDetailsManager;
 		this.passwordEncoder = passwordEncoder;
+		this.leverRepo = leverRepo;
 	}
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		URL url = DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json");
 		new CreateIntialGroups(url, groupRepo).execute();
-		new CreateInitialUsers(groupRepo, userRepository, ldapUserDetailsManager, (DelegatingPasswordEncoder) passwordEncoder).execute();
+		
+		new CreateInitialUsers(
+				groupRepo,
+				userRepository,
+				ldapUserDetailsManager,
+				(DelegatingPasswordEncoder) passwordEncoder).execute();
+		
+		new CreateInitialLevers(leverRepo).execute();
 	}
     
 
