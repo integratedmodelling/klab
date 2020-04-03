@@ -1223,7 +1223,7 @@ public enum Resources implements IResourceService {
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 			if (adapter != null) {
-				boolean ret = adapter.getEncoder().isOnline(resource);
+				boolean ret = adapter.getEncoder().isOnline(resource, Klab.INSTANCE.getRootMonitor());
 				ResourceData cached = statusCache.get(resource.getUrn());
 				if (cached == null) {
 					cached = new ResourceData();
@@ -1617,6 +1617,52 @@ public enum Resources implements IResourceService {
 	public IArtifact contextualizeResource(String urn, IContextualizationScope scope) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Detailed re-validation done on demand.
+	 * 
+	 * @param resource
+	 * @param rmonitor
+	 */
+	public void revalidate(IResource resource, IMonitor monitor) {
+
+		monitor.info("Revalidating resource " + resource.getUrn());
+		
+		/*
+		 * first validate the offline status
+		 */
+		boolean online = false;
+		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+			if (adapter != null) {
+				boolean ret = adapter.getEncoder().isOnline(resource, monitor);
+				ResourceData cached = statusCache.get(resource.getUrn());
+				if (cached == null) {
+					cached = new ResourceData();
+					cached.online = ret;
+					cached.timestamp = System.currentTimeMillis();
+					statusCache.put(resource.getUrn(), cached);
+				}
+				online = ret;
+			}
+		} else if (Urns.INSTANCE.isUniversal(resource.getUrn())) {
+			Urn urn = new Urn(resource.getUrn());
+			if (getUrnAdapter(urn.getCatalog()) != null) {
+				online = getUrnAdapter(urn.getCatalog()).isOnline(urn);
+			} else {
+				// can only have come from a remote node, assumed online
+				online = true;
+			}
+		} else {
+			online = publicResourceCatalog.isOnline(resource.getUrn());
+		}
+
+		monitor.info("Initial status is " + (online ? "online" : "OFFLINE"));
+		
+		// TODO Auto-generated method stub
+		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+		
 	}
 
 }

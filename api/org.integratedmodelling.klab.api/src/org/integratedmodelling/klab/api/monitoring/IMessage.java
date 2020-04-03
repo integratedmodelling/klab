@@ -99,7 +99,7 @@ public interface IMessage {
 		 * Run-class messages start scripts and tests.
 		 */
 		Run,
-		
+
 		/**
 		 * Messages sent or received by the view actor, called from behaviors.
 		 */
@@ -211,16 +211,22 @@ public interface IMessage {
 		 */
 		CreateNamespace, CreateScenario, DeleteNamespace, DeleteLocalResource, CreateProject, DeleteProject,
 		CreateScript, DeleteScript, CreateTestCase, DeleteTestCase, CreateBehavior, DeleteBehavior,
-		
+
 		/*
 		 * F->B: publish or update a local or public resource
 		 */
-		PublishLocalResource, UpdatePublicResource, 
-		
-		/*
-		 * B->F: respond to a request to publish a resource (just submit asynchronously).
+		PublishLocalResource, UpdatePublicResource,
+
+		/**
+		 * B->F: respond to a request to publish a resource (just submit
+		 * asynchronously).
 		 */
 		ResourceSubmitted,
+		
+		/**
+		 * B -> F after a resource operation request, reporting the results
+		 */
+		ResourceInformation,
 
 		/**
 		 * F->B: notification when files are explicitly changed, added or deleted;
@@ -269,12 +275,13 @@ public interface IMessage {
 		 * status
 		 */
 		NetworkStatus,
-		
+
 		/**
-		 * -- Ticketing system monitoring, send around internally by UserInterface after engine notification
+		 * -- Ticketing system monitoring, send around internally by UserInterface after
+		 * engine notification
 		 */
 		TicketResolved,
-		
+
 		/**
 		 * --- Task lifecycle --- B -> F
 		 */
@@ -320,9 +327,9 @@ public interface IMessage {
 		 * --- ResourceLifecycle-class types, B->F
 		 */
 		ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated, ResourceCreated,
-		
+
 		/*
-		 * --- View actor messages 
+		 * --- View actor messages
 		 */
 		CreateViewComponent, SetupInterface
 

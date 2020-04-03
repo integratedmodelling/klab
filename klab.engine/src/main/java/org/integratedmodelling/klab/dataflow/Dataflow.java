@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -36,8 +37,10 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Annotation;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
+import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -285,7 +288,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 				added = true;
 				rootDataflow.dataflowIds.add(this.getName());
-				
+
 				Actuator parent = parentComputation;
 
 				// again, this is currently just one actuator
@@ -295,8 +298,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 					if (actuator.getType() == Type.VOID) {
 						parent.getActuators().add(actuator);
 					} else if (parent.getType() != Type.VOID) {
+
 						/*
-						 * should be the instantiator and have a void child with the same name
+						 * should be within an instantiator, which at this point has resolved its
+						 * instances so it should have a void child with the same name
 						 */
 						for (IActuator pc : parent.getActuators()) {
 							if (pc.getType() == Type.VOID && pc.getName().equals(parent.getName())) {
@@ -313,10 +318,16 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 
 		if (added) {
-			// TODO further reporting of final dataflow after execution
+			/*
+			 * send dataflow after execution is finished. TODO add style elements or flags
+			 * to make sure it's shown statically.
+			 */
+			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+					IMessage.Type.DataflowCompiled, new DataflowReference(session.getMonitor().getIdentity().getId(),
+							getKdlCode(), ContextualizationStrategy.getElkGraph(this))));
 			System.out.println(rootDataflow.getKdlCode());
 		}
-		
+
 		return ret;
 	}
 

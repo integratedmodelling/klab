@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.owl.OWL;
@@ -40,7 +41,7 @@ public class WekaEncoder implements IResourceEncoder {
 	boolean initialized = false;
 
 	@Override
-	public boolean isOnline(IResource resource) {
+	public boolean isOnline(IResource resource, IMonitor monitor) {
 		return !resource.hasErrors();
 	}
 

@@ -178,7 +178,7 @@ public class RasterValidator implements IResourceValidator {
     }
 
     @Override
-    public IResource performOperation(IResource resource, String operationName) {
+    public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
         throw new KlabUnimplementedException("resource operations unimplemented");
     }
 }

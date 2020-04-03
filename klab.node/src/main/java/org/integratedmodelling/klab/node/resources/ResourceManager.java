@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.auth.KlabPermissions;
@@ -79,7 +80,7 @@ public class ResourceManager {
 			IResource resource = catalog.get(urn);
 			if (resource != null) {
 				IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
-				ok = adapter != null && adapter.getEncoder().isOnline(resource);
+				ok = adapter != null && adapter.getEncoder().isOnline(resource, Klab.INSTANCE.getRootMonitor());
 			}
 			if (ok) {
 				online.add(urn);

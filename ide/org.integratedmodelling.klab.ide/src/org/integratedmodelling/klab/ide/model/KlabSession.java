@@ -39,11 +39,13 @@ import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NetworkReference;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
+import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
@@ -538,6 +540,16 @@ public class KlabSession extends KlabPeer {
 		}
 	}
 
+	@MessageHandler
+	public void handleResourceOperation(ResourceOperationResponse response) {
+		String title = "Results of " + response.getOperation() + " on " + response.getUrn();
+		String message = "";
+		for (Notification notification : response.getNotifications()) {
+			message += (message.isEmpty() ? "" : "\n") + notification.getLevel() + ": " + notification.getMessage();
+		}
+		Eclipse.INSTANCE.info(title + "\n\n" + message);
+	}
+	
 	@MessageHandler
 	public void handleDataflow(IMessage message, DataflowReference dataflow) {
 		ETaskReference task = taskCatalog.get(dataflow.getTaskId());

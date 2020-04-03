@@ -20,6 +20,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * The Interface IResourceEncoder.
@@ -29,37 +30,41 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
  */
 public interface IResourceEncoder {
 
-    /**
-     * Check if the resource can be accessed. This should ensure the ability of
-     * calling
-     * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IContextualizationScope)}
-     * without spending too much time.
-     * 
-     * @param resource
-     * @return true if resource can be used at the moment of this call.
-     */
-    boolean isOnline(IResource resource);
+	/**
+	 * Check if the resource can be accessed. This should ensure the ability of
+	 * calling
+	 * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IContextualizationScope)}
+	 * without spending too much time. Full information should be provided through
+	 * the monitor: this will be called also on-demand to individually trace
+	 * resource issues.
+	 * 
+	 * @param resource
+	 * @param monitor  use to report any situation with the needed level of detail.
+	 * 
+	 * @return true if resource can be used at the moment of this call.
+	 */
+	boolean isOnline(IResource resource, IMonitor monitor);
 
-    /**
-     * Build the resource data corresponding to the passed resource in the passed
-     * geometry. The data are created using a builder passed by the runtime.
-     *
-     * @param resource
-     *            a {@link org.integratedmodelling.klab.api.data.IResource}. It
-     *            should have been recently inspected with
-     *            {@link #isOnline(IResource)} so it can be assumed that it is
-     *            correct and active.
-     * @param urnParameters
-     *            any parameters passed in the URN reference to the resource, using
-     *            the URN fragment. A single parameter without key has the key 'value'.
-     * @param geometry
-     *            the {@link org.integratedmodelling.klab.api.data.IGeometry} of
-     *            reference for the query. The resolution process should guarantee
-     *            that the intersection with the resource's geometry is not empty.
-     * @param builder
-     *            a suitable builder to use to build the dataset
-     * @param context
-     *            the context of computation
-     */
-    void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, IKlabData.Builder builder, IContextualizationScope context);
+	/**
+	 * Build the resource data corresponding to the passed resource in the passed
+	 * geometry. The data are created using a builder passed by the runtime.
+	 *
+	 * @param resource      a
+	 *                      {@link org.integratedmodelling.klab.api.data.IResource}.
+	 *                      It should have been recently inspected with
+	 *                      {@link #isOnline(IResource)} so it can be assumed that
+	 *                      it is correct and active.
+	 * @param urnParameters any parameters passed in the URN reference to the
+	 *                      resource, using the URN fragment. A single parameter
+	 *                      without key has the key 'value'.
+	 * @param geometry      the
+	 *                      {@link org.integratedmodelling.klab.api.data.IGeometry}
+	 *                      of reference for the query. The resolution process
+	 *                      should guarantee that the intersection with the
+	 *                      resource's geometry is not empty.
+	 * @param builder       a suitable builder to use to build the dataset
+	 * @param context       the context of computation
+	 */
+	void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+			IKlabData.Builder builder, IContextualizationScope context);
 }

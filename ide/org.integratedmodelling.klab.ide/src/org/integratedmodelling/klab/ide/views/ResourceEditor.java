@@ -88,8 +88,6 @@ public class ResourceEditor extends ViewPart {
 
 	public static final String ID = "org.integratedmodelling.klab.ide.views.ResourceEditor";
 
-	private static final String REVALIDATE_RESOURCE_ACTION = "Revalidate resource";
-
 	private Label urnLabel;
 	private Composite mapHolder;
 	private Label geometryDefinition;
@@ -719,7 +717,9 @@ public class ResourceEditor extends ViewPart {
 			lblOperations.setText("Operations:");
 
 			Combo actionChooser = new Combo(composite_3, SWT.READ_ONLY);
-			actionChooser.add(REVALIDATE_RESOURCE_ACTION);
+			for (ResourceOperationRequest.Standard operation : ResourceOperationRequest.Standard.values()) {
+				actionChooser.add(operation.name());
+			}
 			actionChooser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			actionChooser.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -742,8 +742,6 @@ public class ResourceEditor extends ViewPart {
 			Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
 			lblNewLabel_4
 					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
-			// new Label(composite_1, SWT.NONE);
-			// new Label(composite_1, SWT.NONE);
 			{
 				geometryDefinition = new Label(grpGeometry, SWT.NONE);
 				geometryDefinition.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
@@ -1071,22 +1069,22 @@ public class ResourceEditor extends ViewPart {
 		gl_composite.marginLeft = 4;
 		composite.setLayout(gl_composite);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		Composite composite_4 = new Composite(composite, SWT.NONE);
 		composite_4.setLayout(new GridLayout(4, false));
-		
+
 		Label lblNewLabel_6 = new Label(composite_4, SWT.NONE);
 		lblNewLabel_6.setBounds(0, 0, 55, 15);
 		lblNewLabel_6.setText("Categorization");
-		
+
 		categorizationsCombo = new Combo(composite_4, SWT.READ_ONLY);
 		GridData gd_categorizationsCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_categorizationsCombo.widthHint = 76;
 		categorizationsCombo.setLayoutData(gd_categorizationsCombo);
-		categorizationsCombo.setItems(new String[] {"New..."});
+		categorizationsCombo.setItems(new String[] { "New..." });
 		categorizationsCombo.setBounds(0, 0, 91, 23);
 		categorizationsCombo.select(0);
-		
+
 		Button btnEdit = new Button(composite_4, SWT.NONE);
 		btnEdit.setText("Edit...");
 		new Label(composite_4, SWT.NONE);
@@ -1138,7 +1136,7 @@ public class ResourceEditor extends ViewPart {
 		createActions();
 		initializeToolBar();
 		initializeMenu();
-		
+
 		setDirty(false);
 	}
 

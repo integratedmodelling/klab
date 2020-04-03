@@ -19,6 +19,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
@@ -50,6 +52,7 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -64,6 +67,8 @@ import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
@@ -77,10 +82,9 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder.Location;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
@@ -105,6 +109,7 @@ import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.NetworkReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
@@ -113,6 +118,8 @@ import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
+import org.integratedmodelling.klab.rest.ResourceOperationRequest;
+import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
@@ -131,6 +138,7 @@ import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -164,6 +172,69 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
+
+	// a simple monitor that will only compile all notifications into a list to be
+	// sent back to clients
+	class ReportingMonitor implements IMonitor {
+
+		List<Notification> notifications = new ArrayList<>();
+		int errors = 0;
+
+		@Override
+		public void info(Object... info) {
+			Pair<String, INotification.Type> message = NotificationUtils.getMessage(info);
+			notifications.add(new Notification(message.getFirst(), Level.INFO.getName(), System.currentTimeMillis()));
+		}
+
+		@Override
+		public void warn(Object... o) {
+			Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
+			notifications
+					.add(new Notification(message.getFirst(), Level.WARNING.getName(), System.currentTimeMillis()));
+		}
+
+		@Override
+		public void error(Object... o) {
+			errors++;
+			Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
+			notifications.add(new Notification(message.getFirst(), Level.SEVERE.getName(), System.currentTimeMillis()));
+		}
+
+		@Override
+		public void debug(Object... o) {
+			Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
+			notifications.add(new Notification(message.getFirst(), Level.FINE.getName(), System.currentTimeMillis()));
+		}
+
+		@Override
+		public void send(Object... message) {
+		}
+
+		@Override
+		public Future<IMessage> ask(Object... message) {
+			return null;
+		}
+
+		@Override
+		public void post(Consumer<IMessage> handler, Object... message) {
+		}
+
+		@Override
+		public IIdentity getIdentity() {
+			return null;
+		}
+
+		@Override
+		public boolean isInterrupted() {
+			return false;
+		}
+
+		@Override
+		public boolean hasErrors() {
+			return errors > 0;
+		}
+
+	}
 
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
@@ -600,6 +671,61 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 
 		monitor.send(IMessage.MessageClass.EngineLifecycle, IMessage.Type.TicketResponse, ret);
+	}
+
+	@MessageHandler
+	private void handleResourceOperation(final ResourceOperationRequest request) {
+
+		final IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
+		if (resource == null) {
+			// send back resource not found, very unlikely;
+			return;
+		}
+
+		ResourceOperationRequest.Standard op = null;
+		try {
+			op = ResourceOperationRequest.Standard.valueOf(request.getOperation());
+		} catch (IllegalArgumentException e) {
+			// leave it null;
+		}
+
+		// uff
+		final ResourceOperationRequest.Standard operation = op;
+
+		new Thread() {
+
+			@Override
+			public void run() {
+
+				ResourceOperationResponse response = new ResourceOperationResponse();
+				ReportingMonitor rmonitor = new ReportingMonitor();
+				IResource res = resource;
+
+				if (operation != null) {
+					switch (operation) {
+					case Revalidate:
+						Resources.INSTANCE.revalidate(resource, rmonitor);
+						break;
+					}
+				} else {
+					IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+					res = adapter.getValidator().performOperation(resource, request.getOperation(), rmonitor);
+				}
+
+				response.setUrn(resource.getUrn());
+				response.setOperation(request.getOperation());
+				response.getNotifications().addAll(rmonitor.notifications);
+				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceInformation, response);
+
+				/*
+				 * TODO if there are no errors or a non-standard operation was chosen, refresh
+				 * the resource details in the client by sending the resource again, using the result of
+				 * performOperation (i.e. res, not resource).
+				 */
+			}
+
+		}.start();
+
 	}
 
 	@MessageHandler
@@ -1321,7 +1447,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 			EngineUser engine = getParentIdentity(EngineUser.class);
 			if (engine != null) {
-				
+
 				ActorRef<KlabMessage> parentActor = engine.getActor();
 				parentActor.tell(new Spawn(this));
 

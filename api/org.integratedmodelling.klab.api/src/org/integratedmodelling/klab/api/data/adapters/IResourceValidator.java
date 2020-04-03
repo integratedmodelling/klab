@@ -97,13 +97,15 @@ public interface IResourceValidator {
 	/**
 	 * Perform the passed operation on a resource, returning the modifier
 	 * resource when finished. May run long so should be called in a 
-	 * separate thread. 
+	 * separate thread. Anything including errors, success etc should be
+	 * reported through the monitor.
 	 * 
 	 * @param resource
 	 * @param operationName
+	 * @param monitor
 	 * @return
 	 */
-	IResource performOperation(IResource resource, String operationName);
+	IResource performOperation(IResource resource, String operationName, IMonitor monitor);
 	
 	/**
 	 * Check if the passed file and/or parameters can be validated by this

@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -292,7 +293,7 @@ public class VectorEncoder implements IResourceEncoder {
     }
 
 	@Override
-	public boolean isOnline(IResource resource) {
+	public boolean isOnline(IResource resource, IMonitor monitor) {
 
 		File base = null;
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {

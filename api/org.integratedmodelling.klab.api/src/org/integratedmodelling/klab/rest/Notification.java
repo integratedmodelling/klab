@@ -8,42 +8,54 @@ public class Notification implements INotification {
 	private long timestamp;
 	private String message;
 	private Type type = Type.None;
-	
-	public Notification() {}
-	
+
+	public Notification() {
+	}
+
 	public Notification(String message2, String level2, long timestamp2) {
 		this.message = message2;
 		this.level = level2;
 		this.timestamp = timestamp2;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.integratedmodelling.klab.rest.INotification#getLevel()
 	 */
 	@Override
 	public String getLevel() {
 		return level;
 	}
+
 	public void setLevel(String level) {
 		this.level = level;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.integratedmodelling.klab.rest.INotification#getTimestamp()
 	 */
 	@Override
 	public long getTimestamp() {
 		return timestamp;
 	}
+
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.integratedmodelling.klab.rest.INotification#getMessage()
 	 */
 	@Override
 	public String getMessage() {
 		return message;
 	}
+
 	public void setMessage(String message) {
 		this.message = message;
 	}
@@ -56,5 +68,10 @@ public class Notification implements INotification {
 	public void setType(Type type) {
 		this.type = type;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Notification [level=" + level + ", message=" + message + ", type=" + type + "]";
+	}
+
 }
