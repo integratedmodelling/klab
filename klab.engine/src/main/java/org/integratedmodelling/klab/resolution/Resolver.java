@@ -258,6 +258,12 @@ public enum Resolver {
 		if (!parentScope.isDeferred() && context != null && parentScope.getContext() != null
 				&& !parentScope.getContext().getObservable().getType().is(context)) {
 
+			parentScope.getMonitor()
+					.info("Context of " + observable.getType().getDefinition() + " (" + context.getDefinition()
+							+ ") is incompatible with current context ("
+							+ parentScope.getContext().getObservable().getType().getDefinition() + "): resolving "
+							+ context + " and deferring resolution");
+
 			/*
 			 * Distribute the observable over the observation of its context. We don't know
 			 * what the context observation will produce
