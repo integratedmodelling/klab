@@ -6,9 +6,13 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -108,6 +112,11 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy().initialization(), monitor);
 
+							/*
+							 * load any behaviors and schedule repeating actions
+							 */
+							Actors.INSTANCE.instrument(observer.getAnnotations(), (Observation) ret);
+							
 							getActivity().finished();
 							
 							/*

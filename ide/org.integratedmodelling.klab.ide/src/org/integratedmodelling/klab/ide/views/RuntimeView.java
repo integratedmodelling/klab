@@ -704,7 +704,17 @@ public class RuntimeView extends ViewPart {
 
 		tableViewer.setContentProvider(new NotificationContentProvider());
 		tableViewer.setLabelProvider(new NotificationLabelProvider());
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
+				if (o != null) {
+					handleSelection(o);
+				}
+			}
+		});
+		
 		createActions();
 		initializeToolBar();
 		initializeMenu();

@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -21,15 +22,18 @@ import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.KlabAction;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -312,6 +316,40 @@ public enum Actors implements IActorsService {
 
 	public Collection<String> getBehaviorIds() {
 		return behaviors.keySet();
+	}
+
+	public void instrument(List<IAnnotation> annotations, Observation observation) {
+		
+		for (IAnnotation annotation : annotations) {
+			if (annotation.getName().equals("bind")) {
+				String behavior = annotation.containsKey("behavior") ? annotation.get("behavior", String.class)
+						: annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, String.class);
+				if (behavior != null) {
+					IBehavior b = Actors.INSTANCE.getBehavior(behavior);
+					if (b != null) {
+						if (annotation.contains("filter")) {
+							// TODO build/cache and run filter, skip if false
+						}
+
+						/*
+						 * lookup scheduled actions
+						 */
+						for (IBehavior.Action action : b.getActions()) {
+							for (IAnnotation aa : action.getAnnotations()) {
+								if (aa.getName().equals("schedule")) {
+									// TODO
+									System.out.println("HEY schedule " + action.getName());
+								}
+							}
+						}
+						
+						((Observation) observation).load(b);
+
+					}
+				}
+			}
+		}
+
 	}
 
 }

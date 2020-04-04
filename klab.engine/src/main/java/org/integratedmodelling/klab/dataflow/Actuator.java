@@ -633,12 +633,16 @@ public class Actuator implements IActuator {
 			ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
 					(IState) ret, addParameters(ctx, self, resource), scale);
 
-			addBehaviors(ret);
+			if (this.model != null && ret instanceof Observation) {
+				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret);
+			}
 
 		} else if (contextualizer instanceof IResolver) {
 
 			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
-			addBehaviors(ret);
+			if (this.model != null && ret instanceof Observation) {
+				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret);
+			}
 
 		} else if (contextualizer instanceof IInstantiator) {
 
@@ -679,7 +683,9 @@ public class Actuator implements IActuator {
 					/*
 					 * everything is resolved, now add any behaviors specified in annotations
 					 */
-					addBehaviors(object);
+					if (this.model != null && ret instanceof Observation) {
+						Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) object);
+					}
 
 				}
 				if (ret.groupSize() == 0) {
@@ -688,9 +694,7 @@ public class Actuator implements IActuator {
 					ctx.link(ctx.getContextObservation(), ret);
 				}
 			}
-		} else if (contextualizer instanceof IPredicateClassifier)
-
-		{
+		} else if (contextualizer instanceof IPredicateClassifier) {
 
 			/*
 			 * these are filters, so ret must be filled in already
@@ -759,26 +763,6 @@ public class Actuator implements IActuator {
 				IMessage.Type.DataflowStateChanged, state));
 
 		return ret;
-	}
-
-	private void addBehaviors(IArtifact ret) {
-		if (this.model != null && ret instanceof Observation) {
-			for (IAnnotation annotation : model.getAnnotations()) {
-				if (annotation.getName().equals("bind")) {
-					String behavior = annotation.containsKey("behavior") ? annotation.get("behavior", String.class)
-							: annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, String.class);
-					if (behavior != null) {
-						IBehavior b = Actors.INSTANCE.getBehavior(behavior);
-						if (b != null) {
-							if (annotation.contains("filter")) {
-								// TODO build/cache and run filter, skip if false
-							}
-							((Observation) ret).load(b);
-						}
-					}
-				}
-			}
-		}
 	}
 
 	/**
@@ -1165,7 +1149,7 @@ public class Actuator implements IActuator {
 	public String getDataflowId() {
 		return getId();
 	}
-	
+
 	public IResolutionScope.Mode getMode() {
 		return this.mode;
 	}
@@ -1451,7 +1435,7 @@ public class Actuator implements IActuator {
 		ret.mode = this.mode;
 		return ret;
 	}
-	
+
 	public void resetScales() {
 		this.runtimeScale = null;
 		for (IActuator actuator : actuators) {

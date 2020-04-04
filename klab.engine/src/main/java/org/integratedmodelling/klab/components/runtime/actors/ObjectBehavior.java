@@ -24,4 +24,35 @@ public class ObjectBehavior {
 		}
 		
 	}
+
+	@Action(id="bind")
+	public static class Bind extends KlabAction {
+
+		public Bind(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
+			super(identity, arguments, scope);
+		}
+
+		@Override
+		void run() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+
+	@Action(id="connect")
+	public static class Connect extends KlabAction {
+
+		public Connect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
+			super(identity, arguments, scope);
+		}
+
+		@Override
+		void run() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+
 }
