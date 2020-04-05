@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -39,6 +40,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
@@ -753,6 +755,12 @@ public class ResourceScope implements IRuntimeScope {
 	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void scheduleActions(Observation observation, IBehavior behavior) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

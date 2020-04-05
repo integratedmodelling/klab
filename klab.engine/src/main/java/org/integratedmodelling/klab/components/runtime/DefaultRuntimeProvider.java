@@ -161,8 +161,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					if (active.isComputed() || ((Actuator) active).isMerging()) {
 						active.compute(ctx.getTargetArtifact(), ctx);
 					}
-					if (!((Actuator) active).getDataflow().isSecondary() && !(monitor.getIdentity().is(IIdentity.Type.TASK)
-							&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
+					if (!((Actuator) active).getDataflow().isSecondary()
+							&& !(monitor.getIdentity().is(IIdentity.Type.TASK)
+									&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
 						((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
 					}
 
@@ -172,10 +173,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				}
 
 				/*
-				 * auto-start the only transition if we have one and we promoted an extent to a
-				 * temporal grid.
+				 * auto-start the scheduler if transitions have been registered.
 				 */
-				if (((Dataflow) dataflow).isAutoStartTransitions() && runtimeContext.getScheduler() != null) {
+				if (runtimeContext.getScheduler() != null && !runtimeContext.getScheduler().isEmpty()) {
 					runtimeContext.getScheduler().run();
 				}
 

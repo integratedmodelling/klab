@@ -20,6 +20,7 @@ import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
+import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -30,6 +31,9 @@ import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.common.mediation.Currency;
+import org.integratedmodelling.klab.common.mediation.Quantity;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabAction;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
@@ -121,7 +125,15 @@ public enum Actors implements IActorsService {
 		KActors.INSTANCE.setValueTranslator(new ValueTranslator() {
 			@Override
 			public Object translate(KActorsValue container, Object value) {
-				// TODO Auto-generated method stub
+				if (value instanceof KActorsQuantity) {
+					if (((KActorsQuantity) value).getUnit() != null) {
+						value = Quantity.create(((KActorsQuantity) value).getValue(),
+								Unit.create(((KActorsQuantity) value).getUnit()));
+					} else if (((KActorsQuantity) value).getCurrency() != null) {
+						value = Quantity.create(((KActorsQuantity) value).getValue(),
+								Currency.create(((KActorsQuantity) value).getCurrency()));
+					}
+				}
 				return value;
 			}
 		});
@@ -319,7 +331,7 @@ public enum Actors implements IActorsService {
 	}
 
 	public void instrument(List<IAnnotation> annotations, Observation observation) {
-		
+
 		for (IAnnotation annotation : annotations) {
 			if (annotation.getName().equals("bind")) {
 				String behavior = annotation.containsKey("behavior") ? annotation.get("behavior", String.class)
@@ -327,29 +339,26 @@ public enum Actors implements IActorsService {
 				if (behavior != null) {
 					IBehavior b = Actors.INSTANCE.getBehavior(behavior);
 					if (b != null) {
+
 						if (annotation.contains("filter")) {
 							// TODO build/cache and run filter, skip if false
 						}
 
 						/*
-						 * lookup scheduled actions
+						 * observation will load behavior, schedule all the temporal actions it contains
+						 * before main is run
 						 */
-						for (IBehavior.Action action : b.getActions()) {
-							for (IAnnotation aa : action.getAnnotations()) {
-								if (aa.getName().equals("schedule")) {
-									// TODO
-									System.out.println("HEY schedule " + action.getName());
-								}
-							}
-						}
-						
+						observation.getRuntimeScope().scheduleActions(observation, b);
+
+						/*
+						 * load the behavior, running any main actions right away
+						 */
 						((Observation) observation).load(b);
 
 					}
 				}
 			}
 		}
-
 	}
 
 }

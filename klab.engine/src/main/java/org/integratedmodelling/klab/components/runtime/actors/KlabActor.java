@@ -108,13 +108,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * @author Ferd
 	 *
 	 */
-	public class Scope extends Parameters<String> {
+	public static class Scope extends Parameters<String> {
 
 		Action action;
 		boolean synchronous = false;
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
 		Long listenerId;
+		IIdentity identity;
 		Map<String, Object> symbolTable = new HashMap<>();
 
 		/**
@@ -126,9 +127,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		String viewId;
 		ActorRef<KlabMessage> sender;
 
-		public Scope(Action action, IRuntimeScope scope) {
+		public Scope(IIdentity identity, Action action, IRuntimeScope scope) {
 			this.action = action;
 			this.runtimeScope = scope;
+			this.identity = identity;
 		}
 
 		public Scope(Scope scope) {
@@ -236,7 +238,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * in this.viewIds.
 		 */
 		for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
-			run(action, new Scope(action, message.scope));
+			run(action, new Scope(this.identity, action, message.scope));
 		}
 
 		return Behaviors.same();

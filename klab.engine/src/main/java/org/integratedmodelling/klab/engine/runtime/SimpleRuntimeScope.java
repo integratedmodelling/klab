@@ -11,6 +11,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
@@ -42,6 +43,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.Process;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
@@ -712,6 +714,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void scheduleActions(Observation observation, IBehavior behavior) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -24,6 +25,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.model.Model;
@@ -386,9 +388,18 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * 
 	 * @param observable
 	 * @param context
-	 * @param task the task to register the resolution to
+	 * @param task       the task to register the resolution to
 	 * 
 	 * @return a dataflow to resolve the observable, or null if there is no coverage
 	 */
 	<T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task);
+
+	/**
+	 * Schedule any actions tagged as scheduled in the behavior of the passed
+	 * observation.
+	 * 
+	 * @param observation
+	 * @param behavior
+	 */
+	void scheduleActions(Observation observation, IBehavior behavior);
 }

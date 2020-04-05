@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -21,6 +22,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
@@ -60,6 +62,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.components.time.extents.Scheduler;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Computation;
@@ -493,7 +496,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 			ResolutionScope scope = Resolver.INSTANCE.resolve((Observable) observable, this.resolutionScope,
 					Mode.RESOLUTION, scale, model);
-			
+
 			if (scope.getCoverage().isRelevant()) {
 
 				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope)
@@ -1433,6 +1436,33 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		return (T) (chosen.isEmpty() ? null : chosen.iterator().next());
+	}
+
+	@Override
+	public void scheduleActions(Observation observation, IBehavior behavior) {
+
+		if (resolutionScope.getScale().getTime() == null) {
+			return;
+		}
+
+		/*
+		 * lookup scheduled actions
+		 */
+		for (IBehavior.Action action : behavior.getActions()) {
+			for (IAnnotation aa : action.getAnnotations()) {
+				if (aa.getName().equals("schedule")) {
+
+					RuntimeScope root = getRootScope();
+					if (root.scheduler == null) {
+						root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(),
+								monitor);
+					}
+					((Scheduler) root.scheduler).schedule(action, observation, Time.create(aa), this);
+
+				}
+			}
+		}
+
 	}
 
 	@Override

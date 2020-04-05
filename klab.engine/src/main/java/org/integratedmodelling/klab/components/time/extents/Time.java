@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.components.time.extents.mediators.TimeIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -263,6 +264,12 @@ public class Time extends Extent implements ITime {
 		return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
 	}
 
+	public static ITimeDuration duration(Quantity spec) {
+		Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit().toString()),
+				spec.getValue().doubleValue());
+		return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
+	}
+
 	public static ITimeDuration duration(String string) {
 		return duration(KimQuantity.parse(string));
 	}
@@ -273,6 +280,10 @@ public class Time extends Extent implements ITime {
 
 	public static Resolution resolution(IKimQuantity spec) {
 		return new ResolutionImpl(Resolution.Type.parse(spec.getUnit()), spec.getValue().doubleValue());
+	}
+
+	public static Resolution resolution(Quantity spec) {
+		return new ResolutionImpl(Resolution.Type.parse(spec.getUnit().toString()), spec.getValue().doubleValue());
 	}
 
 	public static Resolution resolution(ITimeInstant start, ITimeInstant end) {

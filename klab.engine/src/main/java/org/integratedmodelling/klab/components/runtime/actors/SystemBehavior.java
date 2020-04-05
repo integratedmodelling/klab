@@ -112,6 +112,7 @@ public class SystemBehavior {
 
 		public KActorsMessage(ActorRef<KlabMessage> sender, String receiver, String actionId,
 				IParameters<String> arguments, KlabActor.Scope scope) {
+			
 			this.sender = sender;
 			this.receiver = receiver;
 			this.message = actionId;

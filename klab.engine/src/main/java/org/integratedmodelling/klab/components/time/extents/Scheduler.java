@@ -14,6 +14,8 @@ import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -29,6 +31,11 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -37,8 +44,11 @@ import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.SchedulerNotification;
 import org.integratedmodelling.klab.scale.Extent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.joda.time.DateTime;
+
+import akka.actor.typed.ActorRef;
 
 /**
  * Scheduler for actors in either real or mock time. Akka does not allow the
@@ -89,6 +99,112 @@ public class Scheduler implements IScheduler {
 		 */
 		long delayInSlot;
 
+		private Observation recipient;
+
+		private Action scheduledAction;
+
+		/**
+		 * Register a behavioral action
+		 * 
+		 * @param actuator
+		 * @param computation
+		 * @param target
+		 * @param scale
+		 * @param scope
+		 * @param endtime
+		 */
+		public Registration(Observation observation, IBehavior.Action scheduled, IScale scale, IRuntimeScope scope,
+				long endtime) {
+
+			this.scale = scale;
+//			this.target = target;
+			this.endTime = endtime;
+			this.scope = scope;
+			this.recipient = observation;
+			this.scheduledAction = scheduled;
+
+			action = new Consumer<Long>() {
+
+				@Override
+				public void accept(Long t) {
+
+					if (endTime > 0 && t > endTime) {
+						return;
+					}
+
+					/*
+					 * If target is dead, return
+					 */
+					if (recipient instanceof IDirectObservation && !((IDirectObservation) recipient).isActive()) {
+						return;
+					}
+
+					/*
+					 * 2. Set the context at() the current time. This will also need to expose any
+					 * affected outputs that move at a different (context) speed through a rescaling
+					 * wrapper. Done within the context, which uses its current target to establish
+					 * the specific view of the context.
+					 */
+					ILocator transitionScale = scale.at(transition);
+					IRuntimeScope transitionContext = scope.locate(transitionScale);
+
+					Set<IObservation> changed = new HashSet<>();
+
+//					// ensure we have the names we expect
+//					transitionContext = actuator.localizeNames(transitionContext);
+//
+					ActorRef<KlabMessage> sender = ((Observation) observation.getRuntimeScope().getRootSubject())
+							.getActor();
+
+					/*
+					 * RUN THE ACTION
+					 */
+					recipient.getActor().tell(new KActorsMessage(sender, "self", scheduled.getId(), null,
+							new KlabActor.Scope(observation, scheduled, transitionContext)));
+
+					/*
+					 * 4. TODO this will always be empty - notify whatever has changed.
+					 */
+					if (recipient instanceof IDirectObservation && !((IDirectObservation) recipient).isActive()) {
+						// TODO target went MIA - notify relatives
+					} else {
+
+						for (IObservation observation : changed) {
+
+							ObservationChange change = new ObservationChange();
+							change.setContextId(scope.getRootSubject().getId());
+							change.setId(observation.getId());
+							change.setTimestamp(t);
+
+							// TODO fill in
+							if (observation instanceof IState) {
+								change.setNewValues(true);
+							} else if (observation instanceof IDirectObservation
+									&& !((IDirectObservation) observation).isActive()) {
+								change.setTerminated(true);
+							}
+
+							ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+							session.getMonitor()
+									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+											IMessage.Type.ModifiedObservation, change));
+						}
+					}
+
+				}
+			};
+		}
+
+		/**
+		 * Register a computation from an actuator
+		 * 
+		 * @param actuator
+		 * @param computation
+		 * @param target
+		 * @param scale
+		 * @param scope
+		 * @param endtime
+		 */
 		public Registration(Actuator actuator, List<Actuator.Computation> computation, IDirectObservation target,
 				IScale scale, IRuntimeScope scope, long endtime) {
 
@@ -138,7 +254,7 @@ public class Scheduler implements IScheduler {
 
 					// ensure we have the names we expect
 					transitionContext = actuator.localizeNames(transitionContext);
-					
+
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
 					 * for signs of life at each step. Anything enqueued here is active so no
@@ -152,8 +268,7 @@ public class Scheduler implements IScheduler {
 						}
 
 						actuator.runContextualizer(computation.contextualizer, computation.observable,
-								computation.resource, computation.target, transitionContext,
-								(IScale) transitionScale);
+								computation.resource, computation.target, transitionContext, (IScale) transitionScale);
 
 						if (computation.target instanceof IDirectObservation
 								&& !((IDirectObservation) computation.target).isActive()) {
@@ -287,6 +402,45 @@ public class Scheduler implements IScheduler {
 	@Override
 	public Synchronicity getSynchronicity() {
 		return synchronicity;
+	}
+
+	public void schedule(Action action, Observation targetObservation, Time time, RuntimeScope runtimeScope) {
+		// TODO Auto-generated method stub
+
+		/*
+		 * make a scale from the scheduling specs and merge
+		 */
+		final IScale overall = runtimeScope.getDataflow().getResolutionScale();
+		final IScale actionScale = Scale.substituteExtent(overall, time);
+		IScale scale = actionScale.merge(overall);
+
+		/*
+		 * proceed as with an actuator
+		 */
+		ITimeInstant start = scale.getTime().getStart();
+		ITimeInstant end = scale.getTime().getStart();
+		ITimeDuration step = scale.getTime().getStep();
+
+		if (start == null || (overall.getTime().getStart() != null && start.isBefore(overall.getTime().getStart()))) {
+			start = overall.getTime().getStart();
+		}
+		if (end == null || (overall.getTime().getEnd() != null && start.isAfter(overall.getTime().getEnd()))) {
+			end = overall.getTime().getEnd();
+		}
+		if (step == null) {
+			step = overall.getTime().getStep();
+		}
+
+		if (step /* still */ == null) {
+			/*
+			 * nothing can occur, nothing to do (TODO: except maybe finalization)
+			 */
+			return;
+		}
+
+		final long endTime = overall.getTime().getEnd() == null ? -1 : overall.getTime().getEnd().getMilliseconds();
+
+		registrations.add(new Registration(targetObservation, action, scale, runtimeScope, endTime));
 	}
 
 	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations,
@@ -557,4 +711,10 @@ public class Scheduler implements IScheduler {
 			executor.shutdownNow();
 		}
 	}
+
+	@Override
+	public boolean isEmpty() {
+		return registrations.size() < 1;
+	}
+
 }

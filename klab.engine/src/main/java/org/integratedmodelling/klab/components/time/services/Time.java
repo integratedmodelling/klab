@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -85,6 +86,12 @@ public class Time implements IExpression {
 
 			if (parameters.get("step") instanceof IKimQuantity) {
 				IKimQuantity sq = parameters.get("step", IKimQuantity.class);
+				step = org.integratedmodelling.klab.components.time.extents.Time.duration(sq);
+				if (resolution == null) {
+					resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(sq);
+				}
+			} else if (parameters.get("step") instanceof Quantity) {
+				Quantity sq = parameters.get("step", Quantity.class);
 				step = org.integratedmodelling.klab.components.time.extents.Time.duration(sq);
 				if (resolution == null) {
 					resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(sq);
