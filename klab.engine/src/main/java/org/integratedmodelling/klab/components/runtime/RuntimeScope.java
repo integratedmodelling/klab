@@ -538,8 +538,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		ICountableObservation ret = null;
-		Observable obs = new Observable((Observable) observable).withoutModel();
-		obs.setName(name);
+		Observable obs = new Observable((Observable) observable);
+//		obs.setName(name);
 
 		/*
 		 * harmonize the scale according to what the model wants and the context's

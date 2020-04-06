@@ -499,32 +499,32 @@ public class KlabSession extends KlabPeer {
 		bus.unsubscribe(task.getId());
 	}
 	
-	@MessageHandler(type = Type.CreateViewComponent)
-	public void handleTaskAborted(IMessage message, ViewComponent component) {
-		switch (component.getType()) {
-		case Alert:
-			Eclipse.INSTANCE.alert(component.getContent());
-			break;
-		case Confirm:
-			boolean choice = Eclipse.INSTANCE.confirm(component.getContent());
-			Activator.reply(message, IMessage.MessageClass.Run, IMessage.Type.RunScript, new ViewAction(choice));
-			break;
-		case TextInput:
-			break;
-		case CheckButton:
-		case Combo:
-		case Footer:
-		case Group:
-		case Header:
-		case Map:
-		case Panel:
-		case PushButton:
-		case RadioButton:
-		case Tree:
-		case TreeItem:
-			break;
-		}
-	}
+//	@MessageHandler(type = Type.CreateViewComponent)
+//	public void handleTaskAborted(IMessage message, ViewComponent component) {
+//		switch (component.getType()) {
+//		case Alert:
+//			Eclipse.INSTANCE.alert(component.getContent());
+//			break;
+//		case Confirm:
+//			boolean choice = Eclipse.INSTANCE.confirm(component.getContent());
+//			Activator.reply(message, IMessage.MessageClass.Run, IMessage.Type.RunScript, new ViewAction(choice));
+//			break;
+//		case TextInput:
+//			break;
+//		case CheckButton:
+//		case Combo:
+//		case Footer:
+//		case Group:
+//		case Header:
+//		case Map:
+//		case Panel:
+//		case PushButton:
+//		case RadioButton:
+//		case Tree:
+//		case TreeItem:
+//			break;
+//		}
+//	}
 
 	@MessageHandler
 	public void handleObservation(ObservationReference observation) {

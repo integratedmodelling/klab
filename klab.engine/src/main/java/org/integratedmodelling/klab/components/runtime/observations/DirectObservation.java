@@ -76,6 +76,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 	public void setName(String name) {
 		this.name = name;
+		this.getObservable().setName(name);
 	}
 
 	public IDirectObservation at(ILocator locator) {
