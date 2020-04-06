@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -761,6 +762,12 @@ public class ResourceScope implements IRuntimeScope {
 	public void scheduleActions(Observation observation, IBehavior behavior) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Map<IConcept,  Pair<String, IKimExpression>> getBehaviorBindings() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

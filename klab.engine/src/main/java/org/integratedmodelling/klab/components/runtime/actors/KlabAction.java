@@ -1,9 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.model.KimExpression;
-import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
@@ -57,6 +56,11 @@ public abstract class KlabAction {
 		return arg;
 	}
 
+	protected void error(String message) {
+		// TODO actor-specific error management
+		scope.runtimeScope.getMonitor().error(message);
+	}
+
 	private Object evaluateInContext(KActorsValue arg) {
 		switch (arg.getType()) {
 		case ANYTHING:
@@ -72,13 +76,11 @@ public abstract class KlabAction {
 		case NUMBERED_PATTERN:
 		case IDENTIFIER:
 			return scope.symbolTable.get(arg.getValue().toString());
-		
+
 		case EXPRESSION:
-		
+
 			if (this.expression == null) {
-				this.expression = new ObjectExpression(
-						new KimExpression(arg.getValue().toString() + " ", Extensions.DEFAULT_EXPRESSION_LANGUAGE),
-						scope.runtimeScope);
+				this.expression = new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope);
 			}
 			return this.expression.eval(scope.runtimeScope, identity);
 

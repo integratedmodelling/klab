@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -720,6 +721,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public void scheduleActions(Observation observation, IBehavior behavior) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Map<IConcept,  Pair<String, IKimExpression>> getBehaviorBindings() {
+		return null;
 	}
 
 }

@@ -77,8 +77,7 @@ public class RuntimeBehavior {
 
 	/**
 	 * The message installs a listener in a context that will fire an object to the
-	 * sender whenever it is resolved and matches a pattern. FIXME this is an
-	 * action, not a message
+	 * sender whenever it is resolved and matches a pattern.
 	 * 
 	 * @author Ferd
 	 *

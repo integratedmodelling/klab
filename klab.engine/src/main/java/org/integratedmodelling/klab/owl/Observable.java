@@ -161,6 +161,15 @@ public class Observable implements IObservable {
 //		this.distributedIn = observable.distributedIn;
 	}
 
+	
+	public Observable withoutModel() {
+		this.originatingModelId = null;
+		this.modelReference = null;
+		this.resolvedModel = null;
+		return this;
+	}
+	
+	
 	@Override
 	public IConcept getType() {
 		return observable;

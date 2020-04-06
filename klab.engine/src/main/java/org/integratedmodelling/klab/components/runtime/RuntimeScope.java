@@ -13,8 +13,8 @@ import org.apache.commons.collections.IteratorUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -79,6 +79,7 @@ import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.owl.IntelligentMap;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
@@ -131,6 +132,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	Map<IConcept, ObservationGroup> groups;
 	Map<String, IVariable> symbolTable = new HashMap<>();
 	Dataflow dataflow;
+	IntelligentMap<Pair<String, IKimExpression>> behaviorBindings;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -142,6 +144,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
 		this.catalog = new HashMap<>();
+		this.behaviorBindings = new IntelligentMap<>();
 		this.report = new Report(this, monitor.getIdentity().getParentIdentity(ISession.class).getId());
 		this.observations = new HashMap<>();
 		this.network = new DefaultDirectedGraph<>(IRelationship.class);
@@ -216,6 +219,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.target = context.target;
 		this.notifiedObservations = context.notifiedObservations;
 		this.dataflow = context.dataflow;
+		this.behaviorBindings = context.behaviorBindings;
 	}
 
 	@Override
@@ -534,7 +538,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		ICountableObservation ret = null;
-		Observable obs = new Observable((Observable) observable);
+		Observable obs = new Observable((Observable) observable).withoutModel();
 		obs.setName(name);
 
 		/*
@@ -544,7 +548,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				monitor);
 
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
-		Dataflow dataflow = resolve(observable, scale, subtask);
+		Dataflow dataflow = resolve(obs, scale, subtask);
 
 		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
 				(Actuator) this.actuator, ((Monitor) monitor).get(subtask));
@@ -639,7 +643,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					"RuntimeContext: cannot create a relationship of type " + observable.getType());
 		}
 
-		Observable obs = new Observable((Observable) observable);
+		Observable obs = new Observable((Observable) observable).withoutModel();
 		obs.setName(name);
 		scale = Scale.contextualize(scale, contextSubject.getScale(), model == null ? null : model.getAnnotations(),
 				monitor);
@@ -1590,6 +1594,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	public void setDataflow(Dataflow dataflow) {
 		this.dataflow = dataflow;
+	}
+
+	@Override
+	public Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings() {
+		return behaviorBindings;
 	}
 
 }

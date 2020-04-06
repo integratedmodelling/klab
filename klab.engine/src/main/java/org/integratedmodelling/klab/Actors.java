@@ -16,14 +16,17 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
 import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.KimExpression;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
@@ -125,15 +128,65 @@ public enum Actors implements IActorsService {
 		KActors.INSTANCE.setValueTranslator(new ValueTranslator() {
 			@Override
 			public Object translate(KActorsValue container, Object value) {
-				if (value instanceof KActorsQuantity) {
-					if (((KActorsQuantity) value).getUnit() != null) {
-						value = Quantity.create(((KActorsQuantity) value).getValue(),
-								Unit.create(((KActorsQuantity) value).getUnit()));
-					} else if (((KActorsQuantity) value).getCurrency() != null) {
-						value = Quantity.create(((KActorsQuantity) value).getValue(),
-								Currency.create(((KActorsQuantity) value).getCurrency()));
+
+				switch (container.getType()) {
+				case ANYTHING:
+					break;
+				case ANYTRUE:
+					break;
+				case ANYVALUE:
+					break;
+				case BOOLEAN:
+					break;
+				case CLASS:
+					break;
+				case DATE:
+					break;
+				case ERROR:
+					break;
+				case EXPRESSION:
+					value = new KimExpression(value.toString() + " ", Extensions.DEFAULT_EXPRESSION_LANGUAGE);
+					break;
+				case IDENTIFIER:
+					break;
+				case LIST:
+					break;
+				case MAP:
+					break;
+				case NODATA:
+					break;
+				case NUMBER:
+					break;
+				case NUMBERED_PATTERN:
+					break;
+				case OBSERVABLE:
+					value = Observables.INSTANCE.declare(value.toString());
+					break;
+				case QUANTITY:
+					if (value instanceof KActorsQuantity) {
+						if (((KActorsQuantity) value).getUnit() != null) {
+							value = Quantity.create(((KActorsQuantity) value).getValue(),
+									Unit.create(((KActorsQuantity) value).getUnit()));
+						} else if (((KActorsQuantity) value).getCurrency() != null) {
+							value = Quantity.create(((KActorsQuantity) value).getValue(),
+									Currency.create(((KActorsQuantity) value).getCurrency()));
+						}
 					}
+					break;
+				case RANGE:
+					break;
+				case REGEXP:
+					break;
+				case STRING:
+					break;
+				case TABLE:
+					break;
+				case TYPE:
+					break;
+				case URN:
+					break;
 				}
+
 				return value;
 			}
 		});
@@ -332,12 +385,28 @@ public enum Actors implements IActorsService {
 
 	public void instrument(List<IAnnotation> annotations, Observation observation) {
 
+		/*
+		 * find any bindings made at runtime
+		 */
+		Pair<String, IKimExpression> rb = observation.getRuntimeScope().getBehaviorBindings()
+				.get(observation.getObservable().getType());
+		if (rb != null) {
+			IBehavior b = getBehavior(rb.getFirst());
+			if (b != null) {
+				if (rb.getSecond() != null) {
+					// TODO filter
+				}
+				observation.getRuntimeScope().scheduleActions(observation, b);
+				((Observation) observation).load(b);
+			}
+		}
+
 		for (IAnnotation annotation : annotations) {
 			if (annotation.getName().equals("bind")) {
 				String behavior = annotation.containsKey("behavior") ? annotation.get("behavior", String.class)
 						: annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, String.class);
 				if (behavior != null) {
-					IBehavior b = Actors.INSTANCE.getBehavior(behavior);
+					IBehavior b = getBehavior(behavior);
 					if (b != null) {
 
 						if (annotation.contains("filter")) {
@@ -354,11 +423,49 @@ public enum Actors implements IActorsService {
 						 * load the behavior, running any main actions right away
 						 */
 						((Observation) observation).load(b);
-
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Find the first unnamed parameter that matches the passed class, resolving
+	 * actor values into their correspondent value.
+	 * 
+	 * @param <T>
+	 * @param arguments
+	 * @param class1
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getArgument(IParameters<String> arguments, Class<T> cls) {
+		for (String key : arguments.getUnnamedKeys()) {
+			Object ret = arguments.get(key);
+			if (ret instanceof KActorsValue) {
+				ret = ((KActorsValue) ret).getValue();
+			}
+			if (ret != null && cls.isAssignableFrom(ret.getClass())) {
+				return (T) ret;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find the first parameter that matches the passed class, looking up by name
+	 * first and checking the unnamed parameters if not found, resolving actor
+	 * values into their correspondent value.
+	 * 
+	 * @param <T>
+	 * @param arguments
+	 * @param parameterName
+	 * @param class1
+	 * @return
+	 */
+	public <T> T getArgument(IParameters<String> arguments, String parameterName, Class<T> class1) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

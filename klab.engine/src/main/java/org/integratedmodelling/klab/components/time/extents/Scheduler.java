@@ -190,7 +190,6 @@ public class Scheduler implements IScheduler {
 											IMessage.Type.ModifiedObservation, change));
 						}
 					}
-
 				}
 			};
 		}

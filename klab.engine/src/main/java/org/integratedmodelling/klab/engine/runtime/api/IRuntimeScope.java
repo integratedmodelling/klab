@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -402,4 +403,14 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param behavior
 	 */
 	void scheduleActions(Observation observation, IBehavior behavior);
+
+	/**
+	 * Bindings between observables and behaviors can be made by actors at runtime.
+	 * If that happens, the bindings will be stored in the runtime scope. They are
+	 * returned as a map (in the default implementation, that will be an
+	 * "intelligent" map so that inference is used in attributing the behaviors.
+	 * 
+	 * @return
+	 */
+	Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings();
 }
