@@ -29,6 +29,8 @@ package org.integratedmodelling.klab.ide.ui.wizards;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.integratedmodelling.kim.api.IKimProject;
@@ -43,6 +45,7 @@ public class BulkImportResourceWizard extends Wizard {
 	private BulkImportResource page;
 	private IKimProject targetProject = null;
 	private EResourceFolder target = null;
+	private String regex = null;
 
 	public BulkImportResourceWizard(EResourceFolder target) {
 		setWindowTitle("Bulk import resources");
@@ -59,6 +62,7 @@ public class BulkImportResourceWizard extends Wizard {
 
 		final String adapter = page.getAdapter();
 		String url = page.getChoice();
+		String regex = page.getRegexp();
 
 		if (url.trim().isEmpty()) {
 			return false;
@@ -78,7 +82,7 @@ public class BulkImportResourceWizard extends Wizard {
 		} catch (MalformedURLException e) {
 		}
 
-		if (validate(u)) {
+		if (validate(u) && validateRegexp(regex)) {
 
 			String adapterId = adapter;
 			if (adapterId != null && adapter.contains(" ")) {
@@ -90,12 +94,26 @@ public class BulkImportResourceWizard extends Wizard {
 			request.setImportUrl(u);
 			request.setBulkImport(true);
 			request.setProjectName(targetProject.getName());
+			request.setRegex(regex);
 
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ImportResource, request);
 			return true;
 		}
 
 		return false;
+	}
+	
+	private boolean validateRegexp(String regexp) {
+		if (regexp == null) {
+			return true;
+		}
+        try {
+            Pattern.compile(regexp);
+        } catch (PatternSyntaxException exception) {
+        	page.setErrorMessage("invalid REGEX filter: please check input");
+            return false;
+        }
+        return true;
 	}
 
 	private boolean validate(URL u) {

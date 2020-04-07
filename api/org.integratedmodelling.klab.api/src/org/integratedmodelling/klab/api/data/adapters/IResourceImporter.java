@@ -33,6 +33,7 @@ public interface IResourceImporter {
 	 * Import all the resources that can be resolved through the passed import
 	 * location string. If there are no usable resources or the location is
 	 * unrecognized, an empty collection should be returned without error.
+	 * User data can include a <code>regex</code> entry that permit filter resources by name
 	 * 
 	 * @param importLocation
 	 * @param userData

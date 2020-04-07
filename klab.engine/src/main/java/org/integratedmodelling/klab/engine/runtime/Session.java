@@ -688,7 +688,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 					public void run() {
 						if (request.isBulkImport()) {
 							for (IResource resource : Resources.INSTANCE.importResources(request.getImportUrl(),
-									project, request.getAdapter())) {
+									project, request.getAdapter(), request.getRegex())) {
 								monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
 										((Resource) resource).getReference());
 							}
