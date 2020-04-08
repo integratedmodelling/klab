@@ -758,6 +758,8 @@ public enum Resources implements IResourceService {
 
 		List<IResourceAdapter> importers = new ArrayList<>();
 		IParameters<String> parameters = new Parameters<String>();
+		// TODO better way to pass the regex to the importer, if not removed from userData after use, 
+		// is added to metadata
 		if (regex != null && !regex.equals("")) {
 			parameters.put(REGEX_ENTRY, regex);
 		}
