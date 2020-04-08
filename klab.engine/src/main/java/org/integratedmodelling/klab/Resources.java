@@ -758,7 +758,7 @@ public enum Resources implements IResourceService {
 
 		List<IResourceAdapter> importers = new ArrayList<>();
 		IParameters<String> parameters = new Parameters<String>();
-		if (regex != null) {
+		if (regex != null && !regex.equals("")) {
 			parameters.put(REGEX_ENTRY, regex);
 		}
 		for (IResourceAdapter adapter : resourceAdapters.values()) {
