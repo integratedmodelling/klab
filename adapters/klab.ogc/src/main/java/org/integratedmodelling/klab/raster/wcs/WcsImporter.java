@@ -38,6 +38,7 @@ public class WcsImporter implements IResourceImporter {
 		String regex = null;
 		if (userData.contains("regex")) {
 			regex = (String) userData.get(Resources.REGEX_ENTRY);
+			userData.remove(Resources.REGEX_ENTRY);
 		}
 		try {
 			int index = importLocation.indexOf('?');

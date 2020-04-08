@@ -45,6 +45,7 @@ public class WfsImporter implements IResourceImporter {
 			String regex = null;
 			if (userData.contains("regex")) {
 				regex = (String) userData.get(Resources.REGEX_ENTRY);
+				userData.remove(Resources.REGEX_ENTRY);
 			}
 			/*
 			 * capabilities will come with EPSG:4326 lat/lon in all services except 1.0.0. But fixing the mess
