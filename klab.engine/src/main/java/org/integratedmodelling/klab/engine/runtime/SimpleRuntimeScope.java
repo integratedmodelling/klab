@@ -728,4 +728,16 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return null;
 	}
 
+	@Override
+	public String addListener(ObservationListener listener) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeListener(String listenerId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

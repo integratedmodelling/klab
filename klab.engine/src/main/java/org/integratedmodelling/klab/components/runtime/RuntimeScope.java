@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.components.runtime;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,8 +15,8 @@ import org.apache.commons.collections.IteratorUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -87,6 +89,7 @@ import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
@@ -133,6 +136,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	Map<String, IVariable> symbolTable = new HashMap<>();
 	Dataflow dataflow;
 	IntelligentMap<Pair<String, IKimExpression>> behaviorBindings;
+	Map<String, ObservationListener> listeners = Collections.synchronizedMap(new LinkedHashMap<>());
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -220,6 +224,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.notifiedObservations = context.notifiedObservations;
 		this.dataflow = context.dataflow;
 		this.behaviorBindings = context.behaviorBindings;
+		this.listeners = context.listeners;
 	}
 
 	@Override
@@ -555,6 +560,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
+			for (ObservationListener listener : listeners.values()) {
+				listener.newObservation(ret);
+			}
 		}
 
 		return ret;
@@ -655,6 +663,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
+			for (ObservationListener listener : listeners.values()) {
+				listener.newObservation(ret);
+			}
 		}
 
 		return ret;
@@ -1599,6 +1610,18 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings() {
 		return behaviorBindings;
+	}
+
+	@Override
+	public String addListener(ObservationListener listener) {
+		String ret = NameGenerator.newName();
+		listeners.put(ret, listener);
+		return ret;
+	}
+
+	@Override
+	public void removeListener(String listenerId) {
+		listeners.remove(listenerId);
 	}
 
 }

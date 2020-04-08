@@ -61,6 +61,14 @@ public abstract class KlabAction {
 		scope.runtimeScope.getMonitor().error(message);
 	}
 
+	/**
+	 * TODO call this - used to remove listeners etc. when an action has finished
+	 * running and nothing should be fired.
+	 */
+	void dispose() {
+
+	}
+
 	private Object evaluateInContext(KActorsValue arg) {
 		switch (arg.getType()) {
 		case ANYTHING:

@@ -75,30 +75,5 @@ public class RuntimeBehavior {
 		}
 	}
 
-	/**
-	 * The message installs a listener in a context that will fire an object to the
-	 * sender whenever it is resolved and matches a pattern.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	@Action(id = "when")
-	public static class When extends KlabAction {
-
-		public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,  KlabActor.Scope scope) {
-			super(identity, arguments, scope);
-//
-//			this.listenerId = listenerId;
-//			this.value = matches;
-//			this.sender = replyTo;
-			// TODO install a listener
-		}
-
-		@Override
-		void run() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
 
 }

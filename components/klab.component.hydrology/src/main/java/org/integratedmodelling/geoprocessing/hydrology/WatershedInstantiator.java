@@ -108,8 +108,9 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 
 			try {
 				ebasin.process();
-			} catch (Exception e) {
-				throw new KlabException(e);
+			} catch (Throwable e) {
+				context.getMonitor().warn("outlet caused error in watershed extraction: skipping: " + e.getMessage());
+				continue;
 			}
 
 			if (monitor.errors > 0) {

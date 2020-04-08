@@ -53,6 +53,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected IBehavior behavior;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
+	
 	/*
 	 * matches the name of the annotation declaring it to the ID of a base div that
 	 * is sent to the view upon loading. If the annotation contains a name, that
@@ -82,7 +83,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 			for (Pair<Match, IKActorsStatement> match : matches) {
 				if (match.getFirst().matches(value)) {
-					execute(match.getSecond(), scope);
+					execute(match.getSecond(), scope.withMatch(value));
 				}
 			}
 		}
@@ -116,6 +117,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		IRuntimeScope runtimeScope;
 		Long listenerId;
 		IIdentity identity;
+		Object match;
 		Map<String, Object> symbolTable = new HashMap<>();
 
 		/**
@@ -131,6 +133,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.action = action;
 			this.runtimeScope = scope;
 			this.identity = identity;
+		}
+
+		public Scope withMatch(Object value) {
+			Scope ret = new Scope(this);
+			ret.match = value;
+			return ret;
 		}
 
 		public Scope(Scope scope) {

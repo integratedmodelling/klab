@@ -92,7 +92,9 @@ public enum GeotoolsUtils {
 		 * only go through active cells. State should have been located through a proxy
 		 * for other extents.
 		 */
+		int cells = 0;
 		for (Cell cell : grid) {
+			cells ++;
 			Object o = state.get(cell);
 			if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
 				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, noDataValue);

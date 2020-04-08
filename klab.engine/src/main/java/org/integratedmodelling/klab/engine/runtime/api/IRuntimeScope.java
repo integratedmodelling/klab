@@ -47,6 +47,16 @@ import org.jgrapht.Graph;
 public interface IRuntimeScope extends IContextualizationScope {
 
 	/**
+	 * These can be installed to be notified of each new observation.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface ObservationListener {
+		void newObservation(IObservation observation);
+	}
+
+	/**
 	 * A context is created for the root observation, and this information never
 	 * changes.
 	 * 
@@ -413,4 +423,21 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings();
+
+	/**
+	 * Add a listener, return an ID that can be passed later to
+	 * {@link #removeListener(String)} to remove it.
+	 * 
+	 * @param listener
+	 * @return
+	 */
+	public String addListener(ObservationListener listener);
+
+	/**
+	 * Remove a previously installed #{@link ObservationListener}.
+	 * 
+	 * @param listenerId
+	 */
+	public void removeListener(String listenerId);
+
 }
