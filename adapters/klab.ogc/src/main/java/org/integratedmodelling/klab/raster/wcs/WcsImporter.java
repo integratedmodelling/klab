@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -34,6 +35,10 @@ public class WcsImporter implements IResourceImporter {
 		List<Builder> ret = new ArrayList<>();
 		// TODO parse from parameter string - for now just force it
 		String wcsVersion = "2.0.1";
+		String regex = null;
+		if (userData.contains("regex")) {
+			regex = (String) userData.get(Resources.REGEX_ENTRY);
+		}
 		try {
 			int index = importLocation.indexOf('?');
 			importLocation = importLocation.substring(0, index);
@@ -44,7 +49,10 @@ public class WcsImporter implements IResourceImporter {
 					Logging.INSTANCE.warn("skipping corrupted WCS layer " + layer.getIdentifier());
 					continue;
 				}
-				
+				if (regex != null && !layer.getIdentifier().matches(regex)) {
+					Logging.INSTANCE.info("layer " + layer.getIdentifier() + " doesn't match REGEX, skipped");
+					continue;
+				}
 				try {
 					
 					Parameters<String> parameters = new Parameters<>();
