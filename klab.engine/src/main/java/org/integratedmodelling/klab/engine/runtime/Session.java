@@ -1292,21 +1292,21 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		switch (type) {
 		case ProjectFileAdded:
 			if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
-				Actors.INSTANCE.add(event.getFile());
+				KActors.INSTANCE.add(event.getFile());
 			} else {
 				Resources.INSTANCE.getLoader().add(event.getFile());
 			}
 			break;
 		case ProjectFileDeleted:
 			if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
-				Actors.INSTANCE.delete(event.getFile());
+				KActors.INSTANCE.delete(event.getFile());
 			} else {
 				Resources.INSTANCE.getLoader().delete(event.getFile());
 			}
 			break;
 		case ProjectFileModified:
 			if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
-				Actors.INSTANCE.touch(event.getFile());
+				KActors.INSTANCE.touch(event.getFile());
 			} else {
 				Resources.INSTANCE.getLoader().touch(event.getFile());
 			}

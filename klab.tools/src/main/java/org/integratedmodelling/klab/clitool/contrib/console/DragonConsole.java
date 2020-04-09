@@ -1377,7 +1377,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 	 * @param outputToProcess
 	 *            The string to be color coded and printed.
 	 */
-	public void append(String outputToProcess) {
+	public synchronized void append(String outputToProcess) {
 		if (!ignoreInput && inputCarryOver && inputControl.isReceivingInput()) {
 			inputControl.storeInput();
 		}
@@ -1486,7 +1486,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 					if (code.charAt(0) == '-')
 						newStyle = "" + oldStyle.charAt(0) + code.charAt(1);
 					else
-						newStyle = "" + code.charAt(0) + (oldStyle.length() > 1 ? oldStyle.charAt(1) : "");
+						newStyle = "" + code.charAt(0) + oldStyle.charAt(1);
 				}
 			} else
 				newStyle = code;
@@ -1496,10 +1496,10 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 			else
 				currentStyle += "" + oldStyle.charAt(0);
 
-			if (newStyle.length() > 1 && containsColorCode(newStyle.charAt(1)))
+			if (containsColorCode(newStyle.charAt(1)))
 				currentStyle += "" + newStyle.charAt(1);
 			else
-				currentStyle += "" + (oldStyle.length() > 1 ? oldStyle.charAt(1) : "");
+				currentStyle += "" + oldStyle.charAt(1);
 		} else
 			currentStyle = oldStyle;
 	}

@@ -169,11 +169,6 @@ public enum KActors {
 		return ret;
 	}
 
-//    public IKdlDataflow declare(Model dataflow) {
-//        return new KdlDataflow(dataflow);
-//    }
-//
-
 	/**
 	 * Get the project name from the string form of any Xtext resource URI.
 	 * 
@@ -259,5 +254,19 @@ public enum KActors {
 	 */
 	public void setValueTranslator(ValueTranslator valueTranslator) {
 		this.valueTranslator = valueTranslator;
+	}
+	
+
+	public void add(File file) {
+		loadResources(Collections.singletonList(file));
+	}
+
+	public void delete(File file) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void touch(File file) {
+		loadResources(Collections.singletonList(file));
 	}
 }

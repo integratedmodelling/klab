@@ -90,7 +90,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 									.compile("local:task:" + session.getId() + ":" + token, scope);
 
 							dataflow.setDescription(taskDescription);
-							
+
 							/*
 							 * Instantiate a preliminary contextualization strategy as there is no context
 							 * yet.
@@ -100,7 +100,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 							// context will take it from the task identity when it's created
 							setContextualizationStrategy(contextualizationStrategy);
-							
+
 							session.getMonitor()
 									.send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 											IMessage.Type.DataflowCompiled, new DataflowReference(token,
@@ -116,9 +116,9 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 * load any behaviors and schedule repeating actions
 							 */
 							Actors.INSTANCE.instrument(observer.getAnnotations(), (Observation) ret);
-							
+
 							getActivity().finished();
-							
+
 							/*
 							 * Register the observation context with the session. It will be disposed of
 							 * and/or persisted by the session itself.

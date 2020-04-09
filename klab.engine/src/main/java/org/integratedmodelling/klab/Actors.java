@@ -473,19 +473,4 @@ public enum Actors implements IActorsService {
 		return null;
 	}
 
-	public void add(File file) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void delete(File file) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void touch(File file) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
