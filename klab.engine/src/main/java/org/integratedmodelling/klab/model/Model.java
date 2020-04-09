@@ -60,6 +60,7 @@ import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
@@ -484,7 +485,14 @@ public class Model extends KimObject implements IModel {
 				return;
 			}
 
-			IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(observable);
+			IUnit baseUnit = null;
+			try {
+				baseUnit = Units.INSTANCE.getDefaultUnitFor(observable);
+			} catch (KlabValidationException e) {
+				monitor.error("Observable " + observable.getName() + " return unit error: " + e, observable);
+				setErrors(true);
+				return;
+			}
 
 			if (baseUnit == null) {
 				monitor.error(

@@ -79,6 +79,8 @@ public class Unit implements IUnit {
 		try {
 			unit = (javax.measure.unit.Unit<?>) UnitFormat.getUCUMInstance().parseObject(string);
 		} catch (Throwable e) {
+			// KLAB-156: Error getting the default unit
+			// catched in org.integratedmodelling.klab.model.Model.java:488
 			throw new KlabValidationException("Invalid unit: " + string);
 		}
 		if (factor != 1.0) {
