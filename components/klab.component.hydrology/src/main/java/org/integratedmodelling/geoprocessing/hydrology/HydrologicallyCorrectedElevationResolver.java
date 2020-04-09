@@ -39,7 +39,7 @@ public class HydrologicallyCorrectedElevationResolver implements IResolver<IStat
 			throw new KlabException(e);
 		}
 		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(pitfiller.outPit, target, (a) -> {
+			GeotoolsUtils.INSTANCE.coverageToState(pitfiller.outPit, target, context.getScale(), (a) -> {
 				if (a == (double) floatNovalue)
 					return Double.NaN;
 				return a;

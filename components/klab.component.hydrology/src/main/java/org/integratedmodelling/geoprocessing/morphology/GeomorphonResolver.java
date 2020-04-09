@@ -71,7 +71,7 @@ public class GeomorphonResolver implements IResolver<IState>, IExpression {
 			throw new KlabException(e);
 		}
 		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(geomorphon.outRaster, target, (a) -> {
+			GeotoolsUtils.INSTANCE.coverageToState(geomorphon.outRaster, target, context.getScale(), (a) -> {
 				if (a == (double) floatNovalue)
 					return Double.NaN;
 				return a;

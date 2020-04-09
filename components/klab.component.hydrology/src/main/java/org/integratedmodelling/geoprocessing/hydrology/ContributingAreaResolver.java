@@ -59,7 +59,7 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 		}
 		if (!context.getMonitor().isInterrupted()) {
 			final IUnit unit = tUnit;
-			GeotoolsUtils.INSTANCE.coverageToState(algorithm.outTca, target, (a) -> {
+			GeotoolsUtils.INSTANCE.coverageToState(algorithm.outTca, target, context.getScale(), (a) -> {
 				if (a == (double) floatNovalue) {
 					return Double.NaN;
 				}

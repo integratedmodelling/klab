@@ -16,9 +16,10 @@ import org.geotools.coverage.grid.GridCoverageFactory;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -125,15 +126,15 @@ public enum GeotoolsUtils {
 		coverageToState(layer, state, null, null);
 	}
 
-	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation) {
-		coverageToState(layer, state, transformation, null);
+	public void coverageToState(GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation) {
+		coverageToState(layer, state, locator, transformation, null);
 	}
 
 	/**
 	 * Dump the data from a coverage into a pre-existing state.
 	 * 
 	 */
-	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation,
+	public void coverageToState(GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation,
 			Function<long[], Boolean> coordinateChecker) {
 
 		ISpace ext = state.getScale().getSpace();
@@ -142,7 +143,7 @@ public enum GeotoolsUtils {
 			throw new KlabValidationException("cannot write a gridded state from a non-gridded extent");
 		}
 
-		Geometry geometry = ((Scale) state.getGeometry()).asGeometry();
+//		Geometry geometry = ((Scale) state.getGeometry()).asGeometry();
 		IGrid grid = ((Space) ext).getGrid();
 		RenderedImage image = layer.getRenderedImage();
 		RandomIter itera = RandomIterFactory.create(image, null);
@@ -150,7 +151,7 @@ public enum GeotoolsUtils {
 		for (int i = 0; i < grid.getCellCount(); i++) {
 			long[] xy = grid.getXYOffsets(i);
 			Double value = itera.getSampleDouble((int) xy[0], (int) xy[1], 0);
-			ILocator spl = geometry.at(ISpace.class, xy[0], xy[1]);
+			ILocator spl = locator.at(ISpace.class, xy[0], xy[1]);
 			if (transformation != null) {
 				value = transformation.apply(value);
 			}

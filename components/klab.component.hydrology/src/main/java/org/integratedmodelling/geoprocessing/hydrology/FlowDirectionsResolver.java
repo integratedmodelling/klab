@@ -42,7 +42,7 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 			throw new KlabException(e);
 		}
 		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(algorithm.outFlow, target, (a) -> {
+			GeotoolsUtils.INSTANCE.coverageToState(algorithm.outFlow, target, context.getScale(), (a) -> {
 				if (a == (double) floatNovalue) {
 					return Double.NaN;
 				}
