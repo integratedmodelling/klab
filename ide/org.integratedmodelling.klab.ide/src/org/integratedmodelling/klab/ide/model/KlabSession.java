@@ -53,8 +53,6 @@ import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
-import org.integratedmodelling.klab.rest.ViewAction;
-import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
@@ -239,6 +237,10 @@ public class KlabSession extends KlabPeer {
 			parent = taskCatalog.get(identity);
 		}
 
+		if (notification.contains("says hola")) {
+			System.out.println("SHITMENOT");
+		}
+		
 		/*
 		 * TODO multi-line notification should be broken up into multiple ones, with
 		 * continuation flag from the second on, so they can be displayed properly

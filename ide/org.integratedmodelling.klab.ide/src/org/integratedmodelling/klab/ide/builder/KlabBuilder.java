@@ -34,7 +34,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 			IResource resource = delta.getResource();
 
 			// TODO if it's a k.LAB resource, we must re-read the relevant resource list.
-			// This may happen at git pull for example. Some cases are taken care of by the 
+			// This may happen at git pull for example. Some cases are taken care of by the
 			// loader and installed callbacks, others aren't.
 
 			switch (delta.getKind()) {
@@ -155,6 +155,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 	}
 
 	public boolean isRelevant(IFile resource) {
-		return resource.toString().endsWith(".kim") || resource.toString().contains("META-INF/klab.properties");
+		return resource.toString().endsWith(".kim") || resource.toString().endsWith(".kactor")
+				|| resource.toString().contains("META-INF/klab.properties");
 	}
 }

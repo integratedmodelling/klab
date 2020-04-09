@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -30,6 +31,7 @@ public abstract class KlabAction {
 	protected IParameters<String> arguments;
 	protected KlabActor.Scope scope;
 	protected IActorIdentity<KlabMessage> identity;
+	protected Session session;
 
 	ObjectExpression expression = null;
 
@@ -37,6 +39,7 @@ public abstract class KlabAction {
 
 	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
 		this.sender = identity.getActor();
+		this.session = identity.getParentIdentity(Session.class);
 		this.arguments = arguments;
 		this.scope = scope;
 		this.identity = identity;
@@ -69,7 +72,7 @@ public abstract class KlabAction {
 
 	}
 
-	private Object evaluateInContext(KActorsValue arg) {
+	protected Object evaluateInContext(KActorsValue arg) {
 		switch (arg.getType()) {
 		case ANYTHING:
 		case ANYVALUE:

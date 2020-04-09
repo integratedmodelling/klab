@@ -24,6 +24,7 @@ import java.util.logging.Level;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
@@ -719,8 +720,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 				/*
 				 * TODO if there are no errors or a non-standard operation was chosen, refresh
-				 * the resource details in the client by sending the resource again, using the result of
-				 * performOperation (i.e. res, not resource).
+				 * the resource details in the client by sending the resource again, using the
+				 * result of performOperation (i.e. res, not resource).
 				 */
 			}
 
@@ -1290,13 +1291,25 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		switch (type) {
 		case ProjectFileAdded:
-			Resources.INSTANCE.getLoader().add(event.getFile());
+			if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
+				Actors.INSTANCE.add(event.getFile());
+			} else {
+				Resources.INSTANCE.getLoader().add(event.getFile());
+			}
 			break;
 		case ProjectFileDeleted:
-			Resources.INSTANCE.getLoader().delete(event.getFile());
+			if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
+				Actors.INSTANCE.delete(event.getFile());
+			} else {
+				Resources.INSTANCE.getLoader().delete(event.getFile());
+			}
 			break;
 		case ProjectFileModified:
-			Resources.INSTANCE.getLoader().touch(event.getFile());
+			if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
+				Actors.INSTANCE.touch(event.getFile());
+			} else {
+				Resources.INSTANCE.getLoader().touch(event.getFile());
+			}
 			break;
 		default:
 			break;
@@ -1474,10 +1487,11 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		return this.actor;
 	}
 
+	// TODO pass new SimpleRuntimeScope(this)
 	@Override
-	public void load(IBehavior behavior) {
+	public void load(IBehavior behavior, IRuntimeScope scope) {
 		// TODO this gets a sucky runtime scope which is used to run main messages.
-		getActor().tell(new SystemBehavior.Load(behavior.getId(), new SimpleRuntimeScope(this)));
+		getActor().tell(new SystemBehavior.Load(behavior.getId(), scope));
 	}
 
 	public void instrument(ActorRef<KlabMessage> actor) {

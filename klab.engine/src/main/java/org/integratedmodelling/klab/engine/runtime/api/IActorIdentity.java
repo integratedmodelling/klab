@@ -23,16 +23,18 @@ public interface IActorIdentity<T> extends IIdentity {
 	ActorRef<T> getActor();
 
 	/**
-	 * Load a specified behavior.
+	 * Load a specified behavior in a specified runtime scope
 	 * 
 	 * @param behavior
+	 * @param scope
 	 */
-	void load(IBehavior behavior);
+	void load(IBehavior behavior, IRuntimeScope scope);
 
 	/**
 	 * Set the actor in the identity.
 	 * 
 	 * @param actor
+	 * @param scope
 	 */
 	void instrument(ActorRef<T> actor);
 

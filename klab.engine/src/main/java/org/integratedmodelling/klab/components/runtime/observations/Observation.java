@@ -296,8 +296,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 
 	@Override
-	public void load(IBehavior behavior) {
-		getActor().tell(new Load(behavior.getId(), getRuntimeScope()));
+	public void load(IBehavior behavior, IRuntimeScope scope) {
+		getActor().tell(new Load(behavior.getId(), scope));
 	}
 
 	@Override

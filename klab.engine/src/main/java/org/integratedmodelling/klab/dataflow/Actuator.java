@@ -634,14 +634,14 @@ public class Actuator implements IActuator {
 					(IState) ret, addParameters(ctx, self, resource), scale);
 
 			if (this.model != null && ret instanceof Observation) {
-				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret);
+				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
 			}
 
 		} else if (contextualizer instanceof IResolver) {
 
 			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
 			if (this.model != null && ret instanceof Observation) {
-				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret);
+				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
 			}
 
 		} else if (contextualizer instanceof IInstantiator) {
@@ -684,7 +684,7 @@ public class Actuator implements IActuator {
 					 * everything is resolved, now add any behaviors specified in annotations
 					 */
 					if (this.model != null && ret instanceof Observation) {
-						Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) object);
+						Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) object, ctx);
 					}
 
 				}

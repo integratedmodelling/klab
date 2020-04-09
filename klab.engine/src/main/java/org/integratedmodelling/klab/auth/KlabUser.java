@@ -3,12 +3,13 @@ package org.integratedmodelling.klab.auth;
 import java.util.Date;
 import java.util.List;
 
-import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.springframework.security.core.GrantedAuthority;
 
 import akka.actor.typed.ActorRef;
@@ -105,7 +106,7 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	}
 
 	@Override
-	public void load(IBehavior behavior) {
+	public void load(IBehavior behavior, IRuntimeScope scope) {
 		// TODO Auto-generated method stub
 		
 	}

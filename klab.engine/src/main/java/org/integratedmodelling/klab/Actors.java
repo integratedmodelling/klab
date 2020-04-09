@@ -16,7 +16,6 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
-import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
@@ -43,6 +42,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -384,6 +384,11 @@ public enum Actors implements IActorsService {
 	}
 
 	public void instrument(List<IAnnotation> annotations, Observation observation) {
+		instrument(annotations, observation, observation.getRuntimeScope());
+	}
+		
+	
+	public void instrument(List<IAnnotation> annotations, Observation observation, IRuntimeScope scope) {
 
 		/*
 		 * find any bindings made at runtime
@@ -397,7 +402,7 @@ public enum Actors implements IActorsService {
 					// TODO filter
 				}
 				observation.getRuntimeScope().scheduleActions(observation, b);
-				((Observation) observation).load(b);
+				((Observation) observation).load(b, scope);
 			}
 		}
 
@@ -422,7 +427,7 @@ public enum Actors implements IActorsService {
 						/*
 						 * load the behavior, running any main actions right away
 						 */
-						((Observation) observation).load(b);
+						((Observation) observation).load(b, scope);
 					}
 				}
 			}
@@ -466,6 +471,21 @@ public enum Actors implements IActorsService {
 	public <T> T getArgument(IParameters<String> arguments, String parameterName, Class<T> class1) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void add(File file) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void delete(File file) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void touch(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
