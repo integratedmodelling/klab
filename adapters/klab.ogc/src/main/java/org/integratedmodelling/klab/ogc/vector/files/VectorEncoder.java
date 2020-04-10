@@ -79,9 +79,9 @@ public class VectorEncoder implements IResourceEncoder {
 	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
 
 		File mainFile = null;
-		IProject project = Resources.INSTANCE.getProject(((Resource)resource).getLocalProjectName());
+		IProject project = Resources.INSTANCE.getProject(((Resource) resource).getLocalProjectName());
 		File rootPath = project.getRoot().getParentFile();
-		
+
 		for (String path : resource.getLocalPaths()) {
 			if (VectorAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
 				mainFile = new File(rootPath + File.separator + path);
@@ -109,188 +109,193 @@ public class VectorEncoder implements IResourceEncoder {
 	}
 
 	// TODO use URN parameters
-	private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource, 
+	private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource,
 			Map<String, String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope context) {
 
+		Filter filter = null;
+		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
+		Scale requestScale = geometry instanceof Scale ? (Scale) geometry : Scale.create(geometry);
 
-        Filter filter = null;
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
-        Scale requestScale = geometry instanceof Scale ? (Scale)geometry : Scale.create(geometry);
-        
-        /*
-         * merge urn params with resource params: if attr=x, use filter, if just value=x and we have a 
-         * nameAttribute filter, else add to parameters
-         */
-        String idRequested = urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY) && urnParameters.size() == 1
-                ? urnParameters.get(Urn.SINGLE_PARAMETER_KEY)
-                : null;
-                
-        String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
+		/*
+		 * merge urn params with resource params: if attr=x, use filter, if just value=x
+		 * and we have a nameAttribute filter, else add to parameters
+		 */
+		String idRequested = urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY) && urnParameters.size() == 1
+				? urnParameters.get(Urn.SINGLE_PARAMETER_KEY)
+				: null;
 
-        Map<String, Class<?>> attributes = new HashMap<>();
-        for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
-            if (!ad.getLocalName().equals(geomName)) {
-                attributes.put(ad.getLocalName(), ad.getType().getBinding());
-                if (idRequested == null && (urnParameters.containsKey(ad.getLocalName().toLowerCase()) || urnParameters.containsKey(ad.getLocalName().toUpperCase()))) {
-                    try {
-                        // use syntax dependent on attribute type
-                    	if (ad.getType().getBinding() == String.class) {
-                    		filter = ECQL.toFilter(ad.getLocalName() + " = '" + Utils.getIgnoreCase(urnParameters, ad.getLocalName()) + "'");
-                    	} else {
-                    		filter = ECQL.toFilter(ad.getLocalName() + " = " + Utils.getIgnoreCase(urnParameters, ad.getLocalName()));
-                    	}
-                    } catch (CQLException e) {
-                        // shouldn't happen as filter was validated previously
-                        throw new KlabValidationException(e);
-                    }
-                }
-            }
-        }
+		String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
+		boolean intersect = urnParameters.containsKey("intersect") ? Boolean.getBoolean(urnParameters.get("intersect"))
+				: true;
 
-        /*
-         * TODO would be nicer to check the request geometry for the data - which may
-         * not be the scale of the result! If it's IRREGULAR MULTIPLE we want objects,
-         * otherwise we want a state. I don't think there is a way to check that at the
-         * moment - the scale will be that of contextualization, not the geometry for
-         * the actuator, which may depend on context.
-         */
-        boolean rasterize = context.getTargetSemantics() != null
-                && (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))
-                && requestScale.getSpace() instanceof Space && ((Space)requestScale.getSpace()).getGrid() != null;
+		Map<String, Class<?>> attributes = new HashMap<>();
+		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
+			if (!ad.getLocalName().equals(geomName)) {
+				attributes.put(ad.getLocalName(), ad.getType().getBinding());
+				if (idRequested == null && (urnParameters.containsKey(ad.getLocalName().toLowerCase())
+						|| urnParameters.containsKey(ad.getLocalName().toUpperCase()))) {
+					try {
+						// use syntax dependent on attribute type
+						if (ad.getType().getBinding() == String.class) {
+							filter = ECQL.toFilter(ad.getLocalName() + " = '"
+									+ Utils.getIgnoreCase(urnParameters, ad.getLocalName()) + "'");
+						} else {
+							filter = ECQL.toFilter(
+									ad.getLocalName() + " = " + Utils.getIgnoreCase(urnParameters, ad.getLocalName()));
+						}
+					} catch (CQLException e) {
+						// shouldn't happen as filter was validated previously
+						throw new KlabValidationException(e);
+					}
+				}
+			}
+		}
 
-        if (resource.getParameters().contains("filter")) {
-            try {
-                Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class));
-                filter = filter == null ? pfilter : ff.and(filter, pfilter);
-            } catch (CQLException e) {
-                // shouldn't happen as filter was validated previously
-                throw new KlabValidationException(e);
-            }
-        }
+		/*
+		 * TODO would be nicer to check the request geometry for the data - which may
+		 * not be the scale of the result! If it's IRREGULAR MULTIPLE we want objects,
+		 * otherwise we want a state. I don't think there is a way to check that at the
+		 * moment - the scale will be that of contextualization, not the geometry for
+		 * the actuator, which may depend on context.
+		 */
+		boolean rasterize = context.getTargetSemantics() != null
+				&& (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))
+				&& requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
-        FeatureCollection<SimpleFeatureType, SimpleFeature> fc;
-        try {
-            fc = source.getFeatures();
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
+		if (resource.getParameters().contains("filter")) {
+			try {
+				Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class));
+				filter = filter == null ? pfilter : ff.and(filter, pfilter);
+			} catch (CQLException e) {
+				// shouldn't happen as filter was validated previously
+				throw new KlabValidationException(e);
+			}
+		}
 
-        Projection originalProjection = Projection.create(fc.getSchema().getCoordinateReferenceSystem());
-        IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope()
-                .transform(originalProjection, true);
+		FeatureCollection<SimpleFeatureType, SimpleFeature> fc;
+		try {
+			fc = source.getFeatures();
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
 
-        Filter bbfilter = ff
-                .bbox(ff.property(geomName), ((Envelope) envelopeInOriginalProjection).getJTSEnvelope());
-        if (filter != null) {
-            bbfilter = ff.and(bbfilter, filter);
-        }
+		Projection originalProjection = Projection.create(fc.getSchema().getCoordinateReferenceSystem());
+		IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection,
+				true);
 
-        Rasterizer<Object> rasterizer = null;
-        if (rasterize) {
-            builder = builder.startState(context.getTargetName());
-            rasterizer = new Rasterizer<Object>(((Space)requestScale.getSpace()).getGrid());
-        }
+		Filter bbfilter = ff.bbox(ff.property(geomName), ((Envelope) envelopeInOriginalProjection).getJTSEnvelope());
+		if (filter != null) {
+			bbfilter = ff.and(bbfilter, filter);
+		}
 
-        String nameAttribute = resource.getParameters().get("nameAttribute", String.class);
-        if (nameAttribute == null && attributes.get("NAME") != null) {
-            nameAttribute = "NAME";
-        }
+		Rasterizer<Object> rasterizer = null;
+		if (rasterize) {
+			builder = builder.startState(context.getTargetName());
+			rasterizer = new Rasterizer<Object>(((Space) requestScale.getSpace()).getGrid());
+		}
 
-        int n = 1;
-        FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
-        while (it.hasNext()) {
+		String nameAttribute = resource.getParameters().get("nameAttribute", String.class);
+		if (nameAttribute == null && attributes.get("NAME") != null) {
+			nameAttribute = "NAME";
+		}
 
-            SimpleFeature feature = it.next();
-            Object shape = feature.getDefaultGeometryProperty().getValue();
-            if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
+		int n = 1;
+		FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
+		while (it.hasNext()) {
 
-            	if (((com.vividsolutions.jts.geom.Geometry) shape).isEmpty()) {
-            		continue;
-            	}
-            	
-                if (resource.getParameters().get("sanitize", false)) {
-                    shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
-                }
+			SimpleFeature feature = it.next();
+			Object shape = feature.getDefaultGeometryProperty().getValue();
+			if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
 
-                IShape objectShape = Shape
-                        .create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
-                        .transform(requestScale.getSpace().getProjection())
-                        .intersection(requestScale.getSpace().getShape());
+				if (((com.vividsolutions.jts.geom.Geometry) shape).isEmpty()) {
+					continue;
+				}
 
-            	if (objectShape.isEmpty()) {
-            		continue;
-            	}
+				if (resource.getParameters().get("sanitize", false)) {
+					shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
+				}
 
-            	if (rasterize) {
+				IShape objectShape = Shape.create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
+						.transform(requestScale.getSpace().getProjection());
 
-                	Object value = Boolean.TRUE;
-                	
-                	if (idRequested != null) {
-                		value = feature.getAttribute(idRequested);
-                		 if (value == null) {
-                			 value = feature.getAttribute(idRequested.toUpperCase());
-                         }
-                         if (value == null) {
-                        	 value = feature.getAttribute(idRequested.toLowerCase());
-                         }
-                	}
-                	
-                	value = Utils.asType(value, Utils.getClassForType(resource.getType()));
-                	
-                	final Object vval = value;
-                	rasterizer.add(objectShape, (s) -> vval);
-                	
-                } else {
+				if (intersect) {
+					objectShape = objectShape.intersection(requestScale.getSpace().getShape());
+				}
 
-                    IScale objectScale = Scale.createLike(context.getScale(), objectShape);
-                    String objectName = null;
-                    if (nameAttribute != null) {
-                        Object nattr = feature.getAttribute(nameAttribute);
-                        if (nattr == null) {
-                            nattr = feature.getAttribute(nameAttribute.toUpperCase());
-                        }
-                        if (nattr == null) {
-                            nattr = feature.getAttribute(nameAttribute.toLowerCase());
-                        }
-                        if (nattr != null) {
-                            objectName = nattr.toString();
-                        }
-                    }
-                    if (objectName /* still */ == null) {
-                        objectName = fc.getSchema().getTypeName() + "_" + (n++);
-                    }
+				if (objectShape.isEmpty()) {
+					continue;
+				}
 
-                    builder = builder.startObject(context.getTargetName(), objectName, objectScale);
-                    for (String key : attributes.keySet()) {
-                        Object nattr = feature.getAttribute(key);
-                        if (nattr == null) {
-                            nattr = feature.getAttribute(key.toUpperCase());
-                        }
-                        if (nattr == null) {
-                            nattr = feature.getAttribute(key.toLowerCase());
-                        }
-                        if (nattr != null) {
-                        	builder.withMetadata(key.toLowerCase(), nattr);
-                        }
-                    }
+				if (rasterize) {
 
-                    builder = builder.finishObject();
+					Object value = Boolean.TRUE;
 
-                }
-            }
-        }
+					if (idRequested != null) {
+						value = feature.getAttribute(idRequested);
+						if (value == null) {
+							value = feature.getAttribute(idRequested.toUpperCase());
+						}
+						if (value == null) {
+							value = feature.getAttribute(idRequested.toLowerCase());
+						}
+					}
 
-        it.close();
+					value = Utils.asType(value, Utils.getClassForType(resource.getType()));
 
-        if (rasterize) {
-        	final Builder stateBuilder = builder;
-            rasterizer.finish((b, xy) -> {
+					final Object vval = value;
+					rasterizer.add(objectShape, (s) -> vval);
+
+				} else {
+
+					IScale objectScale = Scale.createLike(context.getScale(), objectShape);
+					String objectName = null;
+					if (nameAttribute != null) {
+						Object nattr = feature.getAttribute(nameAttribute);
+						if (nattr == null) {
+							nattr = feature.getAttribute(nameAttribute.toUpperCase());
+						}
+						if (nattr == null) {
+							nattr = feature.getAttribute(nameAttribute.toLowerCase());
+						}
+						if (nattr != null) {
+							objectName = nattr.toString();
+						}
+					}
+					if (objectName /* still */ == null) {
+						objectName = fc.getSchema().getTypeName() + "_" + (n++);
+					}
+
+					builder = builder.startObject(context.getTargetName(), objectName, objectScale);
+					for (String key : attributes.keySet()) {
+						Object nattr = feature.getAttribute(key);
+						if (nattr == null) {
+							nattr = feature.getAttribute(key.toUpperCase());
+						}
+						if (nattr == null) {
+							nattr = feature.getAttribute(key.toLowerCase());
+						}
+						if (nattr != null) {
+							builder.withMetadata(key.toLowerCase(), nattr);
+						}
+					}
+
+					builder = builder.finishObject();
+
+				}
+			}
+		}
+
+		it.close();
+
+		if (rasterize) {
+			final Builder stateBuilder = builder;
+			rasterizer.finish((b, xy) -> {
 				stateBuilder.add(b, requestScale.at(ISpace.class, xy/* [0], xy[1] */));
-            });
-            builder = builder.finishState();
-        }
+			});
+			builder = builder.finishState();
+		}
 
-    }
+	}
 
 	@Override
 	public boolean isOnline(IResource resource, IMonitor monitor) {

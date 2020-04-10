@@ -1624,4 +1624,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		listeners.remove(listenerId);
 	}
 
+	public String toString() {
+		return "{Scope of " + contextSubject + " [" + catalog.size() + " obs, " + network.edgeSet().size() + " links]}";
+	}
+
 }

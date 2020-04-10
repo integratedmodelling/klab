@@ -22,6 +22,18 @@ of vulnerabilities.) [comment]: <>   () [comment]: <>   (Next build: [0.10.0.xxx
 
 ## Unreleased
 ### Added
+- Actors can schedule actions (needs synchronization to ensure no temporal overlap
+  can happen), bind behaviors and use the monitor to send notifications.
+- Deferred resolution for observables whose context is a subject incompatible with
+  the context of observation, after successful instantiation of the subjects
+  themselves.
+- Watershed resolver resumes the logics from the former instantiator.
+- New scaling instantiator for spatial objects uses a set of resources to assess the
+  most appropriate scale for the results. Flexible options to ensure coverage and 
+  define granularity preferences. Watershed instantiator being rewritten to
+  use that with global HydroBASINS data. 
+- Vector resources return clipped geometries as before unless a new intersect=false parameter 
+  is passed in the URN.
 - Direct observations with suitable dimensionality inherit the context's 
   scale by default, inheriting grid specifications. Implementation is still incomplete
   but the @space and @time annotation can be used on the instantiators to change

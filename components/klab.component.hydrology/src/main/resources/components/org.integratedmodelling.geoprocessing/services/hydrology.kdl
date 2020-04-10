@@ -193,6 +193,52 @@ export object delineatewatersheds
 	class org.integratedmodelling.geoprocessing.hydrology.WatershedInstantiator
 }
 
+void watershed
+	"Resolves a watershed by finding the stream outlet and tracing flows to it."
+{
+	import number elevation
+		"Elevation at a suitable resolution to perform watershed extraction calculations."
+
+	export object stream_outlet
+		"The stream outlet. If applied to a proper watershed shape and with a suitable
+		 resolution, only one outlet should be found."
+		 
+	export number upstream_cell_count
+		"An observation of the number of cells draining into each cell"	 
+		 
+	export number flow_directions_d8
+		"The D8 numeric code for flow direction"
+		
+	geometry *
+	
+	class org.integratedmodelling.geoprocessing.hydrology.WatershedResolver
+}
+
+
+export object findwatersheds
+	"Extracts the most appropriately scaled watershed polygon(s) based on the HydroBASINS product, to be further
+	 defined by an appropriate resolver."
+{
+	optional parameter boolean whole
+		"If true, cover the context completely: either by choosing a larger watershed
+	     or by adding even small proportion coverage. Default false, choice dependent on
+	     minimum coverage."
+		default false
+		
+	optional enum strategy
+		"If COVER, take as many smaller watersheds as it takes to compute the requested coverage. If EXPAND,
+		 switch to the largest watershed even if it's larger than the context. Default COVER."
+		values COVER, EXPAND
+		
+	optional number mincoverage
+		"The minimum proportion of area needed for a watershed to be included in the result compared with the
+		 area of the original context. Default 0.2. Ineffective if whole = true."
+		
+	geometry #s0
+	
+	class org.integratedmodelling.geoprocessing.hydrology.WatershedPolygonInstantiator
+}
+
 export process runoff
 	"Computes runoff water volume from precipitation in the time unit, using the curve number method."
 {
@@ -209,6 +255,9 @@ export process runoff
 
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"
+
+	optional export number runoff_water_volume
+		"Runoff water volume produced by precipitation"
 		
 	geometry T1S2
 		

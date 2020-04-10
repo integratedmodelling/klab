@@ -435,6 +435,9 @@ public class Model extends KimObject implements IModel {
 		for (IObservable observable : observables) {
 			if (typechain.containsKey(observable.getName())) {
 				IArtifact.Type required = observable.getArtifactType();
+				if (required == IArtifact.Type.OBJECT && !this.isInstantiator()) {
+					required = IArtifact.Type.VOID;
+				}
 				if (!IArtifact.Type.isCompatible(required, typechain.get(observable.getName()))) {
 					monitor.error("the computation produces output of type " + typechain.get(observable.getName())
 							+ " for " + observable.getName() + " when " + required + " is expected",
