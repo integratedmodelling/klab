@@ -255,13 +255,13 @@ public enum Resolver {
 		 * finish the job, as we do with the resolution of the individual instances.
 		 */
 		IConcept context = observable.getContext();
-		if (!parentScope.isDeferred() && context != null && parentScope.getContext() != null
-				&& !parentScope.getContext().getObservable().getType().is(context)) {
+		if (!parentScope.isDeferred() && context != null && parentScope.getContextObservable() != null
+				&& !parentScope.getContextObservable().getType().is(context)) {
 
 			parentScope.getMonitor()
 					.info("Context of " + observable.getType().getDefinition() + " (" + context.getDefinition()
 							+ ") is incompatible with current context ("
-							+ parentScope.getContext().getObservable().getType().getDefinition() + "): resolving "
+							+ parentScope.getContextObservable().getType().getDefinition() + "): resolving "
 							+ context + " and deferring resolution");
 
 			/*

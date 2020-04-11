@@ -154,7 +154,18 @@ public class ResolutionScope implements IResolutionScope {
 	/*
 	 * these do not change during an individual resolution.
 	 */
+
+	/*
+	 * a secondary resolution may have the context set (if it's been created) or not
+	 * (if it's being resolved). Either one or the other are set and
+	 * #getContextObservable() returns the appropriate response.
+	 */
 	private DirectObservation context;
+	private Observable contextObservable;
+	// this is set when resolving a new observation, which the dataflow will build
+	// with this name.
+	private String observationName;
+
 	private Collection<String> scenarios = new ArrayList<>();
 	private boolean interactive;
 
@@ -312,6 +323,8 @@ public class ResolutionScope implements IResolutionScope {
 		this.contextModel = other.contextModel;
 		this.originalScope = other.originalScope;
 		this.deferred = other.deferred;
+		this.observationName = other.observationName;
+		this.contextObservable = other.contextObservable;
 		if (copyResolution) {
 			this.observable = other.observable;
 			this.model = other.model;
@@ -327,6 +340,14 @@ public class ResolutionScope implements IResolutionScope {
 
 	public boolean isResolving(String modelName) {
 		return beingResolved.contains(modelName);
+	}
+
+	public Observable getContextObservable() {
+		return contextObservable == null ? (context == null ? null : context.getObservable()) : contextObservable;
+	}
+
+	public String getObservationName() {
+		return observationName;
 	}
 
 	public Collection<Link> getLinks() {
@@ -483,6 +504,25 @@ public class ResolutionScope implements IResolutionScope {
 		ret.context = (DirectObservation) observer;
 		ret.coverage = Coverage.full(observer.getScale());
 		ret.mode = mode;
+		return ret;
+	}
+
+	/**
+	 * Return a scope to resolve a new observation of the passed observable, which
+	 * will have the passed name. The context remains there to tell us which subject
+	 * we are resolving the observable in.
+	 * 
+	 * @param observable
+	 * @param name
+	 * @return
+	 */
+	public ResolutionScope getChildScope(IObservable observable, IScale scale, String name) {
+
+		ResolutionScope ret = new ResolutionScope(this, true);
+		ret.contextObservable = (Observable) observable;
+		ret.observationName = name;
+		ret.coverage = Coverage.full(scale);
+		ret.mode = Mode.RESOLUTION;
 		return ret;
 	}
 

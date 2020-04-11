@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Utils;
@@ -59,8 +60,7 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 		if (Double.isNaN(code)) {
 			return code;
 		}
-		int exp = Utils.log2int((int)code); 
-		return 45.0 * (exp > 5 ? exp - 6 : exp + 2);
+		return Geospace.getHeading((int)code);
 	}
 	
 	@Override

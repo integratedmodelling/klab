@@ -6,20 +6,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Triple;
 
 /**
  * Abstract instantiator that uses a list of increasingly detailed spatial
  * resources and chooses the one with extents that are most likely to incarnate
- * the object in the specific region.
+ * the object in the specific region. Any spatial URNs supplied should normally
+ * have the intersect=false parameter to prevent breaking up shapes to fit the
+ * context.
  * <p>
  * Resources must be supplied in a <b>sorted</b> list from coarser to finer
  * scaled.
@@ -30,15 +36,16 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public abstract class ScaleChooserInstantiator implements IInstantiator {
 
 	/**
-	 * If true, cover the context completely: either by choosing a larger watershed
-	 * or by adding even small proportion coverage
+	 * If true, always cover the context completely: either by choosing a larger
+	 * object or by adding even small proportion coverage with potentially very
+	 * large objects.
 	 */
 	private boolean whole = false;
 
 	/**
 	 * Strategy used to cover the context
 	 */
-	enum Strategy {
+	public static enum Strategy {
 
 		/**
 		 * take as many smaller watersheds as it takes to compute the requested coverage
@@ -56,20 +63,44 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	 */
 	private double minCoverage = 0.2;
 	private Strategy strategy = Strategy.COVER;
+	private int maxObjects = -1;
+	private boolean boundingBox;
+	private boolean alignGrid;
+	
+	public void setBoundingBox(boolean boundingBox) {
+		this.boundingBox = boundingBox;
+	}
 
-	private Map<String, String> urnParameters = new HashMap<>();
+	public void setAlignGrid(boolean alignGrid) {
+		this.alignGrid = alignGrid;
+	}
 
 	public ScaleChooserInstantiator() {
 	}
 
 	protected ScaleChooserInstantiator(boolean whole) {
 		this.whole = whole;
-		urnParameters.put("intersect", "false");
 	}
 
 	@Override
 	public Type getType() {
 		return Type.OBJECT;
+	}
+
+	public void setWhole(boolean whole) {
+		this.whole = whole;
+	}
+
+	public void setMinCoverage(double minCoverage) {
+		this.minCoverage = minCoverage;
+	}
+
+	public void setStrategy(Strategy strategy) {
+		this.strategy = strategy;
+	}
+
+	public void setMaxObjects(int maxObjects) {
+		this.maxObjects = maxObjects;
 	}
 
 	/**
@@ -90,30 +121,85 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		Integer np = null;
 		int n = 0;
 		for (String urn : getResourceUrns()) {
-			IResource resource = Resources.INSTANCE.resolveResource(urn);
-			IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
-			int size = data.getArtifact().groupSize();
+
+			VisitingDataBuilder builder = new VisitingDataBuilder();
+			Resources.INSTANCE.getResourceData(urn, builder, context.getScale(), context.getMonitor());
+			// TODO use the previous or the next according to strategy
 			if (np != null) {
-				if (size > np) {
+				if (builder.getObjectCount() > np) {
 					break;
 				}
 			}
-			np = size;
+			np = builder.getObjectCount();
 			n++;
 		}
 
 		List<IObjectArtifact> ret = new ArrayList<>();
 
+		// keep name, scale and metadata for later use
+		List<Triple<String, IScale, IMetadata>> tmp = new ArrayList<>();
+		List<Triple<String, IScale, IMetadata>> keep = new ArrayList<>();
+
 		if (n < getResourceUrns().length) {
-			IResource res = Resources.INSTANCE.resolveResource(getResourceUrns()[n]);
-			IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
-			if (data.getArtifact() != null) {
-				for (IArtifact artifact : data.getArtifact()) {
-					if (artifact instanceof IObjectArtifact) {
-						ret.add((IObjectArtifact) artifact);
-					}
-				}
+			VisitingDataBuilder builder = new VisitingDataBuilder();
+			Resources.INSTANCE.getResourceData(getResourceUrns()[n], builder, context.getScale(), context.getMonitor());
+			for (int i = 0; i < builder.getObjectCount(); i++) {
+				tmp.add(new Triple<>(builder.getObjectName(i), builder.getObjectScale(i),
+						builder.getObjectMetadata(i)));
 			}
+		}
+
+		/*
+		 * choose according to criteria
+		 */
+		IShape shape = context.getScale().getSpace().getShape();
+		double ctxarea = shape.getStandardizedArea();
+		
+		for (Triple<String, IScale, IMetadata> data : tmp) {
+
+			boolean ok = whole;
+
+			if (!ok) {
+
+				/*
+				 * choose those where cover >= min coverage
+				 */
+				IShape space = data.getSecond().getSpace().getShape();
+				IShape commn = shape.intersection(space);
+				ok = (commn.getStandardizedArea()/ctxarea) >= minCoverage;
+
+				/*
+				 * 
+				 */
+				
+				if (ok) {
+					keep.add(data);
+				}
+				
+			} else {
+				keep.add(data);
+			}
+
+		}
+
+		if (maxObjects > 0 && keep.size() > maxObjects) {
+			// sort keep by decreasing area proportion
+			// remove anything left beyond maxObjects
+		}
+
+		// make the objects
+		for (Triple<String, IScale, IMetadata> data : keep) {
+			
+			IScale scale = data.getSecond();
+			if (boundingBox) {
+				scale = Scale.substituteExtent(scale, scale.getSpace().getShape().getBoundingExtent());
+			}
+			
+			if (alignGrid) {
+				// TODO!
+			}
+			
+			ret.add(context.newObservation(semantics, data.getFirst(), scale, data.getThird()));
 		}
 
 		return ret;

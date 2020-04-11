@@ -471,8 +471,17 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return (T) ret;
 	}
 
-	// pass a modified observable if needed: add the object's name if direct, etc.
-	public Dataflow resolve(IObservable observable, IScale scale, ITaskTree<?> subtask) {
+	/**
+	 * Resolve a new direct observation (which doesn't exist yet: the dataflow will
+	 * create it) passing the observable and the name.
+	 * 
+	 * @param observable
+	 * @param name
+	 * @param scale
+	 * @param subtask
+	 * @return
+	 */
+	public Dataflow resolve(IObservable observable, String name, IScale scale, ITaskTree<?> subtask) {
 
 		/*
 		 * preload all the possible resolvers in the wider scope before specializing the
@@ -503,8 +512,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
 			}
 
-			ResolutionScope scope = Resolver.INSTANCE.resolve((Observable) observable, this.resolutionScope,
-					Mode.RESOLUTION, scale, model);
+			ResolutionScope scope = Resolver.INSTANCE.resolve((Observable) observable,
+					this.resolutionScope.getChildScope(observable, scale, name), Mode.RESOLUTION, scale, model);
 
 			if (scope.getCoverage().isRelevant()) {
 
@@ -553,7 +562,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				monitor);
 
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
-		Dataflow dataflow = resolve(obs, scale, subtask);
+		Dataflow dataflow = resolve(obs, name, scale, subtask);
 
 		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
 				(Actuator) this.actuator, ((Monitor) monitor).get(subtask));
@@ -656,7 +665,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		scale = Scale.contextualize(scale, contextSubject.getScale(), model == null ? null : model.getAnnotations(),
 				monitor);
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
-		Dataflow dataflow = resolve(obs, scale, subtask);
+		Dataflow dataflow = resolve(obs, name, scale, subtask);
 		IRelationship ret = (IRelationship) dataflow.withMetadata(metadata).withScopeScale(scale)
 				.connecting((IDirectObservation) source, (IDirectObservation) target)
 				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));

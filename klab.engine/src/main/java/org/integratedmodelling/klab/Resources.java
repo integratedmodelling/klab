@@ -137,11 +137,11 @@ public enum Resources implements IResourceService {
 
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
 	Map<String, IUrnAdapter> urnAdapters = Collections.synchronizedMap(new HashMap<>());
-	
+
 	/**
-	 * Cache for universal resources coming from nodes, to avoid continuous retrieval.
-	 * TODO FIXME expire these regularly based on timestamp and store original node for
-	 * a quick node check before use.
+	 * Cache for universal resources coming from nodes, to avoid continuous
+	 * retrieval. TODO FIXME expire these regularly based on timestamp and store
+	 * original node for a quick node check before use.
 	 */
 	Map<String, IResource> remoteCache = Collections.synchronizedMap(new HashMap<>());
 
@@ -438,30 +438,30 @@ public enum Resources implements IResourceService {
 		if (urn.isLocal()) {
 			ret = getLocalResourceCatalog().get(urn.getUrn());
 		} else if (urn.isUniversal()) {
-				
+
 			// TODO this should periodically expire resources whose timestamp is > x
 			if (this.remoteCache.containsKey(urn.getUrn())) {
 				ret = this.remoteCache.get(urn.getUrn());
 			} else {
-			
-			IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
-			if (adapter != null) {
-				// locally available, use local
-				return adapter.getResource(urns);
-			} else {
-				// if 1+ nodes provide the adapter, ask it for the
-				// resource descriptor.
-				INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
-				if (node != null) {
-					/*
-					 * get the resource descriptor directly from the node
-					 */
-					ResourceReference reference = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN,
-							ResourceReference.class, "urn", urn.getUrn());
-					ret = new Resource(reference);
-					this.remoteCache.put(urn.getUrn(), ret);
+
+				IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
+				if (adapter != null) {
+					// locally available, use local
+					return adapter.getResource(urns);
+				} else {
+					// if 1+ nodes provide the adapter, ask it for the
+					// resource descriptor.
+					INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
+					if (node != null) {
+						/*
+						 * get the resource descriptor directly from the node
+						 */
+						ResourceReference reference = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN,
+								ResourceReference.class, "urn", urn.getUrn());
+						ret = new Resource(reference);
+						this.remoteCache.put(urn.getUrn(), ret);
+					}
 				}
-			}
 			}
 		} else {
 			ret = publicResourceCatalog.get(urn.getUrn());
@@ -923,7 +923,6 @@ public enum Resources implements IResourceService {
 		return data == null ? null : new Pair<>(ctxArtifact, data.getArtifact());
 	}
 
-
 	/**
 	 * Resolve a URN to data using default builder and context, using the full
 	 * geometry of the resource and a suitable scale (i.e. downscaling if the
@@ -935,7 +934,7 @@ public enum Resources implements IResourceService {
 	 * @return a pair containing the context artifact and the artifact built by the
 	 *         resource (iterable if objects)
 	 */
-	//@Override
+	// @Override
 	public Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor) {
 		return resolveResourceToArtifact(urn, monitor, false, null, null);
 	}
@@ -960,7 +959,7 @@ public enum Resources implements IResourceService {
 				Expression.emptyContext(monitor));
 		return builder.build();
 	}
-	
+
 	/**
 	 * Non-semantic version that will use the passed geometry.
 	 * 
@@ -979,16 +978,20 @@ public enum Resources implements IResourceService {
 					"adapter for resource of type " + resource.getAdapterType() + " not available");
 		}
 		adapter.getEncoder().getEncodedData(resource, split.getSecond(), geometry, builder,
-				Expression.emptyContext(monitor));
+				Expression.emptyContext(geometry, monitor));
 		return builder.build();
 	}
 
 	/**
 	 * Resolve a resource to data in a passed geometry. This involves retrieval of
 	 * the adapter, decoding of the resource (remotely or locally according to the
-	 * resource itself) and building of the data object. If no exceptions are
-	 * thrown, the result is guaranteed consistent with the geometry and free of
-	 * errors.
+	 * resource itself) and building of the data object through the passed scope. If
+	 * no exceptions are thrown, the result is guaranteed consistent with the
+	 * geometry and free of errors.
+	 * <p>
+	 * If this is used and a runtime scope is passed, this <b>will build</b>
+	 * observations in the context! If the resource is being tried out for later
+	 * building, use one of the getters that use a builder.
 	 * 
 	 * @param resource
 	 * @param urnParameters
@@ -1188,7 +1191,7 @@ public enum Resources implements IResourceService {
 	public Builder createResourceBuilder() {
 		return new ResourceBuilder();
 	}
-	
+
 	@Override
 	public boolean isResourceOnline(String urn) {
 		if (!Urns.INSTANCE.isLocal(urn) && !Urns.INSTANCE.isUniversal(urn)) {
@@ -1628,7 +1631,7 @@ public enum Resources implements IResourceService {
 	public void revalidate(IResource resource, IMonitor monitor) {
 
 		monitor.info("Revalidating resource " + resource.getUrn());
-		
+
 		/*
 		 * first validate the offline status
 		 */
@@ -1659,10 +1662,10 @@ public enum Resources implements IResourceService {
 		}
 
 		monitor.info("Initial status is " + (online ? "online" : "OFFLINE"));
-		
+
 		// TODO Auto-generated method stub
 		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
-		
+
 	}
 
 }

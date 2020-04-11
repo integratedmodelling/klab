@@ -196,24 +196,17 @@ export object delineatewatersheds
 void watershed
 	"Resolves a watershed by finding the stream outlet and tracing flows to it."
 {
-	import number elevation
-		"Elevation at a suitable resolution to perform watershed extraction calculations."
+	import number flow_direction
+		"The heading of the outgoing horizontal water flow."
 
 	export object stream_outlet
 		"The stream outlet. If applied to a proper watershed shape and with a suitable
 		 resolution, only one outlet should be found."
-		 
-	export number upstream_cell_count
-		"An observation of the number of cells draining into each cell"	 
-		 
-	export number flow_directions_d8
-		"The D8 numeric code for flow direction"
 		
 	geometry *
 	
 	class org.integratedmodelling.geoprocessing.hydrology.WatershedResolver
 }
-
 
 export object findwatersheds
 	"Extracts the most appropriately scaled watershed polygon(s) based on the HydroBASINS product, to be further
@@ -224,7 +217,15 @@ export object findwatersheds
 	     or by adding even small proportion coverage. Default false, choice dependent on
 	     minimum coverage."
 		default false
+
+	optional parameter boolean boundingbox
+		"If true, produce only the bounding box instead of the outline of each watershed."
+		default false
 		
+	optional parameter boolean align
+		"If true, align the bounding box of the shape to the grid in the context, if any."
+		default false
+
 	optional enum strategy
 		"If COVER, take as many smaller watersheds as it takes to compute the requested coverage. If EXPAND,
 		 switch to the largest watershed even if it's larger than the context. Default COVER."
@@ -233,6 +234,10 @@ export object findwatersheds
 	optional number mincoverage
 		"The minimum proportion of area needed for a watershed to be included in the result compared with the
 		 area of the original context. Default 0.2. Ineffective if whole = true."
+		 
+	optional number maxobjects
+		"The maximum number of objects to produce. If this is passed, watersheds will be chosen based on the
+		 percentage of coverage of the context."		 
 		
 	geometry #s0
 	

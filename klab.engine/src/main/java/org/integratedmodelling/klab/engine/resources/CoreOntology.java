@@ -398,6 +398,10 @@ public class CoreOntology extends AbstractWorkspace {
 
 	public Concept getCoreType(Set<Type> type) {
 
+		if (type.contains(Type.ANGLE)) {
+			System.out.println("FOCK");
+		}
+		
 		if (type.contains(Type.NOTHING)) {
 			return OWL.INSTANCE.getNothing();
 		}
@@ -433,17 +437,7 @@ public class CoreOntology extends AbstractWorkspace {
 		} else if (type.contains(Type.EVENT)) {
 			ret = Type.EVENT;
 		} else if (type.contains(Type.RELATIONSHIP)) {
-			// if (type.contains(Type.FUNCTIONAL)) {
-			// ret = Type.FUNCTIONAL;
-			// } else if (type.contains(Type.STRUCTURAL)) {
-			// ret = Type.STRUCTURAL;
-			// } else {
 			ret = Type.RELATIONSHIP;
-			// }
-		} else if (type.contains(Type.EXTENSIVE_PROPERTY)) {
-			ret = Type.EXTENSIVE_PROPERTY;
-		} else if (type.contains(Type.INTENSIVE_PROPERTY)) {
-			ret = Type.INTENSIVE_PROPERTY;
 		} else /* if (type.contains(Type.TRAIT)) { */
 		if (type.contains(Type.IDENTITY)) {
 			ret = Type.IDENTITY;
@@ -453,7 +447,6 @@ public class CoreOntology extends AbstractWorkspace {
 			ret = Type.REALM;
 		} else if (type.contains(Type.ORDERING)) {
 			ret = Type.ORDERING;
-			// }
 		} else if (type.contains(Type.ROLE)) {
 			ret = Type.ROLE;
 		} else if (type.contains(Type.CONFIGURATION)) {
@@ -505,15 +498,7 @@ public class CoreOntology extends AbstractWorkspace {
 		} else if (type.contains(Type.VISCOSITY)) {
 			ret = Type.VISCOSITY;
 		} else if (type.contains(Type.AGENT)) {
-			// if (type.contains(Type.DELIBERATIVE)) {
-			// ret = Type.DELIBERATIVE;
-			// } else if (type.contains(Type.INTERACTIVE)) {
-			// ret = Type.INTERACTIVE;
-			// } else if (type.contains(Type.REACTIVE)) {
-			// ret = Type.REACTIVE;
-			// } else {
 			ret = Type.AGENT;
-			// }
 		} else if (type.contains(Type.UNCERTAINTY)) {
 			ret = Type.UNCERTAINTY;
 		} else if (type.contains(Type.PROBABILITY)) {
@@ -534,6 +519,12 @@ public class CoreOntology extends AbstractWorkspace {
 			ret = Type.PRESENCE;
 		} else if (type.contains(Type.EXTENT)) {
 			ret = Type.EXTENT;
+		} 
+		// THESE COME AFTER ALL THE POSSIBLE SUBCLASSES
+		else if (type.contains(Type.EXTENSIVE_PROPERTY)) {
+			ret = Type.EXTENSIVE_PROPERTY;
+		} else if (type.contains(Type.INTENSIVE_PROPERTY)) {
+			ret = Type.INTENSIVE_PROPERTY;
 		} /*
 			 * else if (type.contains(Type.ASSESSMENT)) { ret = Type.ASSESSMENT; }
 			 */

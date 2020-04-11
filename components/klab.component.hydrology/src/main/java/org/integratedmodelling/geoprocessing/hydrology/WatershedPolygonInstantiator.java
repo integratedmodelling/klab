@@ -7,17 +7,17 @@ import org.integratedmodelling.klab.components.geospace.processing.ScaleChooserI
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class WatershedPolygonInstantiator extends ScaleChooserInstantiator implements IExpression {
-	
+
 	static String[] resourceUrns = { 
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev04_v1c",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev05_v1c",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev06_v1c",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev07_v1c",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev08_v1c",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev09_v1c",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev10_v1c",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev11_v1c",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev12_v1c" };
+			"local:ferdinando.villa:im.watersheds:hybas_eu_lev04_v1c#intersect=false",
+			"local:ferdinando.villa:im.watersheds:hybas_eu_lev05_v1c#intersect=false",
+			"local:ferdinando.villa:im.watersheds:hybas_eu_lev06_v1c#intersect=false",
+			"local:ferdinando.villa:im.watersheds:hybas_eu_lev07_v1c#intersect=false",
+			"local:ferdinando.villa:im.watersheds:hybas_eu_lev08_v1c#intersect=false",
+			"local:ferdinando.villa:im.watersheds:hybas_eu_lev09_v1c#intersect=false",
+			"local:ferdinando.villa:im.watersheds:hybas_eu_lev10_v1c#intersect=false",
+			"local:ferdinando.villa:im.watersheds:hybas_eu_lev11_v1c#intersect=false",
+			"local:ferdinando.villa:im.watersheds:hybas_eu_lev12_v1c#intersect=false" };
 
 	public WatershedPolygonInstantiator() {
 	}
@@ -28,8 +28,20 @@ public class WatershedPolygonInstantiator extends ScaleChooserInstantiator imple
 
 	@Override
 	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+		
 		boolean whole = parameters.get("whole", Boolean.FALSE);
+		ScaleChooserInstantiator.Strategy strategy = ScaleChooserInstantiator.Strategy
+				.valueOf(parameters.get("strategy", "cover").toUpperCase());
+		int maxobjects = parameters.get("maxobjects", -1.0).intValue();
+		double minCoverage = parameters.get("mincoverage", 0.2);
+		
 		WatershedPolygonInstantiator ret = new WatershedPolygonInstantiator(whole);
+		
+		ret.setMaxObjects(maxobjects);
+		ret.setMinCoverage(minCoverage);
+		ret.setStrategy(strategy);
+		ret.setWhole(whole);
+		
 		return ret;
 	}
 
