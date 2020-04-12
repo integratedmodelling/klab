@@ -12,6 +12,7 @@ import java.util.Map;
 import org.geotools.data.wfs.WFSDataStore;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -41,7 +42,11 @@ public class WfsImporter implements IResourceImporter {
 			int index = importLocation.indexOf('?');
 			importLocation = importLocation.substring(0, index);
 			WFSDataStore dataStore = WfsAdapter.getDatastore(importLocation, Version.create(wfsVersion));
-
+			String regex = null;
+			if (userData.contains("regex")) {
+				regex = (String) userData.get(Resources.REGEX_ENTRY);
+				userData.remove(Resources.REGEX_ENTRY);
+			}
 			/*
 			 * capabilities will come with EPSG:4326 lat/lon in all services except 1.0.0. But fixing the mess
 			 * entails lots worse than the following line. For now just force 1.0.0 and screw it.
@@ -49,6 +54,11 @@ public class WfsImporter implements IResourceImporter {
 			// validator.swapLatlonAxes(!wfsVersion.equals("1.0.0"));
 
 			for (String layer : dataStore.getTypeNames()) {
+				
+				if (regex != null && !layer.matches(regex)) {
+					Logging.INSTANCE.info("layer " + layer + " doesn't match regex, skipped.");
+					continue;
+				}
 
 				try {
 

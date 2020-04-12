@@ -71,6 +71,7 @@ public class BulkImportResource extends WizardPage {
 
 	private Text text;
 	private Combo combo;
+	private Text regexp;
 
 	private static String NO_CHOICE = "All applicable (may result in errors)";
 	private Table table;
@@ -255,7 +256,8 @@ public class BulkImportResource extends WizardPage {
 			}
 		});
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
+		
+		
 		Button btnChooseFolder = new Button(container, SWT.NONE);
 		btnChooseFolder.addMouseListener(new MouseAdapter() {
 			@Override
@@ -273,7 +275,13 @@ public class BulkImportResource extends WizardPage {
 			}
 		});
 		btnChooseFolder.setText("Choose folder");
-
+		
+		Label lblNewLabel_2 = new Label(container, SWT.NONE);
+		lblNewLabel_2.setText("REGEX filter");
+		
+		regexp = new Text(container, SWT.BORDER);
+		regexp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		
 		templateLabel = new Label(container, SWT.NONE);
 		templateLabel.setEnabled(false);
 		templateLabel.setText("Template variables");
@@ -326,6 +334,10 @@ public class BulkImportResource extends WizardPage {
 		String text = combo.getText();
 		int ns = text.indexOf(' ');
 		return ns > 0 ? text = text.substring(0, ns) : text;
+	}
+	
+	public String getRegexp() {
+		return regexp.getText();
 	}
 	
 	public String getAdapter() {
