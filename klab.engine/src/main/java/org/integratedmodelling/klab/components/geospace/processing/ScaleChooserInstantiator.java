@@ -12,6 +12,10 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.extents.Envelope;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -64,7 +68,7 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	private boolean boundingBox;
 	private boolean alignGrid;
 	private int bufferCells = 0;
-	
+
 	public void setBoundingBox(boolean boundingBox) {
 		this.boundingBox = boundingBox;
 	}
@@ -102,7 +106,8 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	}
 
 	/**
-	 * Return all URNs for the resources to choose from. Must be in coarse to fine-scale order.
+	 * Return all URNs for the resources to choose from. Must be in coarse to
+	 * fine-scale order.
 	 * 
 	 * @return
 	 */
@@ -111,9 +116,14 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	@Override
 	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
 			throws KlabException {
-		
+
 		if (bufferCells > 0 && boundingBox) {
 			alignGrid = true;
+		}
+
+		Grid grid = null;
+		if (context.getScale().getSpace() instanceof Space) {
+			grid = (Grid) ((Space) context.getScale().getSpace()).getGrid();
 		}
 
 		if (context.getScale().getSpace() == null || context.getScale().getSpace().getDimensionality() < 2) {
@@ -156,7 +166,7 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		 */
 		IShape shape = context.getScale().getSpace().getShape();
 		double ctxarea = shape.getStandardizedArea();
-		
+
 		for (Triple<String, IScale, IMetadata> data : tmp) {
 
 			boolean ok = whole;
@@ -168,16 +178,16 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 				 */
 				IShape space = data.getSecond().getSpace().getShape();
 				IShape commn = shape.intersection(space);
-				ok = (commn.getStandardizedArea()/ctxarea) >= minCoverage;
+				ok = (commn.getStandardizedArea() / ctxarea) >= minCoverage;
 
 				/*
 				 * 
 				 */
-				
+
 				if (ok) {
 					keep.add(data);
 				}
-				
+
 			} else {
 				keep.add(data);
 			}
@@ -191,16 +201,14 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 
 		// make the objects
 		for (Triple<String, IScale, IMetadata> data : keep) {
-			
+
 			IScale scale = data.getSecond();
 			if (boundingBox) {
-				scale = Scale.substituteExtent(scale, scale.getSpace().getShape().getBoundingExtent());
+				IShape bbox = Shape.create((Envelope)scale.getSpace().getShape().getEnvelope());
+				scale = Scale.substituteExtent(scale,
+						grid == null ? bbox : Space.create((Shape) bbox, grid, alignGrid));
 			}
-			
-			if (alignGrid) {
-				// TODO!
-			}
-			
+
 			ret.add(context.newObservation(semantics, data.getFirst(), scale, data.getThird()));
 		}
 

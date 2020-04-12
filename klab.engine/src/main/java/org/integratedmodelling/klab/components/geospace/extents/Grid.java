@@ -1311,5 +1311,16 @@ public class Grid extends Area implements IGrid {
 		}
 		long offset = getOffsetFromWorldCoordinates(coordinates[0], coordinates[1]);
 		return getCell(offset);
+	}
+
+	/**
+	 * Get a space extent with the passed shape and a grid that aligns with ours. Easier said
+	 * than done of course.
+	 * 
+	 * @param bbox
+	 * @return
+	 */
+	public Space getAlignedGrid(IShape bbox) {
+		return Space.create(shape, this, true);
 	};
 }

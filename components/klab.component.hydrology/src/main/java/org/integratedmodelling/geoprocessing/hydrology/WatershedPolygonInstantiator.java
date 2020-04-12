@@ -30,6 +30,8 @@ public class WatershedPolygonInstantiator extends ScaleChooserInstantiator imple
 	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		
 		boolean whole = parameters.get("whole", Boolean.FALSE);
+		boolean boundingbox = parameters.get("boundingbox", Boolean.FALSE);
+		boolean align = parameters.get("align", Boolean.FALSE);
 		ScaleChooserInstantiator.Strategy strategy = ScaleChooserInstantiator.Strategy
 				.valueOf(parameters.get("strategy", "cover").toUpperCase());
 		int maxobjects = parameters.get("maxobjects", -1.0).intValue();
@@ -41,7 +43,8 @@ public class WatershedPolygonInstantiator extends ScaleChooserInstantiator imple
 		ret.setMinCoverage(minCoverage);
 		ret.setStrategy(strategy);
 		ret.setWhole(whole);
-		
+		ret.setBoundingBox(boundingbox);
+		ret.setAlignGrid(align);
 		return ret;
 	}
 

@@ -65,11 +65,11 @@ public enum GeotoolsUtils {
 	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue,
 			Function<Object, Object> transformation) {
 
-		Space space = (Space) state.getScale().getSpace();
-		if (space == null || space.getGrid() == null) {
+		ISpace space = state.getScale().getSpace();
+		if (!(space instanceof Space) || ((Space)space).getGrid() == null) {
 			throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
 		}
-		Grid grid = (Grid) space.getGrid();
+		Grid grid = (Grid) ((Space)space).getGrid();
 
 		/*
 		 * build a coverage.
@@ -118,7 +118,7 @@ public enum GeotoolsUtils {
 			}
 		}
 
-		return rasterFactory.create(state.getObservable().getName(), raster, space.getShape().getJTSEnvelope());
+		return rasterFactory.create(state.getObservable().getName(), raster, ((Space)space).getShape().getJTSEnvelope());
 
 	}
 
