@@ -254,21 +254,15 @@ public enum Resolver {
 		 * resolve the distribution context and we leave it to the runtime context to
 		 * finish the job, as we do with the resolution of the individual instances.
 		 */
-		IConcept context = observable.getContext();
-		if (!parentScope.isDeferred() && context != null && parentScope.getContextObservable() != null
-				&& !parentScope.getContextObservable().getType().is(context)) {
-
-			parentScope.getMonitor()
-					.info("Context of " + observable.getType().getDefinition() + " (" + context.getDefinition()
-							+ ") is incompatible with current context ("
-							+ parentScope.getContextObservable().getType().getDefinition() + "): resolving "
-							+ context + " and deferring resolution");
+		Observable deferTo = parentScope.getDeferredObservableFor(observable);
+		
+		if (deferTo != null) {
 
 			/*
 			 * Distribute the observable over the observation of its context. We don't know
 			 * what the context observation will produce
 			 */
-			ResolutionScope ret = resolve(Observable.promote(context), parentScope, Mode.INSTANTIATION);
+			ResolutionScope ret = resolve(deferTo, parentScope, Mode.INSTANTIATION);
 			if (ret.getCoverage().isRelevant()) {
 				ResolutionScope deferred = ret.getChildScope(observable, mode);
 				deferred.setDeferred(true);

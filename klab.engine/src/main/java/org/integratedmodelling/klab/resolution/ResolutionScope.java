@@ -1143,4 +1143,25 @@ public class ResolutionScope implements IResolutionScope {
 		this.deferred = deferred;
 	}
 
+	public Observable getDeferredObservableFor(Observable observable2) {
+
+		if (observable2.equals(this.observable)) {
+			// resolving self
+			return null;
+		}
+		
+		IConcept context = observable2.getContext();
+
+		if (!isDeferred() && context != null && getContextObservable() != null
+				&& !getContextObservable().getType().is(context)) {
+
+			monitor.info("Context of " + observable2.getType().getDefinition() + " (" + context.getDefinition()
+					+ ") is incompatible with current context (" + getContextObservable().getType().getDefinition()
+					+ "): resolving " + context + " and deferring resolution");
+			return Observable.promote(context);
+		}
+
+		return null;
+	}
+
 }

@@ -1,9 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.processing;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -14,7 +12,6 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -66,6 +63,7 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	private int maxObjects = -1;
 	private boolean boundingBox;
 	private boolean alignGrid;
+	private int bufferCells = 0;
 	
 	public void setBoundingBox(boolean boundingBox) {
 		this.boundingBox = boundingBox;
@@ -104,7 +102,7 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	}
 
 	/**
-	 * Return all URNs for the resources to choose from.
+	 * Return all URNs for the resources to choose from. Must be in coarse to fine-scale order.
 	 * 
 	 * @return
 	 */
@@ -113,6 +111,10 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	@Override
 	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
 			throws KlabException {
+		
+		if (bufferCells > 0 && boundingBox) {
+			alignGrid = true;
+		}
 
 		if (context.getScale().getSpace() == null || context.getScale().getSpace().getDimensionality() < 2) {
 			throw new IllegalStateException("scaling instantiator must be executed in a 2-dimensional spatial context");
@@ -203,6 +205,10 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		}
 
 		return ret;
+	}
+
+	public void setBufferCells(int bufferCells) {
+		this.bufferCells = bufferCells;
 	}
 
 }

@@ -269,7 +269,10 @@ public class Flowchart {
 			ret.compileActuator(actuator, null);
 
 			if (!(actuator.getObservable().is(Type.COUNTABLE) && actuator.getMode() == Mode.RESOLUTION)) {
-				ret.outputs.put(actuator.getName(), ret.root.getOrCreateOutput(actuator.getName()));
+				if (ret.root != null) {
+					// FIXME this should never be null
+					ret.outputs.put(actuator.getName(), ret.root.getOrCreateOutput(actuator.getName()));
+				}
 			}
 		}
 		return ret;

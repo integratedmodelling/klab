@@ -38,7 +38,6 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
-import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -543,7 +542,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	 * DataflowPool object or something like that.
 	 */
 	@Override
-	public ICountableObservation newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
+	public IDirectObservation newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
 			throws KlabException {
 
 		if (!observable.is(Type.COUNTABLE)) {
@@ -551,7 +550,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					"RuntimeContext: cannot create a non-countable observation with newObservation()");
 		}
 
-		ICountableObservation ret = null;
+		IDirectObservation ret = null;
 		Observable obs = new Observable((Observable) observable);
 //		obs.setName(name);
 
@@ -564,10 +563,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
 
-		ret = (ICountableObservation) dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
+		IArtifact observation = dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
 				(Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
-		if (ret != null) {
+		if (observation instanceof IDirectObservation) {
+			ret = (IDirectObservation) observation;
 			((DirectObservation) ret).setName(name);
 			for (ObservationListener listener : listeners.values()) {
 				listener.newObservation(ret);
