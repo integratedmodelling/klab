@@ -1179,10 +1179,12 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			File file = null;
 			switch (message.getType()) {
 			case CreateTestCase:
-				file = project.createTestCase(request.getAssetId(), request.getScriptName(), request.getScriptPath());
+				file = project.createTestCase(request.getAssetId(), request.getScriptName(), request.getScriptPath(),
+						request.getScriptType());
 				break;
 			case CreateScript:
-				file = project.createScript(request.getAssetId(), request.getScriptName(), request.getScriptPath());
+				file = project.createScript(request.getAssetId(), request.getScriptName(), request.getScriptPath(),
+						request.getScriptType());
 				break;
 			case CreateNamespace:
 				file = project.createNamespace(request.getAssetId(), false, request.getParameters() != null
@@ -1200,7 +1202,12 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			// send the message before adding, as the addition will trigger a modification
 			// message which would cause
 			// an issue
-			Resources.INSTANCE.getLoader().add(file);
+			if ("kim".equals(request.getScriptType())) {
+				Resources.INSTANCE.getLoader().add(file);
+			} else if ("kactor".equals(request.getScriptType())) {
+				KActors.INSTANCE.add(file);
+			}
+			
 			break;
 
 		case CreateBehavior:

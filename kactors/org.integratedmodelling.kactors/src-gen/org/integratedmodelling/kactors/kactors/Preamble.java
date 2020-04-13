@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isApp <em>App</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTest <em>Test</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isUser <em>User</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isLibrary <em>Library</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isBehavior <em>Behavior</em>}</li>
@@ -63,6 +64,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setApp(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Test</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Test</em>' attribute.
+   * @see #setTest(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Test()
+   * @model
+   * @generated
+   */
+  boolean isTest();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isTest <em>Test</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Test</em>' attribute.
+   * @see #isTest()
+   * @generated
+   */
+  void setTest(boolean value);
 
   /**
    * Returns the value of the '<em><b>User</b></em>' attribute.

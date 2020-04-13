@@ -60,6 +60,8 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 			this.type = Type.TRAITS;
 		} else if (preamble.isUser()) {
 			this.type = Type.USER;
+		} else if (preamble.isTest()) {
+			this.type = Type.UNITTEST;
 		}
 
 		for (String s : preamble.getImports()) {

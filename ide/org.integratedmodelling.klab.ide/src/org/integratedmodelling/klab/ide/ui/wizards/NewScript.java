@@ -41,17 +41,20 @@ import org.integratedmodelling.kim.api.IKimNamespace.Role;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.Activator;
+import org.eclipse.swt.widgets.Button;
 
 public class NewScript extends WizardPage {
-
-	private Text    text;
     private Combo   combo;
     private IKimProject targetProject;
     private Text scriptName;
+    private Button btnKimContext;
+    private Button btnKactorsTest;
+	private Role role;
     
     public NewScript(IKimProject targetProject, Role role) {
         super("wizardPage");
         this.targetProject = targetProject;
+        this.role = role;
 		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
         setTitle("New k.LAB " + (role == Role.SCRIPT ? "script" : "test case"));
         setDescription("Create a new " + (role == Role.SCRIPT ? "script" : "test case"));
@@ -66,32 +69,15 @@ public class NewScript extends WizardPage {
 
         Label lblNewLabel = new Label(container, SWT.NONE);
         FormData fd_lblNewLabel = new FormData();
-        fd_lblNewLabel.left = new FormAttachment(0, 57);
         fd_lblNewLabel.top = new FormAttachment(0, 38);
         lblNewLabel.setLayoutData(fd_lblNewLabel);
         lblNewLabel.setText("Target project");
 
-        text = new Text(container, SWT.BORDER);
-        FormData fd_text = new FormData();
-        fd_text.right = new FormAttachment(100, -83);
-        text.setLayoutData(fd_text);
-
         combo = new Combo(container, SWT.READ_ONLY);
         FormData fd_combo = new FormData();
-        fd_combo.right = new FormAttachment(100, -84);
-        fd_combo.left = new FormAttachment(lblNewLabel, 29);
         fd_combo.top = new FormAttachment(lblNewLabel, -3, SWT.TOP);
+        fd_combo.left = new FormAttachment(lblNewLabel, 18);
         combo.setLayoutData(fd_combo);
-
-        Label lblNewLabel_1 = new Label(container, SWT.NONE);
-        lblNewLabel_1.setToolTipText("The context ID is the name of the context for the new test and the name of the script file.");
-        fd_text.left = new FormAttachment(lblNewLabel_1, 27);
-        lblNewLabel_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
-        FormData fd_lblNewLabel_1 = new FormData();
-        fd_lblNewLabel_1.top = new FormAttachment(text, 3, SWT.TOP);
-        fd_lblNewLabel_1.left = new FormAttachment(lblNewLabel, 0, SWT.LEFT);
-        lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
-        lblNewLabel_1.setText("Context ID");
 
         /*
          * Add open projects in namespace, preselecting the one we started with, if any.
@@ -109,21 +95,38 @@ public class NewScript extends WizardPage {
         combo.select(selection);
         
         Label lblScriptName = new Label(container, SWT.NONE);
+        fd_lblNewLabel.right = new FormAttachment(lblScriptName, 0, SWT.RIGHT);
         lblScriptName.setToolTipText("The script name is the name of the script or test as set in the correspondent annotation. It should be a hierarchical path name identifying the test suite and topic.");
         lblScriptName.setText("Script name");
         lblScriptName.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
         FormData fd_lblScriptName = new FormData();
         fd_lblScriptName.top = new FormAttachment(lblNewLabel, 30);
-        fd_lblScriptName.left = new FormAttachment(lblNewLabel, 0, SWT.LEFT);
+        fd_lblScriptName.left = new FormAttachment(0, 57);
         lblScriptName.setLayoutData(fd_lblScriptName);
         
         scriptName = new Text(container, SWT.BORDER);
-        fd_text.top = new FormAttachment(scriptName, 17);
+        fd_combo.right = new FormAttachment(scriptName, 0, SWT.RIGHT);
         FormData fd_scriptName = new FormData();
-        fd_scriptName.top = new FormAttachment(lblScriptName, -3, SWT.TOP);
-        fd_scriptName.left = new FormAttachment(text, 0, SWT.LEFT);
         fd_scriptName.right = new FormAttachment(100, -83);
+        fd_scriptName.left = new FormAttachment(lblScriptName, 18);
+        fd_scriptName.top = new FormAttachment(lblScriptName, -3, SWT.TOP);
         scriptName.setLayoutData(fd_scriptName);
+        
+        btnKimContext = new Button(container, SWT.RADIO);
+        btnKimContext.setSelection(this.role == Role.TESTCASE);
+        FormData fd_btnKimContext = new FormData();
+        fd_btnKimContext.top = new FormAttachment(scriptName, 29);
+        fd_btnKimContext.left = new FormAttachment(scriptName, 0, SWT.LEFT);
+        btnKimContext.setLayoutData(fd_btnKimContext);
+        btnKimContext.setText("k.IM context");
+        
+        btnKactorsTest = new Button(container, SWT.RADIO);
+        btnKactorsTest.setSelection(this.role == Role.SCRIPT);
+        FormData fd_btnKactorsTest = new FormData();
+        fd_btnKactorsTest.top = new FormAttachment(btnKimContext, 0, SWT.TOP);
+        fd_btnKactorsTest.left = new FormAttachment(btnKimContext, 23);
+        btnKactorsTest.setLayoutData(fd_btnKactorsTest);
+        btnKactorsTest.setText("k.Actors");
 
     }
 
@@ -131,9 +134,10 @@ public class NewScript extends WizardPage {
         return combo;
     }
 
-    public Text getNamespace() {
-        return text;
+    public boolean isActorsFile() {
+    	return btnKactorsTest.getSelection();
     }
+    
     public Text getScriptName() {
         return scriptName;
     }

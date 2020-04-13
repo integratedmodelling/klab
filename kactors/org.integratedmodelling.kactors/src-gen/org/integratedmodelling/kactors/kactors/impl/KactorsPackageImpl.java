@@ -456,7 +456,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_User()
+  public EAttribute getPreamble_Test()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(1);
   }
@@ -467,7 +467,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Library()
+  public EAttribute getPreamble_User()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(2);
   }
@@ -478,7 +478,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Behavior()
+  public EAttribute getPreamble_Library()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(3);
   }
@@ -489,7 +489,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Name()
+  public EAttribute getPreamble_Behavior()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(4);
   }
@@ -500,7 +500,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Imports()
+  public EAttribute getPreamble_Name()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(5);
   }
@@ -511,7 +511,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Worldview()
+  public EAttribute getPreamble_Imports()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(6);
   }
@@ -522,7 +522,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Observable()
+  public EAttribute getPreamble_Worldview()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(7);
   }
@@ -533,9 +533,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getPreamble_Observable()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getPreamble_Observables()
   {
-    return (EReference)preambleEClass.getEStructuralFeatures().get(8);
+    return (EReference)preambleEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -546,7 +557,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Label()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -557,7 +568,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Description()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -568,7 +579,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Permissions()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -579,7 +590,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Authors()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -590,7 +601,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Version()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -601,7 +612,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getPreamble_Created()
   {
-    return (EReference)preambleEClass.getEStructuralFeatures().get(14);
+    return (EReference)preambleEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -612,7 +623,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Createcomment()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(15);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -623,7 +634,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getPreamble_Modified()
   {
-    return (EReference)preambleEClass.getEStructuralFeatures().get(16);
+    return (EReference)preambleEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -634,7 +645,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Modcomment()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(17);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -2753,6 +2764,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     preambleEClass = createEClass(PREAMBLE);
     createEAttribute(preambleEClass, PREAMBLE__APP);
+    createEAttribute(preambleEClass, PREAMBLE__TEST);
     createEAttribute(preambleEClass, PREAMBLE__USER);
     createEAttribute(preambleEClass, PREAMBLE__LIBRARY);
     createEAttribute(preambleEClass, PREAMBLE__BEHAVIOR);
@@ -3036,6 +3048,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     initEClass(preambleEClass, Preamble.class, "Preamble", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getPreamble_App(), ecorePackage.getEBoolean(), "app", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Test(), ecorePackage.getEBoolean(), "test", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_User(), ecorePackage.getEBoolean(), "user", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Library(), ecorePackage.getEBoolean(), "library", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Behavior(), ecorePackage.getEBoolean(), "behavior", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

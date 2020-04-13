@@ -32,6 +32,7 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isApp <em>App</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTest <em>Test</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isUser <em>User</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isLibrary <em>Library</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isBehavior <em>Behavior</em>}</li>
@@ -74,6 +75,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected boolean app = APP_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isTest() <em>Test</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTest()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean TEST_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isTest() <em>Test</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTest()
+   * @generated
+   * @ordered
+   */
+  protected boolean test = TEST_EDEFAULT;
 
   /**
    * The default value of the '{@link #isUser() <em>User</em>}' attribute.
@@ -409,6 +430,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     app = newApp;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__APP, oldApp, app));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isTest()
+  {
+    return test;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTest(boolean newTest)
+  {
+    boolean oldTest = test;
+    test = newTest;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__TEST, oldTest, test));
   }
 
   /**
@@ -923,6 +969,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     {
       case KactorsPackage.PREAMBLE__APP:
         return isApp();
+      case KactorsPackage.PREAMBLE__TEST:
+        return isTest();
       case KactorsPackage.PREAMBLE__USER:
         return isUser();
       case KactorsPackage.PREAMBLE__LIBRARY:
@@ -974,6 +1022,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     {
       case KactorsPackage.PREAMBLE__APP:
         setApp((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__TEST:
+        setTest((Boolean)newValue);
         return;
       case KactorsPackage.PREAMBLE__USER:
         setUser((Boolean)newValue);
@@ -1045,6 +1096,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__APP:
         setApp(APP_EDEFAULT);
         return;
+      case KactorsPackage.PREAMBLE__TEST:
+        setTest(TEST_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__USER:
         setUser(USER_EDEFAULT);
         return;
@@ -1112,6 +1166,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     {
       case KactorsPackage.PREAMBLE__APP:
         return app != APP_EDEFAULT;
+      case KactorsPackage.PREAMBLE__TEST:
+        return test != TEST_EDEFAULT;
       case KactorsPackage.PREAMBLE__USER:
         return user != USER_EDEFAULT;
       case KactorsPackage.PREAMBLE__LIBRARY:
@@ -1163,6 +1219,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (app: ");
     result.append(app);
+    result.append(", test: ");
+    result.append(test);
     result.append(", user: ");
     result.append(user);
     result.append(", library: ");

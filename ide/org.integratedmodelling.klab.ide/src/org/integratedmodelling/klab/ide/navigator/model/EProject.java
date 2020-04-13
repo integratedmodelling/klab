@@ -42,7 +42,6 @@ public class EProject extends ENavigatorItem {
 		}
 		for (IKActorsBehavior child : delegate.getBehaviors()) {
 			ret.add(new EActorBehavior(child, this));
-
 		}
 
 		/*
