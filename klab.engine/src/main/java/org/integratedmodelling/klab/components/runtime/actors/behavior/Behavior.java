@@ -9,9 +9,9 @@ import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Annotations;
-import org.integratedmodelling.klab.api.IStatement;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -104,6 +104,11 @@ public class Behavior implements IBehavior {
 		}
 	}
 
+	private Behavior() {
+		// empty behavior
+		this.statement = new KActorsBehavior();
+	}
+	
 	@Override
 	public String getId() {
 		return this.statement.getName();
@@ -115,7 +120,7 @@ public class Behavior implements IBehavior {
 	}
 
 	@Override
-	public IStatement getStatement() {
+	public IKActorsBehavior getStatement() {
 		return this.statement;
 	}
 
@@ -183,6 +188,10 @@ public class Behavior implements IBehavior {
 	@Override
 	public Action getAction(String actionId) {
 		return actions.get(actionId);
+	}
+
+	public static IBehavior empty() {
+		return new Behavior();
 	}
 
 }

@@ -53,7 +53,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected IBehavior behavior;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
-	
+
 	/*
 	 * matches the name of the annotation declaring it to the ID of a base div that
 	 * is sent to the view upon loading. If the annotation contains a name, that
@@ -236,14 +236,39 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return configure().build();
 	}
 
+	/**
+	 * Filter any loaded behavior before it's loaded. If not OK, return null and an
+	 * empty behavior will be loaded.
+	 * 
+	 * @param behavior
+	 * @return
+	 */
+	protected IBehavior onLoad(IBehavior behavior) {
+		return behavior;
+	}
+
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
 
 		this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
+
 		/*
-		 * TODO check annotations and send view message to setup UI if it contains any
-		 * of @panel, @modal, @header, @footer. Annotation should have a name, if not
-		 * use the ID itself and ensure there is no more than one; use the name as key
-		 * in this.viewIds.
+		 * Init action called no matter what and before the behavior is set; the onLoad
+		 * callback intervenes afterwards.
+		 */
+		for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
+			run(action, new Scope(this.identity, action, message.scope));
+		}
+
+		/*
+		 * filter and further process. If implementation decides that this behavior
+		 * shouldn't be there, substitute with an empty one.
+		 */
+		if ((this.behavior = onLoad(this.behavior)) == null) {
+			this.behavior = org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.empty();
+		}
+
+		/*
+		 * run any main actions
 		 */
 		for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
 			run(action, new Scope(this.identity, action, message.scope));

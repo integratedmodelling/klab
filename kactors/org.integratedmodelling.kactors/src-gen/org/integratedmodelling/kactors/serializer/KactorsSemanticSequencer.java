@@ -593,6 +593,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 description=STRING | 
 	 *                 permissions=STRING | 
 	 *                 authors+=STRING | 
+	 *                 style=PathName | 
 	 *                 version=VersionNumber
 	 *             )? 
 	 *             (imports+=PathName imports+=PathName*)? 

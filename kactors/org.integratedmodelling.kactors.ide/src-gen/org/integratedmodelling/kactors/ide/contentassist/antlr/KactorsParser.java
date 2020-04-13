@@ -90,6 +90,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getGroup_2_7(), "rule__Preamble__Group_2_7__0");
 			builder.put(grammarAccess.getPreambleAccess().getGroup_2_8(), "rule__Preamble__Group_2_8__0");
 			builder.put(grammarAccess.getPreambleAccess().getGroup_2_9(), "rule__Preamble__Group_2_9__0");
+			builder.put(grammarAccess.getPreambleAccess().getGroup_2_10(), "rule__Preamble__Group_2_10__0");
 			builder.put(grammarAccess.getDefinitionAccess().getGroup(), "rule__Definition__Group__0");
 			builder.put(grammarAccess.getArgumentDeclarationAccess().getGroup(), "rule__ArgumentDeclaration__Group__0");
 			builder.put(grammarAccess.getArgumentDeclarationAccess().getGroup_2(), "rule__ArgumentDeclaration__Group_2__0");
@@ -197,11 +198,12 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getDescriptionAssignment_2_4_1(), "rule__Preamble__DescriptionAssignment_2_4_1");
 			builder.put(grammarAccess.getPreambleAccess().getPermissionsAssignment_2_5_1(), "rule__Preamble__PermissionsAssignment_2_5_1");
 			builder.put(grammarAccess.getPreambleAccess().getAuthorsAssignment_2_6_1(), "rule__Preamble__AuthorsAssignment_2_6_1");
-			builder.put(grammarAccess.getPreambleAccess().getVersionAssignment_2_7_1(), "rule__Preamble__VersionAssignment_2_7_1");
-			builder.put(grammarAccess.getPreambleAccess().getCreatedAssignment_2_8_1(), "rule__Preamble__CreatedAssignment_2_8_1");
-			builder.put(grammarAccess.getPreambleAccess().getCreatecommentAssignment_2_8_2(), "rule__Preamble__CreatecommentAssignment_2_8_2");
-			builder.put(grammarAccess.getPreambleAccess().getModifiedAssignment_2_9_1(), "rule__Preamble__ModifiedAssignment_2_9_1");
-			builder.put(grammarAccess.getPreambleAccess().getModcommentAssignment_2_9_2(), "rule__Preamble__ModcommentAssignment_2_9_2");
+			builder.put(grammarAccess.getPreambleAccess().getStyleAssignment_2_7_1(), "rule__Preamble__StyleAssignment_2_7_1");
+			builder.put(grammarAccess.getPreambleAccess().getVersionAssignment_2_8_1(), "rule__Preamble__VersionAssignment_2_8_1");
+			builder.put(grammarAccess.getPreambleAccess().getCreatedAssignment_2_9_1(), "rule__Preamble__CreatedAssignment_2_9_1");
+			builder.put(grammarAccess.getPreambleAccess().getCreatecommentAssignment_2_9_2(), "rule__Preamble__CreatecommentAssignment_2_9_2");
+			builder.put(grammarAccess.getPreambleAccess().getModifiedAssignment_2_10_1(), "rule__Preamble__ModifiedAssignment_2_10_1");
+			builder.put(grammarAccess.getPreambleAccess().getModcommentAssignment_2_10_2(), "rule__Preamble__ModcommentAssignment_2_10_2");
 			builder.put(grammarAccess.getDefinitionAccess().getAnnotationsAssignment_0(), "rule__Definition__AnnotationsAssignment_0");
 			builder.put(grammarAccess.getDefinitionAccess().getNameAssignment_2(), "rule__Definition__NameAssignment_2");
 			builder.put(grammarAccess.getDefinitionAccess().getArgumentsAssignment_3(), "rule__Definition__ArgumentsAssignment_3");

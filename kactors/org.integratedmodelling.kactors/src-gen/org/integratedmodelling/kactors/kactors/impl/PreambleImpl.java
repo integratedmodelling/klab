@@ -45,6 +45,7 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getAuthors <em>Authors</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getStyle <em>Style</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getVersion <em>Version</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreated <em>Created</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreatecomment <em>Createcomment</em>}</li>
@@ -305,6 +306,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected EList<String> authors;
+
+  /**
+   * The default value of the '{@link #getStyle() <em>Style</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getStyle()
+   * @generated
+   * @ordered
+   */
+  protected static final String STYLE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getStyle() <em>Style</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getStyle()
+   * @generated
+   * @ordered
+   */
+  protected String style = STYLE_EDEFAULT;
 
   /**
    * The default value of the '{@link #getVersion() <em>Version</em>}' attribute.
@@ -768,6 +789,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public String getStyle()
+  {
+    return style;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setStyle(String newStyle)
+  {
+    String oldStyle = style;
+    style = newStyle;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__STYLE, oldStyle, style));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getVersion()
   {
     return version;
@@ -995,6 +1041,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return getPermissions();
       case KactorsPackage.PREAMBLE__AUTHORS:
         return getAuthors();
+      case KactorsPackage.PREAMBLE__STYLE:
+        return getStyle();
       case KactorsPackage.PREAMBLE__VERSION:
         return getVersion();
       case KactorsPackage.PREAMBLE__CREATED:
@@ -1063,6 +1111,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__AUTHORS:
         getAuthors().clear();
         getAuthors().addAll((Collection<? extends String>)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__STYLE:
+        setStyle((String)newValue);
         return;
       case KactorsPackage.PREAMBLE__VERSION:
         setVersion((String)newValue);
@@ -1135,6 +1186,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__AUTHORS:
         getAuthors().clear();
         return;
+      case KactorsPackage.PREAMBLE__STYLE:
+        setStyle(STYLE_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__VERSION:
         setVersion(VERSION_EDEFAULT);
         return;
@@ -1192,6 +1246,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return PERMISSIONS_EDEFAULT == null ? permissions != null : !PERMISSIONS_EDEFAULT.equals(permissions);
       case KactorsPackage.PREAMBLE__AUTHORS:
         return authors != null && !authors.isEmpty();
+      case KactorsPackage.PREAMBLE__STYLE:
+        return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
       case KactorsPackage.PREAMBLE__VERSION:
         return VERSION_EDEFAULT == null ? version != null : !VERSION_EDEFAULT.equals(version);
       case KactorsPackage.PREAMBLE__CREATED:
@@ -1243,6 +1299,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(permissions);
     result.append(", authors: ");
     result.append(authors);
+    result.append(", style: ");
+    result.append(style);
     result.append(", version: ");
     result.append(version);
     result.append(", createcomment: ");

@@ -232,13 +232,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__AUTHORS = 13;
 
   /**
+   * The feature id for the '<em><b>Style</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__STYLE = 14;
+
+  /**
    * The feature id for the '<em><b>Version</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__VERSION = 14;
+  int PREAMBLE__VERSION = 15;
 
   /**
    * The feature id for the '<em><b>Created</b></em>' containment reference.
@@ -247,7 +256,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATED = 15;
+  int PREAMBLE__CREATED = 16;
 
   /**
    * The feature id for the '<em><b>Createcomment</b></em>' attribute.
@@ -256,7 +265,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATECOMMENT = 16;
+  int PREAMBLE__CREATECOMMENT = 17;
 
   /**
    * The feature id for the '<em><b>Modified</b></em>' containment reference.
@@ -265,7 +274,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODIFIED = 17;
+  int PREAMBLE__MODIFIED = 18;
 
   /**
    * The feature id for the '<em><b>Modcomment</b></em>' attribute.
@@ -274,7 +283,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODCOMMENT = 18;
+  int PREAMBLE__MODCOMMENT = 19;
 
   /**
    * The number of structural features of the '<em>Preamble</em>' class.
@@ -283,7 +292,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE_FEATURE_COUNT = 19;
+  int PREAMBLE_FEATURE_COUNT = 20;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl <em>Definition</em>}' class.
@@ -2543,6 +2552,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getPreamble_Authors();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getStyle <em>Style</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Style</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#getStyle()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_Style();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getVersion <em>Version</em>}'.
@@ -4811,6 +4831,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute PREAMBLE__AUTHORS = eINSTANCE.getPreamble_Authors();
+
+    /**
+     * The meta object literal for the '<em><b>Style</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__STYLE = eINSTANCE.getPreamble_Style();
 
     /**
      * The meta object literal for the '<em><b>Version</b></em>' attribute feature.

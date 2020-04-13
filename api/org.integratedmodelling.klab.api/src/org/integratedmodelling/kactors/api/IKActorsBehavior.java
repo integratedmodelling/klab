@@ -76,6 +76,13 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 	 * @return
 	 */
 	List<IKActorsAction> getActions();
+
+	/**
+	 * If a style is specified in the preamble, return it here.
+	 * 
+	 * @return
+	 */
+	String getStyle();
 	
 
 }

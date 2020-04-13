@@ -22,6 +22,7 @@ Preamble: {Preamble}
 		('description' description=STRING)? &
 		('permissions' permissions=STRING)? &
 		('author' authors+=STRING)* &
+		('style' style=PathName)? &
 		('version' version=VersionNumber)? & 
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 

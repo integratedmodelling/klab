@@ -22,6 +22,9 @@ public interface IBehavior extends IKimObject {
 		IKActorsAction getStatement();
 
 	}
+	
+	@Override
+	IKActorsBehavior getStatement();
 
 	/**
 	 * Metadata, following the (forthcoming) actor-specific schema in
