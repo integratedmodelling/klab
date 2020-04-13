@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.hub.HubApplication;
 import org.integratedmodelling.klab.hub.HubStartupOptions;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetupTest;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
 @RunWith(SpringRunner.class)
@@ -25,12 +30,21 @@ public abstract class ApplicationCheck {
 	@LocalServerPort
 	int port;
 	
+	public static GreenMail greenMail;
+	
 	@BeforeClass public static void setup() {
 		IHubStartupOptions options = new HubStartupOptions();
 		ICertificate certFile = KlabCertificate.createFromFile(options.getCertificateFile());
 		certFile.isValid();
 		HubAuthenticationManager.INSTANCE.authenticate(options, certFile);
+		
+		greenMail = new GreenMail(ServerSetupTest.ALL);
+		greenMail.setUser("system", "password").create();
+		greenMail.setUser("recipient2@email.com", "recipient2@email.com", "password").create();
+		greenMail.start();
 	}
+	
+	
 	
     @Test
     public void contextLoads() {

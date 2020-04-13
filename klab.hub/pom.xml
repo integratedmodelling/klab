@@ -155,5 +155,12 @@
 		    <artifactId>hibernate-validator</artifactId>
 		    <version>6.0.7.Final</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
+		<dependency>
+		    <groupId>com.icegreen</groupId>
+		    <artifactId>greenmail</artifactId>
+		    <version>1.5.12</version>
+		    <scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
