@@ -1152,8 +1152,21 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@MessageHandler
-	private void handleRunScriptRequest(final RunScriptRequest request) {
-		run(request.getScriptUrl());
+	private void handleRunScriptRequest(final RunScriptRequest request, final IMessage.Type type) {
+		switch (type) {
+		case RunApp:
+		case RunUnitTest:
+			IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
+			if (behavior != null) {
+				this.load(behavior, new SimpleRuntimeScope(this));
+			}
+			break;
+		case RunTest:
+		case RunScript:
+			run(request.getScriptUrl());
+		default:
+			break;
+		}
 	}
 
 	/**
@@ -1207,7 +1220,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			} else if ("kactor".equals(request.getScriptType())) {
 				KActors.INSTANCE.add(file);
 			}
-			
+
 			break;
 
 		case CreateBehavior:

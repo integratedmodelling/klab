@@ -387,6 +387,15 @@ public class KlabSession extends KlabPeer {
 		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new RunScriptRequest(url, true));
 	}
 
+	public void launchApp(String behavior) {
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp, new RunScriptRequest(behavior, false));
+	}
+
+	public void launchTest(String behavior) {
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunUnitTest, new RunScriptRequest(behavior, true));
+	}
+
+
 	public void observe(EKimObject dropped) {
 		Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
 				new ObservationRequest(dropped.getId(), currentRootContextId, null));

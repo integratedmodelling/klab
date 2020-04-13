@@ -315,7 +315,7 @@ public interface IMessage {
 		/*
 		 * --- Run-class types
 		 */
-		RunScript, RunTest, DebugScript, DebugTest,
+		RunScript, RunTest, RunApp, RunUnitTest, DebugScript, DebugTest,
 
 		/*
 		 * --- ResourceLifecycle-class types, F->B

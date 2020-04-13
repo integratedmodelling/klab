@@ -49,11 +49,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
+import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
@@ -439,6 +441,16 @@ public class ContextView extends ViewPart {
 								}
 							}
 
+						}
+						if (dropped instanceof EActorBehavior) {
+							String behavior = ((EActorBehavior) dropped).getName();
+							IKActorsBehavior.Type type = ((EActorBehavior) dropped).getType();
+							if (type == IKActorsBehavior.Type.UNITTEST) {
+								Activator.session().launchTest(behavior);
+							} else if (type == IKActorsBehavior.Type.APP) {
+								Activator.session().launchApp(behavior);
+							}
+
 						} else if (dropped instanceof EModel || dropped instanceof EConcept) {
 							Activator.session().observe((EKimObject) dropped);
 						} else if (dropped instanceof EObserver) {
@@ -488,14 +500,14 @@ public class ContextView extends ViewPart {
 			Display.getDefault().asyncExec(() -> {
 				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ndrop.png"));
 				openViewerAction.setEnabled(false);
-                resetContextAction.setEnabled(false);
+				resetContextAction.setEnabled(false);
 			});
 			break;
 		case EngineUp:
 			Display.getDefault().asyncExec(() -> {
 				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png"));
 				openViewerAction.setEnabled(true);
-                resetContextAction.setEnabled(true);
+				resetContextAction.setEnabled(true);
 			});
 			break;
 		case MatchAction:
@@ -540,7 +552,8 @@ public class ContextView extends ViewPart {
 		case UserProjectModified:
 			break;
 		case UserProjectOpened:
-			// TODO here the project load has ended and we should make a spinner stop spinning or something like that.
+			// TODO here the project load has ended and we should make a spinner stop
+			// spinning or something like that.
 			System.out.println("PROJECT SYNCHRONIZATION FINISHED");
 			break;
 		default:
@@ -733,16 +746,18 @@ public class ContextView extends ViewPart {
 			openViewerAction.setImageDescriptor(
 					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/browser.gif"));
 		}
-	    {
-	        resetContextAction = new Action("Reset context") {                @Override
-                public void run() {
-                    Activator.post(IMessage.MessageClass.UserContextChange, IMessage.Type.ResetContext, "");
-                }
-	        };
-	        resetContextAction.setEnabled(Activator.engineMonitor().isRunning());
-	        resetContextAction.setImageDescriptor(ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
-	        resetContextAction.setToolTipText("Reset context");
-	    }
+		{
+			resetContextAction = new Action("Reset context") {
+				@Override
+				public void run() {
+					Activator.post(IMessage.MessageClass.UserContextChange, IMessage.Type.ResetContext, "");
+				}
+			};
+			resetContextAction.setEnabled(Activator.engineMonitor().isRunning());
+			resetContextAction.setImageDescriptor(ResourceManager
+					.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
+			resetContextAction.setToolTipText("Reset context");
+		}
 	}
 
 	/**

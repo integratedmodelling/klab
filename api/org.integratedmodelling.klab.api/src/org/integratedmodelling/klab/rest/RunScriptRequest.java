@@ -7,6 +7,7 @@ import java.util.Map;
 public class RunScriptRequest {
 
 	private URL scriptUrl;
+	private String behavior;
 	private boolean test;
 	private Map<String, String> parameters = new HashMap<>();
 
@@ -21,6 +22,11 @@ public class RunScriptRequest {
 				parameters.put(kvParameters[i], kvParameters[++i]);
 			}
 		}
+	}
+	
+	public RunScriptRequest(String behavior, boolean isTest) {
+		this.behavior = behavior;
+		this.test = isTest;
 	}
 
 	public URL getScriptUrl() {
@@ -45,6 +51,14 @@ public class RunScriptRequest {
 
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
+	}
+
+	public String getBehavior() {
+		return behavior;
+	}
+
+	public void setBehavior(String behavior) {
+		this.behavior = behavior;
 	}
 
 }
