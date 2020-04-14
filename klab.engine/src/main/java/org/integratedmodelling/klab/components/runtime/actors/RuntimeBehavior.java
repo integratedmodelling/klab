@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.runtime.actors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
@@ -30,6 +29,9 @@ import akka.actor.typed.ActorRef;
  * probability; if first value is a distribution and vals are same number, use
  * that to choose</li>
  * </ul>
+ * <p>
+ * All these messages must be quick to execute, as all observations will queue
+ * them here!
  * 
  * @author Ferd
  *
