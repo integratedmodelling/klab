@@ -53,7 +53,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
 		if (value.getId() != null) {
-			this.type = Type.IDENTIFIER;
+			this.type = value.getId().contains(".") ? Type.URN : Type.IDENTIFIER;
 			this.value = value.getId();
 		} else if (value.getLiteral() != null) {
 			this.value = parseLiteral(value.getLiteral());

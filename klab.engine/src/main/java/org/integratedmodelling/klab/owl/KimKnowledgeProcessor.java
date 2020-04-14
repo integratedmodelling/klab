@@ -73,11 +73,6 @@ public enum KimKnowledgeProcessor {
 		if (concept.isMacro()) {
 			return null;
 		}
-
-		if ("Direction".equals(concept.getName())) {
-			System.out.println("UFUK TURUNKUGL");
-		}
-			
 		
 		Namespace ns = (Namespace) namespace;
 		try {

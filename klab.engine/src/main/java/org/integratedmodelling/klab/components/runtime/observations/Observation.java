@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
@@ -280,13 +281,19 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 			parentActor.tell(new Spawn(this));
 
 			/*
-			 * wait for instrumentation to succeed. Couldn't figure out the ask pattern. TODO when this
-			 * has a chance to fail (e.g. in a cluster situation), add a timeout, or figure
-			 * out the ask pattern.
+			 * wait for instrumentation to succeed. Couldn't figure out the ask pattern.
+			 * TODO when this has a chance to fail (e.g. in a cluster situation), add a
+			 * timeout, or figure out the ask pattern.
 			 */
+			long time = System.currentTimeMillis();
+			long timeout = 10000;
 			while (!this.actorSet.get()) {
 				try {
 					Thread.sleep(50);
+					if ((System.currentTimeMillis() - time) > timeout) {
+						throw new KlabActorException(
+								"internal error in actor system: timeout obtaining peer actor for " + this);
+					}
 				} catch (InterruptedException e) {
 					break;
 				}

@@ -1507,10 +1507,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		return this.actor;
 	}
 
-	// TODO pass new SimpleRuntimeScope(this)
 	@Override
 	public void load(IBehavior behavior, IRuntimeScope scope) {
-		// TODO this gets a sucky runtime scope which is used to run main messages.
 		getActor().tell(new SystemBehavior.Load(behavior.getId(), scope));
 	}
 

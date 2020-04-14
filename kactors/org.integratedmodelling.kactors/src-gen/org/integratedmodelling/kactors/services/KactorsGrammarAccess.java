@@ -541,7 +541,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
 		private final Group cGroup_0_0 = (Group)cAlternatives_0.eContents().get(0);
 		private final Assignment cNameAssignment_0_0_0 = (Assignment)cGroup_0_0.eContents().get(0);
-		private final RuleCall cNamePathNameParserRuleCall_0_0_0_0 = (RuleCall)cNameAssignment_0_0_0.eContents().get(0);
+		private final RuleCall cNameArgPathNameParserRuleCall_0_0_0_0 = (RuleCall)cNameAssignment_0_0_0.eContents().get(0);
 		private final Group cGroup_0_0_1 = (Group)cGroup_0_0.eContents().get(1);
 		private final Keyword cLeftParenthesisKeyword_0_0_1_0 = (Keyword)cGroup_0_0_1.eContents().get(0);
 		private final Assignment cParametersAssignment_0_0_1_1 = (Assignment)cGroup_0_0_1.eContents().get(1);
@@ -555,23 +555,23 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cActionsActionsParserRuleCall_1_1_0 = (RuleCall)cActionsAssignment_1_1.eContents().get(0);
 		
 		//MessageCall:
-		//	(name=PathName ('(' parameters=ParameterList? ')')? | group=StatementGroup) (':' actions=Actions)?;
+		//	(name=ArgPathName ('(' parameters=ParameterList? ')')? | group=StatementGroup) (':' actions=Actions)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(name=PathName ('(' parameters=ParameterList? ')')? | group=StatementGroup) (':' actions=Actions)?
+		//(name=ArgPathName ('(' parameters=ParameterList? ')')? | group=StatementGroup) (':' actions=Actions)?
 		public Group getGroup() { return cGroup; }
 		
-		//(name=PathName ('(' parameters=ParameterList? ')')? | group=StatementGroup)
+		//(name=ArgPathName ('(' parameters=ParameterList? ')')? | group=StatementGroup)
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
-		//name=PathName ('(' parameters=ParameterList? ')')?
+		//name=ArgPathName ('(' parameters=ParameterList? ')')?
 		public Group getGroup_0_0() { return cGroup_0_0; }
 		
-		//name=PathName
+		//name=ArgPathName
 		public Assignment getNameAssignment_0_0_0() { return cNameAssignment_0_0_0; }
 		
-		//PathName
-		public RuleCall getNamePathNameParserRuleCall_0_0_0_0() { return cNamePathNameParserRuleCall_0_0_0_0; }
+		//ArgPathName
+		public RuleCall getNameArgPathNameParserRuleCall_0_0_0_0() { return cNameArgPathNameParserRuleCall_0_0_0_0; }
 		
 		//('(' parameters=ParameterList? ')')?
 		public Group getGroup_0_0_1() { return cGroup_0_0_1; }
@@ -3133,6 +3133,41 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//LOWERCASE_ID
 		public RuleCall getLOWERCASE_IDTerminalRuleCall_1_1() { return cLOWERCASE_IDTerminalRuleCall_1_1; }
 	}
+	public class ArgPathNameElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.ArgPathName");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
+		private final RuleCall cARGVALUETerminalRuleCall_0_0 = (RuleCall)cAlternatives_0.eContents().get(0);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cFullStopKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
+		
+		//ArgPathName:
+		//	(ARGVALUE | LOWERCASE_ID) ('.' LOWERCASE_ID)?;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//(ARGVALUE | LOWERCASE_ID) ('.' LOWERCASE_ID)?
+		public Group getGroup() { return cGroup; }
+		
+		//(ARGVALUE | LOWERCASE_ID)
+		public Alternatives getAlternatives_0() { return cAlternatives_0; }
+		
+		//ARGVALUE
+		public RuleCall getARGVALUETerminalRuleCall_0_0() { return cARGVALUETerminalRuleCall_0_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_0_1() { return cLOWERCASE_IDTerminalRuleCall_0_1; }
+		
+		//('.' LOWERCASE_ID)?
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_1_0() { return cFullStopKeyword_1_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_1_1() { return cLOWERCASE_IDTerminalRuleCall_1_1; }
+	}
 	public class PathElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Path");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -3319,6 +3354,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	private final NumberElements pNumber;
 	private final DateElements pDate;
 	private final PathNameElements pPathName;
+	private final ArgPathNameElements pArgPathName;
 	private final PathElements pPath;
 	private final TerminalRule tUPPERCASE_ID;
 	private final TerminalRule tUPPERCASE_PATH;
@@ -3385,6 +3421,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		this.pNumber = new NumberElements();
 		this.pDate = new DateElements();
 		this.pPathName = new PathNameElements();
+		this.pArgPathName = new ArgPathNameElements();
 		this.pPath = new PathElements();
 		this.tUPPERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
 		this.tUPPERCASE_PATH = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.UPPERCASE_PATH");
@@ -3488,7 +3525,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MessageCall:
-	//	(name=PathName ('(' parameters=ParameterList? ')')? | group=StatementGroup) (':' actions=Actions)?;
+	//	(name=ArgPathName ('(' parameters=ParameterList? ')')? | group=StatementGroup) (':' actions=Actions)?;
 	public MessageCallElements getMessageCallAccess() {
 		return pMessageCall;
 	}
@@ -3906,6 +3943,16 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		return getPathNameAccess().getRule();
 	}
 	
+	//ArgPathName:
+	//	(ARGVALUE | LOWERCASE_ID) ('.' LOWERCASE_ID)?;
+	public ArgPathNameElements getArgPathNameAccess() {
+		return pArgPathName;
+	}
+	
+	public ParserRule getArgPathNameRule() {
+		return getArgPathNameAccess().getRule();
+	}
+	
 	//Path:
 	//	(LOWERCASE_ID | UPPERCASE_ID) (('.' | '/') (LOWERCASE_ID | UPPERCASE_ID))*;
 	public PathElements getPathAccess() {
@@ -3951,7 +3998,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal ARGVALUE:
-	//	'$' '0'..'9'*;
+	//	'$' ('$' | '0'..'9'*);
 	public TerminalRule getARGVALUERule() {
 		return tARGVALUE;
 	}

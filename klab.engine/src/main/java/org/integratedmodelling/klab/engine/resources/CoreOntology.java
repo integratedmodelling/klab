@@ -398,10 +398,6 @@ public class CoreOntology extends AbstractWorkspace {
 
 	public Concept getCoreType(Set<Type> type) {
 
-		if (type.contains(Type.ANGLE)) {
-			System.out.println("FOCK");
-		}
-		
 		if (type.contains(Type.NOTHING)) {
 			return OWL.INSTANCE.getNothing();
 		}

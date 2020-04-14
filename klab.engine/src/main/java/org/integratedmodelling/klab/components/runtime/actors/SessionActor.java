@@ -1,13 +1,19 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.rest.ViewSetup;
 import org.integratedmodelling.klab.rest.ViewSetup.Panel;
+import org.integratedmodelling.klab.utils.NameGenerator;
 
+import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -24,7 +30,9 @@ public class SessionActor extends KlabActor {
 	}
 
 	@Override
-	protected IBehavior onLoad(IBehavior behavior) {
+	protected Behavior<KlabMessage> loadBehavior(Load message) {
+
+		IBehavior behavior = Actors.INSTANCE.getBehavior(message.behavior);
 
 		/*
 		 * collect info about the UI in a bean. If not empty, send bean so that the UI
@@ -52,13 +60,11 @@ public class SessionActor extends KlabActor {
 				}
 				// TODO the rest
 			}
-			
-			/*
-			 * TODO visit action for view calls: if there is any call to the view actor, add the "default" panel
-			 * unless already added
-			 */
 
-			
+			/*
+			 * TODO visit action for view calls: if there is any call to the view actor, add
+			 * the "default" panel unless already added
+			 */
 		}
 
 		if (setup.getPanels().size() > 0 || setup.getStyle() != null || setup.getFooter() != null
@@ -67,7 +73,16 @@ public class SessionActor extends KlabActor {
 					setup);
 		}
 
-		return super.onLoad(behavior);
+		/*
+		 * spawn a new runtime actor and have it load the behavior
+		 */
+		ActorRef<KlabMessage> actor = getContext().spawn(RuntimeActor.create((Session) identity),
+				identity.getId() + NameGenerator.shortUUID());
+		
+		actor.tell(message);
+
+		return Behaviors.same();
+
 	}
 
 	@Override

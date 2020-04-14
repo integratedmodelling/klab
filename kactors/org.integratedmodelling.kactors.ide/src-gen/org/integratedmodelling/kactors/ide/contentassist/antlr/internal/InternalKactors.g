@@ -1100,6 +1100,31 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+// Entry rule entryRuleArgPathName
+entryRuleArgPathName
+:
+{ before(grammarAccess.getArgPathNameRule()); }
+	 ruleArgPathName
+{ after(grammarAccess.getArgPathNameRule()); } 
+	 EOF 
+;
+
+// Rule ArgPathName
+ruleArgPathName 
+	@init {
+		int stackSize = keepStackSize();
+	}
+	:
+	(
+		{ before(grammarAccess.getArgPathNameAccess().getGroup()); }
+		(rule__ArgPathName__Group__0)
+		{ after(grammarAccess.getArgPathNameAccess().getGroup()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 // Entry rule entryRulePath
 entryRulePath
 :
@@ -2402,6 +2427,27 @@ rule__Date__Alternatives_1
 		{ before(grammarAccess.getDateAccess().getBcAssignment_1_2()); }
 		(rule__Date__BcAssignment_1_2)
 		{ after(grammarAccess.getDateAccess().getBcAssignment_1_2()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ArgPathName__Alternatives_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getArgPathNameAccess().getARGVALUETerminalRuleCall_0_0()); }
+		RULE_ARGVALUE
+		{ after(grammarAccess.getArgPathNameAccess().getARGVALUETerminalRuleCall_0_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getArgPathNameAccess().getLOWERCASE_IDTerminalRuleCall_0_1()); }
+		RULE_LOWERCASE_ID
+		{ after(grammarAccess.getArgPathNameAccess().getLOWERCASE_IDTerminalRuleCall_0_1()); }
 	)
 ;
 finally {
@@ -10052,6 +10098,114 @@ finally {
 }
 
 
+rule__ArgPathName__Group__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__ArgPathName__Group__0__Impl
+	rule__ArgPathName__Group__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ArgPathName__Group__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getArgPathNameAccess().getAlternatives_0()); }
+	(rule__ArgPathName__Alternatives_0)
+	{ after(grammarAccess.getArgPathNameAccess().getAlternatives_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ArgPathName__Group__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__ArgPathName__Group__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ArgPathName__Group__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getArgPathNameAccess().getGroup_1()); }
+	(rule__ArgPathName__Group_1__0)?
+	{ after(grammarAccess.getArgPathNameAccess().getGroup_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__ArgPathName__Group_1__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__ArgPathName__Group_1__0__Impl
+	rule__ArgPathName__Group_1__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ArgPathName__Group_1__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getArgPathNameAccess().getFullStopKeyword_1_0()); }
+	'.'
+	{ after(grammarAccess.getArgPathNameAccess().getFullStopKeyword_1_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ArgPathName__Group_1__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__ArgPathName__Group_1__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ArgPathName__Group_1__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getArgPathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1()); }
+	RULE_LOWERCASE_ID
+	{ after(grammarAccess.getArgPathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
 rule__Path__Group__0
 	@init {
 		int stackSize = keepStackSize();
@@ -11200,9 +11354,9 @@ rule__MessageCall__NameAssignment_0_0_0
 	}
 :
 	(
-		{ before(grammarAccess.getMessageCallAccess().getNamePathNameParserRuleCall_0_0_0_0()); }
-		rulePathName
-		{ after(grammarAccess.getMessageCallAccess().getNamePathNameParserRuleCall_0_0_0_0()); }
+		{ before(grammarAccess.getMessageCallAccess().getNameArgPathNameParserRuleCall_0_0_0_0()); }
+		ruleArgPathName
+		{ after(grammarAccess.getMessageCallAccess().getNameArgPathNameParserRuleCall_0_0_0_0()); }
 	)
 ;
 finally {
@@ -13928,7 +14082,7 @@ RULE_CAMELCASE_ID : 'A'..'Z' ('A'..'z'|'0'..'9')*;
 
 RULE_LOWERCASE_ID : 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
 
-RULE_ARGVALUE : '$' ('0'..'9')*;
+RULE_ARGVALUE : '$' ('$'|('0'..'9')*);
 
 RULE_EXPR : '[' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|']'|'\\')|~(('\\'|']')))* ']';
 

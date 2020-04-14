@@ -37,8 +37,8 @@ public abstract class KlabAction {
 
 	protected final Boolean DEFAULT_FIRE = Boolean.TRUE;
 
-	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-		this.sender = identity.getActor();
+	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope, ActorRef<KlabMessage> sender) {
+		this.sender = sender;
 		this.session = identity.getParentIdentity(Session.class);
 		this.arguments = arguments;
 		this.scope = scope;
@@ -49,6 +49,13 @@ public abstract class KlabAction {
 		if (scope.listenerId != null) {
 			this.sender.tell(new Fire(scope.listenerId, value, isFinal));
 		}
+	}
+
+	public void fail(Object... args) {
+		if (args != null) {
+			scope.runtimeScope.getMonitor().error(args);
+		}
+		fire(false, true);
 	}
 
 	protected Object evaluateArgument(String argument) {
@@ -101,6 +108,7 @@ public abstract class KlabAction {
 		case NUMBER:
 		case RANGE:
 		case STRING:
+		case OBSERVABLE:
 			return arg.getValue();
 		case LIST:
 			// eval all args
@@ -109,8 +117,7 @@ public abstract class KlabAction {
 			break;
 		case NODATA:
 			return null;
-		case OBSERVABLE:
-			return Observables.INSTANCE.declare(arg.getValue().toString());
+//			return Observables.INSTANCE.declare(arg.getValue().toString());
 		case QUANTITY:
 			break;
 		case REGEXP:
@@ -121,6 +128,8 @@ public abstract class KlabAction {
 			break;
 		case URN:
 			return new Urn(arg.getValue().toString());
+		default:
+			break;
 		}
 		return null;
 	}

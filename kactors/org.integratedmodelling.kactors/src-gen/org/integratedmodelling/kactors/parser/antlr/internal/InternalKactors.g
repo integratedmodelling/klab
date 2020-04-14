@@ -1063,9 +1063,9 @@ ruleMessageCall returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getMessageCallAccess().getNamePathNameParserRuleCall_0_0_0_0());
+							newCompositeNode(grammarAccess.getMessageCallAccess().getNameArgPathNameParserRuleCall_0_0_0_0());
 						}
-						lv_name_0_0=rulePathName
+						lv_name_0_0=ruleArgPathName
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getMessageCallRule());
@@ -1074,7 +1074,7 @@ ruleMessageCall returns [EObject current=null]
 								$current,
 								"name",
 								lv_name_0_0,
-								"org.integratedmodelling.kactors.Kactors.PathName");
+								"org.integratedmodelling.kactors.Kactors.ArgPathName");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -5786,6 +5786,56 @@ rulePathName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken(
 	)
 ;
 
+// Entry rule entryRuleArgPathName
+entryRuleArgPathName returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getArgPathNameRule()); }
+	iv_ruleArgPathName=ruleArgPathName
+	{ $current=$iv_ruleArgPathName.current.getText(); }
+	EOF;
+
+// Rule ArgPathName
+ruleArgPathName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			this_ARGVALUE_0=RULE_ARGVALUE
+			{
+				$current.merge(this_ARGVALUE_0);
+			}
+			{
+				newLeafNode(this_ARGVALUE_0, grammarAccess.getArgPathNameAccess().getARGVALUETerminalRuleCall_0_0());
+			}
+			    |
+			this_LOWERCASE_ID_1=RULE_LOWERCASE_ID
+			{
+				$current.merge(this_LOWERCASE_ID_1);
+			}
+			{
+				newLeafNode(this_LOWERCASE_ID_1, grammarAccess.getArgPathNameAccess().getLOWERCASE_IDTerminalRuleCall_0_1());
+			}
+		)
+		(
+			kw='.'
+			{
+				$current.merge(kw);
+				newLeafNode(kw, grammarAccess.getArgPathNameAccess().getFullStopKeyword_1_0());
+			}
+			this_LOWERCASE_ID_3=RULE_LOWERCASE_ID
+			{
+				$current.merge(this_LOWERCASE_ID_3);
+			}
+			{
+				newLeafNode(this_LOWERCASE_ID_3, grammarAccess.getArgPathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1());
+			}
+		)?
+	)
+;
+
 // Entry rule entryRulePath
 entryRulePath returns [String current=null]:
 	{ newCompositeNode(grammarAccess.getPathRule()); }
@@ -5975,7 +6025,7 @@ RULE_CAMELCASE_ID : 'A'..'Z' ('A'..'z'|'0'..'9')*;
 
 RULE_LOWERCASE_ID : 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
 
-RULE_ARGVALUE : '$' ('0'..'9')*;
+RULE_ARGVALUE : '$' ('$'|('0'..'9')*);
 
 RULE_EXPR : '[' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|']'|'\\')|~(('\\'|']')))* ']';
 

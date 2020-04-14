@@ -364,14 +364,14 @@ public enum Actors implements IActorsService {
 	 * @return
 	 */
 	public KlabAction getSystemAction(String id, IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
-			KlabActor.Scope scope) {
+			KlabActor.Scope scope, ActorRef<KlabMessage> sender) {
 
 		Pair<String, Class<? extends KlabAction>> cls = actionClasses.get(id);
 		if (cls != null) {
 			try {
 				Constructor<? extends KlabAction> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
-						IParameters.class, KlabActor.Scope.class);
-				return constructor.newInstance(identity, arguments, scope);
+						IParameters.class, KlabActor.Scope.class, ActorRef.class);
+				return constructor.newInstance(identity, arguments, scope, sender);
 			} catch (Throwable e) {
 				scope.getMonitor().error("Error while creating action " + id + ": " + e.getMessage());
 			}
@@ -386,8 +386,7 @@ public enum Actors implements IActorsService {
 	public void instrument(List<IAnnotation> annotations, Observation observation) {
 		instrument(annotations, observation, observation.getRuntimeScope());
 	}
-		
-	
+
 	public void instrument(List<IAnnotation> annotations, Observation observation, IRuntimeScope scope) {
 
 		/*

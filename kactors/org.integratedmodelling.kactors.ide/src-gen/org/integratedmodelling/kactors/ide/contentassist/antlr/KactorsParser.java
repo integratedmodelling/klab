@@ -71,6 +71,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getNumberAccess().getExponentialAlternatives_4_0_0_0(), "rule__Number__ExponentialAlternatives_4_0_0_0");
 			builder.put(grammarAccess.getNumberAccess().getAlternatives_4_0_1(), "rule__Number__Alternatives_4_0_1");
 			builder.put(grammarAccess.getDateAccess().getAlternatives_1(), "rule__Date__Alternatives_1");
+			builder.put(grammarAccess.getArgPathNameAccess().getAlternatives_0(), "rule__ArgPathName__Alternatives_0");
 			builder.put(grammarAccess.getPathAccess().getAlternatives_0(), "rule__Path__Alternatives_0");
 			builder.put(grammarAccess.getPathAccess().getAlternatives_1_0(), "rule__Path__Alternatives_1_0");
 			builder.put(grammarAccess.getPathAccess().getAlternatives_1_1(), "rule__Path__Alternatives_1_1");
@@ -176,6 +177,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getDateAccess().getGroup_6_3_2(), "rule__Date__Group_6_3_2__0");
 			builder.put(grammarAccess.getPathNameAccess().getGroup(), "rule__PathName__Group__0");
 			builder.put(grammarAccess.getPathNameAccess().getGroup_1(), "rule__PathName__Group_1__0");
+			builder.put(grammarAccess.getArgPathNameAccess().getGroup(), "rule__ArgPathName__Group__0");
+			builder.put(grammarAccess.getArgPathNameAccess().getGroup_1(), "rule__ArgPathName__Group_1__0");
 			builder.put(grammarAccess.getPathAccess().getGroup(), "rule__Path__Group__0");
 			builder.put(grammarAccess.getPathAccess().getGroup_1(), "rule__Path__Group_1__0");
 			builder.put(grammarAccess.getVersionNumberAccess().getGroup(), "rule__VersionNumber__Group__0");

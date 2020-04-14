@@ -43,7 +43,7 @@ ArgumentDeclaration: {ArgumentDeclaration}
 MessageBody: {MessageBody} lists+=StatementList*;
 
 MessageCall:
-	(name=PathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
+	(name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 ;
 
 StatementGroup: {StatementGroup} '(' body=MessageBody? ')'
@@ -269,6 +269,10 @@ PathName:
 	LOWERCASE_ID ('.' LOWERCASE_ID)*
 ;
 
+ArgPathName:
+	(ARGVALUE | LOWERCASE_ID) ('.' LOWERCASE_ID)?
+;
+
 Path:
 	(LOWERCASE_ID|UPPERCASE_ID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID))*
 ;
@@ -289,7 +293,7 @@ terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
 terminal ARGVALUE:
-	'$' ('0'..'9')*;
+	'$' ('$' | ('0'..'9')*);
 
 terminal EXPR:
 	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';

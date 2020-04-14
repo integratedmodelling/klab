@@ -498,7 +498,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     MessageCall returns MessageCall
 	 *
 	 * Constraint:
-	 *     (((name=PathName parameters=ParameterList?) | group=StatementGroup) actions=Actions?)
+	 *     (((name=ArgPathName parameters=ParameterList?) | group=StatementGroup) actions=Actions?)
 	 */
 	protected void sequence_MessageCall(ISerializationContext context, MessageCall semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

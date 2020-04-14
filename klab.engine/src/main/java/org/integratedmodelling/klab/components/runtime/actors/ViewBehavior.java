@@ -12,6 +12,8 @@ import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
 
+import akka.actor.typed.ActorRef;
+
 /**
  * View messages.
  * 
@@ -28,8 +30,9 @@ public class ViewBehavior {
 	@Action(id = "alert")
 	public static class Alert extends KlabAction {
 
-		public Alert(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(identity, arguments, scope);
+		public Alert(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 		}
 
 		@Override
@@ -45,8 +48,9 @@ public class ViewBehavior {
 	@Action(id = "confirm")
 	public static class Confirm extends KlabAction {
 
-		public Confirm(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(identity, arguments, scope);
+		public Confirm(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 		}
 
 		@Override

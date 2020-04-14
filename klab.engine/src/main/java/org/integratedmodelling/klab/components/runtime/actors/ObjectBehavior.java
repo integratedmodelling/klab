@@ -1,26 +1,62 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.concurrent.Future;
+
+import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope.ObservationListener;
 import org.integratedmodelling.klab.utils.Pair;
 
+import akka.actor.typed.ActorRef;
+
 @Behavior(id = "object", version = Version.CURRENT)
 public class ObjectBehavior {
+
+	@Action(id = "observe", fires = Type.OBSERVATION)
+	public static class Observe extends KlabAction {
+
+		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
+		}
+
+		@Override
+		void run() {
+
+			if (this.identity instanceof ISubject) {
+				Object arg = evaluateArgument(0);
+				if (arg instanceof IObservable) {
+					try {
+						Future<IObservation> future = ((ISubject) identity).observe(((IObservable) arg).getDefinition());
+						fire(future.get(), true);
+					} catch (Throwable e) {
+						fail(e);
+					}
+				}
+			} else {
+				fail(this.identity + ": observations can only be made within subjects");
+			}
+
+		}
+	}
 
 	@Action(id = "stop")
 	public static class MoveAway extends KlabAction {
 
-		public MoveAway(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(identity, arguments, scope);
+		public MoveAway(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 		}
 
 		@Override
@@ -34,8 +70,9 @@ public class ObjectBehavior {
 	@Action(id = "bind")
 	public static class Bind extends KlabAction {
 
-		public Bind(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(identity, arguments, scope);
+		public Bind(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 		}
 
 		@Override
@@ -63,9 +100,10 @@ public class ObjectBehavior {
 	public static class When extends KlabAction {
 
 		String listener;
-		
-		public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(identity, arguments, scope);
+
+		public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 			// TODO filters
 		}
 
@@ -79,7 +117,7 @@ public class ObjectBehavior {
 				}
 			});
 		}
-		
+
 		@Override
 		void dispose() {
 			scope.runtimeScope.removeListener(this.listener);
@@ -95,8 +133,9 @@ public class ObjectBehavior {
 	@Action(id = "siblings")
 	public static class Siblings extends KlabAction {
 
-		public Siblings(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(identity, arguments, scope);
+		public Siblings(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 		}
 
 		@Override
@@ -110,8 +149,9 @@ public class ObjectBehavior {
 	@Action(id = "connect")
 	public static class Connect extends KlabAction {
 
-		public Connect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(identity, arguments, scope);
+		public Connect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 		}
 
 		@Override

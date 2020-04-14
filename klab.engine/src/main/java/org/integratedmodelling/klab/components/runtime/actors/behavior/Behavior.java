@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -35,7 +36,11 @@ public class Behavior implements IBehavior {
 			this.value = (KActorsValue) ikActorsValue;
 		}
 
-		public boolean matches(Object value) {
+		private boolean notMatch(Object value) {
+			return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean)value));
+		}
+		
+		public boolean matches(Object value, Scope scope) {
 			switch (this.value.getType()) {
 			case ANYTHING:
 				return true;
@@ -50,10 +55,13 @@ public class Behavior implements IBehavior {
 			case DATE:
 				break;
 			case EXPRESSION:
-				System.out.println("PORCODIO AN EXPRESSION");
+				System.out.println("ACH AN EXPRESSION");
 				break;
 			case IDENTIFIER:
-				// TODO match and put the value in scope as named ID
+				if (!notMatch(value)) {
+					scope.symbolTable.put(this.value.getValue().toString(), value);
+					return true;
+				}
 				break;
 			case LIST:
 				// TODO differentiate between multi-identifier and OR match for values in list

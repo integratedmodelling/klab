@@ -82,7 +82,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		public void match(Object value) {
 
 			for (Pair<Match, IKActorsStatement> match : matches) {
-				if (match.getFirst().matches(value)) {
+				if (match.getFirst().matches(value, scope)) {
 					execute(match.getSecond(), scope.withMatch(value));
 				}
 			}
@@ -118,7 +118,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Long listenerId;
 		IIdentity identity;
 		Object match;
-		Map<String, Object> symbolTable = new HashMap<>();
+		public Map<String, Object> symbolTable = new HashMap<>();
 
 		/**
 		 * Set when the action being run is tagged to have a specific panel (footer,
@@ -236,17 +236,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return configure().build();
 	}
 
-	/**
-	 * Filter any loaded behavior before it's loaded. If not OK, return null and an
-	 * empty behavior will be loaded.
-	 * 
-	 * @param behavior
-	 * @return
-	 */
-	protected IBehavior onLoad(IBehavior behavior) {
-		return behavior;
-	}
-
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
 
 		this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
@@ -258,15 +247,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
 			run(action, new Scope(this.identity, action, message.scope));
 		}
-
-		/*
-		 * filter and further process. If implementation decides that this behavior
-		 * shouldn't be there, substitute with an empty one.
-		 */
-		if ((this.behavior = onLoad(this.behavior)) == null) {
-			this.behavior = org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.empty();
-		}
-
+		
 		/*
 		 * run any main actions
 		 */
@@ -376,6 +357,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void executeCall(Call code, Scope scope) {
 
 		/*
@@ -404,26 +386,37 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				message = Path.getLast(message, '.');
 			}
 
-			// if we have no action for this message, send to user actor. Code should have
-			// been fixed to
-			// include the recipient when it is known.
 			ActorRef<KlabMessage> recipient = null;
-			switch (receiver) {
-			case "self":
-				recipient = getContext().getSelf();
-				break;
-			case "view":
-			case "session":
-				recipient = identity.getParentIdentity(Session.class).getActor();
-				break;
-			case "user":
-				recipient = identity.getParentIdentity(EngineUser.class).getActor();
+
+			if (!"self".equals(receiver) && scope.symbolTable.get(receiver) instanceof IActorIdentity) {
+				recipient = ((IActorIdentity<KlabMessage>) scope.symbolTable.get(receiver)).getActor();
+			} else {
+
+				// if we have no action for this message, send to user actor. Code should have
+				// been fixed to
+				// include the recipient when it is known.
+				switch (receiver) {
+				case "self":
+					recipient = getContext().getSelf();
+					break;
+				case "view":
+				case "session":
+					// FIXME this will get the wrong actor - must install the runtime in the spawned observation and
+					// take it from there using the IActorIdentity API - getRuntimeActor() or something, return self
+					// in a runtime.
+					recipient = identity.getParentIdentity(Session.class).getActor();
+					break;
+				case "user":
+					recipient = identity.getParentIdentity(EngineUser.class).getActor();
+				}
 			}
 
 			if (recipient == null || ("self".equals(receiver) && this.behavior.getActions(message) == null)) {
 				Pair<String, ActorRef<KlabMessage>> resolved = Actors.INSTANCE.lookupRecipient(message, this.identity);
-				receiver = resolved.getFirst();
-				recipient = resolved.getSecond();
+				if (resolved != null) {
+					receiver = resolved.getFirst();
+					recipient = resolved.getSecond();
+				}
 			}
 
 			if (recipient == null) {
@@ -450,7 +443,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			run(action, message.scope.withSender(message.sender));
 		} else {
 			KlabAction a = Actors.INSTANCE.getSystemAction(message.message, this.getIdentity(), message.arguments,
-					message.scope);
+					message.scope, getContext().getSelf());
 			if (a != null) {
 				ran = true;
 				a.run();
@@ -473,6 +466,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	protected Behavior<KlabMessage> createChild(Spawn message) {
 
+		System.out.println(this + " CREATING CHILD FOR " + message.identity);
+		
 		Behavior<KlabMessage> behavior = null;
 		// TODO potentially more differentiation according to host
 		if (message.identity instanceof Observation) {
