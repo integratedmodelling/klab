@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.runtime.actors;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
@@ -27,6 +26,22 @@ import akka.actor.typed.ActorRef;
  */
 public abstract class KlabAction {
 
+	public static enum Synchronicity {
+		/**
+		 * Essentially a function: enters and fires, always and within a short enough time
+		 * to be waited for.
+		 */
+		FIRE_IMMEDIATELY_AND_EXIT,
+		/**
+		 * Fire once and exit, but with no guarantee as to when.
+		 */
+		FIRE_LATER_AND_EXIT,
+		/**
+		 * Fire zero or more times, keep running until the parent behavior ends.
+		 */
+		FIRE_AND_WAIT
+	}
+	
 	protected ActorRef<KlabMessage> sender;
 	protected IParameters<String> arguments;
 	protected KlabActor.Scope scope;
