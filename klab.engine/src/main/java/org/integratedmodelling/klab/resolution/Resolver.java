@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -37,7 +38,6 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Coverage;
@@ -255,7 +255,7 @@ public enum Resolver {
 		 * finish the job, as we do with the resolution of the individual instances.
 		 */
 		Observable deferTo = parentScope.getDeferredObservableFor(observable);
-		
+
 		if (deferTo != null) {
 
 			/*
@@ -481,13 +481,33 @@ public enum Resolver {
 			}
 		}
 
+		/*
+		 * if model is a learner with a countable archetype, the dependencies must be
+		 * resolved in the context of the archetype to avoid triggering distributed
+		 * resolution.
+		 */
+		IObservable archetypeContext = null;
+		if (model.isLearning()) {
+			IConcept modelContext = Observables.INSTANCE.getDirectContextType(model.getObservables().get(0).getType());
+			// here we assume that all archetypes are of the same type, as they must
+			if (modelContext != null) {
+				for (IObservable obs : model.getArchetypes()) {
+					if (obs.is(Type.COUNTABLE) && obs.is(modelContext)) {
+						archetypeContext = Observable.promote(modelContext);
+						break;
+					}
+				}
+			}
+		}
+
 		// use the reasoner to infer any missing dependency from the semantics
 		List<ObservationStrategy> strategies = ObservationStrategy.computeDependencies(parentScope.getObservable(),
 				model, ret);
 		for (ObservationStrategy strategy : strategies) {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
 			// should be resolving a CandidateObservable
-			ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
+			ResolutionScope mscope = resolve(strategy.getObservables().get(0),
+					archetypeContext == null ? ret : ret.getContextualizedScope(archetypeContext), strategy.getMode());
 			coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
 			if (coverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
