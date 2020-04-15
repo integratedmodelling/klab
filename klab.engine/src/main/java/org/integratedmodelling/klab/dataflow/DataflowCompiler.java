@@ -985,6 +985,7 @@ public class DataflowCompiler {
 				}
 
 				ret.models.add(md);
+				ret.strategy = model.getObservationStrategy();
 			}
 		}
 

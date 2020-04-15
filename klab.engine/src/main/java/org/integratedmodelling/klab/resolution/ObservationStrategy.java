@@ -71,12 +71,6 @@ public class ObservationStrategy {
 		 */
 		DEREIFICATION,
 
-//		/**
-//		 * Observable must be distributed across a set of objects (which must also be
-//		 * observed), as the context of the observable is not compatible with the
-//		 * context it was observed into.
-//		 */
-//		DISTRIBUTION
 	}
 
 	private List<Observable> observables = new ArrayList<>();

@@ -208,17 +208,6 @@ public enum Observations implements IObservationService {
 		// TODO Auto-generated method stub
 	}
 
-//	public static Aggregation getAggregator(IObservable observable) {
-//		Aggregation ret = Aggregation.MAJORITY;
-//		if (observable.getObservationType() == ObservationType.QUANTIFICATION) {
-//			ret = Aggregation.MEAN;
-//			if (observable.isExtensive(Concepts.c(NS.SPACE_DOMAIN))) {
-//				ret = Aggregation.SUM;
-//			}
-//		}
-//		return ret;
-//	}
-
 	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
 			ILocator locator, int childLevel, boolean isMain) {
 		return createArtifactDescriptor(observation, parent, locator, childLevel, isMain, null);
