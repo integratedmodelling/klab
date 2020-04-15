@@ -1182,6 +1182,35 @@ public class Model extends KimObject implements IModel {
 	}
 
 	/**
+	 * Utility for clarity in resolution
+	 * @return
+	 */
+	public List<IObservable> getArchetypes() {
+		
+		List<IObservable> ret = new ArrayList<>();
+		for (IObservable dependency : getDependencies()) {
+			if (Annotations.INSTANCE.hasAnnotation(dependency, "archetype")) {
+				ret.add(dependency);
+			}
+		}
+		return ret;
+	}
+	/**
+	 * Utility for clarity in resolution
+	 * @return
+	 */
+	public List<IObservable> getPredictors() {
+		
+		List<IObservable> ret = new ArrayList<>();
+		for (IObservable dependency : getDependencies()) {
+			if (Annotations.INSTANCE.hasAnnotation(dependency, "predictor")) {
+				ret.add(dependency);
+			}
+		}
+		return ret;
+	}
+	
+	/**
 	 * The observation strategy implemented by this model. This will always be
 	 * DIRECT unless the model comes from a derived observation, in which case it
 	 * may also be FILTERING or DEREIFYING.

@@ -507,6 +507,12 @@ public class ResolutionScope implements IResolutionScope {
 		return ret;
 	}
 
+	public ResolutionScope getContextualizedScope(IObservable context) {
+		ResolutionScope ret = new ResolutionScope(this, true);
+		ret.contextObservable = (Observable) context;
+		return ret;
+	}
+	
 	/**
 	 * Return a scope to resolve a new observation of the passed observable, which
 	 * will have the passed name. The context remains there to tell us which subject
@@ -1149,11 +1155,24 @@ public class ResolutionScope implements IResolutionScope {
 			// resolving self
 			return null;
 		}
-		
+
 		IConcept context = observable2.getContext();
 
 		if (!isDeferred() && context != null && getContextObservable() != null
 				&& !getContextObservable().getType().is(context)) {
+
+			/*
+			 * check if this is the observable of a learning model that has an archetype
+			 * compatible with the context. In that case, we let it pass as is, as the
+			 * learning process will deal with the distribution.
+			 */
+			if (observable2.getReferencedModel() != null && observable2.getReferencedModel().isLearning()) {
+				for (IObservable archetype : ((Model)observable2.getReferencedModel()).getArchetypes()) {
+					if (archetype.is(context)) {
+						return null;
+					}
+				}
+			}
 
 			monitor.info("Context of " + observable2.getType().getDefinition() + " (" + context.getDefinition()
 					+ ") is incompatible with current context (" + getContextObservable().getType().getDefinition()
