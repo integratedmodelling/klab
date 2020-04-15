@@ -1,8 +1,11 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -62,7 +65,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	protected List<ObservationChange> modificationsToReport = new ArrayList<>();
 	protected List<IModificationListener> modificationListeners = new ArrayList<>();
 	private ActorRef<KlabMessage> actor;
+	// actor-scoped state, manipulated using "set" statements.
+	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
 
+	
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
 
@@ -316,5 +322,9 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public boolean isAlive() {
 		// TODO check if terminated (use ActorSelection apparently).
 		return this.actor != null;
+	}
+	
+	public Map<String, Object> getState() {
+		return globalState;
 	}
 }

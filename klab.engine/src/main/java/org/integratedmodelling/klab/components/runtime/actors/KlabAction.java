@@ -93,7 +93,7 @@ public abstract class KlabAction {
 
 		case NUMBERED_PATTERN:
 		case IDENTIFIER:
-			return scope.symbolTable.get(arg.getValue().toString());
+			return scope.getValue(arg.getValue().toString());
 
 		case EXPRESSION:
 

@@ -173,7 +173,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
-
+	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+		
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
 	class ReportingMonitor implements IMonitor {
@@ -1374,6 +1375,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 			((ISubject) subject).observe(request.getUrn(),
 					request.getScenarios().toArray(new String[request.getScenarios().size()]));
+			
 		} else {
 			observe(request.getUrn(), request.getScenarios().toArray(new String[request.getScenarios().size()]));
 		}
@@ -1516,5 +1518,10 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		this.actor = actor;
 		this.actorSet.set(true);
 	}
+
+	public Map<String, Object> getState() {
+		return globalState;
+	}
+
 
 }

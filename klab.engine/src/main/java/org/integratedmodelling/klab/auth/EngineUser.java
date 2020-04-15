@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.auth;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -20,7 +23,12 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
     private static final long serialVersionUID = -134196454400472128L;
     private IEngineIdentity parent;
     private ActorRef<KlabMessage> actor;
-
+	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	
+	public Map<String, Object> getState() {
+		return globalState;
+	}
+	
     public EngineUser(String username, IEngineIdentity parent) {
         super(username);
         this.parent = parent;

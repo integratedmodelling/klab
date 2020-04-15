@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.atteo.evo.inflector.English;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -287,10 +288,12 @@ public enum Observations implements IObservationService {
 		ISpace space = ((IScale) observation.getGeometry()).getSpace();
 		ITime time = ((IScale) observation.getGeometry()).getTime();
 
+
 		/*
-		 * This is a new context, which redefines the current scale.
+		 * Send full scale for any countables
 		 */
-		if (parent == null) {
+		if (observation.getObservable().is(Type.COUNTABLE)) {
+
 			ScaleReference scaleReference = new ScaleReference();
 			if (space != null) {
 				IEnvelope envelope = space.getEnvelope();

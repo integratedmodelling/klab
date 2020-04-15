@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Loa
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
+import org.integratedmodelling.klab.components.runtime.actors.behavior.BehaviorAction;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -116,7 +117,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
 		Long listenerId;
-		IIdentity identity;
+		IActorIdentity<KlabMessage> identity;
 		Object match;
 		public Map<String, Object> symbolTable = new HashMap<>();
 
@@ -129,7 +130,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		String viewId;
 		ActorRef<KlabMessage> sender;
 
-		public Scope(IIdentity identity, Action action, IRuntimeScope scope) {
+		public Scope(IActorIdentity<KlabMessage> identity, Action action, IRuntimeScope scope) {
 			this.action = action;
 			this.runtimeScope = scope;
 			this.identity = identity;
@@ -184,6 +185,19 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			Scope ret = new Scope(this);
 			ret.sender = sender;
 			return ret;
+		}
+
+		public Scope withViewId(String viewId) {
+			Scope ret = new Scope(this);
+			ret.viewId = viewId;
+			return ret;
+		}
+
+		public Object getValue(String string) {
+			if (symbolTable.containsKey(string)) {
+				return symbolTable.get(string);
+			}
+			return identity.getState().get(string);
 		}
 
 	}
@@ -265,6 +279,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * Look that up in viewIds using the name in the annotation or the annotation
 		 * ID.
 		 */
+		if (((BehaviorAction)action).getViewId() != null) {
+			scope = scope.withViewId(((BehaviorAction)action).getViewId());
+		}
 		execute(action.getStatement().getCode(), scope);
 	}
 
@@ -465,8 +482,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * @return
 	 */
 	protected Behavior<KlabMessage> createChild(Spawn message) {
-
-		System.out.println(this + " CREATING CHILD FOR " + message.identity);
 		
 		Behavior<KlabMessage> behavior = null;
 		// TODO potentially more differentiation according to host

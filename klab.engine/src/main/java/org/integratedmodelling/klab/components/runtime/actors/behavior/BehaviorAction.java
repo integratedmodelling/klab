@@ -21,6 +21,7 @@ public class BehaviorAction implements IBehavior.Action {
 	private Behavior behavior;
 	private CallSequence calls;
 	private List<IAnnotation> annotations = new ArrayList<>();
+	private String viewId;
 
 	public BehaviorAction(IKActorsAction action, Behavior behavior) {
 		this.statement = action;
@@ -35,6 +36,11 @@ public class BehaviorAction implements IBehavior.Action {
 				}
 			}
 			this.annotations.add(a);
+			
+			if (Behavior.viewAnnotations.contains(a.getName())) {
+				this.viewId = a.containsKey("id") ? a.get("id", String.class) : action.getName();
+			}
+			
 		}
 		
 	}
@@ -77,6 +83,14 @@ public class BehaviorAction implements IBehavior.Action {
 	@Override
 	public boolean isErrors() {
 		return false; // this.statement.getErrors().size() > 0;
+	}
+
+	public String getViewId() {
+		return viewId;
+	}
+
+	public void setViewId(String viewId) {
+		this.viewId = viewId;
 	}
 
 }

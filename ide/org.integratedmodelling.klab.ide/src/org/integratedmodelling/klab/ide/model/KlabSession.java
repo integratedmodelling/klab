@@ -236,10 +236,6 @@ public class KlabSession extends KlabPeer {
 		if (taskCatalog.containsKey(identity)) {
 			parent = taskCatalog.get(identity);
 		}
-
-		if (notification.contains("says hola")) {
-			System.out.println("SHITMENOT");
-		}
 		
 		/*
 		 * TODO multi-line notification should be broken up into multiple ones, with

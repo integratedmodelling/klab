@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.components.runtime.actors.behavior;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
@@ -22,6 +24,17 @@ import org.integratedmodelling.klab.utils.Range;
 
 public class Behavior implements IBehavior {
 
+	static Set<String> viewAnnotations;
+	
+	static {
+		viewAnnotations = new HashSet<>();
+		viewAnnotations.add("panel");
+		viewAnnotations.add("header");
+		viewAnnotations.add("footer");
+		viewAnnotations.add("modal");
+		viewAnnotations.add("window");
+	}
+	
 	/**
 	 * Pre-processed match value optimized for matching.
 	 * 

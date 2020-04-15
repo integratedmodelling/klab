@@ -42,7 +42,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 	FutureTask<IObservation> delegate;
 	String taskDescription = "<uninitialized contextual observation task " + token + ">";
 	private TaskReference descriptor;
-
+	
 	public ObserveInContextTask(ObserveInContextTask parent) {
 		super(parent);
 		this.delegate = parent.delegate;
