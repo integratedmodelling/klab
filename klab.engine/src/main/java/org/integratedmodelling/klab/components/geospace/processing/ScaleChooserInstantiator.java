@@ -144,8 +144,7 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 					if (chosen == null) {
 						chosen = n;
 					}
-					// TODO add back - wasteful
-//					break;
+					break;
 				}
 			}
 			np = builder.getObjectCount();

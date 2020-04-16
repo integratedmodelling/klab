@@ -506,6 +506,22 @@ public class ResolutionScope implements IResolutionScope {
 		ret.mode = mode;
 		return ret;
 	}
+	
+	/**
+	 * Scope for a pre-resolved observation, to use in dataflows that will create it
+	 * 
+	 * @param observer
+	 * @param mode
+	 * @return
+	 */
+	public ResolutionScope getChildScope(IObservable observable, IDirectObservation context, IScale scale) {
+
+		ResolutionScope ret = new ResolutionScope(this, true);
+		ret.coverage = Coverage.full(scale);
+		ret.context = (DirectObservation)context;
+		ret.mode = Mode.RESOLUTION;
+		return ret;
+	}
 
 	public ResolutionScope getContextualizedScope(IObservable context) {
 		ResolutionScope ret = new ResolutionScope(this, true);

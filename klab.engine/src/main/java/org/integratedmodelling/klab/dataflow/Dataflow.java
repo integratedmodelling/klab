@@ -684,5 +684,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 	}
 
+	public Dataflow withContext(IDirectObservation contextSubject) {
+		this.context = (DirectObservation) contextSubject;
+		return this;
+	}
+
 
 }

@@ -244,6 +244,11 @@ export object findwatersheds
 		"Add a buffer of the passed number of cells around the bounding box. Implies align=true and is only
 		 effective if boundingbox=true. Intended to provide space around the watershed shape for proper 
 		 watershed extraction."	 
+		 
+	optional number granularity
+		"Modify the spatial granularity of the objects selected by moving to a different level than the one
+		 defined by the scale. Passing 0 has no effect; an integer will move the scale up or down (if negative)
+		 by the passed number of levels."	 
 		
 	geometry #s0
 	

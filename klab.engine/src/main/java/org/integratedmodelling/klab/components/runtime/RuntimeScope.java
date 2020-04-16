@@ -563,8 +563,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
 
-		IArtifact observation = dataflow.withMetadata(metadata).withScopeScale(scale).run(scale.initialization(),
-				(Actuator) this.actuator, ((Monitor) monitor).get(subtask));
+		IArtifact observation = dataflow.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
+				.withMetadata(metadata)//.withScopeScale(scale)
+				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
 		if (observation instanceof IDirectObservation) {
 			ret = (IDirectObservation) observation;
@@ -666,7 +667,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				monitor);
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
-		IRelationship ret = (IRelationship) dataflow.withMetadata(metadata).withScopeScale(scale)
+		IRelationship ret = (IRelationship) dataflow.withMetadata(metadata)
+				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
 				.connecting((IDirectObservation) source, (IDirectObservation) target)
 				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
