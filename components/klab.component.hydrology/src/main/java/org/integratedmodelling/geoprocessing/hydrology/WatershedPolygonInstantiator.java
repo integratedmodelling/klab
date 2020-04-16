@@ -36,6 +36,7 @@ public class WatershedPolygonInstantiator extends ScaleChooserInstantiator imple
 				.valueOf(parameters.get("strategy", "cover").toUpperCase());
 		int maxobjects = parameters.get("maxobjects", -1.0).intValue();
 		double minCoverage = parameters.get("mincoverage", 0.2);
+		int detail = parameters.get("detail", 0.0).intValue();
 		
 		WatershedPolygonInstantiator ret = new WatershedPolygonInstantiator(whole);
 		
@@ -45,6 +46,8 @@ public class WatershedPolygonInstantiator extends ScaleChooserInstantiator imple
 		ret.setWhole(whole);
 		ret.setBoundingBox(boundingbox);
 		ret.setAlignGrid(align);
+		ret.setDetail(detail);
+		
 		return ret;
 	}
 

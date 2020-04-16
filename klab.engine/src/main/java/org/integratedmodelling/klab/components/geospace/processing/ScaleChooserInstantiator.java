@@ -62,12 +62,13 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	/**
 	 * Minimum coverage of context to include in results, unless whole is true.
 	 */
-	private double minCoverage = 0.2;
+	private double minCoverage = 0.45;
 	private Strategy strategy = Strategy.COVER;
 	private int maxObjects = -1;
 	private boolean boundingBox;
 	private boolean alignGrid;
 	private int bufferCells = 0;
+	private int detail = 0;
 
 	public void setBoundingBox(boolean boundingBox) {
 		this.boundingBox = boundingBox;
@@ -132,19 +133,38 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 
 		Integer np = null;
 		int n = 0;
+		Integer chosen = null;
 		for (String urn : getResourceUrns()) {
 
 			VisitingDataBuilder builder = new VisitingDataBuilder();
 			Resources.INSTANCE.getResourceData(urn, builder, context.getScale(), context.getMonitor());
-			// TODO use the previous or the next according to strategy
+			context.getMonitor().debug("#" + builder.getObjectCount() + " in " + urn);
 			if (np != null) {
 				if (builder.getObjectCount() > np) {
-					break;
+					if (chosen == null) {
+						chosen = n;
+					}
+					// TODO add back - wasteful
+//					break;
 				}
 			}
 			np = builder.getObjectCount();
 			n++;
 		}
+
+		context.getMonitor().debug("chosen level " + chosen);
+		
+		/*
+		 * adjust: we have stopped BEFORE the number went up, so as a default we go to
+		 * the next level TODO: this depends on the strategy
+		 */
+		if (strategy == Strategy.COVER && chosen < (getResourceUrns().length - 1)) {
+			chosen++;
+		}
+
+		chosen += detail;
+		
+		context.getMonitor().debug("adjusted level " + chosen + ": " + getResourceUrns()[chosen]);
 
 		List<IObjectArtifact> ret = new ArrayList<>();
 
@@ -152,13 +172,20 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		List<Triple<String, IScale, IMetadata>> tmp = new ArrayList<>();
 		List<Triple<String, IScale, IMetadata>> keep = new ArrayList<>();
 
-		if (n < getResourceUrns().length) {
+		if (chosen < getResourceUrns().length) {
+			
 			VisitingDataBuilder builder = new VisitingDataBuilder();
-			Resources.INSTANCE.getResourceData(getResourceUrns()[n], builder, context.getScale(), context.getMonitor());
+			Resources.INSTANCE.getResourceData(getResourceUrns()[chosen], builder, context.getScale(),
+					context.getMonitor());
+			
 			for (int i = 0; i < builder.getObjectCount(); i++) {
 				tmp.add(new Triple<>(builder.getObjectName(i), builder.getObjectScale(i),
 						builder.getObjectMetadata(i)));
 			}
+			
+			context.getMonitor().debug("Object pool contains " + tmp.size() + " objects");
+		} else {
+			context.getMonitor().warn("Context scale is too small to select any objects with these parameters");
 		}
 
 		/*
@@ -167,18 +194,22 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		IShape shape = context.getScale().getSpace().getShape();
 		double ctxarea = shape.getStandardizedArea();
 
+		n = -1;
 		for (Triple<String, IScale, IMetadata> data : tmp) {
 
 			boolean ok = whole;
-
+			n++;
+			
 			if (!ok) {
 
 				/*
 				 * choose those where cover >= min coverage
 				 */
 				IShape space = data.getSecond().getSpace().getShape();
-				IShape commn = shape.intersection(space);
-				ok = (commn.getStandardizedArea() / ctxarea) >= minCoverage;
+				IShape commn = space.intersection(shape);
+				double coverage = commn.getStandardizedArea() / space.getStandardizedArea();
+				context.getMonitor().debug("object #" + n + " covers " + coverage);
+				ok = coverage >= minCoverage;
 
 				/*
 				 * 
@@ -199,12 +230,14 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 			// remove anything left beyond maxObjects
 		}
 
+		context.getMonitor().debug("Scale-dependent instantiator selected " + keep.size() + " objects out of a pool of " + tmp.size());
+		
 		// make the objects
 		for (Triple<String, IScale, IMetadata> data : keep) {
 
 			IScale scale = data.getSecond();
 			if (boundingBox) {
-				IShape bbox = Shape.create((Envelope)scale.getSpace().getShape().getEnvelope());
+				IShape bbox = Shape.create((Envelope) scale.getSpace().getShape().getEnvelope());
 				scale = Scale.substituteExtent(scale,
 						grid == null ? bbox : Space.create((Shape) bbox, grid, alignGrid));
 			}
@@ -217,6 +250,10 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 
 	public void setBufferCells(int bufferCells) {
 		this.bufferCells = bufferCells;
+	}
+
+	public void setDetail(int detail) {
+		this.detail = detail;
 	}
 
 }
