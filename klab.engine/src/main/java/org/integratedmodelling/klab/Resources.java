@@ -79,6 +79,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -981,6 +982,9 @@ public enum Resources implements IResourceService {
 	public IKlabData getResourceData(String urn, IKlabData.Builder builder, IGeometry geometry, IMonitor monitor) {
 		Pair<String, Map<String, String>> split = Urns.INSTANCE.resolveParameters(urn);
 		IResource resource = resolveResource(urn);
+		if (resource == null) {
+			throw new KlabResourceAccessException("Access to resource data failed for resource " + urn);
+		}
 		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 		if (adapter == null) {
 			throw new KlabUnsupportedFeatureException(
