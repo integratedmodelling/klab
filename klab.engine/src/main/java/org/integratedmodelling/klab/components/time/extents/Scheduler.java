@@ -181,7 +181,7 @@ public class Scheduler implements IScheduler {
 								change.setNewValues(true);
 							} else if (observation instanceof IDirectObservation
 									&& !((IDirectObservation) observation).isActive()) {
-								change.setTerminated(true);
+								change.setType(ObservationChange.Type.Termination);
 							}
 
 							ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
@@ -320,7 +320,7 @@ public class Scheduler implements IScheduler {
 								change.setNewValues(true);
 							} else if (observation instanceof IDirectObservation
 									&& !((IDirectObservation) observation).isActive()) {
-								change.setTerminated(true);
+								change.setType(ObservationChange.Type.Termination);
 							}
 
 							ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
@@ -576,9 +576,12 @@ public class Scheduler implements IScheduler {
 		notification.setContextId(contextId);
 		notification.setType(SchedulerNotification.Type.STARTED);
 		notification.setResolution(resolution);
+		
+		monitor.info("Temporal transitions starting");
+
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 				IMessage.Type.SchedulingStarted, notification));
-
+		
 		long time = startTime;
 		while (true) {
 

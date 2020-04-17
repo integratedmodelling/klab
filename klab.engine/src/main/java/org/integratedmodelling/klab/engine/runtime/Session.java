@@ -136,6 +136,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;
+import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -174,7 +175,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
-		
+
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
 	class ReportingMonitor implements IMonitor {
@@ -465,6 +466,20 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			IObservation ret = context.getObservation(observationId);
 			if (ret != null) {
 				return ret;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the root runtime scope of the passed observation
+	 */
+	public IRuntimeScope getRootScope(String observationId) {
+		// start at the most recent
+		for (IRuntimeScope context : observationContexts) {
+			IObservation ret = context.getObservation(observationId);
+			if (ret != null) {
+				return context;
 			}
 		}
 		return null;
@@ -1170,6 +1185,19 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 	}
 
+	@MessageHandler
+	private void handleObservationWatchRequest(WatchRequest request) {
+
+		IRuntimeScope scope = getRootScope(request.getRootContextId());
+		if (scope != null) {
+			if (request.isActive()) {
+				scope.getWatchedObservationIds().add(request.getObservationId());
+			} else {
+				scope.getWatchedObservationIds().remove(request.getObservationId());
+			}
+		}
+	}
+
 	/**
 	 * Create, delete, modify resources in workspace.
 	 * 
@@ -1375,7 +1403,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 			((ISubject) subject).observe(request.getUrn(),
 					request.getScenarios().toArray(new String[request.getScenarios().size()]));
-			
+
 		} else {
 			observe(request.getUrn(), request.getScenarios().toArray(new String[request.getScenarios().size()]));
 		}
@@ -1522,6 +1550,5 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public Map<String, Object> getState() {
 		return globalState;
 	}
-
 
 }

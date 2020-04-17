@@ -35,7 +35,7 @@ public class WatershedPolygonInstantiator extends ScaleChooserInstantiator imple
 		ScaleChooserInstantiator.Strategy strategy = ScaleChooserInstantiator.Strategy
 				.valueOf(parameters.get("strategy", "cover").toUpperCase());
 		int maxobjects = parameters.get("maxobjects", -1.0).intValue();
-		double minCoverage = parameters.get("mincoverage", 0.2);
+		double minCoverage = parameters.get("mincoverage", 0.45);
 		int detail = parameters.get("granularity", 0.0).intValue();
 		
 		WatershedPolygonInstantiator ret = new WatershedPolygonInstantiator(whole);

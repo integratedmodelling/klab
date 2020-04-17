@@ -95,12 +95,12 @@ public enum Observations implements IObservationService {
 
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
-		return Resolver.INSTANCE.resolve(urn, session, scenarios);
+		return Resolver.create(null).resolve(urn, session, scenarios);
 	}
 
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
-		return Resolver.INSTANCE.resolve(urn, context, scenarios);
+		return Resolver.create(null).resolve(urn, context, scenarios);
 	}
 
 	// @Override

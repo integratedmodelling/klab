@@ -208,6 +208,10 @@ void watershed
 	class org.integratedmodelling.geoprocessing.hydrology.WatershedResolver
 }
 
+/*
+ * TODO all the parameters are from the superclass: use the extension mechanism to write these
+ * once in an abstract prototype where the superclass comes from.
+ */
 export object findwatersheds
 	"Extracts the most appropriately scaled watershed polygon(s) based on the HydroBASINS product, to be further
 	 defined, if needed, by an appropriate resolver. Enables extraction of the actual polygons or their bounding
@@ -229,12 +233,12 @@ export object findwatersheds
 
 	optional enum strategy
 		"If COVER, take as many smaller watersheds as it takes to compute the requested coverage. If EXPAND,
-		 switch to the largest watershed even if it's larger than the context. Default COVER."
+		 use the smallest larger object(s), even if they are much larger than the context. Default COVER."
 		values COVER, EXPAND
 		
 	optional number mincoverage
 		"The minimum proportion of area needed for a watershed to be included in the result compared with the
-		 area of the original context. Default 0.2. Ineffective if whole = true."
+		 area of the original context. Default is 0.45. Ineffective if whole = true or strategy = expand."
 		 
 	optional number maxobjects
 		"The maximum number of objects to produce. If this is passed, watersheds will be chosen based on the

@@ -68,7 +68,6 @@ import org.integratedmodelling.klab.components.runtime.observations.Relationship
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
-import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -173,7 +172,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				}
 
 				/*
-				 * auto-start the scheduler if transitions have been registered.
+				 * auto-start the scheduler if transitions have been registered. FIXME This must happen only
+				 * if the dataflow is the root dataflow!
 				 */
 				if (runtimeContext.getScheduler() != null && !runtimeContext.getScheduler().isEmpty()) {
 					runtimeContext.getScheduler().run();

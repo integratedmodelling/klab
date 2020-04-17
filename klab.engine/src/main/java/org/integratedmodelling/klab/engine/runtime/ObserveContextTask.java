@@ -83,11 +83,11 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 						// TODO put all this logics in the resolver, call it from within Observations
 						// and use that here.
-						ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
+						ResolutionScope scope = Resolver.create(null).resolve(observer, monitor, scenarios);
 						if (scope.getCoverage().isRelevant()) {
 
 							Dataflow dataflow = Dataflows.INSTANCE
-									.compile("local:task:" + session.getId() + ":" + token, scope);
+									.compile("local:task:" + session.getId() + ":" + token, scope, null);
 
 							dataflow.setDescription(taskDescription);
 

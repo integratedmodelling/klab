@@ -506,7 +506,7 @@ public class ResolutionScope implements IResolutionScope {
 		ret.mode = mode;
 		return ret;
 	}
-	
+
 	/**
 	 * Scope for a pre-resolved observation, to use in dataflows that will create it
 	 * 
@@ -518,7 +518,7 @@ public class ResolutionScope implements IResolutionScope {
 
 		ResolutionScope ret = new ResolutionScope(this, true);
 		ret.coverage = Coverage.full(scale);
-		ret.context = (DirectObservation)context;
+		ret.context = (DirectObservation) context;
 		ret.mode = Mode.RESOLUTION;
 		return ret;
 	}
@@ -528,7 +528,7 @@ public class ResolutionScope implements IResolutionScope {
 		ret.contextObservable = (Observable) context;
 		return ret;
 	}
-	
+
 	/**
 	 * Return a scope to resolve a new observation of the passed observable, which
 	 * will have the passed name. The context remains there to tell us which subject
@@ -1165,6 +1165,15 @@ public class ResolutionScope implements IResolutionScope {
 		this.deferred = deferred;
 	}
 
+	/**
+	 * Determine if this scope requires the passed observable to be contextualized
+	 * to a different object. If so, return the corresponding observable. The
+	 * resolver will store the actual observable for resolution after the dataflow
+	 * has created each of the corresponding objects.
+	 * 
+	 * @param observable2
+	 * @return
+	 */
 	public Observable getDeferredObservableFor(Observable observable2) {
 
 		if (observable2.equals(this.observable)) {
@@ -1183,7 +1192,7 @@ public class ResolutionScope implements IResolutionScope {
 			 * learning process will deal with the distribution.
 			 */
 			if (observable2.getReferencedModel() != null && observable2.getReferencedModel().isLearning()) {
-				for (IObservable archetype : ((Model)observable2.getReferencedModel()).getArchetypes()) {
+				for (IObservable archetype : ((Model) observable2.getReferencedModel()).getArchetypes()) {
 					if (archetype.is(context)) {
 						return null;
 					}
@@ -1193,6 +1202,7 @@ public class ResolutionScope implements IResolutionScope {
 			monitor.info("Context of " + observable2.getType().getDefinition() + " (" + context.getDefinition()
 					+ ") is incompatible with current context (" + getContextObservable().getType().getDefinition()
 					+ "): resolving " + context + " and deferring resolution");
+
 			return Observable.promote(context);
 		}
 

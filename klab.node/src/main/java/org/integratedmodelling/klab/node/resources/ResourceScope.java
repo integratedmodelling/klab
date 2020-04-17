@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
@@ -753,7 +754,7 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task) {
+	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task, Mode mode) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -780,6 +781,12 @@ public class ResourceScope implements IRuntimeScope {
 	public void removeListener(String listenerId) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Set<String> getWatchedObservationIds() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -34,7 +34,6 @@ import org.integratedmodelling.klab.components.runtime.observations.DirectObserv
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Annotation;
@@ -86,6 +85,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	IDirectObservation relationshipSource;
 	IDirectObservation relationshipTarget;
 
+	// this could simply be the "dataflow" in the parent actuator but it's clearer
+	// this way.
+	private Dataflow parent;
+
 	/*
 	 * if true, we observe occurrents and we may need to upgrade a generic T context
 	 * to a specific one.
@@ -126,11 +129,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 */
 	Set<String> dataflowIds = new HashSet<>();
 
-	private Dataflow() {
+	private Dataflow(Dataflow parent) {
+		this.parent = parent;
 	}
 
-	public Dataflow(ISession session) {
+	public Dataflow(ISession session, Dataflow parent) {
 		this.session = session;
+		this.parent = parent;
 	}
 
 	/**
@@ -488,12 +493,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.resolutionScope = scope;
 	}
 
-	public static Dataflow empty() {
-		return new Dataflow();
+	public static Dataflow empty(Dataflow parent) {
+		return new Dataflow(parent);
 	}
 
-	public static Dataflow empty(ResolutionScope scope) {
-		Dataflow ret = new Dataflow();
+	public static Dataflow empty(ResolutionScope scope, Dataflow parent) {
+		Dataflow ret = new Dataflow(parent);
 		ret.resolutionScope = scope;
 		ret.session = scope.getSession();
 		return ret;
@@ -507,9 +512,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @param scope
 	 * @return
 	 */
-	public static Dataflow empty(IObservable observable, String name, ResolutionScope scope) {
+	public static Dataflow empty(IObservable observable, String name, ResolutionScope scope, Dataflow parent) {
 
-		Dataflow ret = new Dataflow();
+		Dataflow ret = new Dataflow(parent);
 		ret.resolutionScope = scope;
 		ret.session = scope.getSession();
 
@@ -537,13 +542,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @return
 	 */
 	public boolean isPrimary() {
-		return primary;
+//		return primary;
+		return parent == null;
 	}
 
-	public Dataflow setPrimary(boolean b) {
-		this.primary = b;
-		return this;
-	}
+//	public Dataflow setPrimary(boolean b) {
+//		this.primary = b;
+//		return this;
+//	}
 
 	public String getDescription() {
 		return description;
@@ -688,6 +694,5 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.context = (DirectObservation) contextSubject;
 		return this;
 	}
-
 
 }

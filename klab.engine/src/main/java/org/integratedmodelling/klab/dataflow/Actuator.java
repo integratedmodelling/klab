@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -677,7 +678,8 @@ public class Actuator implements IActuator {
 						if (task == null) {
 							task = ((ITaskTree<?>) ctx.getMonitor().getIdentity()).createChild();
 						}
-						ctx.resolve(deferred, (IDirectObservation) object, task);
+						ctx.resolve(deferred, (IDirectObservation) object, task,
+								deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 					}
 
 					/*

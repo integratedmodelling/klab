@@ -57,10 +57,20 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author ferdinando.villa
  *
  */
-public enum Resolver {
+public class Resolver {
 
-	INSTANCE;
+//	INSTANCE;
 
+	private Dataflow parentDataflow;
+	
+	private Resolver(Dataflow parentDataflow) {
+		this.parentDataflow = parentDataflow;
+	}
+	
+	public static Resolver create(Dataflow parentDataflow) {
+		return new Resolver(parentDataflow);
+	}
+	
 	/**
 	 * Implements the
 	 * {@link IObservationService#resolve(String, ISession, String[])} method,
@@ -82,9 +92,9 @@ public enum Resolver {
 		String taskId = "local:task:" + session.getId() + ":" + object.getId();
 		ResolutionScope scope = resolve((Observer) object, monitor, Arrays.asList(scenarios));
 		if (scope.getCoverage().isRelevant()) {
-			return Dataflows.INSTANCE.compile(taskId, scope);
+			return Dataflows.INSTANCE.compile(taskId, scope, parentDataflow);
 		}
-		return Dataflow.empty();
+		return Dataflow.empty(parentDataflow);
 	}
 
 	/**
@@ -104,7 +114,7 @@ public enum Resolver {
 		IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
 		String taskId = "local:task:" + context.getId() + ":" + ""; // TODO encode resolvable in URN
 		if (resolvable == null) {
-			return Dataflow.empty();
+			return Dataflow.empty(parentDataflow);
 		}
 
 		/*
@@ -113,10 +123,10 @@ public enum Resolver {
 		ResolutionScope scope = resolve(resolvable,
 				ResolutionScope.create((Subject) context, monitor, Arrays.asList(scenarios)));
 		if (scope.getCoverage().isRelevant()) {
-			return Dataflows.INSTANCE.compile(taskId, scope);
+			return Dataflows.INSTANCE.compile(taskId, scope, parentDataflow);
 		}
 
-		return Dataflow.empty();
+		return Dataflow.empty(parentDataflow);
 	}
 
 	/**
@@ -527,7 +537,7 @@ public enum Resolver {
 	 * @param context
 	 * @return a prioritizer for this model
 	 */
-	public IPrioritizer<ModelReference> getPrioritizer(ResolutionScope context) {
+	public static IPrioritizer<ModelReference> getPrioritizer(ResolutionScope context) {
 		return new Prioritizer(context);
 	}
 

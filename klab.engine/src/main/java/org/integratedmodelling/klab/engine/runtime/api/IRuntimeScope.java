@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
@@ -403,7 +404,7 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * 
 	 * @return a dataflow to resolve the observable, or null if there is no coverage
 	 */
-	<T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task);
+	<T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task, Mode mode);
 
 	/**
 	 * Schedule any actions tagged as scheduled in the behavior of the passed
@@ -439,5 +440,14 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param listenerId
 	 */
 	public void removeListener(String listenerId);
+
+	/**
+	 * Scopes must maintain a synchronized set of IDs for all observations that are
+	 * being watched by the view. This is subscribed to through messages sent to the
+	 * session that owns the observations.
+	 * 
+	 * @return
+	 */
+	public Set<String> getWatchedObservationIds();
 
 }

@@ -66,7 +66,8 @@ public class DataflowCompiler {
 	private String name;
 	private DirectObservation context;
 	private IResolutionScope scope;
-
+	private Dataflow parentDataflow;
+	
 	/*
 	 * keep the observables of each merged model to create proper references.
 	 */
@@ -117,10 +118,11 @@ public class DataflowCompiler {
 		}
 	}
 
-	public DataflowCompiler(String name, IResolutionScope scope) {
+	public DataflowCompiler(String name, IResolutionScope scope, Dataflow parentDataflow) {
 		this.name = name;
 		this.scope = scope;
 		this.context = (DirectObservation) scope.getContext();
+		this.parentDataflow = parentDataflow;
 	}
 
 	public Dataflow compile(IMonitor monitor) {
@@ -129,7 +131,7 @@ public class DataflowCompiler {
 			Graphs.show(resolutionGraph, "Resolution graph");
 		}
 
-		Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class));
+		Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class), parentDataflow);
 
 		ret.setName(this.name);
 		ret.setReferenceName(this.name);

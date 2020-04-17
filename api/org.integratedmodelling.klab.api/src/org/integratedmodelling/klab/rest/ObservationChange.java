@@ -6,6 +6,16 @@ import org.integratedmodelling.klab.utils.Triple;
 
 public class ObservationChange {
 
+	public enum Type {
+		SpatialTranslation,
+		SpatialChange,
+		Termination,
+		StructureChange,
+		NameChange,
+		AttributeChange,
+		ValueChange,
+	}
+	
 	private String id;
 	private String contextId;
 	private long timestamp;
@@ -18,8 +28,8 @@ public class ObservationChange {
 	private int newSize;
 	private boolean newMainStatus;
 	private boolean newValues;
-	private boolean terminated;
-
+	private Type type;
+	
 	public List<Triple<String, String, String>> getNewAttributes() {
 		return newAttributes;
 	}
@@ -68,14 +78,6 @@ public class ObservationChange {
 		this.newValues = newValues;
 	}
 
-	public boolean isTerminated() {
-		return terminated;
-	}
-
-	public void setTerminated(boolean terminated) {
-		this.terminated = terminated;
-	}
-
 	public String getId() {
 		return id;
 	}
@@ -106,6 +108,14 @@ public class ObservationChange {
 
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
 	}
 
 

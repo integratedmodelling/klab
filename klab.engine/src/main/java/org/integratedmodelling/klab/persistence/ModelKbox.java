@@ -164,7 +164,7 @@ public class ModelKbox extends ObservableKbox {
 		Pair<Scale, Set<IRankedModel>> preResolved = context.isCaching() ? null
 				: context.getPreresolvedModels(observable);
 
-		IPrioritizer<ModelReference> prioritizer = Resolver.INSTANCE.getPrioritizer(context);
+		IPrioritizer<ModelReference> prioritizer = Resolver.getPrioritizer(context);
 		ModelQueryResult ret = new ModelQueryResult(prioritizer, context.getMonitor());
 		Set<ModelReference> local = new HashSet<>();
 

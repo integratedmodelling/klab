@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.rest.RuntimeDocumentation;
 import org.integratedmodelling.klab.rest.SettingChangeRequest;
 import org.integratedmodelling.klab.rest.UserInputRequest;
 import org.integratedmodelling.klab.rest.UserInputResponse;
+import org.integratedmodelling.klab.rest.WatchRequest;
 
 /**
  * Messages exchanged between the engine and its web UI.
@@ -222,7 +223,7 @@ public interface IMessage {
 		 * asynchronously).
 		 */
 		ResourceSubmitted,
-		
+
 		/**
 		 * B -> F after a resource operation request, reporting the results
 		 */
@@ -253,6 +254,13 @@ public interface IMessage {
 		 * resulted from a search, send the ID of the search so it can be disposed of.
 		 */
 		RequestObservation,
+
+		/**
+		 * F->B: Start or stop watching an observation, i.e. receive messages about
+		 * anything that changes related to it. Linked to a {@link WatchRequest}
+		 * message payload.
+		 */
+		WatchObservation,
 
 		/**
 		 * A new observation is available. Back->Front.
