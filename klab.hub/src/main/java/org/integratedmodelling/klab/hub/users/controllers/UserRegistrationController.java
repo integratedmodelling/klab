@@ -53,7 +53,9 @@ public class UserRegistrationController {
 				tokenService.createToken(user.getUsername()
 						, TokenType.verify);
 		emailManager.sendNewUser(user.getEmail(), user.getUsername(), token.getCallbackUrl());
-		return new ResponseEntity<String>("Please Check your email for account verification email.", HttpStatus.CREATED);
+		JSONObject resp = new JSONObject();
+		resp.appendField("message", "Please Check your email for account verification email.");
+		return new ResponseEntity<JSONObject>(resp, HttpStatus.CREATED);
 	}
 	
 	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_VERIFICATION)

@@ -35,7 +35,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 	private PasswordEncoder passwordEncoder;
 	private LdapTemplate ldapTemplate;
 	private LdapUserDetailsManager ldapUserDetailsManager;
-
+	
 	public UserRegistrationServiceImpl(UserRepository userRepository, 
 			PasswordEncoder passwordEncoder, 
 			LdapTemplate ldapTemplate,

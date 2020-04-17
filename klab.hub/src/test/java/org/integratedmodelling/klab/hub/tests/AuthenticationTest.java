@@ -45,16 +45,6 @@ public class AuthenticationTest extends ApplicationCheck {
 	}
 	
 	@Test
-	public void fail_create_user_username_present() throws URISyntaxException {
-		final String baseUrl = "http://localhost:"+ port + "/hub" + API.HUB.USER_BASE;
-		URI uri = new URI(baseUrl);
-		String username = "srwohl";
-		String password = "password";
-		SignupRequest request = new SignupRequest(username,password);
-		ResponseEntity<JSONObject> result = restTemplate.postForEntity(uri, request, JSONObject.class);
-	}
-	
-	@Test
 	public void fail_log_in_no_user() throws URISyntaxException {
 		final String baseUrl = "http://localhost:"+ port + "/hub" + API.HUB.AUTHENTICATE_USER;
 		URI uri = new URI(baseUrl);
