@@ -165,7 +165,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
 		this.dataflow = actuator.getDataflow();
 		this.watchedObservations = Collections.synchronizedSet(new HashSet<>());
-		
+
 		/*
 		 * Complex and convoluted, but there is no other way to get this which must be
 		 * created by the task for the first context. Successive contextualizations will
@@ -402,9 +402,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ResolutionScope scope = Resolver.create(this.dataflow).resolve(observable, this.resolutionScope,
 				Mode.RESOLUTION, scale, model);
 		if (scope.getCoverage().isRelevant()) {
-			Dataflow dataflow = Dataflows.INSTANCE
-					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope,
-							this.dataflow)/*
+			Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
+					scope, this.dataflow)/*
 											 * .setPrimary(false)
 											 */;
 			dataflow.setModel((Model) model);
@@ -453,11 +452,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					this.resolutionScope.getDeferredChildScope(observation, mode), mode, scale, model);
 
 			if (scope.getCoverage().isRelevant()) {
-				dataflow = Dataflows.INSTANCE
-						.compile("local:task:" + session.getId() + ":" + task.getId(), scope,
-								this.dataflow)/*
-												 * .setPrimary(false)
-												 */;
+				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope,
+						this.dataflow)/*
+										 * .setPrimary(false)
+										 */;
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 			}
 		}
@@ -526,11 +524,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 			if (scope.getCoverage().isRelevant()) {
 
-				dataflow = Dataflows.INSTANCE
-						.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope,
-								this.dataflow)/*
-												 * .setPrimary(false)
-												 */;
+				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope,
+						this.dataflow)/*
+										 * .setPrimary(false)
+										 */;
 				dataflow.setModel((Model) model);
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 
@@ -639,11 +636,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 			if (scope.getCoverage().isRelevant()) {
 
-				dataflow = Dataflows.INSTANCE
-						.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope,
-								this.dataflow)/*
-												 * .setPrimary(false)
-												 */;
+				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope,
+						this.dataflow)/*
+										 * .setPrimary(false)
+										 */;
 				dataflow.setModel((Model) model);
 
 				// TODO this must be added to the computational strategy and linked to the
@@ -1104,6 +1100,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				if (this.rootSubject == null && observation instanceof ISubject) {
 					this.rootSubject = (ISubject) observation;
 					this.eventBus = new EventBus((Subject) this.rootSubject);
+					/*
+					 * We register the root subject for updates by default. TODO This may be
+					 * subjected to a view asking for it at the time of session establishment.
+					 */
+					watchedObservations.add(observation.getId());
 				}
 				this.catalog.put(name, observation);
 				this.structure.addVertex(observation);
