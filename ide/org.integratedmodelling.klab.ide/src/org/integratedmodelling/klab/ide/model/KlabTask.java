@@ -22,6 +22,7 @@ public class KlabTask extends KlabPeer {
 
     @MessageHandler
     public void handleObservation(ObservationReference observation) {
+    	Activator.session().getContextMonitor().register(observation);
     	Activator.session().recordObservation(observation);
     }
 }

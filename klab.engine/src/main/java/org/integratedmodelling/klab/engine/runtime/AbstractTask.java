@@ -55,4 +55,10 @@ public abstract class AbstractTask<T extends IObservation> implements ITaskTree<
 	public void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy) {
 		this.contextualizationStrategy = contextualizationStrategy;
 	}
+	
+	@Override
+	public String getContextId() {
+		return this.context == null ? null : this.context.getId();
+	}
+
 }

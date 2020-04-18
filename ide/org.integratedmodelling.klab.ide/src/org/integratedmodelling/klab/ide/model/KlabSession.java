@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.client.messaging.ContextMonitor;
 import org.integratedmodelling.klab.client.tickets.TicketManager;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
@@ -40,6 +41,7 @@ import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NetworkReference;
 import org.integratedmodelling.klab.rest.Notification;
+import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
@@ -70,6 +72,8 @@ public class KlabSession extends KlabPeer {
 
 	private AtomicLong queryCounter = new AtomicLong();
 
+	ContextMonitor contextMonitor = new ContextMonitor();
+	
 	/*
 	 * all tasks in the session
 	 */
@@ -158,6 +162,10 @@ public class KlabSession extends KlabPeer {
 	 * --- public methods ---
 	 */
 
+	public ContextMonitor getContextMonitor() {
+		return contextMonitor;
+	}
+	
 	/**
 	 * Build a list describing the entire known history of the session, honoring
 	 * chosen display priority and options. The first-level objects will always be
@@ -535,7 +543,14 @@ public class KlabSession extends KlabPeer {
 
 	@MessageHandler
 	public void handleObservation(ObservationReference observation) {
+		contextMonitor.register(observation);
 		recordObservation(observation);
+	}
+
+	@MessageHandler
+	public void handleObservation(ObservationChange observation) {
+		contextMonitor.register(observation);
+//		recordObservation(observation);
 	}
 
 	@MessageHandler

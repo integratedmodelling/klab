@@ -30,4 +30,12 @@ public interface ITaskTree<T extends IObservation> extends ITask<T> {
 	 * @return true if a child
 	 */
 	boolean isChildTask();
+
+	/**
+	 * The ID of the observation context where this task was invoked. May be
+	 * different from the actual context of the observation created.
+	 * 
+	 * @return
+	 */
+	String getContextId();
 }

@@ -814,6 +814,7 @@ public class RuntimeView extends ViewPart {
 			});
 			break;
 		case FocusChanged:
+			System.out.println("GOT FOCUS ON " + message.getPayload());
 			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
 				lastFocus = message.getPayload(EObservationReference.class);
 				refreshTaskViewer(message.getType());

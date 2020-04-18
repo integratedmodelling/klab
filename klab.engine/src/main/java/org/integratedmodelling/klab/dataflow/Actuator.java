@@ -1303,7 +1303,10 @@ public class Actuator implements IActuator {
 		this.currentContext = context;
 
 		if (Klab.INSTANCE.getMessageBus() == null || isPartition()
-				|| context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).isChildTask()) {
+		/*
+		 * || context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).
+		 * isChildTask()
+		 */) {
 			return;
 		}
 
@@ -1345,9 +1348,11 @@ public class Actuator implements IActuator {
 			// level 0
 
 			if (isNew) {
-				IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
-						product.getContext(), context.getScale().initialization(), 0, isMainObservable || isMain)
-						.withTaskId(taskId);
+				IObservationReference observation = Observations.INSTANCE
+						.createArtifactDescriptor(product, product.getContext(), context.getScale().initialization(), 0,
+								isMainObservable || isMain)
+						.withTaskId(taskId).withContextId(
+								context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).getContextId());
 
 				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 						IMessage.Type.NewObservation, observation));

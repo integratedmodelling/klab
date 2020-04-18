@@ -209,7 +209,7 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
     
     @Override
     public String toString() {
-        return "[OBSERVATION " + getObservationType() + " " + getLabel() + "]";
+        return delegate.toString();
     }
 
     @Override

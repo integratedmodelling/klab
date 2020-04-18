@@ -184,6 +184,7 @@ public class ObservationReference implements IObservationReference {
 	private List<String> traits = new ArrayList<>();
 	private Map<String, String> metadata = new HashMap<>();
 	private String taskId;
+	private String contextId;
 	private boolean empty;
 	private Style style;
 	private boolean main;
@@ -678,8 +679,13 @@ public class ObservationReference implements IObservationReference {
 	 * @param taskId
 	 * @return
 	 */
-	public IObservationReference withTaskId(String taskId) {
+	public ObservationReference withTaskId(String taskId) {
 		this.setTaskId(taskId);
+		return this;
+	}
+	
+	public ObservationReference withContextId(String contextId) {
+		this.setContextId(contextId);
 		return this;
 	}
 
@@ -860,5 +866,40 @@ public class ObservationReference implements IObservationReference {
 	public void setAlive(boolean alive) {
 		this.alive = alive;
 	}
+
+	public String getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(String contextId) {
+		this.contextId = contextId;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ObservationReference other = (ObservationReference) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	
 
 }

@@ -103,7 +103,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 		if (throwable instanceof ConnectionLostException) {
 			// if connection lost, call this
 			// error("Connection lost.");
-			System.out.println("Connection lost.");
+			System.out.println("Connection lost: " + throwable);
 		} else {
 			// error("Unknown message transport error. Please report the error.");
 			System.out.println("Unknown message transport error.");
@@ -165,8 +165,8 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 						final Message message = (Message) payload;
 
-//						System.err.println("received payload of type " + message.getPayloadClass() + ", size="
-//								+ (payload == null ? 0 : payload.toString().length()) + " with mclass = " + message.getMessageClass());
+						System.err.println("received payload of type " + message.getPayloadClass() + ", size="
+								+ (payload == null ? 0 : payload.toString().length()) + " with mclass = " + message.getMessageClass());
 
 						/*
 						 * No automatic translation at the receiving end
