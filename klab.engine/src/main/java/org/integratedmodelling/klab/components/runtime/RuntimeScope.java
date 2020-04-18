@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -55,6 +57,7 @@ import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.components.runtime.observations.Configuration;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -80,6 +83,7 @@ import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.IntelligentMap;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
@@ -1144,8 +1148,105 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	}
 
+	/**
+	 * Return whether an observation should be notified to clients. This implies: 1)
+	 * that a client is listening and 2) that there are subscriptions from the
+	 * client that require notification. This means either of: 1) The observation is
+	 * a child of a parent that was subscribed to and was never notified, or 2) the
+	 * observation has been changed (directly or in the number of children) after
+	 * the last notification and it's part of a subscribed hierarchy (is subscribed
+	 * itself and not root, or it's a direct child that a subscribed one).
+	 * <p>
+	 * Upon this returning true, check if the observation's ID is in
+	 * {@link #notifiedObservations} and the observation's changeset to know what to
+	 * do.
+	 * 
+	 * @param observation
+	 * @return
+	 */
+	public boolean isNotifiable(IObservation observation) {
+
+		return false;
+	}
+
 	private void updateNotifications(IObservation observation) {
-		// TODO Auto-generated method stub
+
+//		if (Klab.INSTANCE.getMessageBus() == null || isPartition()
+//		/*
+//		 * || context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).
+//		 * isChildTask()
+//		 */) {
+//			return;
+//		}
+//
+//		String taskId = context.getMonitor().getIdentity().getId();
+//		ISession session = context.getMonitor().getIdentity().getParentIdentity(ISession.class);
+//
+//		if (this.products.isEmpty()) {
+//			if (context.getArtifact(this.name) != null && !context.getArtifact(this.name).isArchetype()) {
+//				this.products.add((IObservation) context.getArtifact(this.name));
+//			}
+//		}
+//
+//		boolean isMain = false;
+//		for (IAnnotation annotation : annotations) {
+//			if (annotation.getName().equals("main")) {
+//				isMain = true;
+//				break;
+//			}
+//		}
+//
+//		for (IObservation product : products) {
+//
+//			if (product.isArchetype()) {
+//				continue;
+//			}
+//
+//			boolean isNew = true;
+//			if (product instanceof ObservationGroup) {
+//				isNew = ((ObservationGroup) product).isNew();
+//			}
+//
+//			if (isNew && context.getNotifiedObservations().contains(product.getId())) {
+//				continue;
+//			}
+//
+//			context.getNotifiedObservations().add(product.getId());
+//
+//			// parent is always getContext() because these notifications aren't sent beyond
+//			// level 0
+//
+//			if (isNew) {
+//				IObservationReference observation = Observations.INSTANCE
+//						.createArtifactDescriptor(product, product.getContext(), context.getScale().initialization(), 0,
+//								isMainObservable || isMain)
+//						.withTaskId(taskId).withContextId(
+//								context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).getContextId());
+//
+//				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+//						IMessage.Type.NewObservation, observation));
+//
+//				((Report) context.getReport()).include(observation);
+//			} else {
+//
+//				// TODO notify a change in an observation group, if any happened
+//
+//			}
+//
+//			if (product instanceof ObservationGroup) {
+//				((ObservationGroup) product).setNew(false);
+//			}
+//		}
+//
+//		/*
+//		 * when all is computed, reuse the context to render the documentation
+//		 * templates.
+//		 */
+//		for (IDocumentation doc : documentation) {
+//			for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
+//				((Report) context.getReport()).include(template, context);
+//			}
+//		}
 
 	}
 

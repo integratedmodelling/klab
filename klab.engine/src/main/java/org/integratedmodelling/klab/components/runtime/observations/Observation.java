@@ -62,7 +62,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
 	 */
-	protected List<ObservationChange> modificationsToReport = new ArrayList<>();
+	protected List<ObservationChange> changeset = new ArrayList<>();
 	protected List<IModificationListener> modificationListeners = new ArrayList<>();
 	private ActorRef<KlabMessage> actor;
 	// actor-scoped state, manipulated using "set" statements.
@@ -88,7 +88,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 
 	protected void reportChange(ObservationChange change) {
-		this.modificationsToReport.add(change);
+		this.changeset.add(change);
 	}
 
 	protected void touch() {
@@ -256,8 +256,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	 * @return
 	 */
 	public List<ObservationChange> getChangesAndReset() {
-		List<ObservationChange> ret = this.modificationsToReport;
-		this.modificationsToReport = new ArrayList<>();
+		List<ObservationChange> ret = this.changeset;
+		this.changeset = new ArrayList<>();
 		return ret;
 	}
 
