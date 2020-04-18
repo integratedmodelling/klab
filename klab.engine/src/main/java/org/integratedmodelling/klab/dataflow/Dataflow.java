@@ -446,13 +446,15 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			if (coverage != null && coverage.getExtentCount() > 0) {
 				List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
 				if (!scaleSpecs.isEmpty()) {
-					ret += "@coverage";
-					for (int i = 0; i < scaleSpecs.size(); i++) {
-						if (scaleSpecs.get(i) != null) {
-							ret += " " + scaleSpecs.get(i).getSourceCode()
-									+ ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
-						}
-					}
+					ret += "@coverage load_me_from_some_sidecar_file()";
+					// TODO this can get huge and is transmitted over websockets, so can't put it here as is. Needs
+					// supplemental material and a ref instead.
+//					for (int i = 0; i < scaleSpecs.size(); i++) {
+//						if (scaleSpecs.get(i) != null) {
+//							ret += " " + scaleSpecs.get(i).getSourceCode()
+//									+ ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
+//						}
+//					}
 					ret += "\n";
 				}
 			}

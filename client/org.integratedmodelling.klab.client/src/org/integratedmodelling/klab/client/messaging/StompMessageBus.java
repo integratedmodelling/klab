@@ -165,8 +165,8 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 						final Message message = (Message) payload;
 
-						System.err.println("received payload of type " + message.getPayloadClass() + ", size="
-								+ (payload == null ? 0 : payload.toString().length()) + " with mclass = " + message.getMessageClass());
+//						System.err.println("received payload of type " + message.getPayloadClass() + ", size="
+//								+ (payload == null ? 0 : payload.toString().length()) + " with mclass = " + message.getMessageClass());
 
 						/*
 						 * No automatic translation at the receiving end
