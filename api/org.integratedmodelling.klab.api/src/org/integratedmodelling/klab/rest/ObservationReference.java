@@ -900,6 +900,31 @@ public class ObservationReference implements IObservationReference {
 		return true;
 	}
 	
-	
+	/**
+	 * Apply a change to a previously created observation and modify it.
+	 * 
+	 * @param change
+	 */
+	public void applyChange(ObservationChange change) {
+		switch (change.getType()) {
+		case AttributeChange:
+			break;
+		case NameChange:
+			break;
+		case SpatialChange:
+			break;
+		case SpatialTranslation:
+			break;
+		case StructureChange:
+			break;
+		case Termination:
+			break;
+		case ValueChange:
+			break;
+		default:
+			break;
+		
+		}
+	}
 
 }
