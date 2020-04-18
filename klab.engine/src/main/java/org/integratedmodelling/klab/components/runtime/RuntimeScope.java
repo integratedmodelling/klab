@@ -1100,6 +1100,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				if (this.rootSubject == null && observation instanceof ISubject) {
 					this.rootSubject = (ISubject) observation;
 					this.eventBus = new EventBus((Subject) this.rootSubject);
+					/*
+					 * We register the root subject for updates by default. TODO This may be
+					 * subjected to a view asking for it at the time of session establishment.
+					 */
+					watchedObservations.add(observation.getId());
 				}
 				this.catalog.put(name, observation);
 				this.structure.addVertex(observation);
