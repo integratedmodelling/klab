@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -81,7 +82,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private String description;
 	private DirectObservation context;
 	private ResolutionScope resolutionScope;
-	private boolean primary = true;
+//	private boolean primary = true;
 	IDirectObservation relationshipSource;
 	IDirectObservation relationshipTarget;
 
@@ -128,6 +129,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * merge each dataflow once when reusing them for multiple instances.
 	 */
 	Set<String> dataflowIds = new HashSet<>();
+	private ObservationGroup observationGroup;
 
 	private Dataflow(Dataflow parent) {
 		this.parent = parent;
@@ -695,6 +697,15 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public Dataflow withContext(IDirectObservation contextSubject) {
 		this.context = (DirectObservation) contextSubject;
 		return this;
+	}
+
+	public Dataflow withinGroup(ObservationGroup group) {
+		this.observationGroup = group;
+		return this;
+	}
+
+	public ObservationGroup getObservationGroup() {
+		return this.observationGroup;
 	}
 
 }

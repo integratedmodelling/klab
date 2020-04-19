@@ -15,7 +15,6 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -57,27 +56,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 		void newObservation(IObservation observation);
 	}
 
-	/**
-	 * A context is created for the root observation, and this information never
-	 * changes.
-	 * 
-	 * @return the root observation. Can only be null at the beginning of the
-	 *         lifecycle of this context, when the root obs has not been created
-	 *         yet.
-	 */
-	ISubject getRootSubject();
-
-	/**
-	 * The context subject for the observation being computed. May differ from
-	 * {@link #getContextObservation()} as the latter is the one in the scope of
-	 * which the runtime operation has been resolved. This applies for example to
-	 * dataflows that resolve an instantiated subject.
-	 * 
-	 * TODO clarify the difference or resolve the conflict if any.
-	 * 
-	 * @return
-	 */
-	IDirectObservation getContextSubject();
 
 	/**
 	 * Return any of the observations created within the context of the root
@@ -100,7 +78,7 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param monitor
 	 * @return
 	 */
-	public IRuntimeScope createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
+	public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope, IMonitor monitor);
 
 	/**
 	 * Called to create the computation context for any actuator contained in a root
@@ -449,5 +427,14 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	public Set<String> getWatchedObservationIds();
+
+	/**
+	 * Send any notifications pertaining to this observation to the clients that are
+	 * watching. Should call {@link #isNotifiable(IObservation)} to ensure that the
+	 * observation is watched.
+	 * 
+	 * @param observation
+	 */
+	void updateNotifications(IObservation observation);
 
 }

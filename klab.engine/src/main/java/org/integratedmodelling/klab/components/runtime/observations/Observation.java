@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -326,5 +327,9 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	
 	public Map<String, Object> getState() {
 		return globalState;
+	}
+
+	public List<ObservationChange> getChangeset() {
+		return changeset;
 	}
 }

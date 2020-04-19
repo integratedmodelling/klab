@@ -90,8 +90,7 @@ public class EngineViewController {
 			loc = obs.getScale().at(loc);
 		}
 
-		return Observations.INSTANCE.createArtifactDescriptor(obs, parent, loc, childLevel == null ? -1 : childLevel,
-				/* collapseSiblings, */ false);
+		return Observations.INSTANCE.createArtifactDescriptor(obs, parent, loc, childLevel == null ? -1 : childLevel);
 	}
 
 	/**
@@ -164,7 +163,7 @@ public class EngineViewController {
 				break;
 			}
 
-			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs, loc, 0, false,
+			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs, loc, 0,
 					obs instanceof ObservationGroupView ? obs.getId() : null));
 			n++;
 		}
@@ -236,8 +235,8 @@ public class EngineViewController {
 				StateSummary summary = Observations.INSTANCE.getStateSummary((IState) obs, loc);
 				if (summary.getColormap() == null) {
 					/*
-					 * force rendering before images are made. Adding the colormap to the
-					 * state summary is a side effect.
+					 * force rendering before images are made. Adding the colormap to the state
+					 * summary is a side effect.
 					 */
 					Renderer.INSTANCE.getRasterSymbolizer((IState) obs, loc);
 				}

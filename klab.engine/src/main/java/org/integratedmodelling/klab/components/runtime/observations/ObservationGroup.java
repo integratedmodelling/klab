@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 
 /**
@@ -29,14 +30,6 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 	private List<IArtifact> artifacts = new ArrayList<>();
 	boolean sorted = false;
 	private Comparator<IArtifact> comparator = null;
-
-	/*
-	 * like everything, a group is born new, then the actuator ensures the next time
-	 * objects are added we should notify a change and not the whole group. Because
-	 * the group changes when objects are added or removed, we use the notified size
-	 * to assess if it's new.
-	 */
-	int notifiedSize = -1;
 
 	public ObservationGroup(Observable observable, Scale scale, IRuntimeScope context, IArtifact.Type type) {
 		super(observable.getName(), observable, scale, context);
@@ -64,14 +57,6 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 		return artifacts.isEmpty();
 	}
 
-	public boolean isNew() {
-		return groupSize() != notifiedSize;
-	}
-
-	public void setNew(boolean b) {
-		this.notifiedSize = groupSize();
-	}
-
 	@Override
 	public Iterator<IArtifact> iterator() {
 		sort();
@@ -85,6 +70,20 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 		}
 	}
 
+	private ObservationChange getSizeChange() {
+		for (ObservationChange change : getChangeset()) {
+			if (change.getType() == ObservationChange.Type.StructureChange) {
+				return change;
+			}
+		}
+		ObservationChange change = new ObservationChange();
+		change.setContextId(getRuntimeScope().getRootSubject().getId());
+		change.setId(this.getId());
+		change.setType(ObservationChange.Type.StructureChange);
+		getChangeset().add(change);
+		return change;
+	}
+
 	@Override
 	public int groupSize() {
 		return artifacts.size();
@@ -95,6 +94,9 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 		artifacts.add(data);
 		((Observation) data).setGroup(this);
 		sorted = false;
+		ObservationChange change = getSizeChange();
+		change.setTimestamp(System.currentTimeMillis());
+		change.setNewSize(change.getNewSize() + 1);
 	}
 
 	public void setComparator(Comparator<IArtifact> comparator) {

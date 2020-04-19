@@ -2,18 +2,59 @@ package org.integratedmodelling.klab.rest;
 
 import java.util.List;
 
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.utils.Triple;
 
 public class ObservationChange {
 
+	/**
+	 * Type of change
+	 * 
+	 * @author Ferd
+	 *
+	 */
 	public enum Type {
+		
+		/**
+		 * Spatial context has changed location
+		 */
 		SpatialTranslation,
+		
+		/**
+		 * Spatial context has changed shape
+		 */
 		SpatialChange,
+		
+		/**
+		 * Observation has been terminated and is no longer in the context
+		 */
 		Termination,
+		
+		/**
+		 * Number of children has changed: newSize contains the new number
+		 */
 		StructureChange,
+		
+		/**
+		 * Name of object has changed
+		 */
 		NameChange,
+		
+		/**
+		 * Attributes linked to an object or a folder have changed
+		 */
 		AttributeChange,
+		
+		/**
+		 * Values of a state have changed
+		 */
 		ValueChange,
+		
+		/**
+		 * Observation becomes "main"
+		 */
+		BringForward
 	}
 	
 	private String id;
@@ -26,7 +67,6 @@ public class ObservationChange {
 	private String newName;
 	private String newSemantics;
 	private int newSize;
-	private boolean newMainStatus;
 	private boolean newValues;
 	private Type type;
 	
@@ -86,14 +126,6 @@ public class ObservationChange {
 		this.id = id;
 	}
 
-	public boolean isNewMainStatus() {
-		return newMainStatus;
-	}
-
-	public void setNewMainStatus(boolean newMainStatus) {
-		this.newMainStatus = newMainStatus;
-	}
-
 	public String getContextId() {
 		return contextId;
 	}
@@ -116,6 +148,21 @@ public class ObservationChange {
 
 	public void setType(Type type) {
 		this.type = type;
+	}
+
+	public static ObservationChange main(IObservation observation, IContextualizationScope scope) {
+		ObservationChange ret = new ObservationChange();
+		ret.setTimestamp(System.currentTimeMillis());
+		ret.setType(Type.BringForward);
+		ret.setContextId(scope.getRootSubject().getId());
+		ret.setId(observation.getId());
+		return ret;
+	}
+
+	@Override
+	public String toString() {
+		return "ObservationChange [id=" + id + ", contextId=" + contextId + ", newAttributes=" + newAttributes
+				+ ", newScale=" + newScale + ", newSize=" + newSize + ", type=" + type + "]";
 	}
 
 

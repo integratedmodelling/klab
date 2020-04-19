@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -56,6 +57,28 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  */
 public interface IContextualizationScope extends IParameters<String> {
+
+	/**
+	 * A context is created for the root observation, and this information never
+	 * changes.
+	 * 
+	 * @return the root observation. Can only be null at the beginning of the
+	 *         lifecycle of this context, when the root obs has not been created
+	 *         yet.
+	 */
+	ISubject getRootSubject();
+
+	/**
+	 * The context subject for the observation being computed. May differ from
+	 * {@link #getContextObservation()} as the latter is the one in the scope of
+	 * which the runtime operation has been resolved. This applies for example to
+	 * dataflows that resolve an instantiated subject.
+	 * 
+	 * TODO clarify the difference or resolve the conflict if any.
+	 * 
+	 * @return
+	 */
+	IDirectObservation getContextSubject();
 
 	/**
 	 * The namespace of reference in this context. Usually that of the running model
@@ -387,6 +410,16 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * @return the parent, or null if root subject
 	 */
 	IDirectObservation getParentOf(IObservation observation);
+
+	/**
+	 * Like {@link #getParentOf(IObservation)}, but will return the parent artifact
+	 * so the parent of any object that is part of a group will be the group and not
+	 * the parent subject.
+	 * 
+	 * @param observation
+	 * @return
+	 */
+	IObservation getParentArtifactOf(IObservation observation);
 
 	/**
 	 * Return all children of the passed observation. The runtime context maintains

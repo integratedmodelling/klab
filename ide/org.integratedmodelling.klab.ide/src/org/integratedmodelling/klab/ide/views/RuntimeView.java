@@ -47,6 +47,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
+import org.integratedmodelling.klab.client.messaging.ContextMonitor.ContextGraph;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
@@ -58,6 +59,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class RuntimeView extends ViewPart {
@@ -159,10 +161,17 @@ public class RuntimeView extends ViewPart {
 
 	class DetailContentProvider implements IStructuredContentProvider {
 
+		ContextGraph graph = null;
+		
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ERuntimeObject) {
 				return ((ERuntimeObject) inputElement).getProperties().toArray();
+			} else if (inputElement instanceof ObservationReference) {
+				System.out.println("ZIP OP");
+			} else if (inputElement instanceof ContextGraph) {
+				System.out.println("TROP HGO");
+				this.graph = (ContextGraph)inputElement;
 			}
 			return new Object[] {};
 		}
@@ -242,6 +251,16 @@ public class RuntimeView extends ViewPart {
 					}
 				} else if (element instanceof EDataflowReference) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/dataflow.gif");
+				}
+			} else if (element instanceof ObservationReference) {
+				if (((ObservationReference) element).isEmpty()) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/emptycontent.gif");
+				} else if (((EObservationReference) element).getSemantics().contains(IKimConcept.Type.QUALITY)) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/datagrid.gif");
+				} else if (((EObservationReference) element).getChildrenCount() > 1) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resources.gif");
+				} else {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
 				}
 			}
 			return null;
@@ -417,7 +436,8 @@ public class RuntimeView extends ViewPart {
 			gd_engineStatusIcon.heightHint = 24;
 			gd_engineStatusIcon.widthHint = 24;
 			engineStatusIcon.setLayoutData(gd_engineStatusIcon);
-			engineStatusIcon.setToolTipText(Activator.engineMonitor().isRunning() ? "Engine is online" : "Engine is offline");
+			engineStatusIcon
+					.setToolTipText(Activator.engineMonitor().isRunning() ? "Engine is online" : "Engine is offline");
 
 			engineStatusLabel = new Label(composite, SWT.NONE);
 			engineStatusLabel.setForeground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_GRAY));
@@ -714,7 +734,7 @@ public class RuntimeView extends ViewPart {
 				}
 			}
 		});
-		
+
 		createActions();
 		initializeToolBar();
 		initializeMenu();
@@ -814,7 +834,6 @@ public class RuntimeView extends ViewPart {
 			});
 			break;
 		case FocusChanged:
-			System.out.println("GOT FOCUS ON " + message.getPayload());
 			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
 				lastFocus = message.getPayload(EObservationReference.class);
 				refreshTaskViewer(message.getType());
@@ -875,7 +894,15 @@ public class RuntimeView extends ViewPart {
 
 		Display.getDefault().asyncExec(() -> {
 			if (lastFocus != null) {
-				taskViewer.setInput(history = Activator.session().getSessionHistory(currentPriority, currentLogLevel));
+				if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+					if (lastFocus instanceof EObservationReference) {
+						taskViewer.setInput(Activator.session().getContextMonitor()
+								.getGraph(((EObservationReference) lastFocus).getObservation().getRootContextId()));
+					}
+				} else {
+					taskViewer.setInput(
+							history = Activator.session().getSessionHistory(currentPriority, currentLogLevel));
+				}
 				if (taskEvent == IMessage.Type.TaskStarted) {
 					taskViewer.collapseAll();
 				}

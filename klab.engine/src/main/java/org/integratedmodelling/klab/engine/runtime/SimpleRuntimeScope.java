@@ -149,7 +149,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		this.semantics = new HashMap<>();
 		this.monitor = session.getMonitor();
 	}
-	
+
 	public SimpleRuntimeScope(IMonitor monitor) {
 		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
 		this.network = new DefaultDirectedGraph<>(Relationship.class);
@@ -517,7 +517,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IRuntimeScope createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
+	public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope,
+			IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -713,7 +714,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task, Mode mode) {
+	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task,
+			Mode mode) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -721,11 +723,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public void scheduleActions(Observation observation, IBehavior behavior) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public Map<IConcept,  Pair<String, IKimExpression>> getBehaviorBindings() {
+	public Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings() {
 		return null;
 	}
 
@@ -738,11 +740,23 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public void removeListener(String listenerId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public Set<String> getWatchedObservationIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void updateNotifications(IObservation observation) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public IObservation getParentArtifactOf(IObservation observation) {
 		// TODO Auto-generated method stub
 		return null;
 	}

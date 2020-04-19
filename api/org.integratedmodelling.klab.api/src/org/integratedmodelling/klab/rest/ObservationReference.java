@@ -187,13 +187,13 @@ public class ObservationReference implements IObservationReference {
 	private String contextId;
 	private boolean empty;
 	private Style style;
-	private boolean main;
 	private boolean primary;
 	private DataSummary dataSummary;
 	private List<ExportFormat> exportFormats = new ArrayList<>();
 	// only non-null in views
 	private String originalGroupId;
 	private boolean alive;
+	private boolean main;
 
 	/*
 	 * Only sent when the observation redefines the scale (new context)
@@ -738,21 +738,7 @@ public class ObservationReference implements IObservationReference {
 	public void setStyle(Style style) {
 		this.style = style;
 	}
-
-	/**
-	 * Observations tagged main should be brought to the user's attention
-	 * preferentially.
-	 * 
-	 * @return
-	 */
-	public boolean isMain() {
-		return main;
-	}
-
-	public void setMain(boolean main) {
-		this.main = main;
-	}
-
+	
 	@Override
 	public DataSummary getDataSummary() {
 		return dataSummary;
@@ -916,15 +902,25 @@ public class ObservationReference implements IObservationReference {
 		case SpatialTranslation:
 			break;
 		case StructureChange:
+			this.childrenCount = change.getNewSize();
 			break;
 		case Termination:
+			this.setAlive(false);
 			break;
 		case ValueChange:
 			break;
-		default:
+		case BringForward:
+			this.setMain(true);
 			break;
-		
 		}
+	}
+
+	public boolean isMain() {
+		return main;
+	}
+
+	public void setMain(boolean main) {
+		this.main = main;
 	}
 
 }

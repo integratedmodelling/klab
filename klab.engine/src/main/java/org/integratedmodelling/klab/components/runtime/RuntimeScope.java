@@ -30,7 +30,6 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
-import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -91,6 +90,7 @@ import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
@@ -130,7 +130,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	IDirectObservation contextSubject;
 	Map<String, IObservation> observations;
 	IScheduler scheduler;
-	IReport report;
+	Report report;
 	ContextualizationStrategy contextualizationStrategy;
 	// set only by the actuator, relevant only in instantiators with attributes
 	IModel model;
@@ -579,7 +579,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
 
 		IArtifact observation = dataflow
-				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale)).withMetadata(metadata)// .withScopeScale(scale)
+				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
+				.withMetadata(metadata)
+				.withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup)this.target : null)
 				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
 		if (observation instanceof IDirectObservation) {
@@ -795,8 +797,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return ret;
 	}
 
+	/**
+	 * Used in sub-resolution with switched context.
+	 */
 	@Override
-	public IRuntimeScope createContext(IScale scale, IActuator actuator, IResolutionScope scope, IMonitor monitor) {
+	public IRuntimeScope createContext(IScale scale, IActuator actuator, IDataflow<?> dataflow, IResolutionScope scope, IMonitor monitor) {
 
 		RuntimeScope ret = new RuntimeScope(this);
 		ret.parent = this;
@@ -814,6 +819,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
 		ret.actuator = actuator;
 		ret.contextSubject = scope.getContext();
+		ret.dataflow = (Dataflow)dataflow;
 
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
@@ -1134,10 +1140,18 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					link(observation, state);
 				}
 
-				/*
-				 * notify if subscribed. States are notified only after resolution.
-				 */
 				if (!(observation instanceof IState)) {
+
+					/*
+					 * chain to the group if we're in one
+					 */
+					if (this.dataflow.getObservationGroup() != null) {
+						this.dataflow.getObservationGroup().chain(observation);
+					}
+					
+					/*
+					 * notify if subscribed. States are notified only after resolution.
+					 */
 					updateNotifications(observation);
 				}
 
@@ -1146,6 +1160,21 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		return preexisting == null ? this.catalog.get(actuator.getName()) : preexisting;
 
+	}
+
+	@Override
+	public IObservation getParentArtifactOf(IObservation observation) {
+		IObservation ret = this.getParentOf(observation);
+
+		if (observation instanceof IDirectObservation) {
+
+			if (observation instanceof DirectObservation) {
+				ret = ((DirectObservation) observation).getGroup() == null ? ret
+						: ((DirectObservation) observation).getGroup();
+			}
+		}
+		
+		return ret;
 	}
 
 	/**
@@ -1164,89 +1193,45 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	 * @param observation
 	 * @return
 	 */
-	public boolean isNotifiable(IObservation observation) {
+	private boolean isNotifiable(IObservation observation) {
 
-		return false;
+		IObservation parent = this.getParentArtifactOf(observation);
+		if (parent != null) {
+			return watchedObservations.contains(parent.getId()) || watchedObservations.contains(observation.getId());
+		}
+		// root context is always notifiable
+		return true;
 	}
 
-	private void updateNotifications(IObservation observation) {
+	@Override
+	public void updateNotifications(IObservation observation) {
 
-//		if (Klab.INSTANCE.getMessageBus() == null || isPartition()
-//		/*
-//		 * || context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).
-//		 * isChildTask()
-//		 */) {
-//			return;
-//		}
-//
-//		String taskId = context.getMonitor().getIdentity().getId();
-//		ISession session = context.getMonitor().getIdentity().getParentIdentity(ISession.class);
-//
-//		if (this.products.isEmpty()) {
-//			if (context.getArtifact(this.name) != null && !context.getArtifact(this.name).isArchetype()) {
-//				this.products.add((IObservation) context.getArtifact(this.name));
-//			}
-//		}
-//
-//		boolean isMain = false;
-//		for (IAnnotation annotation : annotations) {
-//			if (annotation.getName().equals("main")) {
-//				isMain = true;
-//				break;
-//			}
-//		}
-//
-//		for (IObservation product : products) {
-//
-//			if (product.isArchetype()) {
-//				continue;
-//			}
-//
-//			boolean isNew = true;
-//			if (product instanceof ObservationGroup) {
-//				isNew = ((ObservationGroup) product).isNew();
-//			}
-//
-//			if (isNew && context.getNotifiedObservations().contains(product.getId())) {
-//				continue;
-//			}
-//
-//			context.getNotifiedObservations().add(product.getId());
-//
-//			// parent is always getContext() because these notifications aren't sent beyond
-//			// level 0
-//
-//			if (isNew) {
-//				IObservationReference observation = Observations.INSTANCE
-//						.createArtifactDescriptor(product, product.getContext(), context.getScale().initialization(), 0,
-//								isMainObservable || isMain)
-//						.withTaskId(taskId).withContextId(
-//								context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).getContextId());
-//
-//				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-//						IMessage.Type.NewObservation, observation));
-//
-//				((Report) context.getReport()).include(observation);
-//			} else {
-//
-//				// TODO notify a change in an observation group, if any happened
-//
-//			}
-//
-//			if (product instanceof ObservationGroup) {
-//				((ObservationGroup) product).setNew(false);
-//			}
-//		}
-//
-//		/*
-//		 * when all is computed, reuse the context to render the documentation
-//		 * templates.
-//		 */
-//		for (IDocumentation doc : documentation) {
-//			for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
-//				((Report) context.getReport()).include(template, context);
-//			}
-//		}
+		if (isNotifiable(observation)) {
+
+			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+
+			if (!notifiedObservations.contains(observation.getId())) {
+
+				IObservationReference descriptor = Observations.INSTANCE
+						.createArtifactDescriptor(observation, getParentOf(observation),
+								observation.getScale().initialization(), 0)
+						.withTaskId(monitor.getIdentity().getId())
+						.withContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
+
+				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+						IMessage.Type.NewObservation, descriptor));
+
+				report.include(descriptor);
+
+				notifiedObservations.add(observation.getId());
+			}
+
+			for (ObservationChange change : ((Observation) observation).getChangesAndReset()) {
+				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+						IMessage.Type.ModifiedObservation, change));
+			}
+
+		}
 
 	}
 

@@ -24,8 +24,6 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
@@ -58,10 +56,8 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
 import org.integratedmodelling.klab.data.Metadata;
@@ -77,9 +73,9 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
+import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -667,8 +663,6 @@ public class Actuator implements IActuator {
 						continue;
 					}
 
-					((Artifact) ret).chain(object);
-
 					/*
 					 * resolve and compute any distributed observables
 					 */
@@ -948,11 +942,11 @@ public class Actuator implements IActuator {
 		if (coverage != null && !coverage.isEmpty()) {
 			List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
 			if (!scaleSpecs.isEmpty()) {
-				ret += " over";
-				for (int i = 0; i < scaleSpecs.size(); i++) {
-					ret += " " + scaleSpecs.get(i).getSourceCode()
-							+ ((i < scaleSpecs.size() - 1) ? (",\n" + ofs + "      ") : "");
-				}
+				ret += " over scale_specifications_to_be_externalized()";
+//				for (int i = 0; i < scaleSpecs.size(); i++) {
+//					ret += " " + scaleSpecs.get(i).getSourceCode()
+//							+ ((i < scaleSpecs.size() - 1) ? (",\n" + ofs + "      ") : "");
+//				}
 			}
 		}
 
@@ -1310,8 +1304,8 @@ public class Actuator implements IActuator {
 			return;
 		}
 
-		String taskId = context.getMonitor().getIdentity().getId();
-		ISession session = context.getMonitor().getIdentity().getParentIdentity(ISession.class);
+//		String taskId = context.getMonitor().getIdentity().getId();
+//		ISession session = context.getMonitor().getIdentity().getParentIdentity(ISession.class);
 
 		if (this.products.isEmpty()) {
 			if (context.getArtifact(this.name) != null && !context.getArtifact(this.name).isArchetype()) {
@@ -1319,11 +1313,13 @@ public class Actuator implements IActuator {
 			}
 		}
 
-		boolean isMain = false;
-		for (IAnnotation annotation : annotations) {
-			if (annotation.getName().equals("main")) {
-				isMain = true;
-				break;
+		boolean isMain = isMainObservable;
+		if (!isMain) {
+			for (IAnnotation annotation : annotations) {
+				if (annotation.getName().equals("main")) {
+					isMain = true;
+					break;
+				}
 			}
 		}
 
@@ -1333,42 +1329,20 @@ public class Actuator implements IActuator {
 				continue;
 			}
 
-			boolean isNew = true;
-			if (product instanceof ObservationGroup) {
-				isNew = ((ObservationGroup) product).isNew();
-			}
+			/*
+			 * only notify states (which are not notified on creation) or anything that has
+			 * changed, such as groups with new children.
+			 */
+			if (product instanceof IState || ((Observation) product).getChangeset().size() > 0) {
 
-			if (isNew && context.getNotifiedObservations().contains(product.getId())) {
-				continue;
-			}
+				if (isMain) {
+					((Observation) product).getChangeset().add(ObservationChange.main(product, context));
+				}
 
-			context.getNotifiedObservations().add(product.getId());
-
-			// parent is always getContext() because these notifications aren't sent beyond
-			// level 0
-
-			if (isNew) {
-				IObservationReference observation = Observations.INSTANCE
-						.createArtifactDescriptor(product, product.getContext(), context.getScale().initialization(), 0,
-								isMainObservable || isMain)
-						.withTaskId(taskId).withContextId(
-								context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).getContextId());
-
-				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-						IMessage.Type.NewObservation, observation));
-
-				((Report) context.getReport()).include(observation);
-			} else {
-
-				// TODO notify a change in an observation group, if any happened
-
-			}
-
-			if (product instanceof ObservationGroup) {
-				((ObservationGroup) product).setNew(false);
+				context.updateNotifications(product);
 			}
 		}
-
+		
 		/*
 		 * when all is computed, reuse the context to render the documentation
 		 * templates.

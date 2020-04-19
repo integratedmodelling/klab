@@ -209,12 +209,12 @@ public enum Observations implements IObservationService {
 	}
 
 	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
-			ILocator locator, int childLevel, boolean isMain) {
-		return createArtifactDescriptor(observation, parent, locator, childLevel, isMain, null);
+			ILocator locator, int childLevel) {
+		return createArtifactDescriptor(observation, parent, locator, childLevel, null);
 	}
 
 	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
-			ILocator locator, int childLevel, boolean isMain, String viewId) {
+			ILocator locator, int childLevel, String viewId) {
 
 		ObservationReference ret = new ObservationReference();
 
@@ -242,16 +242,10 @@ public enum Observations implements IObservationService {
 			ret.setOriginalGroupId(((ObservationGroupView) observation).getOriginalGroup().getId());
 		}
 
-		ret.setMain(isMain);
 		ret.setCreationTime(observation.getTimestamp());
 		ret.setLastUpdate(((Observation) observation).getLastUpdate());
 		ret.setExportLabel(observation.getObservable().getName());
 
-		if (isMain && observation instanceof Observation && !((Observation) observation).isMain()) {
-			((Observation) observation).setMain(true);
-		} else if (((Observation) observation).isMain()) {
-			ret.setMain(true);
-		}
 
 		ISubject rootSubject = ((Observation) observation).getRuntimeScope().getRootSubject();
 		if (rootSubject != null) {
@@ -439,7 +433,7 @@ public enum Observations implements IObservationService {
 				if (child instanceof IObservation) {
 					ret.getChildren()
 							.add(createArtifactDescriptor((IObservation) child, observation, locator,
-									childLevel > 0 ? (childLevel - 1) : childLevel, false,
+									childLevel > 0 ? (childLevel - 1) : childLevel,
 									observation instanceof ObservationGroupView ? observation.getId() : null));
 				}
 			}

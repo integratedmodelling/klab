@@ -1460,7 +1460,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		for (IRuntimeScope ctx : observationContexts) {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
-					.createArtifactDescriptor(ctx.getRootSubject(), null, ctx.getScale().initialization(), 0, false));
+					.createArtifactDescriptor(ctx.getRootSubject(), null, ctx.getScale().initialization(), 0));
 		}
 
 		return ret;

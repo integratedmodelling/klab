@@ -40,6 +40,10 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
         this.parentArtifactId = parentArtifact;
     }
 
+    public ObservationReference getObservation() {
+    	return (ObservationReference)delegate;
+    }
+    
     @Override
     public ERuntimeObject getEParent(DisplayPriority priority) {
     	if (mainArtifactId != null) {
