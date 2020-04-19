@@ -63,8 +63,9 @@ public abstract class ContextMonitor {
 			subscribe(this, observation, open);
 		}
 
-		public List<IObservation> getChildren(ObservationReference observation, boolean collapseSingletons) {
-			List<IObservation> ret = new ArrayList<>();
+		public List<ObservationReference> getChildren(ObservationReference observation, boolean collapseSingletons) {
+			
+			List<ObservationReference> ret = new ArrayList<>();
 
 			if (observation.getChildrenCount() != incomingEdgesOf(observation).size()) {
 				/*
@@ -77,7 +78,9 @@ public abstract class ContextMonitor {
 				ObservationReference child = getEdgeSource(edge);
 				if (collapseSingletons && child.getGeometryTypes().contains(GeometryType.GROUP)
 						&& child.getChildrenCount() == 1) {
-
+					ret.addAll(getChildren(observation, collapseSingletons));
+				} else {
+					ret.add(child);
 				}
 			}
 			return ret;
@@ -127,6 +130,7 @@ public abstract class ContextMonitor {
 	 * @param observation
 	 */
 	private void updateChildren(ContextGraph graph, ObservationReference observation) {
+		System.out.println("UPDATING CHILDREN OF " + graph.rootNode);
 		List<ObservationReference> children = retrieveChildren(observation, 0, -1);
 		graph.removeAllEdges(graph.incomingEdgesOf(observation));
 		for (ObservationReference child : children) {
@@ -141,7 +145,7 @@ public abstract class ContextMonitor {
 	 */
 	public void register(ObservationReference observation) {
 
-		System.out.println("REGISTERED OBSERVATION " + observation);
+//		System.out.println("REGISTERED OBSERVATION " + observation);
 
 		String parentId = observation.getParentArtifactId() == null ? observation.getParentId()
 				: observation.getParentArtifactId();
@@ -154,6 +158,7 @@ public abstract class ContextMonitor {
 			catalog.put(observation.getId(), observation);
 			graphs.put(observation.getId(), graph);
 			catalogs.put(observation.getId(), catalog);
+			System.out.println("CREATED NEW GRAPH FOR CONTEXT " + observation);
 		} else {
 			ContextGraph graph = graphs.get(observation.getRootContextId());
 			Map<String, ObservationReference> catalog = catalogs.get(observation.getRootContextId());
@@ -163,6 +168,7 @@ public abstract class ContextMonitor {
 			parent.setChildrenCount(parent.getChildrenCount() + 1);
 			graph.addVertex(observation);
 			graph.addEdge(observation, parent);
+			System.out.println("ADDED TO GRAPH: " + observation);
 		}
 
 		// TODO call listeners
