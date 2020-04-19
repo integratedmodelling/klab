@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -64,17 +63,17 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class RuntimeView extends ViewPart {
 
-	private static class ContentProvider implements IStructuredContentProvider {
-		public Object[] getElements(Object inputElement) {
-			return new Object[0];
-		}
-
-		public void dispose() {
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-	}
+//	private static class ContentProvider implements IStructuredContentProvider {
+//		public Object[] getElements(Object inputElement) {
+//			return new Object[0];
+//		}
+//
+//		public void dispose() {
+//		}
+//
+//		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+//		}
+//	}
 
 	public static final String ID = "org.integratedmodelling.klab.ide.views.RuntimeView"; //$NON-NLS-1$
 
@@ -135,6 +134,8 @@ public class RuntimeView extends ViewPart {
 	private TableColumn tblclmnNewColumn;
 	private TableColumn tblclmnNewColumn_1;
 
+	private ObservationReference currentContext;
+
 	public RuntimeView() {
 	}
 
@@ -162,16 +163,11 @@ public class RuntimeView extends ViewPart {
 	class DetailContentProvider implements IStructuredContentProvider {
 
 		ContextGraph graph = null;
-		
+
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ERuntimeObject) {
 				return ((ERuntimeObject) inputElement).getProperties().toArray();
-			} else if (inputElement instanceof ObservationReference) {
-				System.out.println("ZIP OP");
-			} else if (inputElement instanceof ContextGraph) {
-				System.out.println("TROP HGO");
-				this.graph = (ContextGraph)inputElement;
 			}
 			return new Object[] {};
 		}
@@ -255,9 +251,9 @@ public class RuntimeView extends ViewPart {
 			} else if (element instanceof ObservationReference) {
 				if (((ObservationReference) element).isEmpty()) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/emptycontent.gif");
-				} else if (((EObservationReference) element).getSemantics().contains(IKimConcept.Type.QUALITY)) {
+				} else if (((ObservationReference) element).getSemantics().contains(IKimConcept.Type.QUALITY)) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/datagrid.gif");
-				} else if (((EObservationReference) element).getChildrenCount() > 1) {
+				} else if (((ObservationReference) element).getChildrenCount() > 1) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resources.gif");
 				} else {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
@@ -271,6 +267,12 @@ public class RuntimeView extends ViewPart {
 			if (element instanceof ERuntimeObject) {
 				if (element instanceof EObservationReference) {
 					return ((EObservationReference) element).getLabel();
+				}
+				if (element instanceof ObservationReference) {
+					return ((ObservationReference) element).getLabel()
+							+ (((ObservationReference) element).getChildrenCount() > 0
+									? (" [" + ((ObservationReference) element).getChildrenCount() + "]")
+									: "");
 				} else if (element instanceof ETaskReference) {
 					return ((ETaskReference) element).getDescription();
 				} else if (element instanceof ENotification) {
@@ -330,6 +332,8 @@ public class RuntimeView extends ViewPart {
 
 	class TaskContentProvider implements ITreeContentProvider {
 
+		ContextGraph graph;
+
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
@@ -341,6 +345,11 @@ public class RuntimeView extends ViewPart {
 				return ((Collection<?>) parentElement).toArray();
 			} else if (parentElement instanceof ERuntimeObject) {
 				return ((ERuntimeObject) parentElement).getEChildren(currentPriority, currentLogLevel);
+			} else if (parentElement instanceof ContextGraph) {
+				this.graph = (ContextGraph) parentElement;
+				return this.graph.getChildren(this.graph.getRootNode(), true).toArray();
+			} else if (parentElement instanceof ObservationReference) {
+				return this.graph.getChildren((ObservationReference) parentElement, true).toArray();
 			}
 			return new Object[] {};
 		}
@@ -350,6 +359,9 @@ public class RuntimeView extends ViewPart {
 			if (element instanceof ERuntimeObject) {
 				return ((ERuntimeObject) element).getEParent(currentPriority) == null ? history
 						: ((ERuntimeObject) element).getEParent(currentPriority);
+			} else if (element instanceof ObservationReference) {
+				ObservationReference parent = this.graph.getParent((ObservationReference) element, true);
+				return parent == null ? this.graph : parent;
 			}
 			return null;
 		}
@@ -360,6 +372,10 @@ public class RuntimeView extends ViewPart {
 				return ((Collection<?>) element).size() > 0;
 			} else if (element instanceof ERuntimeObject) {
 				return ((ERuntimeObject) element).getEChildren(currentPriority, currentLogLevel).length > 0;
+			} else if (element instanceof ContextGraph) {
+				return true;
+			} else if (element instanceof ObservationReference) {
+				return ((ObservationReference) element).getChildrenCount() > 0;
 			}
 			return false;
 		}
@@ -834,13 +850,29 @@ public class RuntimeView extends ViewPart {
 			});
 			break;
 		case FocusChanged:
+			Object payload = message.getPayload();
+			if (payload instanceof EObservationReference) {
+				payload = ((EObservationReference) payload).getObservation();
+			}
+			if (payload instanceof ObservationReference) {
+				ObservationReference observation = (ObservationReference) payload;
+				if (observation.getParentId() == null) {
+					this.currentContext = observation;
+				}
+			}
 			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
 				lastFocus = message.getPayload(EObservationReference.class);
 				refreshTaskViewer(message.getType());
 			}
 			break;
 		case HistoryChanged:
-			Object payload = message.getPayload();
+			payload = message.getPayload();
+			if (payload instanceof ObservationReference) {
+				ObservationReference observation = (ObservationReference) payload;
+				if (observation.getParentId() == null) {
+					this.currentContext = observation;
+				}
+			}
 			if (((payload instanceof ETaskReference && currentPriority == DisplayPriority.TASK_FIRST)
 					|| (payload instanceof EObservationReference
 							&& currentPriority == DisplayPriority.ARTIFACTS_FIRST))) {
@@ -893,16 +925,12 @@ public class RuntimeView extends ViewPart {
 	public void refreshTaskViewer(IMessage.Type taskEvent) {
 
 		Display.getDefault().asyncExec(() -> {
-			if (lastFocus != null) {
-				if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
-					if (lastFocus instanceof EObservationReference) {
-						taskViewer.setInput(Activator.session().getContextMonitor()
-								.getGraph(((EObservationReference) lastFocus).getObservation().getRootContextId()));
-					}
-				} else {
-					taskViewer.setInput(
-							history = Activator.session().getSessionHistory(currentPriority, currentLogLevel));
+			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+				if (currentContext != null) {
+					taskViewer.setInput(Activator.session().getContextMonitor().getGraph(currentContext.getId()));
 				}
+			} else if (lastFocus != null) {
+				taskViewer.setInput(history = Activator.session().getSessionHistory(currentPriority, currentLogLevel));
 				if (taskEvent == IMessage.Type.TaskStarted) {
 					taskViewer.collapseAll();
 				}

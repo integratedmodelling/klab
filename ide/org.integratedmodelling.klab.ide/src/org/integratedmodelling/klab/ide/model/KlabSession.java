@@ -72,7 +72,21 @@ public class KlabSession extends KlabPeer {
 
 	private AtomicLong queryCounter = new AtomicLong();
 
-	ContextMonitor contextMonitor = new ContextMonitor();
+	ContextMonitor contextMonitor = new ContextMonitor() {
+
+		@Override
+		protected void subscribe(ContextGraph contextGraph, ObservationReference observation, boolean open) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected List<ObservationReference> retrieveChildren(ObservationReference observation, int offset, int count) {
+			List<ObservationReference> ret = new ArrayList<>();
+			return ret;
+		}
+		
+	};
 	
 	/*
 	 * all tasks in the session
@@ -544,13 +558,15 @@ public class KlabSession extends KlabPeer {
 	@MessageHandler
 	public void handleObservation(ObservationReference observation) {
 		contextMonitor.register(observation);
-		recordObservation(observation);
+		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, observation);
+		//		recordObservation(observation);
 	}
 
 	@MessageHandler
 	public void handleObservation(ObservationChange observation) {
 		contextMonitor.register(observation);
-//		recordObservation(observation);
+		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, observation);
+		//		recordObservation(observation);
 	}
 
 	@MessageHandler

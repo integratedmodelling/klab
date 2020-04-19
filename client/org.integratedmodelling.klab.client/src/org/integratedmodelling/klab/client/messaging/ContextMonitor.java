@@ -10,6 +10,7 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.ObservationReference;
+import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 
 /**
  * Collects ObservationReference and ObservationChange messages to keep graphs
@@ -19,7 +20,7 @@ import org.integratedmodelling.klab.rest.ObservationReference;
  * @author Ferd
  *
  */
-public class ContextMonitor {
+public abstract class ContextMonitor {
 
 	/**
 	 * The context graph always contains groups for objects below root. The
@@ -36,8 +37,18 @@ public class ContextMonitor {
 
 		private static final long serialVersionUID = 5610896406683973693L;
 
+		private ObservationReference rootNode;
+
 		public ContextGraph() {
 			super(DefaultEdge.class);
+		}
+
+		/**
+		 * 
+		 * @return
+		 */
+		public ObservationReference getRootNode() {
+			return rootNode;
 		}
 
 		/**
@@ -48,13 +59,43 @@ public class ContextMonitor {
 		 * @param open
 		 * @return
 		 */
-		public boolean expand(ObservationReference observation, boolean open) {
-			return false;
+		public void expand(ObservationReference observation, boolean open) {
+			subscribe(this, observation, open);
 		}
 
 		public List<IObservation> getChildren(ObservationReference observation, boolean collapseSingletons) {
 			List<IObservation> ret = new ArrayList<>();
+
+			if (observation.getChildrenCount() != incomingEdgesOf(observation).size()) {
+				/*
+				 * observation has been updated and now has more children than are in the tree
+				 */
+				updateChildren(this, observation);
+			}
+
+			for (DefaultEdge edge : incomingEdgesOf(observation)) {
+				ObservationReference child = getEdgeSource(edge);
+				if (collapseSingletons && child.getGeometryTypes().contains(GeometryType.GROUP)
+						&& child.getChildrenCount() == 1) {
+
+				}
+			}
 			return ret;
+		}
+
+		public ObservationReference getParent(ObservationReference element, boolean collapseSingletons) {
+
+			for (DefaultEdge edge : outgoingEdgesOf(element)) {
+				// yes, there is one or zero
+				ObservationReference target = getEdgeTarget(edge);
+				if (collapseSingletons && target.getGeometryTypes().contains(GeometryType.GROUP)
+						&& target.getChildrenCount() == 1) {
+					target = getParent(target, collapseSingletons);
+				}
+				return target;
+			}
+			// root
+			return null;
 		}
 
 	}
@@ -67,16 +108,49 @@ public class ContextMonitor {
 	}
 
 	/**
+	 * Subscribe or unsubscribe to any change events concerning a node of the tree
+	 * or its siblings.
+	 * 
+	 * @param contextGraph
+	 * @param observation
+	 * @param open
+	 */
+	protected abstract void subscribe(ContextGraph contextGraph, ObservationReference observation, boolean open);
+
+	protected abstract List<ObservationReference> retrieveChildren(ObservationReference observation, int offset,
+			int count);
+
+	/**
+	 * Define to retrieve the children of the passed observation from the backend.
+	 * For now gets them all, which is obviously crazy.
+	 * 
+	 * @param observation
+	 */
+	private void updateChildren(ContextGraph graph, ObservationReference observation) {
+		List<ObservationReference> children = retrieveChildren(observation, 0, -1);
+		graph.removeAllEdges(graph.incomingEdgesOf(observation));
+		for (ObservationReference child : children) {
+			register(child);
+		}
+	}
+
+	/**
 	 * Register a new observation notified by the remote engine.
 	 * 
 	 * @param observation
 	 */
 	public void register(ObservationReference observation) {
 
-		if (observation.getParentArtifactId() == null) {
+		System.out.println("REGISTERED OBSERVATION " + observation);
+
+		String parentId = observation.getParentArtifactId() == null ? observation.getParentId()
+				: observation.getParentArtifactId();
+
+		if (parentId == null) {
 			ContextGraph graph = new ContextGraph();
 			Map<String, ObservationReference> catalog = new HashMap<>();
 			graph.addVertex(observation);
+			graph.rootNode = observation;
 			catalog.put(observation.getId(), observation);
 			graphs.put(observation.getId(), graph);
 			catalogs.put(observation.getId(), catalog);
@@ -84,7 +158,10 @@ public class ContextMonitor {
 			ContextGraph graph = graphs.get(observation.getRootContextId());
 			Map<String, ObservationReference> catalog = catalogs.get(observation.getRootContextId());
 			catalog.put(observation.getId(), observation);
-			ObservationReference parent = catalog.get(observation.getParentArtifactId());
+			ObservationReference parent = catalog.get(parentId);
+			// when notified directly, we don't send a change so keep the child count updated
+			parent.setChildrenCount(parent.getChildrenCount() + 1);
+			graph.addVertex(observation);
 			graph.addEdge(observation, parent);
 		}
 
@@ -94,19 +171,21 @@ public class ContextMonitor {
 	/**
 	 * Register a change to an observation notified by the remote engine.
 	 * 
-	 * @param observation
+	 * @param observationChange
 	 */
-	public void register(ObservationChange observation) {
+	public void register(ObservationChange observationChange) {
+
+		System.out.println("REGISTERED CHANGE " + observationChange);
 
 		/*
 		 * find the observation
 		 */
-		Map<String, ObservationReference> catalog = catalogs.get(observation.getContextId());
+		Map<String, ObservationReference> catalog = catalogs.get(observationChange.getContextId());
 		if (catalog != null) {
-			ObservationReference ref = catalog.get(observation.getId());
+			ObservationReference ref = catalog.get(observationChange.getId());
 			if (ref != null) {
-				ref.applyChange(observation);
-				
+				ref.applyChange(observationChange);
+
 				// TODO call listeners
 			}
 		}
