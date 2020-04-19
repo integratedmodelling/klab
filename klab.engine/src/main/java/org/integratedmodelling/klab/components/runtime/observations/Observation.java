@@ -332,4 +332,19 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public List<ObservationChange> getChangeset() {
 		return changeset;
 	}
+	
+	public ObservationChange getSizeChange() {
+		for (ObservationChange change : getChangeset()) {
+			if (change.getType() == ObservationChange.Type.StructureChange) {
+				return change;
+			}
+		}
+		ObservationChange change = new ObservationChange();
+		change.setContextId(getRuntimeScope().getRootSubject().getId());
+		change.setId(this.getId());
+		change.setType(ObservationChange.Type.StructureChange);
+		getChangeset().add(change);
+		return change;
+	}
+
 }

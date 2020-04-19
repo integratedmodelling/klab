@@ -930,6 +930,12 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			structure.addEdge(state,
 					parent.target instanceof ObservationGroup ? ((ObservationGroup) parent.target).getContext()
 							: parent.target);
+			
+			if (!(parent.target instanceof ObservationGroup)) {
+				ObservationChange change = ((Observation)parent.target).getSizeChange();
+				change.setNewSize(change.getNewSize() + 1);
+			}
+			
 		}
 
 	}
