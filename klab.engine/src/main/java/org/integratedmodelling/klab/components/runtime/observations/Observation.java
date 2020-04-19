@@ -333,7 +333,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		return changeset;
 	}
 	
-	public ObservationChange getSizeChange() {
+	public ObservationChange requireStructureChangeEvent() {
 		for (ObservationChange change : getChangeset()) {
 			if (change.getType() == ObservationChange.Type.StructureChange) {
 				return change;

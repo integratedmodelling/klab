@@ -80,7 +80,7 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 		artifacts.add(data);
 		((Observation) data).setGroup(this);
 		sorted = false;
-		ObservationChange change = getSizeChange();
+		ObservationChange change = requireStructureChangeEvent();
 		change.setTimestamp(System.currentTimeMillis());
 		change.setNewSize(change.getNewSize() + 1);
 	}

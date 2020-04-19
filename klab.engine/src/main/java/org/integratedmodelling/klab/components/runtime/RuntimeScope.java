@@ -932,7 +932,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							: parent.target);
 			
 			if (!(parent.target instanceof ObservationGroup)) {
-				ObservationChange change = ((Observation)parent.target).getSizeChange();
+				ObservationChange change = ((Observation)parent.target).requireStructureChangeEvent();
 				change.setNewSize(change.getNewSize() + 1);
 			}
 			
