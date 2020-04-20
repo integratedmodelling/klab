@@ -63,6 +63,7 @@ import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
+import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class RuntimeView extends ViewPart {
@@ -253,7 +254,7 @@ public class RuntimeView extends ViewPart {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/dataflow.gif");
 				}
 			} else if (element instanceof ObservationReference) {
-				if (((ObservationReference) element).getGeometryTypes().contains(GeometryType.GROUP)) {
+				if (((ObservationReference) element).getObservationType() == ObservationType.GROUP) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
 							((ObservationReference) element).getChildrenCount() == 0 ? "icons/folder_closed.gif"
 									: "icons/folder_open.gif");
@@ -301,7 +302,7 @@ public class RuntimeView extends ViewPart {
 			} else if (element instanceof ObservationReference && ((ObservationReference) element).isMain()) {
 				return SWTResourceManager.getBoldFont(taskTree.getFont());
 			} else if (element instanceof ObservationReference) {
-				if (((ObservationReference) element).getGeometryTypes().contains(GeometryType.GROUP)
+				if (((ObservationReference) element).getObservationType() == ObservationType.GROUP
 						&& ((ObservationReference) element).getChildrenCount() == 0) {
 					return SWTResourceManager.getItalicFont(taskTree.getFont());
 				} else if (((ObservationReference) element).isEmpty()) {

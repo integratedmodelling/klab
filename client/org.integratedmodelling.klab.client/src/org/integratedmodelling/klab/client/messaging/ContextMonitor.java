@@ -10,6 +10,7 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
+import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
 
 /**
  * Collects ObservationReference and ObservationChange messages to keep graphs
@@ -83,7 +84,7 @@ public abstract class ContextMonitor {
 
 			for (DefaultEdge edge : incomingEdgesOf(observation)) {
 				ObservationReference child = getEdgeSource(edge);
-				if (collapseSingletons && child.getGeometryTypes().contains(GeometryType.GROUP)
+				if (collapseSingletons && child.getObservationType() == ObservationType.GROUP
 						&& child.getChildrenCount() == 1) {
 					ret.addAll(getChildren(observation, collapseSingletons));
 				} else {
@@ -98,7 +99,7 @@ public abstract class ContextMonitor {
 			for (DefaultEdge edge : outgoingEdgesOf(element)) {
 				// yes, there is one or zero
 				ObservationReference target = getEdgeTarget(edge);
-				if (collapseSingletons && target.getGeometryTypes().contains(GeometryType.GROUP)
+				if (collapseSingletons && target.getObservationType() == ObservationType.GROUP
 						&& target.getChildrenCount() == 1) {
 					target = getParent(target, collapseSingletons);
 				}
