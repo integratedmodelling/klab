@@ -25,6 +25,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -40,6 +42,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -298,11 +301,12 @@ public class RuntimeView extends ViewPart {
 			} else if (element instanceof ObservationReference && ((ObservationReference) element).isMain()) {
 				return SWTResourceManager.getBoldFont(taskTree.getFont());
 			} else if (element instanceof ObservationReference) {
-				if (((ObservationReference) element).getGeometryTypes().contains(GeometryType.GROUP) && ((ObservationReference) element).getChildrenCount() == 0) {
+				if (((ObservationReference) element).getGeometryTypes().contains(GeometryType.GROUP)
+						&& ((ObservationReference) element).getChildrenCount() == 0) {
 					return SWTResourceManager.getItalicFont(taskTree.getFont());
 				} else if (((ObservationReference) element).isEmpty()) {
 					return SWTResourceManager.getItalicFont(taskTree.getFont());
-				} 
+				}
 			}
 			return null;
 		}
@@ -643,6 +647,31 @@ public class RuntimeView extends ViewPart {
 		});
 		taskTree = taskViewer.getTree();
 		taskTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+
+		taskTree.addTreeListener(new TreeListener() {
+
+			@Override
+			public void treeExpanded(TreeEvent event) {
+				if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+					Object item = event.item;
+					if (item instanceof TreeItem) {
+						Activator.session().getContextMonitor().getGraph(currentContext.getId())
+								.expand((ObservationReference) ((TreeItem) item).getData(), true);
+					}
+				}
+			}
+
+			@Override
+			public void treeCollapsed(TreeEvent event) {
+				if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+					Object item = event.item;
+					if (item instanceof TreeItem) {
+						Activator.session().getContextMonitor().getGraph(currentContext.getId())
+								.expand((ObservationReference) ((TreeItem) item).getData(), false);
+					}
+				}
+			}
+		});
 
 		detailViewer = new TableViewer(taskArea, SWT.BORDER | SWT.FULL_SELECTION);
 		detailTable = detailViewer.getTable();

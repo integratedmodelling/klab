@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -20,6 +21,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
@@ -602,6 +604,21 @@ public class Actuator implements IActuator {
 				IMessage.Type.DataflowStateChanged, state));
 
 		/*
+		 * notification flags linked to annotations
+		 */
+		boolean modelIsVerbose = false;
+		boolean modelIsSilent = false;
+
+		if (this.model != null) {
+			modelIsVerbose = Annotations.INSTANCE.hasAnnotation(model, "verbose")
+					|| Annotations.INSTANCE.hasAnnotation(observable, "verbose");
+			modelIsSilent = Annotations.INSTANCE.hasAnnotation(model, "silent")
+					|| Annotations.INSTANCE.hasAnnotation(observable, "silent");
+		}
+
+		ctx.setSilent(modelIsSilent);
+		
+		/*
 		 * This is what we get as the original content of self, which may be null or an
 		 * empty state, or contain the result of the previous computation, including
 		 * those that create state layers of a different type. This is the one to use as
@@ -661,6 +678,21 @@ public class Actuator implements IActuator {
 					if (object instanceof ObservedArtifact && ((ObservedArtifact) object).isMarkedForDeletion()) {
 						ctx.removeArtifact(object);
 						continue;
+					}
+
+					/*
+					 * if model has the verbose annotation and we're not subscribed to the group's
+					 * updates, send a size change after each new object and before it's resolved.
+					 */
+					if (!modelIsSilent && modelIsVerbose && !ctx.getWatchedObservationIds().contains(ret.getId())) {
+						ObservationChange change = new ObservationChange();
+						change.setType(ObservationChange.Type.StructureChange);
+						change.setNewSize(ret.groupSize());
+						change.setTimestamp(System.currentTimeMillis());
+						change.setId(ret.getId());
+						change.setContextId(ctx.getContextSubject().getId());
+						session.getMonitor().send(IMessage.MessageClass.ObservationLifecycle,
+								IMessage.Type.ModifiedObservation, change);
 					}
 
 					/*
@@ -1342,7 +1374,7 @@ public class Actuator implements IActuator {
 				context.updateNotifications(product);
 			}
 		}
-		
+
 		/*
 		 * when all is computed, reuse the context to render the documentation
 		 * templates.

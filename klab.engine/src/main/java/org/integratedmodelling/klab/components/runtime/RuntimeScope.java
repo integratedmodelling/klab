@@ -142,6 +142,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	Map<String, ObservationListener> listeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	Set<String> watchedObservations = null;
 
+	// not inherited, can be set from the outside to silence notifications
+	boolean silent = false;
+
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
 
@@ -1212,7 +1215,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void updateNotifications(IObservation observation) {
 
-		if (isNotifiable(observation)) {
+		if (!this.silent && isNotifiable(observation)) {
 
 			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 
@@ -1764,6 +1767,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public Set<String> getWatchedObservationIds() {
 		return watchedObservations;
+	}
+
+	@Override
+	public void setSilent(boolean modelIsSilent) {
+		this.silent = modelIsSilent;
 	}
 
 }

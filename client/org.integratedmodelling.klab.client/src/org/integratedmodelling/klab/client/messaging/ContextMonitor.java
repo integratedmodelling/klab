@@ -61,6 +61,14 @@ public abstract class ContextMonitor {
 		 */
 		public void expand(ObservationReference observation, boolean open) {
 			subscribe(this, observation, open);
+			if (!open) {
+				// remove children
+				List<ObservationReference> children = new ArrayList<>();
+				for (DefaultEdge edge : incomingEdgesOf(observation)) {
+					children.add(getEdgeSource(edge));
+				}
+				removeAllVertices(children);
+			}
 		}
 
 		public List<ObservationReference> getChildren(ObservationReference observation, boolean collapseSingletons) {
@@ -144,9 +152,7 @@ public abstract class ContextMonitor {
 	 * @param observation
 	 */
 	public void register(ObservationReference observation) {
-
-//		System.out.println("REGISTERED OBSERVATION " + observation);
-
+		
 		String parentId = observation.getParentArtifactId() == null ? observation.getParentId()
 				: observation.getParentArtifactId();
 
@@ -158,7 +164,6 @@ public abstract class ContextMonitor {
 			catalog.put(observation.getId(), observation);
 			graphs.put(observation.getId(), graph);
 			catalogs.put(observation.getId(), catalog);
-			System.out.println("CREATED NEW GRAPH FOR CONTEXT " + observation);
 		} else {
 			ContextGraph graph = graphs.get(observation.getRootContextId());
 			Map<String, ObservationReference> catalog = catalogs.get(observation.getRootContextId());
@@ -168,7 +173,6 @@ public abstract class ContextMonitor {
 			parent.setChildrenCount(parent.getChildrenCount() + 1);
 			graph.addVertex(observation);
 			graph.addEdge(observation, parent);
-			System.out.println("ADDED TO GRAPH: " + observation);
 		}
 
 		// TODO call listeners

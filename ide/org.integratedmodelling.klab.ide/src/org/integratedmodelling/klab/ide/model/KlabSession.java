@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
+import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
@@ -76,13 +77,20 @@ public class KlabSession extends KlabPeer {
 
 		@Override
 		protected void subscribe(ContextGraph contextGraph, ObservationReference observation, boolean open) {
-			// TODO Auto-generated method stub
-			
+
+			WatchRequest request = new WatchRequest();
+			request.setActive(open);
+			request.setObservationId(observation.getId());
+			request.setRootContextId(observation.getRootContextId());
+			Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.WatchObservation, request);
 		}
 
 		@Override
 		protected List<ObservationReference> retrieveChildren(ObservationReference observation, int offset, int count) {
 			List<ObservationReference> ret = new ArrayList<>();
+			for (ObservationReference obs : Activator.engineMonitor().getChildren(observation, offset, count)) {
+				ret.add(obs);
+			}
 			return ret;
 		}
 		
