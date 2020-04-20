@@ -931,10 +931,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					parent.target instanceof ObservationGroup ? ((ObservationGroup) parent.target).getContext()
 							: parent.target);
 			
-			if (!(parent.target instanceof ObservationGroup)) {
-				ObservationChange change = ((Observation)parent.target).requireStructureChangeEvent();
-				change.setNewSize(change.getNewSize() + 1);
-			}
+//			if (!(parent.target instanceof ObservationGroup)) {
+//				ObservationChange change = ((Observation)parent.target).requireStructureChangeEvent();
+//				change.setNewSize(change.getNewSize() + 1);
+//			}
 			
 		}
 
