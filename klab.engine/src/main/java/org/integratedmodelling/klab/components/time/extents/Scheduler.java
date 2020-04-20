@@ -178,7 +178,7 @@ public class Scheduler implements IScheduler {
 
 							// TODO fill in
 							if (observation instanceof IState) {
-								change.setNewValues(true);
+								change.setType(ObservationChange.Type.ValueChange);
 							} else if (observation instanceof IDirectObservation
 									&& !((IDirectObservation) observation).isActive()) {
 								change.setType(ObservationChange.Type.Termination);
@@ -317,7 +317,7 @@ public class Scheduler implements IScheduler {
 
 							// TODO fill in
 							if (observation instanceof IState) {
-								change.setNewValues(true);
+								change.setType(ObservationChange.Type.ValueChange);
 							} else if (observation instanceof IDirectObservation
 									&& !((IDirectObservation) observation).isActive()) {
 								change.setType(ObservationChange.Type.Termination);

@@ -67,7 +67,6 @@ public class ObservationChange {
 	private String newName;
 	private String newSemantics;
 	private int newSize;
-	private boolean newValues;
 	private Type type;
 	
 	public List<Triple<String, String, String>> getNewAttributes() {
@@ -108,14 +107,6 @@ public class ObservationChange {
 
 	public void setNewSize(int newSize) {
 		this.newSize = newSize;
-	}
-
-	public boolean isNewValues() {
-		return newValues;
-	}
-
-	public void setNewValues(boolean newValues) {
-		this.newValues = newValues;
 	}
 
 	public String getId() {
