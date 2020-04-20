@@ -86,7 +86,7 @@ public abstract class ContextMonitor {
 				ObservationReference child = getEdgeSource(edge);
 				if (collapseSingletons && child.getObservationType() == ObservationType.GROUP
 						&& child.getChildrenCount() == 1) {
-					ret.addAll(getChildren(observation, collapseSingletons));
+					ret.addAll(getChildren(child, collapseSingletons));
 				} else {
 					ret.add(child);
 				}
