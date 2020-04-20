@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
@@ -138,11 +137,12 @@ public abstract class ContextMonitor {
 	 * @param observation
 	 */
 	private void updateChildren(ContextGraph graph, ObservationReference observation) {
-		System.out.println("UPDATING CHILDREN OF " + graph.rootNode);
 		List<ObservationReference> children = retrieveChildren(observation, 0, -1);
 		graph.removeAllEdges(graph.incomingEdgesOf(observation));
 		for (ObservationReference child : children) {
-			register(child);
+			// don't update che count
+			graph.addVertex(child);
+			graph.addEdge(child, observation);
 		}
 	}
 
@@ -174,8 +174,6 @@ public abstract class ContextMonitor {
 			graph.addVertex(observation);
 			graph.addEdge(observation, parent);
 		}
-
-		// TODO call listeners
 	}
 
 	/**
@@ -185,8 +183,6 @@ public abstract class ContextMonitor {
 	 */
 	public void register(ObservationChange observationChange) {
 
-		System.out.println("REGISTERED CHANGE " + observationChange);
-
 		/*
 		 * find the observation
 		 */
@@ -195,8 +191,6 @@ public abstract class ContextMonitor {
 			ObservationReference ref = catalog.get(observationChange.getId());
 			if (ref != null) {
 				ref.applyChange(observationChange);
-
-				// TODO call listeners
 			}
 		}
 
