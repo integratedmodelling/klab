@@ -431,11 +431,11 @@ public class ResourceScope implements IRuntimeScope {
 
 	}
 
-	@Override
-	public void processAnnotation(IAnnotation annotation) {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	public void processAnnotation(IAnnotation annotation) {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 	@Override
 	public Provenance getProvenance() {
@@ -444,7 +444,7 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public Graph<? extends IArtifact, ?> getStructure() {
+	public IArtifact.Structure getStructure() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -455,11 +455,11 @@ public class ResourceScope implements IRuntimeScope {
 		return null;
 	}
 
-	@Override
-	public void link(IArtifact parent, IArtifact child) {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	public void link(IArtifact parent, IArtifact child) {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 	@Override
 	public void replaceTarget(IArtifact self) {
@@ -512,7 +512,7 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation) {
+	public Collection<IArtifact> getChildArtifactsOf(IArtifact directObservation) {
 		// TODO Auto-generated method stub
 		return null;
 	}

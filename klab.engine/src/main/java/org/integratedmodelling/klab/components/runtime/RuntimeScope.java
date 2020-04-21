@@ -98,7 +98,6 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
  * A runtime scope is installed in the root subject to keep track of what
@@ -300,16 +299,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public IDirectObservation getParentOf(IObservation observation) {
-		if (observation instanceof ObservationGroup) {
-			return structure.getGroupParent((ObservationGroup) observation);
-		}
-		for (DefaultEdge edge : this.structure.outgoingEdgesOf(observation)) {
-			IArtifact source = this.structure.getEdgeTarget(edge);
-			if (source instanceof IDirectObservation) {
-				return (IDirectObservation) source;
-			}
-		}
-		return null;
+		return (IDirectObservation) structure.getLogicalParent(observation);
 	}
 
 	@Override
@@ -570,7 +560,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		IDirectObservation ret = null;
 		Observable obs = new Observable((Observable) observable);
-//		obs.setName(name);
 
 		/*
 		 * harmonize the scale according to what the model wants and the context's
@@ -582,9 +571,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
 
 		IArtifact observation = dataflow
-				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
-				.withMetadata(metadata)
-				.withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup)this.target : null)
+				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale)).withMetadata(metadata)
+				.withTargetName(name)
+				.withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
 				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
 		if (observation instanceof IDirectObservation) {
@@ -692,6 +681,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IRelationship ret = (IRelationship) dataflow.withMetadata(metadata)
 				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
 				.connecting((IDirectObservation) source, (IDirectObservation) target)
+				.withTargetName(name)
+				.withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
 				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
 		if (ret != null) {
@@ -804,7 +795,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	 * Used in sub-resolution with switched context.
 	 */
 	@Override
-	public IRuntimeScope createContext(IScale scale, IActuator actuator, IDataflow<?> dataflow, IResolutionScope scope, IMonitor monitor) {
+	public IRuntimeScope createContext(IScale scale, IActuator actuator, IDataflow<?> dataflow, IResolutionScope scope,
+			IMonitor monitor) {
 
 		RuntimeScope ret = new RuntimeScope(this);
 		ret.parent = this;
@@ -822,7 +814,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
 		ret.actuator = actuator;
 		ret.contextSubject = scope.getContext();
-		ret.dataflow = (Dataflow)dataflow;
+		ret.dataflow = (Dataflow) dataflow;
 
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
@@ -856,8 +848,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		if (artifact instanceof ObservationGroupView) {
 			return IteratorUtils.toList(((ObservationGroupView) artifact).iterator());
 		}
-		for (DefaultEdge edge : this.structure.incomingEdgesOf(artifact)) {
-			IArtifact source = this.structure.getEdgeSource(edge);
+		for (IArtifact source : this.structure.getLogicalChildren(artifact)) {
 			if (cls.isAssignableFrom(source.getClass())) {
 				ret.add((T) source);
 			}
@@ -907,43 +898,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public void processAnnotation(IAnnotation annotation) {
-		switch (annotation.getName()) {
-		case "probe":
-			addTargetToStructure(annotation);
-			break;
-		default:
-			break;
-		}
-	}
-
-	private void addTargetToStructure(IAnnotation probe) {
-
-		IState state = null;
-		if (probe.get("observable") == null) {
-			// TODO check if collapsing is requested
-			state = target instanceof IState ? (IState) target : null;
-		} else {
-			// TODO build requested observation
-		}
-
-		if (state != null && !structure.vertexSet().contains(state) && parent != null
-				&& parent.target instanceof IDirectObservation) {
-			structure.addVertex(state);
-			structure.addEdge(state,
-					parent.target instanceof ObservationGroup ? ((ObservationGroup) parent.target).getContext()
-							: parent.target);
-			
-//			if (!(parent.target instanceof ObservationGroup)) {
-//				ObservationChange change = ((Observation)parent.target).requireStructureChangeEvent();
-//				change.setNewSize(change.getNewSize() + 1);
-//			}
-			
-		}
-
-	}
-
-	@Override
 	public void setTarget(IArtifact target) {
 		this.target = target;
 	}
@@ -961,19 +915,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public IObservable getTargetSemantics() {
 		return targetSemantics;
-	}
-
-	@Override
-	public void link(IArtifact parent, IArtifact child) {
-
-		if (parent instanceof ObservationGroup) {
-			parent = ((ObservationGroup) parent).getContext();
-		} else if (parent instanceof IProcess) {
-			parent = ((IProcess) parent).getContext();
-		}
-
-		this.structure.addVertex(child);
-		this.structure.addEdge(child, parent);
 	}
 
 	@Override
@@ -1048,14 +989,23 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				preexisting = (IObservation) this.target;
 			} else {
 
-				if (observable.is(Type.RELATIONSHIP)) {
-					observation = DefaultRuntimeProvider.createRelationship(observable, scale,
+				Observable obs = observable;
+				
+				// attribute the name if any
+				if (dataflow.getTargetName() != null && ((Actuator)actuator).getMode() == Mode.RESOLUTION &&
+						observable.is(dataflow.getObservationGroup().getObservable())) {
+					obs = new Observable(obs);
+					obs.setName(dataflow.getTargetName());
+				}
+				
+				if (obs.is(Type.RELATIONSHIP)) {
+					observation = DefaultRuntimeProvider.createRelationship(obs, scale,
 							actuator.getDataflow().getRelationshipSource(),
 							actuator.getDataflow().getRelationshipTarget(), this);
 				} else {
-					observation = DefaultRuntimeProvider.createObservation(observable, scale, this, op.getThird());
+					observation = DefaultRuntimeProvider.createObservation(obs, scale, this, op.getThird());
 				}
-
+				
 				if (getRootSubject() != null) {
 					((Observation) getRootSubject()).setLastUpdate(System.currentTimeMillis());
 				}
@@ -1126,10 +1076,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					watchedObservations.add(observation.getId());
 				}
 				this.catalog.put(name, observation);
-				this.structure.addVertex(observation);
+				this.structure.add(observation);
 				if (contextSubject != null) {
-					this.structure.addEdge(observation,
-							contextSubject instanceof ObservationGroup ? contextSubject.getContext() : contextSubject);
+					this.structure.link(observation, getLinkTarget());
 				}
 				if (observation instanceof ISubject) {
 					this.network.addVertex((ISubject) observation);
@@ -1146,7 +1095,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				 * add any predefined states to the structure
 				 */
 				for (IState state : predefinedStates) {
-					link(observation, state);
+					structure.link(observation, state);
 				}
 
 				if (!(observation instanceof IState)) {
@@ -1157,7 +1106,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					if (this.dataflow.getObservationGroup() != null) {
 						this.dataflow.getObservationGroup().chain(observation);
 					}
-					
+
 					/*
 					 * notify if subscribed. States are notified only after resolution.
 					 */
@@ -1171,19 +1120,18 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	}
 
-	@Override
-	public IObservation getParentArtifactOf(IObservation observation) {
-		IObservation ret = this.getParentOf(observation);
-
-		if (observation instanceof IDirectObservation) {
-
-			if (observation instanceof DirectObservation) {
-				ret = ((DirectObservation) observation).getGroup() == null ? ret
-						: ((DirectObservation) observation).getGroup();
+	private IArtifact getLinkTarget() {
+		if (dataflow.getObservationGroup() != null && ((Actuator)actuator).getMode() == Mode.RESOLUTION) {
+			if (this.targetSemantics.is(dataflow.getObservationGroup().getObservable())) {
+				return dataflow.getObservationGroup();
 			}
 		}
-		
-		return ret;
+		return contextSubject;
+	}
+
+	@Override
+	public IObservation getParentArtifactOf(IObservation observation) {
+		return (IObservation) structure.getArtifactParent(observation);
 	}
 
 	/**
@@ -1222,7 +1170,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			if (!notifiedObservations.contains(observation.getId())) {
 
 				IObservationReference descriptor = Observations.INSTANCE
-						.createArtifactDescriptor(observation, getParentOf(observation),
+						.createArtifactDescriptor(observation, getParentArtifactOf(observation),
 								observation.getScale().initialization(), 0)
 						.withTaskId(monitor.getIdentity().getId())
 						.withContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
@@ -1273,10 +1221,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				 */
 				this.observations.put(ret.getId(), ret);
 				this.catalog.put(observable.getName(), ret);
-				this.structure.addVertex(ret);
+				this.structure.add(ret);
 				if (contextSubject != null) {
-					this.structure.addEdge(ret,
-							contextSubject instanceof ObservationGroup ? contextSubject.getContext() : contextSubject);
+					this.structure.link(ret,
+							dataflow.getObservationGroup() == null ? contextSubject : dataflow.getObservationGroup());
 				}
 			}
 		}
@@ -1325,10 +1273,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			this.rootSubject = (ISubject) observation;
 		}
 		this.catalog.put(observable.getName(), observation);
-		this.structure.addVertex(observation);
+		this.structure.add(observation);
 		if (contextSubject != null) {
-			this.structure.addEdge(observation,
-					contextSubject instanceof ObservationGroup ? contextSubject.getContext() : contextSubject);
+			this.structure.link(observation,
+					dataflow.getObservationGroup() == null ? contextSubject : dataflow.getObservationGroup());
 		}
 		if (observation instanceof ISubject) {
 			this.network.addVertex((ISubject) observation);
@@ -1375,7 +1323,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public Graph<? extends IArtifact, ?> getStructure() {
+	public Structure getStructure() {
 		return structure;
 	}
 
@@ -1441,9 +1389,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public void removeArtifact(IArtifact object) {
-		if (structure.containsVertex(object)) {
-			structure.removeVertex(object);
-		}
+		structure.removeArtifact(object);
 	}
 
 	// wrapper for proper caching of sub-dataflows
@@ -1544,8 +1490,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation) {
-		return structure.getChildArtifacts(directObservation);
+	public Collection<IArtifact> getChildArtifactsOf(IArtifact directObservation) {
+		return structure.getArtifactChildren(directObservation);
 	}
 
 	@Override
@@ -1705,8 +1651,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IState ret = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
 
 		semantics.put(observable.getName(), observable);
-		structure.addVertex(ret);
-		structure.addEdge(ret, this.target);
+		structure.add(ret);
+		structure.link(ret, this.target);
 		catalog.put(observable.getName(), ret);
 		observations.put(ret.getId(), ret);
 

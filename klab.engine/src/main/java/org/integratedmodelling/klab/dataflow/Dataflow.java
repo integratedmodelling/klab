@@ -104,6 +104,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private List<Pair<IAnnotation, List<String>>> annotations = new ArrayList<>();
 	private IMetadata metadata;
 	private Collection<IObservation> configurationTargets;
+	private String targetName;
 
 	class AnnotationParameterValue {
 
@@ -706,6 +707,19 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public ObservationGroup getObservationGroup() {
 		return this.observationGroup;
+	}
+
+	public String getTargetName() {
+		return targetName;
+	}
+
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
+	}
+	
+	public Dataflow withTargetName(String targetName) {
+		this.targetName = targetName;
+		return this;
 	}
 
 }

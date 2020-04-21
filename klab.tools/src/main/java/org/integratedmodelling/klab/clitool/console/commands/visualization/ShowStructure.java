@@ -26,7 +26,7 @@ public class ShowStructure implements ICommand {
 		
 		IRuntimeScope context = ((Observation)obs).getRuntimeScope();
 		
-		Graphs.show(context.getStructure(), "Structure of observation " + obs, Graphs.Layout.HIERARCHICAL);
+//		Graphs.show(context.getStructure().getLogicalStructure(), "Logical structure of observation " + obs, Graphs.Layout.HIERARCHICAL);
 		
 		return null;
 	}

@@ -56,7 +56,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 		void newObservation(IObservation observation);
 	}
 
-
 	/**
 	 * Return any of the observations created within the context of the root
 	 * observation. Must be fast. Relied upon by all methods that retrieve
@@ -78,7 +77,8 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param monitor
 	 * @return
 	 */
-	public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope, IMonitor monitor);
+	public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope,
+			IMonitor monitor);
 
 	/**
 	 * Called to create the computation context for any actuator contained in a root
@@ -170,13 +170,13 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void setScale(IScale geometry);
 
-	/**
-	 * Called after successful computation passing each annotation that was defined
-	 * for the model.
-	 * 
-	 * @param annotation
-	 */
-	void processAnnotation(IAnnotation annotation);
+//	/**
+//	 * Called after successful computation passing each annotation that was defined
+//	 * for the model.
+//	 * 
+//	 * @param annotation
+//	 */
+//	void processAnnotation(IAnnotation annotation);
 
 	/**
 	 * Specialize the provenance so we can use setting methods on it.
@@ -186,12 +186,12 @@ public interface IRuntimeScope extends IContextualizationScope {
 	Provenance getProvenance();
 
 	/**
-	 * Return the context structure (all father-child relationships) as a JGraphT
-	 * graph.
+	 * Return the context structure (all father-child relationships) as a graph with
+	 * separate logical (observations) and physical (artifact) hierarchies.
 	 * 
 	 * @return the structure
 	 */
-	Graph<? extends IArtifact, ?> getStructure();
+	IArtifact.Structure getStructure();
 
 	/**
 	 * Return all the children of an artifact in the structural graph that match a
@@ -203,18 +203,18 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	<T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
 
-	/**
-	 * Build the link between a parent and a child artifact. Should only be used in
-	 * the few cases when observations are created by hand, using pre-built
-	 * instances such as rescaling states, instead of through
-	 * {@link #newObservation(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale)}
-	 * or
-	 * {@link #newRelationship(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact)}.
-	 * 
-	 * @param parent
-	 * @param child
-	 */
-	void link(IArtifact parent, IArtifact child);
+//	/**
+//	 * Build the link between a parent and a child artifact. Should only be used in
+//	 * the few cases when observations are created by hand, using pre-built
+//	 * instances such as rescaling states, instead of through
+//	 * {@link #newObservation(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale)}
+//	 * or
+//	 * {@link #newRelationship(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact)}.
+//	 * 
+//	 * @param parent
+//	 * @param child
+//	 */
+//	void link(IArtifact parent, IArtifact child);
 
 	/**
 	 * Set the passed artifact as the current target, ensuring it is properly
@@ -286,7 +286,7 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param directObservation
 	 * @return
 	 */
-	Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation);
+	Collection<IArtifact> getChildArtifactsOf(IArtifact directObservation);
 
 	/*
 	 * OK, I declare failure for now. No better way to record what has been notified
@@ -438,8 +438,8 @@ public interface IRuntimeScope extends IContextualizationScope {
 	void updateNotifications(IObservation observation);
 
 	/**
-	 * Passing true will suppress notifications for the artifacts created in this scope and any changes
-	 * applying to them.
+	 * Passing true will suppress notifications for the artifacts created in this
+	 * scope and any changes applying to them.
 	 *
 	 * @param modelIsSilent
 	 */

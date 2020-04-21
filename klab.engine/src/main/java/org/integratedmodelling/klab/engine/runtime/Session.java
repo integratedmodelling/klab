@@ -1465,6 +1465,14 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		return ret;
 	}
+	
+	public List<IObservation> getRootContexts() {
+		List<IObservation> ret = new ArrayList<>();
+		for (IRuntimeScope scope : observationContexts) {
+			ret.add(scope.getRootSubject());
+		}
+		return ret;
+	}
 
 	@Override
 	public Collection<String> getRelayIdentities() {

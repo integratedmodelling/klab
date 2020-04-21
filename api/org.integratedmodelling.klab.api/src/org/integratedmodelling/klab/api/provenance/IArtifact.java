@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -198,6 +199,10 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 
 	}
 
+	interface Structure {
+
+	}
+	
 	/**
 	 * The geometry linked to the observation. Observed artifacts will specialize
 	 * this as IScale.

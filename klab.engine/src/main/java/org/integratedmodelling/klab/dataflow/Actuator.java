@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
@@ -568,14 +569,6 @@ public class Actuator implements IActuator {
 			}
 		}
 
-		/*
-		 * when computation is finished, pass all annotations from the models to the
-		 * context, so it can execute any post-contextualization actions.
-		 */
-		for (IAnnotation annotation : annotations) {
-			ctx.processAnnotation(annotation);
-		}
-
 		this.currentContext = null;
 		this.endComputation.set(System.currentTimeMillis());
 		this.status.set(2);
@@ -716,11 +709,11 @@ public class Actuator implements IActuator {
 					}
 
 				}
-				if (ret.groupSize() == 0) {
-					// manually add the empty artifact to the structure; this is not done when a
-					// group is created.
-					ctx.link(ctx.getContextObservation(), ret);
-				}
+//				if (ret.groupSize() == 0) {
+//					// manually add the empty artifact to the structure; this is not done when a
+//					// group is created.
+//					ctx.link(ctx.getContextObservation(), ret);
+//				}
 			}
 		} else if (contextualizer instanceof IPredicateClassifier) {
 
@@ -1371,6 +1364,11 @@ public class Actuator implements IActuator {
 					((Observation) product).getChangeset().add(ObservationChange.main(product, context));
 				}
 
+				if (product instanceof IState) {
+					// just pre-compute before notification to speed up visualization
+					Observations.INSTANCE.getStateSummary((IState)product, context.getScale());
+				}
+				
 				context.updateNotifications(product);
 			}
 		}

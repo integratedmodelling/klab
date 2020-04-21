@@ -174,6 +174,7 @@ public abstract class ContextMonitor {
 			parent.setChildrenCount(parent.getChildrenCount() + 1);
 			graph.addVertex(observation);
 			graph.addEdge(observation, parent);
+			System.out.println("STICKING " + observation + " AS CHILD OF " + parent);
 		}
 	}
 

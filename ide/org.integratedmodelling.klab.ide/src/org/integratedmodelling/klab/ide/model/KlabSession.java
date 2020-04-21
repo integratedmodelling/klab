@@ -78,6 +78,8 @@ public class KlabSession extends KlabPeer {
 		@Override
 		protected void subscribe(ContextGraph contextGraph, ObservationReference observation, boolean open) {
 
+			System.out.println("SUBSCRIBING TO " + observation);
+			
 			WatchRequest request = new WatchRequest();
 			request.setActive(open);
 			request.setObservationId(observation.getId());
