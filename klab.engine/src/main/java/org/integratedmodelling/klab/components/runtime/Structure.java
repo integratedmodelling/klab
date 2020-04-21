@@ -94,10 +94,6 @@ public class Structure implements IArtifact.Structure {
 	 */
 	public void link(IArtifact childArtifact, IArtifact parentArtifact) {
 
-		if (childArtifact instanceof ObservationGroup && parentArtifact instanceof ObservationGroup) {
-			System.out.println("WHAT THE FUCK");
-		}
-		
 		/*
 		 * artifact structure is verbatim
 		 */

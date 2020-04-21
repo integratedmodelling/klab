@@ -809,4 +809,10 @@ public class ResourceScope implements IRuntimeScope {
 		
 	}
 
+	@Override
+	public boolean isSilent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

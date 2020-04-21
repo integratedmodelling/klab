@@ -763,4 +763,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		
 	}
 
+	@Override
+	public boolean isSilent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

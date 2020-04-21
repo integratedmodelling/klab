@@ -680,8 +680,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
 		IRelationship ret = (IRelationship) dataflow.withMetadata(metadata)
 				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
-				.connecting((IDirectObservation) source, (IDirectObservation) target)
-				.withTargetName(name)
+				.connecting((IDirectObservation) source, (IDirectObservation) target).withTargetName(name)
 				.withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
 				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
@@ -990,14 +989,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			} else {
 
 				Observable obs = observable;
-				
+
 				// attribute the name if any
-				if (dataflow.getTargetName() != null && ((Actuator)actuator).getMode() == Mode.RESOLUTION &&
-						observable.is(dataflow.getObservationGroup().getObservable())) {
+				if (dataflow.getTargetName() != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION
+						&& observable.is(dataflow.getObservationGroup().getObservable())) {
 					obs = new Observable(obs);
 					obs.setName(dataflow.getTargetName());
 				}
-				
+
 				if (obs.is(Type.RELATIONSHIP)) {
 					observation = DefaultRuntimeProvider.createRelationship(obs, scale,
 							actuator.getDataflow().getRelationshipSource(),
@@ -1005,7 +1004,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				} else {
 					observation = DefaultRuntimeProvider.createObservation(obs, scale, this, op.getThird());
 				}
-				
+
 				if (getRootSubject() != null) {
 					((Observation) getRootSubject()).setLastUpdate(System.currentTimeMillis());
 				}
@@ -1101,9 +1100,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				if (!(observation instanceof IState)) {
 
 					/*
-					 * chain to the group if we're in one
+					 * chain to the group if we're in one and we're supposed to
 					 */
-					if (this.dataflow.getObservationGroup() != null) {
+					if (this.dataflow.getObservationGroup() != null
+							&& ((Actuator) actuator).getMode() == Mode.RESOLUTION
+							&& observable.is(dataflow.getObservationGroup().getObservable())) {
 						this.dataflow.getObservationGroup().chain(observation);
 					}
 
@@ -1121,7 +1122,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	private IArtifact getLinkTarget() {
-		if (dataflow.getObservationGroup() != null && ((Actuator)actuator).getMode() == Mode.RESOLUTION) {
+		if (dataflow.getObservationGroup() != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION) {
 			if (this.targetSemantics.is(dataflow.getObservationGroup().getObservable())) {
 				return dataflow.getObservationGroup();
 			}
@@ -1718,6 +1719,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void setSilent(boolean modelIsSilent) {
 		this.silent = modelIsSilent;
+	}
+
+	@Override
+	public boolean isSilent() {
+		return silent;
 	}
 
 }

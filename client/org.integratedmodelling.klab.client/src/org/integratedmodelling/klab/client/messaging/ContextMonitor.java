@@ -9,7 +9,6 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.ObservationReference;
-import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
 
 /**
@@ -139,11 +138,13 @@ public abstract class ContextMonitor {
 	 */
 	private void updateChildren(ContextGraph graph, ObservationReference observation) {
 		List<ObservationReference> children = retrieveChildren(observation, 0, -1);
+		observation.setChildrenCount(0);
 		graph.removeAllEdges(graph.incomingEdgesOf(observation));
 		for (ObservationReference child : children) {
 			// don't update che count
 			graph.addVertex(child);
 			graph.addEdge(child, observation);
+			observation.setChildrenCount(observation.getChildrenCount() + 1);
 		}
 	}
 
@@ -174,7 +175,6 @@ public abstract class ContextMonitor {
 			parent.setChildrenCount(parent.getChildrenCount() + 1);
 			graph.addVertex(observation);
 			graph.addEdge(observation, parent);
-			System.out.println("STICKING " + observation + " AS CHILD OF " + parent);
 		}
 	}
 
@@ -185,6 +185,8 @@ public abstract class ContextMonitor {
 	 */
 	public void register(ObservationChange observationChange) {
 
+		System.out.println("CHANGE: " + observationChange);
+		
 		/*
 		 * find the observation
 		 */

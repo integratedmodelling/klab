@@ -673,20 +673,6 @@ public class Actuator implements IActuator {
 						continue;
 					}
 
-					/*
-					 * if model has the verbose annotation and we're not subscribed to the group's
-					 * updates, send a size change after each new object and before it's resolved.
-					 */
-					if (!modelIsSilent && modelIsVerbose && !ctx.getWatchedObservationIds().contains(ret.getId())) {
-						ObservationChange change = new ObservationChange();
-						change.setType(ObservationChange.Type.StructureChange);
-						change.setNewSize(ret.groupSize());
-						change.setTimestamp(System.currentTimeMillis());
-						change.setId(ret.getId());
-						change.setContextId(ctx.getContextSubject().getId());
-						session.getMonitor().send(IMessage.MessageClass.ObservationLifecycle,
-								IMessage.Type.ModifiedObservation, change);
-					}
 
 					/*
 					 * resolve and compute any distributed observables
@@ -803,6 +789,7 @@ public class Actuator implements IActuator {
 			ret.set("self", self);
 		}
 		ret.setModel(model);
+		ret.setSilent(ctx.isSilent());
 		ret.getVariables().putAll(ctx.getVariables());
 		for (String name : resource.getParameters().keySet()) {
 			ret.set(name, resource.getParameters().get(name));

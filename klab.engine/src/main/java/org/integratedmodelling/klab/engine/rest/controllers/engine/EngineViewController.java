@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.common.Geometry;
@@ -33,7 +34,6 @@ import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
@@ -132,8 +132,8 @@ public class EngineViewController {
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_CHILDREN_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public List<IObservationReference> getObservationChildren(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer count,
-			@RequestParam(required = false) String locator) {
+			@RequestParam(required = false) Boolean artifacts, @RequestParam(required = false) Integer offset,
+			@RequestParam(required = false) Integer count, @RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
@@ -153,7 +153,8 @@ public class EngineViewController {
 
 		int i = -1;
 		int n = 0;
-		for (IObservation child : context.getChildrenOf(obs)) {
+		for (IArtifact child : ((artifacts == null || artifacts) ? context.getChildArtifactsOf(obs)
+				: context.getChildrenOf(obs))) {
 
 			i++;
 			if (offset != null && i < offset) {
@@ -163,7 +164,7 @@ public class EngineViewController {
 				break;
 			}
 
-			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs, loc, 0,
+			ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child, obs, loc, 0,
 					obs instanceof ObservationGroupView ? obs.getId() : null));
 			n++;
 		}

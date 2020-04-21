@@ -445,4 +445,11 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void setSilent(boolean modelIsSilent);
 
+	/**
+	 * Return whether silent or forced talkative.
+	 * 
+	 * @return
+	 */
+	boolean isSilent();
+
 }
