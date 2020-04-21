@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.observations.IProcess;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.jgrapht.Graph;
@@ -94,6 +95,10 @@ public class Structure implements IArtifact.Structure {
 	 */
 	public void link(IArtifact childArtifact, IArtifact parentArtifact) {
 
+		if (childArtifact instanceof IState && parentArtifact instanceof ObservationGroup) {
+			System.out.println("FUUUUUUUUUCK");
+		}
+		
 		/*
 		 * artifact structure is verbatim
 		 */

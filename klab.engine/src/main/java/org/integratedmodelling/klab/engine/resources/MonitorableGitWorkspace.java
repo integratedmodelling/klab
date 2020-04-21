@@ -31,6 +31,13 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
                 if (!synced && (!skipSync || !root.exists())) {
                     synced = true;
                     for (String url : gitUrls) {
+                    	
+                    	// TODO FIXME REMOVE
+                    	if (url.contains("im.data.usa")) {
+                    		continue;
+                    	}
+                    	
+                    	
                         try {
                             GitUtils.requireUpdatedRepository(url, getRoot());
                             addProjectPath(new File(root + File.separator + MiscUtilities.getURLBaseName(url)));

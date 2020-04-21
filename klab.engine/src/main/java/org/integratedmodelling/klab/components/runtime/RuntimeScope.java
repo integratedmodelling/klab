@@ -712,11 +712,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ret.monitor = monitor;
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
 		ret.actuator = actuator;
-		if (this.target instanceof IDirectObservation) {
+		if (this.target instanceof IDirectObservation && !(this.target instanceof ObservationGroup)) {
 			ret.contextSubject = (IDirectObservation) this.target;
-			if (ret.contextSubject instanceof IProcess) {
-				ret.contextSubject = getParentOf(ret.contextSubject);
-			}
+//			if (ret.contextSubject instanceof IProcess) {
+//				ret.contextSubject = getParentOf(ret.contextSubject);
+//			}
 		} else if (ret.contextSubject == null) {
 			// this only happens when the father is root.
 			ret.contextSubject = rootSubject;
