@@ -28,6 +28,8 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.api.runtime.rest.INotification.Mode;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -131,6 +133,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 */
 	Set<String> dataflowIds = new HashSet<>();
 	private ObservationGroup observationGroup;
+	private Mode notificationMode = INotification.Mode.Normal;
 
 	private Dataflow(Dataflow parent) {
 		this.parent = parent;
@@ -722,4 +725,16 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return this;
 	}
 
+	public Mode getNotificationMode() {
+		return this.notificationMode;
+	}
+
+	public void setNotificationMode(INotification.Mode mode) {
+		this.notificationMode = mode;
+	}
+	
+	public Dataflow withNotificationMode(INotification.Mode mode) {
+		this.notificationMode = mode;
+		return this;
+	}
 }

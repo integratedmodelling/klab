@@ -595,21 +595,6 @@ public class Actuator implements IActuator {
 		state.setMonitorable(false); // for now
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.DataflowStateChanged, state));
-
-		/*
-		 * notification flags linked to annotations
-		 */
-		boolean modelIsVerbose = false;
-		boolean modelIsSilent = false;
-
-		if (this.model != null) {
-			modelIsVerbose = Annotations.INSTANCE.hasAnnotation(model, "verbose")
-					|| Annotations.INSTANCE.hasAnnotation(observable, "verbose");
-			modelIsSilent = Annotations.INSTANCE.hasAnnotation(model, "silent")
-					|| Annotations.INSTANCE.hasAnnotation(observable, "silent");
-		}
-
-		ctx.setSilent(modelIsSilent);
 		
 		/*
 		 * This is what we get as the original content of self, which may be null or an
@@ -693,13 +678,7 @@ public class Actuator implements IActuator {
 					if (this.model != null && ret instanceof Observation) {
 						Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) object, ctx);
 					}
-
 				}
-//				if (ret.groupSize() == 0) {
-//					// manually add the empty artifact to the structure; this is not done when a
-//					// group is created.
-//					ctx.link(ctx.getContextObservation(), ret);
-//				}
 			}
 		} else if (contextualizer instanceof IPredicateClassifier) {
 
@@ -789,7 +768,6 @@ public class Actuator implements IActuator {
 			ret.set("self", self);
 		}
 		ret.setModel(model);
-		ret.setSilent(ctx.isSilent());
 		ret.getVariables().putAll(ctx.getVariables());
 		for (String name : resource.getParameters().keySet()) {
 			ret.set(name, resource.getParameters().get(name));
@@ -1308,16 +1286,9 @@ public class Actuator implements IActuator {
 
 		this.currentContext = context;
 
-		if (Klab.INSTANCE.getMessageBus() == null || isPartition()
-		/*
-		 * || context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).
-		 * isChildTask()
-		 */) {
+		if (Klab.INSTANCE.getMessageBus() == null || isPartition()) {
 			return;
 		}
-
-//		String taskId = context.getMonitor().getIdentity().getId();
-//		ISession session = context.getMonitor().getIdentity().getParentIdentity(ISession.class);
 
 		if (this.products.isEmpty()) {
 			if (context.getArtifact(this.name) != null && !context.getArtifact(this.name).isArchetype()) {
@@ -1353,6 +1324,7 @@ public class Actuator implements IActuator {
 
 				if (product instanceof IState) {
 					// just pre-compute before notification to speed up visualization
+					// FIXME doesn't work
 					Observations.INSTANCE.getStateSummary((IState)product, context.getScale());
 				}
 				

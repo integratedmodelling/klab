@@ -82,7 +82,7 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 		sorted = false;
 		ObservationChange change = requireStructureChangeEvent();
 		change.setTimestamp(System.currentTimeMillis());
-		change.setNewSize(change.getNewSize() + 1);
+		change.setNewSize(this.groupSize());
 	}
 
 	public void setComparator(Comparator<IArtifact> comparator) {

@@ -15,48 +15,53 @@ public class ObservationChange {
 	 *
 	 */
 	public enum Type {
-		
+
 		/**
 		 * Spatial context has changed location
 		 */
 		SpatialTranslation,
-		
+
 		/**
 		 * Spatial context has changed shape
 		 */
 		SpatialChange,
-		
+
 		/**
 		 * Observation has been terminated and is no longer in the context
 		 */
 		Termination,
-		
+
 		/**
 		 * Number of children has changed: newSize contains the new number
 		 */
 		StructureChange,
-		
+
 		/**
 		 * Name of object has changed
 		 */
 		NameChange,
-		
+
 		/**
-		 * Attributes linked to an object or a folder have changed
+		 * Attributes linked to an object or a folder have been added
 		 */
 		AttributeChange,
-		
+
+		/**
+		 * Observable semantics has changed (so far by removing attributes)
+		 */
+		SemanticsChange,
+
 		/**
 		 * Values of a state have changed
 		 */
 		ValueChange,
-		
+
 		/**
 		 * Observation becomes "main"
 		 */
 		BringForward
 	}
-	
+
 	private String id;
 	private String contextId;
 	private long timestamp;
@@ -68,7 +73,7 @@ public class ObservationChange {
 	private String newSemantics;
 	private int newSize;
 	private Type type;
-	
+
 	public List<Triple<String, String, String>> getNewAttributes() {
 		return newAttributes;
 	}
@@ -155,6 +160,5 @@ public class ObservationChange {
 		return "ObservationChange [id=" + id + ", contextId=" + contextId + ", newAttributes=" + newAttributes
 				+ ", newScale=" + newScale + ", newSize=" + newSize + ", type=" + type + "]";
 	}
-
 
 }

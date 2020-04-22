@@ -13,6 +13,12 @@ public interface INotification {
 		None, Success, Failure
 	}
 	
+	public enum Mode {
+		Silent,
+		Normal,
+		Verbose
+	}
+	
 	String getLevel();
 
 	long getTimestamp();

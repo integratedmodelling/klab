@@ -110,6 +110,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 			// record the modification
 			ObservationChange change = new ObservationChange();
+			change.setContextId(getRuntimeScope().getRootSubject().getId());
+			change.setId(this.getId());
+			change.setTimestamp(System.currentTimeMillis());
+			change.setType(ObservationChange.Type.AttributeChange);
 			change.setNewAttributes(new ArrayList<>());
 			change.getNewAttributes()
 					.add(new Triple<>(predicate.toString(), Concepts.INSTANCE.getDisplayLabel(predicate),
@@ -140,6 +144,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 			 */
 			if (!findAndRemoveAttribution(predicate)) {
 				ObservationChange change = new ObservationChange();
+				change.setContextId(getRuntimeScope().getRootSubject().getId());
+				change.setId(this.getId());
+				change.setTimestamp(System.currentTimeMillis());
+				change.setType(ObservationChange.Type.SemanticsChange);
 				change.setNewSemantics(this.getObservable().getDefinition());
 				this.reportChange(change);
 			}

@@ -437,19 +437,4 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void updateNotifications(IObservation observation);
 
-	/**
-	 * Passing true will suppress notifications for the artifacts created in this
-	 * scope and any changes applying to them.
-	 *
-	 * @param modelIsSilent
-	 */
-	void setSilent(boolean modelIsSilent);
-
-	/**
-	 * Return whether silent or forced talkative.
-	 * 
-	 * @return
-	 */
-	boolean isSilent();
-
 }

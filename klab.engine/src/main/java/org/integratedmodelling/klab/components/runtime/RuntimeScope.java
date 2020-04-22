@@ -41,7 +41,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -56,6 +55,7 @@ import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.components.runtime.observations.Configuration;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -140,9 +140,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	IntelligentMap<Pair<String, IKimExpression>> behaviorBindings;
 	Map<String, ObservationListener> listeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	Set<String> watchedObservations = null;
-
-	// not inherited, can be set from the outside to silence notifications
-	boolean silent = false;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -561,6 +558,15 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IDirectObservation ret = null;
 		Observable obs = new Observable((Observable) observable);
 
+		INotification.Mode notificationMode = INotification.Mode.Normal;
+		for (IAnnotation annotation : ((Actuator)actuator).getAnnotations()) {
+			if ("verbose".equals(annotation.getName())) {
+				notificationMode = INotification.Mode.Verbose;
+			} else if ("silent".equals(annotation.getName())) {
+				notificationMode = INotification.Mode.Silent;
+			} 
+		}
+		
 		/*
 		 * harmonize the scale according to what the model wants and the context's
 		 */
@@ -570,9 +576,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
 
+		// TODO switch to a builder pattern that copies the dataflow so we can run concurrently
 		IArtifact observation = dataflow
 				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale)).withMetadata(metadata)
 				.withTargetName(name)
+				.withNotificationMode(notificationMode)
 				.withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
 				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
 
@@ -635,13 +643,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			if (scope.getCoverage().isRelevant()) {
 
 				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope,
-						this.dataflow)/*
-										 * .setPrimary(false)
-										 */;
+						this.dataflow);
 				dataflow.setModel((Model) model);
-
-				// TODO this must be added to the computational strategy and linked to the
-				// original context.
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 
 			} else if (resolutionScope.getPreresolvedModels(observable) == null
@@ -672,14 +675,26 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					"RuntimeContext: cannot create a relationship of type " + observable.getType());
 		}
 
+		INotification.Mode notificationMode = INotification.Mode.Normal;
+		for (IAnnotation annotation : ((Actuator)actuator).getAnnotations()) {
+			if ("verbose".equals(annotation.getName())) {
+				notificationMode = INotification.Mode.Verbose;
+			} else if ("silent".equals(annotation.getName())) {
+				notificationMode = INotification.Mode.Silent;
+			} 
+		}
+		
 		Observable obs = new Observable((Observable) observable).withoutModel();
 		obs.setName(name);
 		scale = Scale.contextualize(scale, contextSubject.getScale(), model == null ? null : model.getAnnotations(),
 				monitor);
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
+		
+		// TODO switch to a builder pattern for the dataflow
 		IRelationship ret = (IRelationship) dataflow.withMetadata(metadata)
 				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
+				.withNotificationMode(notificationMode)
 				.connecting((IDirectObservation) source, (IDirectObservation) target).withTargetName(name)
 				.withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
 				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
@@ -1077,7 +1092,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				this.catalog.put(name, observation);
 				this.structure.add(observation);
 				if (contextSubject != null) {
-					this.structure.link(observation, getLinkTarget());
+					link(observation, getLinkTarget());
 				}
 				if (observation instanceof ISubject) {
 					this.network.addVertex((ISubject) observation);
@@ -1094,7 +1109,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				 * add any predefined states to the structure
 				 */
 				for (IState state : predefinedStates) {
-					structure.link(observation, state);
+					link(observation, state);
 				}
 
 				if (!(observation instanceof IState)) {
@@ -1121,6 +1136,41 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	}
 
+	/**
+	 * Make the link in the structure, sending the notifications we have established
+	 * 
+	 * @param child
+	 * @param parent
+	 */
+	private void link(IArtifact child, IArtifact parent) {
+		
+		boolean notify = false;
+//		if (!(parent instanceof ObservationGroup)) {
+			// direct observable: we should send a structure change if
+			// 1. its parent is being watched and itself is NOT being watched, or
+			IArtifact grandpa = getParentArtifactOf((IObservation)parent);
+			if (grandpa != null && watchedObservations.contains(grandpa.getId()) && watchedObservations.contains(parent.getId())) {
+				notify = true;
+			} else if (dataflow.getNotificationMode() == INotification.Mode.Verbose) {
+				// 2. we are in verbose mode
+				notify = true;
+			}
+//		}
+		
+		this.structure.link(child, parent);
+		
+		if (notify) {
+			/*
+			 * send the new number of children
+			 */
+			ObservationChange change = ((Observation)parent).requireStructureChangeEvent();
+			change.setNewSize(getChildArtifactsOf(parent).size());
+			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+					IMessage.Type.ModifiedObservation, change));
+		}
+	}
+	
 	private IArtifact getLinkTarget() {
 		if (dataflow.getObservationGroup() != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION) {
 			if (this.targetSemantics.is(dataflow.getObservationGroup().getObservable())) {
@@ -1164,7 +1214,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void updateNotifications(IObservation observation) {
 
-		if (!this.silent && isNotifiable(observation)) {
+		if (isNotifiable(observation)) {
 
 			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 
@@ -1224,7 +1274,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				this.catalog.put(observable.getName(), ret);
 				this.structure.add(ret);
 				if (contextSubject != null) {
-					this.structure.link(ret,
+					link(ret,
 							dataflow.getObservationGroup() == null ? contextSubject : dataflow.getObservationGroup());
 				}
 			}
@@ -1276,7 +1326,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.catalog.put(observable.getName(), observation);
 		this.structure.add(observation);
 		if (contextSubject != null) {
-			this.structure.link(observation,
+			link(observation,
 					dataflow.getObservationGroup() == null ? contextSubject : dataflow.getObservationGroup());
 		}
 		if (observation instanceof ISubject) {
@@ -1653,7 +1703,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		semantics.put(observable.getName(), observable);
 		structure.add(ret);
-		structure.link(ret, this.target);
+		this.link(ret, this.target);
 		catalog.put(observable.getName(), ret);
 		observations.put(ret.getId(), ret);
 
@@ -1716,14 +1766,5 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return watchedObservations;
 	}
 
-	@Override
-	public void setSilent(boolean modelIsSilent) {
-		this.silent = modelIsSilent;
-	}
-
-	@Override
-	public boolean isSilent() {
-		return silent;
-	}
 
 }

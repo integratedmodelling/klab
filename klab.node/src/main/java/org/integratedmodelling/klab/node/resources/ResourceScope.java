@@ -803,16 +803,4 @@ public class ResourceScope implements IRuntimeScope {
 		return null;
 	}
 
-	@Override
-	public void setSilent(boolean modelIsSilent) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isSilent() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

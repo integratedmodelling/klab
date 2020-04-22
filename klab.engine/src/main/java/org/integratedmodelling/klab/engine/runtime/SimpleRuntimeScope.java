@@ -756,17 +756,4 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public void setSilent(boolean modelIsSilent) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isSilent() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

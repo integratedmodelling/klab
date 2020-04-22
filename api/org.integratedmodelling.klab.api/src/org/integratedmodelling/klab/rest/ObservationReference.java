@@ -912,6 +912,10 @@ public class ObservationReference implements IObservationReference {
 		case BringForward:
 			this.setMain(true);
 			break;
+		case SemanticsChange:
+			// the semantic flags should not have changed
+			this.setObservable(change.getNewSemantics());
+			break;
 		}
 	}
 
