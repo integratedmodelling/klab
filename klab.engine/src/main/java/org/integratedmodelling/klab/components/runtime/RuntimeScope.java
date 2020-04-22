@@ -1143,32 +1143,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	 * @param parent
 	 */
 	private void link(IArtifact child, IArtifact parent) {
-		
-		boolean notify = false;
-//		if (!(parent instanceof ObservationGroup)) {
-			// direct observable: we should send a structure change if
-			// 1. its parent is being watched and itself is NOT being watched, or
-			IArtifact grandpa = getParentArtifactOf((IObservation)parent);
-			if (grandpa != null && watchedObservations.contains(grandpa.getId()) && watchedObservations.contains(parent.getId())) {
-				notify = true;
-			} else if (dataflow.getNotificationMode() == INotification.Mode.Verbose) {
-				// 2. we are in verbose mode
-				notify = true;
-			}
-//		}
-		
 		this.structure.link(child, parent);
-		
-		if (notify) {
-			/*
-			 * send the new number of children
-			 */
-			ObservationChange change = ((Observation)parent).requireStructureChangeEvent();
-			change.setNewSize(getChildArtifactsOf(parent).size());
-			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-					IMessage.Type.ModifiedObservation, change));
-		}
 	}
 	
 	private IArtifact getLinkTarget() {

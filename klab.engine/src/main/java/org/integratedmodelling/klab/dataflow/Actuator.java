@@ -59,6 +59,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -647,6 +648,15 @@ public class Actuator implements IActuator {
 			 */
 			if (objects != null) {
 
+				INotification.Mode notificationMode = INotification.Mode.Normal;
+				for (IAnnotation annotation : getAnnotations()) {
+					if ("verbose".equals(annotation.getName())) {
+						notificationMode = INotification.Mode.Verbose;
+					} else if ("silent".equals(annotation.getName())) {
+						notificationMode = INotification.Mode.Silent;
+					} 
+				}				
+				
 				for (IObjectArtifact object : objects) {
 
 					/*
@@ -672,11 +682,22 @@ public class Actuator implements IActuator {
 								deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 					}
 
+					
+					if (notificationMode == INotification.Mode.Verbose) {
+						/*
+						 * send the new number of children
+						 */
+						ObservationChange change = ((Observation)ret).requireStructureChangeEvent();
+						change.setNewSize(((Observation)ret).groupSize());
+						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+								IMessage.Type.ModifiedObservation, change));
+					}
+					
 					/*
 					 * everything is resolved, now add any behaviors specified in annotations
 					 */
-					if (this.model != null && ret instanceof Observation) {
-						Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) object, ctx);
+					if (object instanceof Observation) {
+						Actors.INSTANCE.instrument(getAnnotations(), (Observation) object, ctx);
 					}
 				}
 			}
