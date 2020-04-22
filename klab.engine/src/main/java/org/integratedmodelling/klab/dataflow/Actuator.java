@@ -1341,15 +1341,15 @@ public class Actuator implements IActuator {
 				continue;
 			}
 
+			if (isMain) {
+				((Observation) product).getChangeset().add(ObservationChange.main(product, context));
+			}
+
 			/*
 			 * only notify states (which are not notified on creation) or anything that has
 			 * changed, such as groups with new children.
 			 */
 			if (product instanceof IState || ((Observation) product).getChangeset().size() > 0) {
-
-				if (isMain) {
-					((Observation) product).getChangeset().add(ObservationChange.main(product, context));
-				}
 
 				if (product instanceof IState) {
 					// just pre-compute before notification to speed up visualization
