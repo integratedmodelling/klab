@@ -606,7 +606,9 @@ public class Scheduler implements IScheduler {
 							delay += registration.delayInSlot;
 						}
 
+						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.recipient + " at ");
 						registration.run(time + registration.delayInSlot);
+						System.out.println("RAN THIS FUCKA");
 						reschedule(registration, time, false);
 
 					} else {

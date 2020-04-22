@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.velocity.runtime.RuntimeConstants;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -21,7 +20,6 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Actors;
-import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
@@ -596,7 +594,7 @@ public class Actuator implements IActuator {
 		state.setMonitorable(false); // for now
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.DataflowStateChanged, state));
-		
+
 		/*
 		 * This is what we get as the original content of self, which may be null or an
 		 * empty state, or contain the result of the previous computation, including
@@ -654,9 +652,10 @@ public class Actuator implements IActuator {
 						notificationMode = INotification.Mode.Verbose;
 					} else if ("silent".equals(annotation.getName())) {
 						notificationMode = INotification.Mode.Silent;
-					} 
-				}				
-				
+					}
+				}
+
+				boolean first = true;
 				for (IObjectArtifact object : objects) {
 
 					/*
@@ -667,7 +666,6 @@ public class Actuator implements IActuator {
 						ctx.removeArtifact(object);
 						continue;
 					}
-
 
 					/*
 					 * resolve and compute any distributed observables
@@ -682,17 +680,27 @@ public class Actuator implements IActuator {
 								deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 					}
 
-					
 					if (notificationMode == INotification.Mode.Verbose) {
-						/*
-						 * send the new number of children
-						 */
-						ObservationChange change = ((Observation)ret).requireStructureChangeEvent();
-						change.setNewSize(((Observation)ret).groupSize());
-						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-								IMessage.Type.ModifiedObservation, change));
+						// just notify once to allow subscription
+						if (first) {
+							ctx.updateNotifications((IObservation) ret);
+							first = false;
+						}
+
+						// if it was expanded its children were asked for, presumably equivalent to
+						// notification
+						if (ctx.getNotifiedObservations().contains(object.getId())
+								&& !ctx.getWatchedObservationIds().contains(object.getId())) {
+
+							ObservationChange change = ((Observation) object)
+									.createChangeEvent(ObservationChange.Type.StructureChange);
+							change.setNewSize(ctx.getChildArtifactsOf(object).size());
+							session.getMonitor()
+									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+											IMessage.Type.ModifiedObservation, change));
+						}
 					}
-					
+
 					/*
 					 * everything is resolved, now add any behaviors specified in annotations
 					 */
@@ -1346,9 +1354,9 @@ public class Actuator implements IActuator {
 				if (product instanceof IState) {
 					// just pre-compute before notification to speed up visualization
 					// FIXME doesn't work
-					Observations.INSTANCE.getStateSummary((IState)product, context.getScale());
+					Observations.INSTANCE.getStateSummary((IState) product, context.getScale());
 				}
-				
+
 				context.updateNotifications(product);
 			}
 		}

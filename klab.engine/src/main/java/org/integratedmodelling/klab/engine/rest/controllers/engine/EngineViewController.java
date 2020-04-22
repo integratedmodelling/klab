@@ -149,12 +149,12 @@ public class EngineViewController {
 		}
 
 		List<IObservationReference> ret = new ArrayList<>();
-		IRuntimeScope context = ((Observation) obs).getRuntimeScope();
+		IRuntimeScope scope = ((Observation) obs).getRuntimeScope();
 
 		int i = -1;
 		int n = 0;
-		for (IArtifact child : ((artifacts == null || artifacts) ? context.getChildArtifactsOf(obs)
-				: context.getChildrenOf(obs))) {
+		for (IArtifact child : ((artifacts == null || artifacts) ? scope.getChildArtifactsOf(obs)
+				: scope.getChildrenOf(obs))) {
 
 			i++;
 			if (offset != null && i < offset) {
@@ -166,6 +166,10 @@ public class EngineViewController {
 
 			ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child, obs, loc, 0,
 					obs instanceof ObservationGroupView ? obs.getId() : null));
+			
+			// assume this was notified
+			scope.getNotifiedObservations().add(child.getId());
+			
 			n++;
 		}
 

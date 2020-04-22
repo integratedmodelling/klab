@@ -77,13 +77,20 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 
 	@Override
 	public void chain(IArtifact data) {
+		chain(data, false);
+	}
+	
+	public void chain(IArtifact data, boolean notify) {
 		artifacts.add(data);
 		((Observation) data).setGroup(this);
 		sorted = false;
-		ObservationChange change = requireStructureChangeEvent();
-		change.setTimestamp(System.currentTimeMillis());
-		change.setNewSize(this.groupSize());
+		if (notify) {
+			ObservationChange change = requireStructureChangeEvent();
+			change.setTimestamp(System.currentTimeMillis());
+			change.setNewSize(this.groupSize());
+		}
 	}
+
 
 	public void setComparator(Comparator<IArtifact> comparator) {
 		this.comparator = comparator;

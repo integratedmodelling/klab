@@ -128,7 +128,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				IRuntimeScope runtimeContext = null;
 				if (switchContext) {
 					// new catalog, new scale, context subject is in the scope, network remains
-					runtimeContext = ((Subject) context).getRuntimeScope().createContext(actuatorScale, actuator,
+					runtimeContext = ((Observation) context).getRuntimeScope().createContext(actuatorScale, actuator,
 							dataflow, scope, monitor);
 				} else if (context == null) {
 					// new context
@@ -175,7 +175,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				 * auto-start the scheduler if transitions have been registered. FIXME This must
 				 * happen only if the dataflow is the root dataflow!
 				 */
-				if (runtimeContext.getScheduler() != null && !runtimeContext.getScheduler().isEmpty()) {
+				if (((Actuator) actuator).getDataflow().isPrimary() && runtimeContext.getScheduler() != null
+						&& !runtimeContext.getScheduler().isEmpty()) {
 					runtimeContext.getScheduler().run();
 				}
 
