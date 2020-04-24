@@ -47,7 +47,6 @@ public class State extends Observation implements IState, IKeyHolder {
 	IDataKey dataKey;
 	Map<IArtifact.Type, IStorage<?>> layers = new HashMap<>();
 	ITable<Number> table;
-	IMetadata metadata = new Metadata();
 
 	public static State newArchetype(Observable observable, Scale scale, IRuntimeScope context) {
 		return new State(observable, scale, context);
@@ -90,10 +89,6 @@ public class State extends Observation implements IState, IKeyHolder {
 			dataKey.include(value);
 		}
 		return storage.putObject(value, index);
-	}
-
-	public IMetadata getMetadata() {
-		return metadata;
 	}
 
 	public long size() {

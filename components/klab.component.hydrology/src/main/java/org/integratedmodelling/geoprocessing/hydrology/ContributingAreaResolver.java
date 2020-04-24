@@ -7,6 +7,7 @@ import java.awt.image.DataBuffer;
 import org.hortonmachine.hmachine.modules.geomorphology.tca.OmsTca;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.Utils;
 
 public class ContributingAreaResolver implements IResolver<IState>, IExpression {
@@ -46,6 +48,9 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 			tUnit = null;
 		}
 		
+		StateSummary summary = Observations.INSTANCE.getStateSummary(flowDir, context.getScale());
+		System.out.println("" + summary);
+		
 		OmsTca algorithm = new OmsTca();
 		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, DataBuffer.TYPE_FLOAT, floatNovalue);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
@@ -68,6 +73,8 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 				}
 				return unit == null ? (a*cellArea) : unit.convert(a*cellArea, Units.INSTANCE.SQUARE_METERS).doubleValue();
 			});
+			summary = Observations.INSTANCE.getStateSummary(target, context.getScale());
+			System.out.println("" + summary);
 		}
 		return target;
 	}

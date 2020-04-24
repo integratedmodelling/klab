@@ -67,7 +67,7 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	private int maxObjects = -1;
 	private boolean boundingBox;
 	private boolean alignGrid;
-	private int bufferCells = 0;
+	private int cellBuffer = 0;
 	private int detail = 0;
 
 	public void setBoundingBox(boolean boundingBox) {
@@ -118,7 +118,7 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
 			throws KlabException {
 
-		if (bufferCells > 0 && boundingBox) {
+		if (cellBuffer > 0 && boundingBox) {
 			alignGrid = true;
 		}
 
@@ -240,6 +240,12 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 				scale = Scale.substituteExtent(scale,
 						grid == null ? bbox : Space.create((Shape) bbox, grid, alignGrid));
 			}
+			if (cellBuffer > 0 && grid != null) {
+				double width = Math.max(grid.getCellWidth(), grid.getCellHeight()) * cellBuffer;
+				IShape bbox = scale.getSpace().getShape().buffer(width);
+				scale = Scale.substituteExtent(scale,
+						grid == null ? bbox : Space.create((Shape) bbox, grid, alignGrid));
+			}
 
 			ret.add(context.newObservation(semantics, data.getFirst(), scale, data.getThird()));
 		}
@@ -247,8 +253,8 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		return ret;
 	}
 
-	public void setBufferCells(int bufferCells) {
-		this.bufferCells = bufferCells;
+	public void setCellBuffer(int bufferCells) {
+		this.cellBuffer = bufferCells;
 	}
 
 	public void setDetail(int detail) {

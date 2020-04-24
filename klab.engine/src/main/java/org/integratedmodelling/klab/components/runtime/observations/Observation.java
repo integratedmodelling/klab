@@ -59,6 +59,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// separately kept time of creation and exit, using timestamp if non-temporal
 	private long creationTime;
 	private long exitTime;
+	private boolean dynamic;
 
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
@@ -350,6 +351,15 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		ObservationChange change = createChangeEvent(ObservationChange.Type.StructureChange);
 		getChangeset().add(change);
 		return change;
+	}
+
+	@Override
+	public boolean isDynamic() {
+		return dynamic;
+	}
+
+	public void setDynamic(boolean dynamic) {
+		this.dynamic = dynamic;
 	}
 
 }

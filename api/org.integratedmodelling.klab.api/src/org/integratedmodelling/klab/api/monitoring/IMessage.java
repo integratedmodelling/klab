@@ -303,7 +303,7 @@ public interface IMessage {
 		/**
 		 * Scheduler lifecycle F->B
 		 */
-		SchedulingStarted, SchedulingFinished, SchedulerReset,
+		SchedulingStarted, SchedulingFinished, ScheduleAdvanced, SchedulerReset,
 
 		/*
 		 * --- Search-class types ---

@@ -1,13 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -23,7 +18,6 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 
 	private IGeometry geometry;
 	private IRuntimeScope runtimeScope;
-	private IMetadata metadata = new Metadata();
 	private String token = "o" + NameGenerator.shortUUID();
 	private boolean markedForDeletion;
 
@@ -38,15 +32,6 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 	public String getId() {
 		return token;
 	}
-	
-	
-	// TODO REMOVE
-	Set<String> ids = new HashSet<>();
-	public void chain(IArtifact data) {
-		super.chain(data);
-		ids.add(((ObservedArtifact)data).token);
-	}
-
 
 	@Override
 	public IGeometry getGeometry() {
@@ -55,12 +40,6 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 
 	public void setGeometry(IGeometry geometry) {
 		this.geometry = geometry;
-	}
-
-	
-	@Override
-	public IMetadata getMetadata() {
-		return metadata;
 	}
 
 	public IRuntimeScope getRuntimeScope() {
@@ -99,10 +78,6 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 	@Override
 	public IProvenance getProvenance() {
 		return getRuntimeScope().getProvenance();
-	}
-
-	protected void setMetadata(IMetadata metadata) {
-		this.metadata = metadata;
 	}
 
 	/**

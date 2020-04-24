@@ -171,23 +171,28 @@ public class Scheduler implements IScheduler {
 
 						for (IObservation observation : changed) {
 
-							ObservationChange change = new ObservationChange();
-							change.setContextId(scope.getRootSubject().getId());
-							change.setId(observation.getId());
-							change.setTimestamp(t);
+							if (scope.getNotifiedObservations().contains(observation.getId())) {
 
-							// TODO fill in
-							if (observation instanceof IState) {
-								change.setType(ObservationChange.Type.ValueChange);
-							} else if (observation instanceof IDirectObservation
-									&& !((IDirectObservation) observation).isActive()) {
-								change.setType(ObservationChange.Type.Termination);
+								ObservationChange change = new ObservationChange();
+								change.setContextId(scope.getRootSubject().getId());
+								change.setId(observation.getId());
+								change.setTimestamp(t);
+
+								if (observation instanceof IState) {
+									change.setType(ObservationChange.Type.ValueChange);
+								} else if (observation instanceof IDirectObservation
+										&& !((IDirectObservation) observation).isActive()) {
+									change.setType(ObservationChange.Type.Termination);
+								}
+
+								ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+								session.getMonitor()
+										.send(Message.create(session.getId(),
+												IMessage.MessageClass.ObservationLifecycle,
+												IMessage.Type.ModifiedObservation, change));
+							} else {
+								((Observation) observation).setDynamic(true);
 							}
-
-							ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
-							session.getMonitor()
-									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-											IMessage.Type.ModifiedObservation, change));
 						}
 					}
 				}
@@ -576,12 +581,12 @@ public class Scheduler implements IScheduler {
 		notification.setContextId(contextId);
 		notification.setType(SchedulerNotification.Type.STARTED);
 		notification.setResolution(resolution);
-		
+
 		monitor.info("Temporal transitions starting");
 
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 				IMessage.Type.SchedulingStarted, notification));
-		
+
 		long time = startTime;
 		while (true) {
 
@@ -599,11 +604,11 @@ public class Scheduler implements IScheduler {
 
 				long delay = 0;
 				for (Registration registration : regs) {
-					
+
 					if (monitor.isInterrupted()) {
 						break;
 					}
-					
+
 					if (registration.rounds == 0) {
 
 						if (type == Type.REAL_TIME && registration.delayInSlot > delay) {
@@ -612,7 +617,7 @@ public class Scheduler implements IScheduler {
 							delay += registration.delayInSlot;
 						}
 
-						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.target);
+//						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.target);
 						registration.run(time + registration.delayInSlot);
 						reschedule(registration, time, false);
 
@@ -621,9 +626,16 @@ public class Scheduler implements IScheduler {
 						this.wheel[cursor].add(registration);
 					}
 				}
+				
+				SchedulerNotification passed = new SchedulerNotification();
+				passed.setType(SchedulerNotification.Type.TIME_ADVANCED);
+				passed.setCurrentTime(time);
+				monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+						IMessage.Type.ScheduleAdvanced, passed));
+				
 			}
 
-			System.out.println("RAN ALL THE FUCKERS");
+//			System.out.println("RAN ALL THE FUCKERS");
 
 			cursor = (cursor + 1) % wheelSize;
 			time += resolution;

@@ -194,6 +194,7 @@ public class ObservationReference implements IObservationReference {
 	private String originalGroupId;
 	private boolean alive;
 	private boolean main;
+	private boolean dynamic;
 
 	/*
 	 * Only sent when the observation redefines the scale (new context)
@@ -925,6 +926,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setMain(boolean main) {
 		this.main = main;
+	}
+
+	public boolean isDynamic() {
+		return dynamic;
+	}
+
+	public void setDynamic(boolean dynamic) {
+		this.dynamic = dynamic;
 	}
 
 }

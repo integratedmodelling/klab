@@ -37,6 +37,7 @@ public class WatershedPolygonInstantiator extends ScaleChooserInstantiator imple
 		int maxobjects = parameters.get("maxobjects", -1.0).intValue();
 		double minCoverage = parameters.get("mincoverage", 0.45);
 		int detail = parameters.get("granularity", 0.0).intValue();
+		int cellBuffer = parameters.get("cellbuffer", 0.0).intValue();
 		
 		WatershedPolygonInstantiator ret = new WatershedPolygonInstantiator(whole);
 		
@@ -47,6 +48,7 @@ public class WatershedPolygonInstantiator extends ScaleChooserInstantiator imple
 		ret.setBoundingBox(boundingbox);
 		ret.setAlignGrid(align);
 		ret.setDetail(detail);
+		ret.setCellBuffer(cellBuffer);
 		
 		return ret;
 	}
