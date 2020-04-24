@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
@@ -60,7 +61,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	private long creationTime;
 	private long exitTime;
 	private boolean dynamic;
-
+	private String observationContextId;
+	
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
 	 */
@@ -85,6 +87,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	protected Observation(Observable observable, Scale scale, IRuntimeScope context) {
 		super(scale, context);
 		this.observable = observable;
+		ITaskTree<?> creator = context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class);
+		if (creator != null) {
+			this.observationContextId = creator.getContextId();
+		}
 		this.setCreationTime(/* context.getScheduler() != null ? context.getScheduler().getTime() : */ timestamp);
 		this.setExitTime(-1);
 	}
@@ -360,6 +366,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	public void setDynamic(boolean dynamic) {
 		this.dynamic = dynamic;
+	}
+
+	public String getObservationContextId() {
+		return observationContextId;
 	}
 
 }

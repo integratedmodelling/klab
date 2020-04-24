@@ -59,11 +59,11 @@ public class AppRunner implements Annotations.Handler {
         
         if (subject != null && arguments.get("visualize", false)) {
           if (subject.getScale().isSpatiallyDistributed()) {
-            SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
-            for (IState state : subject.getStates()) {
-              display.add(state);
-            }
-            display.show();
+//            SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
+//            for (IState state : subject.getStates()) {
+//              display.add(state);
+//            }
+//            display.show();
           }
         }
         

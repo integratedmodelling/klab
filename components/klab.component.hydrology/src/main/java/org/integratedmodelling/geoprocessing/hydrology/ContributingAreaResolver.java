@@ -47,15 +47,12 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 		if (tUnit != null && tUnit.equals(Units.INSTANCE.SQUARE_METERS)) {
 			tUnit = null;
 		}
-		
-		StateSummary summary = Observations.INSTANCE.getStateSummary(flowDir, context.getScale());
-		System.out.println("" + summary);
-		
+
 		OmsTca algorithm = new OmsTca();
-		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, DataBuffer.TYPE_FLOAT, floatNovalue);
+		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
-		algorithm.doReset = false;
+		algorithm.doReset = true;
 		context.getMonitor().info("computing contributing area...");
 		try {
 			algorithm.process();
@@ -73,8 +70,6 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 				}
 				return unit == null ? (a*cellArea) : unit.convert(a*cellArea, Units.INSTANCE.SQUARE_METERS).doubleValue();
 			});
-			summary = Observations.INSTANCE.getStateSummary(target, context.getScale());
-			System.out.println("" + summary);
 		}
 		return target;
 	}

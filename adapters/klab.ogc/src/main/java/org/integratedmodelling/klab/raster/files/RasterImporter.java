@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.raster.files;
 
+import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -81,7 +82,7 @@ public class RasterImporter extends AbstractFilesetImporter {
                     && observation.getScale().getSpace().isRegular()) {
 
                 GridCoverage2D coverage = GeotoolsUtils.INSTANCE
-                        .stateToCoverage((IState) observation, locator, Float.NaN);
+                        .stateToCoverage((IState) observation, locator, DataBuffer.TYPE_FLOAT, Float.NaN);
 
                 if (format.equalsIgnoreCase("tiff")) {
                     try {

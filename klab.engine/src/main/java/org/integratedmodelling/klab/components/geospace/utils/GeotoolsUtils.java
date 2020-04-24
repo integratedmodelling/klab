@@ -34,24 +34,24 @@ public enum GeotoolsUtils {
 	Map<IConcept, Integer> conceptMap = new HashMap<>();
 	GridCoverageFactory rasterFactory = new GridCoverageFactory();
 
-	/**
-	 * Turn a state into a grid coverage.
-	 * 
-	 * @param state
-	 * @return a Geotools grid coverage
-	 * @throws IllegalArgumentException if the state is not suitable for a raster
-	 *                                  representation.
-	 */
-	public GridCoverage2D stateToCoverage(IState state, ILocator locator, float noDataValue) {
-		return stateToCoverage(state.at(locator), DataBuffer.TYPE_FLOAT, noDataValue);
+//	/**
+//	 * Turn a state into a grid coverage.
+//	 * 
+//	 * @param state
+//	 * @return a Geotools grid coverage
+//	 * @throws IllegalArgumentException if the state is not suitable for a raster
+//	 *                                  representation.
+//	 */
+//	public GridCoverage2D stateToCoverage(IState state, ILocator locator, float noDataValue) {
+//		return stateToCoverage(state.at(locator), DataBuffer.TYPE_FLOAT, noDataValue);
+//	}
+
+	public GridCoverage2D stateToCoverage(IState state, ILocator locator) {
+		return stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN);
 	}
 
-	public GridCoverage2D stateToCoverage(IState state) {
-		return stateToCoverage(state, DataBuffer.TYPE_FLOAT, Float.NaN);
-	}
-
-	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue) {
-		return stateToCoverage(state, type, noDataValue, null);
+	public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue) {
+		return stateToCoverage(state, locator, type, noDataValue, null);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public enum GeotoolsUtils {
 	 * @throws IllegalArgumentException if the state is not suitable for a raster
 	 *                                  representation.
 	 */
-	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue,
+	public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue,
 			Function<Object, Object> transformation) {
 
 		ISpace space = state.getScale().getSpace();
@@ -93,10 +93,9 @@ public enum GeotoolsUtils {
 		 * only go through active cells. State should have been located through a proxy
 		 * for other extents.
 		 */
-		int cells = 0;
-		for (Cell cell : grid) {
-			cells ++;
-			Object o = state.get(cell);
+		for (ILocator position : locator) {
+			Cell cell = position.as(Cell.class);
+			Object o = state.get(position);
 			if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
 				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, noDataValue);
 			} else if (o instanceof Number) {
@@ -119,7 +118,7 @@ public enum GeotoolsUtils {
 		}
 
 		return rasterFactory.create(state.getObservable().getName(), raster, ((Space)space).getShape().getJTSEnvelope());
-
+		
 	}
 
 	public void coverageToState(GridCoverage2D layer, IState state) {

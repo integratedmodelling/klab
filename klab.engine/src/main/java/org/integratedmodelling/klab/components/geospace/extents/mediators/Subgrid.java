@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -24,12 +25,12 @@ public class Subgrid extends Grid {
 	// TODO do this right when we need it again, using a map with a display per original grid indexed by ID
 	private static SpatialDisplay display;
 	
-	static SpatialDisplay getDisplay(Grid original) {
-		if (display == null) {
-			display = new SpatialDisplay(original.getBoundingBox());
-		}
-		return display;
-	}
+//	static SpatialDisplay getDisplay(Grid original, IScale scale) {
+//		if (display == null) {
+//			display = new SpatialDisplay(original.getBoundingBox());
+//		}
+//		return display;
+//	}
 	
 	/**
 	 * Get the percentage of area outside the requested shape that needs to be

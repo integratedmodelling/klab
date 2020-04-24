@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -114,7 +115,7 @@ public enum Renderer {
 		try {
 
 			Viewport vport = new Viewport(viewport[0], viewport.length == 1 ? viewport[0] : viewport[1]);
-			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, Float.NaN);
+			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN);
 			IEnvelope envelope = space.getEnvelope();
 			IProjection projection = space.getProjection();
 			int[] imagesize = vport.getSize(grid.getXCells(), grid.getYCells());
