@@ -76,10 +76,14 @@ public class RunoffResolver implements IResolver<IProcess>, IExpression {
 		if (tUnit != null && tUnit.equals(Units.INSTANCE.SQUARE_METERS)) {
 			tUnit = null;
 		}
-
+		
+		int nouts = 0, nuouts = 0;
+		
 		// TODO this should be in the watershed but it's in the region.
 		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
 
+			nouts++;
+			
 			ISpace space = ((IObservation) artifact).getSpace();
 
 			if (space == null) {
@@ -90,8 +94,14 @@ public class RunoffResolver implements IResolver<IProcess>, IExpression {
 			long xy = grid.getOffsetFromWorldCoordinates(point.getX(), point.getY());
 			Cell start = grid.getCell(xy);
 			computeRunoff(start, flowdirection, precipitation, curvenumber, runoffState);
+			
+			nuouts ++;
 		}
 
+		if (nouts == 0 || nuouts == 0) {
+			System.out.println("MERDA NON CI SONO OUTLETS" + (nouts > 0 ? "" : " UTILIZZABILI"));
+		}
+		
 		return runoffProcess;
 	}
 

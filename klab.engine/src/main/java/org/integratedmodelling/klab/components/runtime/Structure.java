@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.observations.IProcess;
-import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.jgrapht.Graph;
@@ -39,10 +38,6 @@ public class Structure implements IArtifact.Structure {
 			DefaultEdge.class);
 	private Graph<IArtifact, DefaultEdge> artifactStructure = new DefaultDirectedGraph<IArtifact, DefaultEdge>(
 			DefaultEdge.class);
-
-	public Structure() {
-//		super(DefaultEdge.class);
-	}
 
 	public IArtifact getRootArtifact() {
 		for (IArtifact artifact : logicalStructure.vertexSet()) {
@@ -86,14 +81,19 @@ public class Structure implements IArtifact.Structure {
 	/**
 	 * Link observations, using artifact logics, as specified during
 	 * contextualization. The artifact structure will contains the graph as
-	 * specified. The logical structure will skip folders and processes, always
-	 * attributing observations to their parent observations and linking process
-	 * qualities to subjects.
+	 * specified, attributing process states to the parent subject. The logical
+	 * structure will skip folders and processes, always attributing observations to
+	 * their parent observations and linking process qualities to subjects.
 	 * 
 	 * @param childArtifact
 	 * @param parentArtifact
 	 */
 	public void link(IArtifact childArtifact, IArtifact parentArtifact) {
+
+		// these are redirected no matter what.
+		if (parentArtifact instanceof IProcess) {
+			parentArtifact = getArtifactParent(parentArtifact);
+		}
 
 		/*
 		 * artifact structure is verbatim
@@ -108,7 +108,7 @@ public class Structure implements IArtifact.Structure {
 		}
 
 		// otherwise link, possibly skipping the non-logical level
-		if (parentArtifact instanceof ObservationGroup || parentArtifact instanceof IProcess) {
+		if (parentArtifact instanceof ObservationGroup) {
 			parentArtifact = getArtifactParent(parentArtifact);
 		}
 
@@ -116,63 +116,12 @@ public class Structure implements IArtifact.Structure {
 		logicalStructure.addEdge(childArtifact, parentArtifact);
 	}
 
-//	@Override
 	public void add(IArtifact v) {
 		artifactStructure.addVertex(v);
 		if (!(v instanceof ObservationGroup)) {
 			logicalStructure.addVertex(v);
 		}
 	}
-
-//	/**
-//	 * Lookup the parent of a known group.
-//	 * 
-//	 * @param observation
-//	 * @return
-//	 */
-//	public IDirectObservation getGroupParent(ObservationGroup observation) {
-//		for (DefaultEdge edge : this.artifactStructure.outgoingEdgesOf(observation)) {
-//			IArtifact source = this.artifactStructure.getEdgeTarget(edge);
-//			if (source instanceof IDirectObservation) {
-//				return (IDirectObservation) source;
-//			}
-//		}
-//		return null;
-//	}
-
-//	/**
-//	 * Reconstruct the artifact child hierarchy with the groups instead of the direct observations.
-//	 * 
-//	 * @param observation
-//	 * @return
-//	 */
-//	@SuppressWarnings("unchecked")
-//	public List<IArtifact> getChildArtifacts(IObservation artifact) {
-//		
-//		if (artifact instanceof ObservationGroup) {
-//			return IteratorUtils.toList(((ObservationGroup)artifact).iterator());
-//		}
-//		
-//		if (artifact instanceof ObservationGroupView) {
-//			return IteratorUtils.toList(((ObservationGroupView)artifact).iterator());
-//		}		
-//		
-//		List<IArtifact> ret = new ArrayList<>();
-//		Set<String> groupIds = new HashSet<>();
-//		for (DefaultEdge edge : logicalStructure.incomingEdgesOf(artifact)) {
-//			IArtifact source = logicalStructure.getEdgeSource(edge);
-//			if (source instanceof DirectObservation) {
-//				ObservationGroup group = ((DirectObservation)source).getGroup();
-//				if (group != null && !groupIds.contains(group.getId())) {
-//					ret.add(group);
-//					groupIds.add(group.getId());
-//				}
-//			} else if (source instanceof IObservation) {
-//				ret.add((IObservation)source);
-//			}
-//		}
-//		return ret;
-//	}
 
 	public void replace(IArtifact original, IArtifact replacement) {
 

@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -107,6 +108,8 @@ import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DocumentationReference;
+import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.NetworkReference;
 import org.integratedmodelling.klab.rest.NodeReference;
@@ -1459,6 +1462,18 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		ret.setTimeRetrieved(System.currentTimeMillis());
 		ret.setTimeLastActivity(lastActivity);
 
+		IUserIdentity user = getParentIdentity(IUserIdentity.class);
+		if (user != null) {
+			IdentityReference uid = new IdentityReference();
+			uid.setEmail(user.getEmailAddress());
+			uid.setId(user.getUsername());
+			for (Group group : user.getGroups()) {
+				uid.getGroups().add(group.getId());
+			}
+			uid.setLastLogin(user.getLastLogin().toString());
+			ret.setOwner(uid);
+		}
+		
 		for (IRuntimeScope ctx : observationContexts) {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
 					.createArtifactDescriptor(ctx.getRootSubject(), null, ctx.getScale().initialization(), 0));

@@ -1161,44 +1161,20 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return (IObservation) structure.getArtifactParent(observation);
 	}
 
-	/**
-	 * Return whether an observation should be notified to clients. This implies: 1)
-	 * that a client is listening and 2) that there are subscriptions from the
-	 * client that require notification. This means either of: 1) The observation is
-	 * a child of a parent that was subscribed to and was never notified, or 2) the
-	 * observation has been changed (directly or in the number of children) after
-	 * the last notification and it's part of a subscribed hierarchy (is subscribed
-	 * itself and not root, or it's a direct child that a subscribed one).
-	 * <p>
-	 * Upon this returning true, check if the observation's ID is in
-	 * {@link #notifiedObservations} and the observation's changeset to know what to
-	 * do.
-	 * 
-	 * @param observation
-	 * @return
-	 */
-//	private boolean isNotifiable(IObservation observation) {
-//
-//		 || ;
-//		}
-//	// root context is always notifiable
-//	return true;
-//
-//	}
-
 	@Override
 	public void updateNotifications(IObservation observation) {
 
 		if (dataflow.getNotificationMode() == INotification.Mode.Silent) {
 			return;
 		}
-		
+
 		IObservation parent = this.getParentArtifactOf(observation);
-		
-		// if I am subscribed to the father and not to its father, send the number of children
+
+		// if I am subscribed to the father and not to its father, send the number of
+		// children
 		// for the father
 		if (parent == null || watchedObservations.contains(parent.getId())) {
-			
+
 			IObservation grandpa = parent == null ? null : getParentArtifactOf(parent);
 			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 
@@ -1228,13 +1204,15 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
 				}
 
-			} else if (grandpa != null && watchedObservations.contains(parent.getId())) {
+			} else if (dataflow.getNotificationMode() == INotification.Mode.Verbose
+					|| (grandpa != null && watchedObservations.contains(parent.getId()))) {
 
 				// subscribed to grandparent and parent is closed: send change
-				ObservationChange change = ((Observation)parent).createChangeEvent(ObservationChange.Type.StructureChange);
+				ObservationChange change = ((Observation) parent)
+						.createChangeEvent(ObservationChange.Type.StructureChange);
 				change.setNewSize(getChildArtifactsOf(parent).size());
-				session.getMonitor().send(Message.create(session.getId(),
-						IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
+				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+						IMessage.Type.ModifiedObservation, change));
 			}
 		}
 	}

@@ -586,7 +586,7 @@ public class Scheduler implements IScheduler {
 		while (true) {
 
 			// fence with checks
-			if (stopped.get() || (time + resolution) > endTime) {
+			if (stopped.get() || (time + resolution) > endTime || monitor.isInterrupted()) {
 				break;
 			}
 
@@ -599,16 +599,21 @@ public class Scheduler implements IScheduler {
 
 				long delay = 0;
 				for (Registration registration : regs) {
+					
+					if (monitor.isInterrupted()) {
+						break;
+					}
+					
 					if (registration.rounds == 0) {
 
 						if (type == Type.REAL_TIME && registration.delayInSlot > delay) {
+							// FIXME NO! Must run in batches all those starting at the same time, then wait
 							waitStrategy.waitUntil(time + delay);
 							delay += registration.delayInSlot;
 						}
 
-						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.recipient + " at ");
+//						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.target);
 						registration.run(time + registration.delayInSlot);
-						System.out.println("RAN THIS FUCKA");
 						reschedule(registration, time, false);
 
 					} else {
@@ -618,6 +623,8 @@ public class Scheduler implements IScheduler {
 				}
 			}
 
+//			System.out.println("RAN ALL THE FUCKERS");
+
 			cursor = (cursor + 1) % wheelSize;
 			time += resolution;
 
@@ -626,7 +633,7 @@ public class Scheduler implements IScheduler {
 			}
 
 			// check again
-			if (stopped.get() || (time + resolution) > endTime) {
+			if (stopped.get() || (time + resolution) > endTime || monitor.isInterrupted()) {
 				break;
 			}
 		}
