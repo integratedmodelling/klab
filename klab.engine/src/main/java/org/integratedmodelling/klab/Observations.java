@@ -257,7 +257,7 @@ public enum Observations implements IObservationService {
 		ret.setParentId(parent == null ? null : parent.getId());
 		ret.setAlive(((Observation)observation).isAlive());
 		ret.setLabel(getDisplayLabel(observation));
-
+		ret.setDynamic(((Observation)observation).isDynamic());
 		ret.setObservable(observation.getObservable().getDefinition());
 		if (ret.getObservable() == null) {
 			ret.setObservable("Quantity has no semantics associated");
