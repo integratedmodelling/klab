@@ -148,7 +148,7 @@ public class ObservationChange {
 
 	public static ObservationChange main(IObservation observation, IContextualizationScope scope) {
 		ObservationChange ret = new ObservationChange();
-		ret.setTimestamp(System.currentTimeMillis());
+		ret.setTimestamp(-1);
 		ret.setType(Type.BringForward);
 		ret.setContextId(scope.getRootSubject().getId());
 		ret.setId(observation.getId());

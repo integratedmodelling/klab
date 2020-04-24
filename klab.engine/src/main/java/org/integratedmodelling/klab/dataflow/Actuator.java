@@ -773,6 +773,13 @@ public class Actuator implements IActuator {
 			}
 		}
 
+		if (ret instanceof IState) {
+			// just pre-compute before notification to speed up visualization
+			// FIXME doesn't work
+			Observations.INSTANCE.getStateSummary((IState) ret, ctx.getScale());
+		}
+
+		
 		state.setStatus(Status.FINISHED);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.DataflowStateChanged, state));
@@ -1350,13 +1357,6 @@ public class Actuator implements IActuator {
 			 * changed, such as groups with new children.
 			 */
 			if (product instanceof IState || ((Observation) product).getChangeset().size() > 0) {
-
-				if (product instanceof IState) {
-					// just pre-compute before notification to speed up visualization
-					// FIXME doesn't work
-					Observations.INSTANCE.getStateSummary((IState) product, context.getScale());
-				}
-
 				context.updateNotifications(product);
 			}
 		}

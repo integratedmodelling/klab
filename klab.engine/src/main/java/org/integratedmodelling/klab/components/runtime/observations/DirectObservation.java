@@ -112,7 +112,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 			ObservationChange change = new ObservationChange();
 			change.setContextId(getRuntimeScope().getRootSubject().getId());
 			change.setId(this.getId());
-			change.setTimestamp(System.currentTimeMillis());
+			change.setTimestamp(-1);
 			change.setType(ObservationChange.Type.AttributeChange);
 			change.setNewAttributes(new ArrayList<>());
 			change.getNewAttributes()
@@ -146,7 +146,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 				ObservationChange change = new ObservationChange();
 				change.setContextId(getRuntimeScope().getRootSubject().getId());
 				change.setId(this.getId());
-				change.setTimestamp(System.currentTimeMillis());
+				change.setTimestamp(-1);
 				change.setType(ObservationChange.Type.SemanticsChange);
 				change.setNewSemantics(this.getObservable().getDefinition());
 				this.reportChange(change);

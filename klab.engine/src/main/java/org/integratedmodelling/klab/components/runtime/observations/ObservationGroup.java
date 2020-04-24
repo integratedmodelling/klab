@@ -86,7 +86,7 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 		sorted = false;
 		if (notify) {
 			ObservationChange change = requireStructureChangeEvent();
-			change.setTimestamp(System.currentTimeMillis());
+			change.setTimestamp(-1);
 			change.setNewSize(this.groupSize());
 		}
 	}

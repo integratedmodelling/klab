@@ -612,7 +612,7 @@ public class Scheduler implements IScheduler {
 							delay += registration.delayInSlot;
 						}
 
-//						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.target);
+						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.target);
 						registration.run(time + registration.delayInSlot);
 						reschedule(registration, time, false);
 
@@ -623,7 +623,7 @@ public class Scheduler implements IScheduler {
 				}
 			}
 
-//			System.out.println("RAN ALL THE FUCKERS");
+			System.out.println("RAN ALL THE FUCKERS");
 
 			cursor = (cursor + 1) % wheelSize;
 			time += resolution;
