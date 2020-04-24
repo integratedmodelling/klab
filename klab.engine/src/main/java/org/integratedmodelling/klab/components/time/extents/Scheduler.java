@@ -171,7 +171,8 @@ public class Scheduler implements IScheduler {
 
 						for (IObservation observation : changed) {
 
-							if (scope.getNotifiedObservations().contains(observation.getId())) {
+							IObservation parent = scope.getParentArtifactOf(observation);
+							if (parent != null && scope.getWatchedObservationIds().contains(parent.getId())) {
 
 								ObservationChange change = new ObservationChange();
 								change.setContextId(scope.getRootSubject().getId());
@@ -309,29 +310,35 @@ public class Scheduler implements IScheduler {
 					/*
 					 * 4. Notify whatever has changed.
 					 */
-					if (!target.isActive()) {
+					if (target instanceof IDirectObservation && !((IDirectObservation) target).isActive()) {
 						// TODO target went MIA - notify relatives
 					} else {
 
 						for (IObservation observation : changed) {
 
-							ObservationChange change = new ObservationChange();
-							change.setContextId(scope.getRootSubject().getId());
-							change.setId(observation.getId());
-							change.setTimestamp(t);
+							IObservation parent = scope.getParentArtifactOf(observation);
+							if (parent != null && scope.getWatchedObservationIds().contains(parent.getId())) {
 
-							// TODO fill in
-							if (observation instanceof IState) {
-								change.setType(ObservationChange.Type.ValueChange);
-							} else if (observation instanceof IDirectObservation
-									&& !((IDirectObservation) observation).isActive()) {
-								change.setType(ObservationChange.Type.Termination);
+								ObservationChange change = new ObservationChange();
+								change.setContextId(scope.getRootSubject().getId());
+								change.setId(observation.getId());
+								change.setTimestamp(t);
+
+								if (observation instanceof IState) {
+									change.setType(ObservationChange.Type.ValueChange);
+								} else if (observation instanceof IDirectObservation
+										&& !((IDirectObservation) observation).isActive()) {
+									change.setType(ObservationChange.Type.Termination);
+								}
+
+								ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+								session.getMonitor()
+										.send(Message.create(session.getId(),
+												IMessage.MessageClass.ObservationLifecycle,
+												IMessage.Type.ModifiedObservation, change));
+							} else {
+								((Observation) observation).setDynamic(true);
 							}
-
-							ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
-							session.getMonitor()
-									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-											IMessage.Type.ModifiedObservation, change));
 						}
 					}
 
@@ -626,13 +633,13 @@ public class Scheduler implements IScheduler {
 						this.wheel[cursor].add(registration);
 					}
 				}
-				
+
 				SchedulerNotification passed = new SchedulerNotification();
 				passed.setType(SchedulerNotification.Type.TIME_ADVANCED);
 				passed.setCurrentTime(time);
 				monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 						IMessage.Type.ScheduleAdvanced, passed));
-				
+
 			}
 
 //			System.out.println("RAN ALL THE FUCKERS");
