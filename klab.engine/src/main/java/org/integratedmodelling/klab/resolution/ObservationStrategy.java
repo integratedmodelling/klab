@@ -13,11 +13,11 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
@@ -177,6 +177,25 @@ public class ObservationStrategy {
 		Observable target = (Observable) observable;
 		List<Pair<ValueOperator, Object>> operators = observable.getValueOperators();
 		Strategy strategy = Strategy.DIRECT;
+
+//		/*
+//		 * if observable O has an incompatible context C1 when we resolve in C0,
+//		 * transform into O of C1 within C0. If we don't have a specific model for that,
+//		 * the strategy (computed later) can be to observe C1, defer the resolution of O
+//		 * within each C1, then after deferred resolution and computation add an
+//		 * aggregation step to get O of C1 within C0.
+//		 */
+//		Observable deferTo = ((ResolutionScope) scope).getDeferredObservableFor((Observable) observable);
+//		if (deferTo != null) {
+//
+//			Builder builder = observable.getBuilder(scope.getMonitor())
+//					.within(scope.getContext().getObservable().getType()).withDistributedInherency(true);
+//			if (Observables.INSTANCE.getDirectInherentType(observable.getType()) == null) {
+//				builder.of(deferTo.getType());
+//			}
+//			IObservable distributed = builder.buildObservable();
+////			ret.add(new ObservationStrategy((Observable)distributed, observable.getDescription().getResolutionMode()));
+//		}
 
 		if (!operators.isEmpty()) {
 

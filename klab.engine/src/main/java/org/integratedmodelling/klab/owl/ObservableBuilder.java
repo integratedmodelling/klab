@@ -64,11 +64,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IConcept relationshipTarget;
 	private boolean optional;
 	private String name;
-//	private IObservable filteredObservable;
 	private IConcept targetPredicate;
-//	private IConcept distributedIn;
 	private boolean mustContextualize = false;
-
+	
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
 	private List<IConcept> removed = new ArrayList<>();
@@ -1985,6 +1983,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.setOptional(this.optional);
 		ret.setMustContextualizeAtResolution(mustContextualize);
 		ret.getAnnotations().addAll(annotations);
+		ret.setDistributedInherency(distributedInherency);
 //		ret.setDistributionContext(distributedIn);
 
 		return ret;
@@ -2009,8 +2008,8 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	@Override
-	public Builder withDistributedInherency(boolean ofEach) {
-		this.distributedInherency = ofEach;
+	public Builder withDistributedInherency(boolean b) {
+		this.distributedInherency = b;
 		return this;
 	}
 
@@ -2031,5 +2030,5 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.targetPredicate = targetPredicate;
 		return this;
 	}
-
+	
 }

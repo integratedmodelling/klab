@@ -64,15 +64,7 @@ public class Observable implements IObservable {
 	private IDirectObservation observer;
 	private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
 	private boolean fluidUnits;
-
-//	/**
-//	 * This is a direct observable that this observable applies to and is not the
-//	 * main observable in which this observable is being observed. When this is not
-//	 * null, the observable is resolved within each observation resulting from
-//	 * observing it, then (at the discretion of the implementation: typically when
-//	 * the 'within' is explicit) redistributed over the context.
-//	 */
-//	private IConcept distributedIn;
+	private boolean distributedInherency;
 
 	/*
 	 * Target predicate is a concrete predicate that may be added to the observable
@@ -156,9 +148,8 @@ public class Observable implements IObservable {
 		this.valueOperators.addAll(observable.valueOperators);
 		this.fluidUnits = observable.fluidUnits;
 		this.originatingModelId = observable.originatingModelId;
-//		this.filteredObservable = observable.filteredObservable;
 		this.mustContextualize = observable.mustContextualize;
-//		this.distributedIn = observable.distributedIn;
+		this.distributedInherency = observable.distributedInherency;
 	}
 
 	
@@ -746,24 +737,12 @@ public class Observable implements IObservable {
 		this.annotations = list;
 	}
 
-//	/**
-//	 * Create a new observable from this one, distributed in the passed context.
-//	 * 
-//	 * @param context
-//	 * @return
-//	 */
-//	public Observable distributeIn(IConcept context) {
-//		Observable ret = new Observable(this);
-//		ret.distributedIn = context;
-//		return ret;
-//	}
-//	
-//	public IConcept getDistributionContext() {
-//		return this.distributedIn;
-//	}
-//
-//	public void setDistributionContext(IConcept distributedIn) {
-//		this.distributedIn = distributedIn;
-//	}
+	public void setDistributedInherency(boolean b) {
+		this.distributedInherency = b;
+	}
 
+	public boolean isDistributedInherency() {
+		return this.distributedInherency;
+	}
+	
 }
