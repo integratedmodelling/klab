@@ -48,14 +48,6 @@ public class RescalingState extends Observation implements IState {
 	private IActivity.Description observationType;
 	boolean redistribute = false;
 
-	// debugging
-//	AtomicInteger mediatorCalls = new AtomicInteger();
-//	AtomicLong minLocalOffset = new AtomicLong();
-//	AtomicLong maxLocalOffset = new AtomicLong();
-//	AtomicLong minTargetOffset = new AtomicLong();
-//	AtomicLong maxTargetOffset = new AtomicLong();
-//	AtomicLong totalSetCalls = new AtomicLong();
-//	AtomicLong workedSetCalls = new AtomicLong();
 	String localId;
 
 	public void setLocalId(String observable) {
@@ -68,8 +60,6 @@ public class RescalingState extends Observation implements IState {
 		this.newScale = newScale;
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
 		this.observationType = state.getObservable().getDescription();
-//		minLocalOffset.set(Long.MAX_VALUE);
-//		minTargetOffset.set(Long.MAX_VALUE);
 		// TODO check if we need to sum in aggregation. Depends on the observable and on
 		// the relationship between the extents (e.g spatially distributed vs. not)
 		// this.redistribute = ...
@@ -90,13 +80,6 @@ public class RescalingState extends Observation implements IState {
 
 		long offset = this.newScale.getOffset(index);
 
-//		if (minLocalOffset.get() > offset) {
-//			minLocalOffset.set(offset);
-//		}
-//		if (maxLocalOffset.get() < offset) {
-//			maxLocalOffset.set(offset);
-//		}
-
 		if (!this.newScale.isCovered(offset)) {
 			return null;
 		}
@@ -113,14 +96,7 @@ public class RescalingState extends Observation implements IState {
 			}
 
 			ILocator locator = originalGeometry.at(offsets);
-//			long targetOffset = ((Offset) locator).linear;
-//			if (minTargetOffset.get() > targetOffset) {
-//				minTargetOffset.set(targetOffset);
-//			}
-//			if (maxTargetOffset.get() < targetOffset) {
-//				maxTargetOffset.set(targetOffset);
-//			}
-
+			
 			return delegate.get(locator);
 		}
 
@@ -130,7 +106,6 @@ public class RescalingState extends Observation implements IState {
 	private synchronized List<IScaleMediator> getMediators(Scale original, Scale target) {
 		List<IScaleMediator> mediators = new ArrayList<>();
 
-//		mediatorCalls.incrementAndGet();
 		conformant = true;
 		for (IExtent originalExtent : original.getExtents()) {
 			IExtent targetExtent = target.getDimension(originalExtent.getType());
@@ -151,26 +126,16 @@ public class RescalingState extends Observation implements IState {
 
 	public long set(ILocator index, Object value) {
 
-//		totalSetCalls.incrementAndGet();
 		long offset = this.newScale.getOffset(index);
 
 		if (value == null) {
 			return offset;
 		}
 
-//		if (minLocalOffset.get() > offset) {
-//			minLocalOffset.set(offset);
-//		}
-//		if (maxLocalOffset.get() < offset) {
-//			maxLocalOffset.set(offset);
-//		}
-
 		// may be covered by another state and have been assigned already!
 		if (!this.newScale.isCovered(offset)) {
 			return -1;
 		}
-
-//		workedSetCalls.incrementAndGet();
 
 		if (mediators == null) {
 			mediators = getMediators((Scale) this.delegate.getScale(), this.newScale);
@@ -183,14 +148,7 @@ public class RescalingState extends Observation implements IState {
 				offsets[i] = mediators.get(i).mapConformant(offsets[i]);
 			}
 
-			long targetOffset = delegate.set(originalGeometry.at(offsets), value);
-
-//			if (minTargetOffset.get() > targetOffset) {
-//				minTargetOffset.set(targetOffset);
-//			}
-//			if (maxTargetOffset.get() < targetOffset) {
-//				maxTargetOffset.set(targetOffset);
-//			}
+			delegate.set(originalGeometry.at(offsets), value);
 
 		} else {
 			map(index, mediators, value);
@@ -496,10 +454,5 @@ public class RescalingState extends Observation implements IState {
 		System.err.println("SUMMARY for rescaling state " + localId + " delegating to " + getObservable().getName());
 		System.err.println("local scale:  " + newScale);
 		System.err.println("target scale:  " + originalGeometry);
-//		System.err.println("local offset range:  " + minLocalOffset.get() + " - " + maxLocalOffset.get());
-//		System.err.println("target offset range: " + minTargetOffset.get() + " - " + maxTargetOffset.get());
-//		System.err.println(
-//				"total calls to set(): " + totalSetCalls.get() + " of which " + workedSetCalls.get() + " eventful");
-//		System.err.println("total calls to getMediator(): " + mediatorCalls.get());
 	}
 }

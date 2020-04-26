@@ -774,8 +774,7 @@ public class Actuator implements IActuator {
 		}
 
 		if (ret instanceof IState) {
-			// just pre-compute before notification to speed up visualization
-			// FIXME doesn't work
+			// pre-compute before notification to speed up visualization
 			Observations.INSTANCE.getStateSummary((IState) ret, ctx.getScale());
 		}
 

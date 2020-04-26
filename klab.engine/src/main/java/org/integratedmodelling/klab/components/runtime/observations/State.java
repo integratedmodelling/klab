@@ -97,7 +97,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public <T> T get(ILocator index, Class<T> cls) {
-		return Utils.asType(storage.get(index), cls);
+		return Utils.asType(get(index), cls);
 	}
 
 	@Override
@@ -170,6 +170,10 @@ public class State extends Observation implements IState, IKeyHolder {
 		}
 	}
 
+	public IDataStorage<?> getStorage() {
+		return storage;
+	}
+	
 	@Override
 	public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
 		Object o = aggregate(geometry);

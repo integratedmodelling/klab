@@ -50,6 +50,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.CastingSt
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.DereifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
@@ -73,6 +74,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Activity;
@@ -493,5 +495,16 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		}
 		return new ComputableResource(ValueOperatorResolver.getServiceCall(classifiedObservable, operator, operand),
 				Mode.RESOLUTION);
+	}
+
+	@Override
+	public IContextualizable getDereifyingResolver(IConcept distributingType, IConcept inherentType,
+			IArtifact.Type targetType) {
+		if (targetType == IArtifact.Type.OBJECT) {
+			throw new KlabUnimplementedException("de-reification of countable observations is still unimplemented");
+		}
+		return new ComputableResource(
+				DereifyingStateResolver.getServiceCall(distributingType, inherentType, targetType), Mode.RESOLUTION);
+
 	}
 }

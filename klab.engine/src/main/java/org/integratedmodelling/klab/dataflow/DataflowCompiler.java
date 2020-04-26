@@ -67,7 +67,7 @@ public class DataflowCompiler {
 	private DirectObservation context;
 	private IResolutionScope scope;
 	private Dataflow parentDataflow;
-	
+
 	/*
 	 * keep the observables of each merged model to create proper references.
 	 */
@@ -338,8 +338,6 @@ public class DataflowCompiler {
 			 */
 			Actuator ret = Actuator.create(dataflow, mode);
 
-//			boolean secondaryOutput = false;
-//			boolean skipContextualization = false;
 			IObservable modelObservable = null;
 			if (!models.isEmpty()) {
 				modelObservable = models.iterator().next().model.getObservables().get(0);
@@ -351,8 +349,7 @@ public class DataflowCompiler {
 					 * the outer actuator) or we may not, in which case we must create the outer
 					 * actuator and put the empty actuator in it.
 					 */
-//					secondaryOutput = true;
-					if (!(/* skipContextualization = */generated.contains(models.iterator().next()))) {
+					if (!generated.contains(models.iterator().next())) {
 
 						Actuator child = Actuator.create(dataflow,
 								this.observable.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
@@ -399,7 +396,7 @@ public class DataflowCompiler {
 					 */
 					ret.setObservable((Observable) ObservableBuilder.getBuilder(this.observable, monitor)
 							.without(ObservableRole.CONTEXT).buildObservable());
-					
+
 					if (ret.getType() == null) {
 						assignType(ret, this.observable);
 					}
@@ -413,7 +410,7 @@ public class DataflowCompiler {
 				ret.setNamespace(observer.getNamespace());
 				ret.setReferenceName(observer.getId());
 
-			} else if (resolvedArtifact != null /* && artifactAdapters == null */) {
+			} else if (resolvedArtifact != null) {
 				/*
 				 * Different situations if we ARE the artifact or we USE it for something. If we
 				 * have artifact adapters, we must compile an import as a child and use our own
@@ -494,6 +491,35 @@ public class DataflowCompiler {
 				} else {
 					mergedCatalog.add(observable);
 				}
+			}
+
+			/*
+			 * if this is deferring observables, it's meant to create a trans-reified
+			 * quality, so wrap the dereified actuator into another that computes it for the
+			 * host context and set a dereifying contextualizer in it.
+			 * 
+			 * FIXME this shouldn't be a list. Ignoring any element > 1.
+			 */
+			if (deferredObservables.size() > 0) {
+
+				Observable dereified = (Observable) deferredObservables.get(0).getBuilder(monitor)
+						.of(observable.getType()).buildObservable();
+
+				Actuator outer = Actuator.create(dataflow,
+						dereified.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+				outer.setObservable(dereified);
+				outer.setName(dereified.getName());
+				outer.setAlias(dereified.getName());
+				assignType(outer, dereified);
+
+				/*
+				 * add a dereifying contextualizer to the computation
+				 */
+				outer.addComputation(Klab.INSTANCE.getRuntimeProvider().getDereifyingResolver(observable.getType(),
+						deferredObservables.get(0).getType(), dereified.getArtifactType()));
+
+				outer.actuators.add(ret);
+				ret = outer;
 			}
 
 			return ret;
@@ -632,72 +658,7 @@ public class DataflowCompiler {
 						}
 					}
 
-				} /*
-					 * else if (this.strategy == Strategy.DISTRIBUTION) {
-					 * 
-					 * if (Observables.INSTANCE.getDirectContextType(this.observable.getType()) !=
-					 * null) { // if the distribution context is explicit (direct), remove it as we
-					 * are observing // the observable within the context.
-					 * ret.setObservable((Observable) this.observable.getBuilder(monitor)
-					 * .without(ObservableRole.CONTEXT).buildObservable()); }
-					 * 
-					 * assignType(ret, this.observable);
-					 * 
-					 * IConcept distributionContext = this.observable.getContext();
-					 * 
-					 * 
-					 * Compile the child that refers to the instantiation of the context objects
-					 * (create from the child, or locate it and create a reference actuator); then
-					 * compile this node, without that child, into a void dataflow to resolve the
-					 * observable (without the context if explicit) in each of them and insert it
-					 * into the actuator.
-					 * 
-					 * 
-					 * Node outnode = null; List<Node> ownch = new ArrayList<>(); for (Node child :
-					 * sortChildren()) { // observable.getType() == null means non-semantic model,
-					 * which is certainly a legitimate dependency if (child.observable.getType() !=
-					 * null && child.observable.getType().resolves(distributionContext) >= 0) {
-					 * outnode = child; } else { ownch.add(child); } }
-					 * 
-					 * 
-					 * should never be null except in error.
-					 * 
-					 * if (outnode != null) {
-					 * 
-					 * 
-					 * add any legitimate children before rearranging. This is identical to the
-					 * normal case except the context observation is skipped.
-					 * 
-					 * for (Node child : ownch) {
-					 * 
-					 * IConcept childContext = Observables.INSTANCE
-					 * .getDirectContextType(child.observable.getType());
-					 * 
-					 * if (directContext != null && directContext.equals(childContext)) { continue;
-					 * }
-					 * 
-					 * Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level +
-					 * 1); ret.getActuators().add(achild); recordUnits(achild, chosenUnits); if
-					 * (sources.containsKey(achild.getName())) { for (IContextualizable mediator :
-					 * computeMediators(sources.get(achild.getName()), achild.getObservable(),
-					 * scale)) { ret.addMediation(mediator, achild); } } }
-					 * 
-					 * 
-					 * reference node will still need to be used to carry our dataflow for secondary
-					 * contextualization. So we should output exactly in the same way.
-					 * 
-					 * 
-					 * Actuator outactuator = outnode.getActuatorTree(dataflow, monitor, generated,
-					 * level + 1); Actuator subdataflow = newDataflow(new
-					 * Observable(outactuator.getObservable()), dataflow);
-					 * subdataflow.actuators.add(ret); outactuator.actuators.add(subdataflow);
-					 * 
-					 * ret = outactuator;
-					 * 
-					 * }
-					 * 
-					 * }
-					 */else {
+				} else {
 
 					for (Node child : sortChildren()) {
 
@@ -731,16 +692,6 @@ public class DataflowCompiler {
 			}
 			return ret;
 		}
-
-//		private Actuator newDataflow(Observable observable, Dataflow dataflow) {
-//
-//			Actuator ret = Actuator.create(dataflow, Mode.RESOLUTION);
-//			ret.setObservable(observable);
-//			ret.setName(observable.getReferenceName());
-//			ret.setAlias(observable.getName());
-//			ret.setType(Type.VOID);
-//			return ret;
-//		}
 
 		private void recordUnits(Actuator achild, Map<String, IUnit> chosenUnits) {
 			if (Units.INSTANCE.needsUnits(achild.getObservable()) && achild.getObservable().getUnit() != null) {
