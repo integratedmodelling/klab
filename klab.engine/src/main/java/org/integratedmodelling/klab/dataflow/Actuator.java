@@ -621,8 +621,13 @@ public class Actuator implements IActuator {
 			 * pass the distributed computation to the runtime provider for possible
 			 * parallelization instead of hard-coding a loop here.
 			 */
-			ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
+			IArtifact result = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
 					(IState) ret, addParameters(ctx, self, resource), scale);
+
+			if (result != ret) {
+				ctx.swapArtifact(ret, result);
+			}
+			ret = result;
 
 			if (this.model != null && ret instanceof Observation) {
 				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
@@ -630,7 +635,13 @@ public class Actuator implements IActuator {
 
 		} else if (contextualizer instanceof IResolver) {
 
-			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
+			IArtifact result = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
+
+			if (result != ret) {
+				ctx.swapArtifact(ret, result);
+			}
+			ret = result;
+			
 			if (this.model != null && ret instanceof Observation) {
 				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
 			}
@@ -775,7 +786,7 @@ public class Actuator implements IActuator {
 
 		if (ret instanceof IState) {
 			// pre-compute before notification to speed up visualization
-			Observations.INSTANCE.getStateSummary((IState) ret, ctx.getScale());
+			Observations.INSTANCE.getStateSummary((IState) ret, ctx.getScale().initialization());
 		}
 
 		

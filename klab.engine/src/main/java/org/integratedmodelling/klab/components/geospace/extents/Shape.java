@@ -176,6 +176,14 @@ public class Shape extends AbstractExtent implements IShape {
 	private Shape() {
 	}
 
+	protected Shape(Shape shape) {
+		this.shapeGeometry = shape.shapeGeometry;
+		this.geometry = shape.geometry;
+		this.projection = shape.projection;
+		this.envelope = shape.envelope;
+		this.type = shape.type;
+	}
+
 	@Override
 	public Projection getProjection() {
 		return projection;
@@ -380,16 +388,9 @@ public class Shape extends AbstractExtent implements IShape {
 		}
 		throw new IllegalArgumentException("a Shape cannot merge an extent of type " + extent.getType());
 	}
-
-	@Override
-	public double getCoverage() {
-		// TODO Auto-generated method stub
-		return 1;
-	}
-
+	
 	@Override
 	public long size() {
-		// TODO Auto-generated method stub
 		return 1;
 	}
 

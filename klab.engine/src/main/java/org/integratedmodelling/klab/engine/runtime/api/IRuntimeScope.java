@@ -437,4 +437,13 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void updateNotifications(IObservation observation);
 
+	/**
+	 * Swap the passed artifact in all the graphs maintained by the context
+	 * (structure, provenance). Should be only called with states.
+	 * 
+	 * @param ret
+	 * @param result
+	 */
+	void swapArtifact(IArtifact ret, IArtifact result);
+
 }

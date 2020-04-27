@@ -157,4 +157,44 @@ public class Structure implements IArtifact.Structure {
 		}
 	}
 
+	public void swap(IArtifact original, IArtifact replacement) {
+
+		if (logicalStructure.containsVertex(original)) {
+			List<IArtifact> sources = new ArrayList<>();
+			List<IArtifact> targets = new ArrayList<>();
+			for (DefaultEdge edge : logicalStructure.incomingEdgesOf(original)) {
+				sources.add(logicalStructure.getEdgeSource(edge));
+			}
+			for (DefaultEdge edge : logicalStructure.outgoingEdgesOf(original)) {
+				targets.add(logicalStructure.getEdgeTarget(edge));
+			}
+			logicalStructure.removeVertex(original);
+			logicalStructure.addVertex(replacement);
+			for (IArtifact source : sources) {
+				logicalStructure.addEdge(source, replacement);
+			}
+			for (IArtifact target : targets) {
+				logicalStructure.addEdge(replacement, target);
+			}
+		}
+		if (artifactStructure.containsVertex(original)) {
+			List<IArtifact> sources = new ArrayList<>();
+			List<IArtifact> targets = new ArrayList<>();
+			for (DefaultEdge edge : artifactStructure.incomingEdgesOf(original)) {
+				sources.add(artifactStructure.getEdgeSource(edge));
+			}
+			for (DefaultEdge edge : artifactStructure.outgoingEdgesOf(original)) {
+				targets.add(artifactStructure.getEdgeTarget(edge));
+			}
+			artifactStructure.removeVertex(original);
+			artifactStructure.addVertex(replacement);
+			for (IArtifact source : sources) {
+				artifactStructure.addEdge(source, replacement);
+			}
+			for (IArtifact target : targets) {
+				artifactStructure.addEdge(replacement, target);
+			}
+		}
+	}
+
 }

@@ -260,6 +260,13 @@ public class MultidimensionalCursor {
         long end = getElementOffset(intes);
         return new Triple<>(ofs, end, stp);
     }
+    
+    public MultidimensionalCursor(long... extents) {
+        multiplicity = 0;
+        dimensions = 0;
+        storageOrderType = StorageOrdering.ROW_FIRST;
+    	defineDimensions(extents);
+    }
 
     /**
      * 

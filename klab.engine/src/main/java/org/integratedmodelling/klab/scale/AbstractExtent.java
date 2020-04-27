@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.scale;
 
 import java.util.Iterator;
+import java.util.function.Function;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -55,6 +56,37 @@ public abstract class AbstractExtent implements IExtent {
 	protected Extent locatedExtent = null;
 	protected long[] locatedOffsets = null;
 	protected long locatedLinearOffset = -1;
+	private Double coverage;
+	private Function<IExtent, Double> computeCoverage = null;
+
+	@Override
+	public double getCoverage() {
+		return this.coverage == null ? (computeCoverage == null ? 1.0 : (this.coverage = computeCoverage.apply(this)))
+				: this.coverage;
+	}
+
+	/**
+	 * If we are in a situation where coverage may need to be computed, install the
+	 * necessary logics here. Done this way to avoid expensive pre-computation when
+	 * it's not needed.
+	 * 
+	 * @param function
+	 * @return
+	 */
+	public IExtent withCoverageFunction(Function<IExtent, Double> function) {
+		this.computeCoverage = function;
+		return this;
+	}
+	
+	/**
+	 * Preset the coverage when it's economic to do so.
+	 * @param coverage
+	 * @return
+	 */
+	public IExtent withCoverage(double coverage) {
+		this.coverage = coverage;
+		return this;
+	}
 
 	/**
 	 * The extent this locates, if any.

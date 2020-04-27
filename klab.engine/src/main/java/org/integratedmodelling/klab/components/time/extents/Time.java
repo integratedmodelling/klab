@@ -350,11 +350,6 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public double getCoverage() {
-		return end.getMilliseconds() - start.getMilliseconds();
-	}
-
-	@Override
 	public IScaleMediator getMediator(IExtent extent) {
 		// TODO Auto-generated method stub
 		return new TimeIdentity();
@@ -938,10 +933,23 @@ public class Time extends Extent implements ITime {
 					return new Time((Time) locators[0]).withScaleId(getScaleId()).withLocatedOffset(0);
 				} else if (((Time) locators[0]).__id == this.__id) {
 					return (IExtent) locators[0];
+				} else {
+					/*
+					 * Mediation situation. Because of the irregular extents, not doing the coverage
+					 * thing. TODO: do the coverage thing.
+					 */
+					Time other = (Time) locators[0];
+					IExtent start = at(other.getStart());
+					IExtent end = at(other.getEnd());
+					// TODO compute how much other.getStart() leaves out of start() and add it
+					// somehow to the coverage for the first and last steps
+					if (start.equals(end)) {
+						// works for initialization, too
+						return other;
+					}
+					// must create mediating extent with coverage 
+					// return create(start, end, getResolution());
 				}
-				/*
-				 * TODO potential mediation situation
-				 */
 			} else if (locators[0] instanceof ITimeInstant) {
 
 				/*

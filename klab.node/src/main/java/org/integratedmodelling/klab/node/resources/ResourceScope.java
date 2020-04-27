@@ -803,4 +803,10 @@ public class ResourceScope implements IRuntimeScope {
 		return null;
 	}
 
+	@Override
+	public void swapArtifact(IArtifact ret, IArtifact result) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

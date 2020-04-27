@@ -756,4 +756,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void swapArtifact(IArtifact original, IArtifact replacement) {
+		// TODO Auto-generated method stub
+		structure.swap(original, replacement);
+	}
 }

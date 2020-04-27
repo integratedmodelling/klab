@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
+import org.integratedmodelling.klab.components.geospace.extents.Grid.CellImpl;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.FeaturesToShape;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToFeatures;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToGrid;
@@ -644,12 +645,6 @@ public class Space extends Extent implements ISpace {
 	}
 
 	@Override
-	public double getCoverage() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public Type getType() {
 		return Dimension.Type.SPACE;
 	}
@@ -977,6 +972,17 @@ public class Space extends Extent implements ISpace {
 				if (locators[0] instanceof ISpace) {
 					if (((ISpace) locators[0]).getDimensionality() == 0) {
 						coordinates = ((ISpace) locators[0]).getStandardizedCentroid();
+					} else if (locators[0] instanceof IGrid.Cell) {
+						/*
+						 * may be same grid or other grid.
+						 */
+						IGrid.Cell otherCell = (IGrid.Cell)locators[0];
+						if (this.grid != null) {
+							if (((CellImpl)otherCell).getGrid().equals(this.grid)) {
+								return otherCell;
+							}
+							return this.grid.getCoveredExtent(otherCell);
+						}
 					}
 				} else if (locators[0] instanceof Number && !Utils.isFloatingPoint((Number) locators[0])) {
 					offset = ((Number) locators[0]).longValue();

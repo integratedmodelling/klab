@@ -44,6 +44,16 @@ public class MergingState extends State {
 		// TODO filter QUICKLY, or don't.
 		return states;
 	}
+	
+	@Override
+	public boolean isDynamic() {
+		for (IState state : states) {
+			if (state.isDynamic()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Object get(ILocator index) {
 
@@ -52,21 +62,21 @@ public class MergingState extends State {
 		}
 		IScale scale = (IScale)index;
 		
-//		for (IState state : applicable(index)) {
-//			
-//			List<IExtent> exts = new ArrayList<>();
-//			for (IExtent ext : ((Scale)scale).getExtents()) {
-//				IExtent oex = ext.at(((Scale)state.getScale()).getExtent(ext.getType()));
-//				if (oex == null) {
-//					return null;
-//				}
-//				exts.add(oex);
-//			}
-//			
-//			for (ILocator locator : Scale.create(exts)) {
-//				aggregator.add(state.get(locator), state.getObservable(), locator);
-//			}
-//		}
+		for (IState state : applicable(index)) {
+			
+			List<IExtent> exts = new ArrayList<>();
+			for (IExtent ext : ((Scale)scale).getExtents()) {
+				IExtent oex = ((Scale)state.getScale()).getExtent(ext.getType()).at(ext);
+				if (oex == null) {
+					return null;
+				}
+				exts.add(oex);
+			}
+			
+			for (ILocator locator : Scale.create(exts)) {
+				aggregator.add(state.get(locator), state.getObservable(), locator);
+			}
+		}
 
 		return aggregator.getAndReset(index);
 	}
