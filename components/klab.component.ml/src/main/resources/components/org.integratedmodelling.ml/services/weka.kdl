@@ -106,9 +106,6 @@ export value knn extends classifier
         "Number of nearest neighbours (k) used in classification." 
          label "K"
         default 1
-    optional value search
-	    "Search algorithm and its parameters. The default is a LinearNNSearch algorithm "
-		label "A"
 		
 	class org.integratedmodelling.ml.contextualizers.KnnResolver
 }

@@ -56,13 +56,15 @@ public class KnnResolver extends AbstractWekaResolver<IBk> implements IExpressio
 	private static IParameters<String> forDefaults(IParameters<String> parameters) {
 
 		/*
-		 * Both search and estimator parameters are mandatory. This way we enable
-		 * defaults.
+		 * search and estimator parameters are mandatory. This way we enable defaults.
 		 */
 		if (!parameters.containsKey("search")) {
-			parameters.put("search", KimServiceCall.create("weka.knn.linearnnsearch", false));
+			parameters.put("search", KimServiceCall.create("weka.bayes.k2", "maxparents", 3));
 		}
-
+		if (!parameters.containsKey("estimator")) {
+			parameters.put("estimator", KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0));
+		}
+		
 		return parameters;
 	}
 
