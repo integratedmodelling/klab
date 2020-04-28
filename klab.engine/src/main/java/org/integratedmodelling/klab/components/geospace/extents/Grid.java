@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -1306,6 +1307,9 @@ public class Grid extends Area implements IGrid {
 		if (isStandardProjection && !Projection.getDefault().equals(getProjection())) {
 			coordinates = getProjection().transformCoordinate(coordinates, Projection.getDefault());
 		}
+		if (!envelope.envelope.contains(coordinates[0], coordinates[1])) {
+			return null;
+		}
 		long offset = getOffsetFromWorldCoordinates(coordinates[0], coordinates[1]);
 		return getCell(offset);
 	}
@@ -1331,23 +1335,36 @@ public class Grid extends Area implements IGrid {
 	 */
 	public IExtent getCoveredExtent(Cell otherCell) {
 
-		Range horizontal = Range.create(otherCell.getWest(), otherCell.getEast());
-		Range vertical = Range.create(otherCell.getSouth(), otherCell.getNorth());
-		Range gridHRange = Range.create(this.getWest(), this.getEast());
-		Range gridVRange = Range.create(this.getSouth(), this.getNorth());
-
-		Pair<Range, Pair<Double, Double>> hSnapped = gridHRange.snap(horizontal, xCells);
-		Pair<Range, Pair<Double, Double>> vSnapped = gridVRange.snap(vertical, yCells);
-
-		if (hSnapped == null || vSnapped == null) {
+		double[] xy = otherCell.getCenter();
+		// testing
+		Cell ret = this.getCellAt(xy, false);
+		if (ret != null && mask != null && !mask.isActive(ret.getX(), ret.getY())) {
 			return null;
 		}
-
-		/*
-		 * TODO diocan
-		 */
-
-		return new SubgridExtent(otherCell.getShape(), hSnapped, vSnapped);
+		
+//		if (ret != null) {
+//			System.out.println("cell at " + Arrays.toString(xy) + " is " + ret.getX() + "," + ret.getY());
+//		}
+		
+		return ret;
+		
+//		Range horizontal = Range.create(otherCell.getWest(), otherCell.getEast());
+//		Range vertical = Range.create(otherCell.getSouth(), otherCell.getNorth());
+//		Range gridHRange = Range.create(this.getWest(), this.getEast());
+//		Range gridVRange = Range.create(this.getSouth(), this.getNorth());
+//
+//		Pair<Range, Pair<Double, Double>> hSnapped = gridHRange.snap(horizontal, xCells);
+//		Pair<Range, Pair<Double, Double>> vSnapped = gridVRange.snap(vertical, yCells);
+//
+//		if (hSnapped == null || vSnapped == null) {
+//			return null;
+//		}
+//
+//		/*
+//		 * TODO diocan
+//		 */
+//
+//		return new SubgridExtent(otherCell, hSnapped, vSnapped);
 	};
 
 	class SubgridExtent extends Shape {
@@ -1360,9 +1377,9 @@ public class Grid extends Area implements IGrid {
 		private long ycells;
 		private MultidimensionalCursor cursor;
 
-		SubgridExtent(IShape shape, Pair<Range, Pair<Double, Double>> horizontal,
+		SubgridExtent(Cell cell, Pair<Range, Pair<Double, Double>> horizontal,
 				Pair<Range, Pair<Double, Double>> vertical) {
-			super((Shape) shape);
+			super((Shape) cell.getShape());
 			this.horizontalRange = horizontal.getFirst();
 			this.horizontalError = horizontal.getSecond();
 			this.verticalRange = vertical.getFirst();
@@ -1376,6 +1393,7 @@ public class Grid extends Area implements IGrid {
 			if (this.ycells == 0) {
 				this.ycells = 1;
 			}
+			System.out.println("ORIGINAL CELL " + cell.getX() + "," + cell.getY());
 			this.cursor = new MultidimensionalCursor(xcells, ycells);
 		}
 
@@ -1396,6 +1414,9 @@ public class Grid extends Area implements IGrid {
 
 			Cell ret = getCellAt(new double[] { x, y }, false);
 			// TODO coverage
+
+			System.out.println("    STATE CELL " + ret.getX() + "," + ret.getY());
+
 			return ret;
 		}
 

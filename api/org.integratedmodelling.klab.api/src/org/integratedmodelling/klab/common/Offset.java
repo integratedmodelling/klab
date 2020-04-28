@@ -56,6 +56,11 @@ public class Offset implements ILocator {
 	public boolean scalar = true;
 
 	/**
+	 * Coverage
+	 */
+	public double coverage = 1.0;
+
+	/**
 	 * Dimensionality of the offsets, or 0 if undefined.
 	 */
 	public int length;
@@ -84,6 +89,11 @@ public class Offset implements ILocator {
 		this.length = this.pos.length;
 		this.linear = 0;
 		this.scalar = geometry.size() == 1;
+	}
+
+	public Offset(IGeometry geometry, long[] pos, double coverage) {
+		this(geometry, pos);
+		this.coverage = coverage;
 	}
 	
 	/**
@@ -257,22 +267,22 @@ public class Offset implements ILocator {
 	}
 
 	/**
-	 * Return the linear offset for the passed dimension of the original geometry, or
-	 * -1
+	 * Return the linear offset for the passed dimension of the original geometry,
+	 * or -1
 	 * 
 	 * @return
 	 */
 	public long getOffset(Dimension.Type dimension) {
-		
+
 		for (int i = 0; i < geometry.getDimensions().size(); i++) {
 			if (geometry.getDimensions().get(i).getType() == dimension) {
 				return pos[i];
 			}
 		}
-		
+
 		return -1;
 	}
-	
+
 	public static void main(String[] args) {
 
 		String g1 = "S2(431999,27599){bbox=[-179.99999999999966 179.99999999999835 59.99999999999997 82.99999999999997],proj=EPSG:4326}@(30,40)";

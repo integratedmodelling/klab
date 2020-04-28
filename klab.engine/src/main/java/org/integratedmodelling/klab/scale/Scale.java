@@ -424,6 +424,12 @@ public class Scale implements IScale {
 
 		long offset = 0;
 
+		ScaleIterator() {
+			if (size() == 0) {
+				System.out.println("FOCK SIZE ZERO");
+			}
+		}
+		
 		@Override
 		public boolean hasNext() {
 			return offset < size();

@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.indexing.SpatialIndex;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.Aggregator;
@@ -44,7 +45,7 @@ public class MergingState extends State {
 		// TODO filter QUICKLY, or don't.
 		return states;
 	}
-	
+
 	@Override
 	public boolean isDynamic() {
 		for (IState state : states) {
@@ -60,21 +61,26 @@ public class MergingState extends State {
 		if (!(index instanceof IScale)) {
 			throw new IllegalArgumentException("MergingState: cannot merge states unless the locator is a scale");
 		}
-		IScale scale = (IScale)index;
-		
+		IScale scale = (IScale) index;
+
 		for (IState state : applicable(index)) {
-			
+
 			List<IExtent> exts = new ArrayList<>();
-			for (IExtent ext : ((Scale)scale).getExtents()) {
-				IExtent oex = ((Scale)state.getScale()).getExtent(ext.getType()).at(ext);
+			for (IExtent ext : ((Scale) scale).getExtents()) {
+				IExtent oex = ((Scale) state.getScale()).getExtent(ext.getType()).at(ext);
 				if (oex == null) {
-					return null;
+					break;
 				}
 				exts.add(oex);
 			}
-			
-			for (ILocator locator : Scale.create(exts)) {
-				aggregator.add(state.get(locator), state.getObservable(), locator);
+
+			if (exts.size() == scale.getExtentCount()) {
+				
+				OffsetIterator iterator = new OffsetIterator(state.getScale(), exts);
+				while (iterator.hasNext()) {
+					Offset offset = iterator.next();
+					aggregator.add(state.get(offset), state.getObservable(), offset);
+				}
 			}
 		}
 
