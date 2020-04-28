@@ -29,7 +29,7 @@ public class Aggregator {
 	}
 
 	public Object get(ILocator locator) {
-		return null;
+		return addenda.size() == 0 ? null : addenda.get(0).getFirst();
 	}
 
 	public Object getAndReset(ILocator locator) {

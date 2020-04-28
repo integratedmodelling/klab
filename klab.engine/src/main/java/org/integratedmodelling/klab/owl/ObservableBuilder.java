@@ -244,6 +244,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder of(IConcept concept) {
 		this.inherent = concept;
+		if (!declarationIsComplete) {
+			this.declaration.setInherent((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
+		}
 		isTrivial = false;
 		return this;
 	}
@@ -306,12 +309,6 @@ public class ObservableBuilder implements IObservable.Builder {
 		isTrivial = false;
 		return this;
 	}
-
-//	@Override
-//	public Builder filtering(IObservable observable) {
-//		this.filteredObservable = observable;
-//		return this;
-//	}
 
 	@Override
 	public Builder withGoal(IConcept goal) {

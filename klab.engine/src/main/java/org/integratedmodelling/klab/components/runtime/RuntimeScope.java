@@ -1740,7 +1740,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public void swapArtifact(IArtifact original, IArtifact replacement) {
-		// TODO Auto-generated method stub
+		// TODO see what else needs to be there
 		structure.swap(original, replacement);
 		observations.remove(original.getId());
 		observations.put(replacement.getId(), (IObservation)replacement);

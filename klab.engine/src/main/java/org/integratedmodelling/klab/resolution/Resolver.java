@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Models;
@@ -62,15 +63,15 @@ public class Resolver {
 //	INSTANCE;
 
 	private Dataflow parentDataflow;
-	
+
 	private Resolver(Dataflow parentDataflow) {
 		this.parentDataflow = parentDataflow;
 	}
-	
+
 	public static Resolver create(Dataflow parentDataflow) {
 		return new Resolver(parentDataflow);
 	}
-	
+
 	/**
 	 * Implements the
 	 * {@link IObservationService#resolve(String, ISession, String[])} method,
@@ -268,13 +269,27 @@ public class Resolver {
 
 		if (deferTo != null) {
 
+			Observable deferredObservable = observable;
+
+			/*
+			 * The observable loses the context if it's explicit and becomes inherent. (X
+			 * within Y in context Z becomes X of Y). The deferred observable does not need
+			 * the context so it goes back to being just X.
+			 */
+			if (Observables.INSTANCE.getDirectContextType(observable.getType()) != null) {
+				deferredObservable = (Observable) observable.getBuilder(parentScope.getMonitor())
+						.without(ObservableRole.CONTEXT).buildObservable();
+				observable = (Observable) deferredObservable.getBuilder(parentScope.getMonitor()).of(deferTo.getType())
+						.buildObservable();
+			}
+
 			/*
 			 * Distribute the observable over the observation of its context. We don't know
 			 * what the context observation will produce
 			 */
 			ResolutionScope ret = resolve(deferTo, parentScope, Mode.INSTANTIATION);
 			if (ret.getCoverage().isRelevant()) {
-				ResolutionScope deferred = ret.getChildScope(observable, mode);
+				ResolutionScope deferred = ret.getChildScope(deferredObservable, mode);
 				deferred.setDeferred(true);
 				deferred.setCoverage(ret.getCoverage());
 				ret.link(deferred);
@@ -374,12 +389,6 @@ public class Resolver {
 								if (!newCoverage.isRelevant()) {
 									continue;
 								}
-
-//								if (strategy.getStrategy() == Strategy.DISTRIBUTION) {
-//									// record the distribution in the scope observable so that the dataflow compiler
-//									// can find it.
-//									ret.distribute(strategy.getDistributingObservable());
-//								}
 
 								// for reporting
 								boolean wasZero = percentCovered == 0;
