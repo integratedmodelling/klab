@@ -60,10 +60,7 @@ public class KnnResolver extends AbstractWekaResolver<IBk> implements IExpressio
 		 * defaults.
 		 */
 		if (!parameters.containsKey("search")) {
-			parameters.put("search", KimServiceCall.create("weka.bayes.k2", "maxparents", 3));
-		}
-		if (!parameters.containsKey("estimator")) {
-			parameters.put("estimator", KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0));
+			parameters.put("search", KimServiceCall.create("weka.knn.linearnnsearch", false));
 		}
 
 		return parameters;
