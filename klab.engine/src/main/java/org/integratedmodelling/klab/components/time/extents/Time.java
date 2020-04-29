@@ -920,7 +920,9 @@ public class Time extends Extent implements ITime {
 	public IExtent at(Object... locators) {
 
 		if (locators != null && locators.length == 1) {
-			if (locators[0] instanceof Number) {
+			if (locators[0] instanceof String && "INITIALIZATION".equals(locators[0])) {
+				return initialization(this);
+			} else if (locators[0] instanceof Number) {
 				long ofs = ((Number) locators[0]).longValue();
 				if (this.size() == 1 && ofs == 0) {
 					return this;
@@ -947,7 +949,7 @@ public class Time extends Extent implements ITime {
 						// works for initialization, too
 						return other;
 					}
-					// must create mediating extent with coverage 
+					// must create mediating extent with coverage
 					// return create(start, end, getResolution());
 				}
 			} else if (locators[0] instanceof ITimeInstant) {
