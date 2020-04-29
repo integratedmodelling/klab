@@ -197,6 +197,15 @@ public interface ITime extends IExtent {
 		 */
 		double getMultiplier(ITimeInstant start, ITimeInstant end);
 
+		/**
+		 * Get the <em>indicative</em> span of one step in milliseconds. Spans may be
+		 * under- or over-estimates if the resolution is in irregular steps, such as
+		 * months, years and multiple thereof.
+		 * 
+		 * @return
+		 */
+		long getSpan();
+
 	}
 
 	static public enum Type {
@@ -291,8 +300,8 @@ public interface ITime extends IExtent {
 
 	/**
 	 * Only for logical time: specifies the end offset of the covered portion within
-	 * the overall span if the coverage resolution is specified. The value is
-	 * given in the coverage resolution unit.
+	 * the overall span if the coverage resolution is specified. The value is given
+	 * in the coverage resolution unit.
 	 * 
 	 * @return
 	 */

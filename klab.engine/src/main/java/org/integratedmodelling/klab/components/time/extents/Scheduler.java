@@ -661,6 +661,7 @@ public class Scheduler implements IScheduler {
 		 * notify end
 		 */
 		notification.setType(SchedulerNotification.Type.FINISHED);
+		notification.setCurrentTime(time);
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 				IMessage.Type.SchedulingFinished, notification));
 	}

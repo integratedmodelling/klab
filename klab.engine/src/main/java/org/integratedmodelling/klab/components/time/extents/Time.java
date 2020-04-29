@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.time.extents;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -79,6 +80,11 @@ public class Time extends Extent implements ITime {
 		@Override
 		public double getMultiplier() {
 			return multiplier;
+		}
+
+		@Override
+		public long getSpan() {
+			return (long) (type.getMilliseconds() * multiplier);
 		}
 
 		public Resolution copy() {
@@ -949,8 +955,7 @@ public class Time extends Extent implements ITime {
 						// works for initialization, too
 						return other;
 					}
-					// must create mediating extent with coverage
-					// return create(start, end, getResolution());
+					return new TimeGrid(other);
 				}
 			} else if (locators[0] instanceof ITimeInstant) {
 
@@ -964,12 +969,22 @@ public class Time extends Extent implements ITime {
 						return this;
 					}
 
-					if (step != null) {
+					if (size() > 1) {
 						long target = ((ITimeInstant) locators[0]).getMilliseconds();
 						long tleft = target - start.getMilliseconds();
-						long n = tleft / step.getMilliseconds();
+						long n = tleft / resolution.getSpan();
 						if (n >= 0 && n < size()) {
-							return getExtent(n);
+							Time ret = (Time) getExtent(n);
+							long nn = n;
+							// previous was approximate due to potential irregularity; correct as needed
+							while (nn > 0 && ret.getEnd().isBefore(((ITimeInstant) locators[0]))) {
+								ret = (Time) getExtent(++nn);
+							}
+							nn = n;
+							while (nn < size() && ret.getStart().isAfter(((ITimeInstant) locators[0]))) {
+								ret = (Time) getExtent(--nn);
+							}
+							return ret;
 						}
 					}
 				}
@@ -1056,12 +1071,68 @@ public class Time extends Extent implements ITime {
 		for (int i = 0; i < time.size(); i++) {
 			System.out.println(time.getExtent(i));
 		}
+
+		/*
+		 * Cover a span with the original resolution, produce variable coverages in the
+		 * resulting grid
+		 */
+		Time other = create(ITime.Type.PHYSICAL, Resolution.Type.WEEK, 2,
+				new TimeInstant(new DateTime(2000, 2, 10, 0, 0, 0)),
+				new TimeInstant(new DateTime(2000, 5, 11, 0, 0, 0)), null);
+		for (ILocator segment : time.at(other)) {
+			System.out.println("   > " + segment);
+		}
 	}
 
 	@Override
 	protected Time contextualizeTo(IExtent other, IAnnotation constraint) {
 		// TODO Auto-generated method stub
 		return this;
+	}
+
+	/**
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	class TimeGrid extends Time {
+
+		List<ILocator> covered = new ArrayList<>();
+
+		public TimeGrid(Time other) {
+			super(other);
+			Range orext = other.getRange();
+			Time extent = (Time) Time.this.at(other.getStart());
+			while (extent != null) {
+				
+				Range exext = extent.getRange();
+				Range inters = orext.intersection(exext);
+				double coverage = inters.getWidth()/extent.getRange().getWidth();
+				covered.add(extent.withCoverage(coverage));
+				long n = extent.getLocatedOffset();
+				if (extent.getEnd().isBefore(other.getEnd()) && n < Time.this.size()) {
+					extent = (Time) Time.this.getExtent(n + 1);
+				} else {
+					break;
+				}
+			}
+		}
+
+		@Override
+		public long size() {
+			return covered.size();
+		}
+
+		@Override
+		public IExtent getExtent(long stateIndex) {
+			return (IExtent) covered.get((int) stateIndex);
+		}
+
+		@Override
+		public Iterator<ILocator> iterator() {
+			return covered.iterator();
+		}
+
 	}
 
 }
