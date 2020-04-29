@@ -1,10 +1,18 @@
 package org.integratedmodelling.klab.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Triple;
 
 /**
@@ -17,11 +25,16 @@ import org.integratedmodelling.klab.utils.Triple;
  */
 public class Aggregator {
 
-	List<Triple<Object, IObservable, ILocator>> addenda = new ArrayList<>();
-	IObservable observable;
+	private List<Triple<Object, IObservable, ILocator>> addenda = new ArrayList<>();
+	private IObservable observable;
+	private Aggregation aggregation;
+	private IMonitor monitor;
+	boolean dataWarning = false;
 
-	public Aggregator(IObservable destinationObservable) {
+	public Aggregator(IObservable destinationObservable, IMonitor monitor) {
 		this.observable = destinationObservable;
+		this.aggregation = getAggregation(destinationObservable);
+		this.monitor = monitor;
 	}
 
 	public void add(Object value, IObservable observable, ILocator locator) {
@@ -29,13 +42,215 @@ public class Aggregator {
 	}
 
 	public Object get(ILocator locator) {
-		return addenda.size() == 0 ? null : addenda.get(0).getFirst();
+		Object ret = null;
+		Object[] rets = null;
+		int n = 0;
+		for (Triple<Object, IObservable, ILocator> triple : addenda) {
+			if (ret == null) {
+				ret = triple.getFirst();
+			} else {
+				if (rets == null) {
+					rets = new Object[addenda.size()];
+					rets[0] = ret;
+				}
+				rets[++n] = triple.getFirst();
+			}
+		}
+		return rets != null ? aggregate(rets) : ret;
+	}
+
+	private Object aggregate(Object[] values) {
+		return aggregate(values, aggregation, monitor);
 	}
 
 	public Object getAndReset(ILocator locator) {
 		Object ret = get(locator);
 		addenda.clear();
 		return ret;
+	}
+
+	public Object aggregate(Object[] values, Aggregation aggregation, IMonitor monitor) {
+
+		if (aggregation == null) {
+			for (Object value : values) {
+				if (value instanceof Boolean) {
+					aggregation = Aggregation.COUNT;
+					break;
+				} else if (value instanceof Number) {
+					aggregation = Aggregation.MEAN;
+					break;
+				} else if (value != null) {
+					aggregation = Aggregation.MAJORITY;
+					break;
+				}
+			}
+		}
+
+		if (aggregation == null) {
+			return null;
+		}
+
+		switch (aggregation) {
+		case ANY_PRESENT:
+			return values.length > 0;
+		case COUNT:
+			return count(values, monitor);
+		case MAJORITY:
+			return dominant(values, monitor);
+		case MAX:
+			return max(values, monitor);
+		case MEAN:
+			return mean(values, monitor);
+		case MIN:
+			return min(values, monitor);
+		case STD:
+			return std(values, monitor);
+		case SUM:
+			return sum(values, monitor);
+		default:
+			break;
+		}
+
+		return null;
+	}
+
+	public Object sum(Object[] values, IMonitor monitor) {
+		double sum = 0;
+		for (Object value : values) {
+			if (value instanceof Number) {
+				sum += ((Number) value).doubleValue();
+			} else if (!dataWarning) {
+				dataWarning = true;
+				monitor.warn("one or more values found to be of incompatible type during aggregation");
+			}
+		}
+		return sum;
+	}
+
+	public Object std(Object[] values, IMonitor monitor) {
+		double sum = 0;
+		int n = 0;
+		for (Object value : values) {
+			if (value instanceof Number) {
+				sum += ((Number) value).doubleValue();
+				n++;
+			} else if (!dataWarning) {
+				dataWarning = true;
+				monitor.warn("one or more values found to be of incompatible type during aggregation");
+			}
+		}
+		double mean = sum / (double) n;
+		double sd = 0;
+		for (Object value : values) {
+			if (value instanceof Number) {
+				sd += Math.pow(((Number) value).doubleValue() - mean, 2);
+			}
+		}
+		return Math.sqrt(sd / (double) n);
+	}
+
+	public Object min(Object[] values, IMonitor monitor) {
+		Double min = null;
+		for (Object value : values) {
+			if (value instanceof Number) {
+				if (min == null || min > ((Number) value).doubleValue()) {
+					min = ((Number) value).doubleValue();
+				}
+			} else if (!dataWarning) {
+				dataWarning = true;
+				monitor.warn("one or more values found to be of incompatible type during aggregation");
+			}
+		}
+		return min;
+	}
+
+	public Object mean(Object[] values, IMonitor monitor) {
+		double sum = 0;
+		int n = 0;
+		for (Object value : values) {
+			if (value instanceof Number) {
+				sum += ((Number) value).doubleValue();
+				n++;
+			} else if (!dataWarning) {
+				dataWarning = true;
+				monitor.warn("one or more values found to be of incompatible type during aggregation");
+			}
+		}
+		return sum / (double) n;
+	}
+
+	public Object max(Object[] values, IMonitor monitor) {
+
+		Double max = null;
+		for (Object value : values) {
+			if (value instanceof Number) {
+				if (max == null || max < ((Number) value).doubleValue()) {
+					max = ((Number) value).doubleValue();
+				}
+			} else if (!dataWarning) {
+				dataWarning = true;
+				monitor.warn("one or more values found to be of incompatible type during aggregation");
+			}
+		}
+		return max;
+	}
+
+	public Object dominant(Object[] values, IMonitor monitor) {
+
+		Map<Object, Integer> vals = new HashMap<>();
+		for (Object value : values) {
+			if (vals.containsKey(value)) {
+				vals.put(value, vals.get(value) + 1);
+			} else {
+				vals.put(value, 1);
+			}
+		}
+		Object val = null;
+		int n = 0;
+		for (Object o : vals.keySet()) {
+			if (val == null || vals.get(val) > n) {
+				val = o;
+				n = vals.get(val);
+			}
+		}
+		return val;
+	}
+
+	public Object count(Object[] values, IMonitor monitor) {
+		int n = 0;
+		Set<Object> set = new HashSet<>();
+		for (Object value : values) {
+			if (value instanceof Boolean) {
+				if ((Boolean) value) {
+					n++;
+				}
+			} else if (value instanceof Number) {
+				if (((Number) value).doubleValue() != 0) {
+					n++;
+				}
+			} else if (value instanceof IConcept) {
+				if (!set.contains(value)) {
+					n++;
+					set.add(value);
+				}
+			} else if (value != null) {
+				n++;
+			}
+		}
+		return n;
+	}
+
+	public Aggregation getAggregation(IObservable observable) {
+		switch (observable.getDescription()) {
+		case CATEGORIZATION:
+		case VERIFICATION:
+			return Aggregation.MAJORITY;
+		case QUANTIFICATION:
+			return observable.getType().is(Type.EXTENSIVE_PROPERTY) ? Aggregation.SUM : Aggregation.MEAN;
+		default:
+			break;
+		}
+		return null;
 	}
 
 }

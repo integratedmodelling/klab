@@ -333,4 +333,9 @@ public class Offset implements ILocator {
 		return new Offset();
 	}
 
+	@Override
+	public double getCoverage() {
+		return coverage;
+	}
+
 }

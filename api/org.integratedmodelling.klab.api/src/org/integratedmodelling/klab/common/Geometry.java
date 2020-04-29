@@ -438,6 +438,7 @@ public class Geometry implements IGeometry {
 		private long[] shape;
 		private Parameters<String> parameters = new Parameters<>();
 		private boolean generic;
+		private double coverage = 1.0;
 
 		@Override
 		public Type getType() {
@@ -468,6 +469,10 @@ public class Geometry implements IGeometry {
 		@Override
 		public int getDimensionality() {
 			return dimensionality;
+		}
+		
+		public double getCoverage() {
+			return coverage;
 		}
 
 		@Override
@@ -597,9 +602,18 @@ public class Geometry implements IGeometry {
 	private Granularity granularity = Granularity.SINGLE;
 	private Geometry child;
 	private boolean scalar;
+	private Double coverage = null;
 
-	// only used to compute offsets if requested
-//	transient private MultidimensionalCursor cursor = null;
+	@Override
+	public double getCoverage() {
+		if (this.coverage == null) {
+			this.coverage = 1.0;
+			for (Dimension dim : getDimensions()) {
+				this.coverage *= ((DimensionImpl)dim).coverage;
+			}
+		}
+		return this.coverage;
+	}
 
 	@Override
 	public IGeometry getChild() {

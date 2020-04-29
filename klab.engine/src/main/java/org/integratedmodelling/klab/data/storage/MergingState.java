@@ -33,7 +33,7 @@ public class MergingState extends State {
 		super((Observable) delegate.getObservable(), (Scale) delegate.getScale(), ((State) delegate).getRuntimeScope(),
 				((State) delegate).getStorage());
 		this.delegate = delegate;
-		this.aggregator = new Aggregator(delegate.getObservable());
+		this.aggregator = new Aggregator(delegate.getObservable(), delegate.getMonitor());
 	}
 
 	public void add(IState state) {

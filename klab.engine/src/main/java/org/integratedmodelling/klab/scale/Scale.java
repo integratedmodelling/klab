@@ -139,6 +139,8 @@ public class Scale implements IScale {
 	// if not null, we're locating offsets of another scale
 	private long[] locatedOffsets;
 
+	private Double coverage = null;
+
 	@Override
 	public boolean isInfiniteTime() {
 		return isInfiniteTime;
@@ -429,7 +431,7 @@ public class Scale implements IScale {
 				System.out.println("FOCK SIZE ZERO");
 			}
 		}
-		
+
 		@Override
 		public boolean hasNext() {
 			return offset < size();
@@ -1641,7 +1643,7 @@ public class Scale implements IScale {
 
 			return ret;
 		}
-			
+
 		return scale;
 	}
 
@@ -1654,6 +1656,17 @@ public class Scale implements IScale {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public double getCoverage() {
+		if (this.coverage == null) {
+			this.coverage = 1.0;
+			for (IExtent dim : extents) {
+				this.coverage *= dim.getCoverage();
+			}
+		}
+		return this.coverage;
 	}
 
 }
