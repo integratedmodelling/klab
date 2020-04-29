@@ -202,6 +202,7 @@ public enum Renderer {
 		// TODO parameters for shaded relief and contrast enhancement
 
 		for (IAnnotation annotation : state.getAnnotations()) {
+			
 			if (annotation.getName().equals("colormap")) {
 
 				// check if we have just a name

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -38,7 +39,9 @@ public class Aggregator {
 	}
 
 	public void add(Object value, IObservable observable, ILocator locator) {
-		addenda.add(new Triple<>(value, observable, locator));
+		if (Observations.INSTANCE.isData(value)) {
+			addenda.add(new Triple<>(value, observable, locator));
+		}
 	}
 
 	public Object get(ILocator locator) {

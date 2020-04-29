@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -277,6 +278,14 @@ public class Resolver {
 			 * the context so it goes back to being just X.
 			 */
 			if (Observables.INSTANCE.getDirectContextType(observable.getType()) != null) {
+				
+				/*
+				 * this won't go through the dataflow compiler so we need to take care of units manually
+				 */
+				if (observable.getUnit() == null && Units.INSTANCE.needsUnits(observable)) {
+					observable.setUnit(Units.INSTANCE.getDefaultUnitFor(observable));
+				}
+				
 				deferredObservable = (Observable) observable.getBuilder(parentScope.getMonitor())
 						.without(ObservableRole.CONTEXT).buildObservable();
 				observable = (Observable) deferredObservable.getBuilder(parentScope.getMonitor()).of(deferTo.getType())

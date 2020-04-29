@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -60,6 +61,7 @@ public class DereifyingStateResolver implements IResolver<IArtifact>, IProcessor
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 		this.state = new MergingState((IState) ret);
+		this.state.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(ret, ((IState)ret).getObservable()));
 		Collection<IArtifact> distributing = context.getArtifact(distributingArtifact);
 		if (distributing.size() > 0) {
 			for (IArtifact object : distributing.iterator().next()) {

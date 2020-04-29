@@ -409,7 +409,7 @@ public class Concept extends Knowledge implements IConcept {
 			throw new IllegalArgumentException(
 					"Concept " + this + " has more than one parent: cannot call getParent() on it.");
 		}
-		return pp.iterator().next();
+		return pp.size() == 0 ? null : pp.iterator().next();
 	}
 
 	@Override

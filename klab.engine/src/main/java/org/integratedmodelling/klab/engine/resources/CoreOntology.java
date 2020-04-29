@@ -33,6 +33,8 @@ public class CoreOntology extends AbstractWorkspace {
 	private boolean synced = false;
 	private Map<Type, Concept> worldviewCoreConcepts = Collections.synchronizedMap(new HashMap<>());
 	private static Map<Type, String> coreConceptIds = Collections.synchronizedMap(new HashMap<>());
+	
+	public static final String CORE_ONTOLOGY_NAME = "observation";
 
 	static {
 		coreConceptIds.put(Type.PROCESS, NS.CORE_PROCESS);

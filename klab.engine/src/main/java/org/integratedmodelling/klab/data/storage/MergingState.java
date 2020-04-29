@@ -25,7 +25,6 @@ public class MergingState extends State {
 
 	IState delegate;
 	SpatialIndex spatialIndex;
-	Aggregator aggregator;
 
 	List<IState> states = new ArrayList<>();
 
@@ -33,7 +32,6 @@ public class MergingState extends State {
 		super((Observable) delegate.getObservable(), (Scale) delegate.getScale(), ((State) delegate).getRuntimeScope(),
 				((State) delegate).getStorage());
 		this.delegate = delegate;
-		this.aggregator = new Aggregator(delegate.getObservable(), delegate.getMonitor());
 	}
 
 	public void add(IState state) {
@@ -57,6 +55,8 @@ public class MergingState extends State {
 	}
 
 	public Object get(ILocator index) {
+	
+		Aggregator aggregator = new Aggregator(delegate.getObservable(), delegate.getMonitor());
 
 		if (!(index instanceof IScale)) {
 			throw new IllegalArgumentException("MergingState: cannot merge states unless the locator is a scale");

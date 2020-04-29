@@ -685,15 +685,7 @@ public class Observable implements IObservable {
 		return resolvable == null ? null
 				: new Pair<>(resolvable, (Observable) getBuilder(monitor).without(resolvable).buildObservable());
 	}
-
-//	public IObservable getFilteredObservable() {
-//		return filteredObservable;
-//	}
-
-//	public void setfilteredObservable(IObservable filteredObservable) {
-//		this.filteredObservable = filteredObservable;
-//	}
-
+	
 	public void setReferenceName(String name) {
 		this.referenceName = name;
 	}

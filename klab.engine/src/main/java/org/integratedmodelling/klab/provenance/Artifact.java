@@ -49,8 +49,7 @@ public abstract class Artifact implements IArtifact {
 	boolean empty;
 	long timestamp = System.currentTimeMillis();
 	private String generatorActivityId;
-
-
+	
 	public void chain(IArtifact data) {
 		throw new IllegalStateException("chain() should only be called on a group");
 	}
