@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -252,7 +251,7 @@ public class Grid extends Area implements IGrid {
 			this.locatedOffsets = new long[] { x, y };
 			this.locatedLinearOffset = Grid.this.getOffset(x, y);
 		}
-
+		
 		@Override
 		public long getLocatedOffset() {
 			return getOffsetInGrid();
@@ -1347,7 +1346,7 @@ public class Grid extends Area implements IGrid {
 ////		}
 //		
 //		return ret;
-		
+
 		Range horizontal = Range.create(otherCell.getWest(), otherCell.getEast());
 		Range vertical = Range.create(otherCell.getSouth(), otherCell.getNorth());
 		Range gridHRange = Range.create(this.getWest(), this.getEast());
@@ -1403,6 +1402,7 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public IExtent getExtent(long stateIndex) {
+			
 			/*
 			 * get the cell of the original grid pointed to by the offset
 			 */
@@ -1412,9 +1412,15 @@ public class Grid extends Area implements IGrid {
 			double y = verticalRange.getLowerBound() + (offsets[1] * cellHeight) + (cellHeight * 0.5);
 
 			Cell ret = getCellAt(new double[] { x, y }, false);
-			// TODO coverage
+
+			// coverage
+			Range cellHr = Range.create(ret.getWest(), ret.getEast());
+			Range cellVr = Range.create(ret.getSouth(), ret.getNorth());
+
+			double coverage = cellHr.intersection(this.horizontalRange).getWidth() / cellHr.getWidth()
+					* cellVr.intersection(this.verticalRange).getWidth() / cellVr.getWidth();
 			
-			return ret;
+			return ((AbstractExtent)ret).withCoverage(coverage);
 		}
 
 		@Override

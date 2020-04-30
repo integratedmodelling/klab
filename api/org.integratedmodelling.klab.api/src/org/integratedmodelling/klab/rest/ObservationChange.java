@@ -59,7 +59,12 @@ public class ObservationChange {
 		/**
 		 * Observation becomes "main"
 		 */
-		BringForward
+		BringForward,
+		
+		/**
+		 * End of resolution for object
+		 */
+		ContextualizationCompleted
 	}
 
 	private String id;

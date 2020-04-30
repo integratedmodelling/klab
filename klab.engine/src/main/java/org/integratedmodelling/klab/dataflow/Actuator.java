@@ -711,6 +711,19 @@ public class Actuator implements IActuator {
 											IMessage.Type.ModifiedObservation, change));
 						}
 					}
+					
+					/*
+					 * notify end of contextualization if we're subscribed to the parent
+					 */
+					if (ctx.getNotifiedObservations().contains(ret.getId())) {
+
+						ObservationChange change = ((Observation) object)
+								.createChangeEvent(ObservationChange.Type.ContextualizationCompleted);
+						change.setNewSize(ctx.getChildArtifactsOf(object).size());
+						session.getMonitor()
+								.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+										IMessage.Type.ModifiedObservation, change));
+					}
 
 					/*
 					 * everything is resolved, now add any behaviors specified in annotations
