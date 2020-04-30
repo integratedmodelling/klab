@@ -49,7 +49,7 @@ public class KnnResolver extends AbstractWekaResolver<IBk> implements IExpressio
 	}
 
 	public KnnResolver(IParameters<String> parameters, IContextualizationScope context) {
-		super(IBk.class, forDefaults(parameters), context.getTargetSemantics(), true, false, false);
+		super(IBk.class, forDefaults(parameters), context.getTargetSemantics(), true, true, false);
 //		this.context = context;
 	}
 	// change this method to for knn parameters    
@@ -58,12 +58,12 @@ public class KnnResolver extends AbstractWekaResolver<IBk> implements IExpressio
 		/*
 		 * search and estimator parameters are mandatory. This way we enable defaults.
 		 */
-		if (!parameters.containsKey("search")) {
-			parameters.put("search", KimServiceCall.create("weka.bayes.k2", "maxparents", 3));
-		}
-		if (!parameters.containsKey("estimator")) {
-			parameters.put("estimator", KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0));
-		}
+		/*
+		 * if (!parameters.containsKey("search")) { parameters.put("search",
+		 * KimServiceCall.create("weka.bayes.k2", "maxparents", 3)); } if
+		 * (!parameters.containsKey("estimator")) { parameters.put("estimator",
+		 * KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0)); }
+		 */
 		
 		return parameters;
 	}
