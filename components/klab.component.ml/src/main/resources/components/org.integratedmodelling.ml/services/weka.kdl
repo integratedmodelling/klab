@@ -112,3 +112,29 @@ export value knn extends classifier
 		
 	class org.integratedmodelling.ml.contextualizers.KnnResolver
 }
+
+export value logistic extends classifier
+	""
+	label 'Multinomial Logistic Regression'
+{		
+    
+    optional number r
+        "Set the ridge in the log-likelihood." 
+         label "R"
+        
+    optional number maxiter
+	    "Set the maximum number of iterations (default -1, until convergence). "
+		label "M"
+		default -1
+		
+	class org.integratedmodelling.ml.contextualizers.LogisticRegressionResolver
+}
+
+export value simplelogistic extends classifier
+	""
+	label 'Simple Logistic Regression'
+{		
+    
+		
+	class org.integratedmodelling.ml.contextualizers.SimpleLogisticResolver
+}
