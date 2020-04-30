@@ -47,7 +47,7 @@ public class RandomForestResolver extends AbstractWekaResolver<RandomForest> imp
 	
 	public RandomForestResolver(IParameters<String> parameters,IContextualizationScope context) {
 		// TODO check parameters!
-		super(RandomForest.class, fixDefaults(parameters), context.getTargetSemantics(), true, false, false);
+		super(RandomForest.class, fixDefaults(parameters), context.getTargetSemantics(), true, true, false);
 //		this.context = context;
 	}
 
@@ -56,12 +56,12 @@ public class RandomForestResolver extends AbstractWekaResolver<RandomForest> imp
 		/*
 		 * search and estimator parameters are mandatory. This way we enable defaults.
 		 */
-		if (!parameters.containsKey("search")) {
-			parameters.put("search", KimServiceCall.create("weka.bayes.k2", "maxparents", 3));
-		}
-		if (!parameters.containsKey("estimator")) {
-			parameters.put("estimator", KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0));
-		}
+		/*
+		 * if (!parameters.containsKey("search")) { parameters.put("search",
+		 * KimServiceCall.create("weka.bayes.k2", "maxparents", 3)); } if
+		 * (!parameters.containsKey("estimator")) { parameters.put("estimator",
+		 * KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0)); }
+		 */
 		
 		return parameters;
 	}
