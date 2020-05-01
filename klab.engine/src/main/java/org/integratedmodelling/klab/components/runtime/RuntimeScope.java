@@ -1109,7 +1109,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				 * add any predefined states to the structure
 				 */
 				for (IState state : predefinedStates) {
-					link(observation, state);
+					link(state, observation);
 				}
 
 				if (!(observation instanceof IState)) {

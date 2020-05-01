@@ -113,6 +113,8 @@ public class Structure implements IArtifact.Structure {
 		}
 
 		// add process children but not folders
+		logicalStructure.addVertex(childArtifact);
+		logicalStructure.addVertex(parentArtifact);
 		logicalStructure.addEdge(childArtifact, parentArtifact);
 	}
 
