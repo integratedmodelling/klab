@@ -38,7 +38,7 @@ Within these two categories of statements considerable syntactic variation is po
 
 The keywords that introduce _concept_ definitions represent commonly used base concepts in scientific observations. These correspond to base types in the k.LAB core observation ontology and establish the basic nature of the observable concept they introduce. Because these core types are well defined and immutable, there is no *-concept+* keyword in k.IM, and all conceptual definitions will start with a concrete type keyword such as *+agent+*, *+process+*, *+temperature+* or *+uncertainty+*. In comparison, _model_ definitions are simpler: the keyword *+model+* introduces most of them. Special categories of models include _non-semantic models_ (introduced by a data type keyword, one of *+number+*, *+boolean+* or *+text+*) and _learning models_ introduced by *+learn+*.
 
-Other keywords in k.LAB are used to connect concepts (_semantic operators_) and to support the definition of models. These are chosen within the realm of prepositions, adverbs, conjunctions and verbs in the English language, so they rarely conflict with user-defined names, which are normally English nouns. In order to ensure its match to English, k.IM has a high number of keywords: the following table lists all the keywords recognized in k.IM by their role in the language.
+Other keywords in k.LAB are used to connect concepts (_semantic operators_) and to support the definition of models. These are chosen within the prepositions, adverbs, conjunctions and verbs in the English language, so they rarely conflict with user-defined names, which are normally English nouns. To efficiently represent observation activities in science and in order to ensure an intuitive match with the English language, k.IM has a high number of keywords: the following table lists all the keywords recognized in k.IM by their role in the language.
 
 .Keywords in k.IM
 |====
@@ -330,9 +330,35 @@ The syntax of model statements, like that of concept statements, provides variou
 
 === Observable concepts
 
+.Types of observables 
+[plantuml, format=svg, opts="inline"]
+----
+legend
+Observable
+|_ Element 1
+  |_ Element 1.1
+  |_ Element 1.2
+|_ Element 2
+  |_ Element 2.1
+end legend
+----
+
 === Configurations
 
 === Predicates
+
+.Types of predicates 
+[plantuml, format=svg, opts="inline"]
+----
+legend
+Predicate
+|_ Element 1
+  |_ Element 1.1
+  |_ Element 1.2
+|_ Element 2
+  |_ Element 2.1
+end legend
+----
 
 === Abstract status
 
@@ -365,14 +391,102 @@ All _unary operators_ change observables of various types into qualities that re
 |Applies to
 |Description
 
-|With
-|Concept
-|Shite
+|not
+|Deniable attributes
+|pippa
+|presence of
+|Countables
+|pippa
+|proportion of [... in]
+|Qualities
+|pippa
+|percentage of [... in]
+|Predicate [in Quality]
+|pippa
+|ratio of ... to
+|Quality or Attribute to Quality or Attribute
+|pippa
+|distance {to\|from}
+|Countables
+|pippa
+|probability of
+|Events
+|pippa
+|uncertainty of
+|Qualities
+|pippa
+|count of
+|Countables
+|pippa
+|[monetary] value of [...over]
+|Countables, Processes, Configurations
+|pippa
+|occurrence of
+|Countables
+|pippa
+|change in
+|Qualities
+|pippa
+|changed
+|Qualities
+|pippa
+|change rate of
+|Qualities
+|pippa
+|magnitude of
+|Quantifiables
+|pippa
+|level of
+|Quantifiables
+|pippa
+|type of
+|Predicates
+|pippa
 |===
 
-===== Binary operators
+Binary operators do not alter the basic semantics of a concept but restrict it with conditions, creating _subclasses_ of the same concepts that match specific conditions. Importantly, these operators may define or affect the _context_ of observation and the _inherency_ of particular observables, a crucial component of observation semantics and a major driver of behavior in k.LAB. 
 
-..restrict the original semantics with conditions
+.Binary semantic operators in k.IM
+[cols="3", options="header"]
+|===
+|Operator
+|Operands
+|Description
+
+|within [... each]
+|Observable *+within+* Countable
+|Context operator
+|of [...each]
+|Concept
+|Inherency operator
+|for
+|Process,Event *+for+* Configuration
+|Intentionality operator
+|with
+|Concept
+|Compresence operator
+|caused by
+|Concept
+|Passive causality operator
+|adjacent to
+|Concept
+|Adjacency operator
+|contained in
+|Concept
+|Passive containment operator
+|containing
+|Concept
+|Active containment operator
+|causing
+|Concept
+|Active causality operator
+|during
+|Events
+|Concurrency operator
+|linking ... to
+|Relationships
+|Mutual interaction operator
+|===
 
 
 === On properties, roles and attributes
@@ -426,12 +540,46 @@ Such queries are all valid observables, and can be used as queries in k.Explorer
 [cols="3", options="header"]
 |===
 |Operator
-|Operands
+|Applies to
 |Description
 
-|With
+|by
+|Quantifiable *+by+* Class or Countable
+|Groups the values of the quality it is applied to by either the value of the operand or the presence of a distinct countable. Causes the production of a table of aggregated values in the documentation associated to the observation activity.
+
+|down to
+|Class *+down to+* {Class\|<integer>}
+|Produces 
+
+|where (...)
+|Quality where ( Observable )
+|Shite
+
+
+|>, >=, <, \<=, =, ==
+|Quantifiable
+|Shite
+
+|is
+|Class *+is+* subClass
+|Shite
+
+|without
+|Class *+without+* Class
+|Shite
+
+|plus, minus, times, over
+|Quantifiable *+plus+* {Quantifiable\|number}
+|Shite
+
+|summed, averaged
 |Concept
 |Shite
+
+|total
+|Concept
+|Shite
+
 |===
 
 Observable syntax is not limited to setting constraints on values of qualities; it may also specify less obvious constraints on the observation of the inherent type. For example
