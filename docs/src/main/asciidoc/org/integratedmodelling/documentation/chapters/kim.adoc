@@ -1,9 +1,16 @@
 = The k.IM semantic modeling language
 :doctype: book
 
-All knowledge used by k.LAB is specified in k.IM, a small, declarative language designed to be used with the concepts from a shared <<TBD,worldview>> to build logical statements representing scientific knowledge. The k.IM language is designed to be easily readable even by k.IM-illiterate readers. Readability is obtained by manipulating real-life concepts using a syntax that is closely modeled after the rules and conventions of the English grammar. Knowledge of k.IM is not required in order to _use_ k.LAB to make observations; it is, however, necessary to contribute to conceptualizations, build models and annotate resources. This section describes in detail how k.IM is designed and how to write conceptualizations, data annotations and model logics in it.
+The k.LAB software stack utilizes three different domain-specific languages to support the semantic modelling workflow:
 
-NOTE: k.IM is not the only language used in k.LAB. One-sentence on k.DL, k.Actors and link to sections.
+k.IM:: is used to define _semantic assets_, both conceptual (ontologies that become part of _worldviews_ and computational (_models_ that pair semantics with URN-specified _resources_ or inline computations executed by the k.LAB modeling _engine_).
+
+k.Actors:: is used to specify reactive _behaviors_ for the different agents created during a k.LAB session, including observations of all kinds. By extending the notion of _agent_ to k.LAB users and sessions, k.Actors also enables the definition of specific applications that implement custom user interfaces and support specialized workflows.
+
+k.DL:: is the _dataflow_ language that k.LAB uses to represent, store and communicate any computational strategy built to respond to a semantic query. Users are normally not aware of k.DL resources (except through their graphical representation built to document a contextualization) but they can be extracted, saved, and stored as resources that can be published and re-annotated in k.IM. This allows treating k.LAB outputs as inputs and enables reproducibility and provenance analysis across the lifecycle of k.LAB products.
+
+This chapter documents k.IM, the most important k.LAB language for the user. All knowledge used by k.LAB is specified in k.IM, a small, declarative language designed to be used with the concepts from a shared <<TBD,worldview>> to build logical statements representing scientific knowledge. The k.IM language is designed to be easily readable even by k.IM-illiterate readers. Readability is obtained by manipulating real-life concepts using a syntax that is closely modeled after the rules and conventions of the English grammar. Knowledge of k.IM is not required in order to _use_ k.LAB to make observations; it is, however, necessary to contribute to conceptualizations, build models and annotate resources. This section describes in detail how k.IM is designed and how to write conceptualizations, data annotations and model logics in it.
+
 
 [#section-kim-overview]
 == Overview
@@ -14,8 +21,9 @@ NOTE: about English and why English.
 
 The most important types of knowledge that can be specified (we will use the word _declared_ in the following) in k.IM are *concepts* and *models*. In a nutshell:
 
-Concepts:: MORE ON THEM (introduce the worldview here). 
-Models:: Also mention the data/model equivalence.
+Concepts:: MORE ON THEM (introduce the worldview here). The k.IM language produces fully compliant and consistent OWL2 data structures
+Models:: The purposes of models is to _contextualize_ concepts, i.e. _build an observation of them in a context_. (for later: Contextualization is split in two broad categories: _resolution_ and _instantiation_.) In k.IM, we make no difference between the commonly dichotomic categories of _data_ and _models_: the instruction "model X" means build an observation of X, no matter whether the final source of the computed artifact is a stored dataset or a computation.
+
 
 Before we describe how concepts and models are declared in k.IM, we must spend a few words to describe how k.IM statements are organized and stored. The easiest way to follow the content of this section is to have the k.LAB <<chapter-modeler,Modeler>> opened in front of you, with one or more k.IM projects loaded: you can easily do so by following our <<setup-modelers,setup instructions>> for k.LAB modelers.
  
