@@ -1200,6 +1200,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				}
 
 				for (ObservationChange change : ((Observation) observation).getChangesAndReset()) {
+					change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation)observation));
 					session.getMonitor().send(Message.create(session.getId(),
 							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
 				}
@@ -1211,6 +1212,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				ObservationChange change = ((Observation) parent)
 						.createChangeEvent(ObservationChange.Type.StructureChange);
 				change.setNewSize(getChildArtifactsOf(parent).size());
+				change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation)parent));
 				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 						IMessage.Type.ModifiedObservation, change));
 			}

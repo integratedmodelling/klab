@@ -2,10 +2,12 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -245,7 +247,7 @@ public enum Observations implements IObservationService {
 		ret.setCreationTime(observation.getTimestamp());
 		ret.setLastUpdate(((Observation) observation).getLastUpdate());
 		ret.setExportLabel(observation.getObservable().getName());
-		ret.setContextualized(((Observation)observation).isContextualized());
+		ret.setContextualized(((Observation) observation).isContextualized());
 
 		ISubject rootSubject = ((Observation) observation).getRuntimeScope().getRootSubject();
 		if (rootSubject != null) {
@@ -253,12 +255,12 @@ public enum Observations implements IObservationService {
 		}
 
 		ret.setId(observation.getId());
-		ret.setContextId(((Observation)observation).getObservationContextId());
+		ret.setContextId(((Observation) observation).getObservationContextId());
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
-		ret.setAlive(((Observation)observation).isAlive());
+		ret.setAlive(((Observation) observation).isAlive());
 		ret.setLabel(getDisplayLabel(observation));
-		ret.setDynamic(((Observation)observation).isDynamic());
+		ret.setDynamic(((Observation) observation).isDynamic());
 		ret.setObservable(observation.getObservable().getDefinition());
 		if (ret.getObservable() == null) {
 			ret.setObservable("Quantity has no semantics associated");
@@ -271,7 +273,6 @@ public enum Observations implements IObservationService {
 
 		ISpace space = ((IScale) observation.getGeometry()).getSpace();
 		ITime time = ((IScale) observation.getGeometry()).getTime();
-
 
 		/*
 		 * Send full scale for any countables
@@ -369,37 +370,10 @@ public enum Observations implements IObservationService {
 			}
 
 			/*
-			 * check export formats from all adapters
+			 * compute available export formats. This may change after an update so it's done also in
+			 * ObservationChange.
 			 */
-			Map<String, Pair<Triple<String, String, String>, String>> formats = new LinkedHashMap<>();
-			for (IResourceAdapter adapter : Resources.INSTANCE.getResourceAdapters()) {
-				for (Triple<String, String, String> capabilities : adapter.getImporter()
-						.getExportCapabilities(observation)) {
-					formats.put(capabilities.getFirst(), new Pair<>(capabilities, adapter.getName()));
-				}
-			}
-
-			/*
-			 * add anything we don't have adapters for, at the moment just networks
-			 */
-			if (observation instanceof IConfiguration && ((IConfiguration) observation).is(INetwork.class)) {
-				INetwork network = ((IConfiguration) observation).as(INetwork.class);
-				for (Triple<String, String, String> capabilities : network.getExportCapabilities(observation)) {
-					formats.put(capabilities.getFirst(), new Pair<>(capabilities,
-							org.integratedmodelling.klab.components.network.model.Network.ADAPTER_ID));
-				}
-			}
-
-			/*
-			 * For now only one adapter is kept per format. Later we may offer the option by
-			 * using a set instead of a map and implementing equals() for ExportFormat to
-			 * check all three.
-			 */
-			for (String format : formats.keySet()) {
-				Pair<Triple<String, String, String>, String> data = formats.get(format);
-				ret.getExportFormats().add(new ExportFormat(data.getFirst().getSecond(), format, data.getSecond(),
-						data.getFirst().getThird()));
-			}
+			ret.getExportFormats().addAll(getExportFormats(observation));
 
 			ret.getGeometryTypes().add(gtype);
 		}
@@ -488,6 +462,43 @@ public enum Observations implements IObservationService {
 
 		ret.getActions().add(ActionReference.separator());
 		ret.getActions().add(new ActionReference("Add to cache", "AddToCache"));
+
+		return ret;
+	}
+
+	public List<ExportFormat> getExportFormats(IObservation observation) {
+
+		Map<String, Pair<Triple<String, String, String>, String>> formats = new LinkedHashMap<>();
+		List<ExportFormat> ret = new ArrayList<>();
+
+		for (IResourceAdapter adapter : Resources.INSTANCE.getResourceAdapters()) {
+			for (Triple<String, String, String> capabilities : adapter.getImporter()
+					.getExportCapabilities(observation)) {
+				formats.put(capabilities.getFirst(), new Pair<>(capabilities, adapter.getName()));
+			}
+		}
+
+		/*
+		 * add anything we don't have adapters for, at the moment just networks
+		 */
+		if (observation instanceof IConfiguration && ((IConfiguration) observation).is(INetwork.class)) {
+			INetwork network = ((IConfiguration) observation).as(INetwork.class);
+			for (Triple<String, String, String> capabilities : network.getExportCapabilities(observation)) {
+				formats.put(capabilities.getFirst(), new Pair<>(capabilities,
+						org.integratedmodelling.klab.components.network.model.Network.ADAPTER_ID));
+			}
+		}
+		
+		/*
+		 * For now only one adapter is kept per format. Later we may offer the option by
+		 * using a set instead of a map and implementing equals() for ExportFormat to
+		 * check all three.
+		 */
+		for (String format : formats.keySet()) {
+			Pair<Triple<String, String, String>, String> data = formats.get(format);
+			ret.add(new ExportFormat(data.getFirst().getSecond(), format, data.getSecond(),
+					data.getFirst().getThird()));
+		}
 
 		return ret;
 	}

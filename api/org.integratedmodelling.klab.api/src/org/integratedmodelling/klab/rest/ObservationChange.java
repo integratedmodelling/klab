@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.utils.Triple;
 
 public class ObservationChange {
@@ -78,6 +80,7 @@ public class ObservationChange {
 	private String newSemantics;
 	private int newSize;
 	private Type type;
+	private List<ExportFormat> exportFormats;
 
 	public List<Triple<String, String, String>> getNewAttributes() {
 		return newAttributes;
@@ -164,6 +167,14 @@ public class ObservationChange {
 	public String toString() {
 		return "ObservationChange [id=" + id + ", contextId=" + contextId + ", newAttributes=" + newAttributes
 				+ ", newScale=" + newScale + ", newSize=" + newSize + ", type=" + type + "]";
+	}
+
+	public List<ExportFormat> getExportFormats() {
+		return exportFormats;
+	}
+
+	public void setExportFormats(List<ExportFormat> exportFormats) {
+		this.exportFormats = exportFormats;
 	}
 
 }
