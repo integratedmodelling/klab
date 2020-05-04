@@ -717,6 +717,8 @@ public class Actuator implements IActuator {
 					 */
 					if (ctx.getNotifiedObservations().contains(ret.getId())) {
 
+						((Observation)object).setContextualized(true);
+						
 						ObservationChange change = ((Observation) object)
 								.createChangeEvent(ObservationChange.Type.ContextualizationCompleted);
 						change.setNewSize(ctx.getChildArtifactsOf(object).size());
@@ -802,7 +804,8 @@ public class Actuator implements IActuator {
 			Observations.INSTANCE.getStateSummary((IState) ret, ctx.getScale().initialization());
 		}
 
-		
+		((Observation)ret).setContextualized(true);
+
 		state.setStatus(Status.FINISHED);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.DataflowStateChanged, state));

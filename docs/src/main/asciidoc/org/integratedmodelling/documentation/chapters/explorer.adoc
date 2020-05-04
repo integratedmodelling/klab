@@ -1,3 +1,4 @@
+[#chapter-explorer]
 = Querying the k.LAB semantic web with k.Explorer
 :doctype: book
 

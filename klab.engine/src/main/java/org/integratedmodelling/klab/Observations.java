@@ -245,7 +245,7 @@ public enum Observations implements IObservationService {
 		ret.setCreationTime(observation.getTimestamp());
 		ret.setLastUpdate(((Observation) observation).getLastUpdate());
 		ret.setExportLabel(observation.getObservable().getName());
-
+		ret.setContextualized(((Observation)observation).isContextualized());
 
 		ISubject rootSubject = ((Observation) observation).getRuntimeScope().getRootSubject();
 		if (rootSubject != null) {

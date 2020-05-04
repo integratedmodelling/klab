@@ -318,6 +318,11 @@ public class ObservationReference implements IObservationReference {
 	private boolean previouslyNotified;
 
 	/**
+	 * Set to true when descriptor is generated after full contextualization.
+	 */
+	private boolean contextualized;
+	
+	/**
 	 * Only updated for root contexts; contains the timestamp of last update for the
 	 * entire observation structure.
 	 */
@@ -934,6 +939,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setDynamic(boolean dynamic) {
 		this.dynamic = dynamic;
+	}
+
+	public boolean isContextualized() {
+		return contextualized;
+	}
+
+	public void setContextualized(boolean contextualized) {
+		this.contextualized = contextualized;
 	}
 
 }

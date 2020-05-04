@@ -187,6 +187,8 @@ public class Model extends KimObject implements IModel {
 		/*
 		 * if this is a learning model without an archetype, add it as the dependency
 		 * with the annotation and add the core "predicted" attribute to the output.
+		 * 
+		 * TODO check behavior with distributed observables
 		 */
 		if (isLearning() && getMainObservable() != null) {
 

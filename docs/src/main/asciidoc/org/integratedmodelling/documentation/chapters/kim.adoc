@@ -1,11 +1,18 @@
+[#chapter-kim]
 = The k.IM semantic modeling language
+Ferdinando Villa
 :doctype: book
+:encoding: utf-8
+:lang: en
+:toc: left
+:numbered:
 
-The k.LAB software stack utilizes three different domain-specific languages to support the semantic modelling workflow:
+
+The k.LAB software stack utilizes three different domain-specific languages to support the <<chapter-overview,semantic modelling>> workflow:
 
 k.IM:: is used to define _semantic assets_, both conceptual (ontologies that become part of _worldviews_ and computational (_models_ that pair semantics with URN-specified _resources_ or inline computations executed by the k.LAB modeling _engine_).
 
-k.Actors:: is used to specify reactive _behaviors_ for the different agents created during a k.LAB session, including observations of all kinds. By extending the notion of _agent_ to k.LAB users and sessions, k.Actors also enables the definition of specific applications that implement custom user interfaces and support specialized workflows.
+k.Actors:: is used to specify reactive _behaviors_ for the different agents created during a k.LAB session, including observations of all kinds. By extending the notion of _agent_ to k.LAB users and sessions, k.Actors also enables the definition of _applications_ that implement custom user interfaces and support specialized workflows on top of the <<chapter-explorer,k.Explorer>> view component.
 
 k.DL:: is the _dataflow_ language that k.LAB uses to represent, store and communicate any computational strategy built to respond to a semantic query. Users are normally not aware of k.DL resources (except through their graphical representation built to document a contextualization) but they can be extracted, saved, and stored as resources that can be published and re-annotated in k.IM. This allows treating k.LAB outputs as inputs and enables reproducibility and provenance analysis across the lifecycle of k.LAB products.
 
@@ -17,13 +24,23 @@ This chapter documents k.IM, the most important k.LAB language for the user. All
 
 k.IM is a _declarative_ language: when k.LAB reads correct k.IM source code, it does not _do_ anything visible to the user, or produce any outputs of relevance. It merely ingests the knowledge specified in the k.IM statements, validates it, and catalogs it for later use. In that sense, k.IM can be considered a language to build a database of semantically coherent "facts" (a _knowledge base_) that can be used to do what k.LAB does: _contextualize_ concepts to produce their observations, as you have learned <<chapter-overview,previously>>. Because k.LAB is a _distributed_ system, made up of many networked nodes that talk to each other, that knowledge can become available also to any other user connected to the same network, according to where k.IM code is stored and to rules and preferences set in k.IM itself. All k.IM code on public nodes of the k.LAB network contributes to a _distributed knowledge base_, which every user can exploit to make observations and build upon to produce new knowledge.
 
-NOTE: about English and why English.
+Because k.IM deals with semantics, syntactically correct code isn't the entire story, and _logical_ statements made in faraway namespaces may spread their consequences far and wide. The editor in <<chapter-modeler,k.Modeler>>, supported by a k.LAB engine, does its best to ensure correctness at all levels. There are two aspects to correctness in k.IM:
 
-The most important types of knowledge that can be specified (we will use the word _declared_ in the following) in k.IM are *concepts* and *models*. In a nutshell:
+1. Correct _syntax_, which is validated directly by the k.Modeler editor even without an engine connected to it. Because the syntax in k.IM incarnates many of the axioms of the k.LAB observation ontology, and the core types of the concept are known to the editor, this first check is already starting to validate semantics, serving as an important base for the second:
+
+2. Correct _semantics_, whose validation entails the analysis of the _consistency_ of all concepts defined and their use in models, including their distant consequences. This kind of validation can only be performed to the full extent by a _reasoner_ which is embedded in the k.LAB engine.
+
+For this reason, code that shows no errors in k.Modeler when an engine is not connected may be "enriched" with semantic errors once an engine is started and begins communicating with k.Modeler. When an engine is connected, k.Modeler sends every modification made in a namespace to the engine, after its own validation, when the namespace file is saved. All further errors or warnings that the engine sends back are collected and shown to the user. This kind of errors may result from advanced reasoning over context and inherence compatibility when using, for example, dependencies within the same model, or from validation of units of measurement when they are used consistently with the semantic nature of the observable but inconsistently with respect to the spatial or temporal aggregation they imply within a model.
+
+IMPORTANT: Because semantic errors have many ways of spreading, you should not trust models in a namespace to work correctly when other models or concepts, even in different namespaces, show logical errors. Any error will prevent an individual model from being used, but this is not enough to ensure reliability of behavior across the board. A *clean workspace* is a prerequisite to reliable, consistent operation.
+
+The most important types of knowledge that can be specified in k.IM (we will use the word _declared_ in the following to mean "written in a k.IM namespace") are *concepts* and *models*. In a nutshell:
 
 Concepts:: MORE ON THEM (introduce the worldview here). The k.IM language produces fully compliant and consistent OWL2 data structures
 Models:: The purposes of models is to _contextualize_ concepts, i.e. _build an observation of them in a context_. (for later: Contextualization is split in two broad categories: _resolution_ and _instantiation_.) In k.IM, we make no difference between the commonly dichotomic categories of _data_ and _models_: the instruction "model X" means build an observation of X, no matter whether the final source of the computed artifact is a stored dataset or a computation.
 
+
+SOMEWHERE: note for ontologists about properties, why no syntax for those (actually there is) and what may happen in the future.
 
 Before we describe how concepts and models are declared in k.IM, we must spend a few words to describe how k.IM statements are organized and stored. The easiest way to follow the content of this section is to have the k.LAB <<chapter-modeler,Modeler>> opened in front of you, with one or more k.IM projects loaded: you can easily do so by following our <<setup-modelers,setup instructions>> for k.LAB modelers.
  
@@ -44,7 +61,7 @@ As introduced before, the k.IM language recognizes just two main types of statem
 
 Within these two categories of statements considerable syntactic variation is possible. Each statement is always introduced by a keyword, i.e. a reserved word that can only be used as such (for example, keywords cannot be used as part of a namespace identifier or a dependency name). Keywords are always lowercase and they often correspond to commonly used English words. The editor incorporated in k.Modeler highlights all keyword in a bold purple color, to make them easy to recognize as you type.
 
-The keywords that introduce _concept_ definitions represent commonly used base concepts in scientific observations. These correspond to base types in the k.LAB core observation ontology and establish the basic nature of the observable concept they introduce. Because these core types are well defined and immutable, there is no *-concept+* keyword in k.IM, and all conceptual definitions will start with a concrete type keyword such as *+agent+*, *+process+*, *+temperature+* or *+uncertainty+*. In comparison, _model_ definitions are simpler: the keyword *+model+* introduces most of them. Special categories of models include _non-semantic models_ (introduced by a data type keyword, one of *+number+*, *+boolean+* or *+text+*) and _learning models_ introduced by *+learn+*.
+The keywords that introduce _concept_ definitions represent commonly used base concepts in scientific observations. These correspond to base types in the k.LAB core observation ontology and establish the basic nature of the observable concept they introduce. Because these core types are well defined and immutable, there is no *+concept+* keyword in k.IM, and all conceptual definitions will start with a concrete type keyword such as *+agent+*, *+process+*, *+temperature+* or *+uncertainty+*. In comparison, _model_ definitions are simpler: the keyword *+model+* introduces most of them. Special categories of models include _non-semantic models_ (introduced by a data type keyword, one of *+number+*, *+boolean+* or *+text+*) and _learning models_ introduced by *+learn+*.
 
 Other keywords in k.LAB are used to connect concepts (_semantic operators_) and to support the definition of models. These are chosen within the prepositions, adverbs, conjunctions and verbs in the English language, so they rarely conflict with user-defined names, which are normally English nouns. To efficiently represent observation activities in science and in order to ensure an intuitive match with the English language, k.IM has a high number of keywords: the following table lists all the keywords recognized in k.IM by their role in the language.
 
@@ -321,7 +338,7 @@ The following sections will expand on each of the elements above, explaining the
 ==== Model declarations
 
 A _model_ in k.LAB represent a strategy to observe a concept in a context, producing an observation (a scientific artifact) of that concept in that context. As explained in the introduction, this definition of a model applies to both data and computations. Models have the role of _semantic annotations_, linking non-semantic informational resources to concepts and stating, if needed, which other concepts need to be observed in order to make the observation. The non-semantic resources may be explicitly represented by URNs or be implicitly defined as values (for example directly annotating a number), equations or external computations in the k.LAB engine, referred to using a function call with parameters. The syntax of models strives to keep these details intuitive and to provide the same kind of readability that concept declarations aim to.
-
+SS
 The syntax of model statements, like that of concept statements, provides various clauses whose use depends on the type of model being written. Each model makes one of several types of observations, summarized later in 
 
 === Other language elements
@@ -336,41 +353,149 @@ The syntax of model statements, like that of concept statements, provides variou
 
 ..Additional statements and rules pertaining to worldviews, to align with upper ontologies, declare domains etc. See the <<TBD,specific section on worldviews>> for more.
 
-=== Observable concepts
+=== The core observation ontology and observable concepts
 
-.Types of observables 
-[plantuml, format=svg, opts="inline"]
+All of the semantic assets used in k.LAB can be referenced in k.IM using one (or a combination of) _concepts_. The 
+
+The core typology of observables is stated in a OWL2 ontology distributed with k.LAB. This ontology does not make epistemological assumptions on _reality_ but states a simple conceptual framework for the process of scientific observation, laying out the main taxonomy of observations and observables at a high level of abstraction, independent of disciplines and usages. The core ontology is being refactored into an independent product, the Ontology of Descriptions and Observation for Integrated Modelling (ODO-IM), but currently k.LAB uses an older version; we refer to it in the following simply as the (k.LAB) _observation ontology_. The observation ontology separates the concepts used in k.IM in two main categories: _observables_ and _predicates_.
+
+*Observables* are concepts of which a scientific observation can be made. Observables are the _nouns_ in k.IM modeling and a logical expression used in k.IM can have at most one observable concept. For this reason we also use the term _observable_ to refer to a self-consistent k.IM logical expression containing one observable and as many predicates and operators as needed, as explained below.
+
+*Predicates* are concepts that can only _qualify_ observables and cannot be observed by themselves, i.e. no observation can be made of a predicate. The term _predicate_ comes from linguistics and refers to qualifiers such as attributes, identities and the like. Predicates are the _adjectives_ in k.IM, used to categorize observables to refer to a subset of the category of observations that can be made of them.
+
+While the observation ontology has many concepts and properties, we extract a simplified conceptual hierarchy only for the purposes of this documentation, defining terms we will later use to explain the role of specific classes of observables and predicates in k.IM. For observables:
+
+.Simplified, non-exhaustive hierarchy of observables in the k.LAB observation ontology 
+[plantuml, format=svg]
 ----
 legend
 Observable
-|_ Element 1
-  |_ Element 1.1
-  |_ Element 1.2
-|_ Element 2
-  |_ Element 2.1
+|_ Non-countables
+  |_ Qualities
+     |_ Quantifiables
+       |_ Values
+       |_ Counts
+       |_ Probabilities
+       |_ Physical properties
+       |_ ...
+     |_ Enumerables
+       |_ Verifiables
+       |_ Levels
+       |_ Types
+  |_ Processes
+  |_ Configurations
+|_ Countables
+  |_ Subjects
+  |_ Events
+  |_ Relationships
+    |_ Bonds
+    |_ Structural relationships
+    |_ Functional relationships
+  |_ Subjects
 end legend
 ----
 
-=== Configurations
+==== Countables
+
+==== Non-countables
+
+==== Configurations
 
 === Predicates
 
-.Types of predicates 
+.Main types of predicates in the k.LAB observation ontology 
 [plantuml, format=svg, opts="inline"]
 ----
 legend
 Predicate
-|_ Element 1
-  |_ Element 1.1
-  |_ Element 1.2
-|_ Element 2
-  |_ Element 2.1
+|_ Attributes
+  |_ Orderings
+|_ Identities
+|_ Roles
+|_ Realms
 end legend
 ----
 
-=== Abstract status
+==== Identities
 
-=== Parent derivation and aliasing
+==== Attributes and Orderings
+
+==== Realms
+
+==== Roles
+
+=== Understanding and exploring the lineage of k.IM concepts
+
+Users who desire to understand or contribute to ontology assets in k.LAB can use the k.LAB engine command line to explore in detail the axioms that k.IM instructions generate. In this section we explain how the lineage of concepts is established and give examples of how the concept hierarchy and restrictions can be explored.
+
+In k.IM, no concept can exist by itself, as the keyword used to declare it establishes its inheritance from the observation ontology. The concepts from the observation ontology cannot be used in k.IM except in one namespace, the _root namespace_ of a worldview (with the same name as the project that contains the first-level namespaces in the worldview). In order to efficiently use the concepts from the observation ontology, the root namespace is expected to establish mappings to worldview-specific concepts, so that users can refer, if needed, to abstract observables when defining restrictions and the like. 
+
+In regular namespaces, all concepts use the keywords which will establish their lineage to a concept in the root namespace, which in turn inherits its meaning from the observation ontology. For example the lineage established in the following statement (in the `geography` namespace of the `im` worldview:
+
+[code,kim]
+```
+length Elevation is im:Height of earth:Terrain within earth:Location;
+```
+
+establishes the lineage of Elevation from a lenght, which corresponds to the observation:Length concept but has been linked to local concepts in the root namespace:
+
+[code,kim]
+```
+length Length is core observation:Length;
+length Height is im:Vertical core observation:Length;
+```
+so that the core Length concept can be referenced to as needed in other namespaces as `im:Length` and all references remain within the worldview. The parent hierarchy produced can be visualized in the k.LAB engine command line using the command `reason parents geography:Elevation`:
+
+.Parent lineage of the `geography:Elevation` concept
+```
+> reason::parents geography:Elevation
+geography:Elevation
+   earth:EARTH_000000029 (HeightOfTerrainInLocation)
+      im:Height
+         observation:Length
+            observation:IntensivePhysicalProperty
+               observation:PhysicalProperty
+                  observation:ContinuousNumericallyQuantifiableQuality
+                     observation:QuantifiableQuality
+                        observation:ObservedQuality
+                           observation:Quality
+                              observation:Observable
+                                 bfo:BFO_0000001 (entity)
+                              bfo:BFO_0000019 (quality)
+                                 bfo:BFO_0000020 (specifically dependent continuant)
+                                    bfo:BFO_0000002 (continuant)
+                                       bfo:BFO_0000001 (entity)
+```
+
+The full description of the `geography:Elevation` concept, with all the attributes and identities inherited, can be visualized by using the `reason info` command, whose output will also be made accessible from the mouse-hover documentation in k.Modeler:
+
+.Observable analysis of the `geography:Elevation` concept
+```
+> reason::info geography:Elevation
+Core observable: geography:Elevation
+Definition:    geography:Elevation [geography:Elevation]
+[OBSERVABLE, QUALITY, INTENSIVE_PROPERTY, LENGTH, QUANTIFIABLE]
+        Context type: earth:Location [direct: NONE]
+       Inherent type: earth:Terrain [direct: NONE]
+        Causant type: NONE [direct: NONE]
+         Caused type: NONE [direct: NONE]
+           Goal type: NONE [direct: NONE]
+       Adjacent type: NONE [direct: NONE]
+     Compresent type: NONE [direct: NONE]
+   Co-occurrent type: NONE [direct: NONE]
+Traits:
+    im:Vertical [indirect] [PREDICATE, TRAIT, ATTRIBUTE]
+Metadata:
+   klab:conceptDefinition: geography:Elevation
+   observation:baseDeclaration: true
+   im:is-rescaled: false
+
+Observation type: QUANTIFICATION
+```
+
+By using special k.IM constructs only available in the root namespace, it is possible to substitute a different core ontology for the default one and establish arbitrary mappings, which will affect the reasoning during contextualization. This advanced functionality will be documented in an appendix and is not discussed further in this chapter.
+
+
 
 === Children declaration
 
@@ -397,62 +522,62 @@ All _unary operators_ change observables of various types into qualities that re
 |===
 |Operator
 |Applies to
-|Description
+|Description of the concept produced
 
 |not
 |Deniable attributes
-|pippa
+|Produces the negated attribute. The referenced attribute must be concrete and explicitly declared as deniable.
 |presence of
 |Countables
-|pippa
+|Produces the verification of the presence of a countable in the context (a quality with true or false values)
 |proportion of [... in]
 |Qualities
-|pippa
+|Produces a quantifiable (whose values are limited to the 0-1 range) that expresses how much of a quality value is in the context compared to a reference or a whole
 |percentage of [... in]
 |Predicate [in Quality]
-|pippa
+|Synonym of proportion but k.LAB interprets the values between 0-100 and automatically mediates to proportions
 |ratio of ... to
-|Quality or Attribute to Quality or Attribute
-|pippa
+|Quantifiable to Quantifiable
+|A ratio between two quantities. Can be automatically resolved based on other ratios.
 |distance {to\|from}
-|Countables
-|pippa
+|Countables (located in space)
+|The spatial distance between countables that are located in space
 |probability of
 |Events
-|pippa
+|Produces the probability that an event happens in the context
 |uncertainty of
 |Qualities
-|pippa
+|Produces a quantifiable quality that expresses the uncertainty associated to the observation of a quality
 |count of
 |Countables
-|pippa
+|Produces the concept expressing the numerosity of any countable
 |[monetary] value of [...over]
 |Countables, Processes, Configurations
 |pippa
 |occurrence of
 |Countables
-|pippa
+|Occurrence of X is shorthand for "probability of presence of X" 
 |change in
 |Qualities
-|pippa
+|Produces a concept corresponding to a process that changes the quality it is applied to.
 |changed
 |Qualities
-|pippa
+|Produces a concept corresponding to the event resulting from the referenced quality changing its values.
 |change rate of
 |Qualities
 |pippa
 |magnitude of
 |Quantifiables
-|pippa
+|Produces a quantifiable concept expressing the magnitude of another quantifiable, without the precision that a "proper" observation would imply but with the constraint of a monotonic relationship to its values. Models that estimate the magnitude of a quantity are mandatorily private as their interpretation depends on the context of execution.
 |level of
 |Quantifiables
-|pippa
+|Produces the type of an ordering attribute that relates monotonically to the values of a quantifiable. Models that discretize a quantity into levels are mandatorily private.
 |type of
 |Predicates
-|pippa
+|Produces a quality that can have as values the concrete children of an attribute. Used to represent "categorical" observations by using predicates, which are contextualized to serve as values that change over the context.
 |===
 
-Binary operators do not alter the basic semantics of a concept but restrict it with conditions, creating _subclasses_ of the same concepts that match specific conditions. Importantly, these operators may define or affect the _context_ of observation and the _inherency_ of particular observables, a crucial component of observation semantics and a major driver of behavior in k.LAB. 
+Binary operators do not alter the basic semantics of a concept but _restrict_ its meaning with conditions, creating _subclasses_ of the same concepts whose observations match specific conditions and represent a subset of those of the raw observable. Importantly, these operators may define or affect the _context_ of observation and the _inherency_ of particular observables, a crucial component of observation semantics and a major driver of behavior in the k.LAB contextualization process. 
 
 .Binary semantic operators in k.IM
 [cols="3", options="header"]
@@ -463,16 +588,16 @@ Binary operators do not alter the basic semantics of a concept but restrict it w
 
 |within [... each]
 |Observable *+within+* Countable
-|Context operator
+|Contextualization operator: constrains the context in which the observable can be observed. Its operand must be compatible with any context already declared in the concept's parent hierarchy.
 |of [...each]
-|Concept
-|Inherency operator
+|Observable *+of+* Countable
+|Inherency operator: defines a non-contextual different inherency for the observable without changing its context. For example "Height of Tree" can be observed as a quality within a Region as the height is inherent to each tree but the quality can be observed over a region that contains trees. In explicit expressions it is limited to Countables as arguments; inherency to qualities is subsumed in quality operators (e.g. uncertainty of <quality>) and not allowed as an explicit observable.
 |for
 |Process,Event *+for+* Configuration
-|Intentionality operator
-|with
+|Intentionality operator: expresses a rationale that defines a specific sub-set of the observable. 
+|Countable with Observable
 |Concept
-|Compresence operator
+|Compresence operator: constrains the observable to the set of XXXX
 |caused by
 |Concept
 |Passive causality operator
@@ -485,17 +610,18 @@ Binary operators do not alter the basic semantics of a concept but restrict it w
 |containing
 |Concept
 |Active containment operator
-|causing
-|Concept
+|causing 
+|(Process, Event) causing (Process, Event)
 |Active causality operator
-|during
+|during ...
 |Events
 |Concurrency operator
-|linking ... to
+|linking ... to ...
 |Relationships
 |Mutual interaction operator
 |===
 
+=== Abstract and subjective status
 
 === On properties, roles and attributes
 
@@ -513,7 +639,7 @@ Binary operators do not alter the basic semantics of a concept but restrict it w
 
 Observables are *semantic queries* that specify one *observable* concept. They are used to express the semantics of an observation in queries and in models. A user can type an observable in k.Explorer and obtain an observation as the result of its contextualization. <<section-kim-models, k.IM models>> use observables to specify their inputs and outputs. For this reason, it is important to be very familiar with the way observables are declared.
 
-An observable declaration is a k.IM <<section-kim-logical-expressions,logical expression>> that mentions one observable concept, augmented with any predicate or specifier desired, and followed by optional, additional observation semantics. The logical expression in the observable specifies _what_ is observed, where the additional semantics may impose constraints on _how_ it is observed, for example specifying a range, currency or unit of measurement for the values:
+An observable expression is a k.IM <<section-kim-logical-expressions,logical expression>> that mentions one observable concept, optionally augmented with any predicate or specifier desired, and followed by optional, additional observation semantics. The logical expression in the observable specifies _what_ is observed, where the additional semantics may impose constraints on _how_ it is observed, for example specifying a range, currency or unit of measurement for the values:
 
 [source,kim]
 ----
@@ -557,36 +683,36 @@ Such queries are all valid observables, and can be used as queries in k.Explorer
 
 |down to
 |Class *+down to+* {Class\|<integer>}
-|Produces 
+|Produces a categorical quality where the categories have been grouped to the level specified, lumping subcategories into the correspondent parent category. Specify either any category at the desired level or a numeric level below the root category.
 
 |where (...)
-|Quality where ( Observable )
-|Shite
+|Quality where ( Quality )
+|Provide another quality observable to be observed within the same context. The resulting category will have data only where the argument has values and these values are not "false" presence values or zero numeric values.
 
 
 |>, >=, <, \<=, =, ==
 |Quantifiable
-|Shite
+|These operators leave data only where they match.
 
 |is
 |Class *+is+* subClass
-|Shite
+|To be used with a categorical observation, this operator will leave data only where the category matches the argument, including any of its subclasses.
 
 |without
 |Class *+without+* Class
-|Shite
+|Used with a categorical observation, this operator will remove all the values that match the passed class and leave no-data in their place. A class observation can also be used as an argument.
 
 |plus, minus, times, over
 |Quantifiable *+plus+* {Quantifiable\|number}
-|Shite
+|Used with a numeric observation, this operator will perform the correspondent mathematical operation, using either a constant or another observation as argument.
 
 |summed, averaged
 |Concept
-|Shite
+|This operator will substitute all matching values with the sum or average across the context.
 
 |total
 |Concept
-|Shite
+|This operator will aggregate over space and time, respecting the extensive or intensive semantics of the observation.
 
 |===
 
@@ -625,7 +751,7 @@ When a model declaration is processed by k.LAB, it is added to the <<TBD-kbox,kn
 
 === Types of models 
 
-Models can be differentiated according to the type of observation activity they perform. In k.LAB, we distinguish two main types of observation, which separate into others, for a total of six different types. The syntax of the models changes little from one to the other, as it is (mostly) the observable semantics that defines the model, but there are different constraints on what can or cannot be asked to a model for each of them.
+Models can be differentiated according to the type of observation activity they perform. In k.LAB, we distinguish two main types of observation, which separate into others, for a total of nine different types. The syntax of the models changes little from one to the other, as it is (mostly) the observable semantics that defines the model, but there are different constraints on what can or cannot be asked to a model for each of them.
 
 The two main types of observation activity are:
 
@@ -659,7 +785,7 @@ These can be further differentiated according to the observable they apply to, o
 
 |Detection
 |Resolution
-|The detection of a particular configuration engendered by other observation in the context.
+|The detection of a particular configuration engendered by other observation in the context. Detection simulates _emergence_ of recognizable configurations (e.g. food webs, social networks), which are generated on appearance rather than explicitly created by models or queries.
 
 |Acknowledgement
 |Instantiation
@@ -678,11 +804,7 @@ These can be further differentiated according to the observable they apply to, o
 |The acknowledgement of a classified predicate on a specific countable.
 |===
 
-The categories above may read abstract, but in fact they do nothing but categorize cognitive activities that we perform every day when interacting with reality. The good news is that the observation activity expressed in each model follows directly from the semantics and does not need to be declared explicitly. Yet, it is important to be aware of what each model does, in order to avoid surprises and to understand any error messages. By understanding the semantics stated in k.IM, the observation activity should be transparent, as the syntax rules of k.IM are meant to express the activity in a form that is close to its description in the English language. In the following, we provide examples of models that clarify these different types of observation activities and how k.IM allows to state that in an intuitive and direct way.
-
-NOTE: examples of each type of model and the dependency they may satisfy.
-
-Observables are listed after the keyword `model` that introduces the statement. The keyword `observing` introduces a comma-separated list of dependencies. Dependencies and observables are merely <<#section-kim-observables,k.IM observables>>, i.e. pure semantics. In addition to observables and dependencies, a model can specify resources, contextualizers and actions to use as sources of "raw", non-semantic information or to define what to do with the outputs before they reach the k.LAB ecosystem as observations.
+The categories above may read abstract, but in fact they do nothing but categorize cognitive activities that we perform every day when interacting with reality. The good news is that the observation activity expressed in each model follows directly from the semantics and does not need to be declared explicitly.Yet, it is important to be aware of what each model does, in order to avoid surprises and to understand any error messages. You can use the `reason info` command in the k.Engine command line interface to inspect the observation type linked to each observable. By understanding the semantics stated in k.IM, the observation activity should be transparent, as the syntax rules of k.IM are meant to express the activity in a form that is close to its description in the English language. In the following, we provide examples of models that clarify these different types of observation activities and how k.IM allows to state that in an intuitive and direct way.
 
 A model is declared in k.IM following this simple prototype:
 
@@ -690,6 +812,10 @@ A model is declared in k.IM following this simple prototype:
 ----
 ... example
 ----
+
+Observables are listed after the keyword `model` that introduces the statement. The keyword `observing` introduces a comma-separated list of dependencies. Dependencies and observables are merely <<#section-kim-observables,k.IM observables>>, i.e. pure semantics without reference to _how_ those concepts will be contextualized. In addition to observables and dependencies, a model can specify resources, contextualizers and actions to use as sources of "raw", non-semantic information or to define what to do with the outputs before they reach the k.LAB ecosystem as observations.
+
+
 
 ...
 

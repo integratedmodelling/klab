@@ -62,6 +62,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	private long exitTime;
 	private boolean dynamic;
 	private String observationContextId;
+	// just for clients
+	private boolean contextualized;
 	
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
@@ -370,6 +372,14 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	public String getObservationContextId() {
 		return observationContextId;
+	}
+
+	public boolean isContextualized() {
+		return contextualized;
+	}
+
+	public void setContextualized(boolean contextualized) {
+		this.contextualized = contextualized;
 	}
 
 }
