@@ -388,7 +388,7 @@ public class Shape extends AbstractExtent implements IShape {
 		}
 		throw new IllegalArgumentException("a Shape cannot merge an extent of type " + extent.getType());
 	}
-	
+
 	@Override
 	public long size() {
 		return 1;
@@ -817,9 +817,23 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public IExtent at(Object... locators) {
-		if (locators != null && locators.length == 1 && locators[0] instanceof Number
-				&& ((Number) locators[0]).longValue() == 0) {
-			return this;
+		if (locators != null && locators.length == 1) {
+			if (locators[0] instanceof Number && ((Number) locators[0]).longValue() == 0) {
+				return this;
+			}
+			if (locators[0] instanceof Cell) {
+				if (getEnvelope().intersects(((Cell)locators[0]).getEnvelope())) {
+					// TODO coverage
+					return this;
+				}
+				return null;
+			} else if (locators[0] instanceof IShape) {
+				if (getEnvelope().intersects(((Shape)locators[0]).getEnvelope())) {
+					// TODO coverage
+					return this;
+				}
+				return null;
+			}
 		}
 		throw new IllegalStateException("an individual shape cannot be further located");
 	}
@@ -869,7 +883,7 @@ public class Shape extends AbstractExtent implements IShape {
 		if (other instanceof Space) {
 			grid = (Grid) ((Space) other).getGrid();
 		}
-		
+
 		if (grid != null) {
 			return Space.create(this, grid, true);
 		}

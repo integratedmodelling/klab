@@ -651,13 +651,18 @@ public class Concept extends Knowledge implements IConcept {
 
 	@Override
 	public int resolves(IConcept concept) {
+		return resolves(concept, null);
+	}
+
+	@Override
+	public int resolves(IConcept concept, IConcept context) {
 
 		int distance = 0;
 
 		if (this == concept || this.equals(concept)) {
 			return distance;
 		}
-		
+
 		IConcept core1 = Observables.INSTANCE.getCoreObservable(this);
 		IConcept core2 = Observables.INSTANCE.getCoreObservable(concept);
 
@@ -683,7 +688,7 @@ public class Concept extends Knowledge implements IConcept {
 		if (distance < 0) {
 			return distance;
 		}
-		
+
 		// should have all the same traits - additional traits are allowed only
 		// in contextual types
 		for (IConcept t : Traits.INSTANCE.getTraits(this)) {
@@ -699,8 +704,11 @@ public class Concept extends Knowledge implements IConcept {
 			}
 		}
 
-		int component = getDistance(Observables.INSTANCE.getContextType(this),
-				Observables.INSTANCE.getContextType(concept), true);
+		if (context == null) {
+			context = Observables.INSTANCE.getContextType(concept);
+		}
+
+		int component = getDistance(Observables.INSTANCE.getContextType(this), context, true);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);

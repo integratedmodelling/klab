@@ -11,6 +11,7 @@ import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -122,8 +123,8 @@ public class RankedModel extends Model implements IRankedModel {
 		return getDelegate().getAttributeObservables();
 	}
 
-	public String getLocalNameFor(IObservable observable) {
-		return getDelegate().getLocalNameFor(observable);
+	public String getLocalNameFor(IObservable observable, IConcept context) {
+		return getDelegate().getLocalNameFor(observable, context);
 	}
 
 	public boolean isResolved() {
@@ -224,8 +225,8 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public Observable getCompatibleOutput(Observable observable) {
-		return getDelegate().getCompatibleOutput(observable);
+	public Observable getCompatibleOutput(Observable observable, IConcept context) {
+		return getDelegate().getCompatibleOutput(observable, context);
 	}
 
 	@Override

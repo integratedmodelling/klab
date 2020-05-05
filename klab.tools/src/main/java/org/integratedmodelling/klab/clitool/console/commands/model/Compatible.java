@@ -17,6 +17,10 @@ import org.integratedmodelling.klab.utils.StringUtils;
 
 public class Compatible implements ICommand {
 
+	
+	/**
+	 * TODO add context parameter
+	 */
 	@Override
 	public Object execute(IServiceCall call, ISession session) throws KlabValidationException {
 
@@ -33,7 +37,7 @@ public class Compatible implements ICommand {
 		}
 
 		IObservable observable = Observable.promote(concept);
-		Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(observable,
+		Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(observable, null,
 				observable.getDescription().getResolutionMode());
 
 		for (long id : ids) {

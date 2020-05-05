@@ -305,7 +305,7 @@ public abstract class ObservableKbox extends H2Kbox {
 	 * @param observable
 	 * @return the IDs of all compatible concepts that have been used in the kbox.
 	 */
-	public Set<Long> getCompatibleTypeIds(IObservable observable, Mode mode) {
+	public Set<Long> getCompatibleTypeIds(IObservable observable, IConcept context, Mode mode) {
 
 		Set<Long> ret = new HashSet<>();
 		IConcept main = Observables.INSTANCE.getCoreObservable(observable.getType());
@@ -323,7 +323,7 @@ public abstract class ObservableKbox extends H2Kbox {
 		 * is weeded out of all incompatible or unrepresented concepts later.
 		 */
 		for (IConcept candidate : getCandidates(main, mode)) {
-			if (candidate.resolves(observable.getType()) >= 0) {
+			if (candidate.resolves(observable.getType(), context) >= 0) {
 				long id = getConceptId(candidate);
 				if (id >= 0) {
 					ret.add(id);
