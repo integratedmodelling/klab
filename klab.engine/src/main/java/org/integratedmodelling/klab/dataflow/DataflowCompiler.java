@@ -341,7 +341,7 @@ public class DataflowCompiler {
 			IObservable modelObservable = null;
 			if (!models.isEmpty()) {
 				modelObservable = models.iterator().next().model.getObservables().get(0);
-				if (modelObservable.getType().resolves(this.observable.getType()) < 0) {
+				if (modelObservable.getType().resolves(this.observable.getType(), getDataflowContext()) < 0) {
 
 					/**
 					 * Secondary output! We may be already part of the actuator for this (in which
@@ -356,7 +356,8 @@ public class DataflowCompiler {
 						child.setObservable(this.observable);
 						child.setName(observable.getReferenceName());
 						if (models.size() > 0) {
-							child.setAlias(models.iterator().next().model.getCompatibleOutput(observable).getName());
+							child.setAlias(models.iterator().next().model
+									.getCompatibleOutput(observable, getDataflowContext()).getName());
 						}
 						child.setType(this.observable.getArtifactType());
 						child.setExport(true);
@@ -435,8 +436,9 @@ public class DataflowCompiler {
 
 				ModelD theModel = models.iterator().next();
 				ret.setReferenceName(theModel.model.getObservables().get(0).getName());
-				defineActuator(ret, root ? observable.getName() : theModel.model.getLocalNameFor(observable), theModel,
-						generated);
+				defineActuator(ret,
+						root ? observable.getName() : theModel.model.getLocalNameFor(observable, getDataflowContext()),
+						theModel, generated);
 
 			} else if (this.hasPartitions) {
 
@@ -459,7 +461,7 @@ public class DataflowCompiler {
 
 					// rename and set the target name as partitioned. Number is the priority if
 					// known.
-					String name = modelDesc.model.getLocalNameFor(observable) + "_" + index;
+					String name = modelDesc.model.getLocalNameFor(observable, getDataflowContext()) + "_" + index;
 					partial.setPartitionedTarget(ret.getName());
 					partial.setName(name);
 					partial.setObservable(observable);
@@ -716,7 +718,7 @@ public class DataflowCompiler {
 
 					Model model = md.model;
 
-					modelObservable = model.getCompatibleOutput(ret.getObservable());
+					modelObservable = model.getCompatibleOutput(ret.getObservable(), getDataflowContext());
 					if (modelObservable == null) {
 						continue;
 					}
@@ -915,7 +917,7 @@ public class DataflowCompiler {
 
 				Model model = (Model) source;
 
-				Observable compatibleOutput = model.getCompatibleOutput(ret.observable);
+				Observable compatibleOutput = model.getCompatibleOutput(ret.observable, getDataflowContext());
 				if (compatibleOutput == null) {
 					// only happens when the observable is resolved indirectly
 					compatibleOutput = ret.observable;
@@ -943,6 +945,10 @@ public class DataflowCompiler {
 		}
 
 		return ret;
+	}
+
+	public IConcept getDataflowContext() {
+		return this.context == null ? null : this.context.getObservable().getType();
 	}
 
 	/**

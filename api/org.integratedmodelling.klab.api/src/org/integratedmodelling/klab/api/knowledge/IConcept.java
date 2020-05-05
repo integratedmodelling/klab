@@ -36,8 +36,8 @@ public interface IConcept extends IKnowledge {
 	 * uses the {@link org.integratedmodelling.kim.api.IKimConcept.Type} enum to
 	 * instantly assess the concept type without needing any costly inference.
 	 *
-	 * @param type
-	 *            a {@link org.integratedmodelling.kim.api.IKimConcept.Type} object.
+	 * @param type a {@link org.integratedmodelling.kim.api.IKimConcept.Type}
+	 *             object.
 	 * @return a boolean.
 	 */
 	boolean is(Type type);
@@ -85,9 +85,9 @@ public interface IConcept extends IKnowledge {
 	 * Return the range of the passed property in the context of this concept,
 	 * considering restrictions.
 	 *
-	 * @param property
-	 *            a {@link org.integratedmodelling.klab.api.knowledge.IProperty}
-	 *            object.
+	 * @param property a
+	 *                 {@link org.integratedmodelling.klab.api.knowledge.IProperty}
+	 *                 object.
 	 * @return the range of the passed property in our context
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
@@ -97,9 +97,9 @@ public interface IConcept extends IKnowledge {
 	 * Get the value that the passed data property is restricted to in this concept,
 	 * or null if there is no restriction.
 	 *
-	 * @param property
-	 *            a {@link org.integratedmodelling.klab.api.knowledge.IProperty}
-	 *            object.
+	 * @param property a
+	 *                 {@link org.integratedmodelling.klab.api.knowledge.IProperty}
+	 *                 object.
 	 * @return value for data property in our context, or null
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
@@ -116,8 +116,7 @@ public interface IConcept extends IKnowledge {
 	/**
 	 * get the number of properties for this type
 	 *
-	 * @param property
-	 *            a {@link java.lang.String} object.
+	 * @param property a {@link java.lang.String} object.
 	 * @return number of properties of this type in our context
 	 */
 	int getPropertiesCount(String property);
@@ -127,9 +126,8 @@ public interface IConcept extends IKnowledge {
 	 * getLeastGeneralCommonConcept.
 	 * </p>
 	 *
-	 * @param c
-	 *            a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
-	 *            object.
+	 * @param c a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
+	 *          object.
 	 * @return least general common concept compared with c
 	 */
 	IConcept getLeastGeneralCommonConcept(IConcept c);
@@ -151,9 +149,9 @@ public interface IConcept extends IKnowledge {
 	 *
 	 * TODO use a range object
 	 *
-	 * @param property
-	 *            a {@link org.integratedmodelling.klab.api.knowledge.IProperty}
-	 *            object.
+	 * @param property a
+	 *                 {@link org.integratedmodelling.klab.api.knowledge.IProperty}
+	 *                 object.
 	 * @return cardinality
 	 */
 	int[] getCardinality(IProperty property);
@@ -171,9 +169,8 @@ public interface IConcept extends IKnowledge {
 	 * Get the property or properties that restricts the passed concept for this
 	 * one, if any.
 	 *
-	 * @param target
-	 *            a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
-	 *            object.
+	 * @param target a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
+	 *               object.
 	 * @return the property that restricts this concept in our context
 	 */
 	Collection<IProperty> findRestrictingProperty(IConcept target);
@@ -217,5 +214,16 @@ public interface IConcept extends IKnowledge {
 	 * @return
 	 */
 	int resolves(IConcept concept);
+
+	/**
+	 * Returns a measure of directness for the resolution of another concept in
+	 * terms of being able to use it to resolve an observation of this. Also takes
+	 * into account the specific context of resolution.
+	 * 
+	 * @param concept
+	 * @param context
+	 * @return
+	 */
+	int resolves(IConcept concept, IConcept context);
 
 }

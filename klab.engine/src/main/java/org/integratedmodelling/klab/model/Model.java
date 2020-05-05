@@ -868,8 +868,8 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public String getLocalNameFor(IObservable observable) {
-		IObservable obs = getCompatibleOutput((Observable) observable);
+	public String getLocalNameFor(IObservable observable, IConcept context) {
+		IObservable obs = getCompatibleOutput((Observable) observable, context);
 		if (obs != null) {
 			return obs.getName();
 		}
@@ -1111,9 +1111,9 @@ public class Model extends KimObject implements IModel {
 	 * @param observable
 	 * @return an existing output observable or null
 	 */
-	public Observable getCompatibleOutput(Observable observable) {
+	public Observable getCompatibleOutput(Observable observable, IConcept context) {
 		for (IObservable output : observables) {
-			if (output.getType().resolves(observable.getType()) >= 0) {
+			if (output.getType().resolves(observable.getType(), context) >= 0) {
 				return (Observable) output;
 			}
 		}

@@ -27,6 +27,10 @@ import org.integratedmodelling.klab.utils.StringUtils;
  */
 public class Coverage implements ICommand {
 
+	/**
+	 * TODO add context of resolution
+	 */
+	
 	@Override
 	public Object execute(IServiceCall call, ISession session) throws Exception {
 
@@ -57,7 +61,7 @@ public class Coverage implements ICommand {
 			}
 
 			IObservable observable = Observable.promote(concept);
-			Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(observable,
+			Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(observable, null,
 					observable.getDescription().getResolutionMode());
 
 			for (long id : ids) {

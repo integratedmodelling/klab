@@ -419,7 +419,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 * scope to the child observation. Then leave it to the kbox to use the context
 		 * with the preloaded cache.
 		 */
-		this.resolutionScope.preloadResolvers(observable);
+		this.resolutionScope.preloadResolvers(observable, observation);
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 
 		Dataflow dataflow = null;
@@ -489,7 +489,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 * scope to the child observation. Then leave it to the kbox to use the context
 		 * with the preloaded cache.
 		 */
-		this.resolutionScope.preloadResolvers(observable);
+		this.resolutionScope.preloadResolvers(observable, contextSubject);
 
 		Dataflow dataflow = null;
 
@@ -611,7 +611,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 * scope to the child observation. Then leave it to the kbox to use the context
 		 * with the preloaded cache.
 		 */
-		this.resolutionScope.preloadResolvers(observable);
+		this.resolutionScope.preloadResolvers(observable, target);
 
 		Dataflow dataflow = null;
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);

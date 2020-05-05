@@ -256,7 +256,9 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		String query = "SELECT model.oid FROM model WHERE ";
-		String typequery = observableQuery(observable, context.getMode());
+		IConcept contextObservable = context.getContextObservable() == null ? null
+				: context.getContextObservable().getType();
+		String typequery = observableQuery(observable, contextObservable, context.getMode());
 
 		if (typequery == null) {
 			return ret;
@@ -298,14 +300,14 @@ public class ModelKbox extends ObservableKbox {
 		return ret;
 	}
 
-	private String observableQuery(IObservable observable, Mode mode) {
+	private String observableQuery(IObservable observable, IConcept context, Mode mode) {
 
 		// /*
 		// * remove any transformations before querying
 		// */
 		// IConcept concept = observable.getMain();
 
-		Set<Long> ids = this.getCompatibleTypeIds(observable, mode);
+		Set<Long> ids = this.getCompatibleTypeIds(observable, context, mode);
 		if (ids == null || ids.size() == 0) {
 			return null;
 		}

@@ -935,7 +935,7 @@ public class ResolutionScope implements IResolutionScope {
 	 * 
 	 * @param observable
 	 */
-	public void preloadResolvers(IObservable observable) {
+	public void preloadResolvers(IObservable observable, IDirectObservation context) {
 
 		/**
 		 * only search for resolvers if we haven't already
@@ -957,7 +957,7 @@ public class ResolutionScope implements IResolutionScope {
 		ResolutionScope scope = this.getChildScope((Observable) observable, Mode.RESOLUTION);
 		// ensure we don't try to find the cache for the cache
 		scope.caching = true;
-		resolvers.addAll(Models.INSTANCE.resolve(observable, scope));
+		resolvers.addAll(Models.INSTANCE.resolve(observable, scope.getChildScope(observable, context, context.getScale())));
 
 		/*
 		 * TODO this may include the existing states in the context, with enough

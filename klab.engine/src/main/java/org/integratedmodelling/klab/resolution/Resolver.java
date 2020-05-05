@@ -285,7 +285,7 @@ public class Resolver {
 				if (observable.getUnit() == null && Units.INSTANCE.needsUnits(observable)) {
 					observable.setUnit(Units.INSTANCE.getDefaultUnitFor(observable));
 				}
-				
+
 				deferredObservable = (Observable) observable.getBuilder(parentScope.getMonitor())
 						.without(ObservableRole.CONTEXT).buildObservable();
 				observable = (Observable) deferredObservable.getBuilder(parentScope.getMonitor()).of(deferTo.getType())

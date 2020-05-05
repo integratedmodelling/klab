@@ -1931,7 +1931,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency());
 		} else if (unit != null) {
 			ret.setUnit((Unit) unit);
-			ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency());
+			ret.setDeclaration(ret.getDeclaration() + " in " + ret.getUnit());
 		}
 
 		for (Pair<ValueOperator, Object> op : valueOperators) {
