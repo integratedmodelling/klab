@@ -78,6 +78,10 @@ public class KlabCertificate implements ICertificate {
 	public static KlabCertificate createFromClasspath(String resource) {
 		return new KlabCertificate(resource);
 	}
+	
+	public static KlabCertificate createFromProperties(Properties props) {
+		return new KlabCertificate(props);
+	}
 
 	/**
 	 * Get the file from its configured locations and open it. If there is no
@@ -123,6 +127,10 @@ public class KlabCertificate implements ICertificate {
 
 	private KlabCertificate(String resource) {
 		this.resource = resource;
+	}
+
+	public KlabCertificate(Properties props) {
+		this.properties = props;
 	}
 
 	public boolean isValid() {

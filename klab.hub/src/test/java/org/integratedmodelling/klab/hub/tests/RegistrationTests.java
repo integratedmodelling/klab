@@ -98,7 +98,6 @@ public class RegistrationTests extends ApplicationCheck {
 		}
 		
 		s.getQuery().toString();
-		s.
 			
 	}
 }

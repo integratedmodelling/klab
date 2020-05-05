@@ -33,9 +33,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -66,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public TokenAuthenticationFilter tokenAuthenticationFilter() {
 		return new TokenAuthenticationFilter();
 	}
-
+    
 	public static final String AUTHENTICATION_TOKEN_HEADER_NAME = "Authentication";
 
 	/**
@@ -158,7 +160,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.successHandler(oAuth2AuthenticationSuccessHandler)
 		.failureHandler(oAuth2AuthenticationFailureHandler);
 
-		http.cors().and().csrf().disable().antMatcher("/api/**").addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.cors().and().csrf().disable().antMatcher("/api/**")
+			.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 	/*
 	@Bean
@@ -183,7 +186,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	*/
 	@Bean
-	public CorsFilter corsFilter() {
+	CorsConfigurationSource corsConfigurationSource() {
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		final CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);
@@ -191,6 +194,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"https://integratedmodelling.org",
 				"http://localhost:8080",
 				"https://localhost:8080",
+				"http://localhost:8081",
+				"https://localhost:8081",
 				"http://localhost:8284",
 				"https://localhost:8284"));
 		config.setAllowedHeaders(Collections.singletonList("*"));
@@ -198,6 +203,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		config.addExposedHeader(HttpHeaders.LOCATION);
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH", "HEAD"));
 		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
+		return source;
 	}
+	
 }

@@ -3,7 +3,9 @@ package org.integratedmodelling.klab.hub;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
@@ -16,10 +18,19 @@ import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
+import org.integratedmodelling.klab.hub.listeners.LicenseStartupPublisher;
+import org.integratedmodelling.klab.hub.listeners.LicenseStartupReady;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 /**
  * This will start a hub at http://localhost:8284/klab with the default security
@@ -36,6 +47,9 @@ public class Hub {
 	private IPartnerIdentity owner;
 	private ICertificate certificate;
     FileCatalog<Group> defaultGroups;
+    
+    public Hub() {
+    };
     
 	public Hub(IHubStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
@@ -58,28 +72,38 @@ public class Hub {
 	}
 
 	public static Hub start(IHubStartupOptions options) {
+		if(!cloudEnabled()) {
+			ICertificate certificate = null;
 
-		ICertificate certificate = null;
+			if (options.getCertificateResource() != null) {
+				certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
+			} else {
+				File certFile = options.getCertificateFile();
+				certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
+						: KlabCertificate.createDefault();
+			}
 
-		if (options.getCertificateResource() != null) {
-			certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
+			if (!certificate.isValid()) {
+				throw new KlabAuthorizationException("certificate is invalid: " + certificate.getInvalidityCause());
+			}
+
+			Hub ret = new Hub(options, certificate);
+
+			if (!ret.boot(options)) {
+				throw new KlabException("hub failed to start");
+			}
+
+			return ret;
 		} else {
-			File certFile = options.getCertificateFile();
-			certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
-					: KlabCertificate.createDefault();
+	
+			Hub ret = new Hub();
+			
+			if(!ret.boot()){
+				throw new KlabException("hub failed to start");
+			};
+	
+			return ret;
 		}
-
-		if (!certificate.isValid()) {
-			throw new KlabAuthorizationException("certificate is invalid: " + certificate.getInvalidityCause());
-		}
-
-		Hub ret = new Hub(options, certificate);
-
-		if (!ret.boot(options)) {
-			throw new KlabException("hub failed to start");
-		}
-
-		return ret;
 	}
 
 	private boolean boot(IHubStartupOptions options) {
@@ -92,8 +116,6 @@ public class Hub {
 			SpringApplication app = new SpringApplication(HubApplication.class);
 			app.setDefaultProperties(props);
 			this.context = app.run(options.getArguments());	
-//			this.authManager = this.context.getBean(HubAuthenticationManager.class);
-//			this.authManager.authenticate(options, this.certificate);
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(
 					"\nStartup successful: " + "k.LAB hub server" + " v" + Version.CURRENT + " on " + new Date());
@@ -104,53 +126,78 @@ public class Hub {
 		}
 		return true;
 	}
+	
+	private boolean boot() {
+		try {
+			SpringApplication app = new SpringApplication(HubApplication.class);
+			this.context = app.run();
+			Environment environment = this.context.getEnvironment();
+			this.certificate = getCertFromEnv(environment);
+			this.owner = HubAuthenticationManager.INSTANCE.authenticate(new HubStartupOptions(), certificate);
+			LicenseStartupPublisher eventAPublisher = (LicenseStartupPublisher)context.getBean("licenseStartupPublisher");
+			eventAPublisher.publish(new LicenseStartupReady(new Object()));
+			
+			System.out.println("\n" + Logo.HUB_BANNER);
+			System.out.println(
+					"\nStartup successful: " + "k.LAB hub server" + " v" + Version.CURRENT + " on " + new Date());
+			
+		} catch (Throwable e) {
+			Logging.INSTANCE.error(e);
+			return false;
+		}
+		return true;
+	}
+	
+	private static boolean cloudEnabled( ) {
+		try {
+			Yaml yaml = new Yaml();
+			Object loadedYaml = yaml.load(Hub.class.getClassLoader().getResourceAsStream("bootstrap.yml"));
+			return cloundConfingEnabledd(loadedYaml);
+		} catch (YAMLException e) {
+			Logging.INSTANCE.info("Cloud configration not enabled");
+			return false;
+		}	
+	}
+	
+	private static boolean cloundConfingEnabledd(Object yml) {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String json = gson.toJson(yml,LinkedHashMap.class);
+		JsonObject jsonObject = new Gson().fromJson(json, JsonObject.class);
+		jsonObject = new Gson().fromJson(jsonObject.get("spring"), JsonObject.class);
+		jsonObject = new Gson().fromJson(jsonObject.get("cloud"), JsonObject.class);
+		jsonObject = new Gson().fromJson(jsonObject.get("consul"), JsonObject.class);
+		jsonObject = new Gson().fromJson(jsonObject.get("config"), JsonObject.class);
+		if (jsonObject.get("enabled").getAsBoolean()) {
+			Logging.INSTANCE.info("Cloud configration enabled");
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private KlabCertificate getCertFromEnv(Environment env) {
+		Properties props = new Properties();
+		props.setProperty(KlabCertificate.KEY_CERTIFICATE_TYPE,
+				env.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
+		props.setProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL, 
+				env.getProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL));
+		props.setProperty(KlabCertificate.KEY_HUBNAME, 
+				env.getProperty(KlabCertificate.KEY_HUBNAME));
+		props.setProperty(KlabCertificate.KEY_PARTNER_NAME, 
+				env.getProperty(KlabCertificate.KEY_PARTNER_NAME));
+		props.setProperty(KlabCertificate.KEY_PARTNER_EMAIL, 
+				env.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
+		props.setProperty(KlabCertificate.KEY_URL, 
+				env.getProperty(KlabCertificate.KEY_URL));
+		props.setProperty(KlabCertificate.KEY_SIGNATURE, 
+				env.getProperty(KlabCertificate.KEY_SIGNATURE));
+		props.setProperty(KlabCertificate.KEY_CERTIFICATE, 
+				env.getProperty("klab.pgpKey"));
+		return KlabCertificate.createFromProperties(props);
+	}
 
 	public void stop() {
-
-		// // shutdown all components
-		// if (this.sessionClosingTask != null) {
-		// this.sessionClosingTask.cancel(true);
-		// }
-		//
-		// // shutdown the task executor
-		// if (taskExecutor != null) {
-		// taskExecutor.shutdown();
-		// try {
-		// if (!taskExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-		// taskExecutor.shutdownNow();
-		// }
-		// } catch (InterruptedException e) {
-		// taskExecutor.shutdownNow();
-		// }
-		// }
-		//
-		// // shutdown the script executor
-		// if (scriptExecutor != null) {
-		// scriptExecutor.shutdown();
-		// try {
-		// if (!scriptExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-		// scriptExecutor.shutdownNow();
-		// }
-		// } catch (InterruptedException e) {
-		// scriptExecutor.shutdownNow();
-		// }
-		// }
-		//
-		// // and the session scheduler
-		// if (scheduler != null) {
-		// scheduler.shutdown();
-		// try {
-		// if (!scheduler.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-		// scheduler.shutdownNow();
-		// }
-		// } catch (InterruptedException e) {
-		// scheduler.shutdownNow();
-		// }
-		// }
-		//
-		// // shutdown the runtime
-		// Klab.INSTANCE.getRuntimeProvider().shutdown();
-
+		
 		context.close();
 	}
 

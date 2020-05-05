@@ -52,7 +52,7 @@ public class LicenseStartupEvent {
 	private LegacyLicenseConfig legacy;
 	
 	@EventListener
-	public void startup(ApplicationReadyEvent event) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException, DecoderException {
+	public void startup(LicenseStartupReady event) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException, DecoderException {
 		
 		if(repository.findAll().isEmpty()) {
 			LicenseConfiguration config =

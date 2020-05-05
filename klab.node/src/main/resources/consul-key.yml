@@ -1,0 +1,38 @@
+--- 
+klab: 
+  adapter: 
+    raster: 
+      auth: "*"
+    vector: 
+      auth: "*"
+    wcs: 
+      auth: "*"
+    weather: 
+      auth: "*"
+  geoserver: 
+    password: geoserver_password
+    url: "geoserver_node:8080"
+    user: geoserver_user
+  node: 
+    searching: "*"
+    submitting: "*"
+  postgres: 
+    host: postgres_node
+    password: postgres_password
+    port: 5432
+    user: postgres_user
+server: 
+  port: ${random.int(5000,5100)}
+  servlet: 
+    context-path: /node
+    multipart: 
+      max-file-size: 100MB
+      max-request-size: 100MB
+      
+spring:
+  cloud:
+    consul:
+      discovery:
+        tags: service-id = ${random.UUID()}
+        health-check-path: ${server.servlet.context-path}/actuator/health
+        health-check-interval: 5s

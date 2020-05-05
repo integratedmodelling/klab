@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    consul:
+      enabled: true
+      host: localhost
+      port: 8500
+      config:
+        prefix: config
+        enabled: true
+        defaultContext: node-service
+        profileSeparator: '::'
+        format: yaml
+        data-key: data

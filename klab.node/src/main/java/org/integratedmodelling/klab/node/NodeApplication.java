@@ -6,10 +6,12 @@ import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
 
 import org.apache.catalina.startup.Tomcat;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;

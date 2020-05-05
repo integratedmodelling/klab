@@ -3,7 +3,9 @@ package org.integratedmodelling.klab.node;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
@@ -19,6 +21,13 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 /**
  * This will start a node at http://localhost:8287/node with the default
@@ -35,7 +44,18 @@ public class Node {
 	private IPartnerIdentity owner;
 	private ICertificate certificate;
 	private Engine engine;
+	
 
+	/**
+	 * 
+	 * This needs to be rearagned so that the authentication happens after the spring boot
+	 * so that we can use the injection of the properties to register the service with the hub.
+	 * @param certificate
+	 */
+	
+    public Node() {
+    };
+    
 	public Node(INodeStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
 		this.owner = NodeAuthenticationManager.INSTANCE.authenticate(certificate, options);
@@ -55,44 +75,71 @@ public class Node {
 	}
 
 	public static Node start(INodeStartupOptions options) {
+		if(!cloudEnabled()) {
+			ICertificate certificate = null;
+	
+			if (options.getCertificateResource() != null) {
+				certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
+			} else {
+				File certFile = options.getCertificateFile();
+				certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
+						: KlabCertificate.createDefault();
+			}
+	
+			if (!certificate.isValid()) {
+				throw new KlabAuthorizationException("certificate is invalid: " + certificate.getInvalidityCause());
+			}
+	
+			/*
+			 * This authenticates with the hub
+			 */
+			Node ret = new Node(options, certificate);
+	
+			if (!ret.boot(options)) {
+				throw new KlabException("node failed to start");
+			}
 
-		ICertificate certificate = null;
-
-		if (options.getCertificateResource() != null) {
-			certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
+			return ret;
 		} else {
-			File certFile = options.getCertificateFile();
-			certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
-					: KlabCertificate.createDefault();
+			Node ret = new Node();
+			
+			if(!ret.boot()){
+				throw new KlabException("hub failed to start");
+			};
+	
+			return ret;
 		}
-
-		if (!certificate.isValid()) {
-			throw new KlabAuthorizationException("certificate is invalid: " + certificate.getInvalidityCause());
-		}
-
-		/*
-		 * This authenticates with the hub
-		 */
-		Node ret = new Node(options, certificate);
-
-		if (!ret.boot(options)) {
-			throw new KlabException("node failed to start");
-		}
-
-		return ret;
 	}
 
 	private boolean boot(INodeStartupOptions options) {
 		try {
+			SpringApplication app = new SpringApplication(NodeApplication.class);
+			this.context = app.run(options.getArguments());
 			this.engine = Engine.start(this.certificate);
 			this.port = options.getPort();
 			Map<String, Object> props = new HashMap<>();
 			props.put("server.port", "" + options.getPort());
 			props.put("spring.main.banner-mode", "off");
 			props.put("server.servlet.contextPath", contextPath);
-			SpringApplication app = new SpringApplication(NodeApplication.class);
+			
 			app.setDefaultProperties(props);
-			this.context = app.run(options.getArguments());
+			System.out.println("\n" + Logo.NODE_BANNER);
+			System.out.println(
+					"\nStartup successful: " + "k.LAB node server" + " v" + Version.CURRENT + " on " + new Date());
+		} catch (Throwable e) {
+			Logging.INSTANCE.error(e);
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean boot() {
+		try {
+			SpringApplication app = new SpringApplication(Node.class);
+			this.context = app.run();
+			Environment environment = this.context.getEnvironment();
+			this.certificate = getCertFromEnv(environment);
+			this.owner = NodeAuthenticationManager.INSTANCE.authenticate(certificate, new NodeStartupOptions());
 			System.out.println("\n" + Logo.NODE_BANNER);
 			System.out.println(
 					"\nStartup successful: " + "k.LAB node server" + " v" + Version.CURRENT + " on " + new Date());
@@ -163,5 +210,55 @@ public class Node {
 	public Engine getEngine() {
 		return engine;
 	}
+	
+	private static boolean cloudEnabled( ) {
+		try {
+			Yaml yaml = new Yaml();
+			Object loadedYaml = yaml.load(Node.class.getClassLoader().getResourceAsStream("bootstrap.yml"));
+			return cloundConfingEnabledd(loadedYaml);
+		} catch (YAMLException e) {
+			Logging.INSTANCE.info("Cloud configration not enabled");
+			return false;
+		}	
+	}
+	
+	private static boolean cloundConfingEnabledd(Object yml) {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String json = gson.toJson(yml,LinkedHashMap.class);
+		JsonObject jsonObject = new Gson().fromJson(json, JsonObject.class);
+		jsonObject = new Gson().fromJson(jsonObject.get("spring"), JsonObject.class);
+		jsonObject = new Gson().fromJson(jsonObject.get("cloud"), JsonObject.class);
+		jsonObject = new Gson().fromJson(jsonObject.get("consul"), JsonObject.class);
+		jsonObject = new Gson().fromJson(jsonObject.get("config"), JsonObject.class);
+		if (jsonObject.get("enabled").getAsBoolean()) {
+			Logging.INSTANCE.info("Cloud configration enabled");
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private KlabCertificate getCertFromEnv(Environment env) {
+		Properties props = new Properties();
+		props.setProperty(KlabCertificate.KEY_CERTIFICATE_TYPE,
+				env.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
+		props.setProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL, 
+				env.getProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL));
+		props.setProperty(KlabCertificate.KEY_NODENAME, 
+				env.getProperty(KlabCertificate.KEY_NODENAME));
+		props.setProperty(KlabCertificate.KEY_PARTNER_NAME, 
+				env.getProperty(KlabCertificate.KEY_PARTNER_NAME));
+		props.setProperty(KlabCertificate.KEY_PARTNER_EMAIL, 
+				env.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
+		props.setProperty(KlabCertificate.KEY_URL, 
+				env.getProperty(KlabCertificate.KEY_URL));
+		props.setProperty(KlabCertificate.KEY_SIGNATURE, 
+				env.getProperty(KlabCertificate.KEY_SIGNATURE));
+		props.setProperty(KlabCertificate.KEY_CERTIFICATE, 
+				env.getProperty("klab.pgpKey"));
+		return KlabCertificate.createFromProperties(props);
+	}
+	
+	
 
 }

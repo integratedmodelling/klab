@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@Secured(Role.ENGINE)
 public class EngineController {
 
 	@Autowired
