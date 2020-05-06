@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -19,7 +20,9 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -259,4 +262,14 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
     public void fill(Object value) {
         current.fill(value);
     }
+    
+	@Override
+	public void finalizeTransition(IScale scale) {
+		Observations.INSTANCE.getStateSummary(this, scale);
+		setContextualized(true);
+		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+			setDynamic(true);
+		}
+	}
+
 }

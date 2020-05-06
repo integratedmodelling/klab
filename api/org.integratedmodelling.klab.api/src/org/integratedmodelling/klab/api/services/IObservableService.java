@@ -94,8 +94,25 @@ public interface IObservableService {
 	IObservable declare(IKimObservable observable, IMonitor monitor);
 
 	/**
+	 * Retrieve the context type, direct if there, indirect if not.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	IConcept getContext(IConcept concept);
+
+	/**
+	 * Retrieve the inherent type, direct if there, indirect if not.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	IConcept getInherency(IConcept concept);
+	
+	/**
 	 * <p>
-	 * getInherentType.
+	 * Get the <em>implicit</em> inherent type - not the direct one (if asked on X
+	 * of Y will return the inherent type of X, not Y).
 	 * </p>
 	 *
 	 * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
@@ -150,9 +167,10 @@ public interface IObservableService {
 
 	/**
 	 * <p>
-	 * getContextType.
+	 * Get the <em>implicit</em> context type - not the direct one (if asked on X
+	 * of Y will return the context type of X, not Y).
 	 * </p>
-	 *
+	 * 
 	 * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
 	 *                object.
 	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.

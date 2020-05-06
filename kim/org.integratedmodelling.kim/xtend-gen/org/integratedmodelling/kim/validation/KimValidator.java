@@ -2826,13 +2826,13 @@ public class KimValidator extends AbstractKimValidator {
         for (final ConceptDeclaration decl_1 : _creates) {
           {
             KimConcept countable_1 = Kim.INSTANCE.declareConcept(decl_1);
-            boolean _is = countable_1.is(IKimConcept.Type.COUNTABLE);
+            boolean _is = countable_1.is(IKimConcept.Type.OBSERVABLE);
             boolean _not_7 = (!_is);
             if (_not_7) {
               this.error(
-                "only countable types (subject, event, relationship) can be created by processes or events", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_5);
+                "only observable types can be created by processes or events", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_5);
             } else {
-              ret.getCountablesCreated().add(countable_1);
+              ret.getObservablesCreated().add(countable_1);
             }
             i_5++;
           }

@@ -368,6 +368,11 @@ public class Resolver {
 				int order = 0;
 				for (ObservationStrategy strategy : candidates) {
 
+					if (strategy.isResolve()) {
+						// resolve again from scratch. No computations or anything.
+						return resolve(strategy.getObservables().get(0), parentScope, mode);
+					}
+					
 					try {
 
 						// candidate may switch resolution mode

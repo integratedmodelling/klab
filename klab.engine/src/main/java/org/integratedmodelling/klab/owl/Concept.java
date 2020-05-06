@@ -705,10 +705,10 @@ public class Concept extends Knowledge implements IConcept {
 		}
 
 		if (context == null) {
-			context = Observables.INSTANCE.getContextType(concept);
+			context = Observables.INSTANCE.getContext(concept);
 		}
 
-		int component = getDistance(Observables.INSTANCE.getContextType(this), context, true);
+		int component = getDistance(Observables.INSTANCE.getContext(this), context, true);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -716,8 +716,8 @@ public class Concept extends Knowledge implements IConcept {
 		}
 		distance += component;
 
-		component = getDistance(Observables.INSTANCE.getInherentType(this),
-				Observables.INSTANCE.getInherentType(concept), false);
+		component = getDistance(Observables.INSTANCE.getInherency(concept),
+				Observables.INSTANCE.getInherency(this), false);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);

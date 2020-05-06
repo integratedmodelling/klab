@@ -323,6 +323,9 @@ public abstract class ObservableKbox extends H2Kbox {
 		 * is weeded out of all incompatible or unrepresented concepts later.
 		 */
 		for (IConcept candidate : getCandidates(main, mode)) {
+			
+//			System.out.println(candidate.getDefinition());
+			
 			if (candidate.resolves(observable.getType(), context) >= 0) {
 				long id = getConceptId(candidate);
 				if (id >= 0) {

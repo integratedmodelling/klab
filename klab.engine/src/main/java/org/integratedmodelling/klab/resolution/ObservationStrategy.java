@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Klab;
@@ -77,6 +78,9 @@ public class ObservationStrategy {
 	private Mode mode;
 	private List<IContextualizable> computation = new ArrayList<>();
 	private Strategy strategy = Strategy.DIRECT;
+	// if this is true, the observable must be resolved again instead of proceeding
+	// to model query
+	private boolean resolve = false;
 
 	public ObservationStrategy(Observable observable, Mode mode) {
 		this.mode = mode;
@@ -178,26 +182,32 @@ public class ObservationStrategy {
 		List<Pair<ValueOperator, Object>> operators = observable.getValueOperators();
 		Strategy strategy = Strategy.DIRECT;
 
-//		/*
-//		 * if observable O has an incompatible context C1 when we resolve in C0,
-//		 * transform into O of C1 within C0. If we don't have a specific model for that,
-//		 * the strategy (computed later) can be to observe C1, defer the resolution of O
-//		 * within each C1, then after deferred resolution and computation add an
-//		 * aggregation step to get O of C1 within C0.
-//		 */
-//		Observable deferTo = ((ResolutionScope) scope).getDeferredObservableFor((Observable) observable);
-//		if (deferTo != null) {
-//
-//			Builder builder = observable.getBuilder(scope.getMonitor())
-//					.within(scope.getContext().getObservable().getType()).withDistributedInherency(true);
-//			if (Observables.INSTANCE.getDirectInherentType(observable.getType()) == null) {
-//				builder.of(deferTo.getType());
-//			}
-//			IObservable distributed = builder.buildObservable();
-////			ret.add(new ObservationStrategy((Observable)distributed, observable.getDescription().getResolutionMode()));
-//		}
-
-		if (!operators.isEmpty()) {
+		/*
+		 * explore inherency first. If there is explicit inherency (of), we first check
+		 * for equality of inherency, i.e. X of Y within Y. In this case we just observe
+		 * X.
+		 * 
+		 * If not, we leave the trivial strategy as is (to be resolved by a possible
+		 * model) and add X within Y, which will generate X of Y in the current context.
+		 */
+		IConcept inherent = Observables.INSTANCE.getDirectInherentType(observable.getType());
+		if (inherent != null) {
+			IConcept context = Observables.INSTANCE.getContextType(observable.getType());
+			if (context != null && context.equals(inherent)) {
+				observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT)
+						.buildObservable();
+				ret.add(new ObservationStrategy((Observable) observable, mode));
+				// next if should never be necessary as it's not legal to use direct context
+				// except in an output
+			} else if (Observables.INSTANCE.getDirectContextType(observable.getType()) == null) {
+				ret.add(new ObservationStrategy((Observable) observable, mode));
+				observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT).within(inherent)
+						.buildObservable();
+				ObservationStrategy alternative = new ObservationStrategy((Observable) observable, mode);
+				alternative.setResolve(true);
+				ret.add(alternative);
+			}
+		} else if (!operators.isEmpty()) {
 
 			/*
 			 * no as-is resolution, just use the operators. Otherwise it becomes messy to
@@ -290,7 +300,7 @@ public class ObservationStrategy {
 			ret.add(new ObservationStrategy((Observable) observable, mode, strategy));
 
 			List<IContextualizable> computations = new ArrayList<>();
-			IConcept inherent = null;
+			inherent = null;
 			strategy = Strategy.DIRECT;
 
 			if (observable.is(Type.PRESENCE)) {
@@ -392,6 +402,14 @@ public class ObservationStrategy {
 	 */
 	public Strategy getStrategy() {
 		return strategy;
+	}
+
+	public boolean isResolve() {
+		return resolve;
+	}
+
+	public void setResolve(boolean resolve) {
+		this.resolve = resolve;
 	}
 
 //	public IObservable getDistributingObservable() {

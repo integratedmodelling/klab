@@ -797,14 +797,6 @@ public class ObservationReference implements IObservationReference {
 	public void setChildrenCount(int childrenCount) {
 		this.childrenCount = childrenCount;
 	}
-	//
-	// public String getGroupId() {
-	// return groupId;
-	// }
-	//
-	// public void setGroupId(String groupId) {
-	// this.groupId = groupId;
-	// }
 
 	public ScaleReference getScaleReference() {
 		return scaleReference;
@@ -921,6 +913,8 @@ public class ObservationReference implements IObservationReference {
 		case SemanticsChange:
 			// the semantic flags should not have changed
 			this.setObservable(change.getNewSemantics());
+			break;
+		case ContextualizationCompleted:
 			break;
 		}
 	}

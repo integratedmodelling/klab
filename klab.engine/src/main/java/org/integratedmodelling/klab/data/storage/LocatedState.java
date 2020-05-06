@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -14,6 +15,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -189,6 +191,14 @@ public class LocatedState extends Observation implements IState {
 		}
 		for (ILocator locator : getScale()) {
 			set(locator, value);
+		}
+	}
+
+	@Override
+	public void finalizeTransition(IScale scale) {
+		setContextualized(true);
+		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+			setDynamic(true);
 		}
 	}
 

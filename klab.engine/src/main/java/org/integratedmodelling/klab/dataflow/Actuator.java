@@ -641,7 +641,7 @@ public class Actuator implements IActuator {
 				ctx.swapArtifact(ret, result);
 			}
 			ret = result;
-			
+
 			if (this.model != null && ret instanceof Observation) {
 				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
 			}
@@ -711,21 +711,20 @@ public class Actuator implements IActuator {
 											IMessage.Type.ModifiedObservation, change));
 						}
 					}
-					
+
 					/*
 					 * notify end of contextualization if we're subscribed to the parent
 					 */
 					if (ctx.getNotifiedObservations().contains(ret.getId())) {
 
-						((Observation)object).setContextualized(true);
-						
+						((Observation) object).setContextualized(true);
+
 						ObservationChange change = ((Observation) object)
 								.createChangeEvent(ObservationChange.Type.ContextualizationCompleted);
 						change.setNewSize(ctx.getChildArtifactsOf(object).size());
-						change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation)object));
-						session.getMonitor()
-								.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-										IMessage.Type.ModifiedObservation, change));
+						change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) object));
+						session.getMonitor().send(Message.create(session.getId(),
+								IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
 					}
 
 					/*
@@ -800,12 +799,12 @@ public class Actuator implements IActuator {
 			}
 		}
 
-		if (ret instanceof IState) {
-			// pre-compute before notification to speed up visualization
-			Observations.INSTANCE.getStateSummary((IState) ret, ctx.getScale().initialization());
-		}
+		// pre-compute before notification to speed up visualization
+		// TODO change to a state callback to finalize a transition after all values are
+		// in
+		((Observation) ret).finalizeTransition(ctx.getScale().initialization());
 
-		((Observation)ret).setContextualized(true);
+		((Observation) ret).setContextualized(true);
 
 		state.setStatus(Status.FINISHED);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,

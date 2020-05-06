@@ -162,6 +162,8 @@ public class Scheduler implements IScheduler {
 					recipient.getActor().tell(new KActorsMessage(sender, "self", scheduled.getId(), null,
 							new KlabActor.Scope(observation, scheduled, transitionContext)));
 
+					recipient.finalizeTransition((IScale) transitionScale);
+
 					/*
 					 * 4. TODO this will always be empty - notify whatever has changed.
 					 */
@@ -294,6 +296,10 @@ public class Scheduler implements IScheduler {
 							}
 						}
 
+						if (computation.target instanceof Observation) {
+							((Observation) computation.target).finalizeTransition((IScale) transitionScale);
+						}
+
 						/*
 						 * report only states for now - must become discriminating and intelligent. If
 						 * in folder...
@@ -315,6 +321,8 @@ public class Scheduler implements IScheduler {
 					} else {
 
 						for (IObservation observation : changed) {
+
+							((Observation) observation).finalizeTransition((IScale) transitionScale);
 
 							IObservation parent = scope.getParentArtifactOf(observation);
 							if (parent != null && scope.getWatchedObservationIds().contains(parent.getId())) {

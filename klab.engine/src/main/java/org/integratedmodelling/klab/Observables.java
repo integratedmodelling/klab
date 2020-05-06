@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
@@ -285,7 +286,6 @@ public enum Observables implements IObservableService {
 		return ret;
 	}
 
-	
 	public Collection<IConcept> getDescribedQualities(IConcept configuration) {
 		List<IConcept> ret = new ArrayList<>();
 		ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.DESCRIBES_QUALITY_PROPERTY)));
@@ -309,7 +309,18 @@ public enum Observables implements IObservableService {
 	 * @return
 	 */
 	public Collection<IConcept> getAffectedQualities(IConcept process) {
-		return OWL.INSTANCE.getRestrictedClasses(process, Concepts.p(NS.AFFECTS_PROPERTY));
+		Set<IConcept> ret = new HashSet<>();
+		for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process, Concepts.p(NS.AFFECTS_PROPERTY))) {
+			if (!Concepts.INSTANCE.isInternal(c)) {
+				ret.add(c);
+			}
+		}
+		for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process, Concepts.p(NS.CREATES_PROPERTY))) {
+			if (!Concepts.INSTANCE.isInternal(c)) {
+				ret.add(c);
+			}
+		}
+		return ret;
 	}
 
 	private String getDescriptionProperty(DescriptionType type) {
@@ -773,6 +784,24 @@ public enum Observables implements IObservableService {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public IConcept getContext(IConcept concept) {
+		IConcept ret = getDirectContextType(concept);
+		if (ret != null) {
+			return ret;
+		}
+		return getContextType(concept);
+	}
+
+	@Override
+	public IConcept getInherency(IConcept concept) {
+		IConcept ret = getDirectInherentType(concept);
+		if (ret != null) {
+			return ret;
+		}
+		return getInherentType(concept);
 	}
 
 }

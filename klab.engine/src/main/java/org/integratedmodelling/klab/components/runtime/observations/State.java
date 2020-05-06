@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -17,6 +18,8 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.DataIterator;
@@ -203,5 +206,17 @@ public class State extends Observation implements IState, IKeyHolder {
 			set(locator, value);
 		}
 	}
+
+	@Override
+	public void finalizeTransition(IScale scale) {
+		// TODO store locally 
+		Observations.INSTANCE.getStateSummary(this, scale);
+		setContextualized(true);
+		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+			setDynamic(true);
+		}
+	}
+	
+	
 
 }

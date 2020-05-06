@@ -263,8 +263,8 @@ public class KimMacro implements IKimMacro {
         return delegate.toString();
     }
 
-    public List<IKimConcept> getCountablesCreated() {
-        return delegate.getCountablesCreated();
+    public List<IKimConcept> getObservablesCreated() {
+        return delegate.getObservablesCreated();
     }
 
     public List<ApplicableConcept> getSubjectsLinked() {

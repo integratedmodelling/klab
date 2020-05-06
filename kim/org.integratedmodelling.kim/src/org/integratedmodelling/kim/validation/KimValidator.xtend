@@ -2257,12 +2257,12 @@ class KimValidator extends AbstractKimValidator {
 				var i = 0
 				for (decl : concept.creates) {
 					var countable = Kim.INSTANCE.declareConcept(decl)
-					if (!countable.is(Type.COUNTABLE)) {
+					if (!countable.is(Type.OBSERVABLE)) {
 						error(
-							"only countable types (subject, event, relationship) can be created by processes or events",
+							"only observable types can be created by processes or events",
 							concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i)
 					} else {
-						ret.countablesCreated.add(countable)
+						ret.observablesCreated.add(countable)
 					}
 					i++
 				}

@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -380,6 +381,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	public void setContextualized(boolean contextualized) {
 		this.contextualized = contextualized;
+	}
+
+	public void finalizeTransition(IScale scale) {
+		// do nothing here
 	}
 
 }

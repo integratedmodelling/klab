@@ -369,7 +369,7 @@ public class Client extends RestTemplate implements IClient {
 				// Object path = map.get("path");
 				Object message = map.get("message");
 				// Object error = map.get("error");
-				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+				throw new KlabIOException("remote  exception: " + (message == null ? exception : message));
 			}
 
 			if (cls.isAssignableFrom(response.getBody().getClass())) {
