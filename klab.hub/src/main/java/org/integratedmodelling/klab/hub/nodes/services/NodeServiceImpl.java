@@ -4,7 +4,9 @@ import java.util.Collection;
 
 import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.commands.CreateMongoNode;
+import org.integratedmodelling.klab.hub.commands.DeleteMongoNode;
 import org.integratedmodelling.klab.hub.commands.GetMongoNodeByName;
+import org.integratedmodelling.klab.hub.commands.GetMongoNodes;
 import org.integratedmodelling.klab.hub.commands.UpdateMongoNode;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
@@ -36,14 +38,13 @@ public class NodeServiceImpl implements NodeService {
 
 	@Override
 	public void deleteNode(MongoNode node) {
-		// TODO Auto-generated method stub
-		
+		new DeleteMongoNode(node, nodeRepository).execute();
+		return;
 	}
 
 	@Override
 	public Collection<MongoNode> getNodes() {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetMongoNodes(nodeRepository).execute();
 	}
 
 	@Override
