@@ -644,6 +644,7 @@ public class Scheduler implements IScheduler {
 
 				SchedulerNotification passed = new SchedulerNotification();
 				passed.setType(SchedulerNotification.Type.TIME_ADVANCED);
+				passed.setContextId(contextId);
 				passed.setCurrentTime(time);
 				monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 						IMessage.Type.ScheduleAdvanced, passed));

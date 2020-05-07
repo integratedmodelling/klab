@@ -263,7 +263,7 @@ public class Offset implements ILocator {
 			}
 			oofs += (pos[i] == Geometry.INFINITE_SIZE ? "\u221E" : ("" + pos[i]));
 		}
-		return geometry + "@" + oofs;
+		return oofs + " in " + geometry;
 	}
 
 	/**
