@@ -54,6 +54,8 @@ public class Hub {
 	public Hub(IHubStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
 		this.owner = HubAuthenticationManager.INSTANCE.authenticate(options, certificate);
+		LicenseStartupPublisher eventAPublisher = (LicenseStartupPublisher)context.getBean("licenseStartupPublisher");
+		eventAPublisher.publish(new LicenseStartupReady(new Object()));
 		// cert is prevalidated and we are the top consumers, so no further
 		// authentication needed
 	}
@@ -175,6 +177,7 @@ public class Hub {
 		}
 	}
 	
+	//We should use the method from the node to do this.  Much simpler does not require additional methods ICertificate
 	private KlabCertificate getCertFromEnv(Environment env) {
 		Properties props = new Properties();
 		props.setProperty(KlabCertificate.KEY_CERTIFICATE_TYPE,

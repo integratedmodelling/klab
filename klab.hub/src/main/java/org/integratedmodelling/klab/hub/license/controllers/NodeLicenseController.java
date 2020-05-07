@@ -50,6 +50,7 @@ public class NodeLicenseController extends LicenseController<NodeAuthenticationR
 	@RolesAllowed({ "ROLE_SYSTEM" })
 	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
 		MongoNode node = nodeService.getNode(id);
+		licenseRepo.findAll();
 		LicenseConfiguration configuration = licenseRepo.findAll().get(0);
 
 		Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();

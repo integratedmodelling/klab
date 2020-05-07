@@ -21,6 +21,21 @@ klab:
     password: postgres_password
     port: 5432
     user: postgres_user
+  certificate: |
+    #Certificate Generated On Wed May 06 19:10:47 CEST 2020
+    #Wed May 06 19:10:47 CEST 2020
+    klab.user.email=support@integratedmodelling.org
+    klab.partner.email=godzilla@semanticweb.org
+    klab.nodename=knot
+    klab.certificate.level=INSTITUTIONAL
+    klab.partner.hub=http\://172.17.0.1\:8080/hub
+    klab.signature=258e9a59-e290-4192-8133-5a975abad3ef
+    klab.validuntil=2020-11-04T19\:10\:47.412+01\:00
+    klab.certificate=-----BEGIN PGP MESSAGE-----\nVersion\: BCPG v1.64\n\nhQEMA/lPo1TgQLbzAQf6AgLCRc1pr1lNygQXpDc+TX4e0jhw2dG2gCZyiWEKXV4N\nVtw3yg1o3IiNC4WsFLzWIINpUz6i09/r/QvXAeRt2DM63sysNqek1kJpV70ATnoG\norrzyXcV8UV8tBvOUsSYngPg95DI4k87CfB0Dhd83KxV6NMNPvSsHzYYqVDgH89O\nSGtxDPHSW/jhIFXL6Pwi0Jkb+O/v8uniIDhJgKxOSZ6F6bGUA6uVljuCHC5RAnhq\nK5o4dRY3m5TyS+eOSRFs+jnbTM075s7smZZVHlaQx/50askEuOUix2v64Az2AIgp\nM2C61uYm4sgx/vjCNNbWQN540sUnIrSg5KT889JBcdLC5AEOMaaLJssyN7berDVb\nhvDbxnatKMNHawg5tGqgA77AAbV6eYmcIxGLFz6C+g9bTtKkzn8/E9JRxrpBC3Kn\nq3xXFmOnUDzbxoKwXmWQDHQFyxXZUpkSETJHpsasIzKfWaKAac7Aov2xUGLuCCL3\nCq1zpG2N852e2WzZP4SfrulZYbUxjosOTVNwAQUEnulo3ilBeYssy9AsvtLEGrj7\nJMwefep5dnibwoyCeYwdESLLQubznuciNS13ZWVsZz0Xt/GGPY5qy5XWQTheSrui\nrl+RXaGVULlhe/eyY0fCU4Ypnr2Ib+payVtNVQHr4vljG9jshBbf2lQNCdxBE7V3\nXEwIXCI+X05kWGR0E7Z//aYZIXANZzdEMn6qo3BFGmhhBuXjW2Z1oImI4/2YkFoK\nPB8zX2rkt4mRYt8ToZeQrV0o3KEafCkykKXBvLz0Mzg4glZU9kUYJD3I6XbLYNnL\ndgkyIfSs4hwQQqiP883ks2V1XU6+bxrbpACNPN1RVpsmYXm+w+84PJ+n4XwTDUcC\nvlMj0dmmfmih6U76A+3gx7jQR3mrc/4RhKxq+N4JN2ZbN8SMQoMWWtwIPMlt+kZV\nlwdEEzoylGXcbnZO5R9l7xhNtCEXq5QxtcYjALlY3VPffWWlRTTOqAulVRwN8nxF\nxskn81spbs68eKtKvzah4z+eyAhnJBjGfSwiEAn+XLbWP4/tQgHfDhToFoHH8yl4\nyFio7ms+CX0Th3eHuevYEfcTRADknqux6IQn0+pU7IA/Xnzh7SwMpsFUjJC/GFsX\nH3TupfjkmWC3Dw5GFpeYKU01+iwi44ky+QIbs9UoEnJsyj7qn5a+7fQDCFvW5ZbI\n/pynQISCLunU94Kf4foVyCUEVinzpMnIyP08n8msT/J/6ujRmM+b9xyYsdYqCX6Y\n9SUCQDT5vMyGs68fvXhVYT8DmEeMlmRuk47RG4BJ6Tchi15GYJ2XX6Pbznf2S/Ez\nkk2EFlG10Om6MIrvV5c+6+AsCeumsYYRfrFlmt2+kar1V42HBKB104YQQ2EjCqkK\nPVtAsb+/j8atFGGiL1lYYctR3LMridIWkfYnYuJLLDRpctsuKJSPGXYPLjM9Amrq\nDInzhnY2283sjUhW8u+zXtNRmzDT6BirC0Oj4pm2mlf1/BI8IJCb6Vh+7kQBEdZy\nUOb/chvwWGuhBemIu3k11jx4BEKpDFl7MBIazO5Ozsl3CYEoWDBlj+hBqjc1jRaI\n8Bzljiki\n\=g0ug\n-----END PGP MESSAGE-----\n
+    klab.url=http\://172.17.0.1\:8080/node
+    klab.wordlview=im
+    klab.certificate.type=NODE
+    klab.partner.name=testHub
 server: 
   port: ${random.int(5000,5100)}
   servlet: 

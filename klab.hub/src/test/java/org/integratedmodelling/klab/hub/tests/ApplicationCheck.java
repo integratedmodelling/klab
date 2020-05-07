@@ -40,13 +40,9 @@ public abstract class ApplicationCheck {
 		greenMail.setUser("system", "password").create();
 		greenMail.setUser("new.user@email.com", "new.user@email.com", "password").create();
 		greenMail.start();
+		
 	}
 	
-	
-	
-    @Test
-    public void contextLoads() {
-    }
     
     
 }

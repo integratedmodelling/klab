@@ -81,8 +81,10 @@ public class NodeAuthResponeFactory {
         cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
 
         if(nodeProperties.equals(cipherProperties)) {
+        	Logging.INSTANCE.info("authorized installed node " + node.getName());
         	
         	INodeIdentity nodeIdentity = new GetINodeIdentity(node).execute();
+        	Logging.INSTANCE.info(nodeIdentity.toString());
         	
         	AuthenticatedIdentity authenticatedIdentity = 
         			new GetNodeAuthenticatedIdentity(nodeIdentity, groups).execute();

@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.node;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,6 +22,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
@@ -135,14 +139,17 @@ public class Node {
 	
 	private boolean boot() {
 		try {
-			SpringApplication app = new SpringApplication(Node.class);
+			SpringApplication app = new SpringApplication(NodeApplication.class);
 			this.context = app.run();
 			Environment environment = this.context.getEnvironment();
-			this.certificate = getCertFromEnv(environment);
+			String certString = environment.getProperty("klab.certificate");
+			this.certificate = KlabCertificate.createFromString(certString);
 			this.owner = NodeAuthenticationManager.INSTANCE.authenticate(certificate, new NodeStartupOptions());
+			this.engine = Engine.start(this.certificate);
 			System.out.println("\n" + Logo.NODE_BANNER);
 			System.out.println(
 					"\nStartup successful: " + "k.LAB node server" + " v" + Version.CURRENT + " on " + new Date());
+
 		} catch (Throwable e) {
 			Logging.INSTANCE.error(e);
 			return false;
@@ -237,28 +244,6 @@ public class Node {
 			return false;
 		}
 	}
-	
-	private KlabCertificate getCertFromEnv(Environment env) {
-		Properties props = new Properties();
-		props.setProperty(KlabCertificate.KEY_CERTIFICATE_TYPE,
-				env.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
-		props.setProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL, 
-				env.getProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL));
-		props.setProperty(KlabCertificate.KEY_NODENAME, 
-				env.getProperty(KlabCertificate.KEY_NODENAME));
-		props.setProperty(KlabCertificate.KEY_PARTNER_NAME, 
-				env.getProperty(KlabCertificate.KEY_PARTNER_NAME));
-		props.setProperty(KlabCertificate.KEY_PARTNER_EMAIL, 
-				env.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
-		props.setProperty(KlabCertificate.KEY_URL, 
-				env.getProperty(KlabCertificate.KEY_URL));
-		props.setProperty(KlabCertificate.KEY_SIGNATURE, 
-				env.getProperty(KlabCertificate.KEY_SIGNATURE));
-		props.setProperty(KlabCertificate.KEY_CERTIFICATE, 
-				env.getProperty("klab.pgpKey"));
-		return KlabCertificate.createFromProperties(props);
-	}
-	
 	
 
 }

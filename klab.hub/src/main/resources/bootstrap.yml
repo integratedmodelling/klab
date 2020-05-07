@@ -3,9 +3,6 @@ spring:
     name: hub-service
   cloud:
     consul:
-      discovery:
-        health-check-path: ${server.servlet.context-path}/actuator/health
-        health-check-interval: 5s 
       enabled: true
       host: localhost
       port: 8500

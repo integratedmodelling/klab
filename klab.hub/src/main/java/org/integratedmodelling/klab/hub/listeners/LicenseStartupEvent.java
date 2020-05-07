@@ -83,6 +83,37 @@ public class LicenseStartupEvent {
 			repository.insert(config);
 		}
 	}
-	
+		
+	public void startup() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException, DecoderException {
+			
+			if(repository.findAll().isEmpty()) {
+				LicenseConfiguration config =
+						new GenerateLicenseFactory()
+							.getConfiguration(BouncyConfiguration.class);
+				repository.insert(config);
+			}
+			
+			if(legacy.getKey() != null && !repository.findByKeyString(legacy.getKey()).isPresent()) {
+				LicenseConfiguration config =
+						new GenerateLicenseFactory()
+							.getConfiguration(LegacyConfiguration.class);
+				
+				config.setHubId(legacy.getHubId());
+				config.setKeyString(legacy.getKey());
+				config.setName(legacy.getName());
+				config.setEmail(legacy.getEmail());
+				config.setDigest(legacy.getPubRing().getDigest());
+				config.setPassphrase(legacy.getPassword());
+				config.setHubUrl(legacy.getHubUrl());
+				
+				String pub = new String(Files.readAllBytes(Paths.get(legacy.getPubRing().getFilename())), StandardCharsets.UTF_8);
+				String sec =new String(Files.readAllBytes(Paths.get(legacy.getSecRing().getFilename())), StandardCharsets.UTF_8);
+				
+				ArmoredKeyPair keys = ArmoredKeyPair.of(sec.getBytes(), pub.getBytes());
+				
+				config.setKeys(keys);
+				repository.insert(config);
+			}
+	} 
 
 }

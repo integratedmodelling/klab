@@ -1,8 +1,7 @@
 spring:
   application:
-    name: hub-service
+    name: node-service
   cloud:
     consul:
       discovery:
         health-check-critical-timeout: 3m
-        prefer-ip-address: true # disable if we want to use google cloud internal DNS 
