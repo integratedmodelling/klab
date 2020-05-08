@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -635,8 +636,17 @@ public enum Eclipse {
 	public IFile getIFile(File file) {
 		IFile ret = null;
 		try {
+			URI fileURI;
+			// trying to solve problems with path with spaces
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=339422
+			// TODO check better way to do it, check if we can mix code of file.toURI() with URIUtil.toURI()
+			if (file.getAbsolutePath().contains(" ")) {
+				fileURI = URIUtil.fromString(URIUtil.toURI(file.toURI().toURL()).toString().replaceAll("%2520", " "));
+			} else {
+				fileURI = URIUtil.toURI(file.toURI().toURL());
+			}
 			IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-					.findFilesForLocationURI(URIUtil.toURI(file.toURI().toURL()));
+					.findFilesForLocationURI(fileURI);
 			if (files.length > 0) {
 				ret = files[0];
 			}
