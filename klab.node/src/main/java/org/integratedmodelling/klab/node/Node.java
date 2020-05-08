@@ -1,15 +1,14 @@
 package org.integratedmodelling.klab.node;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
+import java.util.stream.StreamSupport;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
@@ -22,10 +21,12 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
-import org.integratedmodelling.klab.utils.NameGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MutablePropertySources;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
@@ -144,6 +145,7 @@ public class Node {
 			Environment environment = this.context.getEnvironment();
 			String certString = environment.getProperty("klab.certificate");
 			this.certificate = KlabCertificate.createFromString(certString);
+			setPropertiesFromEnvironment(environment);
 			this.owner = NodeAuthenticationManager.INSTANCE.authenticate(certificate, new NodeStartupOptions());
 			this.engine = Engine.start(this.certificate);
 			System.out.println("\n" + Logo.NODE_BANNER);
@@ -158,7 +160,6 @@ public class Node {
 	}
 
 	public void stop() {
-
 		// // shutdown all components
 		// if (this.sessionClosingTask != null) {
 		// this.sessionClosingTask.cancel(true);
@@ -243,6 +244,17 @@ public class Node {
 		} else {
 			return false;
 		}
+	}
+	
+	private static void setPropertiesFromEnvironment(Environment environment) {
+		MutablePropertySources propSrcs =  ((ConfigurableEnvironment) environment).getPropertySources();
+		StreamSupport.stream(propSrcs.spliterator(), false)
+		        .filter(ps -> ps instanceof EnumerablePropertySource)
+		        .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+		        .flatMap(Arrays::<String>stream)
+		        .forEach(propName -> Configuration.INSTANCE.getProperties().setProperty(propName, environment.getProperty(propName)));
+		Configuration.INSTANCE.save();
+		return;
 	}
 	
 

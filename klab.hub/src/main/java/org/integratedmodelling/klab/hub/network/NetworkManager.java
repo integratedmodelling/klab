@@ -10,7 +10,9 @@ import java.util.Set;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.auth.Hub;
+import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.joda.time.DateTime;
@@ -40,7 +42,9 @@ public enum NetworkManager {
 	private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
 		
 		NodeReference ret = new NodeReference(node);
+		HubReference hub = new GenerateHubReference().execute();
 		ret.setOnline(isOnline);
+		ret.setPartner(hub.getPartner());
 
 		// TODO more
 
