@@ -280,7 +280,7 @@ public class ObservationStrategy {
 
 			if (attribute != null) {
 
-				Observable filter = (Observable) new ObservableBuilder(attribute)
+				Observable filter = (Observable) new ObservableBuilder(attribute, scope.getMonitor())
 						.of(Observables.INSTANCE.getBaseObservable(target.getType()))/* .filtering(target) */
 						.withTargetPredicate(targetAttribute).withDistributedInherency(observable.is(Type.COUNTABLE))
 						.buildObservable();
@@ -357,7 +357,7 @@ public class ObservationStrategy {
 	}
 
 	private static boolean hasResolvableInherency(Observable observable, IResolutionScope scope) {
-		// TODO handle ratios
+		// TODO handle ratios, one day types (with classifiers)
 		return observable.is(Type.PRESENCE) || scope.getCoverage().getSpace() != null
 				&& scope.getCoverage().getSpace().getDimensionality() >= 2 && observable.is(Type.DISTANCE)
 				|| observable.is(Type.NUMEROSITY);

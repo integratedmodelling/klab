@@ -278,9 +278,10 @@ public class Resolver {
 			 * the context so it goes back to being just X.
 			 */
 			if (Observables.INSTANCE.getDirectContextType(observable.getType()) != null) {
-				
+
 				/*
-				 * this won't go through the dataflow compiler so we need to take care of units manually
+				 * this won't go through the dataflow compiler so we need to take care of units
+				 * manually
 				 */
 				if (observable.getUnit() == null && Units.INSTANCE.needsUnits(observable)) {
 					observable.setUnit(Units.INSTANCE.getDefaultUnitFor(observable));
@@ -372,7 +373,7 @@ public class Resolver {
 						// resolve again from scratch. No computations or anything.
 						return resolve(strategy.getObservables().get(0), parentScope, mode);
 					}
-					
+
 					try {
 
 						// candidate may switch resolution mode
@@ -514,33 +515,13 @@ public class Resolver {
 			}
 		}
 
-		/*
-		 * if model is a learner with a countable archetype, the dependencies must be
-		 * resolved in the context of the archetype to avoid triggering distributed
-		 * resolution.
-		 */
-		IObservable archetypeContext = null;
-		if (model.isLearning()) {
-			IConcept modelContext = Observables.INSTANCE.getDirectContextType(model.getObservables().get(0).getType());
-			// here we assume that all archetypes are of the same type, as they must
-			if (modelContext != null) {
-				for (IObservable obs : model.getArchetypes()) {
-					if (obs.is(Type.COUNTABLE) && obs.is(modelContext)) {
-						archetypeContext = Observable.promote(modelContext);
-						break;
-					}
-				}
-			}
-		}
-
 		// use the reasoner to infer any missing dependency from the semantics
 		List<ObservationStrategy> strategies = ObservationStrategy.computeDependencies(parentScope.getObservable(),
 				model, ret);
 		for (ObservationStrategy strategy : strategies) {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
 			// should be resolving a CandidateObservable
-			ResolutionScope mscope = resolve(strategy.getObservables().get(0),
-					archetypeContext == null ? ret : ret.getContextualizedScope(archetypeContext), strategy.getMode());
+			ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
 			coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
 			if (coverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "

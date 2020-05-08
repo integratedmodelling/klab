@@ -108,7 +108,7 @@ public interface IObservableService {
 	 * @return
 	 */
 	IConcept getInherency(IConcept concept);
-	
+
 	/**
 	 * <p>
 	 * Get the <em>implicit</em> inherent type - not the direct one (if asked on X
@@ -167,8 +167,8 @@ public interface IObservableService {
 
 	/**
 	 * <p>
-	 * Get the <em>implicit</em> context type - not the direct one (if asked on X
-	 * of Y will return the context type of X, not Y).
+	 * Get the <em>implicit</em> context type - not the direct one (if asked on X of
+	 * Y will return the context type of X, not Y).
 	 * </p>
 	 * 
 	 * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
@@ -347,4 +347,13 @@ public interface IObservableService {
 	 * @return the recontextualized observable
 	 */
 	IObservable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor);
+
+	/**
+	 * Return the original type described by a quality that results from applying a
+	 * unary operator to it.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	IConcept getDescribedType(IConcept concept);
 }

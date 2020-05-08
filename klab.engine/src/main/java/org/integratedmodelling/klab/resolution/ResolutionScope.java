@@ -1176,6 +1176,11 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	public Observable getDeferredObservableFor(Observable observable2) {
 
+		if (!observable2.is(Type.OBSERVABLE)) {
+			// attribute resolvers and the like
+			return null;
+		}
+		
 		if (observable2.equals(this.observable)) {
 			// resolving self
 			return null;

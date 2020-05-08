@@ -419,6 +419,11 @@ public class Observable implements IObservable {
 	}
 
 	@Override
+	public IConcept getDescribedType() {
+		return Observables.INSTANCE.getDescribedType(getType());
+	}
+	
+	@Override
 	public IConcept getCausant() {
 		return Observables.INSTANCE.getCausantType(getType());
 	}

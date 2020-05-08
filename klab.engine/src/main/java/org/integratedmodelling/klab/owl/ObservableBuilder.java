@@ -66,7 +66,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private String name;
 	private IConcept targetPredicate;
 	private boolean mustContextualize = false;
-	
+
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
 	private List<IConcept> removed = new ArrayList<>();
@@ -89,26 +89,23 @@ public class ObservableBuilder implements IObservable.Builder {
 		return new ObservableBuilder((Observable) observable, monitor);
 	}
 
-	public static ObservableBuilder getBuilder(IConcept concept) {
-		return new ObservableBuilder(concept);
+	public static ObservableBuilder getBuilder(IConcept concept, IMonitor monitor) {
+		return new ObservableBuilder(concept, monitor);
 	}
 
-	public ObservableBuilder(Concept main, Ontology ontology) {
+	public ObservableBuilder(Concept main, Ontology ontology, IMonitor monitor) {
 		this.main = main;
 		this.ontology = ontology;
 		this.declaration = Concepts.INSTANCE.getDeclaration(main);
 		this.type = ((Concept) main).type;
+		this.monitor = monitor;
 	}
 
-	public ObservableBuilder(IConcept main) {
+	public ObservableBuilder(IConcept main, IMonitor monitor) {
 		this.main = (Concept) main;
 		this.ontology = (Ontology) main.getOntology();
 		this.declaration = Concepts.INSTANCE.getDeclaration(main);
 		this.type = ((Concept) main).type;
-	}
-
-	public ObservableBuilder(IConcept main, IMonitor monitor) {
-		this(main);
 		this.monitor = monitor;
 	}
 
@@ -467,7 +464,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder without(ObservableRole... roles) {
 
 		KimConcept newDeclaration = this.declaration.removeComponents(roles);
-		ObservableBuilder ret = new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration));
+		ObservableBuilder ret = new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration), monitor);
 
 		/*
 		 * copy the rest
@@ -785,8 +782,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.CHANGES_PROPERTY), concept, ontology);
 
 			/*
-			 * context of the change is the same context as the quality it describes - FIXME this shouldn't be
-			 * needed as the inherency is an alternative place to look for context.
+			 * context of the change is the same context as the quality it describes - FIXME
+			 * this shouldn't be needed as the inherency is an alternative place to look for
+			 * context.
 			 */
 			if (context != null) {
 				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
@@ -1526,7 +1524,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		 * corresponding concept
 		 */
 		String conceptId = this.ontology.getIdForDefinition(declaration.getDefinition());
-		if (conceptId != null) {
+		if (conceptId != null && this.ontology.getConcept(conceptId) != null) {
 			return this.ontology.getConcept(conceptId);
 		}
 
@@ -1924,7 +1922,13 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Observable buildObservable() throws KlabValidationException {
 
-		Observable ret = Observable.promote(buildConcept());
+		IConcept obs = buildConcept();
+
+		if (obs == null) {
+			return null;
+		}
+
+		Observable ret = Observable.promote(obs);
 
 		if (currency != null) {
 			ret.setCurrency((Currency) currency);
@@ -2027,5 +2031,5 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.targetPredicate = targetPredicate;
 		return this;
 	}
-	
+
 }

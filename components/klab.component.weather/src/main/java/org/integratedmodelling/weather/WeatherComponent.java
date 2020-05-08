@@ -127,9 +127,13 @@ public class WeatherComponent {
 		return ret;
 	}
 
-	public static Weather getWeather(ISpace space, ITime time, String source, String... vars) {
+	public static Weather getWeather(ISpace space, ITime time, String source, boolean expand, String... vars) {
 		Collection<WeatherStation> wss = WeatherFactory.INSTANCE.within(space.getShape(), source, vars);
 		return new Weather(wss, time, 10, vars, 75, true);
+	}
+	
+	public static Weather getWeather(ISpace space, ITime time, String source, String... vars) {
+		return getWeather(space, time, source, false, vars);
 	}
 
 }

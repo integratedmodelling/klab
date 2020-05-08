@@ -73,7 +73,7 @@ public enum KimKnowledgeProcessor {
 		if (concept.isMacro()) {
 			return null;
 		}
-		
+
 		Namespace ns = (Namespace) namespace;
 		try {
 
@@ -281,7 +281,7 @@ public enum KimKnowledgeProcessor {
 			}
 			OWL.INSTANCE.restrictSome(main, Concepts.p(NS.CREATES_PROPERTY), quality, namespace.getOntology());
 		}
-		
+
 		for (ApplicableConcept link : concept.getSubjectsLinked()) {
 			if (link.getOriginalObservable() == null && link.getSource() != null) {
 				// relationship source->target
@@ -440,7 +440,7 @@ public enum KimKnowledgeProcessor {
 			return null;
 		}
 
-		Builder builder = new ObservableBuilder(main, ontology).withDeclaration(concept, monitor);
+		Builder builder = new ObservableBuilder(main, ontology, monitor).withDeclaration(concept, monitor);
 
 		if (concept.getDistributedInherent() != null) {
 			builder.withDistributedInherency(true);

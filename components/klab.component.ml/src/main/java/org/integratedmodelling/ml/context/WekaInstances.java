@@ -757,6 +757,17 @@ public class WekaInstances {
 
 		for (ObservationGroup archetype : archetypes) {
 
+			/*
+			 * remove the inherency to check for the predicted state in case we are training
+			 * "within" this particular object type.
+			 */
+			IObservable archetypeObservable = predictedObservable;
+			IConcept inherency = Observables.INSTANCE.getDirectInherentType(predictedObservable.getType());
+			if (inherency != null && archetype.getObservable().is(inherency)) {
+				archetypeObservable = archetypeObservable.getBuilder(context.getMonitor())
+						.without(ObservableRole.INHERENT).buildObservable();
+			}
+
 			for (IArtifact object : archetype) {
 
 				// this is for reporting what's missing - bit of a pain
@@ -773,7 +784,7 @@ public class WekaInstances {
 
 					for (IState state : ((IDirectObservation) object).getStates()) {
 
-						if (state.getObservable().equals(predictedObservable)) {
+						if (state.getObservable().equals(archetypeObservable)) {
 							stateIndex.put(predictedObservable.getName(), 0);
 							missing.remove(predictedObservable.getName());
 						} else {
@@ -806,7 +817,7 @@ public class WekaInstances {
 					/*
 					 * find the known name for this state
 					 */
-					String name = getObservableName(state);
+					String name = getObservableName(state, archetypeObservable);
 
 					if (name != null) {
 						Object o = state.aggregate(((IObservation) object).getScale(),
@@ -905,9 +916,10 @@ public class WekaInstances {
 	 * @param state
 	 * @return
 	 */
-	private String getObservableName(IState state) {
+	private String getObservableName(IState state, IObservable archetypeObservable) {
 
-		if (state.getObservable().equals(predictedObservable)) {
+		if (state.getObservable().equals(predictedObservable)
+				|| (archetypeObservable != null && state.getObservable().equals(archetypeObservable))) {
 			return predictedObservable.getName();
 		}
 		for (IObservable observable : getPredictorObservables()) {

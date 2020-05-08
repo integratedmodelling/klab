@@ -132,6 +132,14 @@ public enum Observables implements IObservableService {
 				Concepts.p(NS.IS_COMPARED_TO_PROPERTY));
 		return cls.isEmpty() ? null : cls.iterator().next();
 	}
+	
+
+	@Override
+	public @Nullable IConcept getDescribedType(IConcept concept) {
+		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+				Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY));
+		return cls.isEmpty() ? null : cls.iterator().next();
+	}
 
 	@Override
 	public @Nullable IConcept getCompresentType(IConcept concept) {

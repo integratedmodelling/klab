@@ -188,6 +188,17 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#describesObservable -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#describesObservable">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quality"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <rdfs:comment>The specific inherency that describes the reinterpretation of an observable to make a descriptive quality from an observable aspect of it. Used to point to the original observables in reinterpreting operators such as distance, presence, count, change or type.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#describesQuality -->
 
     <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#describesQuality"/>

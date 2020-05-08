@@ -431,6 +431,14 @@ public interface IObservable extends ISemantic, IResolvable {
 	IConcept getPurpose();
 
 	/**
+	 * The original type for a quality resulting from the application of a unary
+	 * operator.
+	 * 
+	 * @return
+	 */
+	IConcept getDescribedType();
+
+	/**
 	 * If the observable was defined with an inline value (e.g. '10 as Concept'),
 	 * report the POD value here.
 	 *
