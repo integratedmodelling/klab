@@ -1186,7 +1186,7 @@ public class ResolutionScope implements IResolutionScope {
 			return null;
 		}
 
-		IConcept context = observable2.getContext();
+		IConcept context = Observables.INSTANCE.getContextType(observable2.getType());
 
 		if (!isDeferred() && context != null && getContextObservable() != null
 				&& !getContextObservable().getType().is(context)) {

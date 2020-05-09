@@ -398,45 +398,45 @@ public class Observable implements IObservable {
 		return this.resolvedModel;
 	}
 
-	@Override
-	public IConcept getContext() {
-		return Observables.INSTANCE.getContextType(getType());
-	}
-
-	@Override
-	public IConcept getInherentType() {
-		return Observables.INSTANCE.getInherentType(getType());
-	}
-
-	@Override
-	public IConcept getComparisonType() {
-		return Observables.INSTANCE.getComparisonType(getType());
-	}
-
-	@Override
-	public IConcept getCaused() {
-		return Observables.INSTANCE.getCausedType(getType());
-	}
-
-	@Override
-	public IConcept getDescribedType() {
-		return Observables.INSTANCE.getDescribedType(getType());
-	}
-	
-	@Override
-	public IConcept getCausant() {
-		return Observables.INSTANCE.getCausantType(getType());
-	}
-
-	@Override
-	public IConcept getCompresent() {
-		return Observables.INSTANCE.getCompresentType(getType());
-	}
-
-	@Override
-	public IConcept getPurpose() {
-		return Observables.INSTANCE.getGoalType(getType());
-	}
+//	@Override
+//	public IConcept getContext() {
+//		return Observables.INSTANCE.getContextType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getInherentType() {
+//		return Observables.INSTANCE.getInherentType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getComparisonType() {
+//		return Observables.INSTANCE.getComparisonType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getCaused() {
+//		return Observables.INSTANCE.getCausedType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getDescribedType() {
+//		return Observables.INSTANCE.getDescribedType(getType());
+//	}
+//	
+//	@Override
+//	public IConcept getCausant() {
+//		return Observables.INSTANCE.getCausantType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getCompresent() {
+//		return Observables.INSTANCE.getCompresentType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getPurpose() {
+//		return Observables.INSTANCE.getGoalType(getType());
+//	}
 
 	@Override
 	public IArtifact.Type getArtifactType() {

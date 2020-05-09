@@ -49,7 +49,7 @@ public class Contextualize implements ICommand {
 		IObservable observable = Observables.INSTANCE.contextualizeTo(Observable.promote(concepts.get(0)),
 				concepts.get(1), true, session.getMonitor());
 
-		return observable + "\n" + ShowInfo.describe(observable.getType());
+		return observable + "\n" + Observables.INSTANCE.describe(observable.getType());
 	}
 
 }

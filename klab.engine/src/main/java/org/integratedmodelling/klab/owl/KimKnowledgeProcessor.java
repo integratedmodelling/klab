@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimConceptStatement.ApplicableConcept;
@@ -43,7 +43,8 @@ import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal
- * OWL-based knowledge.
+ * OWL-based knowledge. The actual semantic work is done by
+ * {@link ObservableBuilder}.
  * 
  * @author Ferd
  *

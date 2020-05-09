@@ -611,12 +611,15 @@ public enum Units implements IUnitService {
 			 * for the numerosity 'of', but this makes it impossible to have "numerosity of
 			 * X of Y" - which is a limitation of the language but also a stumbling block
 			 * for fully general statements.
+			 * 
+			 * FIXME re-evaluate the above after switching from inherency to the
+			 * describedType in qualities with operators.
 			 */
 			if (checkMetadata && !observable.is(Type.NUMEROSITY) && !observable.is(Type.INTENSIVE_PROPERTY)) {
 				Boolean rescalesInherent = observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT,
 						Boolean.class);
 				if (rescalesInherent == null) {
-					if (Observables.INSTANCE.getDirectInherentType(observable.getType()) != null) {
+					if (Observables.INSTANCE.getDescribedType(observable.getType()) != null) {
 						rescalesInherent = true;
 					} else {
 						rescalesInherent = false;
@@ -645,10 +648,9 @@ public enum Units implements IUnitService {
 	 * If the constraints are null, the chosen unit is the one that is distributed
 	 * over all the extents in the geometry.
 	 * 
-	 * @param geometry
-	 *            a scale or geometry to contextualize to
-	 * @param constraints
-	 *            a map of requested constraints on the chosen unit (may be null)
+	 * @param geometry    a scale or geometry to contextualize to
+	 * @param constraints a map of requested constraints on the chosen unit (may be
+	 *                    null)
 	 * @return
 	 */
 	public UnitContextualization getContextualization(IObservable observable, IGeometry geometry,
@@ -662,10 +664,10 @@ public enum Units implements IUnitService {
 
 		return getContextualization(unit, geometry, constraints);
 	}
-	
+
 	public UnitContextualization getContextualization(IUnit baseUnit, IGeometry geometry,
 			Map<ExtentDimension, ExtentDistribution> constraints) {
-		
+
 		/*
 		 * produce all possible base units: gather the extents in the geometry
 		 */

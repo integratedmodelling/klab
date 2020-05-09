@@ -303,7 +303,7 @@ public class Model extends KimObject implements IModel {
 					 * either as an input or as an output.
 					 */
 					if (this.observables.get(0) != null && this.observables.get(0).is(Type.CHANGE)) {
-						IConcept inherent = this.observables.get(0).getInherentType();
+						IConcept inherent = Observables.INSTANCE.getDescribedType(this.observables.get(0).getType());
 						if (inherent != null && findOutput(inherent) == null && findOutput(inherent) == null) {
 							observables.add(Observable.promote(inherent));
 						}
@@ -417,7 +417,7 @@ public class Model extends KimObject implements IModel {
 		}
 
 		if (getMainObservable() != null && getMainObservable().is(Type.CHANGE)) {
-			IObservable iho = Observable.promote(Observables.INSTANCE.getInherentType(getMainObservable().getType()));
+			IObservable iho = Observable.promote(Observables.INSTANCE.getDescribedType(getMainObservable().getType()));
 			if (targetId.equals(iho.getName())) {
 				return true;
 			}

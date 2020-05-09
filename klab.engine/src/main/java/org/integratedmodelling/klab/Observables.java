@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -547,64 +548,72 @@ public enum Observables implements IObservableService {
 				ontology);
 	}
 
-	/**
-	 * Copy all the observation logical context (inherent, context, caused, ...
-	 * including traits and roles) from a concept to another. Assumes that the
-	 * target concept has none of these.
-	 * 
-	 * @param type
-	 * @param target
-	 */
-	public void copyContext(IConcept type, IConcept target, Ontology ontology) {
-
-		IConcept inherent = getInherentType(type);
-		IConcept context = getContextType(type);
-		IConcept goal = getGoalType(type);
-		IConcept causant = getCausantType(type);
-		IConcept caused = getCausedType(type);
-		IConcept compresent = getCompresentType(type);
-
-		if (inherent != null) {
-			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent, ontology);
-		}
-		if (context != null) {
-			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
-		}
-		if (caused != null) {
-			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused, ontology);
-		}
-		if (causant != null) {
-			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant, ontology);
-		}
-		if (compresent != null) {
-			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent, ontology);
-		}
-		if (goal != null) {
-			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal, ontology);
-		}
-
-		Collection<IConcept> identities = Traits.INSTANCE.getIdentities(type);
-		Collection<IConcept> realms = Traits.INSTANCE.getRealms(type);
-		Collection<IConcept> attributes = Traits.INSTANCE.getAttributes(type);
-		Collection<IConcept> acceptedRoles = Roles.INSTANCE.getRoles(type);
-
-		if (identities.size() > 0) {
-			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities,
-					ontology);
-		}
-		if (realms.size() > 0) {
-			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms,
-					ontology);
-		}
-		if (attributes.size() > 0) {
-			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes,
-					ontology);
-		}
-		if (acceptedRoles.size() > 0) {
-			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles,
-					ontology);
-		}
-	}
+//	/**
+//	 * Copy all the observation logical context (inherent, context, caused, ...
+//	 * including traits and roles) from a concept to another. Assumes that the
+//	 * target concept has none of these.
+//	 * 
+//	 * @param type
+//	 * @param target
+//	 */
+//	public void copyContext(IConcept type, IConcept target, Ontology ontology) {
+//
+//		IConcept inherent = getInherentType(type);
+//		IConcept context = getContextType(type);
+//		IConcept goal = getGoalType(type);
+//		IConcept causant = getCausantType(type);
+//		IConcept caused = getCausedType(type);
+//		IConcept compresent = getCompresentType(type);
+//		IConcept adjacent = getAdjacentType(type);
+//		IConcept described = getDescribedType(type);
+//
+//		if (inherent != null) {
+//			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent, ontology);
+//		}
+//		if (context != null) {
+//			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
+//		}
+//		if (caused != null) {
+//			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused, ontology);
+//		}
+//		if (causant != null) {
+//			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant, ontology);
+//		}
+//		if (compresent != null) {
+//			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent, ontology);
+//		}
+//		if (goal != null) {
+//			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal, ontology);
+//		}
+//		if (adjacent != null) {
+//			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_ADJACENT_TO_PROPERTY), adjacent, ontology);
+//		}
+//		if (described != null) {
+//			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), described, ontology);
+//		}
+//		
+//		Collection<IConcept> identities = Traits.INSTANCE.getIdentities(type);
+//		Collection<IConcept> realms = Traits.INSTANCE.getRealms(type);
+//		Collection<IConcept> attributes = Traits.INSTANCE.getAttributes(type);
+//		Collection<IConcept> acceptedRoles = Roles.INSTANCE.getRoles(type);
+//
+//		if (identities.size() > 0) {
+//			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities,
+//					ontology);
+//		}
+//		if (realms.size() > 0) {
+//			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms,
+//					ontology);
+//		}
+//		if (attributes.size() > 0) {
+//			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes,
+//					ontology);
+//		}
+//		if (acceptedRoles.size() > 0) {
+//			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles,
+//					ontology);
+//		}
+//	}
 
 	/**
 	 * Register any configuration directly or through inherency.
@@ -734,7 +743,7 @@ public enum Observables implements IObservableService {
 	public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit,
 			IMonitor monitor) {
 
-		IConcept originalContext = observable.getContext();
+		IConcept originalContext = getContextType(observable.getType());
 		if (originalContext != null && originalContext.equals(newContext)) {
 			return (Observable) observable;
 		}
@@ -810,6 +819,73 @@ public enum Observables implements IObservableService {
 			return ret;
 		}
 		return getInherentType(concept);
+	}
+
+	public String describe(IConcept concept) {
+
+		IConcept described = Observables.INSTANCE.getDescribedType(concept);
+		
+		String ret = "";
+		ret += "Core observable: " + Observables.INSTANCE.getCoreObservable(concept).getDefinition() + "\n";
+		ret += "Definition:    " + concept.getDefinition() + " [" + concept + "]\n";
+		ret += Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray()) + "\n";
+		if (described != null) {
+			ret += "Describes:    " + described.getDefinition() + "\n";
+		}
+		ret += "        Context type: " + decl(Observables.INSTANCE.getContextType(concept.getType())) + " [direct: "
+				+ decl(Observables.INSTANCE.getDirectContextType(concept.getType())) + "]\n";
+		ret += "       Inherent type: " + decl(Observables.INSTANCE.getInherentType(concept.getType())) + " [direct: "
+				+ decl(Observables.INSTANCE.getDirectInherentType(concept.getType())) + "]\n";
+		ret += "        Causant type: " + decl(Observables.INSTANCE.getCausantType(concept.getType())) + " [direct: "
+				+ decl(Observables.INSTANCE.getDirectCausantType(concept.getType())) + "]\n";
+		ret += "         Caused type: " + decl(Observables.INSTANCE.getCausedType(concept.getType())) + " [direct: "
+				+ decl(Observables.INSTANCE.getDirectCausedType(concept.getType())) + "]\n";
+		ret += "           Goal type: " + decl(Observables.INSTANCE.getGoalType(concept.getType())) + " [direct: "
+				+ decl(Observables.INSTANCE.getDirectGoalType(concept.getType())) + "]\n";
+		ret += "       Adjacent type: " + decl(Observables.INSTANCE.getAdjacentType(concept.getType())) + " [direct: "
+				+ decl(Observables.INSTANCE.getDirectAdjacentType(concept.getType())) + "]\n";
+		ret += "     Compresent type: " + decl(Observables.INSTANCE.getCompresentType(concept.getType())) + " [direct: "
+				+ decl(Observables.INSTANCE.getDirectCompresentType(concept.getType())) + "]\n";
+		ret += "   Co-occurrent type: " + decl(Observables.INSTANCE.getCooccurrentType(concept.getType()))
+				+ " [direct: " + decl(Observables.INSTANCE.getDirectCooccurrentType(concept.getType())) + "]\n";
+
+		Collection<IConcept> allTraits = Traits.INSTANCE.getTraits(concept.getType());
+		Collection<IConcept> dirTraits = Traits.INSTANCE.getDirectTraits(concept.getType());
+		if (!allTraits.isEmpty()) {
+			ret += "Traits:\n";
+			for (IConcept trait : allTraits) {
+				ret += "    " + trait.getDefinition() + (dirTraits.contains(trait) ? " [direct]" : " [indirect]") + " "
+						+ ((Concept) trait).getTypeSet() + "\n";
+			}
+		}
+
+		Collection<IConcept> allRoles = Roles.INSTANCE.getRoles(concept.getType());
+		Collection<IConcept> dirRoles = Roles.INSTANCE.getDirectRoles(concept.getType());
+		if (!allRoles.isEmpty()) {
+			ret += "Roles:\n";
+			for (IConcept trait : allRoles) {
+				ret += "    " + trait.getDefinition() + (dirRoles.contains(trait) ? " [direct]" : " [indirect]") + "\n";
+			}
+		}
+
+		Collection<IConcept> affected = Observables.INSTANCE.getAffectedQualities(concept.getType());
+		if (!affected.isEmpty()) {
+			ret += "Affects:\n";
+			for (IConcept quality : affected) {
+				ret += "    " + quality.getDefinition() + "\n";
+			}
+		}
+
+		ret += "Metadata:\n";
+		for (String key : concept.getMetadata().keySet()) {
+			ret += "   " + key + ": " + concept.getMetadata().get(key) + "\n";
+		}
+
+		return ret;
+	}
+
+	private String decl(IConcept concept) {
+		return concept == null ? "NONE" : concept.getDefinition();
 	}
 
 }
