@@ -659,10 +659,9 @@ public class Concept extends Knowledge implements IConcept {
 
 		int distance = 0;
 
-		String resolving = this.getDefinition();
-		String resolved = concept.getDefinition();
-
-		System.out.println("Does " + resolving + " resolve " + resolved + "?");
+//		String resolving = this.getDefinition();
+//		String resolved = concept.getDefinition();
+//		System.out.println("Does " + resolving + " resolve " + resolved + "?");
 
 		if (this == concept || this.equals(concept)) {
 			return distance;

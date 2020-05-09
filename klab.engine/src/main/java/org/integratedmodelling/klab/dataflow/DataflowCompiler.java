@@ -560,7 +560,8 @@ public class DataflowCompiler {
 			Model model = theModel.model;
 			ret.setModel(model);
 
-			if (!generated.contains(theModel)) {
+			// filters are regenerated every time as their computation needs to be added
+			if (!generated.contains(theModel) || ret.isFilter()) {
 
 				generated.add(theModel);
 				for (IContextualizable resource : getModelComputation(model, ret.getType(), true)) {
@@ -878,20 +879,11 @@ public class DataflowCompiler {
 			if (source instanceof IObservable) {
 
 				if (d.deferred) {
-
-					// if the distribution context is explicit (direct), remove it as we
-					// will be observing the observable within the context.
-					Observable deferred = ((Observable) source);
-//					if (Observables.INSTANCE.getDirectContextType(deferred.getType()) != null) {
-//						deferred = (Observable) deferred.getBuilder(monitor).without(ObservableRole.CONTEXT)
-//								.buildObservable();
-//					}
-
 					/*
 					 * Add the additional resolution step to the node, to be merged into the
 					 * actuator.
 					 */
-					ret.deferredObservables.add(deferred);
+					ret.deferredObservables.add((Observable) source);
 
 				} else {
 

@@ -329,7 +329,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			}
 		}
 
-		if (added) {
+		if (added && isPrimary()) {
 			/*
 			 * send dataflow after execution is finished. TODO add style elements or flags
 			 * to make sure it's shown statically.
