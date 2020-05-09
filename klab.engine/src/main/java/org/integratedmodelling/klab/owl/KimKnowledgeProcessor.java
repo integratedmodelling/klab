@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimConceptStatement.ApplicableConcept;
@@ -43,7 +43,8 @@ import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal
- * OWL-based knowledge.
+ * OWL-based knowledge. The actual semantic work is done by
+ * {@link ObservableBuilder}.
  * 
  * @author Ferd
  *
@@ -73,7 +74,7 @@ public enum KimKnowledgeProcessor {
 		if (concept.isMacro()) {
 			return null;
 		}
-		
+
 		Namespace ns = (Namespace) namespace;
 		try {
 
@@ -281,7 +282,7 @@ public enum KimKnowledgeProcessor {
 			}
 			OWL.INSTANCE.restrictSome(main, Concepts.p(NS.CREATES_PROPERTY), quality, namespace.getOntology());
 		}
-		
+
 		for (ApplicableConcept link : concept.getSubjectsLinked()) {
 			if (link.getOriginalObservable() == null && link.getSource() != null) {
 				// relationship source->target
@@ -440,7 +441,7 @@ public enum KimKnowledgeProcessor {
 			return null;
 		}
 
-		Builder builder = new ObservableBuilder(main, ontology).withDeclaration(concept, monitor);
+		Builder builder = new ObservableBuilder(main, ontology, monitor).withDeclaration(concept, monitor);
 
 		if (concept.getDistributedInherent() != null) {
 			builder.withDistributedInherency(true);

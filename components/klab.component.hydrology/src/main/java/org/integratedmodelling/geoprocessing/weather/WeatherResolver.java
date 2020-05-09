@@ -73,7 +73,7 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 			 */
 			IScale wscale = Scale.create(Time.create(resolutionScale.getTime().getStart(),
 					resolutionScale.getTime().getEnd(), context.getScale().getTime().getResolution()),
-					resolutionScale.getSpace());
+					resolutionScale.getSpace().getBoundingExtent());
 
 			String urn = "klab:weather:stations:" + source;
 			String fragment = "";
@@ -89,7 +89,7 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 					states.add(new Pair<>(variable, state));
 				}
 			}
-			urn += "#" + fragment;
+			urn += "#" + fragment + "&expand=true";
 
 			this.weatherStations = Resources.INSTANCE.getResourceData(urn, wscale, context.getMonitor()).getArtifact();
 

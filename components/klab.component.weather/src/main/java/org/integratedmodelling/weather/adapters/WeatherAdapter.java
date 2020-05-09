@@ -104,10 +104,15 @@ public class WeatherAdapter implements IUrnAdapter {
 
 	private void getStations(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 
+		boolean expand = false;
+		if (urn.getParameters().containsKey("expand")) {
+			expand = Boolean.parseBoolean(urn.getParameters().get("expand").toString());
+		}
+
 		Scale scale = Scale.create(geometry);
 		String[] originalVariables = urn.getSplitParameter(Urn.SINGLE_PARAMETER_KEY);
 		String[] variables = WeatherComponent.normalizeVariableNames(originalVariables);
-		Weather weather = WeatherComponent.getWeather(scale.getSpace(), scale.getTime(), "ALL", variables);
+		Weather weather = WeatherComponent.getWeather(scale.getSpace(), scale.getTime(), "ALL", expand, variables);
 
 		for (Map<String, Object> sd : weather.getStationData()) {
 
@@ -240,7 +245,7 @@ public class WeatherAdapter implements IUrnAdapter {
 		ref.setGeometry(getGeometry(kurn).encode());
 		ref.setVersion(Version.CURRENT);
 		ref.setType(getType(kurn));
-		
+
 		return new Resource(ref);
 	}
 

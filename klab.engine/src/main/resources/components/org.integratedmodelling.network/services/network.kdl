@@ -31,7 +31,7 @@ export object connect
 	optional enum space
 		"Type of spatial link to create if the vertices are spatial and distinct.
 	     Possible values are None, Line, LineCentroid, LineEdge, ConvexHull. Default is ConvexHull
-	     if the source and target are polygonal, Line if they are points, and None if they are 
+	     if the source and target are polygonal, Line if at least one is a point, and None if they are 
 	     non-spatial."
 	     values None, Line, LineCentroid, LineEdge, ConvexHull
 	     

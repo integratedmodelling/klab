@@ -55,7 +55,7 @@ public class ShowInfo implements ICommand {
 			}
 
 			for (IConcept c : concept.getOperands()) {
-				ret += (ret.isEmpty() ? "" : (concept.is(Type.UNION) ? "\n  OR\n" : "\n  AND\n")) + describe(c);
+				ret += (ret.isEmpty() ? "" : (concept.is(Type.UNION) ? "\n  OR\n" : "\n  AND\n")) + Observables.INSTANCE.describe(c);
 			}
 
 			if (observable != null) {
@@ -87,66 +87,5 @@ public class ShowInfo implements ICommand {
 		return ret;
 	}
 
-	public static String describe(IConcept concept) {
-
-		String ret = "";
-		ret += "Core observable: " + Observables.INSTANCE.getCoreObservable(concept).getDefinition() + "\n";
-		ret += "Definition:    " + concept.getDefinition() + " [" + concept + "]\n";
-		ret += Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray()) + "\n";
-		ret += "        Context type: " + decl(Observables.INSTANCE.getContextType(concept.getType())) + " [direct: "
-				+ decl(Observables.INSTANCE.getDirectContextType(concept.getType())) + "]\n";
-		ret += "       Inherent type: " + decl(Observables.INSTANCE.getInherentType(concept.getType())) + " [direct: "
-				+ decl(Observables.INSTANCE.getDirectInherentType(concept.getType())) + "]\n";
-		ret += "        Causant type: " + decl(Observables.INSTANCE.getCausantType(concept.getType())) + " [direct: "
-				+ decl(Observables.INSTANCE.getDirectCausantType(concept.getType())) + "]\n";
-		ret += "         Caused type: " + decl(Observables.INSTANCE.getCausedType(concept.getType())) + " [direct: "
-				+ decl(Observables.INSTANCE.getDirectCausedType(concept.getType())) + "]\n";
-		ret += "           Goal type: " + decl(Observables.INSTANCE.getGoalType(concept.getType())) + " [direct: "
-				+ decl(Observables.INSTANCE.getDirectGoalType(concept.getType())) + "]\n";
-		ret += "       Adjacent type: " + decl(Observables.INSTANCE.getAdjacentType(concept.getType())) + " [direct: "
-				+ decl(Observables.INSTANCE.getDirectAdjacentType(concept.getType())) + "]\n";
-		ret += "     Compresent type: " + decl(Observables.INSTANCE.getCompresentType(concept.getType())) + " [direct: "
-				+ decl(Observables.INSTANCE.getDirectCompresentType(concept.getType())) + "]\n";
-		ret += "   Co-occurrent type: " + decl(Observables.INSTANCE.getCooccurrentType(concept.getType()))
-				+ " [direct: " + decl(Observables.INSTANCE.getDirectCooccurrentType(concept.getType())) + "]\n";
-
-		Collection<IConcept> allTraits = Traits.INSTANCE.getTraits(concept.getType());
-		Collection<IConcept> dirTraits = Traits.INSTANCE.getDirectTraits(concept.getType());
-		if (!allTraits.isEmpty()) {
-			ret += "Traits:\n";
-			for (IConcept trait : allTraits) {
-				ret += "    " + trait.getDefinition() + (dirTraits.contains(trait) ? " [direct]" : " [indirect]") + " "
-						+ ((Concept) trait).getTypeSet() + "\n";
-			}
-		}
-
-		Collection<IConcept> allRoles = Roles.INSTANCE.getRoles(concept.getType());
-		Collection<IConcept> dirRoles = Roles.INSTANCE.getDirectRoles(concept.getType());
-		if (!allRoles.isEmpty()) {
-			ret += "Roles:\n";
-			for (IConcept trait : allRoles) {
-				ret += "    " + trait.getDefinition() + (dirRoles.contains(trait) ? " [direct]" : " [indirect]") + "\n";
-			}
-		}
-
-		Collection<IConcept> affected = Observables.INSTANCE.getAffectedQualities(concept.getType());
-		if (!affected.isEmpty()) {
-			ret += "Affects:\n";
-			for (IConcept quality : affected) {
-				ret += "    " + quality.getDefinition() + "\n";
-			}
-		}
-
-		ret += "Metadata:\n";
-		for (String key : concept.getMetadata().keySet()) {
-			ret += "   " + key + ": " + concept.getMetadata().get(key) + "\n";
-		}
-
-		return ret;
-	}
-
-	static String decl(IConcept concept) {
-		return concept == null ? "NONE" : concept.getDefinition();
-	}
 
 }

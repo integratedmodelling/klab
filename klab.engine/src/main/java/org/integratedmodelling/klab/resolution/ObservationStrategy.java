@@ -124,7 +124,7 @@ public class ObservationStrategy {
 		 * dependency for it, add it.
 		 */
 		if (observable.getDescription() == IActivity.Description.CLASSIFICATION) {
-			IConcept dep = observable.getInherentType();
+			IConcept dep = Observables.INSTANCE.getDescribedType(observable.getType());
 			if (((Model) model).findDependency(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep),
 						observable.getDescription().getResolutionMode()));
@@ -137,7 +137,7 @@ public class ObservationStrategy {
 		 * have to be explicit, and the model should have the quality as an output.
 		 */
 		if (observable.is(Type.CHANGE) && !model.isResolved()) {
-			IConcept dep = observable.getInherentType();
+			IConcept dep = Observables.INSTANCE.getDescribedType(observable.getType());
 			if (((Model) model).findDependency(dep) == null && ((Model) model).findOutput(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep), Mode.RESOLUTION));
 			}
@@ -280,7 +280,7 @@ public class ObservationStrategy {
 
 			if (attribute != null) {
 
-				Observable filter = (Observable) new ObservableBuilder(attribute)
+				Observable filter = (Observable) new ObservableBuilder(attribute, scope.getMonitor())
 						.of(Observables.INSTANCE.getBaseObservable(target.getType()))/* .filtering(target) */
 						.withTargetPredicate(targetAttribute).withDistributedInherency(observable.is(Type.COUNTABLE))
 						.buildObservable();
@@ -305,7 +305,7 @@ public class ObservationStrategy {
 
 			if (observable.is(Type.PRESENCE)) {
 
-				inherent = Observables.INSTANCE.getInherentType(observable.getType());
+				inherent = Observables.INSTANCE.getDescribedType(observable.getType());
 				if (inherent != null && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
 					computations.addAll(Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
 							Mode.RESOLUTION, observable));
@@ -315,7 +315,7 @@ public class ObservationStrategy {
 			} else if (scope.getCoverage().getSpace() != null && scope.getCoverage().getSpace().getDimensionality() >= 2
 					&& observable.is(Type.DISTANCE) || observable.is(Type.NUMEROSITY)) {
 
-				inherent = Observables.INSTANCE.getInherentType(observable.getType());
+				inherent = Observables.INSTANCE.getDescribedType(observable.getType());
 				if (inherent != null && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
 					computations.addAll(Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
 							Mode.RESOLUTION, observable));
@@ -357,7 +357,7 @@ public class ObservationStrategy {
 	}
 
 	private static boolean hasResolvableInherency(Observable observable, IResolutionScope scope) {
-		// TODO handle ratios
+		// TODO handle ratios, one day types (with classifiers)
 		return observable.is(Type.PRESENCE) || scope.getCoverage().getSpace() != null
 				&& scope.getCoverage().getSpace().getDimensionality() >= 2 && observable.is(Type.DISTANCE)
 				|| observable.is(Type.NUMEROSITY);

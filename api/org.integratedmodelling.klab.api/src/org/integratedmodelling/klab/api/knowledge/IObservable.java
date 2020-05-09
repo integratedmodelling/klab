@@ -380,55 +380,63 @@ public interface IObservable extends ISemantic, IResolvable {
 	 */
 	ICurrency getCurrency();
 
-	/**
-	 * The context type.
-	 * 
-	 * @return the context type
-	 */
-	IConcept getContext();
-
-	/**
-	 * The inherent type.
-	 * 
-	 * @return the inherent type
-	 */
-	IConcept getInherentType();
-
-	/**
-	 * The comparison type, if any, for observables that admit it - values,
-	 * proportions and ratios. This is only certainly not null for ratios.
-	 * 
-	 * @return the inherent type
-	 */
-	IConcept getComparisonType();
-
-	/**
-	 * The caused ('causing') type.
-	 * 
-	 * @return the caused type
-	 */
-	IConcept getCaused();
-
-	/**
-	 * The causant ('caused by') type
-	 * 
-	 * @return the caused type
-	 */
-	IConcept getCausant();
-
-	/**
-	 * The compresent ('with') type
-	 * 
-	 * @return the compresent type
-	 */
-	IConcept getCompresent();
-
-	/**
-	 * The purpose ('for') type
-	 * 
-	 * @return the purpose type
-	 */
-	IConcept getPurpose();
+//	/**
+//	 * The context type.
+//	 * 
+//	 * @return the context type
+//	 */
+//	IConcept getContext();
+//
+//	/**
+//	 * The inherent type.
+//	 * 
+//	 * @return the inherent type
+//	 */
+//	IConcept getInherentType();
+//
+//	/**
+//	 * The comparison type, if any, for observables that admit it - values,
+//	 * proportions and ratios. This is only certainly not null for ratios.
+//	 * 
+//	 * @return the inherent type
+//	 */
+//	IConcept getComparisonType();
+//
+//	/**
+//	 * The caused ('causing') type.
+//	 * 
+//	 * @return the caused type
+//	 */
+//	IConcept getCaused();
+//
+//	/**
+//	 * The causant ('caused by') type
+//	 * 
+//	 * @return the caused type
+//	 */
+//	IConcept getCausant();
+//
+//	/**
+//	 * The compresent ('with') type
+//	 * 
+//	 * @return the compresent type
+//	 */
+//	IConcept getCompresent();
+//
+//	/**
+//	 * The purpose ('for') type
+//	 * 
+//	 * @return the purpose type
+//	 */
+//	IConcept getPurpose();
+//
+//	/**
+//	 * The original type for a quality resulting from the application of a unary
+//	 * operator.
+//	 * 
+//	 * @return
+//	 */
+//	IConcept getDescribedType();
 
 	/**
 	 * If the observable was defined with an inline value (e.g. '10 as Concept'),

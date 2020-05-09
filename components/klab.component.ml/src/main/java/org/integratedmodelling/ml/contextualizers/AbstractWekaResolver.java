@@ -99,7 +99,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		for (int i = 1; i < context.getModel().getObservables().size(); i++) {
 			IObservable obs = context.getModel().getObservables().get(i);
 			if (obs.getType().is(Type.UNCERTAINTY)
-					&& ret.getObservable().getType().is(Observables.INSTANCE.getInherentType(obs.getType()))) {
+					&& ret.getObservable().getType().is(Observables.INSTANCE.getDescribedType(obs.getType()))) {
 				uncertainty = context.getArtifact(obs.getName(), IState.class);
 			}
 		}

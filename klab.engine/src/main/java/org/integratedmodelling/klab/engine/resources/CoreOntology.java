@@ -33,7 +33,7 @@ public class CoreOntology extends AbstractWorkspace {
 	private boolean synced = false;
 	private Map<Type, Concept> worldviewCoreConcepts = Collections.synchronizedMap(new HashMap<>());
 	private static Map<Type, String> coreConceptIds = Collections.synchronizedMap(new HashMap<>());
-	
+
 	public static final String CORE_ONTOLOGY_NAME = "observation";
 
 	static {
@@ -115,6 +115,7 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String HAS_SUBJECTIVE_TRAIT_PROPERTY = "observation:hasSubjectiveTrait";
 		public static final String IS_SUBJECTIVE = "observation:isSubjectiveTrait";
 		public static final String IS_INHERENT_TO_PROPERTY = "observation:isInherentTo";
+		public static final String DESCRIBES_OBSERVABLE_PROPERTY = "observation:describesObservable";
 		public static final String IS_COMPARED_TO_PROPERTY = "observation:isComparedTo";
 		public static final String HAS_ROLE_PROPERTY = "observation:hasRole";
 		public static final String INCARNATES_TRAIT_PROPERTY = "observation:exposesTrait";
@@ -517,7 +518,7 @@ public class CoreOntology extends AbstractWorkspace {
 			ret = Type.PRESENCE;
 		} else if (type.contains(Type.EXTENT)) {
 			ret = Type.EXTENT;
-		} 
+		}
 		// THESE COME AFTER ALL THE POSSIBLE SUBCLASSES
 		else if (type.contains(Type.EXTENSIVE_PROPERTY)) {
 			ret = Type.EXTENSIVE_PROPERTY;

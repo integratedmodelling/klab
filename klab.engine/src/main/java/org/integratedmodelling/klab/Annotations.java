@@ -304,6 +304,15 @@ public enum Annotations implements IAnnotationService {
 		return false;
 	}
 
+	public boolean hasAnnotation(IKimStatement object, String s) {
+		for (IKimAnnotation annotation : object.getAnnotations()) {
+			if (annotation.getName().equals(s)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public IAnnotation getAnnotation(IKimObject object, String s) {
 		for (IAnnotation annotation : object.getAnnotations()) {
 			if (annotation.getName().equals(s)) {

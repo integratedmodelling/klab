@@ -603,7 +603,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					"RuntimeContext: cannot attribute predicate " + predicate + ": must be a concrete trait or role");
 		}
 
-		IObservable observable = new ObservableBuilder(predicate).of(target.getObservable().getType())
+		IObservable observable = new ObservableBuilder(predicate, monitor).of(target.getObservable().getType())
 				.buildObservable();
 
 		/*

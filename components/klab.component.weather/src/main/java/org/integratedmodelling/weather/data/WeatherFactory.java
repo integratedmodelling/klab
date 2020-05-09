@@ -82,11 +82,10 @@ public enum WeatherFactory {
 	public static String[] ghcnd_archive_urls = new String[] {
 			"https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd_all.tar.gz" };
 
-	public static String[] cru_archive_urls = new String[] {
-			"http://www.integratedmodelling.org/downloads/crugz.zip" };
+	public static String[] cru_archive_urls = new String[] { "http://www.integratedmodelling.org/downloads/crugz.zip" };
 
 	public static String[] GHCN_URLS = { "https://www1.ncdc.noaa.gov/pub/data/ghcn/daily" };
-	
+
 	private CRUReader cruReader;
 
 	private final static String GHNCD_LAST_UPDATE_PROPERTY = "ghncd.catalog.update";
@@ -350,6 +349,28 @@ public enum WeatherFactory {
 			shape = (Shape) shape.buffer(expandFactor);
 		}
 		return within(shape, source, variables);
+	}
+
+	public List<WeatherStation> within(IShape context, String source, boolean expand, String... variables) {
+
+		double EXPAND_INCREMENT = 0.15;
+		double expandFactor = Math.max(context.getEnvelope().getWidth(), context.getEnvelope().getHeight())
+				* EXPAND_INCREMENT;
+
+		if (expand) {
+			for (int i = 0;; i++) {
+				List<WeatherStation> ret = within(context, source, variables);
+				if (ret.isEmpty()) {
+					if (i == 20) {
+						return ret;
+					}
+					context = context.buffer(expandFactor);
+				} else {
+					return ret;
+				}
+			}
+		}
+		return within(context, source, variables);
 	}
 
 	/**

@@ -104,13 +104,6 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 
     }
 
-//    @Override
-//    public IGeometry getGeometry() {
-//        // TODO ensure this reflects the spatial and temporal character of the
-//        // relationships based on the context and choice of parameters.
-//        return Geometry.create("#");
-//    }
-
     @Override
     public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
             throws KlabException {

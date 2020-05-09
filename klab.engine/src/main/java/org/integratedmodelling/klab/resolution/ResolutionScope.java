@@ -1176,12 +1176,17 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	public Observable getDeferredObservableFor(Observable observable2) {
 
+		if (!observable2.is(Type.OBSERVABLE)) {
+			// attribute resolvers and the like
+			return null;
+		}
+		
 		if (observable2.equals(this.observable)) {
 			// resolving self
 			return null;
 		}
 
-		IConcept context = observable2.getContext();
+		IConcept context = Observables.INSTANCE.getContextType(observable2.getType());
 
 		if (!isDeferred() && context != null && getContextObservable() != null
 				&& !getContextObservable().getType().is(context)) {
