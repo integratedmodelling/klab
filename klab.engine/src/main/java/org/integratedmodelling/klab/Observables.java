@@ -830,7 +830,7 @@ public enum Observables implements IObservableService {
 		ret += "Definition:    " + concept.getDefinition() + " [" + concept + "]\n";
 		ret += Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray()) + "\n";
 		if (described != null) {
-			ret += "Describes:    " + described.getDefinition() + "\n";
+			ret += "           Describes:    " + described.getDefinition() + "\n";
 		}
 		ret += "        Context type: " + decl(Observables.INSTANCE.getContextType(concept.getType())) + " [direct: "
 				+ decl(Observables.INSTANCE.getDirectContextType(concept.getType())) + "]\n";

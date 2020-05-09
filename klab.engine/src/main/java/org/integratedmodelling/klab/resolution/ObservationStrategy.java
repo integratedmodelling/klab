@@ -185,12 +185,15 @@ public class ObservationStrategy {
 		/*
 		 * explore inherency first. If there is explicit inherency (of), we first check
 		 * for equality of inherency, i.e. X of Y within Y. In this case we just observe
-		 * X.
+		 * X. This just applies to true observables: if the inherency is for an
+		 * attribute (e.g. normalized of X) we move forward.
 		 * 
 		 * If not, we leave the trivial strategy as is (to be resolved by a possible
 		 * model) and add X within Y, which will generate X of Y in the current context.
 		 */
-		IConcept inherent = Observables.INSTANCE.getDirectInherentType(observable.getType());
+		IConcept inherent = observable.is(Type.OBSERVABLE)
+				? Observables.INSTANCE.getDirectInherentType(observable.getType())
+				: null;
 		if (inherent != null) {
 			IConcept context = Observables.INSTANCE.getContextType(observable.getType());
 			if (context != null && context.equals(inherent)) {

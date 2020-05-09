@@ -659,6 +659,11 @@ public class Concept extends Knowledge implements IConcept {
 
 		int distance = 0;
 
+		String resolving = this.getDefinition();
+		String resolved = concept.getDefinition();
+
+		System.out.println("Does " + resolving + " resolve " + resolved + "?");
+
 		if (this == concept || this.equals(concept)) {
 			return distance;
 		}
@@ -716,14 +721,26 @@ public class Concept extends Knowledge implements IConcept {
 		}
 		distance += component;
 
-		component = getDistance(Observables.INSTANCE.getInherency(concept),
-				Observables.INSTANCE.getInherency(this), false);
+		/*
+		 * inherency must be same (theirs is ours) unless our inherent type is abstract
+		 */
+		IConcept ourInherent = Observables.INSTANCE.getInherency(this);
+		IConcept itsInherent = Observables.INSTANCE.getInherency(concept);
 
-		if (component < 0) {
-			double d = ((double) component / 10.0);
-			return -1 * (int) (d > 10 ? d : 10);
+		if (ourInherent != null || itsInherent != null) {
+
+			if (ourInherent.isAbstract()) {
+				component = getDistance(ourInherent, itsInherent, false);
+			} else {
+				component = getDistance(itsInherent, ourInherent, false);
+			}
+
+			if (component < 0) {
+				double d = ((double) component / 10.0);
+				return -1 * (int) (d > 10 ? d : 10);
+			}
+			distance += component;
 		}
-		distance += component;
 
 		component = getDistance(Observables.INSTANCE.getGoalType(this), Observables.INSTANCE.getGoalType(concept),
 				false);
