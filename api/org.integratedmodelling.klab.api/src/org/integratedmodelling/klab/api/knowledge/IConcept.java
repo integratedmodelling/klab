@@ -213,7 +213,7 @@ public interface IConcept extends IKnowledge {
 	 * @param concept
 	 * @return
 	 */
-	int resolves(IConcept concept);
+	int getSemanticDistance(IConcept concept);
 
 	/**
 	 * Returns a measure of directness for the resolution of another concept in
@@ -224,6 +224,16 @@ public interface IConcept extends IKnowledge {
 	 * @param context
 	 * @return
 	 */
-	int resolves(IConcept concept, IConcept context);
+	int getSemanticDistance(IConcept concept, IConcept context);
+
+	/**
+	 * Returns whether this concept can be used to resolve another in a given
+	 * context. Equivalent to {@link #getSemanticDistance(IConcept, IConcept)} >= 0.
+	 * 
+	 * @param concept
+	 * @param context
+	 * @return
+	 */
+	boolean resolves(IConcept concept, IConcept context);
 
 }

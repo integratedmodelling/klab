@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -109,7 +110,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
 			IResolutionScope scope, IMonitor monitor) throws KlabException {
 
-		return executor.submit(new Callable<IArtifact>() {
+		Callable<IArtifact> task = new Callable<IArtifact>() {
 
 			@Override
 			public IArtifact call() throws Exception {
@@ -184,7 +185,17 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 				return runtimeContext.getTargetArtifact();
 			}
-		});
+		};
+
+		if (Configuration.INSTANCE.synchronousDataflow()) {
+			try {
+				return ConcurrentUtils.constantFuture(task.call());
+			} catch (Exception e) {
+				throw new KlabException(e);
+			}
+		}
+		
+		return executor.submit(task);
 	}
 
 	@Override

@@ -1290,9 +1290,10 @@ public class Actuator implements IActuator {
 	}
 
 	/*
-	 * Return our children in the original order; if they're partitions, sort them
-	 * by increasing priority (the opposite of their natural order) so that the
-	 * highest-priority computes last, just in case overlaps happen.
+	 * Return our children in the original order, except any actuator with deferred
+	 * observable is put last; if they're partitions, sort them by increasing
+	 * priority (the opposite of their natural order) so that the highest-priority
+	 * computes last, just in case overlaps happen.
 	 * 
 	 * Note: All partitions of the same observable must go after the dependencies
 	 * 
@@ -1304,6 +1305,7 @@ public class Actuator implements IActuator {
 
 		List<IActuator> ret = new ArrayList<>();
 		List<IActuator> partitions = new ArrayList<>();
+		List<IActuator> deferred = new ArrayList<>();
 		for (IActuator act : actuator.getActuators()) {
 
 			// these are sub-dataflow that are run after instantiation
@@ -1311,12 +1313,17 @@ public class Actuator implements IActuator {
 				continue;
 			}
 
-			if (((Actuator) act).observable.equals(actuator.observable)) {
+			if (((Actuator)act).getDeferredObservables().size() > 0) {
+				deferred.add(act);
+			} else if (((Actuator) act).observable.equals(actuator.observable)) {
 				partitions.add(act);
 			} else {
 				ret.add(act);
 			}
 		}
+		
+		ret.addAll(deferred);
+		
 		if (partitions.size() > 1) {
 			partitions.sort(new Comparator<IActuator>() {
 

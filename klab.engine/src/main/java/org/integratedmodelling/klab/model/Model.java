@@ -62,6 +62,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
@@ -218,11 +219,12 @@ public class Model extends KimObject implements IModel {
 					 * we cannot know the context of resolution beforehand, so it will be
 					 * contextualized at query time.
 					 */
-					((Observable)dependency).setMustContextualizeAtResolution(true);
+					((Observable) dependency).setMustContextualizeAtResolution(true);
 
 				} else {
 					try {
-						dependencies.set(i, Observables.INSTANCE.contextualizeTo(dependency, context, explicitContext, monitor));
+						dependencies.set(i,
+								Observables.INSTANCE.contextualizeTo(dependency, context, explicitContext, monitor));
 					} catch (Throwable e) {
 						monitor.error(e, dependency);
 						setErrors(true);
@@ -850,7 +852,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IObservable findDependency(IConcept concept) {
 		for (IObservable dependency : dependencies) {
-			if (dependency.getType().resolves(concept) == 0) {
+			if (dependency.getType().getSemanticDistance(concept) == 0) {
 				return dependency;
 			}
 		}
@@ -895,7 +897,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IObservable findOutput(IConcept concept) {
 		for (IObservable output : observables) {
-			if (output.getType().resolves(concept) == 0) {
+			if (output.getType().getSemanticDistance(concept) == 0) {
 				return output;
 			}
 		}
@@ -1165,14 +1167,15 @@ public class Model extends KimObject implements IModel {
 	}
 
 	/**
-	 * Get the output that can satisfy this observable, possibly with mediation.
+	 * Get the output that can satisfy this observable, possibly with mediation. Do
+	 * not compare inherency to let distributed models through.
 	 * 
 	 * @param observable
 	 * @return an existing output observable or null
 	 */
 	public Observable getCompatibleOutput(Observable observable, IConcept context) {
 		for (IObservable output : observables) {
-			if (output.getType().resolves(observable.getType(), context) >= 0) {
+			if (output.getType().resolves(observable.getType(), context)) {
 				return (Observable) output;
 			}
 		}
@@ -1187,7 +1190,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public Observable getCompatibleInput(Observable observable) {
 		for (IObservable input : dependencies) {
-			if (input.getType().resolves(observable.getType()) > 0) {
+			if (input.getType().getSemanticDistance(observable.getType()) >= 0) {
 				return (Observable) input;
 			}
 		}

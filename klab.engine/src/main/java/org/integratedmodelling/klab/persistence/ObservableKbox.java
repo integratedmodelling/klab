@@ -326,7 +326,7 @@ public abstract class ObservableKbox extends H2Kbox {
 			
 //			System.out.println(candidate.getDefinition());
 			
-			if (candidate.resolves(observable.getType(), context) >= 0) {
+			if (candidate.getSemanticDistance(observable.getType(), context) >= 0) {
 				long id = getConceptId(candidate);
 				if (id >= 0) {
 					ret.add(id);

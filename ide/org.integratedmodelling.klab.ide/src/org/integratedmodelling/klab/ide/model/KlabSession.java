@@ -56,6 +56,7 @@ import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.WatchRequest;
+import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
@@ -77,9 +78,7 @@ public class KlabSession extends KlabPeer {
 
 		@Override
 		protected void subscribe(ContextGraph contextGraph, ObservationReference observation, boolean open) {
-
-			System.out.println("SUBSCRIBING TO " + observation);
-			
+//			System.out.println("SUBSCRIBING TO " + observation);
 			WatchRequest request = new WatchRequest();
 			request.setActive(open);
 			request.setObservationId(observation.getId());
@@ -514,6 +513,7 @@ public class KlabSession extends KlabPeer {
 	private void handleResetContextRequest(IMessage message, String dummy) {
 		this.currentRootContextId = null;
 		this.currentRootTaskId = null;
+//		DebugFile.println("RESET CONTEXT ");
 		send(message);
 	}
 
@@ -521,6 +521,7 @@ public class KlabSession extends KlabPeer {
 	public void handleTaskStarted(IMessage message, TaskReference task, IMessageBus bus) {
 		send(message);
 		recordTask(task, Type.TaskStarted);
+//		DebugFile.println("START TASK " + task.getId());
 		bus.subscribe(task.getId(), new KlabTask(task.getId()));
 	}
 
@@ -528,6 +529,7 @@ public class KlabSession extends KlabPeer {
 	public void handleTaskFinished(IMessage message, TaskReference task, IMessageBus bus) {
 		send(message);
 		recordTask(task, Type.TaskFinished);
+//		DebugFile.println("END TASK " + task.getId());
 		bus.unsubscribe(task.getId());
 	}
 
@@ -535,6 +537,7 @@ public class KlabSession extends KlabPeer {
 	public void handleTaskAborted(IMessage message, TaskReference task, IMessageBus bus) {
 		send(message);
 		recordTask(task, Type.TaskAborted);
+//		DebugFile.println("ABORT TASK " + task.getId());
 		bus.unsubscribe(task.getId());
 	}
 	
@@ -602,6 +605,7 @@ public class KlabSession extends KlabPeer {
 	public void handleDataflow(IMessage message, DataflowReference dataflow) {
 		ETaskReference task = taskCatalog.get(dataflow.getTaskId());
 		if (task != null) {
+//			DebugFile.println("DATAFLOW FOR " + task.getId());
 			task.setDataflow(new EDataflowReference(dataflow, message.getId(), task));
 			send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, task);
 		}

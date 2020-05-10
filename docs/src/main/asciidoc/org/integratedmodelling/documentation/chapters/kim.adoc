@@ -397,7 +397,7 @@ end legend
 
 ==== Abstract and concrete concepts
 
-NOTE: Care with abstract status - not only within the single concept but also with its inherency, as models that are inherent to an abstract observable will match queries for an observable inherent to a concrete subclass of it. ADD MORE INFO AND A LINK TO THE MODEL CHAPTER. In models, abstract status (either of the observable or its inherency) is used as a signal that the model resolves also subclasses. Models of concrete observables only resolve their _same_ observables. TODO: this should also be true of predicates in them.
+NOTE: Care with abstract status - not only within the single concept but also with its inherency, as models that are inherent to an abstract observable will match queries for an observable inherent to a concrete subclass of it. ADD MORE INFO AND A LINK TO THE MODEL CHAPTER. In models, abstract status (either of the observable or its inherency) is used as a signal that the model resolves also subclasses. Models of concrete observables only resolve their _same_ observables. TODO: this should also be true of predicates in them. Basically when an observable is a query, an abstract component will apply to its own subclasses and enter the calculation of semantic distance that defines one prioritization criterion.
 
 Abstract observables, abstract predicates and abstract models.
 

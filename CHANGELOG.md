@@ -22,6 +22,24 @@ of vulnerabilities.) [comment]: <>   () [comment]: <>   (Next build: [0.10.0.xxx
 
 ## Unreleased
 ### Added
+- Fix an overzealous referencing that prevented a second filtered dependency to 
+  be computed correctly (e.g. two "normalized" observations in the same dependency
+  list).
+- Notification logics overhauled to enable a subscription model for any observations
+  that the view wants notified.
+- Resolution 'within' observables now completely supported. Explicit 'within' observables
+  are only allowed as the primary outputs of models. They produce observations within
+  a specialized context observation and are used to resolve "X of Y" observables in
+  contexts that are not Y. Each observation made within Y will first instantiate
+  Y, then observe X in each instance. If the observation is triggered in a context
+  that is not Y, the merged observation X of Y will be produced to satisfy the
+  query. This does not apply to learning models when they have an archetype
+  that is Y: in that case the semantics "learn within Y" is interpreted as "use the
+  distributed archetype to learn a quality" which is then applied to the context if
+  the predictors match it.
+- Clarify the computation of semantic distance when observables or their
+  inherent types are abstract (necessary condition for transitive resolution). 
+  Deprecate Observables.isCompatible in favor of IConcept.resolves().
 - Actors can schedule actions (needs synchronization to ensure no temporal overlap
   can happen), bind behaviors and use the monitor to send notifications.
 - Deferred resolution for observables whose context is a subject incompatible with

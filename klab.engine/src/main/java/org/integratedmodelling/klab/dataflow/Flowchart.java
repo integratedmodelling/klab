@@ -538,7 +538,7 @@ public class Flowchart {
 						IConcept concept = parameter instanceof IConcept ? ((IConcept) parameter)
 								: ((IObservable) parameter).getType();
 						for (IActuator dependency : context.getActuators()) {
-							if (concept.resolves(((Actuator) dependency).getObservable().getType()) >= 0) {
+							if (concept.getSemanticDistance(((Actuator) dependency).getObservable().getType()) >= 0) {
 								parameter = ((Actuator) dependency).getAlias();
 								break;
 							}

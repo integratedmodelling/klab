@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -494,16 +495,17 @@ public class ResolutionScope implements IResolutionScope {
 
 	/**
 	 * 
-	 * @param observer
+	 * @param observation
 	 * @return a scope to resolve the passed observer
 	 * @throws KlabException
 	 */
-	public ResolutionScope getChildScope(IDirectObservation observer, Mode mode) {
+	public ResolutionScope getChildScope(IDirectObservation observation, Mode mode) {
 
 		ResolutionScope ret = new ResolutionScope(this, true);
-		ret.context = (DirectObservation) observer;
-		ret.coverage = Coverage.full(observer.getScale());
+		ret.context = (DirectObservation) observation;
+		ret.coverage = Coverage.full(observation.getScale());
 		ret.mode = mode;
+		
 		return ret;
 	}
 

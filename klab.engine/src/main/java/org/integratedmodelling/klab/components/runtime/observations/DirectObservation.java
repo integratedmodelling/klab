@@ -55,6 +55,16 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	}
 
 	@Override
+	public IObservation getChildObservation(IObservable observable) {
+		for (IArtifact child : getRuntimeScope().getChildArtifactsOf(this)) {
+			if (child instanceof IObservation && ((IObservation)child).getObservable().is(observable)) {
+				return (IObservation)child;
+			}
+		}
+		return null;
+	}
+	
+	@Override
 	public <T extends IArtifact> Collection<T> getChildren(Class<T> cls) {
 		return getRuntimeScope().getChildren(this, cls);
 	}

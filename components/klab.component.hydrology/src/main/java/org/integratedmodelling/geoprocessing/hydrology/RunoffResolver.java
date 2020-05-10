@@ -97,10 +97,6 @@ public class RunoffResolver implements IResolver<IProcess>, IExpression {
 			
 			nuouts ++;
 		}
-
-		if (nouts == 0 || nuouts == 0) {
-			System.out.println("MERDA NON CI SONO OUTLETS" + (nouts > 0 ? "" : " UTILIZZABILI"));
-		}
 		
 		return runoffProcess;
 	}

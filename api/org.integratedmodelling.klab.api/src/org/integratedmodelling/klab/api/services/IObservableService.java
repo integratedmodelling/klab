@@ -209,6 +209,7 @@ public interface IObservableService {
 	 *           object.
 	 * 
 	 * @return true if these are compatible observables
+	 * @deprecated use {@link IConcept#resolves(IConcept, IConcept)}
 	 */
 	boolean isCompatible(IConcept o1, IConcept o2);
 
@@ -223,6 +224,7 @@ public interface IObservableService {
 	 * @param flags see {@link #ACCEPT_REALM_DIFFERENCES} and siblings. Pass them in
 	 *              bitwise OR if more are needed.
 	 * @return true if these are compatible observables
+	 * @deprecated use {@link IConcept#resolves(IConcept, IConcept)}
 	 */
 	boolean isCompatible(IConcept o1, IConcept o2, int flags);
 

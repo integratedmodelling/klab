@@ -649,13 +649,21 @@ public class Concept extends Knowledge implements IConcept {
 		return ret;
 	}
 
-	@Override
-	public int resolves(IConcept concept) {
-		return resolves(concept, null);
+	public boolean resolves(IConcept concept, IConcept context) {
+		return getSemanticDistance(concept, context) >= 0;
 	}
 
 	@Override
-	public int resolves(IConcept concept, IConcept context) {
+	public int getSemanticDistance(IConcept concept) {
+		return getSemanticDistance(concept, null);
+	}
+
+	@Override
+	public int getSemanticDistance(IConcept concept, IConcept context) {
+		return getSemanticDistance(concept, context, true);
+	}
+
+	public int getSemanticDistance(IConcept concept, IConcept context, boolean compareInherency) {
 
 		int distance = 0;
 
@@ -712,33 +720,39 @@ public class Concept extends Knowledge implements IConcept {
 			context = Observables.INSTANCE.getContext(concept);
 		}
 
-		int component = getDistance(Observables.INSTANCE.getContext(this), context, true);
+		int component;
 
-		if (component < 0) {
-			double d = ((double) component / 10.0);
-			return -1 * (int) (d > 10 ? d : 10);
-		}
-		distance += component;
+		if (compareInherency) {
 
-		/*
-		 * inherency must be same (theirs is ours) unless our inherent type is abstract
-		 */
-		IConcept ourInherent = Observables.INSTANCE.getInherency(this);
-		IConcept itsInherent = Observables.INSTANCE.getInherency(concept);
-
-		if (ourInherent != null || itsInherent != null) {
-
-			if (ourInherent.isAbstract()) {
-				component = getDistance(ourInherent, itsInherent, false);
-			} else {
-				component = getDistance(itsInherent, ourInherent, false);
-			}
+			component = getDistance(Observables.INSTANCE.getContext(this), context, true);
 
 			if (component < 0) {
 				double d = ((double) component / 10.0);
 				return -1 * (int) (d > 10 ? d : 10);
 			}
 			distance += component;
+
+			/*
+			 * inherency must be same (theirs is ours) unless our inherent type is abstract
+			 */
+			IConcept ourInherent = Observables.INSTANCE.getInherency(this);
+			IConcept itsInherent = Observables.INSTANCE.getInherency(concept);
+
+			if (ourInherent != null || itsInherent != null) {
+
+				if (ourInherent != null && ourInherent.isAbstract()) {
+					component = getDistance(ourInherent, itsInherent, false);
+				} else {
+					component = getDistance(itsInherent, ourInherent, false);
+				}
+
+				if (component < 0) {
+					double d = ((double) component / 10.0);
+					return -1 * (int) (d > 10 ? d : 10);
+				}
+				distance += component;
+			}
+
 		}
 
 		component = getDistance(Observables.INSTANCE.getGoalType(this), Observables.INSTANCE.getGoalType(concept),

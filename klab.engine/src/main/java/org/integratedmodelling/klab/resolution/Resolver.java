@@ -330,7 +330,7 @@ public class Resolver {
 		 * resolution.
 		 */
 		Coverage coverage = new Coverage(ret.getCoverage());
-
+		
 		/**
 		 * If we're resolving something that has been resolved before (i.e. not
 		 * resolving a countable, which only happens before it is created), get the
@@ -341,7 +341,20 @@ public class Resolver {
 		boolean tryPrevious = ret.getContext() != null
 				&& (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
 		if (tryPrevious) {
+			/*
+			 * look in the catalog. This will have accurate coverage but not necessarily every
+			 * observation (those coming from attributes will be missing).
+			 */
 			previousArtifact = ((Subject) ret.getContext()).getRuntimeScope().findArtifact(observable);
+			if (previousArtifact == null) {
+				/*
+				 * check in the context's children and attribute full coverage if there
+				 */
+				IObservation previous = ((Subject) ret.getContext()).getChildObservation(observable);
+				if (previous != null) {
+					previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
+				}
+			}
 		}
 
 		if (previousArtifact != null) {

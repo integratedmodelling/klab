@@ -341,8 +341,17 @@ public class DataflowCompiler {
 			IObservable modelObservable = null;
 			if (!models.isEmpty()) {
 				modelObservable = models.iterator().next().model.getObservables().get(0);
-				if (modelObservable.getType().resolves(this.observable.getType(), getDataflowContext()) < 0) {
+				if (!modelObservable.getType().resolves(this.observable.getType(), getDataflowContext())) {
 
+					/**
+					 * may be an attribute, in which case we already have the observation, nothing
+					 * is needed and we return null and get ignored.
+					 */
+					for (IObservable attribute : models.iterator().next().model.getAttributeObservables().values()) {
+						if (attribute.getType().resolves(this.observable.getType(), getDataflowContext())) {
+							return null;
+						}
+					}
 					/**
 					 * Secondary output! We may be already part of the actuator for this (in which
 					 * case we just add our empty actuator to create the observation and leave it to
@@ -590,6 +599,11 @@ public class DataflowCompiler {
 
 			Actuator ret = createActuator(dataflow, monitor, generated);
 
+			if (ret == null) {
+				// no actuator needed: observation was predefined
+				return ret;
+			}
+
 			if (!ret.isReference()) {
 
 				/*
@@ -678,6 +692,11 @@ public class DataflowCompiler {
 
 						// this may be a new actuator or a reference to an existing one.
 						Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
+
+						if (achild == null) {
+							// null if the observation is already there, i.e. it was an attribute
+							continue;
+						}
 
 						ret.getActuators().add(achild);
 						recordUnits(achild, chosenUnits);
@@ -1104,7 +1123,7 @@ public class DataflowCompiler {
 	public List<IContextualizable> computeMediators(Observable from, Observable to, IScale scale) {
 
 		if (OWL.INSTANCE.isSemantic(from)) {
-			if (to.getType().resolves(from.getType()) < 0) {
+			if (to.getType().getSemanticDistance(from.getType()) < 0) {
 				throw new IllegalArgumentException(
 						"cannot compute mediators from an observable to another that does not resolve it: " + from
 								+ " can not mediate to " + to);
