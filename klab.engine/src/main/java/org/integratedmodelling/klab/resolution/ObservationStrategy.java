@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -391,12 +390,7 @@ public class ObservationStrategy {
 	public Mode getMode() {
 		return this.mode;
 	}
-
-	public String dump(String spacer) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	/**
 	 * Tells the model and the dataflow compiler how to handle the
 	 * contextualization.

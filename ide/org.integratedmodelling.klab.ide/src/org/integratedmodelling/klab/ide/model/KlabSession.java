@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NetworkReference;
 import org.integratedmodelling.klab.rest.Notification;
@@ -56,7 +57,6 @@ import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.WatchRequest;
-import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
@@ -506,6 +506,12 @@ public class KlabSession extends KlabPeer {
 
 	@MessageHandler
 	public void handleSearchResponse(IMessage message, SearchResponse response) {
+		send(message);
+	}
+	
+	@MessageHandler(type = IMessage.Type.EngineEvent)
+	public void handleSearchResponse(IMessage message, EngineEvent event) {
+		System.out.println("XIO PAPA " + event);
 		send(message);
 	}
 

@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
@@ -63,9 +64,6 @@ public enum Klab implements IRuntimeService {
 
 	public static final int TICKET_CHECK_INTERVAL_SECONDS = 60;
 
-	Map<EngineEvent.Type, Pair<IIdentity, AtomicBoolean>> eventSubscriptions = Collections
-			.synchronizedMap(new HashMap<>());
-
 	/**
 	 * This can be set to a runnable that starts the REST services.
 	 */
@@ -78,6 +76,18 @@ public enum Klab implements IRuntimeService {
 	IIdentity rootIdentity = null;
 	IMessageBus messageBus = null;
 	ITicketManager ticketManager = null;
+
+	/**
+	 * Current status of synchronous engine events
+	 */
+	Map<EngineEvent.Type, Boolean> eventStatus = Collections.synchronizedMap(new HashMap<>());
+
+	/**
+	 * Subscribers to engine events, indexed by event type and then by identity ID,
+	 * including the last notified status (if false, event may never have been
+	 * notified).
+	 */
+	Map<EngineEvent.Type, Map<String, AtomicBoolean>> eventSubscriptions = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * Handler to process classes with k.LAB annotations. Register using
@@ -581,12 +591,36 @@ public enum Klab implements IRuntimeService {
 	 * @param identity
 	 * @param event
 	 */
-	public void subscribe(IIdentity identity, EngineEvent.Type event) {
+	public synchronized void subscribe(IIdentity identity, EngineEvent.Type event) {
 
+		Map<String, AtomicBoolean> subscriptions = eventSubscriptions.get(event);
+		if (subscriptions == null) {
+			subscriptions = new HashMap<>();
+			eventSubscriptions.put(event, subscriptions);
+		}
+
+		boolean status = getEventStatus(event);
+		subscriptions.put(identity.getId(), new AtomicBoolean(status));
+		
+		/*
+		 * active status at subscription gets notified
+		 */
+		if (status) {
+			notifyEventListeners(event, status);
+		}
 	}
 
-	public void unsubscribe(IIdentity identity, EngineEvent.Type event) {
+	public synchronized void unsubscribe(IIdentity identity, EngineEvent.Type event) {
+		Map<String, AtomicBoolean> subscriptions = eventSubscriptions.get(event);
+		if (subscriptions == null) {
+			subscriptions = new HashMap<>();
+			eventSubscriptions.put(event, subscriptions);
+		}
+		subscriptions.remove(identity.getId());
+	}
 
+	public boolean getEventStatus(EngineEvent.Type event) {
+		return eventStatus.containsKey(event) ? eventStatus.get(event) : false;
 	}
 
 	/**
@@ -597,9 +631,26 @@ public enum Klab implements IRuntimeService {
 	 * 
 	 * @param b
 	 */
-	public void notifyEvent(EngineEvent.Type type, boolean started) {
-		// TODO Auto-generated method stub
+	public synchronized void notifyEvent(EngineEvent.Type event, boolean started) {
+		eventStatus.put(event, started);
+		notifyEventListeners(event, started);
+	}
 
+	private synchronized void notifyEventListeners(EngineEvent.Type event, boolean started) {
+		Map<String, AtomicBoolean> subscriptions = eventSubscriptions.get(event);
+		if (subscriptions != null) {
+			for (String id : subscriptions.keySet()) {
+				IIdentity identity = Authentication.INSTANCE.getIdentity(id, IIdentity.class);
+				if (identity instanceof IRuntimeIdentity) {
+					EngineEvent message = new EngineEvent();
+					message.setStarted(started);
+					message.setTimestamp(System.currentTimeMillis());
+					message.setType(event);
+					((IRuntimeIdentity) identity).getMonitor().send(IMessage.MessageClass.Notification,
+							IMessage.Type.EngineEvent, message);
+				}
+			}
+		}
 	}
 
 }

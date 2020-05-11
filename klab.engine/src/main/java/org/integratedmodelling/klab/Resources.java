@@ -1357,7 +1357,7 @@ public enum Resources implements IResourceService {
 		/*
 		 * inform any listeners of the potentially blocking operation
 		 */
-		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, true);
+//		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, true);
 
 		for (String urn : project.getLocalResourceUrns()) {
 			// TODO should also include notifications from namespace compilation in project
@@ -1371,7 +1371,7 @@ public enum Resources implements IResourceService {
 			}
 		}
 
-		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, false);
+//		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, false);
 
 		return ret;
 	}

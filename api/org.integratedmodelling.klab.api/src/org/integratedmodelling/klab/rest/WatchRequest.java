@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.rest;
 public class WatchRequest {
 
 	private boolean active;
+	private EngineEvent.Type eventType;
 	private String observationId;
 	private String rootContextId;
 
@@ -28,6 +29,14 @@ public class WatchRequest {
 
 	public void setRootContextId(String rootContextId) {
 		this.rootContextId = rootContextId;
+	}
+
+	public EngineEvent.Type getEventType() {
+		return eventType;
+	}
+
+	public void setEventType(EngineEvent.Type eventType) {
+		this.eventType = eventType;
 	}
 
 }

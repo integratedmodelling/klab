@@ -1189,15 +1189,27 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 	}
 
+	/*
+	 * This can arrive with different message types
+	 */
 	@MessageHandler
-	private void handleObservationWatchRequest(WatchRequest request) {
+	private void handleWatchRequest(WatchRequest request) {
 
-		IRuntimeScope scope = getRootScope(request.getRootContextId());
-		if (scope != null) {
+		if (request.getEventType() != null) {
 			if (request.isActive()) {
-				scope.getWatchedObservationIds().add(request.getObservationId());
+				Klab.INSTANCE.subscribe(this, request.getEventType());
 			} else {
-				scope.getWatchedObservationIds().remove(request.getObservationId());
+				Klab.INSTANCE.unsubscribe(this, request.getEventType());
+			}
+		} else {
+
+			IRuntimeScope scope = getRootScope(request.getRootContextId());
+			if (scope != null) {
+				if (request.isActive()) {
+					scope.getWatchedObservationIds().add(request.getObservationId());
+				} else {
+					scope.getWatchedObservationIds().remove(request.getObservationId());
+				}
 			}
 		}
 	}
@@ -1473,7 +1485,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			uid.setLastLogin(user.getLastLogin().toString());
 			ret.setOwner(uid);
 		}
-		
+
 		for (IRuntimeScope ctx : observationContexts) {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
 					.createArtifactDescriptor(ctx.getRootSubject(), null, ctx.getScale().initialization(), 0));
@@ -1481,7 +1493,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		return ret;
 	}
-	
+
 	public List<IObservation> getRootContexts() {
 		List<IObservation> ret = new ArrayList<>();
 		for (IRuntimeScope scope : observationContexts) {

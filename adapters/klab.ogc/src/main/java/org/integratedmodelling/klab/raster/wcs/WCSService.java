@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.commons.jxpath.JXPathContext;
 import org.geotools.wcs.WCSConfiguration;
 import org.geotools.xml.Parser;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -29,8 +30,8 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
+import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.SpatialExtent;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -409,6 +410,8 @@ public class WCSService {
 
 		this.serviceUrl = serviceUrl;
 		this.version = version;
+		
+		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, true);
 
 		try {
 			this.parser = new Parser(new WCSConfiguration());
@@ -460,6 +463,8 @@ public class WCSService {
 		} catch (Throwable e) {
 			errors.add(e);
 			Logging.INSTANCE.error(e);
+		} finally {
+			Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, false);
 		}
 	}
 
