@@ -1,14 +1,14 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.TokenClickback;
+import org.integratedmodelling.klab.hub.api.TokenType;
+import org.integratedmodelling.klab.hub.commands.CreateChangePasswordToken;
+import org.integratedmodelling.klab.hub.commands.CreateNewUserAccountToken;
+import org.integratedmodelling.klab.hub.commands.CreateVerifyAccountToken;
+import org.integratedmodelling.klab.hub.commands.DeleteAuthenticationToken;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
-import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
-import org.integratedmodelling.klab.hub.tokens.TokenType;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateChangePasswordToken;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateNewUserAccountToken;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateVerifyAccountToken;
-import org.integratedmodelling.klab.hub.tokens.commands.DeleteAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 	}
 
 	@Override
-	public AuthenticationToken createToken(String username, TokenType type) {
+	public TokenClickback createToken(String username, TokenType type) {
 		if (type.equals(TokenType.verify)) {
 			return new CreateVerifyAccountToken(repository, username, linkConfig).execute();
 		} else if (type.equals(TokenType.password)) {
@@ -36,7 +36,7 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 	}
 
 	@Override
-	public AuthenticationToken createChildToken(String username, String parentToken, TokenType type) {
+	public TokenClickback createChildToken(String username, String parentToken, TokenType type) {
 		if (type.equals(TokenType.newUser)) {
 			return new CreateNewUserAccountToken(repository, username, linkConfig).execute();
 		} else {
@@ -48,7 +48,7 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 	public boolean verifyToken(String username, String id, TokenType type) {
 		return repository.findByTokenString(id)
 			.filter(token -> token.getPrincipal().equals(username))
-			.map(ClickbackToken.class::cast)
+			.map(TokenClickback.class::cast)
 			.filter(token -> token.getClickbackAction().getTokenType().equals(type))
 			.map(token -> setAuthentication(token))
 			.isPresent();
@@ -63,7 +63,7 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 		}
 		return false;
 	}
-	private AuthenticationToken setAuthentication(AuthenticationToken token) {
+	private TokenAuthentication setAuthentication(TokenAuthentication token) {
 		SecurityContextHolder.getContext().setAuthentication(token);
 		return token;
 	}

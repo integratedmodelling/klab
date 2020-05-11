@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: node-service
+  cloud:
+    consul:
+      discovery:
+        health-check-critical-timeout: 3m

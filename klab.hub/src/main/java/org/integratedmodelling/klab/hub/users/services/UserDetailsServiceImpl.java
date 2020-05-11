@@ -3,9 +3,10 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.integratedmodelling.klab.hub.api.Role;
+import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.Role;
-import org.integratedmodelling.klab.hub.users.User;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,6 +14,12 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
+/*
+ * This is needed for login authentication.  It is used to load the user and
+ * populate the password hash from the ldap.  It is than compared to password
+ * in the request.
+ */
 public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	private UserRepository userRepository;
@@ -30,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public User loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		User user = userRepository.findByUsernameIgnoreCase(username)
+		User user = userRepository.findByNameIgnoreCase(username)
 			.orElseThrow(() -> new UsernameNotFoundException("Unable to find user - " + username));
 		
 		UserDetails ldapUser = ldapUserDetailsManager.loadUserByUsername(username);

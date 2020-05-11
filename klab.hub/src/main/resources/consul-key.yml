@@ -1,0 +1,76 @@
+--- 
+email: 
+  replyable: 
+    admin: 
+      emailaddress: "No replay <no-replay@integratedmodelling.org>"
+    general: 
+      emailaddress: "General <integratedmodelling@integratedmodelling.com>"
+    support: 
+      emailaddress: "Support  <support@integratedmodelling>"
+  noreply:
+    emailaddress: "No replay <no-replay@integratedmodelling.org>"
+  server: 
+    hostname: localhost
+    password: password
+    port: 3025
+    username: system
+engine: 
+  url: "https://localhost:8287"
+logging:
+  file:  hub.log
+mongo: 
+  hostname: localhost
+  port: 27017
+server: 
+  port: ${random.int(5100,5200)}
+  servlet: 
+    contextPath: /hub
+site: 
+  callback: "http://172.17.0.1:8080/hub/ui/index.html"
+  clickback: "/clickback/{tokenString}"
+  fullname: "Integrated Modelling Dashboard"
+  server: 
+    id: im
+  shortname: im-dashboard
+  url: "http://172.17.0.1:8080/hub"
+spring:
+  cloud:
+    consul:
+      discovery:
+        health-check-path: ${server.servlet.context-path}/actuator/health
+        health-check-interval: 5s 
+  ldap: 
+    embedded: 
+      base-dn: "dc=integratedmodelling,dc=org"
+      credential: 
+        password: password
+        username: "cn=admin,dc=integratedmodelling,dc=org"
+      ldif: "classpath:initial-ldap-structure.ldif"
+      port: 8389
+      validation: 
+        enabled: true
+  profiles: 
+    active: development
+  security: 
+    oauth2: 
+      client: 
+        registration: 
+          google: 
+            clientId: Norms_A_TOKEN_g0.apps.googleusercontent.co
+            clientSecret: NotGivingAway
+            redirectUriTemplace: "{baseUrl}/oauth2/callback/{registrationId}"
+klab:
+  certificate:
+    type: Hub
+    level: TEST
+  hubname: testHub
+  partner:
+    name: "The Semantic Web of BS, Inc."
+    email:  "godzilla@semanticweb.org"
+    addess: "12 Semantic Street, 00300 Kakazia, Bulland"
+    phone: "+000 (323) 232 3434"
+    description: "We don't really exist"
+    url: "www.integratedbull.org"
+  url:  "http://172.17.0.1:8080/hub"
+  signature: dc8a541b-4c14-4770-9f9d-82a73f44b97d
+  pgpKey: '-----BEGIN PGP MESSAGE-----\n\Version: "-----BEGIN PGP MESSAGE-----\nVersion\: BCPG v1.52\n\nowJ4nJvAy8zAxfhu5lrZ7FXT/RhPH2RPEs/JTE7NK051y8xJ9UvMTdX1TM/LL0pN\niQuf/1tZV1cBKq2QBpTnUg7JKFVwS01SMDJXMDSwMjWxMjVQcPcNUTAyMDLgys5J\nTNIrLU4t0kvNTczMsS0uSS1LzdMrz8/IcUhKNi5KLU5NLErO0MsvSoeoLUgsKsmD\nK8/MS8t3yMwrSU0vSixJTcnNT0nNycnMS0eozwMK5QHdaJuZi7AMLFBcBLIFIpic\nWlSSmZaZDDRELwfoghzb0GDXIFQbM0qTbDNKSgqKY6z09XHYqQ9UpA/RVpyZnpdY\nUlqUapuSbJFoamKYpGuSbGiia2JubqBrmWaZomthlGhunGZikmRpngLRU5aYk5lS\nmlcC9BkodHQNLHSNzEMMDWKAwQbEBnqmZuZRmC4uqSxItXX1c/f0c0V1MsTjOIKn\nkymZhYGRi8GXlQkUcW4y3kCtCh6lSQoaIRmZxQpAVJKRqpCdWqmQll8EZgMlNRVs\n8AW6HQMXpwAssVy6KcDQoSS212A137uzMt42Dxqj/1/l6Dipt4KTrfr/pniX3Zum\nTl138OPy56c3bQo/tyZ0l2Ia74H6Qsa8qOmbfpvdaPjutqc+ZA8ro9n9K3uyv2r9\n0ue84i4dsLRW+ILRzjOlYQ9ied23C/NXXNm6tGenuZJM/lwhndcv3j/T05sc/Shu\nqfE/Ebdz+5bxzrYyYCiImS2XJrHGsSbfdta/ZyxGff/51VQSG5yWZAZ7FOnOnpV9\nvSN72VMeTduWqUGivboMn2e9yT3078n8z0Wd/V9WWWeV+Mxg5lE6tdYhIqE810fL\nv9l+rdPMBOsvEz9e2NbJt39tnd+6ySsrgspVylofX017kPjMXHaSR9+L7Vu/pLIX\ndopwb/97RyNk5k27Wcc7Lu22NFkXlJuYYjNtuTs7z3rhMt6NcQGmzbIrZji8/j1l\noTMzh7iTwrbSvXsWW73/9N3QIU2jUtIzgdneylLY2vfW8ScPN/6t7Na/oDZxoZIO\nM/cW7v6TyTrT4xMULlteXmvP0hdVWL+LMyNI8MnlDxU+2vsuvAvwX6efumHilBcB\n0Se+5JmflstuVldd05s1a7u2SdR3s0ShmRZW24XTih9lp3/Oyhf6+bJm35JlEsIf\n+TsrWXpcn/15e7ToWOmRKz93xqemzFY5dbc2il92Tn2utQpzruXXWT3LWDunHs/3\niFU1Sr05V+D56QzNg+FXDv/kThJa37iRHQCVSrth\n\=/Ds+\n-----END PGP MESSAGE-----\n'

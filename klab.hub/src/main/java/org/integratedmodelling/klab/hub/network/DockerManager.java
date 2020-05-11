@@ -34,7 +34,7 @@ public enum DockerManager {
 		if (config.getClass() == DockerNode.class) {
 			DockerNode nodeConfig = (DockerNode) config;
 			CreateNodeContainer cmd = new CreateNodeContainer(this.client, nodeConfig);
-			CreateContainerResponse resp = cmd.exec(nodeConfig.getNode().getNode());
+			CreateContainerResponse resp = cmd.exec(nodeConfig.getNode().getName());
 			return resp;
 		} else {
 			return null;

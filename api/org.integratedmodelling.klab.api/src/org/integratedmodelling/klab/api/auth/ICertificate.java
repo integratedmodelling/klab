@@ -74,12 +74,19 @@ public interface ICertificate {
 		 * This certificate authorizes a hub. The only allowed level is
 		 * {@link Level#INSTITUTIONAL} or {@link Level#TEST}.
 		 */
-		HUB
+		HUB,
+		/**
+		 * This certificate authorizes a lever. The only allowed level is
+		 * {@link Level#INSTITUTIONAL} or {@link Level#TEST}.
+		 */
+		LEVER
+		
 	}
 
 	public static final String DEFAULT_ENGINE_CERTIFICATE_FILENAME = "klab.cert";
 	public static final String DEFAULT_NODE_CERTIFICATE_FILENAME = "node.cert";
 	public static final String DEFAULT_HUB_CERTIFICATE_FILENAME = "hub.cert";
+	public static final String DEFAULT_LEVER_CERTIFICATE_FILENAME = "lever.cert";
 
 	/*
 	 * Keys for user properties in certificates or for set operations.
@@ -87,6 +94,7 @@ public interface ICertificate {
 	public static final String KEY_EMAIL = "klab.user.email";
 	public static final String KEY_USERNAME = "klab.username";
 	public static final String KEY_NODENAME = "klab.nodename";
+	public static final String KEY_LEVERNAME = "klab.levername";
 	public static final String KEY_HUBNAME = "klab.hubname";
 	public static final String KEY_URL = "klab.url";
 	public static final String KEY_SIGNATURE = "klab.signature";

@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.payload;
 
-import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
-import org.integratedmodelling.klab.hub.users.ProfileResource;
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +9,10 @@ import net.minidev.json.JSONObject;
 
 public class LoginResponse {
 	
-	private AuthenticationToken token;
+	private TokenAuthentication token;
 	private ProfileResource profile;
 	
-	public LoginResponse(AuthenticationToken token, ProfileResource profile) {
+	public LoginResponse(TokenAuthentication token, ProfileResource profile) {
 		this.token = token;
 		this.profile = profile;
 	}

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub;
 import javax.annotation.PreDestroy;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,7 +32,6 @@ import org.springframework.stereotype.Component;
 		"org.integratedmodelling.klab.hub.manager",
 		"org.integratedmodelling.klab.hub.tasks"
 		})
-
 public class HubApplication {
 
 	private static Hub hub;

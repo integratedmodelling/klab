@@ -9,17 +9,18 @@ import javax.naming.directory.Attributes;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.api.User.AccountStatus;
+import org.integratedmodelling.klab.hub.commands.CreateLdapUser;
+import org.integratedmodelling.klab.hub.commands.CreatePendingUser;
+import org.integratedmodelling.klab.hub.commands.CreateUserWithRolesAndStatus;
+import org.integratedmodelling.klab.hub.commands.SetUserPasswordHash;
+import org.integratedmodelling.klab.hub.commands.UpdateLdapUser;
+import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.User;
-import org.integratedmodelling.klab.hub.users.User.AccountStatus;
-import org.integratedmodelling.klab.hub.users.commands.CreateLdapUser;
-import org.integratedmodelling.klab.hub.users.commands.CreatePendingUser;
-import org.integratedmodelling.klab.hub.users.commands.SetUserPasswordHash;
-import org.integratedmodelling.klab.hub.users.commands.UpdateLdapUser;
-import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQuery;
@@ -34,7 +35,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 	private PasswordEncoder passwordEncoder;
 	private LdapTemplate ldapTemplate;
 	private LdapUserDetailsManager ldapUserDetailsManager;
-
+	
 	public UserRegistrationServiceImpl(UserRepository userRepository, 
 			PasswordEncoder passwordEncoder, 
 			LdapTemplate ldapTemplate,
@@ -62,14 +63,26 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 		
 	}
 	
+	@Override
+	public User registerUser(User user) {
+		Optional<User> pendingUser = checkIfUserPending(user.getName(), user.getEmail());
+		if (pendingUser.isPresent()) {
+			return pendingUser.get();
+		} else {
+			User newUser = new CreateUserWithRolesAndStatus(user, userRepository, ldapUserDetailsManager).execute();
+			return newUser;
+		}
+		
+	}
+	
 	private Optional<User> checkIfUserPending(String username, String email) {
 		boolean existInMongo = userRepository.
-				findByUsernameIgnoreCaseOrEmailIgnoreCase(username, email)
+				findByNameIgnoreCaseOrEmailIgnoreCase(username, email)
 				.isPresent();
 		
 		if(existInMongo) {
 			boolean usernameExists = userRepository
-				.findByUsernameIgnoreCase(username)
+				.findByNameIgnoreCase(username)
 				.isPresent();
 			
 			boolean emailExists = userRepository
@@ -85,7 +98,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 			if(!ldapExists && usernameExists && emailExists) {
 				//we need to return a user who has not activated there account and will be asked to
 				//reactivate with an email.
-				Optional<User> pendingUser = userRepository.findByUsernameIgnoreCase(username)
+				Optional<User> pendingUser = userRepository.findByNameIgnoreCase(username)
 						.filter(u -> u.getAccountStatus().equals(AccountStatus.pendingActivation));
 				pendingUser
 					.orElseThrow(()-> new BadRequestException("User exists but has not set a password. "
@@ -109,7 +122,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 
 	@Override
 	public User verifyNewUser(String username) {
-		User pendingUser = userRepository.findByUsernameIgnoreCase(username)
+		User pendingUser = userRepository.findByNameIgnoreCase(username)
 			.filter(user -> 
 				user.getAccountStatus().equals(AccountStatus.pendingActivation) |
 				user.getAccountStatus().equals(AccountStatus.verified))
@@ -124,7 +137,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 	@Override
 	public User setPassword(String username, String password, String confirm) {
 		if (confirmPassword(password, confirm)) {
-			User user = userRepository.findByUsernameIgnoreCase(username)
+			User user = userRepository.findByNameIgnoreCase(username)
 				.filter(u -> 
 					u.getAccountStatus().equals(AccountStatus.verified) |
 					u.getAccountStatus().equals(AccountStatus.active))
@@ -190,6 +203,5 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 			return userAttributes;
 		}
 	}
-	
 
 }

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
-import org.integratedmodelling.klab.hub.tasks.Task;
-import org.integratedmodelling.klab.hub.tasks.TaskStatus;
-import org.integratedmodelling.klab.hub.tokens.ClickbackToken;
+import org.integratedmodelling.klab.hub.api.Task;
+import org.integratedmodelling.klab.hub.api.TaskStatus;
+import org.integratedmodelling.klab.hub.api.TokenClickback;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,7 +19,7 @@ public interface TaskRepository extends MongoRepository<Task, ObjectId>{
 	List<Task> findByStatus(TaskStatus status);
 	
 	@Query(value="{ '_class' : ?0, 'token' : ?1 }")
-	Optional<Task> findByToken(String clazz, ClickbackToken token);
+	Optional<Task> findByToken(String clazz, TokenClickback token);
 	
 	@Query("{'_class' : ?0 }")
 	List<Task> findByClass(String clazz);

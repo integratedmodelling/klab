@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.network;
 
-import org.integratedmodelling.klab.hub.nodes.MongoNode;
+import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import com.sun.istack.NotNull;

@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.auth;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -17,6 +19,7 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -78,6 +81,34 @@ public class KlabCertificate implements ICertificate {
 	public static KlabCertificate createFromClasspath(String resource) {
 		return new KlabCertificate(resource);
 	}
+	
+	public static KlabCertificate createFromProperties(Properties props) {
+		return new KlabCertificate(props);
+	}
+	
+	/**
+	 * Create a new certificate from a string. Check isValid() on the resulting
+	 * certificate in this block because the file is deleted after.
+	 * 
+	 * @param string is the certificate as a complete string
+	 * @return a certificate read from the passed string
+	 */
+	public static ICertificate createFromString(String string) {
+		ICertificate cert;
+		try {
+			File temp = File.createTempFile(NameGenerator.newName(), ".cert");
+			BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
+			bw.write(string);
+			bw.close();
+			cert = KlabCertificate.createFromFile(temp);
+			cert.isValid();
+			temp.delete();
+		} catch (IOException e) {
+			throw new KlabIllegalStatusException("certificate string could not be turned into a file");
+		}
+		return cert;
+		
+	}
 
 	/**
 	 * Get the file from its configured locations and open it. If there is no
@@ -125,6 +156,10 @@ public class KlabCertificate implements ICertificate {
 		this.resource = resource;
 	}
 
+	public KlabCertificate(Properties props) {
+		this.properties = props;
+	}
+
 	public boolean isValid() {
 
 		if (cause != null) {
@@ -168,7 +203,7 @@ public class KlabCertificate implements ICertificate {
 	}
 
 	/**
-	 * Check if the certificate is an old version and try to upgrade it by
+	 * Check if the certificate is an old version and try to ubikeshoppgrade it by
 	 * authenticating to the collaboration server and writing a new one for a
 	 * generic hub. If successful, finish authentication and return true to signal
 	 * that everything is done.

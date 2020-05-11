@@ -6,11 +6,11 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.integratedmodelling.klab.hub.tasks.CreateGroupTask;
-import org.integratedmodelling.klab.hub.tasks.GroupRequestTask;
-import org.integratedmodelling.klab.hub.tasks.RemoveGroupTask;
-import org.integratedmodelling.klab.hub.tasks.Task;
-import org.integratedmodelling.klab.hub.tasks.TaskBuilder;
+import org.integratedmodelling.klab.hub.api.CreateGroupTask;
+import org.integratedmodelling.klab.hub.api.GroupRequestTask;
+import org.integratedmodelling.klab.hub.api.RemoveGroupTask;
+import org.integratedmodelling.klab.hub.api.Task;
+import org.integratedmodelling.klab.hub.api.TaskBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

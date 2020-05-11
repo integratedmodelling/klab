@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: hub-service
+  cloud:
+    consul:
+      enabled: true
+      host: localhost
+      port: 8500
+      config:
+        prefix: config
+        enabled: true
+        defaultContext: hub-service
+        profileSeparator: '::'
+        format: YAML
+        data-key: data

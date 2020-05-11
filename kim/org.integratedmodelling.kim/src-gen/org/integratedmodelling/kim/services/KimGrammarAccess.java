@@ -868,8 +868,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-		//(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | concept=ConceptDeclaration |
-		//'(' toResolve+=ConceptDeclaration (=> ',' toResolve+=ConceptDeclaration)* ')' | op=REL_OPERATOR expression=Number |
+		//(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | concept=ConceptDeclaration | '('
+		//toResolve+=ConceptDeclaration (=> ',' toResolve+=ConceptDeclaration)* ')' | op=REL_OPERATOR expression=Number |
 		//nodata='unknown' | star?='*'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
@@ -1934,14 +1934,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
 		//	condition=Value)? | integrate?='integrate'
 		//	assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
-		//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=>
-		//	('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') =>
-		//	condition=Value?;
+		//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if'
+		//	| conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') => condition=Value?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
-		//condition=Value)? | integrate?='integrate' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if'
-		//| conditionNegative?='unless') condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (','
+		//condition=Value)? | integrate?='integrate' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
+		//conditionNegative?='unless') condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (','
 		//executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value |
 		//away?='away') => condition=Value?
 		public Alternatives getAlternatives() { return cAlternatives; }
@@ -2662,9 +2661,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	(annotations+=Annotation annotations+=Annotation*)? ((projectPrivate?='project'? private?='private')? &
 		//	inactive?='void'?) ('namespace' | scenario?='scenario' | worldviewBound?='worldview') name=PathName docstring=STRING?
 		//	(('using' 'language' language=UPPERCASE_ID)? & ('using' imported+=Import (=> ',' imported+=Import)*)? & ('imports'
-		//	owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & ('covering' coverage+=Function (=> ',' coverage+=Function)*)?
-		//	& ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with' disjointNamespaces+=PathName
-		//	(',' disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from'
+		//	owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
+		//	('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with' disjointNamespaces+=PathName (','
+		//	disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from'
 		//	lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?)
 		//	('parameters' parameters=Metadata)? ('metadata' metadata=Metadata)?
 		//	';';
@@ -2675,9 +2674,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//(('using' 'language' language=UPPERCASE_ID)? & ('using' imported+=Import (=> ',' imported+=Import)*)? & ('imports'
 		//owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		//('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with' disjointNamespaces+=PathName (','
-		//disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from'
-		//lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?)
-		//('parameters' parameters=Metadata)? ('metadata' metadata=Metadata)? ';'
+		//disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from' lookupNamespace+=PathName*)?
+		//& ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?) ('parameters' parameters=Metadata)?
+		//('metadata' metadata=Metadata)? ';'
 		public Group getGroup() { return cGroup; }
 		
 		//(annotations+=Annotation annotations+=Annotation*)?
@@ -2752,8 +2751,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//('using' 'language' language=UPPERCASE_ID)? & ('using' imported+=Import (=> ',' imported+=Import)*)? & ('imports'
 		//owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		//('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with' disjointNamespaces+=PathName (','
-		//disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from'
-		//lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?
+		//disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from' lookupNamespace+=PathName*)?
+		//& ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?
 		public UnorderedGroup getUnorderedGroup_5() { return cUnorderedGroup_5; }
 		
 		//('using' 'language' language=UPPERCASE_ID)?
@@ -3394,8 +3393,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//(urn=Urn 'as')? concept=NamedObservableSemantics docstring=STRING? ('extends' parents+=PathName (','
 		//parents+=PathName)*)? (('observing' // validator will ensure that the semantics has an associated value
 		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('children' ('(' observations+=ObserveStatementBody
-		//')') (',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using'
-		//accessor=Function?)? & ('metadata' metadata=Metadata)?
+		//')') (',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using' accessor=Function?)?
+		//& ('metadata' metadata=Metadata)?
 		public UnorderedGroup getUnorderedGroup() { return cUnorderedGroup; }
 		
 		//(urn=Urn 'as')? concept=NamedObservableSemantics docstring=STRING? ('extends' parents+=PathName (','
@@ -3615,8 +3614,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(value=Value 'as')? generic?='any'? declaration=ConceptDeclaration (('according' 'to' accordingTo=PropertyId)? & ('in'
-		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (valueOperators+=ValueOperator valueOperators+=ValueOperator*)?
-		//& (optional?='optional' | 'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?)
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? &
+		//(optional?='optional' | 'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//(value=Value 'as')?
@@ -4328,9 +4327,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
 		//	adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
 		//	contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-		//	during=SimpleConceptDeclaration)? & ('within' (distributedWithinInherency?='each'?
-		//	context=SimpleConceptDeclaration))? & ('linking' relationshipSource=SimpleConceptDeclaration 'to'
-		//	relationshipTarget=SimpleConceptDeclaration)?)?;
+		//	during=SimpleConceptDeclaration)? & ('within' (distributedWithinInherency?='each'? context=SimpleConceptDeclaration))?
+		//	& ('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//main+=Concept+ (('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))? & ('for'
@@ -4664,8 +4662,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//extends=Concept) | name='inherent' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='compresent'
 		//(type=CONCEPT_TYPE | 'extends' extends=Concept) | name='adjacent' (type=CONCEPT_TYPE | 'extends' extends=Concept) |
 		//name='container' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='contained' (type=CONCEPT_TYPE | 'extends'
-		//extends=Concept) | name='purpose' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='causant' (type=CONCEPT_TYPE
-		//| 'extends' extends=Concept) | name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='cooccurrent'
+		//extends=Concept) | name='purpose' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='causant' (type=CONCEPT_TYPE |
+		//'extends' extends=Concept) | name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='cooccurrent'
 		//(type=CONCEPT_TYPE | 'extends' extends=Concept)) template?='}'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
@@ -4684,10 +4682,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//templateType=('${' | '#{') (name='context' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='inherent'
 		//(type=CONCEPT_TYPE | 'extends' extends=Concept) | name='compresent' (type=CONCEPT_TYPE | 'extends' extends=Concept) |
 		//name='adjacent' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='container' (type=CONCEPT_TYPE | 'extends'
-		//extends=Concept) | name='contained' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='purpose'
-		//(type=CONCEPT_TYPE | 'extends' extends=Concept) | name='causant' (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-		//name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='cooccurrent' (type=CONCEPT_TYPE | 'extends'
-		//extends=Concept)) template?='}'
+		//extends=Concept) | name='contained' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='purpose' (type=CONCEPT_TYPE
+		//| 'extends' extends=Concept) | name='causant' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='caused'
+		//(type=CONCEPT_TYPE | 'extends' extends=Concept) | name='cooccurrent' (type=CONCEPT_TYPE | 'extends' extends=Concept))
+		//template?='}'
 		public Group getGroup_2() { return cGroup_2; }
 		
 		//templateType=('${' | '#{')
@@ -5972,8 +5970,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// */ UpperOntologyDefinition:
 		//	'model' ((agentSpecifier=('deliberative' | 'interactive' | 'reactive') concept='agent' |
 		//	(propertySpecifiers+=PROPERTY_TYPE propertySpecifiers+=PROPERTY_TYPE* concept='relationship')?)
-		//	'using' coreconcept=(NamespaceId | PropertyId) | operand=OPERATOR_TARGET 'using' property=(PropertyId |
-		//	NamespaceId));
+		//	'using' coreconcept=(NamespaceId | PropertyId) | operand=OPERATOR_TARGET 'using' property=(PropertyId | NamespaceId));
 		@Override public ParserRule getRule() { return rule; }
 		
 		//'model' ((agentSpecifier=('deliberative' | 'interactive' | 'reactive') concept='agent' |
@@ -6480,6 +6477,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// * deniable is for traits only. If a trait is deniable, 'not Trait' is a trait (of not being Trait).
 		// * if not deniable, 'not Trait' means being any of the other concrete traits; if there is only one 
 		// * concrete trait it's an error. If there are two, it means being the other.
+		// * 
+		// * Many of the verbs like "confers" or "creates" can also qualify actions in k.Actors, so that
+		// * attributes and objects can be assigned/created/destroyed (and resolved) as the result of
+		// * behavior actions.
+		// *
 		// * ------------------------------------------------------------------------------------------
 		// */ ConceptStatementBody:
 		//	annotations+=Annotation*
@@ -6490,13 +6492,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	contextualizedTraits+=ObservableSemantics)* | specific?='exposing' contextualizesTraits+=ConceptDeclaration (','
 		//	contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority' definedAuthority=UPPERCASE_PATH |
 		//	upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? &
-		//	('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with'
-		//	describedProportionality=ConceptDeclaration)? & ('decreases' 'with'
-		//	describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks' describedNonzeroQuality=ConceptDeclaration)? &
-		//	('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes' discretizesQuality=ConceptDeclaration)? &
-		//	('inherits' actuallyInheritedTraits+=ConceptDeclaration (',' actuallyInheritedTraits+=ConceptDeclaration)*)? & ('has'
-		//	'role' roles+=ConceptDeclaration (',' roles+=ConceptDeclaration)* ('targeting' targetObservables+=ConceptDeclaration
-		//	(',' targetObservables+=ConceptDeclaration)*)? ('in' restrictedObservables+=ConceptDeclaration (','
+		//	('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with' describedProportionality=ConceptDeclaration)?
+		//	& ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks'
+		//	describedNonzeroQuality=ConceptDeclaration)? & ('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes'
+		//	discretizesQuality=ConceptDeclaration)? & ('inherits' actuallyInheritedTraits+=ConceptDeclaration (','
+		//	actuallyInheritedTraits+=ConceptDeclaration)*)? & ('has' 'role' roles+=ConceptDeclaration (','
+		//	roles+=ConceptDeclaration)* ('targeting' targetObservables+=ConceptDeclaration (','
+		//	targetObservables+=ConceptDeclaration)*)? ('in' restrictedObservables+=ConceptDeclaration (','
 		//	restrictedObservables+=ConceptDeclaration)*))? & ('confers' conferredTraits+=ConceptDeclaration (','
 		//	conferredTraits+=ConceptDeclaration)* ('to' conferredTargets+=ConceptDeclaration (','
 		//	conferredTargets+=ConceptDeclaration)*)?)? & (('part' | constituent?='constituent' | constitutes?='consists')
@@ -6513,8 +6515,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//// FIXME shouldn't have to repeat these two. Mostly to keep the underlying ECore neat at the children.
 		//annotations+=Annotation* abstract?='abstract'? (root?='root' | name=CAMELCASE_ID ('identified' 'as'
 		//(stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?)
-		//(docstring=STRING? & ((('is' | alias?='equals') coreConcept?='core'?) (nothing?='nothing' |
-		//parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? & ('exposes'
+		//(docstring=STRING? & ((('is' | alias?='equals') coreConcept?='core'?) (nothing?='nothing' | parents+=ConceptDeclaration
+		//(connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? & ('exposes'
 		//contextualizedTraits+=ObservableSemantics (',' contextualizedTraits+=ObservableSemantics)* | specific?='exposing'
 		//contextualizesTraits+=ConceptDeclaration (',' contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority'
 		//definedAuthority=UPPERCASE_PATH | upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (','
@@ -6528,8 +6530,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//restrictedObservables+=ConceptDeclaration)*))? & ('confers' conferredTraits+=ConceptDeclaration (','
 		//conferredTraits+=ConceptDeclaration)* ('to' conferredTargets+=ConceptDeclaration (','
 		//conferredTargets+=ConceptDeclaration)*)?)? & (('part' | constituent?='constituent' | constitutes?='consists')
-		//partOf?='of' whole=ConceptDeclaration)? & ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)?
-		//& ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? & ('links'
+		//partOf?='of' whole=ConceptDeclaration)? & ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
+		//('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? & ('links'
 		//domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration (',' domains+=SimpleConceptDeclaration =>
 		//'to' ranges+=SimpleConceptDeclaration)*)? & ('inverse' 'of' inverse=ConceptDeclaration)? & ('affects'
 		//qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? & ('has' disjoint?='disjoint'?
@@ -6631,8 +6633,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//restrictedObservables+=ConceptDeclaration)*))? & ('confers' conferredTraits+=ConceptDeclaration (','
 		//conferredTraits+=ConceptDeclaration)* ('to' conferredTargets+=ConceptDeclaration (','
 		//conferredTargets+=ConceptDeclaration)*)?)? & (('part' | constituent?='constituent' | constitutes?='consists')
-		//partOf?='of' whole=ConceptDeclaration)? & ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)?
-		//& ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? & ('links'
+		//partOf?='of' whole=ConceptDeclaration)? & ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
+		//('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? & ('links'
 		//domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration (',' domains+=SimpleConceptDeclaration =>
 		//'to' ranges+=SimpleConceptDeclaration)*)? & ('inverse' 'of' inverse=ConceptDeclaration)? & ('affects'
 		//qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? & ('has' disjoint?='disjoint'?
@@ -7720,8 +7722,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAuthorityUPPERCASE_PATHTerminalRuleCall_1_1_0_1 = (RuleCall)cAuthorityAlternatives_1_1_0.eContents().get(1);
 		
 		//IdentityRequirement:
-		//	('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)*
-		//	|
+		//	('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)* |
 		//	'authority' authority=(UPPERCASE_ID | UPPERCASE_PATH);
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -10887,9 +10888,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	set?='set' assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
 	//	condition=Value)? | integrate?='integrate'
 	//	assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
-	//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=>
-	//	('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') =>
-	//	condition=Value?;
+	//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if'
+	//	| conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') => condition=Value?;
 	public ActionElements getActionAccess() {
 		return pAction;
 	}
@@ -10989,9 +10989,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	(annotations+=Annotation annotations+=Annotation*)? ((projectPrivate?='project'? private?='private')? &
 	//	inactive?='void'?) ('namespace' | scenario?='scenario' | worldviewBound?='worldview') name=PathName docstring=STRING?
 	//	(('using' 'language' language=UPPERCASE_ID)? & ('using' imported+=Import (=> ',' imported+=Import)*)? & ('imports'
-	//	owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & ('covering' coverage+=Function (=> ',' coverage+=Function)*)?
-	//	& ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with' disjointNamespaces+=PathName
-	//	(',' disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from'
+	//	owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
+	//	('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with' disjointNamespaces+=PathName (','
+	//	disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from'
 	//	lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?)
 	//	('parameters' parameters=Metadata)? ('metadata' metadata=Metadata)?
 	//	';';
@@ -11159,9 +11159,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
 	//	adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
 	//	contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-	//	during=SimpleConceptDeclaration)? & ('within' (distributedWithinInherency?='each'?
-	//	context=SimpleConceptDeclaration))? & ('linking' relationshipSource=SimpleConceptDeclaration 'to'
-	//	relationshipTarget=SimpleConceptDeclaration)?)?;
+	//	during=SimpleConceptDeclaration)? & ('within' (distributedWithinInherency?='each'? context=SimpleConceptDeclaration))?
+	//	& ('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?;
 	public ConceptDeclarationElements getConceptDeclarationAccess() {
 		return pConceptDeclaration;
 	}
@@ -11278,8 +11277,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// */ UpperOntologyDefinition:
 	//	'model' ((agentSpecifier=('deliberative' | 'interactive' | 'reactive') concept='agent' |
 	//	(propertySpecifiers+=PROPERTY_TYPE propertySpecifiers+=PROPERTY_TYPE* concept='relationship')?)
-	//	'using' coreconcept=(NamespaceId | PropertyId) | operand=OPERATOR_TARGET 'using' property=(PropertyId |
-	//	NamespaceId));
+	//	'using' coreconcept=(NamespaceId | PropertyId) | operand=OPERATOR_TARGET 'using' property=(PropertyId | NamespaceId));
 	public UpperOntologyDefinitionElements getUpperOntologyDefinitionAccess() {
 		return pUpperOntologyDefinition;
 	}
@@ -11309,6 +11307,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// * deniable is for traits only. If a trait is deniable, 'not Trait' is a trait (of not being Trait).
 	// * if not deniable, 'not Trait' means being any of the other concrete traits; if there is only one 
 	// * concrete trait it's an error. If there are two, it means being the other.
+	// * 
+	// * Many of the verbs like "confers" or "creates" can also qualify actions in k.Actors, so that
+	// * attributes and objects can be assigned/created/destroyed (and resolved) as the result of
+	// * behavior actions.
+	// *
 	// * ------------------------------------------------------------------------------------------
 	// */ ConceptStatementBody:
 	//	annotations+=Annotation*
@@ -11319,13 +11322,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	contextualizedTraits+=ObservableSemantics)* | specific?='exposing' contextualizesTraits+=ConceptDeclaration (','
 	//	contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority' definedAuthority=UPPERCASE_PATH |
 	//	upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? &
-	//	('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with'
-	//	describedProportionality=ConceptDeclaration)? & ('decreases' 'with'
-	//	describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks' describedNonzeroQuality=ConceptDeclaration)? &
-	//	('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes' discretizesQuality=ConceptDeclaration)? &
-	//	('inherits' actuallyInheritedTraits+=ConceptDeclaration (',' actuallyInheritedTraits+=ConceptDeclaration)*)? & ('has'
-	//	'role' roles+=ConceptDeclaration (',' roles+=ConceptDeclaration)* ('targeting' targetObservables+=ConceptDeclaration
-	//	(',' targetObservables+=ConceptDeclaration)*)? ('in' restrictedObservables+=ConceptDeclaration (','
+	//	('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with' describedProportionality=ConceptDeclaration)?
+	//	& ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks'
+	//	describedNonzeroQuality=ConceptDeclaration)? & ('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes'
+	//	discretizesQuality=ConceptDeclaration)? & ('inherits' actuallyInheritedTraits+=ConceptDeclaration (','
+	//	actuallyInheritedTraits+=ConceptDeclaration)*)? & ('has' 'role' roles+=ConceptDeclaration (','
+	//	roles+=ConceptDeclaration)* ('targeting' targetObservables+=ConceptDeclaration (','
+	//	targetObservables+=ConceptDeclaration)*)? ('in' restrictedObservables+=ConceptDeclaration (','
 	//	restrictedObservables+=ConceptDeclaration)*))? & ('confers' conferredTraits+=ConceptDeclaration (','
 	//	conferredTraits+=ConceptDeclaration)* ('to' conferredTargets+=ConceptDeclaration (','
 	//	conferredTargets+=ConceptDeclaration)*)?)? & (('part' | constituent?='constituent' | constitutes?='consists')
@@ -11401,8 +11404,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//IdentityRequirement:
-	//	('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)*
-	//	|
+	//	('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)* |
 	//	'authority' authority=(UPPERCASE_ID | UPPERCASE_PATH);
 	public IdentityRequirementElements getIdentityRequirementAccess() {
 		return pIdentityRequirement;
@@ -12001,7 +12003,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal STRING:
-	//	'"' ('\\' . | !('\\' | '"'))* '"' | "'" ('\\' . | !('\\' | "'"))* "'";
+	//	'"' ('\\' . | !('\\' | '"'))* '"' |
+	//	"'" ('\\' . | !('\\' | "'"))* "'";
 	public TerminalRule getSTRINGRule() {
 		return gaTerminals.getSTRINGRule();
 	}

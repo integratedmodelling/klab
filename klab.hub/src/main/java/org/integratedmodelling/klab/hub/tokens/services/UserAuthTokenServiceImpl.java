@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.TokenType;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.commands.CreateUserAuthenticationToken;
+import org.integratedmodelling.klab.hub.commands.DeleteAuthenticationToken;
+import org.integratedmodelling.klab.hub.commands.GetUserProfile;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
-import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.LoginFailedExcepetion;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.tokens.AuthenticationToken;
-import org.integratedmodelling.klab.hub.tokens.TokenType;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateUserAuthenticationToken;
-import org.integratedmodelling.klab.hub.tokens.commands.DeleteAuthenticationToken;
-import org.integratedmodelling.klab.hub.users.ProfileResource;
-import org.integratedmodelling.klab.hub.users.User;
-import org.integratedmodelling.klab.hub.users.commands.GetUserProfile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,10 +48,10 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	}
 
 	@Override
-	public AuthenticationToken createToken(String username, TokenType type) {
+	public TokenAuthentication createToken(String username, TokenType type) {
 		if(TokenType.auth == type) {
-			AuthenticationToken token = null;
-			Optional<User> user = userRepository.findByUsernameIgnoreCase(username);
+			TokenAuthentication token = null;
+			Optional<User> user = userRepository.findByNameIgnoreCase(username);
 			if(user.isPresent()) {
 				token = new CreateUserAuthenticationToken(tokenRepository, user.get()).execute();
 			}
@@ -61,23 +61,6 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		}
 	}
 
-	@Override
-	public AuthenticationToken createChildToken(String username, String parentToken, TokenType type) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean verifyToken(String username, String tokenString, TokenType type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public boolean verifyTokens(String username, String tokenString, TokenType... verify) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public void deleteToken(String tokenString) {
@@ -85,8 +68,8 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	}
 	
 	private void deleteExpiredTokens(String username) {
-		List<AuthenticationToken> dbTokens = tokenRepository.findByUsername(username);
-		for (AuthenticationToken dbToken : dbTokens) {
+		List<TokenAuthentication> dbTokens = tokenRepository.findByUsername(username);
+		for (TokenAuthentication dbToken : dbTokens) {
 			if (dbToken.isExpired()) {
 				deleteToken(dbToken.getTokenString());
 			}
@@ -94,19 +77,19 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	}
 
 	@Override
-	public AuthenticationToken getUserAuthenticationToken(String username, String password) {
+	public TokenAuthentication getUserAuthenticationToken(String username, String password) {
 		Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
 		try {
 			authRequest = authenticationManager.authenticate(authRequest);
 		} catch (AuthenticationException e) {
-			throw new BadRequestException("Username or password incorrect.");
+			throw new LoginFailedExcepetion(username);
 		}
 		if (!authRequest.isAuthenticated()) {
 			String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
 			throw new KlabException(msg);
 		} else {
 			deleteExpiredTokens(username);
-			AuthenticationToken result = createToken(username, TokenType.auth);
+			TokenAuthentication result = createToken(username, TokenType.auth);
 			SecurityContextHolder.getContext().setAuthentication(result);
 			return result;
 		}
@@ -114,7 +97,7 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 
 	@Override
 	public LoginResponse getAuthResponse(String username, String password) {
-		AuthenticationToken token = getUserAuthenticationToken(username, password);
+		TokenAuthentication token = getUserAuthenticationToken(username, password);
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
 		LoginResponse response = new LoginResponse(token, profile.getSafeProfile());
 		return response;

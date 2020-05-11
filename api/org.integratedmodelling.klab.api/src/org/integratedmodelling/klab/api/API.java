@@ -93,7 +93,7 @@ public interface API {
 
 	/**
 	 * STOMP endpoint for client/server notifications. Handled through Websockets
-	 * protocol.
+	 * protocol.Drugs and Aging
 	 * 
 	 * <br/>
 	 * <b>Response type:</b> {@link Message}
@@ -169,13 +169,109 @@ public interface API {
 		 * <br/>
 		 * <b>Authentication:</b> open
 		 */
-		public static final String AUTHENTICATE_ENGINE = "/api/v2/engines/auth-cert";
-
+		
+		public static final String API_BASE = "/api/v2";
+		/**
+		 * Base URL path for node on the hub.
+		 */
+		public static final String NODE_BASE = API_BASE + "/nodes";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String USER_BASE = API_BASE + "/users";
+		/**
+		 * Base URL path for lever resources on the hub.
+		 */
+		public static final String LEVER_BASE = API_BASE + "/lever";
+		/**
+		 * Base URL path for engine resources on the hub.
+		 */		
+		public static final String ENGINE_BASE = API_BASE + "/engines";
+		/**
+		 * Base URL path for authenticating resources.
+		 */		
+		public static final String AUTH_BASE = "/auth-cert";
+		
+		public static final String AUTHENTICATE_ENGINE = ENGINE_BASE + AUTH_BASE;
 		/**
 		 * Called by nodes on hubs when authenticating with them. Parameters like the
 		 * engine version.
 		 */
-		public static final String AUTHENTICATE_NODE = "/api/v2/nodes/auth-cert";
+		public static final String AUTHENTICATE_NODE = NODE_BASE + AUTH_BASE;
+		/**
+		 * Called by levers on hubs when authenticating with them. Parameters like the
+		 * engine version.
+		 */
+		public static final String AUTHENTICATE_LEVER = LEVER_BASE + AUTH_BASE;
+		/**
+		 * Called by users to log into the hub and recieve an authentication token.
+		 */
+		public static final String AUTHENTICATE_USER = USER_BASE + "/log-in";
+		/**
+		 * Called by users to log into the hub and recieve an authentication token.
+		 */
+		public static final String DEAUTHENTICATE_USER = USER_BASE + "/log-out";
+		/**
+		 * Base URL path for node resources on the hub.
+		 */
+		public static final String NODE_BASE_ID = NODE_BASE + "/{id}";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String USER_BASE_ID = USER_BASE+ "/{id}";
+		/**
+		 * Base URL path for lever resources on the hub.
+		 */
+		public static final String LEVER_BASE_ID = LEVER_BASE + "/{id}";
+		/**
+		 * Base URL path application logs.
+		 */	
+		public static final String LOGS = API_BASE + "/system/logs";
+		/**
+		 * Base URL path for deleted users.
+		 */			
+		public static final String DELETED_USERS = USER_BASE + "/deleted-users";
+		/**
+		 * URL path for deleted users by id.
+		 */
+		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";
+		
+		public static final String CURRENT_PROFILE = USER_BASE + "/me";	
+		
+		public static interface PARAMETERS {
+			/**
+			 * URL PARAMETER for user activation tokens.
+			 */
+			public static final String USER_ACTIVATION = "activate";
+			/**
+			 * URL PARAMETER for user requesting groups.  Should be deprecated tokens.
+			 */
+			@Deprecated
+			public static final String USER_GROUPS = "groups";
+			/**
+			 * URL PARAMETER for user requesting a lost password email.
+			 */
+			public static final String USER_LOST_PASSWORD = "lost-password";
+			/**
+			 * URL PARAMETER for user setting a new password.
+			 */
+			public static final String USER_REQUEST_PASSWORD = "new-password";
+			/**
+			 * URL PARAMETER for user setting a password from set password token.
+			 */
+			public static final String USER_SET_PASSWORD = "set-password";
+			/**
+			 * URL PARAMETER for user to verify account.
+			 */
+			public static final String USER_VERIFICATION = "verify";
+			/**
+			 * URL PARAMETER for user to request a new certificate.
+			 */
+			public static final String USER_CERTIFICATE = "certificate";
+		}
+		
+
+		
 
 		public static interface INDEXING {
 
@@ -360,7 +456,7 @@ public interface API {
 		 */
 		public static final String P_IDENTIFIER = "{identifier}";
 
-		/**
+		/**requestNewP
 		 * Authority capabilities.
 		 * 
 		 * GET JSON

@@ -12,7 +12,9 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.mongodb.MongoClient;
 
@@ -35,12 +37,21 @@ public class MongoConfig extends AbstractMongoConfiguration {
     public MongoDbFactory mongoDbFactory(MongoClient mongoClient) {
         return new SimpleMongoDbFactory(mongoClient, "collaboration");
     }
-	
+    
+    @Bean
+    public ValidatingMongoEventListener validatingMongoEventListener() {
+        return new ValidatingMongoEventListener(validator());
+    }
 
-    @Value("${mongo.hostname}")
+    @Bean
+    public LocalValidatorFactoryBean validator() {
+        return new LocalValidatorFactoryBean();
+    }
+
+    @Value("${mongo.hostname:localhost}")
     private String HOSTNAME;
 
-    @Value("${mongo.port}")
+    @Value("${mongo.por:27017}")
     private int PORT;
 
     @Override

@@ -10,7 +10,9 @@ import java.util.Set;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.auth.Hub;
+import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.joda.time.DateTime;
@@ -24,6 +26,8 @@ public enum NetworkManager {
 	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Map<String, NodeReference> allNodes = new HashMap<>();
 
+	
+	//this does nothing
 	public Collection<NodeReference> getNodes(Set<Group> groups) {
 		Set<NodeReference> ret = new HashSet<>();
 		for (INodeIdentity node : onlineNodes) {
@@ -37,19 +41,10 @@ public enum NetworkManager {
 
 	private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
 		
-		NodeReference ret = new NodeReference();
-		
-		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
-		
-		IdentityReference partnerIdentity = new IdentityReference();
-		partnerIdentity.setId(hub.getParentIdentity().getId());
-		partnerIdentity.setEmail(hub.getParentIdentity().getEmailAddress());
-		partnerIdentity.setLastLogin(DateTime.now().toString());
-		
-		ret.setId(node.getName());
+		NodeReference ret = new NodeReference(node);
+		HubReference hub = new GenerateHubReference().execute();
 		ret.setOnline(isOnline);
-		ret.getUrls().addAll(node.getUrls());
-		ret.setPartner(partnerIdentity);
+		ret.setPartner(hub.getPartner());
 
 		// TODO more
 
@@ -57,8 +52,19 @@ public enum NetworkManager {
 	}
 
 	public void notifyAuthorizedNode(INodeIdentity ret, boolean online) {
-		onlineNodes.add(ret);
-		allNodes.put(ret.getName(), createNodeReference(ret, online));
+		if(allNodes.containsKey(ret.getName()) && online == true) {
+			if (offlineNodes.contains(ret)) {
+				offlineNodes.remove(ret);
+			}
+			if (!onlineNodes.contains(ret)) {
+				onlineNodes.add(ret);
+			}
+		}
+		if(allNodes.containsKey(ret.getName())) {
+			return;
+		} else {
+			allNodes.put(ret.getName(), createNodeReference(ret, online));
+		}
 	}
 
 	public NodeReference getNode(String nodeName) {

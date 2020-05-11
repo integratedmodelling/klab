@@ -5,11 +5,11 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 
-import org.integratedmodelling.klab.hub.groups.MongoGroup;
-import org.integratedmodelling.klab.hub.tasks.CreateGroupTask;
-import org.integratedmodelling.klab.hub.tasks.Task;
+import org.integratedmodelling.klab.hub.api.CreateGroupTask;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
+import org.integratedmodelling.klab.hub.api.Role;
+import org.integratedmodelling.klab.hub.api.Task;
 import org.integratedmodelling.klab.hub.tasks.services.TaskService;
-import org.integratedmodelling.klab.hub.users.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
