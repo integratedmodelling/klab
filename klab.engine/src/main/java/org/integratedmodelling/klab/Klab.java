@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -39,6 +41,7 @@ import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.NotificationUtils;
@@ -59,6 +62,9 @@ public enum Klab implements IRuntimeService {
 	INSTANCE;
 
 	public static final int TICKET_CHECK_INTERVAL_SECONDS = 60;
+
+	Map<EngineEvent.Type, Pair<IIdentity, AtomicBoolean>> eventSubscriptions = Collections
+			.synchronizedMap(new HashMap<>());
 
 	/**
 	 * This can be set to a runnable that starts the REST services.
@@ -566,6 +572,34 @@ public enum Klab implements IRuntimeService {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Subscribe the passed identity to the event and immediately notify it if it's
+	 * ongoing.
+	 * 
+	 * @param identity
+	 * @param event
+	 */
+	public void subscribe(IIdentity identity, EngineEvent.Type event) {
+
+	}
+
+	public void unsubscribe(IIdentity identity, EngineEvent.Type event) {
+
+	}
+
+	/**
+	 * If any listener identity has subscribed to the passed event, notify either
+	 * its start or its end. Events are synchronous and engine-wide, so the event
+	 * may start w/o a listener and any listener that is added after its start and
+	 * before its end is notified automatically.
+	 * 
+	 * @param b
+	 */
+	public void notifyEvent(EngineEvent.Type type, boolean started) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

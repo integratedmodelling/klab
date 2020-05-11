@@ -468,7 +468,7 @@ public class Resolver {
 			parentScope.merge(ret);
 			if (ret.getCoverage().getCoverage() < 0.95) {
 				parentScope.getMonitor()
-						.warn(observable.getType() + " models could only be found to cover "
+						.warn(observable.getType().getDefinition() + ": models could only be found to cover "
 								+ NumberFormat.getPercentInstance().format(ret.getCoverage().getCoverage())
 								+ " of the context");
 			}

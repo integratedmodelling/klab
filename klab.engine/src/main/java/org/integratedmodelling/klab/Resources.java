@@ -86,6 +86,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
@@ -192,7 +193,7 @@ public enum Resources implements IResourceService {
 	private ServiceWorkspace service;
 
 	private IProject localProject;
-	
+
 	public static String REGEX_ENTRY = "regex";
 
 	private Resources() {
@@ -755,11 +756,13 @@ public enum Resources implements IResourceService {
 	 *                    and used as filter by the importer
 	 * @return
 	 */
-	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType, String regex) {
+	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType,
+			String regex) {
 
 		List<IResourceAdapter> importers = new ArrayList<>();
 		IParameters<String> parameters = new Parameters<String>();
-		// TODO better way to pass the regex to the importer, if not removed from userData after use, 
+		// TODO better way to pass the regex to the importer, if not removed from
+		// userData after use,
 		// is added to metadata
 		if (regex != null && !regex.equals("")) {
 			parameters.put(REGEX_ENTRY, regex);
@@ -772,7 +775,7 @@ public enum Resources implements IResourceService {
 		}
 
 		List<IResource> ret = new ArrayList<>();
-		
+
 		for (IResourceAdapter adapter : importers) {
 
 			IResourceImporter importer = adapter.getImporter();
@@ -1350,6 +1353,12 @@ public enum Resources implements IResourceService {
 			compilationResult.setPublishable(namespace.isPublishable());
 			ret.getCompilationReports().add(compilationResult);
 		}
+
+		/*
+		 * inform any listeners of the potentially blocking operation
+		 */
+		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, true);
+
 		for (String urn : project.getLocalResourceUrns()) {
 			// TODO should also include notifications from namespace compilation in project
 			LocalResourceReference rref = new LocalResourceReference();
@@ -1361,6 +1370,9 @@ public enum Resources implements IResourceService {
 				ret.getLocalResources().add(rref);
 			}
 		}
+
+		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, false);
+
 		return ret;
 	}
 

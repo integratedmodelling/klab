@@ -447,9 +447,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 			if (scope.getCoverage().isRelevant()) {
 				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope,
-						this.dataflow)/*
-										 * .setPrimary(false)
-										 */;
+						this.dataflow);
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 			}
 		}
@@ -1106,10 +1104,12 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				}
 
 				/*
-				 * add any predefined states to the structure
+				 * add any predefined states to the structure and the catalog
 				 */
 				for (IState state : predefinedStates) {
 					link(state, observation);
+					
+					catalog.put(state.getObservable().getName(), state);
 				}
 
 				if (!(observation instanceof IState)) {

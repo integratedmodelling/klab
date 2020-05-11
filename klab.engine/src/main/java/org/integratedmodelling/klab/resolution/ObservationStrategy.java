@@ -415,12 +415,9 @@ public class ObservationStrategy {
 		this.resolve = resolve;
 	}
 
-//	public IObservable getDistributingObservable() {
-//		
-//		/*
-//		 * if we have a distributing observable, it's always the first due to the way it's coded.
-//		 */
-//		return Observable.promote(this.observables.get(0).getDistributionContext());
-//	}
+	@Override
+	public String toString() {
+		return "ObservationStrategy [observables=" + observables + ", strategy=" + strategy + "]";
+	}
 
 }
