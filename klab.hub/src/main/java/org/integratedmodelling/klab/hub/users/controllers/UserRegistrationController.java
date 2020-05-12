@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
 import org.integratedmodelling.klab.hub.api.TokenNewUserClickback;
+
+import javax.mail.MessagingException;
+
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
@@ -97,6 +100,20 @@ public class UserRegistrationController {
 				tokenService.createToken(username, TokenType.password);
 		JSONObject resp = new JSONObject();
 		resp.appendField("User", username).appendField("clickback", token.getTokenString());
+		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
+	}
+	
+	
+	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_LOST_PASSWORD)
+	public ResponseEntity<?> requestLostPassword(@PathVariable String username) throws MessagingException {
+		ProfileResource profile = profileService.getUserProfile(username);
+		TokenChangePasswordClickback token = (TokenChangePasswordClickback)
+				tokenService.createToken(username, TokenType.lostPassword);
+		
+		emailManager.sendLostPasswordEmail(profile.getEmail(), token.getCallbackUrl());
+		
+		JSONObject resp = new JSONObject();
+		resp.appendField("message", "Reset password link sent to email address assoicated with user: " + username);
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 
