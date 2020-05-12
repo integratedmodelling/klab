@@ -129,6 +129,14 @@ public abstract class ContextMonitor {
 
 	protected abstract List<ObservationReference> retrieveChildren(ObservationReference observation, int offset,
 			int count);
+	
+	protected void notifyObservation(ObservationReference observation) {
+		
+	}
+
+	protected void notifyObservationChange(ObservationReference observation, ObservationChange change) {
+		
+	}
 
 	/**
 	 * Define to retrieve the children of the passed observation from the backend.
@@ -176,6 +184,8 @@ public abstract class ContextMonitor {
 			graph.addVertex(observation);
 			graph.addEdge(observation, parent);
 		}
+		
+		notifyObservation(observation);
 	}
 
 	/**
@@ -185,7 +195,7 @@ public abstract class ContextMonitor {
 	 */
 	public void register(ObservationChange observationChange) {
 
-		System.out.println("CHANGE: " + observationChange);
+//		System.out.println("CHANGE: " + observationChange);
 		
 		/*
 		 * find the observation
@@ -196,8 +206,10 @@ public abstract class ContextMonitor {
 			if (ref != null) {
 				ref.applyChange(observationChange);
 			}
+			notifyObservationChange(ref, observationChange);
 		}
 
+		
 	}
 
 }

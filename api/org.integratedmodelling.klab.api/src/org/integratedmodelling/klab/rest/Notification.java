@@ -8,6 +8,7 @@ public class Notification implements INotification {
 	private long timestamp;
 	private String message;
 	private Type type = Type.None;
+	private String identity;
 
 	public Notification() {
 	}
@@ -71,7 +72,18 @@ public class Notification implements INotification {
 
 	@Override
 	public String toString() {
-		return "Notification [level=" + level + ", message=" + message + ", type=" + type + "]";
+		return "Notification [level=" + level + ", message=" + message + ", identity=" + identity + ", type=" + type
+				+ "]";
+	}
+
+	@Override
+	public String getIdentity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setIdentity(String identity) {
+		this.identity = identity;
 	}
 
 }

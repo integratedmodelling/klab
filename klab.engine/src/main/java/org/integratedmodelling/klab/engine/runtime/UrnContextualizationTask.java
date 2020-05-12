@@ -5,21 +5,14 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
-import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -36,13 +29,11 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
     FutureTask<ISubject>  delegate;
     String                taskDescription = "<uninitialized URN preview task " + token + ">";
-    private TaskReference descriptor;
 
     public UrnContextualizationTask(UrnContextualizationTask parent) {
         super(parent);
         this.delegate = parent.delegate;
         this.taskDescription = parent.taskDescription;
-        this.descriptor = parent.descriptor;
     }
 
     public UrnContextualizationTask(Session session, String urn) {
@@ -53,11 +44,6 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
             this.monitor = (session.getMonitor()).get(this);
             this.session = session;
             this.taskDescription = "Previewing resource " + urn + ">";
-
-            this.descriptor = new TaskReference();
-            this.descriptor.setId(token);
-            this.descriptor.setParentId(parentTask == null ? null : parentTask.getId());
-            this.descriptor.setDescription(this.taskDescription);
 
             session.touch();
 
@@ -70,13 +56,8 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
                     try {
 
-                        /*
-                         * register the task so it can be interrupted and inquired about
-                         */
-                        session.registerTask(UrnContextualizationTask.this);
-                        session.getMonitor().send(Message.create(session
-                                .getId(), IMessage.MessageClass.TaskLifecycle, IMessage.Type.TaskStarted, UrnContextualizationTask.this.descriptor));
-
+                    	notifyStart();
+                    	
                         Pair<IArtifact, IArtifact> data = Resources.INSTANCE
                                 .resolveResourceToArtifact(urn, monitor);
 
@@ -110,16 +91,12 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
                          * and/or persisted by the session itself.
                          */
                         session.registerObservationContext(((Observation) ret).getRuntimeScope());
-                        session.unregisterTask(UrnContextualizationTask.this);
-                        session.getMonitor().send(Message.create(session
-                                .getId(), IMessage.MessageClass.TaskLifecycle, IMessage.Type.TaskFinished, UrnContextualizationTask.this.descriptor));
+
+                        notifyEnd();
 
                     } catch (Throwable e) {
 
-                        UrnContextualizationTask.this.descriptor.setError(e.getLocalizedMessage());
-                        session.getMonitor().send(Message.create(session
-                                .getId(), IMessage.MessageClass.TaskLifecycle, IMessage.Type.TaskAborted, UrnContextualizationTask.this.descriptor));
-                        throw e;
+                    	throw notifyAbort(e);
 
                     }
                     return ret;
@@ -195,5 +172,10 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
     public ITaskTree<ISubject> createChild() {
         return new UrnContextualizationTask(this);
     }
+
+	@Override
+	protected String getTaskDescription() {
+		return taskDescription;
+	}
 
 }

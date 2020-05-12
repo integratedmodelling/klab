@@ -40,13 +40,13 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 	FutureTask<ISubject> delegate;
 	String taskDescription = "<uninitialized observation task " + token + ">";
-	private TaskReference descriptor;
+//	private TaskReference descriptor;
 
 	public ObserveContextTask(ObserveContextTask parent) {
 		super(parent);
 		this.delegate = parent.delegate;
 		this.taskDescription = parent.taskDescription;
-		this.descriptor = parent.descriptor;
+//		this.descriptor = parent.descriptor;
 	}
 
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
@@ -57,11 +57,6 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 			this.monitor = (session.getMonitor()).get(this);
 			this.session = session;
 			this.taskDescription = "Observation of " + observer.getId();
-
-			this.descriptor = new TaskReference();
-			this.descriptor.setId(token);
-			this.descriptor.setParentId(parentTask == null ? null : parentTask.getId());
-			this.descriptor.setDescription(this.taskDescription);
 
 			session.touch();
 
@@ -77,9 +72,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 						/*
 						 * register the task so it can be interrupted and inquired about
 						 */
-						session.registerTask(ObserveContextTask.this);
-						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.TaskStarted, ObserveContextTask.this.descriptor));
+						notifyStart();
 
 						// TODO put all this logics in the resolver, call it from within Observations
 						// and use that here.
@@ -125,22 +118,13 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 */
 							session.registerObservationContext(((Observation) ret).getRuntimeScope());
 
-							/*
-							 * Unregister the task
-							 */
-							session.unregisterTask(ObserveContextTask.this);
-
 						}
-						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.TaskFinished, ObserveContextTask.this.descriptor));
+
+						notifyEnd();
 
 					} catch (Throwable e) {
 
-						ObserveContextTask.this.descriptor.setError(e.getLocalizedMessage());
-						monitor.error(e);
-						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.TaskAborted, ObserveContextTask.this.descriptor));
-						throw e;
+						throw notifyAbort(e);
 
 					}
 					return ret;
@@ -149,9 +133,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 			});
 
 			engine.getTaskExecutor().execute(delegate);
-		} catch (
-
-		Throwable e) {
+			
+		} catch (Throwable e) {
 			monitor.error("error initializing context task: " + e.getMessage());
 		}
 	}
@@ -215,6 +198,11 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 	@Override
 	public ITaskTree<ISubject> createChild() {
 		return new ObserveContextTask(this);
+	}
+
+	@Override
+	protected String getTaskDescription() {
+		return taskDescription;
 	}
 
 }

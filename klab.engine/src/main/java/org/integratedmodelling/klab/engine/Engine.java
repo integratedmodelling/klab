@@ -66,8 +66,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.kim.KimNotifier;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.rest.ObservationChange;
-import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
@@ -128,6 +126,10 @@ public class Engine extends Server implements IEngine, UserDetails {
 			this.errorCount = monitor.errorCount;
 		}
 
+		public void setError(Throwable e) {
+			this.errorCount ++;
+		}
+		
 		public List<Listener> getListeners() {
 			return listeners;
 		}
@@ -194,20 +196,10 @@ public class Engine extends Server implements IEngine, UserDetails {
 					}
 				}
 			}
-// Debug code for notifications - remove when done
-//			if (message != null) {
-//				if (message.getPayload() instanceof ObservationReference) {
-//					DebugFile.println("SHOW " + ((ObservationReference) message.getPayload()).getObservationType() + " "
-//							+ ((ObservationReference) message.getPayload()).getLabel() + " ("
-//							+ ((ObservationReference) message.getPayload()).getId() + ") ["
-//							+ ((ObservationReference) message.getPayload()).getChildrenCount() + "]");
-//				}
-//				if (message.getPayload() instanceof ObservationChange) {
-//					DebugFile.println("UPDT " + ((ObservationChange) message.getPayload()).getType() + " "
-//							+ ((ObservationChange) message.getPayload()).getId() + " ["
-//							+ ((ObservationChange) message.getPayload()).getNewSize() + "]");
-//				}
-//			}
+			// Debug code for notifications - remove when done
+			if (message != null) {
+				DebugFile.println("SHOW " + this.identity.getId() + " " + message.getPayload());
+			}
 		}
 
 		@Override
@@ -279,6 +271,12 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		public void interrupt() {
 			isInterrupted.set(true);
+//			IIdentity id = getIdentity();
+//			// interrupt any parents that are the same class as ours (i.e. tasks)
+//			while (id != null && id.getClass().isAssignableFrom(id.getParentIdentity().getClass())) {
+//				id = id.getParentIdentity();
+//				((Monitor)((IRuntimeIdentity)id).getMonitor()).interrupt();
+//			}
 		}
 
 		@Override

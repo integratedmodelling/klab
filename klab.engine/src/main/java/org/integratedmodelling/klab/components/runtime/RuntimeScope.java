@@ -397,9 +397,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				Mode.RESOLUTION, scale, model);
 		if (scope.getCoverage().isRelevant()) {
 			Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
-					scope, this.dataflow)/*
-											 * .setPrimary(false)
-											 */;
+					scope, this.dataflow);
 			dataflow.setModel((Model) model);
 			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets)
 					.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));

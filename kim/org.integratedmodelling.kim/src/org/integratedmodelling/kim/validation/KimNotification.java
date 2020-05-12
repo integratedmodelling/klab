@@ -22,6 +22,8 @@ public class KimNotification implements INotification, Serializable {
 	Level level;
 	Type type = Type.None;
 	long timestamp = System.currentTimeMillis();
+	// this will be null when parsed, identities are in the runtime
+	String identity;
 
 	public KimNotification(String message, Level level) {
 		this.message = message;
@@ -69,6 +71,11 @@ public class KimNotification implements INotification, Serializable {
 	@Override
 	public Type getType() {
 		return type;
+	}
+
+	@Override
+	public String getIdentity() {
+		return identity;
 	}
 
 }

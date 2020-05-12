@@ -17,9 +17,9 @@ public class KlabTask extends KlabPeer {
 
 //    	DebugFile.println("TASK NOTIFICATION " + this.getIdentity() + ": " + notification);
 
-        if (message.getType() != IMessage.Type.Debug) {
-            send(message);
-        }
+//        if (message.getType() != IMessage.Type.Debug) {
+//            send(message);
+//        }
         // the session keeps the logs
         Activator.session().recordNotification(notification, message.getIdentity(), message.getType(), message.getId());
     }
@@ -28,6 +28,6 @@ public class KlabTask extends KlabPeer {
     public void handleObservation(ObservationReference observation) {
 //    	DebugFile.println("TASK OBSERVATION " + this.getIdentity() + ": " + observation.getLabel());
     	Activator.session().getContextMonitor().register(observation);
-    	Activator.session().recordObservation(observation);
+//    	Activator.session().recordObservation(observation);
     }
 }

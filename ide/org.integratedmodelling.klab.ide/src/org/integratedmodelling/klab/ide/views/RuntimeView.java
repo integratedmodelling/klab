@@ -49,21 +49,22 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
+import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.client.messaging.ContextMonitor.ContextGraph;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.model.beans.DisplayPriority;
-import org.integratedmodelling.klab.ide.navigator.model.beans.EDataflowReference;
-import org.integratedmodelling.klab.ide.navigator.model.beans.ENotification;
-import org.integratedmodelling.klab.ide.navigator.model.beans.EObservationReference;
+//import org.integratedmodelling.klab.ide.navigator.model.beans.ENotification;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
-import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservationReference;
-import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
+import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class RuntimeView extends ViewPart {
@@ -122,17 +123,17 @@ public class RuntimeView extends ViewPart {
 	private Label lblNewLabel;
 
 	private DisplayPriority currentPriority = DisplayPriority.TASK_FIRST;
-	private List<ENotification> notifications;
-	private List<ERuntimeObject> history;
+//	private List<ENotification> notifications;
+//	private List<ERuntimeObject> history;
 	private Composite composite_2;
 	private Group grpSessionEvents;
 	private Table detailTable;
 	private TableViewer detailViewer;
 
-	private ERuntimeObject lastFocus;
+	private Object lastFocus;
 	private Level systemLogLevel = Level.INFO;
 	private Level currentLogLevel = Level.INFO;
-	private ERuntimeObject currentDetail;
+	private Object currentDetail;
 	private Composite composite_4;
 	private Label label_1;
 	private Combo combo;
@@ -140,8 +141,16 @@ public class RuntimeView extends ViewPart {
 	private TableColumn tblclmnNewColumn_1;
 
 	private ObservationReference currentContext;
+	private TaskReference currentTask;
+
+	private List<Notification> notifications;
+	private List<TaskReference> history;
 
 	public RuntimeView() {
+	}
+
+	private SessionMonitor sm() {
+		return Activator.session().getContextMonitor();
 	}
 
 	class DetailLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -183,14 +192,14 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (element instanceof ENotification && columnIndex == 0) {
-				if (((ENotification) element).getLevel().equals(Level.INFO.getName())) {
+			if (element instanceof Notification && columnIndex == 0) {
+				if (((Notification) element).getLevel().equals(Level.INFO.getName())) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_info.gif");
-				} else if (((ENotification) element).getLevel().equals(Level.WARNING.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.WARNING.getName())) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_warning.gif");
-				} else if (((ENotification) element).getLevel().equals(Level.SEVERE.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.SEVERE.getName())) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_error.gif");
-				} else if (((ENotification) element).getLevel().equals(Level.FINE.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.FINE.getName())) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_debug.gif");
 				}
 			}
@@ -199,10 +208,10 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof ENotification) {
+			if (element instanceof Notification) {
 				if (columnIndex == 0) {
 				} else if (columnIndex == 1) {
-					return ((ENotification) element).getMessage();
+					return ((Notification) element).getMessage();
 				}
 			}
 			return null;
@@ -215,42 +224,42 @@ public class RuntimeView extends ViewPart {
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ERuntimeObject) {
-				if (element instanceof EObservationReference) {
-					if (((EObservationReference) element).isEmpty()) {
+				if (element instanceof ObservationReference) {
+					if (((ObservationReference) element).isEmpty()) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/emptycontent.gif");
-					} else if (((EObservationReference) element).getSemantics().contains(IKimConcept.Type.QUALITY)) {
+					} else if (((ObservationReference) element).getSemantics().contains(IKimConcept.Type.QUALITY)) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/datagrid.gif");
-					} else if (((EObservationReference) element).getChildrenCount() > 1) {
+					} else if (((ObservationReference) element).getChildrenCount() > 1) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resources.gif");
 					} else {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
 					}
-				} else if (element instanceof ETaskReference) {
+				} else if (element instanceof TaskReference) {
 					Image baseImage = ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/task.gif");
-					if (((ETaskReference) element).getStatus() == Type.TaskStarted) {
+					if (sm().getStatus((TaskReference) element) == Status.Started) {
 						return ResourceManager.decorateImage(baseImage,
 								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/waiting_ovr.gif"),
 								SWTResourceManager.TOP_LEFT);
-					} else if (((ETaskReference) element).getStatus() == Type.TaskFinished) {
+					} else if (sm().getStatus((TaskReference) element) == Status.Finished) {
 						return ResourceManager.decorateImage(baseImage,
 								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ok_ovr.gif"),
 								SWTResourceManager.TOP_LEFT);
-					} else if (((ETaskReference) element).getStatus() == Type.TaskAborted) {
+					} else if (sm().getStatus((TaskReference) element) == Status.Aborted) {
 						return ResourceManager.decorateImage(baseImage,
 								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/error_ovr.gif"),
 								SWTResourceManager.TOP_LEFT);
 					}
-				} else if (element instanceof ENotification) {
-					if (((ENotification) element).getLevel().equals(Level.INFO.getName())) {
+				} else if (element instanceof Notification) {
+					if (((Notification) element).getLevel().equals(Level.INFO.getName())) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_info.gif");
-					} else if (((ENotification) element).getLevel().equals(Level.WARNING.getName())) {
+					} else if (((Notification) element).getLevel().equals(Level.WARNING.getName())) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_warning.gif");
-					} else if (((ENotification) element).getLevel().equals(Level.SEVERE.getName())) {
+					} else if (((Notification) element).getLevel().equals(Level.SEVERE.getName())) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_error.gif");
-					} else if (((ENotification) element).getLevel().equals(Level.FINE.getName())) {
+					} else if (((Notification) element).getLevel().equals(Level.FINE.getName())) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_debug.gif");
 					}
-				} else if (element instanceof EDataflowReference) {
+				} else if (element instanceof DataflowReference) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/dataflow.gif");
 				}
 			} else if (element instanceof ObservationReference) {
@@ -274,13 +283,13 @@ public class RuntimeView extends ViewPart {
 		@Override
 		public String getText(Object element) {
 			if (element instanceof ERuntimeObject) {
-				if (element instanceof EObservationReference) {
-					return ((EObservationReference) element).getLabel();
-				} else if (element instanceof ETaskReference) {
-					return ((ETaskReference) element).getDescription();
-				} else if (element instanceof ENotification) {
-					return ((ENotification) element).getMessage();
-				} else if (element instanceof EDataflowReference) {
+				if (element instanceof ObservationReference) {
+					return ((ObservationReference) element).getLabel();
+				} else if (element instanceof TaskReference) {
+					return ((TaskReference) element).getDescription();
+				} else if (element instanceof Notification) {
+					return ((Notification) element).getMessage();
+				} else if (element instanceof DataflowReference) {
 					return "Dataflow computed";
 				}
 			} else if (element instanceof ObservationReference) {
@@ -294,10 +303,9 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Font getFont(Object element) {
-			if (element instanceof EObservationReference && ((EObservationReference) element).isFocal()) {
+			if (element instanceof ObservationReference && ((ObservationReference) element).isMain()) {
 				return SWTResourceManager.getBoldFont(taskTree.getFont());
-			} else if (element instanceof ETaskReference
-					&& ((ETaskReference) element).getStatus() == Type.TaskStarted) {
+			} else if (element instanceof TaskReference && sm().getStatus((TaskReference) element) == Status.Started) {
 				return SWTResourceManager.getItalicFont(taskTree.getFont());
 			} else if (element instanceof ObservationReference && ((ObservationReference) element).isMain()) {
 				return SWTResourceManager.getBoldFont(taskTree.getFont());
@@ -315,25 +323,25 @@ public class RuntimeView extends ViewPart {
 		@Override
 		public Color getForeground(Object element) {
 
-			if (element instanceof ETaskReference) {
-				switch (((ETaskReference) element).getStatus()) {
-				case TaskStarted:
+			if (element instanceof TaskReference) {
+				switch (sm().getStatus((TaskReference) element)) {
+				case Started:
 					return ResourceManager.getColor(SWT.COLOR_DARK_GRAY);
-				case TaskFinished:
+				case Finished:
 					return ResourceManager.getColor(SWT.COLOR_DARK_GREEN);
-				case TaskAborted:
+				case Aborted:
 					return ResourceManager.getColor(SWT.COLOR_RED);
 				default:
 					break;
 				}
-			} else if (element instanceof ENotification) {
-				if (((ENotification) element).getLevel().equals(Level.INFO.getName())) {
+			} else if (element instanceof Notification) {
+				if (((Notification) element).getLevel().equals(Level.INFO.getName())) {
 					return ResourceManager.getColor(SWT.COLOR_DARK_BLUE);
-				} else if (((ENotification) element).getLevel().equals(Level.WARNING.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.WARNING.getName())) {
 					return ResourceManager.getColor(SWT.COLOR_DARK_YELLOW);
-				} else if (((ENotification) element).getLevel().equals(Level.SEVERE.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.SEVERE.getName())) {
 					return ResourceManager.getColor(SWT.COLOR_RED);
-				} else if (((ENotification) element).getLevel().equals(Level.FINE.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.FINE.getName())) {
 					return ResourceManager.getColor(SWT.COLOR_DARK_GRAY);
 				}
 			}
@@ -416,7 +424,7 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Object getParent(Object element) {
-			return element instanceof ENotification ? notifications : null;
+			return element instanceof Notification ? notifications : null;
 		}
 
 		@Override
@@ -713,9 +721,7 @@ public class RuntimeView extends ViewPart {
 					currentPriority = DisplayPriority.TASK_FIRST;
 				}
 				if (lastFocus != null) {
-					lastFocus = currentPriority == DisplayPriority.ARTIFACTS_FIRST
-							? Activator.session().getCurrentContext()
-							: Activator.session().getCurrentTask();
+					lastFocus = currentPriority == DisplayPriority.ARTIFACTS_FIRST ? currentContext : currentTask;
 				}
 				refreshTaskViewer(IMessage.Type.FocusChanged);
 			}
@@ -802,7 +808,7 @@ public class RuntimeView extends ViewPart {
 
 	protected void showDetail(ERuntimeObject o) {
 
-		if (o instanceof ENotification) {
+		if (o instanceof Notification) {
 			return;
 		}
 
@@ -820,19 +826,19 @@ public class RuntimeView extends ViewPart {
 	}
 
 	protected void handleSelection(Object o) {
-		if (o instanceof EDataflowReference) {
-			Eclipse.INSTANCE.edit(((EDataflowReference) o).getKdlCode(), "dataflow", "kdl", false);
-		} else if (o instanceof ENotification) {
-			switch (((ENotification) o).getLevel()) {
+		if (o instanceof DataflowReference) {
+			Eclipse.INSTANCE.edit(((DataflowReference) o).getKdlCode(), "dataflow", "kdl", false);
+		} else if (o instanceof Notification) {
+			switch (((Notification) o).getLevel()) {
 			case "SEVERE":
-				Eclipse.INSTANCE.alert(((ENotification) o).getMessage());
+				Eclipse.INSTANCE.alert(((Notification) o).getMessage());
 				break;
 			case "WARNING":
-				Eclipse.INSTANCE.warning(((ENotification) o).getMessage());
+				Eclipse.INSTANCE.warning(((Notification) o).getMessage());
 				break;
 			case "INFO":
 			case "FINE":
-				Eclipse.INSTANCE.info(((ENotification) o).getMessage());
+				Eclipse.INSTANCE.info(((Notification) o).getMessage());
 				break;
 			}
 		}
@@ -893,9 +899,6 @@ public class RuntimeView extends ViewPart {
 			break;
 		case FocusChanged:
 			Object payload = message.getPayload();
-			if (payload instanceof EObservationReference) {
-				payload = ((EObservationReference) payload).getObservation();
-			}
 			if (payload instanceof ObservationReference) {
 				ObservationReference observation = (ObservationReference) payload;
 				if (observation.getParentId() == null) {
@@ -903,7 +906,7 @@ public class RuntimeView extends ViewPart {
 				}
 			}
 			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
-				lastFocus = message.getPayload(EObservationReference.class);
+				lastFocus = message.getPayload(ObservationReference.class);
 				refreshTaskViewer(message.getType());
 			}
 			break;
@@ -915,8 +918,8 @@ public class RuntimeView extends ViewPart {
 					this.currentContext = observation;
 				}
 			}
-			if (((payload instanceof ETaskReference && currentPriority == DisplayPriority.TASK_FIRST)
-					|| (payload instanceof EObservationReference
+			if (((payload instanceof TaskReference && currentPriority == DisplayPriority.TASK_FIRST)
+					|| (payload instanceof ObservationReference
 							&& currentPriority == DisplayPriority.ARTIFACTS_FIRST))) {
 				lastFocus = (ERuntimeObject) payload;
 			} else {
@@ -929,7 +932,7 @@ public class RuntimeView extends ViewPart {
 			break;
 		case EngineDown:
 			Display.getDefault().asyncExec(() -> {
-				taskViewer.setInput(history = new ArrayList<>());
+				taskViewer.setInput(/* history = */new ArrayList<>());
 				engineStatusIcon.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/grey24.png"));
 				engineStatusIcon.setToolTipText("Engine is offline");
 				networkStatusIcon
@@ -960,8 +963,8 @@ public class RuntimeView extends ViewPart {
 	}
 
 	private void refreshSystemLog() {
-		Display.getDefault().asyncExec(
-				() -> tableViewer.setInput(notifications = Activator.session().getSystemNotifications(systemLogLevel)));
+		Display.getDefault()
+				.asyncExec(() -> tableViewer.setInput(notifications = sm().getSystemNotifications(systemLogLevel)));
 	}
 
 	public void refreshTaskViewer(IMessage.Type taskEvent) {
@@ -971,8 +974,8 @@ public class RuntimeView extends ViewPart {
 				if (currentContext != null) {
 					taskViewer.setInput(Activator.session().getContextMonitor().getGraph(currentContext.getId()));
 				}
-			} else if (lastFocus != null) {
-				taskViewer.setInput(history = Activator.session().getSessionHistory(currentPriority, currentLogLevel));
+			} else if (lastFocus != null && currentContext != null) {
+				taskViewer.setInput(sm().getTasks(currentContext.getId(), currentLogLevel));
 				if (taskEvent == IMessage.Type.TaskStarted) {
 					taskViewer.collapseAll();
 				}

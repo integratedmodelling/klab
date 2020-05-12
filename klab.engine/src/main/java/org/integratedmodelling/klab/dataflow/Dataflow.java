@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Annotation;
@@ -159,7 +160,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	/**
-	 * Pass an actuator to use to register ourselves into.
+	 * Pass an actuator to use to register ourselves into. If the parent is not
+	 * null, notify the task through the monitor (top-level observation do it
+	 * manually so that any resolution issue also get reported as pertaining to the
+	 * same observation task).
 	 * 
 	 * @param scale
 	 * @param parentComputation
@@ -168,6 +172,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @throws KlabException
 	 */
 	public IArtifact run(IScale scale, Actuator parentComputation, IMonitor monitor) throws KlabException {
+
+		if (parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+			((AbstractTask<?>) monitor.getIdentity()).notifyStart();
+		}
 
 		reset();
 
@@ -283,7 +291,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			} catch (InterruptedException e) {
 				return null;
 			} catch (ExecutionException e) {
-				throw new KlabContextualizationException(e);
+				if (parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+					throw ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);
+				}
 			}
 		}
 
@@ -338,6 +348,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 					IMessage.Type.DataflowCompiled, new DataflowReference(session.getMonitor().getIdentity().getId(),
 							getKdlCode(), ContextualizationStrategy.getElkGraph(this))));
 			System.out.println(rootDataflow.getKdlCode());
+		}
+
+		if (parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+			((AbstractTask<?>) monitor.getIdentity()).notifyEnd();
 		}
 
 		return ret;
@@ -453,7 +467,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
 				if (!scaleSpecs.isEmpty()) {
 					ret += "@coverage load_me_from_some_sidecar_file()";
-					// TODO this can get huge and is transmitted over websockets, so can't put it here as is. Needs
+					// TODO this can get huge and is transmitted over websockets, so can't put it
+					// here as is. Needs
 					// supplemental material and a ref instead.
 //					for (int i = 0; i < scaleSpecs.size(); i++) {
 //						if (scaleSpecs.get(i) != null) {
@@ -719,7 +734,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public void setTargetName(String targetName) {
 		this.targetName = targetName;
 	}
-	
+
 	public Dataflow withTargetName(String targetName) {
 		this.targetName = targetName;
 		return this;
@@ -732,7 +747,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public void setNotificationMode(INotification.Mode mode) {
 		this.notificationMode = mode;
 	}
-	
+
 	public Dataflow withNotificationMode(INotification.Mode mode) {
 		this.notificationMode = mode;
 		return this;
