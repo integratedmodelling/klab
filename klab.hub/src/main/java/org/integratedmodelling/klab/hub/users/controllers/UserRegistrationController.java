@@ -79,9 +79,9 @@ public class UserRegistrationController {
 	}
 	
 	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_SET_PASSWORD)
-	public ResponseEntity<?> newUserPassword(@PathVariable String id, @RequestParam String setPassword,
+	public ResponseEntity<?> newUserPassword(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_SET_PASSWORD) String setPassword,
 			@RequestBody PasswordChangeRequest passwordRequest) {
-		TokenType[] types = { TokenType.newUser, TokenType.password };
+		TokenType[] types = { TokenType.newUser, TokenType.password, TokenType.lostPassword };
 		if (!tokenService.verifyTokens(id, setPassword, types)) {
 			throw new ActivationTokenFailedException("User Verification token failed");
 		}
@@ -90,7 +90,7 @@ public class UserRegistrationController {
 			tokenService.deleteToken(setPassword);
 		}
 		JSONObject resp = new JSONObject();
-		resp.appendField("User", user);
+		resp.appendField("Message", "User password updated");
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 	

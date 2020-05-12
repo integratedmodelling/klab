@@ -12,10 +12,10 @@ public final class HubRequestMatchers {
 	};
 	
 	private static final String[] user_registartion = new String[] {
-			API.HUB.USER_BASE+"/*?" + API.HUB.PARAMETERS.USER_ACTIVATION + ".*",
-			API.HUB.USER_BASE+"/*?" + API.HUB.PARAMETERS.USER_LOST_PASSWORD + ".*",
-			API.HUB.USER_BASE+"/*?" + API.HUB.PARAMETERS.USER_SET_PASSWORD + ".*",
-			API.HUB.USER_BASE+"/*?" + API.HUB.PARAMETERS.USER_VERIFICATION + ".*",
+			API.HUB.USER_BASE+".*" + API.HUB.PARAMETERS.USER_ACTIVATION + ".*",
+			API.HUB.USER_BASE+".*" + API.HUB.PARAMETERS.USER_LOST_PASSWORD + ".*",
+			API.HUB.USER_BASE+".*" + API.HUB.PARAMETERS.USER_SET_PASSWORD + ".*",
+			API.HUB.USER_BASE+".*" + API.HUB.PARAMETERS.USER_VERIFICATION + ".*",
 	};
 
 	public static String[] getAuthentication() {
