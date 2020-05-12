@@ -14,7 +14,7 @@ public class ResponseEntityAdapter<E extends Exception> {
         body.put("message", e.getMessage());
         body.put("error", e.getClass().getSimpleName());
 
-        this.response=  new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+        this.response=  new ResponseEntity<>(body, status);
 	}
 
 	public ResponseEntity<Object> getResponse() {
