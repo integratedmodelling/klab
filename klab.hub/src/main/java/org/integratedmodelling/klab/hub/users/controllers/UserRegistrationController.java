@@ -7,11 +7,13 @@ import javax.mail.MessagingException;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
+import org.integratedmodelling.klab.hub.api.TokenLostPasswordClickback;
 import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.TokenVerifyAccountClickback;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
+import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
@@ -105,15 +107,20 @@ public class UserRegistrationController {
 	
 	
 	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_LOST_PASSWORD)
-	public ResponseEntity<?> requestLostPassword(@PathVariable String username) throws MessagingException {
-		ProfileResource profile = profileService.getUserProfile(username);
-		TokenChangePasswordClickback token = (TokenChangePasswordClickback)
-				tokenService.createToken(username, TokenType.lostPassword);
+	public ResponseEntity<?> requestLostPassword(@PathVariable String id) throws MessagingException {
+		ProfileResource profile = null;
+		try {
+			profile = profileService.getUserProfile(id);
+		} catch (UserDoesNotExistException e) {
+			profile = profileService.getUserProfileByEmail(id);
+		}
+		TokenLostPasswordClickback token = (TokenLostPasswordClickback)
+				tokenService.createToken(profile.getUsername(), TokenType.lostPassword);
 		
 		emailManager.sendLostPasswordEmail(profile.getEmail(), token.getCallbackUrl());
 		
 		JSONObject resp = new JSONObject();
-		resp.appendField("message", "Reset password link sent to email address assoicated with user: " + username);
+		resp.appendField("message", "Reset password link sent to email address assoicated with user: " + profile.getUsername());
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 
