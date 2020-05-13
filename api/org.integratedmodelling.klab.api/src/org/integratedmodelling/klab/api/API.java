@@ -180,6 +180,10 @@ public interface API {
 		 */
 		public static final String USER_BASE = API_BASE + "/users";
 		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String GROUPS_BASE = API_BASE + "/groups";
+		/**
 		 * Base URL path for lever resources on the hub.
 		 */
 		public static final String LEVER_BASE = API_BASE + "/lever";
@@ -219,6 +223,10 @@ public interface API {
 		 * Base URL path for user resources on the hub.
 		 */
 		public static final String USER_BASE_ID = USER_BASE+ "/{id}";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String GROUPS_BASE_ID = GROUPS_BASE+ "/{id}";
 		/**
 		 * Base URL path for lever resources on the hub.
 		 */
@@ -268,6 +276,10 @@ public interface API {
 			 * URL PARAMETER for user to request a new certificate.
 			 */
 			public static final String USER_CERTIFICATE = "certificate";
+			/**
+			 * URL PARAMETER for requesting the names of groups.
+			 */
+			public static final String GROUP_NAMES = "names";
 		}
 		
 

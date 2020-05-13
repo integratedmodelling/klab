@@ -7,6 +7,8 @@ import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.commands.UpdateUsers;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
+import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
@@ -41,7 +43,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 						return user;
 						})
 					.orElseThrow(() ->
-					new BadRequestException(String.format("%s by that username not found", username)))
+					new UserDoesNotExistException(username))
 			);		
 		}
 		
@@ -63,7 +65,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 						return user;
 						})
 					.orElseThrow(() ->
-					new BadRequestException(String.format("%s by that username not found", username)))
+					new UserDoesNotExistException(username))
 			);		
 		}
 		
@@ -80,7 +82,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 						new GroupEntry(grp, experiation))
 					)
 				.orElseThrow(()-> 
-					new BadRequestException(String.format("%s by that group name not found", groupname)));
+					new GroupDoesNotExistException(groupname));
 		}
 		return groupEntries;
 	}

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.users.services;
+package org.integratedmodelling.klab.hub.exception;
 
 public class UserByEmailDoesNotExistException extends RuntimeException {
 
