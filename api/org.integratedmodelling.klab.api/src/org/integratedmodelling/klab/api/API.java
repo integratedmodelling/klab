@@ -193,8 +193,12 @@ public interface API {
 		public static final String ENGINE_BASE = API_BASE + "/engines";
 		/**
 		 * Base URL path for tasks resources on the hub.
-		 */				
-		public static final String TASK_BASE = API_BASE + "/tasks";	
+		 */
+		public static final String TASK_BASE = API_BASE + "/tasks";
+		/**
+		 * Base URL path for email resources and services on the hub.
+		 */		
+		public static final String EMAIL_BASE = API_BASE + "/emails";
 		/**
 		 * Base URL path for authenticating resources.
 		 */		
@@ -240,6 +244,10 @@ public interface API {
 		 */
 		public static final String TASK_BASE_ID = TASK_BASE + "/{id}";
 		/**
+		 * Base URL path for email templated by id on the hub.
+		 */
+		public static final String EMAIL_BASE_ID = EMAIL_BASE + "/{id}";
+		/**
 		 * Base URL path application logs.
 		 */	
 		public static final String LOGS = API_BASE + "/system/logs";
@@ -253,6 +261,7 @@ public interface API {
 		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";
 		
 		public static final String CURRENT_PROFILE = USER_BASE + "/me";
+		
 		
 		public static interface PARAMETERS {
 			/**
@@ -304,6 +313,10 @@ public interface API {
 			 * URL PARAMETER for a create group task
 			 */			
 			public static final String CREATE_GROUP = "create-group";
+			/**
+			 * URL PARAMETER for template in the email service
+			 */			
+			public static final String TEMPLATES = "templates";
 		}
 		
 
