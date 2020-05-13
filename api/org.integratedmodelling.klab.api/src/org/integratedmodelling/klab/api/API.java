@@ -180,6 +180,10 @@ public interface API {
 		 */
 		public static final String USER_BASE = API_BASE + "/users";
 		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String GROUPS_BASE = API_BASE + "/groups";
+		/**
 		 * Base URL path for lever resources on the hub.
 		 */
 		public static final String LEVER_BASE = API_BASE + "/lever";
@@ -187,6 +191,10 @@ public interface API {
 		 * Base URL path for engine resources on the hub.
 		 */		
 		public static final String ENGINE_BASE = API_BASE + "/engines";
+		/**
+		 * Base URL path for tasks resources on the hub.
+		 */				
+		public static final String TASK_BASE = API_BASE + "/tasks";	
 		/**
 		 * Base URL path for authenticating resources.
 		 */		
@@ -220,9 +228,17 @@ public interface API {
 		 */
 		public static final String USER_BASE_ID = USER_BASE+ "/{id}";
 		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String GROUPS_BASE_ID = GROUPS_BASE+ "/{id}";
+		/**
 		 * Base URL path for lever resources on the hub.
 		 */
 		public static final String LEVER_BASE_ID = LEVER_BASE + "/{id}";
+		/**
+		 * Base URL path for task resource id on the hub.
+		 */
+		public static final String TASK_BASE_ID = TASK_BASE + "/{id}";
 		/**
 		 * Base URL path application logs.
 		 */	
@@ -236,7 +252,7 @@ public interface API {
 		 */
 		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";
 		
-		public static final String CURRENT_PROFILE = USER_BASE + "/me";	
+		public static final String CURRENT_PROFILE = USER_BASE + "/me";
 		
 		public static interface PARAMETERS {
 			/**
@@ -268,6 +284,26 @@ public interface API {
 			 * URL PARAMETER for user to request a new certificate.
 			 */
 			public static final String USER_CERTIFICATE = "certificate";
+			/**
+			 * URL PARAMETER for requesting the names of groups.
+			 */
+			public static final String GROUP_NAMES = "names";
+			/**
+			 * URL PARAMETER for a user to request groups as a task.
+			 */
+			public static final String USER_REQUEST_GROUPS = "request-groups";
+			/**
+			 * URL PARAMETER for a user to remove groups as a task
+			 */
+			public static final String USER_REMOVE_GROUPS = "remove-groups";
+			/**
+			 * URL PARAMETER for a task to accepted or denied
+			 */
+			public static final String ACCEPT = "accept";
+			/**
+			 * URL PARAMETER for a create group task
+			 */			
+			public static final String CREATE_GROUP = "create-group";
 		}
 		
 

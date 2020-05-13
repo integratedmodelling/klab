@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.config.dev.DevMongoModelsConfig;
 import org.integratedmodelling.klab.hub.config.dev.MongoConfigDev;
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.groups.services.GroupServiceImpl;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.utils.FileCatalog;
@@ -67,7 +68,7 @@ public class GroupServiceTests {
 		assertThat(groupRepo.findAll().size(),equalTo(groups.size()));
 	}
 	
-	@Test(expected = NullPointerException.class)
+	@Test(expected = GroupDoesNotExistException.class)
 	@Order(4)
 	public void fail_getGroup_not_in_db() {
 		groupService.getByName("neverAdded");	

@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.GroupRequestTask;
 import org.integratedmodelling.klab.hub.api.ModifyGroupsTask;
 import org.integratedmodelling.klab.hub.api.RemoveGroupTask;
@@ -29,17 +30,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 import net.minidev.json.JSONObject;
 
 
-@RequestMapping("/api/v2/tasks")
 @RestController
 public class ModifyGroupsController {
 	
 	@Autowired
 	TaskService service;
 	
-	@PostMapping(value= "", produces = "application/json", params="request-groups")
+	@PostMapping(value= API.HUB.TASK_BASE, produces = "application/json", params=API.HUB.PARAMETERS.USER_REQUEST_GROUPS)
 	@PreAuthorize("authentication.principal == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> requestGroupsResponse(
-			@RequestParam("request-groups") String username,
+			@RequestParam(API.HUB.PARAMETERS.USER_REQUEST_GROUPS) String username,
 			@RequestBody List<String> groupNames,
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
@@ -49,10 +49,10 @@ public class ModifyGroupsController {
 	    return new ResponseEntity<>(tasks, HttpStatus.ACCEPTED);
 	}
 	
-	@PostMapping(value= "", produces = "application/json", params="remove-groups")
+	@PostMapping(value= API.HUB.TASK_BASE, produces = "application/json", params=API.HUB.PARAMETERS.USER_REMOVE_GROUPS)
 	@PreAuthorize("authentication.principal == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> removeGroupsResponse(
-			@RequestParam("remove-groups") String username,
+			@RequestParam(API.HUB.PARAMETERS.USER_REMOVE_GROUPS) String username,
 			@RequestBody List<String> groupNames,
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
@@ -63,7 +63,7 @@ public class ModifyGroupsController {
 	    return new ResponseEntity<>(tasks, HttpStatus.ACCEPTED);
 	}
 	
-	@PostMapping(value= "/{id}", produces = "application/json", params= "accept")
+	@PostMapping(value= API.HUB.TASK_BASE_ID, produces = "application/json", params= API.HUB.PARAMETERS.ACCEPT)
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> requestGroupsDecision(
 			@PathVariable("id") String id,
@@ -78,7 +78,7 @@ public class ModifyGroupsController {
 	    	task = service.denyTask(id, request, deniedMessage.isPresent() ? deniedMessage.get() : null);
 	    }
 	    
-		UriComponents uriComponents = b.path("/api/v2/tasks/{id}").buildAndExpand(id);
+		UriComponents uriComponents = b.path(API.HUB.TASK_BASE_ID).buildAndExpand(id);
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setLocation(uriComponents.toUri());
 	    JSONObject resp = new JSONObject();

@@ -54,8 +54,6 @@ public class Hub {
 	public Hub(IHubStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
 		this.owner = HubAuthenticationManager.INSTANCE.authenticate(options, certificate);
-		LicenseStartupPublisher eventAPublisher = (LicenseStartupPublisher)context.getBean("licenseStartupPublisher");
-		eventAPublisher.publish(new LicenseStartupReady(new Object()));
 		// cert is prevalidated and we are the top consumers, so no further
 		// authentication needed
 	}
@@ -118,6 +116,10 @@ public class Hub {
 			SpringApplication app = new SpringApplication(HubApplication.class);
 			app.setDefaultProperties(props);
 			this.context = app.run(options.getArguments());	
+			
+			LicenseStartupPublisher eventAPublisher = (LicenseStartupPublisher) context.getBean("licenseStartupPublisher");
+			eventAPublisher.publish(new LicenseStartupReady(new Object()));
+			
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(
 					"\nStartup successful: " + "k.LAB hub server" + " v" + Version.CURRENT + " on " + new Date());
@@ -136,6 +138,7 @@ public class Hub {
 			Environment environment = this.context.getEnvironment();
 			this.certificate = getCertFromEnv(environment);
 			this.owner = HubAuthenticationManager.INSTANCE.authenticate(new HubStartupOptions(), certificate);
+			
 			LicenseStartupPublisher eventAPublisher = (LicenseStartupPublisher)context.getBean("licenseStartupPublisher");
 			eventAPublisher.publish(new LicenseStartupReady(new Object()));
 			
@@ -155,7 +158,7 @@ public class Hub {
 			Yaml yaml = new Yaml();
 			Object loadedYaml = yaml.load(Hub.class.getClassLoader().getResourceAsStream("bootstrap.yml"));
 			return cloundConfingEnabledd(loadedYaml);
-		} catch (YAMLException e) {
+		} catch (YAMLException|NullPointerException e) {
 			Logging.INSTANCE.info("Cloud configration not enabled");
 			return false;
 		}	

@@ -4,6 +4,7 @@ import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.api.TokenClickback;
 import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.commands.CreateChangePasswordToken;
+import org.integratedmodelling.klab.hub.commands.CreateLostPasswordToken;
 import org.integratedmodelling.klab.hub.commands.CreateNewUserAccountToken;
 import org.integratedmodelling.klab.hub.commands.CreateVerifyAccountToken;
 import org.integratedmodelling.klab.hub.commands.DeleteAuthenticationToken;
@@ -30,6 +31,8 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 			return new CreateVerifyAccountToken(repository, username, linkConfig).execute();
 		} else if (type.equals(TokenType.password)) {
 			return new CreateChangePasswordToken(repository, username, linkConfig).execute();
+		} else if(type.equals(TokenType.lostPassword)) {
+			return new CreateLostPasswordToken(repository, username, linkConfig).execute();
 		} else {
 			return null;
 		}

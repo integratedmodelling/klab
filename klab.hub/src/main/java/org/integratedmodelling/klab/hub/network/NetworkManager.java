@@ -59,11 +59,14 @@ public enum NetworkManager {
 			if (!onlineNodes.contains(ret)) {
 				onlineNodes.add(ret);
 			}
-		}
-		if(allNodes.containsKey(ret.getName())) {
-			return;
 		} else {
-			allNodes.put(ret.getName(), createNodeReference(ret, online));
+			if(online) {
+				allNodes.put(ret.getName(), createNodeReference(ret, online));
+				onlineNodes.add(ret);
+			} else {
+				allNodes.put(ret.getName(), createNodeReference(ret, online));
+				offlineNodes.add(ret);
+			}
 		}
 	}
 

@@ -100,7 +100,8 @@ public class EmailManager {
 		String subject = "New Password Request for you Integrated Modelling Account";
 		String msg = String.format(
 				"You have requested a new password for your Integrated Modelling Account" +
-						"Please click the following link: %s \n\n",
+						"Please click the following link: %s \n\n" +
+						"If you did not request a change of password please ignore this email. \n\n",
 				clickbackUrl);
 		sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
 		

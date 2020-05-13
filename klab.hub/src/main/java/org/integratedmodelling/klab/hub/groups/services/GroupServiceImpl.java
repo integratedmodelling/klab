@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.hub.commands.GetAllMongoGroups;
 import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
 import org.integratedmodelling.klab.hub.commands.MongoGroupExists;
 import org.integratedmodelling.klab.hub.commands.UpdateMongoGroup;
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class GroupServiceImpl implements GroupService {
 		if(exists(group.getName())) {
 			return new UpdateMongoGroup(group, repository).execute();
 		} else {
-			throw new NullPointerException("No group by that name was found.  Did not update group.");
+			throw new GroupDoesNotExistException("No group by the name: " + group.getName() + " was found.");
 		}
 	}
 
@@ -57,13 +58,19 @@ public class GroupServiceImpl implements GroupService {
 		if(!exists(group.getName())) {
 			new DeleteMongoGroup(group, repository).execute();
 		} else {
-			throw new NullPointerException("No Group by that name.  Nothing to delete.");
+			throw new GroupDoesNotExistException("No group by the name: " + group.getName() + " was found.");
 		}		
 	}
 
 	@Override
 	public MongoGroup getByName(String groupName) {
-		return new GetMongoGroupByName(groupName, repository).execute();
+		MongoGroup group = null;
+		group =  new GetMongoGroupByName(groupName, repository).execute();
+		if(group != null) {
+			return group;
+		} else {
+			throw new GroupDoesNotExistException("No group by the name: " + groupName + " was found.");
+		}
 	}
 
 }

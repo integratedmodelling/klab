@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.groups.controllers;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.groups.services.GroupService;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import net.minidev.json.JSONObject;
 
 @RestController
-@RequestMapping("/api/v2/groups")
 public class GroupsController {
 	
 	private GroupService groupService;
@@ -29,13 +29,13 @@ public class GroupsController {
 		this.groupService = groupService;
 	}
 	
-	@GetMapping(value = "")
+	@GetMapping(value = API.HUB.GROUPS_BASE)
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<?> getGroups() {
 		return new ResponseEntity<>(groupService.getAll(), HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "", params="names")
+	@GetMapping(value = API.HUB.GROUPS_BASE, params=API.HUB.PARAMETERS.GROUP_NAMES)
 	@PreAuthorize("hasRole('ROLE_ENGINE') or hasRole('ROLE_USER') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> getGroupNames() {
 		JSONObject resp = new JSONObject();
@@ -43,10 +43,10 @@ public class GroupsController {
 		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 	
-	@PutMapping(value = "/{groupName}")
+	@PutMapping(value = API.HUB.GROUPS_BASE_ID)
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<Object> updateGroup(@PathVariable("groupName") String groupName, @RequestBody MongoGroup group) {
-		if(groupName.equals(group.getName())) {
+	public ResponseEntity<Object> updateGroup(@PathVariable("id") String id, @RequestBody MongoGroup group) {
+		if(id.equals(group.getName())) {
 			groupService.update(group);	
 		} else {
 			throw new BadRequestException("Group Id does not match url Id");
@@ -54,10 +54,10 @@ public class GroupsController {
 		return new ResponseEntity<>("The group has been updated successsfully", HttpStatus.OK);
 	}
 	
-	@DeleteMapping(value = "/{groupName}")
+	@DeleteMapping(value = API.HUB.GROUPS_BASE_ID)
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<Object> delete(@PathVariable("groupName") String groupName,  @RequestBody MongoGroup group) {
-		if(groupName.equals(group.getName())) {
+	public ResponseEntity<Object> delete(@PathVariable("id") String id,  @RequestBody MongoGroup group) {
+		if(id.equals(group.getName())) {
 			groupService.delete(group);	
 		} else {
 			throw new BadRequestException("Group name does not match name");
@@ -65,14 +65,14 @@ public class GroupsController {
 		return new ResponseEntity<>("The Groups has been deleted successsfully", HttpStatus.OK);
 	}
 	
-	@GetMapping(value= "/{groupName}")
+	@GetMapping(value= API.HUB.GROUPS_BASE_ID)
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
-	public ResponseEntity<Object> getGroup(@PathVariable("groupName") String groupName) {
-		MongoGroup group = groupService.getByName(groupName);
+	public ResponseEntity<Object> getGroup(@PathVariable("id") String id) {
+		MongoGroup group = groupService.getByName(id);
 		return new ResponseEntity<>(group, HttpStatus.OK);		
 	}
 	
-	@PostMapping(value="")
+	@PostMapping(value=API.HUB.GROUPS_BASE)
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> createGroup(@RequestBody MongoGroup group) {
 		group = groupService.create(group);

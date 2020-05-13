@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,7 @@ public static class Parameters extends TaskParameters {
 					.collect(Collectors.toList());
 			
 			if(exists.contains(false) | param.groupNames.size() == 0) {
-				throw new BadRequestException("A requested Group does not exist or no groups requested");
+				throw new GroupDoesNotExistException("A requested Group does not exist or no groups requested");
 			}
 			
 			// check dependencies

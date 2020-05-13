@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.CreateGroupTask;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.Role;
@@ -19,14 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-@RequestMapping("/api/v2/tasks")
 @RestController
 public class CreateGroupsController {
 	
 	@Autowired
 	TaskService service;
 	
-	@PostMapping(value="", produces = "application/json", params="create-group")
+	@PostMapping(value=API.HUB.TASK_BASE, produces = "application/json", params=API.HUB.PARAMETERS.CREATE_GROUP)
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> createGroupsResponse(
 			@RequestBody MongoGroup group,

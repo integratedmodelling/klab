@@ -1,14 +1,19 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
 import org.integratedmodelling.klab.hub.api.TokenNewUserClickback;
+
+import javax.mail.MessagingException;
+
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
+import org.integratedmodelling.klab.hub.api.TokenLostPasswordClickback;
 import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.TokenVerifyAccountClickback;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
+import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
@@ -76,9 +81,9 @@ public class UserRegistrationController {
 	}
 	
 	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_SET_PASSWORD)
-	public ResponseEntity<?> newUserPassword(@PathVariable String id, @RequestParam String setPassword,
+	public ResponseEntity<?> newUserPassword(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_SET_PASSWORD) String setPassword,
 			@RequestBody PasswordChangeRequest passwordRequest) {
-		TokenType[] types = { TokenType.newUser, TokenType.password };
+		TokenType[] types = { TokenType.newUser, TokenType.password, TokenType.lostPassword };
 		if (!tokenService.verifyTokens(id, setPassword, types)) {
 			throw new ActivationTokenFailedException("User Verification token failed");
 		}
@@ -87,7 +92,7 @@ public class UserRegistrationController {
 			tokenService.deleteToken(setPassword);
 		}
 		JSONObject resp = new JSONObject();
-		resp.appendField("User", user);
+		resp.appendField("Message", "User password updated");
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 	
@@ -97,6 +102,25 @@ public class UserRegistrationController {
 				tokenService.createToken(username, TokenType.password);
 		JSONObject resp = new JSONObject();
 		resp.appendField("User", username).appendField("clickback", token.getTokenString());
+		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
+	}
+	
+	
+	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_LOST_PASSWORD)
+	public ResponseEntity<?> requestLostPassword(@PathVariable String id) throws MessagingException {
+		ProfileResource profile = null;
+		try {
+			profile = profileService.getUserProfile(id);
+		} catch (UserDoesNotExistException e) {
+			profile = profileService.getUserProfileByEmail(id);
+		}
+		TokenLostPasswordClickback token = (TokenLostPasswordClickback)
+				tokenService.createToken(profile.getUsername(), TokenType.lostPassword);
+		
+		emailManager.sendLostPasswordEmail(profile.getEmail(), token.getCallbackUrl());
+		
+		JSONObject resp = new JSONObject();
+		resp.appendField("message", "Reset password link sent to email address assoicated with user: " + profile.getUsername());
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 

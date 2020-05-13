@@ -39,6 +39,7 @@ public abstract class ApplicationCheck {
 		greenMail = new GreenMail(ServerSetupTest.ALL);
 		greenMail.setUser("system", "password").create();
 		greenMail.setUser("new.user@email.com", "new.user@email.com", "password").create();
+		greenMail.setUser("hades@integratedmodelling.org", "hades@integratedmodelling.org", "password").create();
 		greenMail.start();
 		
 	}
