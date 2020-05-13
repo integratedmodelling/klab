@@ -135,7 +135,7 @@ public class RegistrationTests extends ApplicationCheck {
 	    
 	    ResponseEntity<JSONObject> loginResult = loginRsponse(username, "password");
 	    
-	    assertEquals(HttpStatus.ACCEPTED, loginResult.getStatusCode());
+	    assertEquals(HttpStatus.OK, loginResult.getStatusCode());
 	}
 	
 	@Test
