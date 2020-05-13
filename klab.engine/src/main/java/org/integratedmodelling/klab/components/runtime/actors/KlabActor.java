@@ -35,7 +35,6 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -53,7 +52,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected IBehavior behavior;
 	protected IActorIdentity<KlabMessage> identity;
-	protected Map<Long, MatchActions> matchActions = Collections.synchronizedMap(new HashMap<>());
+	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
 
 	AtomicLong nextId = new AtomicLong(0);
 
@@ -66,22 +65,25 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	class MatchActions {
 
-		Long notifyId;
+		Long listenerId;
+		ActorRef<KlabMessage> caller;
 		List<Pair<Match, IKActorsStatement>> matches = new ArrayList<>();
 
-		public void match(Object value, Scope scope) {
-
-			Scope s = scope.withNotifyId(notifyId);
+		// this must be the scope when the listening action was called.
+		Scope scope;
+		
+		public void match(Object value) {
 
 			for (Pair<Match, IKActorsStatement> match : matches) {
 				if (match.getFirst().matches(value)) {
-					execute(match.getSecond(), s);
+					execute(match.getSecond(), scope);
 				}
 			}
 		}
 
-		public MatchActions(Long notifyId) {
-			this.notifyId = notifyId;
+		public MatchActions(Long listenerId, Scope scope) {
+			this.listenerId = listenerId;
+			this.scope = scope;
 		}
 	}
 
@@ -107,7 +109,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		boolean synchronous = false;
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
-		Long notifyId;
+		Long listenerId;
 		private ActorRef<KlabMessage> sender;
 
 		public Scope(Action action, IRuntimeScope scope) {
@@ -120,12 +122,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.synchronous = scope.synchronous;
 			this.runtimeScope = scope.runtimeScope;
 			this.parent = scope;
-			this.notifyId = scope.notifyId;
+			this.listenerId = scope.listenerId;
 			this.sender = scope.sender;
 		}
 
 		public String toString() {
-			return "{S " + notifyId + " " + action + "}";
+			return "{S " + listenerId + " " + action + "}";
 		}
 
 		public Scope synchronous() {
@@ -136,7 +138,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		public Scope withNotifyId(Long id) {
 			Scope ret = new Scope(this);
-			ret.notifyId = id;
+			ret.listenerId = id;
 			return ret;
 		}
 
@@ -145,7 +147,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		public Long getNotifyId() {
-			return notifyId;
+			return listenerId;
 		}
 
 		public IMonitor getMonitor() {
@@ -183,7 +185,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	}
 
-	protected IIdentity getIdentity() {
+	protected IActorIdentity<KlabMessage> getIdentity() {
 		return this.identity;
 	}
 
@@ -210,12 +212,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected Behavior<KlabMessage> reactToFire(Fire message) {
-		if (message.scope.notifyId != null) {
-			MatchActions actions = matchActions.get(message.scope.notifyId);
+		if (message.listenerId != null) {
+			MatchActions actions = listeners.get(message.listenerId);
 			if (actions != null) {
-				actions.match(message.value, message.scope);
+				actions.match(message.value);
 				if (message.finalize) {
-					matchActions.remove(message.scope.notifyId);
+					listeners.remove(message.listenerId);
 				}
 			}
 		}
@@ -314,7 +316,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	private void executeFire(FireValue code, Scope scope) {
 		if (scope.sender != null) {
-			scope.sender.tell(new Fire(code.getValue().getValue(), /* TODO FIXME boh */true, scope.parent));
+			scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), /* TODO FIXME boh */true));
 		}
 	}
 
@@ -335,7 +337,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * internal message if there is a group: in that case, set the ID in the scope.
 		 */
 
-		Long notifyId = scope.notifyId;
+		Long notifyId = scope.listenerId;
 
 		if (code.getActions().size() > 0) {
 
@@ -344,11 +346,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			/*
 			 * TODO install own action listeners
 			 */
-			MatchActions actions = new MatchActions(notifyId);
+			MatchActions actions = new MatchActions(notifyId, scope);
 			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
 				actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
 			}
-			this.matchActions.put(notifyId, actions);
+			this.listeners.put(notifyId, actions);
 		}
 
 		if (code.getGroup() == null) {
@@ -405,7 +407,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			ran = true;
 			run(action, message.scope.withSender(message.sender));
 		} else {
-			KlabAction a = Actors.INSTANCE.getSystemAction(message.message, message.sender, message.arguments,
+			KlabAction a = Actors.INSTANCE.getSystemAction(message.message, this.getIdentity(), message.arguments,
 					message.scope);
 			if (a != null) {
 				ran = true;

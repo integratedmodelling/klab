@@ -191,6 +191,8 @@ public enum Resources implements IResourceService {
 	private ServiceWorkspace service;
 
 	private IProject localProject;
+	
+	public static String REGEX_ENTRY = "regex";
 
 	private Resources() {
 		Services.INSTANCE.registerService(this, IResourceService.class);
@@ -748,12 +750,19 @@ public enum Resources implements IResourceService {
 	 * @param project     the destination project for the local resources built
 	 * @param adapterType optional, pass if needed to resolve ambiguities or prevent
 	 *                    excessive calculations.
+	 * @param regex       if not null, is added to parameters with key REGEX_ENTRY
+	 *                    and used as filter by the importer
 	 * @return
 	 */
-	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType) {
+	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType, String regex) {
 
 		List<IResourceAdapter> importers = new ArrayList<>();
 		IParameters<String> parameters = new Parameters<String>();
+		// TODO better way to pass the regex to the importer, if not removed from userData after use, 
+		// is added to metadata
+		if (regex != null && !regex.equals("")) {
+			parameters.put(REGEX_ENTRY, regex);
+		}
 		for (IResourceAdapter adapter : resourceAdapters.values()) {
 			if ((adapterType == null || adapter.getName().equals(adapterType)) && adapter.getImporter() != null
 					&& adapter.getImporter().canHandle(source.toString(), parameters)) {
@@ -762,7 +771,7 @@ public enum Resources implements IResourceService {
 		}
 
 		List<IResource> ret = new ArrayList<>();
-
+		
 		for (IResourceAdapter adapter : importers) {
 
 			IResourceImporter importer = adapter.getImporter();

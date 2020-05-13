@@ -9,6 +9,7 @@ public class ResourceImportRequest {
 	private String adapter;
 	private String projectName;
 	private boolean bulkImport;
+	private String regex;
 
 	public ResourceImportRequest() {
 	}
@@ -57,5 +58,13 @@ public class ResourceImportRequest {
     public void setTargetResourceUrn(String targetResourceUrn) {
         this.targetResourceUrn = targetResourceUrn;
     }
+
+	public String getRegex() {
+		return regex;
+	}
+
+	public void setRegex(String regexp) {
+		this.regex = regexp;
+	}
 
 }

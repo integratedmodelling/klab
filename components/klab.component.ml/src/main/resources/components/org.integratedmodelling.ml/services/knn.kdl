@@ -1,0 +1,17 @@
+/**
+ * Bridge to Weka option handling for knn algorithms.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace weka.knn
+
+export value linearnnsearch
+	"Bridge to the WEKA LinearNNSearch algorithm"
+{		
+	optional boolean skipidentical
+		"Skip identical instances (distances equal to zero)."
+  		label "S"
+  		default false
+		
+	class 'weka.core.neighboursearch.LinearNNSearch'
+}

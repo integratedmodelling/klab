@@ -79,17 +79,18 @@ public class SystemBehavior {
 
 		Object value;
 		boolean finalize;
-		KlabActor.Scope scope;
+		Long listenerId;
+//		ActorRef<KlabMessage> sender;
 
-		public Fire(Object firedValue, boolean isFinal, KlabActor.Scope scope) {
+		public Fire(Long listenerId, Object firedValue, boolean isFinal/* , KlabActor.Scope scope */) {
 			this.value = firedValue;
 			this.finalize = isFinal;
-			this.scope = scope;
+			this.listenerId = listenerId;
 		}
 		
 		@Override
 		public String toString() {
-			return "[FIRE" + value + " @" + scope + "]";
+			return "[FIRE" + value + " @" + listenerId + "]";
 		}
 
 	}
