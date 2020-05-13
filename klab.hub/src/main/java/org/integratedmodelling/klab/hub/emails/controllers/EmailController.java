@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.EmailTemplate;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.config.EmailConfig;
@@ -34,7 +35,6 @@ import org.springframework.web.server.ResponseStatusException;
  *
  */
 @RestController
-@RequestMapping("/api/v2/services/emails")
 @RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 public class EmailController {
 
@@ -57,7 +57,7 @@ public class EmailController {
 	 * Request templates
 	 * @return collection of actuals existing templates
 	 */
-	@RequestMapping(value = "", method = RequestMethod.GET, params="templates")
+	@RequestMapping(value = API.HUB.EMAIL_BASE, method = RequestMethod.GET, params=API.HUB.PARAMETERS.TEMPLATES)
 	public ResponseEntity<Object> getEmailTemplates() {
 		return new ResponseEntity<>(emailTemplateService.getEmailTemplates(), HttpStatus.OK);
 	}
@@ -66,7 +66,7 @@ public class EmailController {
 	 * Request available senders coming from configuration
 	 * @return an array of available senders with format "Name \<email\>"
 	 */
-	@RequestMapping(value = "", method = RequestMethod.GET, params="senders")
+	@RequestMapping(value = API.HUB.EMAIL_BASE, method = RequestMethod.GET, params="senders")
 	public ResponseEntity<Object> getAuthorizedSenders() {
 		return new ResponseEntity<>(emailConfig.getAuthorizedEmailAddresses(), HttpStatus.OK);
 	}
@@ -76,7 +76,7 @@ public class EmailController {
 	 * @param id the author id
 	 * @return a collection of email templates for this author
 	 */
-	@RequestMapping(value = "", method = RequestMethod.GET, params="author")
+	@RequestMapping(value = API.HUB.EMAIL_BASE, method = RequestMethod.GET, params="author")
 	public ResponseEntity<Object> getEmailTemplateByAuthor(@PathVariable("author") String id) {
 		EmailTemplate emailTemplate = emailTemplateService.getEmailTemplate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found"));
 		return new ResponseEntity<>(emailTemplate, HttpStatus.OK);		
@@ -87,7 +87,7 @@ public class EmailController {
 	 * @param emailTemplate the email template
 	 * @return the created email template
 	 */
-	@RequestMapping(value = "", method = RequestMethod.POST, params="createTemplate", produces = "application/json")
+	@RequestMapping(value = API.HUB.EMAIL_BASE, method = RequestMethod.POST, params="createTemplate", produces = "application/json")
 	public ResponseEntity<Object> createEmailTemplate(@RequestBody EmailTemplate emailTemplate) {
 		checkUserName(emailTemplate);
 		try {
@@ -104,7 +104,7 @@ public class EmailController {
 	 * @param emailTemplate the updated template
 	 * @return the updated template
 	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = API.HUB.EMAIL_BASE_ID, method = RequestMethod.PUT)
 	public ResponseEntity<Object> updateGroup(@PathVariable("id") String id, @RequestBody EmailTemplate emailTemplate) {
 		checkUserName(emailTemplate);
 		emailTemplateService.updateEmailTemplate(id, emailTemplate);
