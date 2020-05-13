@@ -10,6 +10,7 @@ public class EngineEvent {
 	private boolean started;
 	private long timestamp;
 	private String description;
+	private long id;
 
 	public Type getType() {
 		return type;
@@ -46,6 +47,14 @@ public class EngineEvent {
 	@Override
 	public String toString() {
 		return "EngineEvent [type=" + type + ", started=" + started + "]";
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 }

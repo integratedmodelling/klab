@@ -75,7 +75,7 @@ public abstract class AbstractTask<T extends IObservation> implements ITaskTree<
 	String token = "t" + NameGenerator.shortUUID();
 	String[] scenarios;
 	AbstractTask<T> parentTask = null;
-	private TaskReference descriptor;
+	TaskReference descriptor;
 
 	@Override
 	public boolean isChildTask() {
@@ -117,6 +117,9 @@ public abstract class AbstractTask<T extends IObservation> implements ITaskTree<
 			this.descriptor.setId(token);
 			this.descriptor.setParentId(parentTask == null ? null : parentTask.getId());
 			this.descriptor.setDescription(getTaskDescription());
+			this.descriptor.setContextId(this.context == null ? null : this.context.getId());
+			this.descriptor.setRootContextId(
+					this.context == null ? null : this.context.getRuntimeScope().getRootSubject().getId());
 		}
 		return this.descriptor;
 	}
@@ -143,9 +146,37 @@ public abstract class AbstractTask<T extends IObservation> implements ITaskTree<
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 					IMessage.Type.TaskAborted, getReference()));
 		} else {
-			((Monitor)monitor).setError(e);
+			((Monitor) monitor).setError(e);
 		}
 		return e instanceof KlabTaskException ? (KlabTaskException) e : new KlabTaskException(e);
+	}
+
+	public Subject getContext() {
+		return context;
+	}
+
+	public void setContext(Subject context) {
+		this.context = context;
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public String[] getScenarios() {
+		return scenarios;
+	}
+
+	public AbstractTask<T> getParentTask() {
+		return parentTask;
+	}
+
+	public TaskReference getDescriptor() {
+		return descriptor;
 	}
 
 }

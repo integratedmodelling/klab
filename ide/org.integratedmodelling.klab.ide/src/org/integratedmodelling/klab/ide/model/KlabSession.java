@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference;
 import org.integratedmodelling.klab.client.messaging.SessionMonitor;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor.Listener;
 import org.integratedmodelling.klab.client.tickets.TicketManager;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
@@ -42,6 +43,7 @@ import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
+import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
@@ -83,9 +85,9 @@ public class KlabSession extends KlabPeer {
 			}
 			return ret;
 		}
-		
+
 	};
-	
+
 //	/*
 //	 * all tasks in the session
 //	 */
@@ -125,6 +127,36 @@ public class KlabSession extends KlabPeer {
 
 	public KlabSession(String sessionId) {
 		super(Sender.SESSION, sessionId);
+
+		this.sessionMonitor.addListener(new Listener() {
+
+			@Override
+			public void onTaskStatusChange(ObservationReference rootContext, TaskReference task,
+					org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status status) {
+				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent,
+						new RuntimeEvent(rootContext, task, status));
+			}
+
+			@Override
+			public void onSystemNotification(Notification notification) {
+				// TODO Auto-generated method stub
+				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent, new RuntimeEvent(notification));
+			}
+
+			@Override
+			public void onStructureChange(ObservationReference rootContext, Object added, TaskReference objectParent) {
+				// TODO Auto-generated method stub
+				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent,
+						new RuntimeEvent(rootContext, added, objectParent));
+			}
+
+			@Override
+			public void onDataflowChange(ObservationReference rootContext, DataflowReference dataflow) {
+				// TODO Auto-generated method stub
+				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent,
+						new RuntimeEvent(rootContext, dataflow));
+			}
+		});
 
 		this.ticketManager = new TicketManager(
 				new File(Configuration.INSTANCE.getDataPath() + File.separator + "tickets.modeler.json"));
@@ -177,7 +209,7 @@ public class KlabSession extends KlabPeer {
 	public SessionMonitor getContextMonitor() {
 		return sessionMonitor;
 	}
-	
+
 //	/**
 //	 * Build a list describing the entire known history of the session, honoring
 //	 * chosen display priority and options. The first-level objects will always be
@@ -256,7 +288,7 @@ public class KlabSession extends KlabPeer {
 //		if (taskCatalog.containsKey(identity)) {
 //			parent = taskCatalog.get(identity);
 //		}
-		
+
 		/*
 		 * TODO multi-line notification should be broken up into multiple ones, with
 		 * continuation flag from the second on, so they can be displayed properly
@@ -283,7 +315,7 @@ public class KlabSession extends KlabPeer {
 		}
 
 		sessionMonitor.register(enote);
-		
+
 //		enote.setParent(parent);
 //		if (parent != null) {
 //			parent.addNotification(enote);
@@ -414,7 +446,6 @@ public class KlabSession extends KlabPeer {
 		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunUnitTest, new RunScriptRequest(behavior, true));
 	}
 
-
 	public void observe(EKimObject dropped) {
 		Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
 				new ObservationRequest(dropped.getId(), currentRootContextId, null));
@@ -500,9 +531,9 @@ public class KlabSession extends KlabPeer {
 	public void handleSearchResponse(IMessage message, SearchResponse response) {
 		send(message);
 	}
-	
+
 	@MessageHandler(type = IMessage.Type.EngineEvent)
-	public void handleSearchResponse(IMessage message, EngineEvent event) {
+	public void handleEngineEvent(IMessage message, EngineEvent event) {
 		System.out.println("XIO PAPA " + event);
 		send(message);
 	}
@@ -541,7 +572,7 @@ public class KlabSession extends KlabPeer {
 //		DebugFile.println("ABORT TASK " + task.getId());
 		bus.unsubscribe(task.getId());
 	}
-	
+
 //	@MessageHandler(type = Type.CreateViewComponent)
 //	public void handleTaskAborted(IMessage message, ViewComponent component) {
 //		switch (component.getType()) {
@@ -573,14 +604,14 @@ public class KlabSession extends KlabPeer {
 	public void handleObservation(ObservationReference observation) {
 		sessionMonitor.register(observation);
 //		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, observation);
-		//		recordObservation(observation);
+		// recordObservation(observation);
 	}
 
 	@MessageHandler
 	public void handleObservation(ObservationChange observation) {
 		sessionMonitor.register(observation);
 //		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, observation);
-		//		recordObservation(observation);
+		// recordObservation(observation);
 	}
 
 	@MessageHandler
@@ -601,7 +632,7 @@ public class KlabSession extends KlabPeer {
 		}
 		Eclipse.INSTANCE.info(title + "\n\n" + message);
 	}
-	
+
 	@MessageHandler
 	public void handleDataflow(IMessage message, DataflowReference dataflow) {
 //		ETaskReference task = taskCatalog.get(dataflow.getTaskId());

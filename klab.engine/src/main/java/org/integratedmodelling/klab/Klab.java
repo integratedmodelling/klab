@@ -13,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -77,6 +78,11 @@ public enum Klab implements IRuntimeService {
 	IMessageBus messageBus = null;
 	ITicketManager ticketManager = null;
 
+	/*
+	 * Counter for event IDs.
+	 */
+	AtomicLong eventCounter = new AtomicLong(0);
+	
 	/**
 	 * Current status of synchronous engine events
 	 */
@@ -653,4 +659,34 @@ public enum Klab implements IRuntimeService {
 		}
 	}
 
+//	public synchronized long notifyEventStart(EngineEvent.Type event) {
+//		eventStatus.put(event, started);
+//		return notifyEventListeners(event, started);
+//	}
+//
+//	public void notifyEventEnd(long id) {
+//		eventStatus.put(event, started);
+//		notifyEventListeners(event, started);
+//	}
+//
+//	private synchronized long notifyEventListeners(EngineEvent.Type event, boolean started) {
+//
+//		Map<String, AtomicBoolean> subscriptions = eventSubscriptions.get(event);
+//		if (subscriptions != null && subscriptions.size() > 1) {
+//			
+//			EngineEvent message = new EngineEvent();
+//			message.setStarted(started);
+//			message.setTimestamp(System.currentTimeMillis());
+//			message.setType(event);
+//			message.setId();
+//			for (String id : subscriptions.keySet()) {
+//				IIdentity identity = Authentication.INSTANCE.getIdentity(id, IIdentity.class);
+//				if (identity instanceof IRuntimeIdentity) {
+//					((IRuntimeIdentity) identity).getMonitor().send(IMessage.MessageClass.Notification,
+//							IMessage.Type.EngineEvent, message);
+//				}
+//			}
+//		}
+//	}
+	
 }

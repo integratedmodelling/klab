@@ -48,7 +48,6 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.client.messaging.ContextMonitor.ContextGraph;
 import org.integratedmodelling.klab.client.messaging.SessionMonitor;
@@ -64,6 +63,7 @@ import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
+import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -236,15 +236,15 @@ public class RuntimeView extends ViewPart {
 					}
 				} else if (element instanceof TaskReference) {
 					Image baseImage = ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/task.gif");
-					if (sm().getStatus((TaskReference) element) == Status.Started) {
+					if (((TaskReference) element).getStatus() == Status.Started) {
 						return ResourceManager.decorateImage(baseImage,
 								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/waiting_ovr.gif"),
 								SWTResourceManager.TOP_LEFT);
-					} else if (sm().getStatus((TaskReference) element) == Status.Finished) {
+					} else if (((TaskReference) element).getStatus() == Status.Finished) {
 						return ResourceManager.decorateImage(baseImage,
 								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ok_ovr.gif"),
 								SWTResourceManager.TOP_LEFT);
-					} else if (sm().getStatus((TaskReference) element) == Status.Aborted) {
+					} else if (((TaskReference) element).getStatus() == Status.Aborted) {
 						return ResourceManager.decorateImage(baseImage,
 								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/error_ovr.gif"),
 								SWTResourceManager.TOP_LEFT);
@@ -305,7 +305,7 @@ public class RuntimeView extends ViewPart {
 		public Font getFont(Object element) {
 			if (element instanceof ObservationReference && ((ObservationReference) element).isMain()) {
 				return SWTResourceManager.getBoldFont(taskTree.getFont());
-			} else if (element instanceof TaskReference && sm().getStatus((TaskReference) element) == Status.Started) {
+			} else if (element instanceof TaskReference && ((TaskReference) element).getStatus() == Status.Started) {
 				return SWTResourceManager.getItalicFont(taskTree.getFont());
 			} else if (element instanceof ObservationReference && ((ObservationReference) element).isMain()) {
 				return SWTResourceManager.getBoldFont(taskTree.getFont());
@@ -324,7 +324,7 @@ public class RuntimeView extends ViewPart {
 		public Color getForeground(Object element) {
 
 			if (element instanceof TaskReference) {
-				switch (sm().getStatus((TaskReference) element)) {
+				switch (((TaskReference) element).getStatus()) {
 				case Started:
 					return ResourceManager.getColor(SWT.COLOR_DARK_GRAY);
 				case Finished:
@@ -878,6 +878,9 @@ public class RuntimeView extends ViewPart {
 	private void handleMessage(IMessage message) {
 
 		switch (message.getType()) {
+		case RuntimeEvent:
+			updateTaskView((RuntimeEvent)message.getPayload());
+			break;
 		case TaskStarted:
 			Display.getDefault().asyncExec(() -> {
 				taskArea.setMaximizedControl(taskTree);
@@ -960,6 +963,12 @@ public class RuntimeView extends ViewPart {
 			break;
 
 		}
+	}
+
+	
+	private void updateTaskView(RuntimeEvent event) {
+		// TODO Auto-generated method stub
+		System.out.println("PORCUDIO " + event);
 	}
 
 	private void refreshSystemLog() {

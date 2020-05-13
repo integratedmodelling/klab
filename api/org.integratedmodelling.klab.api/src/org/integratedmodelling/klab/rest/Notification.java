@@ -78,8 +78,7 @@ public class Notification implements INotification {
 
 	@Override
 	public String getIdentity() {
-		// TODO Auto-generated method stub
-		return null;
+		return identity;
 	}
 
 	public void setIdentity(String identity) {

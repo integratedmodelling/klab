@@ -6,29 +6,23 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
-import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
-import org.integratedmodelling.klab.rest.TaskReference;
 
 /**
  * A ITask that creates a root subject within a Session.
@@ -105,6 +99,11 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy().initialization(), monitor);
 
+							if (ret != null) {
+								setContext((Subject)ret);
+								getDescriptor().setContextId(ret.getId());
+							}
+							
 							/*
 							 * load any behaviors and schedule repeating actions
 							 */
