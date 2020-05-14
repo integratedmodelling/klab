@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+
 /**
  * An observation-specific scheduler that can run temporal transitions over a
  * set of differently scaled observations in mock time or in real time, ensuring
@@ -35,7 +37,7 @@ public interface IScheduler {
 	/**
 	 * Start scheduling.
 	 */
-	void start();
+	void start(IMonitor monitor);
 
 	/**
 	 * Stop the scheduler.
@@ -52,7 +54,7 @@ public interface IScheduler {
 	/**
 	 * Start, run to completion (if possible) and return.
 	 */
-	void run();
+	void run(IMonitor monitor);
 
 	/**
 	 * Return true if nothing has been scheduled.

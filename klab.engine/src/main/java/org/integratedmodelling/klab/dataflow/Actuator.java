@@ -685,7 +685,8 @@ public class Actuator implements IActuator {
 					for (Observable deferred : deferredObservables) {
 
 						if (task == null) {
-							task = ((ITaskTree<?>) ctx.getMonitor().getIdentity()).createChild();
+							task = ((ITaskTree<?>) ctx.getMonitor().getIdentity()).createChild("Resolution of "
+									+ Observables.INSTANCE.getDisplayName(deferred) + " within " + object.getName());
 						}
 						ctx.resolve(deferred, (IDirectObservation) object, task,
 								deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
@@ -1313,7 +1314,7 @@ public class Actuator implements IActuator {
 				continue;
 			}
 
-			if (((Actuator)act).getDeferredObservables().size() > 0) {
+			if (((Actuator) act).getDeferredObservables().size() > 0) {
 				deferred.add(act);
 			} else if (((Actuator) act).observable.equals(actuator.observable)) {
 				partitions.add(act);
@@ -1321,9 +1322,9 @@ public class Actuator implements IActuator {
 				ret.add(act);
 			}
 		}
-		
+
 		ret.addAll(deferred);
-		
+
 		if (partitions.size() > 1) {
 			partitions.sort(new Comparator<IActuator>() {
 

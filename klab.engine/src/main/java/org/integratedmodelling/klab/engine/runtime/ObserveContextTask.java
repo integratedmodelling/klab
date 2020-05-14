@@ -34,13 +34,11 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 	FutureTask<ISubject> delegate;
 	String taskDescription = "<uninitialized observation task " + token + ">";
-//	private TaskReference descriptor;
 
-	public ObserveContextTask(ObserveContextTask parent) {
+	public ObserveContextTask(ObserveContextTask parent, String description) {
 		super(parent);
 		this.delegate = parent.delegate;
-		this.taskDescription = parent.taskDescription;
-//		this.descriptor = parent.descriptor;
+		this.taskDescription = description;
 	}
 
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
@@ -195,8 +193,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 	}
 
 	@Override
-	public ITaskTree<ISubject> createChild() {
-		return new ObserveContextTask(this);
+	public ITaskTree<ISubject> createChild(String description) {
+		return new ObserveContextTask(this, description);
 	}
 
 	@Override

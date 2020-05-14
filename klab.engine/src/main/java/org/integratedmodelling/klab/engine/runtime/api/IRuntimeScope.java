@@ -344,7 +344,7 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param transitionScale
 	 * @return
 	 */
-	IRuntimeScope locate(ILocator transitionScale);
+	IRuntimeScope locate(ILocator transitionScale, IMonitor monitor);
 
 	/**
 	 * Get all the artifacts known to this context indexed by their local name in

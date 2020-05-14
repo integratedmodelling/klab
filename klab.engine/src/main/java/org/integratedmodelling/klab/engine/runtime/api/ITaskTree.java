@@ -19,9 +19,10 @@ public interface ITaskTree<T extends IObservation> extends ITask<T> {
 	/**
 	 * Create a child task.
 	 * 
+	 * @param description description for users
 	 * @return a child task, never null.
 	 */
-	ITaskTree<T> createChild();
+	ITaskTree<T> createChild(String description);
 
 	/**
 	 * True if this task is the child of another. Use the {@link IIdentity} API to

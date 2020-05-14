@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -392,7 +393,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 */
 		IConfiguration ret = null;
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
+		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity())
+				.createChild("Resolution of configuration " + Concepts.INSTANCE.getDisplayName(configurationType));
 		ResolutionScope scope = Resolver.create(this.dataflow).resolve(observable, this.resolutionScope,
 				Mode.RESOLUTION, scale, model);
 		if (scope.getCoverage().isRelevant()) {
@@ -569,7 +571,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		scale = Scale.contextualize(scale, contextSubject.getScale(), model == null ? null : model.getAnnotations(),
 				monitor);
 
-		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
+		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild("Resolution of " + name);
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
 
 		// TODO switch to a builder pattern that copies the dataflow so we can run
@@ -611,7 +613,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		Dataflow dataflow = null;
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
+		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild("Resolution of predicate "
+				+ Concepts.INSTANCE.getDisplayName(predicate) + " within " + target.getName());
 		ResolutionScope scope = this.resolutionScope.getChildScope(target, Mode.RESOLUTION);
 
 		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
@@ -684,7 +687,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		obs.setName(name);
 		scale = Scale.contextualize(scale, contextSubject.getScale(), model == null ? null : model.getAnnotations(),
 				monitor);
-		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
+		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild("Resolution of relationship " + name);
 		Dataflow dataflow = resolve(obs, name, scale, subtask);
 
 		// TODO switch to a builder pattern for the dataflow
@@ -1106,7 +1109,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				 */
 				for (IState state : predefinedStates) {
 					link(state, observation);
-					
+
 					catalog.put(state.getObservable().getName(), state);
 				}
 
@@ -1198,7 +1201,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				}
 
 				for (ObservationChange change : ((Observation) observation).getChangesAndReset()) {
-					change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation)observation));
+					change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) observation));
 					session.getMonitor().send(Message.create(session.getId(),
 							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
 				}
@@ -1210,7 +1213,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				ObservationChange change = ((Observation) parent)
 						.createChangeEvent(ObservationChange.Type.StructureChange);
 				change.setNewSize(getChildArtifactsOf(parent).size());
-				change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation)parent));
+				change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) parent));
 				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 						IMessage.Type.ModifiedObservation, change));
 			}
@@ -1645,9 +1648,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public IRuntimeScope locate(ILocator transitionScale) {
+	public IRuntimeScope locate(ILocator transitionScale, IMonitor monitor) {
 
 		RuntimeScope ret = new RuntimeScope(this);
+		ret.monitor = monitor;
 		ret.scale = (Scale) transitionScale;
 
 		/*
@@ -1743,7 +1747,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		// TODO see what else needs to be there
 		structure.swap(original, replacement);
 		observations.remove(original.getId());
-		observations.put(replacement.getId(), (IObservation)replacement);
+		observations.put(replacement.getId(), (IObservation) replacement);
 	}
 
 }

@@ -651,7 +651,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IRuntimeScope locate(ILocator transitionScale) {
+	public IRuntimeScope locate(ILocator transitionScale, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return this;
 	}

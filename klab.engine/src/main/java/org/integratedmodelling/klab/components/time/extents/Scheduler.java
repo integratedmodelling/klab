@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Observables;
@@ -82,7 +82,7 @@ public class Scheduler implements IScheduler {
 		List<Actuator.Computation> computations;
 		IDirectObservation target;
 		IScale scale;
-		Consumer<Long> action;
+		BiConsumer<Long, IMonitor> action;
 		long tIndex = 0;
 		long endTime;
 		IRuntimeScope scope;
@@ -123,10 +123,10 @@ public class Scheduler implements IScheduler {
 			this.recipient = observation;
 			this.scheduledAction = scheduled;
 
-			action = new Consumer<Long>() {
+			action = new BiConsumer<Long, IMonitor>() {
 
 				@Override
-				public void accept(Long t) {
+				public void accept(Long t, IMonitor monitor) {
 
 					if (endTime > 0 && t > endTime) {
 						return;
@@ -146,7 +146,7 @@ public class Scheduler implements IScheduler {
 					 * the specific view of the context.
 					 */
 					ILocator transitionScale = scale.at(transition);
-					IRuntimeScope transitionContext = scope.locate(transitionScale);
+					IRuntimeScope transitionContext = scope.locate(transitionScale, monitor);
 
 					Set<IObservation> changed = new HashSet<>();
 
@@ -222,10 +222,10 @@ public class Scheduler implements IScheduler {
 			this.scope = scope;
 			this.computations = computation;
 
-			action = new Consumer<Long>() {
+			action = new BiConsumer<Long, IMonitor>() {
 
 				@Override
-				public void accept(Long t) {
+				public void accept(Long t, IMonitor monitor) {
 
 					if (endTime > 0 && t > endTime) {
 						return;
@@ -245,7 +245,7 @@ public class Scheduler implements IScheduler {
 					 * the specific view of the context.
 					 */
 					ILocator transitionScale = scale.at(transition);
-					IRuntimeScope transitionContext = scope.locate(transitionScale);
+					IRuntimeScope transitionContext = scope.locate(transitionScale, monitor);
 
 					Set<IObservation> changed = new HashSet<>();
 
@@ -354,7 +354,7 @@ public class Scheduler implements IScheduler {
 			};
 		}
 
-		public void run(long time) {
+		public void run(long time, IMonitor monitor) {
 
 //			System.out.println("Running at " + new Date(time));
 
@@ -362,7 +362,7 @@ public class Scheduler implements IScheduler {
 			// finished
 			if (synchronicity == Synchronicity.SYNCHRONOUS) {
 //				System.out.println("   " + transition + " FOR " + actuator);
-				action.accept(time);
+				action.accept(time, monitor);
 			} else if (synchronicity == Synchronicity.ASYNCHRONOUS) {
 				throw new KlabUnimplementedException("asynchronous scheduling not implemented");
 			} else if (synchronicity == Synchronicity.TIME_SYNCHRONOUS) {
@@ -577,7 +577,7 @@ public class Scheduler implements IScheduler {
 	}
 
 	@Override
-	public void run() {
+	public void run(IMonitor monitor) {
 
 		if (this.registrations.size() < 1) {
 			return;
@@ -633,7 +633,7 @@ public class Scheduler implements IScheduler {
 						}
 
 //						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.target);
-						registration.run(time + registration.delayInSlot);
+						registration.run(time + registration.delayInSlot, monitor);
 						reschedule(registration, time, false);
 
 					} else {
@@ -735,11 +735,11 @@ public class Scheduler implements IScheduler {
 	}
 
 	@Override
-	public void start() {
+	public void start(final IMonitor monitor) {
 		new Thread() {
 			@Override
 			public void run() {
-				Scheduler.this.run();
+				Scheduler.this.run(monitor);
 			}
 		}.start();
 	}

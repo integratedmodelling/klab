@@ -70,9 +70,11 @@ import org.integratedmodelling.klab.components.runtime.observations.Relationship
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -153,7 +155,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					IRuntimeScope ctx = runtimeContext;
 					if (active != actuator) {
 						ctx = runtimeContext.createChild(actuatorScale, active, scope, monitor)
-								.locate(initializationScale);
+								.locate(initializationScale, monitor);
 					}
 
 					/*
@@ -175,12 +177,19 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				}
 
 				/*
-				 * auto-start the scheduler if transitions have been registered. FIXME This must
-				 * happen only if the dataflow is the root dataflow!
+				 * auto-start the scheduler if transitions have been registered.
 				 */
 				if (((Actuator) actuator).getDataflow().isPrimary() && runtimeContext.getScheduler() != null
 						&& !runtimeContext.getScheduler().isEmpty()) {
-					runtimeContext.getScheduler().run();
+					ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity())
+							.createChild("Temporal contextualization");
+					try {
+						((AbstractTask<?>) subtask).notifyStart();
+						runtimeContext.getScheduler().run(((Monitor) runtimeContext.getMonitor()).get(subtask));
+						((AbstractTask<?>) subtask).notifyEnd();
+					} catch (Throwable e) {
+						throw ((AbstractTask<?>) subtask).notifyAbort(e);
+					}
 				}
 
 				return runtimeContext.getTargetArtifact();
@@ -194,7 +203,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				throw new KlabException(e);
 			}
 		}
-		
+
 		return executor.submit(task);
 	}
 

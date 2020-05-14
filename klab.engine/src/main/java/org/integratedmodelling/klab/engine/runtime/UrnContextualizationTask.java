@@ -30,10 +30,10 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
     FutureTask<ISubject>  delegate;
     String                taskDescription = "<uninitialized URN preview task " + token + ">";
 
-    public UrnContextualizationTask(UrnContextualizationTask parent) {
+    public UrnContextualizationTask(UrnContextualizationTask parent, String description) {
         super(parent);
         this.delegate = parent.delegate;
-        this.taskDescription = parent.taskDescription;
+        this.taskDescription = description;
     }
 
     public UrnContextualizationTask(Session session, String urn) {
@@ -169,8 +169,8 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
     }
 
     @Override
-    public ITaskTree<ISubject> createChild() {
-        return new UrnContextualizationTask(this);
+    public ITaskTree<ISubject> createChild(String description) {
+        return new UrnContextualizationTask(this, description);
     }
 
 	@Override

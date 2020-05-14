@@ -51,6 +51,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.client.messaging.ContextMonitor.ContextGraph;
 import org.integratedmodelling.klab.client.messaging.SessionMonitor;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
@@ -121,6 +122,11 @@ public class RuntimeView extends ViewPart {
 	private Button toggleTasks;
 	private Button toggleArtifacts;
 	private Label lblNewLabel;
+
+	/**
+	 * We keep them just in case, although the selector is in the context window.
+	 */
+	private List<ContextDescriptor> rootContexts = new ArrayList<>();
 
 	private DisplayPriority currentPriority = DisplayPriority.TASK_FIRST;
 //	private List<ENotification> notifications;
@@ -223,45 +229,33 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof ERuntimeObject) {
-				if (element instanceof ObservationReference) {
-					if (((ObservationReference) element).isEmpty()) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/emptycontent.gif");
-					} else if (((ObservationReference) element).getSemantics().contains(IKimConcept.Type.QUALITY)) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/datagrid.gif");
-					} else if (((ObservationReference) element).getChildrenCount() > 1) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resources.gif");
-					} else {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
-					}
-				} else if (element instanceof TaskReference) {
-					Image baseImage = ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/task.gif");
-					if (((TaskReference) element).getStatus() == Status.Started) {
-						return ResourceManager.decorateImage(baseImage,
-								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/waiting_ovr.gif"),
-								SWTResourceManager.TOP_LEFT);
-					} else if (((TaskReference) element).getStatus() == Status.Finished) {
-						return ResourceManager.decorateImage(baseImage,
-								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ok_ovr.gif"),
-								SWTResourceManager.TOP_LEFT);
-					} else if (((TaskReference) element).getStatus() == Status.Aborted) {
-						return ResourceManager.decorateImage(baseImage,
-								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/error_ovr.gif"),
-								SWTResourceManager.TOP_LEFT);
-					}
-				} else if (element instanceof Notification) {
-					if (((Notification) element).getLevel().equals(Level.INFO.getName())) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_info.gif");
-					} else if (((Notification) element).getLevel().equals(Level.WARNING.getName())) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_warning.gif");
-					} else if (((Notification) element).getLevel().equals(Level.SEVERE.getName())) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_error.gif");
-					} else if (((Notification) element).getLevel().equals(Level.FINE.getName())) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_debug.gif");
-					}
-				} else if (element instanceof DataflowReference) {
-					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/dataflow.gif");
+			if (element instanceof TaskReference) {
+				Image baseImage = ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/task.gif");
+				if (((TaskReference) element).getStatus() == Status.Started) {
+					return ResourceManager.decorateImage(baseImage,
+							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/waiting_ovr.gif"),
+							SWTResourceManager.TOP_LEFT);
+				} else if (((TaskReference) element).getStatus() == Status.Finished) {
+					return ResourceManager.decorateImage(baseImage,
+							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ok_ovr.gif"),
+							SWTResourceManager.TOP_LEFT);
+				} else if (((TaskReference) element).getStatus() == Status.Aborted) {
+					return ResourceManager.decorateImage(baseImage,
+							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/error_ovr.gif"),
+							SWTResourceManager.TOP_LEFT);
 				}
+			} else if (element instanceof Notification) {
+				if (((Notification) element).getLevel().equals(Level.INFO.getName())) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_info.gif");
+				} else if (((Notification) element).getLevel().equals(Level.WARNING.getName())) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_warning.gif");
+				} else if (((Notification) element).getLevel().equals(Level.SEVERE.getName())) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_error.gif");
+				} else if (((Notification) element).getLevel().equals(Level.FINE.getName())) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_debug.gif");
+				}
+			} else if (element instanceof DataflowReference) {
+				return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/dataflow.gif");
 			} else if (element instanceof ObservationReference) {
 				if (((ObservationReference) element).getObservationType() == ObservationType.GROUP) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
@@ -282,16 +276,12 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof ERuntimeObject) {
-				if (element instanceof ObservationReference) {
-					return ((ObservationReference) element).getLabel();
-				} else if (element instanceof TaskReference) {
-					return ((TaskReference) element).getDescription();
-				} else if (element instanceof Notification) {
-					return ((Notification) element).getMessage();
-				} else if (element instanceof DataflowReference) {
-					return "Dataflow computed";
-				}
+			if (element instanceof TaskReference) {
+				return (((TaskReference) element).getDescription());
+			} else if (element instanceof Notification) {
+				return ((Notification) element).getMessage();
+			} else if (element instanceof DataflowReference) {
+				return "Dataflow computed";
 			} else if (element instanceof ObservationReference) {
 				return ((ObservationReference) element).getLabel()
 						+ (((ObservationReference) element).getChildrenCount() > 0
@@ -358,6 +348,7 @@ public class RuntimeView extends ViewPart {
 	class TaskContentProvider implements ITreeContentProvider {
 
 		ContextGraph graph;
+		private ContextDescriptor currentDescriptor;
 
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -366,28 +357,46 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof Collection) {
-				return ((Collection<?>) parentElement).toArray();
-			} else if (parentElement instanceof ERuntimeObject) {
-				return ((ERuntimeObject) parentElement).getEChildren(currentPriority, currentLogLevel);
+			if (parentElement instanceof ContextDescriptor) {
+				this.currentDescriptor = (ContextDescriptor) parentElement;
+				return ((ContextDescriptor) parentElement).getChildren().toArray();
 			} else if (parentElement instanceof ContextGraph) {
 				this.graph = (ContextGraph) parentElement;
 				return this.graph.getChildren(this.graph.getRootNode(), true).toArray();
-			} else if (parentElement instanceof ObservationReference) {
+			} else if (this.graph != null && parentElement instanceof ObservationReference) {
 				return this.graph.getChildren((ObservationReference) parentElement, true).toArray();
+			} else if (currentDescriptor != null) {
+				return currentDescriptor.getChildren(getId(parentElement), currentLogLevel).toArray();
 			}
 			return new Object[] {};
 		}
 
+		private String getId(Object o) {
+			if (o instanceof Notification) {
+				return ((Notification) o).getId();
+			} else if (o instanceof ObservationReference) {
+				return ((ObservationReference) o).getId();
+			} else if (o instanceof TaskReference) {
+				return ((TaskReference) o).getId();
+			}
+
+			return null;
+		}
+
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof ERuntimeObject) {
-				return ((ERuntimeObject) element).getEParent(currentPriority) == null ? history
-						: ((ERuntimeObject) element).getEParent(currentPriority);
-			} else if (element instanceof ObservationReference) {
+
+			if (element instanceof ContextGraph || element instanceof ContextDescriptor) {
+				return null;
+			}
+
+			if (this.graph != null && element instanceof ObservationReference) {
 				ObservationReference parent = this.graph.getParent((ObservationReference) element, true);
 				return parent == null ? this.graph : parent;
+			} else if (this.currentDescriptor != null) {
+				return this.currentDescriptor.getParent(element);
 			}
+
 			return null;
 		}
 
@@ -395,14 +404,12 @@ public class RuntimeView extends ViewPart {
 		public boolean hasChildren(Object element) {
 			if (element instanceof Collection) {
 				return ((Collection<?>) element).size() > 0;
-			} else if (element instanceof ERuntimeObject) {
-				return ((ERuntimeObject) element).getEChildren(currentPriority, currentLogLevel).length > 0;
+			} else if (element instanceof ContextDescriptor) {
+				return ((ContextDescriptor) element).getChildren().size() > 0;
 			} else if (element instanceof ContextGraph) {
 				return true;
-			} else if (element instanceof ObservationReference) {
-				return ((ObservationReference) element).getChildrenCount() > 0;
 			}
-			return false;
+			return getChildren(element).length > 0;
 		}
 
 	}
@@ -584,7 +591,7 @@ public class RuntimeView extends ViewPart {
 				} else {
 					currentPriority = DisplayPriority.ARTIFACTS_FIRST;
 				}
-				refreshTaskViewer(IMessage.Type.FocusChanged);
+				refreshTrees(/* IMessage.Type.FocusChanged */);
 			}
 		});
 
@@ -628,7 +635,7 @@ public class RuntimeView extends ViewPart {
 					currentLogLevel = Level.FINE;
 					break;
 				}
-				refreshTaskViewer(IMessage.Type.FocusChanged);
+				refreshTrees(/* IMessage.Type.FocusChanged */);
 			}
 		});
 		btnCheckButton.setItems(new String[] { "Error", "Warning", "Info", "Debug" });
@@ -723,7 +730,7 @@ public class RuntimeView extends ViewPart {
 				if (lastFocus != null) {
 					lastFocus = currentPriority == DisplayPriority.ARTIFACTS_FIRST ? currentContext : currentTask;
 				}
-				refreshTaskViewer(IMessage.Type.FocusChanged);
+				refreshTrees(/* IMessage.Type.FocusChanged */);
 			}
 		});
 
@@ -879,13 +886,13 @@ public class RuntimeView extends ViewPart {
 
 		switch (message.getType()) {
 		case RuntimeEvent:
-			updateTaskView((RuntimeEvent)message.getPayload());
+			updateTaskView((RuntimeEvent) message.getPayload());
 			break;
-		case TaskStarted:
-			Display.getDefault().asyncExec(() -> {
-				taskArea.setMaximizedControl(taskTree);
-			});
-			break;
+//		case TaskStarted:
+//			Display.getDefault().asyncExec(() -> {
+//				taskArea.setMaximizedControl(taskTree);
+//			});
+//			break;
 		case NetworkStatus:
 			Display.getDefault().asyncExec(() -> {
 				networkStatusIcon.setToolTipText("Connected to the k.LAB network");
@@ -910,29 +917,29 @@ public class RuntimeView extends ViewPart {
 			}
 			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
 				lastFocus = message.getPayload(ObservationReference.class);
-				refreshTaskViewer(message.getType());
+				refreshTrees(/* message.getType() */);
 			}
 			break;
-		case HistoryChanged:
-			payload = message.getPayload();
-			if (payload instanceof ObservationReference) {
-				ObservationReference observation = (ObservationReference) payload;
-				if (observation.getParentId() == null) {
-					this.currentContext = observation;
-				}
-			}
-			if (((payload instanceof TaskReference && currentPriority == DisplayPriority.TASK_FIRST)
-					|| (payload instanceof ObservationReference
-							&& currentPriority == DisplayPriority.ARTIFACTS_FIRST))) {
-				lastFocus = (ERuntimeObject) payload;
-			} else {
-				payload = null;
-			}
-			refreshTaskViewer(message.getType());
-			break;
-		case Notification:
-			refreshSystemLog();
-			break;
+//		case HistoryChanged:
+//			payload = message.getPayload();
+//			if (payload instanceof ObservationReference) {
+//				ObservationReference observation = (ObservationReference) payload;
+//				if (observation.getParentId() == null) {
+//					this.currentContext = observation;
+//				}
+//			}
+//			if (((payload instanceof TaskReference && currentPriority == DisplayPriority.TASK_FIRST)
+//					|| (payload instanceof ObservationReference
+//							&& currentPriority == DisplayPriority.ARTIFACTS_FIRST))) {
+//				lastFocus = (ERuntimeObject) payload;
+//			} else {
+//				payload = null;
+//			}
+//			refreshTaskViewer(message.getType());
+//			break;
+//		case Notification:
+//			refreshSystemLog();
+//			break;
 		case EngineDown:
 			Display.getDefault().asyncExec(() -> {
 				taskViewer.setInput(/* history = */new ArrayList<>());
@@ -941,6 +948,7 @@ public class RuntimeView extends ViewPart {
 				networkStatusIcon
 						.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldgrey24.png"));
 				networkStatusIcon.setToolTipText("Not connected to the k.LAB network");
+				engineStatusLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
 				engineStatusLabel.setText("Engine is offline");
 			});
 			break;
@@ -956,6 +964,7 @@ public class RuntimeView extends ViewPart {
 //					networkStatusIcon
 //							.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldgrey24.png"));
 //				}
+				engineStatusLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 				engineStatusLabel.setText("User " + capabilities.getOwner().getId() + " logged in");
 			});
 			break;
@@ -965,10 +974,53 @@ public class RuntimeView extends ViewPart {
 		}
 	}
 
-	
 	private void updateTaskView(RuntimeEvent event) {
 		// TODO Auto-generated method stub
-		System.out.println("PORCUDIO " + event);
+		switch (event.getType()) {
+		case DataflowChanged:
+//			refreshTaskTree();
+			break;
+		case NotificationAdded:
+			lastFocus = event.getNotification();
+			refreshTrees();
+			break;
+		case ObservationAdded:
+			if (event.getObservation().getId().equals(event.getRootContext().getId())) {
+				this.rootContexts.add(sm().getContextDescriptor(event.getObservation()));
+				currentContext = event.getObservation();
+			}
+			lastFocus = event.getObservation();
+			refreshTrees();
+			break;
+		case SystemNotification:
+			refreshSystemLog();
+			break;
+		case TaskAdded:
+			lastFocus = event.getTask();
+			refreshTrees();
+			break;
+		case TaskStatusChanged:
+			lastFocus = event.getTask();
+			refreshTrees();
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void refreshTrees() {
+		Display.getDefault().asyncExec(() -> {
+			if (currentPriority == DisplayPriority.TASK_FIRST) {
+				taskViewer.setInput(Activator.session().getCurrentContextDescriptor());
+				if (lastFocus != null) {
+					taskViewer.expandToLevel(lastFocus, TreeViewer.ALL_LEVELS);
+				}
+			} else if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+				if (currentContext != null) {
+					taskViewer.setInput(Activator.session().getContextMonitor().getGraph(currentContext.getId()));
+				}
+			}
+		});
 	}
 
 	private void refreshSystemLog() {
@@ -976,20 +1028,20 @@ public class RuntimeView extends ViewPart {
 				.asyncExec(() -> tableViewer.setInput(notifications = sm().getSystemNotifications(systemLogLevel)));
 	}
 
-	public void refreshTaskViewer(IMessage.Type taskEvent) {
-
-		Display.getDefault().asyncExec(() -> {
-			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
-				if (currentContext != null) {
-					taskViewer.setInput(Activator.session().getContextMonitor().getGraph(currentContext.getId()));
-				}
-			} else if (lastFocus != null && currentContext != null) {
-				taskViewer.setInput(sm().getTasks(currentContext.getId(), currentLogLevel));
-				if (taskEvent == IMessage.Type.TaskStarted) {
-					taskViewer.collapseAll();
-				}
-				taskViewer.expandToLevel(lastFocus, TreeViewer.ALL_LEVELS);
-			}
-		});
-	}
+//	public void refreshTaskViewer(IMessage.Type taskEvent) {
+//
+//		Display.getDefault().asyncExec(() -> {
+//			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+//				if (currentContext != null) {
+//					taskViewer.setInput(Activator.session().getContextMonitor().getGraph(currentContext.getId()));
+//				}
+//			} else if (lastFocus != null && currentContext != null) {
+//				taskViewer.setInput(sm().getTasks(currentContext.getId(), currentLogLevel));
+//				if (taskEvent == IMessage.Type.TaskStarted) {
+//					taskViewer.collapseAll();
+//				}
+//				taskViewer.expandToLevel(lastFocus, TreeViewer.ALL_LEVELS);
+//			}
+//		});
+//	}
 }

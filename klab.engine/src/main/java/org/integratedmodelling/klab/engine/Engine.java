@@ -197,9 +197,9 @@ public class Engine extends Server implements IEngine, UserDetails {
 				}
 			}
 			// Debug code for notifications - remove when done
-			if (message != null) {
-				DebugFile.println("SHOW " + this.identity.getId() + " " + message.getPayload());
-			}
+//			if (message != null) {
+//				DebugFile.println("SHOW " + this.identity.getId() + " " + message.getPayload());
+//			}
 		}
 
 		@Override

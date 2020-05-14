@@ -548,7 +548,7 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public IRuntimeScope locate(ILocator transitionScale) {
+	public IRuntimeScope locate(ILocator transitionScale, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}

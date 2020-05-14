@@ -42,10 +42,10 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 	FutureTask<IObservation> delegate;
 	String taskDescription = "<uninitialized contextual observation task " + token + ">";
 
-	public ObserveInContextTask(ObserveInContextTask parent) {
+	public ObserveInContextTask(ObserveInContextTask parent, String description) {
 		super(parent);
 		this.delegate = parent.delegate;
-		this.taskDescription = parent.taskDescription;
+		this.taskDescription = description;
 	}
 
 	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
@@ -208,8 +208,8 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 	}
 
 	@Override
-	public ITaskTree<IObservation> createChild() {
-		return new ObserveInContextTask(this);
+	public ITaskTree<IObservation> createChild(String description) {
+		return new ObserveInContextTask(this, description);
 	}
 
 	@Override

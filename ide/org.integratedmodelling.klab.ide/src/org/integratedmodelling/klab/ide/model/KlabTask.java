@@ -4,7 +4,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.rest.ObservationReference;
-import org.integratedmodelling.klab.utils.DebugFile;
 
 public class KlabTask extends KlabPeer {
 

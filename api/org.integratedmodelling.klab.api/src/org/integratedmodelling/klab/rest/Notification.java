@@ -9,7 +9,8 @@ public class Notification implements INotification {
 	private String message;
 	private Type type = Type.None;
 	private String identity;
-
+	private String id;
+	
 	public Notification() {
 	}
 
@@ -83,6 +84,14 @@ public class Notification implements INotification {
 
 	public void setIdentity(String identity) {
 		this.identity = identity;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }
