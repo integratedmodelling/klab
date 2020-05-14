@@ -2,11 +2,13 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.util.Set;
 
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Nodes")
+@TypeAlias("MongoNode")
 public class MongoNode extends IdentityModel{
     
     private String url;

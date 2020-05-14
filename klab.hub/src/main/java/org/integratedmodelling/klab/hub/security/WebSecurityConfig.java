@@ -6,7 +6,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -68,6 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public TokenAuthenticationFilter tokenAuthenticationFilter() {
 		return new TokenAuthenticationFilter();
 	}
+    
     
 	public static final String AUTHENTICATION_TOKEN_HEADER_NAME = "Authentication";
 
@@ -160,36 +166,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.successHandler(oAuth2AuthenticationSuccessHandler)
 		.failureHandler(oAuth2AuthenticationFailureHandler);
 
-		http.cors().and().csrf().disable().antMatcher("/api/**")
-			.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.csrf().disable().antMatcher("/api/**")
+		.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		//.addFilterBefore(WebSecurityCorsFilter(), ChannelProcessingFilter.class);
 	}
-	/*
-	@Bean
-	CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowCredentials(true);
-		configuration.setAllowedOrigins(
-				ImmutableList.of(
-						"https://integratedmodelling.org",
-						"http://localhost:8080",
-						"http://192.168.0.104:8080",
-						"https://localhost:8284",
-						"http://localhost:8284"));
-		configuration.setAllowedHeaders(Collections.singletonList("*"));
-		configuration.addExposedHeader("Content-disposition");
-		configuration.addExposedHeader(HttpHeaders.LOCATION);
-		configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","OPTIONS","DELETE","HEAD"));
-		configuration.setMaxAge(3600l);
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
-	}
-	*/
+
+//  Left here as a last resort
+//	public class WebSecurityCorsFilter implements Filter {
+//	    @Override
+//	    public void init(FilterConfig filterConfig) throws ServletException {
+//	    }
+//	    @Override
+//	    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+//	        HttpServletResponse res = (HttpServletResponse) response;
+//	        res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, x-requested-with, Cache-Control");
+//	        chain.doFilter(request, res);
+//	    }
+//	    @Override
+//	    public void destroy() {
+//	    }
+//	}
+	
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		final CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
+		config.setAllowCredentials(false);
 		config.setAllowedOrigins(ImmutableList.of(
 				"https://integratedmodelling.org",
 				"http://localhost:8080",

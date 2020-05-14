@@ -6,11 +6,13 @@ import java.util.List;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Document(collection="DeletedUsers")
+@TypeAlias(value = "DeletedUser")
 public class DeletedUser implements UserDetails {
 	
     /**

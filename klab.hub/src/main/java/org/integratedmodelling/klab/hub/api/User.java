@@ -5,24 +5,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collector;
-
 import org.joda.time.DateTime;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.google.common.collect.Multiset.Entry;
-
-import akka.routing.Group;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 @Document(collection="Users")
+@TypeAlias("MongoUser")
 public class User extends IdentityModel implements UserDetails{
 	public static final String GLOBAL_GROUP = "REGISTERED";
 

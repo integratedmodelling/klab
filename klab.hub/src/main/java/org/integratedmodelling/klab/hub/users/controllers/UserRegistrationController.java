@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.hub.users.services.UserRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -97,11 +98,12 @@ public class UserRegistrationController {
 	}
 	
 	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_REQUEST_PASSWORD)
-	public ResponseEntity<?> authorizedPasswordChange(@PathVariable String username) {
+	@PreAuthorize("authentication.getPrincipal() == #id" )
+	public ResponseEntity<?> authorizedPasswordChange(@PathVariable String id) {
 		TokenChangePasswordClickback token = (TokenChangePasswordClickback)
-				tokenService.createToken(username, TokenType.password);
+				tokenService.createToken(id, TokenType.password);
 		JSONObject resp = new JSONObject();
-		resp.appendField("User", username).appendField("clickback", token.getTokenString());
+		resp.appendField("User", id).appendField("clickback", token.getTokenString());
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 	

@@ -6,10 +6,12 @@ import java.util.Set;
 
 import javax.persistence.Transient;
 
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Levers")
+@TypeAlias("MongoLever")
 public class MongoLever extends IdentityModel{
 	
     @Indexed(unique = false)
