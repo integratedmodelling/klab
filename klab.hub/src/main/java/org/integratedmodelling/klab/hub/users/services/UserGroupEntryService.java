@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserGroupEntryService {
 
-	void setUsersGroupsFromNames(UpdateUsersGroups updateRequest);
+	void setUsersGroupsByNames(UpdateUsersGroups updateRequest);
 
-	void addUsersGroupsFromNames(UpdateUsersGroups updateRequest);
+	void addUsersGroupsByNames(UpdateUsersGroups updateRequest);
+
+	void removeUsersGroupsByNames(UpdateUsersGroups updateUserGroups);
 
 }

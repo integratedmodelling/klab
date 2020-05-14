@@ -29,7 +29,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	
 	
 	@Override
-	public void setUsersGroupsFromNames(UpdateUsersGroups updateRequest) {
+	public void setUsersGroupsByNames(UpdateUsersGroups updateRequest) {
 		
 		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupnames(), updateRequest.getExperation());
 		Set<User> users = new HashSet<>();
@@ -51,7 +51,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	}
 	
 	@Override
-	public void addUsersGroupsFromNames(UpdateUsersGroups updateRequest) {
+	public void addUsersGroupsByNames(UpdateUsersGroups updateRequest) {
 		
 		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupnames(), updateRequest.getExperation());
 		Set<User> users = new HashSet<>();
@@ -62,6 +62,27 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 					.findByNameIgnoreCase(username)
 					.map(user -> {
 						user.addGroupEntries(groupEntries);
+						return user;
+						})
+					.orElseThrow(() ->
+					new UserDoesNotExistException(username))
+			);		
+		}
+		
+		new UpdateUsers(users, userRepository).execute();
+	}
+	
+	@Override
+	public void removeUsersGroupsByNames(UpdateUsersGroups updateRequest) {
+		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupnames(), updateRequest.getExperation());
+		Set<User> users = new HashSet<>();
+		
+		for (String username: updateRequest.getUsernames()) {
+			users.add(
+				userRepository
+					.findByNameIgnoreCase(username)
+					.map(user -> {
+						user.removeGroupEntries(groupEntries);
 						return user;
 						})
 					.orElseThrow(() ->

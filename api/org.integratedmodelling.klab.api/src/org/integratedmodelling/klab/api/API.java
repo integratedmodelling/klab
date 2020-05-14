@@ -317,6 +317,12 @@ public interface API {
 			 * URL PARAMETER for template in the email service
 			 */			
 			public static final String TEMPLATES = "templates";
+			
+			public static final String REQUEST_GROUPS = "request-groups";
+			
+			public static final String SET_GROUPS = "set-groups";
+			
+			public static final String REMOVE_GROUPS = "remove-groups";
 		}
 		
 

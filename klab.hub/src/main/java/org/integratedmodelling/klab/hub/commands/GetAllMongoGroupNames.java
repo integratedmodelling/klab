@@ -1,10 +1,9 @@
-package org.integratedmodelling.klab.hub.groups.services;
+package org.integratedmodelling.klab.hub.commands;
 
 import java.util.Collection;
 import java.util.HashSet;
 
 import org.integratedmodelling.klab.hub.api.MongoGroup;
-import org.integratedmodelling.klab.hub.commands.GetAllMongoGroups;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 
 public class GetAllMongoGroupNames {

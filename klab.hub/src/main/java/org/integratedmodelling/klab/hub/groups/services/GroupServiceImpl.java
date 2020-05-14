@@ -4,6 +4,7 @@ import java.util.Collection;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.commands.CreateMongoGroup;
 import org.integratedmodelling.klab.hub.commands.DeleteMongoGroup;
+import org.integratedmodelling.klab.hub.commands.GetAllMongoGroupNames;
 import org.integratedmodelling.klab.hub.commands.GetAllMongoGroups;
 import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
 import org.integratedmodelling.klab.hub.commands.MongoGroupExists;

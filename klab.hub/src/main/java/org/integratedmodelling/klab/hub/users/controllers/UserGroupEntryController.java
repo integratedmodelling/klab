@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.users.controllers;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.users.services.UserGroupEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +25,27 @@ public class UserGroupEntryController {
 	}
 	
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	@PostMapping(value = "", produces = "application/json", params="addUsersGroups")
+	@PostMapping(value = API.HUB.USER_BASE, produces = "application/json", params=API.HUB.PARAMETERS.REQUEST_GROUPS)
 	public ResponseEntity<?> addUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
-		userService.addUsersGroupsFromNames(updateUserGroups);
+		userService.addUsersGroupsByNames(updateUserGroups);
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body("Updated Succesful");
 	}
 	
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	@PostMapping(value = "", produces = "application/json", params="setUsersGroups")
+	@PostMapping(value = API.HUB.USER_BASE, produces = "application/json", params=API.HUB.PARAMETERS.SET_GROUPS)
 	public ResponseEntity<?> setUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
-		userService.setUsersGroupsFromNames(updateUserGroups);
+		userService.setUsersGroupsByNames(updateUserGroups);
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.body("Updated Succesful");
+	}
+	
+	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
+	@PostMapping(value = API.HUB.USER_BASE, produces = "application/json", params=API.HUB.PARAMETERS.REMOVE_GROUPS)
+	public ResponseEntity<?> removeUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
+		userService.removeUsersGroupsByNames(updateUserGroups);
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.body("Updated Succesful");

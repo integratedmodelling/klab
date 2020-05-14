@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collector;
 
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
@@ -12,6 +14,10 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.google.common.collect.Multiset.Entry;
+
+import akka.routing.Group;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -207,6 +213,28 @@ public class User extends IdentityModel implements UserDetails{
     public void setGroupEntries(Set<GroupEntry> groups) {
         this.groupEntries = groups;
     }
+    
+	public void removeGroupEntries(Set<GroupEntry> groupEntries) {
+    	
+		Set<String> names = Collections.<String>emptySet();
+    	groupEntries
+    	  .forEach(e -> names.add(e.getGroupName()));
+    	
+    	if(names.isEmpty()) {
+    		return;
+    	}
+    	
+		Set<GroupEntry> newEntries = getGroupEntries();
+		
+		for (GroupEntry entry: newEntries) {
+			if(names.contains(entry.getGroupName())) {
+				newEntries.remove(entry);
+			}
+		}
+		
+		setGroupEntries(newEntries);
+		
+	}
 
     public Set<GroupEntry> getGroupEntries() {
         return groupEntries;
@@ -356,4 +384,5 @@ public class User extends IdentityModel implements UserDetails{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 }
