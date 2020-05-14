@@ -22,7 +22,7 @@ public class SetupResources {
 	public static void setupWCSResources(IProject project) throws Exception {
 		for (IResource resource : Resources.INSTANCE.importResources(new URL(
 				"http://www.integratedmodelling.org/geodata/ows?service=WCS&version=2.0.1&request=GetCapabilities"),
-				project, "wcs")) {
+				project, "wcs", null)) {
 			resourceUrns.add(resource.getUrn());
 		}
 	}
