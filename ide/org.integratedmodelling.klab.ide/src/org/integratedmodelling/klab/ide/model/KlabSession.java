@@ -4,7 +4,12 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
@@ -65,12 +70,12 @@ public class KlabSession extends KlabPeer {
 	private int TICKET_CHECK_INTERVAL_SECONDS = 6;
 
 	private AtomicLong queryCounter = new AtomicLong();
-
+	private Map<EngineEvent.Type, Set<Long>> engineEvents = Collections.synchronizedMap(new HashMap<>());
+	
 	SessionMonitor sessionMonitor = new SessionMonitor() {
 
 		@Override
 		protected void subscribe(ContextGraph contextGraph, ObservationReference observation, boolean open) {
-//			System.out.println("SUBSCRIBING TO " + observation);
 			WatchRequest request = new WatchRequest();
 			request.setActive(open);
 			request.setObservationId(observation.getId());
@@ -123,13 +128,11 @@ public class KlabSession extends KlabPeer {
 
 			@Override
 			public void onSystemNotification(Notification notification) {
-				// TODO Auto-generated method stub
 				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent, new RuntimeEvent(notification));
 			}
 
 			@Override
 			public void onStructureChange(ObservationReference rootContext, Object added, TaskReference objectParent) {
-				// TODO Auto-generated method stub
 				if (added instanceof ObservationReference && rootContext.getId().equals(((ObservationReference)added).getId())) {
 					setCurrentContext(rootContext);
 				}
@@ -139,7 +142,6 @@ public class KlabSession extends KlabPeer {
 
 			@Override
 			public void onDataflowChange(ObservationReference rootContext, DataflowReference dataflow) {
-				// TODO Auto-generated method stub
 				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent,
 						new RuntimeEvent(rootContext, dataflow));
 			}
@@ -155,7 +157,6 @@ public class KlabSession extends KlabPeer {
 	}
 
 	protected void setCurrentContext(ObservationReference rootContext) {
-		// TODO Auto-generated method stub
 		this.currentRootContextId = rootContext.getId();
 		
 	}
@@ -362,8 +363,28 @@ public class KlabSession extends KlabPeer {
 	}
 
 	@MessageHandler(type = IMessage.Type.EngineEvent)
-	public void handleEngineEvent(IMessage message, EngineEvent event) {
-		send(message);
+	public synchronized void handleEngineEvent(IMessage message, EngineEvent event) {
+		Set<Long> current = engineEvents.get(event.getType());
+		if (current == null) {
+			current = new HashSet<>();
+			engineEvents.put(event.getType(), current);
+		}
+		
+		/*
+		 * Only notify the first started and the last finished
+		 */
+		boolean notify = false;
+		if (event.isStarted()) {
+			notify = current.size() == 0;
+			current.add(event.getId());
+		} else {
+			current.remove(event.getId());
+			notify = current.size() == 0;
+		}
+		
+		if (notify) {
+			send(message);
+		}
 	}
 
 	@MessageHandler(type = IMessage.Type.ResetContext)
@@ -374,28 +395,19 @@ public class KlabSession extends KlabPeer {
 
 	@MessageHandler(type = Type.TaskStarted)
 	public void handleTaskStarted(IMessage message, TaskReference task, IMessageBus bus) {
-//		send(message);
-//		recordTask(task, Type.TaskStarted);
 		sessionMonitor.register(task);
-//		DebugFile.println("START TASK " + task.getId());
 		bus.subscribe(task.getId(), new KlabTask(task.getId()));
 	}
 
 	@MessageHandler(type = Type.TaskFinished)
 	public void handleTaskFinished(IMessage message, TaskReference task, IMessageBus bus) {
-//		send(message);
-//		recordTask(task, Type.TaskFinished);
 		sessionMonitor.update(task, ITaskReference.Status.Finished);
-//		DebugFile.println("END TASK " + task.getId());
 		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler(type = Type.TaskAborted)
 	public void handleTaskAborted(IMessage message, TaskReference task, IMessageBus bus) {
-//		send(message);
-//		recordTask(task, Type.TaskAborted);
 		sessionMonitor.update(task, ITaskReference.Status.Aborted);
-//		DebugFile.println("ABORT TASK " + task.getId());
 		bus.unsubscribe(task.getId());
 	}
 
@@ -429,15 +441,11 @@ public class KlabSession extends KlabPeer {
 	@MessageHandler
 	public void handleObservation(ObservationReference observation) {
 		sessionMonitor.register(observation);
-//		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, observation);
-		// recordObservation(observation);
 	}
 
 	@MessageHandler
 	public void handleObservation(ObservationChange observation) {
 		sessionMonitor.register(observation);
-//		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, observation);
-		// recordObservation(observation);
 	}
 
 	@MessageHandler
