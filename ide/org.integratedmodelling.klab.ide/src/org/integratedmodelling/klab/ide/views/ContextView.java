@@ -81,8 +81,8 @@ public class ContextView extends ViewPart {
 	}
 
 	private Composite container;
-	private Button searchModeButton;
-	private Text subjectLabel;
+//	private Button searchModeButton;
+	private Label subjectLabel;
 	private SashForm dropArea;
 	private Label dropImage;
 	private TableViewer tableViewer;
@@ -154,75 +154,77 @@ public class ContextView extends ViewPart {
 			ccombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 			// ccombo.setBackground(SWTResourceManager
 			// .getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-			ccombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			GridLayout gl_ccombo = new GridLayout(3, false);
+			ccombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+			GridLayout gl_ccombo = new GridLayout(1, false);
 			gl_ccombo.marginWidth = 0;
 			gl_ccombo.marginHeight = 0;
 			ccombo.setLayout(gl_ccombo);
-
-			searchModeButton = new Button(ccombo, SWT.TOGGLE);
-			searchModeButton.setToolTipText("Query the network for a context ");
-			searchModeButton.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseUp(MouseEvent e) {
-//					Eclipse.INSTANCE.notification("Po dio", "Fucullazzaroppa");
-					// KlabNavigator.refresh();
-					// searchMode(searchModeButton.getSelection());
-				}
-			});
-			searchModeButton
-					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Database.png"));
+//
+//			searchModeButton = new Button(ccombo, SWT.TOGGLE);
+//			searchModeButton.setToolTipText("Query the network for a context ");
+//			searchModeButton.addMouseListener(new MouseAdapter() {
+//				@Override
+//				public void mouseUp(MouseEvent e) {
+////					Eclipse.INSTANCE.notification("Po dio", "Fucullazzaroppa");
+//					// KlabNavigator.refresh();
+//					// searchMode(searchModeButton.getSelection());
+//				}
+//			});
+//			searchModeButton
+//					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Database.png"));
 			// toolkit.adapt(searchModeButton, true, true);
 			{
-				subjectLabel = new Text(ccombo, SWT.NONE);
-				subjectLabel.setEnabled(false);
-				subjectLabel.setEditable(false);
-				subjectLabel.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
-				subjectLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
+				subjectLabel = new Label(ccombo, SWT.CENTER);
+//				subjectLabel.setEnabled(false);
+//				subjectLabel.setEditable(false);
+				subjectLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+				subjectLabel.setFont(SWTResourceManager.getFont("Segoe UI Semibold", 13, SWT.NORMAL));
 				subjectLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-				subjectLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				// subjectLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
+//				subjectLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+				subjectLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 				// toolkit.adapt(subjectLabel, true, true);
 				subjectLabel.setText("No context");
-				subjectLabel.addListener(SWT.Traverse, new Listener() {
-					@Override
-					public void handleEvent(Event event) {
-						if (event.detail == SWT.TRAVERSE_RETURN) {
-							searchObservations(subjectLabel.getText());
-						}
-					}
-				});
+//				subjectLabel.addListener(SWT.Traverse, new Listener() {
+//					@Override
+//					public void handleEvent(Event event) {
+//						if (event.detail == SWT.TRAVERSE_RETURN) {
+//							searchObservations(subjectLabel.getText());
+//						}
+//					}
+//				});
 			}
-			{
-				final Button btnNewButton = new Button(ccombo, SWT.NONE);
-				btnNewButton.setToolTipText("Choose target subject");
-				btnNewButton.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseUp(MouseEvent e) {
-						// if (Environment.get().getContext() != null) {
-						// PopupTreeChooser ptc = new PopupTreeChooser(Eclipse
-						// .getShell(), new ContextLabelProvider(), new ContextContentProvider(),
-						// Environment
-						// .get().getContext()) {
-						//
-						// @Override
-						// protected void objectSelected(Object object) {
-						// if (object instanceof ISubject) {
-						// setObservationTarget((ISubject) object);
-						// }
-						// super.objectSelected(object);
-						// }
-						//
-						// };
-						// ptc.show(btnNewButton.toDisplay(new Point(e.x, e.y)));
-						// } else {
-						// Eclipse.beep();
-						// }
-					}
-				});
-				btnNewButton
-						.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Tree.png"));
-				// toolkit.adapt(btnNewButton, true, true);
-			}
+//			{
+//				final Button btnNewButton = new Button(ccombo, SWT.NONE);
+//				btnNewButton.setToolTipText("Choose target subject");
+//				btnNewButton.addMouseListener(new MouseAdapter() {
+//					@Override
+//					public void mouseUp(MouseEvent e) {
+//						// if (Environment.get().getContext() != null) {
+//						// PopupTreeChooser ptc = new PopupTreeChooser(Eclipse
+//						// .getShell(), new ContextLabelProvider(), new ContextContentProvider(),
+//						// Environment
+//						// .get().getContext()) {
+//						//
+//						// @Override
+//						// protected void objectSelected(Object object) {
+//						// if (object instanceof ISubject) {
+//						// setObservationTarget((ISubject) object);
+//						// }
+//						// super.objectSelected(object);
+//						// }
+//						//
+//						// };
+//						// ptc.show(btnNewButton.toDisplay(new Point(e.x, e.y)));
+//						// } else {
+//						// Eclipse.beep();
+//						// }
+//					}
+//				});
+//				btnNewButton
+//						.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Tree.png"));
+//				// toolkit.adapt(btnNewButton, true, true);
+//			}
 		}
 		{
 			dropArea = new SashForm(container, SWT.NONE);
@@ -665,6 +667,9 @@ public class ContextView extends ViewPart {
 			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, icon));
 			openViewerAction.setEnabled(eviewer);
 			resetContextAction.setEnabled(ereset);
+			subjectLabel.setForeground(currentContext == null ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+					: SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+			subjectLabel.setText(currentContext == null ? "No context" : currentContext.getLabel());
 		});
 	}
 
