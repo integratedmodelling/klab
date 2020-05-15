@@ -173,10 +173,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 */
 	public IArtifact run(IScale scale, Actuator parentComputation, IMonitor monitor) throws KlabException {
 
-		if (parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
-			((AbstractTask<?>) monitor.getIdentity()).notifyStart();
-		}
-
 		reset();
 
 		/*
@@ -191,6 +187,17 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			return Observation.empty();
 		}
 
+		/*
+		 * a trivial dataflow won't do anything but create the target, and notifying it
+		 * would be a lot of notification if it's called for 3000 instantiated objects.
+		 */
+		boolean trivial = actuators.size() < 2
+				&& (actuators.size() == 0 || (actuators.size() == 1 && actuators.get(0).getActuators().size() == 0));
+
+		if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+			((AbstractTask<?>) monitor.getIdentity()).notifyStart();
+		}
+		
 		/*
 		 * Set the .partialScale field in all actuators that represent partitions of the
 		 * context to reflect the portion of the actual scale they must cover.
@@ -291,7 +298,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			} catch (InterruptedException e) {
 				return null;
 			} catch (ExecutionException e) {
-				if (parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+				if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
 					throw ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);
 				}
 			}
@@ -339,7 +346,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			}
 		}
 
-		if (added && isPrimary()) {
+		if (added && !trivial && isPrimary()) {
 			/*
 			 * send dataflow after execution is finished. TODO add style elements or flags
 			 * to make sure it's shown statically.
@@ -350,7 +357,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			System.out.println(rootDataflow.getKdlCode());
 		}
 
-		if (parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+		if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
 			((AbstractTask<?>) monitor.getIdentity()).notifyEnd();
 		}
 

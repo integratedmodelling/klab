@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.runtime;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -129,6 +130,7 @@ public abstract class AbstractTask<T extends IObservation> implements ITaskTree<
 
 	public void notifyEnd() {
 		session.unregisterTask(this);
+		getReference().setStatus(Status.Finished);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.TaskFinished, getReference()));
 	}
