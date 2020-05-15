@@ -295,9 +295,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				} else {
 					((ObservedArtifact) ret).chain(data);
 				}
-			} catch (InterruptedException e) {
-				return null;
-			} catch (ExecutionException e) {
+			} catch (Throwable e) {
 				if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
 					throw ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);
 				}
