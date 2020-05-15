@@ -567,7 +567,8 @@ public class ContextView extends ViewPart {
 
 		Status status = this.state.get();
 
-		if (currentContext != null && event.getRootContext() != null && !currentContext.getId().equals(event.getRootContext().getId())) {
+		if (currentContext != null && event.getRootContext() != null
+				&& !currentContext.getId().equals(event.getRootContext().getId())) {
 			// not tuned on the context of the event, no change
 			return status;
 		}
@@ -575,18 +576,18 @@ public class ContextView extends ViewPart {
 		switch (event.getType()) {
 		case TaskAdded:
 		case TaskStatusChanged:
-			if (event.getTask().getParentId() == null) {
-				switch (event.getTask().getStatus()) {
-				case Aborted:
-					status = Status.EngineError;
-					break;
-				case Finished:
+			switch (event.getTask().getStatus()) {
+			case Aborted:
+				status = Status.EngineError;
+				break;
+			case Finished:
+				if (event.getTask().getParentId() == null) {
 					status = Status.ContextDefined;
-					break;
-				case Started:
-					status = Status.Computing;
-					break;
 				}
+				break;
+			case Started:
+				status = Status.Computing;
+				break;
 			}
 			break;
 		case ObservationAdded:
@@ -594,6 +595,8 @@ public class ContextView extends ViewPart {
 				this.rootContexts.add(sm().getContextDescriptor(event.getObservation()));
 				currentContext = event.getObservation();
 			}
+			status = Status.Computing;
+			break;
 		case SystemNotification:
 		case DataflowChanged:
 		case NotificationAdded:
@@ -613,18 +616,16 @@ public class ContextView extends ViewPart {
 		boolean enableReset = currentContext != null && !engineBusy.get();
 		String image = "icons/odrop.png";
 
-		System.out.println("STATUS " + status);
-
 		if (status == Status.WaitingForEngine && engineBusy.get()) {
 			image = "icons/wait128.png";
-		} else {
-			
+		} else if (status != Status.WaitingForEngine) {
+
 			if (this.state.get() == status) {
 				return;
 			}
-			
+
 			this.state.set(status);
-			
+
 			switch (status) {
 			case Computing:
 				image = "icons/orun.png";
@@ -659,7 +660,7 @@ public class ContextView extends ViewPart {
 		final String icon = image;
 		final boolean eviewer = enableViewer;
 		final boolean ereset = enableReset;
-		
+
 		Display.getDefault().asyncExec(() -> {
 			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, icon));
 			openViewerAction.setEnabled(eviewer);
