@@ -3,7 +3,10 @@ package org.integratedmodelling.klab.ide.views;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -52,6 +55,8 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
@@ -65,9 +70,13 @@ import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.EngineEvent;
+import org.integratedmodelling.klab.rest.ObservationReference;
+import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 
 public class ContextView extends ViewPart {
+
 	public ContextView() {
 	}
 
@@ -87,6 +96,47 @@ public class ContextView extends ViewPart {
 	private KlabPeer klab;
 	private Action openViewerAction;
 	private Action resetContextAction;
+
+	/**
+	 * We keep them just in case, although the selector is in the context window.
+	 */
+	private List<ContextDescriptor> rootContexts = new ArrayList<>();
+	private ObservationReference currentContext;
+
+	private enum Status {
+		/**
+		 * Offline, no engine connected
+		 */
+		EngineOffline,
+		/**
+		 * Online, engine connected not computing or waiting, no context defined
+		 */
+		EngineOnline,
+		/**
+		 * Online, context defined, not computing or waiting
+		 */
+		ContextDefined,
+		/**
+		 * Online, computing a root-level task
+		 */
+		Computing,
+		/**
+		 * Online, engine not ready for observations
+		 */
+		WaitingForEngine,
+		/**
+		 * Online, last task computed caused an error
+		 */
+		EngineError
+	}
+
+	/*
+	 * engine status is null unless the engine is reporting busy status, in which
+	 * case it takes over the state until it goes back to normal while stuff keeps
+	 * happening.
+	 */
+	AtomicReference<Status> state = new AtomicReference<>(Status.EngineOffline);
+	AtomicBoolean engineBusy = new AtomicBoolean(false);
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -487,78 +537,134 @@ public class ContextView extends ViewPart {
 	private void handleMessage(IMessage message) {
 
 		switch (message.getType()) {
-		case DataflowCompiled:
-			break;
-		case Debug:
-			break;
-		case DebugScript:
-			break;
-		case DebugTest:
+		case RuntimeEvent:
+			refresh(getState(message.getPayload(RuntimeEvent.class)));
 			break;
 		case EngineDown:
-			Display.getDefault().asyncExec(() -> {
-				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ndrop.png"));
-				openViewerAction.setEnabled(false);
-				resetContextAction.setEnabled(false);
-			});
+			refresh(Status.EngineOffline);
 			break;
 		case EngineUp:
-			Display.getDefault().asyncExec(() -> {
-				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png"));
-				openViewerAction.setEnabled(true);
-				resetContextAction.setEnabled(true);
-			});
+			refresh(Status.EngineOnline);
 			break;
-		case MatchAction:
-			break;
-		case ModifiedObservation:
-			break;
-		case NewObservation:
-//			System.out.println("ZOAZ: " + message.getPayload(ObservationReference.class).getLabel());
-			break;
-		case PeriodOfInterest:
-			break;
-		case QueryResult:
-			break;
-		case RegionOfInterest:
-			break;
-		case RequestObservation:
-			break;
-		case RunScript:
-			break;
-		case RunTest:
-			break;
-		case ScriptStarted:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/orun.png")));
-			break;
-		case SubmitSearch:
-			break;
-		case TaskAborted:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/estop.png")));
-			break;
-		case TaskFinished:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png")));
-			break;
-		case TaskStarted:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/orun.png")));
-			break;
-		case UserProjectDeleted:
-			break;
-		case UserProjectModified:
-			break;
-		case UserProjectOpened:
-			// TODO here the project load has ended and we should make a spinner stop
-			// spinning or something like that.
-			System.out.println("PROJECT SYNCHRONIZATION FINISHED");
+		case EngineEvent:
+			EngineEvent ee = message.getPayload(EngineEvent.class);
+			switch (ee.getType()) {
+			case ResourceValidation:
+				engineBusy.set(ee.isStarted());
+				refresh(Status.WaitingForEngine);
+				break;
+			default:
+				break;
+			}
 			break;
 		default:
 			break;
 
 		}
+	}
+
+	private Status getState(RuntimeEvent event) {
+
+		Status status = this.state.get();
+
+		if (currentContext != null && event.getRootContext() != null && !currentContext.getId().equals(event.getRootContext().getId())) {
+			// not tuned on the context of the event, no change
+			return status;
+		}
+
+		switch (event.getType()) {
+		case TaskAdded:
+		case TaskStatusChanged:
+			if (event.getTask().getParentId() == null) {
+				switch (event.getTask().getStatus()) {
+				case Aborted:
+					status = Status.EngineError;
+					break;
+				case Finished:
+					status = Status.ContextDefined;
+					break;
+				case Started:
+					status = Status.Computing;
+					break;
+				}
+			}
+			break;
+		case ObservationAdded:
+			if (event.getObservation().getId().equals(event.getRootContext().getId())) {
+				this.rootContexts.add(sm().getContextDescriptor(event.getObservation()));
+				currentContext = event.getObservation();
+			}
+		case SystemNotification:
+		case DataflowChanged:
+		case NotificationAdded:
+		default:
+			break;
+		}
+		return status;
+	}
+
+	private SessionMonitor sm() {
+		return Activator.session().getContextMonitor();
+	}
+
+	private void refresh(Status status) {
+
+		boolean enableViewer = true;
+		boolean enableReset = currentContext != null && !engineBusy.get();
+		String image = "icons/odrop.png";
+
+		System.out.println("STATUS " + status);
+
+		if (status == Status.WaitingForEngine && engineBusy.get()) {
+			image = "icons/wait128.png";
+		} else {
+			
+			if (this.state.get() == status) {
+				return;
+			}
+			
+			this.state.set(status);
+			
+			switch (status) {
+			case Computing:
+				image = "icons/orun.png";
+				enableViewer = true;
+				enableReset = false;
+				break;
+			case ContextDefined:
+				image = "icons/ocheck.png";
+				enableViewer = true;
+				enableReset = true;
+				break;
+			case EngineError:
+				image = "icons/estop.png";
+				enableViewer = true;
+				enableReset = true;
+				break;
+			case EngineOffline:
+				image = "icons/ndrop.png";
+				enableViewer = false;
+				enableReset = false;
+				break;
+			case EngineOnline:
+				image = "icons/odrop.png";
+				enableViewer = true;
+				enableReset = false;
+				break;
+			default:
+				break;
+			}
+		}
+
+		final String icon = image;
+		final boolean eviewer = enableViewer;
+		final boolean ereset = enableReset;
+		
+		Display.getDefault().asyncExec(() -> {
+			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, icon));
+			openViewerAction.setEnabled(eviewer);
+			resetContextAction.setEnabled(ereset);
+		});
 	}
 
 	protected void searchObservations(String text) {
@@ -750,6 +856,8 @@ public class ContextView extends ViewPart {
 				@Override
 				public void run() {
 					Activator.post(IMessage.MessageClass.UserContextChange, IMessage.Type.ResetContext, "");
+					currentContext = null;
+					refresh(Status.EngineOnline);
 				}
 			};
 			resetContextAction.setEnabled(Activator.engineMonitor().isRunning());

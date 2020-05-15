@@ -43,7 +43,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 		Graph<String, DefaultEdge> structure = new DefaultDirectedGraph<>(DefaultEdge.class);
 		// list of top-level tasks registered in order of appearance
 		List<String> observationTasks = new ArrayList<>();
-		boolean dataflowChanged = false;
+		DataflowReference dataflow;
 
 		public ObservationReference getRoot() {
 			return (ObservationReference) beans.get(contextId);
@@ -51,6 +51,9 @@ public abstract class SessionMonitor extends ContextMonitor {
 
 		public List<Object> getChildren() {
 			List<Object> ret = new ArrayList<>();
+			if (dataflow != null) {
+				ret.add(dataflow);
+			}
 			for (String task : observationTasks) {
 				ret.add(beans.get(task));
 			}
@@ -195,7 +198,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 				if (task != null) {
 					ContextDescriptor context = new ContextDescriptor();
 					context.observationGraph = this.getGraph(observation.getId());
-					context.dataflowChanged = false;
+//					context.dataflowChanged = false;
 					context.structure.addVertex(observation.getId());
 					context.structure.addVertex(task.getId());
 					context.structure.addEdge(observation.getId(), task.getId());
@@ -323,7 +326,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 //			System.out.println("REGISTERING DATAFLOW " + dataflow);
 			ContextDescriptor context = contextsByTask.get(dataflow.getTaskId());
 			if (context != null) {
-				context.dataflowChanged = true;
+				context.dataflow = dataflow;
 				for (Listener listener : listeners) {
 					listener.onDataflowChange(context.getRoot(), dataflow);
 				}

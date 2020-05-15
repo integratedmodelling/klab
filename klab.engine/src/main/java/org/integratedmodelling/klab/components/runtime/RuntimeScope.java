@@ -402,7 +402,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					scope, this.dataflow);
 			dataflow.setModel((Model) model);
 			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets)
-					.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
+					.run(scale.initialization(), (Actuator) this.actuator, subtask.getMonitor());
 		}
 		return ret;
 	}
@@ -464,7 +464,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		} else {
 			ret = dataflow.withScope(this.resolutionScope.getDeferredChildScope(observation, mode))
 					.withScopeScale(observation.getScale()).withMetadata(observation.getMetadata())
-					.run(observation.getScale(), (Actuator) this.actuator, ((Monitor) monitor).get(task));
+					.run(observation.getScale(), (Actuator) this.actuator, task.getMonitor());
 		}
 
 		return (T) ret;
@@ -580,7 +580,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale)).withMetadata(metadata)
 				.withTargetName(name).withNotificationMode(notificationMode)
 				.withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
-				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
+				.run(scale.initialization(), (Actuator) this.actuator, subtask.getMonitor());
 
 		if (observation instanceof IDirectObservation) {
 			ret = (IDirectObservation) observation;
@@ -660,7 +660,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		if (dataflow != null) {
-			dataflow.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
+			dataflow.run(scale.initialization(), (Actuator) this.actuator, subtask.getMonitor());
 		}
 
 	}
@@ -696,7 +696,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				.withNotificationMode(notificationMode)
 				.connecting((IDirectObservation) source, (IDirectObservation) target).withTargetName(name)
 				.withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
-				.run(scale.initialization(), (Actuator) this.actuator, ((Monitor) monitor).get(subtask));
+				.run(scale.initialization(), (Actuator) this.actuator, subtask.getMonitor());
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);

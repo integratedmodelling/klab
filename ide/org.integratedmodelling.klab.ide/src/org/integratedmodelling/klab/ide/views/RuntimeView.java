@@ -150,7 +150,7 @@ public class RuntimeView extends ViewPart {
 	private TaskReference currentTask;
 
 	private List<Notification> notifications;
-	private List<TaskReference> history;
+//	private List<TaskReference> history;
 
 	public RuntimeView() {
 	}
@@ -186,8 +186,14 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof ERuntimeObject) {
-				return ((ERuntimeObject) inputElement).getProperties().toArray();
+			if (inputElement instanceof DataflowReference) {
+				// TODO return an array of string pairs
+			} else if (inputElement instanceof ObservationReference) {
+
+			} else if (inputElement instanceof TaskReference) {
+
+			} else if (inputElement instanceof Notification) {
+
 			}
 			return new Object[] {};
 		}
@@ -281,7 +287,7 @@ public class RuntimeView extends ViewPart {
 			} else if (element instanceof Notification) {
 				return ((Notification) element).getMessage();
 			} else if (element instanceof DataflowReference) {
-				return "Dataflow computed";
+				return "Dataflow";
 			} else if (element instanceof ObservationReference) {
 				return ((ObservationReference) element).getLabel()
 						+ (((ObservationReference) element).getChildrenCount() > 0
@@ -365,7 +371,7 @@ public class RuntimeView extends ViewPart {
 				return this.graph.getChildren(this.graph.getRootNode(), true).toArray();
 			} else if (this.graph != null && parentElement instanceof ObservationReference) {
 				return this.graph.getChildren((ObservationReference) parentElement, true).toArray();
-			} else if (currentDescriptor != null) {
+			} else if (currentDescriptor != null && !(parentElement instanceof DataflowReference)) {
 				return currentDescriptor.getChildren(getId(parentElement), currentLogLevel).toArray();
 			}
 			return new Object[] {};
@@ -888,11 +894,6 @@ public class RuntimeView extends ViewPart {
 		case RuntimeEvent:
 			updateTaskView((RuntimeEvent) message.getPayload());
 			break;
-//		case TaskStarted:
-//			Display.getDefault().asyncExec(() -> {
-//				taskArea.setMaximizedControl(taskTree);
-//			});
-//			break;
 		case NetworkStatus:
 			Display.getDefault().asyncExec(() -> {
 				networkStatusIcon.setToolTipText("Connected to the k.LAB network");
@@ -920,26 +921,6 @@ public class RuntimeView extends ViewPart {
 				refreshTrees(/* message.getType() */);
 			}
 			break;
-//		case HistoryChanged:
-//			payload = message.getPayload();
-//			if (payload instanceof ObservationReference) {
-//				ObservationReference observation = (ObservationReference) payload;
-//				if (observation.getParentId() == null) {
-//					this.currentContext = observation;
-//				}
-//			}
-//			if (((payload instanceof TaskReference && currentPriority == DisplayPriority.TASK_FIRST)
-//					|| (payload instanceof ObservationReference
-//							&& currentPriority == DisplayPriority.ARTIFACTS_FIRST))) {
-//				lastFocus = (ERuntimeObject) payload;
-//			} else {
-//				payload = null;
-//			}
-//			refreshTaskViewer(message.getType());
-//			break;
-//		case Notification:
-//			refreshSystemLog();
-//			break;
 		case EngineDown:
 			Display.getDefault().asyncExec(() -> {
 				taskViewer.setInput(/* history = */new ArrayList<>());
@@ -975,10 +956,9 @@ public class RuntimeView extends ViewPart {
 	}
 
 	private void updateTaskView(RuntimeEvent event) {
-		// TODO Auto-generated method stub
+
 		switch (event.getType()) {
 		case DataflowChanged:
-//			refreshTaskTree();
 			break;
 		case NotificationAdded:
 			lastFocus = event.getNotification();
@@ -1028,20 +1008,4 @@ public class RuntimeView extends ViewPart {
 				.asyncExec(() -> tableViewer.setInput(notifications = sm().getSystemNotifications(systemLogLevel)));
 	}
 
-//	public void refreshTaskViewer(IMessage.Type taskEvent) {
-//
-//		Display.getDefault().asyncExec(() -> {
-//			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
-//				if (currentContext != null) {
-//					taskViewer.setInput(Activator.session().getContextMonitor().getGraph(currentContext.getId()));
-//				}
-//			} else if (lastFocus != null && currentContext != null) {
-//				taskViewer.setInput(sm().getTasks(currentContext.getId(), currentLogLevel));
-//				if (taskEvent == IMessage.Type.TaskStarted) {
-//					taskViewer.collapseAll();
-//				}
-//				taskViewer.expandToLevel(lastFocus, TreeViewer.ALL_LEVELS);
-//			}
-//		});
-//	}
 }

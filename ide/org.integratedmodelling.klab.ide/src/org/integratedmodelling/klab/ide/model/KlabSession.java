@@ -363,7 +363,6 @@ public class KlabSession extends KlabPeer {
 
 	@MessageHandler(type = IMessage.Type.EngineEvent)
 	public void handleEngineEvent(IMessage message, EngineEvent event) {
-		System.out.println("ENGINE EVENT " + event);
 		send(message);
 	}
 
