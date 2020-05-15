@@ -617,9 +617,11 @@ public class ContextView extends ViewPart {
 		boolean enableViewer = true;
 		boolean enableReset = currentContext != null && !engineBusy.get();
 		String image = "icons/odrop.png";
-
+		String ttext = "";
+		
 		if (status == Status.WaitingForEngine && engineBusy.get()) {
-			image = "icons/wait128.png";
+			image = "icons/owait.png";
+			ttext = "Engine is busy: please wait";
 		} else if (status != Status.WaitingForEngine) {
 
 			if (this.state.get() == status) {
@@ -631,26 +633,31 @@ public class ContextView extends ViewPart {
 			switch (status) {
 			case Computing:
 				image = "icons/orun.png";
+				ttext = "Contextualization is ongoing";
 				enableViewer = true;
 				enableReset = false;
 				break;
 			case ContextDefined:
 				image = "icons/ocheck.png";
+				ttext = "Drop models or concepts to observe in context";
 				enableViewer = true;
 				enableReset = true;
 				break;
 			case EngineError:
 				image = "icons/estop.png";
+				ttext = "The last task executed caused an error";
 				enableViewer = true;
 				enableReset = true;
 				break;
 			case EngineOffline:
 				image = "icons/ndrop.png";
+				ttext = "Engine is offline or not connected";
 				enableViewer = false;
 				enableReset = false;
 				break;
 			case EngineOnline:
 				image = "icons/odrop.png";
+				ttext = "Define a context using the Explorer or an observer";
 				enableViewer = true;
 				enableReset = false;
 				break;
@@ -660,11 +667,13 @@ public class ContextView extends ViewPart {
 		}
 
 		final String icon = image;
+		final String tooltip = ttext;
 		final boolean eviewer = enableViewer;
 		final boolean ereset = enableReset;
 
 		Display.getDefault().asyncExec(() -> {
 			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, icon));
+			dropImage.setToolTipText(tooltip);
 			openViewerAction.setEnabled(eviewer);
 			resetContextAction.setEnabled(ereset);
 			subjectLabel.setForeground(currentContext == null ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
