@@ -411,7 +411,7 @@ public class WCSService {
 		this.serviceUrl = serviceUrl;
 		this.version = version;
 		
-		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, true);
+		long event = Klab.INSTANCE.notifyEventStart(EngineEvent.Type.ResourceValidation);
 
 		try {
 			this.parser = new Parser(new WCSConfiguration());
@@ -464,7 +464,7 @@ public class WCSService {
 			errors.add(e);
 			Logging.INSTANCE.error(e);
 		} finally {
-			Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, false);
+			Klab.INSTANCE.notifyEventEnd(event);
 		}
 	}
 

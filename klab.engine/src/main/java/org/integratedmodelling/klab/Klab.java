@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -82,18 +83,16 @@ public enum Klab implements IRuntimeService {
 	 * Counter for event IDs.
 	 */
 	AtomicLong eventCounter = new AtomicLong(0);
-	
+
 	/**
 	 * Current status of synchronous engine events
 	 */
-	Map<EngineEvent.Type, Boolean> eventStatus = Collections.synchronizedMap(new HashMap<>());
+	Map<EngineEvent.Type, Set<Long>> eventStatus = Collections.synchronizedMap(new HashMap<>());
 
 	/**
-	 * Subscribers to engine events, indexed by event type and then by identity ID,
-	 * including the last notified status (if false, event may never have been
-	 * notified).
+	 * Subscribers to engine events, indexed by event type and then by identity ID.
 	 */
-	Map<EngineEvent.Type, Map<String, AtomicBoolean>> eventSubscriptions = Collections.synchronizedMap(new HashMap<>());
+	Map<EngineEvent.Type, Set<String>> eventSubscriptions = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * Handler to process classes with k.LAB annotations. Register using
@@ -599,94 +598,99 @@ public enum Klab implements IRuntimeService {
 	 */
 	public synchronized void subscribe(IIdentity identity, EngineEvent.Type event) {
 
-		Map<String, AtomicBoolean> subscriptions = eventSubscriptions.get(event);
+		Set<String> subscriptions = eventSubscriptions.get(event);
 		if (subscriptions == null) {
-			subscriptions = new HashMap<>();
+			subscriptions = new HashSet<>();
 			eventSubscriptions.put(event, subscriptions);
 		}
-
-		boolean status = getEventStatus(event);
-		subscriptions.put(identity.getId(), new AtomicBoolean(status));
-		
-		/*
-		 * active status at subscription gets notified
-		 */
-		if (status) {
-			notifyEventListeners(event, status);
-		}
+		subscriptions.add(identity.getId());
+		notifyEventListeners(event, true);
 	}
 
 	public synchronized void unsubscribe(IIdentity identity, EngineEvent.Type event) {
-		Map<String, AtomicBoolean> subscriptions = eventSubscriptions.get(event);
+		Set<String> subscriptions = eventSubscriptions.get(event);
 		if (subscriptions == null) {
-			subscriptions = new HashMap<>();
+			subscriptions = new HashSet<>();
 			eventSubscriptions.put(event, subscriptions);
 		}
 		subscriptions.remove(identity.getId());
 	}
 
-	public boolean getEventStatus(EngineEvent.Type event) {
-		return eventStatus.containsKey(event) ? eventStatus.get(event) : false;
+	public Set<Long> getEventStatus(EngineEvent.Type event) {
+		return eventStatus.containsKey(event) ? eventStatus.get(event) : new HashSet<>();
 	}
 
-	/**
-	 * If any listener identity has subscribed to the passed event, notify either
-	 * its start or its end. Events are synchronous and engine-wide, so the event
-	 * may start w/o a listener and any listener that is added after its start and
-	 * before its end is notified automatically.
-	 * 
-	 * @param b
-	 */
-	public synchronized void notifyEvent(EngineEvent.Type event, boolean started) {
-		eventStatus.put(event, started);
-		notifyEventListeners(event, started);
-	}
+//	/**
+//	 * If any listener identity has subscribed to the passed event, notify either
+//	 * its start or its end. Events are synchronous and engine-wide, so the event
+//	 * may start w/o a listener and any listener that is added after its start and
+//	 * before its end is notified automatically.
+//	 * 
+//	 * @param b
+//	 */
+//	public synchronized long notifyEvent(EngineEvent.Type event, boolean started) {
+
+//		
+//		notifyEventListeners(event, started);
+//	}
 
 	private synchronized void notifyEventListeners(EngineEvent.Type event, boolean started) {
-		Map<String, AtomicBoolean> subscriptions = eventSubscriptions.get(event);
-		if (subscriptions != null) {
-			for (String id : subscriptions.keySet()) {
-				IIdentity identity = Authentication.INSTANCE.getIdentity(id, IIdentity.class);
-				if (identity instanceof IRuntimeIdentity) {
-					EngineEvent message = new EngineEvent();
-					message.setStarted(started);
-					message.setTimestamp(System.currentTimeMillis());
-					message.setType(event);
-					((IRuntimeIdentity) identity).getMonitor().send(IMessage.MessageClass.Notification,
-							IMessage.Type.EngineEvent, message);
+		Set<String> subscriptions = eventSubscriptions.get(event);
+		Set<Long> eventIds = eventStatus.get(event);
+		if (eventIds != null && eventIds.size() > 0) {
+			if (subscriptions != null) {
+				for (String id : subscriptions) {
+					IIdentity identity = Authentication.INSTANCE.getIdentity(id, IIdentity.class);
+					if (identity instanceof IRuntimeIdentity) {
+						for (Long eid : eventIds) {
+							EngineEvent message = new EngineEvent();
+							message.setStarted(started);
+							message.setTimestamp(System.currentTimeMillis());
+							message.setType(event);
+							message.setId(eid);
+							((IRuntimeIdentity) identity).getMonitor().send(IMessage.MessageClass.Notification,
+									IMessage.Type.EngineEvent, message);
+						}
+					}
 				}
 			}
 		}
 	}
 
-//	public synchronized long notifyEventStart(EngineEvent.Type event) {
-//		eventStatus.put(event, started);
-//		return notifyEventListeners(event, started);
-//	}
-//
-//	public void notifyEventEnd(long id) {
-//		eventStatus.put(event, started);
-//		notifyEventListeners(event, started);
-//	}
-//
-//	private synchronized long notifyEventListeners(EngineEvent.Type event, boolean started) {
-//
-//		Map<String, AtomicBoolean> subscriptions = eventSubscriptions.get(event);
-//		if (subscriptions != null && subscriptions.size() > 1) {
-//			
-//			EngineEvent message = new EngineEvent();
-//			message.setStarted(started);
-//			message.setTimestamp(System.currentTimeMillis());
-//			message.setType(event);
-//			message.setId();
-//			for (String id : subscriptions.keySet()) {
-//				IIdentity identity = Authentication.INSTANCE.getIdentity(id, IIdentity.class);
-//				if (identity instanceof IRuntimeIdentity) {
-//					((IRuntimeIdentity) identity).getMonitor().send(IMessage.MessageClass.Notification,
-//							IMessage.Type.EngineEvent, message);
-//				}
-//			}
-//		}
-//	}
-	
+	public synchronized long notifyEventStart(EngineEvent.Type event) {
+		Set<Long> eventIds = eventStatus.get(event);
+		if (eventIds == null) {
+			eventIds = new HashSet<>();
+			eventStatus.put(event, eventIds);
+		}
+		long id = eventCounter.incrementAndGet();
+		eventIds.add(id);
+		notifyEventListeners(event, true);
+		return id;
+	}
+
+	public void notifyEventEnd(long id) {
+
+		for (EngineEvent.Type type : eventSubscriptions.keySet()) {
+			if (eventStatus.get(type).contains(id)) {
+				eventStatus.get(type).remove(id);
+				Set<String> subscriptions = eventSubscriptions.get(type);
+				if (subscriptions != null) {
+					for (String identity : subscriptions) {
+						IIdentity receiver = Authentication.INSTANCE.getIdentity(identity, IIdentity.class);
+						if (receiver instanceof IRuntimeIdentity) {
+							EngineEvent message = new EngineEvent();
+							message.setStarted(false);
+							message.setTimestamp(System.currentTimeMillis());
+							message.setType(type);
+							message.setId(id);
+							((IRuntimeIdentity) receiver).getMonitor().send(IMessage.MessageClass.Notification,
+									IMessage.Type.EngineEvent, message);
+						}
+					}
+				}
+			}
+		}
+	}
+
 }
