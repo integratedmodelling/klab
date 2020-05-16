@@ -11,6 +11,7 @@ import javax.media.jai.RasterFactory;
 import javax.media.jai.iterator.RandomIter;
 import javax.media.jai.iterator.RandomIterFactory;
 
+import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -20,11 +21,9 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Range;
 
 public enum GeotoolsUtils {
@@ -70,7 +69,7 @@ public enum GeotoolsUtils {
 			throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
 		}
 		Grid grid = (Grid) ((Space)space).getGrid();
-
+		
 		/*
 		 * build a coverage.
 		 * 
@@ -117,7 +116,11 @@ public enum GeotoolsUtils {
 			}
 		}
 
-		return rasterFactory.create(state.getObservable().getName(), raster, ((Space)space).getShape().getJTSEnvelope());
+//		GridSampleDimension[] ziopopr = new GridSampleDimension[] {
+//			GridSampleDimension
+//		};
+		
+		return rasterFactory.create(state.getObservable().getName(), raster, ((Space)space).getShape().getJTSEnvelope()/* , ziopopr*/);
 		
 	}
 

@@ -553,31 +553,31 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
-	public Observer makeROIObserver(final SpatialExtent regionOfInterest, Namespace namespace, IMonitor monitor) {
+	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace, IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
 		}
-		return new Observer(regionOfInterest, observable, (Namespace) namespace);
+		return new Observer(regionOfInterest, time, observable, (Namespace) namespace);
 	}
 
-	public Observer makeROIObserver(final Shape shape, Namespace namespace, IMonitor monitor) {
+	public Observer makeROIObserver(final Shape shape, ITime time, Namespace namespace, IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
 		}
-		return new Observer(shape, observable, (Namespace) namespace);
+		return new Observer(shape, time, observable, (Namespace) namespace);
 	}
 
-	public Observer makeROIObserver(String name, IShape shape, IMetadata metadata) {
+	public Observer makeROIObserver(String name, IShape shape, ITime time, IMetadata metadata) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
 		observable.setOptional(true);
-		Observer ret = new Observer((Shape) shape, observable,
+		Observer ret = new Observer((Shape) shape, time, observable,
 				Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
 		ret.getMetadata().putAll(metadata);
 		return ret;

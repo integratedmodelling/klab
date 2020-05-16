@@ -537,9 +537,12 @@ public class ContextView extends ViewPart {
 			refresh(getState(message.getPayload(RuntimeEvent.class)));
 			break;
 		case EngineDown:
+			currentContext = null;
+			rootContexts.clear();
 			refresh(Status.EngineOffline);
 			break;
 		case EngineUp:
+			// TODO read up previous contexts
 			refresh(Status.EngineOnline);
 			break;
 		case EngineEvent:

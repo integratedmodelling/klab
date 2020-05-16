@@ -65,6 +65,8 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -88,6 +90,8 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
@@ -276,8 +280,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	 */
 	private Double spatialGridSize = null;
 	private String spatialGridUnits = null;
-	private Double temporalGridSize = null;
-	private String temporalGridUnits = null;
+	private Resolution temporalResolution;
+	private Long timeStart = null;
+	private Long timeEnd = null;
 
 	private AtomicBoolean interactive = new AtomicBoolean(false);
 	/*
@@ -380,7 +385,16 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 				roi.setGridResolution(this.spatialGridSize);
 				roi.setGridUnit(this.spatialGridUnits);
 
-				Observer observer = Observations.INSTANCE.makeROIObserver(roi, (Namespace) namespace, monitor);
+				ITime time = null;
+				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
+					time = Time.create(ITime.Type.PHYSICAL, this.temporalResolution.getType(),
+							this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
+							new TimeInstant(this.timeEnd), null);
+				} else {
+					time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+				}
+
+				Observer observer = Observations.INSTANCE.makeROIObserver(roi, time, (Namespace) namespace, monitor);
 				try {
 					ISubject subject = new ObserveContextTask(this, observer, CollectionUtils.arrayToList(scenarios))
 							.get();
@@ -627,8 +641,16 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private void handleFeatureAdded(final SpatialLocation location) {
 
 		if (location.getContextId() == null) {
+			ITime time = null;
+			if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
+				time = Time.create(ITime.Type.PHYSICAL, this.temporalResolution.getType(),
+						this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
+						new TimeInstant(this.timeEnd), null);
+			} else {
+				time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+			}
 			Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
-			Observer observer = Observations.INSTANCE.makeROIObserver(shape, null, monitor);
+			Observer observer = Observations.INSTANCE.makeROIObserver(shape, time, null, monitor);
 			try {
 				new ObserveContextTask(this, observer, new ArrayList<>()).get();
 			} catch (InterruptedException | ExecutionException e) {
@@ -1339,6 +1361,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		if (!lockSpace.get()) {
 			this.spatialGridSize = null;
 			this.spatialGridUnits = null;
+			this.timeEnd = null;
+			this.timeStart = null;
+			this.temporalResolution = null;
 		}
 		this.regionOfInterest = null;
 		monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
@@ -1435,6 +1460,10 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		this.spatialGridSize = Units.INSTANCE.METERS
 				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
 		this.spatialGridUnits = scaleRef.getSpaceUnit();
+		this.temporalResolution = Time
+				.resolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
+		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
+		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
 	}
 
 	@MessageHandler

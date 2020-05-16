@@ -49,7 +49,9 @@ public class KimQuantity extends KimStatement implements IKimQuantity {
 	public static IKimQuantity parse(String string) {
 
 		if (string != null && !string.isEmpty()) {
-			String[] ss = string.split("\\s+");
+			int pindex = string.lastIndexOf('.');
+			String[] ss = pindex > 0 ? new String[] { string.substring(0, pindex), string.substring(pindex + 1) }
+					: new String[] { string };
 			Object value = Utils.asPOD(ss[0]);
 			if (value instanceof Number && ss.length == 2) {
 				KimQuantity ret = new KimQuantity();
@@ -58,7 +60,7 @@ public class KimQuantity extends KimStatement implements IKimQuantity {
 				return ret;
 			}
 		}
-		
+
 		throw new KlabValidationException("wrong string input for quantity: " + string);
 	}
 

@@ -1648,11 +1648,13 @@ public class Scale implements IScale {
 	}
 
 	private static IAnnotation getConstraint(List<IAnnotation> annotations, Type type) {
-		for (IAnnotation annotation : annotations) {
-			if (type == Type.SPACE && "space".equals(annotation.getName())) {
-				return annotation;
-			} else if (type == Type.TIME && "time".equals(annotation.getName())) {
-				return annotation;
+		if (annotations != null) {
+			for (IAnnotation annotation : annotations) {
+				if (type == Type.SPACE && "space".equals(annotation.getName())) {
+					return annotation;
+				} else if (type == Type.TIME && "time".equals(annotation.getName())) {
+					return annotation;
+				}
 			}
 		}
 		return null;

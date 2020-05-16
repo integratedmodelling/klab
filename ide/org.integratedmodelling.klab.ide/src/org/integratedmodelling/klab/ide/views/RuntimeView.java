@@ -901,10 +901,12 @@ public class RuntimeView extends ViewPart {
 						.getPluginImage("org.integratedmodelling.klab.ide", "icons/world24.png"));
 			});
 			break;
+		// TODO support a recycle/reobserve
 		case ResetContext:
 			lastFocus = null;
+			currentContext = null;
 			Display.getDefault().asyncExec(() -> {
-				taskViewer.collapseAll();
+				taskViewer.setInput(/* history = */new ArrayList<>());
 				taskArea.setMaximizedControl(taskTree);
 			});
 			break;

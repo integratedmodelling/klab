@@ -7,17 +7,14 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimObserver;
-import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -55,7 +52,7 @@ public class Observer extends KimObject implements IObserver {
 		this.setErrors(statement.isErrors());
 	}
 
-	public Observer(SpatialExtent regionOfInterest, Observable observable, Namespace namespace) {
+	public Observer(SpatialExtent regionOfInterest, ITime time, Observable observable, Namespace namespace) {
 		super(null);
 
 		this.namespace = namespace;
@@ -83,14 +80,14 @@ public class Observer extends KimObject implements IObserver {
 						: regionOfInterest.getGridResolution();
 
 				ISpace space =  Space.create(Shape.create(envelope), resolution);
-				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+//				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 				
 				return /*Collections.singletonList(space); */ Lists.newArrayList(time, space);
 			}
 		};
 	}
 
-	public Observer(Shape shape, Observable observable, Namespace namespace) {
+	public Observer(Shape shape, ITime time, Observable observable, Namespace namespace) {
 		
 		super(null);
 
@@ -114,7 +111,7 @@ public class Observer extends KimObject implements IObserver {
 
 				double resolution = shape.getEnvelope().getResolutionForZoomLevel().getFirst();
 				
-				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+//				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 				ISpace space = Space.create(shape, resolution);
 				
 				return /* Collections.singletonList(space); */ Lists.newArrayList(time, space);

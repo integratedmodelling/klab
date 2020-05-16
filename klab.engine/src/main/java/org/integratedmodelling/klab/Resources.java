@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -1115,7 +1116,10 @@ public enum Resources implements IResourceService {
 						 * build an observer from the data and return it
 						 */
 						return Observations.INSTANCE.makeROIObserver(builder.getObjectName(0),
-								builder.getObjectScale(0).getSpace().getShape(), builder.getObjectMetadata(0));
+								builder.getObjectScale(0).getSpace().getShape(),
+								org.integratedmodelling.klab.Time.INSTANCE
+										.getGenericCurrentExtent(Resolution.Type.YEAR),
+								builder.getObjectMetadata(0));
 					}
 				}
 			}

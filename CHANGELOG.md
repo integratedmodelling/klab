@@ -7,21 +7,15 @@ as unreleased until merged to master.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-[comment]: <>   (Guiding Principles:) [comment]: <>   (  Changelogs are for humans, 
-not machines.) [comment]: <>   (  There should be an entry for every single version.) 
-[comment]: <>   (  The same types of changes should be grouped.) [comment]: <> (  
-Versions and sections should be linkable.) [comment]: <>   (  The latest version 
-comes first.) [comment]: <>   (  The release date of each version is displayed.) 
-[comment]: <>   (  Mention whether you follow Semantic Versioning.) [comment]: <> 
-(Types of changes: ) [comment]: <>   (  Added for new features.) [comment]: <> (  
-Changed for changes in existing functionality.) [comment]: <>   (  Deprecated for 
-soon-to-be removed features.) [comment]: <>   (  Removed for now removed features.) 
-[comment]: <>   (  Fixed for any bug fixes.) [comment]: <>   (  Security in case 
-of vulnerabilities.) [comment]: <>   () [comment]: <>   (Next build: [0.10.0.xxx] 
--- ISO Date)
-
 ## Unreleased
 ### Added
+- Setting temporal extent and resolution from explorer for subsequent observation
+  is now supported.
+- Engine events can be generated and notified to clients that subscribe to them,
+  using an identifier to allow asynchronous events of the same type to set remote 
+  state coherently. Only one event type exists for now, sent to notify of ongoing 
+  resource validation when it's likely than any observation will leave the workspace 
+  in an inconsistent state.
 - Fix an overzealous referencing that prevented a second filtered dependency to 
   be computed correctly (e.g. two "normalized" observations in the same dependency
   list).
@@ -39,13 +33,14 @@ of vulnerabilities.) [comment]: <>   () [comment]: <>   (Next build: [0.10.0.xxx
   the predictors match it.
 - Clarify the computation of semantic distance when observables or their
   inherent types are abstract (necessary condition for transitive resolution). 
-  Deprecate Observables.isCompatible in favor of IConcept.resolves().
+  Deprecate Observables.isCompatible in favor of IConcept.resolves(). Could be
+  repurposed after refactoring, calling resolves() and then proceeding to assess
+  unit compatibility according to extent and value operator consistency.
 - Actors can schedule actions (needs synchronization to ensure no temporal overlap
   can happen), bind behaviors and use the monitor to send notifications.
 - Deferred resolution for observables whose context is a subject incompatible with
   the context of observation, after successful instantiation of the subjects
   themselves.
-- Watershed resolver resumes the logics from the former instantiator.
 - New scaling instantiator for spatial objects uses a set of resources to assess the
   most appropriate scale for the results. Flexible options to ensure coverage and 
   define granularity preferences. Watershed instantiator being rewritten to

@@ -83,7 +83,7 @@ public class RasterImporter extends AbstractFilesetImporter {
 
                 GridCoverage2D coverage = GeotoolsUtils.INSTANCE
                         .stateToCoverage((IState) observation, locator, DataBuffer.TYPE_FLOAT, Float.NaN);
-
+                
                 if (format.equalsIgnoreCase("tiff")) {
                     try {
                         GeoTiffWriter writer = new GeoTiffWriter(file);
