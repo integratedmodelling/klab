@@ -463,6 +463,7 @@ public class ContextView extends ViewPart {
 					// toolkit.adapt(btnNewButtonT, true, true);
 				}
 			}
+			
 			dropTarget.addDropListener(new DropTargetAdapter() {
 
 				@Override
@@ -518,13 +519,6 @@ public class ContextView extends ViewPart {
 							Activator.session().previewResource((EResourceReference) dropped);
 						}
 					}
-
-					// /*
-					// * reset forcings to default
-					// */
-					// setTimeForcing(defaultTemporalForcing);
-					// setSpatialForcing(defaultSpatialForcing);
-					// }
 				}
 			});
 		}
