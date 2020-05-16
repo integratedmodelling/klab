@@ -1354,24 +1354,30 @@ public enum Resources implements IResourceService {
 			ret.getCompilationReports().add(compilationResult);
 		}
 
-		/*
-		 * inform any listeners of the potentially blocking operation
-		 */
-//		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, true);
+		long event = -1;
+		try {
 
-		for (String urn : project.getLocalResourceUrns()) {
-			// TODO should also include notifications from namespace compilation in project
-			LocalResourceReference rref = new LocalResourceReference();
-			rref.setUrn(urn);
-			IResource resource = Resources.INSTANCE.resolveResource(urn);
-			if (resource != null) {
-				rref.setOnline(Resources.INSTANCE.isResourceOnline(resource));
-				rref.setError(resource.hasErrors());
-				ret.getLocalResources().add(rref);
+			/*
+			 * inform any listeners of the potentially blocking operation
+			 */
+			event = Klab.INSTANCE.notifyEventStart(EngineEvent.Type.ResourceValidation);
+
+			for (String urn : project.getLocalResourceUrns()) {
+				// TODO should also include notifications from namespace compilation in project
+				LocalResourceReference rref = new LocalResourceReference();
+				rref.setUrn(urn);
+				IResource resource = Resources.INSTANCE.resolveResource(urn);
+				if (resource != null) {
+					rref.setOnline(Resources.INSTANCE.isResourceOnline(resource));
+					rref.setError(resource.hasErrors());
+					ret.getLocalResources().add(rref);
+				}
 			}
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			Klab.INSTANCE.notifyEventEnd(event);
 		}
-
-//		Klab.INSTANCE.notifyEvent(EngineEvent.Type.ResourceValidation, false);
 
 		return ret;
 	}

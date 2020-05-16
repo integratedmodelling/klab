@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.WatchRequest;
+import org.integratedmodelling.klab.utils.DebugFile;
 
 /**
  * Front-end session proxy and receiver for session messages. Maintains and
@@ -71,7 +72,7 @@ public class KlabSession extends KlabPeer {
 
 	private AtomicLong queryCounter = new AtomicLong();
 	private Map<EngineEvent.Type, Set<Long>> engineEvents = Collections.synchronizedMap(new HashMap<>());
-	
+
 	SessionMonitor sessionMonitor = new SessionMonitor() {
 
 		@Override
@@ -102,8 +103,7 @@ public class KlabSession extends KlabPeer {
 	public ContextDescriptor getCurrentContextDescriptor() {
 		return currentRootContextId == null ? null : sessionMonitor.getContextDescriptor(currentRootContextId);
 	}
-	
-	
+
 	/*
 	 * Tickets to track engine tickets that track node tickets
 	 */
@@ -133,7 +133,8 @@ public class KlabSession extends KlabPeer {
 
 			@Override
 			public void onStructureChange(ObservationReference rootContext, Object added, TaskReference objectParent) {
-				if (added instanceof ObservationReference && rootContext.getId().equals(((ObservationReference)added).getId())) {
+				if (added instanceof ObservationReference
+						&& rootContext.getId().equals(((ObservationReference) added).getId())) {
 					setCurrentContext(rootContext);
 				}
 				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent,
@@ -158,7 +159,7 @@ public class KlabSession extends KlabPeer {
 
 	protected void setCurrentContext(ObservationReference rootContext) {
 		this.currentRootContextId = rootContext.getId();
-		
+
 	}
 
 	class CheckNetworkTask extends Job {
@@ -369,7 +370,7 @@ public class KlabSession extends KlabPeer {
 			current = new HashSet<>();
 			engineEvents.put(event.getType(), current);
 		}
-		
+
 		/*
 		 * Only notify the first started and the last finished
 		 */
@@ -381,7 +382,7 @@ public class KlabSession extends KlabPeer {
 			current.remove(event.getId());
 			notify = current.size() == 0;
 		}
-		
+
 		if (notify) {
 			send(message);
 		}

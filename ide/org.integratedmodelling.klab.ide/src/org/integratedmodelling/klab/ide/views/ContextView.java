@@ -618,7 +618,7 @@ public class ContextView extends ViewPart {
 		boolean enableReset = currentContext != null && !engineBusy.get();
 		String image = "icons/odrop.png";
 		String ttext = "";
-		
+
 		if (status == Status.WaitingForEngine && engineBusy.get()) {
 			image = "icons/owait.png";
 			ttext = "Engine is busy: please wait";

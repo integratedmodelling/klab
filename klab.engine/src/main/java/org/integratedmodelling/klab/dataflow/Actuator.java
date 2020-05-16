@@ -1526,4 +1526,8 @@ public class Actuator implements IActuator {
 	public List<Observable> getDeferredObservables() {
 		return deferredObservables;
 	}
+
+	public boolean isTrivial() {
+		return actuators.isEmpty() && computationStrategy.isEmpty() && mediationStrategy.isEmpty();
+	}
 }

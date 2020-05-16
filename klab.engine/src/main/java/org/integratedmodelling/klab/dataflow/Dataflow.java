@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Interaction;
@@ -188,16 +189,17 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 
 		/*
-		 * a trivial dataflow won't do anything but create the target, and notifying it
+		 * a trivial dataflow is the one that won't do anything but create the target, and notifying it
 		 * would be a lot of notification if it's called for 3000 instantiated objects.
 		 */
-		boolean trivial = actuators.size() < 2
-				&& (actuators.size() == 0 || (actuators.size() == 1 && actuators.get(0).getActuators().size() == 0));
+		boolean trivial = actuators.size() < 2 && (actuators.size() == 0 || (actuators.size() == 1
+				&& ((Actuator) actuators.get(0)).getObservable().is(IKimConcept.Type.COUNTABLE)
+				&& ((Actuator)actuators.get(0)).isTrivial()));
 
 		if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
 			((AbstractTask<?>) monitor.getIdentity()).notifyStart();
 		}
-		
+
 		/*
 		 * Set the .partialScale field in all actuators that represent partitions of the
 		 * context to reflect the portion of the actual scale they must cover.
