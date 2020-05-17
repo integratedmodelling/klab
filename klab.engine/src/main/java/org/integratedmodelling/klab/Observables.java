@@ -133,7 +133,6 @@ public enum Observables implements IObservableService {
 				Concepts.p(NS.IS_COMPARED_TO_PROPERTY));
 		return cls.isEmpty() ? null : cls.iterator().next();
 	}
-	
 
 	@Override
 	public @Nullable IConcept getDescribedType(IConcept concept) {
@@ -809,7 +808,9 @@ public enum Observables implements IObservableService {
 		if (ret != null) {
 			return ret;
 		}
-		return getContextType(concept);
+		ret = getContextType(concept);
+		IConcept inherent = getDirectInherentType(concept);
+		return inherent != null && ret != null && inherent.is(ret) ? null : ret;
 	}
 
 	@Override
@@ -824,16 +825,18 @@ public enum Observables implements IObservableService {
 	public String describe(IConcept concept) {
 
 		IConcept described = Observables.INSTANCE.getDescribedType(concept);
-		
+
 		String ret = "";
+		ret += " OWL identifier: " + concept + " (may not be unique)\n";
+		ret += "k.IM definition: " + concept.getDefinition() + "\n";
 		ret += "Core observable: " + Observables.INSTANCE.getCoreObservable(concept).getDefinition() + "\n";
-		ret += "Definition:    " + concept.getDefinition() + " [" + concept + "]\n";
-		ret += Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray()) + "\n";
+		ret += "Syntactic types: " + Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray()) + "\n\n";
 		if (described != null) {
 			ret += "           Describes:    " + described.getDefinition() + "\n";
 		}
 		ret += "        Context type: " + decl(Observables.INSTANCE.getContextType(concept.getType())) + " [direct: "
-				+ decl(Observables.INSTANCE.getDirectContextType(concept.getType())) + "]\n";
+				+ decl(Observables.INSTANCE.getDirectContextType(concept.getType())) + "; in resolution: "
+				+ decl(Observables.INSTANCE.getContext(concept)) + "]\n";
 		ret += "       Inherent type: " + decl(Observables.INSTANCE.getInherentType(concept.getType())) + " [direct: "
 				+ decl(Observables.INSTANCE.getDirectInherentType(concept.getType())) + "]\n";
 		ret += "        Causant type: " + decl(Observables.INSTANCE.getCausantType(concept.getType())) + " [direct: "
@@ -852,7 +855,7 @@ public enum Observables implements IObservableService {
 		Collection<IConcept> allTraits = Traits.INSTANCE.getTraits(concept.getType());
 		Collection<IConcept> dirTraits = Traits.INSTANCE.getDirectTraits(concept.getType());
 		if (!allTraits.isEmpty()) {
-			ret += "Traits:\n";
+			ret += "\nTraits:\n";
 			for (IConcept trait : allTraits) {
 				ret += "    " + trait.getDefinition() + (dirTraits.contains(trait) ? " [direct]" : " [indirect]") + " "
 						+ ((Concept) trait).getTypeSet() + "\n";
@@ -862,7 +865,7 @@ public enum Observables implements IObservableService {
 		Collection<IConcept> allRoles = Roles.INSTANCE.getRoles(concept.getType());
 		Collection<IConcept> dirRoles = Roles.INSTANCE.getDirectRoles(concept.getType());
 		if (!allRoles.isEmpty()) {
-			ret += "Roles:\n";
+			ret += "\nRoles:\n";
 			for (IConcept trait : allRoles) {
 				ret += "    " + trait.getDefinition() + (dirRoles.contains(trait) ? " [direct]" : " [indirect]") + "\n";
 			}
@@ -870,13 +873,13 @@ public enum Observables implements IObservableService {
 
 		Collection<IConcept> affected = Observables.INSTANCE.getAffectedQualities(concept.getType());
 		if (!affected.isEmpty()) {
-			ret += "Affects:\n";
+			ret += "\nAffects:\n";
 			for (IConcept quality : affected) {
 				ret += "    " + quality.getDefinition() + "\n";
 			}
 		}
 
-		ret += "Metadata:\n";
+		ret += "\nMetadata:\n";
 		for (String key : concept.getMetadata().keySet()) {
 			ret += "   " + key + ": " + concept.getMetadata().get(key) + "\n";
 		}

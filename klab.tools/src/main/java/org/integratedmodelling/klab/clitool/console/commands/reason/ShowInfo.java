@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.clitool.console.commands.reason;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,8 +9,6 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
-import org.integratedmodelling.klab.Roles;
-import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -20,7 +16,6 @@ import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
 
@@ -55,7 +50,7 @@ public class ShowInfo implements ICommand {
 			}
 
 			for (IConcept c : concept.getOperands()) {
-				ret += (ret.isEmpty() ? "" : (concept.is(Type.UNION) ? "\n  OR\n" : "\n  AND\n")) + Observables.INSTANCE.describe(c);
+				ret += (ret.isEmpty() ? "\n" : (concept.is(Type.UNION) ? "\n  OR\n" : "\n  AND\n")) + Observables.INSTANCE.describe(c);
 			}
 
 			if (observable != null) {

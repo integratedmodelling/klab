@@ -741,5 +741,15 @@ public class Observable implements IObservable {
 	public boolean isDistributedInherency() {
 		return this.distributedInherency;
 	}
+
+	@Override
+	public IConcept getContext() {
+		return Observables.INSTANCE.getContext(this.getType());
+	}
+
+	@Override
+	public IConcept getInherent() {
+		return Observables.INSTANCE.getInherency(this.getType());
+	}
 	
 }

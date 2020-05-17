@@ -194,7 +194,7 @@ public class ObservationStrategy {
 				? Observables.INSTANCE.getDirectInherentType(observable.getType())
 				: null;
 		if (inherent != null) {
-			IConcept context = Observables.INSTANCE.getContextType(observable.getType());
+			IConcept context = /*Observables.INSTANCE.getContextType(observable.getType())*/ observable.getContext();
 			if (context != null && context.equals(inherent)) {
 				observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT)
 						.buildObservable();

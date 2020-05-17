@@ -1188,7 +1188,10 @@ public class ResolutionScope implements IResolutionScope {
 			return null;
 		}
 
-		IConcept context = Observables.INSTANCE.getContextType(observable2.getType());
+		/*
+		 * using getContext() lets any indirect inherency pass through
+		 */
+		IConcept context = observable2.getContext();
 
 		if (!isDeferred() && context != null && getContextObservable() != null
 				&& !getContextObservable().getType().is(context)) {

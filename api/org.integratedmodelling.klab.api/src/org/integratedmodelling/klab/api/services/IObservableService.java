@@ -94,7 +94,10 @@ public interface IObservableService {
 	IObservable declare(IKimObservable observable, IMonitor monitor);
 
 	/**
-	 * Retrieve the context type, direct if there, indirect if not.
+	 * Retrieve the context type, direct if there, indirect if not. Implement the
+	 * recontextualization logics inherent in the 'of' operator: if X has context Y,
+	 * explicit or not, and this is X of Y, the context is "freed" and this returns
+	 * null unless the context type is explicit.
 	 * 
 	 * @param concept
 	 * @return

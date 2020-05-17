@@ -4,6 +4,7 @@ package org.integratedmodelling.klab.ide.views;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -74,6 +75,7 @@ import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.utils.BrowserUtils;
+import org.eclipse.jface.action.MenuManager;
 
 public class ContextView extends ViewPart {
 
@@ -137,6 +139,8 @@ public class ContextView extends ViewPart {
 	 */
 	AtomicReference<Status> state = new AtomicReference<>(Status.EngineOffline);
 	AtomicBoolean engineBusy = new AtomicBoolean(false);
+	private Action action;
+	private IMenuManager manager;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -558,7 +562,6 @@ public class ContextView extends ViewPart {
 			break;
 		default:
 			break;
-
 		}
 	}
 
@@ -676,7 +679,14 @@ public class ContextView extends ViewPart {
 			subjectLabel.setForeground(currentContext == null ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 					: SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 			subjectLabel.setText(currentContext == null ? "No context" : currentContext.getLabel());
+			this.manager.removeAll();
+			for (ContextDescriptor cd : rootContexts) {
+				this.manager.add(new Action(cd.getRoot().getLabel()) {
+					// TODO
+				});
+	 		}
 		});
+		
 	}
 
 	protected void searchObservations(String text) {
@@ -857,7 +867,6 @@ public class ContextView extends ViewPart {
 								+ Activator.engineMonitor().getSessionId());
 					}
 				}
-
 			};
 			openViewerAction.setEnabled(Activator.engineMonitor().isRunning());
 			openViewerAction.setImageDescriptor(
@@ -892,6 +901,10 @@ public class ContextView extends ViewPart {
 	 * Initialize the menu.
 	 */
 	private void initializeMenu() {
-		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+		this.manager = getViewSite().getActionBars().getMenuManager();
+		// this is for hierarchical menus - add the this to the manager and the actions to this 
+//		MenuManager menuManager = new MenuManager("Previous contexts");
+//		manager.add(action);
+//		menuManager.add(action);
 	}
 }

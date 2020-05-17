@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- In observables, getContext() of an observable O whose semantic context is X and
+  was declared as "O of X" will strip the context and return null, allowing indirect
+  inherency to match data in dependencies when the contexts are incompatible. This 
+  does not affect the getContextType() applied to the semantics, which will remain
+  X.
 - Setting temporal extent and resolution from explorer for subsequent observation
   is now supported.
 - Engine events can be generated and notified to clients that subscribe to them,
