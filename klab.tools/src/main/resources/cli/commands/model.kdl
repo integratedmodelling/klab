@@ -53,3 +53,19 @@ void 'compute'
 
 	class org.integratedmodelling.klab.clitool.console.commands.model.Compute
 }
+
+void 'resolve'
+	"Compute all observation strategies for the passed observable and print them."
+{
+		
+	optional text context 
+		"The context of resolution"
+		
+	optional text 'space' 
+		"Spatial extent of resolution (syntax TBD)"
+		
+	optional text 'time' 
+		"Spatial extent of resolution (syntax TBD)"
+
+	class org.integratedmodelling.klab.clitool.console.commands.model.Resolve
+}

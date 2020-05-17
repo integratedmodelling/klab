@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Improve model commands to resolve models and visualize resolution strategies, adding 
+  the resolution context and optional contextualization to geocoded names and years 
+  in model query.
 - In observables, getContext() of an observable O whose semantic context is X and
   was declared as "O of X" will strip the context and return null, allowing indirect
   inherency to match data in dependencies when the contexts are incompatible. This 
