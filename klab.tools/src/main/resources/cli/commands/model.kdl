@@ -44,7 +44,7 @@ void 'info'
 	class org.integratedmodelling.klab.clitool.console.commands.model.Info
 }
 
-void 'compute'
+void 'strategy'
 	"Compute all observation strategies for the passed observable and print them."
 {
 		

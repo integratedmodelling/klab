@@ -57,7 +57,7 @@ public class Compute implements ICommand {
 		
 		for (ObservationStrategy strategy : strategies) {
 //			if (strategies.size() > 1) {
-				ret += StringUtils.leftPad(""+(n++), (level+1)*3) + ". ";
+				ret += spacer + StringUtils.leftPad(""+(n++), (level+1)*3) + ". " + strategy.getStrategy() + " ";
 				for (IObservable observable : strategy.getObservables()) {
 					ret += (strategy.isResolve() ? "Resolve " : "Observe ") + observable + "\n";
 					if (!strategy.isTrivial()) {
@@ -67,7 +67,7 @@ public class Compute implements ICommand {
 				}
 //			}
 			for (IContextualizable computation : strategy.getComputation()) {
-				ret += spacer + "   Compute " + computation.getServiceCall() + "\n";
+				ret += spacer + "      Compute " + computation.getServiceCall() + "\n";
 			}
 		}
 		return ret;
