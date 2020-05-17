@@ -245,6 +245,20 @@ public class ResolutionScope implements IResolutionScope {
 	public static ResolutionScope create(IMonitor monitor) {
 		return new ResolutionScope(monitor);
 	}
+	
+	/**
+	 * Get an empty resolution scope with a specified coverage. FOR TESTING ONLY.
+	 * 
+	 * @param monitor
+	 * @return
+	 */
+	public static ResolutionScope create(IMonitor monitor, IScale scale) {
+		ResolutionScope ret = new ResolutionScope(monitor);
+		if (scale != null) {
+			ret.coverage = Coverage.full(scale);
+		}
+		return ret;
+	}
 
 	/**
 	 * Get a root scope with the scale of an existing subject used as a context for

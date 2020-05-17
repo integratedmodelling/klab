@@ -207,7 +207,7 @@ public enum Geocoder {
 
 	public static void main(String[] args) {
 		for (Location location : INSTANCE.lookup("france")) {
-			System.out.println(location.getURN() + " -- " + location.getDescription());
+			System.out.println(location.getURN() + " -- " + location.getDescription() + ": " + location.getBoundingbox());
 		}
 	}
 
@@ -373,6 +373,10 @@ public enum Geocoder {
 			this.state = state;
 		}
 
+		/**
+		 * Bounding box reported is X1, Y1, X2, Y2 with X = longitude.
+		 * @return
+		 */
 		public List<Double> getBoundingbox() {
 			return boundingbox;
 		}
