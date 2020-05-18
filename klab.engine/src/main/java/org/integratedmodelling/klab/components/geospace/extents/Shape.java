@@ -890,4 +890,9 @@ public class Shape extends AbstractExtent implements IShape {
 
 		return this;
 	}
+
+	@Override
+	public boolean contains(double[] coordinate) {
+		return this.shapeGeometry.intersects(makePoint(coordinate[0], coordinate[1]));
+	}
 }

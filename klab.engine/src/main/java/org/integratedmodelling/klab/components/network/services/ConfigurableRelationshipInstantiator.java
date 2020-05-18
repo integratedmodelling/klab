@@ -20,13 +20,16 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.indexing.DistanceCalculator;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -50,6 +53,21 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 	private boolean allowCycles;
 	Descriptor selectorDescriptor = null;
 
+	class SpatialEdge extends DefaultEdge {
+
+		private static final long serialVersionUID = -6448417928592670704L;
+		
+		IShape sourceShape;
+		IShape targetShape;
+		
+		SpatialEdge() {}
+		SpatialEdge(IShape s, IShape t) {
+			this.sourceShape = s;
+			this.targetShape = t;
+		}
+		
+	}
+	
 	static enum Method {
 		ErdosRenyi, OutDegree, Closest
 		// TODO add others - small world particularly useful, others not sure
@@ -62,14 +80,15 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 	private Method method = Method.ErdosRenyi;
 	private SpaceType spaceType = SpaceType.Default;
 	private Graph<IObjectArtifact, DefaultEdge> graph;
-	private IContextualizationScope context;
+	private IContextualizationScope scope;
+	private DistanceCalculator distanceCalculator;
 
 	public ConfigurableRelationshipInstantiator() {
 		/* to instantiate as expression - do not remove (or use) */}
 
-	public ConfigurableRelationshipInstantiator(IParameters<String> parameters, IContextualizationScope context) {
+	public ConfigurableRelationshipInstantiator(IParameters<String> parameters, IContextualizationScope scope) {
 
-		this.context = context;
+		this.scope = scope;
 		this.sourceArtifact = parameters.get("source", String.class);
 		this.targetArtifact = parameters.get("target", String.class);
 		this.probability = parameters.get("p", parameters.containsKey("select") ? 1.0 : 0.01);
@@ -83,7 +102,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.selectorDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext(), false);
+					.describe(expression.toString(), scope.getExpressionContext(), false);
 		}
 
 		if (parameters.contains("seed")) {
@@ -91,6 +110,10 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		}
 		if (parameters.contains("method")) {
 			this.method = Method.valueOf(Utils.removePrefix(parameters.get("method", String.class)));
+			if (this.method == Method.Closest
+					/* TODO other spatial random methods */ && scope.getScale().getSpace() == null) {
+				throw new IllegalStateException("Cannot instantiate spatial relationships in a non-spatial context");
+			}
 		}
 		if (parameters.contains("space")) {
 			this.spaceType = SpaceType.valueOf(Utils.removePrefix(parameters.get("space", String.class)));
@@ -106,6 +129,12 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		if (semantics.getType().is(IKimConcept.Type.BIDIRECTIONAL)) {
 			allowReciprocal = false;
 		}
+
+		/**
+		 * We make a new one at each instantiation. TODO if this becomes part of a
+		 * process, tie to the change of the target artifact(s).
+		 */
+		this.distanceCalculator = null;
 
 		IConcept sourceConcept = Observables.INSTANCE.getRelationshipSource(semantics.getType());
 		IConcept targetConcept = Observables.INSTANCE.getRelationshipTarget(semantics.getType());
@@ -160,11 +189,11 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 
 			if (method == Method.Closest) {
 
-				Pair<Shape, IDirectObservation> closest = findClosest(source);
+				Pair<Shape, IDirectObservation> closest = findClosest((IObservation) source, allTargets);
 				if (closest != null) {
 					connect((IDirectObservation) source, closest.getSecond(), closest.getFirst());
 				}
-				
+
 			} else {
 
 				for (IArtifact target : allTargets) {
@@ -228,8 +257,26 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		return instantiateRelationships(semantics);
 	}
 
-	private Pair<Shape, IDirectObservation> findClosest(IArtifact source) {
-		// TODO Auto-generated method stub
+	private Pair<Shape, IDirectObservation> findClosest(IObservation source, Collection<IArtifact> targets) {
+
+		if (this.distanceCalculator == null) {
+			this.distanceCalculator = new DistanceCalculator(scope.getScale().getSpace(), targets.size());
+		}
+
+		ISpace sspace = source.getScale().getSpace();
+		if (sspace != null) {
+			double[] xy = this.distanceCalculator.getNearestPoint(sspace.getShape().getCenter(false));
+			for (IArtifact target : targets) {
+				ISpace tspace = ((IObservation) target).getScale().getSpace();
+				if (tspace != null) {
+					if (tspace.getShape().contains(xy)) {
+						return new Pair<Shape, IDirectObservation>(
+								Shape.create(xy[0], xy[1], (Projection) tspace.getShape().getProjection()),
+								(IDirectObservation) target);
+					}
+				}
+			}
+		}
 		return null;
 	}
 
@@ -242,7 +289,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 			IDirectObservation source = (IDirectObservation) graph.getEdgeSource(edge);
 			IDirectObservation target = (IDirectObservation) graph.getEdgeTarget(edge);
 			IScale scale = getScale(source, target);
-			ret.add(context.newRelationship(observable, observable.getName() + "_" + i, scale, source, target, null));
+			ret.add(scope.newRelationship(observable, observable.getName() + "_" + i, scale, source, target, null));
 			i++;
 		}
 		return ret;
@@ -285,8 +332,8 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 			}
 		}
 
-		return shape == null ? ((Scale) context.getScale()).removeExtent(IGeometry.Dimension.Type.SPACE)
-				: Scale.substituteExtent(context.getScale(), shape);
+		return shape == null ? ((Scale) scope.getScale()).removeExtent(IGeometry.Dimension.Type.SPACE)
+				: Scale.substituteExtent(scope.getScale(), shape);
 	}
 
 	private void connect(IDirectObservation source, IDirectObservation target, ISpace spatialConnection) {
@@ -306,7 +353,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		// add to graph for bookkeeping unless we don't need it
 		graph.addVertex(source);
 		graph.addVertex(target);
-		graph.addEdge(source, target);
+		graph.addEdge(source, target, new SpatialEdge(null, spatialConnection.getShape()));
 	}
 
 	/*

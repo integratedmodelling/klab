@@ -39,4 +39,12 @@ public class WatchRequest {
 		this.eventType = eventType;
 	}
 
+	@Override
+	public String toString() {
+		return "WatchRequest [active=" + active + ", eventType=" + eventType + ", observationId=" + observationId
+				+ ", rootContextId=" + rootContextId + "]";
+	}
+	
+	
+
 }

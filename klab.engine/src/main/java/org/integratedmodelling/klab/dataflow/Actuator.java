@@ -80,6 +80,7 @@ import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -716,7 +717,7 @@ public class Actuator implements IActuator {
 					/*
 					 * notify end of contextualization if we're subscribed to the parent
 					 */
-					if (ctx.getNotifiedObservations().contains(ret.getId())) {
+					if (ctx.getWatchedObservationIds().contains(ret.getId())) {
 
 						((Observation) object).setContextualized(true);
 
