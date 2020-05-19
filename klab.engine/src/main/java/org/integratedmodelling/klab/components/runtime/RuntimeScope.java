@@ -1188,7 +1188,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				if (!notifiedObservations.contains(observation.getId())) {
 
 					IObservationReference descriptor = Observations.INSTANCE
-							.createArtifactDescriptor(observation, getParentArtifactOf(observation),
+							.createArtifactDescriptor(observation/* , getParentArtifactOf(observation) */,
 									observation.getScale().initialization(), 0)
 							.withTaskId(monitor.getIdentity().getId())
 							.withContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());

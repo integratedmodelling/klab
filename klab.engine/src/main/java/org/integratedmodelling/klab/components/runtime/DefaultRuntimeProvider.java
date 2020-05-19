@@ -133,14 +133,14 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				IRuntimeScope runtimeContext = null;
 				if (switchContext) {
 					// new catalog, new scale, context subject is in the scope, network remains
-					runtimeContext = ((Observation) context).getRuntimeScope().createContext(actuatorScale, actuator,
+					runtimeContext = ((Observation) context).getScope().createContext(actuatorScale, actuator,
 							dataflow, scope, monitor);
 				} else if (context == null) {
 					// new context
 					runtimeContext = createRuntimeContext(actuator, scope, actuatorScale, monitor);
 				} else {
 					// instantiating or resolving states: stay in context
-					runtimeContext = ((Subject) context).getRuntimeScope().createChild(actuatorScale, actuator, scope,
+					runtimeContext = ((Subject) context).getScope().createChild(actuatorScale, actuator, scope,
 							monitor);
 				}
 

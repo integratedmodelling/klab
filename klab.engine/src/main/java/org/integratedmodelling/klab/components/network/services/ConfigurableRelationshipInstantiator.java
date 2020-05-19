@@ -56,18 +56,20 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 	class SpatialEdge extends DefaultEdge {
 
 		private static final long serialVersionUID = -6448417928592670704L;
-		
+
 		IShape sourceShape;
 		IShape targetShape;
-		
-		SpatialEdge() {}
+
+		SpatialEdge() {
+		}
+
 		SpatialEdge(IShape s, IShape t) {
 			this.sourceShape = s;
 			this.targetShape = t;
 		}
-		
+
 	}
-	
+
 	static enum Method {
 		ErdosRenyi, OutDegree, Closest
 		// TODO add others - small world particularly useful, others not sure
@@ -189,6 +191,13 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 
 			if (method == Method.Closest) {
 
+				if (this.distanceCalculator == null) {
+					this.distanceCalculator = new DistanceCalculator(scope.getScale().getSpace(), targets.size());
+					for (IArtifact target : allTargets) {
+						this.distanceCalculator.add((IDirectObservation)target);
+					}
+				}
+				
 				Pair<Shape, IDirectObservation> closest = findClosest((IObservation) source, allTargets);
 				if (closest != null) {
 					connect((IDirectObservation) source, closest.getSecond(), closest.getFirst());
@@ -259,20 +268,18 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 
 	private Pair<Shape, IDirectObservation> findClosest(IObservation source, Collection<IArtifact> targets) {
 
-		if (this.distanceCalculator == null) {
-			this.distanceCalculator = new DistanceCalculator(scope.getScale().getSpace(), targets.size());
-		}
-
 		ISpace sspace = source.getScale().getSpace();
 		if (sspace != null) {
 			double[] xy = this.distanceCalculator.getNearestPoint(sspace.getShape().getCenter(false));
-			for (IArtifact target : targets) {
-				ISpace tspace = ((IObservation) target).getScale().getSpace();
-				if (tspace != null) {
-					if (tspace.getShape().contains(xy)) {
-						return new Pair<Shape, IDirectObservation>(
-								Shape.create(xy[0], xy[1], (Projection) tspace.getShape().getProjection()),
-								(IDirectObservation) target);
+			if (xy != null) {
+				for (IArtifact target : targets) {
+					ISpace tspace = ((IObservation) target).getScale().getSpace();
+					if (tspace != null) {
+						if (tspace.getShape().contains(xy)) {
+							return new Pair<Shape, IDirectObservation>(
+									Shape.create(xy[0], xy[1], (Projection) tspace.getShape().getProjection()),
+									(IDirectObservation) target);
+						}
 					}
 				}
 			}

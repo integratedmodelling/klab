@@ -88,10 +88,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		return ((IRuntimeScope) context).getObservationGroup(observable, context.getScale());
 	}
 
-	protected Observation(Observable observable, Scale scale, IRuntimeScope context) {
-		super(scale, context);
+	protected Observation(Observable observable, Scale scale, IRuntimeScope scope) {
+		super(scale, scope);
 		this.observable = observable;
-		ITaskTree<?> creator = context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class);
+		ITaskTree<?> creator = scope.getMonitor().getIdentity().getParentIdentity(ITaskTree.class);
 		if (creator != null) {
 			this.observationContextId = creator.getContextId();
 		}
@@ -153,7 +153,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	@Override
 	public Monitor getMonitor() {
-		return (Monitor) getRuntimeScope().getMonitor();
+		return (Monitor) getScope().getMonitor();
 	}
 
 	@Override
@@ -168,7 +168,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	@Override
 	public IProvenance getProvenance() {
-		return getRuntimeScope().getProvenance();
+		return getScope().getProvenance();
 	}
 
 	public void setObservable(Observable observable) {
@@ -176,12 +176,12 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 
 	public Namespace getNamespace() {
-		return (Namespace) getRuntimeScope().getNamespace();
+		return (Namespace) getScope().getNamespace();
 	}
 
 	@Override
 	public DirectObservation getContext() {
-		return (DirectObservation) getRuntimeScope().getParentOf(this);
+		return (DirectObservation) getScope().getParentOf(this);
 	}
 
 	public String toString() {
@@ -287,11 +287,11 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		IActorIdentity<KlabMessage> parent = null;
 
 		if (this.actor == null) {
-			if (this.getRuntimeScope().getParentOf(this) == null) {
+			if (this.getScope().getParentOf(this) == null) {
 				// I'm the context: get our actor from the session
 				parent = getParentIdentity(Session.class);
 			} else {
-				parent = (Observation) getRuntimeScope().getRootSubject();
+				parent = (Observation) getScope().getRootSubject();
 			}
 
 			final ActorRef<KlabMessage> parentActor = parent.getActor();
@@ -346,7 +346,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	
 	public ObservationChange createChangeEvent(ObservationChange.Type type) {
 		ObservationChange change = new ObservationChange();
-		change.setContextId(getRuntimeScope().getRootSubject().getId());
+		change.setContextId(getScope().getRootSubject().getId());
 		change.setId(this.getId());
 		change.setType(type);
 		return change;

@@ -153,7 +153,7 @@ public class Scheduler implements IScheduler {
 //					// ensure we have the names we expect
 //					transitionContext = actuator.localizeNames(transitionContext);
 //
-					ActorRef<KlabMessage> sender = ((Observation) observation.getRuntimeScope().getRootSubject())
+					ActorRef<KlabMessage> sender = ((Observation) observation.getScope().getRootSubject())
 							.getActor();
 
 					/*

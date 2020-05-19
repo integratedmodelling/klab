@@ -24,9 +24,9 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 	protected ObservedArtifact() {
 	}
 	
-	public ObservedArtifact(IGeometry geometry, IRuntimeScope context) {
+	public ObservedArtifact(IGeometry geometry, IRuntimeScope scope) {
 		this.geometry = geometry;
-		this.runtimeScope = context;
+		this.runtimeScope = scope;
 	}
 
 	public String getId() {
@@ -42,7 +42,7 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 		this.geometry = geometry;
 	}
 
-	public IRuntimeScope getRuntimeScope() {
+	public IRuntimeScope getScope() {
 		return this.runtimeScope;
 	}
 
@@ -77,7 +77,7 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 
 	@Override
 	public IProvenance getProvenance() {
-		return getRuntimeScope().getProvenance();
+		return getScope().getProvenance();
 	}
 
 	/**

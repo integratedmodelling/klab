@@ -113,7 +113,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 * Register the observation context with the session. It will be disposed of
 							 * and/or persisted by the session itself.
 							 */
-							session.registerObservationContext(((Observation) ret).getRuntimeScope());
+							session.registerObservationContext(((Observation) ret).getScope());
 
 						}
 

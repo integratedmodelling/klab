@@ -76,7 +76,7 @@ public class State extends Observation implements IState, IKeyHolder {
 		IStorage<?> layer = layers.get(type);
 		if (layer == null) {
 			layers.put(type,
-					layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getRuntimeScope()));
+					layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getScope()));
 		}
 
 		return new StateLayer(this, (IDataStorage<?>) layer);
@@ -145,8 +145,8 @@ public class State extends Observation implements IState, IKeyHolder {
 		 * rescaled instance.
 		 */
 		return scale.isConformant(getScale()) 
-				? new LocatedState(this, (Scale) scale, getRuntimeScope())
-				: new RescalingState(this, (Scale) scale, getRuntimeScope());
+				? new LocatedState(this, (Scale) scale, getScope())
+				: new RescalingState(this, (Scale) scale, getScope());
 	}
 
 	@Override
@@ -194,7 +194,7 @@ public class State extends Observation implements IState, IKeyHolder {
 				values.add(get(locator));
 			}
 			AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()),
-					getRuntimeScope().getMonitor());
+					getScope().getMonitor());
 		}
 		throw new KlabUnimplementedException(
 				"aggregation of rescaled states is unimplemented - please submit a request");

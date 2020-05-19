@@ -30,7 +30,7 @@ public class StateLayer extends State implements IState {
 	}
 	
 	public StateLayer(State state, IDataStorage<?> layer) {
-		super(state.getObservable(), state.getScale(), (RuntimeScope) state.getRuntimeScope(), layer);
+		super(state.getObservable(), state.getScale(), (RuntimeScope) state.getScope(), layer);
 		this.delegate = state;
 		// share the same layers map of the original layer
 		this.layers = state.layers;
@@ -45,7 +45,7 @@ public class StateLayer extends State implements IState {
 	
 	@Override
     public DirectObservation getContext() {
-        return (DirectObservation) getRuntimeScope().getParentOf(delegate);
+        return (DirectObservation) getScope().getParentOf(delegate);
     }
 	
 	@Override

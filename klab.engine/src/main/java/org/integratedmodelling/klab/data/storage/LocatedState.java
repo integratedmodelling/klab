@@ -129,7 +129,7 @@ public class LocatedState extends Observation implements IState {
 		if (delegate.getType() == type) {
 			return this;
 		}
-		return new LocatedState(delegate.as(type), locatedScale, getRuntimeScope());
+		return new LocatedState(delegate.as(type), locatedScale, getScope());
 	}
 
 	@Override
@@ -178,7 +178,7 @@ public class LocatedState extends Observation implements IState {
 				values.add(get(locator));
 			}
 			AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()),
-					getRuntimeScope().getMonitor());
+					getScope().getMonitor());
 		}
 		throw new KlabUnimplementedException(
 				"aggregation of rescaled states is unimplemented - please submit a request");

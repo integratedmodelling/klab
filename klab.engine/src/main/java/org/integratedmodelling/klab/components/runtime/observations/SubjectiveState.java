@@ -54,7 +54,7 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
             if (state == null) {
                 state = Klab.INSTANCE.getRuntimeProvider().createState(
                         ((Observable) current.getObservable()).subjectify(observer), current.getType(),
-                        current.getScale(), ((Observation) current).getRuntimeScope());
+                        current.getScale(), ((Observation) current).getScope());
                 cache.put(observer.getId(), state);
             }
             this.current = state;
@@ -64,7 +64,7 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
     }
 
     public SubjectiveState(IState state, IDirectObservation observer) {
-        super((Observable) state.getObservable(), (Scale) state.getScale(), ((Observation) state).getRuntimeScope());
+        super((Observable) state.getObservable(), (Scale) state.getScale(), ((Observation) state).getScope());
         this.current = state;
         this.observer = observer;
         this.cache.put(this.observer.getId(), state);

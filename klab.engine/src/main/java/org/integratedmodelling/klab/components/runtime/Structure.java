@@ -65,6 +65,9 @@ public class Structure implements IArtifact.Structure {
 	}
 
 	public IArtifact getLogicalParent(IArtifact child) {
+		if (child instanceof ObservationGroup) {
+			return getArtifactParent(child);
+		}
 		for (DefaultEdge edge : logicalStructure.outgoingEdgesOf(child)) {
 			return logicalStructure.getEdgeTarget(edge);
 		}

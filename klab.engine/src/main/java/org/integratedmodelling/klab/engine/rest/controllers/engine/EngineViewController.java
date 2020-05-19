@@ -80,9 +80,9 @@ public class EngineViewController {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
 
-		IObservation parent = obs instanceof DirectObservation && ((DirectObservation) obs).getGroup() != null
-				? ((DirectObservation) obs).getGroup()
-				: obs.getContext();
+//		IObservation parent = obs instanceof DirectObservation && ((DirectObservation) obs).getGroup() != null
+//				? ((DirectObservation) obs).getGroup()
+//				: obs.getContext();
 
 		ILocator loc = obs.getScale().initialization();
 		if (locator != null) {
@@ -90,7 +90,7 @@ public class EngineViewController {
 			loc = obs.getScale().at(loc);
 		}
 
-		return Observations.INSTANCE.createArtifactDescriptor(obs, parent, loc, childLevel == null ? -1 : childLevel);
+		return Observations.INSTANCE.createArtifactDescriptor(obs/* , parent */, loc, childLevel == null ? -1 : childLevel);
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class EngineViewController {
 		}
 
 		List<IObservationReference> ret = new ArrayList<>();
-		IRuntimeScope scope = ((Observation) obs).getRuntimeScope();
+		IRuntimeScope scope = ((Observation) obs).getScope();
 
 		int i = -1;
 		int n = 0;
@@ -164,7 +164,7 @@ public class EngineViewController {
 				break;
 			}
 
-			ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child, obs, loc, 0,
+			ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child/* , obs */, loc, 0,
 					obs instanceof ObservationGroupView ? obs.getId() : null));
 			
 			// assume this was notified

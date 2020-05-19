@@ -122,7 +122,7 @@ public class MediatingState extends Observation implements IState {
 		if (delegate.getType() == type) {
 			return this;
 		}
-		return new MediatingState(delegate.as(type), (RuntimeScope) getRuntimeScope(), from, to);
+		return new MediatingState(delegate.as(type), (RuntimeScope) getScope(), from, to);
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class MediatingState extends Observation implements IState {
 
 	@Override
 	public IState at(ILocator locator) {
-		return new MediatingState((IState) delegate.at(locator), (RuntimeScope) getRuntimeScope(), from, to);
+		return new MediatingState((IState) delegate.at(locator), (RuntimeScope) getScope(), from, to);
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public class MediatingState extends Observation implements IState {
 		}
 
 		return from.equals(to) ? state
-				: new MediatingState(state, (RuntimeScope) ((Observation) state).getRuntimeScope(), from, to);
+				: new MediatingState(state, (RuntimeScope) ((Observation) state).getScope(), from, to);
 	}
 
 	@Override

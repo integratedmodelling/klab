@@ -384,7 +384,7 @@ public enum Actors implements IActorsService {
 	}
 
 	public void instrument(List<IAnnotation> annotations, Observation observation) {
-		instrument(annotations, observation, observation.getRuntimeScope());
+		instrument(annotations, observation, observation.getScope());
 	}
 
 	public void instrument(List<IAnnotation> annotations, Observation observation, IRuntimeScope scope) {
@@ -392,7 +392,7 @@ public enum Actors implements IActorsService {
 		/*
 		 * find any bindings made at runtime
 		 */
-		Pair<String, IKimExpression> rb = observation.getRuntimeScope().getBehaviorBindings()
+		Pair<String, IKimExpression> rb = observation.getScope().getBehaviorBindings()
 				.get(observation.getObservable().getType());
 		if (rb != null) {
 			IBehavior b = getBehavior(rb.getFirst());
@@ -400,7 +400,7 @@ public enum Actors implements IActorsService {
 				if (rb.getSecond() != null) {
 					// TODO filter
 				}
-				observation.getRuntimeScope().scheduleActions(observation, b);
+				observation.getScope().scheduleActions(observation, b);
 				((Observation) observation).load(b, scope);
 			}
 		}
@@ -421,7 +421,7 @@ public enum Actors implements IActorsService {
 						 * observation will load behavior, schedule all the temporal actions it contains
 						 * before main is run
 						 */
-						observation.getRuntimeScope().scheduleActions(observation, b);
+						observation.getScope().scheduleActions(observation, b);
 
 						/*
 						 * load the behavior, running any main actions right away

@@ -175,7 +175,7 @@ public class TestRunner implements Annotations.Handler {
 						for (IServiceCall assertion : arguments.get("assertions", new ArrayList<IServiceCall>())) {
 							Object test = Extensions.INSTANCE.callFunction(assertion, monitor);
 							if (test instanceof Assertion) {
-								evaluateAssertion(assertion, (Assertion) test, ((Subject) subject).getRuntimeScope(),
+								evaluateAssertion(assertion, (Assertion) test, ((Subject) subject).getScope(),
 										(TestMonitor) monitor);
 							} else {
 								monitor.error(

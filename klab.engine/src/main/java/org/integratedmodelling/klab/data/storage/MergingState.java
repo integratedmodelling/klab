@@ -29,7 +29,7 @@ public class MergingState extends State {
 	List<IState> states = new ArrayList<>();
 
 	public MergingState(IState delegate) {
-		super((Observable) delegate.getObservable(), (Scale) delegate.getScale(), ((State) delegate).getRuntimeScope(),
+		super((Observable) delegate.getObservable(), (Scale) delegate.getScale(), ((State) delegate).getScope(),
 				((State) delegate).getStorage());
 		this.delegate = delegate;
 	}

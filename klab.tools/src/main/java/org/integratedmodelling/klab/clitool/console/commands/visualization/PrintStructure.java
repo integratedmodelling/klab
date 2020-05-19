@@ -31,7 +31,7 @@ public class PrintStructure implements ICommand {
 
 	private String printStructure(IArtifact obs, int level, boolean artifacts) {
 
-		IRuntimeScope context = ((Observation) obs).getRuntimeScope();
+		IRuntimeScope context = ((Observation) obs).getScope();
 
 		String ret = StringUtil.repeat(' ', level) + obs;
 		for (IArtifact child : (artifacts ? context.getChildArtifactsOf(obs)

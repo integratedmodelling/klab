@@ -24,7 +24,7 @@ public class ShowStructure implements ICommand {
 			throw new KlabValidationException("show::structure requires a valid observation ID as argument");
 		}
 		
-		IRuntimeScope context = ((Observation)obs).getRuntimeScope();
+		IRuntimeScope context = ((Observation)obs).getScope();
 		
 //		Graphs.show(context.getStructure().getLogicalStructure(), "Logical structure of observation " + obs, Graphs.Layout.HIERARCHICAL);
 		

@@ -41,9 +41,9 @@ public class ObservationGroupView extends CountableObservation implements ISubje
 
 	public ObservationGroupView(Observable observable, IObservation original, Function<IArtifact, Boolean> filter) {
 		
-		super(observable.getName(), observable, (Scale)original.getScale(), ((Observation)original).getRuntimeScope());
+		super(observable.getName(), observable, (Scale)original.getScale(), ((Observation)original).getScope());
 		this.atype = original.getType();
-		IIdentity identity = getRuntimeScope().getMonitor().getIdentity();
+		IIdentity identity = getScope().getMonitor().getIdentity();
 		if (identity instanceof AbstractTask) {
 			setGenerator(((AbstractTask<?>) identity).getActivity());
 		}

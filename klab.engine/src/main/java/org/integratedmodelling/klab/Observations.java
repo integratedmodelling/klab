@@ -210,16 +210,16 @@ public enum Observations implements IObservationService {
 		// TODO Auto-generated method stub
 	}
 
-	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
+	public ObservationReference createArtifactDescriptor(IObservation observation, /* IObservation parent, */
 			ILocator locator, int childLevel) {
-		return createArtifactDescriptor(observation, parent, locator, childLevel, null);
+		return createArtifactDescriptor(observation, /* parent, */locator, childLevel, null);
 	}
 
-	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
+	public ObservationReference createArtifactDescriptor(IObservation observation/* , IObservation parent */,
 			ILocator locator, int childLevel, String viewId) {
 
 		ObservationReference ret = new ObservationReference();
-
+		
 		ret.setEmpty(observation.isEmpty());
 
 		// for now
@@ -249,15 +249,19 @@ public enum Observations implements IObservationService {
 		ret.setExportLabel(observation.getObservable().getName());
 		ret.setContextualized(((Observation) observation).isContextualized());
 
-		ISubject rootSubject = ((Observation) observation).getRuntimeScope().getRootSubject();
+		ISubject rootSubject = ((Observation) observation).getScope().getRootSubject();
 		if (rootSubject != null) {
 			ret.setRootContextId(rootSubject.getId());
 		}
 
+		IArtifact parent = observation.getScope().getParentOf(observation);
+		IArtifact parentArtifact = observation.getScope().getParentArtifactOf(observation);
+		
 		ret.setId(observation.getId());
 		ret.setContextId(((Observation) observation).getObservationContextId());
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
+		ret.setParentArtifactId(parentArtifact == null ? null : parentArtifact.getId());
 		ret.setAlive(((Observation) observation).isAlive());
 		ret.setLabel(getDisplayLabel(observation));
 		ret.setDynamic(((Observation) observation).isDynamic());
@@ -389,25 +393,26 @@ public enum Observations implements IObservationService {
 			// TODO
 		}
 
-		if (observation instanceof IDirectObservation) {
-			/*
-			 * physical parent
-			 */
-			if (observation instanceof DirectObservation) {
-				if (viewId != null) {
-					ret.setParentArtifactId(viewId);
-				} else {
-					ret.setParentArtifactId(((DirectObservation) observation).getGroup() == null ? ret.getParentId()
-							: ((DirectObservation) observation).getGroup().getId());
-				}
-			}
-		}
+//		if (observation instanceof IDirectObservation) {
+//			/*
+//			 * physical parent
+//			 */
+//			if (observation instanceof DirectObservation) {
+//				if (viewId != null) {
+//					ret.setParentArtifactId(viewId);
+//				} else {
+//					ret.setParentArtifactId(((DirectObservation) observation).getGroup() == null ? ret.getParentId()
+//							: ((DirectObservation) observation).getGroup().getId());
+//				}
+//			}
+//		}
+
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
 
 			for (IArtifact child : observation.getChildArtifacts()) {
 				if (child instanceof IObservation) {
 					ret.getChildren()
-							.add(createArtifactDescriptor((IObservation) child, observation, locator,
+							.add(createArtifactDescriptor((IObservation) child/* , observation */, locator,
 									childLevel > 0 ? (childLevel - 1) : childLevel,
 									observation instanceof ObservationGroupView ? observation.getId() : null));
 				}

@@ -121,7 +121,7 @@ public abstract class AbstractTask<T extends IObservation> implements ITaskTree<
 			this.descriptor.setDescription(getTaskDescription());
 			this.descriptor.setContextId(this.context == null ? null : this.context.getId());
 			this.descriptor.setRootContextId(
-					this.context == null ? null : this.context.getRuntimeScope().getRootSubject().getId());
+					this.context == null ? null : this.context.getScope().getRootSubject().getId());
 		}
 		return this.descriptor;
 	}

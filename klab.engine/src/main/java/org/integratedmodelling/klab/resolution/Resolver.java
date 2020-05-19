@@ -345,7 +345,7 @@ public class Resolver {
 			 * look in the catalog. This will have accurate coverage but not necessarily every
 			 * observation (those coming from attributes will be missing).
 			 */
-			previousArtifact = ((Subject) ret.getContext()).getRuntimeScope().findArtifact(observable);
+			previousArtifact = ((Subject) ret.getContext()).getScope().findArtifact(observable);
 			if (previousArtifact == null) {
 				/*
 				 * check in the context's children and attribute full coverage if there
