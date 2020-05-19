@@ -73,7 +73,6 @@ import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.documentation.Report;
-import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
@@ -93,7 +92,6 @@ import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -1749,6 +1747,26 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		structure.swap(original, replacement);
 		observations.remove(original.getId());
 		observations.put(replacement.getId(), (IObservation) replacement);
+	}
+
+	@Override
+	public Collection<IObservation> getObservations(IConcept observable) {
+		List<IObservation> ret = new ArrayList<>();
+		IConcept artifactType = observable;
+		if (observable.is(Type.COUNTABLE)) {
+			artifactType = Observables.INSTANCE.getBaseObservable(artifactType);
+		}
+		IObservation artifact = getArtifact(artifactType, IObservation.class);
+		if (artifact instanceof ObservationGroup) {
+			for (IArtifact grouped : artifact) {
+				if (((IObservation)grouped).getObservable().getType().resolves(observable, null)) {
+					ret.add((IObservation)grouped);
+				}
+			}
+		} else {
+			ret.add(artifact);
+		}
+		return ret;
 	}
 
 }

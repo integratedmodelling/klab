@@ -809,4 +809,10 @@ public class ResourceScope implements IRuntimeScope {
 		
 	}
 
+	@Override
+	public Collection<IObservation> getObservations(IConcept observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

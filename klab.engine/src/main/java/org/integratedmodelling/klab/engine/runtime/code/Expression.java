@@ -258,6 +258,12 @@ public abstract class Expression implements IExpression {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Collection<IObservation> getObservations(IConcept observable) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 
 	public static IContextualizationScope emptyContext(IMonitor monitor) {

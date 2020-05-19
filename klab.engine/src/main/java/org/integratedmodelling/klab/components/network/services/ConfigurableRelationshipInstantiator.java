@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.indexing.DistanceCalculator;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -93,10 +94,10 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		this.scope = scope;
 		this.sourceArtifact = parameters.get("source", String.class);
 		this.targetArtifact = parameters.get("target", String.class);
-		this.probability = parameters.get("p", parameters.containsKey("select") ? 1.0 : 0.01);
 		this.allowSelfConnections = parameters.get("selfconnections", Boolean.FALSE);
 		this.allowReciprocal = parameters.get("reciprocal", Boolean.FALSE);
 		this.allowCycles = parameters.get("cycles", Boolean.TRUE);
+		boolean exhaustive = false;
 
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
@@ -116,10 +117,15 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 					/* TODO other spatial random methods */ && scope.getScale().getSpace() == null) {
 				throw new IllegalStateException("Cannot instantiate spatial relationships in a non-spatial context");
 			}
+			if (this.method == Method.Closest) {
+				exhaustive = true;
+			}
 		}
 		if (parameters.contains("space")) {
 			this.spaceType = SpaceType.valueOf(Utils.removePrefix(parameters.get("space", String.class)));
 		}
+
+		this.probability = parameters.get("p", (exhaustive || parameters.containsKey("select")) ? 1.0 : 0.01);
 
 	}
 
@@ -145,18 +151,28 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		 * recover artifacts according to parameterization or lack thereof. Source and
 		 * target artifacts may be the same artifact.
 		 */
-		List<IArtifact> sources = new ArrayList<>();
+		List<IObservation> sources = new ArrayList<>();
 		if (sourceArtifact == null) {
-			sources.addAll(context.getArtifact(sourceConcept));
+			sources.addAll(context.getObservations(sourceConcept));
 		} else {
-			sources.add(context.getArtifact(sourceArtifact));
+			IArtifact src = context.getArtifact(sourceArtifact);
+			if (src instanceof ObservationGroup) {
+				for (IArtifact a : src) {
+					sources.add((IObservation) a);
+				}
+			}
 		}
 
-		List<IArtifact> targets = new ArrayList<>();
+		List<IObservation> targets = new ArrayList<>();
 		if (targetArtifact == null) {
-			targets.addAll(context.getArtifact(targetConcept));
+			targets.addAll(context.getObservations(targetConcept));
 		} else {
-			targets.add(context.getArtifact(targetArtifact));
+			IArtifact src = context.getArtifact(targetArtifact);
+			if (src instanceof ObservationGroup) {
+				for (IArtifact a : src) {
+					targets.add((IObservation) a);
+				}
+			}
 		}
 
 		// all artifacts must be non-null and objects
@@ -179,26 +195,26 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 				|| (sourceArtifact == null && targetArtifact == null && sourceConcept.equals(targetConcept));
 
 		// TODO these are the simple methods - enable others separately
-		Collection<IArtifact> allSources = CollectionUtils.joinArtifacts(sources);
-		Collection<IArtifact> allTargets = CollectionUtils.joinArtifacts(targets);
+		Collection<IObservation> allSources = CollectionUtils.joinObservations(sources);
+		Collection<IObservation> allTargets = CollectionUtils.joinObservations(targets);
 		int nSources = allSources.size();
 		int nTargets = allTargets.size();
 		int nNodes = samePools ? nSources : nSources + nTargets;
 
 		graph = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-		for (IArtifact source : allSources) {
+		for (IObservation source : allSources) {
 
 			if (method == Method.Closest) {
 
 				if (this.distanceCalculator == null) {
-					this.distanceCalculator = new DistanceCalculator(scope.getScale().getSpace(), targets.size());
+					this.distanceCalculator = new DistanceCalculator(scope.getScale().getSpace(), nTargets);
 					for (IArtifact target : allTargets) {
-						this.distanceCalculator.add((IDirectObservation)target);
+						this.distanceCalculator.add((IDirectObservation) target);
 					}
 				}
-				
-				Pair<Shape, IDirectObservation> closest = findClosest((IObservation) source, allTargets);
+
+				Pair<Shape, IDirectObservation> closest = findClosest(source, allTargets);
 				if (closest != null) {
 					connect((IDirectObservation) source, closest.getSecond(), closest.getFirst());
 				}
@@ -266,14 +282,14 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		return instantiateRelationships(semantics);
 	}
 
-	private Pair<Shape, IDirectObservation> findClosest(IObservation source, Collection<IArtifact> targets) {
+	private Pair<Shape, IDirectObservation> findClosest(IObservation source, Collection<IObservation> targets) {
 
 		ISpace sspace = source.getScale().getSpace();
 		if (sspace != null) {
 			double[] xy = this.distanceCalculator.getNearestPoint(sspace.getShape().getCenter(false));
 			if (xy != null) {
-				for (IArtifact target : targets) {
-					ISpace tspace = ((IObservation) target).getScale().getSpace();
+				for (IObservation target : targets) {
+					ISpace tspace = target.getScale().getSpace();
 					if (tspace != null) {
 						if (tspace.getShape().contains(xy)) {
 							return new Pair<Shape, IDirectObservation>(
@@ -295,19 +311,23 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		for (DefaultEdge edge : graph.edgeSet()) {
 			IDirectObservation source = (IDirectObservation) graph.getEdgeSource(edge);
 			IDirectObservation target = (IDirectObservation) graph.getEdgeTarget(edge);
-			IScale scale = getScale(source, target);
+			IScale scale = getScale(source, target,
+					edge instanceof SpatialEdge ? ((SpatialEdge) edge).targetShape : null);
 			ret.add(scope.newRelationship(observable, observable.getName() + "_" + i, scale, source, target, null));
 			i++;
 		}
 		return ret;
 	}
 
-	private IScale getScale(IDirectObservation source, IDirectObservation target) {
+	private IScale getScale(IDirectObservation source, IDirectObservation target, IShape connectionPoint) {
 
 		SpaceType spt = spaceType;
+		IShape targetShape = connectionPoint == null ? (target.getSpace() == null ? null : target.getSpace().getShape())
+				: connectionPoint;
+
 		if (spt == SpaceType.Default) {
-			spt = (source.getSpace() != null && target.getSpace() != null)
-					? ((source.getSpace().getDimensionality() > 1 && target.getSpace().getDimensionality() > 1)
+			spt = (source.getSpace() != null && targetShape != null)
+					? ((source.getSpace().getDimensionality() > 1 && targetShape.getDimensionality() > 1)
 							? SpaceType.ConvexHull
 							: SpaceType.LineEdge)
 					: SpaceType.None;
@@ -318,21 +338,20 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		if (spt != SpaceType.None) {
 
 			IShape ss = source.getSpace().getShape();
-			IShape st = target.getSpace().getShape();
 
 			switch (spt) {
 			case ConvexHull:
-				shape = Shape.join(ss, st, IShape.Type.POLYGON, true);
+				shape = Shape.join(ss, targetShape, IShape.Type.POLYGON, true);
 				break;
 			case SpaceBetween:
-				shape = Shape.join(ss, st, IShape.Type.POLYGON, false);
+				shape = Shape.join(ss, targetShape, IShape.Type.POLYGON, false);
 				break;
 			case Line:
 			case LineCentroid:
-				shape = Shape.join(ss, st, IShape.Type.LINESTRING, true);
+				shape = Shape.join(ss, targetShape, IShape.Type.LINESTRING, true);
 				break;
 			case LineEdge:
-				shape = Shape.join(ss, st, IShape.Type.LINESTRING, false);
+				shape = Shape.join(ss, targetShape, IShape.Type.LINESTRING, false);
 				break;
 			default:
 				break;

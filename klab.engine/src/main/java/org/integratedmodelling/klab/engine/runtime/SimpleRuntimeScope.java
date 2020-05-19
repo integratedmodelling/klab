@@ -762,4 +762,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		// TODO Auto-generated method stub
 		structure.swap(original, replacement);
 	}
+
+	@Override
+	public Collection<IObservation> getObservations(IConcept observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
