@@ -271,6 +271,7 @@ public class EngineViewController {
 				}
 
 				response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+				response.setCharacterEncoding("UTF-8");
 				response.getWriter().write(descr);
 				response.setStatus(HttpServletResponse.SC_OK);
 				done = true;
