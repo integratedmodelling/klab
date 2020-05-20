@@ -26,6 +26,7 @@
 'BC'=259
 'CE'=258
 'E'=256
+'L'=254
 '^'=260
 'abstract'=170
 'acceleration'=233
@@ -129,7 +130,6 @@
 'into'=34
 'inverse'=200
 'is'=174
-'l'=254
 'language'=92
 'learn'=71
 'least'=207

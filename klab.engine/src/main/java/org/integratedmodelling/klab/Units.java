@@ -508,7 +508,7 @@ public enum Units implements IUnitService {
 
 	/**
 	 * Get the default unit for the passed concept. Only returns a unit if the
-	 * concept is a physical property.
+	 * concept is a physical property or a ratio thereof.
 	 * 
 	 * @param concept
 	 * @return the default SI unit or null
@@ -518,6 +518,20 @@ public enum Units implements IUnitService {
 
 		if (observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.NUMEROSITY)) {
 			return Unit.unitless();
+		}
+		
+		if (observable.is(Type.RATIO)) {
+			IConcept numerator = Observables.INSTANCE.getDescribedType(observable.getType());
+			IConcept denominator = Observables.INSTANCE.getComparisonType(observable.getType());
+			if (numerator != null && denominator != null
+					&& (numerator.is(Type.INTENSIVE_PROPERTY) || numerator.is(Type.EXTENSIVE_PROPERTY))
+					&& (denominator.is(Type.INTENSIVE_PROPERTY) || denominator.is(Type.EXTENSIVE_PROPERTY))) {
+				Unit utop = getDefaultUnitFor(numerator);
+				Unit ubot = getDefaultUnitFor(denominator);
+				if (utop != null && ubot != null) {
+					return new Unit(utop.getUnit().divide(ubot.getUnit()));
+				}
+			}
 		}
 
 		if (defaultUnitCache.containsKey(observable.getType().getDefinition())) {
@@ -561,6 +575,25 @@ public enum Units implements IUnitService {
 
 		return ret;
 	}
+	
+	public Unit getDefaultUnitFor(IConcept concept) {
+		if (concept.is(Type.RATIO)) {
+			IConcept numerator = Observables.INSTANCE.getDescribedType(concept);
+			IConcept denominator = Observables.INSTANCE.getComparisonType(concept);
+			if (numerator != null && denominator != null
+					&& (numerator.is(Type.INTENSIVE_PROPERTY) || numerator.is(Type.EXTENSIVE_PROPERTY))
+					&& (denominator.is(Type.INTENSIVE_PROPERTY) || denominator.is(Type.EXTENSIVE_PROPERTY))) {
+				Unit utop = getDefaultUnitFor(numerator);
+				Unit ubot = getDefaultUnitFor(denominator);
+				if (utop != null && ubot != null) {
+					return new Unit(utop.getUnit().divide(ubot.getUnit()));
+				}
+			}
+		}
+		Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept),
+				NS.SI_UNIT_PROPERTY);
+		return unit == null ? null : getUnit(unit.toString());
+	}
 
 	public ExtentDimension getExtentDimension(ISpace space) {
 		switch (space.getDimensionality()) {
@@ -578,6 +611,19 @@ public enum Units implements IUnitService {
 
 	@Override
 	public boolean needsUnits(IObservable observable) {
+
+		if (observable.is(Type.RATIO)) {
+			// needs units if both concepts do
+			IConcept numerator = Observables.INSTANCE.getDescribedType(observable.getType());
+			IConcept denominator = Observables.INSTANCE.getComparisonType(observable.getType());
+			if (numerator != null && denominator != null
+					&& (numerator.is(Type.INTENSIVE_PROPERTY) || numerator.is(Type.EXTENSIVE_PROPERTY))
+					&& (denominator.is(Type.INTENSIVE_PROPERTY) || denominator.is(Type.EXTENSIVE_PROPERTY))) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 
 		boolean checkMetadata = false;
 		if (observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.EXTENSIVE_PROPERTY)

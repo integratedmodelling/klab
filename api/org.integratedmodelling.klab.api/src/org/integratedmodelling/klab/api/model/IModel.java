@@ -59,6 +59,13 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	public static final String ARCHETYPE_ANNOTATION = "archetype";
 
 	/**
+	 * Annotation requesting a learner for a quality "within" a countable to also
+	 * compute the learned quality over the context of learning, requiring the 
+	 * predictors to become dependencies in it.
+	 */
+	public static final String DISTRIBUTE_ANNOTATION = "distribute";
+
+	/**
 	 * Return the semantics of all observables we are observing. The first in the
 	 * list is the actual observable and must exist; the others are expected
 	 * side-effects of observing the first, which must be connected to semantics

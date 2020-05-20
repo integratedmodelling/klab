@@ -127,11 +127,16 @@ public class Concept extends Knowledge implements IConcept {
 			return false;
 		}
 
+		
 		Concept cc = (Concept) concept;
 
-		if (cc.equals(this)) {
+		if (this == cc || getDefinition().equals(cc.getDefinition())) {
 			return true;
 		}
+
+//		if (cc.equals(this)) {
+//			return true;
+//		}
 
 		Collection<IConcept> collection = getAllParents();
 		collection.add(this);

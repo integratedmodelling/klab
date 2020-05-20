@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
@@ -318,14 +319,14 @@ public class WekaInstances {
 					.describe(this.selector.getCode(), context.getExpressionContext(), false);
 		}
 
-		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
-		if (this.explicitContext != null) {
-			/*
-			 * we learn the quality in its context so remove.
-			 */
-			this.predictedObservable = ObservableBuilder.getBuilder(this.predictedObservable, context.getMonitor())
-					.without(ObservableRole.CONTEXT).buildObservable();
-		}
+//		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
+//		if (this.explicitContext != null) {
+//			/*
+//			 * we learn the quality in its context so remove.
+//			 */
+//			this.predictedObservable = ObservableBuilder.getBuilder(this.predictedObservable, context.getMonitor())
+//					.without(ObservableRole.CONTEXT).buildObservable();
+//		}
 
 		for (IObservable dependency : model.getDependencies()) {
 
@@ -333,9 +334,9 @@ public class WekaInstances {
 
 			if (predictor != null) {
 
-				IConcept predictorContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
+//				IConcept predictorContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
 
-				if (this.explicitContext != null && this.explicitContext.equals(predictorContext)) {
+				if (((Model)model).learnsWithinArchetype() && !((Model)model).distributesLearning()) {
 
 					/*
 					 * the actual observable (which we will look for in the data) will be the one
@@ -365,6 +366,9 @@ public class WekaInstances {
 
 					IArtifact artifact = context.getArtifact(dependency.getName());
 					if (!(artifact instanceof IState)) {
+						if (dependency.isOptional()) {
+							continue;
+						}
 						throw new IllegalArgumentException(
 								"Weka: missing predictor or not a quality: " + dependency.getName());
 					}

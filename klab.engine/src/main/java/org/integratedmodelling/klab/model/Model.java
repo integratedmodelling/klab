@@ -62,7 +62,6 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
@@ -84,7 +83,7 @@ public class Model extends KimObject implements IModel {
 	private boolean reinterpreter;
 	private boolean inactive;
 	private boolean learning;
-//	private boolean merger;
+	private IObservable archetype;
 
 	/*
 	 * the geometry implicitly declared for the project, gathered from the resources
@@ -110,6 +109,8 @@ public class Model extends KimObject implements IModel {
 	private boolean available = true;
 	private Scope scope = Scope.PUBLIC;
 	private Strategy observationStrategy = Strategy.DIRECT;
+	private boolean learnsWithinArchetype;
+	private boolean distributesLearning;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -175,11 +176,11 @@ public class Model extends KimObject implements IModel {
 		/*
 		 * learner whose main observable is within the archetype, treated specially
 		 */
-		boolean learnsWithinArchetype = false;
+		this.learnsWithinArchetype = false;
 		/*
 		 * the archetype itself
 		 */
-		IObservable archetype = null;
+		this.archetype = null;
 
 		/*
 		 * direct (within) context for the main observable
@@ -242,6 +243,8 @@ public class Model extends KimObject implements IModel {
 		 */
 		if (isLearning() && getMainObservable() != null) {
 
+			this.distributesLearning = Annotations.INSTANCE.hasAnnotation(this, DISTRIBUTE_ANNOTATION);
+
 			if (!hasArchetype) {
 
 				Observable origin = (Observable) getMainObservable();
@@ -261,21 +264,25 @@ public class Model extends KimObject implements IModel {
 				if (origin.getAnnotations() == null) {
 					origin.setAnnotations(new ArrayList<IAnnotation>());
 				}
-				origin.getAnnotations().add(Annotation.create(IModel.ARCHETYPE_ANNOTATION));
+				origin.getAnnotations().add(Annotation.create(ARCHETYPE_ANNOTATION));
 
 			} else if (learnsWithinArchetype) {
 
 				/*
-				 * switch observable; optionalize the predictors. No further action as these are
-				 * only run explicitly so the resolution mechanism for the inherent observable
-				 * in ObservationStrategy won't be triggered.
+				 * switch observable; deactivate the predictors unless the @distribute
+				 * annotation requires the model to compute the value over the entire context.
+				 * No further action as these are only run explicitly so the resolution
+				 * mechanism for the inherent observable in ObservationStrategy won't be
+				 * triggered.
 				 */
 				IObservable inherent = getObservables().get(0).getBuilder(monitor).without(ObservableRole.CONTEXT)
 						.of(modelContext).buildObservable();
 				this.observables.set(0, inherent);
 				for (i = 1; i < dependencies.size(); i++) {
 					if (Annotations.INSTANCE.hasAnnotation(dependencies.get(i), IModel.PREDICTOR_ANNOTATION)) {
-						((Observable) dependencies.get(i)).setOptional(true);
+						if (!distributesLearning) {
+							((Observable) dependencies.get(i)).setActive(false);
+						}
 					}
 				}
 			}
@@ -284,9 +291,7 @@ public class Model extends KimObject implements IModel {
 		/*
 		 * add source(s) in main declaration as computables
 		 */
-		if (!model.getResourceUrns().isEmpty())
-
-		{
+		if (!model.getResourceUrns().isEmpty()) {
 
 			try {
 
@@ -537,6 +542,11 @@ public class Model extends KimObject implements IModel {
 			 */
 			monitor.error("Observable " + observable.getName() + " should not have units", observable);
 			setErrors(true);
+			return;
+		}
+
+		if (observable.is(Type.RATIO)) {
+			// we don't do anything to avoid insanity
 			return;
 		}
 
@@ -1286,5 +1296,36 @@ public class Model extends KimObject implements IModel {
 	 */
 	public Strategy getObservationStrategy() {
 		return observationStrategy;
+	}
+
+	/**
+	 * True if the model is a learning model for a quality that is learned within a
+	 * countable. In this case, the dependencies will only serve to define the
+	 * predictors.
+	 * 
+	 * @return
+	 */
+	public boolean learnsWithinArchetype() {
+		return learnsWithinArchetype;
+	}
+
+	/**
+	 * If there's an archetype, return it. Does not handle well the situation where
+	 * there could be > 1.
+	 * 
+	 * @return
+	 */
+	public IObservable getArchetype() {
+		return this.archetype;
+	}
+
+	/**
+	 * Model learns within an archetype but then builds a state for the entire
+	 * context with the learned quality.
+	 * 
+	 * @return
+	 */
+	public boolean distributesLearning() {
+		return this.distributesLearning;
 	}
 }

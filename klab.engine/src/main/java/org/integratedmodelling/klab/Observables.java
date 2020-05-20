@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.owl.Concept;
@@ -825,14 +826,17 @@ public enum Observables implements IObservableService {
 	public String describe(IConcept concept) {
 
 		IConcept described = Observables.INSTANCE.getDescribedType(concept);
+		IConcept comparison = Observables.INSTANCE.getComparisonType(concept);
 
 		String ret = "";
 		ret += " OWL identifier: " + concept + " (may not be unique)\n";
 		ret += "k.IM definition: " + concept.getDefinition() + "\n";
 		ret += "Core observable: " + Observables.INSTANCE.getCoreObservable(concept).getDefinition() + "\n";
 		ret += "Syntactic types: " + Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray()) + "\n\n";
+
 		if (described != null) {
-			ret += "           Describes:    " + described.getDefinition() + "\n";
+			ret += "           Describes: " + described.getDefinition()
+					+ (comparison == null ? "" : (" vs. " + comparison.getDefinition())) + "\n";
 		}
 		ret += "        Context type: " + decl(Observables.INSTANCE.getContextType(concept.getType())) + " [direct: "
 				+ decl(Observables.INSTANCE.getDirectContextType(concept.getType())) + "; in resolution: "
@@ -882,6 +886,11 @@ public enum Observables implements IObservableService {
 		ret += "\nMetadata:\n";
 		for (String key : concept.getMetadata().keySet()) {
 			ret += "   " + key + ": " + concept.getMetadata().get(key) + "\n";
+		}
+		
+		Unit unit = Units.INSTANCE.getDefaultUnitFor(concept);
+		if (unit != null) {
+			ret += "\nDefault unit: " + unit + "\n";
 		}
 
 		return ret;

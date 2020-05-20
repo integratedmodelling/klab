@@ -56,3 +56,9 @@ annotation archetype for dependencies
 		"If specified, values of the predicted variable inside the specified range will not become valid
 		 training instances. This only works with numeric values."
 }
+
+annotation distribute for models
+	"Requests a model that computes a quality within a specified countable to compute the quality over the entire
+	 context after learning. Forces the predictors to be mandatory dependencies for the context of learning."
+{
+}

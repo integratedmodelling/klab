@@ -139,6 +139,9 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		context.getMonitor().info("Training completed successfully.");
 
 		if (!ret.isArchetype()) {
+			
+			// HERE if it's distributed w/o @distribute it should create a merging state to substitute ret.
+			
 			for (ILocator locator : ret.getScale()) {
 
 				Instance instance = instances.getInstance(locator);

@@ -104,7 +104,10 @@ public class ObservationStrategy {
 		List<ObservationStrategy> ret = new ArrayList<>();
 
 		for (IObservable dep : model.getDependencies()) {
-			ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
+			// add all the active dependencies. Only inherent learners deactivate them so far.
+			if (((Observable)dep).isActive()) {
+				ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
+			}
 		}
 
 		if (observable.is(Type.RELATIONSHIP)) {

@@ -65,6 +65,7 @@ public class Observable implements IObservable {
 	private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
 	private boolean fluidUnits;
 	private boolean distributedInherency;
+	private boolean active = true;
 
 	/*
 	 * Target predicate is a concrete predicate that may be added to the observable
@@ -82,13 +83,6 @@ public class Observable implements IObservable {
 	 */
 	transient IModel resolvedModel;
 	private String modelReference;
-
-//	/**
-//	 * If this observable specifies a characterization or classification, which is
-//	 * performed by a filter, the name of the filtered observable is passed along
-//	 * with the observable, so that the model can later use it in computations.
-//	 */
-//	transient private IObservable filteredObservable;
 
 	// only used to resolve the subject observable if it has to be marshalled across
 	// network boundaries
@@ -150,6 +144,7 @@ public class Observable implements IObservable {
 		this.originatingModelId = observable.originatingModelId;
 		this.mustContextualize = observable.mustContextualize;
 		this.distributedInherency = observable.distributedInherency;
+		this.active = observable.active;
 	}
 
 	
@@ -750,6 +745,14 @@ public class Observable implements IObservable {
 	@Override
 	public IConcept getInherent() {
 		return Observables.INSTANCE.getInherency(this.getType());
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	
 }
