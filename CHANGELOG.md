@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Units in physical properties annotating resource attributes are mandatory.
+- Using 'within' is only allowed in the first observable of a model.
 - Improve model commands to resolve models and visualize resolution strategies, adding 
   the resolution context and optional contextualization to geocoded names and years 
   in model query.

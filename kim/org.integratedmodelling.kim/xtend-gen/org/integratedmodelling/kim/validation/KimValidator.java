@@ -557,6 +557,16 @@ public class KimValidator extends AbstractKimValidator {
               }
             }
           }
+          if (((obsIdx > 0) && (observable.getMain().getContext() != null))) {
+            this.error(
+              "Only the first observable of a model can use the \'within\' clause, which sets the context for all others", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+          }
+          if (((observable.hasAttributeIdentifier() && (observable.getMain().is(IKimConcept.Type.EXTENSIVE_PROPERTY) || observable.getMain().is(IKimConcept.Type.INTENSIVE_PROPERTY))) && 
+            (observable.getUnit() == null))) {
+            this.error("Physical properties linked to attributes require measurement units", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+          }
           if ((((observable.getMain() != null) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))) && 
             (observable.getMain().getInherent() == null))) {
             this.error(("Lone predicates are not valid observables. Use classifying observables to attribute " + 
@@ -647,6 +657,13 @@ public class KimValidator extends AbstractKimValidator {
         ObservableSemantics _observable_1 = cd.getObservable();
         boolean _tripleNotEquals_2 = (_observable_1 != null);
         if (_tripleNotEquals_2) {
+          IKimConcept _context = observable.getMain().getContext();
+          boolean _tripleNotEquals_3 = (_context != null);
+          if (_tripleNotEquals_3) {
+            this.error(("The \'within\' clause cannot be used in dependencies. Use \'of\' if you need to reference " + 
+              "an observable contextualized to a different subject than the model."), 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
+          }
           java.util.List<CompileNotificationReference> _notificationsFor = Kim.INSTANCE.getNotificationsFor(namespaceId, 
             observable.getURI());
           for (final CompileNotificationReference ref : _notificationsFor) {
@@ -686,8 +703,8 @@ public class KimValidator extends AbstractKimValidator {
               KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
           }
           Object _value = observable.getValue();
-          boolean _tripleNotEquals_3 = (_value != null);
-          if (_tripleNotEquals_3) {
+          boolean _tripleNotEquals_4 = (_value != null);
+          if (_tripleNotEquals_4) {
             String error = observable.validateValue();
             if ((error != null)) {
               this.error(error, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
@@ -709,8 +726,8 @@ public class KimValidator extends AbstractKimValidator {
               ok = false;
             } else {
               IKimConcept.ObservableRole _distributedInherent = observable.getMain().getDistributedInherent();
-              boolean _tripleNotEquals_4 = (_distributedInherent != null);
-              if (_tripleNotEquals_4) {
+              boolean _tripleNotEquals_5 = (_distributedInherent != null);
+              if (_tripleNotEquals_5) {
                 this.error("Distributed inherency (of each, for each, within each) are only allowed as main observables", 
                   KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
                 ok = false;
@@ -2829,8 +2846,8 @@ public class KimValidator extends AbstractKimValidator {
             boolean _is = countable_1.is(IKimConcept.Type.OBSERVABLE);
             boolean _not_7 = (!_is);
             if (_not_7) {
-              this.error(
-                "only observable types can be created by processes or events", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_5);
+              this.error("only observable types can be created by processes or events", concept, 
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_5);
             } else {
               ret.getObservablesCreated().add(countable_1);
             }

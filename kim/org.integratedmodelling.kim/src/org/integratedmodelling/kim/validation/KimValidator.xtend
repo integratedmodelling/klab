@@ -395,6 +395,19 @@ class KimValidator extends AbstractKimValidator {
 					}
 				}
 
+				if (obsIdx > 0 && observable.main.context !== null) {
+					error(
+						"Only the first observable of a model can use the 'within' clause, which sets the context for all others",
+						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+				}
+
+				if (observable.hasAttributeIdentifier &&
+					(observable.main.is(Type.EXTENSIVE_PROPERTY) || observable.main.is(Type.INTENSIVE_PROPERTY)) &&
+					observable.unit === null) {
+					error("Physical properties linked to attributes require measurement units",
+						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+				}
+
 				if (observable.main !== null && (observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE)) &&
 					observable.main.inherent === null) {
 					error("Lone predicates are not valid observables. Use classifying observables to attribute " +
@@ -474,6 +487,12 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			if (cd.observable !== null) {
+
+				if (observable.main.context !== null) {
+					error("The 'within' clause cannot be used in dependencies. Use 'of' if you need to reference " +
+						"an observable contextualized to a different subject than the model.",
+						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
+				}
 
 				for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId,
 					observable.getURI())) {
@@ -2258,9 +2277,8 @@ class KimValidator extends AbstractKimValidator {
 				for (decl : concept.creates) {
 					var countable = Kim.INSTANCE.declareConcept(decl)
 					if (!countable.is(Type.OBSERVABLE)) {
-						error(
-							"only observable types can be created by processes or events",
-							concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i)
+						error("only observable types can be created by processes or events", concept,
+							KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i)
 					} else {
 						ret.observablesCreated.add(countable)
 					}
