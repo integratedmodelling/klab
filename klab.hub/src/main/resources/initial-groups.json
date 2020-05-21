@@ -9,6 +9,7 @@
 		],
         "iconUrl": "http://integratedmodelling.org/dev/statics/logos/k.lab.png",
 		"worldview": true,
+		"preliminary": true,
         "observables": [],
         "roleRequirement" : "ROLE_USER"
 	},

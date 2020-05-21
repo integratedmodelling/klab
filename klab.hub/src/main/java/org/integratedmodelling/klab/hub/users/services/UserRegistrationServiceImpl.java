@@ -20,6 +20,8 @@ import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
+import org.integratedmodelling.klab.hub.listeners.NewUserAdded;
+import org.integratedmodelling.klab.hub.listeners.NewUserPublisher;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
@@ -35,16 +37,19 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 	private PasswordEncoder passwordEncoder;
 	private LdapTemplate ldapTemplate;
 	private LdapUserDetailsManager ldapUserDetailsManager;
+	private NewUserPublisher publisher;
 	
 	public UserRegistrationServiceImpl(UserRepository userRepository, 
 			PasswordEncoder passwordEncoder, 
 			LdapTemplate ldapTemplate,
-			LdapUserDetailsManager ldapUserDetailsManager) {
+			LdapUserDetailsManager ldapUserDetailsManager,
+			NewUserPublisher publisher) {
 		super();
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.ldapTemplate = ldapTemplate;
 		this.ldapUserDetailsManager = ldapUserDetailsManager;
+		this.publisher = publisher;
 	}
 
 
@@ -58,6 +63,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 			newUser.setUsername(username);
 			newUser.setEmail(email);
 			newUser = new CreatePendingUser(userRepository, newUser).execute();
+			publisher.publish(new NewUserAdded(new Object(), newUser));
 			return newUser;
 		}
 		

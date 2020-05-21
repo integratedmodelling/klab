@@ -34,6 +34,17 @@ public class MongoGroup extends GenericModel{
     Role roleRequirement;
     
     private List<String> dependsOn;
+    
+    /*
+     * If true user should be able to add this
+     * group to themselves
+     */
+    private boolean optIn;
+    
+    /* 
+     *If true this group is added to new users
+     */
+    private boolean preliminary;
 
 	public String getId() {
 		return id;
@@ -113,6 +124,24 @@ public class MongoGroup extends GenericModel{
 	public void setDependsOn(List<String> dependsOn) {
 		this.dependsOn = dependsOn;
 	}
+
+	public boolean isOptIn() {
+		return optIn;
+	}
+
+	public void setOptIn(boolean optIn) {
+		this.optIn = optIn;
+	}
+
+	public boolean isPreliminary() {
+		return preliminary;
+	}
+
+	public void setPreliminary(boolean preliminary) {
+		this.preliminary = preliminary;
+	}
+
+
 	
 	
 }

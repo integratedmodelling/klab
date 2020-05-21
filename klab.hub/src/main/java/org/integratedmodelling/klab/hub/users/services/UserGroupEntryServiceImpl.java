@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.commands.UpdateUsers;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
@@ -26,7 +27,6 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 
 	private UserRepository userRepository;
 	private MongoGroupRepository groupRepository;
-	
 	
 	@Override
 	public void setUsersGroupsByNames(UpdateUsersGroups updateRequest) {
@@ -93,6 +93,14 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		new UpdateUsers(users, userRepository).execute();
 	}
 	
+	@Override
+	public void addPrelimenaryUserGroups(User user, DateTime experiation) {
+		Set<GroupEntry> groupEntries = createPrelimGroupEntries(experiation);
+		user.addGroupEntries(groupEntries);
+		new UpdateUser(user, userRepository).execute();
+		
+	}
+	
 	private Set<GroupEntry> createGroupEntries(Set<String> groupnames, DateTime experiation) {
 		Set<GroupEntry> groupEntries = new HashSet<>();
 		for (String groupname : groupnames) {
@@ -108,4 +116,15 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		return groupEntries;
 	}
 	
+	private Set<GroupEntry> createPrelimGroupEntries(DateTime experiation) {
+		Set<GroupEntry> groupEntries = new HashSet<>();
+		groupRepository
+			.findPrelimGroups()
+			.forEach(grp ->
+				groupEntries.add(
+					new GroupEntry(grp, experiation)
+				)
+			);
+		return groupEntries;
+	}
 }
