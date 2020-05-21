@@ -147,8 +147,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 			 */
 			if (((Model) context.getModel()).learnsWithinArchetype()
 					&& !((Model) context.getModel()).distributesLearning()) {
-				ret = MergingState.promote(ret,
-						context.getArtifact(((Model) context.getModel()).getArchetype().getType()));
+				ret = MergingState.promote(ret, 
+						context.getObservations(((Model) context.getModel()).getArchetype().getType()));
 			} else {
 				for (ILocator locator : ret.getScale()) {
 					Instance instance = instances.getInstance(locator);

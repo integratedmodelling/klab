@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.indexing.SpatialIndex;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.owl.Observable;
@@ -47,16 +48,25 @@ public class MergingState extends State {
 		return ret;
 	}
 
-	public static MergingState promote(IState state, Collection<IArtifact> distributingArtifacts) {
+	public static MergingState promote(IState state, Collection<?> distributingArtifacts) {
 		MergingState ret = new MergingState(state);
 		ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(state, ((IState) state).getObservable()));
-		for (IArtifact distributingArtifact : distributingArtifacts) {
-			for (IArtifact object : distributingArtifact) {
-				if (object instanceof IDirectObservation) {
-					for (IState ostate : ((IDirectObservation) object).getStates()) {
-						if (ostate.getObservable().getType().is(state.getObservable())) {
-							ret.add(ostate);
+		for (Object dis : distributingArtifacts) {
+			if (dis instanceof ObservationGroup) {
+				IArtifact distributingArtifact = (IArtifact) dis;
+				for (IArtifact object : distributingArtifact) {
+					if (object instanceof IDirectObservation) {
+						for (IState ostate : ((IDirectObservation) object).getStates()) {
+							if (state.getObservable().getType().is(ostate.getObservable())) {
+								ret.add(ostate);
+							}
 						}
+					}
+				}
+			} else if (dis instanceof IDirectObservation) {
+				for (IState ostate : ((IDirectObservation) dis).getStates()) {
+					if (state.getObservable().getType().is(ostate.getObservable())) {
+						ret.add(ostate);
 					}
 				}
 			}

@@ -249,6 +249,7 @@ public class Aggregator {
 		case VERIFICATION:
 			return Aggregation.MAJORITY;
 		case QUANTIFICATION:
+			// NO - depends on whether the unit is extensive too
 			return observable.getType().is(Type.EXTENSIVE_PROPERTY) ? Aggregation.SUM : Aggregation.MEAN;
 		default:
 			break;

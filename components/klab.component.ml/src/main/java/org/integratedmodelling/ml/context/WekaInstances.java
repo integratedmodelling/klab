@@ -930,7 +930,7 @@ public class WekaInstances {
 			return predictedObservable.getName();
 		}
 		for (IObservable observable : getPredictorObservables()) {
-			if (observable.equals(state.getObservable())) {
+			if (observable.getType().equals(state.getObservable().getType())) {
 				return observable.getName();
 			}
 		}
