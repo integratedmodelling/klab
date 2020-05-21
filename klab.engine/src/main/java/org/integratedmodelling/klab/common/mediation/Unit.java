@@ -121,6 +121,11 @@ public class Unit implements IUnit {
 		return o instanceof Unit && toString().equals(((Unit) o).toString());
 	}
 
+	@Override
+	public boolean isUnitless() {
+		return equals(unitless());
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {

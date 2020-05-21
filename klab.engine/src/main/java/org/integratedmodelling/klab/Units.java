@@ -619,7 +619,8 @@ public enum Units implements IUnitService {
 			if (numerator != null && denominator != null
 					&& (numerator.is(Type.INTENSIVE_PROPERTY) || numerator.is(Type.EXTENSIVE_PROPERTY))
 					&& (denominator.is(Type.INTENSIVE_PROPERTY) || denominator.is(Type.EXTENSIVE_PROPERTY))) {
-				return true;
+				Unit unit = getDefaultUnitFor(observable.getType());
+				return unit != null && !unit.isUnitless();
 			} else {
 				return false;
 			}

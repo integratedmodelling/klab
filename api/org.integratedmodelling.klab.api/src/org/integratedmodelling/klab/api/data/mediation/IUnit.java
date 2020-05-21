@@ -151,4 +151,11 @@ public interface IUnit extends IValueMediator {
 	 */
 	Pair<IUnit, IUnit> splitExtent(ExtentDimension dimension);
 
+	/**
+	 * True if unitless.
+	 * 
+	 * @return
+	 */
+	boolean isUnitless();
+
 }
