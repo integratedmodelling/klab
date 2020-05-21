@@ -39,6 +39,7 @@ public class Structure implements IArtifact.Structure {
 	private Graph<IArtifact, DefaultEdge> artifactStructure = new DefaultDirectedGraph<IArtifact, DefaultEdge>(
 			DefaultEdge.class);
 
+	@Override
 	public IArtifact getRootArtifact() {
 		for (IArtifact artifact : logicalStructure.vertexSet()) {
 			if (logicalStructure.outgoingEdgesOf(artifact).size() == 0) {
@@ -48,6 +49,7 @@ public class Structure implements IArtifact.Structure {
 		return null;
 	}
 
+	@Override
 	public Collection<IArtifact> getLogicalChildren(IArtifact parent) {
 		List<IArtifact> ret = new ArrayList<>();
 		for (DefaultEdge edge : logicalStructure.incomingEdgesOf(parent)) {
@@ -56,6 +58,7 @@ public class Structure implements IArtifact.Structure {
 		return ret;
 	}
 
+	@Override
 	public Collection<IArtifact> getArtifactChildren(IArtifact parent) {
 		List<IArtifact> ret = new ArrayList<>();
 		for (DefaultEdge edge : artifactStructure.incomingEdgesOf(parent)) {
@@ -64,6 +67,7 @@ public class Structure implements IArtifact.Structure {
 		return ret;
 	}
 
+	@Override
 	public IArtifact getLogicalParent(IArtifact child) {
 		if (child instanceof ObservationGroup) {
 			return getArtifactParent(child);
@@ -74,11 +78,17 @@ public class Structure implements IArtifact.Structure {
 		return null;
 	}
 
+	@Override
 	public IArtifact getArtifactParent(IArtifact child) {
 		for (DefaultEdge edge : artifactStructure.outgoingEdgesOf(child)) {
 			return artifactStructure.getEdgeTarget(edge);
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean contains(IArtifact artifact) {
+		return artifactStructure.containsVertex(artifact);
 	}
 
 	/**

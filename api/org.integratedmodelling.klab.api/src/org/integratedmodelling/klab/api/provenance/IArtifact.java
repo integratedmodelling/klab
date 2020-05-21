@@ -199,10 +199,59 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 
 	}
 
+	/**
+	 * The artifact structure keeps tabs on both the logical and the physical
+	 * relationships of the artifacts within a context. The scope of each
+	 * observation contains the structure and exposes it.
+	 * 
+	 * @author Ferd
+	 *
+	 */
 	interface Structure {
 
+		/**
+		 * 
+		 * @return
+		 */
+		IArtifact getRootArtifact();
+
+		/**
+		 * 
+		 * @param child
+		 * @return
+		 */
+		IArtifact getArtifactParent(IArtifact child);
+
+		/**
+		 * 
+		 * @param child
+		 * @return
+		 */
+		IArtifact getLogicalParent(IArtifact child);
+
+		/**
+		 * 
+		 * @param parent
+		 * @return
+		 */
+		Collection<IArtifact> getArtifactChildren(IArtifact parent);
+
+		/**
+		 * 
+		 * @param parent
+		 * @return
+		 */
+		Collection<IArtifact> getLogicalChildren(IArtifact parent);
+
+		/**
+		 * 
+		 * @param artifact
+		 * @return
+		 */
+		boolean contains(IArtifact artifact);
+
 	}
-	
+
 	/**
 	 * The geometry linked to the observation. Observed artifacts will specialize
 	 * this as IScale.

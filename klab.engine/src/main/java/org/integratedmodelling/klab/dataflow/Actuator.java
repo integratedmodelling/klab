@@ -531,7 +531,8 @@ public class Actuator implements IActuator {
 			if (model != null) {
 				for (int i = 0; i < model.getObservables().size(); i++) {
 					IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getName());
-					if (!artifacts.contains(artifact) && artifact instanceof IObservation) {
+					if (!artifacts.contains(artifact) && artifact instanceof IObservation
+							&& ctx.getStructure().contains(artifact)) {
 						secondary.add((IObservation) artifact);
 					}
 				}

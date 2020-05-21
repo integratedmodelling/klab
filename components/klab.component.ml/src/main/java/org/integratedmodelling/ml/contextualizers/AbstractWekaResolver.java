@@ -31,9 +31,11 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
+import org.integratedmodelling.klab.data.storage.MergingState;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.FileUtils;
@@ -139,14 +141,21 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		context.getMonitor().info("Training completed successfully.");
 
 		if (!ret.isArchetype()) {
-			
-			// HERE if it's distributed w/o @distribute it should create a merging state to substitute ret.
-			
-			for (ILocator locator : ret.getScale()) {
-
-				Instance instance = instances.getInstance(locator);
-				if (instance != null) {
-					setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret, uncertainty);
+			/*
+			 * if it's distributed w/o @distribute it should create a merging state to
+			 * substitute ret.
+			 */
+			if (((Model) context.getModel()).learnsWithinArchetype()
+					&& !((Model) context.getModel()).distributesLearning()) {
+				ret = MergingState.promote(ret,
+						context.getArtifact(((Model) context.getModel()).getArchetype().getType()));
+			} else {
+				for (ILocator locator : ret.getScale()) {
+					Instance instance = instances.getInstance(locator);
+					if (instance != null) {
+						setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret,
+								uncertainty);
+					}
 				}
 			}
 		}
