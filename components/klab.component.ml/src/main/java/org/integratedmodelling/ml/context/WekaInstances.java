@@ -794,7 +794,10 @@ public class WekaInstances {
 						} else {
 							int i = 1;
 							for (IObservable predictor : predictors) {
-								if (state.getObservable().equals(predictor)) {
+								/*
+								 * TODO must use mediators for unit translation etc. if mentioned in the predictors
+								 */
+								if (state.getObservable().getType().equals(predictor.getType())) {
 									stateIndex.put(predictor.getName(), i);
 									missing.remove(predictor.getName());
 								} else if (weightObservable != null && state.getObservable().is(weightObservable)) {
