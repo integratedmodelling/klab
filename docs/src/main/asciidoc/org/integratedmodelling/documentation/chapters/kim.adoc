@@ -502,8 +502,6 @@ Observation type: QUANTIFICATION
 
 By using special k.IM constructs only available in the root namespace, it is possible to substitute a different core ontology for the default one and establish arbitrary mappings, which will affect the reasoning during contextualization. This advanced functionality will be documented in an appendix and is not discussed further in this chapter.
 
-
-
 === Children declaration
 
 [#section-kim-logical-expressions]
