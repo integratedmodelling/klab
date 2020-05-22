@@ -96,8 +96,7 @@ public enum Renderer {
 	 * from annotations or defaults.
 	 * 
 	 * @param state
-	 * @param locator
-	 *            must specify a full spatial slice
+	 * @param locator   must specify a full spatial slice
 	 * @param imageFile
 	 * @param viewport
 	 */
@@ -115,7 +114,8 @@ public enum Renderer {
 		try {
 
 			Viewport vport = new Viewport(viewport[0], viewport.length == 1 ? viewport[0] : viewport[1]);
-			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN);
+			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
+					Float.NaN);
 			IEnvelope envelope = space.getEnvelope();
 			IProjection projection = space.getProjection();
 			int[] imagesize = vport.getSize(grid.getXCells(), grid.getYCells());
@@ -202,7 +202,7 @@ public enum Renderer {
 		// TODO parameters for shaded relief and contrast enhancement
 
 		for (IAnnotation annotation : state.getAnnotations()) {
-			
+
 			if (annotation.getName().equals("colormap")) {
 
 				// check if we have just a name
@@ -416,9 +416,27 @@ public enum Renderer {
 			labels = new String[state.getDataKey().size()];
 			int i = 0;
 			for (Pair<Integer, String> pair : state.getDataKey().getAllValues()) {
-				values[i] = ((Number) pair.getFirst()).doubleValue();
-				labels[i] = pair.getSecond();
-				i++;
+				if (pair.getSecond() != null) {
+					values[i] = ((Number) pair.getFirst()).doubleValue();
+					labels[i] = pair.getSecond();
+					i++;
+				}
+			}
+			
+			// ensure there are no zero values remaining if the datakey isn't fully present
+			// could use lists for less code, I just hate having to turn Double into double
+			if (i < state.getDataKey().size()) {
+				double[] nvalues = new double[i];
+				String[] nlabels = new String[i];
+				Color[] ncolors = new Color[i];
+				for (int in = 0; in < i; in++) {
+					nvalues[in] = values[in];
+					nlabels[in] = labels[in];
+					ncolors[in] = colors[in];
+				}
+				values = nvalues;
+				labels = nlabels;
+				colors = ncolors;
 			}
 		}
 
