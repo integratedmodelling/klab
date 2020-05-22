@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.owl.Ontology;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 
@@ -519,12 +520,16 @@ public enum Observables implements IObservableService {
 
 	@Override
 	public Collection<IConcept> getRelationshipSources(IConcept relationship) {
-		return OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_SOURCE_PROPERTY));
+		return CollectionUtils.join(
+				OWL.INSTANCE.getDirectRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_SOURCE_PROPERTY)),
+				OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_SOURCE_PROPERTY)));
 	}
 
 	@Override
 	public Collection<IConcept> getRelationshipTargets(IConcept relationship) {
-		return OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY));
+		return CollectionUtils.join(
+				OWL.INSTANCE.getDirectRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY)),
+				OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY)));
 	}
 
 	/**
@@ -887,7 +892,7 @@ public enum Observables implements IObservableService {
 		for (String key : concept.getMetadata().keySet()) {
 			ret += "   " + key + ": " + concept.getMetadata().get(key) + "\n";
 		}
-		
+
 		Unit unit = Units.INSTANCE.getDefaultUnitFor(concept);
 		if (unit != null) {
 			ret += "\nDefault unit: " + unit + "\n";

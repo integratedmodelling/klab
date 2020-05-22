@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Types;
@@ -294,6 +295,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			ILocator scale) throws KlabException {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
+		if (context.getModel() != null && Annotations.INSTANCE.hasAnnotation(context.getModel(), "serial")) {
+			reentrant = false;
+		}
 		IArtifact self = context.get("self", IArtifact.class);
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context, context.getVariables());
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);

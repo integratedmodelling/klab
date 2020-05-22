@@ -205,11 +205,20 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 
 		for (IObservation source : allSources) {
 
+			if (context.getMonitor().isInterrupted()) {
+				break;
+			}
+
 			if (method == Method.Closest) {
 
 				if (this.distanceCalculator == null) {
 					this.distanceCalculator = new DistanceCalculator(scope.getScale().getSpace(), nTargets);
 					for (IArtifact target : allTargets) {
+
+						if (context.getMonitor().isInterrupted()) {
+							break;
+						}
+						
 						this.distanceCalculator.add((IDirectObservation) target);
 					}
 				}
@@ -222,6 +231,10 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 			} else {
 
 				for (IArtifact target : allTargets) {
+
+					if (context.getMonitor().isInterrupted()) {
+						break;
+					}
 
 					if (!allowSelfConnections && source.equals(target)) {
 						continue;
