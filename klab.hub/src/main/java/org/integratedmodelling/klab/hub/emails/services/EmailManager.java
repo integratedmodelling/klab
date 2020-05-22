@@ -107,6 +107,17 @@ public class EmailManager {
 		
 	}
 	
+	public void expiredLicenseEmail(String to) throws MessagingException {
+		String subject = "Integrated Modelling Certificate has Expired";
+		String msg = String.format(
+				"You have attempted to authenticate with an expired license.  " +
+						"Please click the following link: %s \n\n" +
+						"and sign in to download a new certificate.", linkConfig.getSiteUrl()
+				);
+		sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
+		
+	}
+	
 	private void sendInternalEmail(String from, String to, String subject, String message) {
 		Set<String> receipts = new HashSet<>(Arrays.asList(to));
 		send(from, receipts, null, subject, message, false);

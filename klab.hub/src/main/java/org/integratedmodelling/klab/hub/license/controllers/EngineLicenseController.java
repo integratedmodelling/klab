@@ -6,7 +6,7 @@ import java.security.NoSuchProviderException;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.annotation.security.RolesAllowed;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,7 +19,9 @@ import org.integratedmodelling.klab.hub.api.EngineAuthResponeFactory;
 import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.PropertiesFactory;
+import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
@@ -44,13 +46,17 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 
 	private MongoGroupRepository groupRepository;
 	
+	private EmailManager emailManager;
+	
 	@Autowired
 	EngineLicenseController(UserProfileService userProfileService,
 			LicenseConfigRepository licenseRepo,
-			MongoGroupRepository groupRepository) {
+			MongoGroupRepository groupRepository,
+		    EmailManager emailManager) {
 		this.userProfileService = userProfileService;
 		this.licenseRepo = licenseRepo;
 		this.groupRepository = groupRepository;
+		this.emailManager = emailManager;
 	}
 	
 	@GetMapping(value= API.HUB.USER_BASE_ID, params = "certificate")
@@ -81,7 +87,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 	@PostMapping(value= API.HUB.AUTHENTICATE_ENGINE)
 	public ResponseEntity<EngineAuthenticationResponse> processCertificate(
 			@RequestBody EngineAuthenticationRequest request,
-			HttpServletRequest httpRequest) {
+			HttpServletRequest httpRequest) throws MessagingException {
 		String remoteAddr = "";
 
 		if (httpRequest != null) {
@@ -97,13 +103,15 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 		LicenseConfiguration config = licenseRepo.findByKeyString(request.getKey())
 				.orElseGet(() -> new LicenseConfiguration());
 
-		EngineAuthenticationResponse response;
+		EngineAuthenticationResponse response = null;
 		
 		try {
 			response = new EngineAuthResponeFactory()
 				.getRespone(request, remoteAddr, config, userProfileService, groupRepository);
 		} catch (NoSuchProviderException | IOException | PGPException e) {
-			throw new BadRequestException("Make a more useful message to help fiqure out what happened.");
+			throw new BadRequestException("");
+		} catch (LicenseExpiredException e) {
+			emailManager.expiredLicenseEmail(request.getEmail());
 		}
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);

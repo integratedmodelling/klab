@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.license.controllers;
 
 import java.io.IOException;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,9 +27,10 @@ public abstract class LicenseController<R extends AuthenticationRequest>{
 	/**
 	* Creates a license for the specified id.
 	* The response is used to stream back the new certifacte in download form
+	 * @throws MessagingException 
 	* 
 	*/
 	abstract ResponseEntity<?> processCertificate(R request,
-			HttpServletRequest httpRequest);
+			HttpServletRequest httpRequest) throws MessagingException;
 
 }
