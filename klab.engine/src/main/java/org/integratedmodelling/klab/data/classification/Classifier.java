@@ -439,11 +439,6 @@ public class Classifier implements IClassifier {
 		} else if (stringMatch != null) {
 			return stringMatch;
 		} else if (expressionMatch != null) {
-			
-			if (Observations.INSTANCE.isData(context.get("population_density")) && Observations.INSTANCE.isData(context.get("gdp"))) {
-				System.out.println("ZIOZI");
-			}
-			
 			return expressionMatch.eval(context, context);
 		}
 		return null;
