@@ -85,6 +85,10 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 		System.err.println("GETTING DATA FROM " + res.getUrn());
 		IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
 		System.err.println("DONE " + res.getUrn());
+		
+		if (data == null) {
+			context.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
+		}
 
 		return data == null ? observation : data.getArtifact();
 	}

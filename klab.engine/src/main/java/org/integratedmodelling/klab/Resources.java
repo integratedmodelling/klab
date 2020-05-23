@@ -1058,6 +1058,7 @@ public enum Resources implements IResourceService {
 					adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
 					return builder.build();
 				} catch (Throwable e) {
+					Logging.INSTANCE.error(e);
 					// just return null later
 				}
 			}
