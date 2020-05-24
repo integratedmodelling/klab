@@ -17111,11 +17111,11 @@ ruleNumber returns [EObject current=null]
 		)
 		(
 			((
-				'L'
+				'l'
 			)
 			)=>
 			(
-				lv_long_3_0='L'
+				lv_long_3_0='l'
 				{
 					newLeafNode(lv_long_3_0, grammarAccess.getNumberAccess().getLongLKeyword_2_0());
 				}
@@ -17123,7 +17123,7 @@ ruleNumber returns [EObject current=null]
 					if ($current==null) {
 						$current = createModelElement(grammarAccess.getNumberRule());
 					}
-					setWithLastConsumed($current, "long", true, "L");
+					setWithLastConsumed($current, "long", true, "l");
 				}
 			)
 		)?

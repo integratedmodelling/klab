@@ -15,9 +15,12 @@
  */
 package org.integratedmodelling.klab.common.mediation;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.measure.converter.UnitConverter;
@@ -34,10 +37,12 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Triple;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -56,10 +61,25 @@ public class Unit implements IUnit {
 	boolean wasContextualized = false;
 
 	/**
+	 * Non-SI units we can't handle directly if we need to preserve comparability
+	 * with same semantics. E.g. volumes in liters wouldn't be compatible with
+	 * volumes in m^3 from a unit perspective, so we turn liters into cubic
+	 * decimeters at the moment of declaration.
+	 * 
+	 * TODO hopefully not necessary, as liters DO translate to volumes properly. For
+	 * the time being the code is there in standardize() but is not used.
+	 */
+	private static Map<String, String> translations;
+
+	static {
+		translations = new HashMap<>();
+//		translations.put("L", "dm^3");
+	}
+
+	/**
 	 * Create a unit from a string.
 	 *
-	 * @param string
-	 *            the string
+	 * @param string the string
 	 * @return the unit
 	 */
 	public static Unit create(String string) {
@@ -97,12 +117,9 @@ public class Unit implements IUnit {
 	/**
 	 * Convert a quantity from a unit to another.
 	 *
-	 * @param value
-	 *            the value
-	 * @param unitFrom
-	 *            the unit from
-	 * @param unitTo
-	 *            the unit to
+	 * @param value    the value
+	 * @param unitFrom the unit from
+	 * @param unitTo   the unit to
 	 * @return the double
 	 */
 	public static double convert(double value, String unitFrom, String unitTo) {
@@ -125,7 +142,7 @@ public class Unit implements IUnit {
 	public boolean isUnitless() {
 		return equals(unitless());
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
@@ -135,10 +152,8 @@ public class Unit implements IUnit {
 	/**
 	 * Instantiates a new unit.
 	 *
-	 * @param unit
-	 *            the unit
-	 * @param statement
-	 *            the statement
+	 * @param unit      the unit
+	 * @param statement the statement
 	 */
 	public Unit(javax.measure.unit.Unit<?> unit, String statement) {
 		this._unit = unit;
@@ -148,8 +163,7 @@ public class Unit implements IUnit {
 	/**
 	 * Instantiates a new unit.
 	 *
-	 * @param unit
-	 *            the unit
+	 * @param unit the unit
 	 */
 	public Unit(javax.measure.unit.Unit<?> unit) {
 		this._unit = unit;
@@ -159,11 +173,14 @@ public class Unit implements IUnit {
 	/**
 	 * The main method.
 	 *
-	 * @param a
-	 *            the arguments
+	 * @param a the arguments
 	 */
 	static public void main(String[] a) {
 		System.out.println(convert(120, "m", "mm"));
+		System.out.println(convert(120, "mg/L", "mg/dm^3"));
+		Unit dio = create("mg/L");
+		System.out.println("DIO era " + dio);
+		System.out.println("DIO ora " + dio.standardize());
 	}
 
 	/** {@inheritDoc} */
@@ -236,7 +253,45 @@ public class Unit implements IUnit {
 		}
 		return Dimension.NONE;
 	}
-	
+
+	/**
+	 * Return the unit with any incompatible non-SI units turned into their
+	 * correspondent SI.
+	 * 
+	 * @return
+	 */
+	public Unit standardize() {
+		return new Unit(standardize(this._unit));
+	}
+
+	private javax.measure.unit.Unit<?> standardize(javax.measure.unit.Unit<?> unit) {
+		String alternate = translations.get(unit.toString());
+		if (alternate != null) {
+			try {
+				return (javax.measure.unit.Unit<?>) UnitFormat.getUCUMInstance().parseObject(alternate);
+			} catch (ParseException e) {
+				throw new KlabInternalErrorException(e);
+			}
+		}
+		if (unit instanceof ProductUnit<?>) {
+			List<Triple<javax.measure.unit.Unit<?>, Integer, Integer>> elements = new ArrayList<>();
+			for (int i = 0; i < ((ProductUnit<?>) unit).getUnitCount(); i++) {
+				elements.add(new Triple<>(standardize(((ProductUnit<?>) unit).getUnit(i)),
+						((ProductUnit<?>) unit).getUnitPow(i), ((ProductUnit<?>) unit).getUnitRoot(i)));
+			}
+
+			javax.measure.unit.Unit<?> ret = null;
+			for (int i = 0; i < elements.size(); i++) {
+				javax.measure.unit.Unit<?> u = elements.get(i).getFirst().root(elements.get(i).getThird())
+						.pow(elements.get(i).getSecond());
+				ret = ret == null ? u : ret.times(u);
+			}
+			return ret;
+
+		}
+		return unit;
+	}
+
 	@Override
 	public Pair<IUnit, IUnit> splitExtent(ExtentDimension dimension) {
 
@@ -339,7 +394,7 @@ public class Unit implements IUnit {
 			Pair<IUnit, IUnit> split = recontextualizer.splitExtent(ed);
 			if (split != null && split.getSecond() != null) {
 
-				recontextualizer = (Unit)split.getFirst();
+				recontextualizer = (Unit) split.getFirst();
 				Pair<Double, IUnit> dimsize = dim.getStandardizedDimension(locator);
 				contextualConversion *= split.getSecond().convert(dimsize.getFirst(), dimsize.getSecond())
 						.doubleValue();
@@ -354,74 +409,8 @@ public class Unit implements IUnit {
 			}
 		}
 
-		return new RecontextualizingUnit((Unit)observable.getUnit(), recontextualizer, contextualConversion, !regular);
+		return new RecontextualizingUnit((Unit) observable.getUnit(), recontextualizer, contextualConversion, !regular);
 	}
-
-//	@Override
-//	public Contextualization contextualize(IGeometry geometry, Map<ExtentDimension, ExtentDistribution> constraints) {
-//
-//		/*
-//		 * produce all possible base units: gather the extents in the geometry
-//		 */
-//		Set<ExtentDimension> aggregatable = new HashSet<>();
-//		for (IGeometry.Dimension dimension : geometry.getDimensions()) {
-//			if (dimension.size() > 1 || dimension.isRegular()) {
-//				aggregatable.add(dimension.getExtentDimension());
-//			}
-//		}
-//
-//		IUnit fullyContextualized = Units.INSTANCE.contextualize(this, aggregatable);
-//
-//		List<Unit> potentialUnits = new ArrayList<>();
-//		for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
-//			Unit aggregated = (Unit) Units.INSTANCE.removeExtents(fullyContextualized, set);
-//			potentialUnits.add(aggregated.withAggregatedDimensions(set));
-//		}
-//
-//		IUnit chosen = null;
-//
-//		if (constraints == null || constraints.isEmpty()) {
-//			chosen = fullyContextualized;
-//		} else {
-//
-//			Set<ExtentDimension> whitelist = new HashSet<>();
-//			Set<ExtentDimension> blacklist = new HashSet<>();
-//			for (ExtentDimension d : constraints.keySet()) {
-//				if (!aggregatable.contains(d)) {
-//					continue;
-//				}
-//				if (constraints.get(d) == ExtentDistribution.EXTENSIVE) {
-//					whitelist.add(d);
-//				} else {
-//					blacklist.add(d);
-//				}
-//			}
-//
-//			for (Unit punit : potentialUnits) {
-//				if (Sets.intersection(punit.getAggregatedDimensions(), whitelist).size() == whitelist.size()
-//						&& Sets.intersection(punit.getAggregatedDimensions(), blacklist).size() == 0) {
-//					chosen = punit;
-//					break;
-//				}
-//			}
-//		}
-//
-//		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
-//		final IUnit correctUnit = chosen;
-//
-//		return new Contextualization() {
-//
-//			@Override
-//			public IUnit getChosenUnit() {
-//				return correctUnit;
-//			}
-//
-//			@Override
-//			public Collection<IUnit> getCandidateUnits() {
-//				return candidates;
-//			}
-//		};
-//	}
 
 	public Unit withAggregatedDimensions(Set<ExtentDimension> set) {
 		this.aggregatedDimensions.addAll(set);
