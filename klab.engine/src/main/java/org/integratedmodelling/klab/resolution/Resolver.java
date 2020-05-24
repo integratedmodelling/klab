@@ -14,8 +14,6 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -33,6 +31,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -345,12 +344,12 @@ public class Resolver {
 			 * look in the catalog. This will have accurate coverage but not necessarily every
 			 * observation (those coming from attributes will be missing).
 			 */
-			previousArtifact = ((Subject) ret.getContext()).getScope().findArtifact(observable);
+			previousArtifact = ((DirectObservation) ret.getContext()).getScope().findArtifact(observable);
 			if (previousArtifact == null) {
 				/*
 				 * check in the context's children and attribute full coverage if there
 				 */
-				IObservation previous = ((Subject) ret.getContext()).getChildObservation(observable);
+				IObservation previous = ((DirectObservation) ret.getContext()).getObservationResolving(observable);
 				if (previous != null) {
 					previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
 				}

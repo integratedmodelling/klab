@@ -44435,7 +44435,7 @@ rule__Number__LongAssignment_2
 		{ before(grammarAccess.getNumberAccess().getLongLKeyword_2_0()); }
 		(
 			{ before(grammarAccess.getNumberAccess().getLongLKeyword_2_0()); }
-			'L'
+			'l'
 			{ after(grammarAccess.getNumberAccess().getLongLKeyword_2_0()); }
 		)
 		{ after(grammarAccess.getNumberAccess().getLongLKeyword_2_0()); }

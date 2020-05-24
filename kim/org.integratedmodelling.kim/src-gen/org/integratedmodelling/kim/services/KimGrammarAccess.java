@@ -9844,11 +9844,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cExpINTTerminalRuleCall_4_0_2_0 = (RuleCall)cExpAssignment_4_0_2.eContents().get(0);
 		
 		//Number:
-		//	('+' | negative?='-')? => real=INT => long?='L'? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+'
+		//	('+' | negative?='-')? => real=INT => long?='l'? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+'
 		//	| expNegative?='-')? exp=INT)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//('+' | negative?='-')? => real=INT => long?='L'? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' |
+		//('+' | negative?='-')? => real=INT => long?='l'? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' |
 		//expNegative?='-')? exp=INT)?
 		public Group getGroup() { return cGroup; }
 		
@@ -9870,10 +9870,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//INT
 		public RuleCall getRealINTTerminalRuleCall_1_0() { return cRealINTTerminalRuleCall_1_0; }
 		
-		//=> long?='L'?
+		//=> long?='l'?
 		public Assignment getLongAssignment_2() { return cLongAssignment_2; }
 		
-		//'L'
+		//'l'
 		public Keyword getLongLKeyword_2_0() { return cLongLKeyword_2_0; }
 		
 		//=> (decimal?='.' decimalPart=INT)?
@@ -11872,7 +11872,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Number:
-	//	('+' | negative?='-')? => real=INT => long?='L'? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+'
+	//	('+' | negative?='-')? => real=INT => long?='l'? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+'
 	//	| expNegative?='-')? exp=INT)?;
 	public NumberElements getNumberAccess() {
 		return pNumber;

@@ -57,13 +57,31 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	@Override
 	public IObservation getChildObservation(IObservable observable) {
 		for (IArtifact child : getScope().getChildArtifactsOf(this)) {
-			if (child instanceof IObservation && ((IObservation)child).getObservable().is(observable)) {
-				return (IObservation)child;
+			if (child instanceof IObservation
+					&& ((IObservation) child).getObservable().getType().is(observable.getType())) {
+				return (IObservation) child;
 			}
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Return the first observation that resolves the passed observable in the context of this one,
+	 * reassessing the context if the observable comes with an explicit 'within' clause.
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	public IObservation getObservationResolving(IObservable observable) {
+		for (IArtifact child : getScope().getChildArtifactsOf(this)) {
+			if (child instanceof IObservation && ((IObservation) child).getObservable().getType()
+					.resolves(observable.getType(), getObservable().getType())) {
+				return (IObservation) child;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public <T extends IArtifact> Collection<T> getChildren(Class<T> cls) {
 		return getScope().getChildren(this, cls);
@@ -136,13 +154,12 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	public Set<IConcept> getPredicates() {
 		return this.predicates;
 	}
-	
+
 	public void removePredicate(IConcept predicate) {
 
 		if (this.predicates.remove(predicate)) {
 
-			IObservable.Builder builder = getObservable().getBuilder(getScope().getMonitor())
-					.without(predicate);
+			IObservable.Builder builder = getObservable().getBuilder(getScope().getMonitor()).without(predicate);
 
 			this.setObservable((Observable) builder.buildObservable());
 

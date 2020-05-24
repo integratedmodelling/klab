@@ -454,9 +454,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IArtifact ret = null;
 		if (dataflow == null) {
 			if (observable.isOptional()) {
-				monitor.warn("cannot resolve optional observable " + observable + " in " + observation);
+				monitor.warn("cannot resolve optional observable " + observable.getDefinition() + " in " + observation);
 			} else {
-				monitor.error("cannot resolve mandatory observable " + observable + " in " + observation);
+				monitor.error("cannot resolve mandatory observable " + observable.getDefinition() + " in " + observation);
 				// don't stop so we know which objects don't resolve, although >1 may be
 				// annoying.
 			}

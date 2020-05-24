@@ -24,7 +24,7 @@ import java.util.HashMap;
 @SuppressWarnings("all")
 public class InternalKimParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_UPPERCASE_ID", "RULE_LOWERCASE_ID", "RULE_STRING", "RULE_SEPARATOR", "RULE_EXPR", "RULE_CAMELCASE_ID", "RULE_INT", "RULE_LOWERCASE_DASHID", "RULE_ID", "RULE_UPPERCASE_PATH", "RULE_BACKCASE_ID", "RULE_ANNOTATION_ID", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "';'", "'void'", "'project'", "'private'", "'define'", "'as'", "'each'", "','", "'true'", "'false'", "'observing'", "'using'", "'classified'", "'discretized'", "'into'", "'according'", "'to'", "'lookup'", "'('", "'?'", "'*'", "')'", "'metadata'", "'otherwise'", "'if'", "'unless'", "'inclusive'", "'exclusive'", "'in'", "'unknown'", "'{{'", "'}}'", "'|'", "'#'", "'aggregated'", "'over'", "'on'", "'definition'", "'instantiation'", "'termination'", "'context'", "'related'", "'set'", "'integrate'", "'do'", "'then'", "'finally'", "'move'", "'away'", "'for'", "'model'", "'learn'", "'number'", "'object'", "'text'", "'boolean'", "'>'", "'>='", "'<='", "'<'", "'where'", "'=='", "'='", "'without'", "'!='", "'plus'", "'minus'", "'times'", "'by'", "'namespace'", "'scenario'", "'worldview'", "'language'", "'imports'", "'covering'", "'domain'", "'root'", "'disjoint'", "'with'", "'version'", "'resolve'", "'from'", "'outside'", "'parameters'", "'urn:klab:'", "':'", "'&'", "'/'", "'.'", "'observe'", "'extends'", "'children'", "'any'", "'per'", "'optional'", "'required'", "'named'", "'down'", "'total'", "'averaged'", "'summed'", "'of'", "'caused'", "'adjacent'", "'contained'", "'containing'", "'causing'", "'during'", "'within'", "'linking'", "'${'", "'#{'", "'inherent'", "'compresent'", "'container'", "'purpose'", "'causant'", "'cooccurrent'", "'}'", "'not'", "'no'", "'identified'", "'presence'", "'count'", "'distance'", "'probability'", "'assessment'", "'change'", "'rate'", "'changed'", "'uncertainty'", "'magnitude'", "'level'", "'type'", "'observability'", "'proportion'", "'percentage'", "'ratio'", "'monetary'", "'value'", "'occurrence'", "'identity'", "'or'", "'and'", "'follows'", "'deliberative'", "'interactive'", "'reactive'", "'agent'", "'relationship'", "'abstract'", "'deniable'", "'subjective'", "'rescaling'", "'is'", "'equals'", "'core'", "'nothing'", "'exposes'", "'exposing'", "'defines'", "'authority'", "'requires'", "'describes'", "'increases'", "'decreases'", "'marks'", "'classifies'", "'discretizes'", "'inherits'", "'has'", "'role'", "'targeting'", "'confers'", "'part'", "'constituent'", "'consists'", "'creates'", "'applies'", "'links'", "'inverse'", "'affects'", "'implies'", "'uses'", "'only'", "'exactly'", "'at'", "'least'", "'most'", "'more'", "'contains'", "'between'", "'attribute'", "'realm'", "'extent'", "'{'", "'initialization'", "'transition'", "'?='", "'quality'", "'class'", "'quantity'", "'configuration'", "'bond'", "'ordering'", "'amount'", "'length'", "'mass'", "'volume'", "'weight'", "'money'", "'duration'", "'area'", "'acceleration'", "'energy'", "'entropy'", "'priority'", "'electric-potential'", "'charge'", "'resistance'", "'resistivity'", "'pressure'", "'angle'", "'velocity'", "'temperature'", "'viscosity'", "'thing'", "'process'", "'event'", "'functional'", "'structural'", "'@'", "'+'", "'-'", "'L'", "'e'", "'E'", "'AD'", "'CE'", "'BC'", "'^'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_UPPERCASE_ID", "RULE_LOWERCASE_ID", "RULE_STRING", "RULE_SEPARATOR", "RULE_EXPR", "RULE_CAMELCASE_ID", "RULE_INT", "RULE_LOWERCASE_DASHID", "RULE_ID", "RULE_UPPERCASE_PATH", "RULE_BACKCASE_ID", "RULE_ANNOTATION_ID", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "';'", "'void'", "'project'", "'private'", "'define'", "'as'", "'each'", "','", "'true'", "'false'", "'observing'", "'using'", "'classified'", "'discretized'", "'into'", "'according'", "'to'", "'lookup'", "'('", "'?'", "'*'", "')'", "'metadata'", "'otherwise'", "'if'", "'unless'", "'inclusive'", "'exclusive'", "'in'", "'unknown'", "'{{'", "'}}'", "'|'", "'#'", "'aggregated'", "'over'", "'on'", "'definition'", "'instantiation'", "'termination'", "'context'", "'related'", "'set'", "'integrate'", "'do'", "'then'", "'finally'", "'move'", "'away'", "'for'", "'model'", "'learn'", "'number'", "'object'", "'text'", "'boolean'", "'>'", "'>='", "'<='", "'<'", "'where'", "'=='", "'='", "'without'", "'!='", "'plus'", "'minus'", "'times'", "'by'", "'namespace'", "'scenario'", "'worldview'", "'language'", "'imports'", "'covering'", "'domain'", "'root'", "'disjoint'", "'with'", "'version'", "'resolve'", "'from'", "'outside'", "'parameters'", "'urn:klab:'", "':'", "'&'", "'/'", "'.'", "'observe'", "'extends'", "'children'", "'any'", "'per'", "'optional'", "'required'", "'named'", "'down'", "'total'", "'averaged'", "'summed'", "'of'", "'caused'", "'adjacent'", "'contained'", "'containing'", "'causing'", "'during'", "'within'", "'linking'", "'${'", "'#{'", "'inherent'", "'compresent'", "'container'", "'purpose'", "'causant'", "'cooccurrent'", "'}'", "'not'", "'no'", "'identified'", "'presence'", "'count'", "'distance'", "'probability'", "'assessment'", "'change'", "'rate'", "'changed'", "'uncertainty'", "'magnitude'", "'level'", "'type'", "'observability'", "'proportion'", "'percentage'", "'ratio'", "'monetary'", "'value'", "'occurrence'", "'identity'", "'or'", "'and'", "'follows'", "'deliberative'", "'interactive'", "'reactive'", "'agent'", "'relationship'", "'abstract'", "'deniable'", "'subjective'", "'rescaling'", "'is'", "'equals'", "'core'", "'nothing'", "'exposes'", "'exposing'", "'defines'", "'authority'", "'requires'", "'describes'", "'increases'", "'decreases'", "'marks'", "'classifies'", "'discretizes'", "'inherits'", "'has'", "'role'", "'targeting'", "'confers'", "'part'", "'constituent'", "'consists'", "'creates'", "'applies'", "'links'", "'inverse'", "'affects'", "'implies'", "'uses'", "'only'", "'exactly'", "'at'", "'least'", "'most'", "'more'", "'contains'", "'between'", "'attribute'", "'realm'", "'extent'", "'{'", "'initialization'", "'transition'", "'?='", "'quality'", "'class'", "'quantity'", "'configuration'", "'bond'", "'ordering'", "'amount'", "'length'", "'mass'", "'volume'", "'weight'", "'money'", "'duration'", "'area'", "'acceleration'", "'energy'", "'entropy'", "'priority'", "'electric-potential'", "'charge'", "'resistance'", "'resistivity'", "'pressure'", "'angle'", "'velocity'", "'temperature'", "'viscosity'", "'thing'", "'process'", "'event'", "'functional'", "'structural'", "'@'", "'+'", "'-'", "'l'", "'e'", "'E'", "'AD'", "'CE'", "'BC'", "'^'"
     };
     public static final int T__144=144;
     public static final int T__143=143;
@@ -46155,7 +46155,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleNumber"
-    // InternalKim.g:17061:1: ruleNumber returns [EObject current=null] : ( (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'L' ) )=> (lv_long_3_0= 'L' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )? ) ;
+    // InternalKim.g:17061:1: ruleNumber returns [EObject current=null] : ( (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'l' ) )=> (lv_long_3_0= 'l' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )? ) ;
     public final EObject ruleNumber() throws RecognitionException {
         EObject current = null;
 
@@ -46175,11 +46175,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalKim.g:17067:2: ( ( (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'L' ) )=> (lv_long_3_0= 'L' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )? ) )
-            // InternalKim.g:17068:2: ( (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'L' ) )=> (lv_long_3_0= 'L' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )? )
+            // InternalKim.g:17067:2: ( ( (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'l' ) )=> (lv_long_3_0= 'l' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )? ) )
+            // InternalKim.g:17068:2: ( (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'l' ) )=> (lv_long_3_0= 'l' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )? )
             {
-            // InternalKim.g:17068:2: ( (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'L' ) )=> (lv_long_3_0= 'L' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )? )
-            // InternalKim.g:17069:3: (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'L' ) )=> (lv_long_3_0= 'L' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )?
+            // InternalKim.g:17068:2: ( (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'l' ) )=> (lv_long_3_0= 'l' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )? )
+            // InternalKim.g:17069:3: (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )? ( ( ( RULE_INT ) )=> (lv_real_2_0= RULE_INT ) ) ( ( ( 'l' ) )=> (lv_long_3_0= 'l' ) )? ( ( ( ( ( '.' ) ) ( ( RULE_INT ) ) ) )=> ( ( (lv_decimal_4_0= '.' ) ) ( (lv_decimalPart_5_0= RULE_INT ) ) ) )? ( ( ( ( ( ( 'e' | 'E' ) ) ) ( '+' | ( ( '-' ) ) )? ( ( RULE_INT ) ) ) )=> ( ( ( (lv_exponential_6_1= 'e' | lv_exponential_6_2= 'E' ) ) ) (otherlv_7= '+' | ( (lv_expNegative_8_0= '-' ) ) )? ( (lv_exp_9_0= RULE_INT ) ) ) )?
             {
             // InternalKim.g:17069:3: (otherlv_0= '+' | ( (lv_negative_1_0= '-' ) ) )?
             int alt342=3;
@@ -46269,7 +46269,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalKim.g:17112:3: ( ( ( 'L' ) )=> (lv_long_3_0= 'L' ) )?
+            // InternalKim.g:17112:3: ( ( ( 'l' ) )=> (lv_long_3_0= 'l' ) )?
             int alt343=2;
             int LA343_0 = input.LA(1);
 
@@ -46278,10 +46278,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             }
             switch (alt343) {
                 case 1 :
-                    // InternalKim.g:17113:4: ( ( 'L' ) )=> (lv_long_3_0= 'L' )
+                    // InternalKim.g:17113:4: ( ( 'l' ) )=> (lv_long_3_0= 'l' )
                     {
-                    // InternalKim.g:17117:4: (lv_long_3_0= 'L' )
-                    // InternalKim.g:17118:5: lv_long_3_0= 'L'
+                    // InternalKim.g:17117:4: (lv_long_3_0= 'l' )
+                    // InternalKim.g:17118:5: lv_long_3_0= 'l'
                     {
                     lv_long_3_0=(Token)match(input,254,FOLLOW_173); if (state.failed) return current;
                     if ( state.backtracking==0 ) {
@@ -46294,7 +46294,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getNumberRule());
                       					}
-                      					setWithLastConsumed(current, "long", true, "L");
+                      					setWithLastConsumed(current, "long", true, "l");
                       				
                     }
 
@@ -62819,11 +62819,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
     // $ANTLR start synpred659_InternalKim
     public final void synpred659_InternalKim_fragment() throws RecognitionException {   
-        // InternalKim.g:17113:4: ( ( 'L' ) )
-        // InternalKim.g:17113:5: ( 'L' )
+        // InternalKim.g:17113:4: ( ( 'l' ) )
+        // InternalKim.g:17113:5: ( 'l' )
         {
-        // InternalKim.g:17113:5: ( 'L' )
-        // InternalKim.g:17114:5: 'L'
+        // InternalKim.g:17113:5: ( 'l' )
+        // InternalKim.g:17114:5: 'l'
         {
         match(input,254,FOLLOW_2); if (state.failed) return ;
 
