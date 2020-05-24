@@ -336,9 +336,11 @@ public abstract class SessionMonitor extends ContextMonitor {
 
 	public List<Notification> getSystemNotifications(Level logLevel) {
 		List<Notification> ret = new ArrayList<>();
-		for (Notification notification : systemNotifications) {
-			if (logLevel.intValue() <= Level.parse(notification.getLevel()).intValue()) {
-				ret.add(notification);
+		synchronized (lock) {
+			for (Notification notification : systemNotifications) {
+				if (logLevel.intValue() <= Level.parse(notification.getLevel()).intValue()) {
+					ret.add(notification);
+				}
 			}
 		}
 		return ret;
