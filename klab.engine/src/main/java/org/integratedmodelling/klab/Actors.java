@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -381,6 +382,16 @@ public enum Actors implements IActorsService {
 
 	public Collection<String> getBehaviorIds() {
 		return behaviors.keySet();
+	}
+
+	public Collection<String> getBehaviorIds(IKActorsBehavior.Type type) {
+		List<String> ret = new ArrayList<>();
+		for (String key : behaviors.keySet()) {
+			if (behaviors.get(key).getDestination() == type) {
+				ret.add(key);
+			}
+		}
+		return ret;
 	}
 
 	public void instrument(List<IAnnotation> annotations, Observation observation) {

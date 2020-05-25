@@ -48,7 +48,7 @@ import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.klab.rest.RunScriptRequest;
+import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
@@ -265,19 +265,19 @@ public class KlabSession extends KlabPeer {
 	}
 
 	public void launchScript(URL url) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunScript, new RunScriptRequest(url, false));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunScript, new LoadApplicationRequest(url, false));
 	}
 
 	public void launchTest(URL url) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new RunScriptRequest(url, true));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new LoadApplicationRequest(url, true));
 	}
 
 	public void launchApp(String behavior) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp, new RunScriptRequest(behavior, false));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp, new LoadApplicationRequest(behavior, false));
 	}
 
 	public void launchTest(String behavior) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunUnitTest, new RunScriptRequest(behavior, true));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunUnitTest, new LoadApplicationRequest(behavior, true));
 	}
 
 	public void observe(EKimObject dropped) {

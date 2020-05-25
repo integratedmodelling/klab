@@ -131,7 +131,7 @@ import org.integratedmodelling.klab.rest.ResourceOperationRequest;
 import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
-import org.integratedmodelling.klab.rest.RunScriptRequest;
+import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
@@ -1195,7 +1195,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@MessageHandler
-	private void handleRunScriptRequest(final RunScriptRequest request, final IMessage.Type type) {
+	private void handleRunScriptRequest(final LoadApplicationRequest request, final IMessage.Type type) {
 		switch (type) {
 		case RunApp:
 		case RunUnitTest:
@@ -1503,6 +1503,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		ret.setTimeLastJoined(lastJoin);
 		ret.setTimeRetrieved(System.currentTimeMillis());
 		ret.setTimeLastActivity(lastActivity);
+		ret.getAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.APP));
 
 		IUserIdentity user = getParentIdentity(IUserIdentity.class);
 		if (user != null) {

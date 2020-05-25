@@ -4,17 +4,17 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RunScriptRequest {
+public class LoadApplicationRequest {
 
 	private URL scriptUrl;
 	private String behavior;
 	private boolean test;
 	private Map<String, String> parameters = new HashMap<>();
 
-	public RunScriptRequest() {
+	public LoadApplicationRequest() {
 	}
 
-	public RunScriptRequest(URL url, boolean isTest, String... kvParameters) {
+	public LoadApplicationRequest(URL url, boolean isTest, String... kvParameters) {
 		this.scriptUrl = url;
 		this.test = isTest;
 		if (kvParameters != null) {
@@ -24,7 +24,7 @@ public class RunScriptRequest {
 		}
 	}
 	
-	public RunScriptRequest(String behavior, boolean isTest) {
+	public LoadApplicationRequest(String behavior, boolean isTest) {
 		this.behavior = behavior;
 		this.test = isTest;
 	}
