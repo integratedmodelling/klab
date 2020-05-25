@@ -47,6 +47,7 @@ import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
 import org.integratedmodelling.kactors.kactors.TableRow;
+import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.UnitOp;
@@ -125,6 +126,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.MATCH: return createMatch();
       case KactorsPackage.LIST: return createList();
       case KactorsPackage.MAP: return createMap();
+      case KactorsPackage.TREE: return createTree();
       case KactorsPackage.MAP_ENTRY: return createMapEntry();
       case KactorsPackage.CLASSIFIER: return createClassifier();
       case KactorsPackage.LOOKUP_TABLE: return createLookupTable();
@@ -420,6 +422,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     MapImpl map = new MapImpl();
     return map;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Tree createTree()
+  {
+    TreeImpl tree = new TreeImpl();
+    return tree;
   }
 
   /**

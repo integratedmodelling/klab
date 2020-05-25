@@ -958,13 +958,22 @@ public interface KactorsPackage extends EPackage
   int VALUE = 16;
 
   /**
+   * The feature id for the '<em><b>Tree</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__TREE = 0;
+
+  /**
    * The feature id for the '<em><b>Argvalue</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__ARGVALUE = 0;
+  int VALUE__ARGVALUE = 1;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -973,7 +982,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LITERAL = 1;
+  int VALUE__LITERAL = 2;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -982,7 +991,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ID = 2;
+  int VALUE__ID = 3;
 
   /**
    * The feature id for the '<em><b>Urn</b></em>' attribute.
@@ -991,7 +1000,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__URN = 3;
+  int VALUE__URN = 4;
 
   /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
@@ -1000,7 +1009,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LIST = 4;
+  int VALUE__LIST = 5;
 
   /**
    * The feature id for the '<em><b>Map</b></em>' containment reference.
@@ -1009,7 +1018,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__MAP = 5;
+  int VALUE__MAP = 6;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' attribute.
@@ -1018,7 +1027,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__OBSERVABLE = 6;
+  int VALUE__OBSERVABLE = 7;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
@@ -1027,7 +1036,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EXPRESSION = 7;
+  int VALUE__EXPRESSION = 8;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -1036,7 +1045,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__TABLE = 8;
+  int VALUE__TABLE = 9;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -1045,7 +1054,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__QUANTITY = 9;
+  int VALUE__QUANTITY = 10;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -1054,7 +1063,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 10;
+  int VALUE_FEATURE_COUNT = 11;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl <em>Match</em>}' class.
@@ -1249,6 +1258,43 @@ public interface KactorsPackage extends EPackage
   int MAP_FEATURE_COUNT = 1;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.TreeImpl <em>Tree</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.TreeImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTree()
+   * @generated
+   */
+  int TREE = 20;
+
+  /**
+   * The feature id for the '<em><b>Root</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TREE__ROOT = 0;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TREE__VALUE = 1;
+
+  /**
+   * The number of structural features of the '<em>Tree</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TREE_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.MapEntryImpl <em>Map Entry</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1256,7 +1302,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getMapEntry()
    * @generated
    */
-  int MAP_ENTRY = 20;
+  int MAP_ENTRY = 21;
 
   /**
    * The feature id for the '<em><b>Classifier</b></em>' containment reference.
@@ -1293,7 +1339,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getClassifier()
    * @generated
    */
-  int CLASSIFIER = 21;
+  int CLASSIFIER = 22;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -1438,7 +1484,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getLookupTable()
    * @generated
    */
-  int LOOKUP_TABLE = 22;
+  int LOOKUP_TABLE = 23;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -1466,7 +1512,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTable()
    * @generated
    */
-  int TABLE = 23;
+  int TABLE = 24;
 
   /**
    * The feature id for the '<em><b>Headers</b></em>' containment reference.
@@ -1503,7 +1549,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getHeaderRow()
    * @generated
    */
-  int HEADER_ROW = 24;
+  int HEADER_ROW = 25;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' attribute list.
@@ -1531,7 +1577,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTableRow()
    * @generated
    */
-  int TABLE_ROW = 25;
+  int TABLE_ROW = 26;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -1559,7 +1605,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTableClassifier()
    * @generated
    */
-  int TABLE_CLASSIFIER = 26;
+  int TABLE_CLASSIFIER = 27;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -1731,7 +1777,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getQuantity()
    * @generated
    */
-  int QUANTITY = 27;
+  int QUANTITY = 28;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1786,7 +1832,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getAnnotation()
    * @generated
    */
-  int ANNOTATION = 28;
+  int ANNOTATION = 29;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1823,7 +1869,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getLiteral()
    * @generated
    */
-  int LITERAL = 29;
+  int LITERAL = 30;
 
   /**
    * The feature id for the '<em><b>Number</b></em>' containment reference.
@@ -1896,7 +1942,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getParameterList()
    * @generated
    */
-  int PARAMETER_LIST = 30;
+  int PARAMETER_LIST = 31;
 
   /**
    * The feature id for the '<em><b>Pairs</b></em>' containment reference list.
@@ -1924,7 +1970,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 31;
+  int KEY_VALUE_PAIR = 32;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1970,7 +2016,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 32;
+  int UNIT_ELEMENT = 33;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2007,7 +2053,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 33;
+  int UNIT = 34;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -2053,7 +2099,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 34;
+  int CURRENCY = 35;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2099,7 +2145,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 35;
+  int REL_OPERATOR = 36;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -2172,7 +2218,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 36;
+  int NUMBER = 37;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -2263,7 +2309,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getDate()
    * @generated
    */
-  int DATE = 37;
+  int DATE = 38;
 
   /**
    * The feature id for the '<em><b>Year</b></em>' attribute.
@@ -2354,7 +2400,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 38;
+  int UNIT_OP = 39;
 
 
   /**
@@ -3243,6 +3289,17 @@ public interface KactorsPackage extends EPackage
   EClass getValue();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Tree</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getTree()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Tree();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3546,6 +3603,38 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getMap_Entries();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Tree <em>Tree</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Tree</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Tree
+   * @generated
+   */
+  EClass getTree();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Tree#getRoot <em>Root</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Root</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Tree#getRoot()
+   * @see #getTree()
+   * @generated
+   */
+  EReference getTree_Root();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Tree#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Value</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Tree#getValue()
+   * @see #getTree()
+   * @generated
+   */
+  EReference getTree_Value();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.MapEntry <em>Map Entry</em>}'.
@@ -5375,6 +5464,14 @@ public interface KactorsPackage extends EPackage
     EClass VALUE = eINSTANCE.getValue();
 
     /**
+     * The meta object literal for the '<em><b>Tree</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__TREE = eINSTANCE.getValue_Tree();
+
+    /**
      * The meta object literal for the '<em><b>Argvalue</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5603,6 +5700,32 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference MAP__ENTRIES = eINSTANCE.getMap_Entries();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.TreeImpl <em>Tree</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.TreeImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTree()
+     * @generated
+     */
+    EClass TREE = eINSTANCE.getTree();
+
+    /**
+     * The meta object literal for the '<em><b>Root</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference TREE__ROOT = eINSTANCE.getTree_Root();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference TREE__VALUE = eINSTANCE.getTree_Value();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.MapEntryImpl <em>Map Entry</em>}' class.

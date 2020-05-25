@@ -126,6 +126,7 @@ Actions:
 ;
 
 Value:
+	tree=Tree |
 	argvalue=ARGVALUE |
 	literal=Literal |
 	id=PathName |
@@ -138,6 +139,20 @@ Value:
 	quantity=Quantity
 	;
 
+ValueWithoutTree returns Value:
+	argvalue=ARGVALUE |
+	literal=Literal |
+	id=PathName |
+	urn=UrnId | 
+	list=List |
+	map=Map |
+	observable=OBSERVABLE | 
+	expression=EXPR |
+	table=LookupTable |
+	quantity=Quantity
+	;
+
+
 Match:
 	id=LOWERCASE_ID '->' body=StatementList  |
 	boolean=('true'|'false') '->' body=StatementList  |
@@ -145,7 +160,6 @@ Match:
 	regexp=REGEXP '->' body=StatementList |
 	observable=OBSERVABLE '->' body=StatementList |
 	literal=Literal '->' body=StatementList |
-//	arguments=ArgumentDeclaration '->' body=StatementList |
 	'in' set=List '->' body=StatementList | 
 	quantity=Quantity '->' body=StatementList |
 	expr=EXPR '->' body=StatementList |
@@ -171,7 +185,11 @@ List:
 	{List} '(' contents+=Value* ')';
 	
 Map:
-	{Map} '{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'
+	{Map} '#{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'
+;
+
+Tree:
+	root=ValueWithoutTree (=> '<-' (value+=ValueWithoutTree | ('(' value+=Tree ')')))+ 
 ;
 
 MapEntry:

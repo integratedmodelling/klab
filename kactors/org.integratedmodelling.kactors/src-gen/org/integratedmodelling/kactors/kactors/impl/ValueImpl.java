@@ -18,6 +18,7 @@ import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
 import org.integratedmodelling.kactors.kactors.Quantity;
+import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
 
 /**
@@ -28,6 +29,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTree <em>Tree</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getId <em>Id</em>}</li>
@@ -44,6 +46,16 @@ import org.integratedmodelling.kactors.kactors.Value;
  */
 public class ValueImpl extends MinimalEObjectImpl.Container implements Value
 {
+  /**
+   * The cached value of the '{@link #getTree() <em>Tree</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTree()
+   * @generated
+   * @ordered
+   */
+  protected Tree tree;
+
   /**
    * The default value of the '{@link #getArgvalue() <em>Argvalue</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -213,6 +225,56 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected EClass eStaticClass()
   {
     return KactorsPackage.Literals.VALUE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Tree getTree()
+  {
+    return tree;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetTree(Tree newTree, NotificationChain msgs)
+  {
+    Tree oldTree = tree;
+    tree = newTree;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__TREE, oldTree, newTree);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTree(Tree newTree)
+  {
+    if (newTree != tree)
+    {
+      NotificationChain msgs = null;
+      if (tree != null)
+        msgs = ((InternalEObject)tree).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__TREE, null, msgs);
+      if (newTree != null)
+        msgs = ((InternalEObject)newTree).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__TREE, null, msgs);
+      msgs = basicSetTree(newTree, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__TREE, newTree, newTree));
   }
 
   /**
@@ -600,6 +662,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KactorsPackage.VALUE__TREE:
+        return basicSetTree(null, msgs);
       case KactorsPackage.VALUE__LITERAL:
         return basicSetLiteral(null, msgs);
       case KactorsPackage.VALUE__LIST:
@@ -624,6 +688,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KactorsPackage.VALUE__TREE:
+        return getTree();
       case KactorsPackage.VALUE__ARGVALUE:
         return getArgvalue();
       case KactorsPackage.VALUE__LITERAL:
@@ -658,6 +724,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KactorsPackage.VALUE__TREE:
+        setTree((Tree)newValue);
+        return;
       case KactorsPackage.VALUE__ARGVALUE:
         setArgvalue((String)newValue);
         return;
@@ -702,6 +771,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KactorsPackage.VALUE__TREE:
+        setTree((Tree)null);
+        return;
       case KactorsPackage.VALUE__ARGVALUE:
         setArgvalue(ARGVALUE_EDEFAULT);
         return;
@@ -746,6 +818,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KactorsPackage.VALUE__TREE:
+        return tree != null;
       case KactorsPackage.VALUE__ARGVALUE:
         return ARGVALUE_EDEFAULT == null ? argvalue != null : !ARGVALUE_EDEFAULT.equals(argvalue);
       case KactorsPackage.VALUE__LITERAL:

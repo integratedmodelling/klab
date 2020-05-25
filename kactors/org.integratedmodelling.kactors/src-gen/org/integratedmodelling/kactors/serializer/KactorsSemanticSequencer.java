@@ -48,6 +48,7 @@ import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
 import org.integratedmodelling.kactors.kactors.TableRow;
+import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.Value;
@@ -177,6 +178,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 			case KactorsPackage.TABLE_ROW:
 				sequence_TableRow(context, (TableRow) semanticObject); 
 				return; 
+			case KactorsPackage.TREE:
+				sequence_Tree(context, (Tree) semanticObject); 
+				return; 
 			case KactorsPackage.UNIT:
 				sequence_Unit(context, (Unit) semanticObject); 
 				return; 
@@ -184,8 +188,15 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				sequence_UnitElement(context, (UnitElement) semanticObject); 
 				return; 
 			case KactorsPackage.VALUE:
-				sequence_Value(context, (Value) semanticObject); 
-				return; 
+				if (rule == grammarAccess.getValueWithoutTreeRule()) {
+					sequence_ValueWithoutTree(context, (Value) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getValueRule()) {
+					sequence_Value(context, (Value) semanticObject); 
+					return; 
+				}
+				else break;
 			case KactorsPackage.WHILE_STATEMENT:
 				sequence_WhileStatement(context, (WhileStatement) semanticObject); 
 				return; 
@@ -749,6 +760,18 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
+	 *     Tree returns Tree
+	 *
+	 * Constraint:
+	 *     (root=ValueWithoutTree (value+=ValueWithoutTree | value+=Tree)+)
+	 */
+	protected void sequence_Tree(ISerializationContext context, Tree semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     UnitElement returns UnitElement
 	 *
 	 * Constraint:
@@ -773,10 +796,34 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
+	 *     ValueWithoutTree returns Value
+	 *
+	 * Constraint:
+	 *     (
+	 *         argvalue=ARGVALUE | 
+	 *         literal=Literal | 
+	 *         id=PathName | 
+	 *         urn=UrnId | 
+	 *         list=List | 
+	 *         map=Map | 
+	 *         observable=OBSERVABLE | 
+	 *         expression=EXPR | 
+	 *         table=LookupTable | 
+	 *         quantity=Quantity
+	 *     )
+	 */
+	protected void sequence_ValueWithoutTree(ISerializationContext context, Value semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Value returns Value
 	 *
 	 * Constraint:
 	 *     (
+	 *         tree=Tree | 
 	 *         argvalue=ARGVALUE | 
 	 *         literal=Literal | 
 	 *         id=PathName | 

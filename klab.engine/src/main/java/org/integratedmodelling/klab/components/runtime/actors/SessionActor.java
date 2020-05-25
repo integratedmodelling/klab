@@ -43,6 +43,22 @@ public class SessionActor extends KlabActor {
 
 		IBehavior behavior = Actors.INSTANCE.getBehavior(message.behavior);
 
+		setupView(behavior);
+
+		/*
+		 * spawn a new runtime actor and have it load the behavior
+		 */
+		ActorRef<KlabMessage> actor = getContext().spawn(RuntimeActor.create((Session) identity),
+				identity.getId() + NameGenerator.shortUUID());
+
+		actor.tell(message);
+
+		return Behaviors.same();
+
+	}
+
+	private void setupView(IBehavior behavior) {
+
 		/*
 		 * collect info about the UI in a bean. If not empty, send bean so that the UI
 		 * can prepare.
@@ -57,12 +73,24 @@ public class SessionActor extends KlabActor {
 									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
 									annotation.get("style", String.class)));
 				}
-				if ("header".equals(annotation.getName())) {
+				if ("left".equals(annotation.getName())) {
+					setup.getLeftPanels()
+							.add(new Panel(
+									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+									annotation.get("style", String.class)));
+				}
+				if ("right".equals(annotation.getName())) {
+					setup.getRightPanels()
+							.add(new Panel(
+									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+									annotation.get("style", String.class)));
+				}
+				if ("header".equals(annotation.getName()) || "top".equals(annotation.getName())) {
 					setup.setHeader(
 							new Panel(annotation.containsKey("id") ? annotation.get("id", String.class) : "header",
 									annotation.get("style", String.class)));
 				}
-				if ("footer".equals(annotation.getName())) {
+				if ("footer".equals(annotation.getName()) || "bottom".equals(annotation.getName())) {
 					setup.setFooter(
 							new Panel(annotation.containsKey("id") ? annotation.get("id", String.class) : "footer",
 									annotation.get("style", String.class)));
@@ -81,17 +109,6 @@ public class SessionActor extends KlabActor {
 			((Session) identity).getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
 					setup);
 		}
-
-		/*
-		 * spawn a new runtime actor and have it load the behavior
-		 */
-		ActorRef<KlabMessage> actor = getContext().spawn(RuntimeActor.create((Session) identity),
-				identity.getId() + NameGenerator.shortUUID());
-
-		actor.tell(message);
-
-		return Behaviors.same();
-
 	}
 
 	@Override

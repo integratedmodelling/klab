@@ -3,8 +3,6 @@ package org.integratedmodelling.klab.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.klab.api.model.IAnnotation;
-
 /**
  * Sent from the back end to set up the interface.
  * 
@@ -46,6 +44,8 @@ public class ViewSetup {
 
 	private String style;
 	private List<Panel> panels = new ArrayList<>();
+	private List<Panel> leftPanels = new ArrayList<>();
+	private List<Panel> rightPanels = new ArrayList<>();
 	private Panel header;
 	private Panel footer;
 
@@ -79,6 +79,22 @@ public class ViewSetup {
 
 	public void setFooter(Panel footer) {
 		this.footer = footer;
+	}
+
+	public List<Panel> getLeftPanels() {
+		return leftPanels;
+	}
+
+	public void setLeftPanels(List<Panel> leftPanels) {
+		this.leftPanels = leftPanels;
+	}
+
+	public List<Panel> getRightPanels() {
+		return rightPanels;
+	}
+
+	public void setRightPanels(List<Panel> rightPanels) {
+		this.rightPanels = rightPanels;
 	}
 
 }

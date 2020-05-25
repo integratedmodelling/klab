@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Change long number suffix from 'l' to 'L' to avoid conflict with liters.
 - Validate units in ratios of physical properties, skipping aggregation.
 - Units in physical properties annotating resource attributes are mandatory.
 - Using 'within' is only allowed in the first observable of a model.

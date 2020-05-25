@@ -60,10 +60,30 @@ public class ViewBehavior {
 			message.setType(Type.Confirm);
 			message.setContent(this.evaluateArgument(0, "Confirm"));
 			session.getMonitor().post((msg) -> {
-				System.out.println("PORCODDIO HA RISPOSTO! SBORRO!");
 				fire(msg.getPayload(ViewAction.class).isBooleanValue(), true);
 			}, IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
 		}
 	}
+	
+	@Action(id = "button")
+	public static class Button extends KlabAction {
+
+		public Button(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
+		}
+
+		@Override
+		void run() {
+			Session session = this.identity.getParentIdentity(Session.class);
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.PushButton);
+			message.setContent(this.evaluateArgument(0, "Button Text"));
+			session.getMonitor().post((msg) -> {
+				fire(msg.getPayload(ViewAction.class).isBooleanValue(), true);
+			}, IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
+		}
+	}
+
 
 }
