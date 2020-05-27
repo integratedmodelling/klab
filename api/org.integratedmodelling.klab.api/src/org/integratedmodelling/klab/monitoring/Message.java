@@ -16,6 +16,8 @@
 package org.integratedmodelling.klab.monitoring;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -27,6 +29,9 @@ import org.integratedmodelling.klab.utils.Utils;
 /**
  * Typed message with potential payload to be transferred through a message bus.
  * Used for fast, duplex engine/client communication.
+ * <p>
+ * Payloads that are maps can be optionally translated to
+ * implementation-dependent types by supplying a static translator function.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -45,6 +50,12 @@ public class Message implements IMessage, Serializable {
 	private INotification.Type notificationType;
 	private long timestamp = System.currentTimeMillis();
 
+	private static BiFunction<Map<?, ?>, Class<?>, Object> translator;
+
+	public static void setPayloadMapTranslator(BiFunction<Map<?, ?>, Class<?>, Object> function) {
+		translator = function;
+	}
+
 	/**
 	 * Build a message by arranging all the arguments appropriately. Only one
 	 * payload object can be passed.
@@ -52,9 +63,8 @@ public class Message implements IMessage, Serializable {
 	 * @param identity
 	 * @param o
 	 * @return a new message
-	 * @throws IllegalArgumentException
-	 *             if there are not enough arguments or more than one payload was
-	 *             passed
+	 * @throws IllegalArgumentException if there are not enough arguments or more
+	 *                                  than one payload was passed
 	 */
 	public static Message create(String identity, Object... o) {
 		Message ret = new Message();
@@ -66,7 +76,7 @@ public class Message implements IMessage, Serializable {
 			} else if (ob instanceof MessageClass) {
 				ret.messageClass = (MessageClass) ob;
 			} else if (ob instanceof INotification.Type) {
-				notype = (INotification.Type)ob;
+				notype = (INotification.Type) ob;
 			} else if (ob != null) {
 				if (ret.payload == null) {
 					ret.payload = ob;
@@ -145,8 +155,7 @@ public class Message implements IMessage, Serializable {
 	/**
 	 * Sets the type.
 	 *
-	 * @param type
-	 *            the new type
+	 * @param type the new type
 	 */
 	public void setType(Type type) {
 		this.type = type;
@@ -164,8 +173,7 @@ public class Message implements IMessage, Serializable {
 	/**
 	 * Sets the payload.
 	 *
-	 * @param payload
-	 *            the new payload
+	 * @param payload the new payload
 	 */
 	public void setPayload(Object payload) {
 		this.payload = payload;
@@ -186,6 +194,11 @@ public class Message implements IMessage, Serializable {
 
 	public String getInResponseTo() {
 		return inResponseTo;
+	}
+
+	public Message inResponseTo(String inResponseTo) {
+		this.inResponseTo = inResponseTo;
+		return this;
 	}
 
 	public void setInResponseTo(String inResponseTo) {
@@ -242,8 +255,14 @@ public class Message implements IMessage, Serializable {
 		if (payload == null) {
 			return null;
 		}
-	
-		return Utils.asType(payload, cls);
+
+		Object p = payload;
+
+		if (payload instanceof Map && translator != null) {
+			p = translator.apply((Map<?, ?>) p, cls);
+		}
+
+		return Utils.asType(p, cls);
 	}
 
 	public INotification.Type getNotificationType() {

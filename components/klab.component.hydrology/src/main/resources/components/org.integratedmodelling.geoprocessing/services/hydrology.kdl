@@ -193,7 +193,73 @@ export object delineatewatersheds
 	class org.integratedmodelling.geoprocessing.hydrology.WatershedInstantiator
 }
 
-export number runoff
+void watershed
+	"Resolves a watershed by finding the stream outlet and tracing flows to it."
+{
+	import number flow_direction
+		"The heading of the outgoing horizontal water flow."
+
+	export object stream_outlet
+		"The stream outlet. If applied to a proper watershed shape and with a suitable
+		 resolution, only one outlet should be found."
+		
+	geometry *
+	
+	class org.integratedmodelling.geoprocessing.hydrology.WatershedResolver
+}
+
+/*
+ * TODO all the parameters are from the superclass: use the extension mechanism to write these
+ * once in an abstract prototype where the superclass comes from.
+ */
+export object findwatersheds
+	"Extracts the most appropriately scaled watershed polygon(s) based on the HydroBASINS product, to be further
+	 defined, if needed, by an appropriate resolver. Enables extraction of the actual polygons or their bounding
+	 boxes, with optional alignment to the master grid and buffering."
+{
+	optional parameter boolean whole
+		"If true, cover the context completely: either by choosing a larger watershed
+	     or by adding even small proportion coverage. Default false, choice dependent on
+	     minimum coverage."
+		default false
+
+	optional parameter boolean boundingbox
+		"If true, produce only the bounding box instead of the outline of each watershed."
+		default false
+		
+	optional parameter boolean align
+		"If true, align the bounding box of the shape to the grid in the context, if any."
+		default false
+
+	optional enum strategy
+		"If COVER, take as many smaller watersheds as it takes to compute the requested coverage. If EXPAND,
+		 use the smallest larger object(s), even if they are much larger than the context. Default COVER."
+		values COVER, EXPAND
+		
+	optional number mincoverage
+		"The minimum proportion of area needed for a watershed to be included in the result compared with the
+		 area of the original context. Default is 0.45. Ineffective if whole = true or strategy = expand."
+		 
+	optional number maxobjects
+		"The maximum number of objects to produce. If this is passed, watersheds will be chosen based on the
+		 percentage of coverage of the context."	
+		 
+	optional number buffer
+		"Add a buffer of the passed number of cells around the bounding box. Implies align=true and is only
+		 effective if boundingbox=true. Intended to provide space around the watershed shape for proper 
+		 watershed extraction."	 
+		 
+	optional number granularity
+		"Modify the spatial granularity of the objects selected by moving to a different level than the one
+		 defined by the scale. Passing 0 has no effect; an integer will move the scale up or down (if negative)
+		 by the passed number of levels."	 
+		
+	geometry #s0
+	
+	class org.integratedmodelling.geoprocessing.hydrology.WatershedPolygonInstantiator
+}
+
+export process runoff
 	"Computes runoff water volume from precipitation in the time unit, using the curve number method."
 {
 
@@ -209,8 +275,48 @@ export number runoff
 
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"
+
+	optional export number runoff_water_volume
+		"Runoff water volume produced by precipitation"
 		
-	geometry S2
+	geometry T1S2
 		
 	class org.integratedmodelling.geoprocessing.hydrology.RunoffResolver
+}
+
+export process weather
+	"Extracts and interpolates observations from weather stations from the k.LAB weather service to build
+	 interpolated surfaces of temporal observation data."
+	 label 'Weather station interpolator'
+{
+	import number elevation
+		"An observation of the elevation for the region."
+		
+	optional export number precipitation
+		"Precipitation volume"
+
+	optional export number tmin
+		"Minimum temperature"
+
+	optional export number tmax
+		"Maximum temperature"
+
+	optional export number snowfall
+		"Snowfall volume"
+
+	optional export number snowdepth
+		"Snow depth"
+
+	optional export number evapotranspiration
+		"Potential evapotranspiration"
+		
+	optional export number relhumidity
+		"Relative humidity"
+		
+	optional export number cloudcover
+		"Cloud cover"
+		
+	geometry T1S2
+		
+	class org.integratedmodelling.geoprocessing.weather.WeatherResolver
 }

@@ -88,8 +88,6 @@ public class ResourceEditor extends ViewPart {
 
 	public static final String ID = "org.integratedmodelling.klab.ide.views.ResourceEditor";
 
-	private static final String REVALIDATE_RESOURCE_ACTION = "Revalidate resource";
-
 	private Label urnLabel;
 	private Composite mapHolder;
 	private Label geometryDefinition;
@@ -133,12 +131,10 @@ public class ResourceEditor extends ViewPart {
 	private Label messageLabel;
 	private Table outputTable;
 	private TableViewer outputViewer;
-
 	private Geometry geometry = null;
-
 	private Button executeActionButton;
-
 	private List<NodeReference> publishingNodes;
+	private Combo categorizationsCombo;
 
 	public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -563,7 +559,7 @@ public class ResourceEditor extends ViewPart {
 			mapHolder.setLayout(new GridLayout(1, false));
 			GridData gd_mapHolder = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
 			gd_mapHolder.heightHint = 181;
-			gd_mapHolder.widthHint = 360;
+			gd_mapHolder.widthHint = 420;
 			mapHolder.setLayoutData(gd_mapHolder);
 
 			Group grpSpaceclickTo = new Group(mapHolder, SWT.NONE);
@@ -577,7 +573,7 @@ public class ResourceEditor extends ViewPart {
 
 			Group grpTime = new Group(mapHolder, SWT.NONE);
 			grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-			grpTime.setSize(238, 352);
+			grpTime.setSize(420, 352);
 			grpTime.setLayout(new GridLayout(1, false));
 			grpTime.setText("Time");
 
@@ -721,7 +717,9 @@ public class ResourceEditor extends ViewPart {
 			lblOperations.setText("Operations:");
 
 			Combo actionChooser = new Combo(composite_3, SWT.READ_ONLY);
-			actionChooser.add(REVALIDATE_RESOURCE_ACTION);
+			for (ResourceOperationRequest.Standard operation : ResourceOperationRequest.Standard.values()) {
+				actionChooser.add(operation.name());
+			}
 			actionChooser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			actionChooser.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -744,8 +742,6 @@ public class ResourceEditor extends ViewPart {
 			Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
 			lblNewLabel_4
 					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
-			// new Label(composite_1, SWT.NONE);
-			// new Label(composite_1, SWT.NONE);
 			{
 				geometryDefinition = new Label(grpGeometry, SWT.NONE);
 				geometryDefinition.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
@@ -1069,10 +1065,29 @@ public class ResourceEditor extends ViewPart {
 			}
 		});
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout gl_composite = new GridLayout(4, false);
+		GridLayout gl_composite = new GridLayout(6, false);
 		gl_composite.marginLeft = 4;
 		composite.setLayout(gl_composite);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		Composite composite_4 = new Composite(composite, SWT.NONE);
+		composite_4.setLayout(new GridLayout(4, false));
+
+		Label lblNewLabel_6 = new Label(composite_4, SWT.NONE);
+		lblNewLabel_6.setBounds(0, 0, 55, 15);
+		lblNewLabel_6.setText("Categorization");
+
+		categorizationsCombo = new Combo(composite_4, SWT.READ_ONLY);
+		GridData gd_categorizationsCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_categorizationsCombo.widthHint = 76;
+		categorizationsCombo.setLayoutData(gd_categorizationsCombo);
+		categorizationsCombo.setItems(new String[] { "New..." });
+		categorizationsCombo.setBounds(0, 0, 91, 23);
+		categorizationsCombo.select(0);
+
+		Button btnEdit = new Button(composite_4, SWT.NONE);
+		btnEdit.setText("Edit...");
+		new Label(composite_4, SWT.NONE);
 
 		messageLabel = new Label(composite, SWT.NONE);
 		messageLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -1116,11 +1131,12 @@ public class ResourceEditor extends ViewPart {
 			}
 		});
 		cancelButton.setText("Cancel");
+		new Label(composite, SWT.NONE);
 
 		createActions();
 		initializeToolBar();
 		initializeMenu();
-		
+
 		setDirty(false);
 	}
 

@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import java.util.Set;
 import org.apache.commons.jxpath.JXPathContext;
 import org.geotools.wcs.WCSConfiguration;
 import org.geotools.xml.Parser;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -28,8 +30,8 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
+import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.SpatialExtent;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -43,7 +45,7 @@ public class WCSService {
 
 	private static int CONNECT_TIMEOUT_MS = 5000;
 	private static int READ_TIMEOUT_MS = 5000;
-	
+
 	public static final String WGS84_BOUNDING_BOX = "WGS84BoundingBox";
 	public static final String IDENTIFIER = "Identifier";
 	public static final String CRS = "crs";
@@ -68,7 +70,9 @@ public class WCSService {
 	public boolean TRANSLATE_DOUBLEUNDERSCORE_TO_NAMESPACE_SEPARATOR = true;
 
 	private List<Throwable> errors = new ArrayList<>();
-	Map<String, WCSLayer> layers = new HashMap<>();
+	Map<String, WCSLayer> layers = Collections.synchronizedMap(new HashMap<>());
+	// all identifiers, also when the layers are not there
+	Set<String> identifiers = Collections.synchronizedSet(new HashSet<>());
 	private String serviceUrl;
 	private Version version;
 	Parser parser;
@@ -153,7 +157,7 @@ public class WCSService {
 
 		// set to true when a getCoverage response has been parsed
 		private boolean finished = false;
-
+		private String message = "";
 		private boolean error = false;
 		private int[] gridShape;
 		private long timestamp = System.currentTimeMillis();
@@ -288,46 +292,54 @@ public class WCSService {
 
 		private void parseV2(Map<?, ?> coverage) {
 
-			JXPathContext context = JXPathContext.newContext(coverage);
+			try {
 
-			this.identifier = this.name;
-			this.originalEnvelope = this.wgs84envelope;
-			this.originalProjection = Projection.getLatLon();
+				JXPathContext context = JXPathContext.newContext(coverage);
 
-			if (coverage.get(COVERAGE_ID) instanceof String) {
-				this.identifier = coverage.get(COVERAGE_ID).toString();
-			}
+				this.identifier = this.name;
+				this.originalEnvelope = this.wgs84envelope;
+				this.originalProjection = Projection.getLatLon();
 
-			// true bounding box
-			Map<?, ?> bounds = (Map<?, ?>) coverage.get("boundedBy");
-			this.originalProjection = Projection.create(bounds.get("srsName").toString());
-			double[] upperCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bounds).get("upperCorner").toString(),
-					"\\s+");
-			double[] lowerCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bounds).get("lowerCorner").toString(),
-					"\\s+");
-			this.originalEnvelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
-					(Projection) this.originalProjection);
+				if (coverage.get(COVERAGE_ID) instanceof String) {
+					this.identifier = coverage.get(COVERAGE_ID).toString();
+				}
 
-			// rangeType: bands
-			for (Iterator<?> it = context.iterate(RANGE_TYPE); it.hasNext();) {
-				Object next = it.next();
-				if (next instanceof Map && !((Map<?, ?>) next).isEmpty()) {
-					if (((Map<?, ?>) next).containsKey("field")) {
-						List<?> bandefs = (List<?>) ((Map<?, ?>) next).get("field");
-						for (Object o : bandefs) {
-							bands.add(new Band((Map<?, ?>) o));
+				// true bounding box
+				Map<?, ?> bounds = (Map<?, ?>) coverage.get("boundedBy");
+				this.originalProjection = Projection.create(bounds.get("srsName").toString());
+				double[] upperCorner = NumberUtils
+						.doubleArrayFromString(((Map<?, ?>) bounds).get("upperCorner").toString(), "\\s+");
+				double[] lowerCorner = NumberUtils
+						.doubleArrayFromString(((Map<?, ?>) bounds).get("lowerCorner").toString(), "\\s+");
+				this.originalEnvelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
+						(Projection) this.originalProjection);
+
+				// rangeType: bands
+				for (Iterator<?> it = context.iterate(RANGE_TYPE); it.hasNext();) {
+					Object next = it.next();
+					if (next instanceof Map && !((Map<?, ?>) next).isEmpty()) {
+						if (((Map<?, ?>) next).containsKey("field")) {
+							List<?> bandefs = (List<?>) ((Map<?, ?>) next).get("field");
+							for (Object o : bandefs) {
+								bands.add(new Band((Map<?, ?>) o));
+							}
+						} else if (((Map<?, ?>) next).containsKey("name")) {
+							bands.add(new Band((Map<?, ?>) next));
 						}
-					} else if (((Map<?, ?>) next).containsKey("name")) {
-						bands.add(new Band((Map<?, ?>) next));
 					}
 				}
-			}
 
-			// resolution and CRS: domainSet
-			Map<?, ?> domain = (Map<?, ?>) context.getValue("domainSet/limits");
-			int[] gridHighRange = NumberUtils.intArrayFromString(domain.get("high").toString(), "\\s+");
-			int[] gridLowRange = NumberUtils.intArrayFromString(domain.get("low").toString(), "\\s+");
-			this.gridShape = new int[] { gridHighRange[0] - gridLowRange[0], gridHighRange[1] - gridLowRange[1] };
+				// resolution and CRS: domainSet
+				Map<?, ?> domain = (Map<?, ?>) context.getValue("domainSet/limits");
+				int[] gridHighRange = NumberUtils.intArrayFromString(domain.get("high").toString(), "\\s+");
+				int[] gridLowRange = NumberUtils.intArrayFromString(domain.get("low").toString(), "\\s+");
+				this.gridShape = new int[] { gridHighRange[0] - gridLowRange[0], gridHighRange[1] - gridLowRange[1] };
+
+			} catch (Throwable t) {
+				this.error = true;
+				this.message = "A " + t.getClass().getCanonicalName()
+						+ "  exception was raised during parsing of the GetCoverage response: " + t.getMessage();
+			}
 
 			// if (this.originalProjection.flipsCoordinates()) {
 			// this.gridShape = new int[] { this.gridShape[1], this.gridShape[0] };
@@ -336,7 +348,9 @@ public class WCSService {
 
 		@Override
 		public String toString() {
-			return name + " " + originalEnvelope + "\n   " + getGeometry();
+			return (name == null ? "NULL NAME" : name) + " "
+					+ (originalEnvelope == null ? "NO ENVELOPE" : originalEnvelope.toString()) + "\n   "
+					+ (getGeometry() == null ? "NO GEOMETRY" : getGeometry().toString());
 		}
 
 		/**
@@ -354,23 +368,27 @@ public class WCSService {
 				ret = ret.withSpatialShape((long) gridShape[0], (long) gridShape[1]);
 			}
 
-			if (originalProjection.flipsCoordinates()) {
-				// use the WGS84
+			if (originalProjection != null && originalEnvelope != null) {
+				if (originalProjection.flipsCoordinates()) {
+					// use the WGS84
+					ret = ret.withBoundingBox(wgs84envelope.getMinX(), wgs84envelope.getMaxX(), wgs84envelope.getMinY(),
+							wgs84envelope.getMaxY()).withProjection(Projection.DEFAULT_PROJECTION_CODE);
+				} else {
+					ret = ret
+							.withBoundingBox(originalEnvelope.getMinX(), originalEnvelope.getMaxX(),
+									originalEnvelope.getMinY(), originalEnvelope.getMaxY())
+							.withProjection(originalProjection.getSimpleSRS());
+				}
+			} else if (wgs84envelope != null) {
 				ret = ret.withBoundingBox(wgs84envelope.getMinX(), wgs84envelope.getMaxX(), wgs84envelope.getMinY(),
 						wgs84envelope.getMaxY()).withProjection(Projection.DEFAULT_PROJECTION_CODE);
-			} else {
-				ret = ret
-						.withBoundingBox(originalEnvelope.getMinX(), originalEnvelope.getMaxX(),
-								originalEnvelope.getMinY(), originalEnvelope.getMaxY())
-						.withProjection(originalProjection.getSimpleSRS());
 			}
 
 			return ret;
 		}
-		
-		
+
 		public SpatialExtent getSpatialExtent() {
-			
+
 			if (wgs84envelope == null) {
 				return null;
 			}
@@ -381,6 +399,10 @@ public class WCSService {
 			ret.setNorth(wgs84envelope.getMaxY());
 			return ret;
 		}
+
+		public String getMessage() {
+			return this.message;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -388,6 +410,8 @@ public class WCSService {
 
 		this.serviceUrl = serviceUrl;
 		this.version = version;
+		
+		long event = Klab.INSTANCE.notifyEventStart(EngineEvent.Type.ResourceValidation);
 
 		try {
 			this.parser = new Parser(new WCSConfiguration());
@@ -398,10 +422,18 @@ public class WCSService {
 			con.setReadTimeout(READ_TIMEOUT_MS);
 
 			try (InputStream input = con.getInputStream()) {
-				
+
 				Map<?, ?> capabilitiesType = (Map<?, ?>) parser.parse(input);
 
 				JXPathContext context = JXPathContext.newContext(capabilitiesType);
+				for (Iterator<Object> it = context.iterate("Contents/CoverageSummary"); it.hasNext();) {
+					Map<String, Object> item = (Map<String, Object>) it.next();
+					Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
+					if (name != null) {
+						identifiers.add(name.toString());
+					}
+				}
+				
 				for (Iterator<Object> it = context.iterate("Contents/CoverageSummary"); it.hasNext();) {
 
 					Map<String, Object> item = (Map<String, Object>) it.next();
@@ -430,12 +462,14 @@ public class WCSService {
 
 		} catch (Throwable e) {
 			errors.add(e);
-            Logging.INSTANCE.error(e);
+			Logging.INSTANCE.error(e);
+		} finally {
+			Klab.INSTANCE.notifyEventEnd(event);
 		}
 	}
 
 	public URL buildRetrieveUrl(WCSLayer layer, Version version, IGeometry geometry) {
-		
+
 		Dimension space = geometry.getDimension(IGeometry.Dimension.Type.SPACE);
 		URL url = null;
 
@@ -512,6 +546,10 @@ public class WCSService {
 		}
 
 		return url;
+	}
+
+	public boolean containsIdentifier(String string) {
+		return identifiers.contains(string);
 	}
 
 }

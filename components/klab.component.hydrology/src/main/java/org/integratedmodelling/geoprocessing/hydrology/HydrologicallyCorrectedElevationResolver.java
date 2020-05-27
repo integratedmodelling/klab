@@ -28,7 +28,7 @@ public class HydrologicallyCorrectedElevationResolver implements IResolver<IStat
 		IState dem = context.getArtifact("elevation", IState.class);
 
 		OmsPitfiller pitfiller = new OmsPitfiller();
-		pitfiller.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, DataBuffer.TYPE_FLOAT, floatNovalue);
+		pitfiller.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
 		pitfiller.pm = new TaskMonitor(context.getMonitor());
 		pitfiller.doProcess = true;
 		pitfiller.doReset = false;
@@ -39,7 +39,7 @@ public class HydrologicallyCorrectedElevationResolver implements IResolver<IStat
 			throw new KlabException(e);
 		}
 		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(pitfiller.outPit, target, (a) -> {
+			GeotoolsUtils.INSTANCE.coverageToState(pitfiller.outPit, target, context.getScale(), (a) -> {
 				if (a == (double) floatNovalue)
 					return Double.NaN;
 				return a;

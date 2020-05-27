@@ -59,6 +59,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -103,9 +104,9 @@ public class SpatialDisplay {
 		String name;
 
 		Layer getLayer() {
-			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state);
+			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, scale);
 			Layer layer = new GridCoverageLayer(coverage,
-					SLD.wrapSymbolizers(Renderer.INSTANCE.getRasterSymbolizer(state, state.getScale()).getFirst()));
+					SLD.wrapSymbolizers(Renderer.INSTANCE.getRasterSymbolizer(state, scale).getFirst()));
 			layer.setTitle(state.getObservable().getName());
 			return layer;
 		}
@@ -177,9 +178,11 @@ public class SpatialDisplay {
 	Map<String, RLDesc> rLayers = new HashMap<>();
 	Map<String, SLDesc> sLayers = new HashMap<>();
 	ISpace space;
+	IScale scale;
 
-	public SpatialDisplay(ISpace space) {
-		this.space = space;
+	public SpatialDisplay(IScale scale) {
+		this.scale = scale;
+		this.space = scale.getSpace();
 	}
 
 	/**

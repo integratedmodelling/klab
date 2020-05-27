@@ -157,7 +157,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	private List<IKimConcept> partParticipants = new ArrayList<>();
 	private List<IKimConcept> configurationParticipants = new ArrayList<>();
 	private List<IKimConcept> constituentParticipants = new ArrayList<>();
-	private List<IKimConcept> countablesCreated = new ArrayList<>();
+	private List<IKimConcept> observablesCreated = new ArrayList<>();
 	private List<ApplicableConcept> appliesTo = new ArrayList<>();
 	private List<ApplicableConcept> subjectsLinked = new ArrayList<>();
 	private List<IKimConcept> qualitiesAffected = new ArrayList<>();
@@ -387,12 +387,12 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	}
 
 	@Override
-	public List<IKimConcept> getCountablesCreated() {
-		return countablesCreated;
+	public List<IKimConcept> getObservablesCreated() {
+		return observablesCreated;
 	}
 
 	public void setCountablesCreated(List<IKimConcept> countablesCreated) {
-		this.countablesCreated = countablesCreated;
+		this.observablesCreated = countablesCreated;
 	}
 
 	@Override
@@ -423,7 +423,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		for (IKimConcept c : constituentParticipants) {
 			c.visit(visitor);
 		}
-		for (IKimConcept c : countablesCreated) {
+		for (IKimConcept c : observablesCreated) {
 			c.visit(visitor);
 		}
 		for (IKimConcept c : exposedTraits) {

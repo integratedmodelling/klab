@@ -7,6 +7,7 @@ import java.awt.image.DataBuffer;
 import org.hortonmachine.hmachine.modules.geomorphology.tca.OmsTca;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.Utils;
 
 public class ContributingAreaResolver implements IResolver<IState>, IExpression {
@@ -45,12 +47,12 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 		if (tUnit != null && tUnit.equals(Units.INSTANCE.SQUARE_METERS)) {
 			tUnit = null;
 		}
-		
+
 		OmsTca algorithm = new OmsTca();
-		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, DataBuffer.TYPE_FLOAT, floatNovalue);
+		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
-		algorithm.doReset = false;
+		algorithm.doReset = true;
 		context.getMonitor().info("computing contributing area...");
 		try {
 			algorithm.process();
@@ -59,7 +61,7 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 		}
 		if (!context.getMonitor().isInterrupted()) {
 			final IUnit unit = tUnit;
-			GeotoolsUtils.INSTANCE.coverageToState(algorithm.outTca, target, (a) -> {
+			GeotoolsUtils.INSTANCE.coverageToState(algorithm.outTca, target, context.getScale(), (a) -> {
 				if (a == (double) floatNovalue) {
 					return Double.NaN;
 				}

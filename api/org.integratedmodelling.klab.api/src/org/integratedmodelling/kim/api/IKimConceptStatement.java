@@ -82,7 +82,7 @@ public interface IKimConceptStatement extends IKimStatement {
 
     List<IKimConcept> getQualitiesAffected();
 
-    List<IKimConcept> getCountablesCreated();
+    List<IKimConcept> getObservablesCreated();
 
     List<IKimConcept> getConstituentParticipants();
 

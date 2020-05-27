@@ -208,8 +208,10 @@ public class WeatherStation implements ISpatial {
 		return true;
 	}
 
+
 	public boolean hasEnoughDataFor(ITime time, int maxNodataPercentage, String... variables) {
-		return hasEnoughDataFor(time.getStart().getMilliseconds(), time.getEnd().getMilliseconds(), maxNodataPercentage, variables);
+		return hasEnoughDataFor(time.getStart().getMilliseconds(), time.getEnd().getMilliseconds(), maxNodataPercentage,
+				variables);
 	}
 
 	/**
@@ -262,7 +264,7 @@ public class WeatherStation implements ISpatial {
 	 * @return
 	 */
 	double[] getDataFromDB(String variable, int year) throws KlabException {
-		cacheData();
+		cacheData(true);
 		String id = _id + ":" + variable + "@" + year;
 		return WeatherFactory.dataMap.get(id);
 	}
@@ -273,7 +275,7 @@ public class WeatherStation implements ISpatial {
 	 * @return
 	 * @throws KlabException
 	 */
-	synchronized boolean cacheData() throws KlabException {
+	synchronized boolean cacheData(boolean fast) throws KlabException {
 
 		boolean ret = false;
 		DateTime now = new DateTime();
@@ -283,16 +285,19 @@ public class WeatherStation implements ISpatial {
 			return false;
 		}
 
-		boolean abandon = _lastKnownYear < now.getYear() - 2;
-		if (hasData && abandon) {
-			Logging.INSTANCE.info("Station data for " + _id + " were not updated since " + _lastKnownYear + ": skipping");
-			return false;
+		if (fast && hasData) {
+			return true;
 		}
 		
-		long storedSize = WeatherFactory.datasizeMap.containsKey(_id)
-				? WeatherFactory.datasizeMap.get(_id)
-				: 0;
-				
+		boolean abandon = _lastKnownYear < now.getYear() - 2;
+		if (hasData && abandon) {
+			Logging.INSTANCE
+					.info("Station data for " + _id + " were not updated since " + _lastKnownYear + ": skipping");
+			return false;
+		}
+
+		long storedSize = WeatherFactory.datasizeMap.containsKey(_id) ? WeatherFactory.datasizeMap.get(_id) : 0;
+
 		if (_source.equals("GHNCD")) {
 			/*
 			 * check if we have different data available; if so, download and read again
@@ -306,12 +311,13 @@ public class WeatherStation implements ISpatial {
 					long size = -1;
 
 					if (localGHCNDLocation != null) {
-						dataFile = new File(localGHCNDLocation + File.separator + _id + ".dly");
+						dataFile = new File(localGHCNDLocation + File.separator + "ghcnd_all" + File.separator + _id + ".dly");
 						if (dataFile.exists()) {
 							size = dataFile.length();
 						}
 						if (size > 0 && storedSize == size) {
-							Logging.INSTANCE.info("Station data for " + _id + " are up to date with local file source: skipping");
+							Logging.INSTANCE.info(
+									"Station data for " + _id + " are up to date with local file source: skipping");
 							return false;
 						}
 					}
@@ -344,7 +350,7 @@ public class WeatherStation implements ISpatial {
 					}
 
 					break;
-					
+
 				} catch (Throwable e) {
 					// do nothing, go through other URLs
 					Logging.INSTANCE.error(
@@ -787,6 +793,9 @@ public class WeatherStation implements ISpatial {
 	}
 
 	public Point getPoint() {
+		if (_location == null) {
+			_location = Shape.create(longitude, latitude, Projection.getLatLon());
+		}
 		return (Point) _location.getGeometry();
 	}
 
@@ -1336,11 +1345,11 @@ public class WeatherStation implements ISpatial {
 	}
 
 	public double getLongitude() {
-		return getPoint().getX();
+		return this.longitude; // getPoint().getX();
 	}
 
 	public double getLatitude() {
-		return getPoint().getY();
+		return this.latitude; // getPoint().getY();
 	}
 
 	public String getType() {

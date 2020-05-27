@@ -17,7 +17,7 @@ package org.integratedmodelling.klab.api.model;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.klab.api.IStatement;
 
 /**
  * A k.IM object is anything that was stated in k.IM. As a result, it can
@@ -60,7 +60,7 @@ public interface IKimObject {
 	 *
 	 * @return the k.IM statement that originated this object, or null.
 	 */
-	IKimStatement getStatement();
+	IStatement getStatement();
 
 	/**
 	 * If the object has child objects of the same kind, these will be returned

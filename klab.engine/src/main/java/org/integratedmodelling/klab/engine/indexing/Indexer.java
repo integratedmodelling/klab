@@ -36,6 +36,7 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.IStatement;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.engine.indexing.SearchContext.Constraint;
@@ -79,7 +80,7 @@ public enum Indexer {
 		}
 	}
 
-	public Match index(IKimStatement object, String namespaceId) {
+	public Match index(IStatement object, String namespaceId) {
 
 		SearchMatch ret = null;
 		Set<IKimConcept.Type> semanticType = null;
@@ -109,10 +110,11 @@ public enum Indexer {
 				 * weight; a concept that 'is' something should index its parent's definition
 				 * with lower weight
 				 */
-
-				for (IKimScope child : object.getChildren()) {
-					if (child instanceof IKimConceptStatement) {
-						index((IKimConceptStatement) child, namespaceId);
+				if (object instanceof IKimStatement) {
+					for (IKimScope child : ((IKimStatement) object).getChildren()) {
+						if (child instanceof IKimConceptStatement) {
+							index((IKimConceptStatement) child, namespaceId);
+						}
 					}
 				}
 			}
@@ -139,7 +141,7 @@ public enum Indexer {
 			try {
 
 				Document document = new Document();
-				
+
 				document.add(new StringField("id", ret.getId(), Store.YES));
 				document.add(new StringField("namespace", namespaceId, Store.YES));
 				document.add(new TextField("name", ret.getName(), Store.YES));

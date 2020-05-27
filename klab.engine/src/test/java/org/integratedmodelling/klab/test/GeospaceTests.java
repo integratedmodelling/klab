@@ -86,7 +86,7 @@ public class GeospaceTests {
 
 		if (System.getProperty("visualize", "false").equals("true")) {
 
-			SpatialDisplay display = new SpatialDisplay(tzScale.getSpace());
+			SpatialDisplay display = new SpatialDisplay(tzScale);
 
 			display.add(((Space) tzScale.getSpace()).getGrid(), "original");
 			display.add(gridUp, "up");
@@ -123,7 +123,7 @@ public class GeospaceTests {
 
 			if (System.getProperty("visualize", "false").equals("true")) {
 				
-				SpatialDisplay display = new SpatialDisplay(tzScale.getSpace());
+				SpatialDisplay display = new SpatialDisplay(tzScale);
 
 				display.add(grid.getShape(), "original context " + grid.getXCells() + "," + grid.getYCells());
 				

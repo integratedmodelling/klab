@@ -10,7 +10,6 @@ import org.hortonmachine.gears.utils.features.FeatureUtilities;
 import org.hortonmachine.hmachine.modules.demmanipulation.wateroutlet.OmsExtractBasin;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -18,7 +17,6 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -27,7 +25,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.geospace.processing.PolygonInstantiator;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -95,7 +92,7 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 			WTaskMonitor monitor = new WTaskMonitor(context.getMonitor());
 
 			OmsExtractBasin ebasin = new OmsExtractBasin();
-			ebasin.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, DataBuffer.TYPE_FLOAT, floatNovalue);
+			ebasin.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
 			ebasin.pm = monitor;
 			ebasin.pEast = point.getX();
 			ebasin.pNorth = point.getY();
@@ -108,8 +105,9 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 
 			try {
 				ebasin.process();
-			} catch (Exception e) {
-				throw new KlabException(e);
+			} catch (Throwable e) {
+				context.getMonitor().warn("outlet caused error in watershed extraction: skipping: " + e.getMessage());
+				continue;
 			}
 
 			if (monitor.errors > 0) {

@@ -42,85 +42,79 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  */
 public interface IDataArtifact extends IArtifact {
 
-    /**
-     * Get the POD object pointed to by the locator. If the locator implies
-     * mediation, this should be supported. If the locator is incompatible with the
-     * geometry, throw an exception.
-     *
-     * @param index
-     *            a locator for the state. If the locator implies mediation,
-     *            propagation or aggregation should be done.
-     * @return value at index
-     * @throws java.lang.IllegalArgumentException
-     *             if the locator is not compatible with the artifact's geometry.
-     */
-    Object get(ILocator index);
+	/**
+	 * Get the POD object pointed to by the locator. If the locator implies
+	 * mediation, this should be supported. If the locator is incompatible with the
+	 * geometry, throw an exception.
+	 *
+	 * @param index a locator for the state. If the locator implies mediation,
+	 *              propagation or aggregation should be done.
+	 * @return value at index
+	 * @throws java.lang.IllegalArgumentException if the locator is not compatible
+	 *                                            with the artifact's geometry.
+	 */
+	Object get(ILocator index);
 
-    /**
-     * Get the POD object pointed to by the locator. If the locator implies
-     * mediation, this should be supported. If the locator is incompatible with the
-     * geometry, throw an exception.
-     *
-     * @param index
-     *            a locator for the state. If the locator implies mediation,
-     *            propagation or aggregation should be done.
-     * @param cls
-     *            the class of the result we want
-     * @return value at index
-     * @throws java.lang.IllegalArgumentException
-     *             if the locator is not compatible with the artifact's geometry.
-     * @param <T>
-     *            a T object.
-     */
-    <T> T get(ILocator index, Class<T> cls);
+	/**
+	 * Get the POD object pointed to by the locator. If the locator implies
+	 * mediation, this should be supported. If the locator is incompatible with the
+	 * geometry, throw an exception.
+	 *
+	 * @param index a locator for the state. If the locator implies mediation,
+	 *              propagation or aggregation should be done.
+	 * @param cls   the class of the result we want
+	 * @return value at index
+	 * @throws java.lang.IllegalArgumentException if the locator is not compatible
+	 *                                            with the artifact's geometry.
+	 * @param <T> a T object.
+	 */
+	<T> T get(ILocator index, Class<T> cls);
 
-    /**
-     * Set the value(s) at given index. Improper values or locators cause an
-     * unchecked exception.
-     *
-     * @param index
-     *            a locator for the state. If the locator implies mediation,
-     *            propagation or aggregation should be done.
-     * @param value
-     *            a compatible value. Usually of type T, but can be others - e.g. a
-     *            probability distribution for it. The state is expected to quickly
-     *            promote itself to a different underlying implementation if a
-     *            compatible value of a new type is expected.
-     * @return the linear offset corresponding to the locator in storage (for
-     *         checking and debugging only)
-     * @throws java.lang.IllegalArgumentException
-     *             if value is incompatible with type or locator is not compatible
-     *             with the geometry.
-     */
-    long set(ILocator index, Object value);
+	/**
+	 * Set the value(s) at given index. Improper values or locators cause an
+	 * unchecked exception.
+	 *
+	 * @param index a locator for the state. If the locator implies mediation,
+	 *              propagation or aggregation should be done.
+	 * @param value a compatible value. Usually of type T, but can be others - e.g.
+	 *              a probability distribution for it. The state is expected to
+	 *              quickly promote itself to a different underlying implementation
+	 *              if a compatible value of a new type is expected.
+	 * @return the linear offset corresponding to the locator in storage (for
+	 *         checking and debugging only)
+	 * @throws java.lang.IllegalArgumentException if value is incompatible with type
+	 *                                            or locator is not compatible with
+	 *                                            the geometry.
+	 */
+	long set(ILocator index, Object value);
 
-    /**
-     * Total number of values. Must be compatible with the size of the dimensions of
-     * the underlying geometry.
-     *
-     * @return total count of states
-     */
-    long size();
+	/**
+	 * Total number of values. Must be compatible with the size of the dimensions of
+	 * the underlying geometry.
+	 *
+	 * @return total count of states
+	 */
+	long size();
 
-    /**
-     * If the individual values can be matched to an interpretive key, return it
-     * here.
-     * 
-     * @return the data key, or null.
-     */
-    IDataKey getDataKey();
+	/**
+	 * If the individual values can be matched to an interpretive key, return it
+	 * here.
+	 * 
+	 * @return the data key, or null.
+	 */
+	IDataKey getDataKey();
 
-    /**
-     * Return a value aggregated over the passed geometry and converted to the passed type if
-     * necessary and possible.
-     * 
-     * @param geometry
-     * @param cls
-     * @return the aggregated value
-     * @throws IllegalArgumentException if the type can't fit the data or the geometry is not 
-     *         covered by the original geometry.
-     */
-    <T> T aggregate(ILocator geometry, Class<? extends T> cls);
-
+	/**
+	 * Return a value aggregated over the passed geometry and converted to the
+	 * passed type if necessary and possible.
+	 * 
+	 * @param geometry
+	 * @param cls
+	 * @return the aggregated value
+	 * @throws IllegalArgumentException if the type can't fit the data or the
+	 *                                  geometry is not covered by the original
+	 *                                  geometry.
+	 */
+	<T> T aggregate(ILocator geometry, Class<? extends T> cls);
 
 }

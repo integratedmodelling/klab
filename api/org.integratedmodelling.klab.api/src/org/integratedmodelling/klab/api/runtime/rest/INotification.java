@@ -12,9 +12,31 @@ public interface INotification {
 	public enum Type {
 		None, Success, Failure
 	}
-	
+
+	public enum Mode {
+		Silent, Normal, Verbose
+	}
+
+	/**
+	 * The notifying identity
+	 * 
+	 * @return
+	 */
+	String getIdentity();
+
+	/**
+	 * This will be the string representation of the silly Java level, which was
+	 * born before enums existed.
+	 * 
+	 * @return
+	 */
 	String getLevel();
 
+	/**
+	 * System time of notification
+	 * 
+	 * @return
+	 */
 	long getTimestamp();
 
 	String getMessage();

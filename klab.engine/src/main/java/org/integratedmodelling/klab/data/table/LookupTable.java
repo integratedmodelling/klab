@@ -72,7 +72,8 @@ public class LookupTable implements ILookupTable {
 
 	@Override
 	public int reverseLookup(Object value) {
-		return key.get(value);
+		Integer ret = key.get(value); 
+		return ret == null ? -1 : ret;
 	}
 
 	@Override

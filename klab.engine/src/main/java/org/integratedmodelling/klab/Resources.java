@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -79,12 +80,14 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
@@ -127,7 +130,6 @@ public enum Resources implements IResourceService {
 	}
 
 	private Map<String, ResourceData> statusCache = Collections.synchronizedMap(new HashMap<>());
-//	private ExecutorService resourceTaskExecutor;
 	private IKimLoader loader = null;
 
 	/**
@@ -138,6 +140,13 @@ public enum Resources implements IResourceService {
 
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
 	Map<String, IUrnAdapter> urnAdapters = Collections.synchronizedMap(new HashMap<>());
+
+	/**
+	 * Cache for universal resources coming from nodes, to avoid continuous
+	 * retrieval. TODO FIXME expire these regularly based on timestamp and store
+	 * original node for a quick node check before use.
+	 */
+	Map<String, IResource> remoteCache = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * The local resource catalog is a map that can be set by the engine according
@@ -185,6 +194,8 @@ public enum Resources implements IResourceService {
 	private ServiceWorkspace service;
 
 	private IProject localProject;
+
+	public static String REGEX_ENTRY = "regex";
 
 	private Resources() {
 		Services.INSTANCE.registerService(this, IResourceService.class);
@@ -430,11 +441,32 @@ public enum Resources implements IResourceService {
 		Urn urn = new Urn(urns);
 
 		if (urn.isLocal()) {
-			ret = getLocalResourceCatalog().get(urn.toString());
+			ret = getLocalResourceCatalog().get(urn.getUrn());
 		} else if (urn.isUniversal()) {
-			IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
-			if (adapter != null) {
-				return adapter.getResource(urns);
+
+			// TODO this should periodically expire resources whose timestamp is > x
+			if (this.remoteCache.containsKey(urn.getUrn())) {
+				ret = this.remoteCache.get(urn.getUrn());
+			} else {
+
+				IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
+				if (adapter != null) {
+					// locally available, use local
+					return adapter.getResource(urns);
+				} else {
+					// if 1+ nodes provide the adapter, ask it for the
+					// resource descriptor.
+					INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
+					if (node != null) {
+						/*
+						 * get the resource descriptor directly from the node
+						 */
+						ResourceReference reference = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN,
+								ResourceReference.class, "urn", urn.getUrn());
+						ret = new Resource(reference);
+						this.remoteCache.put(urn.getUrn(), ret);
+					}
+				}
 			}
 		} else {
 			ret = publicResourceCatalog.get(urn.getUrn());
@@ -467,7 +499,62 @@ public enum Resources implements IResourceService {
 		return "local:" + user.getUsername() + ":" + project.getName() + ":" + resourceId;
 	}
 
-	@Override
+	/**
+	 * Create or update a locally available resource from a specification or/and by
+	 * examining a local file. This is the beginning of a resource's life cycle.
+	 * When a resource is successfully created, its data will be stored in the
+	 * project under the resources folder, and synchronized with the local resource
+	 * catalog. If the file has been seen already, the resource is updated in the
+	 * local catalog with full history records.
+	 * <p>
+	 * The local resource will have a
+	 * {@code [urn:klab:]local:user:project:resourceid.version} URN which is visible
+	 * only within the project. All files and needed info are copied within the
+	 * resources project area.
+	 * <p>
+	 * The resource ID is created from the file name if an id field is not present
+	 * in the parameters. It is an error to pass a null file and no id.
+	 * <p>
+	 * The update parameter controls whether revisions are possible with files that
+	 * don't have a newer timestamp than the resource. It will normally be set to
+	 * true only when the resource creation is created explicitly. This function is
+	 * also used when reading or updating a resource for a file named in a k.IM
+	 * model.
+	 * <p>
+	 * Local resource versions are in the form 0.0.build with the build starting at
+	 * 1 and increasing at each update. Publishing them modifies the minor version,
+	 * starting at 0.1.build. Only their owners' explicit action, or peer review in
+	 * a reviewed repository, modifies the major version to make them 1.x.b or
+	 * anything higher than the initial version.
+	 * 
+	 * @param resourceId   the ID for the resource, which will be part of the URN
+	 *                     and must be unique within a project.
+	 * @param file         a {@link java.io.File} object. May be null if userData
+	 *                     contain all relevant info. The local path of the file
+	 *                     (starting at the project folder, inclusive) is stored in
+	 *                     metadata and checked in case of redefinition, so that the
+	 *                     URN is versioned rather than recreated.
+	 * @param userData     user data. May be empty (if all that's needed is the
+	 *                     file). Must contain a suitable id if the file is null.
+	 *                     These are used to define URN parameters at the discretion
+	 *                     of the adapter.
+	 * @param project      the project for the resource. Can't be null. All local
+	 *                     resources are project-local; only public resources are
+	 *                     visible globally.
+	 * @param adapterType  pass null to interrogate all adapters and choose the
+	 *                     first fitting adapter. Must be passed if file is null.
+	 * @param update       if true, allow updating of the resource every time this
+	 *                     is called. Otherwise just create if absent or update when
+	 *                     the timestamp on the resource is older than that of the
+	 *                     file.
+	 * @param asynchronous if true, spawn a validator thread and return a proxy for
+	 *                     the resource without blocking.
+	 * @param monitor      a
+	 *                     {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *                     object.
+	 * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
+	 *         with a local URN if successful.
+	 */
 	public IResource createLocalResource(String resourceId, File file, IParameters<String> parameters, IProject project,
 			String adapterType, boolean forceUpdate, boolean asynchronous, IMonitor monitor) {
 
@@ -666,12 +753,21 @@ public enum Resources implements IResourceService {
 	 * @param project     the destination project for the local resources built
 	 * @param adapterType optional, pass if needed to resolve ambiguities or prevent
 	 *                    excessive calculations.
+	 * @param regex       if not null, is added to parameters with key REGEX_ENTRY
+	 *                    and used as filter by the importer
 	 * @return
 	 */
-	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType) {
+	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType,
+			String regex) {
 
 		List<IResourceAdapter> importers = new ArrayList<>();
 		IParameters<String> parameters = new Parameters<String>();
+		// TODO better way to pass the regex to the importer, if not removed from
+		// userData after use,
+		// is added to metadata
+		if (regex != null && !regex.equals("")) {
+			parameters.put(REGEX_ENTRY, regex);
+		}
 		for (IResourceAdapter adapter : resourceAdapters.values()) {
 			if ((adapterType == null || adapter.getName().equals(adapterType)) && adapter.getImporter() != null
 					&& adapter.getImporter().canHandle(source.toString(), parameters)) {
@@ -841,11 +937,30 @@ public enum Resources implements IResourceService {
 		return data == null ? null : new Pair<>(ctxArtifact, data.getArtifact());
 	}
 
-	@Override
+	/**
+	 * Resolve a URN to data using default builder and context, using the full
+	 * geometry of the resource and a suitable scale (i.e. downscaling if the
+	 * resulting artifact is too big to handle). Return the resulting artifact, or
+	 * null if things go wrong.
+	 * 
+	 * @param urn
+	 * @param monitor
+	 * @return a pair containing the context artifact and the artifact built by the
+	 *         resource (iterable if objects)
+	 */
+	// @Override
 	public Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor) {
 		return resolveResourceToArtifact(urn, monitor, false, null, null);
 	}
 
+	/**
+	 * Non-semantic version that will use the entire geometry of the resource.
+	 * 
+	 * @param urn
+	 * @param builder
+	 * @param monitor
+	 * @return
+	 */
 	public IKlabData getResourceData(String urn, IKlabData.Builder builder, IMonitor monitor) {
 		Pair<String, Map<String, String>> split = Urns.INSTANCE.resolveParameters(urn);
 		IResource resource = resolveResource(urn);
@@ -859,12 +974,54 @@ public enum Resources implements IResourceService {
 		return builder.build();
 	}
 
-	@Override
+	/**
+	 * Non-semantic version that will use the passed geometry.
+	 * 
+	 * @param urn
+	 * @param builder
+	 * @param geometry
+	 * @param monitor
+	 * @return
+	 */
+	public IKlabData getResourceData(String urn, IKlabData.Builder builder, IGeometry geometry, IMonitor monitor) {
+		Pair<String, Map<String, String>> split = Urns.INSTANCE.resolveParameters(urn);
+		IResource resource = resolveResource(urn);
+		if (resource == null) {
+			throw new KlabResourceAccessException("Access to resource data failed for resource " + urn);
+		}
+		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+		if (adapter == null) {
+			throw new KlabUnsupportedFeatureException(
+					"adapter for resource of type " + resource.getAdapterType() + " not available");
+		}
+		adapter.getEncoder().getEncodedData(resource, split.getSecond(), geometry, builder,
+				Expression.emptyContext(geometry, monitor));
+		return builder.build();
+	}
+
+	/**
+	 * Resolve a resource to data in a passed geometry. This involves retrieval of
+	 * the adapter, decoding of the resource (remotely or locally according to the
+	 * resource itself) and building of the data object through the passed scope. If
+	 * no exceptions are thrown, the result is guaranteed consistent with the
+	 * geometry and free of errors.
+	 * <p>
+	 * If this is used and a runtime scope is passed, this <b>will build</b>
+	 * observations in the context! If the resource is being tried out for later
+	 * building, use one of the getters that use a builder.
+	 * 
+	 * @param resource
+	 * @param urnParameters
+	 * @param geometry
+	 * @param context
+	 * @return KlabException if anything goes wrong
+	 */
+//	@Override
 	public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			IContextualizationScope context) {
 
 		boolean local = Urns.INSTANCE.isLocal(resource.getUrn());
-		Urn urn = new Urn(resource.getUrn());
+		Urn urn = new Urn(resource.getUrn(), urnParameters);
 		if (urn.isUniversal()) {
 			// use it locally only if we have the adapter.
 			local = getResourceAdapter(urn.getCatalog()) != null;
@@ -901,6 +1058,7 @@ public enum Resources implements IResourceService {
 					adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
 					return builder.build();
 				} catch (Throwable e) {
+					Logging.INSTANCE.error(e);
 					// just return null later
 				}
 			}
@@ -909,7 +1067,8 @@ public enum Resources implements IResourceService {
 			INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
 			if (node != null) {
 				ResourceDataRequest request = new ResourceDataRequest();
-				request.setUrn(urn.getUrn());
+				// send toString() with all parameters!
+				request.setUrn(urn.toString());
 				request.setGeometry(geometry.encode());
 				DecodingDataBuilder builder = new DecodingDataBuilder(
 						node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class), context);
@@ -958,7 +1117,10 @@ public enum Resources implements IResourceService {
 						 * build an observer from the data and return it
 						 */
 						return Observations.INSTANCE.makeROIObserver(builder.getObjectName(0),
-								builder.getObjectScale(0).getSpace().getShape(), builder.getObjectMetadata(0));
+								builder.getObjectScale(0).getSpace().getShape(),
+								org.integratedmodelling.klab.Time.INSTANCE
+										.getGenericCurrentExtent(Resolution.Type.YEAR),
+								builder.getObjectMetadata(0));
 					}
 				}
 			}
@@ -1051,14 +1213,6 @@ public enum Resources implements IResourceService {
 		return new ResourceBuilder();
 	}
 
-//	public ExecutorService getResourceTaskExecutor() {
-//		if (resourceTaskExecutor == null) {
-//			// TODO condition both the type and the parameters of the executor to options
-//			resourceTaskExecutor = Executors.newFixedThreadPool(Configuration.INSTANCE.getResourceThreadCount());
-//		}
-//		return resourceTaskExecutor;
-//	}
-
 	@Override
 	public boolean isResourceOnline(String urn) {
 		if (!Urns.INSTANCE.isLocal(urn) && !Urns.INSTANCE.isUniversal(urn)) {
@@ -1073,6 +1227,10 @@ public enum Resources implements IResourceService {
 	}
 
 	public boolean isResourceOnline(IResource resource, boolean forceUpdate) {
+
+		if (resource instanceof MergedResource) {
+			return ((MergedResource) resource).isOnline();
+		}
 
 		if (Configuration.INSTANCE.forceResourcesOnline()) {
 			return true;
@@ -1089,7 +1247,7 @@ public enum Resources implements IResourceService {
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 			if (adapter != null) {
-				boolean ret = adapter.getEncoder().isOnline(resource);
+				boolean ret = adapter.getEncoder().isOnline(resource, Klab.INSTANCE.getRootMonitor());
 				ResourceData cached = statusCache.get(resource.getUrn());
 				if (cached == null) {
 					cached = new ResourceData();
@@ -1103,6 +1261,9 @@ public enum Resources implements IResourceService {
 			Urn urn = new Urn(resource.getUrn());
 			if (getUrnAdapter(urn.getCatalog()) != null) {
 				return getUrnAdapter(urn.getCatalog()).isOnline(urn);
+			} else {
+				// can only have come from a remote node, assumed online
+				return true;
 			}
 		} else {
 			return publicResourceCatalog.isOnline(resource.getUrn());
@@ -1173,7 +1334,6 @@ public enum Resources implements IResourceService {
 		if (rdef.exists()) {
 			ResourceReference rref = JsonUtils.load(rdef, ResourceReference.class);
 			if (!getLocalResourceCatalog().containsKey(rref.getUrn())) {
-				// Logging.INSTANCE.info("synchronizing project resource " + rref.getUrn());
 				getLocalResourceCatalog().put(rref.getUrn(), new Resource(rref));
 			}
 			return rref;
@@ -1198,17 +1358,32 @@ public enum Resources implements IResourceService {
 			compilationResult.setPublishable(namespace.isPublishable());
 			ret.getCompilationReports().add(compilationResult);
 		}
-		for (String urn : project.getLocalResourceUrns()) {
-			// TODO should also include notifications from namespace compilation in project
-			LocalResourceReference rref = new LocalResourceReference();
-			rref.setUrn(urn);
-			IResource resource = Resources.INSTANCE.resolveResource(urn);
-			if (resource != null) {
-				rref.setOnline(Resources.INSTANCE.isResourceOnline(resource));
-				rref.setError(resource.hasErrors());
-				ret.getLocalResources().add(rref);
+
+		long event = -1;
+		try {
+
+			/*
+			 * inform any listeners of the potentially blocking operation
+			 */
+			event = Klab.INSTANCE.notifyEventStart(EngineEvent.Type.ResourceValidation);
+
+			for (String urn : project.getLocalResourceUrns()) {
+				// TODO should also include notifications from namespace compilation in project
+				LocalResourceReference rref = new LocalResourceReference();
+				rref.setUrn(urn);
+				IResource resource = Resources.INSTANCE.resolveResource(urn);
+				if (resource != null) {
+					rref.setOnline(Resources.INSTANCE.isResourceOnline(resource));
+					rref.setError(resource.hasErrors());
+					ret.getLocalResources().add(rref);
+				}
 			}
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			Klab.INSTANCE.notifyEventEnd(event);
 		}
+
 		return ret;
 	}
 
@@ -1465,6 +1640,68 @@ public enum Resources implements IResourceService {
 	public boolean validateForPublication(IResource resource) {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public IKlabData getResourceData(String urn, IGeometry geometry, IMonitor monitor) {
+		IResource resource = resolveResource(urn);
+		if (resource == null) {
+			return null;
+		}
+		Urn kurn = new Urn(urn);
+		return getResourceData(resource, kurn.getParameters(), geometry, Expression.emptyContext(monitor));
+	}
+
+	@Override
+	public IArtifact contextualizeResource(String urn, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Detailed re-validation done on demand.
+	 * 
+	 * @param resource
+	 * @param rmonitor
+	 */
+	public void revalidate(IResource resource, IMonitor monitor) {
+
+		monitor.info("Revalidating resource " + resource.getUrn());
+
+		/*
+		 * first validate the offline status
+		 */
+		boolean online = false;
+		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+			if (adapter != null) {
+				boolean ret = adapter.getEncoder().isOnline(resource, monitor);
+				ResourceData cached = statusCache.get(resource.getUrn());
+				if (cached == null) {
+					cached = new ResourceData();
+					cached.online = ret;
+					cached.timestamp = System.currentTimeMillis();
+					statusCache.put(resource.getUrn(), cached);
+				}
+				online = ret;
+			}
+		} else if (Urns.INSTANCE.isUniversal(resource.getUrn())) {
+			Urn urn = new Urn(resource.getUrn());
+			if (getUrnAdapter(urn.getCatalog()) != null) {
+				online = getUrnAdapter(urn.getCatalog()).isOnline(urn);
+			} else {
+				// can only have come from a remote node, assumed online
+				online = true;
+			}
+		} else {
+			online = publicResourceCatalog.isOnline(resource.getUrn());
+		}
+
+		monitor.info("Initial status is " + (online ? "online" : "OFFLINE"));
+
+		// TODO Auto-generated method stub
+		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+
 	}
 
 }

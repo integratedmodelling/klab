@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 
 /**
@@ -29,14 +30,6 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 	private List<IArtifact> artifacts = new ArrayList<>();
 	boolean sorted = false;
 	private Comparator<IArtifact> comparator = null;
-
-	/*
-	 * like everything, a group is born new, then the actuator ensures the next time
-	 * objects are added we should notify a change and not the whole group. Because
-	 * the group changes when objects are added or removed, we use the notified size
-	 * to assess if it's new.
-	 */
-	int notifiedSize = -1;
 
 	public ObservationGroup(Observable observable, Scale scale, IRuntimeScope context, IArtifact.Type type) {
 		super(observable.getName(), observable, scale, context);
@@ -64,14 +57,6 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 		return artifacts.isEmpty();
 	}
 
-	public boolean isNew() {
-		return groupSize() != notifiedSize;
-	}
-
-	public void setNew(boolean b) {
-		this.notifiedSize = groupSize();
-	}
-
 	@Override
 	public Iterator<IArtifact> iterator() {
 		sort();
@@ -92,10 +77,20 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 
 	@Override
 	public void chain(IArtifact data) {
+		chain(data, false);
+	}
+	
+	public void chain(IArtifact data, boolean notify) {
 		artifacts.add(data);
 		((Observation) data).setGroup(this);
 		sorted = false;
+		if (notify) {
+			ObservationChange change = requireStructureChangeEvent();
+			change.setTimestamp(-1);
+			change.setNewSize(this.groupSize());
+		}
 	}
+
 
 	public void setComparator(Comparator<IArtifact> comparator) {
 		this.comparator = comparator;

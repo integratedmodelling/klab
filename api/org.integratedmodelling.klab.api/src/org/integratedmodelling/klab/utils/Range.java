@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 
 public class Range implements IValueMediator {
@@ -55,7 +56,7 @@ public class Range implements IValueMediator {
 			lowerBound = upperBound;
 			upperBound = s;
 		}
-		
+
 		lowerExclusive = leftExclusive;
 		upperExclusive = rightExclusive;
 	}
@@ -428,6 +429,11 @@ public class Range implements IValueMediator {
 			return create(newLower, newUpper);
 		}
 	}
+	
+	public boolean overlaps(Range other) {
+		return this.lowerBound <= other.upperBound && other.lowerBound <= this.upperBound;
+	}
+	
 
 	/**
 	 * Returns the minimal range that {@linkplain #encloses encloses} both this
@@ -458,6 +464,21 @@ public class Range implements IValueMediator {
 			double newUpper = (upperCmp >= 0) ? upperBound : other.upperBound;
 			return create(newLower, newUpper);
 		}
+	}
+
+	/**
+	 * Return a range that contains as much as possible of the span of the second
+	 * argument constrained to the span of this, changing the values so that the
+	 * boundaries may change with the least possible error, and keeping the span as
+	 * much as possible. The output may be different from both but will never be
+	 * outside this, or span larger than the argument.
+	 * 
+	 * @param constraint
+	 * @param other
+	 * @return
+	 */
+	public Range match(Range other) {
+		return null;
 	}
 
 	/**
@@ -537,6 +558,44 @@ public class Range implements IValueMediator {
 
 	}
 
+	/**
+	 * Return another range that includes the passed one and aligns with this when
+	 * divided by the passed number of cells, which is expected to divide our width
+	 * exactly. Also return a pair of doubles representing the amount of coverage of
+	 * the left and right cells in the original range, in [0, 1) with 0,0 if they
+	 * originally aligned exactly.
+	 * 
+	 * @param original the range to align
+	 * @param nCells   the number of subdivisions in this range
+	 * @return 1) a new range that includes original and aligns with the grid we
+	 *         represent at the passed resolution. If original contains this on
+	 *         either side, cut it to align. 2) two doubles for the left and right
+	 *         percentage of original error (amount of cell covered in the original
+	 *         range).
+	 */
+	public Pair<Range, Pair<Double, Double>> snap(Range original, long nCells) {
+
+		if (!this.overlaps(original)) {
+			return null;
+		}
+		
+		double olower = original.getLowerBound() < getLowerBound() ? getLowerBound() : original.getLowerBound();
+		double oupper = original.getUpperBound() > getUpperBound() ? getUpperBound() : original.getUpperBound();
+		
+		double cellWidth = getWidth() / nCells;
+		double leftGap = olower - getLowerBound();
+		double leftCells = (long) Math.floor(leftGap / cellWidth);
+		double leftError = leftGap - (leftCells * cellWidth);
+		double rightGap = getUpperBound() - oupper;
+		double rightCells = (long) Math.floor(rightGap / cellWidth);
+		double rightError = rightGap - (rightCells * cellWidth);
+
+		return new Pair<>(
+				create(this.getLowerBound() + (leftGap > 0 ? (leftCells * cellWidth) : 0),
+						this.getUpperBound() - (rightGap > 0 ? (rightCells * cellWidth) : 0)),
+				new Pair<>(leftError, rightError));
+	}
+
 	public boolean isWithin(double n) {
 		boolean left = lowerExclusive ? n > lowerBound : n >= lowerBound;
 		boolean right = upperExclusive ? n < upperBound : n <= upperBound;
@@ -544,12 +603,22 @@ public class Range implements IValueMediator {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(Range.create("[1100000.0,7.148E7]").toString());
-		System.out.println(Range.create("[0,1]"));
-		System.out.println(Range.create("[12.33, 3222]"));
-		System.out.println(Range.create("[,1]"));
-		System.out.println(Range.create("[0,]"));
-		System.out.println(Range.create("[,]"));
+
+		Range cock = create(-10, 0);
+		Pair<Range, Pair<Double, Double>> snapped = cock.snap(create(-8.7, -3.9), 10);
+
+		System.out.println("FIXED RANGE: " + snapped.getFirst());
+		System.out.println("ERRORS: " + snapped.getSecond());
+
+		System.out.println("OVERLAP TRUE: " + cock.overlaps(create(1.7, 1.9)));
+		System.out.println("OVERLAP FALSE: " + cock.overlaps(create(11, 19)));
+		
+//		System.out.println(Range.create("[1100000.0,7.148E7]").toString());
+//		System.out.println(Range.create("[0,1]"));
+//		System.out.println(Range.create("[12.33, 3222]"));
+//		System.out.println(Range.create("[,1]"));
+//		System.out.println(Range.create("[0,]"));
+//		System.out.println(Range.create("[,]"));
 	}
 
 	public void include(double d) {

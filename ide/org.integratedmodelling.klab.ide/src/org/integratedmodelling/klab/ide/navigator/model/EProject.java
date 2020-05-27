@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.ide.Activator;
@@ -38,6 +39,9 @@ public class EProject extends ENavigatorItem {
 			if (!child.isWorldviewBound()) {
 				ret.add(new ENamespace(child, this));
 			}
+		}
+		for (IKActorsBehavior child : delegate.getBehaviors()) {
+			ret.add(new EActorBehavior(child, this));
 		}
 
 		/*

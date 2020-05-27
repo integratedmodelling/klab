@@ -49,6 +49,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * and its token must authenticate those engine API calls that are
  * session-aware. All sessions have a {@link IUserIdentity} as parent.
  * <p>
+ * If a session has a behavior associated (bound in the connection REST call by 
+ * name), it becomes an actor and implements it by setting priorities, views and
+ * whatever else the behavior specifies.
+ * <p>
  *
  * @author ferdinando.villa
  * @version $Id: $Id

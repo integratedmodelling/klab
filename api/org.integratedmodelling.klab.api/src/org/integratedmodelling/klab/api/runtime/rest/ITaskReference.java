@@ -2,7 +2,18 @@ package org.integratedmodelling.klab.api.runtime.rest;
 
 public interface ITaskReference {
 
-	// TODO provenance info - agent, cause etc
+	/**
+	 * Used at runtime but not included in the task description itself.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	enum Status {
+		Started,
+		Finished,
+		Aborted
+	}
+	
 	String getId();
 
 	String getParentId();

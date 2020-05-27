@@ -10,8 +10,8 @@ import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -23,10 +23,11 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.model.Behavior;
+import org.integratedmodelling.klab.model.Contextualization;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -122,8 +123,8 @@ public class RankedModel extends Model implements IRankedModel {
 		return getDelegate().getAttributeObservables();
 	}
 
-	public String getLocalNameFor(IObservable observable) {
-		return getDelegate().getLocalNameFor(observable);
+	public String getLocalNameFor(IObservable observable, IConcept context) {
+		return getDelegate().getLocalNameFor(observable, context);
 	}
 
 	public boolean isResolved() {
@@ -178,8 +179,8 @@ public class RankedModel extends Model implements IRankedModel {
 		getDelegate().setNamespace(namespace);
 	}
 
-	public Behavior getBehavior() {
-		return getDelegate().getBehavior();
+	public Contextualization getContextualization() {
+		return getDelegate().getContextualization();
 	}
 
 	public Scope getScope() {
@@ -224,8 +225,8 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public Observable getCompatibleOutput(Observable observable) {
-		return getDelegate().getCompatibleOutput(observable);
+	public Observable getCompatibleOutput(Observable observable, IConcept context) {
+		return getDelegate().getCompatibleOutput(observable, context);
 	}
 
 	@Override
@@ -263,4 +264,8 @@ public class RankedModel extends Model implements IRankedModel {
 		return delegate.isDerived();
 	}
 
+	@Override
+	public Strategy getObservationStrategy() {
+		return delegate.getObservationStrategy();
+	}
 }

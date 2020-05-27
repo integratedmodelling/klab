@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
@@ -45,21 +46,24 @@ public class WcsEncoder implements IResourceEncoder {
 	RasterEncoder encoder = new RasterEncoder();
 
 	@Override
-	public void getEncodedData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope context) {
+	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+			Builder builder, IContextualizationScope context) {
 		WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
 				Version.create(resource.getParameters().get("wcsVersion", String.class)));
 		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
 		if (layer != null) {
-			encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry), geometry, builder, context);
+			encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry), geometry,
+					builder, context);
 		} else {
-			context.getMonitor().warn("Problems accessing WCS layer " + resource.getParameters().get("wcsIdentifier", String.class));
+			context.getMonitor().warn(
+					"Problems accessing WCS layer " + resource.getParameters().get("wcsIdentifier", String.class));
 		}
 	}
 
 	private GridCoverage getCoverage(WCSLayer layer, IResource resource, IGeometry geometry) {
 
 		File coverageFile = WcsAdapter.getCachedFile(layer.getIdentifier(), geometry);
-		
+
 		if (coverageFile == null) {
 
 			// forcing v1.0.0 for now, while I figure out the pain of WCS requests
@@ -93,16 +97,31 @@ public class WcsEncoder implements IResourceEncoder {
 	}
 
 	@Override
-	public boolean isOnline(IResource resource) {
+	public boolean isOnline(IResource resource, IMonitor monitor) {
 
 		WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
 				Version.create(resource.getParameters().get("wcsVersion", String.class)));
 		if (service == null) {
+			monitor.error("Service " + resource.getParameters().get("serviceUrl", String.class)
+					+ " does not exist: likely the service URL is wrong or offline");
 			return false;
 		}
+
 		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
+
+		if (layer == null) {
+			monitor.error("Layer " + resource.getParameters().get("wcsIdentifier", String.class)
+					+ (service.containsIdentifier(resource.getParameters().get("wcsIdentifier", String.class))
+							? "was found in service with a null value"
+							: " was not found in service ")
+					+ resource.getParameters().get("serviceUrl", String.class)
+					+ ": likely the layer ID is wrong or the layer was removed");
+		} else if (layer.isError()) {
+			monitor.error("Layer " + resource.getParameters().get("wcsIdentifier", String.class)
+					+ " has errors: associated message was: " + layer.getMessage());
+		}
+
 		return layer != null && !layer.isError();
 	}
-
 
 }

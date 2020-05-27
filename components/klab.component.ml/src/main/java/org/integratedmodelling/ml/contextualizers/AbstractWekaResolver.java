@@ -31,15 +31,18 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
+import org.integratedmodelling.klab.data.storage.MergingState;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.ml.context.WekaClassifier;
 import org.integratedmodelling.ml.context.WekaInstances;
 import org.integratedmodelling.ml.context.WekaInstances.DiscretizerDescriptor;
@@ -99,7 +102,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		for (int i = 1; i < context.getModel().getObservables().size(); i++) {
 			IObservable obs = context.getModel().getObservables().get(i);
 			if (obs.getType().is(Type.UNCERTAINTY)
-					&& ret.getObservable().getType().is(Observables.INSTANCE.getInherentType(obs.getType()))) {
+					&& ret.getObservable().getType().is(Observables.INSTANCE.getDescribedType(obs.getType()))) {
 				uncertainty = context.getArtifact(obs.getName(), IState.class);
 			}
 		}
@@ -139,11 +142,21 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		context.getMonitor().info("Training completed successfully.");
 
 		if (!ret.isArchetype()) {
-			for (ILocator locator : ret.getScale()) {
-
-				Instance instance = instances.getInstance(locator);
-				if (instance != null) {
-					setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret, uncertainty);
+			/*
+			 * if it's distributed w/o @distribute it should create a merging state to
+			 * substitute ret.
+			 */
+			if (((Model) context.getModel()).learnsWithinArchetype()
+					&& !((Model) context.getModel()).distributesLearning()) {
+				ret = MergingState.promote(ret, 
+						context.getObservations(((Model) context.getModel()).getArchetype().getType()));
+			} else {
+				for (ILocator locator : ret.getScale()) {
+					Instance instance = instances.getInstance(locator);
+					if (instance != null) {
+						setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret,
+								uncertainty);
+					}
 				}
 			}
 		}
@@ -274,6 +287,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 			IState state = predicted ? instances.getPredictedState() : instances.getPredictor(attribute.name());
 			if (state != null && !state.isArchetype()) {
+				
+				// goes through here even when training on objects....
 				StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 				if (!predicted) {
 					builder.withParameter("predictor." + attribute.name() + ".index", i)
@@ -282,8 +297,17 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 					builder.withParameter("predicted.index", i);
 				}
 
-				builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+				// ...hence this:
+				Range range = instances.getDataRange(attribute.name());
+				if (range != null) {
+					// trained on objects
+					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+							"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
+				} else {
+					// trained on state
+					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
 						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
+				}				
 			} else {
 
 				IObservable observable = predicted ? instances.getPredictedObservable()
@@ -295,10 +319,11 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 					builder.withParameter("predicted.index", i);
 				}
 
-				// TODO! Use ranges from training
-//				builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
-//						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
-
+				Range range = instances.getDataRange(observable.getName());
+				if (range != null) {
+					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+						"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
+				}
 			}
 
 			/*

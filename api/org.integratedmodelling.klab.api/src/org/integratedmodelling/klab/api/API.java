@@ -202,6 +202,39 @@ public interface API {
 
 	public static interface NODE {
 
+		/**
+		 * Protected admin endpoints for configuration and component setup.
+		 * 
+		 * @author Ferd
+		 *
+		 */
+		public static interface ADMIN {
+
+			public static final String P_COMPONENT = "{component}";
+			public static final String P_PROPERTY = "{component}";
+						
+			/**
+			 * 
+			 */
+			public static final String COMPONENT_SETUP = "/component/setup/" + P_COMPONENT;
+			
+			/**
+			 * 
+			 */
+			public static final String COMPONENT_GET_STATUS = "/component/getstatus/" + P_COMPONENT;
+
+			/**
+			 * 
+			 */
+			public static final String SET_PROPERTY = "/properties/set/" + P_PROPERTY;
+			
+			/**
+			 * 
+			 */
+			public static final String GET_PROPERTY = "/properties/get/" + P_PROPERTY;
+			
+		}
+
 		public static interface RESOURCE {
 
 			/**
@@ -310,25 +343,43 @@ public interface API {
 	public static final String SCHEMA = "/schema";
 
 	/**
-	 * Authority endpoints are public.
+	 * All authority endpoints are public, although some may limit access according
+	 * to the principal.
 	 *
 	 * @author ferdinando.villa
 	 */
 	public interface AUTHORITY {
 
 		/**
+		 * Authority ID
+		 */
+		public static final String P_AUTHORITY = "{authority}";
+
+		/**
+		 * Identifier according to authority
+		 */
+		public static final String P_IDENTIFIER = "{identifier}";
+
+		/**
+		 * Authority capabilities.
+		 * 
+		 * GET JSON
+		 */
+		public static final String CAPABILITIES = "/public/authority/" + P_AUTHORITY + "/capabilities";
+
+		/**
 		 * The Constant RESOLVE.
 		 *
 		 * GET JSON
 		 */
-		public static final String RESOLVE = "/engine/authority/resolve";
+		public static final String RESOLVE = "/public/authority/" + P_AUTHORITY + "/resolve/" + P_IDENTIFIER;
 
 		/**
 		 * The Constant QUERY.
 		 *
 		 * POST
 		 */
-		public static final String QUERY = "/engine/authority/query";
+		public static final String QUERY = "/public/authority/" + P_AUTHORITY + "/query";
 	}
 
 	/**
@@ -383,7 +434,7 @@ public interface API {
 			 */
 			public static final String SETUP_COMPONENT = "/admin/component/setup/" + P_COMPONENT;
 		}
-		
+
 		/**
 		 * Set one or more properties to the specified values.
 		 * 

@@ -66,48 +66,48 @@ public class WMController {
 		return new Capabilities();
 	}
 
-	/**
-	 * Return usable data between the passed start and end times. Accommodates
-	 * various frequencies defaulting to daily.
-	 * 
-	 * @param bbox
-	 * @param variables
-	 * @return
-	 */
-	@RequestMapping(API.WEATHER.GET_DATA)
-	public List<Map<String, Object>> getStationData(@RequestParam(value = "bbox") String bbox,
-			@RequestParam(value = "variables", defaultValue = "PRCP,TMAX,TMIN") String variables,
-			@RequestParam(value = "start") Long start, @RequestParam(value = "end") Long end,
-			@RequestParam(value = "step") Long step,
-			@RequestParam(value = "max-years-back", defaultValue = "10") int maxYearsBack,
-			@RequestParam(value = "max-nodata-percentage", defaultValue = "23") int maxNodata,
-			@RequestParam(value = "source", defaultValue = "ALL") String source) {
-
-		List<Map<String, Object>> ret = new ArrayList<>();
-
-		String[] vars = null;
-		if (!variables.isEmpty()) {
-			List<String> vv = StringUtils.splitOnCommas(variables);
-			vars = vv.toArray(new String[vv.size()]);
-		}
-
-		if (!bbox.isEmpty()) {
-
-			double[] coords = StringUtils.splitToDoubles(bbox);
-			if (coords.length != 4) {
-				throw new KlabValidationException("wrong bbox specification: " + bbox);
-			}
-
-			Shape shape = Shape.create(coords[0], coords[1], coords[2], coords[3], Projection.getLatLon());
-			Collection<WeatherStation> wss = WeatherFactory.INSTANCE.within(shape, source, vars);
-			Weather weather = new Weather(wss, start, end, step, maxYearsBack, vars, maxNodata, true);
-			for (Map<String, Object> sd : weather.getStationData()) {
-				ret.add(sd);
-			}
-
-		}
-		return ret;
-	}
+//	/**
+//	 * Return usable data between the passed start and end times. Accommodates
+//	 * various frequencies defaulting to daily.
+//	 * 
+//	 * @param bbox
+//	 * @param variables
+//	 * @return
+//	 */
+//	@RequestMapping(API.WEATHER.GET_DATA)
+//	public List<Map<String, Object>> getStationData(@RequestParam(value = "bbox") String bbox,
+//			@RequestParam(value = "variables", defaultValue = "PRCP,TMAX,TMIN") String variables,
+//			@RequestParam(value = "start") Long start, @RequestParam(value = "end") Long end,
+//			@RequestParam(value = "step") Long step,
+//			@RequestParam(value = "max-years-back", defaultValue = "10") int maxYearsBack,
+//			@RequestParam(value = "max-nodata-percentage", defaultValue = "23") int maxNodata,
+//			@RequestParam(value = "source", defaultValue = "ALL") String source) {
+//
+//		List<Map<String, Object>> ret = new ArrayList<>();
+//
+//		String[] vars = null;
+//		if (!variables.isEmpty()) {
+//			List<String> vv = StringUtils.splitOnCommas(variables);
+//			vars = vv.toArray(new String[vv.size()]);
+//		}
+//
+//		if (!bbox.isEmpty()) {
+//
+//			double[] coords = StringUtils.splitToDoubles(bbox);
+//			if (coords.length != 4) {
+//				throw new KlabValidationException("wrong bbox specification: " + bbox);
+//			}
+//
+//			Shape shape = Shape.create(coords[0], coords[1], coords[2], coords[3], Projection.getLatLon());
+//			Collection<WeatherStation> wss = WeatherFactory.INSTANCE.within(shape, source, vars);
+//			Weather weather = new Weather(wss, start, end, step, maxYearsBack, vars, maxNodata, true);
+//			for (Map<String, Object> sd : weather.getStationData()) {
+//				ret.add(sd);
+//			}
+//
+//		}
+//		return ret;
+//	}
 
 	@RequestMapping(value = API.WEATHER.UPLOAD, method = RequestMethod.POST)
 	public Station handleFileUpload(@RequestParam("name") String name, @RequestParam("file") MultipartFile file) {

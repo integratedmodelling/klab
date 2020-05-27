@@ -64,10 +64,10 @@ public class KimNotifier implements Kim.Notifier {
 			super(monitor);
 			this.namespace = namespace;
 			this.notifications = new ArrayList<>();
-			if (namespace.getStatement().getLoader() != null) {
-				// null in scripts that weren't loaded by the loader.
-				this.notifications.addAll(namespace.getStatement().getLoader().getIssues(namespace));
-			}
+//			if (namespace.getStatement().getLoader() != null) {
+//				// null in scripts that weren't loaded by the loader.
+//				this.notifications.addAll(namespace.getStatement().getLoader().getIssues(namespace));
+//			}
 		}
 
 		public ErrorNotifyingMonitor(ErrorNotifyingMonitor monitor) {

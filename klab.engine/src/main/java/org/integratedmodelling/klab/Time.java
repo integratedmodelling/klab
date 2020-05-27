@@ -6,6 +6,7 @@ import java.util.List;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Type;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.services.ITimeService;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -226,6 +227,11 @@ public enum Time implements ITimeService {
         return ret;
     }
 
+    public static int getYear(ITimeInstant time) {
+        DateTime ds = new DateTime(time.getMilliseconds());
+        return ds.getYear();
+    }
+    
     public static int getYear(long start) {
         DateTime ds = new DateTime(start);
         return ds.getYear();

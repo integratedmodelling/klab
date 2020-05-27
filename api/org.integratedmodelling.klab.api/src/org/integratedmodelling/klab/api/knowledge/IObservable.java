@@ -269,15 +269,6 @@ public interface IObservable extends ISemantic, IResolvable {
 		Builder withDistributedInherency(boolean ofEach);
 
 		/**
-		 * Set the observable whose observation is expected to go to the filter that
-		 * this observable specifies.
-		 * 
-		 * @param observableId
-		 * @return
-		 */
-		Builder filtering(IObservable observable);
-
-		/**
 		 * Remove any value operators
 		 * 
 		 * @return
@@ -390,54 +381,21 @@ public interface IObservable extends ISemantic, IResolvable {
 	ICurrency getCurrency();
 
 	/**
-	 * The context type.
+	 * The context type, direct or indirect, and revised according to the stated
+	 * inherency (will be reverted to null if the indirect context is X and the
+	 * concept is <this> of X). The inherency revision is only for observables and
+	 * does not affect the underlying semantics.
 	 * 
 	 * @return the context type
 	 */
 	IConcept getContext();
 
 	/**
-	 * The inherent type.
+	 * The inherent type, direct or indirect.
 	 * 
 	 * @return the inherent type
 	 */
-	IConcept getInherentType();
-
-	/**
-	 * The comparison type, if any, for observables that admit it - values,
-	 * proportions and ratios. This is only certainly not null for ratios.
-	 * 
-	 * @return the inherent type
-	 */
-	IConcept getComparisonType();
-
-	/**
-	 * The caused ('causing') type.
-	 * 
-	 * @return the caused type
-	 */
-	IConcept getCaused();
-
-	/**
-	 * The causant ('caused by') type
-	 * 
-	 * @return the caused type
-	 */
-	IConcept getCausant();
-
-	/**
-	 * The compresent ('with') type
-	 * 
-	 * @return the compresent type
-	 */
-	IConcept getCompresent();
-
-	/**
-	 * The purpose ('for') type
-	 * 
-	 * @return the purpose type
-	 */
-	IConcept getPurpose();
+	IConcept getInherent();
 
 	/**
 	 * If the observable was defined with an inline value (e.g. '10 as Concept'),

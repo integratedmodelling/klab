@@ -127,11 +127,16 @@ public class Concept extends Knowledge implements IConcept {
 			return false;
 		}
 
+		
 		Concept cc = (Concept) concept;
 
-		if (cc.equals(this)) {
+		if (this == cc || getDefinition().equals(cc.getDefinition())) {
 			return true;
 		}
+
+//		if (cc.equals(this)) {
+//			return true;
+//		}
 
 		Collection<IConcept> collection = getAllParents();
 		collection.add(this);
@@ -409,7 +414,7 @@ public class Concept extends Knowledge implements IConcept {
 			throw new IllegalArgumentException(
 					"Concept " + this + " has more than one parent: cannot call getParent() on it.");
 		}
-		return pp.iterator().next();
+		return pp.size() == 0 ? null : pp.iterator().next();
 	}
 
 	@Override
@@ -649,15 +654,32 @@ public class Concept extends Knowledge implements IConcept {
 		return ret;
 	}
 
+	public boolean resolves(IConcept concept, IConcept context) {
+		return getSemanticDistance(concept, context) >= 0;
+	}
+
 	@Override
-	public int resolves(IConcept concept) {
+	public int getSemanticDistance(IConcept concept) {
+		return getSemanticDistance(concept, null);
+	}
+
+	@Override
+	public int getSemanticDistance(IConcept concept, IConcept context) {
+		return getSemanticDistance(concept, context, true);
+	}
+
+	public int getSemanticDistance(IConcept concept, IConcept context, boolean compareInherency) {
 
 		int distance = 0;
+
+//		String resolving = this.getDefinition();
+//		String resolved = concept.getDefinition();
+//		System.out.println("Does " + resolving + " resolve " + resolved + "?");
 
 		if (this == concept || this.equals(concept)) {
 			return distance;
 		}
-		
+
 		IConcept core1 = Observables.INSTANCE.getCoreObservable(this);
 		IConcept core2 = Observables.INSTANCE.getCoreObservable(concept);
 
@@ -699,23 +721,44 @@ public class Concept extends Knowledge implements IConcept {
 			}
 		}
 
-		int component = getDistance(Observables.INSTANCE.getContextType(this),
-				Observables.INSTANCE.getContextType(concept), true);
-
-		if (component < 0) {
-			double d = ((double) component / 10.0);
-			return -1 * (int) (d > 10 ? d : 10);
+		if (context == null) {
+			context = Observables.INSTANCE.getContext(concept);
 		}
-		distance += component;
 
-		component = getDistance(Observables.INSTANCE.getInherentType(this),
-				Observables.INSTANCE.getInherentType(concept), false);
+		int component;
 
-		if (component < 0) {
-			double d = ((double) component / 10.0);
-			return -1 * (int) (d > 10 ? d : 10);
+		if (compareInherency) {
+
+			component = getDistance(Observables.INSTANCE.getContext(this), context, true);
+
+			if (component < 0) {
+				double d = ((double) component / 10.0);
+				return -1 * (int) (d > 10 ? d : 10);
+			}
+			distance += component;
+
+			/*
+			 * inherency must be same (theirs is ours) unless our inherent type is abstract
+			 */
+			IConcept ourInherent = Observables.INSTANCE.getInherency(this);
+			IConcept itsInherent = Observables.INSTANCE.getInherency(concept);
+
+			if (ourInherent != null || itsInherent != null) {
+
+				if (ourInherent != null && ourInherent.isAbstract()) {
+					component = getDistance(ourInherent, itsInherent, false);
+				} else {
+					component = getDistance(itsInherent, ourInherent, false);
+				}
+
+				if (component < 0) {
+					double d = ((double) component / 10.0);
+					return -1 * (int) (d > 10 ? d : 10);
+				}
+				distance += component;
+			}
+
 		}
-		distance += component;
 
 		component = getDistance(Observables.INSTANCE.getGoalType(this), Observables.INSTANCE.getGoalType(concept),
 				false);

@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.common.Geometry;
@@ -33,7 +34,6 @@ import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
@@ -80,9 +80,9 @@ public class EngineViewController {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
 
-		IObservation parent = obs instanceof DirectObservation && ((DirectObservation) obs).getGroup() != null
-				? ((DirectObservation) obs).getGroup()
-				: obs.getContext();
+//		IObservation parent = obs instanceof DirectObservation && ((DirectObservation) obs).getGroup() != null
+//				? ((DirectObservation) obs).getGroup()
+//				: obs.getContext();
 
 		ILocator loc = obs.getScale().initialization();
 		if (locator != null) {
@@ -90,8 +90,7 @@ public class EngineViewController {
 			loc = obs.getScale().at(loc);
 		}
 
-		return Observations.INSTANCE.createArtifactDescriptor(obs, parent, loc, childLevel == null ? -1 : childLevel,
-				/* collapseSiblings, */ false);
+		return Observations.INSTANCE.createArtifactDescriptor(obs/* , parent */, loc, childLevel == null ? -1 : childLevel);
 	}
 
 	/**
@@ -133,8 +132,8 @@ public class EngineViewController {
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_CHILDREN_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public List<IObservationReference> getObservationChildren(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer count,
-			@RequestParam(required = false) String locator) {
+			@RequestParam(required = false) Boolean artifacts, @RequestParam(required = false) Integer offset,
+			@RequestParam(required = false) Integer count, @RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
@@ -150,11 +149,12 @@ public class EngineViewController {
 		}
 
 		List<IObservationReference> ret = new ArrayList<>();
-		IRuntimeScope context = ((Observation) obs).getRuntimeScope();
+		IRuntimeScope scope = ((Observation) obs).getScope();
 
 		int i = -1;
 		int n = 0;
-		for (IObservation child : context.getChildrenOf(obs)) {
+		for (IArtifact child : ((artifacts == null || artifacts) ? scope.getChildArtifactsOf(obs)
+				: scope.getChildrenOf(obs))) {
 
 			i++;
 			if (offset != null && i < offset) {
@@ -164,8 +164,12 @@ public class EngineViewController {
 				break;
 			}
 
-			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs, loc, 0, false,
+			ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child/* , obs */, loc, 0,
 					obs instanceof ObservationGroupView ? obs.getId() : null));
+			
+			// assume this was notified
+			scope.getNotifiedObservations().add(child.getId());
+			
 			n++;
 		}
 
@@ -207,7 +211,7 @@ public class EngineViewController {
 			 * NB: TEMPORARY! must send the T dimension locator if the context is temporal.
 			 */
 			if (obs.getScale().getTime() != null && !locator.toLowerCase().startsWith("t")) {
-				locator = "T1(1){time=0}" + locator;
+				locator = "T1(1){time=INITIALIZATION}" + locator;
 			}
 			loc = Geometry.create(locator);
 			loc = obs.getScale().at(loc);
@@ -236,8 +240,8 @@ public class EngineViewController {
 				StateSummary summary = Observations.INSTANCE.getStateSummary((IState) obs, loc);
 				if (summary.getColormap() == null) {
 					/*
-					 * force rendering before images are made. Adding the colormap to the
-					 * state summary is a side effect.
+					 * force rendering before images are made. Adding the colormap to the state
+					 * summary is a side effect.
 					 */
 					Renderer.INSTANCE.getRasterSymbolizer((IState) obs, loc);
 				}
@@ -267,6 +271,7 @@ public class EngineViewController {
 				}
 
 				response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+				response.setCharacterEncoding("UTF-8");
 				response.getWriter().write(descr);
 				response.setStatus(HttpServletResponse.SC_OK);
 				done = true;

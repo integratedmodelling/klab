@@ -19,10 +19,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
@@ -41,7 +41,6 @@ import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.api.auth.ICertificate.Type;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
@@ -56,7 +55,6 @@ import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.UserIdentity;
-import org.integratedmodelling.klab.components.localstorage.LocalStorageComponent;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
@@ -68,6 +66,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.kim.KimNotifier;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -127,6 +126,10 @@ public class Engine extends Server implements IEngine, UserDetails {
 			this.errorCount = monitor.errorCount;
 		}
 
+		public void setError(Throwable e) {
+			this.errorCount ++;
+		}
+		
 		public List<Listener> getListeners() {
 			return listeners;
 		}
@@ -178,15 +181,18 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		@Override
 		public void send(Object... o) {
+
+			IMessage message = null;
+
 			if (o != null && o.length > 0) {
 				IMessageBus bus = Klab.INSTANCE.getMessageBus();
 				if (bus != null) {
 					if (o.length == 1 && o[0] instanceof IMessage) {
-						bus.post((IMessage) o[0]);
+						bus.post(message = (IMessage) o[0]);
 					} else if (o.length == 1 && o[0] instanceof INotification) {
-						bus.post(Message.create((INotification) o[0], this.identity.getId()));
+						bus.post(message = Message.create((INotification) o[0], this.identity.getId()));
 					} else {
-						bus.post(Message.create(this.identity.getId(), o));
+						bus.post(message = Message.create(this.identity.getId(), o));
 					}
 				}
 			}
@@ -207,6 +213,22 @@ public class Engine extends Server implements IEngine, UserDetails {
 				}
 			}
 			return null;
+		}
+
+		@Override
+		public void post(Consumer<IMessage> handler, Object... o) {
+			if (o != null && o.length > 0) {
+				IMessageBus bus = Klab.INSTANCE.getMessageBus();
+				if (bus != null) {
+					if (o.length == 1 && o[0] instanceof IMessage) {
+						bus.post((IMessage) o[0], handler);
+					} else if (o.length == 1 && o[0] instanceof INotification) {
+						bus.post(Message.create((INotification) o[0], this.identity.getId()), handler);
+					} else {
+						bus.post(Message.create(this.identity.getId(), o), handler);
+					}
+				}
+			}
 		}
 
 		@Override
@@ -245,6 +267,12 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		public void interrupt() {
 			isInterrupted.set(true);
+//			IIdentity id = getIdentity();
+//			// interrupt any parents that are the same class as ours (i.e. tasks)
+//			while (id != null && id.getClass().isAssignableFrom(id.getParentIdentity().getClass())) {
+//				id = id.getParentIdentity();
+//				((Monitor)((IRuntimeIdentity)id).getMonitor()).interrupt();
+//			}
 		}
 
 		@Override
@@ -462,6 +490,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		this.monitor = new Monitor(this);
 
+		/*
+		 * boot the actor system
+		 */
+		Actors.INSTANCE.setup();
+
 		/**
 		 * Annotation prototypes
 		 */
@@ -545,6 +578,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 			Resources.INSTANCE.getComponentsWorkspace().load(getMonitor());
 
 			/*
+			 * save cache of function prototypes and resolved URNs for clients
+			 */
+			saveClientInformation();
+
+			/*
 			 * now we can finally load the workspace
 			 */
 			if (!Resources.INSTANCE.loadLocalWorkspace(this.monitor)) {
@@ -564,11 +602,6 @@ public class Engine extends Server implements IEngine, UserDetails {
 			/*
 			 * run any init scripts from parameters
 			 */
-
-			/*
-			 * save cache of function prototypes and resolved URNs for clients
-			 */
-			saveClientInformation();
 
 			/*
 			 * Schedule the session reaper
@@ -648,6 +681,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 				new File(Configuration.INSTANCE.getDataPath("language") + File.separator + "prototypes.json"));
 		Annotations.INSTANCE.exportPrototypes(
 				new File(Configuration.INSTANCE.getDataPath("language") + File.separator + "annotations.json"));
+		Actors.INSTANCE.exportBehaviors(
+				new File(Configuration.INSTANCE.getDataPath("language") + File.separator + "behaviors.json"));
 	}
 
 	private void scanClasspath() throws KlabException {

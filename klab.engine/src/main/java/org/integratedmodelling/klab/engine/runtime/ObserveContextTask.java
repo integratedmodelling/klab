@@ -6,25 +6,23 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
-import org.integratedmodelling.klab.rest.TaskReference;
 
 /**
  * A ITask that creates a root subject within a Session.
@@ -36,13 +34,11 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 	FutureTask<ISubject> delegate;
 	String taskDescription = "<uninitialized observation task " + token + ">";
-	private TaskReference descriptor;
 
-	public ObserveContextTask(ObserveContextTask parent) {
+	public ObserveContextTask(ObserveContextTask parent, String description) {
 		super(parent);
 		this.delegate = parent.delegate;
-		this.taskDescription = parent.taskDescription;
-		this.descriptor = parent.descriptor;
+		this.taskDescription = description;
 	}
 
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
@@ -53,11 +49,6 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 			this.monitor = (session.getMonitor()).get(this);
 			this.session = session;
 			this.taskDescription = "Observation of " + observer.getId();
-
-			this.descriptor = new TaskReference();
-			this.descriptor.setId(token);
-			this.descriptor.setParentId(parentTask == null ? null : parentTask.getId());
-			this.descriptor.setDescription(this.taskDescription);
 
 			session.touch();
 
@@ -73,20 +64,18 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 						/*
 						 * register the task so it can be interrupted and inquired about
 						 */
-						session.registerTask(ObserveContextTask.this);
-						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.TaskStarted, ObserveContextTask.this.descriptor));
+						notifyStart();
 
 						// TODO put all this logics in the resolver, call it from within Observations
 						// and use that here.
-						ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
+						ResolutionScope scope = Resolver.create(null).resolve(observer, monitor, scenarios);
 						if (scope.getCoverage().isRelevant()) {
 
 							Dataflow dataflow = Dataflows.INSTANCE
-									.compile("local:task:" + session.getId() + ":" + token, scope);
+									.compile("local:task:" + session.getId() + ":" + token, scope, null);
 
 							dataflow.setDescription(taskDescription);
-							
+
 							/*
 							 * Instantiate a preliminary contextualization strategy as there is no context
 							 * yet.
@@ -96,7 +85,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 							// context will take it from the task identity when it's created
 							setContextualizationStrategy(contextualizationStrategy);
-							
+
 							session.getMonitor()
 									.send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 											IMessage.Type.DataflowCompiled, new DataflowReference(token,
@@ -108,30 +97,31 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy().initialization(), monitor);
 
-							getActivity().finished();
+							if (ret != null) {
+								setContext((Subject)ret);
+								getDescriptor().setContextId(ret.getId());
+							}
 							
+							/*
+							 * load any behaviors and schedule repeating actions
+							 */
+							Actors.INSTANCE.instrument(observer.getAnnotations(), (Observation) ret);
+
+							getActivity().finished();
+
 							/*
 							 * Register the observation context with the session. It will be disposed of
 							 * and/or persisted by the session itself.
 							 */
-							session.registerObservationContext(((Observation) ret).getRuntimeScope());
-
-							/*
-							 * Unregister the task
-							 */
-							session.unregisterTask(ObserveContextTask.this);
+							session.registerObservationContext(((Observation) ret).getScope());
 
 						}
-						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.TaskFinished, ObserveContextTask.this.descriptor));
+
+						notifyEnd();
 
 					} catch (Throwable e) {
 
-						ObserveContextTask.this.descriptor.setError(e.getLocalizedMessage());
-						monitor.error(e);
-						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.TaskAborted, ObserveContextTask.this.descriptor));
-						throw e;
+						throw notifyAbort(e);
 
 					}
 					return ret;
@@ -140,9 +130,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 			});
 
 			engine.getTaskExecutor().execute(delegate);
-		} catch (
-
-		Throwable e) {
+			
+		} catch (Throwable e) {
 			monitor.error("error initializing context task: " + e.getMessage());
 		}
 	}
@@ -204,8 +193,13 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 	}
 
 	@Override
-	public ITaskTree<ISubject> createChild() {
-		return new ObserveContextTask(this);
+	public ITaskTree<ISubject> createChild(String description) {
+		return new ObserveContextTask(this, description);
+	}
+
+	@Override
+	protected String getTaskDescription() {
+		return taskDescription;
 	}
 
 }

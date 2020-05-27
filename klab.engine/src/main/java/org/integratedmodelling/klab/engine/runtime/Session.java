@@ -19,12 +19,17 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
@@ -38,15 +43,18 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -57,13 +65,19 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
+import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
@@ -72,8 +86,12 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder.Location;
-import org.integratedmodelling.klab.components.runtime.DefaultRuntimeProvider;
-import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
@@ -81,6 +99,7 @@ import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.Project;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -93,10 +112,13 @@ import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DocumentationReference;
+import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.NetworkReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
@@ -105,9 +127,11 @@ import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
+import org.integratedmodelling.klab.rest.ResourceOperationRequest;
+import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
-import org.integratedmodelling.klab.rest.RunScriptRequest;
+import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
@@ -120,9 +144,12 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;
+import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -130,7 +157,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.ibm.icu.text.NumberFormat;
 
-import akka.actor.ActorRef;
+import akka.actor.typed.ActorRef;
 
 /**
  * Engine session. Implements UserDetails to be directly usable as a principal
@@ -139,7 +166,7 @@ import akka.actor.ActorRef;
  * @author ferdinando.villa
  *
  */
-public class Session implements ISession, UserDetails, IMessageBus.Relay {
+public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetails, IMessageBus.Relay {
 
 	private static final long serialVersionUID = -1571090827271892549L;
 
@@ -155,7 +182,74 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	boolean isDefault = false;
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
+	ActorRef<KlabMessage> actor;
+	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
 
+	// a simple monitor that will only compile all notifications into a list to be
+	// sent back to clients
+	class ReportingMonitor implements IMonitor {
+
+		List<Notification> notifications = new ArrayList<>();
+		int errors = 0;
+
+		@Override
+		public void info(Object... info) {
+			Pair<String, INotification.Type> message = NotificationUtils.getMessage(info);
+			notifications.add(new Notification(message.getFirst(), Level.INFO.getName(), System.currentTimeMillis()));
+		}
+
+		@Override
+		public void warn(Object... o) {
+			Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
+			notifications
+					.add(new Notification(message.getFirst(), Level.WARNING.getName(), System.currentTimeMillis()));
+		}
+
+		@Override
+		public void error(Object... o) {
+			errors++;
+			Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
+			notifications.add(new Notification(message.getFirst(), Level.SEVERE.getName(), System.currentTimeMillis()));
+		}
+
+		@Override
+		public void debug(Object... o) {
+			Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
+			notifications.add(new Notification(message.getFirst(), Level.FINE.getName(), System.currentTimeMillis()));
+		}
+
+		@Override
+		public void send(Object... message) {
+		}
+
+		@Override
+		public Future<IMessage> ask(Object... message) {
+			return null;
+		}
+
+		@Override
+		public void post(Consumer<IMessage> handler, Object... message) {
+		}
+
+		@Override
+		public IIdentity getIdentity() {
+			return null;
+		}
+
+		@Override
+		public boolean isInterrupted() {
+			return false;
+		}
+
+		@Override
+		public boolean hasErrors() {
+			return errors > 0;
+		}
+
+	}
+
+	// tracks the setting of the actor so we can avoid the ask pattern
+	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
 	/**
 	 * A scheduler to periodically collect observation and task garbage
 	 */
@@ -187,8 +281,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 */
 	private Double spatialGridSize = null;
 	private String spatialGridUnits = null;
-	private Double temporalGridSize = null;
-	private String temporalGridUnits = null;
+	private Resolution temporalResolution;
+	private Long timeStart = null;
+	private Long timeEnd = null;
 
 	private AtomicBoolean interactive = new AtomicBoolean(false);
 	/*
@@ -199,8 +294,6 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
 	private AtomicLong lastNetworkCheck = new AtomicLong(0);
-
-	private ActorRef rootActor;
 
 	public interface Listener {
 
@@ -293,7 +386,16 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				roi.setGridResolution(this.spatialGridSize);
 				roi.setGridUnit(this.spatialGridUnits);
 
-				Observer observer = Observations.INSTANCE.makeROIObserver(roi, (Namespace) namespace, monitor);
+				ITime time = null;
+				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
+					time = Time.create(ITime.Type.PHYSICAL, this.temporalResolution.getType(),
+							this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
+							new TimeInstant(this.timeEnd), null);
+				} else {
+					time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+				}
+
+				Observer observer = Observations.INSTANCE.makeROIObserver(roi, time, (Namespace) namespace, monitor);
 				try {
 					ISubject subject = new ObserveContextTask(this, observer, CollectionUtils.arrayToList(scenarios))
 							.get();
@@ -383,6 +485,20 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			IObservation ret = context.getObservation(observationId);
 			if (ret != null) {
 				return ret;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the root runtime scope of the passed observation
+	 */
+	public IRuntimeScope getRootScope(String observationId) {
+		// start at the most recent
+		for (IRuntimeScope context : observationContexts) {
+			IObservation ret = context.getObservation(observationId);
+			if (ret != null) {
+				return context;
 			}
 		}
 		return null;
@@ -526,8 +642,16 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	private void handleFeatureAdded(final SpatialLocation location) {
 
 		if (location.getContextId() == null) {
+			ITime time = null;
+			if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
+				time = Time.create(ITime.Type.PHYSICAL, this.temporalResolution.getType(),
+						this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
+						new TimeInstant(this.timeEnd), null);
+			} else {
+				time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+			}
 			Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
-			Observer observer = Observations.INSTANCE.makeROIObserver(shape, null, monitor);
+			Observer observer = Observations.INSTANCE.makeROIObserver(shape, time, null, monitor);
 			try {
 				new ObserveContextTask(this, observer, new ArrayList<>()).get();
 			} catch (InterruptedException | ExecutionException e) {
@@ -543,9 +667,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		ResourcePublishResponse response = new ResourcePublishResponse();
 		if (type == IMessage.Type.PublishLocalResource) {
-			
+
 			Map<String, String> publicationData = new HashMap<>();
-			
+
 			if (request.getPermissions() != null) {
 				publicationData.put(IMetadata.IM_PERMISSIONS, request.getPermissions());
 			}
@@ -558,7 +682,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			if (request.getSuggestedCatalog() != null) {
 				publicationData.put(IMetadata.IM_SUGGESTED_CATALOG_ID, request.getSuggestedCatalog());
 			}
-			
+
 			response.setOriginalUrn(request.getUrn());
 			IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
 			if (resource == null || resource.hasErrors()) {
@@ -572,7 +696,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					response.setError(e.getMessage());
 				}
 			}
-			
+
 		} else {
 			response.setError("Updating of public resources is still unimplemented");
 		}
@@ -591,6 +715,61 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		}
 
 		monitor.send(IMessage.MessageClass.EngineLifecycle, IMessage.Type.TicketResponse, ret);
+	}
+
+	@MessageHandler
+	private void handleResourceOperation(final ResourceOperationRequest request) {
+
+		final IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
+		if (resource == null) {
+			// send back resource not found, very unlikely;
+			return;
+		}
+
+		ResourceOperationRequest.Standard op = null;
+		try {
+			op = ResourceOperationRequest.Standard.valueOf(request.getOperation());
+		} catch (IllegalArgumentException e) {
+			// leave it null;
+		}
+
+		// uff
+		final ResourceOperationRequest.Standard operation = op;
+
+		new Thread() {
+
+			@Override
+			public void run() {
+
+				ResourceOperationResponse response = new ResourceOperationResponse();
+				ReportingMonitor rmonitor = new ReportingMonitor();
+				IResource res = resource;
+
+				if (operation != null) {
+					switch (operation) {
+					case Revalidate:
+						Resources.INSTANCE.revalidate(resource, rmonitor);
+						break;
+					}
+				} else {
+					IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+					res = adapter.getValidator().performOperation(resource, request.getOperation(), rmonitor);
+				}
+
+				response.setUrn(resource.getUrn());
+				response.setOperation(request.getOperation());
+				response.getNotifications().addAll(rmonitor.notifications);
+				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceInformation, response);
+
+				/*
+				 * TODO if there are no errors or a non-standard operation was chosen, refresh
+				 * the resource details in the client by sending the resource again, using the
+				 * result of performOperation (i.e. res, not resource).
+				 */
+			}
+
+		}.start();
+
 	}
 
 	@MessageHandler
@@ -679,7 +858,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					public void run() {
 						if (request.isBulkImport()) {
 							for (IResource resource : Resources.INSTANCE.importResources(request.getImportUrl(),
-									project, request.getAdapter())) {
+									project, request.getAdapter(), request.getRegex())) {
 								monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
 										((Resource) resource).getReference());
 							}
@@ -1016,8 +1195,46 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	}
 
 	@MessageHandler
-	private void handleRunScriptRequest(final RunScriptRequest request) {
-		run(request.getScriptUrl());
+	private void handleRunScriptRequest(final LoadApplicationRequest request, final IMessage.Type type) {
+		switch (type) {
+		case RunApp:
+		case RunUnitTest:
+			IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
+			if (behavior != null) {
+				this.load(behavior, new SimpleRuntimeScope(this));
+			}
+			break;
+		case RunTest:
+		case RunScript:
+			run(request.getScriptUrl());
+		default:
+			break;
+		}
+	}
+
+	/*
+	 * This can arrive with different message types
+	 */
+	@MessageHandler
+	private void handleWatchRequest(WatchRequest request) {
+
+		if (request.getEventType() != null) {
+			if (request.isActive()) {
+				Klab.INSTANCE.subscribe(this, request.getEventType());
+			} else {
+				Klab.INSTANCE.unsubscribe(this, request.getEventType());
+			}
+		} else {
+
+			IRuntimeScope scope = getRootScope(request.getRootContextId());
+			if (scope != null) {
+				if (request.isActive()) {
+					scope.getWatchedObservationIds().add(request.getObservationId());
+				} else {
+					scope.getWatchedObservationIds().remove(request.getObservationId());
+				}
+			}
+		}
 	}
 
 	/**
@@ -1043,10 +1260,12 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			File file = null;
 			switch (message.getType()) {
 			case CreateTestCase:
-				file = project.createTestCase(request.getAssetId(), request.getScriptName(), request.getScriptPath());
+				file = project.createTestCase(request.getAssetId(), request.getScriptName(), request.getScriptPath(),
+						request.getScriptType());
 				break;
 			case CreateScript:
-				file = project.createScript(request.getAssetId(), request.getScriptName(), request.getScriptPath());
+				file = project.createScript(request.getAssetId(), request.getScriptName(), request.getScriptPath(),
+						request.getScriptType());
 				break;
 			case CreateNamespace:
 				file = project.createNamespace(request.getAssetId(), false, request.getParameters() != null
@@ -1064,7 +1283,28 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			// send the message before adding, as the addition will trigger a modification
 			// message which would cause
 			// an issue
+			if ("kim".equals(request.getScriptType())) {
+				Resources.INSTANCE.getLoader().add(file);
+			} else if ("kactor".equals(request.getScriptType())) {
+				KActors.INSTANCE.add(file);
+			}
+
+			break;
+
+		case CreateBehavior:
+
+			file = project.createBehavior(request.getAssetId(),
+					"true".equals(request.getParameters().get(ProjectModificationRequest.LIBRARY_OPTION))
+							? IKActorsBehavior.Type.TRAITS
+							: IKActorsBehavior.Type.BEHAVIOR,
+					false);
+			monitor.send(Message
+					.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateBehavior,
+							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
+					.inResponseTo(message));
+
 			Resources.INSTANCE.getLoader().add(file);
+
 			break;
 
 		case CreateProject:
@@ -1122,6 +1362,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		if (!lockSpace.get()) {
 			this.spatialGridSize = null;
 			this.spatialGridUnits = null;
+			this.timeEnd = null;
+			this.timeStart = null;
+			this.temporalResolution = null;
 		}
 		this.regionOfInterest = null;
 		monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
@@ -1139,13 +1382,25 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		switch (type) {
 		case ProjectFileAdded:
-			Resources.INSTANCE.getLoader().add(event.getFile());
+			if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
+				KActors.INSTANCE.add(event.getFile());
+			} else {
+				Resources.INSTANCE.getLoader().add(event.getFile());
+			}
 			break;
 		case ProjectFileDeleted:
-			Resources.INSTANCE.getLoader().delete(event.getFile());
+			if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
+				KActors.INSTANCE.delete(event.getFile());
+			} else {
+				Resources.INSTANCE.getLoader().delete(event.getFile());
+			}
 			break;
 		case ProjectFileModified:
-			Resources.INSTANCE.getLoader().touch(event.getFile());
+			if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
+				KActors.INSTANCE.touch(event.getFile());
+			} else {
+				Resources.INSTANCE.getLoader().touch(event.getFile());
+			}
 			break;
 		default:
 			break;
@@ -1190,6 +1445,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 			((ISubject) subject).observe(request.getUrn(),
 					request.getScenarios().toArray(new String[request.getScenarios().size()]));
+
 		} else {
 			observe(request.getUrn(), request.getScenarios().toArray(new String[request.getScenarios().size()]));
 		}
@@ -1205,6 +1461,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		this.spatialGridSize = Units.INSTANCE.METERS
 				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
 		this.spatialGridUnits = scaleRef.getSpaceUnit();
+		this.temporalResolution = Time
+				.resolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
+		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
+		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
 	}
 
 	@MessageHandler
@@ -1243,12 +1503,33 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		ret.setTimeLastJoined(lastJoin);
 		ret.setTimeRetrieved(System.currentTimeMillis());
 		ret.setTimeLastActivity(lastActivity);
+		ret.getAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.APP));
+
+		IUserIdentity user = getParentIdentity(IUserIdentity.class);
+		if (user != null) {
+			IdentityReference uid = new IdentityReference();
+			uid.setEmail(user.getEmailAddress());
+			uid.setId(user.getUsername());
+			for (Group group : user.getGroups()) {
+				uid.getGroups().add(group.getId());
+			}
+			uid.setLastLogin(user.getLastLogin().toString());
+			ret.setOwner(uid);
+		}
 
 		for (IRuntimeScope ctx : observationContexts) {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
-					.createArtifactDescriptor(ctx.getRootSubject(), null, ctx.getScale().initialization(), 0, false));
+					.createArtifactDescriptor(ctx.getRootSubject()/* , null */, ctx.getScale().initialization(), 0));
 		}
 
+		return ret;
+	}
+
+	public List<IObservation> getRootContexts() {
+		List<IObservation> ret = new ArrayList<>();
+		for (IRuntimeScope scope : observationContexts) {
+			ret.add(scope.getRootSubject());
+		}
 		return ret;
 	}
 
@@ -1289,22 +1570,52 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		return ret;
 	}
 
-	/**
-	 * TARIK this is the root actor in a Session, created on demand and child of the
-	 * root actor in the engine, which is held by the runtime system. Probably a
-	 * different call should be used (and maybe even a different type - no idea)!
-	 * The {@link EventBus} (part of {@link RuntimeScope} should call this as the
-	 * father of the context's actor, to create it and all the successive ones as
-	 * new observations are created.
-	 * 
-	 * @return
-	 */
-	public ActorRef getRootActor() {
-		if (this.rootActor == null) {
-			this.rootActor = ((DefaultRuntimeProvider) Klab.INSTANCE.getRuntimeProvider()).getActorSystem()
-					.actorFor(getId());
+	@Override
+	public ActorRef<KlabMessage> getActor() {
+
+		if (this.actor == null) {
+
+			EngineUser engine = getParentIdentity(EngineUser.class);
+			if (engine != null) {
+
+				ActorRef<KlabMessage> parentActor = engine.getActor();
+				parentActor.tell(new Spawn(this));
+
+				/*
+				 * wait for instrumentation to succeed. Couldn't figure out the ask pattern.
+				 * TODO when this has a chance to fail (e.g. in a cluster situation), add a
+				 * timeout, or figure out the ask pattern.
+				 */
+				while (!this.actorSet.get()) {
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						break;
+					}
+				}
+			}
 		}
-		return this.rootActor;
+
+		if (this.actor == null) {
+			// no upstream actor (should not happen), create directly
+			this.actor = Actors.INSTANCE.createActor(SessionActor.create(this), this);
+		}
+
+		return this.actor;
+	}
+
+	@Override
+	public void load(IBehavior behavior, IRuntimeScope scope) {
+		getActor().tell(new SystemBehavior.Load(behavior.getId(), scope));
+	}
+
+	public void instrument(ActorRef<KlabMessage> actor) {
+		this.actor = actor;
+		this.actorSet.set(true);
+	}
+
+	public Map<String, Object> getState() {
+		return globalState;
 	}
 
 }

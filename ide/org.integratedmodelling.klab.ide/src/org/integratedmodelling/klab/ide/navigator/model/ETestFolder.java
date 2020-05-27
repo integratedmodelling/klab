@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.ide.Activator;
 
@@ -33,6 +34,9 @@ public class ETestFolder extends ENavigatorItem {
     @Override
     public ENavigatorItem[] getEChildren() {
         List<ENavigatorItem> ret = new ArrayList<>();
+		for (IKActorsBehavior child : project.delegate.getTests()) {
+			ret.add(new EActorBehavior(child, this));
+		}
         if (folder.isDirectory()) {
             for (File script : folder.listFiles()) {
                 if (script.isDirectory()) {

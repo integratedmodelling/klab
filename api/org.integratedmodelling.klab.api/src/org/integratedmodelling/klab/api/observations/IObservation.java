@@ -15,20 +15,27 @@
  */
 package org.integratedmodelling.klab.api.observations;
 
-import org.integratedmodelling.klab.api.auth.IArtifactIdentity;
+import org.integratedmodelling.klab.api.auth.IContextualizedIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IScheduler;
 
 /**
- * The Interface IObservation.
+ * The interface IObservation, which is the semantic equivalent of an IArtifact
+ * and once created in a k.LAB session, can be made reactive by supplementing it
+ * with a behavior. Models may bind instantiated observations to actor files
+ * that will provide behaviors for their instances (or a subset thereof). Once
+ * made reactive, they can interact with each other and the system.
+ * <p>
+ * An observation 
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IObservation extends IArtifactIdentity, IArtifact {
+public interface IObservation extends IContextualizedIdentity, IArtifact {
 
 	/**
 	 * Return the observable.
@@ -108,6 +115,16 @@ public interface IObservation extends IArtifactIdentity, IArtifact {
 	 * @return the observation of space
 	 */
 	ISpace getSpace();
+
+	/**
+	 * Return true if this observation has changes that happened after
+	 * initialization. Note that it is not guaranteed that a dynamic observation
+	 * knows it's dynamic before changes are reported, so observations may start
+	 * static and become dynamic later.
+	 * 
+	 * @return
+	 */
+	boolean isDynamic();
 
 	/**
 	 * Reinterpret this artifact as a collection of artifacts reflecting the view of

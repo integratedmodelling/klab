@@ -1,0 +1,51 @@
+package org.integratedmodelling.klab.engine.runtime.api;
+
+import java.util.Map;
+
+import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IIdentity;
+
+import akka.actor.typed.ActorRef;
+
+/**
+ * Provides the actor interface to any identity in the k.LAB runtime by exposing
+ * an Akka actor reference.
+ * 
+ * @author Ferd
+ *
+ */
+public interface IActorIdentity<T> extends IIdentity {
+
+	/**
+	 * Get the actor peer for the identity. If the actor needs to be created, ask
+	 * the relevant parent's actor to create it first.
+	 * 
+	 * @return the actor reference. Never null.
+	 */
+	ActorRef<T> getActor();
+
+	/**
+	 * Load a specified behavior in a specified runtime scope
+	 * 
+	 * @param behavior
+	 * @param scope
+	 */
+	void load(IBehavior behavior, IRuntimeScope scope);
+
+	/**
+	 * Set the actor in the identity.
+	 * 
+	 * @param actor
+	 * @param scope
+	 */
+	void instrument(ActorRef<T> actor);
+
+	/**
+	 * Actors have a state that is manipulated through the "set" statement in
+	 * k.Actors.
+	 * 
+	 * @return
+	 */
+	Map<String, Object> getState();
+
+}

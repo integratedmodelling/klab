@@ -131,15 +131,15 @@ public class EngineClient extends RestTemplate {
 	 * Open a session with the engine.
 	 * 
 	 * @param rejoinSession
-	 * @param relayId the ID of a relay object to receive Explorer messages
+	 * @param relayId       the ID of a relay object to receive Explorer messages
 	 * @return a new session ID (possibly same as passed one to rejoin, meaning the
 	 *         rejoin was successful)
 	 */
 	public String openSession(@Nullable String rejoinSession, @Nullable String relayId) {
 
-		AuthorizeSessionResponse response = get(API.ENGINE.SESSION.AUTHORIZE 
-					+ (rejoinSession == null ? "" : ("?join=" + rejoinSession))
-					+ (relayId == null ? "" : ((rejoinSession == null? "?relay=" : "&relay=") + relayId)),
+		AuthorizeSessionResponse response = get(
+				API.ENGINE.SESSION.AUTHORIZE + (rejoinSession == null ? "" : ("?join=" + rejoinSession))
+						+ (relayId == null ? "" : ((rejoinSession == null ? "?relay=" : "&relay=") + relayId)),
 				AuthorizeSessionResponse.class);
 
 		if (monitor != null) {
@@ -225,8 +225,7 @@ public class EngineClient extends RestTemplate {
 	/**
 	 * Return a client with authorization set to the passed object.
 	 * 
-	 * @param authorization
-	 *            any identity.
+	 * @param authorization any identity.
 	 * @return a new
 	 */
 	public EngineClient with(String authorization) {
@@ -297,7 +296,7 @@ public class EngineClient extends RestTemplate {
 		if (authToken != null) {
 			headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
 		}
-		
+
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 
 		// HttpHeaders headers = new HttpHeaders();
@@ -365,8 +364,8 @@ public class EngineClient extends RestTemplate {
 	 * @param errorConsumer
 	 * @return
 	 */
-	public <T> void uploadAsynchronous(String endpoint, File contents, Class<T> responseType, Consumer<T> responseConsumer,
-			@Nullable Consumer<String> errorConsumer) {
+	public <T> void uploadAsynchronous(String endpoint, File contents, Class<T> responseType,
+			Consumer<T> responseConsumer, @Nullable Consumer<String> errorConsumer) {
 		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("file", new FileSystemResource(contents));
 		HttpHeaders headers = new HttpHeaders();
@@ -405,10 +404,10 @@ public class EngineClient extends RestTemplate {
 		headers.set("Accept", "application/json");
 		// headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 		if (authToken != null) {
-			headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
 		HttpEntity<String> entity = new HttpEntity<>(headers);
-		ResponseEntity<Map> response = exchange(url + endpoint, HttpMethod.GET, entity, Map.class);
+		ResponseEntity<T> response = exchange(url + endpoint, HttpMethod.GET, entity, cls);
 
 		switch (response.getStatusCodeValue()) {
 		case 302:
@@ -421,15 +420,22 @@ public class EngineClient extends RestTemplate {
 		if (response.getBody() == null) {
 			return null;
 		}
-		if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
-			Object exception = response.getBody().get("exception");
-			// Object path = response.getBody().get("path");
-			Object message = response.getBody().get("message");
-			// Object error = response.getBody().get("error");
-			throw new RuntimeException("remote exception: " + (message == null ? exception : message));
+
+		if (response.getBody() instanceof Map) {
+
+			Map<?, ?> map = (Map<?, ?>) response.getBody();
+
+			if (map.containsKey("exception") && map.get("exception") != null) {
+				Object exception = map.get("exception");
+				// Object path = response.getBody().get("path");
+				Object message = map.get("message");
+				// Object error = response.getBody().get("error");
+				throw new RuntimeException("remote exception: " + (message == null ? exception : message));
+			}
+			return objectMapper.convertValue(response.getBody(), cls);
 		}
 
-		return objectMapper.convertValue(response.getBody(), cls);
+		return response.getBody();
 	}
 
 	/**

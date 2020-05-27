@@ -1,15 +1,19 @@
 package org.integratedmodelling.klab.resolution;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -27,6 +31,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -34,6 +39,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
@@ -52,9 +58,19 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author ferdinando.villa
  *
  */
-public enum Resolver {
+public class Resolver {
 
-	INSTANCE;
+//	INSTANCE;
+
+	private Dataflow parentDataflow;
+
+	private Resolver(Dataflow parentDataflow) {
+		this.parentDataflow = parentDataflow;
+	}
+
+	public static Resolver create(Dataflow parentDataflow) {
+		return new Resolver(parentDataflow);
+	}
 
 	/**
 	 * Implements the
@@ -77,9 +93,9 @@ public enum Resolver {
 		String taskId = "local:task:" + session.getId() + ":" + object.getId();
 		ResolutionScope scope = resolve((Observer) object, monitor, Arrays.asList(scenarios));
 		if (scope.getCoverage().isRelevant()) {
-			return Dataflows.INSTANCE.compile(taskId, scope);
+			return Dataflows.INSTANCE.compile(taskId, scope, parentDataflow);
 		}
-		return Dataflow.empty();
+		return Dataflow.empty(parentDataflow);
 	}
 
 	/**
@@ -99,7 +115,7 @@ public enum Resolver {
 		IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
 		String taskId = "local:task:" + context.getId() + ":" + ""; // TODO encode resolvable in URN
 		if (resolvable == null) {
-			return Dataflow.empty();
+			return Dataflow.empty(parentDataflow);
 		}
 
 		/*
@@ -108,10 +124,10 @@ public enum Resolver {
 		ResolutionScope scope = resolve(resolvable,
 				ResolutionScope.create((Subject) context, monitor, Arrays.asList(scenarios)));
 		if (scope.getCoverage().isRelevant()) {
-			return Dataflows.INSTANCE.compile(taskId, scope);
+			return Dataflows.INSTANCE.compile(taskId, scope, parentDataflow);
 		}
 
-		return Dataflow.empty();
+		return Dataflow.empty(parentDataflow);
 	}
 
 	/**
@@ -245,12 +261,58 @@ public enum Resolver {
 	private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
 
 		/*
+		 * Check first if we need to redistribute the observable, in which case we only
+		 * resolve the distribution context and we leave it to the runtime context to
+		 * finish the job, as we do with the resolution of the individual instances.
+		 */
+		Observable deferTo = parentScope.getDeferredObservableFor(observable);
+
+		if (deferTo != null) {
+
+			Observable deferredObservable = observable;
+
+			/*
+			 * The observable loses the context if it's explicit and becomes inherent. (X
+			 * within Y in context Z becomes X of Y). The deferred observable does not need
+			 * the context so it goes back to being just X.
+			 */
+			if (Observables.INSTANCE.getDirectContextType(observable.getType()) != null) {
+
+				/*
+				 * this won't go through the dataflow compiler so we need to take care of units
+				 * manually
+				 */
+				if (observable.getUnit() == null && Units.INSTANCE.needsUnits(observable)) {
+					observable.setUnit(Units.INSTANCE.getDefaultUnitFor(observable));
+				}
+
+				deferredObservable = (Observable) observable.getBuilder(parentScope.getMonitor())
+						.without(ObservableRole.CONTEXT).buildObservable();
+				observable = (Observable) deferredObservable.getBuilder(parentScope.getMonitor()).of(deferTo.getType())
+						.buildObservable();
+			}
+
+			/*
+			 * Distribute the observable over the observation of its context. We don't know
+			 * what the context observation will produce
+			 */
+			ResolutionScope ret = resolve(deferTo, parentScope, Mode.INSTANTIATION);
+			if (ret.getCoverage().isRelevant()) {
+				ResolutionScope deferred = ret.getChildScope(deferredObservable, mode);
+				deferred.setDeferred(true);
+				deferred.setCoverage(ret.getCoverage());
+				ret.link(deferred);
+			}
+			return ret;
+		}
+
+		ResolutionScope ret = parentScope.getChildScope(observable, mode);
+
+		/*
 		 * ensure the reference name represents unique semantics across the resolution
 		 * tree
 		 */
 		observable = parentScope.disambiguateObservable(observable);
-
-		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
 		/*
 		 * pre-resolved artifacts contain a number, concept, boolean, expression or
@@ -267,7 +329,7 @@ public enum Resolver {
 		 * resolution.
 		 */
 		Coverage coverage = new Coverage(ret.getCoverage());
-
+		
 		/**
 		 * If we're resolving something that has been resolved before (i.e. not
 		 * resolving a countable, which only happens before it is created), get the
@@ -278,7 +340,20 @@ public enum Resolver {
 		boolean tryPrevious = ret.getContext() != null
 				&& (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
 		if (tryPrevious) {
-			previousArtifact = ((Subject) ret.getContext()).getRuntimeScope().findArtifact(observable);
+			/*
+			 * look in the catalog. This will have accurate coverage but not necessarily every
+			 * observation (those coming from attributes will be missing).
+			 */
+			previousArtifact = ((DirectObservation) ret.getContext()).getScope().findArtifact(observable);
+			if (previousArtifact == null) {
+				/*
+				 * check in the context's children and attribute full coverage if there
+				 */
+				IObservation previous = ((DirectObservation) ret.getContext()).getObservationResolving(observable);
+				if (previous != null) {
+					previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
+				}
+			}
 		}
 
 		if (previousArtifact != null) {
@@ -306,6 +381,11 @@ public enum Resolver {
 				int order = 0;
 				for (ObservationStrategy strategy : candidates) {
 
+					if (strategy.isResolve()) {
+						// resolve again from scratch. No computations or anything.
+						return resolve(strategy.getObservables().get(0), parentScope, mode);
+					}
+
 					try {
 
 						// candidate may switch resolution mode
@@ -320,6 +400,11 @@ public enum Resolver {
 								? Models.INSTANCE.resolve(strategy.getObservables().get(0),
 										ret.getChildScope(strategy.getObservables().get(0), strategy.getMode()))
 								: Models.INSTANCE.createDerivedModel(observable, strategy, ret);
+
+						/*
+						 * set the partition flag after we are sure we have > 1 link
+						 */
+						List<Link> links = new ArrayList<>();
 
 						for (IRankedModel model : candidateModels) {
 
@@ -349,12 +434,18 @@ public enum Resolver {
 								 * partition of the context. The actual scale of computation for the model will
 								 * be established by the dataflow compiler.
 								 */
-								ret.link(mscope).withOrder(order++).withPartition(coverageDelta < 1);
+								links.add(ret.link(mscope).withOrder(order++));
 							}
 
 							if (coverage.isComplete()) {
 								done = true;
 								break;
+							}
+						}
+
+						if (links.size() > 1) {
+							for (Link link : links) {
+								link.withPartition(true);
 							}
 						}
 
@@ -376,7 +467,7 @@ public enum Resolver {
 			parentScope.merge(ret);
 			if (ret.getCoverage().getCoverage() < 0.95) {
 				parentScope.getMonitor()
-						.warn(observable.getType() + " models could only be found to cover "
+						.warn(observable.getType().getDefinition() + ": models could only be found to cover "
 								+ NumberFormat.getPercentInstance().format(ret.getCoverage().getCoverage())
 								+ " of the context");
 			}
@@ -427,8 +518,8 @@ public enum Resolver {
 				 * In this case, warn and force the coverage to full so that resolution can
 				 * continue at the modeler's risk.
 				 */
-				parentScope.getMonitor().warn(
-						"Model " + model.getName() + " is being observed outside its coverage! Expect problems.");
+				parentScope.getMonitor()
+						.warn("Model " + model.getName() + " is being observed outside its coverage! Expect problems.");
 				coverage.setCoverage(1.0);
 			} else {
 				parentScope.getMonitor().error(new KlabInternalErrorException(
@@ -443,13 +534,12 @@ public enum Resolver {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
 			// should be resolving a CandidateObservable
 			ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
-			Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
-			if (newCoverage.isEmpty()) {
+			coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+			if (coverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
 						+ strategy.getObservables().get(0).getName());
 				break;
 			}
-			coverage = newCoverage;
 		}
 
 		ret.setCoverage(coverage);
@@ -463,7 +553,7 @@ public enum Resolver {
 	 * @param context
 	 * @return a prioritizer for this model
 	 */
-	public IPrioritizer<ModelReference> getPrioritizer(ResolutionScope context) {
+	public static IPrioritizer<ModelReference> getPrioritizer(ResolutionScope context) {
 		return new Prioritizer(context);
 	}
 

@@ -35,7 +35,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Time;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
@@ -142,30 +144,38 @@ public class Weather {
 	 */
 	private static final int MIN_STATIONS = 5;
 	List<WeatherStation> _stations = new ArrayList<WeatherStation>();
-	private Collection<Map<String, Object>> _stationData;
+	private Collection<Map<String, Object>> stationData;
 
 	/**
 	 * This one is for the service - the resulting weather won't have any spatial
 	 * interpolation but contain data for all usable stations, precisely resampled
-	 * and ready to ship through a StationData object.
+	 * and ready to ship.
 	 *
 	 * @throws ThinklabException
 	 */
-	public Weather(Collection<WeatherStation> stations, long start, long end, long step, int maxYearsBack,
-			String[] variables, int maxAcceptableNodataPercentage, boolean interpolateNodata) throws KlabException {
+	public Weather(Collection<WeatherStation> stations, ITime time, int maxYearsBack, String[] variables,
+			int maxAcceptableNodataPercentage, boolean interpolateNodata) throws KlabException {
 
-		int year = Time.getYear(start);
+		int year = Time.getYear(time.getStart());
 		ArrayList<WeatherStation> rejected = new ArrayList<>();
 
 		for (WeatherStation s : stations) {
 			s.setMaxYearsBack(maxYearsBack);
 			try {
+
+				/*
+				 * FIXME use vars, not these
+				 */
 				if (s.hasUsableDataFor(year, PRECIPITATION_MM, MAX_TEMPERATURE_C, MIN_TEMPERATURE_C)) {
 
-					s.cacheData();
+					// fast check
+					s.cacheData(true);
 
-					if (!s.hasEnoughDataFor(start, end, maxAcceptableNodataPercentage, PRECIPITATION_MM,
-							MAX_TEMPERATURE_C, MIN_TEMPERATURE_C)) {
+					/*
+					 * FIXME use vars, not the predefined ones
+					 */
+					if (!s.hasEnoughDataFor(time.getStart().getMilliseconds(), time.getEnd().getMilliseconds(),
+							maxAcceptableNodataPercentage, PRECIPITATION_MM, MAX_TEMPERATURE_C, MIN_TEMPERATURE_C)) {
 						/*
 						 * temporarily discard; will get them later if we have no other option.
 						 */
@@ -187,7 +197,7 @@ public class Weather {
 			}
 		}
 
-		_stationData = new ArrayList<>();
+		stationData = new ArrayList<>();
 
 		for (WeatherStation ws : _stations) {
 
@@ -200,13 +210,25 @@ public class Weather {
 
 			for (String var : variables) {
 				List<Double> vdata = new ArrayList<>();
-				for (long current = start; current <= end; current += step) {
-					vdata.add(getAggregatedData(ws, var, current, current + step));
+				// skip initialization
+				for (int i = 1; i < time.size(); i++) {
+					ITime step = (ITime) ((AbstractExtent) time).getExtent(i);
+					vdata.add(getAggregatedData(ws, var, step.getStart().getMilliseconds(),
+							step.getEnd().getMilliseconds()));
 				}
 				wmap.put(var, copyData(vdata));
 			}
-			_stationData.add(wmap);
+			stationData.add(wmap);
 		}
+	}
+
+	/**
+	 * Get all the stations we retained from the original set.
+	 * 
+	 * @return
+	 */
+	public List<WeatherStation> getStations() {
+		return _stations;
 	}
 
 	/**
@@ -279,7 +301,7 @@ public class Weather {
 	}
 
 	public Collection<Map<String, Object>> getStationData() {
-		return _stationData;
+		return stationData;
 	}
 
 }

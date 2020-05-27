@@ -1,15 +1,19 @@
 package org.integratedmodelling.klab.node.resources;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
@@ -20,6 +24,7 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -34,7 +39,6 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.ZipUtils;
-import org.joda.time.DateTime;
 
 import com.google.common.html.types.SafeUrl;
 import com.google.common.html.types.SafeUrls;
@@ -164,12 +168,28 @@ public class ResourceCatalog implements IResourceCatalog {
 	 */
 	private Resource importResourceData(File resourcePath, ResourceReference reference, EngineAuthorization user) {
 
+		Properties importSettings = new Properties();
+		File importProperties = new File(resourcePath + File.separator + "publish.properties");
+		if (importProperties.exists()) {
+			try (InputStream in = new FileInputStream(importProperties)) {
+				importSettings.load(in);
+			} catch (Throwable t) {
+				throw new KlabIOException(t);
+			}
+		}
+		
+		String id = reference.getMetadata().containsKey(Resource.PREFERRED_LOCALNAME_METADATA_KEY)
+				? reference.getMetadata().get(Resource.PREFERRED_LOCALNAME_METADATA_KEY)
+				: reference.getLocalName();
+		
+		if (!importSettings.isEmpty()) {
+			id = importSettings.getProperty(IResourcePublisher.SUGGESTED_RESOURCE_ID_PROPERTY, id);
+		}
+				
 		/*
 		 * fix the resource reference
 		 */
-		String id = sanitizeResourceId(reference.getMetadata().containsKey(Resource.PREFERRED_LOCALNAME_METADATA_KEY)
-				? reference.getMetadata().get(Resource.PREFERRED_LOCALNAME_METADATA_KEY)
-				: reference.getLocalName());
+		id = sanitizeResourceId(id);
 
 		reference.setLocalName(id);
 		reference.setProjectName(null);
@@ -182,11 +202,11 @@ public class ResourceCatalog implements IResourceCatalog {
 		reference.getLocalPaths().addAll(localpaths);
 
 		reference.setVersion("1.0.0");
-		reference.getMetadata().put(IMetadata.DC_DATE_AVAILABLE, new DateTime().toString());
+		reference.getMetadata().put(IMetadata.DC_DATE_AVAILABLE, "" + new Date().getTime());
 		reference.getMetadata().put(IMetadata.DC_CONTRIBUTOR, user.getUsername());
 
-		String catalog = getCatalogName(reference);
-		String namespace = getNamespace(reference);
+		String catalog = getCatalogName(reference, importSettings);
+		String namespace = getNamespace(reference, importSettings);
 		String urn = NodeAuthenticationManager.INSTANCE.getNodeName() + ":" + catalog + ":" + namespace + ":" + id;
 
 		String present = urn;
@@ -207,32 +227,38 @@ public class ResourceCatalog implements IResourceCatalog {
 		return prefix + (char) ('a' + (i % 25));
 	}
 
-	private String getCatalogName(ResourceReference reference) {
+	private String getCatalogName(ResourceReference reference, Properties preferred) {
 		String ret = reference.getMetadata().get(Resource.PREFERRED_CATALOG_METADATA_KEY);
+		if (ret == null && !preferred.isEmpty()) {
+			ret = preferred.getProperty(IResourcePublisher.SUGGESTED_CATALOG_PROPERTY);
+		}
 		if (ret == null) {
 			/*
 			 * use thematic area if any
 			 */
-			ret = sanitizeResourceId(reference.getMetadata().get(IMetadata.IM_THEMATIC_AREA));
+			ret = reference.getMetadata().get(IMetadata.IM_THEMATIC_AREA);
 		}
 		if (ret /* still */ == null) {
 			ret = getDefaultCatalog();
 		}
-		return ret;
+		return sanitizeResourceId(ret);
 	}
 
-	private String getNamespace(ResourceReference reference) {
+	private String getNamespace(ResourceReference reference, Properties preferred) {
 		String ret = reference.getMetadata().get(Resource.PREFERRED_NAMESPACE_METADATA_KEY);
+		if (ret == null && !preferred.isEmpty()) {
+			ret = preferred.getProperty(IResourcePublisher.SUGGESTED_NAMESPACE_PROPERTY);
+		}
 		if (ret == null) {
 			/*
 			 * use region if any
 			 */
-			ret = sanitizeResourceId(reference.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA));
+			ret = reference.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA);
 		}
 		if (ret == null) {
 			ret = getDefaultNamespace();
 		}
-		return ret;
+		return sanitizeResourceId(ret);
 	}
 
 	private String removeProject(String localPath) {

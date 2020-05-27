@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -28,7 +29,6 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
-import org.integratedmodelling.klab.rest.TaskReference;
 
 /**
  * A ITask that creates one or more Observations within a context subject.
@@ -40,13 +40,11 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 	FutureTask<IObservation> delegate;
 	String taskDescription = "<uninitialized contextual observation task " + token + ">";
-	private TaskReference descriptor;
 
-	public ObserveInContextTask(ObserveInContextTask parent) {
+	public ObserveInContextTask(ObserveInContextTask parent, String description) {
 		super(parent);
 		this.delegate = parent.delegate;
-		this.taskDescription = parent.taskDescription;
-		this.descriptor = parent.descriptor;
+		this.taskDescription = description;
 	}
 
 	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
@@ -55,12 +53,6 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 		this.monitor = context.getMonitor().get(this);
 		this.session = context.getParentIdentity(Session.class);
 		this.taskDescription = "Observation of " + urn + " in " + context.getName();
-
-		this.descriptor = new TaskReference();
-		this.descriptor.setId(token);
-		this.descriptor.setContextId(context.getId());
-		this.descriptor.setParentId(parentTask == null ? null : parentTask.getId());
-		this.descriptor.setDescription(this.taskDescription);
 
 		session.touch();
 
@@ -73,13 +65,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 				try {
 
-					/*
-					 * register the task so it can be interrupted and inquired about
-					 */
-					session.registerTask(ObserveInContextTask.this);
-
-					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-							IMessage.Type.TaskStarted, ObserveInContextTask.this.descriptor));
+					notifyStart();
 
 					/*
 					 * obtain the resolvable object corresponding to the URN - either a concept or a
@@ -98,18 +84,18 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					/*
 					 * resolve and run
 					 */
-					ResolutionScope scope = Resolver.INSTANCE.resolve(resolvable,
+					ResolutionScope scope = Resolver.create(null).resolve(resolvable,
 							ResolutionScope.create(context, monitor, scenarios));
 					if (scope.getCoverage().isRelevant()) {
 
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
-								scope);
+								scope, null);
 
 						dataflow.setDescription(taskDescription);
 
 						System.out.println(dataflow.getKdlCode());
 
-						IRuntimeScope ctx = ((Observation) context).getRuntimeScope();
+						IRuntimeScope ctx = ((Observation) context).getScope();
 						ctx.getContextualizationStrategy().add(dataflow);
 
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
@@ -118,7 +104,14 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving properly
 						// at merge.
-						IArtifact result = dataflow.run(scope.getCoverage(), monitor);
+						/*
+						 * pass the first actuator in the father context as the parent for this
+						 * resolution - this must be at primary level, i.e. the root is the first (and
+						 * only) actuator in the root context
+						 */
+						Actuator actuator = (Actuator) (ctx.getDataflow().getActuators().isEmpty() ? null
+								: ctx.getDataflow().getActuators().get(0));
+						IArtifact result = dataflow.run(scope.getCoverage(), actuator, monitor);
 						if (result instanceof IObservation) {
 							ret = (IObservation) result;
 						} else {
@@ -134,23 +127,6 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 						 */
 						if (dataflow.isPrimary()) {
 
-							// IObservation notifiable = (IObservation) (ret instanceof ObservationGroup
-							// && ret.groupSize() > 0 ? ret.iterator().next() : ret);
-							//
-							// // null on task interruption
-							// if (notifiable != null) {
-							// session.getMonitor()
-							// .send(Message.create(session.getId(),
-							// IMessage.MessageClass.ObservationLifecycle,
-							// IMessage.Type.NewObservation,
-							// Observations.INSTANCE
-							// .createArtifactDescriptor(notifiable, context,
-							// ITime.INITIALIZATION, -1, false, true)
-							// .withTaskId(token)));
-							//
-							// ((Artifact) notifiable).setNotified(true);
-							//
-							// }
 							monitor.info("observation completed with "
 									+ NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
 									+ " context coverage");
@@ -160,21 +136,11 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 						monitor.warn("could not build dataflow: observation unsuccessful");
 					}
 
-					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-							IMessage.Type.TaskFinished, ObserveInContextTask.this.descriptor));
-
-					/*
-					 * Unregister the task
-					 */
-					session.unregisterTask(ObserveInContextTask.this);
+					notifyEnd();
 
 				} catch (Throwable e) {
 
-					ObserveInContextTask.this.descriptor.setError(e.getLocalizedMessage());
-					monitor.error(e);
-					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-							IMessage.Type.TaskAborted, ObserveInContextTask.this.descriptor));
-					throw e;
+					throw notifyAbort(e);
 				}
 
 				return ret;
@@ -241,8 +207,13 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 	}
 
 	@Override
-	public ITaskTree<IObservation> createChild() {
-		return new ObserveInContextTask(this);
+	public ITaskTree<IObservation> createChild(String description) {
+		return new ObserveInContextTask(this, description);
+	}
+
+	@Override
+	protected String getTaskDescription() {
+		return taskDescription;
 	}
 
 }

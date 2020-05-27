@@ -1,57 +1,87 @@
 package org.integratedmodelling.kim.api;
 
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
- * API for a read-only, nicer to use Map<String, Object> that collects named parameters of a
- * function. Implemented in {@link Parameters} which can be used as a drop-in replacement for a
- * parameter map.
+ * API for a read-only, nicer to use Map<String, Object> that collects named
+ * parameters of a function. Implemented in {@link Parameters} which can be used
+ * as a drop-in replacement for a parameter map.
  * 
  * @author ferdinando.villa
  *
  */
-public interface IParameters<T> extends Map<T, Object>    {
+public interface IParameters<T> extends Map<T, Object> {
 
-  /**
-   * Get the value as the passed type, if necessary converting between numeric types or casting to
-   * strings.
-   * 
-   * @param name
-   * @param cls the expected class of the result
-   * @return a plain Java object
-   * @throws IllegalArgumentException if the requested class is incompatible with the type.
-   */
-  <K> K get(T name, Class<? extends K> cls);
+	/**
+	 * Get the value as the passed type, if necessary converting between numeric
+	 * types or casting to strings.
+	 * 
+	 * @param name
+	 * @param cls  the expected class of the result
+	 * @return a plain Java object
+	 * @throws IllegalArgumentException if the requested class is incompatible with
+	 *                                  the type.
+	 */
+	<K> K get(T name, Class<? extends K> cls);
 
-  /**
-   * Get the value as the passed type, returning a set default if the value is not there, otherwise
-   * converting if necessary between numeric types or casting to strings.
-   * 
-   * @param name
-   * @param defaultValue the default value returned if the map does not contain the value; also
-   *        specifies the expected class of the result and a potential conversion if found.
-   * @return a plain Java object
-   * @throws IllegalArgumentException if the requested class is incompatible with the type.
-   */
-  <K> K get(T name, K defaultValue);
-  
-  /**
-   * Like {@link #containsKey(Object)}, except it returns false also if the key is there but the
-   * corresponding object is null.
-   * 
-   * @param key
-   * @return false if key is not there or points to a null object
-   */
-  boolean contains(T key);
+	/**
+	 * Get the value as the passed type, if necessary converting between numeric
+	 * types or casting to strings. If the result is null, do your best to convert
+	 * to a suitable primitive POD so that it can be assigned to one without NPEs,
+	 * but with possible inaccuracies (e.g. ints and longs will be 0).
+	 * 
+	 * @param name
+	 * @param cls  the expected class of the result
+	 * @return a plain Java object
+	 * @throws IllegalArgumentException if the requested class is incompatible with
+	 *                                  the type.
+	 */
+	<K> K getNotNull(T name, Class<? extends K> cls);
 
-  /**
-   * Check if an object is present for the key and it is of the passed class.
-   * 
-   * @param key
-   * @param cls
-   * @return true if object is there and belongs to cls
-   */
-  boolean contains(T key, Class<?> cls);
+	/**
+	 * Get the value as the passed type, returning a set default if the value is not
+	 * there, otherwise converting if necessary between numeric types or casting to
+	 * strings.
+	 * 
+	 * @param name
+	 * @param defaultValue the default value returned if the map does not contain
+	 *                     the value; also specifies the expected class of the
+	 *                     result and a potential conversion if found.
+	 * @return a plain Java object
+	 * @throws IllegalArgumentException if the requested class is incompatible with
+	 *                                  the type.
+	 */
+	<K> K get(T name, K defaultValue);
+
+	/**
+	 * When used as a parameter list parsed from a function call, this may contain
+	 * arguments that are unnamed. These are given default names and if any is
+	 * present, their names are returned here. Usage of this functionality is
+	 * restricted to T == String.class and any usage outside of that will generate
+	 * runtime errors.
+	 * 
+	 * @return a list of unnamed argument keys, possibly empty.
+	 */
+	List<T> getUnnamedKeys();
+	
+	/**
+	 * Like {@link #containsKey(Object)}, except it returns false also if the key is
+	 * there but the corresponding object is null.
+	 * 
+	 * @param key
+	 * @return false if key is not there or points to a null object
+	 */
+	boolean contains(T key);
+
+	/**
+	 * Check if an object is present for the key and it is of the passed class.
+	 * 
+	 * @param key
+	 * @param cls
+	 * @return true if object is there and belongs to cls
+	 */
+	boolean contains(T key, Class<?> cls);
 }

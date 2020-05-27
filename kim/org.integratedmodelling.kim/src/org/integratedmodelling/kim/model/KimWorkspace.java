@@ -12,11 +12,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimLoader;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class KimWorkspace implements IKimWorkspace {
@@ -200,13 +198,13 @@ public class KimWorkspace implements IKimWorkspace {
 		return null;
 	}
 
-	public List<File> getAllKimResources() {
-		List<File> ret = new ArrayList<>();
-		for (IKimProject project : projects.values()) {
-			ret.addAll(project.getSourceFiles());
-		}
-		return ret;
-	}
+//	public List<File> getAllKimResources() {
+//		List<File> ret = new ArrayList<>();
+//		for (IKimProject project : projects.values()) {
+//			ret.addAll(project.getSourceFiles());
+//		}
+//		return ret;
+//	}
 
 	/**
 	 * Return all the pre-loaded namespace IDs based on the presence of the

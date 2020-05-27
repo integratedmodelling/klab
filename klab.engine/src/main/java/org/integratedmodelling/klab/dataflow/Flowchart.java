@@ -269,7 +269,10 @@ public class Flowchart {
 			ret.compileActuator(actuator, null);
 
 			if (!(actuator.getObservable().is(Type.COUNTABLE) && actuator.getMode() == Mode.RESOLUTION)) {
-				ret.outputs.put(actuator.getName(), ret.root.getOrCreateOutput(actuator.getName()));
+				if (ret.root != null) {
+					// FIXME this should never be null
+					ret.outputs.put(actuator.getName(), ret.root.getOrCreateOutput(actuator.getName()));
+				}
 			}
 		}
 		return ret;
@@ -306,7 +309,9 @@ public class Flowchart {
 		 * targets and 'self' when the input is the same name as the actuator.
 		 */
 		for (Pair<IServiceCall, IContextualizable> actor : actuator.getComputationStrategy()) {
-			compileComputation(actor, element, actuator);
+			if (actor.getFirst() != null) {
+				compileComputation(actor, element, actuator);
+			}
 		}
 
 		return element;
@@ -533,7 +538,7 @@ public class Flowchart {
 						IConcept concept = parameter instanceof IConcept ? ((IConcept) parameter)
 								: ((IObservable) parameter).getType();
 						for (IActuator dependency : context.getActuators()) {
-							if (concept.resolves(((Actuator) dependency).getObservable().getType()) >= 0) {
+							if (concept.getSemanticDistance(((Actuator) dependency).getObservable().getType()) >= 0) {
 								parameter = ((Actuator) dependency).getAlias();
 								break;
 							}

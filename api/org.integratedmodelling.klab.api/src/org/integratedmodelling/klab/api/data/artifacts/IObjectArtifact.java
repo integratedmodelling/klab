@@ -17,7 +17,6 @@ package org.integratedmodelling.klab.api.data.artifacts;
 
 import java.util.Collection;
 
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**

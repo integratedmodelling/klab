@@ -1,0 +1,333 @@
+grammar org.integratedmodelling.kactors.Kactors with org.eclipse.xtext.common.Terminals
+
+generate kactors "http://www.integratedmodelling.org/kactors/Kactors"
+
+Model: {Model}
+	(preamble=Preamble)?
+	definitions+=Definition*;
+
+Preamble: {Preamble}
+	// name, if there, must be first. Can be an actor (which may select an observable),
+	// or a message library that may be imported by other actors, as long as the type 
+	// is compatible or not given. An app is an actor that represents a
+	// session, a user represents the user and gets any messages we don't recognize. Apps
+	// can be called jobs (for automation w/o a view) or testcases (same for testing, in which case they will
+	// identify test actions with @test and execute them with assertions enabled).
+	((app?=('app'|'job') | test?='testcase' | user?='user' | library?=('trait'|'library') | behavior?=('behavior'|'behaviour')) name=PathName)?
+	(
+		('import' imports+=PathName (',' imports+=PathName)*)? &
+		('worldview' worldview=PathName)? &
+		('observable' (observable=OBSERVABLE | observables=List))? &
+		('label' label=(LOWERCASE_ID|ID|STRING))? &
+		('description' description=STRING)? &
+		('permissions' permissions=STRING)? &
+		('author' authors+=STRING)* &
+		('style' style=PathName)? &
+		('version' version=VersionNumber)? & 
+		('created' created=Date (createcomment=STRING)?)? &
+		('modified' modified=Date (modcomment=STRING)?)? 
+	)
+;
+
+Definition:
+	annotations+=Annotation*
+	'action' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
+
+ArgumentDeclaration: {ArgumentDeclaration}
+	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'
+;
+
+/**
+ * Message body is as many statements of groups we want, ends at the next message or EOF.
+ */
+MessageBody: {MessageBody} lists+=StatementList*;
+
+MessageCall:
+	(name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
+;
+
+StatementGroup: {StatementGroup} '(' body=MessageBody? ')' (':' actions=Actions)?
+;
+
+StatementList:
+	first=Statement next+=NextStatement*
+;
+
+Statement:
+	assignment=Assignment |
+	group=StatementGroup |
+	verb=MessageCall |
+	text=EMBEDDEDTEXT |
+	if=IfStatement |
+	while=WhileStatement |
+	do=DoStatement |
+	for=ForStatement |
+	// this means "fire this" 
+	value=Value
+;
+
+NextStatement returns Statement:
+	',' (
+		assignment=Assignment |
+		verb=MessageCall |
+		group=StatementGroup |
+		text=EMBEDDEDTEXT |
+		if=IfStatement |
+		while=WhileStatement |
+		do=DoStatement |
+		for=ForStatement |
+		// this means "fire this" 
+		value=Value
+	)
+;
+
+Assignment:
+	'set' variable=LOWERCASE_ID value=Value
+;
+
+IfStatement:
+	'if' expression=EXPR body=StatementBody	
+		('else' 'if' elseIfExpression+=EXPR elseIfBody+=StatementBody)* 
+		('else' elseCall=StatementBody)?
+;
+
+/** 
+ * Body of a statement is either a single message call (or fired value) or a set thereof in a group.
+ * */
+StatementBody: verb=MessageCall | value=Value | group=StatementGroup;
+
+///*
+// * Body of a statement that can also contain a value which gets fired
+// */
+//StatementBodyOrFiredValue returns StatementBody:
+//	verb=MessageCall | group=StatementGroup | value=Value
+//;
+
+WhileStatement:
+	'while' expression=EXPR body=StatementBody
+;
+
+DoStatement:
+	'do' body=StatementBody 'while' expression=EXPR
+;
+
+ForStatement:
+	'for' (id=LOWERCASE_ID 'in')? value=Value body=StatementBody
+;
+
+// a sequence of actions after a verb is sequential only if comma-separated. No match mean
+// "upon successful firing" (i.e. firing not null, false or error).
+// Don't switch the order or firing statements will take over the matches and not parse
+Actions: 
+	match=Match |
+	'(' matches+=Match (matches+=Match)* ')' |
+	statement=Statement |
+	'(' statements=StatementList ')' 
+;
+
+Value:
+	tree=Tree |
+	argvalue=ARGVALUE |
+	literal=Literal |
+	id=PathName |
+	urn=UrnId | 
+	list=List |
+	map=Map |
+	observable=OBSERVABLE | 
+	expression=EXPR |
+	table=LookupTable |
+	quantity=Quantity
+	;
+
+ValueWithoutTree returns Value:
+	argvalue=ARGVALUE |
+	literal=Literal |
+	id=PathName |
+	urn=UrnId | 
+	list=List |
+	map=Map |
+	observable=OBSERVABLE | 
+	expression=EXPR |
+	table=LookupTable |
+	quantity=Quantity
+	;
+
+
+Match:
+	id=LOWERCASE_ID '->' body=StatementList  |
+	boolean=('true'|'false') '->' body=StatementList  |
+	type=CAMELCASE_ID '->' body=StatementList |
+	regexp=REGEXP '->' body=StatementList |
+	observable=OBSERVABLE '->' body=StatementList |
+	literal=Literal '->' body=StatementList |
+	list=List '->' body=StatementList |
+	'in' set=List '->' body=StatementList | 
+	quantity=Quantity '->' body=StatementList |
+	expr=EXPR '->' body=StatementList |
+	nodata='unknown' '->' body=StatementList |
+	star?='*' '->' body=StatementList |
+	anything?='#''->' body=StatementList 
+;
+
+/**
+ * URN is 4 sections: node (or 'klab' for internal resources), catalog (or adapter for internal resources), namespace and
+ * resource ID. Admits a version number and a fragment (with only lowercase_id chars in it). It is
+ * legal, but not required, to start with the default prefix urn:klab:. The 4th path element (the ID) may be
+ * integer.
+ */
+UrnId:
+	('urn:klab:')? PathName ':'  PathName ':' PathName ':' (Path|INT) (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
+	
+UrnKvp:
+	PathName '=' (Path|INT)
+;	
+	
+List:
+	{List} '(' contents+=Value* ')';
+	
+Map:
+	{Map} '#{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'
+;
+
+Tree:
+	root=ValueWithoutTree (=> '<-' (value+=ValueWithoutTree | ('(' value+=Tree ')')))+ 
+;
+
+MapEntry:
+	classifier=Classifier ':' value=Value
+;	
+
+Classifier:
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	num=Number | 
+	'in' set=List | 
+	string=STRING | 
+	observable=OBSERVABLE | 
+	id = LOWERCASE_ID |
+	op=REL_OPERATOR expression=Number | 
+	nodata='unknown' |
+	star?='*';	
+
+// Lookup table literal. May be overkill.
+LookupTable: {LookupTable}
+	'{{' table=Table? '}}'
+;
+
+Table:
+	(headers=HeaderRow SEPARATOR)? rows+=TableRow (',' rows+=TableRow)*;
+
+HeaderRow:
+	elements+=(LOWERCASE_ID|STRING) ('|' elements+=(LOWERCASE_ID|STRING))*
+;
+
+TableRow:
+	elements+=TableClassifier ('|' elements+=TableClassifier)*
+;
+
+TableClassifier:
+	(boolean='true' | boolean='false') | 
+	num=Number | 
+	string=STRING | 
+	observable=OBSERVABLE | 
+	op=REL_OPERATOR expression=Number | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	'in' set=List | 
+	quantity=Quantity |
+	date=Date |
+	expr=EXPR |
+	nodata='unknown' |
+	star?='*' |
+	anything?='#';
+
+Quantity:
+	value=Number (over?='/' | '.') (unit=Unit | currency=Currency)
+;
+Annotation:
+	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
+	
+Literal:
+	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
+	
+ParameterList:
+	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
+	
+KeyValuePair:
+	(name=(LOWERCASE_ID) (interactive?='=?' | '='))?
+	value=Value;
+
+UnitElement:
+	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
+	'(' unit=Unit ')';
+
+enum UnitOp:
+	OVER='/' | CARET='^' | STAR='*';
+
+Unit:
+	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+
+Currency:
+	id=UPPERCASE_ID ('@' year=INT) (=> '/' (units+=UnitElement))*;
+		
+REL_OPERATOR:
+	(gt?='>' |
+	lt?='<' |
+	eq?='=' |
+	ne?='!=' |
+	le?='<=' |
+	ge?='>=');
+	
+Number:
+	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
+
+Date:
+	year=INT ('AD' | 'CE' | bc?='BC')? '-' month=INT '-' day=INT (hour=INT ':' min=INT (':' sec=INT ('.' ms=INT)?)?)?
+;
+
+PathName:
+	LOWERCASE_ID ('.' LOWERCASE_ID)*
+;
+
+ArgPathName:
+	(ARGVALUE | LOWERCASE_ID) ('.' LOWERCASE_ID)?
+;
+
+Path:
+	(LOWERCASE_ID|UPPERCASE_ID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID))*
+;
+
+terminal UPPERCASE_ID:
+	('A'..'Z') ('A'..'Z' | '_')*;
+
+terminal UPPERCASE_PATH:
+	UPPERCASE_ID ('.' UPPERCASE_ID)*;
+
+terminal CAMELCASE_ID:
+	('A'..'Z') ('A'..'z'|'0'..'9')*;
+
+VersionNumber:
+	INT ('.' INT ('.' INT)?)? ('-')? ((LOWERCASE_ID|UPPERCASE_ID))?;
+
+terminal LOWERCASE_ID:
+	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
+
+terminal ARGVALUE:
+	'$' ('$' | ('0'..'9')*);
+
+terminal EXPR:
+	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
+	
+terminal EMBEDDEDTEXT:
+	'%%%'(' ')?('-')*('\r'|'\n') -> '%%%'(' ')?('-')*;
+
+terminal REGEXP:
+	'%' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\') | !('\\' | '%'))* '%';
+	
+terminal OBSERVABLE:
+	'{' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '}';
+		
+terminal SEPARATOR:
+	'---' ('-')*;
+
+terminal ANNOTATION_ID:
+	'@' LOWERCASE_ID;

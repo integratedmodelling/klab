@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
 /**
  * A builder that encodes the data into a Protobuf object which will be sent
@@ -60,7 +61,12 @@ public class DecodingDataBuilder implements IKlabData.Builder {
 
 	@Override
 	public IKlabData build() {
-		return new LocalData(data, context);
+		if (context instanceof IRuntimeScope) {
+			return new LocalData(data, (IRuntimeScope)context);
+		} else {
+			// dumb version
+			return new LocalData(data, context.getMonitor());
+		}
 	}
 
 	@Override

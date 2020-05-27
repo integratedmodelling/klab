@@ -6,9 +6,11 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import akka.actor.ActorRef;
 
 /**
- * TARIK this "event bus" is a single instance that resides in the runtime scope for an entire observation tree.
- * I suggest that we use it as the holder of the root actor for a context; we can also give it a dispose() method
- * that is called when the context expires. Not sure if this call is the one that should be used to create
+ * The event bus is a single instance that resides in the runtime scope for an
+ * entire observation tree. I suggest that we use it as the holder of the root
+ * actor for a context; we can also give it a dispose() method that is called
+ * when the context expires. Not sure if this call is the one that should be
+ * used to create
  */
 public class EventBus implements IEventBus {
 
@@ -22,12 +24,7 @@ public class EventBus implements IEventBus {
 	 * @param subject
 	 */
 	public EventBus(Subject subject) {
-		this.session = subject.getRuntimeScope().getMonitor().getIdentity().getParentIdentity(Session.class);
-		// TARIK this should create the root actor for the context, which should turn the context subject into
-		// an actor. All successive actors should be created based on this by DefaultRuntimeProvider.createObservation(),
-		// which should call a method in here. The call below is what I thought the call should be, but clearly this
-		// is not the correct API.
-		//this.root = session.getRootActor().actorOf(subject.getId());
+		this.session = subject.getScope().getMonitor().getIdentity().getParentIdentity(Session.class);
 	}
 
 }

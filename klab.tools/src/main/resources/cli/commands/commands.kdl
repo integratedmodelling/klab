@@ -33,7 +33,7 @@ void cd
 	class org.integratedmodelling.klab.clitool.console.commands.Cd
 }
 
-void cd
+void version
 	"Print version and build information"
 {
 	class org.integratedmodelling.klab.clitool.console.commands.Info

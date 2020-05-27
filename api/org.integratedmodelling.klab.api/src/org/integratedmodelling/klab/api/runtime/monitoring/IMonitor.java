@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.runtime.monitoring;
 
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 import javax.sound.midi.Receiver;
 
@@ -135,6 +136,22 @@ public interface IMonitor {
     * @return a future, or null if there is no message bus.
     */
     Future<IMessage> ask(Object... message);
+    
+    /**
+     * Like {@link #send(Object...)} but takes a handler to process a response when it comes. 
+    *
+    * @param handler the handler for the response message
+    * @param message
+    *            anything that may be sent as a message: either a preconstructed
+    *            {@link IMessage} or the necessary info to build one, including a
+    *            {@link MessageClass} and {@IMessage.Type} along with any payload
+    *            (any serializable object). Sending a {@link INotification} should
+    *            automatically promote it to a suitable logging message.
+    *            
+    * @return a future, or null if there is no message bus.
+    */
+    void post(Consumer<IMessage> handler, Object... message);
+
 
     /**
      * A monitor always operates and reports on behalf of some runtime identity,

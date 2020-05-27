@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -147,42 +148,42 @@ public class Utils {
 		}
 
 		if (cls.isArray() && ret.getClass().isArray()) {
-			
+
 			int length = Array.getLength(ret);
-			
+
 			if (cls.equals(int[].class)) {
 				int[] a = new int[length];
 				for (int i = 0; i < length; i++) {
 					a[i] = asType(Array.get(ret, i), Integer.class);
 				}
-				return (T)a;
+				return (T) a;
 			} else if (cls.equals(long[].class)) {
 				long[] a = new long[length];
 				for (int i = 0; i < length; i++) {
 					a[i] = asType(Array.get(ret, i), Long.class);
 				}
-				return (T)a;
-				
+				return (T) a;
+
 			} else if (cls.equals(float[].class)) {
 				float[] a = new float[length];
 				for (int i = 0; i < length; i++) {
 					a[i] = asType(Array.get(ret, i), Float.class);
 				}
-				return (T)a;
+				return (T) a;
 
 			} else if (cls.equals(double[].class)) {
 				double[] a = new double[length];
 				for (int i = 0; i < length; i++) {
 					a[i] = asType(Array.get(ret, i), Double.class);
 				}
-				return (T)a;
+				return (T) a;
 
 			} else if (cls.equals(String[].class)) {
 				String[] a = new String[length];
 				for (int i = 0; i < length; i++) {
 					a[i] = asType(Array.get(ret, i), String.class);
 				}
-				return (T)a;
+				return (T) a;
 
 			}
 		}
@@ -269,6 +270,53 @@ public class Utils {
 		}
 
 		throw new IllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
+	}
+
+	/**
+	 * Return the most logical non-null value for the passed type, assuming there is
+	 * one.
+	 * 
+	 * @param ret
+	 * @param cls
+	 * @return the object as a cls or null
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T notNull(Class<?> cls) {
+
+		if (cls.isArray()) {
+
+			if (cls.equals(int[].class)) {
+				return (T) new int[] {};
+			} else if (cls.equals(long[].class)) {
+				return (T) new long[] {};
+			} else if (cls.equals(float[].class)) {
+				return (T) new float[] {};
+			} else if (cls.equals(double[].class)) {
+				return (T) new double[] {};
+			} else if (cls.equals(String[].class)) {
+				return (T) new String[] {};
+			}
+		}
+
+		if (cls.equals(List.class)) {
+			List<Object> list = new ArrayList<>();
+			return (T) list;
+		} else if (cls.equals(Integer.class)) {
+			return (T) new Integer(0);
+		} else if (cls.equals(Long.class)) {
+			return (T) new Long(0);
+		} else if (cls.equals(Double.class)) {
+			return (T) new Double(Double.NaN);
+		} else if (cls.equals(Float.class)) {
+			return (T) new Float(Float.NaN);
+		} else if (cls.equals(String.class)) {
+			return (T) "";
+		} else if (cls.equals(Boolean.class)) {
+			return (T) Boolean.FALSE;
+		}
+
+		// give up
+		return null;
 	}
 
 	public static Type getArtifactType(Class<?> cls) {
@@ -365,6 +413,23 @@ public class Utils {
 
 	public static boolean isFloatingPoint(Number number) {
 		return number instanceof Double || number instanceof Float;
+	}
+
+	/**
+	 * Choose the first non-null object among the passed ones.
+	 * 
+	 * @param <T>
+	 * @param objects
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T chooseNotNull(T... objects) {
+		for (T o : objects) {
+			if (o != null) {
+				return o;
+			}
+		}
+		return null;
 	}
 
 }

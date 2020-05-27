@@ -3,7 +3,11 @@ package org.integratedmodelling.klab.ide.views;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -49,11 +53,15 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
+import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
@@ -63,16 +71,20 @@ import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.ObservationReference;
+import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.utils.BrowserUtils;
+import org.eclipse.jface.action.MenuManager;
 
 public class ContextView extends ViewPart {
+
 	public ContextView() {
 	}
 
 	private Composite container;
-	private Button searchModeButton;
-	private Text subjectLabel;
+//	private Button searchModeButton;
+	private Label subjectLabel;
 	private SashForm dropArea;
 	private Label dropImage;
 	private TableViewer tableViewer;
@@ -86,6 +98,49 @@ public class ContextView extends ViewPart {
 	private KlabPeer klab;
 	private Action openViewerAction;
 	private Action resetContextAction;
+
+	/**
+	 * We keep them just in case, although the selector is in the context window.
+	 */
+	private List<ContextDescriptor> rootContexts = new ArrayList<>();
+	private ObservationReference currentContext;
+
+	private enum Status {
+		/**
+		 * Offline, no engine connected
+		 */
+		EngineOffline,
+		/**
+		 * Online, engine connected not computing or waiting, no context defined
+		 */
+		EngineOnline,
+		/**
+		 * Online, context defined, not computing or waiting
+		 */
+		ContextDefined,
+		/**
+		 * Online, computing a root-level task
+		 */
+		Computing,
+		/**
+		 * Online, engine not ready for observations
+		 */
+		WaitingForEngine,
+		/**
+		 * Online, last task computed caused an error
+		 */
+		EngineError
+	}
+
+	/*
+	 * engine status is null unless the engine is reporting busy status, in which
+	 * case it takes over the state until it goes back to normal while stuff keeps
+	 * happening.
+	 */
+	AtomicReference<Status> state = new AtomicReference<>(Status.EngineOffline);
+	AtomicBoolean engineBusy = new AtomicBoolean(false);
+	private Action action;
+	private IMenuManager manager;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -103,75 +158,77 @@ public class ContextView extends ViewPart {
 			ccombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 			// ccombo.setBackground(SWTResourceManager
 			// .getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-			ccombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			GridLayout gl_ccombo = new GridLayout(3, false);
+			ccombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+			GridLayout gl_ccombo = new GridLayout(1, false);
 			gl_ccombo.marginWidth = 0;
 			gl_ccombo.marginHeight = 0;
 			ccombo.setLayout(gl_ccombo);
-
-			searchModeButton = new Button(ccombo, SWT.TOGGLE);
-			searchModeButton.setToolTipText("Query the network for a context ");
-			searchModeButton.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseUp(MouseEvent e) {
-//					Eclipse.INSTANCE.notification("Po dio", "Fucullazzaroppa");
-					// KlabNavigator.refresh();
-					// searchMode(searchModeButton.getSelection());
-				}
-			});
-			searchModeButton
-					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Database.png"));
+//
+//			searchModeButton = new Button(ccombo, SWT.TOGGLE);
+//			searchModeButton.setToolTipText("Query the network for a context ");
+//			searchModeButton.addMouseListener(new MouseAdapter() {
+//				@Override
+//				public void mouseUp(MouseEvent e) {
+////					Eclipse.INSTANCE.notification("Po dio", "Fucullazzaroppa");
+//					// KlabNavigator.refresh();
+//					// searchMode(searchModeButton.getSelection());
+//				}
+//			});
+//			searchModeButton
+//					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Database.png"));
 			// toolkit.adapt(searchModeButton, true, true);
 			{
-				subjectLabel = new Text(ccombo, SWT.NONE);
-				subjectLabel.setEnabled(false);
-				subjectLabel.setEditable(false);
-				subjectLabel.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
-				subjectLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
+				subjectLabel = new Label(ccombo, SWT.CENTER);
+//				subjectLabel.setEnabled(false);
+//				subjectLabel.setEditable(false);
+				subjectLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+				subjectLabel.setFont(SWTResourceManager.getFont("Segoe UI Semibold", 13, SWT.NORMAL));
 				subjectLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-				subjectLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				// subjectLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
+//				subjectLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+				subjectLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 				// toolkit.adapt(subjectLabel, true, true);
 				subjectLabel.setText("No context");
-				subjectLabel.addListener(SWT.Traverse, new Listener() {
-					@Override
-					public void handleEvent(Event event) {
-						if (event.detail == SWT.TRAVERSE_RETURN) {
-							searchObservations(subjectLabel.getText());
-						}
-					}
-				});
+//				subjectLabel.addListener(SWT.Traverse, new Listener() {
+//					@Override
+//					public void handleEvent(Event event) {
+//						if (event.detail == SWT.TRAVERSE_RETURN) {
+//							searchObservations(subjectLabel.getText());
+//						}
+//					}
+//				});
 			}
-			{
-				final Button btnNewButton = new Button(ccombo, SWT.NONE);
-				btnNewButton.setToolTipText("Choose target subject");
-				btnNewButton.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseUp(MouseEvent e) {
-						// if (Environment.get().getContext() != null) {
-						// PopupTreeChooser ptc = new PopupTreeChooser(Eclipse
-						// .getShell(), new ContextLabelProvider(), new ContextContentProvider(),
-						// Environment
-						// .get().getContext()) {
-						//
-						// @Override
-						// protected void objectSelected(Object object) {
-						// if (object instanceof ISubject) {
-						// setObservationTarget((ISubject) object);
-						// }
-						// super.objectSelected(object);
-						// }
-						//
-						// };
-						// ptc.show(btnNewButton.toDisplay(new Point(e.x, e.y)));
-						// } else {
-						// Eclipse.beep();
-						// }
-					}
-				});
-				btnNewButton
-						.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Tree.png"));
-				// toolkit.adapt(btnNewButton, true, true);
-			}
+//			{
+//				final Button btnNewButton = new Button(ccombo, SWT.NONE);
+//				btnNewButton.setToolTipText("Choose target subject");
+//				btnNewButton.addMouseListener(new MouseAdapter() {
+//					@Override
+//					public void mouseUp(MouseEvent e) {
+//						// if (Environment.get().getContext() != null) {
+//						// PopupTreeChooser ptc = new PopupTreeChooser(Eclipse
+//						// .getShell(), new ContextLabelProvider(), new ContextContentProvider(),
+//						// Environment
+//						// .get().getContext()) {
+//						//
+//						// @Override
+//						// protected void objectSelected(Object object) {
+//						// if (object instanceof ISubject) {
+//						// setObservationTarget((ISubject) object);
+//						// }
+//						// super.objectSelected(object);
+//						// }
+//						//
+//						// };
+//						// ptc.show(btnNewButton.toDisplay(new Point(e.x, e.y)));
+//						// } else {
+//						// Eclipse.beep();
+//						// }
+//					}
+//				});
+//				btnNewButton
+//						.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Tree.png"));
+//				// toolkit.adapt(btnNewButton, true, true);
+//			}
 		}
 		{
 			dropArea = new SashForm(container, SWT.NONE);
@@ -410,6 +467,7 @@ public class ContextView extends ViewPart {
 					// toolkit.adapt(btnNewButtonT, true, true);
 				}
 			}
+			
 			dropTarget.addDropListener(new DropTargetAdapter() {
 
 				@Override
@@ -439,6 +497,16 @@ public class ContextView extends ViewPart {
 								}
 							}
 
+						}
+						if (dropped instanceof EActorBehavior) {
+							String behavior = ((EActorBehavior) dropped).getName();
+							IKActorsBehavior.Type type = ((EActorBehavior) dropped).getType();
+							if (type == IKActorsBehavior.Type.UNITTEST) {
+								Activator.session().launchTest(behavior);
+							} else if (type == IKActorsBehavior.Type.APP) {
+								Activator.session().launchApp(behavior);
+							}
+
 						} else if (dropped instanceof EModel || dropped instanceof EConcept) {
 							Activator.session().observe((EKimObject) dropped);
 						} else if (dropped instanceof EObserver) {
@@ -455,13 +523,6 @@ public class ContextView extends ViewPart {
 							Activator.session().previewResource((EResourceReference) dropped);
 						}
 					}
-
-					// /*
-					// * reset forcings to default
-					// */
-					// setTimeForcing(defaultTemporalForcing);
-					// setSpatialForcing(defaultSpatialForcing);
-					// }
 				}
 			});
 		}
@@ -476,77 +537,160 @@ public class ContextView extends ViewPart {
 	private void handleMessage(IMessage message) {
 
 		switch (message.getType()) {
-		case DataflowCompiled:
+		case RuntimeEvent:
+			refresh(getState(message.getPayload(RuntimeEvent.class)));
 			break;
-		case Debug:
-			break;
-		case DebugScript:
-			break;
-		case DebugTest:
+		case ResetContext:
+			currentContext = null;
+			refresh(Status.EngineOnline);
 			break;
 		case EngineDown:
-			Display.getDefault().asyncExec(() -> {
-				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ndrop.png"));
-				openViewerAction.setEnabled(false);
-                resetContextAction.setEnabled(false);
-			});
+			currentContext = null;
+			rootContexts.clear();
+			refresh(Status.EngineOffline);
 			break;
 		case EngineUp:
-			Display.getDefault().asyncExec(() -> {
-				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png"));
-				openViewerAction.setEnabled(true);
-                resetContextAction.setEnabled(true);
-			});
+			// TODO read up previous contexts
+			refresh(Status.EngineOnline);
 			break;
-		case MatchAction:
-			break;
-		case ModifiedObservation:
-			break;
-		case NewObservation:
-			System.out.println("ZOAZ: " + message.getPayload(ObservationReference.class).getLabel());
-			break;
-		case PeriodOfInterest:
-			break;
-		case QueryResult:
-			break;
-		case RegionOfInterest:
-			break;
-		case RequestObservation:
-			break;
-		case RunScript:
-			break;
-		case RunTest:
-			break;
-		case ScriptStarted:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/orun.png")));
-			break;
-		case SubmitSearch:
-			break;
-		case TaskAborted:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/estop.png")));
-			break;
-		case TaskFinished:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png")));
-			break;
-		case TaskStarted:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/orun.png")));
-			break;
-		case UserProjectDeleted:
-			break;
-		case UserProjectModified:
-			break;
-		case UserProjectOpened:
-			// TODO here the project load has ended and we should make a spinner stop spinning or something like that.
-			System.out.println("PROJECT SYNCHRONIZATION FINISHED");
+		case EngineEvent:
+			EngineEvent ee = message.getPayload(EngineEvent.class);
+			switch (ee.getType()) {
+			case ResourceValidation:
+				engineBusy.set(ee.isStarted());
+				refresh(Status.WaitingForEngine);
+				break;
+			default:
+				break;
+			}
 			break;
 		default:
 			break;
-
 		}
+	}
+
+	private Status getState(RuntimeEvent event) {
+
+		Status status = this.state.get();
+
+		if (currentContext != null && event.getRootContext() != null
+				&& !currentContext.getId().equals(event.getRootContext().getId())) {
+			// not tuned on the context of the event, no change
+			return status;
+		}
+
+		switch (event.getType()) {
+		case TaskAdded:
+		case TaskStatusChanged:
+			switch (event.getTask().getStatus()) {
+			case Aborted:
+				status = Status.EngineError;
+				break;
+			case Finished:
+				if (event.getTask().getParentId() == null) {
+					status = Status.ContextDefined;
+				}
+				break;
+			case Started:
+				status = Status.Computing;
+				break;
+			}
+			break;
+		case ObservationAdded:
+			if (event.getObservation().getId().equals(event.getRootContext().getId())) {
+				this.rootContexts.add(sm().getContextDescriptor(event.getObservation()));
+				currentContext = event.getObservation();
+			}
+			status = Status.Computing;
+			break;
+		case SystemNotification:
+		case DataflowChanged:
+		case NotificationAdded:
+		default:
+			break;
+		}
+		return status;
+	}
+
+	private SessionMonitor sm() {
+		return Activator.session().getContextMonitor();
+	}
+
+	private void refresh(Status status) {
+
+		boolean enableViewer = true;
+		boolean enableReset = currentContext != null && !engineBusy.get();
+		String image = "icons/odrop.png";
+		String ttext = "";
+
+		if (status == Status.WaitingForEngine && engineBusy.get()) {
+			image = "icons/owait.png";
+			ttext = "Engine is busy: please wait";
+		} else if (status != Status.WaitingForEngine) {
+
+			if (this.state.get() == status) {
+				return;
+			}
+
+			this.state.set(status);
+
+			switch (status) {
+			case Computing:
+				image = "icons/orun.png";
+				ttext = "Contextualization is ongoing";
+				enableViewer = true;
+				enableReset = false;
+				break;
+			case ContextDefined:
+				image = "icons/ocheck.png";
+				ttext = "Drop models or concepts to observe in context";
+				enableViewer = true;
+				enableReset = true;
+				break;
+			case EngineError:
+				image = "icons/estop.png";
+				ttext = "The last task executed caused an error";
+				enableViewer = true;
+				enableReset = true;
+				break;
+			case EngineOffline:
+				image = "icons/ndrop.png";
+				ttext = "Engine is offline or not connected";
+				enableViewer = false;
+				enableReset = false;
+				break;
+			case EngineOnline:
+				image = "icons/odrop.png";
+				ttext = "Define a context using the Explorer or an observer";
+				enableViewer = true;
+				enableReset = false;
+				break;
+			default:
+				break;
+			}
+		}
+
+		final String icon = image;
+		final String tooltip = ttext;
+		final boolean eviewer = enableViewer;
+		final boolean ereset = enableReset;
+
+		Display.getDefault().asyncExec(() -> {
+			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, icon));
+			dropImage.setToolTipText(tooltip);
+			openViewerAction.setEnabled(eviewer);
+			resetContextAction.setEnabled(ereset);
+			subjectLabel.setForeground(currentContext == null ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+					: SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+			subjectLabel.setText(currentContext == null ? "No context" : currentContext.getLabel());
+			this.manager.removeAll();
+			for (ContextDescriptor cd : rootContexts) {
+				this.manager.add(new Action(cd.getRoot().getLabel()) {
+					// TODO
+				});
+	 		}
+		});
+		
 	}
 
 	protected void searchObservations(String text) {
@@ -727,22 +871,25 @@ public class ContextView extends ViewPart {
 								+ Activator.engineMonitor().getSessionId());
 					}
 				}
-
 			};
 			openViewerAction.setEnabled(Activator.engineMonitor().isRunning());
 			openViewerAction.setImageDescriptor(
 					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/browser.gif"));
 		}
-	    {
-	        resetContextAction = new Action("Reset context") {                @Override
-                public void run() {
-                    Activator.post(IMessage.MessageClass.UserContextChange, IMessage.Type.ResetContext, "");
-                }
-	        };
-	        resetContextAction.setEnabled(Activator.engineMonitor().isRunning());
-	        resetContextAction.setImageDescriptor(ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
-	        resetContextAction.setToolTipText("Reset context");
-	    }
+		{
+			resetContextAction = new Action("Reset context") {
+				@Override
+				public void run() {
+					Activator.post(IMessage.MessageClass.UserContextChange, IMessage.Type.ResetContext, "");
+					currentContext = null;
+					refresh(Status.EngineOnline);
+				}
+			};
+			resetContextAction.setEnabled(Activator.engineMonitor().isRunning());
+			resetContextAction.setImageDescriptor(ResourceManager
+					.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
+			resetContextAction.setToolTipText("Reset context");
+		}
 	}
 
 	/**
@@ -758,6 +905,10 @@ public class ContextView extends ViewPart {
 	 * Initialize the menu.
 	 */
 	private void initializeMenu() {
-		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+		this.manager = getViewSite().getActionBars().getMenuManager();
+		// this is for hierarchical menus - add the this to the manager and the actions to this 
+//		MenuManager menuManager = new MenuManager("Previous contexts");
+//		manager.add(action);
+//		menuManager.add(action);
 	}
 }

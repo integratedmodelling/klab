@@ -6,6 +6,8 @@ import java.util.Set;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
@@ -13,7 +15,7 @@ import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public abstract class UserIdentity implements IUserIdentity, UserDetails {
+public abstract class UserIdentity implements IUserIdentity, UserDetails, IActorIdentity<KlabMessage> {
 
     private static final long serialVersionUID = -5670348187596399293L;
 

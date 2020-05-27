@@ -69,6 +69,7 @@
 		<module>api</module>
 		<module>kdl</module>
 		<module>kim</module>
+		<module>kactors</module>
 		<module>klab.engine</module>
 		<module>adapters</module>
 		<module>klab.modeler</module>
@@ -81,14 +82,14 @@
 		<module>components</module>
 		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
 		<!--  <module>docs</module> -->
- 	</modules>
+	</modules>
 
 	<properties>
 
 		<klab.version>0.10.0-SNAPSHOT</klab.version>
 
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS 
 			should be the same one that geotools needs.
@@ -115,8 +116,9 @@
 		<jackson-version>2.9.5</jackson-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
 			issues -->
-
-		<joda-time-version>2.3</joda-time-version>
+	
+<!--     	<scala.version>2.13.1</scala.version>
+ -->		<joda-time-version>2.3</joda-time-version>
 		<javax.mail-api.version>1.5.2</javax.mail-api.version>
 		<jung.version>2.1.1</jung.version>
 		
@@ -250,7 +252,7 @@
 		<repository>
 			<id>im</id>
 			<name>Integrated Modelling Partnership Repository</name>
-			<url>http://www.integratedmodelling.org/nexus/content/repositories/releases/</url>
+			<url>https://integratedmodelling.org/nexus/repository/releases/</url>
 		</repository>
 		<repository>
 			<snapshots>

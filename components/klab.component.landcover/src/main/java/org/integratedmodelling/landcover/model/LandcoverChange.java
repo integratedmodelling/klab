@@ -924,7 +924,7 @@ public class LandcoverChange {
 		 */
 		IConcept target = scope.getTargetSemantics().getType();
 		if (target.is(Type.CHANGE)) {
-			target = Observables.INSTANCE.getInherentType(target);
+			target = Observables.INSTANCE.getDescribedType(target);
 		} else {
 			for (IConcept c : Observables.INSTANCE.getAffectedQualities(target)) {
 				if (scope.getArtifact(target, IState.class) != null) {

@@ -175,7 +175,7 @@ public class TestRunner implements Annotations.Handler {
 						for (IServiceCall assertion : arguments.get("assertions", new ArrayList<IServiceCall>())) {
 							Object test = Extensions.INSTANCE.callFunction(assertion, monitor);
 							if (test instanceof Assertion) {
-								evaluateAssertion(assertion, (Assertion) test, ((Subject) subject).getRuntimeScope(),
+								evaluateAssertion(assertion, (Assertion) test, ((Subject) subject).getScope(),
 										(TestMonitor) monitor);
 							} else {
 								monitor.error(
@@ -186,7 +186,7 @@ public class TestRunner implements Annotations.Handler {
 						if (subject != null && visualize) {
 
 							if (subject.getScale().getSpace() != null) {
-								SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
+								SpatialDisplay display = new SpatialDisplay(subject.getScale());
 
 								for (IArtifact artifact : subject.getProvenance().getArtifacts()) {
 

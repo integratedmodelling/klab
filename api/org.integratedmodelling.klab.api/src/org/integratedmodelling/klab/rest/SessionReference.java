@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SessionReference {
@@ -13,6 +15,7 @@ public class SessionReference {
 	private String baseHelpUrl;
 	private IdentityReference owner;
 	Map<String, ObservationReference> rootObservations = new HashMap<>();
+	private List<String> appUrns = new ArrayList<>();
 
 	public long getTimeEstablished() {
 		return timeEstablished;
@@ -76,6 +79,14 @@ public class SessionReference {
 
 	public void setBaseHelpUrl(String baseHelpUrl) {
 		this.baseHelpUrl = baseHelpUrl;
+	}
+
+	public List<String> getAppUrns() {
+		return appUrns;
+	}
+
+	public void setAppUrns(List<String> appUrns) {
+		this.appUrns = appUrns;
 	}
 
 }

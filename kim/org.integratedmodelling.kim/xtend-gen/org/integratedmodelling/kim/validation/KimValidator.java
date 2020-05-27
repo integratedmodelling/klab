@@ -143,10 +143,11 @@ public class KimValidator extends AbstractKimValidator {
   
   @Check
   public void checkNamespace(final Namespace namespace) {
+    KimNamespace ns = Kim.INSTANCE.getNamespace(namespace);
+    int i = 0;
     boolean _isWorldviewBound = namespace.isWorldviewBound();
     boolean _not = (!_isWorldviewBound);
     if (_not) {
-      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace);
       IKimProject project = ns.getProject();
       String expectedId = ((KimProject) project).getNamespaceIdFor(namespace);
       if ((expectedId == null)) {
@@ -159,7 +160,6 @@ public class KimValidator extends AbstractKimValidator {
           ns.setErrors(true);
         }
       }
-      int i = 0;
       DependencyGraph _xifexpression = null;
       int _size = namespace.getImported().size();
       boolean _greaterThan = (_size > 0);
@@ -220,6 +220,58 @@ public class KimValidator extends AbstractKimValidator {
                   String _name_3 = import_.getName();
                   String _plus_6 = ((("Variable " + variable) + " could not be found in symbols defined by namespace ") + _name_3);
                   this.error(_plus_6, import_, KimPackage.Literals.IMPORT__IMPORTS, j, KimValidator.BAD_NAMESPACE_ID);
+                  ns.setErrors(true);
+                } else {
+                  ns.getSymbolTable().put(variable.toString(), object);
+                }
+                j++;
+              }
+            }
+            i++;
+          }
+        }
+      }
+    } else {
+      EList<Import> _imported_1 = namespace.getImported();
+      for (final Import import__1 : _imported_1) {
+        {
+          IKimNamespace importedNs = Kim.INSTANCE.getNamespace(import__1.getName());
+          if ((importedNs == null)) {
+            String _name = import__1.getName();
+            String _plus = ("Imported namespace " + _name);
+            String _plus_1 = (_plus + " could not be found");
+            this.error(_plus_1, namespace, 
+              KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
+            ns.setErrors(true);
+          }
+          ns.addImport(import__1.getName());
+          List _imports = import__1.getImports();
+          boolean _tripleEquals = (_imports == null);
+          if (_tripleEquals) {
+            IKimWorkspace _workspace = ns.getProject().getWorkspace();
+            boolean _contains = ((KimWorkspace) _workspace).getNamespaceIds().contains(import__1.getName());
+            boolean _not_1 = (!_contains);
+            if (_not_1) {
+              String _name_1 = import__1.getName();
+              String _plus_2 = ("Imported namespace " + _name_1);
+              String _plus_3 = (_plus_2 + " does not belong to the same workspace");
+              this.error(_plus_3, namespace, 
+                KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
+              ns.setErrors(true);
+            }
+          }
+          List _imports_1 = import__1.getImports();
+          boolean _tripleNotEquals = (_imports_1 != null);
+          if (_tripleNotEquals) {
+            java.util.List<?> importedVs = Kim.INSTANCE.parseList(import__1.getImports(), ns);
+            int j = 0;
+            for (final Object variable : importedVs) {
+              {
+                Object object = importedNs.getSymbolTable().get(variable.toString());
+                if ((object == null)) {
+                  String _name_2 = import__1.getName();
+                  String _plus_4 = ((("Variable " + variable) + " could not be found in symbols defined by namespace ") + _name_2);
+                  this.error(_plus_4, import__1, KimPackage.Literals.IMPORT__IMPORTS, j, KimValidator.BAD_NAMESPACE_ID);
                   ns.setErrors(true);
                 } else {
                   ns.getSymbolTable().put(variable.toString(), object);
@@ -505,6 +557,16 @@ public class KimValidator extends AbstractKimValidator {
               }
             }
           }
+          if (((obsIdx > 0) && (observable.getMain().getContext() != null))) {
+            this.error(
+              "Only the first observable of a model can use the \'within\' clause, which sets the context for all others", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+          }
+          if (((observable.hasAttributeIdentifier() && (observable.getMain().is(IKimConcept.Type.EXTENSIVE_PROPERTY) || observable.getMain().is(IKimConcept.Type.INTENSIVE_PROPERTY))) && 
+            (observable.getUnit() == null))) {
+            this.error("Physical properties linked to attributes require measurement units", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+          }
           if ((((observable.getMain() != null) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))) && 
             (observable.getMain().getInherent() == null))) {
             this.error(("Lone predicates are not valid observables. Use classifying observables to attribute " + 
@@ -518,9 +580,9 @@ public class KimValidator extends AbstractKimValidator {
           }
           if ((((observable.getMain() != null) && observable.getMain().is(IKimConcept.Type.ABSTRACT)) && 
             (!(observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))))) {
-            this.error(("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or" + 
-              " resolve attributes or roles)."), 
-              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+            this.error(
+              ("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or" + 
+                " resolve attributes or roles)."), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
           }
           Kim.ConceptDescriptor definition = observable.getDescriptor();
           if ((definition != null)) {
@@ -595,6 +657,13 @@ public class KimValidator extends AbstractKimValidator {
         ObservableSemantics _observable_1 = cd.getObservable();
         boolean _tripleNotEquals_2 = (_observable_1 != null);
         if (_tripleNotEquals_2) {
+          IKimConcept _context = observable.getMain().getContext();
+          boolean _tripleNotEquals_3 = (_context != null);
+          if (_tripleNotEquals_3) {
+            this.error(("The \'within\' clause cannot be used in dependencies. Use \'of\' if you need to reference " + 
+              "an observable contextualized to a different subject than the model."), 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
+          }
           java.util.List<CompileNotificationReference> _notificationsFor = Kim.INSTANCE.getNotificationsFor(namespaceId, 
             observable.getURI());
           for (final CompileNotificationReference ref : _notificationsFor) {
@@ -634,8 +703,8 @@ public class KimValidator extends AbstractKimValidator {
               KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
           }
           Object _value = observable.getValue();
-          boolean _tripleNotEquals_3 = (_value != null);
-          if (_tripleNotEquals_3) {
+          boolean _tripleNotEquals_4 = (_value != null);
+          if (_tripleNotEquals_4) {
             String error = observable.validateValue();
             if ((error != null)) {
               this.error(error, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
@@ -657,8 +726,8 @@ public class KimValidator extends AbstractKimValidator {
               ok = false;
             } else {
               IKimConcept.ObservableRole _distributedInherent = observable.getMain().getDistributedInherent();
-              boolean _tripleNotEquals_4 = (_distributedInherent != null);
-              if (_tripleNotEquals_4) {
+              boolean _tripleNotEquals_5 = (_distributedInherent != null);
+              if (_tripleNotEquals_5) {
                 this.error("Distributed inherency (of each, for each, within each) are only allowed as main observables", 
                   KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
                 ok = false;
@@ -2061,8 +2130,9 @@ public class KimValidator extends AbstractKimValidator {
   public void checkConceptDefinition(final ConceptStatement statement) {
     boolean ok = true;
     Namespace ns = KimValidator.getNamespace(statement);
-    if (((ns != null) && ns.isWorldviewBound())) {
-      this.error("Concept definitions are not admitted in secondary namespaces", KimPackage.Literals.CONCEPT_STATEMENT__BODY);
+    if ((((ns != null) && ns.isWorldviewBound()) && (!((statement.getBody() != null) && statement.getBody().isAlias())))) {
+      this.error("Concept definitions are not admitted in secondary namespaces: use \'equals\' to declare aliases", 
+        KimPackage.Literals.CONCEPT_STATEMENT__BODY);
       ok = false;
     }
     EnumSet<IKimConcept.Type> type = Kim.INSTANCE.getType(statement.getConcept());
@@ -2773,13 +2843,13 @@ public class KimValidator extends AbstractKimValidator {
         for (final ConceptDeclaration decl_1 : _creates) {
           {
             KimConcept countable_1 = Kim.INSTANCE.declareConcept(decl_1);
-            boolean _is = countable_1.is(IKimConcept.Type.COUNTABLE);
+            boolean _is = countable_1.is(IKimConcept.Type.OBSERVABLE);
             boolean _not_7 = (!_is);
             if (_not_7) {
-              this.error(
-                "only countable types (subject, event, relationship) can be created by processes or events", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_5);
+              this.error("only observable types can be created by processes or events", concept, 
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_5);
             } else {
-              ret.getCountablesCreated().add(countable_1);
+              ret.getObservablesCreated().add(countable_1);
             }
             i_5++;
           }
@@ -2855,8 +2925,8 @@ public class KimValidator extends AbstractKimValidator {
             boolean _is = quality.is(IKimConcept.Type.QUALITY);
             boolean _not_10 = (!_is);
             if (_not_10) {
-              this.error(
-                "only quality types can be affected by a process", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i_6);
+              this.error("only quality types can be affected by a process", concept, 
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i_6);
             } else {
               ret.getQualitiesAffected().add(quality);
             }

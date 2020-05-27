@@ -94,8 +94,28 @@ public interface IObservableService {
 	IObservable declare(IKimObservable observable, IMonitor monitor);
 
 	/**
+	 * Retrieve the context type, direct if there, indirect if not. Implement the
+	 * recontextualization logics inherent in the 'of' operator: if X has context Y,
+	 * explicit or not, and this is X of Y, the context is "freed" and this returns
+	 * null unless the context type is explicit.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	IConcept getContext(IConcept concept);
+
+	/**
+	 * Retrieve the inherent type, direct if there, indirect if not.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	IConcept getInherency(IConcept concept);
+
+	/**
 	 * <p>
-	 * getInherentType.
+	 * Get the <em>implicit</em> inherent type - not the direct one (if asked on X
+	 * of Y will return the inherent type of X, not Y).
 	 * </p>
 	 *
 	 * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
@@ -150,9 +170,10 @@ public interface IObservableService {
 
 	/**
 	 * <p>
-	 * getContextType.
+	 * Get the <em>implicit</em> context type - not the direct one (if asked on X of
+	 * Y will return the context type of X, not Y).
 	 * </p>
-	 *
+	 * 
 	 * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
 	 *                object.
 	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
@@ -191,6 +212,7 @@ public interface IObservableService {
 	 *           object.
 	 * 
 	 * @return true if these are compatible observables
+	 * @deprecated use {@link IConcept#resolves(IConcept, IConcept)}
 	 */
 	boolean isCompatible(IConcept o1, IConcept o2);
 
@@ -205,6 +227,7 @@ public interface IObservableService {
 	 * @param flags see {@link #ACCEPT_REALM_DIFFERENCES} and siblings. Pass them in
 	 *              bitwise OR if more are needed.
 	 * @return true if these are compatible observables
+	 * @deprecated use {@link IConcept#resolves(IConcept, IConcept)}
 	 */
 	boolean isCompatible(IConcept o1, IConcept o2, int flags);
 
@@ -329,4 +352,13 @@ public interface IObservableService {
 	 * @return the recontextualized observable
 	 */
 	IObservable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor);
+
+	/**
+	 * Return the original type described by a quality that results from applying a
+	 * unary operator to it.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	IConcept getDescribedType(IConcept concept);
 }

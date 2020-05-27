@@ -1,16 +1,27 @@
 package org.integratedmodelling.klab.auth;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.rest.IdentityReference;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import akka.actor.typed.ActorRef;
 
 public class Partner extends UserIdentity implements IPartnerIdentity, UserDetails {
 
     private static final long serialVersionUID = -129699145554376751L;
+    
+	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
 
+	
     public Partner(String partnerName) {
         super(partnerName);
     }
@@ -82,4 +93,25 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
         return getUsername();
     }
 
+	@Override
+	public ActorRef<KlabMessage> getActor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void load(IBehavior behavior, IRuntimeScope scope) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void instrument(ActorRef<KlabMessage> actor) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public Map<String, Object> getState() {
+		return globalState;
+	}
 }

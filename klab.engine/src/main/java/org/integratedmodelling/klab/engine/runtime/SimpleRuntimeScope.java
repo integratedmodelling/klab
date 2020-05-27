@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
@@ -20,7 +22,6 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -32,14 +33,18 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.Structure;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.Process;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
@@ -49,6 +54,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.OWL;
@@ -60,7 +66,6 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
  * Trivial context that will only build simple hierarchies and observations.
@@ -85,16 +90,16 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	// these are shared among all children, created in root only and passed around
 	Map<String, IArtifact> artifacts;
 	Map<String, IObservation> observations;
-	Graph<IArtifact, DefaultEdge> structure;
+	Structure structure;
 	Graph<IArtifact, Relationship> network;
 	ISubject rootSubject;
 	Map<String, IObservable> semantics;
-	Map<String, Object> symbolTable = new HashMap<>();
+	Map<String, IVariable> symbolTable = new HashMap<>();
 
 	public SimpleRuntimeScope(Actuator actuator) {
 		this.observable = actuator.getObservable();
 		this.scale = actuator.getDataflow().getScale();
-		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
+		this.structure = new Structure();
 		this.network = new DefaultDirectedGraph<>(Relationship.class);
 		this.artifacts = new HashMap<>();
 		this.observations = new HashMap<>();
@@ -112,7 +117,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public SimpleRuntimeScope(IObservable observable, IScale scale, IMonitor monitor) {
 		this.observable = observable;
 		this.scale = scale;
-		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
+		this.structure = new Structure();
 		this.network = new DefaultDirectedGraph<>(Relationship.class);
 		this.artifacts = new HashMap<>();
 		this.observations = new HashMap<>();
@@ -122,10 +127,34 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 			this.namespace = Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace());
 			this.target = this.rootSubject = new Subject(observable.getName(), (Observable) observable, (Scale) scale,
 					this);
-			this.structure.addVertex(this.target);
+			this.structure.add(this.target);
 			this.artifacts.put(this.getTargetName(), this.target);
 			this.observations.put(this.target.getId(), this.target);
 		}
+	}
+
+	/**
+	 * Just meant to carry around a monitor and identity for actors. Useless and
+	 * likely to break when used in contextualization!
+	 * 
+	 * @param session
+	 */
+	public SimpleRuntimeScope(ISession session) {
+		this.structure = new Structure();
+		this.network = new DefaultDirectedGraph<>(Relationship.class);
+		this.artifacts = new HashMap<>();
+		this.observations = new HashMap<>();
+		this.semantics = new HashMap<>();
+		this.monitor = session.getMonitor();
+	}
+
+	public SimpleRuntimeScope(IMonitor monitor) {
+		this.structure = new Structure();
+		this.network = new DefaultDirectedGraph<>(Relationship.class);
+		this.artifacts = new HashMap<>();
+		this.observations = new HashMap<>();
+		this.semantics = new HashMap<>();
+		this.monitor = monitor;
 	}
 
 	public SimpleRuntimeScope(SimpleRuntimeScope parent) {
@@ -230,9 +259,9 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		if (ret != null) {
 
 			observations.put(ret.getId(), ret);
-			structure.addVertex(ret);
+			structure.add(ret);
 			if (parent != null && parent.target != null) {
-				structure.addEdge(ret, parent.target);
+				structure.link(ret, parent.target);
 			}
 			if (metadata != null) {
 				ret.getMetadata().putAll(metadata);
@@ -251,9 +280,9 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		if (ret != null) {
 
 			observations.put(ret.getId(), ret);
-			structure.addVertex(ret);
+			structure.add(ret);
 			if (parent != null && parent.target != null) {
-				structure.addEdge(ret, parent.target);
+				structure.link(ret, parent.target);
 			}
 
 			network.addVertex(source);
@@ -302,8 +331,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 	@Override
 	public IDirectObservation getParentOf(IObservation observation) {
-		for (DefaultEdge edge : this.structure.outgoingEdgesOf(observation)) {
-			IArtifact source = this.structure.getEdgeTarget(edge);
+		for (IArtifact source : this.structure.getLogicalParent(observation)) {
 			if (source instanceof IDirectObservation) {
 				return (IDirectObservation) source;
 			}
@@ -362,11 +390,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		this.scale = geometry;
 	}
 
-	@Override
-	public void processAnnotation(IAnnotation annotation) {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	public void processAnnotation(IAnnotation annotation) {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 	@Override
 	public Provenance getProvenance() {
@@ -375,7 +403,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public Graph<? extends IArtifact, ?> getStructure() {
+	public IArtifact.Structure getStructure() {
 		return structure;
 	}
 
@@ -383,8 +411,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@SuppressWarnings("unchecked")
 	public <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls) {
 		List<T> ret = new ArrayList<>();
-		for (DefaultEdge edge : this.structure.incomingEdgesOf(artifact)) {
-			IArtifact source = this.structure.getEdgeSource(edge);
+		for (IArtifact source : this.structure.getLogicalChildren(artifact)) {
 			if (cls.isAssignableFrom(source.getClass())) {
 				ret.add((T) source);
 			}
@@ -392,11 +419,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return ret;
 	}
 
-	@Override
-	public void link(IArtifact parent, IArtifact child) {
-		this.structure.addVertex(child);
-		this.structure.addEdge(child, parent);
-	}
+//	@Override
+//	public void link(IArtifact parent, IArtifact child) {
+//		this.structure.add(child);
+//		this.structure.link(child, parent);
+//	}
 
 	/**
 	 * Return a child context that can be used to build the observation of the
@@ -426,8 +453,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		this.observable = observable;
 		semantics.put(observable.getName(), observable);
 
-		structure.addVertex(ret.target);
-		structure.addEdge(ret.target, this.target);
+		structure.add(ret.target);
+		structure.link(ret.target, this.target);
 		artifacts.put(observable.getName(), ret.target);
 		observations.put(ret.target.getId(), ret.target);
 		ret.targetName = observable.getName();
@@ -486,7 +513,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IRuntimeScope createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
+	public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope,
+			IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -564,7 +592,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation) {
+	public Collection<IArtifact> getChildArtifactsOf(IArtifact directObservation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -623,13 +651,13 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IRuntimeScope locate(ILocator transitionScale) {
+	public IRuntimeScope locate(ILocator transitionScale, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@Override
-	public Map<String, Object> getSymbolTable() {
+	public Map<String, IVariable> getVariables() {
 		return symbolTable;
 	}
 
@@ -643,8 +671,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		IState ret = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
 
 		semantics.put(observable.getName(), observable);
-		structure.addVertex(ret);
-		structure.addEdge(ret, this.target);
+		structure.add(ret);
+		structure.link(ret, this.target);
 		artifacts.put(observable.getName(), ret);
 		observations.put(ret.getId(), ret);
 
@@ -659,6 +687,84 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 	@Override
 	public Collection<IArtifact> getAdditionalOutputs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IObservable> getDependents(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IObservable> getPrecursors(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IState addState(IDirectObservation target, IObservable observable, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task,
+			Mode mode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void scheduleActions(Observation observation, IBehavior behavior) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings() {
+		return null;
+	}
+
+	@Override
+	public String addListener(ObservationListener listener) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeListener(String listenerId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Set<String> getWatchedObservationIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void updateNotifications(IObservation observation) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public IObservation getParentArtifactOf(IObservation observation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void swapArtifact(IArtifact original, IArtifact replacement) {
+		// TODO Auto-generated method stub
+		structure.swap(original, replacement);
+	}
+
+	@Override
+	public Collection<IObservation> getObservations(IConcept observable) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -164,7 +164,7 @@ public class ModelKbox extends ObservableKbox {
 		Pair<Scale, Set<IRankedModel>> preResolved = context.isCaching() ? null
 				: context.getPreresolvedModels(observable);
 
-		IPrioritizer<ModelReference> prioritizer = Resolver.INSTANCE.getPrioritizer(context);
+		IPrioritizer<ModelReference> prioritizer = Resolver.getPrioritizer(context);
 		ModelQueryResult ret = new ModelQueryResult(prioritizer, context.getMonitor());
 		Set<ModelReference> local = new HashSet<>();
 
@@ -256,7 +256,9 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		String query = "SELECT model.oid FROM model WHERE ";
-		String typequery = observableQuery(observable, context.getMode());
+		IConcept contextObservable = context.getContextObservable() == null ? null
+				: context.getContextObservable().getType();
+		String typequery = observableQuery(observable, contextObservable, context.getMode());
 
 		if (typequery == null) {
 			return ret;
@@ -298,14 +300,14 @@ public class ModelKbox extends ObservableKbox {
 		return ret;
 	}
 
-	private String observableQuery(IObservable observable, Mode mode) {
+	private String observableQuery(IObservable observable, IConcept context, Mode mode) {
 
 		// /*
 		// * remove any transformations before querying
 		// */
 		// IConcept concept = observable.getMain();
 
-		Set<Long> ids = this.getCompatibleTypeIds(observable, mode);
+		Set<Long> ids = this.getCompatibleTypeIds(observable, context, mode);
 		if (ids == null || ids.size() == 0) {
 			return null;
 		}
@@ -643,20 +645,26 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		if (ret.size() > 0) {
-			
+
 			for (IObservable attr : model.getAttributeObservables().values()) {
 
 				if (attr == null) {
 					// only in error
 					continue;
 				}
-				
-				// attribute type must have inherent type added
-				IConcept type = attr.getBuilder(monitor).within(model.getObservables().get(0).getType()).buildConcept();
+
+				// attribute type must have inherent type added if it's an instantiated quality
+				IConcept type = attr.getType();
+				if (model.isInstantiator()) {
+					IConcept context = Observables.INSTANCE.getContextType(type);
+					if (context == null || !context.is(model.getObservables().get(0))) {
+						type = attr.getBuilder(monitor).within(model.getObservables().get(0).getType()).buildConcept();
+					}
+				}
 				ModelReference m = ret.get(0).copy();
 				m.setObservable(type.getDefinition());
 				m.setObservableConcept(type.getType());
-				m.setObservationType(attr.getDescription().name());
+				m.setObservationType(attr.getArtifactType().name());
 				m.setDereifyingAttribute(attr.getName());
 				m.setMediation(Mediation.DEREIFY_QUALITY);
 				m.setPrimaryObservable(!model.isInstantiator());

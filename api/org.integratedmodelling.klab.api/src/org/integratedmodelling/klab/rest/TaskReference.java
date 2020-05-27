@@ -7,20 +7,24 @@ public class TaskReference implements ITaskReference {
 	private String id;
 	private String parentId;
 	private String contextId;
+	private String rootContextId;
 	private String urn;
 	private String description;
 	private String error;
+	
+	private Status status = Status.Started;
 
 	public TaskReference() {
 	}
 	
-	public TaskReference(TaskReference other) {
-		this.id = other.id;
-		this.parentId = other.parentId;
-		this.urn = other.urn;
-		this.description = other.description;
-		this.error = other.error;
-	}
+//	public TaskReference(TaskReference other) {
+//		this.id = other.id;
+//		this.parentId = other.parentId;
+//		this.urn = other.urn;
+//		this.description = other.description;
+//		this.error = other.error;
+//		this.rootContextId = other.getRootContextId();
+//	}
 	
 	// TODO provenance info - agent, cause etc
 	/* (non-Javadoc)
@@ -95,6 +99,22 @@ public class TaskReference implements ITaskReference {
 
 	public void setContextId(String contextId) {
 		this.contextId = contextId;
+	}
+
+	public String getRootContextId() {
+		return rootContextId;
+	}
+
+	public void setRootContextId(String rootContextId) {
+		this.rootContextId = rootContextId;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 }

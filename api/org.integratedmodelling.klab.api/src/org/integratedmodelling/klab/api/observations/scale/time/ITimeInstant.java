@@ -51,4 +51,11 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
 	 */
 	String getSpecification();
 
+	/**
+	 * Day in the year starting a 0.
+	 * 
+	 * @return
+	 */
+	int getDayOfYear();
+
 }

@@ -53,8 +53,8 @@ public class EConcept extends EKimObject implements IKimConceptStatement {
         return delegate.getQualitiesAffected();
     }
 
-    public List<IKimConcept> getCountablesCreated() {
-        return delegate.getCountablesCreated();
+    public List<IKimConcept> getObservablesCreated() {
+        return delegate.getObservablesCreated();
     }
 
     public List<IKimConcept> getConstituentParticipants() {

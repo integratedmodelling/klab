@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.storage;
 import java.util.Iterator;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -11,6 +12,8 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.mediation.RecontextualizingUnit;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
@@ -119,7 +122,7 @@ public class MediatingState extends Observation implements IState {
 		if (delegate.getType() == type) {
 			return this;
 		}
-		return new MediatingState(delegate.as(type), (RuntimeScope) getRuntimeScope(), from, to);
+		return new MediatingState(delegate.as(type), (RuntimeScope) getScope(), from, to);
 	}
 
 	@Override
@@ -134,7 +137,7 @@ public class MediatingState extends Observation implements IState {
 
 	@Override
 	public IState at(ILocator locator) {
-		return new MediatingState((IState) delegate.at(locator), (RuntimeScope) getRuntimeScope(), from, to);
+		return new MediatingState((IState) delegate.at(locator), (RuntimeScope) getScope(), from, to);
 	}
 
 	@Override
@@ -160,7 +163,7 @@ public class MediatingState extends Observation implements IState {
 		}
 
 		return from.equals(to) ? state
-				: new MediatingState(state, (RuntimeScope) ((Observation) state).getRuntimeScope(), from, to);
+				: new MediatingState(state, (RuntimeScope) ((Observation) state).getScope(), from, to);
 	}
 
 	@Override
@@ -179,5 +182,14 @@ public class MediatingState extends Observation implements IState {
 			set(locator, value);
 		}
 	}
+	
+	@Override
+	public void finalizeTransition(IScale scale) {
+		setContextualized(true);
+		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+			setDynamic(true);
+		}
+	}
+
 
 }

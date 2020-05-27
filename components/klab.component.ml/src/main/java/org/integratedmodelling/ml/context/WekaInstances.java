@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
@@ -107,9 +108,9 @@ public class WekaInstances {
 	IKimExpression selector = null;
 	Descriptor selectorDescriptor = null;
 
-	class Ranges {
-		Range include = null;
-		Range exclude = null;
+	public static class Ranges {
+		public Range include = null;
+		public Range exclude = null;
 	}
 
 	/**
@@ -216,19 +217,24 @@ public class WekaInstances {
 	// TODO set these from instances unless they're set by the archetype notation
 	private double predictedMin = Double.NaN;
 	private double predictedMax = Double.NaN;
-	/*
-	 * if this is not null, we are learning a quality that's specified as "within"
-	 * some observation. We will need that context type to remove it from the
-	 * predictors before it's matched and to build appropriate states when running
-	 * the resource.
-	 */
-	private IConcept explicitContext;
+//	/*
+//	 * if this is not null, we are learning a quality that's specified as "within"
+//	 * some observation. We will need that context type to remove it from the
+//	 * predictors before it's matched and to build appropriate states when running
+//	 * the resource.
+//	 */
+//	private IConcept explicitContext;
 
 	/*
 	 * any attribute that has a datakey serializes its datakey here, so we can save
 	 * it with the resource and reconstruct.
 	 */
 	private Map<String, List<String>> keys = new HashMap<>();
+
+	/*
+	 * store the range of numeric values here during training on instances
+	 */
+	private Map<String, Range> dataRanges = new HashMap<>();
 
 	// for use in the encoder. Presets the attribute and predictor arrays.
 	public WekaInstances(IContextualizationScope context, int nPredictors) {
@@ -280,6 +286,8 @@ public class WekaInstances {
 			@Nullable Filter discretizer) {
 		if (predictorState != null) {
 			this.predictorStates.set(index, predictorState);
+		} else {
+			this.predictorObservables.add(predictor);
 		}
 		this.attributes.set(index + 1, getAttribute(predictor, predictorState));
 		if (discretizer != null) {
@@ -316,14 +324,14 @@ public class WekaInstances {
 					.describe(this.selector.getCode(), context.getExpressionContext(), false);
 		}
 
-		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
-		if (this.explicitContext != null) {
-			/*
-			 * we learn the quality in its context so remove.
-			 */
-			this.predictedObservable = ObservableBuilder.getBuilder(this.predictedObservable, context.getMonitor())
-					.without(ObservableRole.CONTEXT).buildObservable();
-		}
+//		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
+//		if (this.explicitContext != null) {
+//			/*
+//			 * we learn the quality in its context so remove.
+//			 */
+//			this.predictedObservable = ObservableBuilder.getBuilder(this.predictedObservable, context.getMonitor())
+//					.without(ObservableRole.CONTEXT).buildObservable();
+//		}
 
 		for (IObservable dependency : model.getDependencies()) {
 
@@ -331,9 +339,9 @@ public class WekaInstances {
 
 			if (predictor != null) {
 
-				IConcept predictorContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
+//				IConcept predictorContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
 
-				if (this.explicitContext != null && this.explicitContext.equals(predictorContext)) {
+				if (((Model) model).learnsWithinArchetype() && !((Model) model).distributesLearning()) {
 
 					/*
 					 * the actual observable (which we will look for in the data) will be the one
@@ -363,6 +371,9 @@ public class WekaInstances {
 
 					IArtifact artifact = context.getArtifact(dependency.getName());
 					if (!(artifact instanceof IState)) {
+						if (dependency.isOptional()) {
+							continue;
+						}
 						throw new IllegalArgumentException(
 								"Weka: missing predictor or not a quality: " + dependency.getName());
 					}
@@ -755,6 +766,17 @@ public class WekaInstances {
 
 		for (ObservationGroup archetype : archetypes) {
 
+			/*
+			 * remove the inherency to check for the predicted state in case we are training
+			 * "within" this particular object type.
+			 */
+			IObservable archetypeObservable = predictedObservable;
+			IConcept inherency = Observables.INSTANCE.getDirectInherentType(predictedObservable.getType());
+			if (inherency != null && archetype.getObservable().is(inherency)) {
+				archetypeObservable = archetypeObservable.getBuilder(context.getMonitor())
+						.without(ObservableRole.INHERENT).buildObservable();
+			}
+
 			for (IArtifact object : archetype) {
 
 				// this is for reporting what's missing - bit of a pain
@@ -771,13 +793,17 @@ public class WekaInstances {
 
 					for (IState state : ((IDirectObservation) object).getStates()) {
 
-						if (state.getObservable().equals(predictedObservable)) {
+						if (state.getObservable().equals(archetypeObservable)) {
 							stateIndex.put(predictedObservable.getName(), 0);
 							missing.remove(predictedObservable.getName());
 						} else {
 							int i = 1;
 							for (IObservable predictor : predictors) {
-								if (state.getObservable().equals(predictor)) {
+								/*
+								 * TODO must use mediators for unit translation etc. if mentioned in the
+								 * predictors
+								 */
+								if (state.getObservable().getType().equals(predictor.getType())) {
 									stateIndex.put(predictor.getName(), i);
 									missing.remove(predictor.getName());
 								} else if (weightObservable != null && state.getObservable().is(weightObservable)) {
@@ -804,7 +830,7 @@ public class WekaInstances {
 					/*
 					 * find the known name for this state
 					 */
-					String name = getObservableName(state);
+					String name = getObservableName(state, archetypeObservable);
 
 					if (name != null) {
 						Object o = state.aggregate(((IObservation) object).getScale(),
@@ -825,6 +851,9 @@ public class WekaInstances {
 									ignore = true;
 									break;
 								}
+
+								getDataRange(name).include(((Number) o).doubleValue());
+
 							}
 
 							instanceValues[stateIndex.get(name)] = o;
@@ -897,19 +926,29 @@ public class WekaInstances {
 
 	}
 
+	public Range getDataRange(String name) {
+		Range ret = dataRanges.get(name);
+		if (ret == null) {
+			ret = Range.create(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+			dataRanges.put(name, ret);
+		}
+		return ret;
+	}
+
 	/**
 	 * Return the known name linked to a state's observable in the WEKA model.
 	 * 
 	 * @param state
 	 * @return
 	 */
-	private String getObservableName(IState state) {
+	private String getObservableName(IState state, IObservable archetypeObservable) {
 
-		if (state.getObservable().equals(predictedObservable)) {
+		if (state.getObservable().equals(predictedObservable)
+				|| (archetypeObservable != null && state.getObservable().equals(archetypeObservable))) {
 			return predictedObservable.getName();
 		}
 		for (IObservable observable : getPredictorObservables()) {
-			if (observable.equals(state.getObservable())) {
+			if (observable.getType().equals(state.getObservable().getType())) {
 				return observable.getName();
 			}
 		}
@@ -1293,6 +1332,10 @@ public class WekaInstances {
 
 	public void setPredictedObservable(IObservable obs) {
 		this.predictedObservable = obs;
+	}
+
+	public Ranges getRanges(String name) {
+		return this.ranges.get(name);
 	}
 
 }

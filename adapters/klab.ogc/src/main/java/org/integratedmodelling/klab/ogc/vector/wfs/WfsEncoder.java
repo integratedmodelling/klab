@@ -22,6 +22,7 @@ import org.geotools.data.wfs.WFSDataStore;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ogc.WfsAdapter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
@@ -50,7 +51,7 @@ public class WfsEncoder extends VectorEncoder {
 	}
 
 	@Override
-	public boolean isOnline(IResource resource) {
+	public boolean isOnline(IResource resource, IMonitor monitor) {
 		return true; // NetUtilities.urlResponds(resource.getParameters().get("serviceUrl", String.class));
 	}
 

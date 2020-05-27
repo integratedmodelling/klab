@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -232,12 +233,12 @@ public class Geometry implements IGeometry {
 	 * time period as a long
 	 */
 	public static final String PARAMETER_TIME_START = "tstart";
-	
+
 	/**
 	 * time period as a long
 	 */
 	public static final String PARAMETER_TIME_END = "tend";
-	
+
 	/**
 	 * Time representation: one of generic, specific, grid or real.
 	 */
@@ -261,8 +262,23 @@ public class Geometry implements IGeometry {
 	 */
 	public static final String PARAMETER_TIME_SCOPE_UNIT = "tunit";
 
+	public static final String PARAMETER_TIME_COVERAGE_UNIT = "coverageunit";
+
+	public static final String PARAMETER_TIME_COVERAGE_START = "coveragestart";
+
+	public static final String PARAMETER_TIME_COVERAGE_END = "coverageend";
+
 	public static Geometry create(String geometry) {
 		return makeGeometry(geometry, 0);
+	}
+
+	private static Geometry create(Iterable<Dimension> dims) {
+		Geometry ret = new Geometry();
+		for (Dimension dim : dims) {
+			ret.scalar = false;
+			ret.dimensions.add((DimensionImpl) dim);
+		}
+		return ret;
 	}
 
 	public static GeometryBuilder builder() {
@@ -339,7 +355,7 @@ public class Geometry implements IGeometry {
 				return o1.getType() == Type.TIME ? -1 : 0;
 			}
 		});
-		
+
 		String ret = granularity == Granularity.MULTIPLE ? "#" : "";
 		for (Dimension dim : dims) {
 			ret += dim.getType() == Type.SPACE ? (dim.isGeneric() ? "\u03c3" : (dim.isRegular() ? "S" : "s"))
@@ -422,6 +438,7 @@ public class Geometry implements IGeometry {
 		private long[] shape;
 		private Parameters<String> parameters = new Parameters<>();
 		private boolean generic;
+		private double coverage = 1.0;
 
 		@Override
 		public Type getType() {
@@ -452,6 +469,10 @@ public class Geometry implements IGeometry {
 		@Override
 		public int getDimensionality() {
 			return dimensionality;
+		}
+		
+		public double getCoverage() {
+			return coverage;
 		}
 
 		@Override
@@ -581,9 +602,18 @@ public class Geometry implements IGeometry {
 	private Granularity granularity = Granularity.SINGLE;
 	private Geometry child;
 	private boolean scalar;
+	private Double coverage = null;
 
-	// only used to compute offsets if requested
-//	transient private MultidimensionalCursor cursor = null;
+	@Override
+	public double getCoverage() {
+		if (this.coverage == null) {
+			this.coverage = 1.0;
+			for (Dimension dim : getDimensions()) {
+				this.coverage *= ((DimensionImpl)dim).coverage;
+			}
+		}
+		return this.coverage;
+	}
 
 	@Override
 	public IGeometry getChild() {
@@ -796,10 +826,15 @@ public class Geometry implements IGeometry {
 						shape.append(geometry.charAt(idx));
 						idx++;
 					}
-					String[] dims = shape.toString().split(",");
+					String[] dims = shape.toString().trim().split(",");
 					long[] sdimss = new long[dims.length];
 					for (int d = 0; d < dims.length; d++) {
-						sdimss[d] = dims[d].trim().equals("\u221E") ? INFINITE_SIZE : Long.parseLong(dims[d].trim());
+						String dimspec = dims[d].trim();
+						long dsize = NONDIMENSIONAL;
+						if (!dimspec.isEmpty()) {
+							dsize = dimspec.equals("\u221E") ? INFINITE_SIZE : Long.parseLong(dimspec);
+						}
+						sdimss[d] = dsize;
 					}
 					dimensionality.dimensionality = sdimss.length;
 					dimensionality.shape = sdimss;
@@ -836,13 +871,14 @@ public class Geometry implements IGeometry {
 			Object v = null;
 			if (val.startsWith("[") && val.endsWith("]")) {
 				v = NumberUtils.podArrayFromString(val, "\\s+");
-			} else if (NumberUtils.encodesLong(val)) {
+			} else if (!PARAMETER_SPACE_SHAPE.equals(key) && NumberUtils.encodesLong(val)) {
 				// This way all integers will be longs and the next won't be called - check if
-				// that's OK
+				// that's OK. Must avoid shape parameters with WKB values that should stay
+				// strings.
 				v = Long.parseLong(val);
-			} else if (NumberUtils.encodesInteger(val)) {
+			} else if (!PARAMETER_SPACE_SHAPE.equals(key) && NumberUtils.encodesInteger(val)) {
 				v = Integer.parseInt(val);
-			} else if (NumberUtils.encodesDouble(((String) val))) {
+			} else if (!PARAMETER_SPACE_SHAPE.equals(key) && NumberUtils.encodesDouble(((String) val))) {
 				v = Double.parseDouble(val);
 			} else {
 				v = val;
@@ -865,8 +901,8 @@ public class Geometry implements IGeometry {
 //		Geometry g4 = create("T1(23)S2(200,100)");
 //		Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
 
-		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
-		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
+//		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
+//		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
 	}
 
 	@Override
@@ -906,7 +942,7 @@ public class Geometry implements IGeometry {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return encode().hashCode();
@@ -1026,11 +1062,11 @@ public class Geometry implements IGeometry {
 	@Override
 	public boolean isGeneric() {
 		for (Dimension dimension : dimensions) {
-			if (dimension.isGeneric()) {
-				return true;
+			if (!dimension.isGeneric()) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -1039,7 +1075,9 @@ public class Geometry implements IGeometry {
 	 * 
 	 * In general, any geometry can merge in a scalar geometry (an empty one will
 	 * become scalar); other dimensions can be inherited if they are not present, or
-	 * they must have the same dimensionality in order to be kept without error.
+	 * they must have the same dimensionality in order to be kept without error. If
+	 * the receiver has a generic dimension and the incoming dimension is not
+	 * generic, the result adopts the specific one.
 	 * 
 	 * If we have a dimension that the other doesn't, just leave it there in the
 	 * result.
@@ -1053,18 +1091,26 @@ public class Geometry implements IGeometry {
 			return create(geometry.encode());
 		}
 
-		if (geometry.isScalar()) {
+		if (geometry.isScalar() && geometry.isGeneric()) {
 			return this;
 		}
 
-		List<Dimension> add = new ArrayList<>();
+		Map<Dimension.Type, Dimension> res = new LinkedHashMap<>();
+		for (Dimension dimension : getDimensions()) {
+			res.put(dimension.getType(), ((DimensionImpl)dimension).copy());
+		}
+		
+//		List<Dimension> result = new ArrayList<>();
 		for (Dimension dimension : geometry.getDimensions()) {
 			if (getDimension(dimension.getType()) == null) {
-				add.add(((DimensionImpl) dimension).copy());
+				res.put(dimension.getType(), ((DimensionImpl) dimension).copy());
+			} else if (getDimension(dimension.getType()).isGeneric() && !dimension.isGeneric()) {
+				// a specific dimension trumps a generic one
+				res.put(dimension.getType(), ((DimensionImpl) dimension).copy());
 			} else if (!((DimensionImpl) getDimension(dimension.getType())).isCompatible(dimension)) {
 				return null;
 			} else {
-				Dimension myDimension = getDimension(dimension.getType());
+				Dimension myDimension = ((DimensionImpl) getDimension(dimension.getType())).copy();
 				if (myDimension.size() == 0 && dimension.size() > 0) {
 					// merging a distributed dimension makes us distributed
 					((DimensionImpl) myDimension).shape = ((DimensionImpl) dimension).shape.clone();
@@ -1073,17 +1119,12 @@ public class Geometry implements IGeometry {
 					// merging an irregular dimension makes us irregular
 					((DimensionImpl) myDimension).regular = false;
 				}
+				res.put(myDimension.getType(), myDimension);
 			}
 		}
 
-		Geometry ret = create(this.encode());
+		return create(res.values());
 
-		for (Dimension dimension : add) {
-			ret.scalar = false;
-			ret.dimensions.add((DimensionImpl) dimension);
-		}
-
-		return ret;
 	}
 
 	/**

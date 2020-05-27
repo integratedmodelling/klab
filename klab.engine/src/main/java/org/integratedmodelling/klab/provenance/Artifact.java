@@ -17,6 +17,8 @@ import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.data.Metadata;
 
 import com.google.common.collect.Lists;
 
@@ -37,6 +39,7 @@ public abstract class Artifact implements IArtifact {
 	private List<IActivity> activities = new ArrayList<>();
 	private Map<Class<?>, Object> peers = new HashMap<>();
 	private boolean archetype;
+	protected Metadata metadata = new Metadata();
 	
 	/*
 	 * all observation data in a group share the same list; the pre-build object is
@@ -46,8 +49,7 @@ public abstract class Artifact implements IArtifact {
 	boolean empty;
 	long timestamp = System.currentTimeMillis();
 	private String generatorActivityId;
-
-
+	
 	public void chain(IArtifact data) {
 		throw new IllegalStateException("chain() should only be called on a group");
 	}
@@ -128,18 +130,6 @@ public abstract class Artifact implements IArtifact {
 	}
 
 	@Override
-	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IMetadata getMetadata() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Iterator<IArtifact> iterator() {
 
 		if (empty) {
@@ -177,6 +167,11 @@ public abstract class Artifact implements IArtifact {
 			@Override
 			public String getId() {
 				return "emptyArtifact";
+			}
+
+			@Override
+			public IGeometry getGeometry() {
+				return Geometry.empty();
 			}
 		};
 		ret.empty = true;
@@ -243,6 +238,11 @@ public abstract class Artifact implements IArtifact {
 
 	public void setArchetype(boolean archetype) {
 		this.archetype = archetype;
+	}
+	
+	@Override
+	public IMetadata getMetadata() {
+		return metadata;
 	}
 
 }

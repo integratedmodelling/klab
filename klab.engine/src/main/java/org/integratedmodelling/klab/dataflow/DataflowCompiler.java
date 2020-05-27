@@ -15,6 +15,7 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
@@ -24,7 +25,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
+import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -37,15 +38,18 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
+import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
@@ -62,6 +66,7 @@ public class DataflowCompiler {
 	private String name;
 	private DirectObservation context;
 	private IResolutionScope scope;
+	private Dataflow parentDataflow;
 
 	/*
 	 * keep the observables of each merged model to create proper references.
@@ -89,6 +94,8 @@ public class DataflowCompiler {
 		Coverage coverage;
 		IResolutionScope.Mode mode;
 		boolean isPartition = false;
+		// deferred resolution
+		boolean deferred = false;
 
 		/*
 		 * order of computation, relevant for scaling with partitioned resolvers
@@ -103,6 +110,7 @@ public class DataflowCompiler {
 			this.mode = link.getTarget().getMode();
 			this.order = link.getOrder();
 			this.isPartition = link.isPartition();
+			this.deferred = link.getTarget().isDeferred();
 		}
 
 		public String toString() {
@@ -110,10 +118,11 @@ public class DataflowCompiler {
 		}
 	}
 
-	public DataflowCompiler(String name, IResolutionScope scope) {
+	public DataflowCompiler(String name, IResolutionScope scope, Dataflow parentDataflow) {
 		this.name = name;
 		this.scope = scope;
 		this.context = (DirectObservation) scope.getContext();
+		this.parentDataflow = parentDataflow;
 	}
 
 	public Dataflow compile(IMonitor monitor) {
@@ -122,7 +131,7 @@ public class DataflowCompiler {
 			Graphs.show(resolutionGraph, "Resolution graph");
 		}
 
-		Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class));
+		Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class), parentDataflow);
 
 		ret.setName(this.name);
 		ret.setReferenceName(this.name);
@@ -213,7 +222,7 @@ public class DataflowCompiler {
 			/*
 			 * recover any instantiation actions
 			 */
-			for (IAction action : contextModel.getBehavior().getActions(Trigger.INSTANTIATION)) {
+			for (IAction action : contextModel.getContextualization().getActions(Trigger.INSTANTIATION)) {
 				for (IContextualizable resource : action.getComputation()) {
 					actuator.addComputation(((ComputableResource) resource).copy());
 				}
@@ -274,6 +283,8 @@ public class DataflowCompiler {
 		String alias;
 		Object inlineValue;
 		ResolvedArtifact resolvedArtifact;
+		Strategy strategy = Strategy.DIRECT;
+		List<Observable> deferredObservables = new ArrayList<>();
 
 		public String toString() {
 			return (root ? "ROOT " : "") + ("[" + children.size() + "]")
@@ -299,6 +310,9 @@ public class DataflowCompiler {
 
 				this.observable = (Observable) resolvable;
 				this.inlineValue = observable.getValue();
+//				if (this.observable.getDistributionContext() != null) {
+//					this.strategy = Strategy.DISTRIBUTION;
+//				}
 
 			} else if (resolvable instanceof Observer) {
 
@@ -324,9 +338,50 @@ public class DataflowCompiler {
 			 */
 			Actuator ret = Actuator.create(dataflow, mode);
 
+			IObservable modelObservable = null;
+			if (!models.isEmpty()) {
+				modelObservable = models.iterator().next().model.getObservables().get(0);
+				if (!modelObservable.getType().resolves(this.observable.getType(), getDataflowContext())) {
+
+					/**
+					 * may be an attribute, in which case we already have the observation, nothing
+					 * is needed and we return null and get ignored.
+					 */
+					for (IObservable attribute : models.iterator().next().model.getAttributeObservables().values()) {
+						if (attribute.getType().resolves(this.observable.getType(), getDataflowContext())) {
+							return null;
+						}
+					}
+					/**
+					 * Secondary output! We may be already part of the actuator for this (in which
+					 * case we just add our empty actuator to create the observation and leave it to
+					 * the outer actuator) or we may not, in which case we must create the outer
+					 * actuator and put the empty actuator in it.
+					 */
+					if (!generated.contains(models.iterator().next())) {
+
+						Actuator child = Actuator.create(dataflow,
+								this.observable.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+						child.setObservable(this.observable);
+						child.setName(observable.getReferenceName());
+						if (models.size() > 0) {
+							child.setAlias(models.iterator().next().model
+									.getCompatibleOutput(observable, getDataflowContext()).getName());
+						}
+						child.setType(this.observable.getArtifactType());
+						child.setExport(true);
+						child.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
+						ret.actuators.add(child);
+
+						this.observable = (Observable) modelObservable;
+					}
+				}
+			}
+
 			ret.setObservable(observable);
 			ret.setName(observable.getReferenceName());
 			ret.setAlias(observable.getName());
+			ret.getDeferredObservables().addAll(deferredObservables);
 
 			/*
 			 * FIXME this condition is silly; also there will be more problems due to this
@@ -344,40 +399,20 @@ public class DataflowCompiler {
 					ret.setType(Type.VOID);
 				} else {
 					/*
-					 * if not learning, we remove the inherency in the dataflow as it was needed to
-					 * resolve the inherent observable, but the model is run in an object's context
-					 * and we don't maintain the inherency when the semantics is local to the
-					 * object.
+					 * if not learning and not explicitly inherent, we remove the inherency in the
+					 * dataflow as it was needed to resolve the inherent observable, but the model
+					 * is run in an object's context and we don't maintain the inherency when the
+					 * semantics is local to the object.
 					 */
-					this.observable = (Observable) ObservableBuilder.getBuilder(this.observable, monitor)
-							.without(ObservableRole.CONTEXT).buildObservable();
+					ret.setObservable((Observable) ObservableBuilder.getBuilder(this.observable, monitor)
+							.without(ObservableRole.CONTEXT).buildObservable());
+
+					if (ret.getType() == null) {
+						assignType(ret, this.observable);
+					}
 				}
 			} else {
-
-				switch (observable.getDescription()) {
-				case CATEGORIZATION:
-					ret.setType(Type.CONCEPT);
-					break;
-				case DETECTION:
-				case INSTANTIATION:
-					ret.setType(observable.getArtifactType());
-					break;
-				case QUANTIFICATION:
-					ret.setType(Type.NUMBER);
-					break;
-				case SIMULATION:
-					ret.setType(Type.PROCESS);
-					break;
-				case VERIFICATION:
-					ret.setType(Type.BOOLEAN);
-					break;
-				case CHARACTERIZATION:
-				case CLASSIFICATION:
-					ret.setType(Type.VOID);
-					break;
-				default:
-					break;
-				}
+				assignType(ret, this.observable);
 			}
 
 			if (observer != null) {
@@ -385,7 +420,7 @@ public class DataflowCompiler {
 				ret.setNamespace(observer.getNamespace());
 				ret.setReferenceName(observer.getId());
 
-			} else if (resolvedArtifact != null /* && artifactAdapters == null */) {
+			} else if (resolvedArtifact != null) {
 				/*
 				 * Different situations if we ARE the artifact or we USE it for something. If we
 				 * have artifact adapters, we must compile an import as a child and use our own
@@ -410,8 +445,9 @@ public class DataflowCompiler {
 
 				ModelD theModel = models.iterator().next();
 				ret.setReferenceName(theModel.model.getObservables().get(0).getName());
-				defineActuator(ret, root ? observable.getName() : theModel.model.getLocalNameFor(observable), theModel,
-						generated);
+				defineActuator(ret,
+						root ? observable.getName() : theModel.model.getLocalNameFor(observable, getDataflowContext()),
+						theModel, generated);
 
 			} else if (this.hasPartitions) {
 
@@ -434,7 +470,7 @@ public class DataflowCompiler {
 
 					// rename and set the target name as partitioned. Number is the priority if
 					// known.
-					String name = modelDesc.model.getLocalNameFor(observable) + "_" + index;
+					String name = modelDesc.model.getLocalNameFor(observable, getDataflowContext()) + "_" + index;
 					partial.setPartitionedTarget(ret.getName());
 					partial.setName(name);
 					partial.setObservable(observable);
@@ -468,7 +504,64 @@ public class DataflowCompiler {
 				}
 			}
 
+			/*
+			 * if this is deferring observables, it's meant to create a trans-reified
+			 * quality, so wrap the dereified actuator into another that computes it for the
+			 * host context and set a dereifying contextualizer in it.
+			 * 
+			 * FIXME this shouldn't be a list. Ignoring any element > 1.
+			 */
+			if (deferredObservables.size() > 0) {
+
+				Observable dereified = (Observable) deferredObservables.get(0).getBuilder(monitor)
+						.of(observable.getType()).buildObservable();
+
+				Actuator outer = Actuator.create(dataflow,
+						dereified.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+				outer.setObservable(dereified);
+				outer.setName(dereified.getName());
+				outer.setAlias(dereified.getName());
+				assignType(outer, dereified);
+
+				/*
+				 * add a dereifying contextualizer to the computation
+				 */
+				outer.addComputation(Klab.INSTANCE.getRuntimeProvider().getDereifyingResolver(observable.getType(),
+						deferredObservables.get(0).getType(), dereified.getArtifactType()));
+
+				outer.actuators.add(ret);
+				ret = outer;
+			}
+
 			return ret;
+		}
+
+		private void assignType(Actuator ret, Observable observable) {
+
+			switch (observable.getDescription()) {
+			case CATEGORIZATION:
+				ret.setType(Type.CONCEPT);
+				break;
+			case DETECTION:
+			case INSTANTIATION:
+				ret.setType(observable.getArtifactType());
+				break;
+			case QUANTIFICATION:
+				ret.setType(Type.NUMBER);
+				break;
+			case SIMULATION:
+				ret.setType(Type.PROCESS);
+				break;
+			case VERIFICATION:
+				ret.setType(Type.BOOLEAN);
+				break;
+			case CHARACTERIZATION:
+			case CLASSIFICATION:
+				ret.setType(Type.VOID);
+				break;
+			default:
+				break;
+			}
 		}
 
 		private void defineActuator(Actuator ret, String name, ModelD theModel, Set<ModelD> generated) {
@@ -476,7 +569,8 @@ public class DataflowCompiler {
 			Model model = theModel.model;
 			ret.setModel(model);
 
-			if (!generated.contains(theModel)) {
+			// filters are regenerated every time as their computation needs to be added
+			if (!generated.contains(theModel) || ret.isFilter()) {
 
 				generated.add(theModel);
 				for (IContextualizable resource : getModelComputation(model, ret.getType(), true)) {
@@ -503,18 +597,19 @@ public class DataflowCompiler {
 		 */
 		Actuator getActuatorTree(Dataflow dataflow, IMonitor monitor, Set<ModelD> generated, int level) {
 
-//			System.out.println(StringUtils.spaces(level * 3) + this);
-
 			Actuator ret = createActuator(dataflow, monitor, generated);
+
+			if (ret == null) {
+				// no actuator needed: observation was predefined
+				return ret;
+			}
+
 			if (!ret.isReference()) {
 
-//				if (Units.INSTANCE.needsUnits(this.observable)) {
-//					System.out.println(StringUtils.spaces(level * 3) + "UNITS BEFORE:" + this.observable.getUnit()
-//							+ (this.observable.isFluidUnits() ? ", fluid" : ", fixed"));
-//				}
-
-				// collect units from dependent models to ensure consistency across unspecified
-				// ones
+				/*
+				 * collect units from dependent models to ensure consistency across unspecified
+				 * ones
+				 */
 				Map<String, IUnit> chosenUnits = new HashMap<>();
 
 				/*
@@ -527,27 +622,81 @@ public class DataflowCompiler {
 				 */
 				IConcept directContext = Observables.INSTANCE.getDirectContextType(this.observable.getType());
 
-				for (Node child : sortChildren()) {
+				if (this.strategy == Strategy.FILTERING) {
 
-					IConcept childContext = Observables.INSTANCE.getDirectContextType(child.observable.getType());
-
-					if (directContext != null && directContext.equals(childContext)) {
-						/*
-						 * can only be resolved through the instantiator of the object. TODO we should
-						 * ensure that a dependency for the primary observable is included, in the
-						 * ObservableReasoner of course.
-						 */
-						continue;
+					/*
+					 * compile in the child providing the filtered observable, then add the
+					 * dependencies and computations in the others.
+					 */
+					List<Actuator> observ = new ArrayList<>();
+					List<Actuator> filters = new ArrayList<>();
+					for (Node child : sortChildren()) {
+						Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
+						if (achild.isFilter()) {
+							filters.add(achild);
+						} else {
+							observ.add(achild);
+						}
 					}
 
-					// this may be a new actuator or a reference to an existing one.
-					Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
+					if (observ.size() != 1) {
+						throw new KlabInternalErrorException("unexpected >1 observables in filtering actuator");
+					}
 
-					if (achild.isFilter()) {
+					ret.actuators.add(observ.get(0));
 
-						ret.adoptFilter(achild, actuatorCatalog);
+					for (Actuator filter : filters) {
 
-					} else {
+						/*
+						 * adopt any dependencies from the filter; if the dependency exists in the
+						 * passed catalog and we don't already have it, compile in a reference to it,
+						 * otherwise put it in here.
+						 */
+						for (IActuator dependency : filter.actuators) {
+							if (((Actuator) ret).hasDependency(dependency)) {
+								continue;
+							}
+							ret.actuators.add(dependency);
+						}
+
+						// compile in all mediations as they are
+						for (Pair<IServiceCall, IContextualizable> mediator : filter.mediationStrategy) {
+							ret.mediationStrategy.add(mediator);
+						}
+
+						/*
+						 * compile in all filter computations, making a copy and ensuring the target is
+						 * our filtered observable. These can only be filters by virtue of validation.
+						 */
+						for (Pair<IServiceCall, IContextualizable> computation : filter.computationStrategy) {
+							ret.computationStrategy.add(
+									new Pair<>(ret.setFilteredArgument(computation.getFirst(), observ.get(0).getName()),
+											ret.setFilteredArgument(computation.getSecond(), observ.get(0).getName())));
+						}
+					}
+
+				} else {
+
+					for (Node child : sortChildren()) {
+
+						IConcept childContext = Observables.INSTANCE.getDirectContextType(child.observable.getType());
+
+						if (directContext != null && directContext.equals(childContext)) {
+							/*
+							 * can only be resolved through the instantiator of the object. TODO we should
+							 * ensure that a dependency for the primary observable is included, in the
+							 * ObservableReasoner of course.
+							 */
+							continue;
+						}
+
+						// this may be a new actuator or a reference to an existing one.
+						Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
+
+						if (achild == null) {
+							// null if the observation is already there, i.e. it was an attribute
+							continue;
+						}
 
 						ret.getActuators().add(achild);
 						recordUnits(achild, chosenUnits);
@@ -561,11 +710,6 @@ public class DataflowCompiler {
 				}
 
 				inferUnits(ret, chosenUnits);
-
-//				if (Units.INSTANCE.needsUnits(this.observable)) {
-//					System.out.println(StringUtils.spaces(level * 3) + "UNITS AFTER:" + this.observable.getUnit()
-//							+ " using " + chosenUnits);
-//				}
 
 			}
 			return ret;
@@ -594,7 +738,7 @@ public class DataflowCompiler {
 
 					Model model = md.model;
 
-					modelObservable = model.getCompatibleOutput(ret.getObservable());
+					modelObservable = model.getCompatibleOutput(ret.getObservable(), getDataflowContext());
 					if (modelObservable == null) {
 						continue;
 					}
@@ -608,7 +752,7 @@ public class DataflowCompiler {
 						} else {
 							if (!chosenUnits.containsKey(baseUnit.toString())) {
 								if (Units.INSTANCE.needsUnitScaling(observable)) {
-									Contextualization contextualization = Units.INSTANCE
+									UnitContextualization contextualization = Units.INSTANCE
 											.getContextualization(modelObservable, scale, null);
 									observable.withUnit(contextualization.getChosenUnit());
 								} else {
@@ -674,7 +818,7 @@ public class DataflowCompiler {
 
 		/*
 		 * sort by reverse refcount of model, so that actuators are always output before
-		 * any references to them. Ensure that filters are output last.
+		 * any references to them.
 		 */
 		private List<Node> sortChildren() {
 			List<Node> ret = new ArrayList<>(children);
@@ -682,14 +826,14 @@ public class DataflowCompiler {
 
 				@Override
 				public int compare(DataflowCompiler.Node o1, DataflowCompiler.Node o2) {
-					if (o1.observable.getFilteredObservable() != null
-							&& o2.observable.getFilteredObservable() == null) {
-						return 1;
-					}
-					if (o1.observable.getFilteredObservable() == null
-							&& o2.observable.getFilteredObservable() != null) {
-						return -1;
-					}
+//					if (o1.observable.getFilteredObservable() != null
+//							&& o2.observable.getFilteredObservable() == null) {
+//						return 1;
+//					}
+//					if (o1.observable.getFilteredObservable() == null
+//							&& o2.observable.getFilteredObservable() != null) {
+//						return -1;
+//					}
 					if (o2.models.isEmpty() && o1.models.isEmpty()) {
 						return 0;
 					}
@@ -722,7 +866,7 @@ public class DataflowCompiler {
 		Node ret = new Node(resolvable, mode);
 
 		if (scale == null && resolvable instanceof Observer) {
-			scale = (Scale.create(((Observer) resolvable).getBehavior().getExtents(monitor)));
+			scale = (Scale.create(((Observer) resolvable).getContextualization().getExtents(monitor)));
 		}
 
 		ret.scale = scale;
@@ -752,9 +896,20 @@ public class DataflowCompiler {
 			IResolvable source = graph.getEdgeSource(d);
 
 			if (source instanceof IObservable) {
-				Set<ResolutionEdge> sources = graph.incomingEdgesOf(source);
-				if (sources.size() == 1) {
-					source = graph.getEdgeSource(sources.iterator().next());
+
+				if (d.deferred) {
+					/*
+					 * Add the additional resolution step to the node, to be merged into the
+					 * actuator.
+					 */
+					ret.deferredObservables.add((Observable) source);
+
+				} else {
+
+					Set<ResolutionEdge> sources = graph.incomingEdgesOf(source);
+					if (sources.size() == 1) {
+						source = graph.getEdgeSource(sources.iterator().next());
+					}
 				}
 			}
 
@@ -773,14 +928,13 @@ public class DataflowCompiler {
 
 				Model model = (Model) source;
 
-				Observable compatibleOutput = model.getCompatibleOutput(ret.observable);
+				Observable compatibleOutput = model.getCompatibleOutput(ret.observable, getDataflowContext());
 				if (compatibleOutput == null) {
 					// only happens when the observable is resolved indirectly
 					compatibleOutput = ret.observable;
 				} else {
 					compatibleOutput = new Observable(compatibleOutput);
 				}
-				// observableCatalog.put(compatibleOutput.getName(), compatibleOutput);
 
 				ModelD md = compileModel(model, /* d.indirectAdapters, */ d.isPartition && honorPartitions);
 				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
@@ -797,10 +951,15 @@ public class DataflowCompiler {
 				}
 
 				ret.models.add(md);
+				ret.strategy = model.getObservationStrategy();
 			}
 		}
 
 		return ret;
+	}
+
+	public IConcept getDataflowContext() {
+		return this.context == null ? null : this.context.getObservable().getType();
 	}
 
 	/**
@@ -862,6 +1021,7 @@ public class DataflowCompiler {
 		if (resource.getClassification() != null || resource.getAccordingTo() != null) {
 			return Type.CONCEPT;
 		}
+
 		if (resource.getLookupTable() != null) {
 			return resource.getLookupTable().getLookupType();
 		}
@@ -963,7 +1123,7 @@ public class DataflowCompiler {
 	public List<IContextualizable> computeMediators(Observable from, Observable to, IScale scale) {
 
 		if (OWL.INSTANCE.isSemantic(from)) {
-			if (!((Observable) to).canResolve((Observable) from)) {
+			if (to.getType().getSemanticDistance(from.getType()) < 0) {
 				throw new IllegalArgumentException(
 						"cannot compute mediators from an observable to another that does not resolve it: " + from
 								+ " can not mediate to " + to);

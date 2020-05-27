@@ -1,25 +1,61 @@
 package org.integratedmodelling.klab.data.encoding;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.runtime.artifacts.DataArtifact;
+import org.integratedmodelling.klab.components.runtime.artifacts.ObjectArtifact;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.provenance.Artifact;
+import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Utils;
 
+/**
+ * A flexible data container that can be initialized and built both in a
+ * semantic scope and in a data-only, artifact-only scope.
+ * 
+ * @author Ferd
+ *
+ */
 public class LocalData implements IKlabData {
 
-	IState state;
-	IObservation object;
+	IDataArtifact state;
+	IArtifact object;
 	List<INotification> notifications = new ArrayList<>();
 	boolean error = false;
+
+	static Set<String> reservedFields = null;
+
+	static {
+		reservedFields = new HashSet<>();
+		reservedFields.add("objects");
+		reservedFields.add("states");
+		reservedFields.add("geometry");
+		reservedFields.add("name");
+	}
 
 	public LocalData(LocalDataBuilder builder) {
 		if (builder.state != null) {
@@ -37,13 +73,90 @@ public class LocalData implements IKlabData {
 	}
 
 	/**
-	 * Used after a remote resource/contextualize call. Passes the JSON map
-	 * equivalent in structure to the protobuf message from a node.
+	 * Dumb version that produces artifacts directly and does not use a scope to
+	 * incarnate them in an observation structure. Monitor gets the notifications
+	 * unless null.
+	 * 
+	 * @param data
+	 */
+	public LocalData(Map<?, ?> data, IMonitor monitor) {
+
+		if (data.containsKey("states")) {
+			for (Object s : (Iterable<?>) data.get("states")) {
+
+				Map<?, ?> state = (Map<?, ?>) s;
+				IScale scale = Scale.create(Geometry.create(state.get("geometry").toString()));
+				String name = state.get("name").toString();
+
+				IDataArtifact art = new DataArtifact(name, getDataType(state), scale, getData(state));
+				if (this.state == null) {
+					this.state = art;
+				} else {
+					((Artifact) this.state).chain(art);
+				}
+
+			}
+		} else if (data.containsKey("objects")) {
+
+			for (Object object : ((List<?>) data.get("objects"))) {
+
+				Map<?, ?> obj = (Map<?, ?>) object;
+
+				IScale scale = Scale.create(Geometry.create(obj.get("geometry").toString()));
+
+				IObjectArtifact output = new ObjectArtifact(obj.get("name").toString(), scale);
+
+				/*
+				 * add any states or other artifacts. TODO not sure how this works with object
+				 * structures, or even whether it should at all.
+				 */
+				if (obj.containsKey("states")) {
+					for (Object state : (List<?>) obj.get("states")) {
+
+						Map<?, ?> sob = (Map<?, ?>) state;
+						String stateName = sob.get("name").toString();
+						IDataArtifact st = new DataArtifact(stateName, getDataType(sob), scale, getData(sob));
+						((ObjectArtifact) output).addChild(st);
+					}
+				}
+
+				if (this.object == null) {
+					this.object = output;
+				} else {
+					((Artifact) this.object).chain(output);
+				}
+
+			}
+
+		}
+		
+		if (data.containsKey("notifications")) {
+			// TODO send them over to the monitor
+			for (Object state : (List<?>) data.get("notification")) {
+				
+			}
+	}
+
+	}
+
+	private IArtifact.Type getDataType(Map<?, ?> data) {
+		if (data.containsKey("doubledata") || data.containsKey("intdata")) {
+			return IArtifact.Type.NUMBER;
+		} else if (data.containsKey("booleandata")) {
+			return IArtifact.Type.BOOLEAN;
+		}
+		// TODO categories
+		return IArtifact.Type.VALUE;
+	}
+
+	/**
+	 * Special constructor used after a remote resource/contextualize call. Passes
+	 * the JSON map equivalent in structure to the protobuf message from a node.
 	 * 
 	 * @param data
 	 * @param context
 	 */
-	public LocalData(Map<?, ?> data, IContextualizationScope context) {
+	public LocalData(Map<?, ?> data, IRuntimeScope context) {
 
 		if (data.containsKey("states")) {
 			for (Object s : (Iterable<?>) data.get("states")) {
@@ -84,8 +197,86 @@ public class LocalData implements IKlabData {
 
 			}
 		} else if (data.containsKey("objects")) {
-			// TODO Auto-generated constructor stub
+
+			for (Object object : ((List<?>) data.get("objects"))) {
+
+				Map<?, ?> obj = (Map<?, ?>) object;
+
+				IScale scale = Scale.create(Geometry.create(obj.get("geometry").toString()));
+
+				IObjectArtifact output = null;
+
+				if (context.getTargetSemantics().is(Type.RELATIONSHIP)) {
+
+					IDirectObservation source = null; // TODO
+					IDirectObservation target = null; // TODO
+					output = context.newRelationship(context.getTargetSemantics(), obj.get("name").toString(), scale,
+							source, target, extractMetadata(obj));
+				} else {
+
+					output = context.newObservation(context.getTargetSemantics(), obj.get("name").toString(), scale,
+							extractMetadata(obj));
+				}
+
+				/*
+				 * add any states or other artifacts. TODO not sure how this works with object
+				 * structures, or even whether it should at all.
+				 */
+				if (output != null && obj.containsKey("states") && context.getModel() != null) {
+					for (Object state : (List<?>) obj.get("states")) {
+
+						Map<?, ?> sob = (Map<?, ?>) state;
+						String stateName = sob.get("name").toString();
+						IObservable observable = context.getModel().getAttributeObservables().get(stateName);
+						if (observable != null) {
+							context.addState((IDirectObservation) output, observable, getData(sob));
+						}
+
+					}
+				}
+
+				if (this.object == null) {
+					this.object = (IObservation) output;
+				} else {
+					if (!(this.object instanceof ObservationGroup)) {
+						IObservation obs = (IObservation) this.object;
+						this.object = new ObservationGroup((Observable) context.getTargetSemantics(),
+								(Scale) context.getScale(), context, context.getTargetSemantics().getArtifactType());
+						((ObservationGroup) this.object).chain(obs);
+					}
+					((Artifact) this.object).chain(output);
+				}
+
+			}
+
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object getData(Map<?, ?> data) {
+
+		Iterator<?> doubles = data.containsKey("doubledata") ? ((Iterable<?>) data.get("doubledata")).iterator() : null;
+		// TODO tabledata + lookup table
+		Iterator<?> floats = data.containsKey("intdata") ? ((Iterable<?>) data.get("intdata")).iterator() : null;
+		Iterator<?> booleans = data.containsKey("booleandata") ? ((Iterable<?>) data.get("booleandata")).iterator()
+				: null;
+
+		List<Object> ret = new ArrayList<>();
+		for (Iterator<?> it = Utils.chooseNotNull(doubles, floats, booleans); it.hasNext();) {
+			Object o = it.next();
+			ret.add("NaN".equals(o) ? null : o);
+		}
+		return ret.size() == 1 ? ret.get(0) : ret;
+	}
+
+	private IMetadata extractMetadata(Map<?, ?> obj) {
+		Metadata ret = new Metadata();
+		for (Object k : obj.keySet()) {
+			if (!reservedFields.contains(k.toString())) {
+				ret.put(k.toString(), obj.get(k));
+			}
+		}
+		return ret;
 	}
 
 	@Override

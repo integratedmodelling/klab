@@ -19,9 +19,10 @@ public interface ITaskTree<T extends IObservation> extends ITask<T> {
 	/**
 	 * Create a child task.
 	 * 
+	 * @param description description for users
 	 * @return a child task, never null.
 	 */
-	ITaskTree<T> createChild();
+	ITaskTree<T> createChild(String description);
 
 	/**
 	 * True if this task is the child of another. Use the {@link IIdentity} API to
@@ -30,4 +31,12 @@ public interface ITaskTree<T extends IObservation> extends ITask<T> {
 	 * @return true if a child
 	 */
 	boolean isChildTask();
+
+	/**
+	 * The ID of the observation context where this task was invoked. May be
+	 * different from the actual context of the observation created.
+	 * 
+	 * @return
+	 */
+	String getContextId();
 }

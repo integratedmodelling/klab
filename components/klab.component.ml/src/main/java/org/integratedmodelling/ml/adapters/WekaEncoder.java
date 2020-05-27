@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.owl.OWL;
@@ -40,7 +41,7 @@ public class WekaEncoder implements IResourceEncoder {
 	boolean initialized = false;
 
 	@Override
-	public boolean isOnline(IResource resource) {
+	public boolean isOnline(IResource resource, IMonitor monitor) {
 		return !resource.hasErrors();
 	}
 
@@ -119,17 +120,6 @@ public class WekaEncoder implements IResourceEncoder {
 				}
 			}
 
-			if (resource.getParameters().containsKey("key." + dependency.getName())) {
-				// build predictor datakey
-				try {
-					File file = ((Resource) resource).getLocalFile("key." + dependency.getName());
-					List<String> key = FileUtils.readLines(file);
-					instances.setDatakey(dependency.getName(), key);
-				} catch (IOException e) {
-					throw new KlabIOException(e);
-				}
-			}
-
 			/*
 			 * we may have less predictors than during training, so we put them in the
 			 * original place leaving any others as null. The index is the position in the
@@ -144,6 +134,16 @@ public class WekaEncoder implements IResourceEncoder {
 							.named(dependency.getName()),
 					null, index, discretizer);
 
+			if (resource.getParameters().containsKey("key." + dependency.getName())) {
+				// build predictor datakey
+				try {
+					File file = ((Resource) resource).getLocalFile("key." + dependency.getName());
+					List<String> key = FileUtils.readLines(file);
+					instances.setDatakey(dependency.getName(), key);
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
 		}
 
 		/*
@@ -154,7 +154,7 @@ public class WekaEncoder implements IResourceEncoder {
 	}
 
 	public void initialize(IState predictedState, IResource resource, IContextualizationScope context) {
-		
+
 		/*
 		 * load the classifier
 		 */
@@ -244,12 +244,17 @@ public class WekaEncoder implements IResourceEncoder {
 			instances.addPredictor(dependency.getName(), state.getObservable(), state, index, discretizer);
 
 			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
-			Range original = Range
-					.create(resource.getParameters().get("predictor." + dependency.getName() + ".range", String.class));
-			Range actual = Range.create(summary.getRange());
-			if (!original.contains(actual)) {
-				context.getMonitor().warn("predictor " + dependency.getName()
-						+ " has values outside the training range: original = " + original + ", predictor = " + actual);
+			String range = resource.getParameters().get("predictor." + dependency.getName() + ".range", String.class);
+			if (range != null) {
+				// 
+				Range original = Range.create(range);
+				Range actual = Range.create(summary.getRange());
+				if (!original.contains(actual)) {
+					context.getMonitor()
+							.warn("predictor " + dependency.getName()
+									+ " has values outside the training range: original = " + original
+									+ ", predictor = " + actual);
+				}
 			}
 		}
 

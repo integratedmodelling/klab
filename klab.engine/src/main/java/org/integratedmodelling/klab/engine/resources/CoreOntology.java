@@ -34,6 +34,8 @@ public class CoreOntology extends AbstractWorkspace {
 	private Map<Type, Concept> worldviewCoreConcepts = Collections.synchronizedMap(new HashMap<>());
 	private static Map<Type, String> coreConceptIds = Collections.synchronizedMap(new HashMap<>());
 
+	public static final String CORE_ONTOLOGY_NAME = "observation";
+
 	static {
 		coreConceptIds.put(Type.PROCESS, NS.CORE_PROCESS);
 		coreConceptIds.put(Type.SUBJECT, NS.CORE_SUBJECT);
@@ -113,6 +115,7 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String HAS_SUBJECTIVE_TRAIT_PROPERTY = "observation:hasSubjectiveTrait";
 		public static final String IS_SUBJECTIVE = "observation:isSubjectiveTrait";
 		public static final String IS_INHERENT_TO_PROPERTY = "observation:isInherentTo";
+		public static final String DESCRIBES_OBSERVABLE_PROPERTY = "observation:describesObservable";
 		public static final String IS_COMPARED_TO_PROPERTY = "observation:isComparedTo";
 		public static final String HAS_ROLE_PROPERTY = "observation:hasRole";
 		public static final String INCARNATES_TRAIT_PROPERTY = "observation:exposesTrait";
@@ -311,6 +314,8 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String CORE_ANGLE = "observation:Angle";
 		public static final String CORE_ASSESSMENT = "observation:Assessment";
 		public static final String CORE_CHANGE = "observation:Change";
+		public static final String CORE_CHANGED_EVENT = "observation:ChangeEvent";
+		public static final String CORE_CHANGE_RATE = "observation:ChangeRate";
 		public static final String CORE_SPEED = "observation:Speed";
 		public static final String CORE_TEMPERATURE = "observation:Temperature";
 		public static final String CORE_VISCOSITY = "observation:Viscosity";
@@ -431,17 +436,7 @@ public class CoreOntology extends AbstractWorkspace {
 		} else if (type.contains(Type.EVENT)) {
 			ret = Type.EVENT;
 		} else if (type.contains(Type.RELATIONSHIP)) {
-			// if (type.contains(Type.FUNCTIONAL)) {
-			// ret = Type.FUNCTIONAL;
-			// } else if (type.contains(Type.STRUCTURAL)) {
-			// ret = Type.STRUCTURAL;
-			// } else {
 			ret = Type.RELATIONSHIP;
-			// }
-		} else if (type.contains(Type.EXTENSIVE_PROPERTY)) {
-			ret = Type.EXTENSIVE_PROPERTY;
-		} else if (type.contains(Type.INTENSIVE_PROPERTY)) {
-			ret = Type.INTENSIVE_PROPERTY;
 		} else /* if (type.contains(Type.TRAIT)) { */
 		if (type.contains(Type.IDENTITY)) {
 			ret = Type.IDENTITY;
@@ -451,7 +446,6 @@ public class CoreOntology extends AbstractWorkspace {
 			ret = Type.REALM;
 		} else if (type.contains(Type.ORDERING)) {
 			ret = Type.ORDERING;
-			// }
 		} else if (type.contains(Type.ROLE)) {
 			ret = Type.ROLE;
 		} else if (type.contains(Type.CONFIGURATION)) {
@@ -503,15 +497,7 @@ public class CoreOntology extends AbstractWorkspace {
 		} else if (type.contains(Type.VISCOSITY)) {
 			ret = Type.VISCOSITY;
 		} else if (type.contains(Type.AGENT)) {
-			// if (type.contains(Type.DELIBERATIVE)) {
-			// ret = Type.DELIBERATIVE;
-			// } else if (type.contains(Type.INTERACTIVE)) {
-			// ret = Type.INTERACTIVE;
-			// } else if (type.contains(Type.REACTIVE)) {
-			// ret = Type.REACTIVE;
-			// } else {
 			ret = Type.AGENT;
-			// }
 		} else if (type.contains(Type.UNCERTAINTY)) {
 			ret = Type.UNCERTAINTY;
 		} else if (type.contains(Type.PROBABILITY)) {
@@ -532,6 +518,12 @@ public class CoreOntology extends AbstractWorkspace {
 			ret = Type.PRESENCE;
 		} else if (type.contains(Type.EXTENT)) {
 			ret = Type.EXTENT;
+		}
+		// THESE COME AFTER ALL THE POSSIBLE SUBCLASSES
+		else if (type.contains(Type.EXTENSIVE_PROPERTY)) {
+			ret = Type.EXTENSIVE_PROPERTY;
+		} else if (type.contains(Type.INTENSIVE_PROPERTY)) {
+			ret = Type.INTENSIVE_PROPERTY;
 		} /*
 			 * else if (type.contains(Type.ASSESSMENT)) { ret = Type.ASSESSMENT; }
 			 */

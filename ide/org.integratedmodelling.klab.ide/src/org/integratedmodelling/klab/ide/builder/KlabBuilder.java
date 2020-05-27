@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.ide.builder;
 
+import java.io.File;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -11,6 +12,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
@@ -34,7 +36,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 			IResource resource = delta.getResource();
 
 			// TODO if it's a k.LAB resource, we must re-read the relevant resource list.
-			// This may happen at git pull for example. Some cases are taken care of by the 
+			// This may happen at git pull for example. Some cases are taken care of by the
 			// loader and installed callbacks, others aren't.
 
 			switch (delta.getKind()) {
@@ -58,10 +60,14 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 				break;
 			case IResourceDelta.CHANGED:
 				if (resource instanceof IFile && isRelevant((IFile) resource)) {
-					Activator.loader().touch(((IFile) resource).getLocation().toFile());
+					File file = ((IFile) resource).getLocation().toFile();
+					if (KActors.INSTANCE.isKActorsFile(file)) {
+						KActors.INSTANCE.touch(file);
+					} else {
+						Activator.loader().touch(file);
+					}
 					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
-							new ProjectModificationNotification(ProjectModificationNotification.Type.CHANGE,
-									((IFile) resource).getLocation().toFile()));
+							new ProjectModificationNotification(ProjectModificationNotification.Type.CHANGE, file));
 				}
 				break;
 			}
@@ -155,6 +161,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 	}
 
 	public boolean isRelevant(IFile resource) {
-		return resource.toString().endsWith(".kim") || resource.toString().contains("META-INF/klab.properties");
+		return resource.toString().endsWith(".kim") || resource.toString().endsWith(".kactor")
+				|| resource.toString().contains("META-INF/klab.properties");
 	}
 }

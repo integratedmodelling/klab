@@ -445,7 +445,7 @@ Concept:
 	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
 	probability?='probability' 'of' concept=SimpleConceptDeclaration |
 	assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
-	(change?='change' 'in' | change?='next') concept=SimpleConceptDeclaration |
+	('change' (change?='in' | rate?='rate' 'of') | change?='changed') concept=SimpleConceptDeclaration |
 	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
 	magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
 	level?='level' 'of' concept=SimpleConceptDeclaration |
@@ -520,6 +520,11 @@ ConceptStatement:
  * deniable is for traits only. If a trait is deniable, 'not Trait' is a trait (of not being Trait).
  * if not deniable, 'not Trait' means being any of the other concrete traits; if there is only one 
  * concrete trait it's an error. If there are two, it means being the other.
+ * 
+ * Many of the verbs like "confers" or "creates" can also qualify actions in k.Actors, so that
+ * attributes and objects can be assigned/created/destroyed (and resolved) as the result of
+ * behavior actions.
+ *
  * ------------------------------------------------------------------------------------------
  */
 ConceptStatementBody:
@@ -621,8 +626,8 @@ ConceptStatementBody:
 		(('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
 
 	/*
-               * for processes: creates countable in context.
-               */
+     * for processes: creates countable in context.
+     */
 		('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
 
 	/*
@@ -892,24 +897,24 @@ PROPERTY_TYPE:
 terminal ANNOTATION_ID:
 	'@' LOWERCASE_ID;
 
-/*
- * Observable without the 'as' to use in model declarations and without the 'optional' that
- * is only for dependencies.
- */
-SimpleObservableSemantics returns ObservableSemantics:
-	
-	declaration=ConceptDeclaration
-	(
-		('according' 'to' accordingTo=PropertyId)? &
-		(
-			('in' (unit=Unit | currency=Currency)) |
-			('per' unit=Unit)
-		)? &
-		(from=Number 'to' to=Number)? &
-		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		(optional?='optional' | 'required')? &
-		('named' name=(LOWERCASE_ID|STRING))?
-	);
+///*
+// * Observable without the 'as' to use in model declarations and without the 'optional' that
+// * is only for dependencies.
+// */
+//SimpleObservableSemantics returns ObservableSemantics:
+//	
+//	declaration=ConceptDeclaration
+//	(
+//		('according' 'to' accordingTo=PropertyId)? &
+//		(
+//			('in' (unit=Unit | currency=Currency)) |
+//			('per' unit=Unit)
+//		)? &
+//		(from=Number 'to' to=Number)? &
+//		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+//		(optional?='optional' | 'required')? &
+//		('named' name=(LOWERCASE_ID|STRING))?
+//	);
 
 /*
  * Full observable without the 'as <role>' but with 'optional'

@@ -95,7 +95,7 @@ public class Authentication implements IAuthentication {
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), ICertificate.Level.USER);
 
 		/*
-		 * worst-case scenario, using only info from pbysical certificate
+		 * worst-case scenario, using only info from physical certificate
 		 */
 		status = certificate.isExpired() ? Status.EXPIRED : (certificate.isValid() ? Status.OFFLINE : Status.INVALID);
 
@@ -135,6 +135,7 @@ public class Authentication implements IAuthentication {
 
 		} catch (UnirestException e) {
 			// just leave the status as is
+			ControlCenter.INSTANCE.message("Connection error");
 		}
 
 	}

@@ -141,5 +141,13 @@ public interface IShape extends IReferenced, ISpace {
 	 * @return
 	 */
 	double[] getCenter(boolean standardized);
+	
+	/**
+	 * True if the passed coordinate is on or in the shape.
+	 * 
+	 * @param coordinates
+	 * @return
+	 */
+	boolean contains(double[] coordinates);
 
 }

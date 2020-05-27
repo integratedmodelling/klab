@@ -21,11 +21,12 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -41,38 +42,45 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
+import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
+import org.integratedmodelling.klab.client.messaging.ContextMonitor.ContextGraph;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.model.beans.DisplayPriority;
-import org.integratedmodelling.klab.ide.navigator.model.beans.EDataflowReference;
-import org.integratedmodelling.klab.ide.navigator.model.beans.ENotification;
-import org.integratedmodelling.klab.ide.navigator.model.beans.EObservationReference;
+//import org.integratedmodelling.klab.ide.navigator.model.beans.ENotification;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
-import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.Notification;
+import org.integratedmodelling.klab.rest.ObservationReference;
+import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
+import org.integratedmodelling.klab.rest.RuntimeEvent;
+import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class RuntimeView extends ViewPart {
 
-	private static class ContentProvider implements IStructuredContentProvider {
-		public Object[] getElements(Object inputElement) {
-			return new Object[0];
-		}
-
-		public void dispose() {
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-	}
+//	private static class ContentProvider implements IStructuredContentProvider {
+//		public Object[] getElements(Object inputElement) {
+//			return new Object[0];
+//		}
+//
+//		public void dispose() {
+//		}
+//
+//		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+//		}
+//	}
 
 	public static final String ID = "org.integratedmodelling.klab.ide.views.RuntimeView"; //$NON-NLS-1$
 
@@ -115,25 +123,40 @@ public class RuntimeView extends ViewPart {
 	private Button toggleArtifacts;
 	private Label lblNewLabel;
 
+	/**
+	 * We keep them just in case, although the selector is in the context window.
+	 */
+	private List<ContextDescriptor> rootContexts = new ArrayList<>();
+
 	private DisplayPriority currentPriority = DisplayPriority.TASK_FIRST;
-	private List<ENotification> notifications;
-	private List<ERuntimeObject> history;
+//	private List<ENotification> notifications;
+//	private List<ERuntimeObject> history;
 	private Composite composite_2;
 	private Group grpSessionEvents;
 	private Table detailTable;
 	private TableViewer detailViewer;
 
-	private ERuntimeObject lastFocus;
+	private Object lastFocus;
 	private Level systemLogLevel = Level.INFO;
 	private Level currentLogLevel = Level.INFO;
-	private ERuntimeObject currentDetail;
+	private Object currentDetail;
 	private Composite composite_4;
 	private Label label_1;
 	private Combo combo;
 	private TableColumn tblclmnNewColumn;
 	private TableColumn tblclmnNewColumn_1;
 
+	private ObservationReference currentContext;
+	private TaskReference currentTask;
+
+	private List<Notification> notifications;
+//	private List<TaskReference> history;
+
 	public RuntimeView() {
+	}
+
+	private SessionMonitor sm() {
+		return Activator.session().getContextMonitor();
 	}
 
 	class DetailLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -159,10 +182,18 @@ public class RuntimeView extends ViewPart {
 
 	class DetailContentProvider implements IStructuredContentProvider {
 
+		ContextGraph graph = null;
+
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof ERuntimeObject) {
-				return ((ERuntimeObject) inputElement).getProperties().toArray();
+			if (inputElement instanceof DataflowReference) {
+				// TODO return an array of string pairs
+			} else if (inputElement instanceof ObservationReference) {
+
+			} else if (inputElement instanceof TaskReference) {
+
+			} else if (inputElement instanceof Notification) {
+
 			}
 			return new Object[] {};
 		}
@@ -173,14 +204,14 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (element instanceof ENotification && columnIndex == 0) {
-				if (((ENotification) element).getLevel().equals(Level.INFO.getName())) {
+			if (element instanceof Notification && columnIndex == 0) {
+				if (((Notification) element).getLevel().equals(Level.INFO.getName())) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_info.gif");
-				} else if (((ENotification) element).getLevel().equals(Level.WARNING.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.WARNING.getName())) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_warning.gif");
-				} else if (((ENotification) element).getLevel().equals(Level.SEVERE.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.SEVERE.getName())) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_error.gif");
-				} else if (((ENotification) element).getLevel().equals(Level.FINE.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.FINE.getName())) {
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_debug.gif");
 				}
 			}
@@ -189,10 +220,10 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof ENotification) {
+			if (element instanceof Notification) {
 				if (columnIndex == 0) {
 				} else if (columnIndex == 1) {
-					return ((ENotification) element).getMessage();
+					return ((Notification) element).getMessage();
 				}
 			}
 			return null;
@@ -204,44 +235,46 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof ERuntimeObject) {
-				if (element instanceof EObservationReference) {
-					if (((EObservationReference) element).isEmpty()) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/emptycontent.gif");
-					} else if (((EObservationReference) element).getSemantics().contains(IKimConcept.Type.QUALITY)) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/datagrid.gif");
-					} else if (((EObservationReference) element).getChildrenCount() > 1) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resources.gif");
-					} else {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
-					}
-				} else if (element instanceof ETaskReference) {
-					Image baseImage = ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/task.gif");
-					if (((ETaskReference) element).getStatus() == Type.TaskStarted) {
-						return ResourceManager.decorateImage(baseImage,
-								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/waiting_ovr.gif"),
-								SWTResourceManager.TOP_LEFT);
-					} else if (((ETaskReference) element).getStatus() == Type.TaskFinished) {
-						return ResourceManager.decorateImage(baseImage,
-								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ok_ovr.gif"),
-								SWTResourceManager.TOP_LEFT);
-					} else if (((ETaskReference) element).getStatus() == Type.TaskAborted) {
-						return ResourceManager.decorateImage(baseImage,
-								ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/error_ovr.gif"),
-								SWTResourceManager.TOP_LEFT);
-					}
-				} else if (element instanceof ENotification) {
-					if (((ENotification) element).getLevel().equals(Level.INFO.getName())) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_info.gif");
-					} else if (((ENotification) element).getLevel().equals(Level.WARNING.getName())) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_warning.gif");
-					} else if (((ENotification) element).getLevel().equals(Level.SEVERE.getName())) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_error.gif");
-					} else if (((ENotification) element).getLevel().equals(Level.FINE.getName())) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_debug.gif");
-					}
-				} else if (element instanceof EDataflowReference) {
-					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/dataflow.gif");
+			if (element instanceof TaskReference) {
+				Image baseImage = ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/task.gif");
+				if (((TaskReference) element).getStatus() == Status.Started) {
+					return ResourceManager.decorateImage(baseImage,
+							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/waiting_ovr.gif"),
+							SWTResourceManager.TOP_LEFT);
+				} else if (((TaskReference) element).getStatus() == Status.Finished) {
+					return ResourceManager.decorateImage(baseImage,
+							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ok_ovr.gif"),
+							SWTResourceManager.TOP_LEFT);
+				} else if (((TaskReference) element).getStatus() == Status.Aborted) {
+					return ResourceManager.decorateImage(baseImage,
+							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/error_ovr.gif"),
+							SWTResourceManager.TOP_LEFT);
+				}
+			} else if (element instanceof Notification) {
+				if (((Notification) element).getLevel().equals(Level.INFO.getName())) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_info.gif");
+				} else if (((Notification) element).getLevel().equals(Level.WARNING.getName())) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_warning.gif");
+				} else if (((Notification) element).getLevel().equals(Level.SEVERE.getName())) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_error.gif");
+				} else if (((Notification) element).getLevel().equals(Level.FINE.getName())) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_debug.gif");
+				}
+			} else if (element instanceof DataflowReference) {
+				return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/dataflow.gif");
+			} else if (element instanceof ObservationReference) {
+				if (((ObservationReference) element).getObservationType() == ObservationType.GROUP) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+							((ObservationReference) element).getChildrenCount() == 0 ? "icons/folder_closed.gif"
+									: "icons/folder_open.gif");
+				} else if (((ObservationReference) element).isEmpty()) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/emptycontent.gif");
+				} else if (((ObservationReference) element).getSemantics().contains(IKimConcept.Type.QUALITY)) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/datagrid.gif");
+				} else if (((ObservationReference) element).getChildrenCount() > 1) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resources.gif");
+				} else {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
 				}
 			}
 			return null;
@@ -249,27 +282,36 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof ERuntimeObject) {
-				if (element instanceof EObservationReference) {
-					return ((EObservationReference) element).getLabel();
-				} else if (element instanceof ETaskReference) {
-					return ((ETaskReference) element).getDescription();
-				} else if (element instanceof ENotification) {
-					return ((ENotification) element).getMessage();
-				} else if (element instanceof EDataflowReference) {
-					return "Dataflow computed";
-				}
+			if (element instanceof TaskReference) {
+				return (((TaskReference) element).getDescription());
+			} else if (element instanceof Notification) {
+				return ((Notification) element).getMessage();
+			} else if (element instanceof DataflowReference) {
+				return "Dataflow";
+			} else if (element instanceof ObservationReference) {
+				return ((ObservationReference) element).getLabel()
+						+ (((ObservationReference) element).getChildrenCount() > 0
+								? (" [" + ((ObservationReference) element).getChildrenCount() + "]")
+								: "");
 			}
 			return null;
 		}
 
 		@Override
 		public Font getFont(Object element) {
-			if (element instanceof EObservationReference && ((EObservationReference) element).isFocal()) {
+			if (element instanceof ObservationReference && ((ObservationReference) element).isMain()) {
 				return SWTResourceManager.getBoldFont(taskTree.getFont());
-			} else if (element instanceof ETaskReference
-					&& ((ETaskReference) element).getStatus() == Type.TaskStarted) {
+			} else if (element instanceof TaskReference && ((TaskReference) element).getStatus() == Status.Started) {
 				return SWTResourceManager.getItalicFont(taskTree.getFont());
+			} else if (element instanceof ObservationReference && ((ObservationReference) element).isMain()) {
+				return SWTResourceManager.getBoldFont(taskTree.getFont());
+			} else if (element instanceof ObservationReference) {
+				if (((ObservationReference) element).getObservationType() == ObservationType.GROUP
+						&& ((ObservationReference) element).getChildrenCount() == 0) {
+					return SWTResourceManager.getItalicFont(taskTree.getFont());
+				} else if (((ObservationReference) element).isEmpty()) {
+					return SWTResourceManager.getItalicFont(taskTree.getFont());
+				}
 			}
 			return null;
 		}
@@ -277,25 +319,25 @@ public class RuntimeView extends ViewPart {
 		@Override
 		public Color getForeground(Object element) {
 
-			if (element instanceof ETaskReference) {
-				switch (((ETaskReference) element).getStatus()) {
-				case TaskStarted:
+			if (element instanceof TaskReference) {
+				switch (((TaskReference) element).getStatus()) {
+				case Started:
 					return ResourceManager.getColor(SWT.COLOR_DARK_GRAY);
-				case TaskFinished:
+				case Finished:
 					return ResourceManager.getColor(SWT.COLOR_DARK_GREEN);
-				case TaskAborted:
+				case Aborted:
 					return ResourceManager.getColor(SWT.COLOR_RED);
 				default:
 					break;
 				}
-			} else if (element instanceof ENotification) {
-				if (((ENotification) element).getLevel().equals(Level.INFO.getName())) {
+			} else if (element instanceof Notification) {
+				if (((Notification) element).getLevel().equals(Level.INFO.getName())) {
 					return ResourceManager.getColor(SWT.COLOR_DARK_BLUE);
-				} else if (((ENotification) element).getLevel().equals(Level.WARNING.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.WARNING.getName())) {
 					return ResourceManager.getColor(SWT.COLOR_DARK_YELLOW);
-				} else if (((ENotification) element).getLevel().equals(Level.SEVERE.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.SEVERE.getName())) {
 					return ResourceManager.getColor(SWT.COLOR_RED);
-				} else if (((ENotification) element).getLevel().equals(Level.FINE.getName())) {
+				} else if (((Notification) element).getLevel().equals(Level.FINE.getName())) {
 					return ResourceManager.getColor(SWT.COLOR_DARK_GRAY);
 				}
 			}
@@ -311,6 +353,9 @@ public class RuntimeView extends ViewPart {
 
 	class TaskContentProvider implements ITreeContentProvider {
 
+		ContextGraph graph;
+		private ContextDescriptor currentDescriptor;
+
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
@@ -318,20 +363,46 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof Collection) {
-				return ((Collection<?>) parentElement).toArray();
-			} else if (parentElement instanceof ERuntimeObject) {
-				return ((ERuntimeObject) parentElement).getEChildren(currentPriority, currentLogLevel);
+			if (parentElement instanceof ContextDescriptor) {
+				this.currentDescriptor = (ContextDescriptor) parentElement;
+				return ((ContextDescriptor) parentElement).getChildren().toArray();
+			} else if (parentElement instanceof ContextGraph) {
+				this.graph = (ContextGraph) parentElement;
+				return this.graph.getChildren(this.graph.getRootNode(), true).toArray();
+			} else if (this.graph != null && parentElement instanceof ObservationReference) {
+				return this.graph.getChildren((ObservationReference) parentElement, true).toArray();
+			} else if (currentDescriptor != null && !(parentElement instanceof DataflowReference)) {
+				return currentDescriptor.getChildren(getId(parentElement), currentLogLevel).toArray();
 			}
 			return new Object[] {};
 		}
 
+		private String getId(Object o) {
+			if (o instanceof Notification) {
+				return ((Notification) o).getId();
+			} else if (o instanceof ObservationReference) {
+				return ((ObservationReference) o).getId();
+			} else if (o instanceof TaskReference) {
+				return ((TaskReference) o).getId();
+			}
+
+			return null;
+		}
+
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof ERuntimeObject) {
-				return ((ERuntimeObject) element).getEParent(currentPriority) == null ? history
-						: ((ERuntimeObject) element).getEParent(currentPriority);
+
+			if (element instanceof ContextGraph || element instanceof ContextDescriptor) {
+				return null;
 			}
+
+			if (this.graph != null && element instanceof ObservationReference) {
+				ObservationReference parent = this.graph.getParent((ObservationReference) element, true);
+				return parent == null ? this.graph : parent;
+			} else if (this.currentDescriptor != null) {
+				return this.currentDescriptor.getParent(element);
+			}
+
 			return null;
 		}
 
@@ -339,10 +410,12 @@ public class RuntimeView extends ViewPart {
 		public boolean hasChildren(Object element) {
 			if (element instanceof Collection) {
 				return ((Collection<?>) element).size() > 0;
-			} else if (element instanceof ERuntimeObject) {
-				return ((ERuntimeObject) element).getEChildren(currentPriority, currentLogLevel).length > 0;
+			} else if (element instanceof ContextDescriptor) {
+				return ((ContextDescriptor) element).getChildren().size() > 0;
+			} else if (element instanceof ContextGraph) {
+				return true;
 			}
-			return false;
+			return getChildren(element).length > 0;
 		}
 
 	}
@@ -364,7 +437,7 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Object getParent(Object element) {
-			return element instanceof ENotification ? notifications : null;
+			return element instanceof Notification ? notifications : null;
 		}
 
 		@Override
@@ -417,7 +490,8 @@ public class RuntimeView extends ViewPart {
 			gd_engineStatusIcon.heightHint = 24;
 			gd_engineStatusIcon.widthHint = 24;
 			engineStatusIcon.setLayoutData(gd_engineStatusIcon);
-			engineStatusIcon.setToolTipText(Activator.engineMonitor().isRunning() ? "Engine is online" : "Engine is offline");
+			engineStatusIcon
+					.setToolTipText(Activator.engineMonitor().isRunning() ? "Engine is online" : "Engine is offline");
 
 			engineStatusLabel = new Label(composite, SWT.NONE);
 			engineStatusLabel.setForeground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_GRAY));
@@ -523,7 +597,7 @@ public class RuntimeView extends ViewPart {
 				} else {
 					currentPriority = DisplayPriority.ARTIFACTS_FIRST;
 				}
-				refreshTaskViewer(IMessage.Type.FocusChanged);
+				refreshTrees(/* IMessage.Type.FocusChanged */);
 			}
 		});
 
@@ -567,7 +641,7 @@ public class RuntimeView extends ViewPart {
 					currentLogLevel = Level.FINE;
 					break;
 				}
-				refreshTaskViewer(IMessage.Type.FocusChanged);
+				refreshTrees(/* IMessage.Type.FocusChanged */);
 			}
 		});
 		btnCheckButton.setItems(new String[] { "Error", "Warning", "Info", "Debug" });
@@ -595,6 +669,31 @@ public class RuntimeView extends ViewPart {
 		});
 		taskTree = taskViewer.getTree();
 		taskTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+
+		taskTree.addTreeListener(new TreeListener() {
+
+			@Override
+			public void treeExpanded(TreeEvent event) {
+				if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+					Object item = event.item;
+					if (item instanceof TreeItem) {
+						Activator.session().getContextMonitor().getGraph(currentContext.getId())
+								.expand((ObservationReference) ((TreeItem) item).getData(), true);
+					}
+				}
+			}
+
+			@Override
+			public void treeCollapsed(TreeEvent event) {
+				if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+					Object item = event.item;
+					if (item instanceof TreeItem) {
+						Activator.session().getContextMonitor().getGraph(currentContext.getId())
+								.expand((ObservationReference) ((TreeItem) item).getData(), false);
+					}
+				}
+			}
+		});
 
 		detailViewer = new TableViewer(taskArea, SWT.BORDER | SWT.FULL_SELECTION);
 		detailTable = detailViewer.getTable();
@@ -635,11 +734,9 @@ public class RuntimeView extends ViewPart {
 					currentPriority = DisplayPriority.TASK_FIRST;
 				}
 				if (lastFocus != null) {
-					lastFocus = currentPriority == DisplayPriority.ARTIFACTS_FIRST
-							? Activator.session().getCurrentContext()
-							: Activator.session().getCurrentTask();
+					lastFocus = currentPriority == DisplayPriority.ARTIFACTS_FIRST ? currentContext : currentTask;
 				}
-				refreshTaskViewer(IMessage.Type.FocusChanged);
+				refreshTrees(/* IMessage.Type.FocusChanged */);
 			}
 		});
 
@@ -704,6 +801,16 @@ public class RuntimeView extends ViewPart {
 
 		tableViewer.setContentProvider(new NotificationContentProvider());
 		tableViewer.setLabelProvider(new NotificationLabelProvider());
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
+				if (o != null) {
+					handleSelection(o);
+				}
+			}
+		});
 
 		createActions();
 		initializeToolBar();
@@ -714,7 +821,7 @@ public class RuntimeView extends ViewPart {
 
 	protected void showDetail(ERuntimeObject o) {
 
-		if (o instanceof ENotification) {
+		if (o instanceof Notification) {
 			return;
 		}
 
@@ -732,19 +839,19 @@ public class RuntimeView extends ViewPart {
 	}
 
 	protected void handleSelection(Object o) {
-		if (o instanceof EDataflowReference) {
-			Eclipse.INSTANCE.edit(((EDataflowReference) o).getKdlCode(), "dataflow", "kdl", false);
-		} else if (o instanceof ENotification) {
-			switch (((ENotification) o).getLevel()) {
+		if (o instanceof DataflowReference) {
+			Eclipse.INSTANCE.edit(((DataflowReference) o).getKdlCode(), "dataflow", "kdl", false);
+		} else if (o instanceof Notification) {
+			switch (((Notification) o).getLevel()) {
 			case "SEVERE":
-				Eclipse.INSTANCE.alert(((ENotification) o).getMessage());
+				Eclipse.INSTANCE.alert(((Notification) o).getMessage());
 				break;
 			case "WARNING":
-				Eclipse.INSTANCE.warning(((ENotification) o).getMessage());
+				Eclipse.INSTANCE.warning(((Notification) o).getMessage());
 				break;
 			case "INFO":
 			case "FINE":
-				Eclipse.INSTANCE.info(((ENotification) o).getMessage());
+				Eclipse.INSTANCE.info(((Notification) o).getMessage());
 				break;
 			}
 		}
@@ -784,10 +891,8 @@ public class RuntimeView extends ViewPart {
 	private void handleMessage(IMessage message) {
 
 		switch (message.getType()) {
-		case TaskStarted:
-			Display.getDefault().asyncExec(() -> {
-				taskArea.setMaximizedControl(taskTree);
-			});
+		case RuntimeEvent:
+			updateTaskView((RuntimeEvent) message.getPayload());
 			break;
 		case NetworkStatus:
 			Display.getDefault().asyncExec(() -> {
@@ -796,41 +901,37 @@ public class RuntimeView extends ViewPart {
 						.getPluginImage("org.integratedmodelling.klab.ide", "icons/world24.png"));
 			});
 			break;
+		// TODO support a recycle/reobserve
 		case ResetContext:
 			lastFocus = null;
+			currentContext = null;
 			Display.getDefault().asyncExec(() -> {
-				taskViewer.collapseAll();
+				taskViewer.setInput(/* history = */new ArrayList<>());
 				taskArea.setMaximizedControl(taskTree);
 			});
 			break;
 		case FocusChanged:
-			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
-				lastFocus = message.getPayload(EObservationReference.class);
-				refreshTaskViewer(message.getType());
-			}
-			break;
-		case HistoryChanged:
 			Object payload = message.getPayload();
-			if (((payload instanceof ETaskReference && currentPriority == DisplayPriority.TASK_FIRST)
-					|| (payload instanceof EObservationReference
-							&& currentPriority == DisplayPriority.ARTIFACTS_FIRST))) {
-				lastFocus = (ERuntimeObject) payload;
-			} else {
-				payload = null;
+			if (payload instanceof ObservationReference) {
+				ObservationReference observation = (ObservationReference) payload;
+				if (observation.getParentId() == null) {
+					this.currentContext = observation;
+				}
 			}
-			refreshTaskViewer(message.getType());
-			break;
-		case Notification:
-			refreshSystemLog();
+			if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+				lastFocus = message.getPayload(ObservationReference.class);
+				refreshTrees(/* message.getType() */);
+			}
 			break;
 		case EngineDown:
 			Display.getDefault().asyncExec(() -> {
-				taskViewer.setInput(history = new ArrayList<>());
+				taskViewer.setInput(/* history = */new ArrayList<>());
 				engineStatusIcon.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/grey24.png"));
 				engineStatusIcon.setToolTipText("Engine is offline");
 				networkStatusIcon
 						.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldgrey24.png"));
 				networkStatusIcon.setToolTipText("Not connected to the k.LAB network");
+				engineStatusLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
 				engineStatusLabel.setText("Engine is offline");
 			});
 			break;
@@ -846,6 +947,7 @@ public class RuntimeView extends ViewPart {
 //					networkStatusIcon
 //							.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldgrey24.png"));
 //				}
+				engineStatusLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 				engineStatusLabel.setText("User " + capabilities.getOwner().getId() + " logged in");
 			});
 			break;
@@ -855,21 +957,57 @@ public class RuntimeView extends ViewPart {
 		}
 	}
 
-	private void refreshSystemLog() {
-		Display.getDefault().asyncExec(
-				() -> tableViewer.setInput(notifications = Activator.session().getSystemNotifications(systemLogLevel)));
+	private void updateTaskView(RuntimeEvent event) {
+
+		switch (event.getType()) {
+		case DataflowChanged:
+			break;
+		case NotificationAdded:
+			lastFocus = event.getNotification();
+			refreshTrees();
+			break;
+		case ObservationAdded:
+			if (event.getObservation().getId().equals(event.getRootContext().getId())) {
+				this.rootContexts.add(sm().getContextDescriptor(event.getObservation()));
+				currentContext = event.getObservation();
+			}
+			lastFocus = event.getObservation();
+			refreshTrees();
+			break;
+		case SystemNotification:
+			refreshSystemLog();
+			break;
+		case TaskAdded:
+			lastFocus = event.getTask();
+			refreshTrees();
+			break;
+		case TaskStatusChanged:
+			lastFocus = event.getTask();
+			refreshTrees();
+			break;
+		default:
+			break;
+		}
 	}
 
-	public void refreshTaskViewer(IMessage.Type taskEvent) {
-
+	private void refreshTrees() {
 		Display.getDefault().asyncExec(() -> {
-			if (lastFocus != null) {
-				taskViewer.setInput(history = Activator.session().getSessionHistory(currentPriority, currentLogLevel));
-				if (taskEvent == IMessage.Type.TaskStarted) {
-					taskViewer.collapseAll();
+			if (currentPriority == DisplayPriority.TASK_FIRST) {
+				taskViewer.setInput(Activator.session().getCurrentContextDescriptor());
+				if (lastFocus != null) {
+					taskViewer.expandToLevel(lastFocus, TreeViewer.ALL_LEVELS);
 				}
-				taskViewer.expandToLevel(lastFocus, TreeViewer.ALL_LEVELS);
+			} else if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
+				if (currentContext != null) {
+					taskViewer.setInput(Activator.session().getContextMonitor().getGraph(currentContext.getId()));
+				}
 			}
 		});
 	}
+
+	private void refreshSystemLog() {
+		Display.getDefault()
+				.asyncExec(() -> tableViewer.setInput(notifications = sm().getSystemNotifications(systemLogLevel)));
+	}
+
 }

@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -58,6 +59,28 @@ import org.integratedmodelling.klab.utils.Pair;
 public interface IContextualizationScope extends IParameters<String> {
 
 	/**
+	 * A context is created for the root observation, and this information never
+	 * changes.
+	 * 
+	 * @return the root observation. Can only be null at the beginning of the
+	 *         lifecycle of this context, when the root obs has not been created
+	 *         yet.
+	 */
+	ISubject getRootSubject();
+
+	/**
+	 * The context subject for the observation being computed. May differ from
+	 * {@link #getContextObservation()} as the latter is the one in the scope of
+	 * which the runtime operation has been resolved. This applies for example to
+	 * dataflows that resolve an instantiated subject.
+	 * 
+	 * TODO clarify the difference or resolve the conflict if any.
+	 * 
+	 * @return
+	 */
+	IDirectObservation getContextSubject();
+
+	/**
 	 * The namespace of reference in this context. Usually that of the running model
 	 * or observer.
 	 *
@@ -74,6 +97,24 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * @return the provenance graph. Null in an empty context.
 	 */
 	IProvenance getProvenance();
+
+	/**
+	 * Return all the observable that depend directly on the passed one in this
+	 * context.
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	Collection<IObservable> getDependents(IObservable observable);
+
+	/**
+	 * Return all the observables that the passed one depends directly on in this
+	 * context.
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	Collection<IObservable> getPrecursors(IObservable observable);
 
 	/**
 	 * <p>
@@ -179,6 +220,22 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * any multiple matches by choosing the closest to the model being
 	 * contextualized, if any is (i.e. choose the one that is a dependency of the
 	 * model returned by {@link #getModel()} if applicable).
+	 * <p>
+	 * * Note that:
+	 * <ul>
+	 * <li>The artifact will be a <b>group</b> for any countable, containing zero or
+	 * more observations, which will need to be iterated to obtain the actual
+	 * observations;</li>
+	 * <li>In the case of countables, the artifact will match the <b>base</b>
+	 * observable, without attributes and roles; queries for observables containing
+	 * attributes will, as a rule, return an empty collection even if there are
+	 * observations with that exact type. If individual observations are wanted and
+	 * attributes must be taken into account, use getObservations() instead.</li>
+	 * </ul>
+	 *
+	 * 
+	 * This method breaks the rules by returning a non-semantic IArtifact chosen by
+	 * passing a semantic type. It should be reviewed for consistency.
 	 * 
 	 * @param <T>
 	 * @param concept
@@ -199,14 +256,40 @@ public interface IContextualizationScope extends IParameters<String> {
 	<T extends IArtifact> Collection<Pair<String, T>> getArtifacts(Class<T> type);
 
 	/**
-	 * Get the resolved {@link IArtifact artifacts} corresponding to the observable
-	 * concept. Use {@link IParameters IParameters get methods} to retrieve
-	 * contextualized values for states or parameters.
-	 *
+	 * Get the resolved {@link IObservation artifacts} corresponding to the
+	 * observable concept.
+	 * <p>
+	 * Note that:
+	 * <ul>
+	 * <li>The artifact will be a <b>group</b> for any countable, containing zero or
+	 * more observations, which will need to be iterated to obtain the actual
+	 * observations;</li>
+	 * <li>In the case of countables, the artifact will match the <b>base</b>
+	 * observable, without attributes and roles; queries for observables containing
+	 * attributes will, as a rule, return an empty collection even if there are
+	 * observations with that exact type. If individual observations are wanted and
+	 * attributes must be taken into account, use getObservations() instead.</li>
+	 * </ul>
+	 * *
+	 * 
 	 * @param localName a {@link java.lang.String} object.
 	 * @return the artifact, null if not found.
 	 */
 	Collection<IArtifact> getArtifact(IConcept observable);
+
+	/**
+	 * Return all the observations of this type in this scope. This will:
+	 * <ul>
+	 * <li>Resolve groups of countables by returning the matching observations in
+	 * the group, and</li>
+	 * <li>Filter the observations with the specific attributes and roles contained
+	 * in a group when the passed observable adopts any predicates.</li>
+	 * </ul>
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	Collection<IObservation> getObservations(IConcept observable);
 
 	/**
 	 * Return the model being computed, if any.
@@ -371,6 +454,16 @@ public interface IContextualizationScope extends IParameters<String> {
 	IDirectObservation getParentOf(IObservation observation);
 
 	/**
+	 * Like {@link #getParentOf(IObservation)}, but will return the parent artifact
+	 * so the parent of any object that is part of a group will be the group and not
+	 * the parent subject.
+	 * 
+	 * @param observation
+	 * @return
+	 */
+	IObservation getParentArtifactOf(IObservation observation);
+
+	/**
 	 * Return all children of the passed observation. The runtime context maintains
 	 * the structure graph.
 	 * 
@@ -387,7 +480,7 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * 
 	 * @return the symbol table, never null.
 	 */
-	Map<String, Object> getSymbolTable();
+	Map<String, IVariable> getVariables();
 
 	/**
 	 * Create a context to compile an expression.

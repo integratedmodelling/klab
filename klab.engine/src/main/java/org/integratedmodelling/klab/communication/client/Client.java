@@ -60,6 +60,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.client.support.HttpRequestWrapper;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -368,7 +369,7 @@ public class Client extends RestTemplate implements IClient {
 				// Object path = map.get("path");
 				Object message = map.get("message");
 				// Object error = map.get("error");
-				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+				throw new KlabIOException("remote  exception: " + (message == null ? exception : message));
 			}
 
 			if (cls.isAssignableFrom(response.getBody().getClass())) {
@@ -478,11 +479,17 @@ public class Client extends RestTemplate implements IClient {
 			String params = "";
 			for (int i = 0; i < parameters.length; i++) {
 				String key = parameters[i].toString();
+				String nakedKey = key;
 				String val = parameters[++i].toString();
-				if (url.contains("{" + key + "}")) {
-					url = url.replace("{" + key + "}", val);
+				if (!(key.startsWith("{") && key.endsWith("}"))) {
+					key = "{" + key + "}";
 				} else {
-					params += (params.isEmpty() ? "" : "&") + key + "=" + Escape.forURL(val);
+					nakedKey = key.substring(1, key.length() - 1);
+				}
+				if (url.contains(key)) {
+					url = url.replace(key, val);
+				} else {
+					params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + Escape.forURL(val);
 				}
 			}
 			if (!params.isEmpty()) {
@@ -532,7 +539,12 @@ public class Client extends RestTemplate implements IClient {
 
 		try {
 
-			ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+			final RestTemplate restTemplate = new RestTemplate();
+			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+			// without this, large files will eat up the heap
+			requestFactory.setBufferRequestBody(false);
+			restTemplate.setRequestFactory(requestFactory);
+			ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
 
 			switch (response.getStatusCodeValue()) {
 			case 302:
