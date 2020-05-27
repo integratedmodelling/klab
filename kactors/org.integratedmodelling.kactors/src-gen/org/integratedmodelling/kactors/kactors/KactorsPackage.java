@@ -480,13 +480,22 @@ public interface KactorsPackage extends EPackage
   int STATEMENT_GROUP__BODY = 0;
 
   /**
+   * The feature id for the '<em><b>Actions</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT_GROUP__ACTIONS = 1;
+
+  /**
    * The number of structural features of the '<em>Statement Group</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT_GROUP_FEATURE_COUNT = 1;
+  int STATEMENT_GROUP_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementListImpl <em>Statement List</em>}' class.
@@ -1139,13 +1148,22 @@ public interface KactorsPackage extends EPackage
   int MATCH__LITERAL = 6;
 
   /**
+   * The feature id for the '<em><b>List</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__LIST = 7;
+
+  /**
    * The feature id for the '<em><b>Set</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MATCH__SET = 7;
+  int MATCH__SET = 8;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -1154,7 +1172,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__QUANTITY = 8;
+  int MATCH__QUANTITY = 9;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
@@ -1163,7 +1181,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__EXPR = 9;
+  int MATCH__EXPR = 10;
 
   /**
    * The feature id for the '<em><b>Nodata</b></em>' attribute.
@@ -1172,7 +1190,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__NODATA = 10;
+  int MATCH__NODATA = 11;
 
   /**
    * The feature id for the '<em><b>Star</b></em>' attribute.
@@ -1181,7 +1199,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__STAR = 11;
+  int MATCH__STAR = 12;
 
   /**
    * The feature id for the '<em><b>Anything</b></em>' attribute.
@@ -1190,7 +1208,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__ANYTHING = 12;
+  int MATCH__ANYTHING = 13;
 
   /**
    * The number of structural features of the '<em>Match</em>' class.
@@ -1199,7 +1217,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH_FEATURE_COUNT = 13;
+  int MATCH_FEATURE_COUNT = 14;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ListImpl <em>List</em>}' class.
@@ -2837,6 +2855,17 @@ public interface KactorsPackage extends EPackage
   EReference getStatementGroup_Body();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.StatementGroup#getActions <em>Actions</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Actions</em>'.
+   * @see org.integratedmodelling.kactors.kactors.StatementGroup#getActions()
+   * @see #getStatementGroup()
+   * @generated
+   */
+  EReference getStatementGroup_Actions();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.StatementList <em>Statement List</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3495,6 +3524,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getMatch_Literal();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Match#getList <em>List</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>List</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Match#getList()
+   * @see #getMatch()
+   * @generated
+   */
+  EReference getMatch_List();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Match#getSet <em>Set</em>}'.
@@ -5108,6 +5148,14 @@ public interface KactorsPackage extends EPackage
     EReference STATEMENT_GROUP__BODY = eINSTANCE.getStatementGroup_Body();
 
     /**
+     * The meta object literal for the '<em><b>Actions</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT_GROUP__ACTIONS = eINSTANCE.getStatementGroup_Actions();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementListImpl <em>Statement List</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5616,6 +5664,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference MATCH__LITERAL = eINSTANCE.getMatch_Literal();
+
+    /**
+     * The meta object literal for the '<em><b>List</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MATCH__LIST = eINSTANCE.getMatch_List();
 
     /**
      * The meta object literal for the '<em><b>Set</b></em>' containment reference feature.

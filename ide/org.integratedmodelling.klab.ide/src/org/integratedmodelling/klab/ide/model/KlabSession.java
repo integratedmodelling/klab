@@ -154,7 +154,7 @@ public class KlabSession extends KlabPeer {
 		// run the first network check in 10 seconds
 		new CheckNetworkTask().schedule(10000);
 		// start checking tickets in 5
-		new CheckNetworkTask().schedule(5000);
+		new CheckTicketsTask().schedule(5000);
 	}
 
 	protected void setCurrentContext(ObservationReference rootContext) {

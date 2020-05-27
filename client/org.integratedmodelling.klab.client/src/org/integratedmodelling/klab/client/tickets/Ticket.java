@@ -211,4 +211,12 @@ public class Ticket implements ITicket {
 		update();
 	}
 
+	@Override
+	public String toString() {
+		return "Ticket [id=" + id + ", postDate=" + postDate + ", resolutionDate=" + resolutionDate + ", status="
+				+ status + ", type=" + type + ", statusMessage=" + statusMessage + "]";
+	}
+	
+	
+
 }

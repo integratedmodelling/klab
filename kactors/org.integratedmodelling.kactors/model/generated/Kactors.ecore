@@ -64,6 +64,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="StatementGroup">
     <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//MessageBody"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actions" eType="#//Actions"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StatementList">
     <eStructuralFeatures xsi:type="ecore:EReference" name="first" eType="#//Statement"
@@ -167,6 +169,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="observable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="literal" eType="#//Literal"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="list" eType="#//List" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="set" eType="#//List" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="quantity" eType="#//Quantity"
         containment="true"/>

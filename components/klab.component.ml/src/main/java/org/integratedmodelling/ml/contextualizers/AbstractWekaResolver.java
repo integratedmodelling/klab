@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.ml.context.WekaClassifier;
 import org.integratedmodelling.ml.context.WekaInstances;
 import org.integratedmodelling.ml.context.WekaInstances.DiscretizerDescriptor;
@@ -286,6 +287,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 			IState state = predicted ? instances.getPredictedState() : instances.getPredictor(attribute.name());
 			if (state != null && !state.isArchetype()) {
+				
+				// goes through here even when training on objects....
 				StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 				if (!predicted) {
 					builder.withParameter("predictor." + attribute.name() + ".index", i)
@@ -294,8 +297,17 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 					builder.withParameter("predicted.index", i);
 				}
 
-				builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+				// ...hence this:
+				Range range = instances.getDataRange(attribute.name());
+				if (range != null) {
+					// trained on objects
+					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+							"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
+				} else {
+					// trained on state
+					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
 						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
+				}				
 			} else {
 
 				IObservable observable = predicted ? instances.getPredictedObservable()
@@ -307,10 +319,11 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 					builder.withParameter("predicted.index", i);
 				}
 
-				// TODO! Use ranges from training
-//				builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
-//						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
-
+				Range range = instances.getDataRange(observable.getName());
+				if (range != null) {
+					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+						"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
+				}
 			}
 
 			/*

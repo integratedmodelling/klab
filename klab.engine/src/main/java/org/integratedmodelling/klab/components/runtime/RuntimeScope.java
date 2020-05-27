@@ -789,7 +789,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 			}
 
-		} else {
+		} else if (!actuator.isInput()) {
 
 			// save existing target
 			ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);

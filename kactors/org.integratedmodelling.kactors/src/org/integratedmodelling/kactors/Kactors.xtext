@@ -46,7 +46,7 @@ MessageCall:
 	(name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 ;
 
-StatementGroup: {StatementGroup} '(' body=MessageBody? ')'
+StatementGroup: {StatementGroup} '(' body=MessageBody? ')' (':' actions=Actions)?
 ;
 
 StatementList:
@@ -160,6 +160,7 @@ Match:
 	regexp=REGEXP '->' body=StatementList |
 	observable=OBSERVABLE '->' body=StatementList |
 	literal=Literal '->' body=StatementList |
+	list=List '->' body=StatementList |
 	'in' set=List '->' body=StatementList | 
 	quantity=Quantity '->' body=StatementList |
 	expr=EXPR '->' body=StatementList |

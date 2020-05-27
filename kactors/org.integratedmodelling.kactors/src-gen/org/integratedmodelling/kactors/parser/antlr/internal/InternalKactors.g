@@ -1211,6 +1211,31 @@ ruleStatementGroup returns [EObject current=null]
 		{
 			newLeafNode(otherlv_3, grammarAccess.getStatementGroupAccess().getRightParenthesisKeyword_3());
 		}
+		(
+			otherlv_4=':'
+			{
+				newLeafNode(otherlv_4, grammarAccess.getStatementGroupAccess().getColonKeyword_4_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementGroupAccess().getActionsActionsParserRuleCall_4_1_0());
+					}
+					lv_actions_5_0=ruleActions
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementGroupRule());
+						}
+						set(
+							$current,
+							"actions",
+							lv_actions_5_0,
+							"org.integratedmodelling.kactors.Kactors.Actions");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
 	)
 ;
 
@@ -3028,39 +3053,35 @@ ruleMatch returns [EObject current=null]
 		)
 		    |
 		(
-			otherlv_18='in'
-			{
-				newLeafNode(otherlv_18, grammarAccess.getMatchAccess().getInKeyword_6_0());
-			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getMatchAccess().getSetListParserRuleCall_6_1_0());
+						newCompositeNode(grammarAccess.getMatchAccess().getListListParserRuleCall_6_0_0());
 					}
-					lv_set_19_0=ruleList
+					lv_list_18_0=ruleList
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getMatchRule());
 						}
 						set(
 							$current,
-							"set",
-							lv_set_19_0,
+							"list",
+							lv_list_18_0,
 							"org.integratedmodelling.kactors.Kactors.List");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_20='->'
+			otherlv_19='->'
 			{
-				newLeafNode(otherlv_20, grammarAccess.getMatchAccess().getHyphenMinusGreaterThanSignKeyword_6_2());
+				newLeafNode(otherlv_19, grammarAccess.getMatchAccess().getHyphenMinusGreaterThanSignKeyword_6_1());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getMatchAccess().getBodyStatementListParserRuleCall_6_3_0());
+						newCompositeNode(grammarAccess.getMatchAccess().getBodyStatementListParserRuleCall_6_2_0());
 					}
-					lv_body_21_0=ruleStatementList
+					lv_body_20_0=ruleStatementList
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getMatchRule());
@@ -3068,7 +3089,7 @@ ruleMatch returns [EObject current=null]
 						set(
 							$current,
 							"body",
-							lv_body_21_0,
+							lv_body_20_0,
 							"org.integratedmodelling.kactors.Kactors.StatementList");
 						afterParserOrEnumRuleCall();
 					}
@@ -3077,33 +3098,37 @@ ruleMatch returns [EObject current=null]
 		)
 		    |
 		(
+			otherlv_21='in'
+			{
+				newLeafNode(otherlv_21, grammarAccess.getMatchAccess().getInKeyword_7_0());
+			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getMatchAccess().getQuantityQuantityParserRuleCall_7_0_0());
+						newCompositeNode(grammarAccess.getMatchAccess().getSetListParserRuleCall_7_1_0());
 					}
-					lv_quantity_22_0=ruleQuantity
+					lv_set_22_0=ruleList
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getMatchRule());
 						}
 						set(
 							$current,
-							"quantity",
-							lv_quantity_22_0,
-							"org.integratedmodelling.kactors.Kactors.Quantity");
+							"set",
+							lv_set_22_0,
+							"org.integratedmodelling.kactors.Kactors.List");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 			otherlv_23='->'
 			{
-				newLeafNode(otherlv_23, grammarAccess.getMatchAccess().getHyphenMinusGreaterThanSignKeyword_7_1());
+				newLeafNode(otherlv_23, grammarAccess.getMatchAccess().getHyphenMinusGreaterThanSignKeyword_7_2());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getMatchAccess().getBodyStatementListParserRuleCall_7_2_0());
+						newCompositeNode(grammarAccess.getMatchAccess().getBodyStatementListParserRuleCall_7_3_0());
 					}
 					lv_body_24_0=ruleStatementList
 					{
@@ -3124,19 +3149,20 @@ ruleMatch returns [EObject current=null]
 		(
 			(
 				(
-					lv_expr_25_0=RULE_EXPR
 					{
-						newLeafNode(lv_expr_25_0, grammarAccess.getMatchAccess().getExprEXPRTerminalRuleCall_8_0_0());
+						newCompositeNode(grammarAccess.getMatchAccess().getQuantityQuantityParserRuleCall_8_0_0());
 					}
+					lv_quantity_25_0=ruleQuantity
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getMatchRule());
+							$current = createModelElementForParent(grammarAccess.getMatchRule());
 						}
-						setWithLastConsumed(
+						set(
 							$current,
-							"expr",
-							lv_expr_25_0,
-							"org.integratedmodelling.kactors.Kactors.EXPR");
+							"quantity",
+							lv_quantity_25_0,
+							"org.integratedmodelling.kactors.Kactors.Quantity");
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
@@ -3168,15 +3194,19 @@ ruleMatch returns [EObject current=null]
 		(
 			(
 				(
-					lv_nodata_28_0='unknown'
+					lv_expr_28_0=RULE_EXPR
 					{
-						newLeafNode(lv_nodata_28_0, grammarAccess.getMatchAccess().getNodataUnknownKeyword_9_0_0());
+						newLeafNode(lv_expr_28_0, grammarAccess.getMatchAccess().getExprEXPRTerminalRuleCall_9_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getMatchRule());
 						}
-						setWithLastConsumed($current, "nodata", lv_nodata_28_0, "unknown");
+						setWithLastConsumed(
+							$current,
+							"expr",
+							lv_expr_28_0,
+							"org.integratedmodelling.kactors.Kactors.EXPR");
 					}
 				)
 			)
@@ -3208,15 +3238,15 @@ ruleMatch returns [EObject current=null]
 		(
 			(
 				(
-					lv_star_31_0='*'
+					lv_nodata_31_0='unknown'
 					{
-						newLeafNode(lv_star_31_0, grammarAccess.getMatchAccess().getStarAsteriskKeyword_10_0_0());
+						newLeafNode(lv_nodata_31_0, grammarAccess.getMatchAccess().getNodataUnknownKeyword_10_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getMatchRule());
 						}
-						setWithLastConsumed($current, "star", true, "*");
+						setWithLastConsumed($current, "nodata", lv_nodata_31_0, "unknown");
 					}
 				)
 			)
@@ -3248,15 +3278,15 @@ ruleMatch returns [EObject current=null]
 		(
 			(
 				(
-					lv_anything_34_0='#'
+					lv_star_34_0='*'
 					{
-						newLeafNode(lv_anything_34_0, grammarAccess.getMatchAccess().getAnythingNumberSignKeyword_11_0_0());
+						newLeafNode(lv_star_34_0, grammarAccess.getMatchAccess().getStarAsteriskKeyword_11_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getMatchRule());
 						}
-						setWithLastConsumed($current, "anything", true, "#");
+						setWithLastConsumed($current, "star", true, "*");
 					}
 				)
 			)
@@ -3278,6 +3308,46 @@ ruleMatch returns [EObject current=null]
 							$current,
 							"body",
 							lv_body_36_0,
+							"org.integratedmodelling.kactors.Kactors.StatementList");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_anything_37_0='#'
+					{
+						newLeafNode(lv_anything_37_0, grammarAccess.getMatchAccess().getAnythingNumberSignKeyword_12_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getMatchRule());
+						}
+						setWithLastConsumed($current, "anything", true, "#");
+					}
+				)
+			)
+			otherlv_38='->'
+			{
+				newLeafNode(otherlv_38, grammarAccess.getMatchAccess().getHyphenMinusGreaterThanSignKeyword_12_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getMatchAccess().getBodyStatementListParserRuleCall_12_2_0());
+					}
+					lv_body_39_0=ruleStatementList
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getMatchRule());
+						}
+						set(
+							$current,
+							"body",
+							lv_body_39_0,
 							"org.integratedmodelling.kactors.Kactors.StatementList");
 						afterParserOrEnumRuleCall();
 					}
@@ -3591,9 +3661,9 @@ ruleMap returns [EObject current=null]
 					$current);
 			}
 		)
-		otherlv_1='{'
+		otherlv_1='#{'
 		{
-			newLeafNode(otherlv_1, grammarAccess.getMapAccess().getLeftCurlyBracketKeyword_1());
+			newLeafNode(otherlv_1, grammarAccess.getMapAccess().getNumberSignLeftCurlyBracketKeyword_1());
 		}
 		(
 			(

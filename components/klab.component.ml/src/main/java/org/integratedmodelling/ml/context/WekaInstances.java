@@ -108,9 +108,9 @@ public class WekaInstances {
 	IKimExpression selector = null;
 	Descriptor selectorDescriptor = null;
 
-	class Ranges {
-		Range include = null;
-		Range exclude = null;
+	public static class Ranges {
+		public Range include = null;
+		public Range exclude = null;
 	}
 
 	/**
@@ -217,19 +217,24 @@ public class WekaInstances {
 	// TODO set these from instances unless they're set by the archetype notation
 	private double predictedMin = Double.NaN;
 	private double predictedMax = Double.NaN;
-	/*
-	 * if this is not null, we are learning a quality that's specified as "within"
-	 * some observation. We will need that context type to remove it from the
-	 * predictors before it's matched and to build appropriate states when running
-	 * the resource.
-	 */
-	private IConcept explicitContext;
+//	/*
+//	 * if this is not null, we are learning a quality that's specified as "within"
+//	 * some observation. We will need that context type to remove it from the
+//	 * predictors before it's matched and to build appropriate states when running
+//	 * the resource.
+//	 */
+//	private IConcept explicitContext;
 
 	/*
 	 * any attribute that has a datakey serializes its datakey here, so we can save
 	 * it with the resource and reconstruct.
 	 */
 	private Map<String, List<String>> keys = new HashMap<>();
+
+	/*
+	 * store the range of numeric values here during training on instances
+	 */
+	private Map<String, Range> dataRanges = new HashMap<>();
 
 	// for use in the encoder. Presets the attribute and predictor arrays.
 	public WekaInstances(IContextualizationScope context, int nPredictors) {
@@ -336,7 +341,7 @@ public class WekaInstances {
 
 //				IConcept predictorContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
 
-				if (((Model)model).learnsWithinArchetype() && !((Model)model).distributesLearning()) {
+				if (((Model) model).learnsWithinArchetype() && !((Model) model).distributesLearning()) {
 
 					/*
 					 * the actual observable (which we will look for in the data) will be the one
@@ -795,7 +800,8 @@ public class WekaInstances {
 							int i = 1;
 							for (IObservable predictor : predictors) {
 								/*
-								 * TODO must use mediators for unit translation etc. if mentioned in the predictors
+								 * TODO must use mediators for unit translation etc. if mentioned in the
+								 * predictors
 								 */
 								if (state.getObservable().getType().equals(predictor.getType())) {
 									stateIndex.put(predictor.getName(), i);
@@ -845,6 +851,9 @@ public class WekaInstances {
 									ignore = true;
 									break;
 								}
+
+								getDataRange(name).include(((Number) o).doubleValue());
+
 							}
 
 							instanceValues[stateIndex.get(name)] = o;
@@ -915,6 +924,15 @@ public class WekaInstances {
 			throw new IllegalStateException(e);
 		}
 
+	}
+
+	public Range getDataRange(String name) {
+		Range ret = dataRanges.get(name);
+		if (ret == null) {
+			ret = Range.create(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+			dataRanges.put(name, ret);
+		}
+		return ret;
 	}
 
 	/**
@@ -1314,6 +1332,10 @@ public class WekaInstances {
 
 	public void setPredictedObservable(IObservable obs) {
 		this.predictedObservable = obs;
+	}
+
+	public Ranges getRanges(String name) {
+		return this.ranges.get(name);
 	}
 
 }

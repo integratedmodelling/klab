@@ -479,6 +479,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         (regexp=REGEXP body=StatementList) | 
 	 *         (observable=OBSERVABLE body=StatementList) | 
 	 *         (literal=Literal body=StatementList) | 
+	 *         (list=List body=StatementList) | 
 	 *         (set=List body=StatementList) | 
 	 *         (quantity=Quantity body=StatementList) | 
 	 *         (expr=EXPR body=StatementList) | 
@@ -666,7 +667,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     StatementGroup returns StatementGroup
 	 *
 	 * Constraint:
-	 *     body=MessageBody?
+	 *     (body=MessageBody? actions=Actions?)
 	 */
 	protected void sequence_StatementGroup(ISerializationContext context, StatementGroup semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

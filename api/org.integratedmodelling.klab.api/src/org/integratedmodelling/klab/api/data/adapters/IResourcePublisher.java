@@ -27,17 +27,23 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IResourcePublisher {
 
-  /**
-   * Publish a local resource, which must have no errors. If no errors happen during publishing,
-   * produce a new public IResource with a valid URN, ready for storage in the public resource
-   * catalog.
-   *
-   * @param localResource the local resource
-   * @param monitor for notifications and identity retrieval
-   * @return a new resource. If errors happen, throw an exception; if the function returns, the
-   *         resource must be valid.
-   * @throws KlabException the klab exception
-   */
-  public IResource publish(IResource localResource, IMonitor monitor) throws KlabException;
+	// Properties for the publish.properties settings sent along with uploads
+	public static String SUGGESTED_CATALOG_PROPERTY = "im:suggested-catalog-id";
+	public static String SUGGESTED_RESOURCE_ID_PROPERTY = "im:suggested-resource-id";
+	public static String SUGGESTED_NAMESPACE_PROPERTY = "im:suggested-namespace-id";
+	public static String RESOURCE_PERMISSIONS_PROPERTY = "im:permissions";
+
+	/**
+	 * Publish a local resource, which must have no errors. If no errors happen
+	 * during publishing, produce a new public IResource with a valid URN, ready for
+	 * storage in the public resource catalog.
+	 *
+	 * @param localResource the local resource
+	 * @param monitor       for notifications and identity retrieval
+	 * @return a new resource. If errors happen, throw an exception; if the function
+	 *         returns, the resource must be valid.
+	 * @throws KlabException the klab exception
+	 */
+	public IResource publish(IResource localResource, IMonitor monitor);
 
 }

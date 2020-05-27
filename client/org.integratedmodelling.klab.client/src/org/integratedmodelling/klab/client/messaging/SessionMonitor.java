@@ -66,19 +66,21 @@ public abstract class SessionMonitor extends ContextMonitor {
 
 		public List<Object> getChildren(String parentId, Level notificationLevel) {
 			List<Object> ret = new ArrayList<>();
-			for (DefaultEdge edge : structure.incomingEdgesOf(parentId)) {
-				Object object = beans.get(structure.getEdgeSource(edge));
-				if (object instanceof Notification
-						&& notificationLevel.intValue() > Level.parse(((Notification) object).getLevel()).intValue()) {
-					object = null;
-				}
-				if (object != null) {
-					ret.add(object);
+			if (parentId != null) {
+				for (DefaultEdge edge : structure.incomingEdgesOf(parentId)) {
+					Object object = beans.get(structure.getEdgeSource(edge));
+					if (object instanceof Notification && notificationLevel.intValue() > Level
+							.parse(((Notification) object).getLevel()).intValue()) {
+						object = null;
+					}
+					if (object != null) {
+						ret.add(object);
+					}
 				}
 			}
 			return ret;
 		}
-		
+
 		Object getParent(String s) {
 			Set<DefaultEdge> edges = structure.outgoingEdgesOf(s);
 			if (edges.size() == 0) {
@@ -93,11 +95,11 @@ public abstract class SessionMonitor extends ContextMonitor {
 				return this;
 			}
 			if (element instanceof Notification) {
-				return getParent(((Notification)element).getId());
+				return getParent(((Notification) element).getId());
 			} else if (element instanceof ObservationReference) {
-				return getParent(((ObservationReference)element).getId());
+				return getParent(((ObservationReference) element).getId());
 			} else if (element instanceof TaskReference) {
-				return getParent(((TaskReference)element).getId());
+				return getParent(((TaskReference) element).getId());
 			}
 			return null;
 		}
@@ -168,7 +170,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 					context = contextsByTask.get(task.getParentId());
 				}
 				if (context.beans.containsKey(task.getId())) {
-					return (TaskReference)context.beans.get(task.getId());
+					return (TaskReference) context.beans.get(task.getId());
 				}
 				context.beans.put(task.getId(), task);
 				context.structure.addVertex(task.getId());
@@ -270,27 +272,27 @@ public abstract class SessionMonitor extends ContextMonitor {
 
 	public String getDataflow(String contextId) {
 		synchronized (lock) {
-			
+
 		}
 		return "";
 	}
-	
+
 	ContextDescriptor findContext(Object bean) {
 		String id = null;
 		if (bean instanceof TaskReference) {
-			ContextDescriptor ret = contexts.get(((TaskReference)bean).getRootContextId());
+			ContextDescriptor ret = contexts.get(((TaskReference) bean).getRootContextId());
 			if (ret == null) {
-				id = ((TaskReference)bean).getId();
+				id = ((TaskReference) bean).getId();
 			}
 		} else if (bean instanceof ObservationReference) {
-			ContextDescriptor ret = contexts.get(((ObservationReference)bean).getRootContextId());
+			ContextDescriptor ret = contexts.get(((ObservationReference) bean).getRootContextId());
 			if (ret == null) {
-				id = ((ObservationReference)bean).getId();
+				id = ((ObservationReference) bean).getId();
 			}
 		} else if (bean instanceof Notification) {
-			id = ((Notification)bean).getId();
-		} 
-		
+			id = ((Notification) bean).getId();
+		}
+
 		if (id != null) {
 			for (ContextDescriptor cd : contexts.values()) {
 				if (cd.beans.containsKey(id)) {
@@ -298,7 +300,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 

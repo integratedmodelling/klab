@@ -849,6 +849,17 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getStatementGroup_Actions()
+  {
+    return (EReference)statementGroupEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getStatementList()
   {
     return statementListEClass;
@@ -1520,7 +1531,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMatch_Set()
+  public EReference getMatch_List()
   {
     return (EReference)matchEClass.getEStructuralFeatures().get(7);
   }
@@ -1531,7 +1542,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getMatch_Quantity()
+  public EReference getMatch_Set()
   {
     return (EReference)matchEClass.getEStructuralFeatures().get(8);
   }
@@ -1542,9 +1553,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Expr()
+  public EReference getMatch_Quantity()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(9);
+    return (EReference)matchEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -1553,7 +1564,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Nodata()
+  public EAttribute getMatch_Expr()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(10);
   }
@@ -1564,7 +1575,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Star()
+  public EAttribute getMatch_Nodata()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(11);
   }
@@ -1575,9 +1586,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Anything()
+  public EAttribute getMatch_Star()
   {
     return (EAttribute)matchEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMatch_Anything()
+  {
+    return (EAttribute)matchEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -2867,6 +2889,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     statementGroupEClass = createEClass(STATEMENT_GROUP);
     createEReference(statementGroupEClass, STATEMENT_GROUP__BODY);
+    createEReference(statementGroupEClass, STATEMENT_GROUP__ACTIONS);
 
     statementListEClass = createEClass(STATEMENT_LIST);
     createEReference(statementListEClass, STATEMENT_LIST__FIRST);
@@ -2939,6 +2962,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(matchEClass, MATCH__REGEXP);
     createEAttribute(matchEClass, MATCH__OBSERVABLE);
     createEReference(matchEClass, MATCH__LITERAL);
+    createEReference(matchEClass, MATCH__LIST);
     createEReference(matchEClass, MATCH__SET);
     createEReference(matchEClass, MATCH__QUANTITY);
     createEAttribute(matchEClass, MATCH__EXPR);
@@ -3157,6 +3181,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     initEClass(statementGroupEClass, StatementGroup.class, "StatementGroup", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatementGroup_Body(), this.getMessageBody(), null, "body", null, 0, 1, StatementGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatementGroup_Actions(), this.getActions(), null, "actions", null, 0, 1, StatementGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementListEClass, StatementList.class, "StatementList", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatementList_First(), this.getStatement(), null, "first", null, 0, 1, StatementList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3229,6 +3254,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getMatch_Regexp(), ecorePackage.getEString(), "regexp", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Observable(), ecorePackage.getEString(), "observable", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMatch_List(), this.getList(), null, "list", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_Set(), this.getList(), null, "set", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_Quantity(), this.getQuantity(), null, "quantity", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Expr(), ecorePackage.getEString(), "expr", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -32,11 +32,11 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
                     synced = true;
                     for (String url : gitUrls) {
                     	
-                    	// TODO FIXME REMOVE
-                    	if (url.contains("im.data.usa")) {
-                    		continue;
-                    	}
-                    	
+//                    	// TODO FIXME REMOVE
+//                    	if (url.contains("im.data.usa")) {
+//                    		continue;
+//                    	}
+//                    	
                     	
                         try {
                             GitUtils.requireUpdatedRepository(url, getRoot());
