@@ -248,6 +248,11 @@ public abstract class SessionMonitor extends ContextMonitor {
 		synchronized (lock) {
 			if (notification.getIdentity().startsWith("t")) {
 				ContextDescriptor context = contextsByTask.get(notification.getIdentity());
+				if (context == null) {
+					// came before the context is set, like when resolving a model for it: just
+					// throw it away for now.
+					return;
+				}
 				if (context.beans.containsKey(notification.getId())) {
 					return;
 				}
