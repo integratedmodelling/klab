@@ -753,7 +753,15 @@ public class Model extends KimObject implements IModel {
 
 		if (resource.getClassification() != null) {
 
-			resource.setValidatedResource(new Classification(resource.getClassification()));
+			Classification classification = new Classification(resource.getClassification());
+
+			/*
+			 * TODO validate that all concepts are children of the described concept in the
+			 * main observable (if TYPE) - URGENTLY because the team is already mixing
+			 * landcover with mayonnaise and motorcycles
+			 */
+
+			resource.setValidatedResource(classification);
 
 		} else if (resource.getLookupTable() != null) {
 
