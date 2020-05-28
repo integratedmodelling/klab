@@ -113,7 +113,7 @@
 				"observable": "im:Potential value of es:FloodRegulation",
 				"description": "The potential for flood regulation offered by the natural features in each point, considering their effect on areas downstream.",
 				"semantics": "QUALITY",
-				"state": "BETA",
+				"state": "FORTHCOMING",
 				"extendedDescription": "The current strategy for this observable is only for demonstration: runoff, which must be calculated in individual watersheds, is computed by delineating the largest watershed within the user context; this calculation may create wrong watersheds in contexts that do not contain an entire one. In addition, the runoff calculation uses annual rainfall data and applies the curve number method, which is meant for individual storm events. As a result the runoff figures are underestimated. The results should only be seen as demonstrational while we implement event-driven, dynamic behavior."
 			},
 			{
@@ -122,7 +122,7 @@
 				"observable": "ses:Demanded value of es:FloodRegulation",
 				"description": "The demand component for the flood regulation service, based on the presence of humans or infrastructural assets in flood-prone areas.",
 				"semantics": "QUALITY",
-				"state": "EXPERIMENTAL"
+				"state": "FORTHCOMING"
 			},
 			{
 				"separator": false,
@@ -130,7 +130,7 @@
 				"observable": "value of es:FloodRegulation",
 				"description": "The overall value of flood regulation in each point, combining the potential supply with the demand in the area.",
 				"semantics": "QUALITY",
-				"state": "BETA",
+				"state": "FORTHCOMING",
 				"extendedDescription": "The current strategy for this observable is only for demonstration: runoff, which must be calculated in individual watersheds, is computed by delineating the largest watershed within the user context; this calculation may create wrong watersheds in contexts that do not contain an entire one. In addition, the runoff calculation uses annual rainfall data and applies the curve number method, which is meant for individual storm events. As a result the runoff figures are underestimated. The results should only be seen as demonstrational while we implement event-driven, dynamic behavior."
 			},
 			{
