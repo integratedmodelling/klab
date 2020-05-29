@@ -8,6 +8,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 public class Envelope implements IEnvelope {
 
 	/**
@@ -141,6 +143,11 @@ public class Envelope implements IEnvelope {
 	@Override
 	public Shape asShape() {
 		return Shape.create(this);
+	}
+
+	public Geometry asJTSGeometry() {
+		return Shape.makeCell(this.envelope.getMinX(), this.envelope.getMinY(), this.envelope.getMaxX(),
+				this.envelope.getMaxY());
 	}
 
 	public static Envelope create(double minx, double maxx, double miny, double maxy, Projection crs) {
