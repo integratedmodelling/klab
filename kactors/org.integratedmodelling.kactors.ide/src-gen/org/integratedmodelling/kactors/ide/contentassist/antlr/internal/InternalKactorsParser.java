@@ -5788,13 +5788,13 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__Alternatives"
-    // InternalKactors.g:1601:1: rule__Value__Alternatives : ( ( ( rule__Value__TreeAssignment_0 ) ) | ( ( rule__Value__ArgvalueAssignment_1 ) ) | ( ( rule__Value__LiteralAssignment_2 ) ) | ( ( rule__Value__IdAssignment_3 ) ) | ( ( rule__Value__UrnAssignment_4 ) ) | ( ( rule__Value__ListAssignment_5 ) ) | ( ( rule__Value__MapAssignment_6 ) ) | ( ( rule__Value__ObservableAssignment_7 ) ) | ( ( rule__Value__ExpressionAssignment_8 ) ) | ( ( rule__Value__TableAssignment_9 ) ) | ( ( rule__Value__QuantityAssignment_10 ) ) );
+    // InternalKactors.g:1601:1: rule__Value__Alternatives : ( ( ( rule__Value__TreeAssignment_0 ) ) | ( ( rule__Value__ArgvalueAssignment_1 ) ) | ( ( rule__Value__LiteralAssignment_2 ) ) | ( ( rule__Value__UrnAssignment_3 ) ) | ( ( rule__Value__IdAssignment_4 ) ) | ( ( rule__Value__ListAssignment_5 ) ) | ( ( rule__Value__MapAssignment_6 ) ) | ( ( rule__Value__ObservableAssignment_7 ) ) | ( ( rule__Value__ExpressionAssignment_8 ) ) | ( ( rule__Value__TableAssignment_9 ) ) | ( ( rule__Value__QuantityAssignment_10 ) ) );
     public final void rule__Value__Alternatives() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:1605:1: ( ( ( rule__Value__TreeAssignment_0 ) ) | ( ( rule__Value__ArgvalueAssignment_1 ) ) | ( ( rule__Value__LiteralAssignment_2 ) ) | ( ( rule__Value__IdAssignment_3 ) ) | ( ( rule__Value__UrnAssignment_4 ) ) | ( ( rule__Value__ListAssignment_5 ) ) | ( ( rule__Value__MapAssignment_6 ) ) | ( ( rule__Value__ObservableAssignment_7 ) ) | ( ( rule__Value__ExpressionAssignment_8 ) ) | ( ( rule__Value__TableAssignment_9 ) ) | ( ( rule__Value__QuantityAssignment_10 ) ) )
+            // InternalKactors.g:1605:1: ( ( ( rule__Value__TreeAssignment_0 ) ) | ( ( rule__Value__ArgvalueAssignment_1 ) ) | ( ( rule__Value__LiteralAssignment_2 ) ) | ( ( rule__Value__UrnAssignment_3 ) ) | ( ( rule__Value__IdAssignment_4 ) ) | ( ( rule__Value__ListAssignment_5 ) ) | ( ( rule__Value__MapAssignment_6 ) ) | ( ( rule__Value__ObservableAssignment_7 ) ) | ( ( rule__Value__ExpressionAssignment_8 ) ) | ( ( rule__Value__TableAssignment_9 ) ) | ( ( rule__Value__QuantityAssignment_10 ) ) )
             int alt12=11;
             alt12 = dfa12.predict(input);
             switch (alt12) {
@@ -5886,19 +5886,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 4 :
-                    // InternalKactors.g:1624:2: ( ( rule__Value__IdAssignment_3 ) )
+                    // InternalKactors.g:1624:2: ( ( rule__Value__UrnAssignment_3 ) )
                     {
-                    // InternalKactors.g:1624:2: ( ( rule__Value__IdAssignment_3 ) )
-                    // InternalKactors.g:1625:3: ( rule__Value__IdAssignment_3 )
+                    // InternalKactors.g:1624:2: ( ( rule__Value__UrnAssignment_3 ) )
+                    // InternalKactors.g:1625:3: ( rule__Value__UrnAssignment_3 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getIdAssignment_3()); 
+                       before(grammarAccess.getValueAccess().getUrnAssignment_3()); 
                     }
-                    // InternalKactors.g:1626:3: ( rule__Value__IdAssignment_3 )
-                    // InternalKactors.g:1626:4: rule__Value__IdAssignment_3
+                    // InternalKactors.g:1626:3: ( rule__Value__UrnAssignment_3 )
+                    // InternalKactors.g:1626:4: rule__Value__UrnAssignment_3
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__IdAssignment_3();
+                    rule__Value__UrnAssignment_3();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -5906,7 +5906,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getIdAssignment_3()); 
+                       after(grammarAccess.getValueAccess().getUrnAssignment_3()); 
                     }
 
                     }
@@ -5915,19 +5915,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 5 :
-                    // InternalKactors.g:1630:2: ( ( rule__Value__UrnAssignment_4 ) )
+                    // InternalKactors.g:1630:2: ( ( rule__Value__IdAssignment_4 ) )
                     {
-                    // InternalKactors.g:1630:2: ( ( rule__Value__UrnAssignment_4 ) )
-                    // InternalKactors.g:1631:3: ( rule__Value__UrnAssignment_4 )
+                    // InternalKactors.g:1630:2: ( ( rule__Value__IdAssignment_4 ) )
+                    // InternalKactors.g:1631:3: ( rule__Value__IdAssignment_4 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getUrnAssignment_4()); 
+                       before(grammarAccess.getValueAccess().getIdAssignment_4()); 
                     }
-                    // InternalKactors.g:1632:3: ( rule__Value__UrnAssignment_4 )
-                    // InternalKactors.g:1632:4: rule__Value__UrnAssignment_4
+                    // InternalKactors.g:1632:3: ( rule__Value__IdAssignment_4 )
+                    // InternalKactors.g:1632:4: rule__Value__IdAssignment_4
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__UrnAssignment_4();
+                    rule__Value__IdAssignment_4();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -5935,7 +5935,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getUrnAssignment_4()); 
+                       after(grammarAccess.getValueAccess().getIdAssignment_4()); 
                     }
 
                     }
@@ -42299,66 +42299,21 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__Value__LiteralAssignment_2"
 
 
-    // $ANTLR start "rule__Value__IdAssignment_3"
-    // InternalKactors.g:12626:1: rule__Value__IdAssignment_3 : ( rulePathName ) ;
-    public final void rule__Value__IdAssignment_3() throws RecognitionException {
+    // $ANTLR start "rule__Value__UrnAssignment_3"
+    // InternalKactors.g:12626:1: rule__Value__UrnAssignment_3 : ( ruleUrnId ) ;
+    public final void rule__Value__UrnAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:12630:1: ( ( rulePathName ) )
-            // InternalKactors.g:12631:2: ( rulePathName )
+            // InternalKactors.g:12630:1: ( ( ruleUrnId ) )
+            // InternalKactors.g:12631:2: ( ruleUrnId )
             {
-            // InternalKactors.g:12631:2: ( rulePathName )
-            // InternalKactors.g:12632:3: rulePathName
-            {
-            if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_3_0()); 
-            }
-            pushFollow(FOLLOW_2);
-            rulePathName();
-
-            state._fsp--;
-            if (state.failed) return ;
-            if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_3_0()); 
-            }
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__IdAssignment_3"
-
-
-    // $ANTLR start "rule__Value__UrnAssignment_4"
-    // InternalKactors.g:12641:1: rule__Value__UrnAssignment_4 : ( ruleUrnId ) ;
-    public final void rule__Value__UrnAssignment_4() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:12645:1: ( ( ruleUrnId ) )
-            // InternalKactors.g:12646:2: ( ruleUrnId )
-            {
-            // InternalKactors.g:12646:2: ( ruleUrnId )
-            // InternalKactors.g:12647:3: ruleUrnId
+            // InternalKactors.g:12631:2: ( ruleUrnId )
+            // InternalKactors.g:12632:3: ruleUrnId
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_4_0()); 
+               before(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_3_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleUrnId();
@@ -42366,7 +42321,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_4_0()); 
+               after(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_3_0()); 
             }
 
             }
@@ -42386,7 +42341,52 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__UrnAssignment_4"
+    // $ANTLR end "rule__Value__UrnAssignment_3"
+
+
+    // $ANTLR start "rule__Value__IdAssignment_4"
+    // InternalKactors.g:12641:1: rule__Value__IdAssignment_4 : ( rulePathName ) ;
+    public final void rule__Value__IdAssignment_4() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:12645:1: ( ( rulePathName ) )
+            // InternalKactors.g:12646:2: ( rulePathName )
+            {
+            // InternalKactors.g:12646:2: ( rulePathName )
+            // InternalKactors.g:12647:3: rulePathName
+            {
+            if ( state.backtracking==0 ) {
+               before(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_4_0()); 
+            }
+            pushFollow(FOLLOW_2);
+            rulePathName();
+
+            state._fsp--;
+            if (state.failed) return ;
+            if ( state.backtracking==0 ) {
+               after(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_4_0()); 
+            }
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Value__IdAssignment_4"
 
 
     // $ANTLR start "rule__Value__ListAssignment_5"
@@ -49104,20 +49104,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred36_InternalKactors
     public final void synpred36_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:1624:2: ( ( ( rule__Value__IdAssignment_3 ) ) )
-        // InternalKactors.g:1624:2: ( ( rule__Value__IdAssignment_3 ) )
+        // InternalKactors.g:1624:2: ( ( ( rule__Value__UrnAssignment_3 ) ) )
+        // InternalKactors.g:1624:2: ( ( rule__Value__UrnAssignment_3 ) )
         {
-        // InternalKactors.g:1624:2: ( ( rule__Value__IdAssignment_3 ) )
-        // InternalKactors.g:1625:3: ( rule__Value__IdAssignment_3 )
+        // InternalKactors.g:1624:2: ( ( rule__Value__UrnAssignment_3 ) )
+        // InternalKactors.g:1625:3: ( rule__Value__UrnAssignment_3 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getIdAssignment_3()); 
+           before(grammarAccess.getValueAccess().getUrnAssignment_3()); 
         }
-        // InternalKactors.g:1626:3: ( rule__Value__IdAssignment_3 )
-        // InternalKactors.g:1626:4: rule__Value__IdAssignment_3
+        // InternalKactors.g:1626:3: ( rule__Value__UrnAssignment_3 )
+        // InternalKactors.g:1626:4: rule__Value__UrnAssignment_3
         {
         pushFollow(FOLLOW_2);
-        rule__Value__IdAssignment_3();
+        rule__Value__UrnAssignment_3();
 
         state._fsp--;
         if (state.failed) return ;
@@ -49134,20 +49134,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred37_InternalKactors
     public final void synpred37_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:1630:2: ( ( ( rule__Value__UrnAssignment_4 ) ) )
-        // InternalKactors.g:1630:2: ( ( rule__Value__UrnAssignment_4 ) )
+        // InternalKactors.g:1630:2: ( ( ( rule__Value__IdAssignment_4 ) ) )
+        // InternalKactors.g:1630:2: ( ( rule__Value__IdAssignment_4 ) )
         {
-        // InternalKactors.g:1630:2: ( ( rule__Value__UrnAssignment_4 ) )
-        // InternalKactors.g:1631:3: ( rule__Value__UrnAssignment_4 )
+        // InternalKactors.g:1630:2: ( ( rule__Value__IdAssignment_4 ) )
+        // InternalKactors.g:1631:3: ( rule__Value__IdAssignment_4 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getUrnAssignment_4()); 
+           before(grammarAccess.getValueAccess().getIdAssignment_4()); 
         }
-        // InternalKactors.g:1632:3: ( rule__Value__UrnAssignment_4 )
-        // InternalKactors.g:1632:4: rule__Value__UrnAssignment_4
+        // InternalKactors.g:1632:3: ( rule__Value__IdAssignment_4 )
+        // InternalKactors.g:1632:4: rule__Value__IdAssignment_4
         {
         pushFollow(FOLLOW_2);
-        rule__Value__UrnAssignment_4();
+        rule__Value__IdAssignment_4();
 
         state._fsp--;
         if (state.failed) return ;
@@ -52043,7 +52043,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             this.transition = dfa_25;
         }
         public String getDescription() {
-            return "1601:1: rule__Value__Alternatives : ( ( ( rule__Value__TreeAssignment_0 ) ) | ( ( rule__Value__ArgvalueAssignment_1 ) ) | ( ( rule__Value__LiteralAssignment_2 ) ) | ( ( rule__Value__IdAssignment_3 ) ) | ( ( rule__Value__UrnAssignment_4 ) ) | ( ( rule__Value__ListAssignment_5 ) ) | ( ( rule__Value__MapAssignment_6 ) ) | ( ( rule__Value__ObservableAssignment_7 ) ) | ( ( rule__Value__ExpressionAssignment_8 ) ) | ( ( rule__Value__TableAssignment_9 ) ) | ( ( rule__Value__QuantityAssignment_10 ) ) );";
+            return "1601:1: rule__Value__Alternatives : ( ( ( rule__Value__TreeAssignment_0 ) ) | ( ( rule__Value__ArgvalueAssignment_1 ) ) | ( ( rule__Value__LiteralAssignment_2 ) ) | ( ( rule__Value__UrnAssignment_3 ) ) | ( ( rule__Value__IdAssignment_4 ) ) | ( ( rule__Value__ListAssignment_5 ) ) | ( ( rule__Value__MapAssignment_6 ) ) | ( ( rule__Value__ObservableAssignment_7 ) ) | ( ( rule__Value__ExpressionAssignment_8 ) ) | ( ( rule__Value__TableAssignment_9 ) ) | ( ( rule__Value__QuantityAssignment_10 ) ) );";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -52186,7 +52186,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred33_InternalKactors()) ) {s = 15;}
 
-                        else if ( (synpred37_InternalKactors()) ) {s = 20;}
+                        else if ( (synpred36_InternalKactors()) ) {s = 19;}
 
                          
                         input.seek(index12_9);
@@ -52280,7 +52280,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     static final String dfa_28s = "\1\4\1\uffff\2\7\1\4\1\uffff\1\4\6\uffff\3\4\2\7\1\uffff\1\4\1\uffff\1\4\1\0\2\7\14\4\2\0\10\4\4\0\3\4\1\0";
     static final String dfa_29s = "\1\114\1\uffff\2\7\1\130\1\uffff\1\117\6\uffff\1\127\2\117\2\114\1\uffff\1\4\1\uffff\1\117\1\0\2\7\3\117\1\4\3\117\2\4\3\117\2\0\1\117\1\4\2\117\1\4\3\117\4\0\1\4\2\117\1\0";
     static final String dfa_30s = "\1\uffff\1\1\3\uffff\1\2\1\uffff\1\4\1\5\1\6\1\7\1\10\1\11\5\uffff\1\12\1\uffff\1\3\42\uffff";
-    static final String dfa_31s = "\26\uffff\1\7\16\uffff\1\4\1\6\10\uffff\1\5\1\3\1\1\1\0\3\uffff\1\2}>";
+    static final String dfa_31s = "\26\uffff\1\7\16\uffff\1\4\1\6\10\uffff\1\1\1\2\1\3\1\0\3\uffff\1\5}>";
     static final String[] dfa_32s = {
             "\1\6\1\uffff\1\5\1\4\2\uffff\1\1\1\uffff\1\12\1\uffff\1\13\15\uffff\2\5\3\uffff\1\2\25\uffff\1\10\11\uffff\1\7\2\uffff\1\11\3\uffff\1\14\3\uffff\1\3",
             "",
@@ -52383,10 +52383,10 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         if ( s>=0 ) return s;
                         break;
                     case 1 : 
-                        int LA13_49 = input.LA(1);
+                        int LA13_47 = input.LA(1);
 
                          
-                        int index13_49 = input.index();
+                        int index13_47 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred45_InternalKactors()) ) {s = 20;}
@@ -52394,25 +52394,10 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         else if ( (synpred46_InternalKactors()) ) {s = 7;}
 
                          
-                        input.seek(index13_49);
+                        input.seek(index13_47);
                         if ( s>=0 ) return s;
                         break;
                     case 2 : 
-                        int LA13_54 = input.LA(1);
-
-                         
-                        int index13_54 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred45_InternalKactors()) ) {s = 20;}
-
-                        else if ( (synpred46_InternalKactors()) ) {s = 7;}
-
-                         
-                        input.seek(index13_54);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 3 : 
                         int LA13_48 = input.LA(1);
 
                          
@@ -52425,6 +52410,21 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
                          
                         input.seek(index13_48);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 3 : 
+                        int LA13_49 = input.LA(1);
+
+                         
+                        int index13_49 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred45_InternalKactors()) ) {s = 20;}
+
+                        else if ( (synpred46_InternalKactors()) ) {s = 7;}
+
+                         
+                        input.seek(index13_49);
                         if ( s>=0 ) return s;
                         break;
                     case 4 : 
@@ -52443,10 +52443,10 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         if ( s>=0 ) return s;
                         break;
                     case 5 : 
-                        int LA13_47 = input.LA(1);
+                        int LA13_54 = input.LA(1);
 
                          
-                        int index13_47 = input.index();
+                        int index13_54 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred45_InternalKactors()) ) {s = 20;}
@@ -52454,7 +52454,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         else if ( (synpred46_InternalKactors()) ) {s = 7;}
 
                          
-                        input.seek(index13_47);
+                        input.seek(index13_54);
                         if ( s>=0 ) return s;
                         break;
                     case 6 : 

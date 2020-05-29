@@ -6123,7 +6123,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleValue"
-    // InternalKactors.g:2323:1: ruleValue returns [EObject current=null] : ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_id_3_0= rulePathName ) ) | ( (lv_urn_4_0= ruleUrnId ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) ) ;
+    // InternalKactors.g:2323:1: ruleValue returns [EObject current=null] : ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_urn_3_0= ruleUrnId ) ) | ( (lv_id_4_0= rulePathName ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) ) ;
     public final EObject ruleValue() throws RecognitionException {
         EObject current = null;
 
@@ -6134,9 +6134,9 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
 
         EObject lv_literal_2_0 = null;
 
-        AntlrDatatypeRuleToken lv_id_3_0 = null;
+        AntlrDatatypeRuleToken lv_urn_3_0 = null;
 
-        AntlrDatatypeRuleToken lv_urn_4_0 = null;
+        AntlrDatatypeRuleToken lv_id_4_0 = null;
 
         EObject lv_list_5_0 = null;
 
@@ -6151,10 +6151,10 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalKactors.g:2329:2: ( ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_id_3_0= rulePathName ) ) | ( (lv_urn_4_0= ruleUrnId ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) ) )
-            // InternalKactors.g:2330:2: ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_id_3_0= rulePathName ) ) | ( (lv_urn_4_0= ruleUrnId ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) )
+            // InternalKactors.g:2329:2: ( ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_urn_3_0= ruleUrnId ) ) | ( (lv_id_4_0= rulePathName ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) ) )
+            // InternalKactors.g:2330:2: ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_urn_3_0= ruleUrnId ) ) | ( (lv_id_4_0= rulePathName ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) )
             {
-            // InternalKactors.g:2330:2: ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_id_3_0= rulePathName ) ) | ( (lv_urn_4_0= ruleUrnId ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) )
+            // InternalKactors.g:2330:2: ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_urn_3_0= ruleUrnId ) ) | ( (lv_id_4_0= rulePathName ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) )
             int alt35=11;
             alt35 = dfa35.predict(input);
             switch (alt35) {
@@ -6277,21 +6277,21 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalKactors.g:2390:3: ( (lv_id_3_0= rulePathName ) )
+                    // InternalKactors.g:2390:3: ( (lv_urn_3_0= ruleUrnId ) )
                     {
-                    // InternalKactors.g:2390:3: ( (lv_id_3_0= rulePathName ) )
-                    // InternalKactors.g:2391:4: (lv_id_3_0= rulePathName )
+                    // InternalKactors.g:2390:3: ( (lv_urn_3_0= ruleUrnId ) )
+                    // InternalKactors.g:2391:4: (lv_urn_3_0= ruleUrnId )
                     {
-                    // InternalKactors.g:2391:4: (lv_id_3_0= rulePathName )
-                    // InternalKactors.g:2392:5: lv_id_3_0= rulePathName
+                    // InternalKactors.g:2391:4: (lv_urn_3_0= ruleUrnId )
+                    // InternalKactors.g:2392:5: lv_urn_3_0= ruleUrnId
                     {
                     if ( state.backtracking==0 ) {
 
-                      					newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_3_0());
+                      					newCompositeNode(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_3_0());
                       				
                     }
                     pushFollow(FOLLOW_2);
-                    lv_id_3_0=rulePathName();
+                    lv_urn_3_0=ruleUrnId();
 
                     state._fsp--;
                     if (state.failed) return current;
@@ -6302,9 +6302,9 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					}
                       					set(
                       						current,
-                      						"id",
-                      						lv_id_3_0,
-                      						"org.integratedmodelling.kactors.Kactors.PathName");
+                      						"urn",
+                      						lv_urn_3_0,
+                      						"org.integratedmodelling.kactors.Kactors.UrnId");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -6318,21 +6318,21 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalKactors.g:2410:3: ( (lv_urn_4_0= ruleUrnId ) )
+                    // InternalKactors.g:2410:3: ( (lv_id_4_0= rulePathName ) )
                     {
-                    // InternalKactors.g:2410:3: ( (lv_urn_4_0= ruleUrnId ) )
-                    // InternalKactors.g:2411:4: (lv_urn_4_0= ruleUrnId )
+                    // InternalKactors.g:2410:3: ( (lv_id_4_0= rulePathName ) )
+                    // InternalKactors.g:2411:4: (lv_id_4_0= rulePathName )
                     {
-                    // InternalKactors.g:2411:4: (lv_urn_4_0= ruleUrnId )
-                    // InternalKactors.g:2412:5: lv_urn_4_0= ruleUrnId
+                    // InternalKactors.g:2411:4: (lv_id_4_0= rulePathName )
+                    // InternalKactors.g:2412:5: lv_id_4_0= rulePathName
                     {
                     if ( state.backtracking==0 ) {
 
-                      					newCompositeNode(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_4_0());
+                      					newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_4_0());
                       				
                     }
                     pushFollow(FOLLOW_2);
-                    lv_urn_4_0=ruleUrnId();
+                    lv_id_4_0=rulePathName();
 
                     state._fsp--;
                     if (state.failed) return current;
@@ -6343,9 +6343,9 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					}
                       					set(
                       						current,
-                      						"urn",
-                      						lv_urn_4_0,
-                      						"org.integratedmodelling.kactors.Kactors.UrnId");
+                      						"id",
+                      						lv_id_4_0,
+                      						"org.integratedmodelling.kactors.Kactors.PathName");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -18454,25 +18454,25 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
 
     // $ANTLR start synpred69_InternalKactors
     public final void synpred69_InternalKactors_fragment() throws RecognitionException {   
-        AntlrDatatypeRuleToken lv_id_3_0 = null;
+        AntlrDatatypeRuleToken lv_urn_3_0 = null;
 
 
-        // InternalKactors.g:2390:3: ( ( (lv_id_3_0= rulePathName ) ) )
-        // InternalKactors.g:2390:3: ( (lv_id_3_0= rulePathName ) )
+        // InternalKactors.g:2390:3: ( ( (lv_urn_3_0= ruleUrnId ) ) )
+        // InternalKactors.g:2390:3: ( (lv_urn_3_0= ruleUrnId ) )
         {
-        // InternalKactors.g:2390:3: ( (lv_id_3_0= rulePathName ) )
-        // InternalKactors.g:2391:4: (lv_id_3_0= rulePathName )
+        // InternalKactors.g:2390:3: ( (lv_urn_3_0= ruleUrnId ) )
+        // InternalKactors.g:2391:4: (lv_urn_3_0= ruleUrnId )
         {
-        // InternalKactors.g:2391:4: (lv_id_3_0= rulePathName )
-        // InternalKactors.g:2392:5: lv_id_3_0= rulePathName
+        // InternalKactors.g:2391:4: (lv_urn_3_0= ruleUrnId )
+        // InternalKactors.g:2392:5: lv_urn_3_0= ruleUrnId
         {
         if ( state.backtracking==0 ) {
 
-          					newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_3_0());
+          					newCompositeNode(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_3_0());
           				
         }
         pushFollow(FOLLOW_2);
-        lv_id_3_0=rulePathName();
+        lv_urn_3_0=ruleUrnId();
 
         state._fsp--;
         if (state.failed) return ;
@@ -18489,25 +18489,25 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
 
     // $ANTLR start synpred70_InternalKactors
     public final void synpred70_InternalKactors_fragment() throws RecognitionException {   
-        AntlrDatatypeRuleToken lv_urn_4_0 = null;
+        AntlrDatatypeRuleToken lv_id_4_0 = null;
 
 
-        // InternalKactors.g:2410:3: ( ( (lv_urn_4_0= ruleUrnId ) ) )
-        // InternalKactors.g:2410:3: ( (lv_urn_4_0= ruleUrnId ) )
+        // InternalKactors.g:2410:3: ( ( (lv_id_4_0= rulePathName ) ) )
+        // InternalKactors.g:2410:3: ( (lv_id_4_0= rulePathName ) )
         {
-        // InternalKactors.g:2410:3: ( (lv_urn_4_0= ruleUrnId ) )
-        // InternalKactors.g:2411:4: (lv_urn_4_0= ruleUrnId )
+        // InternalKactors.g:2410:3: ( (lv_id_4_0= rulePathName ) )
+        // InternalKactors.g:2411:4: (lv_id_4_0= rulePathName )
         {
-        // InternalKactors.g:2411:4: (lv_urn_4_0= ruleUrnId )
-        // InternalKactors.g:2412:5: lv_urn_4_0= ruleUrnId
+        // InternalKactors.g:2411:4: (lv_id_4_0= rulePathName )
+        // InternalKactors.g:2412:5: lv_id_4_0= rulePathName
         {
         if ( state.backtracking==0 ) {
 
-          					newCompositeNode(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_4_0());
+          					newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_4_0());
           				
         }
         pushFollow(FOLLOW_2);
-        lv_urn_4_0=ruleUrnId();
+        lv_id_4_0=rulePathName();
 
         state._fsp--;
         if (state.failed) return ;
@@ -21279,7 +21279,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
             this.transition = dfa_40;
         }
         public String getDescription() {
-            return "2330:2: ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_id_3_0= rulePathName ) ) | ( (lv_urn_4_0= ruleUrnId ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) )";
+            return "2330:2: ( ( (lv_tree_0_0= ruleTree ) ) | ( (lv_argvalue_1_0= RULE_ARGVALUE ) ) | ( (lv_literal_2_0= ruleLiteral ) ) | ( (lv_urn_3_0= ruleUrnId ) ) | ( (lv_id_4_0= rulePathName ) ) | ( (lv_list_5_0= ruleList ) ) | ( (lv_map_6_0= ruleMap ) ) | ( (lv_observable_7_0= RULE_OBSERVABLE ) ) | ( (lv_expression_8_0= RULE_EXPR ) ) | ( (lv_table_9_0= ruleLookupTable ) ) | ( (lv_quantity_10_0= ruleQuantity ) ) )";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -21422,7 +21422,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         s = -1;
                         if ( (synpred66_InternalKactors()) ) {s = 15;}
 
-                        else if ( (synpred70_InternalKactors()) ) {s = 20;}
+                        else if ( (synpred69_InternalKactors()) ) {s = 19;}
 
                          
                         input.seek(index35_9);
@@ -21516,7 +21516,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
     static final String dfa_43s = "\1\4\1\uffff\2\15\1\4\1\uffff\1\4\6\uffff\3\4\2\15\1\uffff\1\5\1\4\1\uffff\1\0\2\15\3\4\1\5\3\4\2\5\3\4\2\0\1\4\1\5\2\4\1\5\3\4\4\0\1\5\2\4\1\0";
     static final String dfa_44s = "\1\121\1\uffff\2\15\1\127\1\uffff\1\121\6\uffff\2\124\1\130\2\121\1\uffff\1\5\1\121\1\uffff\1\0\2\15\3\121\1\5\3\121\2\5\3\121\2\0\1\121\1\5\2\121\1\5\3\121\4\0\1\5\2\121\1\0";
     static final String dfa_45s = "\1\uffff\1\1\3\uffff\1\2\1\uffff\1\4\1\5\1\6\1\7\1\10\1\11\5\uffff\1\12\2\uffff\1\3\41\uffff";
-    static final String dfa_46s = "\26\uffff\1\5\16\uffff\1\6\1\1\10\uffff\1\3\1\0\1\4\1\2\3\uffff\1\7}>";
+    static final String dfa_46s = "\26\uffff\1\2\16\uffff\1\7\1\4\10\uffff\1\5\1\1\1\3\1\6\3\uffff\1\0}>";
     static final String[] dfa_47s = {
             "\1\12\1\6\1\uffff\1\5\1\uffff\1\13\1\1\2\uffff\1\4\36\uffff\1\10\11\uffff\2\5\3\uffff\1\7\2\uffff\1\11\5\uffff\1\14\13\uffff\1\2\1\3",
             "",
@@ -21604,6 +21604,21 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
+                        int LA36_54 = input.LA(1);
+
+                         
+                        int index36_54 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred78_InternalKactors()) ) {s = 21;}
+
+                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
+
+                         
+                        input.seek(index36_54);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 1 : 
                         int LA36_48 = input.LA(1);
 
                          
@@ -21618,67 +21633,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index36_48);
                         if ( s>=0 ) return s;
                         break;
-                    case 1 : 
-                        int LA36_38 = input.LA(1);
-
-                         
-                        int index36_38 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred78_InternalKactors()) ) {s = 21;}
-
-                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
-
-                         
-                        input.seek(index36_38);
-                        if ( s>=0 ) return s;
-                        break;
                     case 2 : 
-                        int LA36_50 = input.LA(1);
-
-                         
-                        int index36_50 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred78_InternalKactors()) ) {s = 21;}
-
-                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
-
-                         
-                        input.seek(index36_50);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 3 : 
-                        int LA36_47 = input.LA(1);
-
-                         
-                        int index36_47 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred78_InternalKactors()) ) {s = 21;}
-
-                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
-
-                         
-                        input.seek(index36_47);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 4 : 
-                        int LA36_49 = input.LA(1);
-
-                         
-                        int index36_49 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred78_InternalKactors()) ) {s = 21;}
-
-                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
-
-                         
-                        input.seek(index36_49);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 5 : 
                         int LA36_22 = input.LA(1);
 
                          
@@ -21693,7 +21648,67 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index36_22);
                         if ( s>=0 ) return s;
                         break;
+                    case 3 : 
+                        int LA36_49 = input.LA(1);
+
+                         
+                        int index36_49 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred78_InternalKactors()) ) {s = 21;}
+
+                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
+
+                         
+                        input.seek(index36_49);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 4 : 
+                        int LA36_38 = input.LA(1);
+
+                         
+                        int index36_38 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred78_InternalKactors()) ) {s = 21;}
+
+                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
+
+                         
+                        input.seek(index36_38);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 5 : 
+                        int LA36_47 = input.LA(1);
+
+                         
+                        int index36_47 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred78_InternalKactors()) ) {s = 21;}
+
+                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
+
+                         
+                        input.seek(index36_47);
+                        if ( s>=0 ) return s;
+                        break;
                     case 6 : 
+                        int LA36_50 = input.LA(1);
+
+                         
+                        int index36_50 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred78_InternalKactors()) ) {s = 21;}
+
+                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
+
+                         
+                        input.seek(index36_50);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 7 : 
                         int LA36_37 = input.LA(1);
 
                          
@@ -21706,21 +21721,6 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
 
                          
                         input.seek(index36_37);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 7 : 
-                        int LA36_54 = input.LA(1);
-
-                         
-                        int index36_54 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred78_InternalKactors()) ) {s = 21;}
-
-                        else if ( (synpred79_InternalKactors()) ) {s = 7;}
-
-                         
-                        input.seek(index36_54);
                         if ( s>=0 ) return s;
                         break;
             }

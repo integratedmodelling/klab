@@ -76,8 +76,11 @@ public class Behavior implements IBehavior {
 					return true;
 				}
 				break;
+			case SET:
+				// TODO OR match for values in list
+				break;			
 			case LIST:
-				// TODO differentiate between multi-identifier and OR match for values in list
+				// TODO multi-identifier match
 				break;
 			case MAP:
 				break;
@@ -103,6 +106,14 @@ public class Behavior implements IBehavior {
 			case TYPE:
 				break;
 			case URN:
+				break;
+			case ERROR:
+				// match any error? any literal for that?
+				break;
+			case OBSERVATION:
+				// might
+				break;
+			case TREE:
 				break;
 			default:
 				break;

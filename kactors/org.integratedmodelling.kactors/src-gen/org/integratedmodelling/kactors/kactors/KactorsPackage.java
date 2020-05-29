@@ -994,22 +994,22 @@ public interface KactorsPackage extends EPackage
   int VALUE__LITERAL = 2;
 
   /**
-   * The feature id for the '<em><b>Id</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VALUE__ID = 3;
-
-  /**
    * The feature id for the '<em><b>Urn</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__URN = 4;
+  int VALUE__URN = 3;
+
+  /**
+   * The feature id for the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__ID = 4;
 
   /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
@@ -3351,17 +3351,6 @@ public interface KactorsPackage extends EPackage
   EReference getValue_Literal();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Id</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Value#getId()
-   * @see #getValue()
-   * @generated
-   */
-  EAttribute getValue_Id();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3371,6 +3360,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getValue_Urn();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getId()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Id();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getList <em>List</em>}'.
@@ -5536,20 +5536,20 @@ public interface KactorsPackage extends EPackage
     EReference VALUE__LITERAL = eINSTANCE.getValue_Literal();
 
     /**
-     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute VALUE__ID = eINSTANCE.getValue_Id();
-
-    /**
      * The meta object literal for the '<em><b>Urn</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute VALUE__URN = eINSTANCE.getValue_Urn();
+
+    /**
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__ID = eINSTANCE.getValue_Id();
 
     /**
      * The meta object literal for the '<em><b>List</b></em>' containment reference feature.

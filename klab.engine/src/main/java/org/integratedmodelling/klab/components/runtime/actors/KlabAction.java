@@ -125,7 +125,16 @@ public abstract class KlabAction {
 		case STRING:
 		case OBSERVABLE:
 			return arg.getValue();
+		case OBSERVATION:
+			// TODO
+			break;
+		case SET:
+			// eval all args
+			break;
 		case LIST:
+			// eval all args
+			break;
+		case TREE:
 			// eval all args
 			break;
 		case MAP:
@@ -143,8 +152,8 @@ public abstract class KlabAction {
 			break;
 		case URN:
 			return new Urn(arg.getValue().toString());
-		default:
-			break;
+//		default:
+//			break;
 		}
 		return null;
 	}

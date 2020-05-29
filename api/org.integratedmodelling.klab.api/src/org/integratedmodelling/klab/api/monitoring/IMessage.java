@@ -288,7 +288,7 @@ public interface IMessage {
 		 * -- Ticketing system monitoring, send around internally by UserInterface after
 		 * engine notification
 		 */
-		TicketResolved,
+		TicketResolved, TicketStatusChanged, TicketCreated,
 
 		/**
 		 * --- Task lifecycle --- B -> F

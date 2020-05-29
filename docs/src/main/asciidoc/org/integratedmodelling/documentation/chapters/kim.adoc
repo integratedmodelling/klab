@@ -26,9 +26,9 @@ k.IM is a _declarative_ language: when k.LAB reads correct k.IM source code, it 
 
 Because k.IM deals with semantics, syntactically correct code isn't the entire story, and _logical_ statements made in faraway namespaces may spread their consequences far and wide. The editor in <<chapter-modeler,k.Modeler>>, supported by a k.LAB engine, does its best to ensure correctness at all levels. There are two aspects to correctness in k.IM:
 
-1. Correct _syntax_, which is validated directly by the k.Modeler editor even without an engine connected to it. Because the syntax in k.IM incarnates many of the axioms of the k.LAB observation ontology, and the core types of the concept are known to the editor, this first check is already starting to validate semantics, serving as an important base for the second:
+1. Correct _syntax_, which is validated directly by the k.Modeler editor even without an engine connected to it. Because the syntax in k.IM incarnates many of the axioms of the k.LAB observation ontology, and the core types of the concept are known to the editor, this first check already performs the most basic semantic validation, serving as an important base for the second:
 
-2. Correct _semantics_, whose validation entails the analysis of the _consistency_ of all concepts defined and their use in models, including their distant consequences. This kind of validation can only be performed to the full extent by a _reasoner_ which is embedded in the k.LAB engine.
+2. Correct _semantics_, whose validation entails the analysis of the _consistency_ of all concepts defined and their use in models, including their distant consequences. This kind of validation can only be performed to the full extent by a _reasoner_, which is embedded in the k.LAB engine.
 
 For this reason, code that shows no errors in k.Modeler when an engine is not connected may be "enriched" with semantic errors once an engine is started and begins communicating with k.Modeler. When an engine is connected, k.Modeler sends every modification made in a namespace to the engine, after its own validation, when the namespace file is saved. All further errors or warnings that the engine sends back are collected and shown to the user. This kind of errors may result from advanced reasoning over context and inherence compatibility when using, for example, dependencies within the same model, or from validation of units of measurement when they are used consistently with the semantic nature of the observable but inconsistently with respect to the spatial or temporal aggregation they imply within a model.
 
@@ -311,7 +311,7 @@ The _general form_ of a concept declaration can be explained using <> for langua
     [links ]
     [increases with ]        
     [decreases with ]
-    [marks with ]
+    [marks ]
     [classifies ]
     [discretizes ]
     [inherits ]                              <6>

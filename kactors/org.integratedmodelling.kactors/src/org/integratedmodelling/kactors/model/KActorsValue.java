@@ -81,6 +81,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (value.getUrn() != null) {
 			this.type = Type.URN;
 			this.value = value.getUrn();
+		} else if (value.getTree() != null) {
+			this.type = Type.TREE;
+			// TODO
 		}
 	}
 
@@ -101,7 +104,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.type = Type.OBSERVABLE;
 			this.value = match.getObservable().substring(0, match.getObservable().length() - 1);
 		} else if (match.getSet() != null) {
-			this.type = Type.LIST;
+			this.type = Type.SET;
 			this.value = parseList(match.getSet());
 		} else if (match.getBoolean() != null) {
 			this.type = Type.BOOLEAN;
@@ -109,6 +112,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (match.getType() != null) {
 			this.type = Type.TYPE;
 			this.value = match.getType();
+		} else if (match.getList() != null) {
+			this.type = Type.LIST;
+			this.value = parseList(match.getList());
 		}
 	}
 
@@ -212,4 +218,6 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	public void setData(Object data) {
 		this.data = data;
 	}
+	
+	
 }

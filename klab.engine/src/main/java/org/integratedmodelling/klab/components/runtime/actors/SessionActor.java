@@ -105,7 +105,7 @@ public class SessionActor extends KlabActor {
 		}
 
 		if (setup.getPanels().size() > 0 || setup.getStyle() != null || setup.getFooter() != null
-				|| setup.getHeader() != null) {
+				|| setup.getHeader() != null || setup.getRightPanels().size() > 0 || setup.getLeftPanels().size() > 0) {
 			((Session) identity).getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
 					setup);
 		}

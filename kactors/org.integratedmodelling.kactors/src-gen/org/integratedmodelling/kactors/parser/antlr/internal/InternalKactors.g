@@ -2390,18 +2390,18 @@ ruleValue returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_3_0());
+					newCompositeNode(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_3_0());
 				}
-				lv_id_3_0=rulePathName
+				lv_urn_3_0=ruleUrnId
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueRule());
 					}
 					set(
 						$current,
-						"id",
-						lv_id_3_0,
-						"org.integratedmodelling.kactors.Kactors.PathName");
+						"urn",
+						lv_urn_3_0,
+						"org.integratedmodelling.kactors.Kactors.UrnId");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -2410,18 +2410,18 @@ ruleValue returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_4_0());
+					newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_4_0());
 				}
-				lv_urn_4_0=ruleUrnId
+				lv_id_4_0=rulePathName
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueRule());
 					}
 					set(
 						$current,
-						"urn",
-						lv_urn_4_0,
-						"org.integratedmodelling.kactors.Kactors.UrnId");
+						"id",
+						lv_id_4_0,
+						"org.integratedmodelling.kactors.Kactors.PathName");
 					afterParserOrEnumRuleCall();
 				}
 			)

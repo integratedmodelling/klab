@@ -1214,10 +1214,10 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cArgvalueARGVALUETerminalRuleCall_1_0 = (RuleCall)cArgvalueAssignment_1.eContents().get(0);
 		private final Assignment cLiteralAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
 		private final RuleCall cLiteralLiteralParserRuleCall_2_0 = (RuleCall)cLiteralAssignment_2.eContents().get(0);
-		private final Assignment cIdAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
-		private final RuleCall cIdPathNameParserRuleCall_3_0 = (RuleCall)cIdAssignment_3.eContents().get(0);
-		private final Assignment cUrnAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
-		private final RuleCall cUrnUrnIdParserRuleCall_4_0 = (RuleCall)cUrnAssignment_4.eContents().get(0);
+		private final Assignment cUrnAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
+		private final RuleCall cUrnUrnIdParserRuleCall_3_0 = (RuleCall)cUrnAssignment_3.eContents().get(0);
+		private final Assignment cIdAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
+		private final RuleCall cIdPathNameParserRuleCall_4_0 = (RuleCall)cIdAssignment_4.eContents().get(0);
 		private final Assignment cListAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
 		private final RuleCall cListListParserRuleCall_5_0 = (RuleCall)cListAssignment_5.eContents().get(0);
 		private final Assignment cMapAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
@@ -1232,11 +1232,11 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cQuantityQuantityParserRuleCall_10_0 = (RuleCall)cQuantityAssignment_10.eContents().get(0);
 		
 		//Value:
-		//	tree=Tree | argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map |
+		//	tree=Tree | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName | list=List | map=Map |
 		//	observable=OBSERVABLE | expression=EXPR | table=LookupTable | quantity=Quantity;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//tree=Tree | argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map | observable=OBSERVABLE
+		//tree=Tree | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName | list=List | map=Map | observable=OBSERVABLE
 		//| expression=EXPR | table=LookupTable | quantity=Quantity
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
@@ -1258,17 +1258,17 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//Literal
 		public RuleCall getLiteralLiteralParserRuleCall_2_0() { return cLiteralLiteralParserRuleCall_2_0; }
 		
-		//id=PathName
-		public Assignment getIdAssignment_3() { return cIdAssignment_3; }
-		
-		//PathName
-		public RuleCall getIdPathNameParserRuleCall_3_0() { return cIdPathNameParserRuleCall_3_0; }
-		
 		//urn=UrnId
-		public Assignment getUrnAssignment_4() { return cUrnAssignment_4; }
+		public Assignment getUrnAssignment_3() { return cUrnAssignment_3; }
 		
 		//UrnId
-		public RuleCall getUrnUrnIdParserRuleCall_4_0() { return cUrnUrnIdParserRuleCall_4_0; }
+		public RuleCall getUrnUrnIdParserRuleCall_3_0() { return cUrnUrnIdParserRuleCall_3_0; }
+		
+		//id=PathName
+		public Assignment getIdAssignment_4() { return cIdAssignment_4; }
+		
+		//PathName
+		public RuleCall getIdPathNameParserRuleCall_4_0() { return cIdPathNameParserRuleCall_4_0; }
 		
 		//list=List
 		public Assignment getListAssignment_5() { return cListAssignment_5; }
@@ -3863,7 +3863,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Value:
-	//	tree=Tree | argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map |
+	//	tree=Tree | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName | list=List | map=Map |
 	//	observable=OBSERVABLE | expression=EXPR | table=LookupTable | quantity=Quantity;
 	public ValueElements getValueAccess() {
 		return pValue;

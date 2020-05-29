@@ -132,6 +132,10 @@ public class Klab {
 		return ret;
 	}
 
+	public NetworkReference getNetwork() {
+		return this.network.get();
+	}
+	
 	/*
 	 * sync the resource status and project errors with the capabilities from the
 	 * engine

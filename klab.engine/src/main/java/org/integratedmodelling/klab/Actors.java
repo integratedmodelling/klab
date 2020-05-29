@@ -150,6 +150,10 @@ public enum Actors implements IActorsService {
 					break;
 				case IDENTIFIER:
 					break;
+				case SET:
+					break;
+				case TREE:
+					break;
 				case LIST:
 					break;
 				case MAP:
