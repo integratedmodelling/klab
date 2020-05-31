@@ -451,6 +451,13 @@ public class Activator extends AbstractUIPlugin {
 		}
 	}
 
+	public static void reply(String originalMessageId, Object... object) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().post(
+					Message.create(get().engineStatusMonitor.getSessionId(), object).inResponseTo(originalMessageId));
+		}
+	}
+	
 	public static void post(Consumer<IMessage> responseHandler, Object... object) {
 		if (get().engineStatusMonitor.isRunning()) {
 			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object),

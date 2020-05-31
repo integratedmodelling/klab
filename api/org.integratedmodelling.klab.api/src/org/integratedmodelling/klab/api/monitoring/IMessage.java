@@ -20,6 +20,11 @@ public interface IMessage {
 
 	public static IMessage NO_RESPONSE = null;
 
+	enum Repeatability {
+		Repeatable,
+		Once
+	}
+	
 	/**
 	 * Message class. Ugly type name makes life easier.
 	 * 
@@ -339,9 +344,16 @@ public interface IMessage {
 		/*
 		 * --- View actor messages
 		 */
-		CreateViewComponent, SetupInterface
+		CreateViewComponent, SetupInterface, 
+		
+		/*
+		 * --- Sent F->B when a view action interacts with a component
+		 */
+		ViewAction
 
 	}
+	
+	Repeatability getRepeatability();
 
 	/**
 	 * Unique ID for each message.

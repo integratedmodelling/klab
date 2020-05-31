@@ -85,12 +85,14 @@ public class SessionActor extends KlabActor {
 									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
 									annotation.get("style", String.class)));
 				}
-				if ("header".equals(annotation.getName()) || "top".equals(annotation.getName())) {
+				if ("header".equals(annotation.getName()) || "header".equals(action.getId())
+						|| "top".equals(annotation.getName())) {
 					setup.setHeader(
 							new Panel(annotation.containsKey("id") ? annotation.get("id", String.class) : "header",
 									annotation.get("style", String.class)));
 				}
-				if ("footer".equals(annotation.getName()) || "bottom".equals(annotation.getName())) {
+				if ("footer".equals(annotation.getName()) || "footer".equals(action.getId())
+						|| "bottom".equals(annotation.getName())) {
 					setup.setFooter(
 							new Panel(annotation.containsKey("id") ? annotation.get("id", String.class) : "footer",
 									annotation.get("style", String.class)));

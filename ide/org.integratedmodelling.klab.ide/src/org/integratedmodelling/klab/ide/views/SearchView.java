@@ -44,14 +44,15 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
-import org.integratedmodelling.klab.ide.ui.Palette;
+import org.integratedmodelling.klab.ide.ui.AppView;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
+import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.rest.ViewSetup;
 
 public class SearchView extends ViewPart {
 
@@ -68,11 +69,13 @@ public class SearchView extends ViewPart {
 	private KlabPeer klab;
 	private Composite topContainer;
 	private Composite searchView;
-	private Palette paletteView;
+	private AppView paletteView;
 	GridData gd_paletteView, gd_searchView;
 	private Composite actionArea;
 
 	private boolean searchShowStatus;
+
+	private Composite parent;
 
 	public SearchView() {
 	}
@@ -190,7 +193,8 @@ public class SearchView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		
+
+		this.parent = parent;
 		topContainer = new Composite(parent, SWT.NONE);
 		// toolkit.paintBordersFor(container);
 		topContainer.setLayout(new GridLayout(1, false));
@@ -246,7 +250,7 @@ public class SearchView extends ViewPart {
 		actionArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// begin comment out
-		paletteView = new Palette(KimData.INSTANCE.getBookmarks(), true, actionArea, SWT.NONE);
+		paletteView = new AppView(true, actionArea, SWT.NONE, this);
 		paletteView.setVisible(true);
 		gd_paletteView = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_paletteView.exclude = false;
@@ -340,8 +344,8 @@ public class SearchView extends ViewPart {
 		initializeMenu();
 
 		text.setEnabled(Activator.engineMonitor().isRunning());
-		
-		paletteView.draw();
+
+//		paletteView.draw();
 
 	}
 
@@ -384,6 +388,12 @@ public class SearchView extends ViewPart {
 				reset();
 				text.setEnabled(true);
 			});
+			break;
+		case SetupInterface:
+			paletteView.setup(message.getPayload(ViewSetup.class));
+			break;
+		case CreateViewComponent:
+			paletteView.addWidget(message);
 			break;
 		default:
 			break;

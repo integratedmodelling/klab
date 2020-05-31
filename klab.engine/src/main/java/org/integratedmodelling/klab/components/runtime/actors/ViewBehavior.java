@@ -5,6 +5,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessage.Repeatability;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -64,7 +65,7 @@ public class ViewBehavior {
 			}, IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
 		}
 	}
-	
+
 	@Action(id = "button")
 	public static class Button extends KlabAction {
 
@@ -79,11 +80,9 @@ public class ViewBehavior {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.PushButton);
 			message.setContent(this.evaluateArgument(0, "Button Text"));
-			session.getMonitor().post((msg) -> {
-				fire(msg.getPayload(ViewAction.class).isBooleanValue(), true);
-			}, IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
+			session.getMonitor().post((msg) -> fire(DEFAULT_FIRE, false), IMessage.MessageClass.ViewActor,
+					IMessage.Type.CreateViewComponent, message);
 		}
 	}
-
 
 }

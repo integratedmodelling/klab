@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
 
@@ -28,7 +30,10 @@ public class ViewComponent {
 	private ValueType contentType;
 	private String content;
 	private List<String> possibleContent;
-	
+	// for groups
+	private List<ViewComponent> components;
+	private Map<String, String> data = new HashMap<>();
+
 	public String getId() {
 		return id;
 	}
@@ -48,7 +53,7 @@ public class ViewComponent {
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getStyle() {
 		return style;
 	}
@@ -100,6 +105,21 @@ public class ViewComponent {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
+
+	public List<ViewComponent> getComponents() {
+		return components;
+	}
+
+	public void setComponents(List<ViewComponent> components) {
+		this.components = components;
+	}
+
+	public Map<String, String> getData() {
+		return data;
+	}
+
+	public void setData(Map<String, String> data) {
+		this.data = data;
+	}
+
 }

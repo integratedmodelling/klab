@@ -14,6 +14,15 @@ public class ViewSetup {
 	public static final String DEFAULT_PANEL_NAME = "defaultpanel";
 
 	public static class Panel {
+		
+		public enum Location {
+			Header,
+			Footer,
+			MainPanel,
+			RightPanel,
+			CenterPanel,
+		}
+		
 		private String name;
 		private String style;
 

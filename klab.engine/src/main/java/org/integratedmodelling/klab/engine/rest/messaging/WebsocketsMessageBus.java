@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
+import org.integratedmodelling.klab.api.monitoring.IMessage.Repeatability;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
@@ -170,7 +171,8 @@ public class WebsocketsMessageBus implements IMessageBus {
 	@MessageMapping(API.MESSAGE)
 	public void handleTask(Message message) {
 
-		// TODO for now: print out all messages except network status, which clutters the output. This is
+		// TODO for now: print out all messages except network status, which clutters
+		// the output. This is
 		// really important for development but obviously should be removed.
 		if (message.getType() != IMessage.Type.NetworkStatus) {
 			System.out.println(JsonUtils.printAsJson(message));
@@ -186,7 +188,10 @@ public class WebsocketsMessageBus implements IMessageBus {
 
 			} else {
 
-				Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
+				Consumer<IMessage> responder = message.getRepeatability() == Repeatability.Once
+						? responders.remove(message.getInResponseTo())
+						: responders.get(message.getInResponseTo());
+						
 				if (responder != null) {
 					responder.accept(message);
 					return;

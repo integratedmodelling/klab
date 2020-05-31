@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.ResourcesView;
+import org.integratedmodelling.klab.ide.views.SearchView;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
@@ -475,35 +476,13 @@ public class KlabSession extends KlabPeer {
 
 	@MessageHandler
 	public void handleCreateView(IMessage message, ViewSetup component) {
-		System.out.println("CREATE VIEW " + component);
+		Eclipse.INSTANCE.openView(SearchView.ID, null);
+		send(message);
 	}
 
 	@MessageHandler(type = Type.CreateViewComponent)
 	public void handleCreateComponent(IMessage message, ViewComponent component) {
-		System.out.println("CREATE COMPONENT " + component);
-//		switch (component.getType()) {
-//		case Alert:
-//			Eclipse.INSTANCE.alert(component.getContent());
-//			break;
-//		case Confirm:
-//			boolean choice = Eclipse.INSTANCE.confirm(component.getContent());
-//			Activator.reply(message, IMessage.MessageClass.Run, IMessage.Type.RunScript, new ViewAction(choice));
-//			break;
-//		case TextInput:
-//			break;
-//		case CheckButton:
-//		case Combo:
-//		case Footer:
-//		case Group:
-//		case Header:
-//		case Map:
-//		case Panel:
-//		case PushButton:
-//		case RadioButton:
-//		case Tree:
-//		case TreeItem:
-//			break;
-//		}
+		send(message);
 	}
 
 	@MessageHandler

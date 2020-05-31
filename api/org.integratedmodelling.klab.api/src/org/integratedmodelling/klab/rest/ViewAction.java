@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class ViewAction {
 
+	private ViewComponent component;
+	
 	private boolean booleanValue;
 	private double doubleValue;
 	private int intValue;
@@ -15,6 +17,11 @@ public class ViewAction {
 	public ViewAction() {
 	}
 
+	public ViewAction(ViewComponent component) {
+		this.component = component;
+	}
+
+	
 	public ViewAction(boolean response) {
 		this.booleanValue = response;
 	}
@@ -51,11 +58,11 @@ public class ViewAction {
 		this.stringValue = stringValue;
 	}
 
-	public List getListValue() {
+	public List<String> getListValue() {
 		return listValue;
 	}
 
-	public void setListValue(List listValue) {
+	public void setListValue(List<String> listValue) {
 		this.listValue = listValue;
 	}
 
@@ -65,6 +72,14 @@ public class ViewAction {
 
 	public void setMapValue(Map<String, String> mapValue) {
 		this.mapValue = mapValue;
+	}
+
+	public ViewComponent getComponent() {
+		return component;
+	}
+
+	public void setComponent(ViewComponent component) {
+		this.component = component;
 	}
 
 }
