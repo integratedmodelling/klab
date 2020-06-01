@@ -52,7 +52,7 @@ import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.ViewComponent;
-import org.integratedmodelling.klab.rest.ViewSetup;
+import org.integratedmodelling.klab.rest.View;
 
 public class SearchView extends ViewPart {
 
@@ -390,7 +390,7 @@ public class SearchView extends ViewPart {
 			});
 			break;
 		case SetupInterface:
-			paletteView.setup(message.getPayload(ViewSetup.class));
+			paletteView.setup(message.getPayload(View.class));
 			break;
 		case CreateViewComponent:
 			paletteView.addWidget(message);

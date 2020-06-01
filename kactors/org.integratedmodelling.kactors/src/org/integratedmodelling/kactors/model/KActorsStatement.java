@@ -1,5 +1,8 @@
 package org.integratedmodelling.kactors.model;
 
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.kactors.Statement;

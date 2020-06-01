@@ -1,5 +1,8 @@
 package org.integratedmodelling.kactors.model;
 
+import java.util.function.Consumer;
+
+import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.kactors.Statement;
 

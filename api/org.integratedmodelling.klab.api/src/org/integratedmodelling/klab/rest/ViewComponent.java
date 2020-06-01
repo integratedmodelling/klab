@@ -17,7 +17,7 @@ public class ViewComponent {
 
 	public static enum Type {
 		Panel, Header, Footer, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree,
-		TreeItem, Confirm,
+		TreeItem, Confirm, View
 		// etc
 	}
 
@@ -122,4 +122,12 @@ public class ViewComponent {
 		this.data = data;
 	}
 
+	@Override
+	public String toString() {
+		return "ViewComponent [parentId=" + parentId + ", type=" + type + ", name=" + name + ", title=" + title
+				+ ", content=" + content + ", data=" + data + "]";
+	}
+
+	
+	
 }

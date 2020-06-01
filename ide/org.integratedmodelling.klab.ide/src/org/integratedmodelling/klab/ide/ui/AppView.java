@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -17,22 +19,23 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Repeatability;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
-import org.integratedmodelling.klab.rest.ViewSetup;
-import org.integratedmodelling.klab.rest.ViewSetup.Panel;
+import org.integratedmodelling.klab.rest.View;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 public class AppView extends Composite {
 
 	private static final String MESSAGE_ID_KEY = "__MESSAGE_ID";
 
-	private Map<String, Panel> panels = new LinkedHashMap<>();
+	private Map<String, ViewPanel> panels = new LinkedHashMap<>();
 	private Map<String, Composite> composites = new LinkedHashMap<>();
 	private List<ViewComponent> widgets = new ArrayList<>();
 	private Map<String, Integer> displayed = new HashMap<>();
@@ -55,7 +58,7 @@ public class AppView extends Composite {
 	 * 
 	 * @param layout
 	 */
-	public void setup(ViewSetup layout) {
+	public void setup(View layout) {
 
 		this.panels.clear();
 		this.widgets.clear();
@@ -76,15 +79,15 @@ public class AppView extends Composite {
 			panels.put(layout.getHeader().getName(), layout.getHeader());
 			displayed.put(layout.getHeader().getName(), 0);
 		}
-		for (Panel panel : layout.getLeftPanels()) {
+		for (ViewPanel panel : layout.getLeftPanels()) {
 			panels.put(panel.getName(), panel);
 			displayed.put(panel.getName(), 0);
 		}
-		for (Panel panel : layout.getPanels()) {
+		for (ViewPanel panel : layout.getPanels()) {
 			panels.put(panel.getName(), panel);
 			displayed.put(panel.getName(), 0);
 		}
-		for (Panel panel : layout.getRightPanels()) {
+		for (ViewPanel panel : layout.getRightPanels()) {
 			panels.put(panel.getName(), panel);
 			displayed.put(panel.getName(), 0);
 		}
@@ -161,6 +164,8 @@ public class AppView extends Composite {
 
 				Composite panel = composites.get(panelId);
 
+				System.out.println("WIDGET " + widget);
+				
 				if (widget.getTitle() != null) {
 					// add label
 				}
@@ -200,6 +205,18 @@ public class AppView extends Composite {
 				case RadioButton:
 					break;
 				case TextInput:
+					Text text = new Text(panel, SWT.BORDER);
+					text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+					if (widget.getContent() != null) {
+						text.setText(widget.getContent());
+					}
+					text.addModifyListener(new ModifyListener() {
+						@Override
+						public void modifyText(ModifyEvent e) {
+							Activator.reply(widget.getData().get(MESSAGE_ID_KEY), IMessage.MessageClass.Run,
+									IMessage.Type.RunScript, Repeatability.Repeatable, new ViewAction(widget, text.getText()));
+						}
+					});
 					break;
 				case Tree:
 					break;

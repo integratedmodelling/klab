@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
@@ -25,7 +26,7 @@ import org.integratedmodelling.klab.utils.Range;
 public class Behavior implements IBehavior {
 
 	static Set<String> viewAnnotations;
-	
+
 	static {
 		viewAnnotations = new HashSet<>();
 		viewAnnotations.add("panel");
@@ -34,7 +35,7 @@ public class Behavior implements IBehavior {
 		viewAnnotations.add("modal");
 		viewAnnotations.add("window");
 	}
-	
+
 	/**
 	 * Pre-processed match value optimized for matching.
 	 * 
@@ -50,9 +51,35 @@ public class Behavior implements IBehavior {
 		}
 
 		private boolean notMatch(Object value) {
-			return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean)value));
+			return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean) value));
+		}
+
+		/**
+		 * If true, no match value was given and the values will be set into system
+		 * variables $ for the entire match, plus $1..$n if multiple values.
+		 * 
+		 * @return
+		 */
+		public boolean isImplicit() {
+			return value == null;
 		}
 		
+		// Call only if isIdentifier() returns true
+		public String getIdentifier() {
+			return this.value.getValue().toString();
+		}
+		
+		/**
+		 * If true, this matches true and contains an identifier to set into the scope
+		 * to the matched value.
+		 * 
+		 * @param scope
+		 * @return
+		 */
+		public boolean isIdentifier(Scope scope) {
+			return this.value.getType() == IKActorsValue.Type.IDENTIFIER && !scope.containsKey(this.value.getValue());
+		}
+
 		public boolean matches(Object value, Scope scope) {
 			switch (this.value.getType()) {
 			case ANYTHING:
@@ -60,7 +87,8 @@ public class Behavior implements IBehavior {
 			case ANYVALUE:
 				return value != null && !(value instanceof Throwable);
 			case ANYTRUE:
-				return value != null && !(value instanceof Throwable) && !(value instanceof Boolean && !((Boolean)value));
+				return value != null && !(value instanceof Throwable)
+						&& !(value instanceof Boolean && !((Boolean) value));
 			case BOOLEAN:
 				return value instanceof Boolean && value.equals(this.value.getValue());
 			case CLASS:
@@ -71,21 +99,25 @@ public class Behavior implements IBehavior {
 				System.out.println("ACH AN EXPRESSION");
 				break;
 			case IDENTIFIER:
+				if (scope.symbolTable.containsKey(this.value.getValue())) {
+					return this.value.getValue().equals(scope.symbolTable.get(value));
+				}
 				if (!notMatch(value)) {
-					scope.symbolTable.put(this.value.getValue().toString(), value);
+					// NO - if defined in scope, match to its value, else just return true.
+//					scope.symbolTable.put(this.value.getValue().toString(), value);
 					return true;
 				}
 				break;
 			case SET:
 				// TODO OR match for values in list
-				break;			
+				break;
 			case LIST:
 				// TODO multi-identifier match
 				break;
 			case MAP:
 				break;
 			case NODATA:
-				return value == null || value instanceof Number && Double.isNaN(((Number)value).doubleValue());
+				return value == null || value instanceof Number && Double.isNaN(((Number) value).doubleValue());
 			case NUMBER:
 				return value instanceof Number && value.equals(this.value.getValue());
 			case NUMBERED_PATTERN:
@@ -140,7 +172,7 @@ public class Behavior implements IBehavior {
 		// empty behavior
 		this.statement = new KActorsBehavior();
 	}
-	
+
 	@Override
 	public String getId() {
 		return this.statement.getName();
@@ -190,7 +222,7 @@ public class Behavior implements IBehavior {
 	public Type getDestination() {
 		return statement.getType();
 	}
-
+	
 	@Override
 	public List<Action> getActions(String... match) {
 		List<Action> ret = new ArrayList<>();

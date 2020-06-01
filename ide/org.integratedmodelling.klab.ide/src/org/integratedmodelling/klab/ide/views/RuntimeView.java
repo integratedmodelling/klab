@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.views;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -1006,8 +1007,11 @@ public class RuntimeView extends ViewPart {
 	}
 
 	private void refreshSystemLog() {
-		Display.getDefault()
-				.asyncExec(() -> tableViewer.setInput(notifications = sm().getSystemNotifications(systemLogLevel)));
+		Display.getDefault().asyncExec(() -> {
+			notifications = sm().getSystemNotifications(systemLogLevel);
+			Collections.reverse(notifications);
+			tableViewer.setInput(notifications);
+		});
 	}
 
 }

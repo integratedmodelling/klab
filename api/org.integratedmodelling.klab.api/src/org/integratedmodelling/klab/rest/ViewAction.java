@@ -21,6 +21,11 @@ public class ViewAction {
 		this.component = component;
 	}
 
+	public ViewAction(ViewComponent component, String stringValue) {
+		this.component = component;
+		this.stringValue = stringValue;
+	}
+
 	
 	public ViewAction(boolean response) {
 		this.booleanValue = response;

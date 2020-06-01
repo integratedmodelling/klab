@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -54,14 +55,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected IBehavior behavior;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
-
-	/*
-	 * matches the name of the annotation declaring it to the ID of a base div that
-	 * is sent to the view upon loading. If the annotation contains a name, that
-	 * name is used as a key, otherwise the annotation itself is used (e.g. "panel",
-	 * "footer").
-	 */
-	private Map<String, String> viewIds = Collections.synchronizedMap(new HashMap<>());
 	AtomicLong nextId = new AtomicLong(0);
 
 	/**
@@ -84,7 +77,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 			for (Pair<Match, IKActorsStatement> match : matches) {
 				if (match.getFirst().matches(value, scope)) {
-					execute(match.getSecond(), scope.withMatch(value));
+					execute(match.getSecond(), scope.withMatch(match.getFirst(), value));
 				}
 			}
 		}
@@ -136,8 +129,24 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.identity = identity;
 		}
 
-		public Scope withMatch(Object value) {
+		public Scope withMatch(Match match, Object value) {
 			Scope ret = new Scope(this);
+			/*
+			 * if we have identifiers either as key or in list key, match them to the
+			 * values. Otherwise match to $, $1, ... #n
+			 */
+			if (match.isIdentifier(ret)) {
+				// TODO list still not handled
+				ret.symbolTable.put(match.getIdentifier(), value);
+			} else if (match.isImplicit()) {
+				ret.symbolTable.put("$", value);
+				if (value instanceof Collection) {
+					int n = 1;
+					for (Object o : ((Collection<?>) value)) {
+						ret.symbolTable.put("$" + (n++), o);
+					}
+				}
+			}
 			ret.match = value;
 			return ret;
 		}
@@ -261,7 +270,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
 			run(action, new Scope(this.identity, action, message.scope));
 		}
-		
+
 		/*
 		 * run any main actions
 		 */
@@ -279,8 +288,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * Look that up in viewIds using the name in the annotation or the annotation
 		 * ID.
 		 */
-		if (((BehaviorAction)action).getViewId() != null) {
-			scope = scope.withViewId(((BehaviorAction)action).getViewId());
+		if (((BehaviorAction) action).getViewId() != null) {
+			scope = scope.withViewId(((BehaviorAction) action).getViewId());
 		}
 		execute(action.getStatement().getCode(), scope);
 	}
@@ -288,34 +297,34 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private void execute(IKActorsStatement code, Scope scope) {
 		switch (code.getType()) {
 		case ACTION_CALL:
-			executeCall((IKActorsStatement.Call) code, scope/* .get(code) */);
+			executeCall((IKActorsStatement.Call) code, scope);
 			break;
 		case ASSIGNMENT:
-			executeAssignment((IKActorsStatement.Assignment) code, scope/* .get(code) */);
+			executeAssignment((IKActorsStatement.Assignment) code, scope);
 			break;
 		case DO_STATEMENT:
-			executeDo((IKActorsStatement.Do) code, scope/* .get(code) */);
+			executeDo((IKActorsStatement.Do) code, scope);
 			break;
 		case FIRE_VALUE:
-			executeFire((IKActorsStatement.FireValue) code, scope/* .get(code) */);
+			executeFire((IKActorsStatement.FireValue) code, scope);
 			break;
 		case FOR_STATEMENT:
-			executeFor((IKActorsStatement.For) code, scope/* .get(code) */);
+			executeFor((IKActorsStatement.For) code, scope);
 			break;
 		case IF_STATEMENT:
-			executeIf((IKActorsStatement.If) code, scope/* .get(code) */);
+			executeIf((IKActorsStatement.If) code, scope);
 			break;
 		case CONCURRENT_GROUP:
-			executeGroup((IKActorsStatement.ConcurrentGroup) code, scope/* .get(code) */);
+			executeGroup((IKActorsStatement.ConcurrentGroup) code, scope);
 			break;
 		case SEQUENCE:
-			executeSequence((IKActorsStatement.Sequence) code, scope/* .get(code) */);
+			executeSequence((IKActorsStatement.Sequence) code, scope);
 			break;
 		case TEXT_BLOCK:
-			executeText((IKActorsStatement.TextBlock) code, scope/* .get(code) */);
+			executeText((IKActorsStatement.TextBlock) code, scope);
 			break;
 		case WHILE_STATEMENT:
-			executeWhile((IKActorsStatement.While) code, scope/* .get(code) */);
+			executeWhile((IKActorsStatement.While) code, scope);
 			break;
 		default:
 			break;
@@ -387,7 +396,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		if (code.getActions().size() > 0) {
 
 			notifyId = nextId.incrementAndGet();
-			MatchActions actions = new MatchActions(/* notifyId, */scope);
+			MatchActions actions = new MatchActions(scope);
 			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
 				actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
 			}
@@ -418,8 +427,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 					break;
 				case "view":
 				case "session":
-					// FIXME this will get the wrong actor - must install the runtime in the spawned observation and
-					// take it from there using the IActorIdentity API - getRuntimeActor() or something, return self
+					// FIXME this will get the wrong actor - must install the runtime in the spawned
+					// observation and
+					// take it from there using the IActorIdentity API - getRuntimeActor() or
+					// something, return self
 					// in a runtime.
 					recipient = identity.getParentIdentity(Session.class).getActor();
 					break;
@@ -482,7 +493,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * @return
 	 */
 	protected Behavior<KlabMessage> createChild(Spawn message) {
-		
+
 		Behavior<KlabMessage> behavior = null;
 		// TODO potentially more differentiation according to host
 		if (message.identity instanceof Observation) {
