@@ -249,7 +249,7 @@ public enum Authentication implements IAuthenticationService {
 		// try local hub, let fail if not active
 		if (client.ping(LOCAL_HUB_URL)) {
 			authenticationServer = LOCAL_HUB_URL;
-			Logging.INSTANCE.info("local hub is available: trying local authestartntication");
+			Logging.INSTANCE.info("local hub is available: trying local authentication");
 		} else {
 			authenticationServer = certificate.getProperty(KlabCertificate.KEY_PARTNER_HUB);
 		}

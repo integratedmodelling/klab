@@ -49,7 +49,7 @@ public class PublishResourceWizard extends Wizard {
 	private List<NodeReference> nodes;
 
 	public PublishResourceWizard(ResourceReference target, List<NodeReference> nodes) {
-		setWindowTitle("Publish a new k.Lab Resource");
+		setWindowTitle("Create a new k.LAB Namespace");
 		this.nodes = nodes;
 		this.target = target;
 	}
