@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ide.views;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -8,7 +9,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -24,6 +27,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,32 +46,40 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.api.runtime.ITicket.Status;
+import org.integratedmodelling.klab.client.messaging.ResourceMonitor;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class ResourcesView extends ViewPart {
 
 	public static final int LOCAL = 0;
 	public static final int PUBLIC = 1;
-	
+
 	public static final String ID = "org.integratedmodelling.klab.ide.views.ResourcesView";
-	
+
 	private Table table;
 	private TableViewer tableViewer;
 	private Text searchField;
 	private Label resultsLabel;
 	private List<EResourceReference> currentMatches = new ArrayList<>();
+	private List<Pair<String, IParameters<String>>> currentPublished = new ArrayList<>();
 	private KlabPeer klab;
 	private MenuItem mntmPreviewResource;
 	private Combo targetSelector;
 	private int mode = LOCAL;
 
-	class LabelProvider implements ITableLabelProvider {
+	class LabelProvider implements ITableLabelProvider, IColorProvider, IFontProvider {
 
 		@Override
 		public void addListener(ILabelProviderListener listener) {
@@ -80,18 +93,23 @@ public class ResourcesView extends ViewPart {
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
- 
+
 		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			return columnIndex == 0 && element instanceof EResourceReference
-					? ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-							(((ResourceReference) element).getGeometry().startsWith("#") ? "icons/resources.gif"
-									: "icons/resource.gif"))
-					: null;
+			if (element instanceof EResourceReference) {
+				// local. TODO change image if published, in error or pending
+				return columnIndex == 0 ? ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+						(((ResourceReference) element).getGeometry().startsWith("#") ? "icons/resources.gif"
+								: "icons/resource.gif"))
+						: null;
+			} else if (element instanceof Pair) {
+				// TODO
+			}
+			return null;
 		}
 
 		@Override
@@ -107,6 +125,23 @@ public class ResourcesView extends ViewPart {
 				case 3:
 					return describeGeometry(((EResourceReference) element).getGeometry());
 				}
+			} else if (element instanceof Pair) {
+				@SuppressWarnings("unchecked")
+				Pair<String, IParameters<String>> pair = (Pair<String, IParameters<String>>) element;
+				Date date = pair.getSecond().get(ResourceMonitor.DATE_RESOLVED_FIELD, Date.class);
+				if (date == null) {
+					date = pair.getSecond().get(ResourceMonitor.DATE_POSTED_FIELD, Date.class);
+				}
+				switch (columnIndex) {
+				case 0:
+					return pair.getSecond().get(ResourceMonitor.URN_FIELD, String.class);
+				case 1:
+					return pair.getSecond().get(ResourceMonitor.NODE_FIELD, String.class);
+				case 2:
+					return date.toString();
+				case 3:
+					return pair.getSecond().get(ResourceMonitor.LOCAL_URN_FIELD, String.class);
+				}
 			}
 			return null;
 		}
@@ -114,6 +149,50 @@ public class ResourcesView extends ViewPart {
 		private String describeGeometry(String geometry) {
 			// TODO
 			return geometry;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Font getFont(Object element) {
+			if (element instanceof Pair) {
+				Pair<String, IParameters<String>> pair = (Pair<String, IParameters<String>>) element;
+				if (pair.getSecond().get(ResourceMonitor.STATUS_FIELD, ITicket.Status.class) == Status.OPEN) {
+					return SWTResourceManager.getItalicFont(tableViewer.getTable().getFont());
+				} else {
+					return SWTResourceManager.getBoldFont(tableViewer.getTable().getFont());
+				}
+			}
+			return null;
+		}
+
+		@Override
+		public Color getForeground(Object element) {
+			if (element instanceof Pair) {
+
+				@SuppressWarnings("unchecked")
+				Pair<String, IParameters<String>> pair = (Pair<String, IParameters<String>>) element;
+				NodeReference node = null;
+				if (Activator.klab().getNetwork() == null) {
+					node = Activator.klab().getNetwork().getNodes()
+							.get(pair.getSecond().get(ResourceMonitor.NODE_FIELD));
+				}
+				if (node == null || !node.isOnline()) {
+					return SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY);
+				}
+
+				if (pair.getSecond().get(ResourceMonitor.STATUS_FIELD, ITicket.Status.class) == Status.RESOLVED) {
+					return SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN);
+				} else if (pair.getSecond().get(ResourceMonitor.STATUS_FIELD, ITicket.Status.class) == Status.ERROR) {
+					return SWTResourceManager.getColor(SWT.COLOR_RED);
+				}
+			}
+			return null;
+		}
+
+		@Override
+		public Color getBackground(Object element) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}
@@ -138,6 +217,8 @@ public class ResourcesView extends ViewPart {
 		public Object getParent(Object element) {
 			if (element instanceof ResourceReference) {
 				return currentMatches;
+			} else if (element instanceof Pair) {
+				return currentPublished;
 			}
 			return null;
 		}
@@ -182,6 +263,8 @@ public class ResourcesView extends ViewPart {
 			targetSelector.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
+					mode = targetSelector.getSelectionIndex();
+					refresh();
 				}
 			});
 		}
@@ -312,9 +395,10 @@ public class ResourcesView extends ViewPart {
 				mntmPreviewResource.setEnabled(true);
 			});
 			break;
-		case NetworkStatus:
-			// TODO if there's anything new and !(set to local + focus on search bar), switch to public and
-			// reload.
+		case TicketStatusChanged:
+		case TicketCreated:
+		case TicketResolved:
+			refresh();
 			break;
 		default:
 			break;
@@ -326,23 +410,41 @@ public class ResourcesView extends ViewPart {
 	 */
 	public void switchTo(int mode) {
 		if (this.mode != mode) {
-			
+			this.mode = mode;
+			this.targetSelector.select(mode);
+			refresh();
 		}
 	}
-	
+
 	protected void search(String text) {
 		currentMatches.clear();
 		if (text.length() > 1) {
-			for (EResourceReference resource : Activator.klab().getProjectResources()) {
-				if (resource.getLocalName().startsWith(text)) {
-					currentMatches.add(0, resource);
-				} else if (resource.getLocalName().contains(text)) {
-					currentMatches.add(resource);
+			if (this.mode == 0) {
+				for (EResourceReference resource : Activator.klab().getProjectResources()) {
+					if (resource.getLocalName().startsWith(text)) {
+						currentMatches.add(0, resource);
+					} else if (resource.getLocalName().contains(text)) {
+						currentMatches.add(resource);
+					}
 				}
+			} else {
+				// public
 			}
 		}
-		Display.getDefault().asyncExec(() -> tableViewer.setInput(currentMatches));
+		refresh();
+	}
 
+	private void refresh() {
+
+		Display.getDefault().asyncExec(() -> {
+			if (mode == 0) {
+				tableViewer.setInput(currentMatches);
+			} else {
+				// refresh from resource manager
+				this.currentPublished = Activator.session().getPublishedResources();
+				tableViewer.setInput(currentPublished);
+			}
+		});
 	}
 
 	public void dispose() {
@@ -376,9 +478,4 @@ public class ResourcesView extends ViewPart {
 		// Set the focus
 	}
 
-	public void showPending() {
-		//TODO
-		//Need to dome something to show status of pending resources
-		targetSelector.select(1);
-	}
 }

@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IComputationProvider;
@@ -56,6 +57,13 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * archetype is created from the observable.
 	 */
 	public static final String ARCHETYPE_ANNOTATION = "archetype";
+
+	/**
+	 * Annotation requesting a learner for a quality "within" a countable to also
+	 * compute the learned quality over the context of learning, requiring the 
+	 * predictors to become dependencies in it.
+	 */
+	public static final String DISTRIBUTE_ANNOTATION = "distribute";
 
 	/**
 	 * Return the semantics of all observables we are observing. The first in the
@@ -118,12 +126,13 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @param observable a
 	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *                   object.
+	 * @param the context of the observation, or null
 	 * @return the name with which the passed observable (or one compatible with it)
 	 *         is known in this model. If the observable isn't found in the model,
 	 *         this method should return the passed observable's local name, not
 	 *         null.
 	 */
-	String getLocalNameFor(IObservable observable);
+	String getLocalNameFor(IObservable observable, IConcept context);
 
 	/**
 	 * Return true if this model can be computed on its own and has associated data.

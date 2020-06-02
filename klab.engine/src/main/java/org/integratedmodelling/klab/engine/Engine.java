@@ -66,6 +66,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.kim.KimNotifier;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -125,6 +126,10 @@ public class Engine extends Server implements IEngine, UserDetails {
 			this.errorCount = monitor.errorCount;
 		}
 
+		public void setError(Throwable e) {
+			this.errorCount ++;
+		}
+		
 		public List<Listener> getListeners() {
 			return listeners;
 		}
@@ -176,15 +181,18 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		@Override
 		public void send(Object... o) {
+
+			IMessage message = null;
+
 			if (o != null && o.length > 0) {
 				IMessageBus bus = Klab.INSTANCE.getMessageBus();
 				if (bus != null) {
 					if (o.length == 1 && o[0] instanceof IMessage) {
-						bus.post((IMessage) o[0]);
+						bus.post(message = (IMessage) o[0]);
 					} else if (o.length == 1 && o[0] instanceof INotification) {
-						bus.post(Message.create((INotification) o[0], this.identity.getId()));
+						bus.post(message = Message.create((INotification) o[0], this.identity.getId()));
 					} else {
-						bus.post(Message.create(this.identity.getId(), o));
+						bus.post(message = Message.create(this.identity.getId(), o));
 					}
 				}
 			}
@@ -205,6 +213,22 @@ public class Engine extends Server implements IEngine, UserDetails {
 				}
 			}
 			return null;
+		}
+
+		@Override
+		public void post(Consumer<IMessage> handler, Object... o) {
+			if (o != null && o.length > 0) {
+				IMessageBus bus = Klab.INSTANCE.getMessageBus();
+				if (bus != null) {
+					if (o.length == 1 && o[0] instanceof IMessage) {
+						bus.post((IMessage) o[0], handler);
+					} else if (o.length == 1 && o[0] instanceof INotification) {
+						bus.post(Message.create((INotification) o[0], this.identity.getId()), handler);
+					} else {
+						bus.post(Message.create(this.identity.getId(), o), handler);
+					}
+				}
+			}
 		}
 
 		@Override
@@ -243,6 +267,12 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		public void interrupt() {
 			isInterrupted.set(true);
+//			IIdentity id = getIdentity();
+//			// interrupt any parents that are the same class as ours (i.e. tasks)
+//			while (id != null && id.getClass().isAssignableFrom(id.getParentIdentity().getClass())) {
+//				id = id.getParentIdentity();
+//				((Monitor)((IRuntimeIdentity)id).getMonitor()).interrupt();
+//			}
 		}
 
 		@Override
@@ -464,7 +494,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 		 * boot the actor system
 		 */
 		Actors.INSTANCE.setup();
-		
+
 		/**
 		 * Annotation prototypes
 		 */
@@ -546,12 +576,12 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * load component knowledge after all binary content is registered.
 			 */
 			Resources.INSTANCE.getComponentsWorkspace().load(getMonitor());
-			
+
 			/*
 			 * save cache of function prototypes and resolved URNs for clients
 			 */
 			saveClientInformation();
-			
+
 			/*
 			 * now we can finally load the workspace
 			 */
@@ -572,8 +602,6 @@ public class Engine extends Server implements IEngine, UserDetails {
 			/*
 			 * run any init scripts from parameters
 			 */
-
-
 
 			/*
 			 * Schedule the session reaper

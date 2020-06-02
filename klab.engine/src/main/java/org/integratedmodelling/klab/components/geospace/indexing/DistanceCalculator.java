@@ -15,7 +15,9 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.operation.distance.DistanceOp;
 
 public class DistanceCalculator {
 
@@ -65,6 +67,17 @@ public class DistanceCalculator {
 			}
 		}
 		return Double.NaN;
+	}
+
+	public double[] getNearestPoint(double[] xy) {
+
+		if (!isEmpty) {
+			Coordinate[] nearest = new DistanceOp(Shape.makePoint(xy[0], xy[1]), getFinalGeometry()).nearestPoints();
+			if (nearest.length > 1) {
+				return new double[] { nearest[1].x, nearest[1].y };
+			}
+		}
+		return null;
 	}
 
 	private double convert(double distance, IUnit unit) {

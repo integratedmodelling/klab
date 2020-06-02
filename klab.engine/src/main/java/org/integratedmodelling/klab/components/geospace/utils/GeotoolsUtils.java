@@ -11,19 +11,19 @@ import javax.media.jai.RasterFactory;
 import javax.media.jai.iterator.RandomIter;
 import javax.media.jai.iterator.RandomIterFactory;
 
+import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
-import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Range;
 
 public enum GeotoolsUtils {
@@ -33,24 +33,24 @@ public enum GeotoolsUtils {
 	Map<IConcept, Integer> conceptMap = new HashMap<>();
 	GridCoverageFactory rasterFactory = new GridCoverageFactory();
 
-	/**
-	 * Turn a state into a grid coverage.
-	 * 
-	 * @param state
-	 * @return a Geotools grid coverage
-	 * @throws IllegalArgumentException if the state is not suitable for a raster
-	 *                                  representation.
-	 */
-	public GridCoverage2D stateToCoverage(IState state, ILocator locator, float noDataValue) {
-		return stateToCoverage(state.at(locator), DataBuffer.TYPE_FLOAT, noDataValue);
+//	/**
+//	 * Turn a state into a grid coverage.
+//	 * 
+//	 * @param state
+//	 * @return a Geotools grid coverage
+//	 * @throws IllegalArgumentException if the state is not suitable for a raster
+//	 *                                  representation.
+//	 */
+//	public GridCoverage2D stateToCoverage(IState state, ILocator locator, float noDataValue) {
+//		return stateToCoverage(state.at(locator), DataBuffer.TYPE_FLOAT, noDataValue);
+//	}
+
+	public GridCoverage2D stateToCoverage(IState state, ILocator locator) {
+		return stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN);
 	}
 
-	public GridCoverage2D stateToCoverage(IState state) {
-		return stateToCoverage(state, DataBuffer.TYPE_FLOAT, Float.NaN);
-	}
-
-	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue) {
-		return stateToCoverage(state, type, noDataValue, null);
+	public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue) {
+		return stateToCoverage(state, locator, type, noDataValue, null);
 	}
 
 	/**
@@ -61,15 +61,15 @@ public enum GeotoolsUtils {
 	 * @throws IllegalArgumentException if the state is not suitable for a raster
 	 *                                  representation.
 	 */
-	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue,
+	public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue,
 			Function<Object, Object> transformation) {
 
-		Space space = (Space) state.getScale().getSpace();
-		if (space == null || space.getGrid() == null) {
+		ISpace space = state.getScale().getSpace();
+		if (!(space instanceof Space) || ((Space)space).getGrid() == null) {
 			throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
 		}
-		Grid grid = (Grid) space.getGrid();
-
+		Grid grid = (Grid) ((Space)space).getGrid();
+		
 		/*
 		 * build a coverage.
 		 * 
@@ -92,8 +92,9 @@ public enum GeotoolsUtils {
 		 * only go through active cells. State should have been located through a proxy
 		 * for other extents.
 		 */
-		for (Cell cell : grid) {
-			Object o = state.get(cell);
+		for (ILocator position : locator) {
+			Cell cell = position.as(Cell.class);
+			Object o = state.get(position);
 			if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
 				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, noDataValue);
 			} else if (o instanceof Number) {
@@ -115,23 +116,27 @@ public enum GeotoolsUtils {
 			}
 		}
 
-		return rasterFactory.create(state.getObservable().getName(), raster, space.getShape().getJTSEnvelope());
-
+//		GridSampleDimension[] ziopopr = new GridSampleDimension[] {
+//			GridSampleDimension
+//		};
+		
+		return rasterFactory.create(state.getObservable().getName(), raster, ((Space)space).getShape().getJTSEnvelope()/* , ziopopr*/);
+		
 	}
 
 	public void coverageToState(GridCoverage2D layer, IState state) {
 		coverageToState(layer, state, null, null);
 	}
 
-	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation) {
-		coverageToState(layer, state, transformation, null);
+	public void coverageToState(GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation) {
+		coverageToState(layer, state, locator, transformation, null);
 	}
 
 	/**
 	 * Dump the data from a coverage into a pre-existing state.
 	 * 
 	 */
-	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation,
+	public void coverageToState(GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation,
 			Function<long[], Boolean> coordinateChecker) {
 
 		ISpace ext = state.getScale().getSpace();
@@ -140,7 +145,7 @@ public enum GeotoolsUtils {
 			throw new KlabValidationException("cannot write a gridded state from a non-gridded extent");
 		}
 
-		Geometry geometry = ((Scale) state.getGeometry()).asGeometry();
+//		Geometry geometry = ((Scale) state.getGeometry()).asGeometry();
 		IGrid grid = ((Space) ext).getGrid();
 		RenderedImage image = layer.getRenderedImage();
 		RandomIter itera = RandomIterFactory.create(image, null);
@@ -148,7 +153,7 @@ public enum GeotoolsUtils {
 		for (int i = 0; i < grid.getCellCount(); i++) {
 			long[] xy = grid.getXYOffsets(i);
 			Double value = itera.getSampleDouble((int) xy[0], (int) xy[1], 0);
-			ILocator spl = geometry.at(ISpace.class, xy[0], xy[1]);
+			ILocator spl = locator.at(ISpace.class, xy[0], xy[1]);
 			if (transformation != null) {
 				value = transformation.apply(value);
 			}

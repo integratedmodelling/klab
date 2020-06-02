@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -33,7 +34,9 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
 
 /**
  * 
@@ -248,7 +251,7 @@ public class Grid extends Area implements IGrid {
 			this.locatedOffsets = new long[] { x, y };
 			this.locatedLinearOffset = Grid.this.getOffset(x, y);
 		}
-
+		
 		@Override
 		public long getLocatedOffset() {
 			return getOffsetInGrid();
@@ -515,11 +518,6 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public double getCoverage() {
-			return 1;
-		}
-
-		@Override
 		public long size() {
 			return 1;
 		}
@@ -743,6 +741,12 @@ public class Grid extends Area implements IGrid {
 			if (stateIndex != 0) {
 				throw new IllegalArgumentException("cannot access state #" + stateIndex + " in a Cell");
 			}
+			return this;
+		}
+
+		@Override
+		protected CellImpl contextualizeTo(IExtent other, IAnnotation constraint) {
+			// TODO Auto-generated method stub
 			return this;
 		}
 	}
@@ -1302,7 +1306,143 @@ public class Grid extends Area implements IGrid {
 		if (isStandardProjection && !Projection.getDefault().equals(getProjection())) {
 			coordinates = getProjection().transformCoordinate(coordinates, Projection.getDefault());
 		}
+		if (!envelope.envelope.contains(coordinates[0], coordinates[1])) {
+			return null;
+		}
 		long offset = getOffsetFromWorldCoordinates(coordinates[0], coordinates[1]);
 		return getCell(offset);
+	}
+
+	/**
+	 * Get a space extent with the passed shape and a grid that aligns with ours.
+	 * Easier said than done of course.
+	 * 
+	 * @param bbox
+	 * @return
+	 */
+	public Space getAlignedGrid(IShape bbox) {
+		return Space.create(shape, this, true);
+	}
+
+	/**
+	 * Return a rectangular extent that covers a cell from a different grid and
+	 * iterates to the covered cells of this grid, each with a coverage
+	 * correspondent to the amount of the original cell covered.
+	 * 
+	 * @param otherCell
+	 * @return
+	 */
+	public IExtent getCoveredExtent(Cell otherCell) {
+
+		double[] xy = otherCell.getCenter();
+		// testing
+//		Cell ret = this.getCellAt(xy, false);
+//		if (ret != null && mask != null && !mask.isActive(ret.getX(), ret.getY())) {
+//			return null;
+//		}
+//		
+////		if (ret != null) {
+////			System.out.println("cell at " + Arrays.toString(xy) + " is " + ret.getX() + "," + ret.getY());
+////		}
+//		
+//		return ret;
+
+		Range horizontal = Range.create(otherCell.getWest(), otherCell.getEast());
+		Range vertical = Range.create(otherCell.getSouth(), otherCell.getNorth());
+		Range gridHRange = Range.create(this.getWest(), this.getEast());
+		Range gridVRange = Range.create(this.getSouth(), this.getNorth());
+
+		Pair<Range, Pair<Double, Double>> hSnapped = gridHRange.snap(horizontal, xCells);
+		Pair<Range, Pair<Double, Double>> vSnapped = gridVRange.snap(vertical, yCells);
+
+		if (hSnapped == null || vSnapped == null) {
+			return null;
+		}
+
+		/*
+		 * TODO diocan
+		 */
+
+		return new SubgridExtent(otherCell, hSnapped, vSnapped);
 	};
+
+	class SubgridExtent extends Shape {
+
+		private Range horizontalRange;
+		private Pair<Double, Double> horizontalError;
+		private Range verticalRange;
+		private Pair<Double, Double> verticalError;
+		private long xcells;
+		private long ycells;
+		private MultidimensionalCursor cursor;
+
+		SubgridExtent(Cell cell, Pair<Range, Pair<Double, Double>> horizontal,
+				Pair<Range, Pair<Double, Double>> vertical) {
+			super((Shape) cell.getShape());
+			this.horizontalRange = horizontal.getFirst();
+			this.horizontalError = horizontal.getSecond();
+			this.verticalRange = vertical.getFirst();
+			this.verticalError = vertical.getSecond();
+			this.xcells = (long) (this.horizontalRange.getWidth() / cellWidth);
+			this.ycells = (long) (this.verticalRange.getWidth() / cellHeight);
+			// rounding may do this
+			if (this.xcells == 0) {
+				this.xcells = 1;
+			}
+			if (this.ycells == 0) {
+				this.ycells = 1;
+			}
+			this.cursor = new MultidimensionalCursor(xcells, ycells);
+		}
+
+		@Override
+		public long size() {
+			return this.xcells * this.ycells;
+		}
+
+		@Override
+		public IExtent getExtent(long stateIndex) {
+			
+			/*
+			 * get the cell of the original grid pointed to by the offset
+			 */
+			long[] offsets = cursor.getElementIndexes(stateIndex);
+
+			double x = horizontalRange.getLowerBound() + (offsets[0] * cellWidth) + (cellWidth * 0.5);
+			double y = verticalRange.getLowerBound() + (offsets[1] * cellHeight) + (cellHeight * 0.5);
+
+			Cell ret = getCellAt(new double[] { x, y }, false);
+
+			// coverage
+			Range cellHr = Range.create(ret.getWest(), ret.getEast());
+			Range cellVr = Range.create(ret.getSouth(), ret.getNorth());
+
+			double coverage = cellHr.intersection(this.horizontalRange).getWidth() / cellHr.getWidth()
+					* cellVr.intersection(this.verticalRange).getWidth() / cellVr.getWidth();
+			
+			return ((AbstractExtent)ret).withCoverage(coverage);
+		}
+
+		@Override
+		public Iterator<ILocator> iterator() {
+
+			return new Iterator<ILocator>() {
+
+				long current = 0;
+
+				@Override
+				public boolean hasNext() {
+					return current < cursor.getMultiplicity();
+				}
+
+				@Override
+				public ILocator next() {
+					return getExtent(current++);
+				}
+
+			};
+		}
+
+	}
+
 }

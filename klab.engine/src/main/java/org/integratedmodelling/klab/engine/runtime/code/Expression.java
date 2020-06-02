@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -26,220 +27,254 @@ import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 public abstract class Expression implements IExpression {
 
-  // A dummy context to use when we don't have a context to pass
-  public static class Scope extends Parameters<String> implements IContextualizationScope {
+	// A dummy context to use when we don't have a context to pass
+	public static class Scope extends Parameters<String> implements IContextualizationScope {
 
-    private IMonitor monitor;
-    private INamespace namespace;
-    
-    public Scope(IMonitor monitor) {
-      this.monitor = monitor;
-    }
+		private IMonitor monitor;
+		private INamespace namespace;
+		private IScale scale;
 
-    Scope(IMonitor monitor, INamespace namespace) {
-      this.monitor = monitor;
-      this.namespace = namespace;
-    }
-    
-    @Override
-    public INamespace getNamespace() {
-      return this.namespace;
-    }
+		public Scope(IMonitor monitor) {
+			this.monitor = monitor;
+		}
 
-    @Override
-    public IProvenance getProvenance() {
-      return null;
-    }
+		Scope(IMonitor monitor, INamespace namespace) {
+			this.monitor = monitor;
+			this.namespace = namespace;
+		}
 
-    @Override
-    public IEventBus getEventBus() {
-      return null;
-    }
+		Scope(IGeometry geometry, IMonitor monitor) {
+			this.monitor = monitor;
+			this.scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
+		}
 
-    @Override
-    public Collection<IRelationship> getOutgoingRelationships(IDirectObservation observation) {
-      return new ArrayList<>();
-    }
+		@Override
+		public INamespace getNamespace() {
+			return this.namespace;
+		}
 
-    @Override
-    public Collection<IRelationship> getIncomingRelationships(IDirectObservation observation) {
-      return new ArrayList<>();
-    }
+		@Override
+		public IProvenance getProvenance() {
+			return null;
+		}
 
-    @Override
-    public IArtifact getArtifact(String localName) {
-      return null;
-    }
+		@Override
+		public IEventBus getEventBus() {
+			return null;
+		}
 
-    @Override
-    public IMonitor getMonitor() {
-      return monitor;
-    }
+		@Override
+		public Collection<IRelationship> getOutgoingRelationships(IDirectObservation observation) {
+			return new ArrayList<>();
+		}
 
-    @Override
-    public IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata) {
-      return null;
-    }
+		@Override
+		public Collection<IRelationship> getIncomingRelationships(IDirectObservation observation) {
+			return new ArrayList<>();
+		}
 
-    @Override
-    public IObjectArtifact newRelationship(IObservable observable, String name, IScale scale,
-        IObjectArtifact source, IObjectArtifact target, IMetadata metadata) {
-      return null;
-    }
+		@Override
+		public IArtifact getArtifact(String localName) {
+			return null;
+		}
 
-    @Override
-    public Type getArtifactType() {
-      // TODO Auto-generated method stub
-      return null;
-    }
+		@Override
+		public IMonitor getMonitor() {
+			return monitor;
+		}
 
-    @Override
-    public <T extends IArtifact> Collection<Pair<String, T>> getArtifacts(Class<T> type) {
-      return new ArrayList<>();
-    }
+		@Override
+		public IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata) {
+			return null;
+		}
 
-    @Override
-    public IScale getScale() {
-      // TODO Auto-generated method stub
-      return null;
-    }
+		@Override
+		public IObjectArtifact newRelationship(IObservable observable, String name, IScale scale,
+				IObjectArtifact source, IObjectArtifact target, IMetadata metadata) {
+			return null;
+		}
 
-    @Override
-    public IObservable getSemantics(String identifier) {
-      return null;
-    }
+		@Override
+		public Type getArtifactType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 
-    @Override
-    public IArtifact getTargetArtifact() {
-      // TODO Auto-generated method stub
-      return null;
-    }
+		@Override
+		public <T extends IArtifact> Collection<Pair<String, T>> getArtifacts(Class<T> type) {
+			return new ArrayList<>();
+		}
 
-    @Override
-    public <T extends IArtifact> T getArtifact(String localName, Class<T> cls) {
-      // TODO Auto-generated method stub
-      return null;
-    }
+		@Override
+		public IScale getScale() {
+			return scale;
+		}
 
-	@Override
-	public IObservable getTargetSemantics() {
-		// TODO Auto-generated method stub
-		return null;
+		@Override
+		public IObservable getSemantics(String identifier) {
+			return null;
+		}
+
+		@Override
+		public IArtifact getTargetArtifact() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public <T extends IArtifact> T getArtifact(String localName, Class<T> cls) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IObservable getTargetSemantics() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getTargetName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ISubject getSourceSubject(IRelationship relationship) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ISubject getTargetSubject(IRelationship relationship) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IDirectObservation getContextObservation() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IDirectObservation getParentOf(IObservation observation) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IObservation> getChildrenOf(IObservation observation) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IScheduler getScheduler() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IReport getReport() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IModel getModel() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IArtifact> getArtifact(IConcept observable) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public org.integratedmodelling.klab.api.data.general.IExpression.Context getExpressionContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IDataflow<?> getDataflow() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Map<String, IVariable> getVariables() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IArtifact> getAdditionalOutputs() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IObservable> getDependents(IObservable observable) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IObservable> getPrecursors(IObservable observable) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ISubject getRootSubject() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IDirectObservation getContextSubject() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IObservation getParentArtifactOf(IObservation observation) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IObservation> getObservations(IConcept observable) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 
-	@Override
-	public String getTargetName() {
-		// TODO Auto-generated method stub
-		return null;
+	public static IContextualizationScope emptyContext(IMonitor monitor) {
+		return new Scope(monitor);
 	}
 
-	@Override
-	public ISubject getSourceSubject(IRelationship relationship) {
-		// TODO Auto-generated method stub
-		return null;
+	public static IContextualizationScope emptyContext(IMonitor monitor, INamespace namespace) {
+		return new Scope(monitor, namespace);
 	}
 
-	@Override
-	public ISubject getTargetSubject(IRelationship relationship) {
-		// TODO Auto-generated method stub
-		return null;
+	public static IContextualizationScope emptyContext(IGeometry geometry, IMonitor monitor) {
+		return new Scope(geometry, monitor);
 	}
-
-	@Override
-	public IDirectObservation getContextObservation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IDirectObservation getParentOf(IObservation observation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<IObservation> getChildrenOf(IObservation observation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IScheduler getScheduler() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IReport getReport() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IModel getModel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<IArtifact> getArtifact(IConcept observable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public org.integratedmodelling.klab.api.data.general.IExpression.Context getExpressionContext() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IDataflow<?> getDataflow() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<String, IVariable> getVariables() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<IArtifact> getAdditionalOutputs() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<IObservable> getDependents(IObservable observable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<IObservable> getPrecursors(IObservable observable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-  }
-  
-  public static IContextualizationScope emptyContext(IMonitor monitor) {
-    return new Scope(monitor);
-  }
-  
-  public static IContextualizationScope emptyContext(IMonitor monitor, INamespace namespace) {
-    return new Scope(monitor, namespace);
-  }    
 }

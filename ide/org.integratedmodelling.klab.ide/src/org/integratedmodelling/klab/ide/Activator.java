@@ -46,8 +46,10 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AttributeReference;
+import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectReference;
+import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -119,9 +121,9 @@ public class Activator extends AbstractUIPlugin {
 							ret.setOnline();
 						}
 						if (resource.getDependencies() != null) {
-						    for (AttributeReference dependency : resource.getDependencies()) {
-						        ret.addDependency(dependency.getName(), dependency.getType());
-						    }
+							for (AttributeReference dependency : resource.getDependencies()) {
+								ret.addDependency(dependency.getName(), dependency.getType());
+							}
 						}
 					}
 				}
@@ -171,12 +173,11 @@ public class Activator extends AbstractUIPlugin {
 			}
 
 		});
-		
+
 		/*
 		 * this tells us when a project is being closed
 		 */
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(new KimResourceListener());
-        
 
 		/*
 		 * install link helper
@@ -257,11 +258,11 @@ public class Activator extends AbstractUIPlugin {
 		 * ensure we can be stopped by an external controller
 		 */
 		new FileBasedMonitor(5).start(5);
-		
+
 		this.engineStatusMonitor.start(relayId);
 
 	}
-	
+
 	/**
 	 * Call this after adding or removing projects
 	 */
@@ -318,13 +319,22 @@ public class Activator extends AbstractUIPlugin {
 		this.engine = new KlabEngine(this.engineStatusMonitor.getEngineId());
 		this.session = new KlabSession(sessionId);
 		this.explorer = new KlabExplorer(relayId);
+
 		this.user = new KlabUser(this.engineStatusMonitor.getOwner());
 		this.engineStatusMonitor.getBus().subscribe(this.engineStatusMonitor.getEngineId(), this.engine);
 		this.engineStatusMonitor.getBus().subscribe(sessionId, this.session);
 		this.engineStatusMonitor.getBus().subscribe(relayId, this.explorer);
 		this.engine.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
 				IMessage.Type.EngineUp, this.engineStatusMonitor.getCapabilities()));
-
+		/*
+		 * subscribe to notifications for resource validation events
+		 */
+		WatchRequest request = new WatchRequest();
+		request.setEventType(EngineEvent.Type.ResourceValidation);
+		request.setActive(true);
+		this.engineStatusMonitor.getBus().post(Message.create(this.engineStatusMonitor.getSessionId(),
+				IMessage.MessageClass.Notification, IMessage.Type.EngineEvent, request));
+		
 		/*
 		 * offer to import any k.LAB local projects that are not in the workspace and
 		 * have the engine load those projects it does not have. TODO may also offer to
@@ -403,7 +413,7 @@ public class Activator extends AbstractUIPlugin {
 	public static EngineClient client() {
 		return engineMonitor().getClient();
 	}
-	
+
 	public static IKimLoader loader() {
 		return get().loader;
 	}
@@ -425,15 +435,29 @@ public class Activator extends AbstractUIPlugin {
 		if (get().engineStatusMonitor.isRunning()) {
 			client().with(session().getIdentity()).download(url, file);
 		}
-		
+
 	}
-	
+
 	public static void post(Object... object) {
 		if (get().engineStatusMonitor.isRunning()) {
 			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object));
 		}
 	}
 
+	public static void reply(IMessage original, Object... object) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().post(
+					Message.create(get().engineStatusMonitor.getSessionId(), object).inResponseTo(original.getId()));
+		}
+	}
+
+	public static void reply(String originalMessageId, Object... object) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().post(
+					Message.create(get().engineStatusMonitor.getSessionId(), object).inResponseTo(originalMessageId));
+		}
+	}
+	
 	public static void post(Consumer<IMessage> responseHandler, Object... object) {
 		if (get().engineStatusMonitor.isRunning()) {
 			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object),

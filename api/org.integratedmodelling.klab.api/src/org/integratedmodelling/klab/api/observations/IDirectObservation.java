@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 
 /**
  * The Interface IDirectObservation, i.e. an observation that can be
@@ -41,6 +42,15 @@ public abstract interface IDirectObservation extends IObservation, IObjectArtifa
 	 */
 	String getName();
 
+	/**
+	 * Direct observations may have children. This is a convenience method to find a particular
+	 * child artifact.
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	public IObservation getChildObservation(IObservable observable);
+	
 	/**
 	 * <p>
 	 * Direct observations may have states of their own.

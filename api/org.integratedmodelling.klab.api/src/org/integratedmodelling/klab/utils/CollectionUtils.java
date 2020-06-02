@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.rest.Notification;
 
 public class CollectionUtils {
 
@@ -53,4 +55,15 @@ public class CollectionUtils {
 		}
 		return ret;
 	}
+	
+	public static Collection<IObservation> joinObservations(Collection<IObservation> artifacts) {
+		List<IObservation> ret = new ArrayList<>();
+		for (IObservation artifact : artifacts) {
+			for (IArtifact a : artifact) {
+				ret.add((IObservation)a);
+			}
+		}
+		return ret;
+	}
+
 }

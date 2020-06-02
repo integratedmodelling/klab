@@ -34,6 +34,7 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getRegexp <em>Regexp</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getLiteral <em>Literal</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getQuantity <em>Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getExpr <em>Expr</em>}</li>
@@ -165,6 +166,16 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @ordered
    */
   protected Literal literal;
+
+  /**
+   * The cached value of the '{@link #getList() <em>List</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getList()
+   * @generated
+   * @ordered
+   */
+  protected List list;
 
   /**
    * The cached value of the '{@link #getSet() <em>Set</em>}' containment reference.
@@ -518,6 +529,56 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
+  public List getList()
+  {
+    return list;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetList(List newList, NotificationChain msgs)
+  {
+    List oldList = list;
+    list = newList;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__LIST, oldList, newList);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setList(List newList)
+  {
+    if (newList != list)
+    {
+      NotificationChain msgs = null;
+      if (list != null)
+        msgs = ((InternalEObject)list).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__LIST, null, msgs);
+      if (newList != null)
+        msgs = ((InternalEObject)newList).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__LIST, null, msgs);
+      msgs = basicSetList(newList, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__LIST, newList, newList));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public List getSet()
   {
     return set;
@@ -726,6 +787,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return basicSetBody(null, msgs);
       case KactorsPackage.MATCH__LITERAL:
         return basicSetLiteral(null, msgs);
+      case KactorsPackage.MATCH__LIST:
+        return basicSetList(null, msgs);
       case KactorsPackage.MATCH__SET:
         return basicSetSet(null, msgs);
       case KactorsPackage.MATCH__QUANTITY:
@@ -758,6 +821,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return getObservable();
       case KactorsPackage.MATCH__LITERAL:
         return getLiteral();
+      case KactorsPackage.MATCH__LIST:
+        return getList();
       case KactorsPackage.MATCH__SET:
         return getSet();
       case KactorsPackage.MATCH__QUANTITY:
@@ -804,6 +869,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return;
       case KactorsPackage.MATCH__LITERAL:
         setLiteral((Literal)newValue);
+        return;
+      case KactorsPackage.MATCH__LIST:
+        setList((List)newValue);
         return;
       case KactorsPackage.MATCH__SET:
         setSet((List)newValue);
@@ -858,6 +926,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
       case KactorsPackage.MATCH__LITERAL:
         setLiteral((Literal)null);
         return;
+      case KactorsPackage.MATCH__LIST:
+        setList((List)null);
+        return;
       case KactorsPackage.MATCH__SET:
         setSet((List)null);
         return;
@@ -904,6 +975,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
       case KactorsPackage.MATCH__LITERAL:
         return literal != null;
+      case KactorsPackage.MATCH__LIST:
+        return list != null;
       case KactorsPackage.MATCH__SET:
         return set != null;
       case KactorsPackage.MATCH__QUANTITY:

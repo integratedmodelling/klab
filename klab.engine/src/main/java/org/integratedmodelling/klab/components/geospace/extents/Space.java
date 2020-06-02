@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
+import org.integratedmodelling.klab.components.geospace.extents.Grid.CellImpl;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.FeaturesToShape;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToFeatures;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToGrid;
@@ -644,12 +645,6 @@ public class Space extends Extent implements ISpace {
 	}
 
 	@Override
-	public double getCoverage() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public Type getType() {
 		return Dimension.Type.SPACE;
 	}
@@ -883,11 +878,11 @@ public class Space extends Extent implements ISpace {
 						 */
 						double resolution = ((Envelope) resultShape.getEnvelope()).getResolutionForZoomLevel(50, 2)
 								.getFirst();
-						
-						return create((Shape)resultShape, resolution);
-						
+
+						return create((Shape) resultShape, resolution);
+
 					} else {
-						
+
 						// what we want is the destination, already fully defined
 						return destination;
 					}
@@ -899,21 +894,23 @@ public class Space extends Extent implements ISpace {
 						/*
 						 * make a grid according to specs
 						 */
-						double resolution = org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(((Space) destination).gridSpecs);
-						return create((Shape)resultShape, resolution);
-						
+						double resolution = org.integratedmodelling.klab.components.geospace.services.Space
+								.parseResolution(((Space) destination).gridSpecs);
+						return create((Shape) resultShape, resolution);
+
 					} else {
-						
+
 						/*
 						 * if we have same resolution, keep the grid from the source, otherwise make a
 						 * different one and hope for mediators.
 						 */
-						double resolution = org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(((Space) destination).gridSpecs);
-						if (NumberUtils.equal(((Grid)resultGrid).linearResolutionMeters, resolution)) {
+						double resolution = org.integratedmodelling.klab.components.geospace.services.Space
+								.parseResolution(((Space) destination).gridSpecs);
+						if (NumberUtils.equal(((Grid) resultGrid).linearResolutionMeters, resolution)) {
 							return destination;
 						}
-						
-						return create((Shape)resultShape, resolution);
+
+						return create((Shape) resultShape, resolution);
 					}
 				}
 
@@ -975,6 +972,17 @@ public class Space extends Extent implements ISpace {
 				if (locators[0] instanceof ISpace) {
 					if (((ISpace) locators[0]).getDimensionality() == 0) {
 						coordinates = ((ISpace) locators[0]).getStandardizedCentroid();
+					} else if (locators[0] instanceof IGrid.Cell) {
+						/*
+						 * may be same grid or other grid.
+						 */
+						IGrid.Cell otherCell = (IGrid.Cell)locators[0];
+						if (this.grid != null) {
+							if (((CellImpl)otherCell).getGrid().equals(this.grid)) {
+								return otherCell;
+							}
+							return this.grid.getCoveredExtent(otherCell);
+						}
 					}
 				} else if (locators[0] instanceof Number && !Utils.isFloatingPoint((Number) locators[0])) {
 					offset = ((Number) locators[0]).longValue();
@@ -1028,6 +1036,29 @@ public class Space extends Extent implements ISpace {
 	public IExtent adopt(IExtent extent, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return this;
+	}
+
+	@Override
+	protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
+	/**
+	 * Create a new spatial extent from a shape using an existing grid as a model
+	 * for gridding. The grid is only a model and does not necessarily cover or
+	 * intersect the shape.
+	 * 
+	 * @param shape the shape for the extent
+	 * @param grid  the definition of a grid, which may or may not extend to cover
+	 *              or intersect the shape
+	 * @param align if true, try to align the grids so that cells may overlap, even
+	 *              if the extents do not
+	 * @return a new spatial extent
+	 */
+	public static Space create(Shape shape, Grid grid, boolean align) {
+		// TODO this ignores everything
+		return create(shape.copy(), grid.linearResolutionMeters);
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -437,6 +438,7 @@ public class Geometry implements IGeometry {
 		private long[] shape;
 		private Parameters<String> parameters = new Parameters<>();
 		private boolean generic;
+		private double coverage = 1.0;
 
 		@Override
 		public Type getType() {
@@ -467,6 +469,10 @@ public class Geometry implements IGeometry {
 		@Override
 		public int getDimensionality() {
 			return dimensionality;
+		}
+		
+		public double getCoverage() {
+			return coverage;
 		}
 
 		@Override
@@ -596,9 +602,18 @@ public class Geometry implements IGeometry {
 	private Granularity granularity = Granularity.SINGLE;
 	private Geometry child;
 	private boolean scalar;
+	private Double coverage = null;
 
-	// only used to compute offsets if requested
-//	transient private MultidimensionalCursor cursor = null;
+	@Override
+	public double getCoverage() {
+		if (this.coverage == null) {
+			this.coverage = 1.0;
+			for (Dimension dim : getDimensions()) {
+				this.coverage *= ((DimensionImpl)dim).coverage;
+			}
+		}
+		return this.coverage;
+	}
 
 	@Override
 	public IGeometry getChild() {
@@ -1080,13 +1095,18 @@ public class Geometry implements IGeometry {
 			return this;
 		}
 
-		List<Dimension> result = new ArrayList<>();
+		Map<Dimension.Type, Dimension> res = new LinkedHashMap<>();
+		for (Dimension dimension : getDimensions()) {
+			res.put(dimension.getType(), ((DimensionImpl)dimension).copy());
+		}
+		
+//		List<Dimension> result = new ArrayList<>();
 		for (Dimension dimension : geometry.getDimensions()) {
 			if (getDimension(dimension.getType()) == null) {
-				result.add(((DimensionImpl) dimension).copy());
+				res.put(dimension.getType(), ((DimensionImpl) dimension).copy());
 			} else if (getDimension(dimension.getType()).isGeneric() && !dimension.isGeneric()) {
 				// a specific dimension trumps a generic one
-				result.add(((DimensionImpl) dimension).copy());
+				res.put(dimension.getType(), ((DimensionImpl) dimension).copy());
 			} else if (!((DimensionImpl) getDimension(dimension.getType())).isCompatible(dimension)) {
 				return null;
 			} else {
@@ -1099,11 +1119,11 @@ public class Geometry implements IGeometry {
 					// merging an irregular dimension makes us irregular
 					((DimensionImpl) myDimension).regular = false;
 				}
-				result.add(myDimension);
+				res.put(myDimension.getType(), myDimension);
 			}
 		}
 
-		return create(result);
+		return create(res.values());
 
 	}
 

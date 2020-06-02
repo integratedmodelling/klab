@@ -184,15 +184,17 @@ public class ObservationReference implements IObservationReference {
 	private List<String> traits = new ArrayList<>();
 	private Map<String, String> metadata = new HashMap<>();
 	private String taskId;
+	private String contextId;
 	private boolean empty;
 	private Style style;
-	private boolean main;
 	private boolean primary;
 	private DataSummary dataSummary;
 	private List<ExportFormat> exportFormats = new ArrayList<>();
 	// only non-null in views
 	private String originalGroupId;
 	private boolean alive;
+	private boolean main;
+	private boolean dynamic;
 
 	/*
 	 * Only sent when the observation redefines the scale (new context)
@@ -315,6 +317,11 @@ public class ObservationReference implements IObservationReference {
 	 */
 	private boolean previouslyNotified;
 
+	/**
+	 * Set to true when descriptor is generated after full contextualization.
+	 */
+	private boolean contextualized;
+	
 	/**
 	 * Only updated for root contexts; contains the timestamp of last update for the
 	 * entire observation structure.
@@ -678,8 +685,13 @@ public class ObservationReference implements IObservationReference {
 	 * @param taskId
 	 * @return
 	 */
-	public IObservationReference withTaskId(String taskId) {
+	public ObservationReference withTaskId(String taskId) {
 		this.setTaskId(taskId);
+		return this;
+	}
+	
+	public ObservationReference withContextId(String contextId) {
+		this.setContextId(contextId);
 		return this;
 	}
 
@@ -732,21 +744,7 @@ public class ObservationReference implements IObservationReference {
 	public void setStyle(Style style) {
 		this.style = style;
 	}
-
-	/**
-	 * Observations tagged main should be brought to the user's attention
-	 * preferentially.
-	 * 
-	 * @return
-	 */
-	public boolean isMain() {
-		return main;
-	}
-
-	public void setMain(boolean main) {
-		this.main = main;
-	}
-
+	
 	@Override
 	public DataSummary getDataSummary() {
 		return dataSummary;
@@ -799,14 +797,6 @@ public class ObservationReference implements IObservationReference {
 	public void setChildrenCount(int childrenCount) {
 		this.childrenCount = childrenCount;
 	}
-	//
-	// public String getGroupId() {
-	// return groupId;
-	// }
-	//
-	// public void setGroupId(String groupId) {
-	// this.groupId = groupId;
-	// }
 
 	public ScaleReference getScaleReference() {
 		return scaleReference;
@@ -859,6 +849,98 @@ public class ObservationReference implements IObservationReference {
 
 	public void setAlive(boolean alive) {
 		this.alive = alive;
+	}
+
+	public String getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(String contextId) {
+		this.contextId = contextId;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ObservationReference other = (ObservationReference) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	/**
+	 * Apply a change to a previously created observation and modify it.
+	 * 
+	 * @param change
+	 */
+	public void applyChange(ObservationChange change) {
+		switch (change.getType()) {
+		case AttributeChange:
+			break;
+		case NameChange:
+			break;
+		case SpatialChange:
+			break;
+		case SpatialTranslation:
+			break;
+		case StructureChange:
+			this.childrenCount = change.getNewSize();
+			break;
+		case Termination:
+			this.setAlive(false);
+			break;
+		case ValueChange:
+			break;
+		case BringForward:
+			this.setMain(true);
+			break;
+		case SemanticsChange:
+			// the semantic flags should not have changed
+			this.setObservable(change.getNewSemantics());
+			break;
+		case ContextualizationCompleted:
+			break;
+		}
+	}
+
+	public boolean isMain() {
+		return main;
+	}
+
+	public void setMain(boolean main) {
+		this.main = main;
+	}
+
+	public boolean isDynamic() {
+		return dynamic;
+	}
+
+	public void setDynamic(boolean dynamic) {
+		this.dynamic = dynamic;
+	}
+
+	public boolean isContextualized() {
+		return contextualized;
+	}
+
+	public void setContextualized(boolean contextualized) {
+		this.contextualized = contextualized;
 	}
 
 }

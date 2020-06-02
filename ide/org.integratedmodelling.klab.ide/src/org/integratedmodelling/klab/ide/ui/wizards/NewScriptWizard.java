@@ -74,13 +74,14 @@ public class NewScriptWizard extends Wizard {
     @Override
     public boolean performFinish() {
 
-        final String nspc = page.getNamespace().getText().trim();
+        final String nspc = page.getScriptName().getText().trim().replaceAll("\\.", "_");
 
         if (validate(nspc, target)) {
             ProjectModificationRequest request = new ProjectModificationRequest(page.getTargetProject().getText(),
                     nspc);
             request.setScriptName(page.getScriptName().getText());
             request.setScriptPath(path);
+            request.setScriptType(page.isActorsFile() ? "kactor" : "kim");
             Activator.post((message) -> {
                 File file = message.getPayload(ProjectModificationNotification.class).getFile();
                 Activator.loader().add(file);
@@ -116,16 +117,16 @@ public class NewScriptWizard extends Wizard {
         for (IKimProject p : Kim.INSTANCE.getProjects()) {
             for (IKimNamespace n : p.getNamespaces()) {
                 if (n.getName().equals(nspc)) {
-                    this.page.setErrorMessage("Namespace " + nspc + " already exists in project " + p.getName());
+                    this.page.setErrorMessage("A file named " + nspc + " already exists in project " + p.getName());
                     return false;
                 }
             }
         }
 
-        if (nspc.contains(".")) {
-        	page.setErrorMessage("Context ID must be a unique name, not a path: scripts are not hierarchically arranged in a project.");
-        	return false;
-        }
+//        if (nspc.contains(".")) {
+//        	page.setErrorMessage("Context ID must be a unique name, not a path: scripts are not hierarchically arranged in a project.");
+//        	return false;
+//        }
         
 		if (Kim.INSTANCE.getKimKeywords().contains(nspc)) {
 			page.setErrorMessage("'" + nspc + "' is a k.IM keyword and cannot be used as a namespace component.");

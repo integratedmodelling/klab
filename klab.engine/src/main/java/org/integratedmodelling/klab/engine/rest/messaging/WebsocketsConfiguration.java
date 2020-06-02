@@ -2,7 +2,12 @@ package org.integratedmodelling.klab.engine.rest.messaging;
 
 import java.util.List;
 
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
+import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,6 +59,12 @@ public class WebsocketsConfiguration implements WebSocketMessageBrokerConfigurer
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+    	Message.setPayloadMapTranslator((map, cls) -> { 
+    		if (IConfigurationService.REST_RESOURCES_PACKAGE_ID.equals(cls.getPackage().getName())) {
+    			return JsonUtils.convertMap(map, cls);
+    		}
+    		return map;
+    	});
         registry.addEndpoint(API.MESSAGE).setAllowedOrigins("*").withSockJS();
     }
 
@@ -61,16 +72,6 @@ public class WebsocketsConfiguration implements WebSocketMessageBrokerConfigurer
     public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
         registration.setSendTimeLimit(15 * 1000).setMessageSizeLimit(1024 * 1024).setSendBufferSizeLimit(1024 * 1024);
     }
-
-//    @Bean
-//    public DefaultHandshakeHandler handshakeHandler() {
-//
-//        WebSocketPolicy policy = new WebSocketPolicy(WebSocketBehavior.SERVER);
-//        policy.setInputBufferSize(8192);
-//        policy.setIdleTimeout(600000);
-//
-//        return new DefaultHandshakeHandler(new JettyRequestUpgradeStrategy(new WebSocketServerFactory(policy)));
-//    }
 
     @Bean
     public ServletServerContainerFactoryBean createServletServerContainerFactoryBean() {

@@ -430,6 +430,8 @@ public class KimLoader implements IKimLoader {
 				collectNondependentResources(f, project);
 			} else if (f.toString().endsWith(".kim")) {
 				nonDependentResources.put(f, new NsInfo(project));
+			} else if (f.toString().endsWith(".kactor")) {
+				behaviorFiles.add(f);
 			}
 		}
 	}

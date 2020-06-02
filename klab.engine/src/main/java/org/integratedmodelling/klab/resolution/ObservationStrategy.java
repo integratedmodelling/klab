@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.ValueOperator;
-import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Traits;
@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
-import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
@@ -70,17 +69,27 @@ public class ObservationStrategy {
 		 * observable is inherent, then applying a dereifying transformation chosen by
 		 * the runtime.
 		 */
-		DEREIFICATION
+		DEREIFICATION,
+
 	}
 
 	private List<Observable> observables = new ArrayList<>();
 	private Mode mode;
 	private List<IContextualizable> computation = new ArrayList<>();
 	private Strategy strategy = Strategy.DIRECT;
+	// if this is true, the observable must be resolved again instead of proceeding
+	// to model query
+	private boolean resolve = false;
 
 	public ObservationStrategy(Observable observable, Mode mode) {
 		this.mode = mode;
 		this.observables.add(observable);
+	}
+
+	public ObservationStrategy(Observable observable, Mode mode, Strategy strategy) {
+		this.mode = mode;
+		this.observables.add(observable);
+		this.strategy = strategy;
 	}
 
 	/**
@@ -95,7 +104,10 @@ public class ObservationStrategy {
 		List<ObservationStrategy> ret = new ArrayList<>();
 
 		for (IObservable dep : model.getDependencies()) {
-			ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
+			// add all the active dependencies. Only inherent learners deactivate them so far.
+			if (((Observable)dep).isActive()) {
+				ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
+			}
 		}
 
 		if (observable.is(Type.RELATIONSHIP)) {
@@ -114,7 +126,7 @@ public class ObservationStrategy {
 		 * dependency for it, add it.
 		 */
 		if (observable.getDescription() == IActivity.Description.CLASSIFICATION) {
-			IConcept dep = observable.getInherentType();
+			IConcept dep = Observables.INSTANCE.getDescribedType(observable.getType());
 			if (((Model) model).findDependency(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep),
 						observable.getDescription().getResolutionMode()));
@@ -127,7 +139,7 @@ public class ObservationStrategy {
 		 * have to be explicit, and the model should have the quality as an output.
 		 */
 		if (observable.is(Type.CHANGE) && !model.isResolved()) {
-			IConcept dep = observable.getInherentType();
+			IConcept dep = Observables.INSTANCE.getDescribedType(observable.getType());
 			if (((Model) model).findDependency(dep) == null && ((Model) model).findOutput(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep), Mode.RESOLUTION));
 			}
@@ -169,9 +181,38 @@ public class ObservationStrategy {
 		List<ObservationStrategy> ret = new ArrayList<>();
 
 		Observable target = (Observable) observable;
-
 		List<Pair<ValueOperator, Object>> operators = observable.getValueOperators();
-		if (!operators.isEmpty()) {
+		Strategy strategy = Strategy.DIRECT;
+
+		/*
+		 * explore inherency first. If there is explicit inherency (of), we first check
+		 * for equality of inherency, i.e. X of Y within Y. In this case we just observe
+		 * X. This just applies to true observables: if the inherency is for an
+		 * attribute (e.g. normalized of X) we move forward.
+		 * 
+		 * If not, we leave the trivial strategy as is (to be resolved by a possible
+		 * model) and add X within Y, which will generate X of Y in the current context.
+		 */
+		IConcept inherent = observable.is(Type.OBSERVABLE)
+				? Observables.INSTANCE.getDirectInherentType(observable.getType())
+				: null;
+		if (inherent != null) {
+			IConcept context = /*Observables.INSTANCE.getContextType(observable.getType())*/ observable.getContext();
+			if (context != null && context.equals(inherent)) {
+				observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT)
+						.buildObservable();
+				ret.add(new ObservationStrategy((Observable) observable, mode));
+				// next if should never be necessary as it's not legal to use direct context
+				// except in an output
+			} else if (Observables.INSTANCE.getDirectContextType(observable.getType()) == null) {
+				ret.add(new ObservationStrategy((Observable) observable, mode));
+				observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT).within(inherent)
+						.buildObservable();
+				ObservationStrategy alternative = new ObservationStrategy((Observable) observable, mode);
+				alternative.setResolve(true);
+				ret.add(alternative);
+			}
+		} else if (!operators.isEmpty()) {
 
 			/*
 			 * no as-is resolution, just use the operators. Otherwise it becomes messy to
@@ -208,7 +249,7 @@ public class ObservationStrategy {
 
 		} else if (target.hasResolvableTraits()) {
 
-			ret.add(new ObservationStrategy((Observable) observable, mode));
+			ret.add(new ObservationStrategy((Observable) observable, mode, strategy));
 
 			Pair<IConcept, Observable> resolvables = target.popResolvableTrait(scope.getMonitor());
 
@@ -244,8 +285,8 @@ public class ObservationStrategy {
 
 			if (attribute != null) {
 
-				Observable filter = (Observable) new ObservableBuilder(attribute)
-						.of(Observables.INSTANCE.getBaseObservable(target.getType())).filtering(target)
+				Observable filter = (Observable) new ObservableBuilder(attribute, scope.getMonitor())
+						.of(Observables.INSTANCE.getBaseObservable(target.getType()))/* .filtering(target) */
 						.withTargetPredicate(targetAttribute).withDistributedInherency(observable.is(Type.COUNTABLE))
 						.buildObservable();
 
@@ -260,15 +301,16 @@ public class ObservationStrategy {
 
 		} else if (hasResolvableInherency(target, scope)) {
 
-			ret.add(new ObservationStrategy((Observable) observable, mode));
+			// direct
+			ret.add(new ObservationStrategy((Observable) observable, mode, strategy));
 
 			List<IContextualizable> computations = new ArrayList<>();
-			IConcept inherent = null;
-			Strategy strategy = Strategy.DIRECT;
+			inherent = null;
+			strategy = Strategy.DIRECT;
 
 			if (observable.is(Type.PRESENCE)) {
 
-				inherent = Observables.INSTANCE.getInherentType(observable.getType());
+				inherent = Observables.INSTANCE.getDescribedType(observable.getType());
 				if (inherent != null && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
 					computations.addAll(Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
 							Mode.RESOLUTION, observable));
@@ -278,7 +320,7 @@ public class ObservationStrategy {
 			} else if (scope.getCoverage().getSpace() != null && scope.getCoverage().getSpace().getDimensionality() >= 2
 					&& observable.is(Type.DISTANCE) || observable.is(Type.NUMEROSITY)) {
 
-				inherent = Observables.INSTANCE.getInherentType(observable.getType());
+				inherent = Observables.INSTANCE.getDescribedType(observable.getType());
 				if (inherent != null && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
 					computations.addAll(Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
 							Mode.RESOLUTION, observable));
@@ -300,10 +342,9 @@ public class ObservationStrategy {
 					inherentObservable = Observable.promote(inherent);
 				}
 
-				ObservationStrategy alternative = new ObservationStrategy(inherentObservable, mode);
+				ObservationStrategy alternative = new ObservationStrategy(inherentObservable, mode, strategy);
 
 				alternative.computation.addAll(computations);
-				alternative.strategy = strategy;
 
 				ret.add(alternative);
 			}
@@ -313,7 +354,7 @@ public class ObservationStrategy {
 			/*
 			 * just add as is
 			 */
-			ret.add(new ObservationStrategy((Observable) observable, mode));
+			ret.add(new ObservationStrategy(target, mode, strategy));
 
 		}
 
@@ -321,7 +362,7 @@ public class ObservationStrategy {
 	}
 
 	private static boolean hasResolvableInherency(Observable observable, IResolutionScope scope) {
-		// TODO handle ratios
+		// TODO handle ratios, one day types (with classifiers)
 		return observable.is(Type.PRESENCE) || scope.getCoverage().getSpace() != null
 				&& scope.getCoverage().getSpace().getDimensionality() >= 2 && observable.is(Type.DISTANCE)
 				|| observable.is(Type.NUMEROSITY);
@@ -352,12 +393,7 @@ public class ObservationStrategy {
 	public Mode getMode() {
 		return this.mode;
 	}
-
-	public String dump(String spacer) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	/**
 	 * Tells the model and the dataflow compiler how to handle the
 	 * contextualization.
@@ -366,6 +402,19 @@ public class ObservationStrategy {
 	 */
 	public Strategy getStrategy() {
 		return strategy;
+	}
+
+	public boolean isResolve() {
+		return resolve;
+	}
+
+	public void setResolve(boolean resolve) {
+		this.resolve = resolve;
+	}
+
+	@Override
+	public String toString() {
+		return "ObservationStrategy [observables=" + observables + ", strategy=" + strategy + "]";
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
@@ -17,11 +18,21 @@ import org.integratedmodelling.klab.utils.StringUtils;
 
 public class Compatible implements ICommand {
 
+	/**
+	 * TODO add context parameter
+	 */
 	@Override
 	public Object execute(IServiceCall call, ISession session) throws KlabValidationException {
 
 		String ret = "";
+		String ctx = call.getParameters().get("context", String.class);
+
 		String declaration = StringUtils.join((List<?>) call.getParameters().get("arguments"), ' ').trim();
+
+		IConcept context = null;
+		if (ctx != null) {
+			context = Concepts.c(ctx);
+		}
 
 		IConcept concept = null;
 		if (declaration.startsWith("k:")) {
@@ -33,7 +44,7 @@ public class Compatible implements ICommand {
 		}
 
 		IObservable observable = Observable.promote(concept);
-		Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(observable,
+		Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(observable, context,
 				observable.getDescription().getResolutionMode());
 
 		for (long id : ids) {

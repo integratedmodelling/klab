@@ -1,6 +1,8 @@
 package org.integratedmodelling.kactors.api;
 
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.utils.Pair;
@@ -136,4 +138,5 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 	 * @return
 	 */
 	Type getType();
+
 }

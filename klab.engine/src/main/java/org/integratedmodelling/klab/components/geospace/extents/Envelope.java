@@ -8,6 +8,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 public class Envelope implements IEnvelope {
 
 	/**
@@ -143,6 +145,11 @@ public class Envelope implements IEnvelope {
 		return Shape.create(this);
 	}
 
+	public Geometry asJTSGeometry() {
+		return Shape.makeCell(this.envelope.getMinX(), this.envelope.getMinY(), this.envelope.getMaxX(),
+				this.envelope.getMaxY());
+	}
+
 	public static Envelope create(double minx, double maxx, double miny, double maxy, Projection crs) {
 		return create(new ReferencedEnvelope(minx, maxx, miny, maxy, crs.getCoordinateReferenceSystem()));
 	}
@@ -178,9 +185,8 @@ public class Envelope implements IEnvelope {
 	 * Same as {@link #getResolutionForZoomLevel(int, double) using a default of 5
 	 * meters and the default multiplier of 4.
 	 * 
-	 * @param roundTo
-	 *            meters to round to. Also the minimum resolution if we can't get
-	 *            enough screen pixels.
+	 * @param roundTo meters to round to. Also the minimum resolution if we can't
+	 *                get enough screen pixels.
 	 * @return resolution and the correspondent unit string.
 	 */
 	public Pair<Integer, String> getResolutionForZoomLevel() {
@@ -191,9 +197,8 @@ public class Envelope implements IEnvelope {
 	 * Same as {@link #getResolutionForZoomLevel(int, double) using a default
 	 * multiplier of 4.
 	 * 
-	 * @param roundTo
-	 *            meters to round to. Also the minimum resolution if we can't get
-	 *            enough screen pixels.
+	 * @param roundTo meters to round to. Also the minimum resolution if we can't
+	 *                get enough screen pixels.
 	 * @return resolution and the correspondent unit string.
 	 */
 	public Pair<Integer, String> getResolutionForZoomLevel(int roundTo) {
@@ -209,13 +214,11 @@ public class Envelope implements IEnvelope {
 	 * <p>
 	 * Meters per pixel at zoom level z are equal to 156412/(2^z).
 	 * 
-	 * @param roundTo
-	 *            meters to round to. Also the minimum resolution if we can't get
-	 *            enough screen pixels.
-	 * @param multiplier
-	 *            multiplier for the literal resolution. A good value for modern
-	 *            screens is around 4.
-	 *            
+	 * @param roundTo    meters to round to. Also the minimum resolution if we can't
+	 *                   get enough screen pixels.
+	 * @param multiplier multiplier for the literal resolution. A good value for
+	 *                   modern screens is around 4.
+	 * 
 	 * @return resolution in meters and the natural unit to use in displaying it.
 	 */
 	public Pair<Integer, String> getResolutionForZoomLevel(int roundTo, double multiplier) {
@@ -264,6 +267,10 @@ public class Envelope implements IEnvelope {
 
 	public ReferencedEnvelope getJTSEnvelope() {
 		return envelope;
+	}
+
+	public boolean intersects(IEnvelope envelope) {
+		return this.envelope.intersects((com.vividsolutions.jts.geom.Envelope) ((Envelope) envelope).envelope);
 	}
 
 	@Override

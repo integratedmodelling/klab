@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Loa
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
+import org.integratedmodelling.klab.components.runtime.actors.behavior.BehaviorAction;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -53,7 +55,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected IBehavior behavior;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
-
 	AtomicLong nextId = new AtomicLong(0);
 
 	/**
@@ -65,24 +66,23 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	class MatchActions {
 
-		Long listenerId;
 		ActorRef<KlabMessage> caller;
 		List<Pair<Match, IKActorsStatement>> matches = new ArrayList<>();
 
-		// this must be the scope when the listening action was called.
+		// this is the original calling scope, to use when the listening action is
+		// executed upon a match.
 		Scope scope;
-		
+
 		public void match(Object value) {
 
 			for (Pair<Match, IKActorsStatement> match : matches) {
-				if (match.getFirst().matches(value)) {
-					execute(match.getSecond(), scope);
+				if (match.getFirst().matches(value, scope)) {
+					execute(match.getSecond(), scope.withMatch(match.getFirst(), value));
 				}
 			}
 		}
 
-		public MatchActions(Long listenerId, Scope scope) {
-			this.listenerId = listenerId;
+		public MatchActions(Scope scope) {
 			this.scope = scope;
 		}
 	}
@@ -103,18 +103,52 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * @author Ferd
 	 *
 	 */
-	public class Scope extends Parameters<String> {
+	public static class Scope extends Parameters<String> {
 
 		Action action;
 		boolean synchronous = false;
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
 		Long listenerId;
-		private ActorRef<KlabMessage> sender;
+		IActorIdentity<KlabMessage> identity;
+		Object match;
+		public Map<String, Object> symbolTable = new HashMap<>();
 
-		public Scope(Action action, IRuntimeScope scope) {
+		/**
+		 * Set when the action being run is tagged to have a specific panel (footer,
+		 * header, modal etc), which is reported to the view before the action is run
+		 * and its ID set in the scope so that components created by view messages know
+		 * where to go.
+		 */
+		String viewId;
+		ActorRef<KlabMessage> sender;
+
+		public Scope(IActorIdentity<KlabMessage> identity, Action action, IRuntimeScope scope) {
 			this.action = action;
 			this.runtimeScope = scope;
+			this.identity = identity;
+		}
+
+		public Scope withMatch(Match match, Object value) {
+			Scope ret = new Scope(this);
+			/*
+			 * if we have identifiers either as key or in list key, match them to the
+			 * values. Otherwise match to $, $1, ... #n
+			 */
+			if (match.isIdentifier(ret)) {
+				// TODO list still not handled
+				ret.symbolTable.put(match.getIdentifier(), value);
+			} else if (match.isImplicit()) {
+				ret.symbolTable.put("$", value);
+				if (value instanceof Collection) {
+					int n = 1;
+					for (Object o : ((Collection<?>) value)) {
+						ret.symbolTable.put("$" + (n++), o);
+					}
+				}
+			}
+			ret.match = value;
+			return ret;
 		}
 
 		public Scope(Scope scope) {
@@ -124,6 +158,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.parent = scope;
 			this.listenerId = scope.listenerId;
 			this.sender = scope.sender;
+			this.viewId = scope.viewId;
+			this.symbolTable.putAll(scope.symbolTable);
 		}
 
 		public String toString() {
@@ -160,26 +196,20 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			return ret;
 		}
 
-	}
+		public Scope withViewId(String viewId) {
+			Scope ret = new Scope(this);
+			ret.viewId = viewId;
+			return ret;
+		}
 
-//	/**
-//	 * Get the recipient actor for a named recipient. This will be matched to known
-//	 * behavior declarations and to any actors set into the context by previous
-//	 * actions. A null recipient will respond a reference to self.
-//	 * 
-//	 * @param recipient
-//	 * @return
-//	 */
-//	ActorRef<KlabMessage> getRecipient(String recipient) {
-//		if (recipient == null || "self".equals(recipient)) {
-//			return getContext().getSelf();
-//		} else if ("session".equals(recipient) || "view".equals(recipient)) {
-//
-//		} else if ("user".equals(recipient)) {
-//
-//		}
-//		return null;
-//	}
+		public Object getValue(String string) {
+			if (symbolTable.containsKey(string)) {
+				return symbolTable.get(string);
+			}
+			return identity.getState().get(string);
+		}
+
+	}
 
 	protected void waitForCompletion(KlabMessage message) {
 
@@ -230,48 +260,71 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
+
 		this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
-		for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
-			run(action, new Scope(action, message.scope));
+
+		/*
+		 * Init action called no matter what and before the behavior is set; the onLoad
+		 * callback intervenes afterwards.
+		 */
+		for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
+			run(action, new Scope(this.identity, action, message.scope));
 		}
+
+		/*
+		 * run any main actions
+		 */
+		for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
+			run(action, new Scope(this.identity, action, message.scope));
+		}
+
 		return Behaviors.same();
 	}
 
 	protected void run(IBehavior.Action action, Scope scope) {
+		/*
+		 * TODO if this contains any of @panel, @modal, @header, @footer set the viewId
+		 * in the scope to the ID of the component created upon loading the behavior.
+		 * Look that up in viewIds using the name in the annotation or the annotation
+		 * ID.
+		 */
+		if (((BehaviorAction) action).getViewId() != null) {
+			scope = scope.withViewId(((BehaviorAction) action).getViewId());
+		}
 		execute(action.getStatement().getCode(), scope);
 	}
 
 	private void execute(IKActorsStatement code, Scope scope) {
 		switch (code.getType()) {
 		case ACTION_CALL:
-			executeCall((IKActorsStatement.Call) code, scope/* .get(code) */);
+			executeCall((IKActorsStatement.Call) code, scope);
 			break;
 		case ASSIGNMENT:
-			executeAssignment((IKActorsStatement.Assignment) code, scope/* .get(code) */);
+			executeAssignment((IKActorsStatement.Assignment) code, scope);
 			break;
 		case DO_STATEMENT:
-			executeDo((IKActorsStatement.Do) code, scope/* .get(code) */);
+			executeDo((IKActorsStatement.Do) code, scope);
 			break;
 		case FIRE_VALUE:
-			executeFire((IKActorsStatement.FireValue) code, scope/* .get(code) */);
+			executeFire((IKActorsStatement.FireValue) code, scope);
 			break;
 		case FOR_STATEMENT:
-			executeFor((IKActorsStatement.For) code, scope/* .get(code) */);
+			executeFor((IKActorsStatement.For) code, scope);
 			break;
 		case IF_STATEMENT:
-			executeIf((IKActorsStatement.If) code, scope/* .get(code) */);
+			executeIf((IKActorsStatement.If) code, scope);
 			break;
 		case CONCURRENT_GROUP:
-			executeGroup((IKActorsStatement.ConcurrentGroup) code, scope/* .get(code) */);
+			executeGroup((IKActorsStatement.ConcurrentGroup) code, scope);
 			break;
 		case SEQUENCE:
-			executeSequence((IKActorsStatement.Sequence) code, scope/* .get(code) */);
+			executeSequence((IKActorsStatement.Sequence) code, scope);
 			break;
 		case TEXT_BLOCK:
-			executeText((IKActorsStatement.TextBlock) code, scope/* .get(code) */);
+			executeText((IKActorsStatement.TextBlock) code, scope);
 			break;
 		case WHILE_STATEMENT:
-			executeWhile((IKActorsStatement.While) code, scope/* .get(code) */);
+			executeWhile((IKActorsStatement.While) code, scope);
 			break;
 		default:
 			break;
@@ -330,11 +383,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void executeCall(Call code, Scope scope) {
 
 		/*
-		 * TODO establish message reply ID for listeners. Must be same for every
-		 * internal message if there is a group: in that case, set the ID in the scope.
+		 * TODO message reply ID for listeners must be same for every internal message
+		 * if there is a group: in that case, set the ID in the scope.
 		 */
 
 		Long notifyId = scope.listenerId;
@@ -342,11 +396,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		if (code.getActions().size() > 0) {
 
 			notifyId = nextId.incrementAndGet();
-
-			/*
-			 * TODO install own action listeners
-			 */
-			MatchActions actions = new MatchActions(notifyId, scope);
+			MatchActions actions = new MatchActions(scope);
 			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
 				actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
 			}
@@ -362,26 +412,39 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				message = Path.getLast(message, '.');
 			}
 
-			// if we have no action for this message, send to user actor. Code should have
-			// been fixed to
-			// include the recipient when it is known.
 			ActorRef<KlabMessage> recipient = null;
-			switch (receiver) {
-			case "self":
-				recipient = getContext().getSelf();
-				break;
-			case "view":
-			case "session":
-				recipient = identity.getParentIdentity(Session.class).getActor();
-				break;
-			case "user":
-				recipient = identity.getParentIdentity(EngineUser.class).getActor();
+
+			if (!"self".equals(receiver) && scope.symbolTable.get(receiver) instanceof IActorIdentity) {
+				recipient = ((IActorIdentity<KlabMessage>) scope.symbolTable.get(receiver)).getActor();
+			} else {
+
+				// if we have no action for this message, send to user actor. Code should have
+				// been fixed to
+				// include the recipient when it is known.
+				switch (receiver) {
+				case "self":
+					recipient = getContext().getSelf();
+					break;
+				case "view":
+				case "session":
+					// FIXME this will get the wrong actor - must install the runtime in the spawned
+					// observation and
+					// take it from there using the IActorIdentity API - getRuntimeActor() or
+					// something, return self
+					// in a runtime.
+					recipient = identity.getParentIdentity(Session.class).getActor();
+					break;
+				case "user":
+					recipient = identity.getParentIdentity(EngineUser.class).getActor();
+				}
 			}
 
 			if (recipient == null || ("self".equals(receiver) && this.behavior.getActions(message) == null)) {
 				Pair<String, ActorRef<KlabMessage>> resolved = Actors.INSTANCE.lookupRecipient(message, this.identity);
-				receiver = resolved.getFirst();
-				recipient = resolved.getSecond();
+				if (resolved != null) {
+					receiver = resolved.getFirst();
+					recipient = resolved.getSecond();
+				}
 			}
 
 			if (recipient == null) {
@@ -408,7 +471,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			run(action, message.scope.withSender(message.sender));
 		} else {
 			KlabAction a = Actors.INSTANCE.getSystemAction(message.message, this.getIdentity(), message.arguments,
-					message.scope);
+					message.scope, getContext().getSelf());
 			if (a != null) {
 				ran = true;
 				a.run();

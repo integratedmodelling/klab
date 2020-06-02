@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.StatementGroup;
@@ -25,6 +26,7 @@ import org.integratedmodelling.kactors.kactors.StatementGroup;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementGroupImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementGroupImpl#getActions <em>Actions</em>}</li>
  * </ul>
  *
  * @generated
@@ -40,6 +42,16 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
    * @ordered
    */
   protected MessageBody body;
+
+  /**
+   * The cached value of the '{@link #getActions() <em>Actions</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getActions()
+   * @generated
+   * @ordered
+   */
+  protected Actions actions;
 
   /**
    * <!-- begin-user-doc -->
@@ -118,12 +130,64 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
    * @generated
    */
   @Override
+  public Actions getActions()
+  {
+    return actions;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetActions(Actions newActions, NotificationChain msgs)
+  {
+    Actions oldActions = actions;
+    actions = newActions;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_GROUP__ACTIONS, oldActions, newActions);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setActions(Actions newActions)
+  {
+    if (newActions != actions)
+    {
+      NotificationChain msgs = null;
+      if (actions != null)
+        msgs = ((InternalEObject)actions).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_GROUP__ACTIONS, null, msgs);
+      if (newActions != null)
+        msgs = ((InternalEObject)newActions).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_GROUP__ACTIONS, null, msgs);
+      msgs = basicSetActions(newActions, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_GROUP__ACTIONS, newActions, newActions));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
       case KactorsPackage.STATEMENT_GROUP__BODY:
         return basicSetBody(null, msgs);
+      case KactorsPackage.STATEMENT_GROUP__ACTIONS:
+        return basicSetActions(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -140,6 +204,8 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
     {
       case KactorsPackage.STATEMENT_GROUP__BODY:
         return getBody();
+      case KactorsPackage.STATEMENT_GROUP__ACTIONS:
+        return getActions();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -156,6 +222,9 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
     {
       case KactorsPackage.STATEMENT_GROUP__BODY:
         setBody((MessageBody)newValue);
+        return;
+      case KactorsPackage.STATEMENT_GROUP__ACTIONS:
+        setActions((Actions)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -174,6 +243,9 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
       case KactorsPackage.STATEMENT_GROUP__BODY:
         setBody((MessageBody)null);
         return;
+      case KactorsPackage.STATEMENT_GROUP__ACTIONS:
+        setActions((Actions)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -190,6 +262,8 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
     {
       case KactorsPackage.STATEMENT_GROUP__BODY:
         return body != null;
+      case KactorsPackage.STATEMENT_GROUP__ACTIONS:
+        return actions != null;
     }
     return super.eIsSet(featureID);
   }

@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.components.runtime.actors.behavior;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -19,14 +21,28 @@ public class BehaviorAction implements IBehavior.Action {
 	 */
 	private IKActorsAction statement;
 	private Behavior behavior;
-	private CallSequence calls;
+//	private CallSequence calls;
 	private List<IAnnotation> annotations = new ArrayList<>();
+	private String viewId;
 
 	public BehaviorAction(IKActorsAction action, Behavior behavior) {
 		this.statement = action;
 		this.behavior = behavior;
 		for (IKimAnnotation annotation : action.getAnnotations()) {
-			this.annotations.add(new Annotation(annotation));
+			Annotation a = new Annotation(annotation);
+			// translate KActorsValue into actual values
+			for (String key : a.keySet()) {
+				Object value = a.get(key);
+				if (value instanceof KActorsValue) {
+					a.put(key, ((KActorsValue)value).getValue());
+				}
+			}
+			this.annotations.add(a);
+			
+			if (Behavior.viewAnnotations.contains(a.getName())) {
+				this.viewId = a.containsKey("id") ? a.get("id", String.class) : action.getName();
+			}
+			
 		}
 		
 	}
@@ -69,6 +85,14 @@ public class BehaviorAction implements IBehavior.Action {
 	@Override
 	public boolean isErrors() {
 		return false; // this.statement.getErrors().size() > 0;
+	}
+
+	public String getViewId() {
+		return viewId;
+	}
+
+	public void setViewId(String viewId) {
+		this.viewId = viewId;
 	}
 
 }

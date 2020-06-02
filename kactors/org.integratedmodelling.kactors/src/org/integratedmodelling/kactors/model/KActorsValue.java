@@ -36,6 +36,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	public static KActorsValue anyvalue() {
 		return new KActorsValue(Type.ANYVALUE, null);
 	}
+	
+	public static KActorsValue anytrue() {
+		return new KActorsValue(Type.ANYTRUE, null);
+	}
 
 	/**
 	 * Create an error value. Pass an exception, string, or nothing.
@@ -49,19 +53,19 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
 		if (value.getId() != null) {
-			this.type = Type.IDENTIFIER;
+			this.type = value.getId().contains(".") ? Type.URN : Type.IDENTIFIER;
 			this.value = value.getId();
 		} else if (value.getLiteral() != null) {
 			this.value = parseLiteral(value.getLiteral());
 		} else if (value.getExpression() != null) {
 			this.type = Type.EXPRESSION;
-			this.value = value.getExpression().substring(0, value.getExpression().length() - 1);
+			this.value = value.getExpression().substring(1, value.getExpression().length() - 1);
 		} else if (value.getQuantity() != null) {
 			this.type = Type.QUANTITY;
 			this.value = parseQuantity(value.getQuantity());
 		} else if (value.getObservable() != null) {
 			this.type = Type.OBSERVABLE;
-			this.value = value.getObservable().substring(0, value.getObservable().length() - 1);
+			this.value = value.getObservable().substring(1, value.getObservable().length() - 1);
 		} else if (value.getList() != null) {
 			this.type = Type.LIST;
 			this.value = parseList(value.getList());
@@ -77,6 +81,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (value.getUrn() != null) {
 			this.type = Type.URN;
 			this.value = value.getUrn();
+		} else if (value.getTree() != null) {
+			this.type = Type.TREE;
+			// TODO
 		}
 	}
 
@@ -97,7 +104,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.type = Type.OBSERVABLE;
 			this.value = match.getObservable().substring(0, match.getObservable().length() - 1);
 		} else if (match.getSet() != null) {
-			this.type = Type.LIST;
+			this.type = Type.SET;
 			this.value = parseList(match.getSet());
 		} else if (match.getBoolean() != null) {
 			this.type = Type.BOOLEAN;
@@ -105,6 +112,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (match.getType() != null) {
 			this.type = Type.TYPE;
 			this.value = match.getType();
+		} else if (match.getList() != null) {
+			this.type = Type.LIST;
+			this.value = parseList(match.getList());
 		}
 	}
 
@@ -208,4 +218,6 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	public void setData(Object data) {
 		this.data = data;
 	}
+	
+	
 }

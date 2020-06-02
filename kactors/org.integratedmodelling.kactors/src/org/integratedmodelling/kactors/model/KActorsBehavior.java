@@ -26,6 +26,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	private String observable;
 	private Type type = Type.BEHAVIOR;
 	private File file;
+	private String style;
 	private List<IKActorsBehavior> imports = new ArrayList<>();
 	private List<IKActorsAction> actions = new ArrayList<>();
 
@@ -43,6 +44,10 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		}
 	}
 
+	public KActorsBehavior() {
+		this.name = "Empty behavior";
+	}
+
 	private void loadPreamble(Preamble preamble) {
 		
 		this.name = preamble.getName();
@@ -53,6 +58,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		}
 		
 		this.observable = preamble.getObservable();
+		this.style = preamble.getStyle();
 		
 		if (preamble.isApp()) {
 			this.type = Type.APP;
@@ -60,6 +66,8 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 			this.type = Type.TRAITS;
 		} else if (preamble.isUser()) {
 			this.type = Type.USER;
+		} else if (preamble.isTest()) {
+			this.type = Type.UNITTEST;
 		}
 
 		for (String s : preamble.getImports()) {
@@ -93,6 +101,14 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	@Override
 	public List<IKActorsAction> getActions() {
 		return actions;
+	}
+
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
 	}
 
 }

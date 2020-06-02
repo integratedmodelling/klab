@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -15,7 +16,9 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
@@ -25,7 +28,6 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.AggregationUtils;
-import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -48,14 +50,6 @@ public class RescalingState extends Observation implements IState {
 	private IActivity.Description observationType;
 	boolean redistribute = false;
 
-	// debugging
-//	AtomicInteger mediatorCalls = new AtomicInteger();
-//	AtomicLong minLocalOffset = new AtomicLong();
-//	AtomicLong maxLocalOffset = new AtomicLong();
-//	AtomicLong minTargetOffset = new AtomicLong();
-//	AtomicLong maxTargetOffset = new AtomicLong();
-//	AtomicLong totalSetCalls = new AtomicLong();
-//	AtomicLong workedSetCalls = new AtomicLong();
 	String localId;
 
 	public void setLocalId(String observable) {
@@ -68,8 +62,6 @@ public class RescalingState extends Observation implements IState {
 		this.newScale = newScale;
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
 		this.observationType = state.getObservable().getDescription();
-//		minLocalOffset.set(Long.MAX_VALUE);
-//		minTargetOffset.set(Long.MAX_VALUE);
 		// TODO check if we need to sum in aggregation. Depends on the observable and on
 		// the relationship between the extents (e.g spatially distributed vs. not)
 		// this.redistribute = ...
@@ -90,13 +82,6 @@ public class RescalingState extends Observation implements IState {
 
 		long offset = this.newScale.getOffset(index);
 
-//		if (minLocalOffset.get() > offset) {
-//			minLocalOffset.set(offset);
-//		}
-//		if (maxLocalOffset.get() < offset) {
-//			maxLocalOffset.set(offset);
-//		}
-
 		if (!this.newScale.isCovered(offset)) {
 			return null;
 		}
@@ -113,14 +98,7 @@ public class RescalingState extends Observation implements IState {
 			}
 
 			ILocator locator = originalGeometry.at(offsets);
-//			long targetOffset = ((Offset) locator).linear;
-//			if (minTargetOffset.get() > targetOffset) {
-//				minTargetOffset.set(targetOffset);
-//			}
-//			if (maxTargetOffset.get() < targetOffset) {
-//				maxTargetOffset.set(targetOffset);
-//			}
-
+			
 			return delegate.get(locator);
 		}
 
@@ -130,7 +108,6 @@ public class RescalingState extends Observation implements IState {
 	private synchronized List<IScaleMediator> getMediators(Scale original, Scale target) {
 		List<IScaleMediator> mediators = new ArrayList<>();
 
-//		mediatorCalls.incrementAndGet();
 		conformant = true;
 		for (IExtent originalExtent : original.getExtents()) {
 			IExtent targetExtent = target.getDimension(originalExtent.getType());
@@ -151,26 +128,16 @@ public class RescalingState extends Observation implements IState {
 
 	public long set(ILocator index, Object value) {
 
-//		totalSetCalls.incrementAndGet();
 		long offset = this.newScale.getOffset(index);
 
 		if (value == null) {
 			return offset;
 		}
 
-//		if (minLocalOffset.get() > offset) {
-//			minLocalOffset.set(offset);
-//		}
-//		if (maxLocalOffset.get() < offset) {
-//			maxLocalOffset.set(offset);
-//		}
-
 		// may be covered by another state and have been assigned already!
 		if (!this.newScale.isCovered(offset)) {
 			return -1;
 		}
-
-//		workedSetCalls.incrementAndGet();
 
 		if (mediators == null) {
 			mediators = getMediators((Scale) this.delegate.getScale(), this.newScale);
@@ -183,14 +150,7 @@ public class RescalingState extends Observation implements IState {
 				offsets[i] = mediators.get(i).mapConformant(offsets[i]);
 			}
 
-			long targetOffset = delegate.set(originalGeometry.at(offsets), value);
-
-//			if (minTargetOffset.get() > targetOffset) {
-//				minTargetOffset.set(targetOffset);
-//			}
-//			if (maxTargetOffset.get() < targetOffset) {
-//				maxTargetOffset.set(targetOffset);
-//			}
+			delegate.set(originalGeometry.at(offsets), value);
 
 		} else {
 			map(index, mediators, value);
@@ -232,56 +192,6 @@ public class RescalingState extends Observation implements IState {
 			this.weight = weight;
 		}
 	}
-
-	/**
-	 * Generate the scale-wide cartesian product of the touched extent offsets,
-	 * multiplying the individual weights.
-	 * 
-	 * @param data
-	 * @return
-	 */
-	class CartesianProductIterator implements Iterator<Pair<long[], Double>> {
-
-		List<List<ExtentLocation>> data;
-		long[] ret;
-		final MultidimensionalCursor cursor = new MultidimensionalCursor();
-
-		long current = 0;
-
-		CartesianProductIterator(List<List<ExtentLocation>> data) {
-			this.data = data;
-			this.ret = new long[data.size()];
-			long[] sizes = new long[data.size()];
-			for (int i = 0; i < data.size(); i++) {
-				sizes[i] = data.get(i).size();
-			}
-			this.cursor.defineDimensions(sizes);
-		}
-
-		public long size() {
-			return cursor.getMultiplicity();
-		}
-
-		@Override
-		public boolean hasNext() {
-			return current < cursor.getMultiplicity();
-		}
-
-		@Override
-		public Pair<long[], Double> next() {
-
-			long[] offsets = cursor.getElementIndexes(current);
-			double weight = 1.0;
-
-			for (int i = 0; i < offsets.length; i++) {
-				ret[i] = data.get(i).get((int) offsets[i]).offset;
-				weight *= data.get(i).get((int) offsets[i]).weight;
-			}
-
-			current++;
-			return new Pair<>(ret, weight);
-		}
-	};
 
 	/*
 	 * Aggregate contents of original state at the cartesian product of the
@@ -427,7 +337,7 @@ public class RescalingState extends Observation implements IState {
 		if (delegate.getType() == type) {
 			return this;
 		}
-		return new RescalingState(delegate.as(type), newScale, getRuntimeScope());
+		return new RescalingState(delegate.as(type), newScale, getScope());
 	}
 
 	@Override
@@ -476,7 +386,7 @@ public class RescalingState extends Observation implements IState {
 				values.add(get(locator));
 			}
 			AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()),
-					getRuntimeScope().getMonitor());
+					getScope().getMonitor());
 		}
 		throw new KlabUnimplementedException(
 				"aggregation of rescaled states is unimplemented - please submit a request");
@@ -496,10 +406,14 @@ public class RescalingState extends Observation implements IState {
 		System.err.println("SUMMARY for rescaling state " + localId + " delegating to " + getObservable().getName());
 		System.err.println("local scale:  " + newScale);
 		System.err.println("target scale:  " + originalGeometry);
-//		System.err.println("local offset range:  " + minLocalOffset.get() + " - " + maxLocalOffset.get());
-//		System.err.println("target offset range: " + minTargetOffset.get() + " - " + maxTargetOffset.get());
-//		System.err.println(
-//				"total calls to set(): " + totalSetCalls.get() + " of which " + workedSetCalls.get() + " eventful");
-//		System.err.println("total calls to getMediator(): " + mediatorCalls.get());
 	}
+	
+	@Override
+	public void finalizeTransition(IScale scale) {
+		setContextualized(true);
+		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+			setDynamic(true);
+		}
+	}
+
 }

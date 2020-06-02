@@ -1,26 +1,37 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Future;
 
+import org.integratedmodelling.kactors.api.IKActorsValue.Type;
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+
+import akka.actor.typed.ActorRef;
 
 /**
  * 
  * Messages:
  * <ul>
- * <li><b>maybe[(probability, value)]</b> fire value (default TRUE) with probability
- * (default 0.5)</li>
- * <li><b>choose(v1, v2, ..., vn)</b> fire one of the values with same probability; if
- * first value is a distribution and vals are same number, use that to
- * choose</li>
- * <li><b>when</b> fire any new observations made in the context after the call; match
- * by type (concept) or name (string)</li>
+ * <li><b>maybe[(probability, value)]</b> fire value (default TRUE) with
+ * probability (default 0.5)</li>
+ * <li><b>choose(v1, v2, ..., vn)</b> fire one of the values with same
+ * probability; if first value is a distribution and vals are same number, use
+ * that to choose</li>
  * </ul>
+ * <p>
+ * All these messages must be quick to execute, as all observations will queue
+ * them here!
  * 
  * @author Ferd
  *
@@ -28,21 +39,34 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 @Behavior(id = "session", version = Version.CURRENT)
 public class RuntimeBehavior {
 
-	@Action(id = "observe")
+	/**
+	 * Set the root context
+	 */
+	@Action(id = "context", fires = Type.OBSERVATION)
 	public static class Observe extends KlabAction {
 
-		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(identity, arguments, scope);
+		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 		}
 
 		@Override
 		void run() {
-			// TODO Auto-generated method stub
+
+			Object arg = evaluateArgument(0);
+			if (arg instanceof Urn) {
+				try {
+					Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
+					fire(future.get(), true);
+				} catch (Throwable e) {
+					fail();
+				}
+			}
 
 		}
 	}
 
-	@Action(id = "maybe")
+	@Action(id = "maybe", fires = Type.BOOLEAN)
 	public static class Maybe extends KlabAction {
 
 		Random random = new Random();
@@ -50,8 +74,9 @@ public class RuntimeBehavior {
 		double probability = 0.5;
 		Object fired = null;
 
-		public Maybe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope) {
-			super(identity, arguments, scope);
+		public Maybe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 			boolean pdef = false;
 			for (String key : arguments.getUnnamedKeys()) {
 				Object o = arguments.get(key);
@@ -68,35 +93,82 @@ public class RuntimeBehavior {
 		void run() {
 			if (random.nextDouble() < probability) {
 				fire(fired == null ? DEFAULT_FIRE : fired, true);
+			} else {
+				// fire anyway so that anything that's waiting can continue
+				fire(false, true);
 			}
 		}
 	}
 
-	/**
-	 * The message installs a listener in a context that will fire an object to the
-	 * sender whenever it is resolved and matches a pattern. FIXME this is an
-	 * action, not a message
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	@Action(id = "when")
-	public static class When extends KlabAction {
+	@Action(id = "info", fires = {})
+	public static class Info extends KlabAction {
 
-		public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,  KlabActor.Scope scope) {
-			super(identity, arguments, scope);
-//
-//			this.listenerId = listenerId;
-//			this.value = matches;
-//			this.sender = replyTo;
-			// TODO install a listener
+		public Info(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
 		}
 
 		@Override
 		void run() {
-			// TODO Auto-generated method stub
-			
+			List<Object> args = new ArrayList<>();
+			for (Object arg : arguments.values()) {
+				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
+			}
+			scope.runtimeScope.getMonitor().info(args.toArray());
 		}
 	}
 
+	@Action(id = "warn", fires = {})
+	public static class Warning extends KlabAction {
+
+		public Warning(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
+		}
+
+		@Override
+		void run() {
+			List<Object> args = new ArrayList<>();
+			for (Object arg : arguments.values()) {
+				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
+			}
+			scope.runtimeScope.getMonitor().warn(args.toArray());
+		}
+	}
+
+	@Action(id = "error", fires = {})
+	public static class Error extends KlabAction {
+
+		public Error(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
+		}
+
+		@Override
+		void run() {
+			List<Object> args = new ArrayList<>();
+			for (Object arg : arguments.values()) {
+				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
+			}
+			scope.runtimeScope.getMonitor().error(args.toArray());
+		}
+	}
+
+	@Action(id = "debug", fires = {})
+	public static class Debug extends KlabAction {
+
+		public Debug(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender) {
+			super(identity, arguments, scope, sender);
+		}
+
+		@Override
+		void run() {
+			List<Object> args = new ArrayList<>();
+			for (Object arg : arguments.values()) {
+				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
+			}
+			scope.runtimeScope.getMonitor().debug(args.toArray());
+		}
+	}
 }

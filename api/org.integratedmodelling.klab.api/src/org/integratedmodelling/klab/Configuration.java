@@ -310,4 +310,8 @@ public enum Configuration implements IConfigurationService {
 		return new File(
 				getProperties().getProperty(KLAB_TEMPORARY_DATA_DIRECTORY, System.getProperty("java.io.tmpdir")));
 	}
+
+	public boolean synchronousDataflow() {
+		return System.getProperty("synchronous") != null;
+	}
 }

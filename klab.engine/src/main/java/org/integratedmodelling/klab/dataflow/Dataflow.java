@@ -2,10 +2,13 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Interaction;
@@ -14,6 +17,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -25,17 +29,23 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.api.runtime.rest.INotification.Mode;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Annotation;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
+import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -49,11 +59,24 @@ import org.integratedmodelling.klab.utils.Utils;
  * {@link #run(IScale, IMonitor)} produces {@link IObservation observations}
  * unless the dataflow is {@link #isEmpty() empty}.
  * <p>
+ * Each context has a single, hierarchically organized dataflow made up of
+ * sub-dataflow. The root dataflow resolves the context (object resolvers are
+ * void as they do not produce observations, the object type is reserved for
+ * instantiators). Each actuator that instantiates objects also has the void
+ * dataflow(s) that resolve them, plus any other actuator run in the context of
+ * the instantiated objects. Successive observations add dataflows to the parent
+ * actuator, according to the scope of each resolution, contributing to one
+ * overall dataflow which is visualized to the user as it changes.
+ * <p>
  * A matching implementation may be provided to run non-semantic workflows in
  * semantically unaware computation engines, or a translator could be used to
  * provide commodity semantics to use this one so that k.LAB servers can serve
  * indirectAdapters through URNs.
  * <p>
+ * A dataflow is a void actuator in k.DL. A void actuator resolves the context
+ * it's run into. When objects are created, the containing actuator may contain
+ * the dataflow(s) to resolve it and/or specific qualities declared "within" the
+ * object.
  * 
  * @author Ferd
  *
@@ -63,9 +86,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private String description;
 	private DirectObservation context;
 	private ResolutionScope resolutionScope;
-	private boolean primary = true;
+//	private boolean primary = true;
 	IDirectObservation relationshipSource;
 	IDirectObservation relationshipTarget;
+
+	// this could simply be the "dataflow" in the parent actuator but it's clearer
+	// this way.
+	private Dataflow parent;
 
 	/*
 	 * if true, we observe occurrents and we may need to upgrade a generic T context
@@ -81,6 +108,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private List<Pair<IAnnotation, List<String>>> annotations = new ArrayList<>();
 	private IMetadata metadata;
 	private Collection<IObservation> configurationTargets;
+	private String targetName;
 
 	class AnnotationParameterValue {
 
@@ -99,12 +127,23 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	List<AnnotationParameterValue> annotationParameters = new ArrayList<>();
 	private Scale resolutionScale;
+	private boolean secondary;
 
-	private Dataflow() {
+	/*
+	 * keep the IDs of the dataflows already merged (during run()) so that we only
+	 * merge each dataflow once when reusing them for multiple instances.
+	 */
+	Set<String> dataflowIds = new HashSet<>();
+	private ObservationGroup observationGroup;
+	private Mode notificationMode = INotification.Mode.Normal;
+
+	private Dataflow(Dataflow parent) {
+		this.parent = parent;
 	}
 
-	public Dataflow(ISession session) {
+	public Dataflow(ISession session, Dataflow parent) {
 		this.session = session;
+		this.parent = parent;
 	}
 
 	/**
@@ -118,9 +157,25 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
+		return run(scale, null, monitor);
+	}
+
+	/**
+	 * Pass an actuator to use to register ourselves into. If the parent is not
+	 * null, notify the task through the monitor (top-level observation do it
+	 * manually so that any resolution issue also get reported as pertaining to the
+	 * same observation task).
+	 * 
+	 * @param scale
+	 * @param parentComputation
+	 * @param monitor
+	 * @return
+	 * @throws KlabException
+	 */
+	public IArtifact run(IScale scale, Actuator parentComputation, IMonitor monitor) throws KlabException {
 
 		reset();
-		
+
 		/*
 		 * we need the initialization scale for the dataflow but we must create our
 		 * targets with the overall scale. Problem is, occurrent actuators must create
@@ -131,6 +186,18 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				return resolutionScope.getResolvedArtifact().getArtifact();
 			}
 			return Observation.empty();
+		}
+
+		/*
+		 * a trivial dataflow is the one that won't do anything but create the target, and notifying it
+		 * would be a lot of notification if it's called for 3000 instantiated objects.
+		 */
+		boolean trivial = actuators.size() < 2 && (actuators.size() == 0 || (actuators.size() == 1
+				&& ((Actuator) actuators.get(0)).getObservable().is(IKimConcept.Type.COUNTABLE)
+				&& ((Actuator)actuators.get(0)).isTrivial()));
+
+		if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+			((AbstractTask<?>) monitor.getIdentity()).notifyStart();
 		}
 
 		/*
@@ -230,11 +297,68 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				} else {
 					((ObservedArtifact) ret).chain(data);
 				}
-			} catch (InterruptedException e) {
-				return null;
-			} catch (ExecutionException e) {
-				throw new KlabContextualizationException(e);
+			} catch (Throwable e) {
+				if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+					throw ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);
+				}
 			}
+		}
+
+		Dataflow rootDataflow = null;
+		boolean added = false;
+		if (parentComputation == null) {
+			rootDataflow = this;
+			((RuntimeScope) ((Observation) ret).getScope()).setDataflow(this);
+		} else {
+
+			rootDataflow = (Dataflow) ((Observation) ret).getScope().getDataflow();
+
+			if (!rootDataflow.dataflowIds.contains(this.getName())) {
+
+				added = true;
+				rootDataflow.dataflowIds.add(this.getName());
+
+				Actuator parent = parentComputation;
+
+				// again, this is currently just one actuator
+				for (IActuator actuator : actuators) {
+
+					// I am the resolver
+					if (actuator.getType() == Type.VOID) {
+						parent.getActuators().add(actuator);
+					} else if (parent.getType() != Type.VOID) {
+
+						/*
+						 * should be within an instantiator, which at this point has resolved its
+						 * instances so it should have a void child with the same name
+						 */
+						for (IActuator pc : parent.getActuators()) {
+							if (pc.getType() == Type.VOID && pc.getName().equals(parent.getName())) {
+								parent = (Actuator) pc;
+								break;
+							}
+						}
+						if (parent.getType() == Type.VOID) {
+							parent.getActuators().add(actuator);
+						}
+					}
+				}
+			}
+		}
+
+		if (added && !trivial && isPrimary()) {
+			/*
+			 * send dataflow after execution is finished. TODO add style elements or flags
+			 * to make sure it's shown statically.
+			 */
+			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+					IMessage.Type.DataflowCompiled, new DataflowReference(session.getMonitor().getIdentity().getId(),
+							getKdlCode(), ContextualizationStrategy.getElkGraph(this))));
+			System.out.println(rootDataflow.getKdlCode());
+		}
+
+		if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+			((AbstractTask<?>) monitor.getIdentity()).notifyEnd();
 		}
 
 		return ret;
@@ -349,13 +473,16 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			if (coverage != null && coverage.getExtentCount() > 0) {
 				List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
 				if (!scaleSpecs.isEmpty()) {
-					ret += "@coverage";
-					for (int i = 0; i < scaleSpecs.size(); i++) {
-						if (scaleSpecs.get(i) != null) {
-							ret += " " + scaleSpecs.get(i).getSourceCode()
-									+ ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
-						}
-					}
+					ret += "@coverage load_me_from_some_sidecar_file()";
+					// TODO this can get huge and is transmitted over websockets, so can't put it
+					// here as is. Needs
+					// supplemental material and a ref instead.
+//					for (int i = 0; i < scaleSpecs.size(); i++) {
+//						if (scaleSpecs.get(i) != null) {
+//							ret += " " + scaleSpecs.get(i).getSourceCode()
+//									+ ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
+//						}
+//					}
 					ret += "\n";
 				}
 			}
@@ -396,12 +523,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.resolutionScope = scope;
 	}
 
-	public static Dataflow empty() {
-		return new Dataflow();
+	public static Dataflow empty(Dataflow parent) {
+		return new Dataflow(parent);
 	}
 
-	public static Dataflow empty(ResolutionScope scope) {
-		Dataflow ret = new Dataflow();
+	public static Dataflow empty(ResolutionScope scope, Dataflow parent) {
+		Dataflow ret = new Dataflow(parent);
 		ret.resolutionScope = scope;
 		ret.session = scope.getSession();
 		return ret;
@@ -415,9 +542,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @param scope
 	 * @return
 	 */
-	public static Dataflow empty(IObservable observable, String name, ResolutionScope scope) {
+	public static Dataflow empty(IObservable observable, String name, ResolutionScope scope, Dataflow parent) {
 
-		Dataflow ret = new Dataflow();
+		Dataflow ret = new Dataflow(parent);
 		ret.resolutionScope = scope;
 		ret.session = scope.getSession();
 
@@ -445,13 +572,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @return
 	 */
 	public boolean isPrimary() {
-		return primary;
+//		return primary;
+		return parent == null;
 	}
 
-	public Dataflow setPrimary(boolean b) {
-		this.primary = b;
-		return this;
-	}
+//	public Dataflow setPrimary(boolean b) {
+//		this.primary = b;
+//		return this;
+//	}
 
 	public String getDescription() {
 		return description;
@@ -534,6 +662,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return this.autoStartTransitions;
 	}
 
+	/**
+	 * TODO/FIXME if withScope is called, it must be called before this one.
+	 * 
+	 * @param scale
+	 * @return
+	 */
 	public Dataflow withScopeScale(IScale scale) {
 		if (this.resolutionScope != null) {
 			this.resolutionScope = this.resolutionScope.rescale(scale);
@@ -541,5 +675,88 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return this;
 	}
 
+	/**
+	 * TODO this should create a new dataflow if we want concurrent execution of
+	 * dataflows with different scopes. Also this MUST be called before
+	 * withScopeScale if that is used.
+	 * 
+	 * @param scope
+	 * @return
+	 */
+	public Dataflow withScope(ResolutionScope scope) {
+		this.resolutionScope = scope;
+		return this;
+	}
 
+	public ResolutionScope getResolutionScope() {
+		return this.resolutionScope;
+	}
+
+	/*
+	 * FIXME this shouldn't be necessary - use the hierarchy
+	 */
+	public void setSecondary(boolean b) {
+		this.secondary = b;
+	}
+
+	/*
+	 * FIXME this shouldn't be necessary - use the hierarchy. Also conflicts with
+	 * isPrimary() in meaning.
+	 */
+	public boolean isSecondary() {
+		return this.secondary;
+	}
+
+	public void reattributeActuators() {
+		for (IActuator actuator : actuators) {
+			reattributeActuator(actuator);
+		}
+	}
+
+	private void reattributeActuator(IActuator actuator) {
+		((Actuator) actuator).setDataflow(this);
+		for (IActuator a : actuator.getActuators()) {
+			reattributeActuator(a);
+		}
+	}
+
+	public Dataflow withContext(IDirectObservation contextSubject) {
+		this.context = (DirectObservation) contextSubject;
+		return this;
+	}
+
+	public Dataflow withinGroup(ObservationGroup group) {
+		this.observationGroup = group;
+		return this;
+	}
+
+	public ObservationGroup getObservationGroup() {
+		return this.observationGroup;
+	}
+
+	public String getTargetName() {
+		return targetName;
+	}
+
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
+	}
+
+	public Dataflow withTargetName(String targetName) {
+		this.targetName = targetName;
+		return this;
+	}
+
+	public Mode getNotificationMode() {
+		return this.notificationMode;
+	}
+
+	public void setNotificationMode(INotification.Mode mode) {
+		this.notificationMode = mode;
+	}
+
+	public Dataflow withNotificationMode(INotification.Mode mode) {
+		this.notificationMode = mode;
+		return this;
+	}
 }

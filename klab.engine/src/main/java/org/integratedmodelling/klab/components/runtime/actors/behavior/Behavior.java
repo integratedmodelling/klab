@@ -1,25 +1,40 @@
 package org.integratedmodelling.klab.components.runtime.actors.behavior;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Annotations;
-import org.integratedmodelling.klab.api.IStatement;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.utils.Range;
 
 public class Behavior implements IBehavior {
+
+	static Set<String> viewAnnotations;
+
+	static {
+		viewAnnotations = new HashSet<>();
+		viewAnnotations.add("panel");
+		viewAnnotations.add("header");
+		viewAnnotations.add("footer");
+		viewAnnotations.add("modal");
+		viewAnnotations.add("window");
+	}
 
 	/**
 	 * Pre-processed match value optimized for matching.
@@ -35,12 +50,45 @@ public class Behavior implements IBehavior {
 			this.value = (KActorsValue) ikActorsValue;
 		}
 
-		public boolean matches(Object value) {
+		private boolean notMatch(Object value) {
+			return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean) value));
+		}
+
+		/**
+		 * If true, no match value was given and the values will be set into system
+		 * variables $ for the entire match, plus $1..$n if multiple values.
+		 * 
+		 * @return
+		 */
+		public boolean isImplicit() {
+			return value == null;
+		}
+		
+		// Call only if isIdentifier() returns true
+		public String getIdentifier() {
+			return this.value.getValue().toString();
+		}
+		
+		/**
+		 * If true, this matches true and contains an identifier to set into the scope
+		 * to the matched value.
+		 * 
+		 * @param scope
+		 * @return
+		 */
+		public boolean isIdentifier(Scope scope) {
+			return this.value.getType() == IKActorsValue.Type.IDENTIFIER && !scope.containsKey(this.value.getValue());
+		}
+
+		public boolean matches(Object value, Scope scope) {
 			switch (this.value.getType()) {
 			case ANYTHING:
 				return true;
 			case ANYVALUE:
-				return value != null;
+				return value != null && !(value instanceof Throwable);
+			case ANYTRUE:
+				return value != null && !(value instanceof Throwable)
+						&& !(value instanceof Boolean && !((Boolean) value));
 			case BOOLEAN:
 				return value instanceof Boolean && value.equals(this.value.getValue());
 			case CLASS:
@@ -48,18 +96,28 @@ public class Behavior implements IBehavior {
 			case DATE:
 				break;
 			case EXPRESSION:
-				System.out.println("PORCODIO AN EXPRESSION");
+				System.out.println("ACH AN EXPRESSION");
 				break;
 			case IDENTIFIER:
-				// TODO match and put the value in scope as named ID
+				if (scope.symbolTable.containsKey(this.value.getValue())) {
+					return this.value.getValue().equals(scope.symbolTable.get(value));
+				}
+				if (!notMatch(value)) {
+					// NO - if defined in scope, match to its value, else just return true.
+//					scope.symbolTable.put(this.value.getValue().toString(), value);
+					return true;
+				}
+				break;
+			case SET:
+				// TODO OR match for values in list
 				break;
 			case LIST:
-				// TODO differentiate between multi-identifier and OR match for values in list
+				// TODO multi-identifier match
 				break;
 			case MAP:
 				break;
 			case NODATA:
-				return value == null || value instanceof Number && Double.isNaN(((Number)value).doubleValue());
+				return value == null || value instanceof Number && Double.isNaN(((Number) value).doubleValue());
 			case NUMBER:
 				return value instanceof Number && value.equals(this.value.getValue());
 			case NUMBERED_PATTERN:
@@ -80,6 +138,14 @@ public class Behavior implements IBehavior {
 			case TYPE:
 				break;
 			case URN:
+				break;
+			case ERROR:
+				// match any error? any literal for that?
+				break;
+			case OBSERVATION:
+				// might
+				break;
+			case TREE:
 				break;
 			default:
 				break;
@@ -102,6 +168,11 @@ public class Behavior implements IBehavior {
 		}
 	}
 
+	private Behavior() {
+		// empty behavior
+		this.statement = new KActorsBehavior();
+	}
+
 	@Override
 	public String getId() {
 		return this.statement.getName();
@@ -113,7 +184,7 @@ public class Behavior implements IBehavior {
 	}
 
 	@Override
-	public IStatement getStatement() {
+	public IKActorsBehavior getStatement() {
 		return this.statement;
 	}
 
@@ -151,7 +222,7 @@ public class Behavior implements IBehavior {
 	public Type getDestination() {
 		return statement.getType();
 	}
-
+	
 	@Override
 	public List<Action> getActions(String... match) {
 		List<Action> ret = new ArrayList<>();
@@ -181,6 +252,10 @@ public class Behavior implements IBehavior {
 	@Override
 	public Action getAction(String actionId) {
 		return actions.get(actionId);
+	}
+
+	public static IBehavior empty() {
+		return new Behavior();
 	}
 
 }

@@ -1,0 +1,11 @@
+[#chapter-kactors]
+= The k.Actors language
+Ferdinando Villa
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: left
+:numbered:
+
+The k.Actors language, one of the three supported in k.LAB, is used to specify reactive _behaviors_ for the different agents created during a k.LAB session, including observations of all kinds. By extending the notion of _agent_ to k.LAB users and sessions, k.Actors also enables the definition of _applications_ that implement custom user interfaces and support specialized workflows on top of the <<chapter-explorer,k.Explorer>> view component.
+

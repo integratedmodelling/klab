@@ -19,120 +19,123 @@ package org.integratedmodelling.klab.data;
 /**
  * The Enum Aggregators.
  *
+ * TODO deprecate and abandon, or hide somewhere if still useful. Intelligent
+ * aggregation logics is in the Aggregator class.
+ *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public enum Aggregators {
 
-  INSTANCE;
+	INSTANCE;
 
-  /**
-   * The Interface IAggregator.
-   */
-  public static interface IAggregator {
-    
-    /**
-     * Aggregate.
-     *
-     * @param objects the objects
-     * @return the aggregated object
-     */
-    public Object aggregate(Iterable<Object> objects);
-  }
+	/**
+	 * The Interface IAggregator.
+	 */
+	public static interface IAggregator {
 
-  /**
-   * The Class Mean.
-   */
-  public static class Mean implements IAggregator {
+		/**
+		 * Aggregate.
+		 *
+		 * @param objects the objects
+		 * @return the aggregated object
+		 */
+		public Object aggregate(Iterable<Object> objects);
+	}
 
-      @Override
-      public Object aggregate(Iterable<Object> objects) {
+	/**
+	 * The Class Mean.
+	 */
+	public static class Mean implements IAggregator {
 
-          double sum = 0.0;
-          double n = 0;
+		@Override
+		public Object aggregate(Iterable<Object> objects) {
 
-          for (Object o : objects) {
-              sum += INSTANCE.toDouble(o);
-              n += 1.0;
-          }
+			double sum = 0.0;
+			double n = 0;
 
-          return sum / n;
-      }
-  }
+			for (Object o : objects) {
+				sum += INSTANCE.toDouble(o);
+				n += 1.0;
+			}
 
-  /**
-   * The Class Sum.
-   */
-  public static class Sum implements IAggregator {
+			return sum / n;
+		}
+	}
 
-      @Override
-      public Object aggregate(Iterable<Object> objects) {
+	/**
+	 * The Class Sum.
+	 */
+	public static class Sum implements IAggregator {
 
-          double sum = 0.0;
-          for (Object o : objects) {
-              sum += INSTANCE.toDouble(o);
-          }
-          return sum;
-      }
+		@Override
+		public Object aggregate(Iterable<Object> objects) {
 
-  }
+			double sum = 0.0;
+			for (Object o : objects) {
+				sum += INSTANCE.toDouble(o);
+			}
+			return sum;
+		}
 
-  /**
-   * The Class Min.
-   */
-  public static class Min implements IAggregator {
+	}
 
-      @Override
-      public Object aggregate(Iterable<Object> objects) {
+	/**
+	 * The Class Min.
+	 */
+	public static class Min implements IAggregator {
 
-          double min = Double.NaN;
+		@Override
+		public Object aggregate(Iterable<Object> objects) {
 
-          for (Object o : objects) {
-              double d = INSTANCE.toDouble(o);
-              if (!Double.isNaN(d) && (Double.isNaN(min) || d < min)) {
-                  min = d;
-              }
-          }
+			double min = Double.NaN;
 
-          return min;
-      }
-  }
+			for (Object o : objects) {
+				double d = INSTANCE.toDouble(o);
+				if (!Double.isNaN(d) && (Double.isNaN(min) || d < min)) {
+					min = d;
+				}
+			}
 
-  /**
-   * The Class Max.
-   */
-  public static class Max implements IAggregator {
+			return min;
+		}
+	}
 
-      @Override
-      public Object aggregate(Iterable<Object> objects) {
+	/**
+	 * The Class Max.
+	 */
+	public static class Max implements IAggregator {
 
-          double max = Double.NaN;
+		@Override
+		public Object aggregate(Iterable<Object> objects) {
 
-          for (Object o : objects) {
-              double d = INSTANCE.toDouble(o);
-              if (!Double.isNaN(d) && (Double.isNaN(max) || d > max)) {
-                  max = d;
-              }
-          }
+			double max = Double.NaN;
 
-          return max;
-      }
-  }
-  
-  /**
-   * To double.
-   *
-   * @param o the o
-   * @return the double
-   */
-  public double toDouble(Object o) {
+			for (Object o : objects) {
+				double d = INSTANCE.toDouble(o);
+				if (!Double.isNaN(d) && (Double.isNaN(max) || d > max)) {
+					max = d;
+				}
+			}
 
-    double ret = Double.NaN;
-    if (o instanceof String) {
-        ret = Double.parseDouble(o.toString());
-    } else if (o instanceof Number) {
-        ret = ((Number) o).doubleValue();
-    }
-    return ret;
-}
+			return max;
+		}
+	}
+
+	/**
+	 * To double.
+	 *
+	 * @param o the o
+	 * @return the double
+	 */
+	public double toDouble(Object o) {
+
+		double ret = Double.NaN;
+		if (o instanceof String) {
+			ret = Double.parseDouble(o.toString());
+		} else if (o instanceof Number) {
+			ret = ((Number) o).doubleValue();
+		}
+		return ret;
+	}
 }

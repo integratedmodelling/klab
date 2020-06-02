@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -13,10 +15,10 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
@@ -24,6 +26,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.model.Model;
@@ -44,26 +47,14 @@ import org.jgrapht.Graph;
 public interface IRuntimeScope extends IContextualizationScope {
 
 	/**
-	 * A context is created for the root observation, and this information never
-	 * changes.
+	 * These can be installed to be notified of each new observation.
 	 * 
-	 * @return the root observation. Can only be null at the beginning of the
-	 *         lifecycle of this context, when the root obs has not been created
-	 *         yet.
+	 * @author Ferd
+	 *
 	 */
-	ISubject getRootSubject();
-
-	/**
-	 * The context subject for the observation being computed. May differ from
-	 * {@link #getContextObservation()} as the latter is the one in the scope of
-	 * which the runtime operation has been resolved. This applies for example to
-	 * dataflows that resolve an instantiated subject.
-	 * 
-	 * TODO clarify the difference or resolve the conflict if any.
-	 * 
-	 * @return
-	 */
-	IDirectObservation getContextSubject();
+	interface ObservationListener {
+		void newObservation(IObservation observation);
+	}
 
 	/**
 	 * Return any of the observations created within the context of the root
@@ -86,7 +77,8 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param monitor
 	 * @return
 	 */
-	public IRuntimeScope createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
+	public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope,
+			IMonitor monitor);
 
 	/**
 	 * Called to create the computation context for any actuator contained in a root
@@ -178,13 +170,13 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void setScale(IScale geometry);
 
-	/**
-	 * Called after successful computation passing each annotation that was defined
-	 * for the model.
-	 * 
-	 * @param annotation
-	 */
-	void processAnnotation(IAnnotation annotation);
+//	/**
+//	 * Called after successful computation passing each annotation that was defined
+//	 * for the model.
+//	 * 
+//	 * @param annotation
+//	 */
+//	void processAnnotation(IAnnotation annotation);
 
 	/**
 	 * Specialize the provenance so we can use setting methods on it.
@@ -194,12 +186,12 @@ public interface IRuntimeScope extends IContextualizationScope {
 	Provenance getProvenance();
 
 	/**
-	 * Return the context structure (all father-child relationships) as a JGraphT
-	 * graph.
+	 * Return the context structure (all father-child relationships) as a graph with
+	 * separate logical (observations) and physical (artifact) hierarchies.
 	 * 
 	 * @return the structure
 	 */
-	Graph<? extends IArtifact, ?> getStructure();
+	IArtifact.Structure getStructure();
 
 	/**
 	 * Return all the children of an artifact in the structural graph that match a
@@ -211,18 +203,18 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	<T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
 
-	/**
-	 * Build the link between a parent and a child artifact. Should only be used in
-	 * the few cases when observations are created by hand, using pre-built
-	 * instances such as rescaling states, instead of through
-	 * {@link #newObservation(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale)}
-	 * or
-	 * {@link #newRelationship(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact)}.
-	 * 
-	 * @param parent
-	 * @param child
-	 */
-	void link(IArtifact parent, IArtifact child);
+//	/**
+//	 * Build the link between a parent and a child artifact. Should only be used in
+//	 * the few cases when observations are created by hand, using pre-built
+//	 * instances such as rescaling states, instead of through
+//	 * {@link #newObservation(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale)}
+//	 * or
+//	 * {@link #newRelationship(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact)}.
+//	 * 
+//	 * @param parent
+//	 * @param child
+//	 */
+//	void link(IArtifact parent, IArtifact child);
 
 	/**
 	 * Set the passed artifact as the current target, ensuring it is properly
@@ -294,7 +286,7 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param directObservation
 	 * @return
 	 */
-	Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation);
+	Collection<IArtifact> getChildArtifactsOf(IArtifact directObservation);
 
 	/*
 	 * OK, I declare failure for now. No better way to record what has been notified
@@ -352,7 +344,7 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param transitionScale
 	 * @return
 	 */
-	IRuntimeScope locate(ILocator transitionScale);
+	IRuntimeScope locate(ILocator transitionScale, IMonitor monitor);
 
 	/**
 	 * Get all the artifacts known to this context indexed by their local name in
@@ -369,11 +361,89 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * Manually add a state to a target observation, updating structure and
 	 * notifying what needs to be notified.
 	 * 
-	 * @param target the direct observation that will receive the state.
+	 * @param target     the direct observation that will receive the state.
 	 * @param observable for the state. The scale will be the same as the target.
-	 * @param data any kind of content for the state - either a scalar to be redistributed or
-	 *        
+	 * @param data       any kind of content for the state - either a scalar to be
+	 *                   redistributed or
+	 * 
 	 * @return
 	 */
 	IState addState(IDirectObservation target, IObservable observable, Object data);
+
+	/**
+	 * Resolve the passed observable in the passed context and return the resulting
+	 * dataflow. If the observable cannot be resolved, return null without error.
+	 * Must cache dataflows by scale and retrieve them quickly as it may be called
+	 * many times at each new direct observation.
+	 * 
+	 * @param observable
+	 * @param context
+	 * @param task       the task to register the resolution to
+	 * 
+	 * @return a dataflow to resolve the observable, or null if there is no coverage
+	 */
+	<T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task, Mode mode);
+
+	/**
+	 * Schedule any actions tagged as scheduled in the behavior of the passed
+	 * observation.
+	 * 
+	 * @param observation
+	 * @param behavior
+	 */
+	void scheduleActions(Observation observation, IBehavior behavior);
+
+	/**
+	 * Bindings between observables and behaviors can be made by actors at runtime.
+	 * If that happens, the bindings will be stored in the runtime scope. They are
+	 * returned as a map (in the default implementation, that will be an
+	 * "intelligent" map so that inference is used in attributing the behaviors.
+	 * 
+	 * @return
+	 */
+	Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings();
+
+	/**
+	 * Add a listener, return an ID that can be passed later to
+	 * {@link #removeListener(String)} to remove it.
+	 * 
+	 * @param listener
+	 * @return
+	 */
+	public String addListener(ObservationListener listener);
+
+	/**
+	 * Remove a previously installed #{@link ObservationListener}.
+	 * 
+	 * @param listenerId
+	 */
+	public void removeListener(String listenerId);
+
+	/**
+	 * Scopes must maintain a synchronized set of IDs for all observations that are
+	 * being watched by the view. This is subscribed to through messages sent to the
+	 * session that owns the observations.
+	 * 
+	 * @return
+	 */
+	public Set<String> getWatchedObservationIds();
+
+	/**
+	 * Send any notifications pertaining to this observation to the clients that are
+	 * watching. Should call {@link #isNotifiable(IObservation)} to ensure that the
+	 * observation is watched.
+	 * 
+	 * @param observation
+	 */
+	void updateNotifications(IObservation observation);
+
+	/**
+	 * Swap the passed artifact in all the graphs maintained by the context
+	 * (structure, provenance). Should be only called with states.
+	 * 
+	 * @param ret
+	 * @param result
+	 */
+	void swapArtifact(IArtifact ret, IArtifact result);
+
 }

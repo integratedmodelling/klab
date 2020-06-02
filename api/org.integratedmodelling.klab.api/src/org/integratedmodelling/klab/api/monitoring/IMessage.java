@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.rest.RuntimeDocumentation;
 import org.integratedmodelling.klab.rest.SettingChangeRequest;
 import org.integratedmodelling.klab.rest.UserInputRequest;
 import org.integratedmodelling.klab.rest.UserInputResponse;
+import org.integratedmodelling.klab.rest.WatchRequest;
 
 /**
  * Messages exchanged between the engine and its web UI.
@@ -19,6 +20,11 @@ public interface IMessage {
 
 	public static IMessage NO_RESPONSE = null;
 
+	enum Repeatability {
+		Repeatable,
+		Once
+	}
+	
 	/**
 	 * Message class. Ugly type name makes life easier.
 	 * 
@@ -99,6 +105,11 @@ public interface IMessage {
 		 * Run-class messages start scripts and tests.
 		 */
 		Run,
+
+		/**
+		 * Messages sent or received by the view actor, called from behaviors.
+		 */
+		ViewActor
 	}
 
 	/**
@@ -206,16 +217,22 @@ public interface IMessage {
 		 */
 		CreateNamespace, CreateScenario, DeleteNamespace, DeleteLocalResource, CreateProject, DeleteProject,
 		CreateScript, DeleteScript, CreateTestCase, DeleteTestCase, CreateBehavior, DeleteBehavior,
-		
+
 		/*
 		 * F->B: publish or update a local or public resource
 		 */
-		PublishLocalResource, UpdatePublicResource, 
-		
-		/*
-		 * B->F: respond to a request to publish a resource (just submit asynchronously).
+		PublishLocalResource, UpdatePublicResource,
+
+		/**
+		 * B->F: respond to a request to publish a resource (just submit
+		 * asynchronously).
 		 */
 		ResourceSubmitted,
+
+		/**
+		 * B -> F after a resource operation request, reporting the results
+		 */
+		ResourceInformation,
 
 		/**
 		 * F->B: notification when files are explicitly changed, added or deleted;
@@ -226,7 +243,7 @@ public interface IMessage {
 		/*
 		 * --- Notification-class types ---
 		 */
-		Debug, Info, Warning, Error,
+		Debug, Info, Warning, Error, EngineEvent, RuntimeEvent,
 
 		/*
 		 * --- KimLifecycle: one-off compile notifications at the namespace or project
@@ -242,6 +259,13 @@ public interface IMessage {
 		 * resulted from a search, send the ID of the search so it can be disposed of.
 		 */
 		RequestObservation,
+
+		/**
+		 * F->B: Start or stop watching an observation, i.e. receive messages about
+		 * anything that changes related to it. Linked to a {@link WatchRequest}
+		 * message payload.
+		 */
+		WatchObservation,
 
 		/**
 		 * A new observation is available. Back->Front.
@@ -264,12 +288,13 @@ public interface IMessage {
 		 * status
 		 */
 		NetworkStatus,
-		
+
 		/**
-		 * -- Ticketing system monitoring, send around internally by UserInterface after engine notification
+		 * -- Ticketing system monitoring, send around internally by UserInterface after
+		 * engine notification
 		 */
-		TicketResolved,
-		
+		TicketResolved, TicketStatusChanged, TicketCreated,
+
 		/**
 		 * --- Task lifecycle --- B -> F
 		 */
@@ -283,7 +308,7 @@ public interface IMessage {
 		/**
 		 * Scheduler lifecycle F->B
 		 */
-		SchedulingStarted, SchedulingFinished, SchedulerReset,
+		SchedulingStarted, SchedulingFinished, ScheduleAdvanced, SchedulerReset,
 
 		/*
 		 * --- Search-class types ---
@@ -303,7 +328,7 @@ public interface IMessage {
 		/*
 		 * --- Run-class types
 		 */
-		RunScript, RunTest, DebugScript, DebugTest,
+		RunScript, RunTest, RunApp, RunUnitTest, DebugScript, DebugTest,
 
 		/*
 		 * --- ResourceLifecycle-class types, F->B
@@ -314,9 +339,21 @@ public interface IMessage {
 		/*
 		 * --- ResourceLifecycle-class types, B->F
 		 */
-		ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated, ResourceCreated
+		ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated, ResourceCreated,
+
+		/*
+		 * --- View actor messages
+		 */
+		CreateViewComponent, SetupInterface, 
+		
+		/*
+		 * --- Sent F->B when a view action interacts with a component
+		 */
+		ViewAction
 
 	}
+	
+	Repeatability getRepeatability();
 
 	/**
 	 * Unique ID for each message.

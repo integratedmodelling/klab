@@ -25,7 +25,7 @@ Orthogonality
 
 === Pitfalls: common parlance vs. ontological sanity
 
-It's a constant war with the "automatic" and the "jargon"
+Developing useful ontologies is a constant war with the "habit" and the "jargon". We are used to talk, even between scientists, in very imprecise ways that rely on unwritten conventions to minimize effort and optimize time. These conventions are so ingrained that we lose sight of the terminology and just assume that our common words represent our observables correctly. These habits wreak havoc when trying to state each concept with maximum clarity and minimal ambiguity as is required in any ontological effort.
 
 - Processes instead of the quantities they affect: establish a rule and stick to it.
 - Unneeded attributes like 'mean precipitation' or 'total biomass'.

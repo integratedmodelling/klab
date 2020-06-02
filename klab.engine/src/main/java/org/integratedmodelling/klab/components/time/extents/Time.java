@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.time.extents;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -29,6 +30,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.components.time.extents.mediators.TimeIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -78,6 +80,11 @@ public class Time extends Extent implements ITime {
 		@Override
 		public double getMultiplier() {
 			return multiplier;
+		}
+
+		@Override
+		public long getSpan() {
+			return (long) (type.getMilliseconds() * multiplier);
 		}
 
 		public Resolution copy() {
@@ -263,6 +270,12 @@ public class Time extends Extent implements ITime {
 		return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
 	}
 
+	public static ITimeDuration duration(Quantity spec) {
+		Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit().toString()),
+				spec.getValue().doubleValue());
+		return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
+	}
+
 	public static ITimeDuration duration(String string) {
 		return duration(KimQuantity.parse(string));
 	}
@@ -273,6 +286,10 @@ public class Time extends Extent implements ITime {
 
 	public static Resolution resolution(IKimQuantity spec) {
 		return new ResolutionImpl(Resolution.Type.parse(spec.getUnit()), spec.getValue().doubleValue());
+	}
+
+	public static Resolution resolution(Quantity spec) {
+		return new ResolutionImpl(Resolution.Type.parse(spec.getUnit().toString()), spec.getValue().doubleValue());
 	}
 
 	public static Resolution resolution(ITimeInstant start, ITimeInstant end) {
@@ -335,11 +352,6 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public double getCoveredExtent() {
-		return end.getMilliseconds() - start.getMilliseconds();
-	}
-
-	@Override
-	public double getCoverage() {
 		return end.getMilliseconds() - start.getMilliseconds();
 	}
 
@@ -914,7 +926,9 @@ public class Time extends Extent implements ITime {
 	public IExtent at(Object... locators) {
 
 		if (locators != null && locators.length == 1) {
-			if (locators[0] instanceof Number) {
+			if (locators[0] instanceof String && "INITIALIZATION".equals(locators[0])) {
+				return initialization(this);
+			} else if (locators[0] instanceof Number) {
 				long ofs = ((Number) locators[0]).longValue();
 				if (this.size() == 1 && ofs == 0) {
 					return this;
@@ -927,10 +941,22 @@ public class Time extends Extent implements ITime {
 					return new Time((Time) locators[0]).withScaleId(getScaleId()).withLocatedOffset(0);
 				} else if (((Time) locators[0]).__id == this.__id) {
 					return (IExtent) locators[0];
+				} else {
+					/*
+					 * Mediation situation. Because of the irregular extents, not doing the coverage
+					 * thing. TODO: do the coverage thing.
+					 */
+					Time other = (Time) locators[0];
+					IExtent start = at(other.getStart());
+					IExtent end = at(other.getEnd());
+					// TODO compute how much other.getStart() leaves out of start() and add it
+					// somehow to the coverage for the first and last steps
+					if (start.equals(end)) {
+						// works for initialization, too
+						return other;
+					}
+					return new TimeGrid(other);
 				}
-				/*
-				 * TODO potential mediation situation
-				 */
 			} else if (locators[0] instanceof ITimeInstant) {
 
 				/*
@@ -943,12 +969,22 @@ public class Time extends Extent implements ITime {
 						return this;
 					}
 
-					if (step != null) {
+					if (size() > 1) {
 						long target = ((ITimeInstant) locators[0]).getMilliseconds();
 						long tleft = target - start.getMilliseconds();
-						long n = tleft / step.getMilliseconds();
+						long n = tleft / resolution.getSpan();
 						if (n >= 0 && n < size()) {
-							return getExtent(n);
+							Time ret = (Time) getExtent(n);
+							long nn = n;
+							// previous was approximate due to potential irregularity; correct as needed
+							while (nn > 0 && ret.getEnd().isBefore(((ITimeInstant) locators[0]))) {
+								ret = (Time) getExtent(++nn);
+							}
+							nn = n;
+							while (nn < size() && ret.getStart().isAfter(((ITimeInstant) locators[0]))) {
+								ret = (Time) getExtent(--nn);
+							}
+							return ret;
 						}
 					}
 				}
@@ -1035,6 +1071,68 @@ public class Time extends Extent implements ITime {
 		for (int i = 0; i < time.size(); i++) {
 			System.out.println(time.getExtent(i));
 		}
+
+		/*
+		 * Cover a span with the original resolution, produce variable coverages in the
+		 * resulting grid
+		 */
+		Time other = create(ITime.Type.PHYSICAL, Resolution.Type.WEEK, 2,
+				new TimeInstant(new DateTime(2000, 2, 10, 0, 0, 0)),
+				new TimeInstant(new DateTime(2000, 5, 11, 0, 0, 0)), null);
+		for (ILocator segment : time.at(other)) {
+			System.out.println("   > " + segment);
+		}
+	}
+
+	@Override
+	protected Time contextualizeTo(IExtent other, IAnnotation constraint) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
+	/**
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	class TimeGrid extends Time {
+
+		List<ILocator> covered = new ArrayList<>();
+
+		public TimeGrid(Time other) {
+			super(other);
+			Range orext = other.getRange();
+			Time extent = (Time) Time.this.at(other.getStart());
+			while (extent != null) {
+				
+				Range exext = extent.getRange();
+				Range inters = orext.intersection(exext);
+				double coverage = inters.getWidth()/extent.getRange().getWidth();
+				covered.add(extent.withCoverage(coverage));
+				long n = extent.getLocatedOffset();
+				if (extent.getEnd().isBefore(other.getEnd()) && n < Time.this.size()) {
+					extent = (Time) Time.this.getExtent(n + 1);
+				} else {
+					break;
+				}
+			}
+		}
+
+		@Override
+		public long size() {
+			return covered.size();
+		}
+
+		@Override
+		public IExtent getExtent(long stateIndex) {
+			return (IExtent) covered.get((int) stateIndex);
+		}
+
+		@Override
+		public Iterator<ILocator> iterator() {
+			return covered.iterator();
+		}
+
 	}
 
 }

@@ -41,3 +41,18 @@ export number density
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver
 }
+
+export value merge 
+	"Dereification by merging qualities distributed over multiple objects in the context."
+{
+	concept distributing
+		""
+	
+	concept inherent 
+		""
+		
+	text type
+		""
+
+	class org.integratedmodelling.klab.components.runtime.contextualizers.DereifyingStateResolver
+}

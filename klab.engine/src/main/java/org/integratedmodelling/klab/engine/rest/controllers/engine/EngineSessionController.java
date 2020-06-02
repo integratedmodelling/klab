@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
+@CrossOrigin(origins = "*")
 @Secured(Roles.SESSION)
 public class EngineSessionController {
 

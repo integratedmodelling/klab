@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.api.actors;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IKimObject;
 
@@ -22,6 +24,9 @@ public interface IBehavior extends IKimObject {
 		IKActorsAction getStatement();
 
 	}
+
+	@Override
+	IKActorsBehavior getStatement();
 
 	/**
 	 * Metadata, following the (forthcoming) actor-specific schema in
@@ -55,5 +60,5 @@ public interface IBehavior extends IKimObject {
 	 * @return the action or null
 	 */
 	Action getAction(String actionId);
-	
+
 }

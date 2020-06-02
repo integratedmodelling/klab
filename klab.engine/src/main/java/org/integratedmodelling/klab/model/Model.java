@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
@@ -60,6 +61,7 @@ import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
@@ -81,7 +83,7 @@ public class Model extends KimObject implements IModel {
 	private boolean reinterpreter;
 	private boolean inactive;
 	private boolean learning;
-//	private boolean merger;
+	private IObservable archetype;
 
 	/*
 	 * the geometry implicitly declared for the project, gathered from the resources
@@ -107,6 +109,8 @@ public class Model extends KimObject implements IModel {
 	private boolean available = true;
 	private Scope scope = Scope.PUBLIC;
 	private Strategy observationStrategy = Strategy.DIRECT;
+	private boolean learnsWithinArchetype;
+	private boolean distributesLearning;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -162,39 +166,84 @@ public class Model extends KimObject implements IModel {
 
 		for (IKimObservable dependency : model.getDependencies()) {
 			Observable dep = Observables.INSTANCE.declare(dependency, monitor);
+			dependencies.add(dep);
+		}
+
+		/*
+		 * there is an archetype notation
+		 */
+		boolean hasArchetype = false;
+		/*
+		 * learner whose main observable is within the archetype, treated specially
+		 */
+		this.learnsWithinArchetype = false;
+		/*
+		 * the archetype itself
+		 */
+		this.archetype = null;
+
+		/*
+		 * direct (within) context for the main observable
+		 */
+		IConcept modelContext = null;
+
+		if (isLearning() && getMainObservable() != null) {
+
+			modelContext = Observables.INSTANCE.getDirectContextType(getObservables().get(0).getType());
+
+			for (IObservable dependency : dependencies) {
+				if ((hasArchetype = Annotations.INSTANCE.hasAnnotation(dependency, IModel.ARCHETYPE_ANNOTATION))) {
+					archetype = dependency;
+					break;
+				}
+			}
+
+			if (modelContext != null && archetype.is(Type.COUNTABLE) && archetype.is(modelContext)) {
+				/*
+				 * if the model's archetype is the contextual observable in an explicit
+				 * 'within', the primary output becomes "of" it and the learning will be done
+				 * within each object and applied to the rest of the context. All predictors
+				 * become optional in the context and remain as indication of what to look for
+				 * in the archetype. This is assessed early so that we don't precontextualize
+				 * the dependencies in this case.
+				 */
+				learnsWithinArchetype = true;
+			}
+		}
+
+		int i = 0;
+		for (IObservable dependency : dependencies) {
 			if (context != null) {
-				if (this.instantiator) {
+				if (this.instantiator || learnsWithinArchetype) {
 
 					/*
 					 * we cannot know the context of resolution beforehand, so it will be
 					 * contextualized at query time.
 					 */
-					dep.setMustContextualizeAtResolution(true);
+					((Observable) dependency).setMustContextualizeAtResolution(true);
 
 				} else {
 					try {
-						dep = Observables.INSTANCE.contextualizeTo(dep, context, explicitContext, monitor);
+						dependencies.set(i,
+								Observables.INSTANCE.contextualizeTo(dependency, context, explicitContext, monitor));
 					} catch (Throwable e) {
 						monitor.error(e, dependency);
 						setErrors(true);
 					}
 				}
 			}
-			dependencies.add(dep);
+			i++;
 		}
 
 		/*
 		 * if this is a learning model without an archetype, add it as the dependency
 		 * with the annotation and add the core "predicted" attribute to the output.
+		 * 
+		 * TODO check behavior with distributed observables
 		 */
 		if (isLearning() && getMainObservable() != null) {
 
-			boolean hasArchetype = false;
-			for (IObservable dependency : dependencies) {
-				if ((hasArchetype = Annotations.INSTANCE.hasAnnotation(dependency, IModel.ARCHETYPE_ANNOTATION))) {
-					break;
-				}
-			}
+			this.distributesLearning = Annotations.INSTANCE.hasAnnotation(this, DISTRIBUTE_ANNOTATION);
 
 			if (!hasArchetype) {
 
@@ -215,7 +264,27 @@ public class Model extends KimObject implements IModel {
 				if (origin.getAnnotations() == null) {
 					origin.setAnnotations(new ArrayList<IAnnotation>());
 				}
-				origin.getAnnotations().add(Annotation.create("archetype"));
+				origin.getAnnotations().add(Annotation.create(ARCHETYPE_ANNOTATION));
+
+			} else if (learnsWithinArchetype) {
+
+				/*
+				 * switch observable; deactivate the predictors unless the @distribute
+				 * annotation requires the model to compute the value over the entire context.
+				 * No further action as these are only run explicitly so the resolution
+				 * mechanism for the inherent observable in ObservationStrategy won't be
+				 * triggered.
+				 */
+				IObservable inherent = getObservables().get(0).getBuilder(monitor).without(ObservableRole.CONTEXT)
+						.of(modelContext).buildObservable();
+				this.observables.set(0, inherent);
+				for (i = 1; i < dependencies.size(); i++) {
+					if (Annotations.INSTANCE.hasAnnotation(dependencies.get(i), IModel.PREDICTOR_ANNOTATION)) {
+						if (!distributesLearning) {
+							((Observable) dependencies.get(i)).setActive(false);
+						}
+					}
+				}
 			}
 		}
 
@@ -241,7 +310,7 @@ public class Model extends KimObject implements IModel {
 					 * either as an input or as an output.
 					 */
 					if (this.observables.get(0) != null && this.observables.get(0).is(Type.CHANGE)) {
-						IConcept inherent = this.observables.get(0).getInherentType();
+						IConcept inherent = Observables.INSTANCE.getDescribedType(this.observables.get(0).getType());
 						if (inherent != null && findOutput(inherent) == null && findOutput(inherent) == null) {
 							observables.add(Observable.promote(inherent));
 						}
@@ -355,7 +424,7 @@ public class Model extends KimObject implements IModel {
 		}
 
 		if (getMainObservable() != null && getMainObservable().is(Type.CHANGE)) {
-			IObservable iho = Observable.promote(Observables.INSTANCE.getInherentType(getMainObservable().getType()));
+			IObservable iho = Observable.promote(Observables.INSTANCE.getDescribedType(getMainObservable().getType()));
 			if (targetId.equals(iho.getName())) {
 				return true;
 			}
@@ -434,6 +503,9 @@ public class Model extends KimObject implements IModel {
 		for (IObservable observable : observables) {
 			if (typechain.containsKey(observable.getName())) {
 				IArtifact.Type required = observable.getArtifactType();
+				if (required == IArtifact.Type.OBJECT && !this.isInstantiator()) {
+					required = IArtifact.Type.VOID;
+				}
 				if (!IArtifact.Type.isCompatible(required, typechain.get(observable.getName()))) {
 					monitor.error("the computation produces output of type " + typechain.get(observable.getName())
 							+ " for " + observable.getName() + " when " + required + " is expected",
@@ -473,6 +545,11 @@ public class Model extends KimObject implements IModel {
 			return;
 		}
 
+		if (observable.is(Type.RATIO)) {
+			// we don't do anything to avoid insanity
+			return;
+		}
+
 		if (Units.INSTANCE.needsUnitScaling(observable)) {
 
 			IUnit statedUnit = observable.getUnit();
@@ -484,7 +561,14 @@ public class Model extends KimObject implements IModel {
 				return;
 			}
 
-			IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(observable);
+			IUnit baseUnit = null;
+			try {
+				baseUnit = Units.INSTANCE.getDefaultUnitFor(observable);
+			} catch (KlabValidationException e) {
+				monitor.error("Observable " + observable.getName() + " return unit error: " + e, observable);
+				setErrors(true);
+				return;
+			}
 
 			if (baseUnit == null) {
 				monitor.error(
@@ -669,7 +753,15 @@ public class Model extends KimObject implements IModel {
 
 		if (resource.getClassification() != null) {
 
-			resource.setValidatedResource(new Classification(resource.getClassification()));
+			Classification classification = new Classification(resource.getClassification());
+
+			/*
+			 * TODO validate that all concepts are children of the described concept in the
+			 * main observable (if TYPE) - URGENTLY because the team is already mixing
+			 * landcover with mayonnaise and motorcycles
+			 */
+
+			resource.setValidatedResource(classification);
 
 		} else if (resource.getLookupTable() != null) {
 
@@ -778,7 +870,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IObservable findDependency(IConcept concept) {
 		for (IObservable dependency : dependencies) {
-			if (dependency.getType().resolves(concept) == 0) {
+			if (dependency.getType().getSemanticDistance(concept) == 0) {
 				return dependency;
 			}
 		}
@@ -823,7 +915,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IObservable findOutput(IConcept concept) {
 		for (IObservable output : observables) {
-			if (output.getType().resolves(concept) == 0) {
+			if (output.getType().getSemanticDistance(concept) == 0) {
 				return output;
 			}
 		}
@@ -855,8 +947,8 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public String getLocalNameFor(IObservable observable) {
-		IObservable obs = getCompatibleOutput((Observable) observable);
+	public String getLocalNameFor(IObservable observable, IConcept context) {
+		IObservable obs = getCompatibleOutput((Observable) observable, context);
 		if (obs != null) {
 			return obs.getName();
 		}
@@ -1093,14 +1185,15 @@ public class Model extends KimObject implements IModel {
 	}
 
 	/**
-	 * Get the output that can satisfy this observable, possibly with mediation.
+	 * Get the output that can satisfy this observable, possibly with mediation. Do
+	 * not compare inherency to let distributed models through.
 	 * 
 	 * @param observable
 	 * @return an existing output observable or null
 	 */
-	public Observable getCompatibleOutput(Observable observable) {
+	public Observable getCompatibleOutput(Observable observable, IConcept context) {
 		for (IObservable output : observables) {
-			if (output.getType().resolves(observable.getType()) >= 0) {
+			if (output.getType().resolves(observable.getType(), context)) {
 				return (Observable) output;
 			}
 		}
@@ -1115,7 +1208,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public Observable getCompatibleInput(Observable observable) {
 		for (IObservable input : dependencies) {
-			if (input.getType().resolves(observable.getType()) > 0) {
+			if (input.getType().getSemanticDistance(observable.getType()) >= 0) {
 				return (Observable) input;
 			}
 		}
@@ -1171,6 +1264,38 @@ public class Model extends KimObject implements IModel {
 	}
 
 	/**
+	 * Utility for clarity in resolution
+	 * 
+	 * @return
+	 */
+	public List<IObservable> getArchetypes() {
+
+		List<IObservable> ret = new ArrayList<>();
+		for (IObservable dependency : getDependencies()) {
+			if (Annotations.INSTANCE.hasAnnotation(dependency, IModel.ARCHETYPE_ANNOTATION)) {
+				ret.add(dependency);
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Utility for clarity in resolution
+	 * 
+	 * @return
+	 */
+	public List<IObservable> getPredictors() {
+
+		List<IObservable> ret = new ArrayList<>();
+		for (IObservable dependency : getDependencies()) {
+			if (Annotations.INSTANCE.hasAnnotation(dependency, IModel.PREDICTOR_ANNOTATION)) {
+				ret.add(dependency);
+			}
+		}
+		return ret;
+	}
+
+	/**
 	 * The observation strategy implemented by this model. This will always be
 	 * DIRECT unless the model comes from a derived observation, in which case it
 	 * may also be FILTERING or DEREIFYING.
@@ -1179,5 +1304,36 @@ public class Model extends KimObject implements IModel {
 	 */
 	public Strategy getObservationStrategy() {
 		return observationStrategy;
+	}
+
+	/**
+	 * True if the model is a learning model for a quality that is learned within a
+	 * countable. In this case, the dependencies will only serve to define the
+	 * predictors.
+	 * 
+	 * @return
+	 */
+	public boolean learnsWithinArchetype() {
+		return learnsWithinArchetype;
+	}
+
+	/**
+	 * If there's an archetype, return it. Does not handle well the situation where
+	 * there could be > 1.
+	 * 
+	 * @return
+	 */
+	public IObservable getArchetype() {
+		return this.archetype;
+	}
+
+	/**
+	 * Model learns within an archetype but then builds a state for the entire
+	 * context with the learned quality.
+	 * 
+	 * @return
+	 */
+	public boolean distributesLearning() {
+		return this.distributesLearning;
 	}
 }

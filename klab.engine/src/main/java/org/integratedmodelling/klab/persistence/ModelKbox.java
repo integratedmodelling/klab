@@ -164,7 +164,7 @@ public class ModelKbox extends ObservableKbox {
 		Pair<Scale, Set<IRankedModel>> preResolved = context.isCaching() ? null
 				: context.getPreresolvedModels(observable);
 
-		IPrioritizer<ModelReference> prioritizer = Resolver.INSTANCE.getPrioritizer(context);
+		IPrioritizer<ModelReference> prioritizer = Resolver.getPrioritizer(context);
 		ModelQueryResult ret = new ModelQueryResult(prioritizer, context.getMonitor());
 		Set<ModelReference> local = new HashSet<>();
 
@@ -256,7 +256,9 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		String query = "SELECT model.oid FROM model WHERE ";
-		String typequery = observableQuery(observable, context.getMode());
+		IConcept contextObservable = context.getContextObservable() == null ? null
+				: context.getContextObservable().getType();
+		String typequery = observableQuery(observable, contextObservable, context.getMode());
 
 		if (typequery == null) {
 			return ret;
@@ -298,14 +300,14 @@ public class ModelKbox extends ObservableKbox {
 		return ret;
 	}
 
-	private String observableQuery(IObservable observable, Mode mode) {
+	private String observableQuery(IObservable observable, IConcept context, Mode mode) {
 
 		// /*
 		// * remove any transformations before querying
 		// */
 		// IConcept concept = observable.getMain();
 
-		Set<Long> ids = this.getCompatibleTypeIds(observable, mode);
+		Set<Long> ids = this.getCompatibleTypeIds(observable, context, mode);
 		if (ids == null || ids.size() == 0) {
 			return null;
 		}
@@ -643,14 +645,14 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		if (ret.size() > 0) {
-			
+
 			for (IObservable attr : model.getAttributeObservables().values()) {
 
 				if (attr == null) {
 					// only in error
 					continue;
 				}
-				
+
 				// attribute type must have inherent type added if it's an instantiated quality
 				IConcept type = attr.getType();
 				if (model.isInstantiator()) {

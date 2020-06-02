@@ -6,10 +6,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
@@ -17,41 +17,51 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.api.runtime.rest.ITaskReference;
+import org.integratedmodelling.klab.client.messaging.ResourceMonitor;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor.Listener;
 import org.integratedmodelling.klab.client.tickets.TicketManager;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
-import org.integratedmodelling.klab.ide.navigator.model.beans.DisplayPriority;
-import org.integratedmodelling.klab.ide.navigator.model.beans.EDataflowReference;
-import org.integratedmodelling.klab.ide.navigator.model.beans.ENotification;
-import org.integratedmodelling.klab.ide.navigator.model.beans.EObservationReference;
-import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
-import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.views.ResourcesView;
+import org.integratedmodelling.klab.ide.views.SearchView;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.EngineEvent;
+import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NetworkReference;
+import org.integratedmodelling.klab.rest.Notification;
+import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
+import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.klab.rest.RunScriptRequest;
+import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
-import org.integratedmodelling.klab.utils.StringUtil;
+import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.rest.View;
+import org.integratedmodelling.klab.rest.WatchRequest;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Front-end session proxy and receiver for session messages. Maintains and
@@ -66,55 +76,111 @@ public class KlabSession extends KlabPeer {
 	private int NETWORK_CHECK_INTERVAL_SECONDS = 60;
 	private int TICKET_CHECK_INTERVAL_SECONDS = 6;
 
+	// six hours
+	private static final long MAX_TICKET_AGE = 1000l * 60l * 60l * 6l;
+
+
 	private AtomicLong queryCounter = new AtomicLong();
+	private Map<EngineEvent.Type, Set<Long>> engineEvents = Collections.synchronizedMap(new HashMap<>());
 
-	/*
-	 * all tasks in the session
-	 */
-	private Map<String, ETaskReference> taskCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
+	SessionMonitor sessionMonitor = new SessionMonitor() {
 
-	/*
-	 * All observation seen
-	 */
-	private Map<String, EObservationReference> observationCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
+		@Override
+		protected void subscribe(ContextGraph contextGraph, ObservationReference observation, boolean open) {
+			WatchRequest request = new WatchRequest();
+			request.setActive(open);
+			request.setObservationId(observation.getId());
+			request.setRootContextId(observation.getRootContextId());
+			Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.WatchObservation, request);
+		}
 
-	/*
-	 * All notifications not linked to a task
+		@Override
+		protected List<ObservationReference> retrieveChildren(ObservationReference observation, int offset, int count) {
+			List<ObservationReference> ret = new ArrayList<>();
+			for (ObservationReference obs : Activator.engineMonitor().getChildren(observation, offset, count)) {
+				ret.add(obs);
+			}
+			return ret;
+		}
+
+	};
+
+	/**
+	 * Use in views to provide the root of any visualization tree.
+	 * 
+	 * @return
 	 */
-	private List<ENotification> systemNotifications = Collections.synchronizedList(new ArrayList<>());
+	public ContextDescriptor getCurrentContextDescriptor() {
+		return currentRootContextId == null ? null : sessionMonitor.getContextDescriptor(currentRootContextId);
+	}
 
 	/*
 	 * Tickets to track engine tickets that track node tickets
 	 */
 	private TicketManager ticketManager;
+	private ResourceMonitor resourceMonitor = new ResourceMonitor();
+	private Map<String, ITicket.Status> ticketStatus = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * Current root context and task in UI or null
 	 */
 	private String currentRootContextId;
-	private String currentRootTaskId;
-
-	// historical list of root tasks and contexts in order of appearance.
-	private List<String> contexts = Collections.synchronizedList(new LinkedList<>());
-	private List<String> tasks = Collections.synchronizedList(new LinkedList<>());
-
-	/*
-	 * This is to attribute new tasks to the root one they belong to. This hierarchy
-	 * is unique to the UI and does not reflect the arrangement of tasks in the
-	 * engine.
-	 */
-	private Map<String, ETaskReference> taskByObservation = Collections.synchronizedMap(new HashMap<>());
 
 	public KlabSession(String sessionId) {
 		super(Sender.SESSION, sessionId);
 
+		this.sessionMonitor.addListener(new Listener() {
+
+			@Override
+			public void onTaskStatusChange(ObservationReference rootContext, TaskReference task,
+					org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status status) {
+				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent,
+						new RuntimeEvent(rootContext, task, status));
+			}
+
+			@Override
+			public void onSystemNotification(Notification notification) {
+				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent, new RuntimeEvent(notification));
+			}
+
+			@Override
+			public void onStructureChange(ObservationReference rootContext, Object added, TaskReference objectParent) {
+				if (added instanceof ObservationReference
+						&& rootContext.getId().equals(((ObservationReference) added).getId())) {
+					setCurrentContext(rootContext);
+				}
+				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent,
+						new RuntimeEvent(rootContext, added, objectParent));
+			}
+
+			@Override
+			public void onDataflowChange(ObservationReference rootContext, DataflowReference dataflow) {
+				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent,
+						new RuntimeEvent(rootContext, dataflow));
+			}
+		});
+
 		this.ticketManager = new TicketManager(
 				new File(Configuration.INSTANCE.getDataPath() + File.separator + "tickets.modeler.json"));
 
+		/*
+		 * initialize resource status
+		 */
+		for (ITicket ticket : ticketManager.get()) {
+			if (!isStale(ticket)) {
+				resourceMonitor.add(ticket);
+			}
+		}
+		
 		// run the first network check in 10 seconds
 		new CheckNetworkTask().schedule(10000);
 		// start checking tickets in 5
-		new CheckNetworkTask().schedule(5000);
+		new CheckTicketsTask().schedule(5000);
+	}
+
+	protected void setCurrentContext(ObservationReference rootContext) {
+		this.currentRootContextId = rootContext.getId();
+
 	}
 
 	class CheckNetworkTask extends Job {
@@ -144,104 +210,76 @@ public class KlabSession extends KlabPeer {
 		}
 
 		protected IStatus run(IProgressMonitor monitor) {
+
 			schedule(TICKET_CHECK_INTERVAL_SECONDS * 1000);
+
+			List<ITicket> toRemove = new ArrayList<>();
 			for (ITicket ticket : ticketManager.get()) {
-				System.out.println("AAAH! TICKET! " + ticket);
+				if (isStale(ticket)) {
+					// TODO use logging!
+					System.out.println("Removing stale ticket " + ticket);
+					toRemove.add(ticket);
+				} else {
+					/*
+					 * notify if status changed or ticket is new
+					 */
+					if (ticketStatus.containsKey(ticket.getId())) {
+						if (ticket.getStatus() != ticketStatus.get(ticket.getId())) {
+							ticketStatus.put(ticket.getId(), ticket.getStatus());
+							processTicketEvent(ticket, false);
+						}
+					} else {
+						ticketStatus.put(ticket.getId(), ticket.getStatus());
+						processTicketEvent(ticket, true);
+					}
+				}
 			}
+
+			for (ITicket ticket : toRemove) {
+				ticketManager.remove(ticket);
+			}
+
 			return Status.OK_STATUS;
 		}
+
 	}
 
+	private boolean isStale(ITicket ticket) {
+		return ticket.getStatus() == ITicket.Status.OPEN
+				&& (System.currentTimeMillis() - ticket.getPostDate().getTime()) > MAX_TICKET_AGE;
+	}
+	
 	/*
 	 * --- public methods ---
 	 */
 
-	/**
-	 * Build a list describing the entire known history of the session, honoring
-	 * chosen display priority and options. The first-level objects will always be
-	 * root contexts, most recently created first.
-	 * 
-	 * @param priority
-	 * @return the session history
-	 */
-	public List<ERuntimeObject> getSessionHistory(DisplayPriority priority, Level level) {
-
-		List<ERuntimeObject> ret = new ArrayList<>();
-		if (priority == DisplayPriority.ARTIFACTS_FIRST) {
-			for (int i = contexts.size() - 1; i >= 0; i--) {
-				ret.add(observationCatalog.get(contexts.get(i)));
-			}
-		} else {
-			for (int i = tasks.size() - 1; i >= 0; i--) {
-				ret.add(taskCatalog.get(tasks.get(i)));
-			}
-		}
-		return ret;
-	}
-
-	/**
-	 * ID of the current root context, or null if none is set.
-	 * 
-	 * @return
-	 */
-	public String getCurrentContextId() {
-		return currentRootContextId;
-	}
-
-	public String getCurrentTaskId() {
-		return currentRootTaskId;
-	}
-
-	/**
-	 * The latest observation made, or the one set by the user.
-	 * 
-	 * @return
-	 */
-	public EObservationReference getCurrentContext() {
-		return currentRootContextId == null ? null : observationCatalog.get(currentRootContextId);
-	}
-
-	/**
-	 * The latest task started, or the one set by the user.
-	 * 
-	 * @return
-	 */
-	public ETaskReference getCurrentTask() {
-		return currentRootTaskId == null ? null : taskCatalog.get(currentRootTaskId);
-	}
-
-	/**
-	 * All the observations made in this session, last observed first. May be filled
-	 * on startup after rejoining a session.
-	 * 
-	 * @return
-	 */
-	public List<EObservationReference> getContexts() {
-		List<EObservationReference> ret = new ArrayList<>();
-		for (int i = contexts.size() - 1; i >= 0; i--) {
-			ret.add(observationCatalog.get(contexts.get(i)));
-		}
-		return ret;
+	public SessionMonitor getContextMonitor() {
+		return sessionMonitor;
 	}
 
 	/*
 	 * --- State and history management
 	 */
 
-	void recordNotification(String notification, String identity, Type type, String messageId) {
+	public void processTicketEvent(ITicket ticket, boolean isNew) {
+		resourceMonitor.add(ticket);
+		// expose the resources view, which will set itself to public and refresh when it gets the message 
+		Eclipse.INSTANCE.openView(ResourcesView.ID, null);
+		send(IMessage.MessageClass.UserInterface,
+				isNew ? IMessage.Type.TicketCreated : IMessage.Type.TicketStatusChanged, ticket);
+	}
 
-		ETaskReference parent = null;
-		if (taskCatalog.containsKey(identity)) {
-			parent = taskCatalog.get(identity);
-		}
+	void recordNotification(String notification, String identity, Type type, String messageId) {
 
 		/*
 		 * TODO multi-line notification should be broken up into multiple ones, with
 		 * continuation flag from the second on, so they can be displayed properly
 		 */
 
-		ENotification enote = new ENotification(messageId);
+		Notification enote = new Notification();
 		enote.setMessage(notification);
+		enote.setIdentity(identity);
+		enote.setId(messageId);
 		switch (type) {
 		case Debug:
 			enote.setLevel(Level.FINE.getName());
@@ -258,99 +296,12 @@ public class KlabSession extends KlabPeer {
 		default:
 			break;
 		}
-
-		enote.setParent(parent);
-		if (parent != null) {
-			parent.addNotification(enote);
-		}
-
-		if (parent != null) {
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, enote);
-		} else {
-			systemNotifications.add(enote);
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.Notification, enote);
-		}
-	}
-
-	private void recordTask(TaskReference task, Type event) {
-
-		ETaskReference etask = null;
-		EObservationReference context = null;
-		if (task.getContextId() != null) {
-			context = observationCatalog.get(task.getContextId());
-		}
-
-		if (event == Type.TaskStarted) {
-			if (task.getContextId() == null) {
-				// new root task
-				tasks.add(task.getId());
-				this.currentRootTaskId = task.getId();
-			}
-			etask = new ETaskReference(task);
-			taskCatalog.put(task.getId(), etask);
-			if (task.getContextId() != null) {
-				ETaskReference parent = taskByObservation.get(task.getContextId());
-				if (parent != null) {
-					parent.addChildTask(etask);
-				}
-			}
-		} else {
-			etask = taskCatalog.get(task.getId());
-		}
-
-		etask.setStatus(event);
-		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, etask);
-	}
-
-	public void recordObservation(ObservationReference observation) {
-
-		EObservationReference obs = observationCatalog.get(observation.getId());
-
-		if (obs != null) {
-			obs.setFocal(true);
-			for (EObservationReference oo : observationCatalog.values()) {
-				if (oo.getTaskId().equals(obs.getTaskId()) && !oo.getId().equals(observation.getId())) {
-					oo.setDependentTo(obs);
-				}
-			}
-		} else {
-
-			EObservationReference parent = null;
-			if (observation.getParentId() != null) {
-				parent = observationCatalog.get(observation.getParentId());
-				parent.addChildObservationId(observation.getId());
-			} else {
-				this.currentRootContextId = observation.getId();
-				contexts.add(observation.getId());
-			}
-
-			obs = new EObservationReference(observation, observation.getTaskId(), observation.getParentId());
-			if (observation.getTaskId() != null) {
-				ETaskReference task = taskCatalog.get(observation.getTaskId());
-				if (task.getContextId() == null) {
-					task.setContextId(observation.getId());
-				}
-				task.addCreated(obs);
-				taskByObservation.put(observation.getId(), task);
-			}
-
-			observationCatalog.put(observation.getId(), obs);
-
-			if (observation.getParentId() == null) {
-				this.currentRootContextId = observation.getId();
-			}
-		}
-
-		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, obs);
-		if (observation.getParentId() == null) {
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.FocusChanged, obs);
-		}
+		sessionMonitor.register(enote);
 	}
 
 	/*
 	 * --- Front-end action triggers ---
 	 */
-
 	public void importFileResource(File file, String project) {
 		try {
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ImportResource,
@@ -374,11 +325,20 @@ public class KlabSession extends KlabPeer {
 	}
 
 	public void launchScript(URL url) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunScript, new RunScriptRequest(url, false));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunScript, new LoadApplicationRequest(url, false));
 	}
 
 	public void launchTest(URL url) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new RunScriptRequest(url, true));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new LoadApplicationRequest(url, true));
+	}
+
+	public void launchApp(String behavior) {
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp, new LoadApplicationRequest(behavior, false));
+	}
+
+	public void launchTest(String behavior) {
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunUnitTest,
+				new LoadApplicationRequest(behavior, true));
 	}
 
 	public void observe(EKimObject dropped) {
@@ -450,15 +410,13 @@ public class KlabSession extends KlabPeer {
 		Activator.klab().updateNetwork(network);
 		send(IMessage.MessageClass.UserInterface, IMessage.Type.NetworkStatus, network);
 		for (TicketResponse.Ticket ticket : network.getResolvedTickets()) {
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.TicketResolved, ticket);
+			ticketManager.update(ticket);
+			// scheduled job will pick this up
 		}
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
 	public void handleNotification(IMessage message, String notification) {
-		if (message.getType() != IMessage.Type.Debug) {
-			send(message);
-		}
 		recordNotification(notification, message.getIdentity(), message.getType(), message.getId());
 	}
 
@@ -467,37 +425,74 @@ public class KlabSession extends KlabPeer {
 		send(message);
 	}
 
+	@MessageHandler(type = IMessage.Type.EngineEvent)
+	public synchronized void handleEngineEvent(IMessage message, EngineEvent event) {
+		Set<Long> current = engineEvents.get(event.getType());
+		if (current == null) {
+			current = new HashSet<>();
+			engineEvents.put(event.getType(), current);
+		}
+
+		/*
+		 * Only notify the first started and the last finished
+		 */
+		boolean notify = false;
+		if (event.isStarted()) {
+			notify = current.size() == 0;
+			current.add(event.getId());
+		} else {
+			current.remove(event.getId());
+			notify = current.size() == 0;
+		}
+
+		if (notify) {
+			send(message);
+		}
+	}
+
 	@MessageHandler(type = IMessage.Type.ResetContext)
 	private void handleResetContextRequest(IMessage message, String dummy) {
 		this.currentRootContextId = null;
-		this.currentRootTaskId = null;
 		send(message);
 	}
 
 	@MessageHandler(type = Type.TaskStarted)
 	public void handleTaskStarted(IMessage message, TaskReference task, IMessageBus bus) {
-		send(message);
-		recordTask(task, Type.TaskStarted);
+		sessionMonitor.register(task);
 		bus.subscribe(task.getId(), new KlabTask(task.getId()));
 	}
 
 	@MessageHandler(type = Type.TaskFinished)
 	public void handleTaskFinished(IMessage message, TaskReference task, IMessageBus bus) {
-		send(message);
-		recordTask(task, Type.TaskFinished);
+		sessionMonitor.update(task, ITaskReference.Status.Finished);
 		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler(type = Type.TaskAborted)
 	public void handleTaskAborted(IMessage message, TaskReference task, IMessageBus bus) {
-		send(message);
-		recordTask(task, Type.TaskAborted);
+		sessionMonitor.update(task, ITaskReference.Status.Aborted);
 		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler
+	public void handleCreateView(IMessage message, View component) {
+		Eclipse.INSTANCE.openView(SearchView.ID, null);
+		send(message);
+	}
+
+	@MessageHandler(type = Type.CreateViewComponent)
+	public void handleCreateComponent(IMessage message, ViewComponent component) {
+		send(message);
+	}
+
+	@MessageHandler
 	public void handleObservation(ObservationReference observation) {
-		recordObservation(observation);
+		sessionMonitor.register(observation);
+	}
+
+	@MessageHandler
+	public void handleObservation(ObservationChange observation) {
+		sessionMonitor.register(observation);
 	}
 
 	@MessageHandler
@@ -510,12 +505,18 @@ public class KlabSession extends KlabPeer {
 	}
 
 	@MessageHandler
-	public void handleDataflow(IMessage message, DataflowReference dataflow) {
-		ETaskReference task = taskCatalog.get(dataflow.getTaskId());
-		if (task != null) {
-			task.setDataflow(new EDataflowReference(dataflow, message.getId(), task));
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, task);
+	public void handleResourceOperation(ResourceOperationResponse response) {
+		String title = "Results of " + response.getOperation() + " on " + response.getUrn();
+		String message = "";
+		for (Notification notification : response.getNotifications()) {
+			message += (message.isEmpty() ? "" : "\n") + notification.getLevel() + ": " + notification.getMessage();
 		}
+		Eclipse.INSTANCE.info(title + "\n\n" + message);
+	}
+
+	@MessageHandler
+	public void handleDataflow(IMessage message, DataflowReference dataflow) {
+		sessionMonitor.register(dataflow);
 		send(message);
 	}
 
@@ -530,40 +531,17 @@ public class KlabSession extends KlabPeer {
 		KlabNavigator.refresh();
 	}
 
-	public List<ENotification> getSystemNotifications(Level level) {
-		List<ENotification> ret = new ArrayList<>();
-		for (int i = systemNotifications.size() - 1; i >= 0; i--) {
-			if (level.intValue() <= Level.parse(systemNotifications.get(i).getLevel()).intValue()) {
-				ret.add(systemNotifications.get(i));
-			}
-		}
-		return ret;
-	}
-
-	public void dumpHistory(DisplayPriority priority, Level logLevel) {
-		for (ERuntimeObject e : getSessionHistory(priority, Level.FINE)) {
-			dumpHistoryObject(e, priority, logLevel, 0);
-		}
-	}
-
-	private void dumpHistoryObject(ERuntimeObject e, DisplayPriority priority, Level logLevel, int level) {
-
-		System.out.println(StringUtil.spaces(level * 3) + e);
-		for (ERuntimeObject c : e.getEChildren(priority, logLevel)) {
-			dumpHistoryObject(c, priority, logLevel, level + 1);
-		}
-	}
-
-	public ETaskReference getTask(String id) {
-		return taskCatalog.get(id);
-	}
-
-	public EObservationReference getObservation(String id) {
-		return observationCatalog.get(id);
-	}
-
 	public TicketManager getTicketManager() {
 		return this.ticketManager;
+	}
+
+	public List<Pair<String, IParameters<String>>> getPublishedResources() {
+		return resourceMonitor.getPublished();
+	}
+
+	public void notifyTicket(ITicket ticket) {
+		this.resourceMonitor.add(ticket);
+		send(IMessage.MessageClass.UserInterface, IMessage.Type.TicketCreated, ticket);
 	}
 
 }

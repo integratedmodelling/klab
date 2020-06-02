@@ -44,6 +44,7 @@ import org.integratedmodelling.kactors.kactors.StatementList;
 import org.integratedmodelling.kactors.kactors.Table;
 import org.integratedmodelling.kactors.kactors.TableClassifier;
 import org.integratedmodelling.kactors.kactors.TableRow;
+import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.Value;
@@ -211,6 +212,11 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseMap(Map object)
       {
         return createMapAdapter();
+      }
+      @Override
+      public Adapter caseTree(Tree object)
+      {
+        return createTreeAdapter();
       }
       @Override
       public Adapter caseMapEntry(MapEntry object)
@@ -620,6 +626,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createMapAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Tree <em>Tree</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Tree
+   * @generated
+   */
+  public Adapter createTreeAdapter()
   {
     return null;
   }

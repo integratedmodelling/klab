@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Utils;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
@@ -61,6 +62,51 @@ public class Geospace {
 			return Orientation.NE;
 		}
 		return null;
+	}
+	
+	public static int getD8(double heading) {
+
+		if (heading >= 315) {
+			return 6;
+		} else if (heading >= 270) {
+			return 5;
+		} else if (heading >= 225) {
+			return 4;
+		}  else if (heading >= 180) {
+			return 3;
+		}  else if (heading >= 135) {
+			return 2;
+		}  else if (heading >= 90) {
+			return 1;
+		}  else if (heading >= 45) {
+			return 8;
+		}  else if (heading >= 0) {
+			return 7;
+		} 
+		return -1;
+	}
+
+	public static double getHeading(int d8) {
+		switch (d8) {
+		case 1:
+			return 90;
+		case 2:
+			return 135;
+		case 3:
+			return 180;
+		case 4:
+			return 225;
+		case 5:
+			return 270;
+		case 6:
+			return 315;
+		case 7:
+			return 0;
+		case 8:
+			return 45;
+		}
+		return Double.NaN;
+		
 	}
 
 	/**

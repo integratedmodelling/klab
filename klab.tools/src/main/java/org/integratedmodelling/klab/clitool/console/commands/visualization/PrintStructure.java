@@ -5,6 +5,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -23,19 +24,21 @@ public class PrintStructure implements ICommand {
 		if (obs == null) {
 			throw new KlabValidationException("show::structure requires a valid observation ID as argument");
 		}
-		
-		return  "Session " + session.getId() + ":\n" + printStructure(obs, 0);
+
+		return "Session " + session.getId() + ":\n"
+				+ printStructure(obs, 0, call.getParameters().get("artifacts", false));
 	}
 
-	private String printStructure(IObservation obs, int level) {
+	private String printStructure(IArtifact obs, int level, boolean artifacts) {
 
-		IRuntimeScope context = ((Observation)obs).getRuntimeScope();
-		
+		IRuntimeScope context = ((Observation) obs).getScope();
+
 		String ret = StringUtil.repeat(' ', level) + obs;
-		for (IObservation child : context.getChildrenOf(obs)) {
-			ret += "\n" + printStructure(child, level + 3);
+		for (IArtifact child : (artifacts ? context.getChildArtifactsOf(obs)
+				: context.getChildrenOf((IObservation) obs))) {
+			ret += "\n" + printStructure(child, level + 3, artifacts);
 		}
-		
+
 		return ret;
 	}
 

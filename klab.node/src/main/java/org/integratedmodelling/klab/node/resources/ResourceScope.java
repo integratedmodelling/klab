@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -31,6 +33,7 @@ import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
@@ -39,10 +42,12 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
@@ -59,7 +64,7 @@ import org.jgrapht.Graph;
 public class ResourceScope implements IRuntimeScope {
 
 	IMonitor monitor;
-	
+
 	/**
 	 * Use when called from a JSON post request without additional inputs. May build
 	 * dummy artifacts for any additional outputs.
@@ -366,7 +371,8 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public IRuntimeScope createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
+	public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope,
+			IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -425,11 +431,11 @@ public class ResourceScope implements IRuntimeScope {
 
 	}
 
-	@Override
-	public void processAnnotation(IAnnotation annotation) {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	public void processAnnotation(IAnnotation annotation) {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 	@Override
 	public Provenance getProvenance() {
@@ -438,7 +444,7 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public Graph<? extends IArtifact, ?> getStructure() {
+	public IArtifact.Structure getStructure() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -449,11 +455,11 @@ public class ResourceScope implements IRuntimeScope {
 		return null;
 	}
 
-	@Override
-	public void link(IArtifact parent, IArtifact child) {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	public void link(IArtifact parent, IArtifact child) {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 	@Override
 	public void replaceTarget(IArtifact self) {
@@ -506,7 +512,7 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation) {
+	public Collection<IArtifact> getChildArtifactsOf(IArtifact directObservation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -542,7 +548,7 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public IRuntimeScope locate(ILocator transitionScale) {
+	public IRuntimeScope locate(ILocator transitionScale, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -747,4 +753,66 @@ public class ResourceScope implements IRuntimeScope {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task,
+			Mode mode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void scheduleActions(Observation observation, IBehavior behavior) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String addListener(ObservationListener listener) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeListener(String listenerId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Set<String> getWatchedObservationIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateNotifications(IObservation observation) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public IObservation getParentArtifactOf(IObservation observation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void swapArtifact(IArtifact ret, IArtifact result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Collection<IObservation> getObservations(IConcept observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -26,9 +26,9 @@ import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -89,8 +89,8 @@ public interface IRuntimeProvider {
 	 * Get a service call that, once executed, will turn the passed specification
 	 * for a resource into a suitable contextualizer that runs on this runtime.
 	 *
-	 * @param resource a {@link org.integratedmodelling.kim.api.IContextualizable}
-	 *                 object.
+	 * @param resource   a {@link org.integratedmodelling.kim.api.IContextualizable}
+	 *                   object.
 	 * @param observable
 	 * @param session
 	 * 
@@ -192,6 +192,24 @@ public interface IRuntimeProvider {
 	 * @return a resolver or null
 	 */
 	IContextualizable getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
+
+	/**
+	 * Return a resolver that will collect the artifacts of the passed distributing
+	 * concept, find their dependent artifact of type inherent, and produce a merged
+	 * artifact collecting them in the parent context. This is meant to support
+	 * "trans-reification" (if there is such a word), meaning producing an
+	 * observation that collects the values of observations made after distributing
+	 * their observables over their legitimate context, such as "height of tree
+	 * within region".
+	 * 
+	 * @param distributingType the type of the artifacts over which the inherent
+	 *                         type is distributed
+	 * @param inherentType     the type of the inherent artifacts to collect
+	 * @param targetType       the type of the resulting dereified observation
+	 * @return
+	 */
+	IContextualizable getDereifyingResolver(IConcept distributingType, IConcept inherentType,
+			IArtifact.Type targetType);
 
 	/**
 	 * Return a computation that will apply the passed operator and operand to

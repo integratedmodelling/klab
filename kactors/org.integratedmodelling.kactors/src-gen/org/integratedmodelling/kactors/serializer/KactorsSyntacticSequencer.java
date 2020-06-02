@@ -140,8 +140,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     ('(' ')')?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     name=PathName (ambiguity) ':' actions=Actions
-	 *     name=PathName (ambiguity) (rule end)
+	 *     name=ArgPathName (ambiguity) ':' actions=Actions
+	 *     name=ArgPathName (ambiguity) (rule end)
 	 */
 	protected void emit_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

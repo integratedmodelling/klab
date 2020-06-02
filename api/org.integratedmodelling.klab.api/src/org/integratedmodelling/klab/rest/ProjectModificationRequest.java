@@ -13,6 +13,8 @@ public class ProjectModificationRequest {
 	private String assetId;
 	private String scriptName;
 	private String scriptPath;
+	private String scriptType;
+	
 	private Map<String, String> parameters = new HashMap<>();
 
 	public ProjectModificationRequest() {
@@ -76,6 +78,14 @@ public class ProjectModificationRequest {
 
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
+	}
+
+	public String getScriptType() {
+		return scriptType;
+	}
+
+	public void setScriptType(String scriptType) {
+		this.scriptType = scriptType;
 	}
 
 }

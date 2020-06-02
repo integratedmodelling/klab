@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.dataflow.Dataflow;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -65,6 +64,9 @@ public class Observable implements IObservable {
 	private IDirectObservation observer;
 	private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
 	private boolean fluidUnits;
+	private boolean distributedInherency;
+	private boolean active = true;
+
 	/*
 	 * Target predicate is a concrete predicate that may be added to the observable
 	 * that classifies its abstract base predicate, so that any outputs that do not
@@ -81,13 +83,6 @@ public class Observable implements IObservable {
 	 */
 	transient IModel resolvedModel;
 	private String modelReference;
-
-	/**
-	 * If this observable specifies a characterization or classification, which is
-	 * performed by a filter, the name of the filtered observable is passed along
-	 * with the observable, so that the model can later use it in computations.
-	 */
-	transient private IObservable filteredObservable;
 
 	// only used to resolve the subject observable if it has to be marshalled across
 	// network boundaries
@@ -147,10 +142,20 @@ public class Observable implements IObservable {
 		this.valueOperators.addAll(observable.valueOperators);
 		this.fluidUnits = observable.fluidUnits;
 		this.originatingModelId = observable.originatingModelId;
-		this.filteredObservable = observable.filteredObservable;
 		this.mustContextualize = observable.mustContextualize;
+		this.distributedInherency = observable.distributedInherency;
+		this.active = observable.active;
 	}
 
+	
+	public Observable withoutModel() {
+		this.originatingModelId = null;
+		this.modelReference = null;
+		this.resolvedModel = null;
+		return this;
+	}
+	
+	
 	@Override
 	public IConcept getType() {
 		return observable;
@@ -388,40 +393,45 @@ public class Observable implements IObservable {
 		return this.resolvedModel;
 	}
 
-	@Override
-	public IConcept getContext() {
-		return Observables.INSTANCE.getContextType(getType());
-	}
-
-	@Override
-	public IConcept getInherentType() {
-		return Observables.INSTANCE.getInherentType(getType());
-	}
-
-	@Override
-	public IConcept getComparisonType() {
-		return Observables.INSTANCE.getComparisonType(getType());
-	}
-
-	@Override
-	public IConcept getCaused() {
-		return Observables.INSTANCE.getCausedType(getType());
-	}
-
-	@Override
-	public IConcept getCausant() {
-		return Observables.INSTANCE.getCausantType(getType());
-	}
-
-	@Override
-	public IConcept getCompresent() {
-		return Observables.INSTANCE.getCompresentType(getType());
-	}
-
-	@Override
-	public IConcept getPurpose() {
-		return Observables.INSTANCE.getGoalType(getType());
-	}
+//	@Override
+//	public IConcept getContext() {
+//		return Observables.INSTANCE.getContextType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getInherentType() {
+//		return Observables.INSTANCE.getInherentType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getComparisonType() {
+//		return Observables.INSTANCE.getComparisonType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getCaused() {
+//		return Observables.INSTANCE.getCausedType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getDescribedType() {
+//		return Observables.INSTANCE.getDescribedType(getType());
+//	}
+//	
+//	@Override
+//	public IConcept getCausant() {
+//		return Observables.INSTANCE.getCausantType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getCompresent() {
+//		return Observables.INSTANCE.getCompresentType(getType());
+//	}
+//
+//	@Override
+//	public IConcept getPurpose() {
+//		return Observables.INSTANCE.getGoalType(getType());
+//	}
 
 	@Override
 	public IArtifact.Type getArtifactType() {
@@ -556,6 +566,8 @@ public class Observable implements IObservable {
 	public String getNamespace() {
 		// TODO if we come from a declaration in a given namespace, use that
 		return getType().getNamespace();
+		
+		
 	}
 
 	@Override
@@ -673,15 +685,7 @@ public class Observable implements IObservable {
 		return resolvable == null ? null
 				: new Pair<>(resolvable, (Observable) getBuilder(monitor).without(resolvable).buildObservable());
 	}
-
-	public IObservable getFilteredObservable() {
-		return filteredObservable;
-	}
-
-	public void setfilteredObservable(IObservable filteredObservable) {
-		this.filteredObservable = filteredObservable;
-	}
-
+	
 	public void setReferenceName(String name) {
 		this.referenceName = name;
 	}
@@ -725,4 +729,30 @@ public class Observable implements IObservable {
 		this.annotations = list;
 	}
 
+	public void setDistributedInherency(boolean b) {
+		this.distributedInherency = b;
+	}
+
+	public boolean isDistributedInherency() {
+		return this.distributedInherency;
+	}
+
+	@Override
+	public IConcept getContext() {
+		return Observables.INSTANCE.getContext(this.getType());
+	}
+
+	@Override
+	public IConcept getInherent() {
+		return Observables.INSTANCE.getInherency(this.getType());
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
 }

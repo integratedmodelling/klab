@@ -30,6 +30,8 @@ public class Ticket implements ITicket {
 					ret.status = (Status) objects[i];
 				} else if (objects[i] instanceof Type) {
 					ret.type = (Type) objects[i];
+				} else if (objects[i] instanceof TicketResponse.Ticket) {
+					ret.copy((TicketResponse.Ticket)objects[i]);
 				} else {
 					Object key = objects[i];
 					Object value = objects[++i];
@@ -210,5 +212,13 @@ public class Ticket implements ITicket {
 		}
 		update();
 	}
+
+	@Override
+	public String toString() {
+		return "Ticket [id=" + id + ", postDate=" + postDate + ", resolutionDate=" + resolutionDate + ", status="
+				+ status + ", type=" + type + ", statusMessage=" + statusMessage + "]";
+	}
+	
+	
 
 }

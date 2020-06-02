@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 
@@ -27,7 +30,7 @@ public class StateLayer extends State implements IState {
 	}
 	
 	public StateLayer(State state, IDataStorage<?> layer) {
-		super(state.getObservable(), state.getScale(), (RuntimeScope) state.getRuntimeScope(), layer);
+		super(state.getObservable(), state.getScale(), (RuntimeScope) state.getScope(), layer);
 		this.delegate = state;
 		// share the same layers map of the original layer
 		this.layers = state.layers;
@@ -42,7 +45,15 @@ public class StateLayer extends State implements IState {
 	
 	@Override
     public DirectObservation getContext() {
-        return (DirectObservation) getRuntimeScope().getParentOf(delegate);
+        return (DirectObservation) getScope().getParentOf(delegate);
     }
+	
+	@Override
+	public void finalizeTransition(IScale scale) {
+		setContextualized(true);
+		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+			setDynamic(true);
+		}
+	}
 
 }

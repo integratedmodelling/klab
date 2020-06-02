@@ -1,5 +1,7 @@
 package org.integratedmodelling.kactors.model;
 
+import java.util.function.Consumer;
+
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
@@ -22,5 +24,6 @@ public class KActorsWhile extends KActorsStatement implements While {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

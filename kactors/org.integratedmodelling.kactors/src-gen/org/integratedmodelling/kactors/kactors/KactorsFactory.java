@@ -204,6 +204,15 @@ public interface KactorsFactory extends EFactory
   Map createMap();
 
   /**
+   * Returns a new object of class '<em>Tree</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Tree</em>'.
+   * @generated
+   */
+  Tree createTree();
+
+  /**
    * Returns a new object of class '<em>Map Entry</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

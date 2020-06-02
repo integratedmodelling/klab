@@ -14,10 +14,11 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getObservable <em>Observable</em>}</li>
@@ -32,6 +33,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Value extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Tree</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Tree</em>' containment reference.
+   * @see #setTree(Tree)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Tree()
+   * @model containment="true"
+   * @generated
+   */
+  Tree getTree();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Tree</em>' containment reference.
+   * @see #getTree()
+   * @generated
+   */
+  void setTree(Tree value);
+
   /**
    * Returns the value of the '<em><b>Argvalue</b></em>' attribute.
    * <!-- begin-user-doc -->
@@ -77,28 +100,6 @@ public interface Value extends EObject
   void setLiteral(Literal value);
 
   /**
-   * Returns the value of the '<em><b>Id</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Id</em>' attribute.
-   * @see #setId(String)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Id()
-   * @model
-   * @generated
-   */
-  String getId();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Id</em>' attribute.
-   * @see #getId()
-   * @generated
-   */
-  void setId(String value);
-
-  /**
    * Returns the value of the '<em><b>Urn</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -119,6 +120,28 @@ public interface Value extends EObject
    * @generated
    */
   void setUrn(String value);
+
+  /**
+   * Returns the value of the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Id</em>' attribute.
+   * @see #setId(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Id()
+   * @model
+   * @generated
+   */
+  String getId();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Id</em>' attribute.
+   * @see #getId()
+   * @generated
+   */
+  void setId(String value);
 
   /**
    * Returns the value of the '<em><b>List</b></em>' containment reference.

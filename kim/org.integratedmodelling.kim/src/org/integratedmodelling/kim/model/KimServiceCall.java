@@ -118,6 +118,11 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 			String ret = name + "(";
 			int i = 0;
 			for (String key : parameters.keySet()) {
+
+				// internal parameters
+				if (key.startsWith("__")) {
+					continue;
+				}
 				ret += (i == 0 ? "" : ", ") + key + " = ";
 				Object val = parameters.get(key);
 				ret += val instanceof String ? ("\"" + Escape.forDoubleQuotedString((String) val, false) + "\"")

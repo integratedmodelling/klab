@@ -1,10 +1,73 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.utils.Triple;
 
 public class ObservationChange {
+
+	/**
+	 * Type of change
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public enum Type {
+
+		/**
+		 * Spatial context has changed location
+		 */
+		SpatialTranslation,
+
+		/**
+		 * Spatial context has changed shape
+		 */
+		SpatialChange,
+
+		/**
+		 * Observation has been terminated and is no longer in the context
+		 */
+		Termination,
+
+		/**
+		 * Number of children has changed: newSize contains the new number
+		 */
+		StructureChange,
+
+		/**
+		 * Name of object has changed
+		 */
+		NameChange,
+
+		/**
+		 * Attributes linked to an object or a folder have been added
+		 */
+		AttributeChange,
+
+		/**
+		 * Observable semantics has changed (so far by removing attributes)
+		 */
+		SemanticsChange,
+
+		/**
+		 * Values of a state have changed
+		 */
+		ValueChange,
+
+		/**
+		 * Observation becomes "main"
+		 */
+		BringForward,
+		
+		/**
+		 * End of resolution for object
+		 */
+		ContextualizationCompleted
+	}
 
 	private String id;
 	private String contextId;
@@ -16,9 +79,8 @@ public class ObservationChange {
 	private String newName;
 	private String newSemantics;
 	private int newSize;
-	private boolean newMainStatus;
-	private boolean newValues;
-	private boolean terminated;
+	private Type type;
+	private List<ExportFormat> exportFormats;
 
 	public List<Triple<String, String, String>> getNewAttributes() {
 		return newAttributes;
@@ -60,36 +122,12 @@ public class ObservationChange {
 		this.newSize = newSize;
 	}
 
-	public boolean isNewValues() {
-		return newValues;
-	}
-
-	public void setNewValues(boolean newValues) {
-		this.newValues = newValues;
-	}
-
-	public boolean isTerminated() {
-		return terminated;
-	}
-
-	public void setTerminated(boolean terminated) {
-		this.terminated = terminated;
-	}
-
 	public String getId() {
 		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public boolean isNewMainStatus() {
-		return newMainStatus;
-	}
-
-	public void setNewMainStatus(boolean newMainStatus) {
-		this.newMainStatus = newMainStatus;
 	}
 
 	public String getContextId() {
@@ -108,5 +146,35 @@ public class ObservationChange {
 		this.timestamp = timestamp;
 	}
 
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public static ObservationChange main(IObservation observation, IContextualizationScope scope) {
+		ObservationChange ret = new ObservationChange();
+		ret.setTimestamp(-1);
+		ret.setType(Type.BringForward);
+		ret.setContextId(scope.getRootSubject().getId());
+		ret.setId(observation.getId());
+		return ret;
+	}
+
+	@Override
+	public String toString() {
+		return "ObservationChange [id=" + id + ", contextId=" + contextId + ", newAttributes=" + newAttributes
+				+ ", newScale=" + newScale + ", newSize=" + newSize + ", type=" + type + "]";
+	}
+
+	public List<ExportFormat> getExportFormats() {
+		return exportFormats;
+	}
+
+	public void setExportFormats(List<ExportFormat> exportFormats) {
+		this.exportFormats = exportFormats;
+	}
 
 }

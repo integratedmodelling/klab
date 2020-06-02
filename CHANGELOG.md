@@ -7,21 +7,67 @@ as unreleased until merged to master.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-[comment]: <>   (Guiding Principles:) [comment]: <>   (  Changelogs are for humans, 
-not machines.) [comment]: <>   (  There should be an entry for every single version.) 
-[comment]: <>   (  The same types of changes should be grouped.) [comment]: <> (  
-Versions and sections should be linkable.) [comment]: <>   (  The latest version 
-comes first.) [comment]: <>   (  The release date of each version is displayed.) 
-[comment]: <>   (  Mention whether you follow Semantic Versioning.) [comment]: <> 
-(Types of changes: ) [comment]: <>   (  Added for new features.) [comment]: <> (  
-Changed for changes in existing functionality.) [comment]: <>   (  Deprecated for 
-soon-to-be removed features.) [comment]: <>   (  Removed for now removed features.) 
-[comment]: <>   (  Fixed for any bug fixes.) [comment]: <>   (  Security in case 
-of vulnerabilities.) [comment]: <>   () [comment]: <>   (Next build: [0.10.0.xxx] 
--- ISO Date)
-
 ## Unreleased
 ### Added
+- Validate units in ratios of physical properties, skipping aggregation.
+- Units in physical properties annotating resource attributes are mandatory.
+- Using 'within' is only allowed in the first observable of a model.
+- Improve model commands to resolve models and visualize resolution strategies, adding 
+  the resolution context and optional contextualization to geocoded names and years 
+  in model query.
+- In observables, getContext() of an observable O whose semantic context is X and
+  was declared as "O of X" will strip the context and return null, allowing indirect
+  inherency to match data in dependencies when the contexts are incompatible. This 
+  does not affect the getContextType() applied to the semantics, which will remain
+  X.
+- Setting temporal extent and resolution from explorer for subsequent observation
+  is now supported.
+- Engine events can be generated and notified to clients that subscribe to them,
+  using an identifier to allow asynchronous events of the same type to set remote 
+  state coherently. Only one event type exists for now, sent to notify of ongoing 
+  resource validation when it's likely than any observation will leave the workspace 
+  in an inconsistent state.
+- Fix an overzealous referencing that prevented a second filtered dependency to 
+  be computed correctly (e.g. two "normalized" observations in the same dependency
+  list).
+- Notification logics overhauled to enable a subscription model for any observations
+  that the view wants notified.
+- Resolution 'within' observables now completely supported. Explicit 'within' observables
+  are only allowed as the primary outputs of models. They produce observations within
+  a specialized context observation and are used to resolve "X of Y" observables in
+  contexts that are not Y. Each observation made within Y will first instantiate
+  Y, then observe X in each instance. If the observation is triggered in a context
+  that is not Y, the merged observation X of Y will be produced to satisfy the
+  query. This does not apply to learning models when they have an archetype
+  that is Y: in that case the semantics "learn within Y" is interpreted as "use the
+  distributed archetype to learn a quality" which is then applied to the context if
+  the predictors match it.
+- Clarify the computation of semantic distance when observables or their
+  inherent types are abstract (necessary condition for transitive resolution). 
+  Deprecate Observables.isCompatible in favor of IConcept.resolves(). Could be
+  repurposed after refactoring, calling resolves() and then proceeding to assess
+  unit compatibility according to extent and value operator consistency.
+- Actors can schedule actions (needs synchronization to ensure no temporal overlap
+  can happen), bind behaviors and use the monitor to send notifications.
+- Deferred resolution for observables whose context is a subject incompatible with
+  the context of observation, after successful instantiation of the subjects
+  themselves.
+- New scaling instantiator for spatial objects uses a set of resources to assess the
+  most appropriate scale for the results. Flexible options to ensure coverage and 
+  define granularity preferences. Watershed instantiator being rewritten to
+  use that with global HydroBASINS data. 
+- Vector resources return clipped geometries as before unless a new intersect=false parameter 
+  is passed in the URN.
+- Direct observations with suitable dimensionality inherit the context's 
+  scale by default, inheriting grid specifications. Implementation is still incomplete
+  but the @space and @time annotation can be used on the instantiators to change
+  the defaults.
+- There is now just one dataflow per context, with hierarchical structure, and each
+  new resolution below the root level creates a new (void) resolver at the level
+  it pertains to. Distributed resolution is now done by reasoning on the contexts
+  of the observation, creating the context as an observation of it if not the same
+  as the root context and distributing the resolution over all the observations
+  instantiated.
 - All IIdentities now have the option of becoming actors by loading a IBehavior. 
   If behavior isn't loaded but actors exist in the session, they automatically become 
   "dumb" actors that do nothing but do take messages. Declaration statement in k.Actor 

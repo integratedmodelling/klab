@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -19,19 +21,29 @@ import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
+import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.KimExpression;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.common.mediation.Currency;
+import org.integratedmodelling.klab.common.mediation.Quantity;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabAction;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -117,7 +129,69 @@ public enum Actors implements IActorsService {
 		KActors.INSTANCE.setValueTranslator(new ValueTranslator() {
 			@Override
 			public Object translate(KActorsValue container, Object value) {
-				// TODO Auto-generated method stub
+
+				switch (container.getType()) {
+				case ANYTHING:
+					break;
+				case ANYTRUE:
+					break;
+				case ANYVALUE:
+					break;
+				case BOOLEAN:
+					break;
+				case CLASS:
+					break;
+				case DATE:
+					break;
+				case ERROR:
+					break;
+				case EXPRESSION:
+					value = new KimExpression(value.toString() + " ", Extensions.DEFAULT_EXPRESSION_LANGUAGE);
+					break;
+				case IDENTIFIER:
+					break;
+				case SET:
+					break;
+				case TREE:
+					break;
+				case LIST:
+					break;
+				case MAP:
+					break;
+				case NODATA:
+					break;
+				case NUMBER:
+					break;
+				case NUMBERED_PATTERN:
+					break;
+				case OBSERVABLE:
+					value = Observables.INSTANCE.declare(value.toString());
+					break;
+				case QUANTITY:
+					if (value instanceof KActorsQuantity) {
+						if (((KActorsQuantity) value).getUnit() != null) {
+							value = Quantity.create(((KActorsQuantity) value).getValue(),
+									Unit.create(((KActorsQuantity) value).getUnit()));
+						} else if (((KActorsQuantity) value).getCurrency() != null) {
+							value = Quantity.create(((KActorsQuantity) value).getValue(),
+									Currency.create(((KActorsQuantity) value).getCurrency()));
+						}
+					}
+					break;
+				case RANGE:
+					break;
+				case REGEXP:
+					break;
+				case STRING:
+					break;
+				case TABLE:
+					break;
+				case TYPE:
+					break;
+				case URN:
+					break;
+				}
+
 				return value;
 			}
 		});
@@ -295,14 +369,14 @@ public enum Actors implements IActorsService {
 	 * @return
 	 */
 	public KlabAction getSystemAction(String id, IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
-			KlabActor.Scope scope) {
+			KlabActor.Scope scope, ActorRef<KlabMessage> sender) {
 
 		Pair<String, Class<? extends KlabAction>> cls = actionClasses.get(id);
 		if (cls != null) {
 			try {
 				Constructor<? extends KlabAction> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
-						IParameters.class, KlabActor.Scope.class);
-				return constructor.newInstance(identity, arguments, scope);
+						IParameters.class, KlabActor.Scope.class, ActorRef.class);
+				return constructor.newInstance(identity, arguments, scope, sender);
 			} catch (Throwable e) {
 				scope.getMonitor().error("Error while creating action " + id + ": " + e.getMessage());
 			}
@@ -312,6 +386,105 @@ public enum Actors implements IActorsService {
 
 	public Collection<String> getBehaviorIds() {
 		return behaviors.keySet();
+	}
+
+	public Collection<String> getBehaviorIds(IKActorsBehavior.Type type) {
+		List<String> ret = new ArrayList<>();
+		for (String key : behaviors.keySet()) {
+			if (behaviors.get(key).getDestination() == type) {
+				ret.add(key);
+			}
+		}
+		return ret;
+	}
+
+	public void instrument(List<IAnnotation> annotations, Observation observation) {
+		instrument(annotations, observation, observation.getScope());
+	}
+
+	public void instrument(List<IAnnotation> annotations, Observation observation, IRuntimeScope scope) {
+
+		/*
+		 * find any bindings made at runtime
+		 */
+		Pair<String, IKimExpression> rb = observation.getScope().getBehaviorBindings()
+				.get(observation.getObservable().getType());
+		if (rb != null) {
+			IBehavior b = getBehavior(rb.getFirst());
+			if (b != null) {
+				if (rb.getSecond() != null) {
+					// TODO filter
+				}
+				observation.getScope().scheduleActions(observation, b);
+				((Observation) observation).load(b, scope);
+			}
+		}
+
+		for (IAnnotation annotation : annotations) {
+			if (annotation.getName().equals("bind")) {
+				String behavior = annotation.containsKey("behavior") ? annotation.get("behavior", String.class)
+						: annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, String.class);
+				if (behavior != null) {
+					IBehavior b = getBehavior(behavior);
+					if (b != null) {
+
+						if (annotation.contains("filter")) {
+							// TODO build/cache and run filter, skip if false
+						}
+
+						/*
+						 * observation will load behavior, schedule all the temporal actions it contains
+						 * before main is run
+						 */
+						observation.getScope().scheduleActions(observation, b);
+
+						/*
+						 * load the behavior, running any main actions right away
+						 */
+						((Observation) observation).load(b, scope);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Find the first unnamed parameter that matches the passed class, resolving
+	 * actor values into their correspondent value.
+	 * 
+	 * @param <T>
+	 * @param arguments
+	 * @param class1
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getArgument(IParameters<String> arguments, Class<T> cls) {
+		for (String key : arguments.getUnnamedKeys()) {
+			Object ret = arguments.get(key);
+			if (ret instanceof KActorsValue) {
+				ret = ((KActorsValue) ret).getValue();
+			}
+			if (ret != null && cls.isAssignableFrom(ret.getClass())) {
+				return (T) ret;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find the first parameter that matches the passed class, looking up by name
+	 * first and checking the unnamed parameters if not found, resolving actor
+	 * values into their correspondent value.
+	 * 
+	 * @param <T>
+	 * @param arguments
+	 * @param parameterName
+	 * @param class1
+	 * @return
+	 */
+	public <T> T getArgument(IParameters<String> arguments, String parameterName, Class<T> class1) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

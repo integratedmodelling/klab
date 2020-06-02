@@ -15,11 +15,15 @@
 void 'structure'
 	"Show the structure graph for the named context observation."
 {
-	class org.integratedmodelling.klab.clitool.console.commands.visualization.ShowStructure
+	optional boolean artifacts
+		"List artifact hierarchy instead of observation hierarchy"
+		default false
+
+	class org.integratedmodelling.klab.clitool.console.commands.visualization.PrintStructure
 }
 
 void 'list'
-	"Print the structure tree starting at the named observation."
+	"List the known root contexts for this session."
 {
-	class org.integratedmodelling.klab.clitool.console.commands.visualization.PrintStructure
+	class org.integratedmodelling.klab.clitool.console.commands.visualization.List
 }

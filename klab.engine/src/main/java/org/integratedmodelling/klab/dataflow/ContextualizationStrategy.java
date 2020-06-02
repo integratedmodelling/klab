@@ -12,7 +12,6 @@ import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -59,6 +58,12 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
         }
     }
 
+    public static String getElkGraph(Dataflow dataflow) {
+    	ContextualizationStrategy strategy =new ContextualizationStrategy();
+    	strategy.add(dataflow);
+    	return strategy.getElkGraph();
+    }
+    
     public String getElkGraph() {
 
         List<Flowchart> flowcharts = new ArrayList<>();

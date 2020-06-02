@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
@@ -42,6 +43,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
@@ -172,6 +174,14 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	private Shape() {
+	}
+
+	protected Shape(Shape shape) {
+		this.shapeGeometry = shape.shapeGeometry;
+		this.geometry = shape.geometry;
+		this.projection = shape.projection;
+		this.envelope = shape.envelope;
+		this.type = shape.type;
 	}
 
 	@Override
@@ -380,14 +390,7 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	@Override
-	public double getCoverage() {
-		// TODO Auto-generated method stub
-		return 1;
-	}
-
-	@Override
 	public long size() {
-		// TODO Auto-generated method stub
 		return 1;
 	}
 
@@ -814,9 +817,23 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public IExtent at(Object... locators) {
-		if (locators != null && locators.length == 1 && locators[0] instanceof Number
-				&& ((Number) locators[0]).longValue() == 0) {
-			return this;
+		if (locators != null && locators.length == 1) {
+			if (locators[0] instanceof Number && ((Number) locators[0]).longValue() == 0) {
+				return this;
+			}
+			if (locators[0] instanceof Cell) {
+				if (getEnvelope().intersects(((Cell)locators[0]).getEnvelope())) {
+					// TODO coverage
+					return this;
+				}
+				return null;
+			} else if (locators[0] instanceof IShape) {
+				if (getEnvelope().intersects(((Shape)locators[0]).getEnvelope())) {
+					// TODO coverage
+					return this;
+				}
+				return null;
+			}
 		}
 		throw new IllegalStateException("an individual shape cannot be further located");
 	}
@@ -836,12 +853,46 @@ public class Shape extends AbstractExtent implements IShape {
 		// TODO Auto-generated method stub
 		return this;
 	}
-	
+
 	@Override
 	public IExtent getExtent(long stateIndex) {
 		if (stateIndex != 0) {
 			throw new IllegalArgumentException("cannot access state #" + stateIndex + " in a Shape");
 		}
 		return this;
+	}
+
+	@Override
+	protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
+
+		if (constraint != null && constraint.size() == 0) {
+			return this;
+		}
+		if (this.getDimensionality() < 2) {
+			// a point remains a point, a line remains a line. Maybe later we can buffer
+			// using an annotation and apply the rules.
+			return this;
+		}
+
+		/*
+		 * dimensionality >= 2; if we have a grid, apply it. TODO this will need to be
+		 * revised to apply a 2D grid to 2D extents matched with a 3D grid, which we
+		 * don't have for now.
+		 */
+		Grid grid = null;
+		if (other instanceof Space) {
+			grid = (Grid) ((Space) other).getGrid();
+		}
+
+		if (grid != null) {
+			return Space.create(this, grid, true);
+		}
+
+		return this;
+	}
+
+	@Override
+	public boolean contains(double[] coordinate) {
+		return this.shapeGeometry.intersects(makePoint(coordinate[0], coordinate[1]));
 	}
 }

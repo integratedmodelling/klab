@@ -34,7 +34,12 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 		 * definition as a collection of traits ("personality"). In an app context it
 		 * can simply be declared as a "library".
 		 */
-		TRAITS
+		TRAITS,
+		
+		/**
+		 * The behavior is an app defining a collection of annotated unit tests
+		 */
+		UNITTEST
 	}
 
 	/**
@@ -71,6 +76,13 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 	 * @return
 	 */
 	List<IKActorsAction> getActions();
+
+	/**
+	 * If a style is specified in the preamble, return it here.
+	 * 
+	 * @return
+	 */
+	String getStyle();
 	
 
 }

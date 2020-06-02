@@ -14,13 +14,16 @@ void 'list'
 }
 
 void 'compatible'
-	"List the available observables that are compatible with the passed semantics."
+	"List the available observables that resolve the passed observable."
 {
 	
 	optional boolean verbose
 		"Verbose output: list model details"
 		default false
-	
+		
+	optional text context 
+		"The context of resolution"
+		
 	class org.integratedmodelling.klab.clitool.console.commands.model.Compatible
 }
 
@@ -41,8 +44,28 @@ void 'info'
 	class org.integratedmodelling.klab.clitool.console.commands.model.Info
 }
 
-void 'compute'
+void 'strategy'
 	"Compute all observation strategies for the passed observable and print them."
 {
+		
+	optional text context 
+		"The context of resolution"
+
 	class org.integratedmodelling.klab.clitool.console.commands.model.Compute
+}
+
+void 'resolve'
+	"Compute all observation strategies for the passed observable and print them."
+{
+		
+	optional text context 
+		"The context of resolution"
+		
+	optional text 'space' 
+		"Spatial extent of resolution (syntax TBD)"
+		
+	optional text 'time' 
+		"Spatial extent of resolution (syntax TBD)"
+
+	class org.integratedmodelling.klab.clitool.console.commands.model.Resolve
 }

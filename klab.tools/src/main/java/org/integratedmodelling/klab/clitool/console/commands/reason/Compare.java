@@ -61,8 +61,8 @@ public class Compare implements ICommand {
 			ret += "   Observable compatibility: not observables\n";
 		}
 
-		int c1c2distance = c1.resolves(c2);
-		int c2c1distance = c2.resolves(c1);
+		int c1c2distance = c1.getSemanticDistance(c2);
+		int c2c1distance = c2.getSemanticDistance(c1);
 
 		ret += "   " + c1.getDefinition() + (c1c2distance < 0 ? " DOES NOT RESOLVE " : "    RESOLVES    ")
 				+ c2.getDefinition() + ": distance is " + c1c2distance + "\n";

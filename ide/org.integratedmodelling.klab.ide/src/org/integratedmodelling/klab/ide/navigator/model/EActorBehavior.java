@@ -91,4 +91,9 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 		return behavior.getActions();
 	}
 
+	@Override
+	public String getStyle() {
+		return behavior.getStyle();
+	}
+
 }

@@ -132,6 +132,55 @@ public class IPUtils {
 		}
 		return ret;
 	}
+	
+	/**
+	 * Gets the non-local ips.
+	 *
+	 * @return the local ips
+	 * @throws SocketException
+	 *             the socket exception
+	 */
+	public static Set<String> getIps() throws SocketException {
+		Set<String> ret = new HashSet<>();
+		for (int i = 1; i < localPatterns.length; i++) {
+			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+			for (; n.hasMoreElements();) {
+				NetworkInterface e = n.nextElement();
+				Enumeration<InetAddress> a = e.getInetAddresses();
+				for (; a.hasMoreElements();) {
+					InetAddress addr = a.nextElement();
+					if (!isLocal(addr.getHostAddress())) {
+						ret.add(addr.getHostAddress());
+					}
+				}
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Gets the non-local ip.
+	 *
+	 * @return the local ips
+	 * @throws SocketException
+	 *             the socket exception
+	 */
+	public static String getIp() throws SocketException {
+		for (int i = 1; i < localPatterns.length; i++) {
+			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+			for (; n.hasMoreElements();) {
+				NetworkInterface e = n.nextElement();
+				Enumeration<InetAddress> a = e.getInetAddresses();
+				for (; a.hasMoreElements();) {
+					InetAddress addr = a.nextElement();
+					if (!isLocal(addr.getHostAddress())) {
+						return addr.getHostAddress();
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Get the local IP for the interface matching the first local pattern not
@@ -151,7 +200,7 @@ public class IPUtils {
 				Enumeration<InetAddress> a = e.getInetAddresses();
 				for (; a.hasMoreElements();) {
 					InetAddress addr = a.nextElement();
-					if (checkIPMatching(localPatterns[i], addr.getHostAddress())) {
+					if (IPUtils.checkIPMatching(localPatterns[i], addr.getHostAddress())) {
 						return addr.getHostAddress();
 					}
 				}
@@ -217,6 +266,7 @@ public class IPUtils {
 			System.out.println("ZORB");
 		}
 		System.out.println("Local is " + getLocalIp());
+		System.out.println("Non-local is " + getIp());
 	}
 
 }

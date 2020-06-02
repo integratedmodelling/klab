@@ -10,6 +10,7 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kactors.api.IKActorsCodeStatement;
+import org.integratedmodelling.kdl.api.IKdlAnnotation;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimMetadata;
 
@@ -60,10 +61,6 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
             setCode(statement);
         }
         this.parent = parent;
-//		IKimNamespace ns = findNamespace(parent);
-//		if (ns != null) {
-//			this.namespaceId = ns.getName();
-//		}
 		if (statement != null) {
 			this.uri = EcoreUtil.getURI(statement);
 		}

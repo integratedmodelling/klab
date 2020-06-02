@@ -103,27 +103,7 @@ public interface IUnit extends IValueMediator {
 	 * @return
 	 */
 	Set<ExtentDimension> getAggregatedDimensions();
-
-//	/**
-//	 * Contextualize this <em>base unit</em> to the passed geometry, returning a
-//	 * descriptor that contains all the acceptable units paired with the set of
-//	 * extents that are aggregated in them. The descriptor also contains a chosen
-//	 * unit that corresponds to an optional set of constraints, pairing a dimension
-//	 * to a choice of extensive (aggregated) or intensive (distributed). If the
-//	 * constraints are null, the chosen unit is the one that is distributed over all
-//	 * the extents in the geometry.
-//	 * <p>
-//	 * In order to work properly, this must be called on the <b>DEFAULT BASE
-//	 * UNIT</b> of an observable, stripped of any contextualization.
-//	 * 
-//	 * @param geometry
-//	 *            a geometry to contextualize to
-//	 * @param constraints
-//	 *            a map of requested constraints on the chosen unit (may be null)
-//	 * @return
-//	 */
-//	Contextualization contextualize(IGeometry geometry, Map<ExtentDimension, ExtentDistribution> constraints);
-
+	
 	/**
 	 * Pass an observable with unit to obtain a mediator that will convert a value
 	 * to this unit crossing extentual boundaries over the passed scale, i.e.
@@ -150,5 +130,12 @@ public interface IUnit extends IValueMediator {
 	 * @return
 	 */
 	Pair<IUnit, IUnit> splitExtent(ExtentDimension dimension);
+
+	/**
+	 * True if unitless.
+	 * 
+	 * @return
+	 */
+	boolean isUnitless();
 
 }

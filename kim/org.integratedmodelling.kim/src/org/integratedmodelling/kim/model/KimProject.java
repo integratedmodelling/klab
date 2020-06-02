@@ -130,7 +130,7 @@ public class KimProject implements IKimProject {
 		return workspace;
 	}
 
-	public List<File> getSourceFiles(File folder) {
+	private List<File> getSourceFiles(File folder) {
 		List<File> result = new ArrayList<>();
 		File[] files = folder == null ? null : folder.listFiles();
 		if (files != null) {
@@ -228,6 +228,16 @@ public class KimProject implements IKimProject {
 
 	@Override
 	public List<IKActorsBehavior> getBehaviors() {
-		return KActors.INSTANCE.getBehaviors(this.name);
+		return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.BEHAVIOR);
+	}
+
+	@Override
+	public List<IKActorsBehavior> getApps() {
+		return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.APP);
+	}
+
+	@Override
+	public List<IKActorsBehavior> getTests() {
+		return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.UNITTEST);
 	}
 }

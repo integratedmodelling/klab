@@ -159,69 +159,15 @@ public enum KActors {
 	 * @param project
 	 * @return
 	 */
-	public List<IKActorsBehavior> getBehaviors(String project) {
+	public List<IKActorsBehavior> getBehaviors(String project, IKActorsBehavior.Type type) {
 		List<IKActorsBehavior> ret = new ArrayList<>();
 		for (BehaviorDescriptor bd : behaviors.values()) {
-			if (project.equals(bd.projectName)) {
+			if (project.equals(bd.projectName) && bd.behavior.getType() == type) {
 				ret.add(bd.behavior);
 			}
 		}
 		return ret;
 	}
-
-//    public IKdlDataflow declare(Model dataflow) {
-//        return new KdlDataflow(dataflow);
-//    }
-//
-//    public Number parseNumber(org.integratedmodelling.kdl.kdl.Number number) {
-//        ICompositeNode node = NodeModelUtils.findActualNodeFor(number);
-//        if (number.isExponential() || number.isDecimal()) {
-//            return Double.parseDouble(node.getText().trim());
-//        } 
-//        return Integer.parseInt(node.getText().trim());
-//    }
-//    
-//    public Object parseValue(Value value) {
-//        if (value.getLiteral() != null) {
-//            return parseLiteral(value.getLiteral());
-//        } else if (value.getFunction() != null) {
-//        	if (value.getFunction().getParameters() == null) {
-//        		return value.getFunction().getName();
-//        	} else {
-//        		// TODO!
-//        	}
-//        } else if (value.getList() != null) {
-//            List<Object> ret = new ArrayList<>();
-//            for (Value val : value.getList().getContents()) {
-//                if (!(val.getLiteral() != null && val.getLiteral().isComma())) {
-//                    ret.add(parseValue(val));
-//                }
-//            }
-//            return ret;
-//        } 
-//        
-//        return null;
-//    }
-//    
-//    private Object parseLiteral(Literal literal) {
-//        if (literal.getBoolean() != null) {
-//            return Boolean.parseBoolean(literal.getBoolean());
-//        } else if (literal.getNumber() != null) {
-//            return parseNumber(literal.getNumber());
-//        } else if (literal.getId() != null) {
-//            return literal.getId();
-//        } else if (literal.getString() != null) {
-//            return literal.getString();
-//        } else if (literal.getFrom() != null) {
-//            Range range = new Range();
-//            range.low = parseNumber(literal.getFrom()).doubleValue();
-//            if (literal.getTo() != null) {
-//                range.high = parseNumber(literal.getTo()).doubleValue();
-//            }
-//            return range;
-//        }
-//        return null;
-//    }
 
 	/**
 	 * Get the project name from the string form of any Xtext resource URI.
@@ -308,5 +254,19 @@ public enum KActors {
 	 */
 	public void setValueTranslator(ValueTranslator valueTranslator) {
 		this.valueTranslator = valueTranslator;
+	}
+	
+
+	public void add(File file) {
+		loadResources(Collections.singletonList(file));
+	}
+
+	public void delete(File file) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void touch(File file) {
+		loadResources(Collections.singletonList(file));
 	}
 }

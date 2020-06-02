@@ -43,7 +43,7 @@ public class EngineContextController {
 		if (ctx == null) {
 			throw new IllegalArgumentException("context " + context + " does not exist");
 		}
-		return ((Observation) ctx).getRuntimeScope().getReport().render(Encoding.HTML);
+		return ((Observation) ctx).getScope().getReport().render(Encoding.HTML);
 	}
 
 	/**
@@ -59,6 +59,6 @@ public class EngineContextController {
 			throw new IllegalArgumentException("context " + context + " does not exist");
 		}
 		return new DataflowReference(session.getId(), null,
-				((Observation) ctx).getRuntimeScope().getContextualizationStrategy().getElkGraph());
+				((Observation) ctx).getScope().getContextualizationStrategy().getElkGraph());
 	}
 }

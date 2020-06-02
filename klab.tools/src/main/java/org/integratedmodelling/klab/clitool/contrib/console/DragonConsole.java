@@ -1377,7 +1377,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 	 * @param outputToProcess
 	 *            The string to be color coded and printed.
 	 */
-	public void append(String outputToProcess) {
+	public synchronized void append(String outputToProcess) {
 		if (!ignoreInput && inputCarryOver && inputControl.isReceivingInput()) {
 			inputControl.storeInput();
 		}

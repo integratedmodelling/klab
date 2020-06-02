@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -154,9 +155,24 @@ public class ResolutionScope implements IResolutionScope {
 	/*
 	 * these do not change during an individual resolution.
 	 */
+
+	/*
+	 * a secondary resolution may have the context set (if it's been created) or not
+	 * (if it's being resolved). Either one or the other are set and
+	 * #getContextObservable() returns the appropriate response.
+	 */
 	private DirectObservation context;
+	private Observable contextObservable;
+	// this is set when resolving a new observation, which the dataflow will build
+	// with this name.
+	private String observationName;
+
 	private Collection<String> scenarios = new ArrayList<>();
 	private boolean interactive;
+
+	// true = resolution is deferred to after instantiation
+	private boolean deferred;
+
 	private IMonitor monitor;
 	private Scope originalScope;
 
@@ -228,6 +244,20 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	public static ResolutionScope create(IMonitor monitor) {
 		return new ResolutionScope(monitor);
+	}
+	
+	/**
+	 * Get an empty resolution scope with a specified coverage. FOR TESTING ONLY.
+	 * 
+	 * @param monitor
+	 * @return
+	 */
+	public static ResolutionScope create(IMonitor monitor, IScale scale) {
+		ResolutionScope ret = new ResolutionScope(monitor);
+		if (scale != null) {
+			ret.coverage = Coverage.full(scale);
+		}
+		return ret;
 	}
 
 	/**
@@ -307,6 +337,9 @@ public class ResolutionScope implements IResolutionScope {
 		this.beingResolved.addAll(other.beingResolved);
 		this.contextModel = other.contextModel;
 		this.originalScope = other.originalScope;
+		this.deferred = other.deferred;
+		this.observationName = other.observationName;
+		this.contextObservable = other.contextObservable;
 		if (copyResolution) {
 			this.observable = other.observable;
 			this.model = other.model;
@@ -322,6 +355,14 @@ public class ResolutionScope implements IResolutionScope {
 
 	public boolean isResolving(String modelName) {
 		return beingResolved.contains(modelName);
+	}
+
+	public Observable getContextObservable() {
+		return contextObservable == null ? (context == null ? null : context.getObservable()) : contextObservable;
+	}
+
+	public String getObservationName() {
+		return observationName;
 	}
 
 	public Collection<Link> getLinks() {
@@ -456,7 +497,8 @@ public class ResolutionScope implements IResolutionScope {
 		ret.resolutionNamespace = (Namespace) observer.getNamespace();
 
 		if (observer.getContextualization().hasScale()) {
-			ret = new ResolutionScope(Scale.create(observer.getContextualization().getExtents(monitor)), 1.0, ret, false);
+			ret = new ResolutionScope(Scale.create(observer.getContextualization().getExtents(monitor)), 1.0, ret,
+					false);
 		} else {
 			ret.coverage = new Coverage(this.coverage);
 			ret.coverage.setCoverage(1.0);
@@ -467,19 +509,73 @@ public class ResolutionScope implements IResolutionScope {
 
 	/**
 	 * 
+	 * @param observation
+	 * @return a scope to resolve the passed observer
+	 * @throws KlabException
+	 */
+	public ResolutionScope getChildScope(IDirectObservation observation, Mode mode) {
+
+		ResolutionScope ret = new ResolutionScope(this, true);
+		ret.context = (DirectObservation) observation;
+		ret.coverage = Coverage.full(observation.getScale());
+		ret.mode = mode;
+		
+		return ret;
+	}
+
+	/**
+	 * Scope for a pre-resolved observation, to use in dataflows that will create it
+	 * 
+	 * @param observer
+	 * @param mode
+	 * @return
+	 */
+	public ResolutionScope getChildScope(IObservable observable, IDirectObservation context, IScale scale) {
+
+		ResolutionScope ret = new ResolutionScope(this, true);
+		ret.coverage = Coverage.full(scale);
+		ret.context = (DirectObservation) context;
+		ret.mode = Mode.RESOLUTION;
+		return ret;
+	}
+
+	public ResolutionScope getContextualizedScope(IObservable context) {
+		ResolutionScope ret = new ResolutionScope(this, true);
+		ret.contextObservable = (Observable) context;
+		return ret;
+	}
+
+	/**
+	 * Return a scope to resolve a new observation of the passed observable, which
+	 * will have the passed name. The context remains there to tell us which subject
+	 * we are resolving the observable in.
+	 * 
+	 * @param observable
+	 * @param name
+	 * @return
+	 */
+	public ResolutionScope getChildScope(IObservable observable, IScale scale, String name) {
+
+		ResolutionScope ret = new ResolutionScope(this, true);
+		ret.contextObservable = (Observable) observable;
+		ret.observationName = name;
+		ret.coverage = Coverage.full(scale);
+		ret.mode = Mode.RESOLUTION;
+		return ret;
+	}
+
+	/**
+	 * 
 	 * @param observer
 	 * @return a scope to resolve the passed observer
 	 * @throws KlabException
 	 */
-	public ResolutionScope getChildScope(IDirectObservation observer, Mode mode) throws KlabException {
-
-		ResolutionScope ret = new ResolutionScope(this, true);
-		ret.context = (DirectObservation) observer;
-		ret.coverage = Coverage.full(observer.getScale());
-		ret.mode = mode;
+	public ResolutionScope getDeferredChildScope(IDirectObservation observer, Mode mode) {
+		ResolutionScope ret = getChildScope(observer, mode);
+		ret.deferred = true;
 		return ret;
 	}
-	
+
 	@Override
 	public Collection<String> getScenarios() {
 		return scenarios;
@@ -849,11 +945,13 @@ public class ResolutionScope implements IResolutionScope {
 	 * Called before each instance resolution when the passed observable is
 	 * instantiated in our context. Should fill in the resolver set in our scale
 	 * only once, so the same resolvers can be used above. The models will then be
-	 * ranked in the scale of each instance.
+	 * ranked in the scale of each instance. The resulting dataflows will need to
+	 * swap their resolution scope before being usable to resolve any direct
+	 * observation different from the original.
 	 * 
 	 * @param observable
 	 */
-	public void preloadResolvers(IObservable observable) {
+	public void preloadResolvers(IObservable observable, IDirectObservation context) {
 
 		/**
 		 * only search for resolvers if we haven't already
@@ -875,7 +973,7 @@ public class ResolutionScope implements IResolutionScope {
 		ResolutionScope scope = this.getChildScope((Observable) observable, Mode.RESOLUTION);
 		// ensure we don't try to find the cache for the cache
 		scope.caching = true;
-		resolvers.addAll(Models.INSTANCE.resolve(observable, scope));
+		resolvers.addAll(Models.INSTANCE.resolve(observable, scope.getChildScope(observable, context, context.getScale())));
 
 		/*
 		 * TODO this may include the existing states in the context, with enough
@@ -990,7 +1088,7 @@ public class ResolutionScope implements IResolutionScope {
 		Observable ret = resolvable;
 		Map<String, IObservable> knownObservables = new HashMap<>();
 		if (context != null) {
-			IRuntimeScope ctx = context.getRuntimeScope();
+			IRuntimeScope ctx = context.getScope();
 			if (ctx != null) {
 				for (Pair<String, IObservation> obs : ctx.getArtifacts(IObservation.class)) {
 					knownObservables.put(obs.getSecond().getObservable().getReferenceName(),
@@ -1069,6 +1167,70 @@ public class ResolutionScope implements IResolutionScope {
 		ResolutionScope ret = new ResolutionScope(this);
 		ret.coverage = Coverage.full(scale);
 		return ret;
+	}
+
+//	public void distribute(IObservable distributingObservable) {
+//		this.observable = this.observable.distributeIn(distributingObservable.getType());
+//	}
+
+	public boolean isDeferred() {
+		return deferred;
+	}
+
+	public void setDeferred(boolean deferred) {
+		this.deferred = deferred;
+	}
+
+	/**
+	 * Determine if this scope requires the passed observable to be contextualized
+	 * to a different object. If so, return the corresponding observable. The
+	 * resolver will store the actual observable for resolution after the dataflow
+	 * has created each of the corresponding objects.
+	 * 
+	 * @param observable2
+	 * @return
+	 */
+	public Observable getDeferredObservableFor(Observable observable2) {
+
+		if (!observable2.is(Type.OBSERVABLE)) {
+			// attribute resolvers and the like
+			return null;
+		}
+		
+		if (observable2.equals(this.observable)) {
+			// resolving self
+			return null;
+		}
+
+		/*
+		 * using getContext() lets any indirect inherency pass through
+		 */
+		IConcept context = observable2.getContext();
+
+		if (!isDeferred() && context != null && getContextObservable() != null
+				&& !getContextObservable().getType().is(context)) {
+
+			/*
+			 * check if this is the observable of a learning model that has an archetype
+			 * compatible with the context. In that case, we let it pass as is, as the
+			 * learning process will deal with the distribution.
+			 */
+			if (observable2.getReferencedModel() != null && observable2.getReferencedModel().isLearning()) {
+				for (IObservable archetype : ((Model) observable2.getReferencedModel()).getArchetypes()) {
+					if (archetype.is(context)) {
+						return null;
+					}
+				}
+			}
+
+			monitor.info("Context of " + observable2.getType().getDefinition() + " (" + context.getDefinition()
+					+ ") is incompatible with current context (" + getContextObservable().getType().getDefinition()
+					+ "): resolving " + context.getDefinition() + " and deferring resolution");
+
+			return Observable.promote(context);
+		}
+
+		return null;
 	}
 
 }

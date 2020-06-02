@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -21,22 +22,51 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 import com.vividsolutions.jts.geom.Point;
 
-public class RunoffResolver implements IResolver<IState>, IExpression {
+public class RunoffResolver implements IResolver<IProcess>, IExpression {
 
+	// only one official output for now (see k.DL specs)
+	String[] outputIds = { "runoff_water_volume" };
+	
 	@Override
 	public Type getType() {
-		return Type.NUMBER;
+		return Type.PROCESS;
 	}
 
 	@Override
-	public IState resolve(IState target, IContextualizationScope context) throws KlabException {
+	public IProcess resolve(IProcess runoffProcess, IContextualizationScope context) throws KlabException {
 
 		IState flowdirection = context.getArtifact("flow_directions_d8", IState.class);
 		IState precipitation = context.getArtifact("precipitation_volume", IState.class);
 		IState curvenumber = context.getArtifact("curve_number", IState.class);
 
-		IUnit tUnit = target.getObservable().getUnit();
-		Grid grid = Space.extractGrid(target);
+		IState runoffState = null;
+		
+		for (int i = 1; i < context.getModel().getObservables().size(); i++) {
+
+			// FIXME - laborious; find a simpler way that can be codified somewhere
+			for (String output : outputIds) {
+				if (output.equals(context.getModel().getObservables().get(i).getName())) {
+					IState state = context.getArtifact(output, IState.class);
+					if (state == null) {
+						context.getMonitor().warn("runoff: cannot find state for " + output);
+					} else {
+						switch (output) {
+						case "runoff_water_volume":
+							runoffState = state;
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+		
+		if (runoffState == null) {
+			return runoffProcess;
+		}
+		
+		IUnit tUnit = runoffState.getObservable().getUnit();
+		Grid grid = Space.extractGrid(runoffState);
 		
 		if (grid == null) {
 			throw new KlabValidationException("Runoff must be computed on a grid extent");
@@ -46,9 +76,14 @@ public class RunoffResolver implements IResolver<IState>, IExpression {
 		if (tUnit != null && tUnit.equals(Units.INSTANCE.SQUARE_METERS)) {
 			tUnit = null;
 		}
-
+		
+		int nouts = 0, nuouts = 0;
+		
+		// TODO this should be in the watershed but it's in the region.
 		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
 
+			nouts++;
+			
 			ISpace space = ((IObservation) artifact).getSpace();
 
 			if (space == null) {
@@ -58,10 +93,12 @@ public class RunoffResolver implements IResolver<IState>, IExpression {
 			Point point = ((Shape) space.getShape()).getJTSGeometry().getCentroid();
 			long xy = grid.getOffsetFromWorldCoordinates(point.getX(), point.getY());
 			Cell start = grid.getCell(xy);
-			computeRunoff(start, flowdirection, precipitation, curvenumber, target);
+			computeRunoff(start, flowdirection, precipitation, curvenumber, runoffState);
+			
+			nuouts ++;
 		}
-
-		return target;
+		
+		return runoffProcess;
 	}
 
 	/*

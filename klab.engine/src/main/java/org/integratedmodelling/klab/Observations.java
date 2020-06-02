@@ -2,10 +2,12 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -13,6 +15,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.atteo.evo.inflector.English;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -94,12 +97,12 @@ public enum Observations implements IObservationService {
 
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
-		return Resolver.INSTANCE.resolve(urn, session, scenarios);
+		return Resolver.create(null).resolve(urn, session, scenarios);
 	}
 
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
-		return Resolver.INSTANCE.resolve(urn, context, scenarios);
+		return Resolver.create(null).resolve(urn, context, scenarios);
 	}
 
 	// @Override
@@ -207,27 +210,16 @@ public enum Observations implements IObservationService {
 		// TODO Auto-generated method stub
 	}
 
-//	public static Aggregation getAggregator(IObservable observable) {
-//		Aggregation ret = Aggregation.MAJORITY;
-//		if (observable.getObservationType() == ObservationType.QUANTIFICATION) {
-//			ret = Aggregation.MEAN;
-//			if (observable.isExtensive(Concepts.c(NS.SPACE_DOMAIN))) {
-//				ret = Aggregation.SUM;
-//			}
-//		}
-//		return ret;
-//	}
-
-	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
-			ILocator locator, int childLevel, boolean isMain) {
-		return createArtifactDescriptor(observation, parent, locator, childLevel, isMain, null);
+	public ObservationReference createArtifactDescriptor(IObservation observation, /* IObservation parent, */
+			ILocator locator, int childLevel) {
+		return createArtifactDescriptor(observation, /* parent, */locator, childLevel, null);
 	}
 
-	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
-			ILocator locator, int childLevel, boolean isMain, String viewId) {
+	public ObservationReference createArtifactDescriptor(IObservation observation/* , IObservation parent */,
+			ILocator locator, int childLevel, String viewId) {
 
 		ObservationReference ret = new ObservationReference();
-
+		
 		ret.setEmpty(observation.isEmpty());
 
 		// for now
@@ -252,28 +244,27 @@ public enum Observations implements IObservationService {
 			ret.setOriginalGroupId(((ObservationGroupView) observation).getOriginalGroup().getId());
 		}
 
-		ret.setMain(isMain);
 		ret.setCreationTime(observation.getTimestamp());
 		ret.setLastUpdate(((Observation) observation).getLastUpdate());
 		ret.setExportLabel(observation.getObservable().getName());
+		ret.setContextualized(((Observation) observation).isContextualized());
 
-		if (isMain && observation instanceof Observation && !((Observation) observation).isMain()) {
-			((Observation) observation).setMain(true);
-		} else if (((Observation) observation).isMain()) {
-			ret.setMain(true);
-		}
-
-		ISubject rootSubject = ((Observation) observation).getRuntimeScope().getRootSubject();
+		ISubject rootSubject = ((Observation) observation).getScope().getRootSubject();
 		if (rootSubject != null) {
 			ret.setRootContextId(rootSubject.getId());
 		}
 
+		IArtifact parent = observation.getScope().getParentOf(observation);
+		IArtifact parentArtifact = observation.getScope().getParentArtifactOf(observation);
+		
 		ret.setId(observation.getId());
+		ret.setContextId(((Observation) observation).getObservationContextId());
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
-		ret.setAlive(((Observation)observation).isAlive());
+		ret.setParentArtifactId(parentArtifact == null ? null : parentArtifact.getId());
+		ret.setAlive(((Observation) observation).isAlive());
 		ret.setLabel(getDisplayLabel(observation));
-
+		ret.setDynamic(((Observation) observation).isDynamic());
 		ret.setObservable(observation.getObservable().getDefinition());
 		if (ret.getObservable() == null) {
 			ret.setObservable("Quantity has no semantics associated");
@@ -288,9 +279,10 @@ public enum Observations implements IObservationService {
 		ITime time = ((IScale) observation.getGeometry()).getTime();
 
 		/*
-		 * This is a new context, which redefines the current scale.
+		 * Send full scale for any countables
 		 */
-		if (parent == null) {
+		if (observation.getObservable().is(Type.COUNTABLE)) {
+
 			ScaleReference scaleReference = new ScaleReference();
 			if (space != null) {
 				IEnvelope envelope = space.getEnvelope();
@@ -382,37 +374,10 @@ public enum Observations implements IObservationService {
 			}
 
 			/*
-			 * check export formats from all adapters
+			 * compute available export formats. This may change after an update so it's done also in
+			 * ObservationChange.
 			 */
-			Map<String, Pair<Triple<String, String, String>, String>> formats = new LinkedHashMap<>();
-			for (IResourceAdapter adapter : Resources.INSTANCE.getResourceAdapters()) {
-				for (Triple<String, String, String> capabilities : adapter.getImporter()
-						.getExportCapabilities(observation)) {
-					formats.put(capabilities.getFirst(), new Pair<>(capabilities, adapter.getName()));
-				}
-			}
-
-			/*
-			 * add anything we don't have adapters for, at the moment just networks
-			 */
-			if (observation instanceof IConfiguration && ((IConfiguration) observation).is(INetwork.class)) {
-				INetwork network = ((IConfiguration) observation).as(INetwork.class);
-				for (Triple<String, String, String> capabilities : network.getExportCapabilities(observation)) {
-					formats.put(capabilities.getFirst(), new Pair<>(capabilities,
-							org.integratedmodelling.klab.components.network.model.Network.ADAPTER_ID));
-				}
-			}
-
-			/*
-			 * For now only one adapter is kept per format. Later we may offer the option by
-			 * using a set instead of a map and implementing equals() for ExportFormat to
-			 * check all three.
-			 */
-			for (String format : formats.keySet()) {
-				Pair<Triple<String, String, String>, String> data = formats.get(format);
-				ret.getExportFormats().add(new ExportFormat(data.getFirst().getSecond(), format, data.getSecond(),
-						data.getFirst().getThird()));
-			}
+			ret.getExportFormats().addAll(getExportFormats(observation));
 
 			ret.getGeometryTypes().add(gtype);
 		}
@@ -428,26 +393,27 @@ public enum Observations implements IObservationService {
 			// TODO
 		}
 
-		if (observation instanceof IDirectObservation) {
-			/*
-			 * physical parent
-			 */
-			if (observation instanceof DirectObservation) {
-				if (viewId != null) {
-					ret.setParentArtifactId(viewId);
-				} else {
-					ret.setParentArtifactId(((DirectObservation) observation).getGroup() == null ? ret.getParentId()
-							: ((DirectObservation) observation).getGroup().getId());
-				}
-			}
-		}
+//		if (observation instanceof IDirectObservation) {
+//			/*
+//			 * physical parent
+//			 */
+//			if (observation instanceof DirectObservation) {
+//				if (viewId != null) {
+//					ret.setParentArtifactId(viewId);
+//				} else {
+//					ret.setParentArtifactId(((DirectObservation) observation).getGroup() == null ? ret.getParentId()
+//							: ((DirectObservation) observation).getGroup().getId());
+//				}
+//			}
+//		}
+
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
 
 			for (IArtifact child : observation.getChildArtifacts()) {
 				if (child instanceof IObservation) {
 					ret.getChildren()
-							.add(createArtifactDescriptor((IObservation) child, observation, locator,
-									childLevel > 0 ? (childLevel - 1) : childLevel, false,
+							.add(createArtifactDescriptor((IObservation) child/* , observation */, locator,
+									childLevel > 0 ? (childLevel - 1) : childLevel,
 									observation instanceof ObservationGroupView ? observation.getId() : null));
 				}
 			}
@@ -505,6 +471,43 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
+	public List<ExportFormat> getExportFormats(IObservation observation) {
+
+		Map<String, Pair<Triple<String, String, String>, String>> formats = new LinkedHashMap<>();
+		List<ExportFormat> ret = new ArrayList<>();
+
+		for (IResourceAdapter adapter : Resources.INSTANCE.getResourceAdapters()) {
+			for (Triple<String, String, String> capabilities : adapter.getImporter()
+					.getExportCapabilities(observation)) {
+				formats.put(capabilities.getFirst(), new Pair<>(capabilities, adapter.getName()));
+			}
+		}
+
+		/*
+		 * add anything we don't have adapters for, at the moment just networks
+		 */
+		if (observation instanceof IConfiguration && ((IConfiguration) observation).is(INetwork.class)) {
+			INetwork network = ((IConfiguration) observation).as(INetwork.class);
+			for (Triple<String, String, String> capabilities : network.getExportCapabilities(observation)) {
+				formats.put(capabilities.getFirst(), new Pair<>(capabilities,
+						org.integratedmodelling.klab.components.network.model.Network.ADAPTER_ID));
+			}
+		}
+		
+		/*
+		 * For now only one adapter is kept per format. Later we may offer the option by
+		 * using a set instead of a map and implementing equals() for ExportFormat to
+		 * check all three.
+		 */
+		for (String format : formats.keySet()) {
+			Pair<Triple<String, String, String>, String> data = formats.get(format);
+			ret.add(new ExportFormat(data.getFirst().getSecond(), format, data.getSecond(),
+					data.getFirst().getThird()));
+		}
+
+		return ret;
+	}
+
 	public String getDisplayLabel(IObservation observation) {
 		String ret = null;
 		if (observation instanceof ObservationGroup) {
@@ -555,31 +558,31 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
-	public Observer makeROIObserver(final SpatialExtent regionOfInterest, Namespace namespace, IMonitor monitor) {
+	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace, IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
 		}
-		return new Observer(regionOfInterest, observable, (Namespace) namespace);
+		return new Observer(regionOfInterest, time, observable, (Namespace) namespace);
 	}
 
-	public Observer makeROIObserver(final Shape shape, Namespace namespace, IMonitor monitor) {
+	public Observer makeROIObserver(final Shape shape, ITime time, Namespace namespace, IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
 		}
-		return new Observer(shape, observable, (Namespace) namespace);
+		return new Observer(shape, time, observable, (Namespace) namespace);
 	}
 
-	public Observer makeROIObserver(String name, IShape shape, IMetadata metadata) {
+	public Observer makeROIObserver(String name, IShape shape, ITime time, IMetadata metadata) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
 		observable.setOptional(true);
-		Observer ret = new Observer((Shape) shape, observable,
+		Observer ret = new Observer((Shape) shape, time, observable,
 				Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
 		ret.getMetadata().putAll(metadata);
 		return ret;

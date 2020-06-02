@@ -60,7 +60,7 @@ public class GeomorphonResolver implements IResolver<IState>, IExpression {
 			geomorphon.pThreshold = pThreshold * cMeters;
 		}
 		
-		geomorphon.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, DataBuffer.TYPE_FLOAT, floatNovalue);
+		geomorphon.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
 		geomorphon.pm = new TaskMonitor(context.getMonitor());
 		geomorphon.doProcess = true;
 		geomorphon.doReset = false;
@@ -71,7 +71,7 @@ public class GeomorphonResolver implements IResolver<IState>, IExpression {
 			throw new KlabException(e);
 		}
 		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(geomorphon.outRaster, target, (a) -> {
+			GeotoolsUtils.INSTANCE.coverageToState(geomorphon.outRaster, target, context.getScale(), (a) -> {
 				if (a == (double) floatNovalue)
 					return Double.NaN;
 				return a;

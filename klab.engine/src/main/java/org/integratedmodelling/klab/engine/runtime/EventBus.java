@@ -24,7 +24,7 @@ public class EventBus implements IEventBus {
 	 * @param subject
 	 */
 	public EventBus(Subject subject) {
-		this.session = subject.getRuntimeScope().getMonitor().getIdentity().getParentIdentity(Session.class);
+		this.session = subject.getScope().getMonitor().getIdentity().getParentIdentity(Session.class);
 	}
 
 }

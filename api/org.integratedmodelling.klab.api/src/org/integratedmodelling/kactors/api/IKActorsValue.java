@@ -17,8 +17,17 @@ package org.integratedmodelling.kactors.api;
 public interface IKActorsValue extends IKActorsCodeStatement {
 
 	public enum Type {
-		REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, CLASS, ANYVALUE, ANYTHING, NODATA,
-		RANGE, MAP, TABLE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN, ERROR
+		REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, SET, CLASS, ANYVALUE, ANYTHING, NODATA,
+		RANGE, MAP, TABLE, TREE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN, ERROR,
+		/**
+		 * Matcher for anything that isn't null, false or error
+		 */
+		ANYTRUE,
+		
+		/**
+		 * Objects that don't have literals in the language but can be fired
+		 */
+		OBSERVATION
 	}
 
 	/**

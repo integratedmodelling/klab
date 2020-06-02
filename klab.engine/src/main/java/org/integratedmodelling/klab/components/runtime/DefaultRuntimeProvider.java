@@ -10,12 +10,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Types;
@@ -50,6 +52,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.CastingSt
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.DereifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
@@ -68,12 +71,14 @@ import org.integratedmodelling.klab.components.runtime.observations.Relationship
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
-import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Activity;
@@ -108,7 +113,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
 			IResolutionScope scope, IMonitor monitor) throws KlabException {
 
-		return executor.submit(new Callable<IArtifact>() {
+		Callable<IArtifact> task = new Callable<IArtifact>() {
 
 			@Override
 			public IArtifact call() throws Exception {
@@ -129,14 +134,14 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				IRuntimeScope runtimeContext = null;
 				if (switchContext) {
 					// new catalog, new scale, context subject is in the scope, network remains
-					runtimeContext = ((Subject) context).getRuntimeScope().createContext(actuatorScale, actuator, scope,
-							monitor);
+					runtimeContext = ((Observation) context).getScope().createContext(actuatorScale, actuator,
+							dataflow, scope, monitor);
 				} else if (context == null) {
 					// new context
 					runtimeContext = createRuntimeContext(actuator, scope, actuatorScale, monitor);
 				} else {
 					// instantiating or resolving states: stay in context
-					runtimeContext = ((Subject) context).getRuntimeScope().createChild(actuatorScale, actuator, scope,
+					runtimeContext = ((Subject) context).getScope().createChild(actuatorScale, actuator, scope,
 							monitor);
 				}
 
@@ -151,7 +156,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					IRuntimeScope ctx = runtimeContext;
 					if (active != actuator) {
 						ctx = runtimeContext.createChild(actuatorScale, active, scope, monitor)
-								.locate(initializationScale);
+								.locate(initializationScale, monitor);
 					}
 
 					/*
@@ -161,8 +166,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					if (active.isComputed() || ((Actuator) active).isMerging()) {
 						active.compute(ctx.getTargetArtifact(), ctx);
 					}
-					if (!(monitor.getIdentity().is(IIdentity.Type.TASK)
-							&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
+					if (!((Actuator) active).getDataflow().isSecondary()
+							&& !(monitor.getIdentity().is(IIdentity.Type.TASK)
+									&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
 						((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
 					}
 
@@ -172,16 +178,34 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				}
 
 				/*
-				 * auto-start the only transition if we have one and we promoted an extent to a
-				 * temporal grid.
+				 * auto-start the scheduler if transitions have been registered.
 				 */
-				if (((Dataflow) dataflow).isAutoStartTransitions() && runtimeContext.getScheduler() != null) {
-					runtimeContext.getScheduler().run();
+				if (((Actuator) actuator).getDataflow().isPrimary() && runtimeContext.getScheduler() != null
+						&& !runtimeContext.getScheduler().isEmpty()) {
+					ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity())
+							.createChild("Temporal contextualization");
+					try {
+						((AbstractTask<?>) subtask).notifyStart();
+						runtimeContext.getScheduler().run(subtask.getMonitor());
+						((AbstractTask<?>) subtask).notifyEnd();
+					} catch (Throwable e) {
+						throw ((AbstractTask<?>) subtask).notifyAbort(e);
+					}
 				}
 
 				return runtimeContext.getTargetArtifact();
 			}
-		});
+		};
+
+		if (Configuration.INSTANCE.synchronousDataflow()) {
+			try {
+				return ConcurrentUtils.constantFuture(task.call());
+			} catch (Exception e) {
+				throw new KlabException(e);
+			}
+		}
+
+		return executor.submit(task);
 	}
 
 	@Override
@@ -271,6 +295,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			ILocator scale) throws KlabException {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
+		if (context.getModel() != null && Annotations.INSTANCE.hasAnnotation(context.getModel(), "serial")) {
+			reentrant = false;
+		}
 		IArtifact self = context.get("self", IArtifact.class);
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context, context.getVariables());
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
@@ -492,5 +519,16 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		}
 		return new ComputableResource(ValueOperatorResolver.getServiceCall(classifiedObservable, operator, operand),
 				Mode.RESOLUTION);
+	}
+
+	@Override
+	public IContextualizable getDereifyingResolver(IConcept distributingType, IConcept inherentType,
+			IArtifact.Type targetType) {
+		if (targetType == IArtifact.Type.OBJECT) {
+			throw new KlabUnimplementedException("de-reification of countable observations is still unimplemented");
+		}
+		return new ComputableResource(
+				DereifyingStateResolver.getServiceCall(distributingType, inherentType, targetType), Mode.RESOLUTION);
+
 	}
 }

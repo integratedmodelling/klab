@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -130,7 +131,8 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		 */
 		LIST,
 		/**
-		 * No value - used only for options in command prototypes
+		 * No value - the type of computations that resolve objects (acknowledgements),
+		 * and for options in command prototypes
 		 */
 		VOID,
 
@@ -194,6 +196,59 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		public boolean isOccurrent() {
 			return this == EVENT || this == PROCESS;
 		}
+
+	}
+
+	/**
+	 * The artifact structure keeps tabs on both the logical and the physical
+	 * relationships of the artifacts within a context. The scope of each
+	 * observation contains the structure and exposes it.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface Structure {
+
+		/**
+		 * 
+		 * @return
+		 */
+		IArtifact getRootArtifact();
+
+		/**
+		 * 
+		 * @param child
+		 * @return
+		 */
+		IArtifact getArtifactParent(IArtifact child);
+
+		/**
+		 * 
+		 * @param child
+		 * @return
+		 */
+		IArtifact getLogicalParent(IArtifact child);
+
+		/**
+		 * 
+		 * @param parent
+		 * @return
+		 */
+		Collection<IArtifact> getArtifactChildren(IArtifact parent);
+
+		/**
+		 * 
+		 * @param parent
+		 * @return
+		 */
+		Collection<IArtifact> getLogicalChildren(IArtifact parent);
+
+		/**
+		 * 
+		 * @param artifact
+		 * @return
+		 */
+		boolean contains(IArtifact artifact);
 
 	}
 

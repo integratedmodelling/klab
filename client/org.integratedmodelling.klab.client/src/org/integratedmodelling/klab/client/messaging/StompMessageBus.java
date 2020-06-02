@@ -103,7 +103,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 		if (throwable instanceof ConnectionLostException) {
 			// if connection lost, call this
 			// error("Connection lost.");
-			System.out.println("Connection lost.");
+			System.out.println("Connection lost: " + throwable);
 		} else {
 			// error("Unknown message transport error. Please report the error.");
 			System.out.println("Unknown message transport error.");

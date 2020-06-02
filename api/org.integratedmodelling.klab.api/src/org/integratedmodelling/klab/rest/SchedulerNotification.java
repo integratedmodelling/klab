@@ -10,12 +10,14 @@ public class SchedulerNotification {
 	public static enum Type {
 		STARTED,
 		FINISHED,
+		TIME_ADVANCED,
 		RESET
 	}
 	
 	private Type type;
 	private String contextId;
 	private long resolution;
+	private long currentTime;
 	
 	public Type getType() {
 		return type;
@@ -34,6 +36,12 @@ public class SchedulerNotification {
 	}
 	public void setResolution(long resolution) {
 		this.resolution = resolution;
+	}
+	public long getCurrentTime() {
+		return currentTime;
+	}
+	public void setCurrentTime(long currentTime) {
+		this.currentTime = currentTime;
 	}
 	
 	

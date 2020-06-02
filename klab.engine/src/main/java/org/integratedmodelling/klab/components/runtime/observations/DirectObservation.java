@@ -51,16 +51,44 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 	@Override
 	public Collection<IState> getStates() {
-		return getRuntimeScope().getChildren(this, IState.class);
+		return getScope().getChildren(this, IState.class);
+	}
+
+	@Override
+	public IObservation getChildObservation(IObservable observable) {
+		for (IArtifact child : getScope().getChildArtifactsOf(this)) {
+			if (child instanceof IObservation
+					&& ((IObservation) child).getObservable().getType().is(observable.getType())) {
+				return (IObservation) child;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return the first observation that resolves the passed observable in the context of this one,
+	 * reassessing the context if the observable comes with an explicit 'within' clause.
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	public IObservation getObservationResolving(IObservable observable) {
+		for (IArtifact child : getScope().getChildArtifactsOf(this)) {
+			if (child instanceof IObservation && ((IObservation) child).getObservable().getType()
+					.resolves(observable.getType(), getObservable().getType())) {
+				return (IObservation) child;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public <T extends IArtifact> Collection<T> getChildren(Class<T> cls) {
-		return getRuntimeScope().getChildren(this, cls);
+		return getScope().getChildren(this, cls);
 	}
 
 	public IObservation getChildArtifact(String name) {
-		for (IArtifact artifact : this.getRuntimeScope().getChildArtifactsOf(this)) {
+		for (IArtifact artifact : this.getScope().getChildArtifactsOf(this)) {
 			if ((artifact instanceof IDirectObservation && ((IDirectObservation) artifact).getName().equals(name))
 					|| (artifact instanceof IState && ((IState) artifact).getObservable().getName().equals(name))) {
 				return (IObservation) artifact;
@@ -76,6 +104,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 	public void setName(String name) {
 		this.name = name;
+		this.getObservable().setName(name);
 	}
 
 	public IDirectObservation at(ILocator locator) {
@@ -97,7 +126,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 		if (this.predicates.add(predicate)) {
 
-			IObservable.Builder builder = getObservable().getBuilder(getRuntimeScope().getMonitor());
+			IObservable.Builder builder = getObservable().getBuilder(getScope().getMonitor());
 
 			if (predicate.is(IKimConcept.Type.ROLE)) {
 				builder.withRole(predicate);
@@ -109,6 +138,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 			// record the modification
 			ObservationChange change = new ObservationChange();
+			change.setContextId(getScope().getRootSubject().getId());
+			change.setId(this.getId());
+			change.setTimestamp(-1);
+			change.setType(ObservationChange.Type.AttributeChange);
 			change.setNewAttributes(new ArrayList<>());
 			change.getNewAttributes()
 					.add(new Triple<>(predicate.toString(), Concepts.INSTANCE.getDisplayLabel(predicate),
@@ -121,13 +154,12 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	public Set<IConcept> getPredicates() {
 		return this.predicates;
 	}
-	
+
 	public void removePredicate(IConcept predicate) {
 
 		if (this.predicates.remove(predicate)) {
 
-			IObservable.Builder builder = getObservable().getBuilder(getRuntimeScope().getMonitor())
-					.without(predicate);
+			IObservable.Builder builder = getObservable().getBuilder(getScope().getMonitor()).without(predicate);
 
 			this.setObservable((Observable) builder.buildObservable());
 
@@ -139,6 +171,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 			 */
 			if (!findAndRemoveAttribution(predicate)) {
 				ObservationChange change = new ObservationChange();
+				change.setContextId(getScope().getRootSubject().getId());
+				change.setId(this.getId());
+				change.setTimestamp(-1);
+				change.setType(ObservationChange.Type.SemanticsChange);
 				change.setNewSemantics(this.getObservable().getDefinition());
 				this.reportChange(change);
 			}
@@ -163,7 +199,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 	@Override
 	public Collection<IArtifact> getChildArtifacts() {
-		return getRuntimeScope().getChildArtifactsOf(this);
+		return getScope().getChildArtifactsOf(this);
 	}
 
 	@Override

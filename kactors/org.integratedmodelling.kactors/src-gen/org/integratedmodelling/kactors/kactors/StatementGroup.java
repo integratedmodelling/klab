@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.StatementGroup#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.StatementGroup#getActions <em>Actions</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatementGroup()
@@ -44,5 +45,27 @@ public interface StatementGroup extends EObject
    * @generated
    */
   void setBody(MessageBody value);
+
+  /**
+   * Returns the value of the '<em><b>Actions</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Actions</em>' containment reference.
+   * @see #setActions(Actions)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatementGroup_Actions()
+   * @model containment="true"
+   * @generated
+   */
+  Actions getActions();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.StatementGroup#getActions <em>Actions</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Actions</em>' containment reference.
+   * @see #getActions()
+   * @generated
+   */
+  void setActions(Actions value);
 
 } // StatementGroup

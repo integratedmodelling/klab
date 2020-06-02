@@ -6,6 +6,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
@@ -50,7 +51,8 @@ public class MergedUrnResolver implements IExpression, IResolver<IArtifact> {
 
 		if (this.schedule == null) {
 
-			IConcept inherent = ((IObservation) observation).getObservable().getInherentType();
+			IConcept inherent = Observables.INSTANCE
+					.getInherentType(((IObservation) observation).getObservable().getType());
 			Pair<String, IArtifact> target = ((IRuntimeScope) context).findArtifact(Observable.promote(inherent));
 
 			if (target == null || !(target.getSecond() instanceof IState)) {
@@ -63,7 +65,7 @@ public class MergedUrnResolver implements IExpression, IResolver<IArtifact> {
 		}
 
 		IState target = this.targetState;
-		
+
 		for (IContextualizer contextualizer : this.schedule.getComputation(context.getScale().getTime(), context)) {
 
 			/*
@@ -79,8 +81,8 @@ public class MergedUrnResolver implements IExpression, IResolver<IArtifact> {
 				 * pass the distributed computation to the runtime provider for possible
 				 * parallelization instead of hard-coding a loop here.
 				 */
-				target = (IState) Klab.INSTANCE.getRuntimeProvider().distributeComputation(
-						(IStateResolver) contextualizer, target, context, context.getScale());
+				target = (IState) Klab.INSTANCE.getRuntimeProvider()
+						.distributeComputation((IStateResolver) contextualizer, target, context, context.getScale());
 
 			} else if (contextualizer instanceof IResolver) {
 				target = (IState) ((IResolver<IArtifact>) contextualizer).resolve(target, context);

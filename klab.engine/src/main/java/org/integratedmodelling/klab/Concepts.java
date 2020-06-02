@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
+import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.owl.Concept;
@@ -494,6 +495,10 @@ public enum Concepts implements IConceptService {
 			}
 		}
 		return true;
+	}
+
+	public boolean isInternal(IConcept c) {
+		return CoreOntology.CORE_ONTOLOGY_NAME.equals(c.getNamespace());
 	}
 
 }

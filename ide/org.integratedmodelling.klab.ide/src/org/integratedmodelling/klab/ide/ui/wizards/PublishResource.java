@@ -46,6 +46,8 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.ui.PermissionEditor;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.eclipse.swt.custom.CLabel;
 
 public class PublishResource extends WizardPage {
 
@@ -117,7 +119,7 @@ public class PublishResource extends WizardPage {
 
 		text = new Text(container, SWT.BORDER);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		this.text.setText(resource.getLocalName().toLowerCase());
+		this.text.setText(MiscUtilities.getFileBaseName(resource.getLocalName().toLowerCase()));
 
 		Label lblCatalogoptional = new Label(container, SWT.NONE);
 		lblCatalogoptional.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -150,6 +152,17 @@ public class PublishResource extends WizardPage {
 		permissionsEditor = new PermissionEditor(grpPermissions, SWT.NONE);
 		permissionsEditor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		permissionsEditor.setPermissions(resource.getMetadata().get(IMetadata.IM_PERMISSIONS));
+		
+		CLabel lblNewLabel_3 = new CLabel(grpPermissions, SWT.NONE);
+		lblNewLabel_3.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
+		lblNewLabel_3.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		lblNewLabel_3.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
+		lblNewLabel_3.setText("Resource ID, catalog and namespace define a permanent URN. Choose wisely,");
+		
+		CLabel lblNewLabel_3_1 = new CLabel(grpPermissions, SWT.NONE);
+		lblNewLabel_3_1.setText("use sensible names and correct spelling.");
+		lblNewLabel_3_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
+		lblNewLabel_3_1.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
 	}
 
 	public NodeReference getTargetNode() {

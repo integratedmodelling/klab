@@ -127,7 +127,7 @@ public class ConcaveHullInstantiator implements IExpression, IInstantiator {
 			 * if the semantics is compatible with the quality's context, the instance
 			 * inherits a view of each state.
 			 */
-			IConcept scontext = sourceState.getObservable().getContext();
+			IConcept scontext = Observables.INSTANCE.getContextType(sourceState.getObservable().getType());
 			// the first condition should never happen
 			if (scontext != null && Observables.INSTANCE.isCompatible(semantics.getType(), scontext)) {
 				inheritedStates.add(sourceState);

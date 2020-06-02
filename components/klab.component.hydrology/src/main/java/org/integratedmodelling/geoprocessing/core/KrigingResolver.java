@@ -205,7 +205,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 		}
 
 		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(kriging.outGrid, target, (a) -> {
+			GeotoolsUtils.INSTANCE.coverageToState(kriging.outGrid, target, context.getScale(), (a) -> {
 				if (a == (double) floatNovalue) {
 					return Double.NaN;
 				}

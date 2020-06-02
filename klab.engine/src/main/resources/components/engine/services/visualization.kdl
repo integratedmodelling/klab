@@ -101,3 +101,12 @@ annotation icon
 		"The SVG code for the desired icon."
 		default ""
 }
+
+annotation silent 
+	"Add to a model to silence notifications of the artifacts produced to clients" 
+{}
+
+annotation verbose 
+	"Add to an instantiator to send notifications of each artifact produced to clients 
+	 instead of just one at the end." 
+{}

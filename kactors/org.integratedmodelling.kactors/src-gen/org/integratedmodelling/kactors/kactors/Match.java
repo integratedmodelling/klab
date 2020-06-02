@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getRegexp <em>Regexp</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getLiteral <em>Literal</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getQuantity <em>Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getExpr <em>Expr</em>}</li>
@@ -188,6 +189,28 @@ public interface Match extends EObject
    * @generated
    */
   void setLiteral(Literal value);
+
+  /**
+   * Returns the value of the '<em><b>List</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>List</em>' containment reference.
+   * @see #setList(List)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_List()
+   * @model containment="true"
+   * @generated
+   */
+  List getList();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getList <em>List</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>List</em>' containment reference.
+   * @see #getList()
+   * @generated
+   */
+  void setList(List value);
 
   /**
    * Returns the value of the '<em><b>Set</b></em>' containment reference.

@@ -133,7 +133,7 @@ public class Table<T> implements ITable<T> {
 			for (int i = 0; i < (rows.size() == 0 ? 0 : rows.get(i).length); i++) {
 				this.columnHeaders.add("$" + (i + 1));
 			}
-		} else {
+		} else if (headers != null) {
 			this.columnHeaders.addAll(headers);
 		}
 	}

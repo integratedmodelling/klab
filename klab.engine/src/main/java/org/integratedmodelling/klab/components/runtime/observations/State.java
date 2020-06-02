@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -17,6 +18,8 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.DataIterator;
@@ -47,7 +50,6 @@ public class State extends Observation implements IState, IKeyHolder {
 	IDataKey dataKey;
 	Map<IArtifact.Type, IStorage<?>> layers = new HashMap<>();
 	ITable<Number> table;
-	IMetadata metadata = new Metadata();
 
 	public static State newArchetype(Observable observable, Scale scale, IRuntimeScope context) {
 		return new State(observable, scale, context);
@@ -74,7 +76,7 @@ public class State extends Observation implements IState, IKeyHolder {
 		IStorage<?> layer = layers.get(type);
 		if (layer == null) {
 			layers.put(type,
-					layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getRuntimeScope()));
+					layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getScope()));
 		}
 
 		return new StateLayer(this, (IDataStorage<?>) layer);
@@ -92,17 +94,13 @@ public class State extends Observation implements IState, IKeyHolder {
 		return storage.putObject(value, index);
 	}
 
-	public IMetadata getMetadata() {
-		return metadata;
-	}
-
 	public long size() {
 		return getGeometry().size();
 	}
 
 	@Override
 	public <T> T get(ILocator index, Class<T> cls) {
-		return Utils.asType(storage.get(index), cls);
+		return Utils.asType(get(index), cls);
 	}
 
 	@Override
@@ -147,8 +145,8 @@ public class State extends Observation implements IState, IKeyHolder {
 		 * rescaled instance.
 		 */
 		return scale.isConformant(getScale()) 
-				? new LocatedState(this, (Scale) scale, getRuntimeScope())
-				: new RescalingState(this, (Scale) scale, getRuntimeScope());
+				? new LocatedState(this, (Scale) scale, getScope())
+				: new RescalingState(this, (Scale) scale, getScope());
 	}
 
 	@Override
@@ -175,6 +173,10 @@ public class State extends Observation implements IState, IKeyHolder {
 		}
 	}
 
+	public IDataStorage<?> getStorage() {
+		return storage;
+	}
+	
 	@Override
 	public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
 		Object o = aggregate(geometry);
@@ -192,7 +194,7 @@ public class State extends Observation implements IState, IKeyHolder {
 				values.add(get(locator));
 			}
 			AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()),
-					getRuntimeScope().getMonitor());
+					getScope().getMonitor());
 		}
 		throw new KlabUnimplementedException(
 				"aggregation of rescaled states is unimplemented - please submit a request");
@@ -204,5 +206,17 @@ public class State extends Observation implements IState, IKeyHolder {
 			set(locator, value);
 		}
 	}
+
+	@Override
+	public void finalizeTransition(IScale scale) {
+		// TODO store locally 
+		Observations.INSTANCE.getStateSummary(this, scale);
+		setContextualized(true);
+		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+			setDynamic(true);
+		}
+	}
+	
+	
 
 }

@@ -160,7 +160,7 @@ public class Project implements IProject {
 			break;
 		default:
 			break;
-		
+
 		}
 		try (PrintWriter out = new PrintWriter(ret)) {
 			out.print(statement + " " + namespaceId + "\n\n");
@@ -177,17 +177,24 @@ public class Project implements IProject {
 		return delegate;
 	}
 
-	public File createScript(String namespaceId, String scriptName, String scriptPath) {
+	public File createScript(String namespaceId, String scriptName, String scriptPath, String scriptType) {
+
+		boolean isKim = "kim".equals(scriptType);
 
 		File ret = new File(getRoot() + File.separator + IKimProject.SCRIPT_FOLDER);
 		ret.mkdirs();
 		ret = new File(getRoot() + File.separator + IKimProject.SCRIPT_FOLDER + File.separator
-				+ scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar) + ".kim");
+				+ scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar)
+				+ (isKim ? ".kim" : ".kactor"));
 		ret.getParentFile().mkdirs();
 		try (PrintWriter out = new PrintWriter(ret)) {
-			out.print(KimTemplates.scriptTemplate.replaceAll("__NAME__", namespaceId)
-					.replaceAll("__WORLDVIEW__", Resources.INSTANCE.getWorldview().getName())
-					.replaceAll("__SCRIPT_NAME__", scriptName));
+			if (isKim) {
+				out.print(KimTemplates.scriptTemplate.replaceAll("__NAME__", namespaceId)
+						.replaceAll("__WORLDVIEW__", Resources.INSTANCE.getWorldview().getName())
+						.replaceAll("__SCRIPT_NAME__", scriptName));
+			} else {
+				out.print("app " + scriptName + "\n\naction main:\n\n");
+			}
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}
@@ -195,17 +202,24 @@ public class Project implements IProject {
 		return ret;
 	}
 
-	public File createTestCase(String namespaceId, String scriptName, String scriptPath) {
+	public File createTestCase(String namespaceId, String scriptName, String scriptPath, String scriptType) {
+
+		boolean isKim = "kim".equals(scriptType);
 
 		File ret = new File(getRoot() + File.separator + IKimProject.TESTS_FOLDER);
 		ret.mkdirs();
 		ret = new File(getRoot() + File.separator + IKimProject.TESTS_FOLDER + File.separator
-				+ scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar) + ".kim");
+				+ scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar)
+				+ (isKim ? ".kim" : ".kactor"));
 		ret.getParentFile().mkdirs();
 		try (PrintWriter out = new PrintWriter(ret)) {
-			out.print(KimTemplates.testCaseTemplate.replaceAll("__NAME__", namespaceId)
-					.replaceAll("__WORLDVIEW__", Resources.INSTANCE.getWorldview().getName())
-					.replaceAll("__TEST_NAME__", scriptName));
+			if (isKim) {
+				out.print(KimTemplates.testCaseTemplate.replaceAll("__NAME__", namespaceId)
+						.replaceAll("__WORLDVIEW__", Resources.INSTANCE.getWorldview().getName())
+						.replaceAll("__TEST_NAME__", scriptName));
+			} else {
+				out.print("testcase " + namespaceId + "\n\naction main:\n\n@test\naction test1:\n\n");
+			}
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}

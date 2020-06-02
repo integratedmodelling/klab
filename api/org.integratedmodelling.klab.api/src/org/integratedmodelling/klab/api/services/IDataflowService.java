@@ -33,55 +33,55 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IDataflowService {
 
-  /**
-   * Read and return the dataflow specifications corresponding to the passed
-   * input, which is expected to contain valid KDL.
-   *
-   * @param input a {@link java.io.InputStream} object.
-   * @return the parsed dataflow.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  IKdlDataflow declare(InputStream input) throws KlabException;
+	/**
+	 * Read and return the dataflow specifications corresponding to the passed
+	 * input, which is expected to contain valid KDL.
+	 *
+	 * @param input a {@link java.io.InputStream} object.
+	 * @return the parsed dataflow.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	IKdlDataflow declare(InputStream input) throws KlabException;
 
-  /**
-   * Read and return the dataflow specifications corresponding to the passed
-   * input file, which is expected to contain valid KDL.
-   *
-   * @param file a {@link java.io.File} object.
-   * @return the parsed dataflow.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  IKdlDataflow declare(File file) throws KlabException;
+	/**
+	 * Read and return the dataflow specifications corresponding to the passed input
+	 * file, which is expected to contain valid KDL.
+	 *
+	 * @param file a {@link java.io.File} object.
+	 * @return the parsed dataflow.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	IKdlDataflow declare(File file) throws KlabException;
 
-  /**
-   * Read and return the dataflow specifications corresponding to the passed
-   * input URL, which is expected to contain valid KDL.
-   *
-   * @param url a {@link java.net.URL} object.
-   * @return the parsed dataflow.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  IKdlDataflow declare(URL url) throws KlabException;
+	/**
+	 * Read and return the dataflow specifications corresponding to the passed input
+	 * URL, which is expected to contain valid KDL.
+	 *
+	 * @param url a {@link java.net.URL} object.
+	 * @return the parsed dataflow.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	IKdlDataflow declare(URL url) throws KlabException;
 
-  /**
-   * Compile a resolution scope into a dataflow computing the passed artifact type.
-   *
-   * @param name a {@link java.lang.String} object.
-   * @param scope a {@link org.integratedmodelling.klab.api.resolution.IResolutionScope} object.
-   * @return a dataflow that will compute an artifact of the requested type when run.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   * @param <T> a T object.
-   */
-  <T extends IArtifact> IDataflow<T> compile(String name, IResolutionScope scope)
-      throws KlabException;
-  
-  /**
-   * Compile a KDL specification into an executable dataflow. To be implemented.
-   * 
-   * @param specification
-   * @return
-   */
-  IDataflow<? extends IArtifact> compile(IKdlDataflow specification);
+//	/**
+//	 * Compile a resolution scope into a dataflow computing the passed artifact
+//	 * type.
+//	 * 
+//	 * @param <T>
+//	 * @param name
+//	 * @param scope
+//	 * @param parentDataflow
+//	 * @return
+//	 * @throws KlabException
+//	 */
+//	<T extends IArtifact> IDataflow<T> compile(String name, IResolutionScope scope, IDataflow<T> parentDataflow);
 
+	/**
+	 * Compile a KDL specification into an executable dataflow. To be implemented.
+	 * 
+	 * @param specification
+	 * @return
+	 */
+	IDataflow<? extends IArtifact> compile(IKdlDataflow specification);
 
 }
