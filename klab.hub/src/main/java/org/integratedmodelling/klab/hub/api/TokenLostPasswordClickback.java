@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.hub.api;
 
 import org.integratedmodelling.klab.hub.config.LinkConfig;
+import org.springframework.data.annotation.TypeAlias;
 
+@TypeAlias("LostPassword")
 public class TokenLostPasswordClickback extends TokenClickback{
 
 	/**

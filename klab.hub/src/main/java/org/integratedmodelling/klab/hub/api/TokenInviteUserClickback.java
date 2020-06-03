@@ -3,9 +3,11 @@ package org.integratedmodelling.klab.hub.api;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.config.LinkConfig;
+import org.springframework.data.annotation.TypeAlias;
 
 import com.sun.istack.NotNull;
 
+@TypeAlias("InviteUser")
 public class TokenInviteUserClickback extends TokenClickback{
 
 	private static final long serialVersionUID = -7290369988203926731L;

@@ -7,12 +7,14 @@ import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
-@Document(collection = "AuthenticationTokens")
+@Document(collection = "Tokens")
+@TypeAlias("Authentication")
 public class TokenAuthentication extends AbstractAuthenticationToken {
 
     private static final long serialVersionUID = -639057954057823267L;

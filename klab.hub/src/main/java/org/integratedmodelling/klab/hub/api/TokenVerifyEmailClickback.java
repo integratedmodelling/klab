@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.hub.api;
 
+import org.springframework.data.annotation.TypeAlias;
+
+@TypeAlias("VerifyEmail")
 public class TokenVerifyEmailClickback extends TokenClickback {
 	
 	private static final long serialVersionUID = -9175135534782007340L;

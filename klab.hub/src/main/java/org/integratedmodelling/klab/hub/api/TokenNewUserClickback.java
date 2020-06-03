@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.hub.api;
 
 import org.integratedmodelling.klab.hub.config.LinkConfig;
+import org.springframework.data.annotation.TypeAlias;
 
+@TypeAlias("NewUser")
 public class TokenNewUserClickback extends TokenClickback {
 
 	private static final long serialVersionUID = -6813740740798681807L;
