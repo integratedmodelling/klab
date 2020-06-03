@@ -26,7 +26,7 @@ public class ViewComponent {
 	 *
 	 */
 	public static enum Type {
-		Panel, Header, Footer, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree,
+		Panel, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree,
 		TreeItem, Confirm, View, Container
 		// etc
 	}

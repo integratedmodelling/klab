@@ -34,23 +34,53 @@ public class ViewBehavior {
 	 * predefine the UI. An action will be created before run() with the sole
 	 * purpose of creating the widgets.
 	 * 
+	 * Works this way:
+	 * <ul>
+	 * <li>The view is set up by reflection on the behavior before the behavior is
+	 * loaded. All components that do not depend on runtime conditions (variable
+	 * values, in optional or repeated code) are defined there; those that do are
+	 * given a container. Each active component has the ID of the action that will
+	 * represent it in the actor.</li>
+	 * <li>The KlabWidgetAction::run method is called when the action is run in the
+	 * code. When run() is called, the following should happen:</li>
+	 * <li>The widget action checks if it is dynamic (compute first, then cache) and
+	 * if so, sends the ViewComponent code with the ID of the container (the
+	 * internalId of the call that has generated the action).</li>
+	 * <li>Bind the notifyId in the execution scope to each component ID (if
+	 * dynamic) or the action internal ID (if static) so that session messages to
+	 * this actor can send the message to the actor to lookup the listeners and
+	 * invoke them.</li>
+	 * </ul>
+	 * 
+	 * 
 	 * @author Ferd
 	 *
 	 */
 	public static abstract class KlabWidgetAction extends KlabAction {
 
-		private int progressiveId;
-		
 		public KlabWidgetAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
 		void run(Scope scope) {
 			Session session = this.identity.getParentIdentity(Session.class);
-			session.getMonitor().post((msg) -> fire(getFiredResult(msg.getPayload(ViewAction.class)), false),
-					IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, getViewComponent());
+			
+			String bindId = this.callId;
+			
+			/*
+			 * send the component if needed; if so, give it a new ID and set bindId to it.
+			 */
+			
+			/*
+			 * bind the notifyId to the bindId in the actor
+			 */
+			
+			
+			// disable for now.
+//			session.getMonitor().post((msg) -> fire(getFiredResult(msg.getPayload(ViewAction.class)), false),
+//					IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, getViewComponent());
 		}
 
 		/**
@@ -69,22 +99,14 @@ public class ViewBehavior {
 		 */
 		public abstract ViewComponent getViewComponent();
 
-		public int getProgressiveId() {
-			return progressiveId;
-		}
-
-		public void setProgressiveId(int progressiveId) {
-			this.progressiveId = progressiveId;
-		}
-
 	}
 
 	@Action(id = "alert")
 	public static class Alert extends KlabAction {
 
 		public Alert(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
@@ -101,8 +123,8 @@ public class ViewBehavior {
 	public static class Confirm extends KlabAction {
 
 		public Confirm(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
@@ -121,8 +143,8 @@ public class ViewBehavior {
 	public static class Button extends KlabWidgetAction {
 
 		public Button(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
@@ -143,8 +165,8 @@ public class ViewBehavior {
 	public static class Text extends KlabWidgetAction {
 
 		public Text(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override

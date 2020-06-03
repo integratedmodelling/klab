@@ -46,8 +46,8 @@ public class RuntimeBehavior {
 	public static class Observe extends KlabAction {
 
 		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
@@ -75,8 +75,8 @@ public class RuntimeBehavior {
 		Object fired = null;
 
 		public Maybe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 			boolean pdef = false;
 			for (String key : arguments.getUnnamedKeys()) {
 				Object o = arguments.get(key);
@@ -104,8 +104,8 @@ public class RuntimeBehavior {
 	public static class Info extends KlabAction {
 
 		public Info(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
@@ -122,8 +122,8 @@ public class RuntimeBehavior {
 	public static class Warning extends KlabAction {
 
 		public Warning(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
@@ -140,8 +140,8 @@ public class RuntimeBehavior {
 	public static class Error extends KlabAction {
 
 		public Error(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
@@ -158,8 +158,8 @@ public class RuntimeBehavior {
 	public static class Debug extends KlabAction {
 
 		public Debug(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override

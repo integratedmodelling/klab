@@ -4,6 +4,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import akka.actor.typed.ActorRef;
@@ -32,6 +33,17 @@ public class SystemBehavior {
 
 		public Load(String behavior, IRuntimeScope scope) {
 			this.behavior = behavior;
+			this.scope = scope;
+		}
+	}
+	
+	public static class UserAction implements KlabMessage {
+
+		ViewAction action;
+		IRuntimeScope scope;
+
+		public UserAction(ViewAction action, IRuntimeScope scope) {
+			this.action = action;
 			this.scope = scope;
 		}
 	}

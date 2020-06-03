@@ -21,6 +21,7 @@ public class View extends ViewComponent {
 	private List<ViewPanel> rightPanels = new ArrayList<>();
 	private ViewPanel header;
 	private ViewPanel footer;
+	private String receivingIdentity;
 
 	public View() {
 		setType(Type.View);
@@ -74,5 +75,13 @@ public class View extends ViewComponent {
 	public boolean empty() {
 		return panels.size() == 0 && footer == null && header == null && rightPanels.size() > 0
 				&& leftPanels.size() > 0;
+	}
+
+	public String getReceivingIdentity() {
+		return receivingIdentity;
+	}
+
+	public void setReceivingIdentity(String receivingIdentity) {
+		this.receivingIdentity = receivingIdentity;
 	}
 }

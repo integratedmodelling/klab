@@ -378,14 +378,14 @@ public enum Actors implements IActorsService {
 	 * @return
 	 */
 	public KlabAction getSystemAction(String id, IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
-			KlabActor.Scope scope, ActorRef<KlabMessage> sender) {
+			KlabActor.Scope scope, ActorRef<KlabMessage> sender, String callId) {
 
 		Pair<String, Class<? extends KlabAction>> cls = actionClasses.get(id);
 		if (cls != null) {
 			try {
 				Constructor<? extends KlabAction> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
-						IParameters.class, KlabActor.Scope.class, ActorRef.class);
-				return constructor.newInstance(identity, arguments, scope, sender);
+						IParameters.class, KlabActor.Scope.class, ActorRef.class, String.class);
+				return constructor.newInstance(identity, arguments, scope, sender, callId);
 			} catch (Throwable e) {
 				scope.getMonitor().error("Error while creating action " + id + ": " + e.getMessage());
 			}
@@ -671,8 +671,8 @@ public enum Actors implements IActorsService {
 
 				if (!dynamic) {
 					// just a prototype
-					KlabWidgetAction action = (KlabWidgetAction) Actors.INSTANCE.getSystemAction(statement.getMessage(),
-							null, statement.getArguments(), null, null);
+					KlabWidgetAction action = (KlabWidgetAction) getSystemAction(statement.getMessage(),
+							null, statement.getArguments(), null, null, ((KActorsActionCall) statement).getInternalId());
 					if (action != null) {
 						ret = action.getViewComponent();
 					}

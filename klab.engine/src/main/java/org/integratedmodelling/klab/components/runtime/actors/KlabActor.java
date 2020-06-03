@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fir
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.BehaviorAction;
@@ -238,8 +239,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	protected ReceiveBuilder<KlabMessage> configure() {
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
-		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
-				.onMessage(Fire.class, this::reactToFire).onMessage(KActorsMessage.class, this::executeCall)
+		return builder
+				.onMessage(Load.class, this::loadBehavior)
+				.onMessage(Spawn.class, this::createChild)
+				.onMessage(Fire.class, this::reactToFire)
+				.onMessage(UserAction.class, this::reactToViewAction)
+				.onMessage(KActorsMessage.class, this::executeCall)
 				.onSignal(PostStop.class, signal -> onPostStop());
 	}
 
@@ -248,6 +253,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return this;
 	}
 
+	protected Behavior<KlabMessage> reactToViewAction(UserAction message) {
+
+		// TODO 
+		
+		return Behaviors.same();
+	}
+	
 	protected Behavior<KlabMessage> reactToFire(Fire message) {
 		if (message.listenerId != null) {
 			MatchActions actions = listeners.get(message.listenerId);
@@ -490,7 +502,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 			if (a == null) {
 				a = Actors.INSTANCE.getSystemAction(message.message, this.getIdentity(), message.arguments,
-						message.scope, getContext().getSelf());
+						message.scope, getContext().getSelf(), message.actionInternalId);
 				if (a != null && message.actionInternalId != null) {
 					actionCache.put(message.actionInternalId, a);
 				}

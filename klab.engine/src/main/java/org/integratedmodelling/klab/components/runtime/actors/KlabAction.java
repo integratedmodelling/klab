@@ -28,8 +28,8 @@ public abstract class KlabAction {
 
 	public static enum Synchronicity {
 		/**
-		 * Essentially a function: enters and fires, always and within a short enough time
-		 * to be waited for.
+		 * Essentially a function: enters and fires, always and within a short enough
+		 * time to be waited for.
 		 */
 		FIRE_IMMEDIATELY_AND_EXIT,
 		/**
@@ -41,23 +41,28 @@ public abstract class KlabAction {
 		 */
 		FIRE_AND_WAIT
 	}
-	
+
 	protected ActorRef<KlabMessage> sender;
 	protected IParameters<String> arguments;
 	protected KlabActor.Scope scope;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Session session;
-
+	// the ID of the call that generated this action in the k.Actors code. May be
+	// null when the action is create by the
+	// scheduler or other API.
+	protected String callId;
 	ObjectExpression expression = null;
 
 	protected final Boolean DEFAULT_FIRE = Boolean.TRUE;
 
-	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope, ActorRef<KlabMessage> sender) {
+	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+			ActorRef<KlabMessage> sender, String callId) {
 		this.sender = sender;
 		this.session = identity == null ? null : identity.getParentIdentity(Session.class);
 		this.arguments = arguments;
 		this.scope = scope;
 		this.identity = identity;
+		this.callId = callId;
 	}
 
 	public void fire(Object value, boolean isFinal) {
@@ -182,7 +187,7 @@ public abstract class KlabAction {
 	}
 
 	/**
-	 * May be called more than once, so pass the scope again. 
+	 * May be called more than once, so pass the scope again.
 	 * 
 	 * @param scope
 	 */

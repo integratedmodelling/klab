@@ -251,8 +251,9 @@ public class SearchView extends ViewPart {
 
 		// begin comment out
 		paletteView = new AppView(true, actionArea, SWT.NONE, this);
+		paletteView.setLayout(new GridLayout(1, true));
 		paletteView.setVisible(true);
-		gd_paletteView = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_paletteView = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd_paletteView.exclude = false;
 		paletteView.setLayoutData(gd_paletteView);
 		// end comment out
