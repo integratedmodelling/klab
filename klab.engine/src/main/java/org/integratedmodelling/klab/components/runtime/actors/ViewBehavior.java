@@ -129,7 +129,7 @@ public class ViewBehavior {
 		public ViewComponent getViewComponent() {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.PushButton);
-			message.setContent(this.evaluateArgument(0, "Button Text"));
+			message.setName(this.evaluateArgument(0, "Button Text"));
 			return message;
 		}
 
