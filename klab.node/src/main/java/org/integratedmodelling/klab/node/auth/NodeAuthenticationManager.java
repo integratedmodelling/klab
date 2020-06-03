@@ -102,8 +102,8 @@ public enum NodeAuthenticationManager {
         NodeAuthenticationRequest request = new NodeAuthenticationRequest();
 
         request.setCertificate(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE));
-        request.setNodeName(nodeName);
-        request.setNodeKey(KlabCertificate.KEY_SIGNATURE);
+        request.setName(nodeName);
+        request.setKey(KlabCertificate.KEY_SIGNATURE);
         request.setLevel(certificate.getLevel());
         request.setEmail(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
 
@@ -139,7 +139,7 @@ public enum NodeAuthenticationManager {
         JwtConsumer jwtVerifier = new JwtConsumerBuilder().setSkipDefaultAudienceValidation()
                 .setAllowedClockSkewInSeconds(ALLOWED_CLOCK_SKEW_MS / 1000).setVerificationKey(publicKey).build();
 
-        jwksVerifiers.put(response.getAuthenticatingNodeId(), jwtVerifier);
+        jwksVerifiers.put(response.getAuthenticatingHub(), jwtVerifier);
         
         /*
          * setup the various identities: partner->node, we add the engine later.
