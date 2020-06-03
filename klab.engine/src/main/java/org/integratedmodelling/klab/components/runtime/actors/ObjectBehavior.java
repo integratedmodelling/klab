@@ -31,7 +31,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 
 			if (this.identity instanceof ISubject) {
 				Object arg = evaluateArgument(0);
@@ -59,7 +59,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			// TODO Auto-generated method stub
 
 		}
@@ -75,7 +75,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			IObservable what = Actors.INSTANCE.getArgument(arguments, IObservable.class);
 			String behavior = Actors.INSTANCE.getArgument(arguments, String.class);
 			IKimExpression filter = Actors.INSTANCE.getArgument(arguments, IKimExpression.class);
@@ -83,7 +83,7 @@ public class ObjectBehavior {
 				// TODO improve message
 				error("error in bind action: behavior or observable not specified or recognized");
 			} else {
-				this.scope.runtimeScope.getBehaviorBindings().put(what.getType(), new Pair<>(behavior, filter));
+				scope.runtimeScope.getBehaviorBindings().put(what.getType(), new Pair<>(behavior, filter));
 			}
 		}
 	}
@@ -107,7 +107,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			this.listener = scope.runtimeScope.addListener(new ObservationListener() {
 				@Override
 				public void newObservation(IObservation observation) {
@@ -138,7 +138,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			// TODO Auto-generated method stub
 
 		}
@@ -154,7 +154,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			// TODO Auto-generated method stub
 
 		}

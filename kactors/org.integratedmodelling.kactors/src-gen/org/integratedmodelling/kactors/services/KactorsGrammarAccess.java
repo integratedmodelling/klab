@@ -614,16 +614,18 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cBodyAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cBodyMessageBodyParserRuleCall_2_0 = (RuleCall)cBodyAssignment_2.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
-		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cColonKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cActionsAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cActionsActionsParserRuleCall_4_1_0 = (RuleCall)cActionsAssignment_4_1.eContents().get(0);
+		private final Assignment cMetadataAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cMetadataMetadataParserRuleCall_4_0 = (RuleCall)cMetadataAssignment_4.eContents().get(0);
+		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
+		private final Keyword cColonKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cActionsAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cActionsActionsParserRuleCall_5_1_0 = (RuleCall)cActionsAssignment_5_1.eContents().get(0);
 		
 		//StatementGroup:
-		//	{StatementGroup} '(' body=MessageBody? ')' (':' actions=Actions)?;
+		//	{StatementGroup} '(' body=MessageBody? ')' metadata=Metadata? (':' actions=Actions)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{StatementGroup} '(' body=MessageBody? ')' (':' actions=Actions)?
+		//{StatementGroup} '(' body=MessageBody? ')' metadata=Metadata? (':' actions=Actions)?
 		public Group getGroup() { return cGroup; }
 		
 		//{StatementGroup}
@@ -641,17 +643,50 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//')'
 		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
 		
+		//metadata=Metadata?
+		public Assignment getMetadataAssignment_4() { return cMetadataAssignment_4; }
+		
+		//Metadata
+		public RuleCall getMetadataMetadataParserRuleCall_4_0() { return cMetadataMetadataParserRuleCall_4_0; }
+		
 		//(':' actions=Actions)?
-		public Group getGroup_4() { return cGroup_4; }
+		public Group getGroup_5() { return cGroup_5; }
 		
 		//':'
-		public Keyword getColonKeyword_4_0() { return cColonKeyword_4_0; }
+		public Keyword getColonKeyword_5_0() { return cColonKeyword_5_0; }
 		
 		//actions=Actions
-		public Assignment getActionsAssignment_4_1() { return cActionsAssignment_4_1; }
+		public Assignment getActionsAssignment_5_1() { return cActionsAssignment_5_1; }
 		
 		//Actions
-		public RuleCall getActionsActionsParserRuleCall_4_1_0() { return cActionsActionsParserRuleCall_4_1_0; }
+		public RuleCall getActionsActionsParserRuleCall_5_1_0() { return cActionsActionsParserRuleCall_5_1_0; }
+	}
+	public class MetadataElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Metadata");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cKeysAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cKeysMetadataKeyParserRuleCall_0_0 = (RuleCall)cKeysAssignment_0.eContents().get(0);
+		private final Assignment cValuesAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cValuesValueParserRuleCall_1_0 = (RuleCall)cValuesAssignment_1.eContents().get(0);
+		
+		//Metadata:
+		//	(keys+=MetadataKey values+=Value)+;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//(keys+=MetadataKey values+=Value)+
+		public Group getGroup() { return cGroup; }
+		
+		//keys+=MetadataKey
+		public Assignment getKeysAssignment_0() { return cKeysAssignment_0; }
+		
+		//MetadataKey
+		public RuleCall getKeysMetadataKeyParserRuleCall_0_0() { return cKeysMetadataKeyParserRuleCall_0_0; }
+		
+		//values+=Value
+		public Assignment getValuesAssignment_1() { return cValuesAssignment_1; }
+		
+		//Value
+		public RuleCall getValuesValueParserRuleCall_1_0() { return cValuesValueParserRuleCall_1_0; }
 	}
 	public class StatementListElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.StatementList");
@@ -2911,6 +2946,25 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//')'
 		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
 	}
+	public class MetadataKeyElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.MetadataKey");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cColonKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		
+		//MetadataKey:
+		//	':' LOWERCASE_ID;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//':' LOWERCASE_ID
+		public Group getGroup() { return cGroup; }
+		
+		//':'
+		public Keyword getColonKeyword_0() { return cColonKeyword_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_1() { return cLOWERCASE_IDTerminalRuleCall_1; }
+	}
 	public class UnitElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Unit");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -3516,6 +3570,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	private final MessageBodyElements pMessageBody;
 	private final MessageCallElements pMessageCall;
 	private final StatementGroupElements pStatementGroup;
+	private final MetadataElements pMetadata;
 	private final StatementListElements pStatementList;
 	private final StatementElements pStatement;
 	private final NextStatementElements pNextStatement;
@@ -3547,6 +3602,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	private final ParameterListElements pParameterList;
 	private final KeyValuePairElements pKeyValuePair;
 	private final UnitElementElements pUnitElement;
+	private final MetadataKeyElements pMetadataKey;
 	private final UnitOpElements eUnitOp;
 	private final UnitElements pUnit;
 	private final CurrencyElements pCurrency;
@@ -3585,6 +3641,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		this.pMessageBody = new MessageBodyElements();
 		this.pMessageCall = new MessageCallElements();
 		this.pStatementGroup = new StatementGroupElements();
+		this.pMetadata = new MetadataElements();
 		this.pStatementList = new StatementListElements();
 		this.pStatement = new StatementElements();
 		this.pNextStatement = new NextStatementElements();
@@ -3616,6 +3673,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		this.pParameterList = new ParameterListElements();
 		this.pKeyValuePair = new KeyValuePairElements();
 		this.pUnitElement = new UnitElementElements();
+		this.pMetadataKey = new MetadataKeyElements();
 		this.eUnitOp = new UnitOpElements();
 		this.pUnit = new UnitElements();
 		this.pCurrency = new CurrencyElements();
@@ -3737,13 +3795,23 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//StatementGroup:
-	//	{StatementGroup} '(' body=MessageBody? ')' (':' actions=Actions)?;
+	//	{StatementGroup} '(' body=MessageBody? ')' metadata=Metadata? (':' actions=Actions)?;
 	public StatementGroupElements getStatementGroupAccess() {
 		return pStatementGroup;
 	}
 	
 	public ParserRule getStatementGroupRule() {
 		return getStatementGroupAccess().getRule();
+	}
+	
+	//Metadata:
+	//	(keys+=MetadataKey values+=Value)+;
+	public MetadataElements getMetadataAccess() {
+		return pMetadata;
+	}
+	
+	public ParserRule getMetadataRule() {
+		return getMetadataAccess().getRule();
 	}
 	
 	//StatementList:
@@ -4093,6 +4161,16 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getUnitElementRule() {
 		return getUnitElementAccess().getRule();
+	}
+	
+	//MetadataKey:
+	//	':' LOWERCASE_ID;
+	public MetadataKeyElements getMetadataKeyAccess() {
+		return pMetadataKey;
+	}
+	
+	public ParserRule getMetadataKeyRule() {
+		return getMetadataKeyAccess().getRule();
 	}
 	
 	//enum UnitOp:

@@ -54,7 +54,7 @@ public abstract class KlabAction {
 
 	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope, ActorRef<KlabMessage> sender) {
 		this.sender = sender;
-		this.session = identity.getParentIdentity(Session.class);
+		this.session = identity == null ? null : identity.getParentIdentity(Session.class);
 		this.arguments = arguments;
 		this.scope = scope;
 		this.identity = identity;
@@ -67,7 +67,7 @@ public abstract class KlabAction {
 	}
 
 	public void fail(Object... args) {
-		if (args != null) {
+		if (args != null && scope != null) {
 			scope.runtimeScope.getMonitor().error(args);
 		}
 		fire(false, true);
@@ -172,7 +172,7 @@ public abstract class KlabAction {
 
 	protected Object evaluateArgument(int argumentIndex) {
 		Object arg = null;
-		if (arguments.getUnnamedKeys().size() > argumentIndex) {
+		if (arguments != null && arguments.getUnnamedKeys().size() > argumentIndex) {
 			arg = arguments.get(arguments.getUnnamedKeys().get(argumentIndex));
 			if (arg instanceof KActorsValue) {
 				arg = evaluateInContext((KActorsValue) arg);
@@ -181,6 +181,11 @@ public abstract class KlabAction {
 		return arg;
 	}
 
-	abstract void run();
+	/**
+	 * May be called more than once, so pass the scope again. 
+	 * 
+	 * @param scope
+	 */
+	abstract void run(KlabActor.Scope scope);
 
 }

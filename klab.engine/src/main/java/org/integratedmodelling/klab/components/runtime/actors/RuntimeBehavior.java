@@ -51,7 +51,7 @@ public class RuntimeBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 
 			Object arg = evaluateArgument(0);
 			if (arg instanceof Urn) {
@@ -90,7 +90,7 @@ public class RuntimeBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			if (random.nextDouble() < probability) {
 				fire(fired == null ? DEFAULT_FIRE : fired, true);
 			} else {
@@ -109,7 +109,7 @@ public class RuntimeBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			List<Object> args = new ArrayList<>();
 			for (Object arg : arguments.values()) {
 				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
@@ -127,7 +127,7 @@ public class RuntimeBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			List<Object> args = new ArrayList<>();
 			for (Object arg : arguments.values()) {
 				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
@@ -145,7 +145,7 @@ public class RuntimeBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			List<Object> args = new ArrayList<>();
 			for (Object arg : arguments.values()) {
 				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
@@ -163,7 +163,7 @@ public class RuntimeBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			List<Object> args = new ArrayList<>();
 			for (Object arg : arguments.values()) {
 				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);

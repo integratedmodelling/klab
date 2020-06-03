@@ -46,7 +46,11 @@ MessageCall:
 	(name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 ;
 
-StatementGroup: {StatementGroup} '(' body=MessageBody? ')' (':' actions=Actions)?
+StatementGroup: {StatementGroup} '(' body=MessageBody? ')' metadata=Metadata? (':' actions=Actions)?
+;
+
+Metadata:
+	(keys+=MetadataKey values+=Value)+
 ;
 
 StatementList:
@@ -259,6 +263,8 @@ KeyValuePair:
 UnitElement:
 	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
 	'(' unit=Unit ')';
+
+MetadataKey: ':' LOWERCASE_ID;
 
 enum UnitOp:
 	OVER='/' | CARET='^' | STAR='*';

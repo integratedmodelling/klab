@@ -35,6 +35,7 @@ import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
@@ -113,6 +114,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.MESSAGE_BODY: return createMessageBody();
       case KactorsPackage.MESSAGE_CALL: return createMessageCall();
       case KactorsPackage.STATEMENT_GROUP: return createStatementGroup();
+      case KactorsPackage.METADATA: return createMetadata();
       case KactorsPackage.STATEMENT_LIST: return createStatementList();
       case KactorsPackage.STATEMENT: return createStatement();
       case KactorsPackage.ASSIGNMENT: return createAssignment();
@@ -266,6 +268,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     StatementGroupImpl statementGroup = new StatementGroupImpl();
     return statementGroup;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Metadata createMetadata()
+  {
+    MetadataImpl metadata = new MetadataImpl();
+    return metadata;
   }
 
   /**

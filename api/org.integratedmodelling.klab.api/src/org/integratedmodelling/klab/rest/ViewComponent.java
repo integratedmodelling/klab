@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,15 +16,28 @@ import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
  */
 public class ViewComponent {
 
+	/**
+	 * If type == Container, this will be filled later as the component it's
+	 * supposed to host can only be computed at runtime. It may be a group container
+	 * (if the components are created in a loop) or another; the containedType
+	 * specifies what.
+	 * 
+	 * @author Ferd
+	 *
+	 */
 	public static enum Type {
 		Panel, Header, Footer, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree,
-		TreeItem, Confirm, View
+		TreeItem, Confirm, View, Container
 		// etc
 	}
 
 	private String id;
 	private String parentId;
 	private Type type;
+	// type of contained object if the component is a container. The object will
+	// come later with this as parentId. May be a Group if multiple objects are
+	// expected.
+	private Type containedType;
 	private String name;
 	private String style;
 	private String title;
@@ -31,7 +45,7 @@ public class ViewComponent {
 	private String content;
 	private List<String> possibleContent;
 	// for groups
-	private List<ViewComponent> components;
+	private List<ViewComponent> components = new ArrayList<>();
 	private Map<String, String> data = new HashMap<>();
 
 	public String getId() {
@@ -128,6 +142,12 @@ public class ViewComponent {
 				+ ", content=" + content + ", data=" + data + "]";
 	}
 
-	
-	
+	public Type getContainedType() {
+		return containedType;
+	}
+
+	public void setContainedType(Type containedType) {
+		this.containedType = containedType;
+	}
+
 }

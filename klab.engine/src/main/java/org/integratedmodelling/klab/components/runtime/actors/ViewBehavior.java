@@ -47,7 +47,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(Scope scope) {
 			Session session = this.identity.getParentIdentity(Session.class);
 			session.getMonitor().post((msg) -> fire(getFiredResult(msg.getPayload(ViewAction.class)), false),
 					IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, getViewComponent());
@@ -88,7 +88,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			Session session = this.identity.getParentIdentity(Session.class);
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Alert);
@@ -106,7 +106,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			Session session = this.identity.getParentIdentity(Session.class);
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Confirm);

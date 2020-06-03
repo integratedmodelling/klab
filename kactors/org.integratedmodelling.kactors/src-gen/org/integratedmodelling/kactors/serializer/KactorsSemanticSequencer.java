@@ -36,6 +36,7 @@ import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
@@ -131,6 +132,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.MESSAGE_CALL:
 				sequence_MessageCall(context, (MessageCall) semanticObject); 
+				return; 
+			case KactorsPackage.METADATA:
+				sequence_Metadata(context, (Metadata) semanticObject); 
 				return; 
 			case KactorsPackage.MODEL:
 				sequence_Model(context, (Model) semanticObject); 
@@ -519,6 +523,18 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
+	 *     Metadata returns Metadata
+	 *
+	 * Constraint:
+	 *     (keys+=MetadataKey values+=Value)+
+	 */
+	protected void sequence_Metadata(ISerializationContext context, Metadata semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Model returns Model
 	 *
 	 * Constraint:
@@ -667,7 +683,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     StatementGroup returns StatementGroup
 	 *
 	 * Constraint:
-	 *     (body=MessageBody? actions=Actions?)
+	 *     (body=MessageBody? metadata=Metadata? actions=Actions?)
 	 */
 	protected void sequence_StatementGroup(ISerializationContext context, StatementGroup semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

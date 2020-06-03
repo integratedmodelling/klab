@@ -10,6 +10,7 @@ import org.integratedmodelling.kactors.kactors.Actions
 import org.integratedmodelling.kactors.kactors.Definition
 import org.integratedmodelling.kactors.kactors.Match
 import org.integratedmodelling.kactors.kactors.MessageCall
+import org.integratedmodelling.kactors.kactors.Metadata
 import org.integratedmodelling.kactors.kactors.Statement
 import org.integratedmodelling.kactors.kactors.StatementGroup
 import org.integratedmodelling.kactors.kactors.StatementList
@@ -41,6 +42,10 @@ class KactorsLabelProvider extends DefaultEObjectLabelProvider {
 			return text(statement.group)
 		}
 		
+	}
+
+	def text(Metadata metadata) {
+		'Metadata'
 	}
 
 	def text(Definition definition) {

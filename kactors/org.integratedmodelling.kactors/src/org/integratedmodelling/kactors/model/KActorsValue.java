@@ -201,6 +201,17 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		return value;
 	}
 
+	public boolean isVariable() {
+		if (this.value instanceof List) {
+			for (Object val : ((List<?>)this.value)) {
+				if (val instanceof KActorsValue && ((KActorsValue)val).getType() == Type.IDENTIFIER) {
+					return true;
+				}
+			}
+		}
+		return type == Type.IDENTIFIER;
+	}
+	
 	/**
 	 * Use in translators to support complex and costly data processing.
 	 * 

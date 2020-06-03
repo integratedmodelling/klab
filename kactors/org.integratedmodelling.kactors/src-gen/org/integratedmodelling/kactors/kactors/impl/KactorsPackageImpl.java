@@ -34,6 +34,7 @@ import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
@@ -108,6 +109,13 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass statementGroupEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass metadataEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -849,9 +857,53 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatementGroup_Actions()
+  public EReference getStatementGroup_Metadata()
   {
     return (EReference)statementGroupEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getStatementGroup_Actions()
+  {
+    return (EReference)statementGroupEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getMetadata()
+  {
+    return metadataEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMetadata_Keys()
+  {
+    return (EAttribute)metadataEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getMetadata_Values()
+  {
+    return (EReference)metadataEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -2889,7 +2941,12 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     statementGroupEClass = createEClass(STATEMENT_GROUP);
     createEReference(statementGroupEClass, STATEMENT_GROUP__BODY);
+    createEReference(statementGroupEClass, STATEMENT_GROUP__METADATA);
     createEReference(statementGroupEClass, STATEMENT_GROUP__ACTIONS);
+
+    metadataEClass = createEClass(METADATA);
+    createEAttribute(metadataEClass, METADATA__KEYS);
+    createEReference(metadataEClass, METADATA__VALUES);
 
     statementListEClass = createEClass(STATEMENT_LIST);
     createEReference(statementListEClass, STATEMENT_LIST__FIRST);
@@ -3181,7 +3238,12 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     initEClass(statementGroupEClass, StatementGroup.class, "StatementGroup", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatementGroup_Body(), this.getMessageBody(), null, "body", null, 0, 1, StatementGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatementGroup_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, StatementGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatementGroup_Actions(), this.getActions(), null, "actions", null, 0, 1, StatementGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(metadataEClass, Metadata.class, "Metadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getMetadata_Keys(), ecorePackage.getEString(), "keys", null, 0, -1, Metadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMetadata_Values(), this.getValue(), null, "values", null, 0, -1, Metadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementListEClass, StatementList.class, "StatementList", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatementList_First(), this.getStatement(), null, "first", null, 0, 1, StatementList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

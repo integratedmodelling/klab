@@ -109,13 +109,16 @@ public class SystemBehavior {
 		String receiver;
 		IParameters<String> arguments = Parameters.create();
 		KlabActor.Scope scope;
+		// for caching
+		String actionInternalId;
 
-		public KActorsMessage(ActorRef<KlabMessage> sender, String receiver, String actionId,
+		public KActorsMessage(ActorRef<KlabMessage> sender, String receiver, String actionId, String actionInternalId,
 				IParameters<String> arguments, KlabActor.Scope scope) {
 			
 			this.sender = sender;
 			this.receiver = receiver;
 			this.message = actionId;
+			this.actionInternalId = actionInternalId;
 			if (arguments != null) {
 				this.arguments.putAll(arguments);
 			}

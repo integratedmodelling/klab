@@ -20,6 +20,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Sequence;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
@@ -55,7 +56,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected IBehavior behavior;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
-	AtomicLong nextId = new AtomicLong(0);
+	private AtomicLong nextId = new AtomicLong(0);
+
+	/*
+	 * if we pre-build actions or we run repeatedly we cache them here. Important
+	 * that their run() method is reentrant.
+	 */
+	protected Map<String, KlabAction> actionCache = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * Descriptor for actions to be taken when a firing is recorded with the ID used
@@ -105,7 +112,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	public static class Scope extends Parameters<String> {
 
-		Action action;
+//		Action action;
 		boolean synchronous = false;
 		Scope parent = null;
 		IRuntimeScope runtimeScope;
@@ -124,7 +131,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		ActorRef<KlabMessage> sender;
 
 		public Scope(IActorIdentity<KlabMessage> identity, Action action, IRuntimeScope scope) {
-			this.action = action;
+//			this.action = action;
 			this.runtimeScope = scope;
 			this.identity = identity;
 		}
@@ -152,7 +159,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		public Scope(Scope scope) {
-			this.action = scope.action;
+//			this.action = scope.action;
 			this.synchronous = scope.synchronous;
 			this.runtimeScope = scope.runtimeScope;
 			this.parent = scope;
@@ -163,7 +170,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		public String toString() {
-			return "{S " + listenerId + " " + action + "}";
+			return "{S " + listenerId + " " /* + action */ + "}";
 		}
 
 		public Scope synchronous() {
@@ -452,8 +459,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				recipient = identity.getParentIdentity(EngineUser.class).getActor();
 			}
 
-			recipient.tell(new KActorsMessage(getContext().getSelf(), receiver, message, code.getArguments(),
-					scope.withNotifyId(notifyId)));
+			recipient.tell(new KActorsMessage(getContext().getSelf(), receiver, message,
+					((KActorsActionCall) code).getInternalId(), code.getArguments(), scope.withNotifyId(notifyId)));
 
 		} else {
 
@@ -463,6 +470,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected Behavior<KlabMessage> executeCall(KActorsMessage message) {
+
 		// message can be one of ours or a system one.
 		boolean ran = false;
 		Action action = this.behavior == null ? null : this.behavior.getAction(message.message);
@@ -470,12 +478,29 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			ran = true;
 			run(action, message.scope.withSender(message.sender));
 		} else {
-			KlabAction a = Actors.INSTANCE.getSystemAction(message.message, this.getIdentity(), message.arguments,
-					message.scope, getContext().getSelf());
+
+			/*
+			 * Use cache only for system actions for now. The cache may have been pre-filled
+			 * (only by view actions for the time being).
+			 */
+			KlabAction a = null;
+			if (message.actionInternalId != null) {
+				a = actionCache.get(message.actionInternalId);
+			}
+
+			if (a == null) {
+				a = Actors.INSTANCE.getSystemAction(message.message, this.getIdentity(), message.arguments,
+						message.scope, getContext().getSelf());
+				if (a != null && message.actionInternalId != null) {
+					actionCache.put(message.actionInternalId, a);
+				}
+			}
+
 			if (a != null) {
 				ran = true;
-				a.run();
+				a.run(message.scope.withSender(message.sender));
 			}
+
 		}
 
 		if (!ran) {

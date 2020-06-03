@@ -11,6 +11,7 @@ import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class KActorsActionCall extends KActorsStatement implements Call {
@@ -27,6 +28,7 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 	private List<ActionDescriptor> actions = new ArrayList<>();
 	private KActorsArguments arguments;
 	private KActorsConcurrentGroup group;
+	private String internalId = "kac" + NameGenerator.shortUUID();
 
 	public KActorsActionCall(MessageCall messageCall, KActorCodeStatement parent) {
 
@@ -34,11 +36,11 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 
 		if (messageCall.getGroup() != null) {
 			// TODO use the same ID for the entire group, must have actions
-			this.group = new KActorsConcurrentGroup(messageCall.getGroup().getBody().getLists(), this);
+			this.group = new KActorsConcurrentGroup(messageCall.getGroup(), this);
 		}
-		
+
 		this.message = messageCall.getName();
-		
+
 		if (messageCall.getParameters() != null) {
 			this.arguments = new KActorsArguments(messageCall.getParameters());
 		}
@@ -65,8 +67,7 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 				for (Match match : messageCall.getActions().getMatches()) {
 					ActionDescriptor action = new ActionDescriptor();
 					action.match = new KActorsValue(match, this);
-					action.action = new KActorsConcurrentGroup(
-							Collections.singletonList(match.getBody()), this);
+					action.action = new KActorsConcurrentGroup(Collections.singletonList(match.getBody()), this);
 					actions.add(action);
 				}
 			}
@@ -76,7 +77,7 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 	public String getMessage() {
 		return message;
 	}
-	
+
 	@Override
 	public String getRecipient() {
 		return recipient;
@@ -99,6 +100,16 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 	@Override
 	public KActorsConcurrentGroup getGroup() {
 		return group;
+	}
+
+	/**
+	 * Used to build and cache repeated action calls or any that needs to be created
+	 * in advance.
+	 * 
+	 * @return
+	 */
+	public String getInternalId() {
+		return this.internalId;
 	}
 
 }

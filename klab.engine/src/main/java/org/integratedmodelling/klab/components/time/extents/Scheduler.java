@@ -159,7 +159,7 @@ public class Scheduler implements IScheduler {
 					/*
 					 * RUN THE ACTION
 					 */
-					recipient.getActor().tell(new KActorsMessage(sender, "self", scheduled.getId(), null,
+					recipient.getActor().tell(new KActorsMessage(sender, "self", scheduled.getId(), null, null,
 							new KlabActor.Scope(observation, scheduled, transitionContext)));
 
 					recipient.finalizeTransition((IScale) transitionScale);

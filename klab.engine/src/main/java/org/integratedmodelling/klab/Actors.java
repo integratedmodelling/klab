@@ -17,8 +17,11 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsStatement;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
 import org.integratedmodelling.kactors.model.KActorsQuantity;
@@ -40,6 +43,8 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabAction;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetAction;
+import org.integratedmodelling.klab.components.runtime.actors.behavior.BehaviorAction;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -48,7 +53,11 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.BehaviorReference;
+import org.integratedmodelling.klab.rest.View;
+import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -384,6 +393,11 @@ public enum Actors implements IActorsService {
 		return null;
 	}
 
+	public Class<? extends KlabAction> getActionClass(String id) {
+		Pair<String, Class<? extends KlabAction>> ret = actionClasses.get(id);
+		return ret == null ? null : ret.getSecond();
+	}
+
 	public Collection<String> getBehaviorIds() {
 		return behaviors.keySet();
 	}
@@ -487,4 +501,251 @@ public enum Actors implements IActorsService {
 		return null;
 	}
 
+	public View getView(IBehavior behavior) {
+
+		this.groupCounter = 0;
+
+		/*
+		 * collect info about the UI in a bean. If not empty, send bean so that the UI
+		 * can prepare.
+		 */
+		View view = new View(behavior.getName());
+		view.setStyle(behavior.getStatement().getStyle());
+		for (IBehavior.Action action : behavior.getActions()) {
+
+			ViewPanel panel = null;
+
+			for (IAnnotation annotation : action.getAnnotations()) {
+				if ("panel".equals(annotation.getName())) {
+					view.getPanels()
+							.add(panel = new ViewPanel(
+									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+									annotation.get("style", String.class)));
+				}
+				if ("left".equals(annotation.getName())) {
+					view.getLeftPanels()
+							.add(panel = new ViewPanel(
+									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+									annotation.get("style", String.class)));
+				}
+				if ("right".equals(annotation.getName())) {
+					view.getRightPanels()
+							.add(panel = new ViewPanel(
+									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+									annotation.get("style", String.class)));
+				}
+				if ("header".equals(annotation.getName()) || "header".equals(action.getId())
+						|| "top".equals(annotation.getName())) {
+					view.setHeader(panel = new ViewPanel(
+							annotation.containsKey("id") ? annotation.get("id", String.class) : "header",
+							annotation.get("style", String.class)));
+				}
+				if ("footer".equals(annotation.getName()) || "footer".equals(action.getId())
+						|| "bottom".equals(annotation.getName())) {
+					view.setFooter(panel = new ViewPanel(
+							annotation.containsKey("id") ? annotation.get("id", String.class) : "footer",
+							annotation.get("style", String.class)));
+				}
+
+			}
+
+			if (panel != null) {
+				/*
+				 * visit action for view calls: if there is any call to the view actor, add the
+				 * "default" panel unless already added
+				 */
+				visitViewActions(action, panel);
+			}
+		}
+
+		return view;
+	}
+
+	private int groupCounter;
+
+	public ViewComponent getChildComponent(IKActorsStatement.ConcurrentGroup group, ViewComponent parent) {
+		ViewComponent ret = new ViewComponent();
+		ret.setType(ViewComponent.Type.Group);
+		if (group.getGroupMetadata().containsKey("name")) {
+			ret.setName(group.getGroupMetadata().get("name").getValue().toString());
+		}
+		String id = null;
+		if (group.getGroupMetadata().containsKey("id")) {
+			id = group.getGroupMetadata().get("id").getValue().toString();
+		} else {
+			id = "g" + (groupCounter++);
+		}
+		setViewMetadata(ret, group.getGroupMetadata());
+		ret.setId(parent.getId() + "/" + id);
+		parent.getComponents().add(ret);
+		return ret;
+	}
+
+	private void setViewMetadata(ViewComponent component, Map<String, ?> parameters) {
+
+		// width, height, length, foreground, background, style, class, tooltip, title,
+		// ....? (Enrico?)
+
+		/*
+		 * TODO remaining metadata - alignment, width etc, use a common function from
+		 * parameters or metadata
+		 */
+	}
+
+	private void visitViewActions(IBehavior.Action action, ViewPanel panel) {
+		IKActorsStatement code = ((BehaviorAction) action).getStatement().getCode();
+		visitViewActions(code, panel, false, false, 0);
+	}
+
+	private void visitViewActions(IKActorsStatement statement, ViewComponent scope, boolean optionalScope,
+			boolean repeatedScope, int level) {
+		switch (statement.getType()) {
+		case ACTION_CALL:
+			ViewComponent component = getViewComponent((IKActorsStatement.Call) statement, optionalScope,
+					repeatedScope);
+			if (component != null) {
+				scope.getComponents().add(component);
+			}
+			break;
+		case ASSIGNMENT:
+			// see if this is a masked action call
+			break;
+		case CONCURRENT_GROUP:
+			if (((IKActorsStatement.ConcurrentGroup) statement).getStatements().size() == 1) {
+				visitViewActions(((IKActorsStatement.ConcurrentGroup) statement).getStatements().get(0), scope,
+						optionalScope, repeatedScope, level);
+			} else {
+				scope = level == 0 ? scope : getChildComponent((IKActorsStatement.ConcurrentGroup) statement, scope);
+				for (IKActorsStatement sequence : ((IKActorsStatement.ConcurrentGroup) statement).getStatements()) {
+					visitViewActions(sequence, scope, optionalScope, repeatedScope, level + 1);
+				}
+			}
+			break;
+		case DO_STATEMENT:
+			// visit code with optionalScope = true, repeatedScope = true
+			break;
+		case FIRE_VALUE:
+			break;
+		case FOR_STATEMENT:
+			// visit code with optionalScope = true, repeatedScope = true
+			break;
+		case IF_STATEMENT:
+			// visit code with optionalScope = true
+			break;
+		case SEQUENCE:
+			// dig in in same scope
+			for (IKActorsStatement sequence : ((IKActorsStatement.Sequence) statement).getStatements()) {
+				visitViewActions(sequence, scope, optionalScope, repeatedScope, level);
+			}
+			break;
+		case TEXT_BLOCK:
+			// add text widget to scope
+			break;
+		case WHILE_STATEMENT:
+			break;
+		default:
+			break;
+		}
+	}
+
+	private ViewComponent getViewComponent(Call statement, boolean optionalScope, boolean repeatedScope) {
+
+		Class<? extends KlabAction> cls = Actors.INSTANCE.getActionClass(statement.getMessage());
+		ViewComponent ret = null;
+		if (cls != null) {
+			if (KlabWidgetAction.class.isAssignableFrom(cls)) {
+
+				/*
+				 * check if the arguments are variable
+				 */
+				boolean dynamic = optionalScope || repeatedScope;
+				if (!dynamic && statement.getArguments() != null) {
+					for (Object arg : statement.getArguments().values()) {
+						if (arg instanceof KActorsValue && ((KActorsValue) arg).isVariable()) {
+							dynamic = true;
+							break;
+						}
+					}
+				}
+
+				if (!dynamic) {
+					// just a prototype
+					KlabWidgetAction action = (KlabWidgetAction) Actors.INSTANCE.getSystemAction(statement.getMessage(),
+							null, statement.getArguments(), null, null);
+					if (action != null) {
+						ret = action.getViewComponent();
+					}
+				}
+
+				/*
+				 * if we got here, we should return a placeholder
+				 */
+				if (ret == null) {
+					ret = new ViewComponent();
+					ret.setType(ViewComponent.Type.Container);
+					if (repeatedScope) {
+						ret.setContainedType(ViewComponent.Type.Group);
+					}
+				}
+
+				setViewMetadata(ret, statement.getArguments());
+				ret.setId(((KActorsActionCall) statement).getInternalId());
+
+			}
+		}
+		return ret;
+	}
+
+	public String dumpView(View view) {
+
+		StringBuffer ret = new StringBuffer(2048);
+
+		if (view.getHeader() != null) {
+			dumpPanel(view.getHeader(), "HEADER", ret, 0);
+		}
+
+		for (ViewPanel panel : view.getLeftPanels()) {
+			dumpPanel(panel, "LEFT", ret, 0);
+		}
+
+		for (ViewPanel panel : view.getPanels()) {
+			dumpPanel(panel, "CENTER", ret, 0);
+		}
+
+		for (ViewPanel panel : view.getRightPanels()) {
+			dumpPanel(panel, "RIGHT", ret, 0);
+		}
+
+		if (view.getFooter() != null) {
+			dumpPanel(view.getHeader(), "FOOTER", ret, 0);
+		}
+
+		return ret.toString();
+
+	}
+
+	private static void dumpPanel(ViewPanel panel, String title, StringBuffer ret, int offset) {
+
+		String spacer = StringUtil.spaces(offset);
+
+		ret.append("\n" + spacer + title + " " + panel.getName() + " [" + panel.getId() + "]\n\n");
+
+		for (ViewComponent component : panel.getComponents()) {
+			dumpComponent(component, ret, offset + 3);
+		}
+
+	}
+
+	private static void dumpComponent(ViewComponent component, StringBuffer ret, int offset) {
+		if (component instanceof ViewPanel) {
+			dumpPanel((ViewPanel) component, "PANEL", ret, offset);
+		} else {
+			String spacer = StringUtil.spaces(offset);
+			ret.append(spacer + component.getType() + " " + component.getName() + " [" + component.getId() + "]\n");
+			for (ViewComponent c : component.getComponents()) {
+				dumpComponent(c, ret, offset + 3);
+			}
+
+		}
+	}
 }
