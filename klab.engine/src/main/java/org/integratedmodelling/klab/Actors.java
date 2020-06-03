@@ -561,6 +561,7 @@ public enum Actors implements IActorsService {
 		return view;
 	}
 
+	// FIXME add in parameters!
 	private int groupCounter;
 
 	public ViewComponent getChildComponent(IKActorsStatement.ConcurrentGroup group, ViewComponent parent) {
@@ -695,40 +696,46 @@ public enum Actors implements IActorsService {
 		}
 		return ret;
 	}
-
+	
 	public String dumpView(View view) {
-
 		StringBuffer ret = new StringBuffer(2048);
-
-		if (view.getHeader() != null) {
-			dumpPanel(view.getHeader(), "HEADER", ret, 0);
-		}
-
-		for (ViewPanel panel : view.getLeftPanels()) {
-			dumpPanel(panel, "LEFT", ret, 0);
-		}
-
-		for (ViewPanel panel : view.getPanels()) {
-			dumpPanel(panel, "CENTER", ret, 0);
-		}
-
-		for (ViewPanel panel : view.getRightPanels()) {
-			dumpPanel(panel, "RIGHT", ret, 0);
-		}
-
-		if (view.getFooter() != null) {
-			dumpPanel(view.getHeader(), "FOOTER", ret, 0);
-		}
-
+		dumpView(view, ret, 0);
 		return ret.toString();
-
 	}
 
-	private static void dumpPanel(ViewPanel panel, String title, StringBuffer ret, int offset) {
+	public void dumpView(View view, StringBuffer ret, int offset) {
 
 		String spacer = StringUtil.spaces(offset);
 
-		ret.append("\n" + spacer + title + " " + panel.getName() + " [" + panel.getId() + "]\n\n");
+		ret.append(spacer +  "View " + view.getName() + "\n");
+
+		if (view.getHeader() != null) {
+			dumpPanel(view.getHeader(), "Header", ret, offset + 3);
+		}
+
+		for (ViewPanel panel : view.getLeftPanels()) {
+			dumpPanel(panel, "Left", ret, offset + 3);
+		}
+
+		for (ViewPanel panel : view.getPanels()) {
+			dumpPanel(panel, "Center", ret, offset + 3);
+		}
+
+		for (ViewPanel panel : view.getRightPanels()) {
+			dumpPanel(panel, "Right", ret, offset + 3);
+		}
+
+		if (view.getFooter() != null) {
+			dumpPanel(view.getHeader(), "Footer", ret, offset + 3);
+		}
+
+	}
+
+	private void dumpPanel(ViewPanel panel, String title, StringBuffer ret, int offset) {
+
+		String spacer = StringUtil.spaces(offset);
+
+		ret.append(spacer + title + ": " + panel.getName() + " [" + panel.getId() + "]\n");
 
 		for (ViewComponent component : panel.getComponents()) {
 			dumpComponent(component, ret, offset + 3);
@@ -736,9 +743,11 @@ public enum Actors implements IActorsService {
 
 	}
 
-	private static void dumpComponent(ViewComponent component, StringBuffer ret, int offset) {
-		if (component instanceof ViewPanel) {
-			dumpPanel((ViewPanel) component, "PANEL", ret, offset);
+	private void dumpComponent(ViewComponent component, StringBuffer ret, int offset) {
+		if (component instanceof View) {
+			dumpView((View) component, ret, offset);
+		} if (component instanceof ViewPanel) {
+			dumpPanel((ViewPanel) component, "Panel", ret, offset);
 		} else {
 			String spacer = StringUtil.spaces(offset);
 			ret.append(spacer + component.getType() + " " + component.getName() + " [" + component.getId() + "]\n");
