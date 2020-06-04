@@ -51,7 +51,7 @@ public class AppView extends Composite {
 		ret.horizontalSpacing = 2;
 		return ret;
 	}
-	
+
 	private Composite makeView(Layout view, Composite parent) {
 
 		Composite ret = new Composite(parent, SWT.NONE);
@@ -109,7 +109,7 @@ public class AppView extends Composite {
 
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(gridLayout(1, false));
-		
+
 		if (panels.size() > 1) {
 
 			TabFolder tabFolder = new TabFolder(ret, SWT.NONE);
@@ -153,7 +153,7 @@ public class AppView extends Composite {
 	 * @param parent
 	 */
 	private void makeComponent(ViewComponent component, Composite parent) {
-		
+
 		switch (component.getType()) {
 		case CheckButton:
 			break;
@@ -162,27 +162,37 @@ public class AppView extends Composite {
 		case Container:
 		case MultiContainer:
 		case Group:
-			
-			/*
-			 * TODO: if it's a group of all groups, each subgroup should be a row and we should have
-			 * as many columns as the biggest group in the children, patching with empty labels
-			 */
-			
+
 			Composite group = component.getName() == null ? new Composite(parent, SWT.NONE)
 					: new Group(parent, SWT.NONE);
 			if (component.getName() != null) {
-				((Group)group).setText(component.getName());
+				((Group) group).setText(component.getName());
 			}
-			group.setLayout(gridLayout(component.getComponents().size(), false));
-			for (ViewComponent child : component.getComponents()) {
-				makeComponent(child, group);
+
+			int tcols = isTable(component);
+			if (tcols > 0) {
+				group.setLayout(gridLayout(tcols, false));
+				for (ViewComponent row : component.getComponents()) {
+					for (int col = 0; col < row.getComponents().size(); col ++) {
+						makeComponent(row.getComponents().get(col), group);
+					}
+					for (int i = row.getComponents().size(); i < tcols; i++) {
+						new Label(group, SWT.NONE);
+					}
+				}
+
+			} else {
+				group.setLayout(gridLayout(component.getComponents().size(), false));
+				for (ViewComponent child : component.getComponents()) {
+					makeComponent(child, group);
+				}
 			}
 			group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 			break;
 		case Map:
 			break;
 		case Panel:
-			makePanel(Collections.singletonList((ViewPanel)component), parent);
+			makePanel(Collections.singletonList((ViewPanel) component), parent);
 			break;
 		case Label:
 			Label label = new Label(parent, SWT.NONE);
@@ -226,12 +236,35 @@ public class AppView extends Composite {
 		case TreeItem:
 			break;
 		case View:
-			makeView((Layout)component, parent);
+			makeView((Layout) component, parent);
 			break;
 		default:
 			break;
 		}
 
+	}
+
+	/**
+	 * If this group is a group of groups (representing a table) return the max number of items
+	 * per row, otherwise return 0.
+	 * 
+	 * @param component
+	 * @return
+	 */
+	private int isTable(ViewComponent component) {
+		if (component.getType() == ViewComponent.Type.Group) {
+			int ret = 0;
+			for (ViewComponent child : component.getComponents()) {
+				if (child.getType() != ViewComponent.Type.Group) {
+					return 0;
+				}
+				if (ret < child.getComponents().size()) {
+					ret = child.getComponents().size();
+				}
+			}
+			return ret;
+		}
+		return 0;
 	}
 
 	public void setup(Layout layout) {
@@ -251,7 +284,7 @@ public class AppView extends Composite {
 
 		this.currentLayout = layout;
 		this.containers.clear();
-		
+
 		refreshView();
 	}
 
@@ -266,7 +299,7 @@ public class AppView extends Composite {
 			parent.layout(true);
 		});
 	}
-	
+
 	public synchronized void addWidget(IMessage message) {
 		ViewComponent component = message.getPayload(ViewComponent.class);
 		if (component.getType() == ViewComponent.Type.Alert) {
@@ -282,7 +315,7 @@ public class AppView extends Composite {
 
 			// TODO refresh view
 			refreshView();
-			
+
 		} else {
 			System.err.println("INTERNAL: got widget outside of known container");
 		}
