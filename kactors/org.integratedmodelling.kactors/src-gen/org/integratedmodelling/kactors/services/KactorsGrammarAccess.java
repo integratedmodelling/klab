@@ -83,81 +83,76 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cBehaviorBehaviourKeyword_1_0_4_0_1 = (Keyword)cBehaviorAlternatives_1_0_4_0.eContents().get(1);
 		private final Assignment cNameAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cNamePathNameParserRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
-		private final UnorderedGroup cUnorderedGroup_2 = (UnorderedGroup)cGroup.eContents().get(2);
-		private final Group cGroup_2_0 = (Group)cUnorderedGroup_2.eContents().get(0);
-		private final Keyword cImportKeyword_2_0_0 = (Keyword)cGroup_2_0.eContents().get(0);
-		private final Assignment cImportsAssignment_2_0_1 = (Assignment)cGroup_2_0.eContents().get(1);
-		private final RuleCall cImportsPathNameParserRuleCall_2_0_1_0 = (RuleCall)cImportsAssignment_2_0_1.eContents().get(0);
-		private final Group cGroup_2_0_2 = (Group)cGroup_2_0.eContents().get(2);
-		private final Keyword cCommaKeyword_2_0_2_0 = (Keyword)cGroup_2_0_2.eContents().get(0);
-		private final Assignment cImportsAssignment_2_0_2_1 = (Assignment)cGroup_2_0_2.eContents().get(1);
-		private final RuleCall cImportsPathNameParserRuleCall_2_0_2_1_0 = (RuleCall)cImportsAssignment_2_0_2_1.eContents().get(0);
-		private final Group cGroup_2_1 = (Group)cUnorderedGroup_2.eContents().get(1);
-		private final Keyword cWorldviewKeyword_2_1_0 = (Keyword)cGroup_2_1.eContents().get(0);
-		private final Assignment cWorldviewAssignment_2_1_1 = (Assignment)cGroup_2_1.eContents().get(1);
-		private final RuleCall cWorldviewPathNameParserRuleCall_2_1_1_0 = (RuleCall)cWorldviewAssignment_2_1_1.eContents().get(0);
-		private final Group cGroup_2_2 = (Group)cUnorderedGroup_2.eContents().get(2);
-		private final Keyword cObservableKeyword_2_2_0 = (Keyword)cGroup_2_2.eContents().get(0);
-		private final Alternatives cAlternatives_2_2_1 = (Alternatives)cGroup_2_2.eContents().get(1);
-		private final Assignment cObservableAssignment_2_2_1_0 = (Assignment)cAlternatives_2_2_1.eContents().get(0);
-		private final RuleCall cObservableOBSERVABLETerminalRuleCall_2_2_1_0_0 = (RuleCall)cObservableAssignment_2_2_1_0.eContents().get(0);
-		private final Assignment cObservablesAssignment_2_2_1_1 = (Assignment)cAlternatives_2_2_1.eContents().get(1);
-		private final RuleCall cObservablesListParserRuleCall_2_2_1_1_0 = (RuleCall)cObservablesAssignment_2_2_1_1.eContents().get(0);
-		private final Group cGroup_2_3 = (Group)cUnorderedGroup_2.eContents().get(3);
-		private final Keyword cLabelKeyword_2_3_0 = (Keyword)cGroup_2_3.eContents().get(0);
-		private final Assignment cLabelAssignment_2_3_1 = (Assignment)cGroup_2_3.eContents().get(1);
-		private final Alternatives cLabelAlternatives_2_3_1_0 = (Alternatives)cLabelAssignment_2_3_1.eContents().get(0);
-		private final RuleCall cLabelLOWERCASE_IDTerminalRuleCall_2_3_1_0_0 = (RuleCall)cLabelAlternatives_2_3_1_0.eContents().get(0);
-		private final RuleCall cLabelIDTerminalRuleCall_2_3_1_0_1 = (RuleCall)cLabelAlternatives_2_3_1_0.eContents().get(1);
-		private final RuleCall cLabelSTRINGTerminalRuleCall_2_3_1_0_2 = (RuleCall)cLabelAlternatives_2_3_1_0.eContents().get(2);
-		private final Group cGroup_2_4 = (Group)cUnorderedGroup_2.eContents().get(4);
-		private final Keyword cDescriptionKeyword_2_4_0 = (Keyword)cGroup_2_4.eContents().get(0);
-		private final Assignment cDescriptionAssignment_2_4_1 = (Assignment)cGroup_2_4.eContents().get(1);
-		private final RuleCall cDescriptionSTRINGTerminalRuleCall_2_4_1_0 = (RuleCall)cDescriptionAssignment_2_4_1.eContents().get(0);
-		private final Group cGroup_2_5 = (Group)cUnorderedGroup_2.eContents().get(5);
-		private final Keyword cPermissionsKeyword_2_5_0 = (Keyword)cGroup_2_5.eContents().get(0);
-		private final Assignment cPermissionsAssignment_2_5_1 = (Assignment)cGroup_2_5.eContents().get(1);
-		private final RuleCall cPermissionsSTRINGTerminalRuleCall_2_5_1_0 = (RuleCall)cPermissionsAssignment_2_5_1.eContents().get(0);
-		private final Group cGroup_2_6 = (Group)cUnorderedGroup_2.eContents().get(6);
-		private final Keyword cAuthorKeyword_2_6_0 = (Keyword)cGroup_2_6.eContents().get(0);
-		private final Assignment cAuthorsAssignment_2_6_1 = (Assignment)cGroup_2_6.eContents().get(1);
-		private final RuleCall cAuthorsSTRINGTerminalRuleCall_2_6_1_0 = (RuleCall)cAuthorsAssignment_2_6_1.eContents().get(0);
-		private final Group cGroup_2_7 = (Group)cUnorderedGroup_2.eContents().get(7);
-		private final Keyword cStyleKeyword_2_7_0 = (Keyword)cGroup_2_7.eContents().get(0);
-		private final Assignment cStyleAssignment_2_7_1 = (Assignment)cGroup_2_7.eContents().get(1);
-		private final RuleCall cStylePathNameParserRuleCall_2_7_1_0 = (RuleCall)cStyleAssignment_2_7_1.eContents().get(0);
-		private final Group cGroup_2_8 = (Group)cUnorderedGroup_2.eContents().get(8);
-		private final Keyword cVersionKeyword_2_8_0 = (Keyword)cGroup_2_8.eContents().get(0);
-		private final Assignment cVersionAssignment_2_8_1 = (Assignment)cGroup_2_8.eContents().get(1);
-		private final RuleCall cVersionVersionNumberParserRuleCall_2_8_1_0 = (RuleCall)cVersionAssignment_2_8_1.eContents().get(0);
-		private final Group cGroup_2_9 = (Group)cUnorderedGroup_2.eContents().get(9);
-		private final Keyword cCreatedKeyword_2_9_0 = (Keyword)cGroup_2_9.eContents().get(0);
-		private final Assignment cCreatedAssignment_2_9_1 = (Assignment)cGroup_2_9.eContents().get(1);
-		private final RuleCall cCreatedDateParserRuleCall_2_9_1_0 = (RuleCall)cCreatedAssignment_2_9_1.eContents().get(0);
-		private final Assignment cCreatecommentAssignment_2_9_2 = (Assignment)cGroup_2_9.eContents().get(2);
-		private final RuleCall cCreatecommentSTRINGTerminalRuleCall_2_9_2_0 = (RuleCall)cCreatecommentAssignment_2_9_2.eContents().get(0);
-		private final Group cGroup_2_10 = (Group)cUnorderedGroup_2.eContents().get(10);
-		private final Keyword cModifiedKeyword_2_10_0 = (Keyword)cGroup_2_10.eContents().get(0);
-		private final Assignment cModifiedAssignment_2_10_1 = (Assignment)cGroup_2_10.eContents().get(1);
-		private final RuleCall cModifiedDateParserRuleCall_2_10_1_0 = (RuleCall)cModifiedAssignment_2_10_1.eContents().get(0);
-		private final Assignment cModcommentAssignment_2_10_2 = (Assignment)cGroup_2_10.eContents().get(2);
-		private final RuleCall cModcommentSTRINGTerminalRuleCall_2_10_2_0 = (RuleCall)cModcommentAssignment_2_10_2.eContents().get(0);
+		private final Assignment cLabelAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cLabelSTRINGTerminalRuleCall_2_0 = (RuleCall)cLabelAssignment_2.eContents().get(0);
+		private final UnorderedGroup cUnorderedGroup_3 = (UnorderedGroup)cGroup.eContents().get(3);
+		private final Group cGroup_3_0 = (Group)cUnorderedGroup_3.eContents().get(0);
+		private final Keyword cImportKeyword_3_0_0 = (Keyword)cGroup_3_0.eContents().get(0);
+		private final Assignment cImportsAssignment_3_0_1 = (Assignment)cGroup_3_0.eContents().get(1);
+		private final RuleCall cImportsPathNameParserRuleCall_3_0_1_0 = (RuleCall)cImportsAssignment_3_0_1.eContents().get(0);
+		private final Group cGroup_3_0_2 = (Group)cGroup_3_0.eContents().get(2);
+		private final Keyword cCommaKeyword_3_0_2_0 = (Keyword)cGroup_3_0_2.eContents().get(0);
+		private final Assignment cImportsAssignment_3_0_2_1 = (Assignment)cGroup_3_0_2.eContents().get(1);
+		private final RuleCall cImportsPathNameParserRuleCall_3_0_2_1_0 = (RuleCall)cImportsAssignment_3_0_2_1.eContents().get(0);
+		private final Group cGroup_3_1 = (Group)cUnorderedGroup_3.eContents().get(1);
+		private final Keyword cWorldviewKeyword_3_1_0 = (Keyword)cGroup_3_1.eContents().get(0);
+		private final Assignment cWorldviewAssignment_3_1_1 = (Assignment)cGroup_3_1.eContents().get(1);
+		private final RuleCall cWorldviewPathNameParserRuleCall_3_1_1_0 = (RuleCall)cWorldviewAssignment_3_1_1.eContents().get(0);
+		private final Group cGroup_3_2 = (Group)cUnorderedGroup_3.eContents().get(2);
+		private final Keyword cObservableKeyword_3_2_0 = (Keyword)cGroup_3_2.eContents().get(0);
+		private final Alternatives cAlternatives_3_2_1 = (Alternatives)cGroup_3_2.eContents().get(1);
+		private final Assignment cObservableAssignment_3_2_1_0 = (Assignment)cAlternatives_3_2_1.eContents().get(0);
+		private final RuleCall cObservableOBSERVABLETerminalRuleCall_3_2_1_0_0 = (RuleCall)cObservableAssignment_3_2_1_0.eContents().get(0);
+		private final Assignment cObservablesAssignment_3_2_1_1 = (Assignment)cAlternatives_3_2_1.eContents().get(1);
+		private final RuleCall cObservablesListParserRuleCall_3_2_1_1_0 = (RuleCall)cObservablesAssignment_3_2_1_1.eContents().get(0);
+		private final Group cGroup_3_3 = (Group)cUnorderedGroup_3.eContents().get(3);
+		private final Keyword cDescriptionKeyword_3_3_0 = (Keyword)cGroup_3_3.eContents().get(0);
+		private final Assignment cDescriptionAssignment_3_3_1 = (Assignment)cGroup_3_3.eContents().get(1);
+		private final RuleCall cDescriptionSTRINGTerminalRuleCall_3_3_1_0 = (RuleCall)cDescriptionAssignment_3_3_1.eContents().get(0);
+		private final Group cGroup_3_4 = (Group)cUnorderedGroup_3.eContents().get(4);
+		private final Keyword cPermissionsKeyword_3_4_0 = (Keyword)cGroup_3_4.eContents().get(0);
+		private final Assignment cPermissionsAssignment_3_4_1 = (Assignment)cGroup_3_4.eContents().get(1);
+		private final RuleCall cPermissionsSTRINGTerminalRuleCall_3_4_1_0 = (RuleCall)cPermissionsAssignment_3_4_1.eContents().get(0);
+		private final Group cGroup_3_5 = (Group)cUnorderedGroup_3.eContents().get(5);
+		private final Keyword cAuthorKeyword_3_5_0 = (Keyword)cGroup_3_5.eContents().get(0);
+		private final Assignment cAuthorsAssignment_3_5_1 = (Assignment)cGroup_3_5.eContents().get(1);
+		private final RuleCall cAuthorsSTRINGTerminalRuleCall_3_5_1_0 = (RuleCall)cAuthorsAssignment_3_5_1.eContents().get(0);
+		private final Group cGroup_3_6 = (Group)cUnorderedGroup_3.eContents().get(6);
+		private final Keyword cStyleKeyword_3_6_0 = (Keyword)cGroup_3_6.eContents().get(0);
+		private final Assignment cStyleAssignment_3_6_1 = (Assignment)cGroup_3_6.eContents().get(1);
+		private final RuleCall cStylePathNameParserRuleCall_3_6_1_0 = (RuleCall)cStyleAssignment_3_6_1.eContents().get(0);
+		private final Group cGroup_3_7 = (Group)cUnorderedGroup_3.eContents().get(7);
+		private final Keyword cVersionKeyword_3_7_0 = (Keyword)cGroup_3_7.eContents().get(0);
+		private final Assignment cVersionAssignment_3_7_1 = (Assignment)cGroup_3_7.eContents().get(1);
+		private final RuleCall cVersionVersionNumberParserRuleCall_3_7_1_0 = (RuleCall)cVersionAssignment_3_7_1.eContents().get(0);
+		private final Group cGroup_3_8 = (Group)cUnorderedGroup_3.eContents().get(8);
+		private final Keyword cCreatedKeyword_3_8_0 = (Keyword)cGroup_3_8.eContents().get(0);
+		private final Assignment cCreatedAssignment_3_8_1 = (Assignment)cGroup_3_8.eContents().get(1);
+		private final RuleCall cCreatedDateParserRuleCall_3_8_1_0 = (RuleCall)cCreatedAssignment_3_8_1.eContents().get(0);
+		private final Assignment cCreatecommentAssignment_3_8_2 = (Assignment)cGroup_3_8.eContents().get(2);
+		private final RuleCall cCreatecommentSTRINGTerminalRuleCall_3_8_2_0 = (RuleCall)cCreatecommentAssignment_3_8_2.eContents().get(0);
+		private final Group cGroup_3_9 = (Group)cUnorderedGroup_3.eContents().get(9);
+		private final Keyword cModifiedKeyword_3_9_0 = (Keyword)cGroup_3_9.eContents().get(0);
+		private final Assignment cModifiedAssignment_3_9_1 = (Assignment)cGroup_3_9.eContents().get(1);
+		private final RuleCall cModifiedDateParserRuleCall_3_9_1_0 = (RuleCall)cModifiedAssignment_3_9_1.eContents().get(0);
+		private final Assignment cModcommentAssignment_3_9_2 = (Assignment)cGroup_3_9.eContents().get(2);
+		private final RuleCall cModcommentSTRINGTerminalRuleCall_3_9_2_0 = (RuleCall)cModcommentAssignment_3_9_2.eContents().get(0);
 		
 		//Preamble:
 		//	{Preamble} ((app?=('app' | 'job') | test?='testcase' | user?='user' | library?=('trait' | 'library') |
-		//	behavior?=('behavior' | 'behaviour')) name=PathName)? (('import' imports+=PathName (',' imports+=PathName)*)? &
-		//	('worldview' worldview=PathName)? & ('observable' (observable=OBSERVABLE | observables=List))? & ('label'
-		//	label=(LOWERCASE_ID | ID | STRING))? & ('description' description=STRING)? & ('permissions' permissions=STRING)? &
-		//	('author' authors+=STRING)* & ('style' style=PathName)? & ('version' version=VersionNumber)? & ('created'
-		//	created=Date createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?);
+		//	behavior?=('behavior' | 'behaviour')) name=PathName)?
+		//	label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? &
+		//	('observable' (observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
+		//	permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? & ('version' version=VersionNumber)? &
+		//	('created' created=Date createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{Preamble} ((app?=('app' | 'job') | test?='testcase' | user?='user' | library?=('trait' | 'library') |
-		//behavior?=('behavior' | 'behaviour')) name=PathName)? (('import' imports+=PathName (',' imports+=PathName)*)? &
-		//('worldview' worldview=PathName)? & ('observable' (observable=OBSERVABLE | observables=List))? & ('label'
-		//label=(LOWERCASE_ID | ID | STRING))? & ('description' description=STRING)? & ('permissions' permissions=STRING)? &
-		//('author' authors+=STRING)* & ('style' style=PathName)? & ('version' version=VersionNumber)? & ('created' created=Date
-		//createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?)
+		//behavior?=('behavior' | 'behaviour')) name=PathName)? label=STRING? (('import' imports+=PathName (','
+		//imports+=PathName)*)? & ('worldview' worldview=PathName)? & ('observable' (observable=OBSERVABLE | observables=List))?
+		//& ('description' description=STRING)? & ('permissions' permissions=STRING)? & ('author' authors+=STRING)* & ('style'
+		//style=PathName)? & ('version' version=VersionNumber)? & ('created' created=Date createcomment=STRING?)? & ('modified'
+		//modified=Date modcomment=STRING?)?)
 		public Group getGroup() { return cGroup; }
 		
 		//{Preamble}
@@ -225,186 +220,170 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//PathName
 		public RuleCall getNamePathNameParserRuleCall_1_1_0() { return cNamePathNameParserRuleCall_1_1_0; }
 		
+		//label=STRING?
+		public Assignment getLabelAssignment_2() { return cLabelAssignment_2; }
+		
+		//STRING
+		public RuleCall getLabelSTRINGTerminalRuleCall_2_0() { return cLabelSTRINGTerminalRuleCall_2_0; }
+		
 		//(('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? & ('observable'
-		//(observable=OBSERVABLE | observables=List))? & ('label' label=(LOWERCASE_ID | ID | STRING))? & ('description'
-		//description=STRING)? & ('permissions' permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? &
-		//('version' version=VersionNumber)? & ('created' created=Date createcomment=STRING?)? & ('modified' modified=Date
-		//modcomment=STRING?)?)
-		public UnorderedGroup getUnorderedGroup_2() { return cUnorderedGroup_2; }
+		//(observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
+		//permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? & ('version' version=VersionNumber)? &
+		//('created' created=Date createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?)
+		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
 		//('import' imports+=PathName (',' imports+=PathName)*)?
-		public Group getGroup_2_0() { return cGroup_2_0; }
+		public Group getGroup_3_0() { return cGroup_3_0; }
 		
 		//'import'
-		public Keyword getImportKeyword_2_0_0() { return cImportKeyword_2_0_0; }
+		public Keyword getImportKeyword_3_0_0() { return cImportKeyword_3_0_0; }
 		
 		//imports+=PathName
-		public Assignment getImportsAssignment_2_0_1() { return cImportsAssignment_2_0_1; }
+		public Assignment getImportsAssignment_3_0_1() { return cImportsAssignment_3_0_1; }
 		
 		//PathName
-		public RuleCall getImportsPathNameParserRuleCall_2_0_1_0() { return cImportsPathNameParserRuleCall_2_0_1_0; }
+		public RuleCall getImportsPathNameParserRuleCall_3_0_1_0() { return cImportsPathNameParserRuleCall_3_0_1_0; }
 		
 		//(',' imports+=PathName)*
-		public Group getGroup_2_0_2() { return cGroup_2_0_2; }
+		public Group getGroup_3_0_2() { return cGroup_3_0_2; }
 		
 		//','
-		public Keyword getCommaKeyword_2_0_2_0() { return cCommaKeyword_2_0_2_0; }
+		public Keyword getCommaKeyword_3_0_2_0() { return cCommaKeyword_3_0_2_0; }
 		
 		//imports+=PathName
-		public Assignment getImportsAssignment_2_0_2_1() { return cImportsAssignment_2_0_2_1; }
+		public Assignment getImportsAssignment_3_0_2_1() { return cImportsAssignment_3_0_2_1; }
 		
 		//PathName
-		public RuleCall getImportsPathNameParserRuleCall_2_0_2_1_0() { return cImportsPathNameParserRuleCall_2_0_2_1_0; }
+		public RuleCall getImportsPathNameParserRuleCall_3_0_2_1_0() { return cImportsPathNameParserRuleCall_3_0_2_1_0; }
 		
 		//('worldview' worldview=PathName)?
-		public Group getGroup_2_1() { return cGroup_2_1; }
+		public Group getGroup_3_1() { return cGroup_3_1; }
 		
 		//'worldview'
-		public Keyword getWorldviewKeyword_2_1_0() { return cWorldviewKeyword_2_1_0; }
+		public Keyword getWorldviewKeyword_3_1_0() { return cWorldviewKeyword_3_1_0; }
 		
 		//worldview=PathName
-		public Assignment getWorldviewAssignment_2_1_1() { return cWorldviewAssignment_2_1_1; }
+		public Assignment getWorldviewAssignment_3_1_1() { return cWorldviewAssignment_3_1_1; }
 		
 		//PathName
-		public RuleCall getWorldviewPathNameParserRuleCall_2_1_1_0() { return cWorldviewPathNameParserRuleCall_2_1_1_0; }
+		public RuleCall getWorldviewPathNameParserRuleCall_3_1_1_0() { return cWorldviewPathNameParserRuleCall_3_1_1_0; }
 		
 		//('observable' (observable=OBSERVABLE | observables=List))?
-		public Group getGroup_2_2() { return cGroup_2_2; }
+		public Group getGroup_3_2() { return cGroup_3_2; }
 		
 		//'observable'
-		public Keyword getObservableKeyword_2_2_0() { return cObservableKeyword_2_2_0; }
+		public Keyword getObservableKeyword_3_2_0() { return cObservableKeyword_3_2_0; }
 		
 		//(observable=OBSERVABLE | observables=List)
-		public Alternatives getAlternatives_2_2_1() { return cAlternatives_2_2_1; }
+		public Alternatives getAlternatives_3_2_1() { return cAlternatives_3_2_1; }
 		
 		//observable=OBSERVABLE
-		public Assignment getObservableAssignment_2_2_1_0() { return cObservableAssignment_2_2_1_0; }
+		public Assignment getObservableAssignment_3_2_1_0() { return cObservableAssignment_3_2_1_0; }
 		
 		//OBSERVABLE
-		public RuleCall getObservableOBSERVABLETerminalRuleCall_2_2_1_0_0() { return cObservableOBSERVABLETerminalRuleCall_2_2_1_0_0; }
+		public RuleCall getObservableOBSERVABLETerminalRuleCall_3_2_1_0_0() { return cObservableOBSERVABLETerminalRuleCall_3_2_1_0_0; }
 		
 		//observables=List
-		public Assignment getObservablesAssignment_2_2_1_1() { return cObservablesAssignment_2_2_1_1; }
+		public Assignment getObservablesAssignment_3_2_1_1() { return cObservablesAssignment_3_2_1_1; }
 		
 		//List
-		public RuleCall getObservablesListParserRuleCall_2_2_1_1_0() { return cObservablesListParserRuleCall_2_2_1_1_0; }
-		
-		//('label' label=(LOWERCASE_ID | ID | STRING))?
-		public Group getGroup_2_3() { return cGroup_2_3; }
-		
-		//'label'
-		public Keyword getLabelKeyword_2_3_0() { return cLabelKeyword_2_3_0; }
-		
-		//label=(LOWERCASE_ID | ID | STRING)
-		public Assignment getLabelAssignment_2_3_1() { return cLabelAssignment_2_3_1; }
-		
-		//(LOWERCASE_ID | ID | STRING)
-		public Alternatives getLabelAlternatives_2_3_1_0() { return cLabelAlternatives_2_3_1_0; }
-		
-		//LOWERCASE_ID
-		public RuleCall getLabelLOWERCASE_IDTerminalRuleCall_2_3_1_0_0() { return cLabelLOWERCASE_IDTerminalRuleCall_2_3_1_0_0; }
-		
-		//ID
-		public RuleCall getLabelIDTerminalRuleCall_2_3_1_0_1() { return cLabelIDTerminalRuleCall_2_3_1_0_1; }
-		
-		//STRING
-		public RuleCall getLabelSTRINGTerminalRuleCall_2_3_1_0_2() { return cLabelSTRINGTerminalRuleCall_2_3_1_0_2; }
+		public RuleCall getObservablesListParserRuleCall_3_2_1_1_0() { return cObservablesListParserRuleCall_3_2_1_1_0; }
 		
 		//('description' description=STRING)?
-		public Group getGroup_2_4() { return cGroup_2_4; }
+		public Group getGroup_3_3() { return cGroup_3_3; }
 		
 		//'description'
-		public Keyword getDescriptionKeyword_2_4_0() { return cDescriptionKeyword_2_4_0; }
+		public Keyword getDescriptionKeyword_3_3_0() { return cDescriptionKeyword_3_3_0; }
 		
 		//description=STRING
-		public Assignment getDescriptionAssignment_2_4_1() { return cDescriptionAssignment_2_4_1; }
+		public Assignment getDescriptionAssignment_3_3_1() { return cDescriptionAssignment_3_3_1; }
 		
 		//STRING
-		public RuleCall getDescriptionSTRINGTerminalRuleCall_2_4_1_0() { return cDescriptionSTRINGTerminalRuleCall_2_4_1_0; }
+		public RuleCall getDescriptionSTRINGTerminalRuleCall_3_3_1_0() { return cDescriptionSTRINGTerminalRuleCall_3_3_1_0; }
 		
 		//('permissions' permissions=STRING)?
-		public Group getGroup_2_5() { return cGroup_2_5; }
+		public Group getGroup_3_4() { return cGroup_3_4; }
 		
 		//'permissions'
-		public Keyword getPermissionsKeyword_2_5_0() { return cPermissionsKeyword_2_5_0; }
+		public Keyword getPermissionsKeyword_3_4_0() { return cPermissionsKeyword_3_4_0; }
 		
 		//permissions=STRING
-		public Assignment getPermissionsAssignment_2_5_1() { return cPermissionsAssignment_2_5_1; }
+		public Assignment getPermissionsAssignment_3_4_1() { return cPermissionsAssignment_3_4_1; }
 		
 		//STRING
-		public RuleCall getPermissionsSTRINGTerminalRuleCall_2_5_1_0() { return cPermissionsSTRINGTerminalRuleCall_2_5_1_0; }
+		public RuleCall getPermissionsSTRINGTerminalRuleCall_3_4_1_0() { return cPermissionsSTRINGTerminalRuleCall_3_4_1_0; }
 		
 		//('author' authors+=STRING)*
-		public Group getGroup_2_6() { return cGroup_2_6; }
+		public Group getGroup_3_5() { return cGroup_3_5; }
 		
 		//'author'
-		public Keyword getAuthorKeyword_2_6_0() { return cAuthorKeyword_2_6_0; }
+		public Keyword getAuthorKeyword_3_5_0() { return cAuthorKeyword_3_5_0; }
 		
 		//authors+=STRING
-		public Assignment getAuthorsAssignment_2_6_1() { return cAuthorsAssignment_2_6_1; }
+		public Assignment getAuthorsAssignment_3_5_1() { return cAuthorsAssignment_3_5_1; }
 		
 		//STRING
-		public RuleCall getAuthorsSTRINGTerminalRuleCall_2_6_1_0() { return cAuthorsSTRINGTerminalRuleCall_2_6_1_0; }
+		public RuleCall getAuthorsSTRINGTerminalRuleCall_3_5_1_0() { return cAuthorsSTRINGTerminalRuleCall_3_5_1_0; }
 		
 		//('style' style=PathName)?
-		public Group getGroup_2_7() { return cGroup_2_7; }
+		public Group getGroup_3_6() { return cGroup_3_6; }
 		
 		//'style'
-		public Keyword getStyleKeyword_2_7_0() { return cStyleKeyword_2_7_0; }
+		public Keyword getStyleKeyword_3_6_0() { return cStyleKeyword_3_6_0; }
 		
 		//style=PathName
-		public Assignment getStyleAssignment_2_7_1() { return cStyleAssignment_2_7_1; }
+		public Assignment getStyleAssignment_3_6_1() { return cStyleAssignment_3_6_1; }
 		
 		//PathName
-		public RuleCall getStylePathNameParserRuleCall_2_7_1_0() { return cStylePathNameParserRuleCall_2_7_1_0; }
+		public RuleCall getStylePathNameParserRuleCall_3_6_1_0() { return cStylePathNameParserRuleCall_3_6_1_0; }
 		
 		//('version' version=VersionNumber)?
-		public Group getGroup_2_8() { return cGroup_2_8; }
+		public Group getGroup_3_7() { return cGroup_3_7; }
 		
 		//'version'
-		public Keyword getVersionKeyword_2_8_0() { return cVersionKeyword_2_8_0; }
+		public Keyword getVersionKeyword_3_7_0() { return cVersionKeyword_3_7_0; }
 		
 		//version=VersionNumber
-		public Assignment getVersionAssignment_2_8_1() { return cVersionAssignment_2_8_1; }
+		public Assignment getVersionAssignment_3_7_1() { return cVersionAssignment_3_7_1; }
 		
 		//VersionNumber
-		public RuleCall getVersionVersionNumberParserRuleCall_2_8_1_0() { return cVersionVersionNumberParserRuleCall_2_8_1_0; }
+		public RuleCall getVersionVersionNumberParserRuleCall_3_7_1_0() { return cVersionVersionNumberParserRuleCall_3_7_1_0; }
 		
 		//('created' created=Date createcomment=STRING?)?
-		public Group getGroup_2_9() { return cGroup_2_9; }
+		public Group getGroup_3_8() { return cGroup_3_8; }
 		
 		//'created'
-		public Keyword getCreatedKeyword_2_9_0() { return cCreatedKeyword_2_9_0; }
+		public Keyword getCreatedKeyword_3_8_0() { return cCreatedKeyword_3_8_0; }
 		
 		//created=Date
-		public Assignment getCreatedAssignment_2_9_1() { return cCreatedAssignment_2_9_1; }
+		public Assignment getCreatedAssignment_3_8_1() { return cCreatedAssignment_3_8_1; }
 		
 		//Date
-		public RuleCall getCreatedDateParserRuleCall_2_9_1_0() { return cCreatedDateParserRuleCall_2_9_1_0; }
+		public RuleCall getCreatedDateParserRuleCall_3_8_1_0() { return cCreatedDateParserRuleCall_3_8_1_0; }
 		
 		//createcomment=STRING?
-		public Assignment getCreatecommentAssignment_2_9_2() { return cCreatecommentAssignment_2_9_2; }
+		public Assignment getCreatecommentAssignment_3_8_2() { return cCreatecommentAssignment_3_8_2; }
 		
 		//STRING
-		public RuleCall getCreatecommentSTRINGTerminalRuleCall_2_9_2_0() { return cCreatecommentSTRINGTerminalRuleCall_2_9_2_0; }
+		public RuleCall getCreatecommentSTRINGTerminalRuleCall_3_8_2_0() { return cCreatecommentSTRINGTerminalRuleCall_3_8_2_0; }
 		
 		//('modified' modified=Date modcomment=STRING?)?
-		public Group getGroup_2_10() { return cGroup_2_10; }
+		public Group getGroup_3_9() { return cGroup_3_9; }
 		
 		//'modified'
-		public Keyword getModifiedKeyword_2_10_0() { return cModifiedKeyword_2_10_0; }
+		public Keyword getModifiedKeyword_3_9_0() { return cModifiedKeyword_3_9_0; }
 		
 		//modified=Date
-		public Assignment getModifiedAssignment_2_10_1() { return cModifiedAssignment_2_10_1; }
+		public Assignment getModifiedAssignment_3_9_1() { return cModifiedAssignment_3_9_1; }
 		
 		//Date
-		public RuleCall getModifiedDateParserRuleCall_2_10_1_0() { return cModifiedDateParserRuleCall_2_10_1_0; }
+		public RuleCall getModifiedDateParserRuleCall_3_9_1_0() { return cModifiedDateParserRuleCall_3_9_1_0; }
 		
 		//modcomment=STRING?
-		public Assignment getModcommentAssignment_2_10_2() { return cModcommentAssignment_2_10_2; }
+		public Assignment getModcommentAssignment_3_9_2() { return cModcommentAssignment_3_9_2; }
 		
 		//STRING
-		public RuleCall getModcommentSTRINGTerminalRuleCall_2_10_2_0() { return cModcommentSTRINGTerminalRuleCall_2_10_2_0; }
+		public RuleCall getModcommentSTRINGTerminalRuleCall_3_9_2_0() { return cModcommentSTRINGTerminalRuleCall_3_9_2_0; }
 	}
 	public class DefinitionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Definition");
@@ -1050,12 +1029,6 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cBodyAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cBodyStatementBodyParserRuleCall_2_0 = (RuleCall)cBodyAssignment_2.eContents().get(0);
 		
-		/////*
-		//// * Body of a statement that can also contain a value which gets fired
-		//// */
-		////StatementBodyOrFiredValue returns StatementBody:
-		////	verb=MessageCall | group=StatementGroup | value=Value
-		////;
 		//WhileStatement:
 		//	'while' expression=EXPR body=StatementBody;
 		@Override public ParserRule getRule() { return rule; }
@@ -3737,11 +3710,11 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Preamble:
 	//	{Preamble} ((app?=('app' | 'job') | test?='testcase' | user?='user' | library?=('trait' | 'library') |
-	//	behavior?=('behavior' | 'behaviour')) name=PathName)? (('import' imports+=PathName (',' imports+=PathName)*)? &
-	//	('worldview' worldview=PathName)? & ('observable' (observable=OBSERVABLE | observables=List))? & ('label'
-	//	label=(LOWERCASE_ID | ID | STRING))? & ('description' description=STRING)? & ('permissions' permissions=STRING)? &
-	//	('author' authors+=STRING)* & ('style' style=PathName)? & ('version' version=VersionNumber)? & ('created'
-	//	created=Date createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?);
+	//	behavior?=('behavior' | 'behaviour')) name=PathName)?
+	//	label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? &
+	//	('observable' (observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
+	//	permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? & ('version' version=VersionNumber)? &
+	//	('created' created=Date createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?);
 	public PreambleElements getPreambleAccess() {
 		return pPreamble;
 	}
@@ -3879,12 +3852,6 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		return getStatementBodyAccess().getRule();
 	}
 	
-	/////*
-	//// * Body of a statement that can also contain a value which gets fired
-	//// */
-	////StatementBodyOrFiredValue returns StatementBody:
-	////	verb=MessageCall | group=StatementGroup | value=Value
-	////;
 	//WhileStatement:
 	//	'while' expression=EXPR body=StatementBody;
 	public WhileStatementElements getWhileStatementAccess() {

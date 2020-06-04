@@ -91,10 +91,13 @@ public class ViewBehavior {
 			}
 
 			/*
-			 * bind the listener ID that matches the fire actions to the bindId in the actor, so that the
-			 * view message can simulate a fire
+			 * if there are associated actions, bind the listener ID that matches the fire
+			 * actions to the bindId in the actor, so that the view message can simulate a
+			 * fire
 			 */
-			identity.getActor().tell(new BindUserAction(scope.listenerId, bindId));
+			if (scope.listenerId != null) {
+				identity.getActor().tell(new BindUserAction(scope.listenerId, bindId));
+			}
 		}
 
 		/**
@@ -175,6 +178,28 @@ public class ViewBehavior {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.PushButton);
 			message.setName(this.evaluateArgument(0, scope, "Button Text"));
+			return message;
+		}
+
+		@Override
+		protected Object getFiredResult(ViewAction action) {
+			return DEFAULT_FIRE;
+		}
+	}
+	
+	@Action(id = "label")
+	public static class Label extends KlabWidgetAction {
+
+		public Label(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		public ViewComponent createViewComponent(Scope scope) {
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.Label);
+			message.setContent(this.evaluateArgument(0, scope, "Label text"));
 			return message;
 		}
 

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.ide.ui;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -33,7 +35,7 @@ public class AppView extends Composite {
 
 	private Composite parent;
 	private Map<String, Composite> containers = new HashMap<>();
-	private Object currentLayout;
+	private Layout currentLayout;
 
 	public AppView(boolean horizontal, Composite parent, int style, ViewPart view) {
 		super(parent, style);
@@ -46,7 +48,7 @@ public class AppView extends Composite {
 		ret.marginWidth = 0;
 		ret.verticalSpacing = 0;
 		ret.marginHeight = 0;
-		ret.horizontalSpacing = 0;
+		ret.horizontalSpacing = 2;
 		return ret;
 	}
 	
@@ -141,19 +143,12 @@ public class AppView extends Composite {
 	private void makeComponent(ViewComponent component, Composite parent) {
 		
 		switch (component.getType()) {
-		case Alert:
-			Eclipse.INSTANCE.alert(component.getContent());
-			break;
 		case CheckButton:
 			break;
 		case Combo:
 			break;
-		case Confirm:
-			break;
 		case Container:
 		case MultiContainer:
-			// composite, add to map
-			break;
 		case Group:
 			Composite group = component.getName() == null ? new Composite(parent, SWT.NONE)
 					: new Group(parent, SWT.NONE);
@@ -169,10 +164,16 @@ public class AppView extends Composite {
 		case Map:
 			break;
 		case Panel:
+			makePanel(Collections.singletonList((ViewPanel)component), parent);
+			break;
+		case Label:
+			Label label = new Label(parent, SWT.NONE);
+			label.setText(component.getContent());
+			label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 			break;
 		case PushButton:
 			Button button = new Button(parent, SWT.NONE);
-			button.setText(component.getName() == null ? "Push me" : component.getName());
+			button.setText(component.getName() == null ? "Button" : component.getName());
 			button.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -200,9 +201,14 @@ public class AppView extends Composite {
 			break;
 		case Tree:
 			break;
+		case Table:
+			break;
+		case Text:
+			break;
 		case TreeItem:
 			break;
 		case View:
+			makeView((Layout)component, parent);
 			break;
 		default:
 			break;
@@ -227,10 +233,14 @@ public class AppView extends Composite {
 
 		this.currentLayout = layout;
 		this.containers.clear();
+		
+		refreshView();
+	}
 
+	private void refreshView() {
 		Display.getDefault().asyncExec(() -> {
 			this.setLayout(gridLayout(1, true));
-			Composite app = makeView(layout, this);
+			Composite app = makeView(this.currentLayout, this);
 			app.setLayout(gridLayout(1, true));
 			app.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			// parent.setSize(this.view.get);
@@ -238,9 +248,27 @@ public class AppView extends Composite {
 			parent.layout(true);
 		});
 	}
-
+	
 	public synchronized void addWidget(IMessage message) {
-		ViewComponent widget = message.getPayload(ViewComponent.class);
+		ViewComponent component = message.getPayload(ViewComponent.class);
+		if (component.getType() == ViewComponent.Type.Alert) {
+			Eclipse.INSTANCE.alert(component.getContent());
+		} else if (component.getType() == ViewComponent.Type.Alert) {
+			boolean choice = Eclipse.INSTANCE.confirm(component.getContent());
+			Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.ViewAction,
+					new ViewAction(component, choice));
+		} else if (component.getParentId() != null && this.containers.containsKey(component.getParentId())) {
+
+			// TODO add component to layout
+			makeComponent(component, this.containers.get(component.getParentId()));
+
+			// TODO refresh view
+			refreshView();
+			
+		} else {
+			System.err.println("INTERNAL: got widget outside of known container");
+		}
+
 		// TODO parent must be a known container
 
 		// save message ID for responding when interacted with

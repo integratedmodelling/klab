@@ -22,11 +22,11 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isLibrary <em>Library</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getImports <em>Imports</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getWorldview <em>Worldview</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getObservables <em>Observables</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getDescription <em>Description</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getAuthors <em>Authors</em>}</li>
@@ -177,6 +177,28 @@ public interface Preamble extends EObject
   void setName(String value);
 
   /**
+   * Returns the value of the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Label</em>' attribute.
+   * @see #setLabel(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Label()
+   * @model
+   * @generated
+   */
+  String getLabel();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Label</em>' attribute.
+   * @see #getLabel()
+   * @generated
+   */
+  void setLabel(String value);
+
+  /**
    * Returns the value of the '<em><b>Imports</b></em>' attribute list.
    * The list contents are of type {@link java.lang.String}.
    * <!-- begin-user-doc -->
@@ -253,28 +275,6 @@ public interface Preamble extends EObject
    * @generated
    */
   void setObservables(List value);
-
-  /**
-   * Returns the value of the '<em><b>Label</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Label</em>' attribute.
-   * @see #setLabel(String)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Label()
-   * @model
-   * @generated
-   */
-  String getLabel();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Label</em>' attribute.
-   * @see #getLabel()
-   * @generated
-   */
-  void setLabel(String value);
 
   /**
    * Returns the value of the '<em><b>Description</b></em>' attribute.

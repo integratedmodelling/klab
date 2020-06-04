@@ -37,11 +37,11 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isLibrary <em>Library</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getImports <em>Imports</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getWorldview <em>Worldview</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getObservables <em>Observables</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getAuthors <em>Authors</em>}</li>
@@ -178,6 +178,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected String name = NAME_EDEFAULT;
 
   /**
+   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected static final String LABEL_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected String label = LABEL_EDEFAULT;
+
+  /**
    * The cached value of the '{@link #getImports() <em>Imports</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -236,26 +256,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected List observables;
-
-  /**
-   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLabel()
-   * @generated
-   * @ordered
-   */
-  protected static final String LABEL_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLabel()
-   * @generated
-   * @ordered
-   */
-  protected String label = LABEL_EDEFAULT;
 
   /**
    * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
@@ -584,6 +584,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public String getLabel()
+  {
+    return label;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLabel(String newLabel)
+  {
+    String oldLabel = label;
+    label = newLabel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LABEL, oldLabel, label));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<String> getImports()
   {
     if (imports == null)
@@ -691,31 +716,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLES, newObservables, newObservables));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String getLabel()
-  {
-    return label;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setLabel(String newLabel)
-  {
-    String oldLabel = label;
-    label = newLabel;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LABEL, oldLabel, label));
   }
 
   /**
@@ -1025,6 +1025,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return isBehavior();
       case KactorsPackage.PREAMBLE__NAME:
         return getName();
+      case KactorsPackage.PREAMBLE__LABEL:
+        return getLabel();
       case KactorsPackage.PREAMBLE__IMPORTS:
         return getImports();
       case KactorsPackage.PREAMBLE__WORLDVIEW:
@@ -1033,8 +1035,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return getObservable();
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         return getObservables();
-      case KactorsPackage.PREAMBLE__LABEL:
-        return getLabel();
       case KactorsPackage.PREAMBLE__DESCRIPTION:
         return getDescription();
       case KactorsPackage.PREAMBLE__PERMISSIONS:
@@ -1086,6 +1086,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__NAME:
         setName((String)newValue);
         return;
+      case KactorsPackage.PREAMBLE__LABEL:
+        setLabel((String)newValue);
+        return;
       case KactorsPackage.PREAMBLE__IMPORTS:
         getImports().clear();
         getImports().addAll((Collection<? extends String>)newValue);
@@ -1098,9 +1101,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         setObservables((List)newValue);
-        return;
-      case KactorsPackage.PREAMBLE__LABEL:
-        setLabel((String)newValue);
         return;
       case KactorsPackage.PREAMBLE__DESCRIPTION:
         setDescription((String)newValue);
@@ -1162,6 +1162,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__NAME:
         setName(NAME_EDEFAULT);
         return;
+      case KactorsPackage.PREAMBLE__LABEL:
+        setLabel(LABEL_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__IMPORTS:
         getImports().clear();
         return;
@@ -1173,9 +1176,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         setObservables((List)null);
-        return;
-      case KactorsPackage.PREAMBLE__LABEL:
-        setLabel(LABEL_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__DESCRIPTION:
         setDescription(DESCRIPTION_EDEFAULT);
@@ -1230,6 +1230,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return behavior != BEHAVIOR_EDEFAULT;
       case KactorsPackage.PREAMBLE__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case KactorsPackage.PREAMBLE__LABEL:
+        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case KactorsPackage.PREAMBLE__IMPORTS:
         return imports != null && !imports.isEmpty();
       case KactorsPackage.PREAMBLE__WORLDVIEW:
@@ -1238,8 +1240,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         return observables != null;
-      case KactorsPackage.PREAMBLE__LABEL:
-        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case KactorsPackage.PREAMBLE__DESCRIPTION:
         return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
       case KactorsPackage.PREAMBLE__PERMISSIONS:
@@ -1285,14 +1285,14 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(behavior);
     result.append(", name: ");
     result.append(name);
+    result.append(", label: ");
+    result.append(label);
     result.append(", imports: ");
     result.append(imports);
     result.append(", worldview: ");
     result.append(worldview);
     result.append(", observable: ");
     result.append(observable);
-    result.append(", label: ");
-    result.append(label);
     result.append(", description: ");
     result.append(description);
     result.append(", permissions: ");

@@ -610,14 +610,12 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *             ) 
 	 *             name=PathName
 	 *         )? 
+	 *         label=STRING? 
 	 *         (
 	 *             (
 	 *                 worldview=PathName | 
 	 *                 observable=OBSERVABLE | 
 	 *                 observables=List | 
-	 *                 label=LOWERCASE_ID | 
-	 *                 label=ID | 
-	 *                 label=STRING | 
 	 *                 description=STRING | 
 	 *                 permissions=STRING | 
 	 *                 authors+=STRING | 

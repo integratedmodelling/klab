@@ -14,11 +14,11 @@ Preamble: {Preamble}
 	// can be called jobs (for automation w/o a view) or testcases (same for testing, in which case they will
 	// identify test actions with @test and execute them with assertions enabled).
 	((app?=('app'|'job') | test?='testcase' | user?='user' | library?=('trait'|'library') | behavior?=('behavior'|'behaviour')) name=PathName)?
+	label=STRING?
 	(
 		('import' imports+=PathName (',' imports+=PathName)*)? &
 		('worldview' worldview=PathName)? &
 		('observable' (observable=OBSERVABLE | observables=List))? &
-		('label' label=(LOWERCASE_ID|ID|STRING))? &
 		('description' description=STRING)? &
 		('permissions' permissions=STRING)? &
 		('author' authors+=STRING)* &
@@ -99,13 +99,6 @@ IfStatement:
  * Body of a statement is either a single message call (or fired value) or a set thereof in a group.
  * */
 StatementBody: verb=MessageCall | value=Value | group=StatementGroup;
-
-///*
-// * Body of a statement that can also contain a value which gets fired
-// */
-//StatementBodyOrFiredValue returns StatementBody:
-//	verb=MessageCall | group=StatementGroup | value=Value
-//;
 
 WhileStatement:
 	'while' expression=EXPR body=StatementBody

@@ -160,13 +160,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__NAME = 5;
 
   /**
+   * The feature id for the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__LABEL = 6;
+
+  /**
    * The feature id for the '<em><b>Imports</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__IMPORTS = 6;
+  int PREAMBLE__IMPORTS = 7;
 
   /**
    * The feature id for the '<em><b>Worldview</b></em>' attribute.
@@ -175,7 +184,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__WORLDVIEW = 7;
+  int PREAMBLE__WORLDVIEW = 8;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' attribute.
@@ -184,7 +193,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__OBSERVABLE = 8;
+  int PREAMBLE__OBSERVABLE = 9;
 
   /**
    * The feature id for the '<em><b>Observables</b></em>' containment reference.
@@ -193,16 +202,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__OBSERVABLES = 9;
-
-  /**
-   * The feature id for the '<em><b>Label</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PREAMBLE__LABEL = 10;
+  int PREAMBLE__OBSERVABLES = 10;
 
   /**
    * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -2576,6 +2576,17 @@ public interface KactorsPackage extends EPackage
   EAttribute getPreamble_Name();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Label</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#getLabel()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_Label();
+
+  /**
    * Returns the meta object for the attribute list '{@link org.integratedmodelling.kactors.kactors.Preamble#getImports <em>Imports</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2618,17 +2629,6 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getPreamble_Observables();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Label</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Preamble#getLabel()
-   * @see #getPreamble()
-   * @generated
-   */
-  EAttribute getPreamble_Label();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getDescription <em>Description</em>}'.
@@ -4987,6 +4987,14 @@ public interface KactorsPackage extends EPackage
     EAttribute PREAMBLE__NAME = eINSTANCE.getPreamble_Name();
 
     /**
+     * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__LABEL = eINSTANCE.getPreamble_Label();
+
+    /**
      * The meta object literal for the '<em><b>Imports</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5017,14 +5025,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference PREAMBLE__OBSERVABLES = eINSTANCE.getPreamble_Observables();
-
-    /**
-     * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute PREAMBLE__LABEL = eINSTANCE.getPreamble_Label();
 
     /**
      * The meta object literal for the '<em><b>Description</b></em>' attribute feature.

@@ -310,7 +310,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
 
 		this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
-
+		this.listeners.clear();
+		this.actionBindings.clear();
+		this.actionCache.clear();
+		
 		Layout view = Actors.INSTANCE.getView(behavior, this.identity);
 		if (!view.empty()) {
 			this.identity.setLayout(view);

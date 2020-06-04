@@ -27,10 +27,10 @@ public class ViewAction {
 		this.component = component;
 		this.stringValue = stringValue;
 	}
-
 	
-	public ViewAction(boolean response) {
-		this.booleanValue = response;
+	public ViewAction(ViewComponent component, boolean value) {
+		this.component = component;
+		this.booleanValue = value;
 	}
 
 	public Boolean isBooleanValue() {
