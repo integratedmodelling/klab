@@ -13,17 +13,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
-import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
+import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -53,7 +56,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.BehaviorReference;
-import org.integratedmodelling.klab.rest.View;
+import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.Pair;
@@ -501,15 +504,15 @@ public enum Actors implements IActorsService {
 		return null;
 	}
 
-	public View getView(IBehavior behavior) {
+	public Layout getView(IBehavior behavior, @Nullable IIdentity identity) {
 
-		this.groupCounter = 0;
+		ViewScope scope = new ViewScope(identity);
 
 		/*
 		 * collect info about the UI in a bean. If not empty, send bean so that the UI
 		 * can prepare.
 		 */
-		View view = new View(behavior.getName());
+		Layout view = new Layout(behavior.getName());
 		view.setStyle(behavior.getStatement().getStyle());
 		for (IBehavior.Action action : behavior.getActions()) {
 
@@ -554,18 +557,47 @@ public enum Actors implements IActorsService {
 				 * visit action for view calls: if there is any call to the view actor, add the
 				 * "default" panel unless already added
 				 */
-				visitViewActions(action, panel);
+				visitViewActions(action, panel, scope);
 			}
 		}
 
 		return view;
 	}
 
-	// FIXME add in parameters!
-	private int groupCounter;
+	private class ViewScope {
+		IIdentity identity;
+		boolean optional = false;
+		boolean repeated = false;
+		private Integer groupCounter = new Integer(0);
 
-	public ViewComponent getChildComponent(IKActorsStatement.ConcurrentGroup group, ViewComponent parent) {
+		public ViewScope(IIdentity identity) {
+			this.identity = identity;
+		}
+
+		public ViewScope(ViewScope scope) {
+			this.identity = scope.identity;
+			this.repeated = scope.repeated;
+			this.optional = scope.optional;
+			this.groupCounter = scope.groupCounter;
+		}
+
+		public ViewScope repeated() {
+			ViewScope ret = new ViewScope(this);
+			ret.repeated = true;
+			return ret;
+		}
+
+		public ViewScope optional() {
+			ViewScope ret = new ViewScope(this);
+			ret.optional = true;
+			return ret;
+		}
+	}
+
+	public ViewComponent getChildComponent(IKActorsStatement.ConcurrentGroup group, ViewComponent parent,
+			ViewScope scope) {
 		ViewComponent ret = new ViewComponent();
+		ret.setIdentity(scope.identity == null ? null : scope.identity.getId());
 		ret.setType(ViewComponent.Type.Group);
 		if (group.getGroupMetadata().containsKey("name")) {
 			ret.setName(group.getGroupMetadata().get("name").getValue().toString());
@@ -574,7 +606,7 @@ public enum Actors implements IActorsService {
 		if (group.getGroupMetadata().containsKey("id")) {
 			id = group.getGroupMetadata().get("id").getValue().toString();
 		} else {
-			id = "g" + (groupCounter++);
+			id = "g" + (scope.groupCounter++);
 		}
 		setViewMetadata(ret, group.getGroupMetadata());
 		ret.setId(parent.getId() + "/" + id);
@@ -593,63 +625,68 @@ public enum Actors implements IActorsService {
 		 */
 	}
 
-	private void visitViewActions(IBehavior.Action action, ViewPanel panel) {
+	private void visitViewActions(IBehavior.Action action, ViewPanel panel, ViewScope scope) {
 		IKActorsStatement code = ((BehaviorAction) action).getStatement().getCode();
-		visitViewActions(code, panel, false, false, 0);
+		visitViewActions(code, panel, 0, scope);
 	}
 
-	private void visitViewActions(IKActorsStatement statement, ViewComponent scope, boolean optionalScope,
-			boolean repeatedScope, int level) {
+	private void visitViewActions(IKActorsStatement statement, ViewComponent parent, int level, ViewScope scope) {
 		switch (statement.getType()) {
 		case ACTION_CALL:
-			ViewComponent component = getViewComponent((IKActorsStatement.Call) statement, optionalScope,
-					repeatedScope);
+			ViewComponent component = getViewComponent((IKActorsStatement.Call) statement, scope);
 			if (component != null) {
-				scope.getComponents().add(component);
+				parent.getComponents().add(component);
 			}
 			break;
 		case ASSIGNMENT:
 			// see if this is a masked action call
 			break;
 		case CONCURRENT_GROUP:
-			if (((IKActorsStatement.ConcurrentGroup) statement).getStatements().size() == 1) {
-				visitViewActions(((IKActorsStatement.ConcurrentGroup) statement).getStatements().get(0), scope,
-						optionalScope, repeatedScope, level);
-			} else {
-				scope = level == 0 ? scope : getChildComponent((IKActorsStatement.ConcurrentGroup) statement, scope);
-				for (IKActorsStatement sequence : ((IKActorsStatement.ConcurrentGroup) statement).getStatements()) {
-					visitViewActions(sequence, scope, optionalScope, repeatedScope, level + 1);
-				}
+			parent = level == 0 ? parent
+					: getChildComponent((IKActorsStatement.ConcurrentGroup) statement, parent, scope);
+			for (IKActorsStatement sequence : ((IKActorsStatement.ConcurrentGroup) statement).getStatements()) {
+				visitViewActions(sequence, parent, level + 1, scope);
 			}
 			break;
 		case DO_STATEMENT:
-			// visit code with optionalScope = true, repeatedScope = true
-			break;
-		case FIRE_VALUE:
+			// visit code with scope.optional().repeated()
+			visitViewActions(((IKActorsStatement.Do) statement).getBody(), parent, level, scope.optional().repeated());
 			break;
 		case FOR_STATEMENT:
-			// visit code with optionalScope = true, repeatedScope = true
+			// visit code with scope.optional().repeated()
+			visitViewActions(((IKActorsStatement.For) statement).getBody(), parent, level, scope.optional().repeated());
 			break;
 		case IF_STATEMENT:
-			// visit code with optionalScope = true
+			visitViewActions(((IKActorsStatement.If) statement).getThen(), parent, level, scope.optional());
+			for (Pair<IKActorsValue, IKActorsStatement> elseif : ((IKActorsStatement.If) statement).getElseIfs()) {
+				visitViewActions(elseif.getSecond(), parent, level, scope.optional());
+			}
+			if (((IKActorsStatement.If) statement).getElse() != null) {
+				visitViewActions(((IKActorsStatement.If) statement).getElse(), parent, level, scope.optional());
+
+			}
 			break;
 		case SEQUENCE:
 			// dig in in same scope
 			for (IKActorsStatement sequence : ((IKActorsStatement.Sequence) statement).getStatements()) {
-				visitViewActions(sequence, scope, optionalScope, repeatedScope, level);
+				visitViewActions(sequence, parent, level, scope);
 			}
 			break;
 		case TEXT_BLOCK:
-			// add text widget to scope
+			// TODO add text widget to scope
 			break;
 		case WHILE_STATEMENT:
+			visitViewActions(((IKActorsStatement.While) statement).getBody(), parent, level,
+					scope.optional().repeated());
+			break;
+		case FIRE_VALUE:
 			break;
 		default:
 			break;
 		}
 	}
 
-	private ViewComponent getViewComponent(Call statement, boolean optionalScope, boolean repeatedScope) {
+	private ViewComponent getViewComponent(Call statement, ViewScope scope) {
 
 		Class<? extends KlabAction> cls = Actors.INSTANCE.getActionClass(statement.getMessage());
 		ViewComponent ret = null;
@@ -659,7 +696,7 @@ public enum Actors implements IActorsService {
 				/*
 				 * check if the arguments are variable
 				 */
-				boolean dynamic = optionalScope || repeatedScope;
+				boolean dynamic = scope.optional || scope.repeated;
 				if (!dynamic && statement.getArguments() != null) {
 					for (Object arg : statement.getArguments().values()) {
 						if (arg instanceof KActorsValue && ((KActorsValue) arg).isVariable()) {
@@ -671,8 +708,8 @@ public enum Actors implements IActorsService {
 
 				if (!dynamic) {
 					// just a prototype
-					KlabWidgetAction action = (KlabWidgetAction) getSystemAction(statement.getMessage(),
-							null, statement.getArguments(), null, null, ((KActorsActionCall) statement).getInternalId());
+					KlabWidgetAction action = (KlabWidgetAction) getSystemAction(statement.getMessage(), null,
+							statement.getArguments(), null, null, ((KActorsActionCall) statement).getInternalId());
 					if (action != null) {
 						ret = action.getViewComponent();
 					}
@@ -682,32 +719,30 @@ public enum Actors implements IActorsService {
 				 * if we got here, we should return a placeholder
 				 */
 				if (ret == null) {
-					ret = new ViewComponent();
-					ret.setType(ViewComponent.Type.Container);
-					if (repeatedScope) {
-						ret.setContainedType(ViewComponent.Type.Group);
-					}
+					ret.setIdentity(scope.identity == null ? null : scope.identity.getId());
+					ret.setType(scope.repeated ? ViewComponent.Type.MultiContainer : ViewComponent.Type.Container);
 				}
 
 				setViewMetadata(ret, statement.getArguments());
+				ret.setIdentity(scope.identity == null ? null : scope.identity.getId());
 				ret.setId(((KActorsActionCall) statement).getInternalId());
 
 			}
 		}
 		return ret;
 	}
-	
-	public String dumpView(View view) {
+
+	public String dumpView(Layout view) {
 		StringBuffer ret = new StringBuffer(2048);
 		dumpView(view, ret, 0);
 		return ret.toString();
 	}
 
-	public void dumpView(View view, StringBuffer ret, int offset) {
+	public void dumpView(Layout view, StringBuffer ret, int offset) {
 
 		String spacer = StringUtil.spaces(offset);
 
-		ret.append(spacer +  "View " + view.getName() + "\n");
+		ret.append(spacer + "View " + view.getName() + "\n");
 
 		if (view.getHeader() != null) {
 			dumpPanel(view.getHeader(), "Header", ret, offset + 3);
@@ -744,9 +779,10 @@ public enum Actors implements IActorsService {
 	}
 
 	private void dumpComponent(ViewComponent component, StringBuffer ret, int offset) {
-		if (component instanceof View) {
-			dumpView((View) component, ret, offset);
-		} if (component instanceof ViewPanel) {
+		if (component instanceof Layout) {
+			dumpView((Layout) component, ret, offset);
+		}
+		if (component instanceof ViewPanel) {
 			dumpPanel((ViewPanel) component, "Panel", ret, offset);
 		} else {
 			String spacer = StringUtil.spaces(offset);

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -7,12 +8,13 @@ public class ViewAction {
 
 	private ViewComponent component;
 	
-	private boolean booleanValue;
-	private double doubleValue;
-	private int intValue;
-	private String stringValue;
-	private List<String> listValue;
-	private Map<String, String> mapValue;
+	private Boolean booleanValue = null;
+	private Double doubleValue = null; 
+	private Integer intValue = null;
+	private String stringValue = null;
+	private List<String> listValue = null; 
+	private Map<String, String> mapValue = null;
+	private Date dateValue = null;
 
 	public ViewAction() {
 	}
@@ -31,7 +33,7 @@ public class ViewAction {
 		this.booleanValue = response;
 	}
 
-	public boolean isBooleanValue() {
+	public Boolean isBooleanValue() {
 		return booleanValue;
 	}
 
@@ -39,7 +41,7 @@ public class ViewAction {
 		this.booleanValue = booleanValue;
 	}
 
-	public double getDoubleValue() {
+	public Double getDoubleValue() {
 		return doubleValue;
 	}
 
@@ -47,7 +49,7 @@ public class ViewAction {
 		this.doubleValue = doubleValue;
 	}
 
-	public int getIntValue() {
+	public Integer getIntValue() {
 		return intValue;
 	}
 
@@ -85,6 +87,14 @@ public class ViewAction {
 
 	public void setComponent(ViewComponent component) {
 		this.component = component;
+	}
+
+	public Date getDateValue() {
+		return dateValue;
+	}
+
+	public void setDateValue(Date dateValue) {
+		this.dateValue = dateValue;
 	}
 
 }

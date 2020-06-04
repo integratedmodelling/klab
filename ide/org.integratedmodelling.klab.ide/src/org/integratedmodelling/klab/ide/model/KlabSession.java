@@ -59,7 +59,7 @@ import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.ViewComponent;
-import org.integratedmodelling.klab.rest.View;
+import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -475,7 +475,7 @@ public class KlabSession extends KlabPeer {
 	}
 
 	@MessageHandler
-	public void handleCreateView(IMessage message, View component) {
+	public void handleCreateView(IMessage message, Layout component) {
 		Eclipse.INSTANCE.openView(SearchView.ID, null);
 		send(message);
 	}

@@ -36,7 +36,14 @@ public class SystemBehavior {
 			this.scope = scope;
 		}
 	}
-	
+
+	/**
+	 * Notify a user action from a view to the actor that must process it as a
+	 * message.
+	 * 
+	 * @author Ferd
+	 *
+	 */
 	public static class UserAction implements KlabMessage {
 
 		ViewAction action;
@@ -45,6 +52,25 @@ public class SystemBehavior {
 		public UserAction(ViewAction action, IRuntimeScope scope) {
 			this.action = action;
 			this.scope = scope;
+		}
+	}
+
+	/**
+	 * Bind an action's notification ID to the ID of a component in the associated
+	 * view, so that matches can be triggered from the view even if the view was
+	 * built before the action existed.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class BindUserAction implements KlabMessage {
+
+		long notifyId;
+		String componentId;
+
+		public BindUserAction(long notifyId, String componentId) {
+			this.notifyId = notifyId;
+			this.componentId = componentId;
 		}
 	}
 
@@ -99,7 +125,7 @@ public class SystemBehavior {
 			this.finalize = isFinal;
 			this.listenerId = listenerId;
 		}
-		
+
 		@Override
 		public String toString() {
 			return "[FIRE" + value + " @" + listenerId + "]";
@@ -126,7 +152,7 @@ public class SystemBehavior {
 
 		public KActorsMessage(ActorRef<KlabMessage> sender, String receiver, String actionId, String actionInternalId,
 				IParameters<String> arguments, KlabActor.Scope scope) {
-			
+
 			this.sender = sender;
 			this.receiver = receiver;
 			this.message = actionId;
@@ -136,7 +162,7 @@ public class SystemBehavior {
 			}
 			this.scope = scope;
 		}
-		
+
 		@Override
 		public String toString() {
 			return "[" + message + " @" + scope + "]";

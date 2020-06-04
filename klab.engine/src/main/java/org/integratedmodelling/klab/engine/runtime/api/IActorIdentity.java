@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.ViewComponent;
 
 import akka.actor.typed.ActorRef;
 
@@ -15,6 +17,30 @@ import akka.actor.typed.ActorRef;
  *
  */
 public interface IActorIdentity<T> extends IIdentity {
+
+	/**
+	 * An actor may have an associated view.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface View {
+
+		/**
+		 * The layout. Never null if there is a view.
+		 * 
+		 * @return
+		 */
+		Layout getLayout();
+
+		/**
+		 * Static layout components indexed by their action ID. Used to marshall
+		 * notifications and add components in dynamic views.
+		 * 
+		 * @return
+		 */
+		Map<String, ViewComponent> getStaticComponents();
+	}
 
 	/**
 	 * Get the actor peer for the identity. If the actor needs to be created, ask
@@ -47,5 +73,15 @@ public interface IActorIdentity<T> extends IIdentity {
 	 * @return
 	 */
 	Map<String, Object> getState();
+
+	/**
+	 * If the actor has a view associated, return it. Otherwise return null.
+	 * 
+	 * @return
+	 */
+	View getView();
+	
+	// must be in the API for now. Called to create the view.
+	void setLayout(Layout layout);
 
 }

@@ -11,8 +11,10 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
+import org.integratedmodelling.klab.rest.Layout;
 import org.springframework.security.core.GrantedAuthority;
 
 import akka.actor.typed.ActorRef;
@@ -23,6 +25,7 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	private IIdentity parent;
 	protected boolean online;
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private View view;
 
 	public KlabUser(String username, INodeIdentity node) {
 		super(username);
@@ -125,4 +128,13 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 		return globalState;
 	}
 
+	@Override
+	public View getView() {
+		return view;
+	}
+
+	@Override
+	public void setLayout(Layout layout) {
+		this.view = new ViewImpl(layout);
+	}
 }

@@ -23,7 +23,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.rest.View;
+import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
@@ -41,7 +41,7 @@ public class AppView extends Composite {
 		setLayout(new GridLayout(1, true));
 	}
 
-	private Composite makeView(View view, Composite parent) {
+	private Composite makeView(Layout view, Composite parent) {
 
 		Composite ret = new Composite(parent, SWT.NONE);
 		Composite header = null;
@@ -59,17 +59,17 @@ public class AppView extends Composite {
 		ret.setLayout(new GridLayout(1, true));
 
 		if (view.getHeader() != null) {
-			header = new Composite(ret, SWT.BORDER);
+			header = new Composite(ret, SWT.NONE);
 			header.setLayout(new GridLayout(view.getHeader().getComponents().size(), false));
 			header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 		}
 
-		center = new Composite(ret, SWT.BORDER);
+		center = new Composite(ret, SWT.NONE);
 		center.setLayout(new GridLayout(ncols, false));
 		center.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		if (view.getFooter() != null) {
-			footer = new Composite(ret, SWT.BORDER);
+			footer = new Composite(ret, SWT.NONE);
 			footer.setLayout(new GridLayout(view.getFooter().getComponents().size(), false));
 			footer.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 		}
@@ -117,7 +117,7 @@ public class AppView extends Composite {
 			}
 
 		} else if (panels.size() > 0) {
-			Composite innerFrame = new Composite(ret, SWT.BORDER);
+			Composite innerFrame = new Composite(ret, SWT.NONE);
 			innerFrame.setLayout(new GridLayout(1, false));
 			for (ViewComponent component : panels.get(0).getComponents()) {
 				makeComponent(component, innerFrame);
@@ -141,6 +141,7 @@ public class AppView extends Composite {
 		case Confirm:
 			break;
 		case Container:
+		case MultiContainer:
 			// composite, add to map
 			break;
 		case Group:
@@ -199,7 +200,7 @@ public class AppView extends Composite {
 
 	}
 
-	public void setup(View layout) {
+	public void setup(Layout layout) {
 
 		if (this.currentLayout != null) {
 
@@ -238,136 +239,4 @@ public class AppView extends Composite {
 //		Display.getDefault().asyncExec(() -> refresh());
 	}
 
-//	public void refresh() {
-//
-//		if (panels.size() > 1) {
-//
-//			if (this.tabFolder == null) {
-//
-//				this.tabFolder = new TabFolder(this, SWT.NONE);
-//				this.tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-//
-//				for (String panelId : panels.keySet()) {
-//					TabItem tbtmNewItem = new TabItem(tabFolder, SWT.NONE);
-//					tbtmNewItem.setText(StringUtil.capitalize(panelId));
-//					/* Scrolled */Composite scrolledComposite = new /* Scrolled */Composite(tabFolder,
-//							SWT.BORDER /* | SWT.H_SCROLL | SWT.V_SCROLL */);
-//					scrolledComposite.setLayout(new GridLayout(this.nColumns, true));
-//					tbtmNewItem.setControl(scrolledComposite);
-////					scrolledComposite.setExpandHorizontal(true);
-////					scrolledComposite.setExpandVertical(true);
-//					this.composites.put(panelId, scrolledComposite);
-//				}
-//			}
-//
-//		} else if (panels.size() > 0) {
-//
-//			if (composites.size() == 0) {
-//				/* Scrolled */Composite scrolledComposite = new /* Scrolled */Composite(this,
-//						SWT.BORDER /* | SWT.H_SCROLL | SWT.V_SCROLL */);
-////				scrolledComposite.setExpandHorizontal(true);
-////				scrolledComposite.setExpandVertical(true);
-//				scrolledComposite.setLayout(new GridLayout(1, true));
-//				scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-////				Composite composite_1 = new Composite(scrolledComposite, SWT.NONE);
-////				composite_1.setLayout(new GridLayout(1, false));
-////				composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-//				this.composites.put(panels.values().iterator().next().getName(), scrolledComposite);
-//			}
-//		}
-//
-//		for (String panelId : panels.keySet()) {
-//
-//			if (displayed.get(panelId) == 0) {
-//				// reset layout
-//			}
-//
-//			for (int i = 0; i < widgets.size(); i++) {
-//
-//				if (i < displayed.get(panelId)) {
-//					continue;
-//				}
-//
-//				ViewComponent widget = widgets.get(i);
-////				if (widget.getParentId() != null && !widget.getParentId().equals(panelId)) {
-////					continue;
-////				}
-//
-//				Composite panel = composites.get(panelId);
-//
-//				System.out.println("WIDGET " + widget);
-//
-//				if (widget.getTitle() != null) {
-//					// add label
-//				}
-//
-//				switch (widget.getType()) {
-//				case Alert:
-//					Eclipse.INSTANCE.alert(widget.getContent());
-//					break;
-//				case CheckButton:
-//					break;
-//				case Combo:
-//					break;
-//				case Confirm:
-//					break;
-//				case Footer:
-//					break;
-//				case Group:
-//					break;
-//				case Header:
-//					break;
-//				case Map:
-//					break;
-//				case Panel:
-//					break;
-//				case PushButton:
-//					Button button = new Button(panel, SWT.NONE);
-//					button.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-//					button.setText(widget.getContent() == null ? "Push me" : widget.getContent());
-//					button.addSelectionListener(new SelectionAdapter() {
-//						@Override
-//						public void widgetSelected(SelectionEvent e) {
-//							Activator.reply(widget.getData().get(MESSAGE_ID_KEY), IMessage.MessageClass.Run,
-//									IMessage.Type.RunScript, Repeatability.Repeatable, new ViewAction(widget));
-//						}
-//					});
-//					break;
-//				case RadioButton:
-//					break;
-//				case TextInput:
-//					Text text = new Text(panel, SWT.BORDER);
-//					text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-//					if (widget.getContent() != null) {
-//						text.setText(widget.getContent());
-//					}
-//					text.addModifyListener(new ModifyListener() {
-//						@Override
-//						public void modifyText(ModifyEvent e) {
-//							Activator.reply(widget.getData().get(MESSAGE_ID_KEY), IMessage.MessageClass.Run,
-//									IMessage.Type.RunScript, Repeatability.Repeatable,
-//									new ViewAction(widget, text.getText()));
-//						}
-//					});
-//					break;
-//				case Tree:
-//					break;
-//				case TreeItem:
-//					break;
-//				default:
-//					break;
-//				}
-//
-//				// show widget
-//				// widget.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1,
-//				// 1));
-//			}
-//
-//			displayed.put(panelId, widgets.size());
-//		}
-//
-////		parent.setSize(this.view.get);
-//		parent.pack();
-//		parent.layout(true);
-//	}
 }

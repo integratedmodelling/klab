@@ -25,8 +25,10 @@ import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
@@ -39,6 +41,8 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -58,6 +62,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
 	private AtomicLong nextId = new AtomicLong(0);
+	private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * if we pre-build actions or we run repeatedly we cache them here. Important
@@ -239,13 +244,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	protected ReceiveBuilder<KlabMessage> configure() {
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
-		return builder
-				.onMessage(Load.class, this::loadBehavior)
-				.onMessage(Spawn.class, this::createChild)
-				.onMessage(Fire.class, this::reactToFire)
-				.onMessage(UserAction.class, this::reactToViewAction)
-				.onMessage(KActorsMessage.class, this::executeCall)
-				.onSignal(PostStop.class, signal -> onPostStop());
+		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
+				.onMessage(Fire.class, this::reactToFire).onMessage(UserAction.class, this::reactToViewAction)
+				.onMessage(BindUserAction.class, this::bindViewAction)
+				.onMessage(KActorsMessage.class, this::executeCall).onSignal(PostStop.class, signal -> onPostStop());
 	}
 
 	protected KlabActor onPostStop() {
@@ -255,11 +257,38 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected Behavior<KlabMessage> reactToViewAction(UserAction message) {
 
-		// TODO 
-		
+		Long notifyId = this.actionBindings.get(message.action.getComponent().getId());
+		if (notifyId != null) {
+			MatchActions actions = listeners.get(notifyId);
+			if (actions != null) {
+				actions.match(getActionValue(message.action));
+			}
+		}
 		return Behaviors.same();
 	}
-	
+
+	private Object getActionValue(ViewAction action) {
+		if (action.getStringValue() != null) {
+			return action.getStringValue();
+		} else if (action.getListValue() != null) {
+			return action.getListValue();
+		} else if (action.getMapValue() != null) {
+			return action.getMapValue();
+		} else if (action.getDateValue() != null) {
+			return action.getDoubleValue();
+		} else if (action.getIntValue() != null) {
+			return action.getIntValue();
+		} else if (action.getDoubleValue() != null) {
+			return action.getDoubleValue();
+		}
+		return null;
+	}
+
+	protected Behavior<KlabMessage> bindViewAction(BindUserAction message) {
+		this.actionBindings.put(message.componentId, message.notifyId);
+		return Behaviors.same();
+	}
+
 	protected Behavior<KlabMessage> reactToFire(Fire message) {
 		if (message.listenerId != null) {
 			MatchActions actions = listeners.get(message.listenerId);
@@ -282,6 +311,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
 
+		Layout view = Actors.INSTANCE.getView(behavior, this.identity);
+		if (!view.empty()) {
+			this.identity.setLayout(view);
+			((Session) this.identity).getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
+					view);
+		}
+		
 		/*
 		 * Init action called no matter what and before the behavior is set; the onLoad
 		 * callback intervenes afterwards.

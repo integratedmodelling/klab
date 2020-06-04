@@ -27,17 +27,14 @@ public class ViewComponent {
 	 */
 	public static enum Type {
 		Panel, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree,
-		TreeItem, Confirm, View, Container
+		TreeItem, Confirm, View, Container, MultiContainer
 		// etc
 	}
 
 	private String id;
+	private String identity;
 	private String parentId;
 	private Type type;
-	// type of contained object if the component is a container. The object will
-	// come later with this as parentId. May be a Group if multiple objects are
-	// expected.
-	private Type containedType;
 	private String name;
 	private String style;
 	private String title;
@@ -141,13 +138,13 @@ public class ViewComponent {
 		return "ViewComponent [parentId=" + parentId + ", type=" + type + ", name=" + name + ", title=" + title
 				+ ", content=" + content + ", data=" + data + "]";
 	}
-
-	public Type getContainedType() {
-		return containedType;
+	
+	public String getIdentity() {
+		return identity;
 	}
 
-	public void setContainedType(Type containedType) {
-		this.containedType = containedType;
+	public void setIdentity(String identity) {
+		this.identity = identity;
 	}
 
 }

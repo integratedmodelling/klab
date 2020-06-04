@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.Set;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
@@ -7,11 +9,13 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
+import org.integratedmodelling.klab.utils.NameGenerator;
 
 import akka.actor.typed.ActorRef;
 
@@ -33,8 +37,10 @@ public class ViewBehavior {
 	 * component (widget). The action visitor before running will use it to
 	 * predefine the UI. An action will be created before run() with the sole
 	 * purpose of creating the widgets.
-	 * 
-	 * Works this way:
+	 * <p>
+	 * The action's run() is called when the code is executed, a point where the
+	 * view has already received the correspondent ViewComponent or a container if
+	 * dynamic.
 	 * <ul>
 	 * <li>The view is set up by reflection on the behavior before the behavior is
 	 * loaded. All components that do not depend on runtime conditions (variable
@@ -43,20 +49,21 @@ public class ViewBehavior {
 	 * represent it in the actor.</li>
 	 * <li>The KlabWidgetAction::run method is called when the action is run in the
 	 * code. When run() is called, the following should happen:</li>
-	 * <li>The widget action checks if it is dynamic (compute first, then cache) and
-	 * if so, sends the ViewComponent code with the ID of the container (the
+	 * <li>1. The widget action checks if it is dynamic (compute first, then cache)
+	 * and if so, sends the ViewComponent code with the ID of the container (the
 	 * internalId of the call that has generated the action).</li>
-	 * <li>Bind the notifyId in the execution scope to each component ID (if
+	 * <li>2. Bind the notifyId in the execution scope to each component ID (if
 	 * dynamic) or the action internal ID (if static) so that session messages to
 	 * this actor can send the message to the actor to lookup the listeners and
 	 * invoke them.</li>
 	 * </ul>
 	 * 
-	 * 
 	 * @author Ferd
 	 *
 	 */
 	public static abstract class KlabWidgetAction extends KlabAction {
+
+		Boolean dynamic = null;
 
 		public KlabWidgetAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -65,22 +72,39 @@ public class ViewBehavior {
 
 		@Override
 		void run(Scope scope) {
+
 			Session session = this.identity.getParentIdentity(Session.class);
-			
 			String bindId = this.callId;
-			
+
+			// if deemed dynamic at view setup, we create and communicate the component here
+			if (this.identity.getView() != null && !this.identity.getView().getStaticComponents().containsKey(bindId)) {
+
+				bindId = "kad" + NameGenerator.shortUUID();
+
+				/*
+				 * dynamic: create component in scope and send it
+				 */
+				ViewComponent component = createViewComponent(scope);
+				component.setId(bindId);
+				component.setIdentity(this.identity.getId());
+				session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent,
+						component);
+			}
+
 			/*
-			 * send the component if needed; if so, give it a new ID and set bindId to it.
+			 * bind the listener ID that matches the fire actions to the bindId in the actor, so that the
+			 * view message can simulate a fire
 			 */
-			
-			/*
-			 * bind the notifyId to the bindId in the actor
-			 */
-			
-			
-			// disable for now.
-//			session.getMonitor().post((msg) -> fire(getFiredResult(msg.getPayload(ViewAction.class)), false),
-//					IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, getViewComponent());
+			identity.getActor().tell(new BindUserAction(scope.listenerId, bindId));
+		}
+
+		/**
+		 * Called only by static calls. Dynamic ones will use the call scope.
+		 * 
+		 * @return
+		 */
+		public ViewComponent getViewComponent() {
+			return createViewComponent(this.scope);
 		}
 
 		/**
@@ -97,7 +121,7 @@ public class ViewBehavior {
 		 * 
 		 * @return
 		 */
-		public abstract ViewComponent getViewComponent();
+		protected abstract ViewComponent createViewComponent(Scope scope);
 
 	}
 
@@ -148,7 +172,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public ViewComponent getViewComponent() {
+		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.PushButton);
 			message.setName(this.evaluateArgument(0, "Button Text"));
@@ -170,7 +194,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public ViewComponent getViewComponent() {
+		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.TextInput);
 			message.setContent(this.evaluateArgument(0, (String) null));

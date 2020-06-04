@@ -26,13 +26,16 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spa
 import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity.View;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.DebugFile;
@@ -66,7 +69,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	private String observationContextId;
 	// just for clients
 	private boolean contextualized;
-	
+	private View view;
+
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
 	 */
@@ -386,6 +390,16 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	public void finalizeTransition(IScale scale) {
 		// do nothing here
+	}
+	
+	@Override
+	public View getView() {
+		return view;
+	}
+
+	@Override
+	public void setLayout(Layout layout) {
+		this.view = new ViewImpl(layout);
 	}
 
 }

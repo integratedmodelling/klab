@@ -25,7 +25,7 @@ public class View implements ICommand {
 				throw new KlabResourceNotFoundException(id.toString());
 			}
 
-			org.integratedmodelling.klab.rest.View view = Actors.INSTANCE.getView(behavior);
+			org.integratedmodelling.klab.rest.Layout view = Actors.INSTANCE.getView(behavior, session);
 
 			ret += (ret.isEmpty() ? "" : "\n\n") + id + ":\n\n"
 					+ (json ? JsonUtils.printAsJson(view) : Actors.INSTANCE.dumpView(view));

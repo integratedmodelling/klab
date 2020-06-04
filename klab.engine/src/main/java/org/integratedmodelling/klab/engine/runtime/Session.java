@@ -67,7 +67,6 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
@@ -90,6 +89,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -115,6 +115,8 @@ import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
+import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.NetworkReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
@@ -131,7 +133,6 @@ import org.integratedmodelling.klab.rest.ResourceOperationRequest;
 import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
-import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
@@ -144,9 +145,10 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;
+import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.CollectionUtils;
-import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
@@ -184,6 +186,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private View view;
 
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
@@ -1212,6 +1215,17 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 	}
 
+	@MessageHandler
+	private void handleViewAction(ViewAction action) {
+
+		@SuppressWarnings("unchecked")
+		IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(action.getComponent().getIdentity(),
+				IActorIdentity.class);
+		if (receiver != null) {
+			receiver.getActor().tell(new UserAction(action, new SimpleRuntimeScope(this)));
+		}
+	}
+
 	/*
 	 * This can arrive with different message types
 	 */
@@ -1616,6 +1630,16 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	public Map<String, Object> getState() {
 		return globalState;
+	}
+
+	@Override
+	public View getView() {
+		return view;
+	}
+
+	@Override
+	public void setLayout(Layout layout) {
+		this.view = new ViewImpl(layout);
 	}
 
 }

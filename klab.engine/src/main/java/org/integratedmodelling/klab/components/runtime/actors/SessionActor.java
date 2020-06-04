@@ -1,25 +1,12 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.util.Map;
-
-import org.integratedmodelling.kactors.api.IKActorsStatement;
-import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
-import org.integratedmodelling.kactors.model.KActorsActionCall;
-import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
-import org.integratedmodelling.klab.api.actors.IBehavior.Action;
-import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
-import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetAction;
-import org.integratedmodelling.klab.components.runtime.actors.behavior.BehaviorAction;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.rest.View;
-import org.integratedmodelling.klab.rest.ViewComponent;
-import org.integratedmodelling.klab.rest.ViewPanel;
+import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.StringUtil;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
@@ -48,28 +35,29 @@ public class SessionActor extends KlabActor {
 		super(context, identity);
 	}
 
-	@Override
-	protected Behavior<KlabMessage> loadBehavior(Load message) {
-
-		IBehavior behavior = Actors.INSTANCE.getBehavior(message.behavior);
-
-		View view = Actors.INSTANCE.getView(behavior);
-		if (!view.empty()) {
-			((Session) identity).getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
-					view);
-		}
-
-		/*
-		 * spawn a new runtime actor and have it load the behavior
-		 */
-		ActorRef<KlabMessage> actor = getContext().spawn(RuntimeActor.create((Session) identity),
-				identity.getId() + NameGenerator.shortUUID());
-
-		actor.tell(message);
-
-		return Behaviors.same();
-
-	}
+//	@Override
+//	protected Behavior<KlabMessage> loadBehavior(Load message) {
+//
+//		IBehavior behavior = Actors.INSTANCE.getBehavior(message.behavior);
+//
+//		Layout view = Actors.INSTANCE.getView(behavior, this.identity);
+//		if (!view.empty()) {
+//			this.identity.setLayout(view);
+//			((Session) this.identity).getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
+//					view);
+//		}
+//
+//		/*
+//		 * spawn a new runtime actor and have it load the behavior
+//		 */
+//		ActorRef<KlabMessage> actor = getContext().spawn(RuntimeActor.create((Session) identity),
+//				identity.getId() + NameGenerator.shortUUID());
+//
+//		actor.tell(message);
+//
+//		return Behaviors.same();
+//
+//	}
 
 	@Override
 	protected ReceiveBuilder<KlabMessage> configure() {

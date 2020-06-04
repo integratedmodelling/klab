@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Sent from the back end to set up the interface. A View is a component with 0
+ * Sent from the back end to set up the interface. A Layout is a component with 0
  * or 1 header panel, 0 or 1 footer panel, 0 or more panels in the right, center
  * and left sections. The name of the view is the name of the behavior that
  * specifies it.
@@ -12,7 +12,7 @@ import java.util.List;
  * @author Ferd
  *
  */
-public class View extends ViewComponent {
+public class Layout extends ViewComponent {
 
 	public static final String DEFAULT_PANEL_NAME = "defaultpanel";
 
@@ -23,11 +23,11 @@ public class View extends ViewComponent {
 	private ViewPanel footer;
 	private String receivingIdentity;
 
-	public View() {
+	public Layout() {
 		setType(Type.View);
 	}
 
-	public View(String behaviorName) {
+	public Layout(String behaviorName) {
 		this();
 		setName(behaviorName);
 	}
