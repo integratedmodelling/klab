@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -78,10 +79,10 @@ public abstract class KlabAction {
 		fire(false, true);
 	}
 
-	protected Object evaluateArgument(String argument) {
+	protected Object evaluateArgument(String argument, Scope scope) {
 		Object arg = arguments.get(argument);
 		if (arg instanceof KActorsValue) {
-			arg = evaluateInContext((KActorsValue) arg);
+			arg = evaluateInContext((KActorsValue) arg, scope);
 		}
 		return arg;
 	}
@@ -99,7 +100,7 @@ public abstract class KlabAction {
 
 	}
 
-	protected Object evaluateInContext(KActorsValue arg) {
+	protected Object evaluateInContext(KActorsValue arg, Scope scope) {
 		switch (arg.getType()) {
 		case ANYTHING:
 		case ANYVALUE:
@@ -163,24 +164,24 @@ public abstract class KlabAction {
 		return null;
 	}
 
-	protected <T> T evaluateArgument(String argument, T defaultValue) {
-		Object arg = evaluateArgument(argument);
+	protected <T> T evaluateArgument(String argument, Scope scope, T defaultValue) {
+		Object arg = evaluateArgument(argument, scope);
 		return arg == null ? defaultValue
 				: Utils.asType(arg, defaultValue == null ? Object.class : defaultValue.getClass());
 	}
 
-	protected <T> T evaluateArgument(int argumentIndex, T defaultValue) {
-		Object arg = evaluateArgument(argumentIndex);
+	protected <T> T evaluateArgument(int argumentIndex, Scope scope, T defaultValue) {
+		Object arg = evaluateArgument(argumentIndex, scope);
 		return arg == null ? defaultValue
 				: Utils.asType(arg, defaultValue == null ? Object.class : defaultValue.getClass());
 	}
 
-	protected Object evaluateArgument(int argumentIndex) {
+	protected Object evaluateArgument(int argumentIndex, Scope scope) {
 		Object arg = null;
 		if (arguments != null && arguments.getUnnamedKeys().size() > argumentIndex) {
 			arg = arguments.get(arguments.getUnnamedKeys().get(argumentIndex));
 			if (arg instanceof KActorsValue) {
-				arg = evaluateInContext((KActorsValue) arg);
+				arg = evaluateInContext((KActorsValue) arg, scope);
 			}
 		}
 		return arg;

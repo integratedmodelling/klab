@@ -53,7 +53,7 @@ public class RuntimeBehavior {
 		@Override
 		void run(KlabActor.Scope scope) {
 
-			Object arg = evaluateArgument(0);
+			Object arg = evaluateArgument(0, scope);
 			if (arg instanceof Urn) {
 				try {
 					Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
@@ -112,7 +112,7 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 			List<Object> args = new ArrayList<>();
 			for (Object arg : arguments.values()) {
-				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
+				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
 			}
 			scope.runtimeScope.getMonitor().info(args.toArray());
 		}
@@ -130,7 +130,7 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 			List<Object> args = new ArrayList<>();
 			for (Object arg : arguments.values()) {
-				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
+				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
 			}
 			scope.runtimeScope.getMonitor().warn(args.toArray());
 		}
@@ -148,7 +148,7 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 			List<Object> args = new ArrayList<>();
 			for (Object arg : arguments.values()) {
-				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
+				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
 			}
 			scope.runtimeScope.getMonitor().error(args.toArray());
 		}
@@ -166,7 +166,7 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 			List<Object> args = new ArrayList<>();
 			for (Object arg : arguments.values()) {
-				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg) : arg);
+				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
 			}
 			scope.runtimeScope.getMonitor().debug(args.toArray());
 		}

@@ -34,7 +34,7 @@ public class ObjectBehavior {
 		void run(KlabActor.Scope scope) {
 
 			if (this.identity instanceof ISubject) {
-				Object arg = evaluateArgument(0);
+				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof IObservable) {
 					try {
 						Future<IObservation> future = ((ISubject) identity).observe(((IObservable) arg).getDefinition());

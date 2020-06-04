@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.util.Set;
-
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
@@ -139,7 +137,7 @@ public class ViewBehavior {
 			Session session = this.identity.getParentIdentity(Session.class);
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Alert);
-			message.setContent(this.evaluateArgument(0, "Alert"));
+			message.setContent(this.evaluateArgument(0, scope, "Alert"));
 			session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
 		}
 	}
@@ -157,7 +155,7 @@ public class ViewBehavior {
 			Session session = this.identity.getParentIdentity(Session.class);
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Confirm);
-			message.setContent(this.evaluateArgument(0, "Confirm"));
+			message.setContent(this.evaluateArgument(0, scope, "Confirm"));
 			session.getMonitor().post((msg) -> {
 				fire(msg.getPayload(ViewAction.class).isBooleanValue(), true);
 			}, IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
@@ -176,7 +174,7 @@ public class ViewBehavior {
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.PushButton);
-			message.setName(this.evaluateArgument(0, "Button Text"));
+			message.setName(this.evaluateArgument(0, scope, "Button Text"));
 			return message;
 		}
 
@@ -198,7 +196,7 @@ public class ViewBehavior {
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.TextInput);
-			message.setContent(this.evaluateArgument(0, (String) null));
+			message.setContent(this.evaluateArgument(0, scope, (String) null));
 			return message;
 		}
 
