@@ -86,6 +86,7 @@ public class ViewBehavior {
 				 */
 				ViewComponent component = createViewComponent(scope);
 				component.setId(bindId);
+				component.setParentId(this.callId);
 				component.setIdentity(this.identity.getId());
 				session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent,
 						component);
