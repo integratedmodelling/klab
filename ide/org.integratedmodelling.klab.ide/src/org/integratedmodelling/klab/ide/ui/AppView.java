@@ -140,6 +140,18 @@ public class AppView extends Composite {
 
 	}
 
+	/**
+	 * TODO add:
+	 * <ul>
+	 * <li>A log table (add text lines or notifications, show last first);</li>
+	 * <li>A pager for numbered subcomponents</li>
+	 * <li>Link text</li>
+	 * <li>A palette/bookmark component</li>
+	 * </ul>
+	 * 
+	 * @param component
+	 * @param parent
+	 */
 	private void makeComponent(ViewComponent component, Composite parent) {
 		
 		switch (component.getType()) {
@@ -150,6 +162,12 @@ public class AppView extends Composite {
 		case Container:
 		case MultiContainer:
 		case Group:
+			
+			/*
+			 * TODO: if it's a group of all groups, each subgroup should be a row and we should have
+			 * as many columns as the biggest group in the children, patching with empty labels
+			 */
+			
 			Composite group = component.getName() == null ? new Composite(parent, SWT.NONE)
 					: new Group(parent, SWT.NONE);
 			if (component.getName() != null) {

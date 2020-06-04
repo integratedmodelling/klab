@@ -118,7 +118,7 @@ public class RuntimeBehavior {
 		}
 	}
 
-	@Action(id = "warn", fires = {})
+	@Action(id = "warning", fires = {})
 	public static class Warning extends KlabAction {
 
 		public Warning(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
