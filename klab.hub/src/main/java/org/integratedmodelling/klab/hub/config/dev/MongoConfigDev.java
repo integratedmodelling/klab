@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.hub.config.dev;
 
-import org.integratedmodelling.klab.hub.config.MongoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
@@ -24,7 +24,7 @@ import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 @Configuration
 @EnableMongoRepositories(basePackages = "org.integratedmodelling.klab.hub.repository")
 @EnableMongoAuditing
-public class MongoConfigDev extends MongoConfig {
+public class MongoConfigDev extends AbstractMongoConfiguration {
 	@Autowired
     private MappingMongoConverter mongoConverter;
     
@@ -36,7 +36,7 @@ public class MongoConfigDev extends MongoConfig {
 
     @Bean
     public MongoDbFactory mongoDbFactory(MongoClient mongoClient) {
-        return new SimpleMongoDbFactory(mongoClient, "collaborationTest");
+        return new SimpleMongoDbFactory(mongoClient, getDatabaseName());
     }
     
     @Bean
@@ -60,11 +60,6 @@ public class MongoConfigDev extends MongoConfig {
     public MongoClient mongoClient(MongoServer mongoServer) {
         return new MongoClient(new ServerAddress(mongoServer.getLocalAddress()));
     }
-
-	@Override
-	protected String getAuthDatabaseName() {
-        return "authTest";
-    }
 	
 	@Override
     protected String getMappingBasePackage() {
@@ -73,6 +68,11 @@ public class MongoConfigDev extends MongoConfig {
 
 	@Override
 	protected String getDatabaseName() {
-		return "collaborationTest";
-	}	
+		return "hubTest";
+	}
+
+	@Override
+	public MongoClient mongoClient() {
+		return new MongoClient("localhost", 27017);
+	}
 }

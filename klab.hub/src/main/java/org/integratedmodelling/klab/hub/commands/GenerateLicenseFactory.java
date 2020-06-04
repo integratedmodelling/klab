@@ -6,11 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
 import org.bouncycastle.openpgp.PGPException;
-import org.hamcrest.core.IsInstanceOf;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.hub.api.BouncyConfiguration;
-import org.integratedmodelling.klab.hub.api.BouncyLicense;
 import org.integratedmodelling.klab.hub.api.LegacyConfiguration;
 import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
 

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -11,7 +12,10 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.convert.DbRefResolver;
+import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -22,55 +26,20 @@ import com.mongodb.MongoClient;
 @Configuration
 @EnableMongoRepositories(basePackages = "org.integratedmodelling.klab.hub.repository")
 @EnableMongoAuditing
-public class MongoConfig extends AbstractMongoConfiguration {
-	
+public class MongoConfig {
 	@Autowired
-    private MappingMongoConverter mongoConverter;
-    
-    @Bean
-    public MongoTemplate mongoTemplate(MongoClient mongoClient) {
-    	this.mongoConverter.setMapKeyDotReplacement("#");
-        return new MongoTemplate(mongoDbFactory(mongoClient), this.mongoConverter);
-    }
+	private MongoDbFactory mongoFactory;
 
-    @Bean
-    public MongoDbFactory mongoDbFactory(MongoClient mongoClient) {
-        return new SimpleMongoDbFactory(mongoClient, "collaboration");
-    }
-    
-    @Bean
-    public ValidatingMongoEventListener validatingMongoEventListener() {
-        return new ValidatingMongoEventListener(validator());
-    }
+	@Autowired
+	private MongoMappingContext mongoMappingContext;
 
-    @Bean
-    public LocalValidatorFactoryBean validator() {
-        return new LocalValidatorFactoryBean();
-    }
-
-    @Value("${mongo.hostname:localhost}")
-    private String HOSTNAME;
-
-    @Value("${mongo.por:27017}")
-    private int PORT;
-
-    @Override
-    protected String getDatabaseName() {
-        return "collaboration";
-    }
-
-    protected String getAuthDatabaseName() {
-        return "authProdTest";
-    }
-    
-    @Override
-    protected String getMappingBasePackage() {
-        return "org.integratedmodelling.klab.hub";
-    }
-
-	@Override
-	public MongoClient mongoClient() {
-		return new MongoClient(HOSTNAME, PORT);
+	@Bean
+	public MappingMongoConverter mongoConverter() throws Exception {
+	  DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoFactory);
+	  MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
+	  //this is my customization
+	  mongoConverter.setMapKeyDotReplacement("#");
+	  return mongoConverter;
 	}
     
 

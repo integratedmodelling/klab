@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.hub.api;
 
-import javax.persistence.GeneratedValue;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Id;
@@ -15,11 +14,11 @@ import org.springframework.validation.annotation.Validated;
  */
 @Validated
 public abstract class GenericModel {
-	@Id @GeneratedValue
+	@Id
     String id;
 
 	@NotNull(message = "Name field cannot be null or blank")
-	@Indexed(unique = true)
+	@Indexed(unique=true)
     String name;
 
 	public String getName() {

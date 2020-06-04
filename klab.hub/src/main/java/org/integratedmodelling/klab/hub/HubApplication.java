@@ -3,11 +3,7 @@ package org.integratedmodelling.klab.hub;
 import javax.annotation.PreDestroy;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,8 +14,7 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
-@PropertySource("classpath:default.properties")
-@EnableAutoConfiguration(exclude={MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
+@EnableAutoConfiguration
 @ComponentScan(basePackages = { 
 		"org.integratedmodelling.klab.hub.security",
 		"org.integratedmodelling.klab.hub.services",
