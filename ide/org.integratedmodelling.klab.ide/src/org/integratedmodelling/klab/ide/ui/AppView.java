@@ -38,9 +38,18 @@ public class AppView extends Composite {
 	public AppView(boolean horizontal, Composite parent, int style, ViewPart view) {
 		super(parent, style);
 		this.parent = parent;
-		setLayout(new GridLayout(1, true));
+		setLayout(gridLayout(1, true));
 	}
 
+	private GridLayout gridLayout(int cols, boolean equalWidth) {
+		GridLayout ret = new GridLayout(cols, equalWidth);
+		ret.marginWidth = 0;
+		ret.verticalSpacing = 0;
+		ret.marginHeight = 0;
+		ret.horizontalSpacing = 0;
+		return ret;
+	}
+	
 	private Composite makeView(Layout view, Composite parent) {
 
 		Composite ret = new Composite(parent, SWT.NONE);
@@ -56,21 +65,21 @@ public class AppView extends Composite {
 			ncols++;
 		}
 
-		ret.setLayout(new GridLayout(1, true));
+		ret.setLayout(gridLayout(1, true));
 
 		if (view.getHeader() != null) {
 			header = new Composite(ret, SWT.NONE);
-			header.setLayout(new GridLayout(view.getHeader().getComponents().size(), false));
+			header.setLayout(gridLayout(view.getHeader().getComponents().size(), false));
 			header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 		}
 
 		center = new Composite(ret, SWT.NONE);
-		center.setLayout(new GridLayout(ncols, false));
+		center.setLayout(gridLayout(ncols, false));
 		center.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		if (view.getFooter() != null) {
 			footer = new Composite(ret, SWT.NONE);
-			footer.setLayout(new GridLayout(view.getFooter().getComponents().size(), false));
+			footer.setLayout(gridLayout(view.getFooter().getComponents().size(), false));
 			footer.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 		}
 
@@ -97,7 +106,7 @@ public class AppView extends Composite {
 	private Composite makePanel(List<ViewPanel> panels, Composite parent) {
 
 		Composite ret = new Composite(parent, SWT.NONE);
-		ret.setLayout(new GridLayout(1, false));
+		ret.setLayout(gridLayout(1, false));
 		
 		if (panels.size() > 1) {
 
@@ -108,7 +117,7 @@ public class AppView extends Composite {
 				TabItem tbtmNewItem = new TabItem(tabFolder, SWT.NONE);
 				tbtmNewItem.setText(StringUtil.capitalize(panel.getName()));
 				Composite innerFrame = new Composite(tabFolder, SWT.NONE);
-				innerFrame.setLayout(new GridLayout(1, false));
+				innerFrame.setLayout(gridLayout(1, false));
 				tbtmNewItem.setControl(innerFrame);
 				for (ViewComponent component : panel.getComponents()) {
 					makeComponent(component, innerFrame);
@@ -118,7 +127,7 @@ public class AppView extends Composite {
 
 		} else if (panels.size() > 0) {
 			Composite innerFrame = new Composite(ret, SWT.NONE);
-			innerFrame.setLayout(new GridLayout(1, false));
+			innerFrame.setLayout(gridLayout(1, false));
 			for (ViewComponent component : panels.get(0).getComponents()) {
 				makeComponent(component, innerFrame);
 			}
@@ -130,6 +139,7 @@ public class AppView extends Composite {
 	}
 
 	private void makeComponent(ViewComponent component, Composite parent) {
+		
 		switch (component.getType()) {
 		case Alert:
 			Eclipse.INSTANCE.alert(component.getContent());
@@ -150,7 +160,7 @@ public class AppView extends Composite {
 			if (component.getName() != null) {
 				((Group)group).setText(component.getName());
 			}
-			group.setLayout(new GridLayout(component.getComponents().size(), false));
+			group.setLayout(gridLayout(component.getComponents().size(), false));
 			for (ViewComponent child : component.getComponents()) {
 				makeComponent(child, group);
 			}
@@ -219,9 +229,9 @@ public class AppView extends Composite {
 		this.containers.clear();
 
 		Display.getDefault().asyncExec(() -> {
-			this.setLayout(new GridLayout(1, true));
+			this.setLayout(gridLayout(1, true));
 			Composite app = makeView(layout, this);
-			app.setLayout(new GridLayout(1, true));
+			app.setLayout(gridLayout(1, true));
 			app.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			// parent.setSize(this.view.get);
 			parent.pack();
