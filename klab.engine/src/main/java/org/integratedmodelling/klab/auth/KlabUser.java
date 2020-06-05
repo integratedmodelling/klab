@@ -10,9 +10,10 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.Layout;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +27,8 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	protected boolean online;
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
 	private View view;
-
+	private ActorRef<KlabMessage> actor;
+	
 	public KlabUser(String username, INodeIdentity node) {
 		super(username);
 		this.parent = node;
@@ -114,9 +116,9 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	}
 
 	@Override
-	public void load(IBehavior behavior, IRuntimeScope scope) {
+	public String load(IBehavior behavior, IContextualizationScope scope) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
@@ -136,5 +138,23 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	@Override
 	public void setLayout(Layout layout) {
 		this.view = new ViewImpl(layout);
+	}
+
+	@Override
+	public boolean stop(String behaviorId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean stop() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IMonitor getMonitor() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

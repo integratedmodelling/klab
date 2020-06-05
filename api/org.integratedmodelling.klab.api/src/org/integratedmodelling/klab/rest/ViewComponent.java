@@ -33,6 +33,7 @@ public class ViewComponent {
 
 	private String id;
 	private String identity;
+	private String applicationId;
 	private String parentId;
 	private Type type;
 	private String name;
@@ -139,6 +140,14 @@ public class ViewComponent {
 				+ ", content=" + content + ", data=" + data + "]";
 	}
 	
+	public String getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(String identity) {
+		this.applicationId = identity;
+	}
+
 	public String getIdentity() {
 		return identity;
 	}

@@ -27,12 +27,12 @@ import akka.actor.typed.javadsl.ReceiveBuilder;
  */
 public class SessionActor extends KlabActor {
 
-	public static Behavior<KlabMessage> create(Session session) {
-		return Behaviors.setup(ctx -> new SessionActor(ctx, session));
+	public static Behavior<KlabMessage> create(Session session, String appId) {
+		return Behaviors.setup(ctx -> new SessionActor(ctx, session, appId));
 	}
 
-	public SessionActor(ActorContext<KlabMessage> context, Session identity) {
-		super(context, identity);
+	public SessionActor(ActorContext<KlabMessage> context, Session identity, String appId) {
+		super(context, identity, appId);
 	}
 
 //	@Override

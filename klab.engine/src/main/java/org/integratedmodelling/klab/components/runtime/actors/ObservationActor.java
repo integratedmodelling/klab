@@ -15,8 +15,8 @@ public class ObservationActor extends KlabActor {
 	boolean transitionActionChecked;
 	Action transitionAction;
 	
-	static Behavior<KlabMessage> create(Observation observation) {
-		return Behaviors.setup(ctx -> new ObservationActor(ctx, observation));
+	static Behavior<KlabMessage> create(Observation observation, String appId) {
+		return Behaviors.setup(ctx -> new ObservationActor(ctx, observation, appId));
 	}
 
 	@Override
@@ -52,8 +52,8 @@ public class ObservationActor extends KlabActor {
 		return Behaviors.same();
 	}
 
-	public ObservationActor(ActorContext<KlabMessage> context, Observation observation) {
-		super(context, observation);
+	public ObservationActor(ActorContext<KlabMessage> context, Observation observation, String appId) {
+		super(context, observation, appId);
 	}
 
 }

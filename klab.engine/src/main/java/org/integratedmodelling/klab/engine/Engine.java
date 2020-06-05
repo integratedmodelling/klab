@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -46,6 +47,7 @@ import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
@@ -397,8 +399,10 @@ public class Engine extends Server implements IEngine, UserDetails {
 		return ret;
 	}
 
-	public void stop() {
+	public boolean stop() {
 
+		
+		
 		// shutdown all components
 		if (this.sessionClosingTask != null) {
 			this.sessionClosingTask.cancel(true);
@@ -445,6 +449,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		// shutdown the runtime
 		Klab.INSTANCE.getRuntimeProvider().shutdown();
+		
+		return true;
 	}
 
 	/**
@@ -807,6 +813,18 @@ public class Engine extends Server implements IEngine, UserDetails {
 	public IClient getClient() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String load(IBehavior behavior, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean stop(String behaviorId) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

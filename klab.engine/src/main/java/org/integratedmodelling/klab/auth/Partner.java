@@ -8,6 +8,8 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -23,6 +25,7 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
 	private View view;
+	private ActorRef<KlabMessage> actor;
 
 	public Partner(String partnerName) {
 		super(partnerName);
@@ -101,11 +104,6 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 		return null;
 	}
 
-	@Override
-	public void load(IBehavior behavior, IRuntimeScope scope) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void instrument(ActorRef<KlabMessage> actor) {
@@ -126,4 +124,29 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 	public void setLayout(Layout layout) {
 		this.view = new ViewImpl(layout);
 	}
+
+	@Override
+	public String load(IBehavior behavior, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean stop(String behaviorId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean stop() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IMonitor getMonitor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -11,11 +11,11 @@ import akka.actor.typed.javadsl.ReceiveBuilder;
 public class UserActor extends KlabActor {
 
 	public static Behavior<KlabMessage> create(EngineUser session) {
-		return Behaviors.setup(ctx -> new UserActor(ctx, session));
+		return Behaviors.setup(ctx -> new UserActor(ctx, session, null));
 	}
 
-	public UserActor(ActorContext<KlabMessage> context, EngineUser identity) {
-		super(context, identity);
+	public UserActor(ActorContext<KlabMessage> context, EngineUser identity, String appId) {
+		super(context, identity, appId);
 	}
 
 	@Override

@@ -23,7 +23,6 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
-import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
@@ -31,14 +30,13 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
-import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity.View;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.DebugFile;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
 
 import akka.actor.typed.ActorRef;
@@ -298,9 +296,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 				parent = (Observation) getScope().getRootSubject();
 			}
 
+			// use the runtime actor, which is not running any actor code
 			final ActorRef<KlabMessage> parentActor = parent.getActor();
 
-			parentActor.tell(new Spawn(this));
+			parentActor.tell(new Spawn(this, null));
 
 			/*
 			 * wait for instrumentation to succeed. Couldn't figure out the ask pattern.
@@ -325,8 +324,20 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 
 	@Override
-	public void load(IBehavior behavior, IRuntimeScope scope) {
-		getActor().tell(new Load(behavior.getId(), scope));
+	public String load(IBehavior behavior, IContextualizationScope scope) {
+		String behaviorId = "obh" + NameGenerator.shortUUID();
+		getActor().tell(new Load(behavior.getId(), behaviorId, (IRuntimeScope)scope));
+		return behaviorId;
+	}
+
+	@Override
+	public boolean stop() {
+		return true;
+	}
+
+	@Override
+	public boolean stop(String appId) {
+		return true;
 	}
 
 	@Override

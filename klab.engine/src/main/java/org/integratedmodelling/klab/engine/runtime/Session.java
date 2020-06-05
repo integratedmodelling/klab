@@ -67,6 +67,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
@@ -146,7 +147,6 @@ import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.ViewAction;
-import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
@@ -1222,7 +1222,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(action.getComponent().getIdentity(),
 				IActorIdentity.class);
 		if (receiver != null) {
-			receiver.getActor().tell(new UserAction(action, new SimpleRuntimeScope(this)));
+			receiver.getActor().tell(
+					new UserAction(action, action.getComponent().getApplicationId(), new SimpleRuntimeScope(this)));
 		}
 	}
 
@@ -1593,7 +1594,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			if (engine != null) {
 
 				ActorRef<KlabMessage> parentActor = engine.getActor();
-				parentActor.tell(new Spawn(this));
+				parentActor.tell(new Spawn(this, null));
 
 				/*
 				 * wait for instrumentation to succeed. Couldn't figure out the ask pattern.
@@ -1612,15 +1613,29 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		if (this.actor == null) {
 			// no upstream actor (should not happen), create directly
-			this.actor = Actors.INSTANCE.createActor(SessionActor.create(this), this);
+			this.actor = Actors.INSTANCE.createActor(SessionActor.create(this, null), this);
 		}
 
 		return this.actor;
 	}
 
 	@Override
-	public void load(IBehavior behavior, IRuntimeScope scope) {
-		getActor().tell(new SystemBehavior.Load(behavior.getId(), scope));
+	public String load(IBehavior behavior, IContextualizationScope scope) {
+		String ret = "app" + NameGenerator.shortUUID();
+		getActor().tell(new SystemBehavior.Load(behavior.getId(), ret, (IRuntimeScope) scope));
+		return ret;
+	}
+
+	@Override
+	public boolean stop(String behaviorId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean stop() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public void instrument(ActorRef<KlabMessage> actor) {

@@ -10,6 +10,8 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.UserActor;
@@ -136,9 +138,10 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 
 	// TODO pass new SimpleRuntimeScope(Klab.INSTANCE.getRootMonitor())
 	@Override
-	public void load(IBehavior behavior, IRuntimeScope scope) {
+	public String load(IBehavior behavior, IContextualizationScope scope) {
 		// TODO this gets a sucky runtime scope that is used to run main messages.
-		getActor().tell(new SystemBehavior.Load(behavior.getId(), scope));
+		getActor().tell(new SystemBehavior.Load(behavior.getId(), getId(), (IRuntimeScope)scope));
+		return getId();
 	}
 
 	@Override
@@ -155,4 +158,23 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	public void setLayout(Layout layout) {
 		this.view = new ViewImpl(layout);
 	}
+
+	@Override
+	public boolean stop(String behaviorId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean stop() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IMonitor getMonitor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

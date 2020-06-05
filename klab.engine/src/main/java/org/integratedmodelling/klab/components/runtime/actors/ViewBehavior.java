@@ -85,7 +85,7 @@ public class ViewBehavior {
 				ViewComponent component = createViewComponent(scope);
 				component.setId(bindId);
 				component.setParentId(this.callId);
-				component.setIdentity(this.identity.getId());
+				component.setApplicationId(this.identity.getId());
 				session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent,
 						component);
 			}
@@ -96,7 +96,7 @@ public class ViewBehavior {
 			 * fire
 			 */
 			if (scope.listenerId != null) {
-				identity.getActor().tell(new BindUserAction(scope.listenerId, bindId));
+				identity.getActor().tell(new BindUserAction(scope.listenerId, scope.appId, bindId));
 			}
 		}
 

@@ -504,9 +504,9 @@ public enum Actors implements IActorsService {
 		return null;
 	}
 
-	public Layout getView(IBehavior behavior, @Nullable IIdentity identity) {
+	public Layout getView(IBehavior behavior, IIdentity identity, String applicationId) {
 
-		ViewScope scope = new ViewScope(identity);
+		ViewScope scope = new ViewScope(identity, applicationId);
 
 		/*
 		 * collect info about the UI in a bean. If not empty, send bean so that the UI
@@ -565,16 +565,19 @@ public enum Actors implements IActorsService {
 	}
 
 	private class ViewScope {
-		IIdentity identity;
+		String identity;
+		String applicationId;
 		boolean optional = false;
 		boolean repeated = false;
 		private Integer groupCounter = new Integer(0);
 
-		public ViewScope(IIdentity identity) {
-			this.identity = identity;
+		public ViewScope(IIdentity identity, String applicationId) {
+			this.identity = identity == null ? null : identity.getId();
+			this.applicationId = applicationId;
 		}
 
 		public ViewScope(ViewScope scope) {
+			this.applicationId = scope.applicationId;
 			this.identity = scope.identity;
 			this.repeated = scope.repeated;
 			this.optional = scope.optional;
@@ -597,7 +600,8 @@ public enum Actors implements IActorsService {
 	public ViewComponent getChildComponent(IKActorsStatement.ConcurrentGroup group, ViewComponent parent,
 			ViewScope scope) {
 		ViewComponent ret = new ViewComponent();
-		ret.setIdentity(scope.identity == null ? null : scope.identity.getId());
+		ret.setIdentity(scope.identity);
+		ret.setApplicationId(scope.applicationId);
 		ret.setType(ViewComponent.Type.Group);
 		if (group.getGroupMetadata().containsKey("name")) {
 			ret.setName(group.getGroupMetadata().get("name").getValue().toString());
@@ -719,12 +723,13 @@ public enum Actors implements IActorsService {
 				 * if we got here, we should return a placeholder
 				 */
 				if (ret == null) {
-					ret.setIdentity(scope.identity == null ? null : scope.identity.getId());
+					ret = new ViewComponent();
 					ret.setType(scope.repeated ? ViewComponent.Type.MultiContainer : ViewComponent.Type.Container);
 				}
 
 				setViewMetadata(ret, statement.getArguments());
-				ret.setIdentity(scope.identity == null ? null : scope.identity.getId());
+				ret.setIdentity(scope.identity);
+				ret.setApplicationId(scope.applicationId);
 				ret.setId(((KActorsActionCall) statement).getInternalId());
 
 			}

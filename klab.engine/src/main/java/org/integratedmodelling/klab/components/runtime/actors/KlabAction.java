@@ -68,7 +68,7 @@ public abstract class KlabAction {
 
 	public void fire(Object value, boolean isFinal) {
 		if (scope.listenerId != null) {
-			this.sender.tell(new Fire(scope.listenerId, value, isFinal));
+			this.sender.tell(new Fire(scope.listenerId, value, isFinal, scope.appId));
 		}
 	}
 
