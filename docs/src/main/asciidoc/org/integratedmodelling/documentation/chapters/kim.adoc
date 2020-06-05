@@ -425,6 +425,8 @@ end legend
 
 ==== Identities
 
+Inherency and identities: in observables, identity also applies to the inherent subject (the connection is made automatically) and `of`, `within` should be kept for observational inherency. In concept declarations, they both establish context and they are equivalent in role, "of" being used for further inherency when "within" is also used. Example: biomass is mass of individual but fish biomass in an observable is annotated Fish Biomass and not biomass of Fish Individual. The reattribution is automatic.
+
 ==== Attributes and Orderings
 
 ==== Realms

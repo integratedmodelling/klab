@@ -586,12 +586,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected Behavior<KlabMessage> executeCall(KActorsMessage message) {
 
-		if (message.appId != null) {
+		/**
+		 * Route only those messages whose appID is recognized, meaning they are
+		 * directed through us to one of our app executors. Others with appId will
+		 * come from an application but our agent doesn't have its own behavior 
+		 * loaded, so continue assuming it's for us.
+		 */
+		if (message.appId != null && receivers.containsKey(message.appId)) {
 			ActorRef<KlabMessage> receiver = receivers.get(message.appId);
 			if (receiver != null) {
 				receiver.tell(message.direct());
-			} else {
-				System.out.println("PORCODDIO NON HO L'ID");
 			}
 		} else {
 
