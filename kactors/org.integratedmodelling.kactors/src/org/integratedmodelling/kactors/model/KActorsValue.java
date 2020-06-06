@@ -3,12 +3,17 @@ package org.integratedmodelling.kactors.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.integratedmodelling.contrib.jgrapht.Graph;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.Quantity;
+import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -24,7 +29,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	private Type type;
 	private Object value;
-	
+
 	// to support costly translations from implementations
 	private Object data;
 
@@ -36,7 +41,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	public static KActorsValue anyvalue() {
 		return new KActorsValue(Type.ANYVALUE, null);
 	}
-	
+
 	public static KActorsValue anytrue() {
 		return new KActorsValue(Type.ANYTRUE, null);
 	}
@@ -83,7 +88,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.value = value.getUrn();
 		} else if (value.getTree() != null) {
 			this.type = Type.TREE;
-			// TODO
+			this.value = parseTree(value.getTree(), this);
 		}
 	}
 
@@ -203,15 +208,15 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	public boolean isVariable() {
 		if (this.value instanceof List) {
-			for (Object val : ((List<?>)this.value)) {
-				if (val instanceof KActorsValue && ((KActorsValue)val).getType() == Type.IDENTIFIER) {
+			for (Object val : ((List<?>) this.value)) {
+				if (val instanceof KActorsValue && ((KActorsValue) val).getType() == Type.IDENTIFIER) {
 					return true;
 				}
 			}
 		}
 		return type == Type.IDENTIFIER;
 	}
-	
+
 	/**
 	 * Use in translators to support complex and costly data processing.
 	 * 
@@ -229,6 +234,28 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	public void setData(Object data) {
 		this.data = data;
 	}
-	
-	
+
+	public Graph<KActorsValue, DefaultEdge> parseTree(Tree tree, KActorCodeStatement parent) {
+		Graph<KActorsValue, DefaultEdge> ret = new DefaultDirectedGraph<KActorsValue, DefaultEdge>(DefaultEdge.class);
+		addNode(tree, parent, ret);
+		return ret;
+	}
+
+	private KActorsValue addNode(Tree treeNode, KActorCodeStatement parent, Graph<KActorsValue, DefaultEdge> ret) {
+		KActorsValue value = new KActorsValue(treeNode.getRoot(), parent);
+		ret.addVertex(value);
+		for (EObject child : treeNode.getValue()) {
+			Value vchild = (Value) child;
+			KActorsValue vvc = null;
+			if (vchild.getTree() != null) {
+				vvc = addNode(vchild.getTree(), parent, ret);
+			} else {
+				vvc = new KActorsValue(vchild, parent);
+				ret.addVertex(vvc);
+			}
+			ret.addEdge(vvc, value);
+		}
+		return value;
+	}
+
 }

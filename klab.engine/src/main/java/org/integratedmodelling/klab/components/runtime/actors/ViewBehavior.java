@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import org.integratedmodelling.contrib.jgrapht.Graph;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
@@ -186,7 +189,7 @@ public class ViewBehavior {
 			return DEFAULT_FIRE;
 		}
 	}
-	
+
 	@Action(id = "label")
 	public static class Label extends KlabWidgetAction {
 
@@ -229,6 +232,35 @@ public class ViewBehavior {
 		protected Object getFiredResult(ViewAction action) {
 			return action.getStringValue();
 		}
+	}
+
+	@Action(id = "tree")
+	public static class Tree extends KlabWidgetAction {
+
+		public Tree(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public ViewComponent createViewComponent(Scope scope) {
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.Tree);
+			message.setTree(getTree(
+					(Graph<KActorsValue, DefaultEdge>) arguments.get(arguments.getUnnamedKeys().iterator().next())));
+			return message;
+		}
+
+		@Override
+		protected Object getFiredResult(ViewAction action) {
+			return action.getStringValue();
+		}
+	}
+
+	public static ViewComponent.Tree getTree(Graph<KActorsValue, DefaultEdge> graph) {
+		ViewComponent.Tree ret = new ViewComponent.Tree();
+		return ret;
 	}
 
 }

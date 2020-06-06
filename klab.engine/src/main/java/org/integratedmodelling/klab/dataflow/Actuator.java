@@ -708,6 +708,7 @@ public class Actuator implements IActuator {
 
 							ObservationChange change = ((Observation) object)
 									.createChangeEvent(ObservationChange.Type.StructureChange);
+							change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) object));
 							change.setNewSize(ctx.getChildArtifactsOf(object).size());
 							session.getMonitor()
 									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,

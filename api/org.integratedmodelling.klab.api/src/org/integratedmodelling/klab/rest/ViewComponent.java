@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * The message used by the view actor to request view components. Any number of
@@ -26,9 +27,49 @@ public class ViewComponent {
 	 *
 	 */
 	public static enum Type {
-		Panel, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree,
-		TreeItem, Confirm, View, Container, MultiContainer, Label, Text, Table
+		Panel, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree, TreeItem, Confirm, View,
+		Container, MultiContainer, Label, Text, Table
 		// etc
+	}
+
+	/**
+	 * A tree is a list of nodes (each a String->String map) and a list of
+	 * child->parent links, expressed using the index of the values in the list. For
+	 * convenience, the index of the root node is also provided.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class Tree {
+
+		private List<Map<String, String>> values = new ArrayList<>();
+		private int rootId;
+		private List<Pair<Integer, Integer>> links = new ArrayList<>();
+
+		public List<Map<String, String>> getValues() {
+			return values;
+		}
+
+		public void setValues(List<Map<String, String>> values) {
+			this.values = values;
+		}
+
+		public int getRootId() {
+			return rootId;
+		}
+
+		public void setRootId(int rootId) {
+			this.rootId = rootId;
+		}
+
+		public List<Pair<Integer, Integer>> getLinks() {
+			return links;
+		}
+
+		public void setLinks(List<Pair<Integer, Integer>> links) {
+			this.links = links;
+		}
+
 	}
 
 	private String id;
@@ -41,6 +82,7 @@ public class ViewComponent {
 	private String title;
 	private ValueType contentType;
 	private String content;
+	private Tree tree;
 	private List<String> possibleContent;
 	// for groups
 	private List<ViewComponent> components = new ArrayList<>();
@@ -139,7 +181,7 @@ public class ViewComponent {
 		return "ViewComponent [parentId=" + parentId + ", type=" + type + ", name=" + name + ", title=" + title
 				+ ", content=" + content + ", data=" + data + "]";
 	}
-	
+
 	public String getApplicationId() {
 		return applicationId;
 	}
@@ -154,6 +196,14 @@ public class ViewComponent {
 
 	public void setIdentity(String identity) {
 		this.identity = identity;
+	}
+
+	public Tree getTree() {
+		return tree;
+	}
+
+	public void setTree(Tree tree) {
+		this.tree = tree;
 	}
 
 }
