@@ -31,6 +31,7 @@ import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Metadata;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
@@ -165,6 +166,13 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         Metadata metadata = (Metadata)theEObject;
         T result = caseMetadata(metadata);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.METADATA_PAIR:
+      {
+        MetadataPair metadataPair = (MetadataPair)theEObject;
+        T result = caseMetadataPair(metadataPair);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -520,6 +528,22 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseMetadata(Metadata object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Metadata Pair</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Metadata Pair</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMetadataPair(MetadataPair object)
   {
     return null;
   }

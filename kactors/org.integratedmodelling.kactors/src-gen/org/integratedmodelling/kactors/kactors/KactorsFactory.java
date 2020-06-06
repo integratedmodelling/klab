@@ -96,6 +96,15 @@ public interface KactorsFactory extends EFactory
   Metadata createMetadata();
 
   /**
+   * Returns a new object of class '<em>Metadata Pair</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Metadata Pair</em>'.
+   * @generated
+   */
+  MetadataPair createMetadataPair();
+
+  /**
    * Returns a new object of class '<em>Statement List</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

@@ -14,13 +14,12 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.Metadata;
-import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 
 /**
  * <!-- begin-user-doc -->
@@ -30,8 +29,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MetadataImpl#getKeys <em>Keys</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MetadataImpl#getValues <em>Values</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MetadataImpl#getPairs <em>Pairs</em>}</li>
  * </ul>
  *
  * @generated
@@ -39,24 +37,14 @@ import org.integratedmodelling.kactors.kactors.Value;
 public class MetadataImpl extends MinimalEObjectImpl.Container implements Metadata
 {
   /**
-   * The cached value of the '{@link #getKeys() <em>Keys</em>}' attribute list.
+   * The cached value of the '{@link #getPairs() <em>Pairs</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getKeys()
+   * @see #getPairs()
    * @generated
    * @ordered
    */
-  protected EList<String> keys;
-
-  /**
-   * The cached value of the '{@link #getValues() <em>Values</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValues()
-   * @generated
-   * @ordered
-   */
-  protected EList<Value> values;
+  protected EList<MetadataPair> pairs;
 
   /**
    * <!-- begin-user-doc -->
@@ -85,28 +73,13 @@ public class MetadataImpl extends MinimalEObjectImpl.Container implements Metada
    * @generated
    */
   @Override
-  public EList<String> getKeys()
+  public EList<MetadataPair> getPairs()
   {
-    if (keys == null)
+    if (pairs == null)
     {
-      keys = new EDataTypeEList<String>(String.class, this, KactorsPackage.METADATA__KEYS);
+      pairs = new EObjectContainmentEList<MetadataPair>(MetadataPair.class, this, KactorsPackage.METADATA__PAIRS);
     }
-    return keys;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<Value> getValues()
-  {
-    if (values == null)
-    {
-      values = new EObjectContainmentEList<Value>(Value.class, this, KactorsPackage.METADATA__VALUES);
-    }
-    return values;
+    return pairs;
   }
 
   /**
@@ -119,8 +92,8 @@ public class MetadataImpl extends MinimalEObjectImpl.Container implements Metada
   {
     switch (featureID)
     {
-      case KactorsPackage.METADATA__VALUES:
-        return ((InternalEList<?>)getValues()).basicRemove(otherEnd, msgs);
+      case KactorsPackage.METADATA__PAIRS:
+        return ((InternalEList<?>)getPairs()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -135,10 +108,8 @@ public class MetadataImpl extends MinimalEObjectImpl.Container implements Metada
   {
     switch (featureID)
     {
-      case KactorsPackage.METADATA__KEYS:
-        return getKeys();
-      case KactorsPackage.METADATA__VALUES:
-        return getValues();
+      case KactorsPackage.METADATA__PAIRS:
+        return getPairs();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -154,13 +125,9 @@ public class MetadataImpl extends MinimalEObjectImpl.Container implements Metada
   {
     switch (featureID)
     {
-      case KactorsPackage.METADATA__KEYS:
-        getKeys().clear();
-        getKeys().addAll((Collection<? extends String>)newValue);
-        return;
-      case KactorsPackage.METADATA__VALUES:
-        getValues().clear();
-        getValues().addAll((Collection<? extends Value>)newValue);
+      case KactorsPackage.METADATA__PAIRS:
+        getPairs().clear();
+        getPairs().addAll((Collection<? extends MetadataPair>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -176,11 +143,8 @@ public class MetadataImpl extends MinimalEObjectImpl.Container implements Metada
   {
     switch (featureID)
     {
-      case KactorsPackage.METADATA__KEYS:
-        getKeys().clear();
-        return;
-      case KactorsPackage.METADATA__VALUES:
-        getValues().clear();
+      case KactorsPackage.METADATA__PAIRS:
+        getPairs().clear();
         return;
     }
     super.eUnset(featureID);
@@ -196,29 +160,10 @@ public class MetadataImpl extends MinimalEObjectImpl.Container implements Metada
   {
     switch (featureID)
     {
-      case KactorsPackage.METADATA__KEYS:
-        return keys != null && !keys.isEmpty();
-      case KactorsPackage.METADATA__VALUES:
-        return values != null && !values.isEmpty();
+      case KactorsPackage.METADATA__PAIRS:
+        return pairs != null && !pairs.isEmpty();
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (keys: ");
-    result.append(keys);
-    result.append(')');
-    return result.toString();
   }
 
 } //MetadataImpl

@@ -67,6 +67,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getKeyValuePairAccess().getAlternatives_0_1(), "rule__KeyValuePair__Alternatives_0_1");
 			builder.put(grammarAccess.getUnitElementAccess().getAlternatives(), "rule__UnitElement__Alternatives");
 			builder.put(grammarAccess.getUnitElementAccess().getIdAlternatives_0_0(), "rule__UnitElement__IdAlternatives_0_0");
+			builder.put(grammarAccess.getMetadataKeyAccess().getAlternatives_0(), "rule__MetadataKey__Alternatives_0");
 			builder.put(grammarAccess.getREL_OPERATORAccess().getAlternatives(), "rule__REL_OPERATOR__Alternatives");
 			builder.put(grammarAccess.getNumberAccess().getAlternatives_0(), "rule__Number__Alternatives_0");
 			builder.put(grammarAccess.getNumberAccess().getExponentialAlternatives_4_0_0_0(), "rule__Number__ExponentialAlternatives_4_0_0_0");
@@ -103,7 +104,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMessageCallAccess().getGroup_1(), "rule__MessageCall__Group_1__0");
 			builder.put(grammarAccess.getStatementGroupAccess().getGroup(), "rule__StatementGroup__Group__0");
 			builder.put(grammarAccess.getStatementGroupAccess().getGroup_5(), "rule__StatementGroup__Group_5__0");
-			builder.put(grammarAccess.getMetadataAccess().getGroup(), "rule__Metadata__Group__0");
+			builder.put(grammarAccess.getMetadataPairAccess().getGroup(), "rule__MetadataPair__Group__0");
 			builder.put(grammarAccess.getStatementListAccess().getGroup(), "rule__StatementList__Group__0");
 			builder.put(grammarAccess.getNextStatementAccess().getGroup(), "rule__NextStatement__Group__0");
 			builder.put(grammarAccess.getAssignmentAccess().getGroup(), "rule__Assignment__Group__0");
@@ -228,8 +229,9 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getStatementGroupAccess().getBodyAssignment_2(), "rule__StatementGroup__BodyAssignment_2");
 			builder.put(grammarAccess.getStatementGroupAccess().getMetadataAssignment_4(), "rule__StatementGroup__MetadataAssignment_4");
 			builder.put(grammarAccess.getStatementGroupAccess().getActionsAssignment_5_1(), "rule__StatementGroup__ActionsAssignment_5_1");
-			builder.put(grammarAccess.getMetadataAccess().getKeysAssignment_0(), "rule__Metadata__KeysAssignment_0");
-			builder.put(grammarAccess.getMetadataAccess().getValuesAssignment_1(), "rule__Metadata__ValuesAssignment_1");
+			builder.put(grammarAccess.getMetadataAccess().getPairsAssignment(), "rule__Metadata__PairsAssignment");
+			builder.put(grammarAccess.getMetadataPairAccess().getKeyAssignment_0(), "rule__MetadataPair__KeyAssignment_0");
+			builder.put(grammarAccess.getMetadataPairAccess().getValueAssignment_1(), "rule__MetadataPair__ValueAssignment_1");
 			builder.put(grammarAccess.getStatementListAccess().getFirstAssignment_0(), "rule__StatementList__FirstAssignment_0");
 			builder.put(grammarAccess.getStatementListAccess().getNextAssignment_1(), "rule__StatementList__NextAssignment_1");
 			builder.put(grammarAccess.getStatementAccess().getAssignmentAssignment_0(), "rule__Statement__AssignmentAssignment_0");

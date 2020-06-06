@@ -16,8 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Metadata#getKeys <em>Keys</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Metadata#getValues <em>Values</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Metadata#getPairs <em>Pairs</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMetadata()
@@ -27,27 +26,15 @@ import org.eclipse.emf.ecore.EObject;
 public interface Metadata extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Keys</b></em>' attribute list.
-   * The list contents are of type {@link java.lang.String}.
+   * Returns the value of the '<em><b>Pairs</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.MetadataPair}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Keys</em>' attribute list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMetadata_Keys()
-   * @model unique="false"
-   * @generated
-   */
-  EList<String> getKeys();
-
-  /**
-   * Returns the value of the '<em><b>Values</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Value}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Values</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMetadata_Values()
+   * @return the value of the '<em>Pairs</em>' containment reference list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMetadata_Pairs()
    * @model containment="true"
    * @generated
    */
-  EList<Value> getValues();
+  EList<MetadataPair> getPairs();
 
 } // Metadata

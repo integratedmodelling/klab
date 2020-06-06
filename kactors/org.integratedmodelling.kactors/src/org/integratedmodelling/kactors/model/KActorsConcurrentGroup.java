@@ -8,6 +8,7 @@ import java.util.Map;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementGroup;
 import org.integratedmodelling.kactors.kactors.StatementList;
@@ -23,7 +24,7 @@ public class KActorsConcurrentGroup extends KActorsStatement implements Concurre
 
 	List<IKActorsStatement> sequences = new ArrayList<>();
 	Map<String, IKActorsValue> groupMetadata = new HashMap<>();
-	
+
 	public KActorsConcurrentGroup(List<StatementList> statementGroup, KActorCodeStatement parent) {
 		super(parent, Type.CONCURRENT_GROUP);
 		for (StatementList list : statementGroup) {
@@ -55,9 +56,15 @@ public class KActorsConcurrentGroup extends KActorsStatement implements Concurre
 			}
 		}
 		if (statementGroup.getMetadata() != null) {
-			for (int i = 0; i < statementGroup.getMetadata().getKeys().size(); i++) {
-				String key = statementGroup.getMetadata().getKeys().get(i).substring(1);
-				KActorsValue value = new KActorsValue(statementGroup.getMetadata().getValues().get(i), this);
+			for (MetadataPair pair : statementGroup.getMetadata().getPairs()) {
+				String key = pair.getKey().substring(1);
+				boolean negative = pair.getKey().startsWith("!");
+				KActorsValue value = null;
+				if (pair.getValue() != null) {
+					value = new KActorsValue(pair.getValue(), this);
+				} else {
+					value = new KActorsValue(!negative, this);
+				}
 				groupMetadata.put(key, value);
 			}
 		}
@@ -72,5 +79,5 @@ public class KActorsConcurrentGroup extends KActorsStatement implements Concurre
 	public Map<String, IKActorsValue> getGroupMetadata() {
 		return groupMetadata;
 	}
-	
+
 }

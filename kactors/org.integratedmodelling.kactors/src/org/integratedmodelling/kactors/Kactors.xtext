@@ -50,7 +50,11 @@ StatementGroup: {StatementGroup} '(' body=MessageBody? ')' metadata=Metadata? ('
 ;
 
 Metadata:
-	(keys+=MetadataKey values+=Value)+
+	pairs+=MetadataPair+
+;
+
+MetadataPair:
+	key=MetadataKey (value=Value)?
 ;
 
 StatementList:
@@ -257,7 +261,7 @@ UnitElement:
 	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
 	'(' unit=Unit ')';
 
-MetadataKey: ':' LOWERCASE_ID;
+MetadataKey: (':'|'!') LOWERCASE_ID;
 
 enum UnitOp:
 	OVER='/' | CARET='^' | STAR='*';

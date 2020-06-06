@@ -33,6 +33,7 @@ import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Metadata;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
@@ -153,6 +154,11 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseMetadata(Metadata object)
       {
         return createMetadataAdapter();
+      }
+      @Override
+      public Adapter caseMetadataPair(MetadataPair object)
+      {
+        return createMetadataPairAdapter();
       }
       @Override
       public Adapter caseStatementList(StatementList object)
@@ -452,6 +458,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createMetadataAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.MetadataPair <em>Metadata Pair</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.MetadataPair
+   * @generated
+   */
+  public Adapter createMetadataPairAdapter()
   {
     return null;
   }

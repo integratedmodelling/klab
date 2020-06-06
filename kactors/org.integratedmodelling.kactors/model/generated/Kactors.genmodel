@@ -61,8 +61,11 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//StatementGroup/actions"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Metadata">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Metadata/keys"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Metadata/values"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Metadata/pairs"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//MetadataPair">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//MetadataPair/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//MetadataPair/value"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//StatementList">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//StatementList/first"/>

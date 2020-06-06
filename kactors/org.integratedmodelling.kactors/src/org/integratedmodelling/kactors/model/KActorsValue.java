@@ -55,6 +55,12 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		return new KActorsValue(Type.ERROR, o);
 	}
 
+	public KActorsValue(boolean value, KActorCodeStatement parent) {
+		super(null, parent);
+		this.type = Type.BOOLEAN;
+		this.value = value;
+	}
+	
 	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
 		if (value.getId() != null) {

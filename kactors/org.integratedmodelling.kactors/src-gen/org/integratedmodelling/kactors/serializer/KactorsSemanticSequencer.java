@@ -37,6 +37,7 @@ import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Metadata;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
@@ -135,6 +136,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.METADATA:
 				sequence_Metadata(context, (Metadata) semanticObject); 
+				return; 
+			case KactorsPackage.METADATA_PAIR:
+				sequence_MetadataPair(context, (MetadataPair) semanticObject); 
 				return; 
 			case KactorsPackage.MODEL:
 				sequence_Model(context, (Model) semanticObject); 
@@ -523,10 +527,22 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
+	 *     MetadataPair returns MetadataPair
+	 *
+	 * Constraint:
+	 *     (key=MetadataKey value=Value?)
+	 */
+	protected void sequence_MetadataPair(ISerializationContext context, MetadataPair semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Metadata returns Metadata
 	 *
 	 * Constraint:
-	 *     (keys+=MetadataKey values+=Value)+
+	 *     pairs+=MetadataPair+
 	 */
 	protected void sequence_Metadata(ISerializationContext context, Metadata semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
