@@ -418,6 +418,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getKeyValuePairAccess().getInteractiveAssignment_0_0_1_0(), "rule__KeyValuePair__InteractiveAssignment_0_0_1_0");
 			builder.put(grammarAccess.getKeyValuePairAccess().getValueAssignment_0_1(), "rule__KeyValuePair__ValueAssignment_0_1");
 			builder.put(grammarAccess.getKeyValuePairAccess().getKeyAssignment_1(), "rule__KeyValuePair__KeyAssignment_1");
+			builder.put(grammarAccess.getKeyValuePairAccess().getTagAssignment_2(), "rule__KeyValuePair__TagAssignment_2");
 			builder.put(grammarAccess.getUnitElementAccess().getIdAssignment_0(), "rule__UnitElement__IdAssignment_0");
 			builder.put(grammarAccess.getUnitElementAccess().getUnitAssignment_1_1(), "rule__UnitElement__UnitAssignment_1_1");
 			builder.put(grammarAccess.getUnitAccess().getRootAssignment_1(), "rule__Unit__RootAssignment_1");

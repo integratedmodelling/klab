@@ -36,6 +36,7 @@ public class AppView extends Composite {
 	private Composite parent;
 	private Map<String, Composite> containers = new HashMap<>();
 	private Layout currentLayout;
+	private Map<String, ViewComponent> components = new HashMap<>();
 
 	public AppView(boolean horizontal, Composite parent, int style, ViewPart view) {
 		super(parent, style);

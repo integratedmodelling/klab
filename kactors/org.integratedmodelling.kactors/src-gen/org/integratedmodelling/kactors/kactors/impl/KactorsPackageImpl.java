@@ -2526,6 +2526,17 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getKeyValuePair_Tag()
+  {
+    return (EAttribute)keyValuePairEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getUnitElement()
   {
     return unitElementEClass;
@@ -3183,6 +3194,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(keyValuePairEClass, KEY_VALUE_PAIR__INTERACTIVE);
     createEReference(keyValuePairEClass, KEY_VALUE_PAIR__VALUE);
     createEAttribute(keyValuePairEClass, KEY_VALUE_PAIR__KEY);
+    createEAttribute(keyValuePairEClass, KEY_VALUE_PAIR__TAG);
 
     unitElementEClass = createEClass(UNIT_ELEMENT);
     createEAttribute(unitElementEClass, UNIT_ELEMENT__ID);
@@ -3486,6 +3498,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getKeyValuePair_Interactive(), ecorePackage.getEBoolean(), "interactive", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getKeyValuePair_Value(), this.getValue(), null, "value", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getKeyValuePair_Key(), ecorePackage.getEString(), "key", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getKeyValuePair_Tag(), ecorePackage.getEString(), "tag", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(unitElementEClass, UnitElement.class, "UnitElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getUnitElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

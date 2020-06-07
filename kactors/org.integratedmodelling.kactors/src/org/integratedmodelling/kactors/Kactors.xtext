@@ -290,7 +290,8 @@ ParameterList:
 KeyValuePair:
 	((name=(LOWERCASE_ID) (interactive?='?=' | '='))?
 	 value=Value) |
-    key=KEY;
+    key=KEY |
+    tag=TAG;
 
 UnitElement:
 	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |

@@ -236,6 +236,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/interactive"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//KeyValuePair/value"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/tag"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//UnitElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//UnitElement/id"/>

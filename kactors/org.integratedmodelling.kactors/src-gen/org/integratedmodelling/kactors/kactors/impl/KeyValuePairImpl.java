@@ -28,6 +28,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#isInteractive <em>Interactive</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#getTag <em>Tag</em>}</li>
  * </ul>
  *
  * @generated
@@ -103,6 +104,26 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
    * @ordered
    */
   protected String key = KEY_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getTag() <em>Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTag()
+   * @generated
+   * @ordered
+   */
+  protected static final String TAG_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getTag() <em>Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTag()
+   * @generated
+   * @ordered
+   */
+  protected String tag = TAG_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -256,6 +277,31 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
    * @generated
    */
   @Override
+  public String getTag()
+  {
+    return tag;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTag(String newTag)
+  {
+    String oldTag = tag;
+    tag = newTag;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.KEY_VALUE_PAIR__TAG, oldTag, tag));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -284,6 +330,8 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
         return getValue();
       case KactorsPackage.KEY_VALUE_PAIR__KEY:
         return getKey();
+      case KactorsPackage.KEY_VALUE_PAIR__TAG:
+        return getTag();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -309,6 +357,9 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
         return;
       case KactorsPackage.KEY_VALUE_PAIR__KEY:
         setKey((String)newValue);
+        return;
+      case KactorsPackage.KEY_VALUE_PAIR__TAG:
+        setTag((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -336,6 +387,9 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
       case KactorsPackage.KEY_VALUE_PAIR__KEY:
         setKey(KEY_EDEFAULT);
         return;
+      case KactorsPackage.KEY_VALUE_PAIR__TAG:
+        setTag(TAG_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -358,6 +412,8 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
         return value != null;
       case KactorsPackage.KEY_VALUE_PAIR__KEY:
         return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+      case KactorsPackage.KEY_VALUE_PAIR__TAG:
+        return TAG_EDEFAULT == null ? tag != null : !TAG_EDEFAULT.equals(tag);
     }
     return super.eIsSet(featureID);
   }
@@ -379,6 +435,8 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
     result.append(interactive);
     result.append(", key: ");
     result.append(key);
+    result.append(", tag: ");
+    result.append(tag);
     result.append(')');
     return result.toString();
   }

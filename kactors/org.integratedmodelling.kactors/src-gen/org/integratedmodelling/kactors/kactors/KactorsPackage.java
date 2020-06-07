@@ -2119,13 +2119,22 @@ public interface KactorsPackage extends EPackage
   int KEY_VALUE_PAIR__KEY = 3;
 
   /**
+   * The feature id for the '<em><b>Tag</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__TAG = 4;
+
+  /**
    * The number of structural features of the '<em>Key Value Pair</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR_FEATURE_COUNT = 4;
+  int KEY_VALUE_PAIR_FEATURE_COUNT = 5;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.UnitElementImpl <em>Unit Element</em>}' class.
@@ -4589,6 +4598,17 @@ public interface KactorsPackage extends EPackage
   EAttribute getKeyValuePair_Key();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getTag <em>Tag</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Tag</em>'.
+   * @see org.integratedmodelling.kactors.kactors.KeyValuePair#getTag()
+   * @see #getKeyValuePair()
+   * @generated
+   */
+  EAttribute getKeyValuePair_Tag();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.UnitElement <em>Unit Element</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6608,6 +6628,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute KEY_VALUE_PAIR__KEY = eINSTANCE.getKeyValuePair_Key();
+
+    /**
+     * The meta object literal for the '<em><b>Tag</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute KEY_VALUE_PAIR__TAG = eINSTANCE.getKeyValuePair_Tag();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.UnitElementImpl <em>Unit Element</em>}' class.

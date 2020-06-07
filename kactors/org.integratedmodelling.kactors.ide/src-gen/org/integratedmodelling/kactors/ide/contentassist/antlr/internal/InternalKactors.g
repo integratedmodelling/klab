@@ -2527,6 +2527,12 @@ rule__KeyValuePair__Alternatives
 		(rule__KeyValuePair__KeyAssignment_1)
 		{ after(grammarAccess.getKeyValuePairAccess().getKeyAssignment_1()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getKeyValuePairAccess().getTagAssignment_2()); }
+		(rule__KeyValuePair__TagAssignment_2)
+		{ after(grammarAccess.getKeyValuePairAccess().getTagAssignment_2()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -15033,6 +15039,21 @@ rule__KeyValuePair__KeyAssignment_1
 		{ before(grammarAccess.getKeyValuePairAccess().getKeyKEYTerminalRuleCall_1_0()); }
 		RULE_KEY
 		{ after(grammarAccess.getKeyValuePairAccess().getKeyKEYTerminalRuleCall_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__KeyValuePair__TagAssignment_2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getKeyValuePairAccess().getTagTAGTerminalRuleCall_2_0()); }
+		RULE_TAG
+		{ after(grammarAccess.getKeyValuePairAccess().getTagTAGTerminalRuleCall_2_0()); }
 	)
 ;
 finally {

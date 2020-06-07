@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#isInteractive <em>Interactive</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getKey <em>Key</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getTag <em>Tag</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getKeyValuePair()
@@ -113,5 +114,27 @@ public interface KeyValuePair extends EObject
    * @generated
    */
   void setKey(String value);
+
+  /**
+   * Returns the value of the '<em><b>Tag</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Tag</em>' attribute.
+   * @see #setTag(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getKeyValuePair_Tag()
+   * @model
+   * @generated
+   */
+  String getTag();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getTag <em>Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Tag</em>' attribute.
+   * @see #getTag()
+   * @generated
+   */
+  void setTag(String value);
 
 } // KeyValuePair

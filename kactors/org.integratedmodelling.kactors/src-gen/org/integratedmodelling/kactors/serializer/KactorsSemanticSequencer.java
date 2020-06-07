@@ -400,7 +400,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     KeyValuePair returns KeyValuePair
 	 *
 	 * Constraint:
-	 *     (((name=LOWERCASE_ID interactive?='?='?)? value=Value) | key=KEY)
+	 *     (((name=LOWERCASE_ID interactive?='?='?)? value=Value) | key=KEY | tag=TAG)
 	 */
 	protected void sequence_KeyValuePair(ISerializationContext context, KeyValuePair semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

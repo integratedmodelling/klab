@@ -5733,6 +5733,25 @@ ruleKeyValuePair returns [EObject current=null]
 				}
 			)
 		)
+		    |
+		(
+			(
+				lv_tag_5_0=RULE_TAG
+				{
+					newLeafNode(lv_tag_5_0, grammarAccess.getKeyValuePairAccess().getTagTAGTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getKeyValuePairRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"tag",
+						lv_tag_5_0,
+						"org.integratedmodelling.kactors.Kactors.TAG");
+				}
+			)
+		)
 	)
 ;
 
