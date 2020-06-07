@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.model.KActorsValue;
@@ -17,6 +20,7 @@ import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
 
@@ -242,13 +246,11 @@ public class ViewBehavior {
 			super(identity, arguments, scope, sender, callId);
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Tree);
-			message.setTree(getTree(
-					(Graph<KActorsValue, DefaultEdge>) arguments.get(arguments.getUnnamedKeys().iterator().next())));
+			message.setTree(getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next())));
 			return message;
 		}
 
@@ -258,8 +260,24 @@ public class ViewBehavior {
 		}
 	}
 
-	public static ViewComponent.Tree getTree(Graph<KActorsValue, DefaultEdge> graph) {
+	public static ViewComponent.Tree getTree(KActorsValue tree) {
+		@SuppressWarnings("unchecked")
+		Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>)tree.getValue();
 		ViewComponent.Tree ret = new ViewComponent.Tree();
+		int rootId = -1; int id = 0;
+		Map<KActorsValue, Integer> ids = new HashMap<>();
+		for (KActorsValue value : graph.vertexSet()) {
+			ids.put(value, id);
+			if (rootId < 0 && graph.outgoingEdgesOf(value).isEmpty()) {
+				rootId = id;
+			}
+			ret.getValues().add(value.asMap());
+			id ++;
+		}
+		for (DefaultEdge edge : graph.edgeSet()) {
+			ret.getLinks().add(new Pair<>(ids.get(graph.getEdgeSource(edge)), ids.get(graph.getEdgeTarget(edge))));
+		}
+		ret.setRootId(rootId);
 		return ret;
 	}
 

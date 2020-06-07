@@ -228,6 +228,7 @@ public class AppView extends Composite {
 			});
 			break;
 		case Tree:
+			System.out.println("UN TREE, PORCODI'");
 			break;
 		case Table:
 			break;

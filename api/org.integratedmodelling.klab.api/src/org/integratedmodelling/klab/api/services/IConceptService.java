@@ -20,6 +20,7 @@ import java.util.Collection;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 
 /**
  * The Interface IConceptService.
@@ -175,6 +176,23 @@ public interface IConceptService {
 	 *         comparable.
 	 */
 	int compareSpecificity(IConcept c1, IConcept c2, boolean useBaseTrait);
+
+	/**
+	 * Get the best display name for a concept or observable.
+	 *
+	 * @param k any knowledge
+	 * @return a name for display
+	 */
+	String getDisplayName(ISemantic k);
+
+	/**
+	 * Get the best display name and turn any camel case into something more
+	 * text-like if it does not contain spaces.
+	 *
+	 * @param k any knowledge
+	 * @return a label for display
+	 */
+	String getDisplayLabel(ISemantic k);
 
 
 }

@@ -81,6 +81,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/do"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/for"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Statement/tag"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Assignment">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Assignment/variable"/>
@@ -129,6 +130,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/expression"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/table"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/quantity"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/metadata"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Match">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/id"/>
@@ -233,6 +235,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/interactive"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//KeyValuePair/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/key"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//UnitElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//UnitElement/id"/>

@@ -700,13 +700,22 @@ public interface KactorsPackage extends EPackage
   int STATEMENT__VALUE = 8;
 
   /**
+   * The feature id for the '<em><b>Tag</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT__TAG = 9;
+
+  /**
    * The number of structural features of the '<em>Statement</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT_FEATURE_COUNT = 9;
+  int STATEMENT_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl <em>Assignment</em>}' class.
@@ -1140,13 +1149,22 @@ public interface KactorsPackage extends EPackage
   int VALUE__QUANTITY = 10;
 
   /**
+   * The feature id for the '<em><b>Metadata</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__METADATA = 11;
+
+  /**
    * The number of structural features of the '<em>Value</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 11;
+  int VALUE_FEATURE_COUNT = 12;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl <em>Match</em>}' class.
@@ -2092,13 +2110,22 @@ public interface KactorsPackage extends EPackage
   int KEY_VALUE_PAIR__VALUE = 2;
 
   /**
+   * The feature id for the '<em><b>Key</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__KEY = 3;
+
+  /**
    * The number of structural features of the '<em>Key Value Pair</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR_FEATURE_COUNT = 3;
+  int KEY_VALUE_PAIR_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.UnitElementImpl <em>Unit Element</em>}' class.
@@ -3145,6 +3172,17 @@ public interface KactorsPackage extends EPackage
   EReference getStatement_Value();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Statement#getTag <em>Tag</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Tag</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Statement#getTag()
+   * @see #getStatement()
+   * @generated
+   */
+  EAttribute getStatement_Tag();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Assignment <em>Assignment</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3575,6 +3613,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getValue_Quantity();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getMetadata <em>Metadata</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Metadata</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getMetadata()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Metadata();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Match <em>Match</em>}'.
@@ -4529,6 +4578,17 @@ public interface KactorsPackage extends EPackage
   EReference getKeyValuePair_Value();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getKey <em>Key</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Key</em>'.
+   * @see org.integratedmodelling.kactors.kactors.KeyValuePair#getKey()
+   * @see #getKeyValuePair()
+   * @generated
+   */
+  EAttribute getKeyValuePair_Key();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.UnitElement <em>Unit Element</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5454,6 +5514,14 @@ public interface KactorsPackage extends EPackage
     EReference STATEMENT__VALUE = eINSTANCE.getStatement_Value();
 
     /**
+     * The meta object literal for the '<em><b>Tag</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute STATEMENT__TAG = eINSTANCE.getStatement_Tag();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl <em>Assignment</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5788,6 +5856,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference VALUE__QUANTITY = eINSTANCE.getValue_Quantity();
+
+    /**
+     * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__METADATA = eINSTANCE.getValue_Metadata();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl <em>Match</em>}' class.
@@ -6524,6 +6600,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference KEY_VALUE_PAIR__VALUE = eINSTANCE.getKeyValuePair_Value();
+
+    /**
+     * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute KEY_VALUE_PAIR__KEY = eINSTANCE.getKeyValuePair_Key();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.UnitElementImpl <em>Unit Element</em>}' class.

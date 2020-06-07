@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Each behavior is loaded into a separate actor and external messages to affect 
+  that behavior must include the resulting appId. The main actor receives the messages
+  and dispatches them if an appId is included. Bookkeeping and logics to start/stop/pause
+  each behavior being added. Concurrent applications now fully supported.
+- UI layout communicated to view from actors with view components. Marshalling
+  mechanism for inclusion of UI-driven actions in place and working. Some support
+  for UI in the IDE.
+- k.Actors improvements include parsing of keys (introduced by : or ! for naked
+  negative keys that encode false) for group and value metadata and addition of
+  tags (#xxx) to any statement for identification wherever needed. Some syntax 
+  highlighting and parser fixes.
 - Validate units in ratios of physical properties, skipping aggregation.
 - Units in physical properties annotating resource attributes are mandatory.
 - Using 'within' is only allowed in the first observable of a model.

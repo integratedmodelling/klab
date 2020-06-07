@@ -96,4 +96,10 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 		return behavior.getStyle();
 	}
 
+	@Override
+	public String getTag() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

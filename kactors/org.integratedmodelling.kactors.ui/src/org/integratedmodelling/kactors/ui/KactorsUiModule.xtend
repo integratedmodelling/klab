@@ -4,10 +4,29 @@
 package org.integratedmodelling.kactors.ui
 
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator
+import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper
+import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration
+import org.integratedmodelling.kactors.ui.contentassist.KactorsHighlightingCalculator
+import org.integratedmodelling.kactors.ui.contentassist.KactorsHighlightingConfiguration
+import org.integratedmodelling.kactors.ui.contentassist.KactorsSyntaxHighlighter
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
  */
 @FinalFieldsConstructor
 class KactorsUiModule extends AbstractKactorsUiModule {
+	
+	def Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+		return typeof(KactorsHighlightingCalculator);
+	}
+
+	def Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
+		return typeof(KactorsSyntaxHighlighter)
+	}
+	
+	def Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
+		return typeof(KactorsHighlightingConfiguration);
+	}
+	
 }

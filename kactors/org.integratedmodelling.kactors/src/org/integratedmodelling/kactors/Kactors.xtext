@@ -54,7 +54,7 @@ Metadata:
 ;
 
 MetadataPair:
-	key=MetadataKey (value=Value)?
+	key=KEY (value=Value)?
 ;
 
 StatementList:
@@ -62,16 +62,18 @@ StatementList:
 ;
 
 Statement:
-	assignment=Assignment |
-	group=StatementGroup |
-	verb=MessageCall |
-	text=EMBEDDEDTEXT |
-	if=IfStatement |
-	while=WhileStatement |
-	do=DoStatement |
-	for=ForStatement |
-	// this means "fire this" 
-	value=Value
+	(assignment=Assignment |
+	 group=StatementGroup |
+	 verb=MessageCall |
+	 text=EMBEDDEDTEXT |
+	 if=IfStatement |
+	 while=WhileStatement |
+	 do=DoStatement |
+	 for=ForStatement |
+	 // this means "fire this" 
+	 value=ValueWithMetadata) 
+	 // all statement may be tagged for reference
+	 (tag=TAG)?
 ;
 
 NextStatement returns Statement:
@@ -85,8 +87,10 @@ NextStatement returns Statement:
 		do=DoStatement |
 		for=ForStatement |
 		// this means "fire this" 
-		value=Value
+		value=ValueWithMetadata
 	)
+	// all statement may be tagged for reference
+	(tag=TAG)?
 ;
 
 Assignment:
@@ -140,6 +144,22 @@ Value:
 	quantity=Quantity
 	;
 
+
+ValueWithMetadata returns Value:
+	(tree=Tree |
+	 argvalue=ARGVALUE |
+	 literal=Literal |
+	 urn=UrnId | 
+	 id=PathName |
+	 list=List |
+	 map=Map |
+	 observable=OBSERVABLE | 
+	 expression=EXPR |
+	 table=LookupTable |
+	 quantity=Quantity) 
+	 (metadata=Metadata)?
+	;
+
 ValueWithoutTree returns Value:
 	argvalue=ARGVALUE |
 	literal=Literal |
@@ -151,6 +171,20 @@ ValueWithoutTree returns Value:
 	expression=EXPR |
 	table=LookupTable |
 	quantity=Quantity
+	;
+	
+ValueWithMetadataWithoutTree returns Value:
+	(argvalue=ARGVALUE |
+	literal=Literal |
+	id=PathName |
+	urn=UrnId | 
+	list=List |
+	map=Map |
+	observable=OBSERVABLE | 
+	expression=EXPR |
+	table=LookupTable |
+	quantity=Quantity)
+	(metadata=Metadata)?
 	;
 
 
@@ -184,18 +218,18 @@ UrnKvp:
 ;	
 	
 List:
-	{List} '(' contents+=Value* ')';
+	{List} '(' contents+=ValueWithMetadata* ')';
 	
 Map:
 	{Map} '#{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'
 ;
 
 Tree:
-	root=ValueWithoutTree (=> '<-' (value+=ValueWithoutTree | ('(' value+=Tree ')')))+ 
+	root=ValueWithMetadataWithoutTree (=> '<-' (value+=ValueWithMetadataWithoutTree | ('(' value+=Tree ')')))+ 
 ;
 
 MapEntry:
-	classifier=Classifier ':' value=Value
+	classifier=Classifier ':' value=ValueWithMetadata
 ;	
 
 Classifier:
@@ -251,17 +285,16 @@ Literal:
 	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
 	
 ParameterList:
-	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
+	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
 	
 KeyValuePair:
-	(name=(LOWERCASE_ID) (interactive?='=?' | '='))?
-	value=Value;
+	((name=(LOWERCASE_ID) (interactive?='?=' | '='))?
+	 value=Value) |
+    key=KEY;
 
 UnitElement:
 	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
 	'(' unit=Unit ')';
-
-MetadataKey: (':'|'!') LOWERCASE_ID;
 
 enum UnitOp:
 	OVER='/' | CARET='^' | STAR='*';
@@ -298,6 +331,12 @@ ArgPathName:
 Path:
 	(LOWERCASE_ID|UPPERCASE_ID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID))*
 ;
+
+terminal KEY:
+	(':'|'!')('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
+
+terminal TAG:
+	('#')('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
 terminal UPPERCASE_ID:
 	('A'..'Z') ('A'..'Z' | '_')*;

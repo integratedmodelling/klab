@@ -31,6 +31,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
     protected KActorCodeStatement parent = null;
     protected boolean errors = false;
     protected boolean warnings = false;
+    protected String tag = null;
 
     EObject eObject;
 	private URI uri;
@@ -169,6 +170,11 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
 	public IKimMetadata getMetadata() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public String getTag() {
+		return this.tag;
 	}
 
 

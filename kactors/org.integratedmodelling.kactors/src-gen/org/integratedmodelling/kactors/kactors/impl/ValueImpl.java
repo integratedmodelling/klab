@@ -17,6 +17,7 @@ import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
@@ -40,6 +41,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
  * @generated
@@ -205,6 +207,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Quantity quantity;
+
+  /**
+   * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMetadata()
+   * @generated
+   * @ordered
+   */
+  protected Metadata metadata;
 
   /**
    * <!-- begin-user-doc -->
@@ -658,6 +670,56 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public Metadata getMetadata()
+  {
+    return metadata;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  {
+    Metadata oldMetadata = metadata;
+    metadata = newMetadata;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__METADATA, oldMetadata, newMetadata);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMetadata(Metadata newMetadata)
+  {
+    if (newMetadata != metadata)
+    {
+      NotificationChain msgs = null;
+      if (metadata != null)
+        msgs = ((InternalEObject)metadata).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__METADATA, null, msgs);
+      if (newMetadata != null)
+        msgs = ((InternalEObject)newMetadata).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__METADATA, null, msgs);
+      msgs = basicSetMetadata(newMetadata, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__METADATA, newMetadata, newMetadata));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -674,6 +736,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetTable(null, msgs);
       case KactorsPackage.VALUE__QUANTITY:
         return basicSetQuantity(null, msgs);
+      case KactorsPackage.VALUE__METADATA:
+        return basicSetMetadata(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -710,6 +774,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getTable();
       case KactorsPackage.VALUE__QUANTITY:
         return getQuantity();
+      case KactorsPackage.VALUE__METADATA:
+        return getMetadata();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -756,6 +822,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)newValue);
+        return;
+      case KactorsPackage.VALUE__METADATA:
+        setMetadata((Metadata)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -804,6 +873,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)null);
         return;
+      case KactorsPackage.VALUE__METADATA:
+        setMetadata((Metadata)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -840,6 +912,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return table != null;
       case KactorsPackage.VALUE__QUANTITY:
         return quantity != null;
+      case KactorsPackage.VALUE__METADATA:
+        return metadata != null;
     }
     return super.eIsSet(featureID);
   }

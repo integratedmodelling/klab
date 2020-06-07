@@ -9,33 +9,63 @@ Ferdinando Villa, Ph.D.
 Technical note, June 2020
 
 
-
 In this note we define *integrated modeling* as a scientific practice that aims to maximizing the value of scientific information by providing actionable _modularity_, _reusability_, and _openness_ for the scientific process. In k.LAB, an innovative approach to _semantic annotation_ enables integrated modelling by supporting the production, curation and linkage of scientific artifacts such as datasets, modular model components and data or computational services. The central service in the k.LAB modeling API receives as input a purely logical query ("observe _concept_ in _context_") and, in response, assembles, documents and runs a computation that produces the best possible *observation* of such knowledge - a new scientific artifact. Artificial intelligence operates on the contents of the k.LAB network to rank, select, adapt, and connect data and model components made available by independent and uncoordinated scientists.
+
+## Architecture of the k.LAB software stack
 
 The open source k.LAB software provides five main components that, together, support the creation, maintenance and fruition of a distributed _semantic web_ where scientific information can be stored, published, shared, connected, and ultimately _deployed_ as "live" knowledge that can change and improve based on the integration of new information. 
 
-. *Server* components (*k.Node*) are deployed by certified _partners_ to provide both published content (*k.Server*) and modeling services (*k.Engine*) to online users. The content wrapped in k.LAB _resources_ can be hosted natively on k.Servers or linked from available data services such as OGC or OpenDAP, or computational services such as OpenCPU. 
-. *Client* components are used by modelers (*k.Modeler*) to develop, validate and publish content, and by end users (*k.Explorer*) to access modeling services with novel intuitiveness and transparency. The k.LAB distributed paradigm supports and enforces a model where information remains under the ownership of its authoritative sources while maximizing its availability and interoperability, compatibly with both public and commercial services thanks to state-of-the-art access control and security.
+. *Server* components (*k.Node*) are deployed by certified _partners_ to publish resources and semantic content (*k.Server*) or provide semantic modeling services (*k.Engine*) to online users. One k.Node instance is installed at a partner site and it can be configured to spawn as many k.Server and/or k.Engine instances as desired. Published content may be hosted natively on k.Servers or linked from external data services such as OGC or OpenDAP, or from computational services such as OpenCPU. The k.Server containers managed automatically by k.Node can be configured to host dedicated instances of Geoserver, PostgreSQL, Hyrax or other services to enable one-stop resource management.
+. *Client* components are used by modelers (*k.Modeler*) to develop, validate and publish resources and semantic content, and by end users (*k.Explorer*) to access modeling services with novel intuitiveness and transparency. The k.LAB distributed paradigm supports and enforces a model where information remains under the ownership of its authoritative sources while maximizing its availability and interoperability, compatibly with both public and commercial services thanks to state-of-the-art access control and security.
 
 The architecture of the k.LAB platform is best explained by dividing it in three conceptually distinct layers:
 
-The *resource layer* linked data paradigm
+The *resource layer* linked data paradigm/ Deals with RESOURCES i.e. any content that is not semantic. Resources are developed, validated, published and curated.
 
-The *semantic layer* connects resources to meaning by adopting a representational - principles of orthogonality and parsimony ...
+The *semantic layer* deals with Semantic resources exist at the "conceptual"  level (models, concepts), at the "physical" level (semantically annotated observations, "live" within a session) and can be exported back to resources for publication and curation. In the semantic layer, links are made between resources and their meaning: by adopting a representational - principles of orthogonality and parsimony ... The *k.IM language*, a  language optimized for semantic annotation... , is central to the semantic layer and ensures...
 
-The *reactivity layer* connects _behaviors_ to any of the artifact created during a k.LAB session, enabling individual-based modeling, interactive, reactive and distributed real-time simulations, as well as responsive user applications, with a uniform model. 
+The *reactivity layer* connects _behaviors_ to any of the artifacts created during a k.LAB session, enabling individual-based modeling, interactive, reactive and distributed real-time simulations, as well as responsive user applications, with a uniform model. The *k.Actors language* is the central resource to specify behaviors and applications for all the "live" identities in a k.LAB session, including not only the observations made (agent-based modeling) but also sessions (building both interactive and non-interactive applications) and the users themselves. Behaviors specified in k.Actors are mapped to the Akka framework to create interactive, distributed simulations and applications.
 
+## The resource layer
 
+## The semantic layer
+
+## The reactivity layer
+
+# Applications
+
+# State and future of the software
 
 [bibliography]
-== Bibliography
-
-The bibliography list is a style of AsciiDoc bulleted list.
+== Resources
 
 [bibliography]
-.Books
+.Software 
 - [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
   Programming'. Addison-Wesley. ISBN 0-13-142901-9.
 - [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
   'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
   ISBN 1-56592-580-7.
+  
+.Articles 
+- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
+  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
+- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
+  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
+  ISBN 1-56592-580-7.
+  
+.Web sites 
+- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
+  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
+- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
+  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
+  ISBN 1-56592-580-7.
+  
+.Application projects 
+- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
+  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
+- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
+  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
+  ISBN 1-56592-580-7.
+
+

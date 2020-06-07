@@ -5,7 +5,13 @@ package org.integratedmodelling.kactors.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.integratedmodelling.kactors.ui.AbstractKactorsUiModule;
+import org.integratedmodelling.kactors.ui.contentassist.KactorsHighlightingCalculator;
+import org.integratedmodelling.kactors.ui.contentassist.KactorsHighlightingConfiguration;
+import org.integratedmodelling.kactors.ui.contentassist.KactorsSyntaxHighlighter;
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
@@ -13,6 +19,18 @@ import org.integratedmodelling.kactors.ui.AbstractKactorsUiModule;
 @FinalFieldsConstructor
 @SuppressWarnings("all")
 public class KactorsUiModule extends AbstractKactorsUiModule {
+  public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+    return KactorsHighlightingCalculator.class;
+  }
+  
+  public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
+    return KactorsSyntaxHighlighter.class;
+  }
+  
+  public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
+    return KactorsHighlightingConfiguration.class;
+  }
+  
   public KactorsUiModule(final AbstractUIPlugin plugin) {
     super(plugin);
   }

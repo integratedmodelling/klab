@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConceptService;
@@ -140,13 +141,15 @@ public enum Concepts implements IConceptService {
 
 	}
 
-	/**
-	 * Get the best display name for a concept.
-	 *
-	 * @param t the t
-	 * @return a name for display
-	 */
-	public String getDisplayName(IConcept t) {
+	@Override
+	public String getDisplayName(ISemantic k) {
+		if (k instanceof IObservable) {
+			return getDisplayName((IObservable)k);
+		}
+		return getDisplayName(k.getType());
+	}
+	
+	private String getDisplayName(IConcept t) {
 
 		String ret = t.getMetadata().get(NS.DISPLAY_LABEL_PROPERTY, String.class);
 
@@ -162,13 +165,7 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
-	/**
-	 * Get the best display name for a concept.
-	 *
-	 * @param t the t
-	 * @return a name for display
-	 */
-	public String getDisplayName(IObservable o) {
+	private String getDisplayName(IObservable o) {
 
 		String ret = getDisplayName(o.getType());
 
@@ -187,14 +184,15 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
-	/**
-	 * Get the best display name and turn any camel case into something more
-	 * text-like if it does not contain spaces.
-	 *
-	 * @param t the t
-	 * @return a name for display
-	 */
-	public String getDisplayLabel(IConcept t) {
+	@Override
+	public String getDisplayLabel(ISemantic k) {
+		if (k instanceof IObservable) {
+			return getDisplayLabel((IObservable)k);
+		}
+		return getDisplayLabel(k.getType());
+	}
+
+	private String getDisplayLabel(IConcept t) {
 		String ret = getDisplayName(t);
 		if (!ret.contains(" ")) {
 			ret = StringUtils.capitalize(CamelCase.toLowerCase(ret, ' '));
@@ -202,7 +200,7 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
-	public String getDisplayLabel(IObservable t) {
+	private String getDisplayLabel(IObservable t) {
 		String ret = getDisplayName(t);
 		if (!ret.contains(" ")) {
 			ret = StringUtils.capitalize(CamelCase.toLowerCase(ret, ' '));

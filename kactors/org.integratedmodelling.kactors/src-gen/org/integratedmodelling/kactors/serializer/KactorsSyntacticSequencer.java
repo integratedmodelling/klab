@@ -29,6 +29,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected AbstractElementAlias match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_4_0_1_0_q;
+	protected AbstractElementAlias match_ParameterList_CommaKeyword_1_0_0_q;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_5_1_1_q;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_5_4_1_q;
 	
@@ -42,6 +43,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 		match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getLeftParenthesisKeyword_0_0_1_0()), new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getRightParenthesisKeyword_0_0_1_2()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_4_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_4_0_1_0());
+		match_ParameterList_CommaKeyword_1_0_0_q = new TokenAlias(false, true, grammarAccess.getParameterListAccess().getCommaKeyword_1_0_0());
 		match_TableClassifier_ExclusiveKeyword_5_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_5_1_1());
 		match_TableClassifier_ExclusiveKeyword_5_4_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_5_4_1());
 	}
@@ -83,6 +85,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_Number_PlusSignKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_4_0_1_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_4_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ParameterList_CommaKeyword_1_0_0_q.equals(syntax))
+				emit_ParameterList_CommaKeyword_1_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_5_1_1_q.equals(syntax))
 				emit_TableClassifier_ExclusiveKeyword_5_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_5_4_1_q.equals(syntax))
@@ -167,6 +171,17 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     exponential?='e' (ambiguity) exp=INT
 	 */
 	protected void emit_Number_PlusSignKeyword_4_0_1_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     ','?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     pairs+=KeyValuePair (ambiguity) pairs+=KeyValuePair
+	 */
+	protected void emit_ParameterList_CommaKeyword_1_0_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

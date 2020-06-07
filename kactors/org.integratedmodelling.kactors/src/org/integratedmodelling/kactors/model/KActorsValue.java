@@ -1,7 +1,9 @@
 package org.integratedmodelling.kactors.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
@@ -12,9 +14,13 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.Match;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.klab.Services;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
@@ -29,7 +35,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	private Type type;
 	private Object value;
-
+	private Map<String, KActorsValue> metadata = new HashMap<>();
+	
 	// to support costly translations from implementations
 	private Object data;
 
@@ -60,7 +67,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		this.type = Type.BOOLEAN;
 		this.value = value;
 	}
-	
+
 	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
 		if (value.getId() != null) {
@@ -96,6 +103,21 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.type = Type.TREE;
 			this.value = parseTree(value.getTree(), this);
 		}
+		
+		if (value.getMetadata() != null) {
+			for (MetadataPair pair : value.getMetadata().getPairs()) {
+				String key = pair.getKey().substring(1);
+				boolean negative = pair.getKey().startsWith("!");
+				KActorsValue v = null;
+				if (pair.getValue() != null) {
+					v = new KActorsValue(pair.getValue(), this);
+				} else {
+					v = new KActorsValue(!negative, this);
+				}
+				metadata.put(key, v);
+			}
+		}
+		
 	}
 
 	public KActorsValue(Match match, KActorCodeStatement parent) {
@@ -247,14 +269,22 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		return ret;
 	}
 
+	private Tree getSubTree(Value value) {
+		if (value.getList() != null && value.getList().getContents().size() == 1 && value.getList().getContents().get(0).getTree() != null) {
+			return value.getList().getContents().get(0).getTree();
+		}
+		return null;
+	}
+	
 	private KActorsValue addNode(Tree treeNode, KActorCodeStatement parent, Graph<KActorsValue, DefaultEdge> ret) {
 		KActorsValue value = new KActorsValue(treeNode.getRoot(), parent);
 		ret.addVertex(value);
 		for (EObject child : treeNode.getValue()) {
 			Value vchild = (Value) child;
 			KActorsValue vvc = null;
-			if (vchild.getTree() != null) {
-				vvc = addNode(vchild.getTree(), parent, ret);
+			Tree chtree = getSubTree(vchild);
+			if (chtree != null) {
+				vvc = addNode(chtree, parent, ret);
 			} else {
 				vvc = new KActorsValue(vchild, parent);
 				ret.addVertex(vvc);
@@ -262,6 +292,68 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			ret.addEdge(vvc, value);
 		}
 		return value;
+	}
+
+	/**
+	 * Return a map for the value containing at least an ID (unique for the same
+	 * value), a label for display, and the string value of the type. According to
+	 * the type, this may be more or less intelligent.
+	 * 
+	 * So far unimplemented for collection types.
+	 * 
+	 * @return
+	 */
+	public Map<String, String> asMap() {
+
+		IConceptService cservice = Services.INSTANCE.getService(IConceptService.class);
+
+		Map<String,String> ret = new HashMap<>();
+		ret.put("id", value == null ? "null" : value.toString());
+		ret.put("type", type.name());
+		
+		switch(type) {
+		case OBSERVABLE:
+			Object o = getValue();
+			if (cservice != null && o instanceof ISemantic) {
+				ret.put("label", cservice.getDisplayLabel(((ISemantic)o).getType()));
+				break;
+			}
+		case ANYTHING:
+		case ANYTRUE:
+		case ANYVALUE:
+		case BOOLEAN:
+		case CLASS:
+		case DATE:
+		case ERROR:
+		case EXPRESSION:
+		case IDENTIFIER:
+		case LIST:
+		case MAP:
+		case NODATA:
+		case NUMBER:
+		case NUMBERED_PATTERN:
+		case OBSERVATION:
+		case QUANTITY:
+		case RANGE:
+		case REGEXP:
+		case SET:
+		case STRING:
+		case TABLE:
+		case TREE:
+		case TYPE:
+		case URN:
+			ret.put("label", ret.get("id"));
+			break;
+		}
+		
+		/*
+		 * metadata may override anything
+		 */
+		for (String key : metadata.keySet()) {
+			ret.put(key, metadata.get(key).getValue().toString());
+		}
+		
+		return ret;
 	}
 
 }

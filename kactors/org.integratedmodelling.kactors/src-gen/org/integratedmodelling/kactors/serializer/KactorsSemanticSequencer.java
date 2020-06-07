@@ -196,7 +196,15 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				sequence_UnitElement(context, (UnitElement) semanticObject); 
 				return; 
 			case KactorsPackage.VALUE:
-				if (rule == grammarAccess.getValueWithoutTreeRule()) {
+				if (rule == grammarAccess.getValueWithMetadataWithoutTreeRule()) {
+					sequence_ValueWithMetadataWithoutTree(context, (Value) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getValueWithMetadataRule()) {
+					sequence_ValueWithMetadata(context, (Value) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getValueWithoutTreeRule()) {
 					sequence_ValueWithoutTree(context, (Value) semanticObject); 
 					return; 
 				}
@@ -392,7 +400,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     KeyValuePair returns KeyValuePair
 	 *
 	 * Constraint:
-	 *     ((name=LOWERCASE_ID interactive?='=?'?)? value=Value)
+	 *     (((name=LOWERCASE_ID interactive?='?='?)? value=Value) | key=KEY)
 	 */
 	protected void sequence_KeyValuePair(ISerializationContext context, KeyValuePair semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -404,7 +412,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     List returns List
 	 *
 	 * Constraint:
-	 *     contents+=Value*
+	 *     contents+=ValueWithMetadata*
 	 */
 	protected void sequence_List(ISerializationContext context, List semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -447,7 +455,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     MapEntry returns MapEntry
 	 *
 	 * Constraint:
-	 *     (classifier=Classifier value=Value)
+	 *     (classifier=Classifier value=ValueWithMetadata)
 	 */
 	protected void sequence_MapEntry(ISerializationContext context, MapEntry semanticObject) {
 		if (errorAcceptor != null) {
@@ -458,7 +466,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getMapEntryAccess().getClassifierClassifierParserRuleCall_0_0(), semanticObject.getClassifier());
-		feeder.accept(grammarAccess.getMapEntryAccess().getValueValueParserRuleCall_2_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getMapEntryAccess().getValueValueWithMetadataParserRuleCall_2_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
@@ -530,7 +538,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     MetadataPair returns MetadataPair
 	 *
 	 * Constraint:
-	 *     (key=MetadataKey value=Value?)
+	 *     (key=KEY value=Value?)
 	 */
 	protected void sequence_MetadataPair(ISerializationContext context, MetadataPair semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -567,15 +575,18 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         assignment=Assignment | 
-	 *         verb=MessageCall | 
-	 *         group=StatementGroup | 
-	 *         text=EMBEDDEDTEXT | 
-	 *         if=IfStatement | 
-	 *         while=WhileStatement | 
-	 *         do=DoStatement | 
-	 *         for=ForStatement | 
-	 *         value=Value
+	 *         (
+	 *             assignment=Assignment | 
+	 *             verb=MessageCall | 
+	 *             group=StatementGroup | 
+	 *             text=EMBEDDEDTEXT | 
+	 *             if=IfStatement | 
+	 *             while=WhileStatement | 
+	 *             do=DoStatement | 
+	 *             for=ForStatement | 
+	 *             value=ValueWithMetadata
+	 *         ) 
+	 *         tag=TAG?
 	 *     )
 	 */
 	protected void sequence_NextStatement(ISerializationContext context, Statement semanticObject) {
@@ -722,15 +733,18 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         assignment=Assignment | 
-	 *         group=StatementGroup | 
-	 *         verb=MessageCall | 
-	 *         text=EMBEDDEDTEXT | 
-	 *         if=IfStatement | 
-	 *         while=WhileStatement | 
-	 *         do=DoStatement | 
-	 *         for=ForStatement | 
-	 *         value=Value
+	 *         (
+	 *             assignment=Assignment | 
+	 *             group=StatementGroup | 
+	 *             verb=MessageCall | 
+	 *             text=EMBEDDEDTEXT | 
+	 *             if=IfStatement | 
+	 *             while=WhileStatement | 
+	 *             do=DoStatement | 
+	 *             for=ForStatement | 
+	 *             value=ValueWithMetadata
+	 *         ) 
+	 *         tag=TAG?
 	 *     )
 	 */
 	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
@@ -794,7 +808,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Tree returns Tree
 	 *
 	 * Constraint:
-	 *     (root=ValueWithoutTree (value+=ValueWithoutTree | value+=Tree)+)
+	 *     (root=ValueWithMetadataWithoutTree (value+=ValueWithMetadataWithoutTree | value+=Tree)+)
 	 */
 	protected void sequence_Tree(ISerializationContext context, Tree semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -821,6 +835,59 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     (root=UnitElement? (connectors+=UnitOp units+=UnitElement)*)
 	 */
 	protected void sequence_Unit(ISerializationContext context, Unit semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ValueWithMetadataWithoutTree returns Value
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             argvalue=ARGVALUE | 
+	 *             literal=Literal | 
+	 *             id=PathName | 
+	 *             urn=UrnId | 
+	 *             list=List | 
+	 *             map=Map | 
+	 *             observable=OBSERVABLE | 
+	 *             expression=EXPR | 
+	 *             table=LookupTable | 
+	 *             quantity=Quantity
+	 *         ) 
+	 *         metadata=Metadata?
+	 *     )
+	 */
+	protected void sequence_ValueWithMetadataWithoutTree(ISerializationContext context, Value semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ValueWithMetadata returns Value
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             tree=Tree | 
+	 *             argvalue=ARGVALUE | 
+	 *             literal=Literal | 
+	 *             urn=UrnId | 
+	 *             id=PathName | 
+	 *             list=List | 
+	 *             map=Map | 
+	 *             observable=OBSERVABLE | 
+	 *             expression=EXPR | 
+	 *             table=LookupTable | 
+	 *             quantity=Quantity
+	 *         ) 
+	 *         metadata=Metadata?
+	 *     )
+	 */
+	protected void sequence_ValueWithMetadata(ISerializationContext context, Value semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

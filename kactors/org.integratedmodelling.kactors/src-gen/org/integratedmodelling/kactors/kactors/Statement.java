@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getDo <em>Do</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getFor <em>For</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getValue <em>Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getTag <em>Tag</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement()
@@ -228,5 +229,27 @@ public interface Statement extends EObject
    * @generated
    */
   void setValue(Value value);
+
+  /**
+   * Returns the value of the '<em><b>Tag</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Tag</em>' attribute.
+   * @see #setTag(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Tag()
+   * @model
+   * @generated
+   */
+  String getTag();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getTag <em>Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Tag</em>' attribute.
+   * @see #getTag()
+   * @generated
+   */
+  void setTag(String value);
 
 } // Statement
