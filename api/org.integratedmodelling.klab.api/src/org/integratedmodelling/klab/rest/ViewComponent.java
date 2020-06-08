@@ -83,10 +83,8 @@ public class ViewComponent {
 	private ValueType contentType;
 	private String content;
 	private Tree tree;
-	private List<String> possibleContent;
-	// for groups
 	private List<ViewComponent> components = new ArrayList<>();
-	private Map<String, String> data = new HashMap<>();
+	private Map<String, String> attributes = new HashMap<>();
 
 	public String getId() {
 		return id;
@@ -148,14 +146,6 @@ public class ViewComponent {
 		this.content = content;
 	}
 
-	public List<String> getPossibleContent() {
-		return possibleContent;
-	}
-
-	public void setPossibleContent(List<String> possibleContent) {
-		this.possibleContent = possibleContent;
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -168,18 +158,18 @@ public class ViewComponent {
 		this.components = components;
 	}
 
-	public Map<String, String> getData() {
-		return data;
+	public Map<String, String> getAttributes() {
+		return attributes;
 	}
 
-	public void setData(Map<String, String> data) {
-		this.data = data;
+	public void setAttributes(Map<String, String> data) {
+		this.attributes = data;
 	}
 
 	@Override
 	public String toString() {
 		return "ViewComponent [parentId=" + parentId + ", type=" + type + ", name=" + name + ", title=" + title
-				+ ", content=" + content + ", data=" + data + "]";
+				+ ", content=" + content + ", attributes=" + attributes + "]";
 	}
 
 	public String getApplicationId() {

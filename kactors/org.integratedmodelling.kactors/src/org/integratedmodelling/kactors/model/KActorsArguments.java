@@ -18,7 +18,7 @@ public class KActorsArguments extends Parameters<String> {
 			if (pair.getKey() != null) {
 				put(pair.getKey().substring(1), new KActorsValue(pair.getKey().startsWith("!"), null));
 			} else if (pair.getTag() != null) {
-				put("name", pair.getTag().substring(1));
+				put("tag", pair.getTag().substring(1));
 			} else if (pair.getName() == null) {
 				putUnnamed(new KActorsValue(pair.getValue(), null));
 			} else {

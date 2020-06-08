@@ -815,4 +815,10 @@ public class ResourceScope implements IRuntimeScope {
 		return null;
 	}
 
+	@Override
+	public List<String> getNamedKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

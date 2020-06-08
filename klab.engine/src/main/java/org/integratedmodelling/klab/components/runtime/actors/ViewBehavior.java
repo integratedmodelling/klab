@@ -25,10 +25,30 @@ import org.integratedmodelling.klab.utils.Pair;
 import akka.actor.typed.ActorRef;
 
 /**
- * View messages.
- * 
+ * View messages. Uses metadata for layout control
+ * <p>
+ * Metadata this far:
+ * <p>
+ * No argument:
  * <ul>
- * <li></li>
+ * <li>:right, :left, :top, :bottom</li>
+ * <li>:hfill, :vfill, :fill</li>
+ * <li>:disabled {!disabled for completeness}</li>
+ * <li>:hidden {!hidden}</li>
+ * </ul>
+ * <p>
+ * With argument:
+ * <ul>
+ * <li>:cspan, :rspan (columns and rows spanned in grid)</li>
+ * <li>:fg, :bg (color name for now?)</li>
+ * <li>:bstyle {?HTML solid dotted}</li>
+ * <li>:bwidth <n> border width (always solid for now)</li>
+ * <li>:fstyle {bold|italic|strike|normal}</li>
+ * <li>:fsize <n></li>
+ * <li>:symbol {font awesome char code}</li>
+ * <li>:class (CSS class)</li>
+ * <li>:wmin, :hmin (minimum height and width)</li>
+ * <li>:cols, :equal for panel grids</li>
  * </ul>
  * 
  * @author Ferd
@@ -148,6 +168,7 @@ public class ViewBehavior {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Alert);
 			message.setContent(this.evaluateArgument(0, scope, "Alert"));
+			message.getAttributes().putAll(getMetadata(arguments, scope));
 			session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
 		}
 	}
@@ -166,6 +187,7 @@ public class ViewBehavior {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Confirm);
 			message.setContent(this.evaluateArgument(0, scope, "Confirm"));
+			message.getAttributes().putAll(getMetadata(arguments, scope));
 			session.getMonitor().post((msg) -> {
 				fire(msg.getPayload(ViewAction.class).isBooleanValue(), true);
 			}, IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
@@ -185,6 +207,7 @@ public class ViewBehavior {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.PushButton);
 			message.setName(this.evaluateArgument(0, scope, "Button Text"));
+			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
 
@@ -207,6 +230,7 @@ public class ViewBehavior {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Label);
 			message.setContent(this.evaluateArgument(0, scope, "Label text"));
+			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
 
@@ -229,6 +253,7 @@ public class ViewBehavior {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.TextInput);
 			message.setContent(this.evaluateArgument(0, scope, (String) null));
+			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
 
@@ -251,6 +276,7 @@ public class ViewBehavior {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Tree);
 			message.setTree(getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next())));
+			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
 
@@ -262,9 +288,10 @@ public class ViewBehavior {
 
 	public static ViewComponent.Tree getTree(KActorsValue tree) {
 		@SuppressWarnings("unchecked")
-		Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>)tree.getValue();
+		Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>) tree.getValue();
 		ViewComponent.Tree ret = new ViewComponent.Tree();
-		int rootId = -1; int id = 0;
+		int rootId = -1;
+		int id = 0;
 		Map<KActorsValue, Integer> ids = new HashMap<>();
 		for (KActorsValue value : graph.vertexSet()) {
 			ids.put(value, id);
@@ -272,12 +299,30 @@ public class ViewBehavior {
 				rootId = id;
 			}
 			ret.getValues().add(value.asMap());
-			id ++;
+			id++;
 		}
 		for (DefaultEdge edge : graph.edgeSet()) {
 			ret.getLinks().add(new Pair<>(ids.get(graph.getEdgeSource(edge)), ids.get(graph.getEdgeTarget(edge))));
 		}
 		ret.setRootId(rootId);
+		return ret;
+	}
+
+	public static Map<String, String> getMetadata(IParameters<String> arguments, Scope scope) {
+		Map<String, String> ret = new HashMap<>();
+		if (arguments != null) {
+			for (String key : arguments.getNamedKeys()) {
+				Object o = arguments.get(key);
+				if (o instanceof KActorsValue) {
+					o = ((KActorsValue) o).getValue();
+				}
+				if (o == null) {
+					ret.put(key, "null");
+				} else {
+					ret.put(key, o.toString());
+				}
+			}
+		}
 		return ret;
 	}
 

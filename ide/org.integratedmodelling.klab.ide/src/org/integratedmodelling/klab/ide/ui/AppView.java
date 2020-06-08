@@ -1,15 +1,26 @@
 package org.integratedmodelling.klab.ide.ui;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -28,7 +39,9 @@ import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.rest.ViewComponent.Tree;
 import org.integratedmodelling.klab.rest.ViewPanel;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 public class AppView extends Composite {
@@ -37,6 +50,150 @@ public class AppView extends Composite {
 	private Map<String, Composite> containers = new HashMap<>();
 	private Layout currentLayout;
 	private Map<String, ViewComponent> components = new HashMap<>();
+	private Map<String, StructuredViewer> viewers = new HashMap<>();
+
+	private class TreeWrapper {
+
+		Tree tree;
+
+		public TreeWrapper(Tree tree) {
+			this.tree = tree;
+			for (int i = 0; i < tree.getValues().size(); i++) {
+				tree.getValues().get(i).put("__IID", i + "");
+			}
+		}
+
+		public Object[] getChildren(Object item) {
+
+			List<Map<String, String>> ret = new ArrayList<>();
+			if (item instanceof TreeWrapper) {
+				for (Pair<Integer, Integer> link : tree.getLinks()) {
+					if (link.getSecond() == tree.getRootId()) {
+						ret.add(tree.getValues().get(link.getFirst()));
+					}
+				}
+			} else {
+				@SuppressWarnings("unchecked")
+				int i = Integer.parseInt(((Map<String, String>) item).get("__IID"));
+				for (Pair<Integer, Integer> link : tree.getLinks()) {
+					if (link.getSecond() == i) {
+						ret.add(tree.getValues().get(link.getFirst()));
+					}
+				}
+			}
+			return ret.toArray();
+		}
+
+		public Object getParent(Object parent) {
+
+			if (parent instanceof Map) {
+				@SuppressWarnings("unchecked")
+				Map<String, String> mparent = (Map<String, String>) parent;
+				int i = Integer.parseInt(mparent.get("__IID"));
+				if (i == tree.getRootId()) {
+					return this;
+				}
+				for (Pair<Integer, Integer> link : tree.getLinks()) {
+					if (link.getFirst() == i) {
+						return tree.getValues().get(link.getSecond());
+					}
+				}
+			}
+			return new Object[] {};
+		}
+	}
+
+	private class TreeLabelProvider implements ILabelProvider, IColorProvider, IFontProvider {
+
+		@Override
+		public void addListener(ILabelProviderListener listener) {
+		}
+
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public boolean isLabelProperty(Object element, String property) {
+			return true;
+		}
+
+		@Override
+		public void removeListener(ILabelProviderListener listener) {
+		}
+
+		@Override
+		public Font getFont(Object element) {
+			return null;
+		}
+
+		@Override
+		public Color getForeground(Object element) {
+			return null;
+		}
+
+		@Override
+		public Color getBackground(Object element) {
+			return null;
+		}
+
+//		@Override
+//		public Image getColumnImage(Object element, int columnIndex) {
+//			return null;
+//		}
+//
+//		@SuppressWarnings("unchecked")
+//		@Override
+//		public String getColumnText(Object element, int columnIndex) {
+//			return null;
+//		}
+
+		@Override
+		public Image getImage(Object element) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public String getText(Object element) {
+			if (element instanceof Map) {
+				return ((Map<String,String>)element).get("label");
+			}
+			return null;
+		}
+
+	}
+
+	private class TreeContentProvider implements ITreeContentProvider {
+
+		TreeWrapper tree;
+
+		public TreeContentProvider(TreeWrapper tree) {
+			this.tree = tree;
+		}
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			return getChildren(inputElement);
+		}
+
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			return tree.getChildren(parentElement);
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			return tree.getParent(element);
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			return getChildren(element).length > 0;
+		}
+
+	}
 
 	public AppView(boolean horizontal, Composite parent, int style, ViewPart view) {
 		super(parent, style);
@@ -155,6 +312,8 @@ public class AppView extends Composite {
 	 */
 	private void makeComponent(ViewComponent component, Composite parent) {
 
+		components.put(component.getId(), component);
+
 		switch (component.getType()) {
 		case CheckButton:
 			break;
@@ -174,7 +333,7 @@ public class AppView extends Composite {
 			if (tcols > 0) {
 				group.setLayout(gridLayout(tcols, false));
 				for (ViewComponent row : component.getComponents()) {
-					for (int col = 0; col < row.getComponents().size(); col ++) {
+					for (int col = 0; col < row.getComponents().size(); col++) {
 						makeComponent(row.getComponents().get(col), group);
 					}
 					for (int i = row.getComponents().size(); i < tcols; i++) {
@@ -229,7 +388,15 @@ public class AppView extends Composite {
 			});
 			break;
 		case Tree:
-			System.out.println("UN TREE, PORCODI'");
+			TreeViewer viewer = new TreeViewer(parent, SWT.CHECK);
+			viewers.put(component.getId(), viewer);
+			viewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+			viewer.setLabelProvider(new TreeLabelProvider());
+			TreeWrapper tree = new TreeWrapper(component.getTree());
+			viewer.setContentProvider(new TreeContentProvider(tree));
+			viewer.setLabelProvider(new TreeLabelProvider());
+			// TODO add needed listeners based on metadata and options
+			viewer.setInput(tree);
 			break;
 		case Table:
 			break;
@@ -247,8 +414,8 @@ public class AppView extends Composite {
 	}
 
 	/**
-	 * If this group is a group of groups (representing a table) return the max number of items
-	 * per row, otherwise return 0.
+	 * If this group is a group of groups (representing a table) return the max
+	 * number of items per row, otherwise return 0.
 	 * 
 	 * @param component
 	 * @return
@@ -286,6 +453,7 @@ public class AppView extends Composite {
 
 		this.currentLayout = layout;
 		this.containers.clear();
+		this.components.clear();
 
 		refreshView();
 	}

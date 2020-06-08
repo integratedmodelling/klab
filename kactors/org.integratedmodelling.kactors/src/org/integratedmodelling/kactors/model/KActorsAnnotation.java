@@ -32,10 +32,20 @@ public class KActorsAnnotation extends Parameters<String> implements IKimAnnotat
 
 		if (statement.getParameters() != null) {
 			if (statement.getParameters().getPairs() != null) {
+				
 				for (KeyValuePair pair : statement.getParameters().getPairs()) {
-					String key = pair.getName();
-					KActorsValue value = new KActorsValue(pair.getValue(), null);
-					put(key == null ? IKimAnnotation.DEFAULT_PARAMETER_NAME : key, value);
+					if (pair.getKey() != null) {
+						put(pair.getKey().substring(1), new KActorsValue(pair.getKey().startsWith("!"), null));
+					} else if (pair.getTag() != null) {
+						put("tag", pair.getTag().substring(1));
+					} else if (pair.getName() == null) {
+						putUnnamed(new KActorsValue(pair.getValue(), null));
+					} else {
+						put(pair.getName(), new KActorsValue(pair.getValue(), null));
+					}
+//					String key = pair.getName();
+//					KActorsValue value = new KActorsValue(pair.getValue(), null);
+//					put(key == null ? IKimAnnotation.DEFAULT_PARAMETER_NAME : key, value);
 				}
 			}
 		}

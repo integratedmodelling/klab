@@ -9,6 +9,67 @@ import java.util.List;
  * and left sections. The name of the view is the name of the behavior that
  * specifies it.
  * 
+ * 
+ * Input from Enrico on suggested conventions:
+ * <pre>
+ * --------------------------------------------------------------------------------------------------------
+ * View
+Componente principale e contenitore di tutto il resto
+Si struttura in 5 aree:
+
+    Header (max 1 elemento)
+    Left (n elementos)
+    Right (n elementos)
+    Center (n elementos)
+    Footer (max 1 elemento)
+
+Attributi
+Guardando la definizione che usa Quasar di Layout (che è la cosa corrispondente) ci sono 2 cose interessanti che magari verrebbero bene più avanti:
+- Un Layout puó essere un container quindi puó passare ad essere pure lui un componente. Nel caso di Quasar, questo fa sí che le dimensioni facciano riferimento alla página intera o al Panel dove è messo (per maggiori dettagli mi dici). Per noi questo potrebbe essere utile pensando a una view generale che sostituisca l'explorer come ben dicevi tu
+- Usano una serie di lettere per gestire le sovrapposizioni:
+Fondamentalmente si gestisce se i pannelli laterali coprono o no l'header e il footer
+
+Panel
+Header
+Footer
+Non so se Header e Footer sono rimasugli di altre implementazioni, pero credo che non sono necessari.
+Quasar ha dei componenti specifici però fondamentalmente gestisce dettagli estetici. Un panel messo nella proprietà header di View non penso abbia bisogno di ulteriori dettagli, quindi mi centrerei in Panel
+Panel è un contenitore di elementi eterogenei posizionati a seconda di come si definiscono e del layout previsto per il pannello,
+Un pannello puó contenere altri pannelli e cosí successivamente
+Personalmente credo che tutti i componenti dovrebbero essere contenuti in un pannello e non possano essere lasciati soli, più che altro per essere un po' coerenti
+Attributi
+visible: visibilità che púo essere legata a una variabile
+layout: qualche descrizione sul tipo di layout. Qua ci si puó mettere di tutto, però in un principio con orizzontale, verticale ed indicare se puoi andare a capo dovrebbe essere sufficiente. La storia del a capo è per sapere se si cambia la dimensione degli elementi per starci o quando non ci si sta si va a nuova linea. 
+Magari si puó anche pensare in un GridLayout o in un Flex più avanti.
+
+Group
+Un gruppo credo dovrebbe essere qualcosa di omogeneo per poter gestire elementi come se fossero una unità. È necessario per i radioButton e i checkButton
+Attributi
+Credo che possono essere gli stessi di un componente:
+
+PushButton
+CheckButton
+RadioButton
+TextInput
+Combo
+Tree
+TreeItem
+Map
+Componenti che possono essere inseriti in un Panel
+In quanto ad attributi, metterei quelli fissi che possono essere validi anche per i gruppi
+align
+width: qui userei o percentuale o cose fisse senza dimensioni specifiche (xs, s, m, etc) e poi lo stile li definisce
+Ed in questo momento non mi viene in mente alto
+E poi lascerei una serie di attributi come un Map visto che il funzionamento di ogni componente avrà le sue necessita specifiche
+
+Alert
+Confirm
+Questi due li stiamo trattando in una maniera speciale, penso che potranno avere un panel e dentro ci sia quello che vuoi
+Sarebbero piú simili ad una View pero con una parte dove metti il panel con il contenuto, e una parte con i bottoni specifici (alert solo ok, confirm ok e cancel)
+Oppure un tipo Dialog que puó avere delle implementazioni per alert e confirm
+--------------------------------------------------------------------------------------------------------
+ * </pre>
+ * 
  * @author Ferd
  *
  */
