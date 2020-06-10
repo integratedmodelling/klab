@@ -44,6 +44,19 @@ import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 
+/**
+ * SO there should be one of these in the knowledge search view to provide the
+ * USER application (defaulting to a provided one) and nothing more, with a
+ * button to edit it and one to reset to defaults.
+ * <p>
+ * THEN there should be a specialized k.Apps view for anything else, where the
+ * "dropped" ones end up, with a chooser for the active ones and another for the
+ * apps gathered in the workspace.
+ * <p>
+ * 
+ * @author Ferd
+ *
+ */
 public class AppView extends Composite {
 
 	private Composite parent;
@@ -158,7 +171,7 @@ public class AppView extends Composite {
 		@Override
 		public String getText(Object element) {
 			if (element instanceof Map) {
-				return ((Map<String,String>)element).get("label");
+				return ((Map<String, String>) element).get("label");
 			}
 			return null;
 		}
@@ -195,10 +208,17 @@ public class AppView extends Composite {
 
 	}
 
-	public AppView(boolean horizontal, Composite parent, int style, ViewPart view) {
+	public AppView(Composite parent, int style) {
 		super(parent, style);
 		this.parent = parent;
 		setLayout(gridLayout(1, true));
+	}
+
+	public AppView(Layout layout, Composite parent, int style) {
+		super(parent, style);
+		this.parent = parent;
+		setLayout(gridLayout(1, true));
+		setup(layout);
 	}
 
 	private GridLayout gridLayout(int cols, boolean equalWidth) {
@@ -455,19 +475,19 @@ public class AppView extends Composite {
 		this.containers.clear();
 		this.components.clear();
 
-		refreshView();
+		Display.getDefault().asyncExec(() -> {
+			refreshView();
+		});
 	}
 
 	private void refreshView() {
-		Display.getDefault().asyncExec(() -> {
-			this.setLayout(gridLayout(1, true));
-			Composite app = makeView(this.currentLayout, this);
-			app.setLayout(gridLayout(1, true));
-			app.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			// parent.setSize(this.view.get);
-			parent.pack();
-			parent.layout(true);
-		});
+		this.setLayout(gridLayout(1, true));
+		Composite app = makeView(this.currentLayout, this);
+		app.setLayout(gridLayout(1, true));
+		app.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		// parent.setSize(this.view.get);
+		parent.pack();
+		parent.layout(true);
 	}
 
 	public synchronized void addWidget(IMessage message) {
@@ -479,12 +499,10 @@ public class AppView extends Composite {
 			Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.ViewAction,
 					new ViewAction(component, choice));
 		} else if (component.getParentId() != null && this.containers.containsKey(component.getParentId())) {
-
-			// TODO add component to layout
-			makeComponent(component, this.containers.get(component.getParentId()));
-
-			// TODO refresh view
-			refreshView();
+			Display.getDefault().asyncExec(() -> {
+				makeComponent(component, this.containers.get(component.getParentId()));
+				refreshView();
+			});
 
 		} else {
 			System.err.println("INTERNAL: got widget outside of known container");

@@ -4,6 +4,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -52,17 +53,15 @@ public class SystemBehavior {
 	 */
 	public static class Stop implements KlabMessage {
 
-		String behavior;
 		String appId;
 
-		public Stop(String behavior, String appId) {
-			this.behavior = behavior;
+		public Stop(String appId) {
 			this.appId = appId;
 		}
 
 		@Override
 		public Stop direct() {
-			return new Stop(behavior, null);
+			throw new KlabIllegalStatusException("Actors shouldn't stop themselves.");
 		}
 	}
 	

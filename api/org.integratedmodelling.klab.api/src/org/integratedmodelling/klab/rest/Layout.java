@@ -88,9 +88,10 @@ public class Layout extends ViewComponent {
 		setType(Type.View);
 	}
 
-	public Layout(String behaviorName) {
+	public Layout(String behaviorName, String applicationId) {
 		this();
 		setName(behaviorName);
+		setApplicationId(applicationId);
 	}
 
 	public List<ViewPanel> getPanels() {

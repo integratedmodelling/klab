@@ -41,7 +41,6 @@ import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.klab.rest.TicketResponse;
 
 /**
  * Holder of state for sessions and projects. Singleton available through the
@@ -195,9 +194,9 @@ public class Klab {
 		KlabNavigator.refresh();
 		Eclipse.INSTANCE.refreshOpenEditors();
 		Eclipse.INSTANCE.notification("New resource imported",
-				"The resource with URN " + resource.getUrn()
-						+ " is now available and online. It can be referenced within the " + resource.getProjectName()
-						+ " project as " + resource.getLocalName());
+				"Resource <b>" + resource.getUrn()
+						+ "</b> is available and online.\nIt can be referenced within the <b>" + resource.getProjectName()
+						+ "</b> project as <b>" + resource.getLocalName()+"</b>.");
 	}
 
 	public void notifyResourceUpdated(ResourceReference resource) {
@@ -220,7 +219,7 @@ public class Klab {
 		KlabNavigator.refresh();
 		Eclipse.INSTANCE.refreshOpenEditors();
 		Eclipse.INSTANCE.notification("Resource updated",
-				"The resource with URN " + resource.getUrn() + " was updated by the engine.");
+				"Resource <b>" + resource.getUrn() + "</b> was updated by the engine.");
 	}
 
 	public void notifyResourceDeleted(ResourceReference resource) {
@@ -237,8 +236,8 @@ public class Klab {
 		}
 		Eclipse.INSTANCE.refreshOpenEditors();
 		KlabNavigator.refresh();
-		Eclipse.INSTANCE.notification("Resource deleted", "The resource with URN " + resource.getUrn()
-				+ " was deleted from project " + resource.getProjectName());
+		Eclipse.INSTANCE.notification("Resource deleted", "Resource <b>" + resource.getUrn()
+				+ "</b> deleted from project <b>" + resource.getProjectName() + "</b>.");
 	}
 
 	/*

@@ -338,8 +338,10 @@ The following sections will expand on each of the elements above, explaining the
 ==== Model declarations
 
 A _model_ in k.LAB represent a strategy to observe a concept in a context, producing an observation (a scientific artifact) of that concept in that context. As explained in the introduction, this definition of a model applies to both data and computations. Models have the role of _semantic annotations_, linking non-semantic informational resources to concepts and stating, if needed, which other concepts need to be observed in order to make the observation. The non-semantic resources may be explicitly represented by URNs or be implicitly defined as values (for example directly annotating a number), equations or external computations in the k.LAB engine, referred to using a function call with parameters. The syntax of models strives to keep these details intuitive and to provide the same kind of readability that concept declarations aim to.
-SS
-The syntax of model statements, like that of concept statements, provides various clauses whose use depends on the type of model being written. Each model makes one of several types of observations, summarized later in 
+
+The syntax of model statements, like that of concept statements, provides various clauses whose use depends on the type of model being written. Each model makes one of several types of observations, summarized later.
+
+[[ TODO ]]
 
 === Other language elements
 
@@ -347,6 +349,7 @@ The syntax of model statements, like that of concept statements, provides variou
 
 ==== Definitions
 
+[[ TODO ]]
 
 [#section-kim-concepts]
 == Concept declaration

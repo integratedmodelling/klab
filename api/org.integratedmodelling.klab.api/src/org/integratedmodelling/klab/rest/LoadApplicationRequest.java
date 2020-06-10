@@ -9,6 +9,7 @@ public class LoadApplicationRequest {
 	private URL scriptUrl;
 	private String behavior;
 	private boolean test;
+	private boolean stop = false;
 	private Map<String, String> parameters = new HashMap<>();
 
 	public LoadApplicationRequest() {
@@ -59,6 +60,22 @@ public class LoadApplicationRequest {
 
 	public void setBehavior(String behavior) {
 		this.behavior = behavior;
+	}
+
+	/**
+	 * If stop is called, the behaviorId should be the application ID
+	 * @return
+	 */
+	public boolean isStop() {
+		return stop;
+	}
+
+	/**
+	 * If stop is called, the behaviorId should be the application ID
+	 * @return
+	 */
+	public void setStop(boolean stop) {
+		this.stop = stop;
 	}
 
 }

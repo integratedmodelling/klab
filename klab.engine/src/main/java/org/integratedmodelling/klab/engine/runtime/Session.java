@@ -1202,13 +1202,18 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		switch (type) {
 		case RunApp:
 		case RunUnitTest:
-			IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
-			if (behavior != null) {
-				this.load(behavior, new SimpleRuntimeScope(this));
+			if (request.isStop()) {
+				stop(request.getBehavior());
+			} else {
+				IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
+				if (behavior != null) {
+					this.load(behavior, new SimpleRuntimeScope(this));
+				}
 			}
 			break;
 		case RunTest:
 		case RunScript:
+			// these run to the end or can be stopped through their monitor (not handled for now)
 			run(request.getScriptUrl());
 		default:
 			break;
@@ -1627,9 +1632,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@Override
-	public boolean stop(String behaviorId) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean stop(String applicationId) {
+		getActor().tell(new SystemBehavior.Stop(applicationId));
+		return true;
 	}
 
 	@Override

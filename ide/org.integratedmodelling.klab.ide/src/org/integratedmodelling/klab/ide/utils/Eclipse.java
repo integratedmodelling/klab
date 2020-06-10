@@ -43,6 +43,8 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.nebula.widgets.opal.notifier.Notifier;
+import org.eclipse.nebula.widgets.opal.notifier.NotifierColorsFactory.NotifierTheme;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -639,14 +641,14 @@ public enum Eclipse {
 			URI fileURI;
 			// trying to solve problems with path with spaces
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=339422
-			// TODO check better way to do it, check if we can mix code of file.toURI() with URIUtil.toURI()
+			// TODO check better way to do it, check if we can mix code of file.toURI() with
+			// URIUtil.toURI()
 			if (file.getAbsolutePath().contains(" ")) {
 				fileURI = URIUtil.fromString(URIUtil.toURI(file.toURI().toURL()).toString().replaceAll("%2520", " "));
 			} else {
 				fileURI = URIUtil.toURI(file.toURI().toURL());
 			}
-			IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-					.findFilesForLocationURI(fileURI);
+			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(fileURI);
 			if (files.length > 0) {
 				ret = files[0];
 			}
@@ -754,33 +756,7 @@ public enum Eclipse {
 	}
 
 	public void notification(final String label, final String description) {
-
-		// TODO find a way to use those. So far all attempts were useless.
-		System.out.println("NOTIFICATION: " + label + "\n" + description);
-
-		// AbstractNotification notification = new AbstractNotification("klab.event") {
-		//
-		// public String getLabel() {
-		// return label;
-		// }
-		//
-		// public String getDescription() {
-		// return description;
-		// }
-		//
-		// @Override
-		// public <T> T getAdapter(Class<T> adapter) {
-		// // TODO Auto-generated method stub
-		// return null;
-		// }
-		//
-		// @Override
-		// public Date getDate() {
-		// // TODO Auto-generated method stub
-		// return new Date();
-		// }
-		// };
-		// NotificationsPlugin.getDefault().getService().notify(Collections.singletonList(notification));
+		Display.getDefault().asyncExec(() -> Notifier.notify(label, description, NotifierTheme.BLUE_THEME));
 	}
 
 	public void copyToClipboard(String string) {

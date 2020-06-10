@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fir
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Stop;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
@@ -268,12 +269,33 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
 				.onMessage(Fire.class, this::reactToFire).onMessage(UserAction.class, this::reactToViewAction)
 				.onMessage(BindUserAction.class, this::bindViewAction)
-				.onMessage(KActorsMessage.class, this::executeCall).onSignal(PostStop.class, signal -> onPostStop());
+				.onMessage(KActorsMessage.class, this::executeCall).onMessage(Stop.class, this::stopChild)
+				.onSignal(PostStop.class, signal -> onPostStop());
 	}
 
 	protected KlabActor onPostStop() {
 		// TODO deactivate the underlying observation, send changes
 		return this;
+	}
+
+	/**
+	 * This also stops self if called w/o appId. This should not be possible
+	 * accidentally as the direct() method of {@link Stop} throws an illegal state
+	 * exception.
+	 * 
+	 * @param message
+	 * @return
+	 */
+	protected Behavior<KlabMessage> stopChild(Stop message) {
+
+		if (message.appId != null && receivers.containsKey(message.appId)) {
+			getContext().stop(receivers.get(message.appId));
+			receivers.remove(message.appId);
+			return Behaviors.same();
+		}
+
+		return Behaviors.stopped();
+
 	}
 
 	protected Behavior<KlabMessage> reactToViewAction(UserAction message) {
@@ -356,7 +378,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			/*
 			 * spawn another actor and load the behavior in it.
 			 */
-			ActorRef<KlabMessage> child = getContext().spawn(SessionActor.create((Session) identity, message.appId), message.appId);
+			ActorRef<KlabMessage> child = getContext().spawn(SessionActor.create((Session) identity, message.appId),
+					message.appId);
 			this.receivers.put(message.appId, child);
 			child.tell(message.direct());
 
@@ -482,7 +505,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	private void executeFire(FireValue code, Scope scope) {
 		if (scope.sender != null) {
-			scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), /* TODO FIXME boh */true, scope.appId));
+			scope.sender.tell(
+					new Fire(scope.listenerId, code.getValue().getValue(), /* TODO FIXME boh */true, scope.appId));
 		}
 	}
 
@@ -574,8 +598,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				recipient = identity.getParentIdentity(EngineUser.class).getActor();
 			}
 
-			recipient.tell(new KActorsMessage(getDispatcher(), receiver, message,
-					((KActorsActionCall) code).getInternalId(), code.getArguments(), scope.withNotifyId(notifyId), appId));
+			recipient.tell(
+					new KActorsMessage(getDispatcher(), receiver, message, ((KActorsActionCall) code).getInternalId(),
+							code.getArguments(), scope.withNotifyId(notifyId), appId));
 
 		} else {
 
@@ -588,9 +613,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		/**
 		 * Route only those messages whose appID is recognized, meaning they are
-		 * directed through us to one of our app executors. Others with appId will
-		 * come from an application but our agent doesn't have its own behavior 
-		 * loaded, so continue assuming it's for us.
+		 * directed through us to one of our app executors. Others with appId will come
+		 * from an application but our agent doesn't have its own behavior loaded, so
+		 * continue assuming it's for us.
 		 */
 		if (message.appId != null && receivers.containsKey(message.appId)) {
 			ActorRef<KlabMessage> receiver = receivers.get(message.appId);
@@ -602,7 +627,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			/*
 			 * it's for us: our appId should be in the scope.
 			 */
-			
+
 			// message can be one of ours or a system one.
 			boolean ran = false;
 			Action action = this.behavior == null ? null : this.behavior.getAction(message.message);

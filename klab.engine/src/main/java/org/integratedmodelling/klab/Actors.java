@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
@@ -46,6 +44,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabAction;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetAction;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.BehaviorAction;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -512,7 +511,7 @@ public enum Actors implements IActorsService {
 		 * collect info about the UI in a bean. If not empty, send bean so that the UI
 		 * can prepare.
 		 */
-		Layout view = new Layout(behavior.getName());
+		Layout view = new Layout(behavior.getName(), applicationId);
 		view.setStyle(behavior.getStatement().getStyle());
 		for (IBehavior.Action action : behavior.getActions()) {
 
@@ -524,30 +523,35 @@ public enum Actors implements IActorsService {
 							.add(panel = new ViewPanel(
 									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
 									annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
 				}
 				if ("left".equals(annotation.getName())) {
 					view.getLeftPanels()
 							.add(panel = new ViewPanel(
 									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
 									annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
 				}
 				if ("right".equals(annotation.getName())) {
 					view.getRightPanels()
 							.add(panel = new ViewPanel(
 									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
 									annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
 				}
 				if ("header".equals(annotation.getName()) || "header".equals(action.getId())
 						|| "top".equals(annotation.getName())) {
 					view.setHeader(panel = new ViewPanel(
 							annotation.containsKey("id") ? annotation.get("id", String.class) : "header",
 							annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
 				}
 				if ("footer".equals(annotation.getName()) || "footer".equals(action.getId())
 						|| "bottom".equals(annotation.getName())) {
 					view.setFooter(panel = new ViewPanel(
 							annotation.containsKey("id") ? annotation.get("id", String.class) : "footer",
 							annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
 				}
 
 			}
@@ -557,6 +561,7 @@ public enum Actors implements IActorsService {
 				 * visit action for view calls: if there is any call to the view actor, add the
 				 * "default" panel unless already added
 				 */
+				panel.setApplicationId(applicationId);
 				visitViewActions(action, panel, scope);
 			}
 		}

@@ -53,6 +53,8 @@ import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.Layout;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 
 public class SearchView extends ViewPart {
 
@@ -76,6 +78,8 @@ public class SearchView extends ViewPart {
 	private boolean searchShowStatus;
 
 	private Composite parent;
+	private Action action_1;
+	private Action action_2;
 
 	public SearchView() {
 	}
@@ -250,7 +254,7 @@ public class SearchView extends ViewPart {
 		actionArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// begin comment out
-		paletteView = new AppView(true, actionArea, SWT.NONE, this);
+		paletteView = new AppView(actionArea, SWT.NONE);
 		paletteView.setLayout(new GridLayout(1, true));
 		paletteView.setVisible(true);
 		gd_paletteView = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -529,7 +533,17 @@ public class SearchView extends ViewPart {
 	 * Create the actions.
 	 */
 	private void createActions() {
-		// Create the actions
+		{
+			action_1 = new Action("Reset default") {
+			};
+			action_1.setImageDescriptor(ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/behavior.png"));
+		}
+		{
+			action_2 = new Action("Save current as...") {
+			};
+			action_2.setEnabled(false);
+			action_2.setImageDescriptor(ResourceManager.getPluginImageDescriptor("org.eclipse.ui", "/icons/full/etool16/save_edit.png"));
+		}
 	}
 
 	/**
@@ -544,6 +558,8 @@ public class SearchView extends ViewPart {
 	 */
 	private void initializeMenu() {
 		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+		manager.add(action_1);
+		manager.add(action_2);
 	}
 
 	@Override
