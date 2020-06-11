@@ -102,4 +102,9 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 		return null;
 	}
 
+	@Override
+	public Platform getPlatform() {
+		return behavior.getPlatform();
+	}
+
 }

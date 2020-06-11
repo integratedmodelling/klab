@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isMobile <em>Mobile</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isDesktop <em>Desktop</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isApp <em>App</em>}</li>
@@ -46,6 +47,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Preamble extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Mobile</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Mobile</em>' attribute.
+   * @see #setMobile(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Mobile()
+   * @model
+   * @generated
+   */
+  boolean isMobile();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isMobile <em>Mobile</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Mobile</em>' attribute.
+   * @see #isMobile()
+   * @generated
+   */
+  void setMobile(boolean value);
+
   /**
    * Returns the value of the '<em><b>Desktop</b></em>' attribute.
    * <!-- begin-user-doc -->

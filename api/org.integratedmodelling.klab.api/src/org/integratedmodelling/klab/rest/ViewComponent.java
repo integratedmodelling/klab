@@ -87,6 +87,7 @@ public class ViewComponent {
 	private List<ViewComponent> components = new ArrayList<>();
 	private Map<String, String> attributes = new HashMap<>();
 	private IKActorsBehavior.Type destination;
+	private IKActorsBehavior.Platform platform;
 	
 	public String getId() {
 		return id;
@@ -204,6 +205,14 @@ public class ViewComponent {
 
 	public void setDestination(IKActorsBehavior.Type destination) {
 		this.destination = destination;
+	}
+
+	public IKActorsBehavior.Platform getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(IKActorsBehavior.Platform platform) {
+		this.platform = platform;
 	}
 
 }

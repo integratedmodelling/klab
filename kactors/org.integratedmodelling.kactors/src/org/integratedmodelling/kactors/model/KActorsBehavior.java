@@ -25,6 +25,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	private Version version;
 	private String observable;
 	private Type type = Type.BEHAVIOR;
+	private Platform platform = Platform.ANY;
 	private File file;
 	private String style;
 	private List<IKActorsBehavior> imports = new ArrayList<>();
@@ -69,6 +70,14 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		} else if (preamble.isTest()) {
 			this.type = Type.UNITTEST;
 		}
+		
+		if (preamble.isDesktop()) {
+			this.platform = Platform.DESKTOP;
+		} else if (preamble.isWeb()) {
+			this.platform = Platform.WEB;
+		} else if (preamble.isMobile()) {
+			this.platform = Platform.MOBILE;
+		}
 
 		for (String s : preamble.getImports()) {
 			IKActorsBehavior imported = KActors.INSTANCE.getBehavior(s);
@@ -109,6 +118,12 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 
 	public void setStyle(String style) {
 		this.style = style;
+	}
+
+	@Override
+	public Platform getPlatform() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

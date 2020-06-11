@@ -15,7 +15,7 @@ Preamble: {Preamble}
 	// identify test actions with @test and execute them with assertions enabled).
 	(
 		(
-			((desktop?='desktop' | web?='web')? app?='app'| app?='job') | 
+			((mobile?='mobile' |  desktop?='desktop' | web?='web')? app?='app'| app?='job') | 
 			test?='testcase' | 
 			user?='user' | 
 			library?=('trait'|'library') |

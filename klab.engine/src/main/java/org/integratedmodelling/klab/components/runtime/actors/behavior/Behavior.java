@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
@@ -256,6 +257,11 @@ public class Behavior implements IBehavior {
 
 	public static IBehavior empty() {
 		return new Behavior();
+	}
+
+	@Override
+	public Platform getPlatform() {
+		return getStatement().getPlatform();
 	}
 
 }

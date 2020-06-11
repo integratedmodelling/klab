@@ -35,11 +35,15 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 		 * can simply be declared as a "library".
 		 */
 		TRAITS,
-		
+
 		/**
 		 * The behavior is an app defining a collection of annotated unit tests
 		 */
 		UNITTEST
+	}
+
+	enum Platform {
+		ANY, DESKTOP, WEB, MOBILE
 	}
 
 	/**
@@ -57,19 +61,27 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 	Type getType();
 
 	/**
+	 * If this is an app, return the platform this is specialized for, which may be
+	 * ANY. For any other behavior, return ANY.
+	 * 
+	 * @return
+	 */
+	Platform getPlatform();
+
+	/**
 	 * Where it comes from. Always a file resource for now.
 	 * 
 	 * @return
 	 */
 	File getFile();
-	
+
 	/**
 	 * All behaviors imported, resolved and parsed.
 	 * 
 	 * @return
 	 */
 	List<IKActorsBehavior> getImports();
-	
+
 	/**
 	 * All the actions declared in this behavior (not in the imported ones)
 	 * 
@@ -83,6 +95,5 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 	 * @return
 	 */
 	String getStyle();
-	
 
 }

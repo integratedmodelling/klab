@@ -106,13 +106,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE = 1;
 
   /**
+   * The feature id for the '<em><b>Mobile</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__MOBILE = 0;
+
+  /**
    * The feature id for the '<em><b>Desktop</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__DESKTOP = 0;
+  int PREAMBLE__DESKTOP = 1;
 
   /**
    * The feature id for the '<em><b>Web</b></em>' attribute.
@@ -121,7 +130,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__WEB = 1;
+  int PREAMBLE__WEB = 2;
 
   /**
    * The feature id for the '<em><b>App</b></em>' attribute.
@@ -130,7 +139,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__APP = 2;
+  int PREAMBLE__APP = 3;
 
   /**
    * The feature id for the '<em><b>Test</b></em>' attribute.
@@ -139,7 +148,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__TEST = 3;
+  int PREAMBLE__TEST = 4;
 
   /**
    * The feature id for the '<em><b>User</b></em>' attribute.
@@ -148,7 +157,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__USER = 4;
+  int PREAMBLE__USER = 5;
 
   /**
    * The feature id for the '<em><b>Library</b></em>' attribute.
@@ -157,7 +166,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__LIBRARY = 5;
+  int PREAMBLE__LIBRARY = 6;
 
   /**
    * The feature id for the '<em><b>Behavior</b></em>' attribute.
@@ -166,7 +175,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__BEHAVIOR = 6;
+  int PREAMBLE__BEHAVIOR = 7;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -175,7 +184,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__NAME = 7;
+  int PREAMBLE__NAME = 8;
 
   /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -184,7 +193,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__LABEL = 8;
+  int PREAMBLE__LABEL = 9;
 
   /**
    * The feature id for the '<em><b>Imports</b></em>' attribute list.
@@ -193,7 +202,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__IMPORTS = 9;
+  int PREAMBLE__IMPORTS = 10;
 
   /**
    * The feature id for the '<em><b>Worldview</b></em>' attribute.
@@ -202,7 +211,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__WORLDVIEW = 10;
+  int PREAMBLE__WORLDVIEW = 11;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' attribute.
@@ -211,7 +220,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__OBSERVABLE = 11;
+  int PREAMBLE__OBSERVABLE = 12;
 
   /**
    * The feature id for the '<em><b>Observables</b></em>' containment reference.
@@ -220,7 +229,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__OBSERVABLES = 12;
+  int PREAMBLE__OBSERVABLES = 13;
 
   /**
    * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -229,7 +238,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__DESCRIPTION = 13;
+  int PREAMBLE__DESCRIPTION = 14;
 
   /**
    * The feature id for the '<em><b>Permissions</b></em>' attribute.
@@ -238,7 +247,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__PERMISSIONS = 14;
+  int PREAMBLE__PERMISSIONS = 15;
 
   /**
    * The feature id for the '<em><b>Authors</b></em>' attribute list.
@@ -247,7 +256,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__AUTHORS = 15;
+  int PREAMBLE__AUTHORS = 16;
 
   /**
    * The feature id for the '<em><b>Style</b></em>' attribute.
@@ -256,7 +265,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__STYLE = 16;
+  int PREAMBLE__STYLE = 17;
 
   /**
    * The feature id for the '<em><b>Version</b></em>' attribute.
@@ -265,7 +274,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__VERSION = 17;
+  int PREAMBLE__VERSION = 18;
 
   /**
    * The feature id for the '<em><b>Created</b></em>' containment reference.
@@ -274,7 +283,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATED = 18;
+  int PREAMBLE__CREATED = 19;
 
   /**
    * The feature id for the '<em><b>Createcomment</b></em>' attribute.
@@ -283,7 +292,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATECOMMENT = 19;
+  int PREAMBLE__CREATECOMMENT = 20;
 
   /**
    * The feature id for the '<em><b>Modified</b></em>' containment reference.
@@ -292,7 +301,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODIFIED = 20;
+  int PREAMBLE__MODIFIED = 21;
 
   /**
    * The feature id for the '<em><b>Modcomment</b></em>' attribute.
@@ -301,7 +310,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODCOMMENT = 21;
+  int PREAMBLE__MODCOMMENT = 22;
 
   /**
    * The number of structural features of the '<em>Preamble</em>' class.
@@ -310,7 +319,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE_FEATURE_COUNT = 22;
+  int PREAMBLE_FEATURE_COUNT = 23;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl <em>Definition</em>}' class.
@@ -2590,6 +2599,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EClass getPreamble();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#isMobile <em>Mobile</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Mobile</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#isMobile()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_Mobile();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#isDesktop <em>Desktop</em>}'.
@@ -5106,6 +5126,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EClass PREAMBLE = eINSTANCE.getPreamble();
+
+    /**
+     * The meta object literal for the '<em><b>Mobile</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__MOBILE = eINSTANCE.getPreamble_Mobile();
 
     /**
      * The meta object literal for the '<em><b>Desktop</b></em>' attribute feature.

@@ -40,6 +40,13 @@ public interface IBehavior extends IKimObject {
 	 * @return
 	 */
 	IKActorsBehavior.Type getDestination();
+	
+	/**
+	 * What this is for.
+	 * 
+	 * @return
+	 */
+	IKActorsBehavior.Platform getPlatform();
 
 	/**
 	 * Get all the actions in order of declaration. If a string is passed, match it

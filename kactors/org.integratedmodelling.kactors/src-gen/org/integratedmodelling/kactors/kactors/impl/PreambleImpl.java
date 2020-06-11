@@ -31,6 +31,7 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isMobile <em>Mobile</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isDesktop <em>Desktop</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isApp <em>App</em>}</li>
@@ -59,6 +60,26 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  */
 public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamble
 {
+  /**
+   * The default value of the '{@link #isMobile() <em>Mobile</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMobile()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean MOBILE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isMobile() <em>Mobile</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMobile()
+   * @generated
+   * @ordered
+   */
+  protected boolean mobile = MOBILE_EDEFAULT;
+
   /**
    * The default value of the '{@link #isDesktop() <em>Desktop</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -468,6 +489,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected EClass eStaticClass()
   {
     return KactorsPackage.Literals.PREAMBLE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isMobile()
+  {
+    return mobile;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMobile(boolean newMobile)
+  {
+    boolean oldMobile = mobile;
+    mobile = newMobile;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__MOBILE, oldMobile, mobile));
   }
 
   /**
@@ -1105,6 +1151,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__MOBILE:
+        return isMobile();
       case KactorsPackage.PREAMBLE__DESKTOP:
         return isDesktop();
       case KactorsPackage.PREAMBLE__WEB:
@@ -1164,6 +1212,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__MOBILE:
+        setMobile((Boolean)newValue);
+        return;
       case KactorsPackage.PREAMBLE__DESKTOP:
         setDesktop((Boolean)newValue);
         return;
@@ -1246,6 +1297,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__MOBILE:
+        setMobile(MOBILE_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__DESKTOP:
         setDesktop(DESKTOP_EDEFAULT);
         return;
@@ -1326,6 +1380,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__MOBILE:
+        return mobile != MOBILE_EDEFAULT;
       case KactorsPackage.PREAMBLE__DESKTOP:
         return desktop != DESKTOP_EDEFAULT;
       case KactorsPackage.PREAMBLE__WEB:
@@ -1385,7 +1441,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (desktop: ");
+    result.append(" (mobile: ");
+    result.append(mobile);
+    result.append(", desktop: ");
     result.append(desktop);
     result.append(", web: ");
     result.append(web);

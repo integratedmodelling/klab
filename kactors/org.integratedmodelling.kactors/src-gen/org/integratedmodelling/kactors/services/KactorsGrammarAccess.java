@@ -68,10 +68,12 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives_1_0_0 = (Alternatives)cAlternatives_1_0.eContents().get(0);
 		private final Group cGroup_1_0_0_0 = (Group)cAlternatives_1_0_0.eContents().get(0);
 		private final Alternatives cAlternatives_1_0_0_0_0 = (Alternatives)cGroup_1_0_0_0.eContents().get(0);
-		private final Assignment cDesktopAssignment_1_0_0_0_0_0 = (Assignment)cAlternatives_1_0_0_0_0.eContents().get(0);
-		private final Keyword cDesktopDesktopKeyword_1_0_0_0_0_0_0 = (Keyword)cDesktopAssignment_1_0_0_0_0_0.eContents().get(0);
-		private final Assignment cWebAssignment_1_0_0_0_0_1 = (Assignment)cAlternatives_1_0_0_0_0.eContents().get(1);
-		private final Keyword cWebWebKeyword_1_0_0_0_0_1_0 = (Keyword)cWebAssignment_1_0_0_0_0_1.eContents().get(0);
+		private final Assignment cMobileAssignment_1_0_0_0_0_0 = (Assignment)cAlternatives_1_0_0_0_0.eContents().get(0);
+		private final Keyword cMobileMobileKeyword_1_0_0_0_0_0_0 = (Keyword)cMobileAssignment_1_0_0_0_0_0.eContents().get(0);
+		private final Assignment cDesktopAssignment_1_0_0_0_0_1 = (Assignment)cAlternatives_1_0_0_0_0.eContents().get(1);
+		private final Keyword cDesktopDesktopKeyword_1_0_0_0_0_1_0 = (Keyword)cDesktopAssignment_1_0_0_0_0_1.eContents().get(0);
+		private final Assignment cWebAssignment_1_0_0_0_0_2 = (Assignment)cAlternatives_1_0_0_0_0.eContents().get(2);
+		private final Keyword cWebWebKeyword_1_0_0_0_0_2_0 = (Keyword)cWebAssignment_1_0_0_0_0_2.eContents().get(0);
 		private final Assignment cAppAssignment_1_0_0_0_1 = (Assignment)cGroup_1_0_0_0.eContents().get(1);
 		private final Keyword cAppAppKeyword_1_0_0_0_1_0 = (Keyword)cAppAssignment_1_0_0_0_1.eContents().get(0);
 		private final Assignment cAppAssignment_1_0_0_1 = (Assignment)cAlternatives_1_0_0.eContents().get(1);
@@ -146,17 +148,17 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cModcommentSTRINGTerminalRuleCall_3_9_2_0 = (RuleCall)cModcommentAssignment_3_9_2.eContents().get(0);
 		
 		//Preamble:
-		//	{Preamble} ((((desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' | user?='user' |
-		//	library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)?
+		//	{Preamble} ((((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' |
+		//	user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)?
 		//	label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? &
 		//	('observable' (observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
 		//	permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? & ('version' version=VersionNumber)? &
 		//	('created' created=Date createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{Preamble} ((((desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' | user?='user' |
-		//library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)? label=STRING? (('import'
-		//imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? & ('observable'
+		//{Preamble} ((((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' |
+		//user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)? label=STRING?
+		//(('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? & ('observable'
 		//(observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
 		//permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? & ('version' version=VersionNumber)? &
 		//('created' created=Date createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?)
@@ -165,34 +167,40 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//{Preamble}
 		public Action getPreambleAction_0() { return cPreambleAction_0; }
 		
-		//((((desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' | user?='user' | library?=('trait' |
-		//'library') | behavior?=('behavior' | 'behaviour')) name=PathName)?
+		//((((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' | user?='user' |
+		//library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)?
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//(((desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' | user?='user' | library?=('trait' |
-		//'library') | behavior?=('behavior' | 'behaviour'))
+		//(((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' | user?='user' |
+		//library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour'))
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
-		//((desktop?='desktop' | web?='web')? app?='app' | app?='job')
+		//((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job')
 		public Alternatives getAlternatives_1_0_0() { return cAlternatives_1_0_0; }
 		
-		//(desktop?='desktop' | web?='web')? app?='app'
+		//(mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app'
 		public Group getGroup_1_0_0_0() { return cGroup_1_0_0_0; }
 		
-		//(desktop?='desktop' | web?='web')?
+		//(mobile?='mobile' | desktop?='desktop' | web?='web')?
 		public Alternatives getAlternatives_1_0_0_0_0() { return cAlternatives_1_0_0_0_0; }
 		
+		//mobile?='mobile'
+		public Assignment getMobileAssignment_1_0_0_0_0_0() { return cMobileAssignment_1_0_0_0_0_0; }
+		
+		//'mobile'
+		public Keyword getMobileMobileKeyword_1_0_0_0_0_0_0() { return cMobileMobileKeyword_1_0_0_0_0_0_0; }
+		
 		//desktop?='desktop'
-		public Assignment getDesktopAssignment_1_0_0_0_0_0() { return cDesktopAssignment_1_0_0_0_0_0; }
+		public Assignment getDesktopAssignment_1_0_0_0_0_1() { return cDesktopAssignment_1_0_0_0_0_1; }
 		
 		//'desktop'
-		public Keyword getDesktopDesktopKeyword_1_0_0_0_0_0_0() { return cDesktopDesktopKeyword_1_0_0_0_0_0_0; }
+		public Keyword getDesktopDesktopKeyword_1_0_0_0_0_1_0() { return cDesktopDesktopKeyword_1_0_0_0_0_1_0; }
 		
 		//web?='web'
-		public Assignment getWebAssignment_1_0_0_0_0_1() { return cWebAssignment_1_0_0_0_0_1; }
+		public Assignment getWebAssignment_1_0_0_0_0_2() { return cWebAssignment_1_0_0_0_0_2; }
 		
 		//'web'
-		public Keyword getWebWebKeyword_1_0_0_0_0_1_0() { return cWebWebKeyword_1_0_0_0_0_1_0; }
+		public Keyword getWebWebKeyword_1_0_0_0_0_2_0() { return cWebWebKeyword_1_0_0_0_0_2_0; }
 		
 		//app?='app'
 		public Assignment getAppAssignment_1_0_0_0_1() { return cAppAssignment_1_0_0_0_1; }
@@ -4008,8 +4016,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Preamble:
-	//	{Preamble} ((((desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' | user?='user' |
-	//	library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)?
+	//	{Preamble} ((((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' |
+	//	user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)?
 	//	label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? &
 	//	('observable' (observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
 	//	permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? & ('version' version=VersionNumber)? &

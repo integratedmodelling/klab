@@ -19,6 +19,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
 import org.integratedmodelling.klab.ide.Activator;
@@ -191,7 +192,8 @@ public class ApplicationView extends ViewPart {
 			break;
 		case SetupInterface:
 			Layout layout = message.getPayload(Layout.class);
-			if (layout.getDestination() == IKActorsBehavior.Type.APP) {
+			if (layout.getDestination() == IKActorsBehavior.Type.APP
+					&& (layout.getPlatform() == Platform.ANY || layout.getPlatform() == Platform.DESKTOP)) {
 				Display.getDefault().asyncExec(() -> createAppLayout(layout));
 			}
 			break;
@@ -206,7 +208,7 @@ public class ApplicationView extends ViewPart {
 
 	private void removeAll() {
 		for (CTabItem tab : tabs.values()) {
-			Layout layout = (Layout)tab.getData();
+			Layout layout = (Layout) tab.getData();
 			Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp,
 					new LoadApplicationRequest(layout.getApplicationId(), false, true));
 			Display.getDefault().asyncExec(() -> tab.dispose());
@@ -219,8 +221,9 @@ public class ApplicationView extends ViewPart {
 		ViewComponent component = message.getPayload(ViewComponent.class);
 		for (String behavior : tabs.keySet()) {
 			CTabItem tab = tabs.get(behavior);
-			Layout layout = (Layout)tab.getData();
-			if (component.getApplicationId() != null && component.getApplicationId().equals(layout.getApplicationId())) {
+			Layout layout = (Layout) tab.getData();
+			if (component.getApplicationId() != null
+					&& component.getApplicationId().equals(layout.getApplicationId())) {
 				tabFolder.setSelection(tab);
 				Display.getDefault().asyncExec(() -> apps.get(behavior).addWidget(message));
 				break;

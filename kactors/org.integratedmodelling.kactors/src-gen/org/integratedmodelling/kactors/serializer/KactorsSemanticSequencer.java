@@ -626,7 +626,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     (
 	 *         (
 	 *             (
-	 *                 ((desktop?='desktop' | web?='web')? app?='app') | 
+	 *                 ((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app') | 
 	 *                 app?='job' | 
 	 *                 test?='testcase' | 
 	 *                 user?='user' | 

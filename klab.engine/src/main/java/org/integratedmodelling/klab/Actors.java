@@ -201,6 +201,8 @@ public enum Actors implements IActorsService {
 					break;
 				case URN:
 					break;
+				case OBSERVATION:
+					break;
 				}
 
 				return value;
