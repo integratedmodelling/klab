@@ -16,6 +16,7 @@ public class SessionReference {
 	private IdentityReference owner;
 	Map<String, ObservationReference> rootObservations = new HashMap<>();
 	private List<String> appUrns = new ArrayList<>();
+	private List<String> userAppUrns = new ArrayList<>();
 
 	public long getTimeEstablished() {
 		return timeEstablished;
@@ -87,6 +88,14 @@ public class SessionReference {
 
 	public void setAppUrns(List<String> appUrns) {
 		this.appUrns = appUrns;
+	}
+
+	public List<String> getUserAppUrns() {
+		return userAppUrns;
+	}
+
+	public void setUserAppUrns(List<String> userAppUrns) {
+		this.userAppUrns = userAppUrns;
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -85,7 +86,8 @@ public class ViewComponent {
 	private Tree tree;
 	private List<ViewComponent> components = new ArrayList<>();
 	private Map<String, String> attributes = new HashMap<>();
-
+	private IKActorsBehavior.Type destination;
+	
 	public String getId() {
 		return id;
 	}
@@ -194,6 +196,14 @@ public class ViewComponent {
 
 	public void setTree(Tree tree) {
 		this.tree = tree;
+	}
+
+	public IKActorsBehavior.Type getDestination() {
+		return destination;
+	}
+
+	public void setDestination(IKActorsBehavior.Type destination) {
+		this.destination = destination;
 	}
 
 }

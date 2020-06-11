@@ -634,6 +634,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 */
 			Resources.INSTANCE.loadServiceWorkspace(this.monitor);
 
+			Actors.INSTANCE.loadUserBehaviors();
+			
 			/*
 			 * boot time is now
 			 */

@@ -1524,6 +1524,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		ret.setTimeRetrieved(System.currentTimeMillis());
 		ret.setTimeLastActivity(lastActivity);
 		ret.getAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.APP));
+		ret.getUserAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.USER));
 
 		IUserIdentity user = getParentIdentity(IUserIdentity.class);
 		if (user != null) {

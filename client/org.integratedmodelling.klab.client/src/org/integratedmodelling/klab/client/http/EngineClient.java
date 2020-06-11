@@ -182,7 +182,7 @@ public class EngineClient extends RestTemplate {
 
 			HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
 			HttpHeaders headers = requestWrapper.getHeaders();
-			headers.set("Accept", "application/json");
+			headers.set(HttpHeaders.ACCEPT, "application/json");
 			// headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
 			// headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 			if (authToken != null) {

@@ -83,6 +83,9 @@ public class Layout extends ViewComponent {
 	private ViewPanel header;
 	private ViewPanel footer;
 	private String receivingIdentity;
+	
+	// this is for layout management in clients, not API
+	private int index;
 
 	public Layout() {
 		setType(Type.View);
@@ -145,5 +148,13 @@ public class Layout extends ViewComponent {
 
 	public void setReceivingIdentity(String receivingIdentity) {
 		this.receivingIdentity = receivingIdentity;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 }

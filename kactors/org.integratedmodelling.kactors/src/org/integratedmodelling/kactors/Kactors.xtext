@@ -13,7 +13,15 @@ Preamble: {Preamble}
 	// session, a user represents the user and gets any messages we don't recognize. Apps
 	// can be called jobs (for automation w/o a view) or testcases (same for testing, in which case they will
 	// identify test actions with @test and execute them with assertions enabled).
-	((app?=('app'|'job') | test?='testcase' | user?='user' | library?=('trait'|'library') | behavior?=('behavior'|'behaviour')) name=PathName)?
+	(
+		(
+			((desktop?='desktop' | web?='web')? app?='app'| app?='job') | 
+			test?='testcase' | 
+			user?='user' | 
+			library?=('trait'|'library') |
+			behavior?=('behavior'|'behaviour')
+		) name=PathName
+	)?
 	label=STRING?
 	(
 		('import' imports+=PathName (',' imports+=PathName)*)? &

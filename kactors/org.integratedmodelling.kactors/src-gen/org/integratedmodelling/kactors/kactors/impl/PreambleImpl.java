@@ -31,6 +31,8 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isDesktop <em>Desktop</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isApp <em>App</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTest <em>Test</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isUser <em>User</em>}</li>
@@ -57,6 +59,46 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  */
 public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamble
 {
+  /**
+   * The default value of the '{@link #isDesktop() <em>Desktop</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDesktop()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean DESKTOP_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDesktop() <em>Desktop</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDesktop()
+   * @generated
+   * @ordered
+   */
+  protected boolean desktop = DESKTOP_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isWeb() <em>Web</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isWeb()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean WEB_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isWeb() <em>Web</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isWeb()
+   * @generated
+   * @ordered
+   */
+  protected boolean web = WEB_EDEFAULT;
+
   /**
    * The default value of the '{@link #isApp() <em>App</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -426,6 +468,56 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected EClass eStaticClass()
   {
     return KactorsPackage.Literals.PREAMBLE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isDesktop()
+  {
+    return desktop;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDesktop(boolean newDesktop)
+  {
+    boolean oldDesktop = desktop;
+    desktop = newDesktop;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__DESKTOP, oldDesktop, desktop));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isWeb()
+  {
+    return web;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setWeb(boolean newWeb)
+  {
+    boolean oldWeb = web;
+    web = newWeb;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__WEB, oldWeb, web));
   }
 
   /**
@@ -1013,6 +1105,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__DESKTOP:
+        return isDesktop();
+      case KactorsPackage.PREAMBLE__WEB:
+        return isWeb();
       case KactorsPackage.PREAMBLE__APP:
         return isApp();
       case KactorsPackage.PREAMBLE__TEST:
@@ -1068,6 +1164,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__DESKTOP:
+        setDesktop((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__WEB:
+        setWeb((Boolean)newValue);
+        return;
       case KactorsPackage.PREAMBLE__APP:
         setApp((Boolean)newValue);
         return;
@@ -1144,6 +1246,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__DESKTOP:
+        setDesktop(DESKTOP_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__WEB:
+        setWeb(WEB_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__APP:
         setApp(APP_EDEFAULT);
         return;
@@ -1218,6 +1326,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__DESKTOP:
+        return desktop != DESKTOP_EDEFAULT;
+      case KactorsPackage.PREAMBLE__WEB:
+        return web != WEB_EDEFAULT;
       case KactorsPackage.PREAMBLE__APP:
         return app != APP_EDEFAULT;
       case KactorsPackage.PREAMBLE__TEST:
@@ -1273,7 +1385,11 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (app: ");
+    result.append(" (desktop: ");
+    result.append(desktop);
+    result.append(", web: ");
+    result.append(web);
+    result.append(", app: ");
     result.append(app);
     result.append(", test: ");
     result.append(test);

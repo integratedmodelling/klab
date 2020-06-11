@@ -15,15 +15,20 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
+import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.ui.AppView;
 import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.LoadApplicationRequest;
+import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.utils.BrowserUtils;
 
 public class ApplicationView extends ViewPart {
 
@@ -34,9 +39,12 @@ public class ApplicationView extends ViewPart {
 	// stops the previous.
 	Map<String, AppView> apps = new HashMap<>();
 	Map<String, CTabItem> tabs = new HashMap<>();
-	AppView appView;
 	private Action action;
 	private CTabFolder tabFolder;
+
+	private Action openViewerAction;
+
+	private Action resetContextAction;
 
 	public ApplicationView() {
 	}
@@ -54,40 +62,44 @@ public class ApplicationView extends ViewPart {
 
 		tabFolder = new CTabFolder(container, SWT.CLOSE);
 		tabFolder.addCTabFolder2Listener(new CTabFolder2Listener() {
-			
+
 			@Override
 			public void showList(CTabFolderEvent event) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void restore(CTabFolderEvent event) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void minimize(CTabFolderEvent event) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void maximize(CTabFolderEvent event) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void close(CTabFolderEvent event) {
-				// TODO close the app
-				
+				// stop the app
+				Layout layout = (Layout) ((CTabItem) event.item).getData();
+				apps.remove(layout.getName());
+				tabs.remove(layout.getName());
+				Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp,
+						new LoadApplicationRequest(layout.getApplicationId(), false, true));
 			}
 		});
-		
+
 		klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
-		
+
 		createActions();
 		initializeToolBar();
 		initializeMenu();
@@ -105,6 +117,35 @@ public class ApplicationView extends ViewPart {
 			action.setImageDescriptor(
 					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/define.gif"));
 		}
+
+		{
+			openViewerAction = new Action("Open new viewer") {
+
+				@Override
+				public void run() {
+					if (Activator.engineMonitor().isRunning()) {
+						BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session="
+								+ Activator.engineMonitor().getSessionId());
+					}
+				}
+			};
+			openViewerAction.setEnabled(Activator.engineMonitor().isRunning());
+			openViewerAction.setImageDescriptor(
+					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/browser.gif"));
+		}
+		{
+			resetContextAction = new Action("Reset context") {
+				@Override
+				public void run() {
+					Activator.post(IMessage.MessageClass.UserContextChange, IMessage.Type.ResetContext, "");
+				}
+			};
+			resetContextAction.setEnabled(Activator.engineMonitor().isRunning());
+			resetContextAction.setImageDescriptor(ResourceManager
+					.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
+			resetContextAction.setToolTipText("Reset context");
+		}
+
 	}
 
 	/**
@@ -112,6 +153,8 @@ public class ApplicationView extends ViewPart {
 	 */
 	private void initializeToolBar() {
 		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+		toolbarManager.add(resetContextAction);
+		toolbarManager.add(openViewerAction);
 	}
 
 	/**
@@ -132,11 +175,25 @@ public class ApplicationView extends ViewPart {
 	private void handleMessage(IMessage message) {
 
 		switch (message.getType()) {
+		case EngineUp:
+			Display.getDefault().asyncExec(() -> {
+				openViewerAction.setEnabled(true);
+				resetContextAction.setEnabled(true);
+			});
+			removeAll();
+			break;
 		case EngineDown:
+			Display.getDefault().asyncExec(() -> {
+				openViewerAction.setEnabled(false);
+				resetContextAction.setEnabled(false);
+			});
 			removeAll();
 			break;
 		case SetupInterface:
-			Display.getDefault().asyncExec(() -> createAppLayout(message.getPayload(Layout.class)));
+			Layout layout = message.getPayload(Layout.class);
+			if (layout.getDestination() == IKActorsBehavior.Type.APP) {
+				Display.getDefault().asyncExec(() -> createAppLayout(layout));
+			}
 			break;
 		case CreateViewComponent:
 			addWidget(message);
@@ -148,26 +205,47 @@ public class ApplicationView extends ViewPart {
 	}
 
 	private void removeAll() {
-		// TODO Auto-generated method stub
-
+		for (CTabItem tab : tabs.values()) {
+			Layout layout = (Layout)tab.getData();
+			Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp,
+					new LoadApplicationRequest(layout.getApplicationId(), false, true));
+			Display.getDefault().asyncExec(() -> tab.dispose());
+		}
+		apps.clear();
+		tabs.clear();
 	}
 
 	private void addWidget(IMessage message) {
-		// TODO Auto-generated method stub
-
+		ViewComponent component = message.getPayload(ViewComponent.class);
+		for (String behavior : tabs.keySet()) {
+			CTabItem tab = tabs.get(behavior);
+			Layout layout = (Layout)tab.getData();
+			if (component.getApplicationId() != null && component.getApplicationId().equals(layout.getApplicationId())) {
+				tabFolder.setSelection(tab);
+				Display.getDefault().asyncExec(() -> apps.get(behavior).addWidget(message));
+				break;
+			}
+		}
 	}
 
 	private void createAppLayout(Layout layout) {
+
 		CTabItem tab = tabs.get(layout.getName());
 		if (tab == null) {
+			layout.setIndex(tabFolder.getItemCount());
 			tab = new CTabItem(tabFolder, SWT.CLOSE);
+			tab.setData(layout);
 			tab.setText(layout.getName());
 			tabs.put(layout.getName(), tab);
 			Composite composite = new Composite(tabFolder, SWT.NONE);
 			composite.setLayout(new FillLayout());
 			tab.setControl(composite);
 			apps.put(layout.getName(), new AppView(composite, SWT.NONE));
+		} else {
+			layout.setIndex(((Layout) tab.getData()).getIndex());
 		}
+
 		apps.get(layout.getName()).setup(layout);
+		tabFolder.setSelection(layout.getIndex());
 	}
 }

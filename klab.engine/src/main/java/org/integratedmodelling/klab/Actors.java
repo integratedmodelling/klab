@@ -513,6 +513,8 @@ public enum Actors implements IActorsService {
 		 */
 		Layout view = new Layout(behavior.getName(), applicationId);
 		view.setStyle(behavior.getStatement().getStyle());
+		view.setDestination(behavior.getDestination());
+		
 		for (IBehavior.Action action : behavior.getActions()) {
 
 			ViewPanel panel = null;
@@ -800,7 +802,19 @@ public enum Actors implements IActorsService {
 			for (ViewComponent c : component.getComponents()) {
 				dumpComponent(c, ret, offset + 3);
 			}
+		}
+	}
 
+	/**
+	 * Load all the behaviors in <klab>/user. These should be managed through the
+	 * IDE and there should always be a default one.
+	 */
+	public void loadUserBehaviors() {
+		File bspace = Configuration.INSTANCE.getDataPath("user");
+		for (File bfile : bspace.listFiles()) {
+			if (bfile.toString().endsWith(".kactor")) {
+				KActors.INSTANCE.add(bfile);
+			}
 		}
 	}
 }

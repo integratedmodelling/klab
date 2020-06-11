@@ -25,9 +25,10 @@ public class LoadApplicationRequest {
 		}
 	}
 	
-	public LoadApplicationRequest(String behavior, boolean isTest) {
+	public LoadApplicationRequest(String behavior, boolean isTest, boolean isStop) {
 		this.behavior = behavior;
 		this.test = isTest;
+		this.stop = isStop;
 	}
 
 	public URL getScriptUrl() {

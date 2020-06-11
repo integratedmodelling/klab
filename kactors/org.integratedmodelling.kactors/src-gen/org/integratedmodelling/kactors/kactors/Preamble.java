@@ -16,6 +16,8 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isDesktop <em>Desktop</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isApp <em>App</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTest <em>Test</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isUser <em>User</em>}</li>
@@ -44,6 +46,50 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Preamble extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Desktop</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Desktop</em>' attribute.
+   * @see #setDesktop(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Desktop()
+   * @model
+   * @generated
+   */
+  boolean isDesktop();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isDesktop <em>Desktop</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Desktop</em>' attribute.
+   * @see #isDesktop()
+   * @generated
+   */
+  void setDesktop(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Web</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Web</em>' attribute.
+   * @see #setWeb(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Web()
+   * @model
+   * @generated
+   */
+  boolean isWeb();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isWeb <em>Web</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Web</em>' attribute.
+   * @see #isWeb()
+   * @generated
+   */
+  void setWeb(boolean value);
+
   /**
    * Returns the value of the '<em><b>App</b></em>' attribute.
    * <!-- begin-user-doc -->

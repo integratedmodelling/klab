@@ -26,15 +26,42 @@ The *semantic layer* deals with Semantic resources exist at the "conceptual"  le
 
 The *reactivity layer* connects _behaviors_ to any of the artifacts created during a k.LAB session, enabling individual-based modeling, interactive, reactive and distributed real-time simulations, as well as responsive user applications, with a uniform model. The *k.Actors language* is the central resource to specify behaviors and applications for all the "live" identities in a k.LAB session, including not only the observations made (agent-based modeling) but also sessions (building both interactive and non-interactive applications) and the users themselves. Behaviors specified in k.Actors are mapped to the Akka framework to create interactive, distributed simulations and applications.
 
-## The resource layer
+### The resource layer
 
-## The semantic layer
+### The semantic layer
 
-## The reactivity layer
+### The reactivity layer
 
-# Applications
 
-# State and future of the software
+## Creating a k.LAB semantic network
+
+## Client applications
+
+### Content providers
+
+### Content fruition
+
+## Contributing knowledge and extension points
+
+### Contributed knowledge
+
+#### Worldview tiers
+
+#### Resource content
+
+#### Semantic content
+
+### Extension points
+
+#### Resource Adapters
+
+... List of adapters existing and in development 
+
+#### Engine components
+
+## Applications
+
+## State and future of the software
 
 [bibliography]
 == Resources

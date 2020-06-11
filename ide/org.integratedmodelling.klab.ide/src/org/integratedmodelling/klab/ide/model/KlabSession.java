@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -36,10 +37,12 @@ import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.views.ApplicationView;
 import org.integratedmodelling.klab.ide.views.ResourcesView;
 import org.integratedmodelling.klab.ide.views.SearchView;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.EngineEvent;
+import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NetworkReference;
@@ -56,10 +59,10 @@ import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
+import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.ViewComponent;
-import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -82,7 +85,8 @@ public class KlabSession extends KlabPeer {
 
 	private AtomicLong queryCounter = new AtomicLong();
 	private Map<EngineEvent.Type, Set<Long>> engineEvents = Collections.synchronizedMap(new HashMap<>());
-
+	private SessionReference sessionReference; 
+	
 	SessionMonitor sessionMonitor = new SessionMonitor() {
 
 		@Override
@@ -333,12 +337,12 @@ public class KlabSession extends KlabPeer {
 	}
 
 	public void launchApp(String behavior) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp, new LoadApplicationRequest(behavior, false));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp, new LoadApplicationRequest(behavior, false, false));
 	}
 
 	public void launchTest(String behavior) {
 		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunUnitTest,
-				new LoadApplicationRequest(behavior, true));
+				new LoadApplicationRequest(behavior, true, false));
 	}
 
 	public void observe(EKimObject dropped) {
@@ -476,7 +480,11 @@ public class KlabSession extends KlabPeer {
 
 	@MessageHandler
 	public void handleCreateView(IMessage message, Layout component) {
-		Eclipse.INSTANCE.openView(SearchView.ID, null);
+		if (component.getDestination() == IKActorsBehavior.Type.USER) {
+			Eclipse.INSTANCE.openView(SearchView.ID, null);
+		} else {
+			Eclipse.INSTANCE.openView(ApplicationView.ID, null);
+		}
 		send(message);
 	}
 
@@ -544,4 +552,13 @@ public class KlabSession extends KlabPeer {
 		send(IMessage.MessageClass.UserInterface, IMessage.Type.TicketCreated, ticket);
 	}
 
+	public String getDefaultUserBehavior() {
+		// TODO
+		return "default";
+	}
+
+	public List<String> getUserBehaviors() {
+		return this.sessionReference == null ? new ArrayList<>() : this.sessionReference.getUserAppUrns();
+	}
+	
 }
