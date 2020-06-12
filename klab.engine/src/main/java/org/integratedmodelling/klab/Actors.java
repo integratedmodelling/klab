@@ -516,6 +516,9 @@ public enum Actors implements IActorsService {
 		Layout view = new Layout(behavior.getName(), applicationId);
 		view.setStyle(behavior.getStatement().getStyle());
 		view.setDestination(behavior.getDestination());
+		view.setLabel(behavior.getStatement().getLabel());
+		view.setDescription(behavior.getStatement().getDescription());
+		view.setPlatform(behavior.getPlatform());
 		
 		for (IBehavior.Action action : behavior.getActions()) {
 

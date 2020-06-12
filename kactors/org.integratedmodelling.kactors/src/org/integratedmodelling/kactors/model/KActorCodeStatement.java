@@ -10,7 +10,6 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kactors.api.IKActorsCodeStatement;
-import org.integratedmodelling.kdl.api.IKdlAnnotation;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimMetadata;
 
@@ -32,6 +31,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
     protected boolean errors = false;
     protected boolean warnings = false;
     protected String tag = null;
+    protected IKimMetadata metadata;
 
     EObject eObject;
 	private URI uri;
@@ -168,8 +168,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
 
 	@Override
 	public IKimMetadata getMetadata() {
-		// TODO Auto-generated method stub
-		return null;
+		return metadata;
 	}
 	
 	@Override

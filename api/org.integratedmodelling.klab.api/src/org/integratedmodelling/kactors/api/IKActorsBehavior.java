@@ -96,4 +96,20 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 	 */
 	String getStyle();
 
+	/**
+	 * Label (docstring). This should/could be in metadata but we still have some
+	 * API weirdness with IKimMetadata being cumbersome.
+	 * 
+	 * @return
+	 */
+	String getLabel();
+
+	/**
+	 * Description (as per preamble). This should/could be in metadata but we still have some
+	 * API weirdness with IKimMetadata being cumbersome.
+	 * 
+	 * @return
+	 */
+	String getDescription();
+
 }

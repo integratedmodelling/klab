@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.nebula.widgets.opal.header.Header;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,7 +33,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
@@ -247,12 +248,20 @@ public class AppView extends Composite {
 
 		ret.setLayout(gridLayout(1, true));
 
+		if (view.getLabel() != null && view.getDescription() != null) {
+			final Header description = new Header(ret, SWT.NONE);
+			description.setTitle(view.getLabel());
+			description.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/action-item-login.png"));
+			description.setDescription(view.getDescription());
+			description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		}
+
 		if (view.getHeader() != null) {
 			header = new Composite(ret, SWT.NONE);
 			header.setLayout(gridLayout(view.getHeader().getComponents().size(), false));
 			header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 		}
-
+		
 		center = new Composite(ret, SWT.NONE);
 		center.setLayout(gridLayout(ncols, false));
 		center.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

@@ -30,6 +30,8 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	private String style;
 	private List<IKActorsBehavior> imports = new ArrayList<>();
 	private List<IKActorsAction> actions = new ArrayList<>();
+	private String label;
+	private String description;
 
 	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
 		
@@ -60,6 +62,8 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		
 		this.observable = preamble.getObservable();
 		this.style = preamble.getStyle();
+		this.label = preamble.getLabel();
+		this.description = preamble.getDescription();
 		
 		if (preamble.isApp()) {
 			this.type = Type.APP;
@@ -124,6 +128,22 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	public Platform getPlatform() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 }

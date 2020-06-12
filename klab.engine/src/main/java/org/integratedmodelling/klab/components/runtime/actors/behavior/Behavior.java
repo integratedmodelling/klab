@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
@@ -64,12 +63,12 @@ public class Behavior implements IBehavior {
 		public boolean isImplicit() {
 			return value == null;
 		}
-		
+
 		// Call only if isIdentifier() returns true
 		public String getIdentifier() {
 			return this.value.getValue().toString();
 		}
-		
+
 		/**
 		 * If true, this matches true and contains an identifier to set into the scope
 		 * to the matched value.
@@ -223,7 +222,7 @@ public class Behavior implements IBehavior {
 	public Type getDestination() {
 		return statement.getType();
 	}
-	
+
 	@Override
 	public List<Action> getActions(String... match) {
 		List<Action> ret = new ArrayList<>();
@@ -261,7 +260,7 @@ public class Behavior implements IBehavior {
 
 	@Override
 	public Platform getPlatform() {
-		return getStatement().getPlatform();
+		return getStatement().getPlatform() == null ? Platform.ANY : getStatement().getPlatform();
 	}
 
 }
