@@ -248,7 +248,15 @@ public class AppView extends Composite {
 
 		ret.setLayout(gridLayout(1, true));
 
-		if (view.getLabel() != null && view.getDescription() != null) {
+		/**
+		 * We give it a default header unless one is specified. TODO limit this to the
+		 * root layout in case of composite panels.
+		 */
+		if (view.getHeader() != null) {
+			header = new Composite(ret, SWT.NONE);
+			header.setLayout(gridLayout(view.getHeader().getComponents().size(), false));
+			header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+		} else if (view.getLabel() != null && view.getDescription() != null) {
 			final Header description = new Header(ret, SWT.NONE);
 			description.setTitle(view.getLabel());
 			description.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/action-item-login.png"));
@@ -256,12 +264,6 @@ public class AppView extends Composite {
 			description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		}
 
-		if (view.getHeader() != null) {
-			header = new Composite(ret, SWT.NONE);
-			header.setLayout(gridLayout(view.getHeader().getComponents().size(), false));
-			header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
-		}
-		
 		center = new Composite(ret, SWT.NONE);
 		center.setLayout(gridLayout(ncols, false));
 		center.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
