@@ -393,7 +393,7 @@ public class Model extends KimObject implements IModel {
 		 */
 
 		if (model.getMetadata() != null) {
-			getMetadata().putAll(model.getMetadata().getData());
+			getMetadata().putAll(model.getMetadata());
 		}
 
 		if (model.getDocstring() != null) {

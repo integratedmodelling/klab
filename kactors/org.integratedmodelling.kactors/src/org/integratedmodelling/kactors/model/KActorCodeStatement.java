@@ -11,7 +11,8 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kactors.api.IKActorsCodeStatement;
 import org.integratedmodelling.kim.api.IKimAnnotation;
-import org.integratedmodelling.kim.api.IKimMetadata;
+import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class KActorCodeStatement implements IKActorsCodeStatement {
 
@@ -31,7 +32,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
     protected boolean errors = false;
     protected boolean warnings = false;
     protected String tag = null;
-    protected IKimMetadata metadata;
+    protected IParameters<String> metadata = Parameters.create();
 
     EObject eObject;
 	private URI uri;
@@ -167,7 +168,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
 	}
 
 	@Override
-	public IKimMetadata getMetadata() {
+	public IParameters<String> getMetadata() {
 		return metadata;
 	}
 	

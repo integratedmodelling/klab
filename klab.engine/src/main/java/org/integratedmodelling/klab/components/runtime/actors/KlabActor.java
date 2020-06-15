@@ -473,8 +473,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private void executeText(TextBlock code, Scope scope) {
-		// TODO Auto-generated method stub
-
+		executeCall(new KActorsActionCall(code), scope);
 	}
 
 	private void executeSequence(Sequence code, Scope scope) {

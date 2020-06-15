@@ -73,6 +73,14 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		}
 	}
 
+	public KActorsActionCall(TextBlock code) {
+		super(((KActorsText)code).eObject, ((KActorsText)code).parent, Type.TEXT_BLOCK);
+		this.message = "text";
+		this.arguments = new KActorsArguments();
+		this.arguments.putUnnamed(code.getText());
+		this.arguments.putAll(code.getMetadata());
+	}
+
 	public String getMessage() {
 		return message;
 	}

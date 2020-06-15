@@ -25,6 +25,7 @@
 	        <unit id="org.eclipse.nebula.widgets.opal.commons.feature.feature.group" version="0.0.0"/>
 	        <unit id="org.eclipse.nebula.widgets.opal.header.feature.feature.group" version="0.0.0"/>
 	        <unit id="org.eclipse.nebula.widgets.opal.notifier.feature.feature.group" version="0.0.0"/>
+	        <unit id="org.eclipse.nebula.widgets.richtext.feature.feature.group" version="0.0.0"/>
         </location>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
             <unit id="org.eclipse.egit.feature.group" version="0.0.0"/>

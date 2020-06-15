@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.nebula.widgets.opal.header.Header;
+import org.eclipse.nebula.widgets.richtext.RichTextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -432,6 +433,9 @@ public class AppView extends Composite {
 		case Table:
 			break;
 		case Text:
+			RichTextViewer textViewer = new RichTextViewer(parent, SWT.WRAP);
+			textViewer.setText(component.getContent());
+			textViewer.setLayoutData(getGridData(component, SWT.FILL, SWT.CENTER, true, false));
 			break;
 		case TreeItem:
 			break;
@@ -442,6 +446,92 @@ public class AppView extends Composite {
 			break;
 		}
 
+	}
+	/**
+	 * View messages. Uses metadata for layout control
+	 * <p>
+	 * Metadata this far:
+	 * <p>
+	 * No argument:
+	 * <ul>
+	 * <li>:right, :left, :top, :bottom</li>
+	 * <li>:hfill, :vfill, :fill</li>
+	 * <li>:disabled {!disabled for completeness}</li>
+	 * <li>:hidden {!hidden}</li>
+	 * </ul>
+	 * <p>
+	 * With argument:
+	 * <ul>
+	 * <li>:cspan, :rspan (columns and rows spanned in grid)</li>
+	 * <li>:fg, :bg (color name for now?)</li>
+	 * <li>:bstyle {?HTML solid dotted}</li>
+	 * <li>:bwidth <n> border width (always solid for now)</li>
+	 * <li>:fstyle {bold|italic|strike|normal}</li>
+	 * <li>:fsize <n></li>
+	 * <li>:symbol {font awesome char code}</li>
+	 * <li>:class (CSS class)</li>
+	 * <li>:wmin, :hmin (minimum height and width)</li>
+	 * <li>:cols, :equal for panel grids</li>
+	 * </ul>
+	 * 
+	 */
+	private GridData getGridData(ViewComponent component, int fill, int center, boolean grabX, boolean grabY) {
+		
+		int cspan = 1;
+		int rspan = 1;
+		int wmin = -1;
+		int hmin = -1;
+		
+		for (String attribute : component.getAttributes().keySet()) {
+			switch (attribute) {
+			case "right":
+				fill = SWT.RIGHT;
+				break;
+			case "left":
+				fill = SWT.LEFT;
+				break;
+			case "top":
+				center = SWT.TOP;
+				break;
+			case "bottom":
+				center = SWT.BOTTOM;
+				break;
+			case "hfill":
+				fill = SWT.FILL;
+				break;
+			case "vfill":
+				center = SWT.FILL;
+				break;
+			case "fill":
+				center = SWT.FILL;
+				fill = SWT.FILL;
+				break;
+			case "cspan":
+				cspan = Integer.parseInt(component.getAttributes().get(attribute));
+				break;
+			case "rspan":
+				rspan = Integer.parseInt(component.getAttributes().get(attribute));
+				break;
+			case "wmin":
+			case "width":
+				wmin = Integer.parseInt(component.getAttributes().get(attribute));
+				break;
+			case "hmin":
+			case "height":
+				hmin = Integer.parseInt(component.getAttributes().get(attribute));
+				break;
+			}
+		}
+		GridData ret = new GridData(fill, center, grabX, grabY);
+		ret.horizontalSpan = cspan;
+		ret.verticalSpan = rspan;
+		if (wmin >= 0) {
+			ret.widthHint = wmin;
+		}
+		if (hmin >= 0) {
+			ret.heightHint = hmin;
+		}
+		return ret;
 	}
 
 	/**

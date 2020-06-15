@@ -755,8 +755,11 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cGroupStatementGroupParserRuleCall_0_1_0 = (RuleCall)cGroupAssignment_0_1.eContents().get(0);
 		private final Assignment cVerbAssignment_0_2 = (Assignment)cAlternatives_0.eContents().get(2);
 		private final RuleCall cVerbMessageCallParserRuleCall_0_2_0 = (RuleCall)cVerbAssignment_0_2.eContents().get(0);
-		private final Assignment cTextAssignment_0_3 = (Assignment)cAlternatives_0.eContents().get(3);
-		private final RuleCall cTextEMBEDDEDTEXTTerminalRuleCall_0_3_0 = (RuleCall)cTextAssignment_0_3.eContents().get(0);
+		private final Group cGroup_0_3 = (Group)cAlternatives_0.eContents().get(3);
+		private final Assignment cTextAssignment_0_3_0 = (Assignment)cGroup_0_3.eContents().get(0);
+		private final RuleCall cTextEMBEDDEDTEXTTerminalRuleCall_0_3_0_0 = (RuleCall)cTextAssignment_0_3_0.eContents().get(0);
+		private final Assignment cMetadataAssignment_0_3_1 = (Assignment)cGroup_0_3.eContents().get(1);
+		private final RuleCall cMetadataMetadataParserRuleCall_0_3_1_0 = (RuleCall)cMetadataAssignment_0_3_1.eContents().get(0);
 		private final Assignment cIfAssignment_0_4 = (Assignment)cAlternatives_0.eContents().get(4);
 		private final RuleCall cIfIfStatementParserRuleCall_0_4_0 = (RuleCall)cIfAssignment_0_4.eContents().get(0);
 		private final Assignment cWhileAssignment_0_5 = (Assignment)cAlternatives_0.eContents().get(5);
@@ -771,16 +774,16 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cTagTAGTerminalRuleCall_1_0 = (RuleCall)cTagAssignment_1.eContents().get(0);
 		
 		//Statement:
-		//	(assignment=Assignment | group=StatementGroup | verb=MessageCall | text=EMBEDDEDTEXT | if=IfStatement |
-		//	while=WhileStatement | do=DoStatement | for=ForStatement | value=ValueWithMetadata) tag=TAG?;
+		//	(assignment=Assignment | group=StatementGroup | verb=MessageCall | text=EMBEDDEDTEXT metadata=Metadata? |
+		//	if=IfStatement | while=WhileStatement | do=DoStatement | for=ForStatement | value=ValueWithMetadata) tag=TAG?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(assignment=Assignment | group=StatementGroup | verb=MessageCall | text=EMBEDDEDTEXT | if=IfStatement |
-		//while=WhileStatement | do=DoStatement | for=ForStatement | value=ValueWithMetadata) tag=TAG?
+		//(assignment=Assignment | group=StatementGroup | verb=MessageCall | text=EMBEDDEDTEXT metadata=Metadata? | if=IfStatement
+		//| while=WhileStatement | do=DoStatement | for=ForStatement | value=ValueWithMetadata) tag=TAG?
 		public Group getGroup() { return cGroup; }
 		
-		//(assignment=Assignment | group=StatementGroup | verb=MessageCall | text=EMBEDDEDTEXT | if=IfStatement |
-		//while=WhileStatement | do=DoStatement | for=ForStatement | value=ValueWithMetadata)
+		//(assignment=Assignment | group=StatementGroup | verb=MessageCall | text=EMBEDDEDTEXT metadata=Metadata? | if=IfStatement
+		//| while=WhileStatement | do=DoStatement | for=ForStatement | value=ValueWithMetadata)
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
 		//assignment=Assignment
@@ -801,11 +804,20 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//MessageCall
 		public RuleCall getVerbMessageCallParserRuleCall_0_2_0() { return cVerbMessageCallParserRuleCall_0_2_0; }
 		
+		//text=EMBEDDEDTEXT metadata=Metadata?
+		public Group getGroup_0_3() { return cGroup_0_3; }
+		
 		//text=EMBEDDEDTEXT
-		public Assignment getTextAssignment_0_3() { return cTextAssignment_0_3; }
+		public Assignment getTextAssignment_0_3_0() { return cTextAssignment_0_3_0; }
 		
 		//EMBEDDEDTEXT
-		public RuleCall getTextEMBEDDEDTEXTTerminalRuleCall_0_3_0() { return cTextEMBEDDEDTEXTTerminalRuleCall_0_3_0; }
+		public RuleCall getTextEMBEDDEDTEXTTerminalRuleCall_0_3_0_0() { return cTextEMBEDDEDTEXTTerminalRuleCall_0_3_0_0; }
+		
+		//metadata=Metadata?
+		public Assignment getMetadataAssignment_0_3_1() { return cMetadataAssignment_0_3_1; }
+		
+		//Metadata
+		public RuleCall getMetadataMetadataParserRuleCall_0_3_1_0() { return cMetadataMetadataParserRuleCall_0_3_1_0; }
 		
 		//if=IfStatement
 		public Assignment getIfAssignment_0_4() { return cIfAssignment_0_4; }
@@ -4115,8 +4127,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Statement:
-	//	(assignment=Assignment | group=StatementGroup | verb=MessageCall | text=EMBEDDEDTEXT | if=IfStatement |
-	//	while=WhileStatement | do=DoStatement | for=ForStatement | value=ValueWithMetadata) tag=TAG?;
+	//	(assignment=Assignment | group=StatementGroup | verb=MessageCall | text=EMBEDDEDTEXT metadata=Metadata? |
+	//	if=IfStatement | while=WhileStatement | do=DoStatement | for=ForStatement | value=ValueWithMetadata) tag=TAG?;
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}

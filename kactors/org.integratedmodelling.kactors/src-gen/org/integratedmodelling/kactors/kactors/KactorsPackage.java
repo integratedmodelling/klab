@@ -682,13 +682,22 @@ public interface KactorsPackage extends EPackage
   int STATEMENT__TEXT = 3;
 
   /**
+   * The feature id for the '<em><b>Metadata</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT__METADATA = 4;
+
+  /**
    * The feature id for the '<em><b>If</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT__IF = 4;
+  int STATEMENT__IF = 5;
 
   /**
    * The feature id for the '<em><b>While</b></em>' containment reference.
@@ -697,7 +706,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__WHILE = 5;
+  int STATEMENT__WHILE = 6;
 
   /**
    * The feature id for the '<em><b>Do</b></em>' containment reference.
@@ -706,7 +715,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__DO = 6;
+  int STATEMENT__DO = 7;
 
   /**
    * The feature id for the '<em><b>For</b></em>' containment reference.
@@ -715,7 +724,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__FOR = 7;
+  int STATEMENT__FOR = 8;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -724,7 +733,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__VALUE = 8;
+  int STATEMENT__VALUE = 9;
 
   /**
    * The feature id for the '<em><b>Tag</b></em>' attribute.
@@ -733,7 +742,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__TAG = 9;
+  int STATEMENT__TAG = 10;
 
   /**
    * The number of structural features of the '<em>Statement</em>' class.
@@ -742,7 +751,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT_FEATURE_COUNT = 10;
+  int STATEMENT_FEATURE_COUNT = 11;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl <em>Assignment</em>}' class.
@@ -3186,6 +3195,17 @@ public interface KactorsPackage extends EPackage
   EAttribute getStatement_Text();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Statement#getMetadata <em>Metadata</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Metadata</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Statement#getMetadata()
+   * @see #getStatement()
+   * @generated
+   */
+  EReference getStatement_Metadata();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Statement#getIf <em>If</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5576,6 +5596,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute STATEMENT__TEXT = eINSTANCE.getStatement_Text();
+
+    /**
+     * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT__METADATA = eINSTANCE.getStatement_Metadata();
 
     /**
      * The meta object literal for the '<em><b>If</b></em>' containment reference feature.

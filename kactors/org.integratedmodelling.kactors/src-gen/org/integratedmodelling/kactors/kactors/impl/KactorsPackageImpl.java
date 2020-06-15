@@ -1063,7 +1063,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_If()
+  public EReference getStatement_Metadata()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(4);
   }
@@ -1074,7 +1074,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_While()
+  public EReference getStatement_If()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(5);
   }
@@ -1085,7 +1085,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Do()
+  public EReference getStatement_While()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(6);
   }
@@ -1096,7 +1096,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_For()
+  public EReference getStatement_Do()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(7);
   }
@@ -1107,7 +1107,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Value()
+  public EReference getStatement_For()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(8);
   }
@@ -1118,9 +1118,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getStatement_Value()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getStatement_Tag()
   {
-    return (EAttribute)statementEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)statementEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -3070,6 +3081,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(statementEClass, STATEMENT__GROUP);
     createEReference(statementEClass, STATEMENT__VERB);
     createEAttribute(statementEClass, STATEMENT__TEXT);
+    createEReference(statementEClass, STATEMENT__METADATA);
     createEReference(statementEClass, STATEMENT__IF);
     createEReference(statementEClass, STATEMENT__WHILE);
     createEReference(statementEClass, STATEMENT__DO);
@@ -3377,6 +3389,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getStatement_Group(), this.getStatementGroup(), null, "group", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Verb(), this.getMessageCall(), null, "verb", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStatement_Text(), ecorePackage.getEString(), "text", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_If(), this.getIfStatement(), null, "if", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_While(), this.getWhileStatement(), null, "while", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Do(), this.getDoStatement(), null, "do", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

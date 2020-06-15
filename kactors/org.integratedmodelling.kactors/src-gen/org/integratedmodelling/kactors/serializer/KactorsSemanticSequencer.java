@@ -737,7 +737,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *             assignment=Assignment | 
 	 *             group=StatementGroup | 
 	 *             verb=MessageCall | 
-	 *             text=EMBEDDEDTEXT | 
+	 *             (text=EMBEDDEDTEXT metadata=Metadata?) | 
 	 *             if=IfStatement | 
 	 *             while=WhileStatement | 
 	 *             do=DoStatement | 

@@ -8,9 +8,9 @@ import java.util.Set;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
 import org.integratedmodelling.kim.api.IKimAnnotation;
-import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -78,7 +78,7 @@ public class KActorsAnnotation extends Parameters<String> implements IKimAnnotat
 	}
 
 	@Override
-	public IKimMetadata getDocumentationMetadata() {
+	public IParameters<String> getDocumentationMetadata() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -162,7 +162,7 @@ public class KActorsAnnotation extends Parameters<String> implements IKimAnnotat
 	}
 
 	@Override
-	public IKimMetadata getMetadata() {
+	public IParameters<String> getMetadata() {
 		// TODO Auto-generated method stub
 		return null;
 	}

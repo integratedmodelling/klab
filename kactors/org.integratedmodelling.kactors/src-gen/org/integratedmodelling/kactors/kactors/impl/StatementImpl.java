@@ -18,6 +18,7 @@ import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementGroup;
 import org.integratedmodelling.kactors.kactors.Value;
@@ -35,6 +36,7 @@ import org.integratedmodelling.kactors.kactors.WhileStatement;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getVerb <em>Verb</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getText <em>Text</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getWhile <em>While</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getDo <em>Do</em>}</li>
@@ -96,6 +98,16 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @ordered
    */
   protected String text = TEXT_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMetadata()
+   * @generated
+   * @ordered
+   */
+  protected Metadata metadata;
 
   /**
    * The cached value of the '{@link #getIf() <em>If</em>}' containment reference.
@@ -361,6 +373,56 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     text = newText;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__TEXT, oldText, text));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Metadata getMetadata()
+  {
+    return metadata;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  {
+    Metadata oldMetadata = metadata;
+    metadata = newMetadata;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__METADATA, oldMetadata, newMetadata);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMetadata(Metadata newMetadata)
+  {
+    if (newMetadata != metadata)
+    {
+      NotificationChain msgs = null;
+      if (metadata != null)
+        msgs = ((InternalEObject)metadata).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__METADATA, null, msgs);
+      if (newMetadata != null)
+        msgs = ((InternalEObject)newMetadata).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__METADATA, null, msgs);
+      msgs = basicSetMetadata(newMetadata, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__METADATA, newMetadata, newMetadata));
   }
 
   /**
@@ -654,6 +716,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return basicSetGroup(null, msgs);
       case KactorsPackage.STATEMENT__VERB:
         return basicSetVerb(null, msgs);
+      case KactorsPackage.STATEMENT__METADATA:
+        return basicSetMetadata(null, msgs);
       case KactorsPackage.STATEMENT__IF:
         return basicSetIf(null, msgs);
       case KactorsPackage.STATEMENT__WHILE:
@@ -686,6 +750,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return getVerb();
       case KactorsPackage.STATEMENT__TEXT:
         return getText();
+      case KactorsPackage.STATEMENT__METADATA:
+        return getMetadata();
       case KactorsPackage.STATEMENT__IF:
         return getIf();
       case KactorsPackage.STATEMENT__WHILE:
@@ -723,6 +789,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return;
       case KactorsPackage.STATEMENT__TEXT:
         setText((String)newValue);
+        return;
+      case KactorsPackage.STATEMENT__METADATA:
+        setMetadata((Metadata)newValue);
         return;
       case KactorsPackage.STATEMENT__IF:
         setIf((IfStatement)newValue);
@@ -768,6 +837,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
       case KactorsPackage.STATEMENT__TEXT:
         setText(TEXT_EDEFAULT);
         return;
+      case KactorsPackage.STATEMENT__METADATA:
+        setMetadata((Metadata)null);
+        return;
       case KactorsPackage.STATEMENT__IF:
         setIf((IfStatement)null);
         return;
@@ -808,6 +880,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return verb != null;
       case KactorsPackage.STATEMENT__TEXT:
         return TEXT_EDEFAULT == null ? text != null : !TEXT_EDEFAULT.equals(text);
+      case KactorsPackage.STATEMENT__METADATA:
+        return metadata != null;
       case KactorsPackage.STATEMENT__IF:
         return if_ != null;
       case KactorsPackage.STATEMENT__WHILE:

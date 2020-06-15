@@ -2,8 +2,8 @@ package org.integratedmodelling.kactors.model;
 
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Statement;
-import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 
 public abstract class KActorsStatement extends KActorCodeStatement implements IKActorsStatement {
 	
@@ -35,6 +35,19 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 			ret =  new KActorsWhile(statement.getWhile(), parent);
 		} else if (statement.getText() != null) {
 			ret =  new KActorsText(statement, parent);
+			if (statement.getMetadata() != null) {
+				for (MetadataPair pair : statement.getMetadata().getPairs()) {
+					String key = pair.getKey().substring(1);
+					boolean negative = pair.getKey().startsWith("!");
+					KActorsValue v = null;
+					if (pair.getValue() != null) {
+						v = new KActorsValue(pair.getValue(), ret);
+					} else {
+						v = new KActorsValue(!negative, ret);
+					}
+					ret.metadata.put(key, v);
+				}
+			}
 		} else if (statement.getValue() != null) {
 			ret =  new KActorsFire(statement.getValue(), parent);
 		} else if (statement.getVerb() != null) {

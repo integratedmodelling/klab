@@ -95,6 +95,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="verb" eType="#//MessageCall"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//Metadata"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="if" eType="#//IfStatement"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="while" eType="#//WhileStatement"

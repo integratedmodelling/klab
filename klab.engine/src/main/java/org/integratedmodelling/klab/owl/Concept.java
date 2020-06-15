@@ -522,7 +522,7 @@ public class Concept extends Knowledge implements IConcept {
 			IKimObject object = Resources.INSTANCE.getModelObject(getUrn());
 			if (object instanceof IConceptDefinition
 					&& ((IConceptDefinition) object).getStatement().getMetadata() != null) {
-				this.metadata.putAll(((IConceptDefinition) object).getStatement().getMetadata().getData());
+				this.metadata.putAll(((IConceptDefinition) object).getStatement().getMetadata());
 			}
 		}
 		return this.metadata;

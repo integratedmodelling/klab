@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getText <em>Text</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getWhile <em>While</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getDo <em>Do</em>}</li>
@@ -119,6 +120,28 @@ public interface Statement extends EObject
    * @generated
    */
   void setText(String value);
+
+  /**
+   * Returns the value of the '<em><b>Metadata</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Metadata</em>' containment reference.
+   * @see #setMetadata(Metadata)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Metadata()
+   * @model containment="true"
+   * @generated
+   */
+  Metadata getMetadata();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getMetadata <em>Metadata</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Metadata</em>' containment reference.
+   * @see #getMetadata()
+   * @generated
+   */
+  void setMetadata(Metadata value);
 
   /**
    * Returns the value of the '<em><b>If</b></em>' containment reference.

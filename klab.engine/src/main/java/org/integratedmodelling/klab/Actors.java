@@ -19,6 +19,7 @@ import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
+import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
@@ -519,7 +520,7 @@ public enum Actors implements IActorsService {
 		view.setLabel(behavior.getStatement().getLabel());
 		view.setDescription(behavior.getStatement().getDescription());
 		view.setPlatform(behavior.getPlatform());
-		
+
 		for (IBehavior.Action action : behavior.getActions()) {
 
 			ViewPanel panel = null;
@@ -689,7 +690,10 @@ public enum Actors implements IActorsService {
 			}
 			break;
 		case TEXT_BLOCK:
-			// TODO add text widget to scope
+			component = getViewComponent(new KActorsActionCall((TextBlock)statement), scope);
+			if (component != null) {
+				parent.getComponents().add(component);
+			}
 			break;
 		case WHILE_STATEMENT:
 			visitViewActions(((IKActorsStatement.While) statement).getBody(), parent, level,

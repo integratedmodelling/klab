@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
+import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -286,6 +287,43 @@ public class ViewBehavior {
 		}
 	}
 
+	/**
+	 * Bound to the %%% .... %%% template syntax; handled directly by actors. Can also be
+	 * referenced directly.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	@Action(id = "text")
+	public static class RichText extends KlabWidgetAction {
+
+		public RichText(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+			// TODO compile template and set dynamic status if text contains runtime template calls
+		}
+
+		@Override
+		public ViewComponent createViewComponent(Scope scope) {
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.Text);
+			message.setContent(processTemplate(
+					arguments.get(arguments.getUnnamedKeys().iterator().next()), scope));
+			message.getAttributes().putAll(getMetadata(arguments, scope));
+			return message;
+		}
+
+		@Override
+		protected Object getFiredResult(ViewAction action) {
+			/**
+			 * TODO eventually handle links in the text; for now the Eclipse widget cannot
+			 * use them, and the explorer can implement them directly but should be able to
+			 * also fire the link when it's matched.
+			 */
+			return null;
+		}
+	}
+
 	public static ViewComponent.Tree getTree(KActorsValue tree) {
 		@SuppressWarnings("unchecked")
 		Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>) tree.getValue();
@@ -306,6 +344,17 @@ public class ViewBehavior {
 		}
 		ret.setRootId(rootId);
 		return ret;
+	}
+
+	public static String processTemplate(Object value, Scope scope) {
+		String template = value instanceof String ? (String)value : null;
+		if (template == null && value instanceof KActorsValue) {
+			template = ((KActorsValue)value).getValue().toString();
+		}
+		/*
+		 * TODO engage the template system to merge with the runtime context
+		 */
+		return MarkdownUtils.INSTANCE.format(template);
 	}
 
 	public static Map<String, String> getMetadata(IParameters<String> arguments, Scope scope) {

@@ -12,6 +12,8 @@ import org.integratedmodelling.klab.utils.Parameters;
  *
  */
 public class KActorsArguments extends Parameters<String> {
+	
+	protected KActorsArguments() {}
 
 	public KActorsArguments(ParameterList parameters) {
 		for (KeyValuePair pair : parameters.getPairs()) {

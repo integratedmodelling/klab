@@ -33,6 +33,8 @@ The *reactivity layer* connects _behaviors_ to any of the artifacts created duri
 
 (ontologies rigorously ONLY about the meaning, never the representation, metadata or distribution)
 
+#### Authorities
+
 ### The reactivity layer
 
 
