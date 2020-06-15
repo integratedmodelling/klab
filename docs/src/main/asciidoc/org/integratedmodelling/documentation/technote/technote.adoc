@@ -9,27 +9,51 @@ Ferdinando Villa, Ph.D.
 Technical note, June 2020
 
 
-In this note we define *integrated modeling* as a scientific practice that aims to maximizing the value of scientific information by providing actionable _modularity_, _reusability_, and _openness_ for the scientific process. In k.LAB, an innovative approach to _semantic annotation_ enables integrated modelling by supporting the production, curation and linkage of scientific artifacts such as datasets, modular model components and data or computational services. The central service in the k.LAB modeling API receives as input a purely logical query ("observe _concept_ in _context_") and, in response, assembles, documents and runs a computation that produces the best possible *observation* of such knowledge - a new scientific artifact. Artificial intelligence operates on the contents of the k.LAB network to rank, select, adapt, and connect data and model components made available by independent and uncoordinated scientists.
+*Integrated modeling* is a scientific practice that aims to maximizing the value of scientific information by providing  _modularity_, _reusability_, and _openness_ for the scientific process. The k.LAB software is a reference implementation for an innovative approach to enabling integrated modelling by supporting the production, curation and linkage of scientific artifacts such as datasets, modular model components and computational services. 
+
+The central service in the k.LAB modeling API receives as input a purely logical query ("observe _concept_ in _context_") and, in response, assembles, documents and runs a computation that produces the best possible *observation* of such knowledge - a new scientific artifact. Artificial intelligence operates on the contents of the k.LAB network to rank, select, adapt, and connect data and model components made available by independent and uncoordinated scientists.
+
+List of GOALS here.
 
 ## Architecture of the k.LAB platform
 
-The five components of the open source k.LAB software stack support the creation, maintenance and fruition of a distributed _semantic web platform_ where scientific information can be stored, published, shared, connected. This platforms directly addresses all four dimensions of the FAIR goals and add the reactivity aspect so that knowledge can also be _deployed_ as "live" artifacts that can change and improve based on the integration of new information.
+The open source k.LAB software stack includes five components that support the creation, maintenance and fruition of a distributed _semantic web platform_ where scientific information can be stored, published, shared and connected. The platforms addresses directly the four dimensions of the FAIR goals (Findable, Accessible, Interoperable and REOZOSOSO), adding a further _reactivity_ aspect that enables knowledge to also be _deployed_, creating "live" artifacts that can change and improve based as new information appears on the network. 
 
 . *Server* components (*k.Node*) are deployed by certified _partners_ to publish resources and semantic content (*k.Server*) or provide semantic modeling services (*k.Engine*) to online users. One k.Node instance is installed at a partner site and it can be configured to spawn as many k.Server and/or k.Engine instances as desired. Published content may be hosted natively on k.Servers or linked from external data services such as OGC or OpenDAP, or from computational services such as OpenCPU. The k.Server containers managed automatically by k.Node can be configured to host dedicated instances of Geoserver, PostgreSQL, Hyrax or other services to enable one-stop resource management.
 . *Client* components are used by modelers (*k.Modeler*) to develop, validate and publish resources and semantic content, and by end users (*k.Explorer*) to access modeling services with novel intuitiveness and transparency. The k.LAB distributed paradigm supports and enforces a model where information remains under the ownership of its authoritative sources while maximizing its availability and interoperability, compatibly with both public and commercial services thanks to state-of-the-art access control and security.
 
-The architecture of the k.LAB platform is best explained by dividing it in three conceptually distinct layers:
+The k.LAB platform is deployed through the <deployment> of k.Nodes at partner sites, each certified to connect to others. The active nodes at any given time form what can be seen collectively as a distributed _container_ where knowledge is found in three distinct layers:
 
-The *resource layer* linked data paradigm/ Deals with RESOURCES i.e. any content that is not semantic. Resources are developed, validated, published and curated.
+
+The *resource layer* linked data paradigm/ Deals with RESOURCES i.e. any content that is not semantic. Resources are developed, validated, published and curated. Information is only persisted and curated in the resource layer; there is no semantics. It is the layer where existing data produces, services, and computations are most close.
 
 The *semantic layer* deals with Semantic resources exist at the "conceptual"  level (models, concepts), at the "physical" level (semantically annotated observations, "live" within a session) and can be exported back to resources for publication and curation. In the semantic layer, links are made between resources and their meaning: by adopting a representational - principles of orthogonality and parsimony ... The *k.IM language*, a  language optimized for semantic annotation... , is central to the semantic layer and ensures...
 
+(some of this stuff goes later, just intro here).
+
+Information in this layer exists in contextualized form, (relative to a root observation or context chosen by the user) under the form of software _agents_. In this layer, the behavior is determined by a _dataflow_ which is built by the system after the user has (1) defined a context and (2) queried a concept to observe in it (the main operation in k.LAB). The dataflow, built by k.LAB after analyzing the query in the context, creates the _observation_ of that concept along with all other observations needed to compute the dataflow. All these observations are software agents that will live in the session until its end.
+
 The *reactivity layer* connects _behaviors_ to any of the artifacts created during a k.LAB session, enabling individual-based modeling, interactive, reactive and distributed real-time simulations, as well as responsive user applications, with a uniform model. The *k.Actors language* is the central resource to specify behaviors and applications for all the "live" identities in a k.LAB session, including not only the observations made (agent-based modeling) but also sessions (building both interactive and non-interactive applications) and the users themselves. Behaviors specified in k.Actors are mapped to the Akka framework to create interactive, distributed simulations and applications.
+
+ROUND-TRIP lifecycle of information between the layers. Live observations and dataflows can be saved to resources and curated as such, then reconnected to semantics (the same or not) and reused. Info from the resource layer is contextualized and ... After, both dynamic and static info can be moved back to the resource layer.
 
 ### The resource layer
 
+URNs, geometry and content. Static or dynamic. Adapters.
+
+Lifecycle. Ensuring safety, documentation and validation.
+
+LOD paradigm.
+
+Main API calls in the resource layer
+
+Search and discover API (no semantics: by metadata, author etc)
+
+Access control
+
 ### The semantic layer
 
+Two levels: the worldview (shared and synchronized, based on certificate) and models (annotation) where semantics is specified for resources and computational procedures (both curated from external sources or defined within k.LAB as components).
 
 (ontologies rigorously ONLY about the meaning, never the representation, metadata or distribution)
 
