@@ -6,7 +6,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
-import org.integratedmodelling.klab.hub.commands.DeleteMongoGroup;
 import org.integratedmodelling.klab.hub.users.services.UserGroupEntryService;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
@@ -25,16 +24,16 @@ public class GroupServiceAdvice {
 	@Autowired
 	UserGroupEntryService groupEntryService;
 
-	//Add advice for deleted groups
+	//Add advice for CRUD groups
 	@AfterReturning(
-			pointcut = "execution(* org.integratedmodelling.klab.hub.groups.services.GroupService.delete(..))", 
+			pointcut = "execution(* org.integratedmodelling.klab.hub.groups.services.GroupService.*(org.integratedmodelling.klab.hub.api.MongoGroup))", 
 			returning = "group" )
 	public void afterDeleteGroup(JoinPoint jp, MongoGroup group) {
 		if(group != null) {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String username = authentication.getName();
 			JSONObject entry = new JSONObject();
-			entry.appendField("command", DeleteMongoGroup.class.toString());
+			entry.appendField("command", jp.getSignature().toShortString());
 			entry.appendField("group", group);
 			entry.appendField("user", username);
 			entry.appendField("timestamp", DateTime.now());
