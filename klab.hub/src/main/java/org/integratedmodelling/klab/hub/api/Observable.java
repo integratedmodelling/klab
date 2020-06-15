@@ -13,9 +13,6 @@ import org.springframework.data.annotation.TypeAlias;
 @TypeAlias("Observable")
 public class Observable {
 	
-	@Id @GeneratedValue
-	private String Id;
-	
 	@NotBlank
 	private String observable;
 	
@@ -72,10 +69,6 @@ public class Observable {
 
 	public void setExtendedDescription(String extendedDescription) {
 		this.extendedDescription = extendedDescription;
-	}
-
-	public String getId() {
-		return Id;
 	}
 
 	public ObservableReference getObservableReference() {

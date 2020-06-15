@@ -32,7 +32,9 @@ public class GroupsController {
 	@GetMapping(value = API.HUB.GROUPS_BASE)
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<?> getGroups() {
-		return new ResponseEntity<>(groupService.getAll(), HttpStatus.OK);
+		JSONObject resp = new JSONObject();
+		resp.appendField("groups", groupService.getAll());
+		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 	
 	@GetMapping(value = API.HUB.GROUPS_BASE, params=API.HUB.PARAMETERS.GROUP_NAMES)
@@ -56,20 +58,20 @@ public class GroupsController {
 	
 	@DeleteMapping(value = API.HUB.GROUPS_BASE_ID)
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<Object> delete(@PathVariable("id") String id,  @RequestBody MongoGroup group) {
-		if(id.equals(group.getName())) {
-			groupService.delete(group);	
-		} else {
-			throw new BadRequestException("Group name does not match name");
-		}
+	public ResponseEntity<Object> delete(@PathVariable("id") String id) {
+		MongoGroup group = groupService.getByName(id);
+		groupService.delete(group);	
+		JSONObject resp = new JSONObject();
+		resp.appendField("message", id + " was deleted");
 		return new ResponseEntity<>("The Groups has been deleted successsfully", HttpStatus.OK);
 	}
 	
 	@GetMapping(value= API.HUB.GROUPS_BASE_ID)
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
 	public ResponseEntity<Object> getGroup(@PathVariable("id") String id) {
-		MongoGroup group = groupService.getByName(id);
-		return new ResponseEntity<>(group, HttpStatus.OK);		
+		JSONObject resp = new JSONObject();
+		resp.appendField("group", groupService.getByName(id));
+		return new ResponseEntity<>(resp, HttpStatus.OK);		
 	}
 	
 	@PostMapping(value=API.HUB.GROUPS_BASE)

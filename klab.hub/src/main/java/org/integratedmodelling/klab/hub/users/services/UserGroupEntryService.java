@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.joda.time.DateTime;
@@ -15,5 +16,7 @@ public interface UserGroupEntryService {
 	void removeUsersGroupsByNames(UpdateUsersGroups updateUserGroups);
 
 	void addPrelimenaryUserGroups(User user, DateTime experiation);
+
+	void removeGroupFromUsers(MongoGroup group);
 
 }

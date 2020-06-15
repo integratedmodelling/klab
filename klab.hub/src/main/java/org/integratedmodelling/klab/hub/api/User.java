@@ -9,20 +9,31 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.NotNull;
 
 @Document(collection="Users")
 @TypeAlias("MongoUser")
+@CompoundIndexes({
+    @CompoundIndex(name = "username_idx",
+                   unique = true,
+                   def = "{'name' : 1, 'username' : 1}")
+})
 public class User extends IdentityModel implements UserDetails{
 	public static final String GLOBAL_GROUP = "REGISTERED";
 
     private static final long serialVersionUID = -6213593655742083476L;
-
+    
+    @NotNull
+    private String username;
+    
     String affiliation;
 
     String comments;
@@ -100,10 +111,11 @@ public class User extends IdentityModel implements UserDetails{
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     public void setUsername(String username) {
+        this.username = username;
         this.name = username;
     }
 
@@ -211,21 +223,18 @@ public class User extends IdentityModel implements UserDetails{
     
 	public void removeGroupEntries(Set<GroupEntry> groupEntries) {
     	
-		Set<String> names = Collections.<String>emptySet();
+		Set<String> groupsToRemove = new HashSet<>();
     	groupEntries
-    	  .forEach(e -> names.add(e.getGroupName()));
+    	  .forEach(e -> groupsToRemove.add(e.getGroupName()));
     	
-    	if(names.isEmpty()) {
+    	if(groupsToRemove.isEmpty()) {
     		return;
     	}
     	
 		Set<GroupEntry> newEntries = getGroupEntries();
 		
-		for (GroupEntry entry: newEntries) {
-			if(names.contains(entry.getGroupName())) {
-				newEntries.remove(entry);
-			}
-		}
+		newEntries
+			.removeIf(e -> groupsToRemove.contains(e.getGroupName()));
 		
 		setGroupEntries(newEntries);
 		
@@ -360,7 +369,7 @@ public class User extends IdentityModel implements UserDetails{
     public void setLastLogin(DateTime date) {
         lastLogin = date;
     }
-    
+
     public DateTime getLastLogin() {
     	return lastLogin;
     }

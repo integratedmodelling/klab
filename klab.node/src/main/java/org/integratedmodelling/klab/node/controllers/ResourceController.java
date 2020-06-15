@@ -2,9 +2,13 @@ package org.integratedmodelling.klab.node.controllers;
 
 import java.io.File;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.ITicket;
@@ -17,6 +21,7 @@ import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.FileStorageService;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
+import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
@@ -91,7 +96,6 @@ public class ResourceController {
 	@PostMapping(API.NODE.RESOURCE.SUBMIT_FILES)
 	@ResponseBody
 	public TicketResponse.Ticket submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
-
 		String fileName = fileStorageService.storeFile(file);
 		ITicket ticket = resourceManager.publishResource(null, new File(fileName), (EngineAuthorization) principal,
 				Klab.INSTANCE.getRootMonitor());
@@ -114,5 +118,32 @@ public class ResourceController {
 				Klab.INSTANCE.getRootMonitor());
 		return TicketManager.encode(ticket);
 	}
+	
+	
+	public static boolean approveSubmission(EngineAuthorization user, long fileSize) {
+		String submitting = Configuration.INSTANCE.getProperty("klab.node.submitting", "NONE");
+		if ("*".equals(submitting)) {
+			return checkUploadLimit(user, fileSize);
+		} else if ("NONE".equals(submitting)) {
+			return false;
+		} else {
+			KlabPermissions perms = KlabPermissions.create(submitting);
+			Collection<String> groups = new ArrayList<>();
+			user.getGroups().forEach(g -> groups.add(g.getId()));
+			if(perms.isAuthorized(user.getUsername(), groups)) {
+				return checkUploadLimit(user, fileSize);
+			} else {
+				return false;
+			}
+		}
+	}
 
+	private static boolean checkUploadLimit(EngineAuthorization user, long fileSize) {
+		for (Group group: user.getGroups()) {
+			if(group.getMaxUpload() > fileSize) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

@@ -16,7 +16,7 @@ public interface EmailTemplateRepository extends MongoRepository<EmailTemplate, 
 
 	Optional<EmailTemplate> findById(String id);
 	
-	List<EmailTemplate> findByName(String name);
+	Optional<EmailTemplate> findByName(String name);
 	
 	List<EmailTemplate> findByAuthorUsername(String username);
 }

@@ -59,7 +59,7 @@ public class EmailController {
 	 */
 	@RequestMapping(value = API.HUB.EMAIL_BASE, method = RequestMethod.GET, params=API.HUB.PARAMETERS.TEMPLATES)
 	public ResponseEntity<Object> getEmailTemplates() {
-		return new ResponseEntity<>(emailTemplateService.getEmailTemplates(), HttpStatus.OK);
+		return new ResponseEntity<>(emailTemplateService.getAll(), HttpStatus.OK);
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class EmailController {
 	 */
 	@RequestMapping(value = API.HUB.EMAIL_BASE, method = RequestMethod.GET, params="author")
 	public ResponseEntity<Object> getEmailTemplateByAuthor(@PathVariable("author") String id) {
-		EmailTemplate emailTemplate = emailTemplateService.getEmailTemplate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found"));
+		EmailTemplate emailTemplate = emailTemplateService.getById(id);
 		return new ResponseEntity<>(emailTemplate, HttpStatus.OK);		
 	}
 	
@@ -91,7 +91,7 @@ public class EmailController {
 	public ResponseEntity<Object> createEmailTemplate(@RequestBody EmailTemplate emailTemplate) {
 		checkUserName(emailTemplate);
 		try {
-			emailTemplateService.createEmailTemplate(emailTemplate);
+			emailTemplateService.create(emailTemplate);
 		} catch (DuplicateKeyException dke) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "User and email exists");
 		}
@@ -107,7 +107,7 @@ public class EmailController {
 	@RequestMapping(value = API.HUB.EMAIL_BASE_ID, method = RequestMethod.PUT)
 	public ResponseEntity<Object> updateGroup(@PathVariable("id") String id, @RequestBody EmailTemplate emailTemplate) {
 		checkUserName(emailTemplate);
-		emailTemplateService.updateEmailTemplate(id, emailTemplate);
+		emailTemplateService.update(emailTemplate);
 		return new ResponseEntity<>("The template has been updated successfully", HttpStatus.OK);
 	}
 
@@ -118,7 +118,8 @@ public class EmailController {
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> delete(@PathVariable("id") String id) {
-		emailTemplateService.deleteEmailTemplate(id);
+		EmailTemplate template = emailTemplateService.getById(id);
+		emailTemplateService.delete(template);
 		return new ResponseEntity<>("The template has been deleted successfully", HttpStatus.OK);
 	}
 	
@@ -130,7 +131,7 @@ public class EmailController {
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Object> getEmailTemplate(@PathVariable("id") String id) {
-		EmailTemplate emailTemplate = emailTemplateService.getEmailTemplate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found"));
+		EmailTemplate emailTemplate = emailTemplateService.getById((id));
 		return new ResponseEntity<>(emailTemplate, HttpStatus.OK);		
 	}
 	

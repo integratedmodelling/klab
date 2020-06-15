@@ -45,6 +45,12 @@ public class MongoGroup extends GenericModel{
      *If true this group is added to new users
      */
     private boolean preliminary;
+    
+    /* 
+     *Max number of bytes allowed to be uploaded by members of this group.
+     *Apples and Apples comparison for the multipart class size method.
+     */
+    private long maxUpload = 1073741824;
 
 	public String getId() {
 		return id;
@@ -139,6 +145,14 @@ public class MongoGroup extends GenericModel{
 
 	public void setPreliminary(boolean preliminary) {
 		this.preliminary = preliminary;
+	}
+
+	public long getMaxUpload() {
+		return maxUpload;
+	}
+
+	public void setMaxUpload(long maxUpload) {
+		this.maxUpload = maxUpload;
 	}
 
 

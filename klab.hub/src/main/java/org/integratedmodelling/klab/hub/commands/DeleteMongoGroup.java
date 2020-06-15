@@ -14,7 +14,8 @@ public class DeleteMongoGroup {
 		this.repository = repository;
 	}
 	
-	public void execute() {
+	public MongoGroup execute() {
 		repository.delete(group);
+		return group;
 	}
 }

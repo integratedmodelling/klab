@@ -32,9 +32,9 @@ public class LeverService implements GenericHubService<MongoLever>{
 	}
 
 	@Override
-	public void delete(MongoLever model) {
+	public MongoLever delete(MongoLever model) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
@@ -53,6 +53,12 @@ public class LeverService implements GenericHubService<MongoLever>{
 	public boolean exists(String name) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public MongoLever getById(String id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

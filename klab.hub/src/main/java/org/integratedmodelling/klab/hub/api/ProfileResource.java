@@ -27,7 +27,7 @@ public class ProfileResource implements OAuth2User{
 	
     @Size(max = Constraints.USERNAME_LENGTH)
     @Pattern(regexp = Constraints.USERNAME_PATTERN)
-    public String name;
+    public String username;
 
     @Email
     public String email;
@@ -72,7 +72,7 @@ public class ProfileResource implements OAuth2User{
     
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(name).append(email).append(serverUrl).append(firstName).append(lastName)
+        return new HashCodeBuilder().append(username).append(email).append(serverUrl).append(firstName).append(lastName)
                 .append(initials).append(address).append(jobTitle).append(phone).append(affiliation).append(groupEntries)
                 .append(sendUpdates).append(comments).append(accountStatus).hashCode();
     }
@@ -90,7 +90,7 @@ public class ProfileResource implements OAuth2User{
         }
 
         ProfileResource other = (ProfileResource) obj;
-        return new EqualsBuilder().append(name, other.name).append(email, other.email)
+        return new EqualsBuilder().append(username, other.username).append(email, other.email)
                 .append(serverUrl, other.serverUrl).append(firstName, other.firstName).append(lastName, other.lastName)
                 .append(initials, other.initials).append(address, other.address).append(jobTitle, other.jobTitle)
                 .append(phone, other.phone).append(affiliation, other.affiliation).append(groupEntries, other.groupEntries)
@@ -99,11 +99,11 @@ public class ProfileResource implements OAuth2User{
     }
     
     public String getUsername() {
-		return name;
+		return username;
 	}
 
 	public void setUsername(String username) {
-		this.name = username;
+		this.username = username;
 	}
 	
     public List<GroupEntry> getGroups() {
@@ -213,7 +213,7 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.sendUpdates = sendUpdates;
 		cleanedProfile.serverUrl = serverUrl;
 		cleanedProfile.Token = Token;
-		cleanedProfile.name = name;
+		cleanedProfile.username = username;
 		
 		List<GroupEntry> safeGroups = new ArrayList<>();
 		for (GroupEntry entry : cleanedProfile.getGroups()) {

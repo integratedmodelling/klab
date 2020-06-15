@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.GroupEntry;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.commands.UpdateUsers;
@@ -125,5 +128,18 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 				)
 			);
 		return groupEntries;
+	}
+
+	@Override
+	public void removeGroupFromUsers(MongoGroup group) {
+		
+		Set<String> groupNames = new HashSet<>();
+		Set<String> usernames = new HashSet<>();
+		
+		userRepository.findAll().forEach(u -> usernames.add(u.getUsername()));
+		groupNames.add(group.getName());
+		
+		UpdateUsersGroups request = new UpdateUsersGroups(usernames, groupNames, DateTime.now());		
+		removeUsersGroupsByNames(request);
 	}
 }

@@ -12,6 +12,7 @@ public class Group {
 	private List<String> projectUrls = new ArrayList<>();
 	private List<ObservableReference> observables = new ArrayList<>();
 	private boolean worldview;
+	private long maxUpload;
 	
 	// TODO add owner and possibly more authentication
 
@@ -131,6 +132,10 @@ public class Group {
 
 	public void setIconUrl(String iconUrl) {
 		this.iconUrl = iconUrl;
+	}
+
+	public long getMaxUpload() {
+		return maxUpload;
 	}
 
 }

@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.hub.commands.CreateMongoGroup;
 import org.integratedmodelling.klab.hub.commands.DeleteMongoGroup;
 import org.integratedmodelling.klab.hub.commands.GetAllMongoGroupNames;
 import org.integratedmodelling.klab.hub.commands.GetAllMongoGroups;
+import org.integratedmodelling.klab.hub.commands.GetMongoGroupById;
 import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
 import org.integratedmodelling.klab.hub.commands.MongoGroupExists;
 import org.integratedmodelling.klab.hub.commands.UpdateMongoGroup;
@@ -55,9 +56,9 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public void delete(MongoGroup group) {
-		if(!exists(group.getName())) {
-			new DeleteMongoGroup(group, repository).execute();
+	public MongoGroup delete(MongoGroup group) {
+		if(exists(group.getName())) {
+			return new DeleteMongoGroup(group, repository).execute();
 		} else {
 			throw new GroupDoesNotExistException("No group by the name: " + group.getName() + " was found.");
 		}		
@@ -71,6 +72,17 @@ public class GroupServiceImpl implements GroupService {
 			return group;
 		} else {
 			throw new GroupDoesNotExistException("No group by the name: " + groupName + " was found.");
+		}
+	}
+
+	@Override
+	public MongoGroup getById(String id) {
+		MongoGroup group = null;
+		group =  new GetMongoGroupById(id, repository).execute();
+		if(group != null) {
+			return group;
+		} else {
+			throw new GroupDoesNotExistException("No group by the id: " + id + " was found.");
 		}
 	}
 
