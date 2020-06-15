@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.rest.ViewComponent.Type;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 import akka.actor.typed.ActorRef;
 
@@ -354,7 +355,7 @@ public class ViewBehavior {
 		/*
 		 * TODO engage the template system to merge with the runtime context
 		 */
-		return MarkdownUtils.INSTANCE.format(template);
+		return MarkdownUtils.INSTANCE.format(StringUtils.stripLeadingWhitespace(template));
 	}
 
 	public static Map<String, String> getMetadata(IParameters<String> arguments, Scope scope) {
