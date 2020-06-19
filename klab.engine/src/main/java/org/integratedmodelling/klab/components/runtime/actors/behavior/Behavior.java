@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.utils.Range;
 public class Behavior implements IBehavior {
 
 	static Set<String> viewAnnotations;
-
 	static {
 		viewAnnotations = new HashSet<>();
 		viewAnnotations.add("panel");
@@ -159,9 +158,11 @@ public class Behavior implements IBehavior {
 	Map<String, BehaviorAction> actions = new LinkedHashMap<>();
 	IMetadata metadata = new Metadata();
 	List<IAnnotation> annotations = new ArrayList<>();
+	String projectId;
 
 	public Behavior(IKActorsBehavior statement) {
 		this.statement = statement;
+		this.projectId = statement.getProjectId();
 		for (IKActorsAction a : statement.getActions()) {
 			BehaviorAction action = new BehaviorAction(a, this);
 			actions.put(action.getId(), action);
@@ -261,6 +262,11 @@ public class Behavior implements IBehavior {
 	@Override
 	public Platform getPlatform() {
 		return getStatement().getPlatform() == null ? Platform.ANY : getStatement().getPlatform();
+	}
+
+	@Override
+	public String getProject() {
+		return projectId;
 	}
 
 }

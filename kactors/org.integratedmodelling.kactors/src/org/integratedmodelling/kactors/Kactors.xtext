@@ -31,15 +31,25 @@ Preamble: {Preamble}
 		('permissions' permissions=STRING)? &
 		('author' authors+=STRING)* &
 		('style' style=PathName)? &
+		('logo' logo=(Path|STRING))? &
 		('version' version=VersionNumber)? & 
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 
 	)
 ;
 
+/*
+ *  Action defines an action in the behavior;
+ *  Actor is an action that creates a "peer" actor, which remains alive until stopped 
+ *  and whose "main" is the action body (equivalent to importing another behavior and creating
+ *  the actor using new(behavior);
+ *  Component is an actor that has a view, i.e. can be considered a "widget" with view and
+ *  reactive behavior.
+ * 
+ */
 Definition:
 	annotations+=Annotation*
-	'action' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
+	(component?='component' | actor?='actor' | 'action') name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
 
 ArgumentDeclaration: {ArgumentDeclaration}
 	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'

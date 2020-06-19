@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getAuthors <em>Authors</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getStyle <em>Style</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLogo <em>Logo</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersion <em>Version</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreatecomment <em>Createcomment</em>}</li>
@@ -422,6 +423,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setStyle(String value);
+
+  /**
+   * Returns the value of the '<em><b>Logo</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Logo</em>' attribute.
+   * @see #setLogo(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Logo()
+   * @model
+   * @generated
+   */
+  String getLogo();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getLogo <em>Logo</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Logo</em>' attribute.
+   * @see #getLogo()
+   * @generated
+   */
+  void setLogo(String value);
 
   /**
    * Returns the value of the '<em><b>Version</b></em>' attribute.

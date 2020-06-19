@@ -23,6 +23,7 @@ package org.integratedmodelling.klab.client.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -35,10 +36,12 @@ import java.util.function.Consumer;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.AuthorizeSessionResponse;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.utils.Escape;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -397,7 +400,6 @@ public class EngineClient extends RestTemplate {
 	 * @param cls
 	 * @return the deserialized result
 	 */
-	@SuppressWarnings({ "rawtypes" })
 	public <T> T get(String endpoint, Class<T> cls) {
 
 		HttpHeaders headers = new HttpHeaders();
@@ -438,6 +440,43 @@ public class EngineClient extends RestTemplate {
 		return response.getBody();
 	}
 
+	/**
+	 * Returns an inputstream directly, for byte resources.
+	 * 
+	 * @param url
+	 * @param cls
+	 * @return the deserialized result
+	 */
+	public InputStream get(String endpoint) {
+
+		HttpHeaders headers = new HttpHeaders();
+//		headers.set("Accept", "application/json");
+		// headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		if (authToken != null) {
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
+		}
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		ResponseEntity<Resource> response = exchange(url + endpoint, HttpMethod.GET, entity, Resource.class);
+
+		switch (response.getStatusCodeValue()) {
+		case 302:
+		case 403:
+			throw new KlabAuthorizationException("unauthorized request " + url + endpoint);
+		case 404:
+			throw new RuntimeException("internal: request " + url + endpoint + " was not accepted");
+		}
+
+		if (response.getBody() == null) {
+			return null;
+		}
+		
+		try {
+			return response.getBody().getInputStream();
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
+	
 	/**
 	 * Instrumented for header communication and error parsing
 	 * 

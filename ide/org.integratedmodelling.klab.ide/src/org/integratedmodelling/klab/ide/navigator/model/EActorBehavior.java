@@ -117,4 +117,14 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 		return behavior.getDescription();
 	}
 
+	@Override
+	public String getLogo() {
+		return behavior.getLogo();
+	}
+
+	@Override
+	public String getProjectId() {
+		return behavior.getProjectId();
+	}
+
 }

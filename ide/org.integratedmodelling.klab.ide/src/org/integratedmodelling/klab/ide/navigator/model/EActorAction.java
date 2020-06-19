@@ -52,5 +52,10 @@ public class EActorAction extends EKimObject implements IKActorsAction {
 		return action.getTag();
 	}
 
+	@Override
+	public Type getType() {
+		return action.getType();
+	}
+
 
 }

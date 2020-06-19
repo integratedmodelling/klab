@@ -6,6 +6,7 @@ import java.awt.datatransfer.StringSelection;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -72,6 +73,7 @@ import org.eclipse.xtext.ui.editor.utils.EditorUtils;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ide.Activator;
@@ -768,6 +770,26 @@ public enum Eclipse {
 		} else {
 			beep();
 		}
+	}
+
+	/**
+	 * Get an image from project resources, using the engine API.
+	 * 
+	 * @param projectId  project id
+	 * @param resourceId relative project path to resource
+	 * @return the image or null
+	 */
+	public Image getImageResource(String projectId, String resourceId) {
+		if (Activator.session() != null) {
+			try (InputStream is = Activator.client().with(Activator.session().getIdentity())
+					.get(API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE.replace(API.ENGINE.RESOURCE.P_PROJECT, projectId)
+							.replace(API.ENGINE.RESOURCE.P_RESOURCEPATH, resourceId.replace("/", ":")))) {
+				return new Image(Display.getCurrent(), is);
+			} catch (Throwable t) {
+				handleException(t);
+			}
+		}
+		return null;
 	}
 
 }

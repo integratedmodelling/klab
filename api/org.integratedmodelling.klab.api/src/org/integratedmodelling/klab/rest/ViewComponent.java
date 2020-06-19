@@ -29,7 +29,7 @@ public class ViewComponent {
 	 */
 	public static enum Type {
 		Panel, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree, TreeItem, Confirm, View,
-		Container, MultiContainer, Label, Text, Table
+		Container, MultiContainer, Label, Text, Table, Notification
 		// etc
 	}
 
@@ -84,6 +84,7 @@ public class ViewComponent {
 	private ValueType contentType;
 	private String content;
 	private Tree tree;
+	private Layout layout;
 	private List<ViewComponent> components = new ArrayList<>();
 	private Map<String, String> attributes = new HashMap<>();
 	private IKActorsBehavior.Type destination;
@@ -213,6 +214,14 @@ public class ViewComponent {
 
 	public void setPlatform(IKActorsBehavior.Platform platform) {
 		this.platform = platform;
+	}
+
+	public Layout getLayout() {
+		return layout;
+	}
+
+	public void setLayout(Layout layout) {
+		this.layout = layout;
 	}
 
 }

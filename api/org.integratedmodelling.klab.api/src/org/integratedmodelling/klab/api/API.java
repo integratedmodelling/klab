@@ -212,12 +212,12 @@ public interface API {
 
 			public static final String P_COMPONENT = "{component}";
 			public static final String P_PROPERTY = "{component}";
-						
+
 			/**
 			 * 
 			 */
 			public static final String COMPONENT_SETUP = "/component/setup/" + P_COMPONENT;
-			
+
 			/**
 			 * 
 			 */
@@ -227,12 +227,12 @@ public interface API {
 			 * 
 			 */
 			public static final String SET_PROPERTY = "/properties/set/" + P_PROPERTY;
-			
+
 			/**
 			 * 
 			 */
 			public static final String GET_PROPERTY = "/properties/get/" + P_PROPERTY;
-			
+
 		}
 
 		public static interface RESOURCE {
@@ -567,6 +567,27 @@ public interface API {
 			 */
 			public static final String OBSERVE_CONTEXT_URN = "/engine/session/observe/" + P_URN;
 		}
+		
+
+		/**
+		 * Handle engine-local non-semantic assets - import of resources or multiple
+		 * resource sources, inquiry.
+		 * 
+		 * @author ferdinando.villa
+		 *
+		 */
+		public interface RESOURCE {
+
+			public static final String P_PROJECT = "{project}";
+			public static final String P_RESOURCEPATH = "{resourcepath}";
+
+			/**
+			 * Get a project resource as is (image, file or otherwise) by passing the path in the form
+			 */
+			public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/"
+					+ P_RESOURCEPATH;
+
+		}
 
 		/**
 		 * Endpoints to access contexts, using context tokens for authentication.
@@ -655,16 +676,6 @@ public interface API {
 
 			}
 
-			/**
-			 * Handle engine-local non-semantic assets - import of resources or multiple
-			 * resource sources, inquiry.
-			 * 
-			 * @author ferdinando.villa
-			 *
-			 */
-			public interface RESOURCE {
-
-			}
 		}
 
 	}

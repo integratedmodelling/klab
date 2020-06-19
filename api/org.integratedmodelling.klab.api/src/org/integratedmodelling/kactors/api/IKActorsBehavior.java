@@ -111,5 +111,19 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 	 * @return
 	 */
 	String getDescription();
+	
+	/**
+	 * If a logo pathname (relative to the application) has been specified, return it.
+	 * 
+	 * @return
+	 */
+	String getLogo();
+	
+	/**
+	 * Name of project we are declared into. Null if not in a project.
+	 * 
+	 * @return
+	 */
+	String getProjectId();
 
 }

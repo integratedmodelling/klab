@@ -1,7 +1,5 @@
 package org.integratedmodelling.kactors.model;
 
-import java.util.function.Consumer;
-
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Do;
 import org.integratedmodelling.kactors.api.IKActorsValue;

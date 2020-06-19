@@ -9,7 +9,7 @@ public class KActorsText extends KActorsStatement implements TextBlock {
 	
 	public KActorsText(Statement statement, KActorCodeStatement parent) {
 		super(statement, parent, Type.TEXT_BLOCK);
-		this.text = statement.getText().substring(3, statement.getText().length() - 4).trim();
+		this.text = statement.getText().substring(3, statement.getText().length() - 4);
 	}
 
 	@Override

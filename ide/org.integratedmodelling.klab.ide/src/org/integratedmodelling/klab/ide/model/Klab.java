@@ -327,7 +327,7 @@ public class Klab {
 				}
 			}
 		} else if (item instanceof EScriptFolder) {
-			for (ENavigatorItem resource : (((EScriptFolder) item).getEChildren())) {
+			for (Object resource : (((EScriptFolder) item).getEChildren())) {
 				if (hasNotifications(resource, level)) {
 					return true;
 				}

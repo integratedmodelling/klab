@@ -32,10 +32,13 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	private List<IKActorsAction> actions = new ArrayList<>();
 	private String label;
 	private String description;
+	private String logo;
+	private String projectId;
 
 	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
 		
 		super(model, null);
+		this.projectId = descriptor.projectName;
 		if (model.getPreamble() != null) {
 			loadPreamble(model.getPreamble());
 		}
@@ -64,6 +67,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		this.style = preamble.getStyle();
 		this.label = preamble.getLabel();
 		this.description = preamble.getDescription();
+		this.logo = preamble.getLogo();
 		
 		if (preamble.isApp()) {
 			this.type = Type.APP;
@@ -126,8 +130,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 
 	@Override
 	public Platform getPlatform() {
-		// TODO Auto-generated method stub
-		return null;
+		return platform;
 	}
 
 	public String getDescription() {
@@ -144,6 +147,27 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public String getObservable() {
+		return observable;
+	}
+
+	public Version getVersion() {
+		return version;
+	}
+
+	@Override
+	public String getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
 	}
 
 }

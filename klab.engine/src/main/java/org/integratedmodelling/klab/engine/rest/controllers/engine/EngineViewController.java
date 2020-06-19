@@ -31,7 +31,6 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -80,17 +79,13 @@ public class EngineViewController {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
 
-//		IObservation parent = obs instanceof DirectObservation && ((DirectObservation) obs).getGroup() != null
-//				? ((DirectObservation) obs).getGroup()
-//				: obs.getContext();
-
 		ILocator loc = obs.getScale().initialization();
 		if (locator != null) {
 			loc = Geometry.create(locator);
 			loc = obs.getScale().at(loc);
 		}
 
-		return Observations.INSTANCE.createArtifactDescriptor(obs/* , parent */, loc, childLevel == null ? -1 : childLevel);
+		return Observations.INSTANCE.createArtifactDescriptor(obs, loc, childLevel == null ? -1 : childLevel);
 	}
 
 	/**

@@ -7,7 +7,9 @@ import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -37,6 +39,7 @@ import akka.actor.typed.ActorRef;
  * <li>:hfill, :vfill, :fill</li>
  * <li>:disabled {!disabled for completeness}</li>
  * <li>:hidden {!hidden}</li>
+ * <li>:vbox :hbox [:grid = default] for component layout (in annotation or for groups)</li>
  * </ul>
  * <p>
  * With argument:
@@ -288,9 +291,40 @@ public class ViewBehavior {
 		}
 	}
 
+	@Action(id = "panel")
+	public static class Panel extends KlabWidgetAction {
+
+		public Panel(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		public ViewComponent createViewComponent(Scope scope) {
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.Panel);
+			if (arguments.getUnnamedKeys().size() > 0) {
+				String behaviorId = ((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next()))
+						.getValue().toString();
+				IBehavior behavior = Actors.INSTANCE.getBehavior(behaviorId);
+				if (behavior != null) {
+					message.setLayout(Actors.INSTANCE.getView(behavior, identity, scope.appId));
+				}
+			}
+			message.getAttributes().putAll(getMetadata(arguments, scope));
+			return message;
+		}
+
+		@Override
+		protected Object getFiredResult(ViewAction action) {
+			// won't fire
+			return null;
+		}
+	}
+
 	/**
-	 * Bound to the %%% .... %%% template syntax; handled directly by actors. Can also be
-	 * referenced directly.
+	 * Bound to the %%% .... %%% template syntax; handled directly by actors. Can
+	 * also be referenced directly.
 	 * 
 	 * @author Ferd
 	 *
@@ -301,15 +335,15 @@ public class ViewBehavior {
 		public RichText(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
 			super(identity, arguments, scope, sender, callId);
-			// TODO compile template and set dynamic status if text contains runtime template calls
+			// TODO compile template and set dynamic status if text contains runtime
+			// template calls
 		}
 
 		@Override
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Text);
-			message.setContent(processTemplate(
-					arguments.get(arguments.getUnnamedKeys().iterator().next()), scope));
+			message.setContent(processTemplate(arguments.get(arguments.getUnnamedKeys().iterator().next()), scope));
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
@@ -348,9 +382,9 @@ public class ViewBehavior {
 	}
 
 	public static String processTemplate(Object value, Scope scope) {
-		String template = value instanceof String ? (String)value : null;
+		String template = value instanceof String ? (String) value : null;
 		if (template == null && value instanceof KActorsValue) {
-			template = ((KActorsValue)value).getValue().toString();
+			template = ((KActorsValue) value).getValue().toString();
 		}
 		/*
 		 * TODO engage the template system to merge with the runtime context

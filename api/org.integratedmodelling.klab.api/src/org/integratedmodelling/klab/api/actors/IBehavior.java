@@ -66,4 +66,11 @@ public interface IBehavior extends IKimObject {
 	 */
 	Action getAction(String actionId);
 
+	/**
+	 * The name of the project this behavior is declared in. May be null only in user behaviors.
+	 * 
+	 * @return
+	 */
+	String getProject();
+
 }

@@ -61,6 +61,7 @@ import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -518,9 +519,11 @@ public enum Actors implements IActorsService {
 		view.setStyle(behavior.getStatement().getStyle());
 		view.setDestination(behavior.getDestination());
 		view.setLabel(behavior.getStatement().getLabel());
-		view.setDescription(behavior.getStatement().getDescription());
+		view.setDescription(StringUtils.pack(behavior.getStatement().getDescription()));
 		view.setPlatform(behavior.getPlatform());
-
+		view.setLogo(behavior.getStatement().getLogo());
+		view.setProjectId(behavior.getProject());
+		
 		for (IBehavior.Action action : behavior.getActions()) {
 
 			ViewPanel panel = null;

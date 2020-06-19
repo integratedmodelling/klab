@@ -17,6 +17,8 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#getAnnotations <em>Annotations</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#isComponent <em>Component</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#isActor <em>Actor</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#getArguments <em>Arguments</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Definition#getBody <em>Body</em>}</li>
@@ -39,6 +41,50 @@ public interface Definition extends EObject
    * @generated
    */
   EList<Annotation> getAnnotations();
+
+  /**
+   * Returns the value of the '<em><b>Component</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Component</em>' attribute.
+   * @see #setComponent(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getDefinition_Component()
+   * @model
+   * @generated
+   */
+  boolean isComponent();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Definition#isComponent <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Component</em>' attribute.
+   * @see #isComponent()
+   * @generated
+   */
+  void setComponent(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Actor</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Actor</em>' attribute.
+   * @see #setActor(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getDefinition_Actor()
+   * @model
+   * @generated
+   */
+  boolean isActor();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Definition#isActor <em>Actor</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Actor</em>' attribute.
+   * @see #isActor()
+   * @generated
+   */
+  void setActor(boolean value);
 
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.

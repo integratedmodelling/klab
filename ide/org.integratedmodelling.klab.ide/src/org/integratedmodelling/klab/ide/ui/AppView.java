@@ -260,7 +260,14 @@ public class AppView extends Composite {
 		} else if (view.getLabel() != null && view.getDescription() != null) {
 			final Header description = new Header(ret, SWT.NONE);
 			description.setTitle(view.getLabel());
-			description.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/action-item-login.png"));
+			Image logo = null;
+			if (view.getLogo() != null && view.getProjectId() != null) {
+				logo = Eclipse.INSTANCE.getImageResource(view.getProjectId(), view.getLogo());
+			}
+			if (logo == null) {
+				logo = ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/action-item-login.png");
+			}
+			description.setImage(logo);
 			description.setDescription(view.getDescription());
 			description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		}
@@ -334,9 +341,10 @@ public class AppView extends Composite {
 	 * TODO add:
 	 * <ul>
 	 * <li>A log table (add text lines or notifications, show last first);</li>
-	 * <li>A pager for numbered subcomponents</li>
+	 * <li>A pager for numbered subcomponents, firing the index when advanced</li>
 	 * <li>Link text</li>
 	 * <li>A palette/bookmark component</li>
+	 * <li>Image from the project resources (URL from engine)</li>
 	 * </ul>
 	 * 
 	 * @param component
@@ -447,6 +455,7 @@ public class AppView extends Composite {
 		}
 
 	}
+
 	/**
 	 * View messages. Uses metadata for layout control
 	 * <p>
@@ -476,12 +485,12 @@ public class AppView extends Composite {
 	 * 
 	 */
 	private GridData getGridData(ViewComponent component, int fill, int center, boolean grabX, boolean grabY) {
-		
+
 		int cspan = 1;
 		int rspan = 1;
 		int wmin = -1;
 		int hmin = -1;
-		
+
 		for (String attribute : component.getAttributes().keySet()) {
 			switch (attribute) {
 			case "right":
@@ -555,6 +564,21 @@ public class AppView extends Composite {
 			return ret;
 		}
 		return 0;
+	}
+	
+	/**
+	 * Group may have tags that specify the layout or not. If they don't have
+	 * any of :hbox, :vbox or :shelf (for now), they will be arranged as grids
+	 * with all the element in a row unless the components are all groups. In that
+	 * case, the groups represent rows and the columns will be filled with the max number
+	 * of column occupied in the largest row, taking into account also any :cspan 
+	 * tag in the inner components.
+	 * 
+	 * The returned object classifies the group so that the 
+	 * @param component
+	 */
+	private void classifyGroup(ViewComponent component) {
+		
 	}
 
 	public void setup(Layout layout) {
