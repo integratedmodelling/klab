@@ -573,7 +573,9 @@ public class AppView extends Composite {
 			Shelf,
 			Vbox,
 			Hbox,
-			Table
+			Table,
+			Tabs,
+			Pager
 		}
 		
 		int nRows = 1;
@@ -591,6 +593,8 @@ public class AppView extends Composite {
 	 * of column occupied in the largest row, taking into account also any :cspan 
 	 * tag in the inner components.
 	 * 
+	 * TODO add :tabs and :pager
+	 * 
 	 * The returned object classifies the group so that the 
 	 * @param component
 	 */
@@ -601,8 +605,11 @@ public class AppView extends Composite {
 		boolean isShelf = component.getAttributes().containsKey("shelf");
 		boolean isHbox = component.getAttributes().containsKey("hbox");
 		boolean isVbox = component.getAttributes().containsKey("vbox");
-		boolean isGrid = !(isShelf || isHbox || isVbox);
+		boolean isTabs= component.getAttributes().containsKey("tabs");
+		boolean isPager = component.getAttributes().containsKey("pager");
+		boolean isGrid = !(isShelf || isHbox || isVbox || isPager || isTabs);
 		String gname = component.getAttributes().get("name");
+		
 		if (isGrid) {
 			int columns = isTable(component);
 			if (columns > 1) {

@@ -21,6 +21,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsActionCall;
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
@@ -73,6 +74,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * that their run() method is reentrant.
 	 */
 	protected Map<String, KlabAction> actionCache = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, KlabAction.Actor> localActors = Collections.synchronizedMap(new HashMap<>());
 
 	protected ActorRef<KlabMessage> getDispatcher() {
 		if (appId == null) {
@@ -548,6 +550,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				message = Path.getLast(message, '.');
 			}
 
+			if (this.localActors.containsKey(receiver)) {
+				KActorsMessage m = new KActorsMessage(getDispatcher(), receiver, message,
+						((KActorsActionCall) code).getInternalId(), code.getArguments(), scope.withNotifyId(notifyId),
+						appId);
+				this.localActors.get(receiver).onMessage(m, scope);
+				return;
+			}
+
 			ActorRef<KlabMessage> recipient = null;
 
 			if (!"self".equals(receiver) && scope.symbolTable.get(receiver) instanceof IActorIdentity) {
@@ -653,6 +663,18 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				}
 
 				if (a != null) {
+
+					if (a instanceof KlabAction.Actor) {
+						/*
+						 * assign ID and store for later use
+						 */
+						if (message.arguments.containsKey("tag")) {
+							((KlabAction.Actor) a)
+									.setName(message.arguments.get("tag", KActorsValue.class).getValue().toString());
+							this.localActors.put(((KlabAction.Actor) a).getName(), (KlabAction.Actor) a);
+						}
+					}
+
 					ran = true;
 					a.run(message.scope.withSender(message.sender, appId));
 				}

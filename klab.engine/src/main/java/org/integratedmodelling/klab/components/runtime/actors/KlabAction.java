@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Utils;
 
 import akka.actor.typed.ActorRef;
@@ -27,20 +28,54 @@ import akka.actor.typed.ActorRef;
  */
 public abstract class KlabAction {
 
-	public static enum Synchronicity {
+	/**
+	 * An action implementing this interface will be saved in the actor where the
+	 * calling behavior is running and be enabled to receive later messages just
+	 * like an actor.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface Actor {
+
 		/**
-		 * Essentially a function: enters and fires, always and within a short enough
-		 * time to be waited for.
+		 * The actor name, normally established using a tag.
+		 * 
+		 * @return
 		 */
-		FIRE_IMMEDIATELY_AND_EXIT,
+		String getName();
+		
 		/**
-		 * Fire once and exit, but with no guarantee as to when.
+		 * Done by the calling actor using arguments and/or metadata
+		 * @param name
 		 */
-		FIRE_LATER_AND_EXIT,
+		void setName(String name);
+
 		/**
-		 * Fire zero or more times, keep running until the parent behavior ends.
+		 * Implement the response to a messages sent in k.Actors.
+		 * 
+		 * @param message
+		 * @param scope
 		 */
-		FIRE_AND_WAIT
+		void onMessage(KlabMessage message, Scope scope);
+
+	}
+
+	/**
+	 * A component is an Actor that reacts through an MVC pattern.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface Component extends Actor {
+
+		/**
+		 * Return a descriptor of the view component that will provide
+		 * the view for this actor.
+		 * @return
+		 */
+		public ViewComponent getViewComponent();
+		
 	}
 
 	protected ActorRef<KlabMessage> sender;

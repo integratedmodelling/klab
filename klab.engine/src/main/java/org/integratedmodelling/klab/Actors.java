@@ -714,7 +714,7 @@ public enum Actors implements IActorsService {
 		Class<? extends KlabAction> cls = Actors.INSTANCE.getActionClass(statement.getMessage());
 		ViewComponent ret = null;
 		if (cls != null) {
-			if (KlabWidgetAction.class.isAssignableFrom(cls)) {
+			if (KlabAction.Component.class.isAssignableFrom(cls)) {
 
 				/*
 				 * check if the arguments are variable

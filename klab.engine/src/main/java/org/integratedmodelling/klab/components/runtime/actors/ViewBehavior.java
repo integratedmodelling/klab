@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabAction.Component;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
@@ -91,15 +92,26 @@ public class ViewBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static abstract class KlabWidgetAction extends KlabAction {
+	public static abstract class KlabWidgetAction extends KlabAction implements Component {
 
 		Boolean dynamic = null;
-
+		String name;
+		
 		public KlabWidgetAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
 			super(identity, arguments, scope, sender, callId);
 		}
 
+		@Override
+		public String getName() {
+			return name;
+		}
+		
+		@Override
+		public void setName(String name) {
+			this.name = name;
+		}
+		
 		@Override
 		void run(Scope scope) {
 
@@ -220,6 +232,12 @@ public class ViewBehavior {
 		protected Object getFiredResult(ViewAction action) {
 			return DEFAULT_FIRE;
 		}
+
+		@Override
+		public void onMessage(KlabMessage message, Scope scope) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	@Action(id = "label")
@@ -242,6 +260,12 @@ public class ViewBehavior {
 		@Override
 		protected Object getFiredResult(ViewAction action) {
 			return DEFAULT_FIRE;
+		}
+
+		@Override
+		public void onMessage(KlabMessage message, Scope scope) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 
@@ -266,6 +290,12 @@ public class ViewBehavior {
 		protected Object getFiredResult(ViewAction action) {
 			return action.getStringValue();
 		}
+
+		@Override
+		public void onMessage(KlabMessage message, Scope scope) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	@Action(id = "tree")
@@ -288,6 +318,12 @@ public class ViewBehavior {
 		@Override
 		protected Object getFiredResult(ViewAction action) {
 			return action.getStringValue();
+		}
+
+		@Override
+		public void onMessage(KlabMessage message, Scope scope) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 
@@ -319,6 +355,12 @@ public class ViewBehavior {
 		protected Object getFiredResult(ViewAction action) {
 			// won't fire
 			return null;
+		}
+
+		@Override
+		public void onMessage(KlabMessage message, Scope scope) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 
@@ -356,6 +398,12 @@ public class ViewBehavior {
 			 * also fire the link when it's matched.
 			 */
 			return null;
+		}
+
+		@Override
+		public void onMessage(KlabMessage message, Scope scope) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 
