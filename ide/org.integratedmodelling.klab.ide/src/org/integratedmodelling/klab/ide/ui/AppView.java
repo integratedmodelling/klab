@@ -557,6 +557,7 @@ public class AppView extends Composite {
 				if (child.getType() != ViewComponent.Type.Group) {
 					return 0;
 				}
+				// TODO must check if any component has a :cspan tag
 				if (ret < child.getComponents().size()) {
 					ret = child.getComponents().size();
 				}
@@ -564,6 +565,22 @@ public class AppView extends Composite {
 			return ret;
 		}
 		return 0;
+	}
+	
+	static class GroupLayout {
+
+		enum Type {
+			Shelf,
+			Vbox,
+			Hbox,
+			Table
+		}
+		
+		int nRows = 1;
+		int nCols = 1;
+		Type type = Type.Hbox;
+		String name = null;
+		
 	}
 	
 	/**
@@ -577,8 +594,25 @@ public class AppView extends Composite {
 	 * The returned object classifies the group so that the 
 	 * @param component
 	 */
-	private void classifyGroup(ViewComponent component) {
+	private GroupLayout classifyGroup(ViewComponent component) {
 		
+		GroupLayout ret = new GroupLayout();
+		
+		boolean isShelf = component.getAttributes().containsKey("shelf");
+		boolean isHbox = component.getAttributes().containsKey("hbox");
+		boolean isVbox = component.getAttributes().containsKey("vbox");
+		boolean isGrid = !(isShelf || isHbox || isVbox);
+		String gname = component.getAttributes().get("name");
+		if (isGrid) {
+			int columns = isTable(component);
+			if (columns > 1) {
+				
+			}
+		}
+
+		
+		
+		return ret;
 	}
 
 	public void setup(Layout layout) {
