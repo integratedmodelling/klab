@@ -312,6 +312,10 @@ public class ViewBehavior {
 			message.setType(Type.Tree);
 			message.setTree(getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next())));
 			message.getAttributes().putAll(getMetadata(arguments, scope));
+			if (!message.getAttributes().containsKey("name")) {
+				// tree "name" is the root element if it's a string
+				 message.setName(message.getTree().getValues().get(message.getTree().getRootId()).get("id"));
+			}
 			return message;
 		}
 

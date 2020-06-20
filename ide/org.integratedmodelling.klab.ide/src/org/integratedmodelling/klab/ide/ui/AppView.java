@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.nebula.widgets.opal.header.Header;
 import org.eclipse.nebula.widgets.pshelf.PShelf;
+import org.eclipse.nebula.widgets.pshelf.PShelfItem;
 import org.eclipse.nebula.widgets.richtext.RichTextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -30,6 +31,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -166,17 +168,6 @@ public class AppView extends Composite {
 		public Color getBackground(Object element) {
 			return null;
 		}
-
-//		@Override
-//		public Image getColumnImage(Object element, int columnIndex) {
-//			return null;
-//		}
-//
-//		@SuppressWarnings("unchecked")
-//		@Override
-//		public String getColumnText(Object element, int columnIndex) {
-//			return null;
-//		}
 
 		@Override
 		public Image getImage(Object element) {
@@ -499,8 +490,14 @@ public class AppView extends Composite {
 			break;
 		case Shelf:
 			container = new PShelf(parent, SWT.NONE);
+			((PShelf) container).setLayoutData(getGridData(component, SWT.LEFT, SWT.TOP, false, false, defaults));
+			int n = 1;
 			for (ViewComponent panel : component.getComponents()) {
-
+				PShelfItem item = new PShelfItem((PShelf)container, SWT.NONE);
+				item.getBody().setLayout(new GridLayout(1, false));
+				item.setText(panel.getName() == null ? ("Panel " + n) : panel.getName());
+				makeComponent(panel, item.getBody(), defaults);
+				n++;
 			}
 			break;
 		case Tabs:
@@ -561,8 +558,8 @@ public class AppView extends Composite {
 		}
 
 		/*
-		 * TODO these should probably only apply to containers; others would define the
-		 * SWT flags instead.
+		 * TODO these should probably only apply to containers; in other types of
+		 * components these should define the SWT flags instead.
 		 */
 		for (String attribute : component.getAttributes().keySet()) {
 			switch (attribute) {
