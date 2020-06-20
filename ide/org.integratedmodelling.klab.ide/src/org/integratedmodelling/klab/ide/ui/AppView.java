@@ -2,9 +2,11 @@ package org.integratedmodelling.klab.ide.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -14,8 +16,12 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.nebula.widgets.opal.header.Header;
+import org.eclipse.nebula.widgets.pshelf.PShelf;
 import org.eclipse.nebula.widgets.richtext.RichTextViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -23,6 +29,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -37,6 +44,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.ui.AppView.GroupLayout.Type;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
@@ -66,6 +74,13 @@ public class AppView extends Composite {
 	private Layout currentLayout;
 	private Map<String, ViewComponent> components = new HashMap<>();
 	private Map<String, StructuredViewer> viewers = new HashMap<>();
+
+	private static Set<ViewComponent.Type> containerTypes;
+
+	static {
+		containerTypes = EnumSet.of(ViewComponent.Type.Container, ViewComponent.Type.Group, ViewComponent.Type.Panel,
+				ViewComponent.Type.MultiContainer);
+	}
 
 	private class TreeWrapper {
 
@@ -214,6 +229,15 @@ public class AppView extends Composite {
 		super(parent, style);
 		this.parent = parent;
 		setLayout(gridLayout(1, true));
+		addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+//				Point ps = parent.getParent().getSize();
+//				if (getSize().x < ps.x || getSize().y < ps.y) {
+//					setSize(ps);
+//				}
+			}
+		});
 	}
 
 	public AppView(Layout layout, Composite parent, int style) {
@@ -319,7 +343,7 @@ public class AppView extends Composite {
 				innerFrame.setLayout(gridLayout(1, false));
 				tbtmNewItem.setControl(innerFrame);
 				for (ViewComponent component : panel.getComponents()) {
-					makeComponent(component, innerFrame);
+					makeComponent(component, innerFrame, panel.getAttributes());
 				}
 				innerFrame.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 			}
@@ -328,7 +352,7 @@ public class AppView extends Composite {
 			Composite innerFrame = new Composite(ret, SWT.NONE);
 			innerFrame.setLayout(gridLayout(1, false));
 			for (ViewComponent component : panels.get(0).getComponents()) {
-				makeComponent(component, innerFrame);
+				makeComponent(component, innerFrame, panels.get(0).getAttributes());
 			}
 			innerFrame.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 		}
@@ -347,10 +371,12 @@ public class AppView extends Composite {
 	 * <li>Image from the project resources (URL from engine)</li>
 	 * </ul>
 	 * 
+	 * TODO use parent component for layout defaults (set in the annotation)
+	 * 
 	 * @param component
 	 * @param parent
 	 */
-	private void makeComponent(ViewComponent component, Composite parent) {
+	private void makeComponent(ViewComponent component, Composite parent, Map<String, String> defaults) {
 
 		components.put(component.getId(), component);
 
@@ -362,32 +388,8 @@ public class AppView extends Composite {
 		case Container:
 		case MultiContainer:
 		case Group:
-
-			Composite group = component.getName() == null ? new Composite(parent, SWT.NONE)
-					: new Group(parent, SWT.NONE);
-			if (component.getName() != null) {
-				((Group) group).setText(component.getName());
-			}
-
-			int tcols = isTable(component);
-			if (tcols > 0) {
-				group.setLayout(gridLayout(tcols, false));
-				for (ViewComponent row : component.getComponents()) {
-					for (int col = 0; col < row.getComponents().size(); col++) {
-						makeComponent(row.getComponents().get(col), group);
-					}
-					for (int i = row.getComponents().size(); i < tcols; i++) {
-						new Label(group, SWT.NONE);
-					}
-				}
-
-			} else {
-				group.setLayout(gridLayout(component.getComponents().size(), false));
-				for (ViewComponent child : component.getComponents()) {
-					makeComponent(child, group);
-				}
-			}
-			group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			/* Control group = */makeContainer(component, parent, defaults);
+//			group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 			break;
 		case Map:
 			break;
@@ -397,7 +399,7 @@ public class AppView extends Composite {
 		case Label:
 			Label label = new Label(parent, SWT.NONE);
 			label.setText(component.getContent());
-			label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+			label.setLayoutData(getGridData(component, SWT.LEFT, SWT.CENTER, false, false, defaults));
 			break;
 		case PushButton:
 			Button button = new Button(parent, SWT.NONE);
@@ -409,13 +411,13 @@ public class AppView extends Composite {
 							new ViewAction(component));
 				}
 			});
-			button.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+			button.setLayoutData(getGridData(component, SWT.LEFT, SWT.TOP, false, false, defaults));
 			break;
 		case RadioButton:
 			break;
 		case TextInput:
 			Text text = new Text(parent, SWT.BORDER);
-			text.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			text.setLayoutData(getGridData(component, SWT.FILL, SWT.TOP, true, false, defaults));
 			if (component.getContent() != null) {
 				text.setText(component.getContent());
 			}
@@ -430,7 +432,7 @@ public class AppView extends Composite {
 		case Tree:
 			TreeViewer viewer = new TreeViewer(parent, SWT.CHECK);
 			viewers.put(component.getId(), viewer);
-			viewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+			viewer.getTree().setLayoutData(getGridData(component, SWT.FILL, SWT.FILL, true, false, defaults));
 			viewer.setLabelProvider(new TreeLabelProvider());
 			TreeWrapper tree = new TreeWrapper(component.getTree());
 			viewer.setContentProvider(new TreeContentProvider(tree));
@@ -443,7 +445,7 @@ public class AppView extends Composite {
 		case Text:
 			RichTextViewer textViewer = new RichTextViewer(parent, SWT.WRAP);
 			textViewer.setText(component.getContent());
-			textViewer.setLayoutData(getGridData(component, SWT.FILL, SWT.CENTER, true, false));
+			textViewer.setLayoutData(getGridData(component, SWT.FILL, SWT.CENTER, true, false, defaults));
 			break;
 		case TreeItem:
 			break;
@@ -454,6 +456,62 @@ public class AppView extends Composite {
 			break;
 		}
 
+	}
+
+	private Control makeContainer(ViewComponent component, Composite parent, Map<String, String> defaults) {
+
+		GroupLayout gl = classifyGroup(component);
+
+		// first switch, make the container
+		Control container = null;
+		switch (gl.type) {
+		case Table:
+		case Hbox:
+		case Vbox:
+			container = gl.name == null ? new Composite(parent, SWT.NONE) : new Group(parent, SWT.NONE);
+			((Composite) container).setLayoutData(getGridData(component, SWT.LEFT, SWT.TOP, false, false, defaults));
+			if (gl.name != null) {
+				((Group) container).setText(gl.name);
+			}
+			((Composite) container).setLayout(new GridLayout(gl.nCols, gl.equal));
+			if (gl.type == Type.Table) {
+				for (ViewComponent row : component.getComponents()) {
+					int reached = 0;
+					for (int col = 0; col < row.getComponents().size(); col++) {
+						makeComponent(row.getComponents().get(col), (Composite) container, defaults);
+						reached += computeColumnSize(row.getComponents().get(col));
+					}
+					for (int i = reached; i < gl.nCols; i++) {
+						new Label((Composite) container, SWT.NONE);
+					}
+				}
+			} else {
+				for (ViewComponent child : component.getComponents()) {
+					makeComponent(child, (Composite) container, defaults);
+				}
+			}
+			break;
+		case Pager:
+			container = new Pager(parent, SWT.NONE);
+			for (ViewComponent panel : component.getComponents()) {
+				// TODO
+			}
+			break;
+		case Shelf:
+			container = new PShelf(parent, SWT.NONE);
+			for (ViewComponent panel : component.getComponents()) {
+
+			}
+			break;
+		case Tabs:
+			container = new CTabFolder(parent, SWT.NONE);
+			for (ViewComponent panel : component.getComponents()) {
+
+			}
+			break;
+		}
+
+		return container;
 	}
 
 	/**
@@ -467,6 +525,8 @@ public class AppView extends Composite {
 	 * <li>:hfill, :vfill, :fill</li>
 	 * <li>:disabled {!disabled for completeness}</li>
 	 * <li>:hidden {!hidden}</li>
+	 * <li>:hbox :vbox :pager :shelf :tabs [:table is the default] to specify the
+	 * type of arrangement in a group</li>
 	 * </ul>
 	 * <p>
 	 * With argument:
@@ -484,13 +544,26 @@ public class AppView extends Composite {
 	 * </ul>
 	 * 
 	 */
-	private GridData getGridData(ViewComponent component, int fill, int center, boolean grabX, boolean grabY) {
+	private GridData getGridData(ViewComponent component, int fill, int center, boolean grabX, boolean grabY,
+			Map<String, String> defaults) {
 
 		int cspan = 1;
 		int rspan = 1;
 		int wmin = -1;
 		int hmin = -1;
 
+		if (isContainer(component)) {
+			for (String key : defaults.keySet()) {
+				if (!component.getAttributes().containsKey(key)) {
+					component.getAttributes().put(key, defaults.get(key));
+				}
+			}
+		}
+
+		/*
+		 * TODO these should probably only apply to containers; others would define the
+		 * SWT flags instead.
+		 */
 		for (String attribute : component.getAttributes().keySet()) {
 			switch (attribute) {
 			case "right":
@@ -543,6 +616,10 @@ public class AppView extends Composite {
 		return ret;
 	}
 
+	private boolean isContainer(ViewComponent component) {
+		return containerTypes.contains(component.getType());
+	}
+
 	/**
 	 * If this group is a group of groups (representing a table) return the max
 	 * number of items per row, otherwise return 0.
@@ -550,75 +627,97 @@ public class AppView extends Composite {
 	 * @param component
 	 * @return
 	 */
-	private int isTable(ViewComponent component) {
+	private int computeColumns(ViewComponent component) {
 		if (component.getType() == ViewComponent.Type.Group) {
 			int ret = 0;
 			for (ViewComponent child : component.getComponents()) {
 				if (child.getType() != ViewComponent.Type.Group) {
 					return 0;
 				}
-				// TODO must check if any component has a :cspan tag
-				if (ret < child.getComponents().size()) {
-					ret = child.getComponents().size();
+				int cols = computeColumnSize(child);
+				if (ret < cols) {
+					ret = cols;
 				}
 			}
 			return ret;
 		}
 		return 0;
 	}
-	
+
+	private int computeColumnSize(ViewComponent child) {
+		int ret = 0;
+		for (ViewComponent component : child.getComponents()) {
+			ret += getComponentSpan(component);
+		}
+		return ret == 0 ? 1 : ret;
+	}
+
+	private int getComponentSpan(ViewComponent component) {
+		int ret = 1;
+		String sspan = component.getAttributes().get("cspan");
+		if (sspan != null) {
+			ret = Integer.parseInt(sspan);
+		}
+		return ret;
+	}
+
 	static class GroupLayout {
 
 		enum Type {
-			Shelf,
-			Vbox,
-			Hbox,
-			Table,
-			Tabs,
-			Pager
+			Shelf, Vbox, Hbox, Table, Tabs, Pager
 		}
-		
+
 		int nRows = 1;
 		int nCols = 1;
 		Type type = Type.Hbox;
 		String name = null;
-		
+		boolean equal; // equal column width
 	}
-	
+
 	/**
-	 * Group may have tags that specify the layout or not. If they don't have
-	 * any of :hbox, :vbox or :shelf (for now), they will be arranged as grids
-	 * with all the element in a row unless the components are all groups. In that
-	 * case, the groups represent rows and the columns will be filled with the max number
-	 * of column occupied in the largest row, taking into account also any :cspan 
-	 * tag in the inner components.
+	 * Group may have tags that specify the layout or not. If they don't have any of
+	 * :hbox, :vbox or :shelf (for now), they will be arranged as grids with all the
+	 * element in a row unless the components are all groups. In that case, the
+	 * groups represent rows and the columns will be filled with the max number of
+	 * column occupied in the largest row, taking into account also any :cspan tag
+	 * in the inner components.
 	 * 
-	 * TODO add :tabs and :pager
-	 * 
-	 * The returned object classifies the group so that the 
 	 * @param component
 	 */
 	private GroupLayout classifyGroup(ViewComponent component) {
-		
+
 		GroupLayout ret = new GroupLayout();
-		
-		boolean isShelf = component.getAttributes().containsKey("shelf");
-		boolean isHbox = component.getAttributes().containsKey("hbox");
-		boolean isVbox = component.getAttributes().containsKey("vbox");
-		boolean isTabs= component.getAttributes().containsKey("tabs");
-		boolean isPager = component.getAttributes().containsKey("pager");
-		boolean isGrid = !(isShelf || isHbox || isVbox || isPager || isTabs);
-		String gname = component.getAttributes().get("name");
-		
-		if (isGrid) {
-			int columns = isTable(component);
-			if (columns > 1) {
-				
+
+		ret.type = Type.Table;
+
+		if (component.getAttributes().containsKey("shelf")) {
+			ret.type = Type.Shelf;
+		} else if (component.getAttributes().containsKey("hbox")) {
+			ret.type = Type.Hbox;
+			ret.nCols = component.getComponents().size();
+		} else if (component.getAttributes().containsKey("vbox")) {
+			ret.type = Type.Vbox;
+			ret.nRows = component.getComponents().size();
+		} else if (component.getAttributes().containsKey("tabs")) {
+			ret.type = Type.Tabs;
+		} else if (component.getAttributes().containsKey("pager")) {
+			ret.type = Type.Pager;
+		}
+
+		ret.name = component.getName();
+		ret.equal = component.getAttributes().containsKey("equal");
+
+		if (ret.type == Type.Table) {
+			ret.nCols = computeColumns(component);
+			ret.nRows = component.getComponents().size();
+			if (ret.nCols == 0) {
+				// not a table, make it a hbox
+				ret.type = Type.Hbox;
+				ret.nCols = ret.nRows;
+				ret.nRows = 1;
 			}
 		}
 
-		
-		
 		return ret;
 	}
 
@@ -647,11 +746,16 @@ public class AppView extends Composite {
 	}
 
 	private void refreshView() {
+		Point ps = getParent().getParent().getSize();
 		this.setLayout(gridLayout(1, true));
 		Composite app = makeView(this.currentLayout, this);
 		app.setLayout(gridLayout(1, true));
-		app.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		// parent.setSize(this.view.get);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+//		layoutData.heightHint = ps.y;
+		layoutData.widthHint = ps.x;
+		app.setLayoutData(layoutData);
+		this.parent.setSize(ps);
+		this.setSize(ps);
 		parent.pack();
 		parent.layout(true);
 	}
@@ -666,7 +770,7 @@ public class AppView extends Composite {
 					new ViewAction(component, choice));
 		} else if (component.getParentId() != null && this.containers.containsKey(component.getParentId())) {
 			Display.getDefault().asyncExec(() -> {
-				makeComponent(component, this.containers.get(component.getParentId()));
+				makeComponent(component, this.containers.get(component.getParentId()), component.getAttributes());
 				refreshView();
 			});
 

@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
@@ -92,6 +94,71 @@ public enum Actors implements IActorsService {
 	private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, Pair<String, Class<? extends KlabAction>>> actionClasses = Collections
 			.synchronizedMap(new HashMap<>());
+
+	static Set<String> layoutMetadata = null;
+
+	/**
+	 * Metadata for layout control
+	 * <p>
+	 * No argument:
+	 * <ul>
+	 * <li>:right, :left, :top, :bottom</li>
+	 * <li>:hfill, :vfill, :fill</li>
+	 * <li>:disabled {!disabled for completeness}</li>
+	 * <li>:hidden {!hidden}</li>
+	 * <li>:hbox :vbox :pager :shelf :tabs [:table is the default] to specify the
+	 * type of arrangement in a group</li>
+	 * </ul>
+	 * <p>
+	 * With argument:
+	 * <ul>
+	 * <li>:cspan, :rspan (columns and rows spanned in grid)</li>
+	 * <li>:fg, :bg (color name for now?)</li>
+	 * <li>:bstyle {?HTML solid dotted}</li>
+	 * <li>:bwidth <n> border width (always solid for now)</li>
+	 * <li>:fstyle {bold|italic|strike|normal}</li>
+	 * <li>:fsize <n></li>
+	 * <li>:symbol {font awesome char code}</li>
+	 * <li>:class (CSS class)</li>
+	 * <li>:wmin, :hmin (minimum height and width)</li>
+	 * <li>:cols, :equal for panel grids</li>
+	 * </ul>
+	 */
+	static {
+		layoutMetadata = new HashSet<>();
+		layoutMetadata.add("right");
+		layoutMetadata.add("left");
+		layoutMetadata.add("top");
+		layoutMetadata.add("bottom");
+		layoutMetadata.add("hfill");
+		layoutMetadata.add("vfill");
+		layoutMetadata.add("fill");
+		layoutMetadata.add("disabled");
+		layoutMetadata.add("hidden");
+		layoutMetadata.add("hbox");
+		layoutMetadata.add("vbox");
+		layoutMetadata.add("pager");
+		layoutMetadata.add("shelf");
+		layoutMetadata.add("tabs");
+		layoutMetadata.add("cspan");
+		layoutMetadata.add("rspan");
+		layoutMetadata.add("fg");
+		layoutMetadata.add("bg");
+		layoutMetadata.add("bwidth");
+		layoutMetadata.add("bstyle");
+		layoutMetadata.add("fstyle");
+		layoutMetadata.add("fsize");
+		layoutMetadata.add("symbol");
+		layoutMetadata.add("class");
+		layoutMetadata.add("wmin");
+		layoutMetadata.add("wmax");
+		layoutMetadata.add("hmin");
+		layoutMetadata.add("hmax");
+		layoutMetadata.add("height");
+		layoutMetadata.add("width");
+		layoutMetadata.add("cols");
+		layoutMetadata.add("equal");
+	}
 
 	public IBehavior getBehavior(String behaviorId) {
 		return behaviors.get(behaviorId);
@@ -523,7 +590,7 @@ public enum Actors implements IActorsService {
 		view.setPlatform(behavior.getPlatform());
 		view.setLogo(behavior.getStatement().getLogo());
 		view.setProjectId(behavior.getProject());
-		
+
 		for (IBehavior.Action action : behavior.getActions()) {
 
 			ViewPanel panel = null;
@@ -635,14 +702,16 @@ public enum Actors implements IActorsService {
 	}
 
 	private void setViewMetadata(ViewComponent component, Map<String, ?> parameters) {
-
-		// width, height, length, foreground, background, style, class, tooltip, title,
-		// ....? (Enrico?)
-
-		/*
-		 * TODO remaining metadata - alignment, width etc, use a common function from
-		 * parameters or metadata
-		 */
+		if (parameters != null) {
+			for (String key : parameters.keySet()) {
+				if (layoutMetadata.contains(key)) {
+					Object param = parameters.get(key);
+					component.getAttributes().put(key,
+							param instanceof KActorsValue ? ((KActorsValue) param).getValue().toString()
+									: param.toString());
+				}
+			}
+		}
 	}
 
 	private void visitViewActions(IBehavior.Action action, ViewPanel panel, ViewScope scope) {
@@ -693,7 +762,7 @@ public enum Actors implements IActorsService {
 			}
 			break;
 		case TEXT_BLOCK:
-			component = getViewComponent(new KActorsActionCall((TextBlock)statement), scope);
+			component = getViewComponent(new KActorsActionCall((TextBlock) statement), scope);
 			if (component != null) {
 				parent.getComponents().add(component);
 			}

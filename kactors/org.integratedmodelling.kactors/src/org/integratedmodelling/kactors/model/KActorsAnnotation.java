@@ -35,7 +35,7 @@ public class KActorsAnnotation extends Parameters<String> implements IKimAnnotat
 				
 				for (KeyValuePair pair : statement.getParameters().getPairs()) {
 					if (pair.getKey() != null) {
-						put(pair.getKey().substring(1), new KActorsValue(pair.getKey().startsWith("!"), null));
+						put(pair.getKey().substring(1), new KActorsValue(!pair.getKey().startsWith("!"), null));
 					} else if (pair.getTag() != null) {
 						put("tag", pair.getTag().substring(1));
 					} else if (pair.getName() == null) {

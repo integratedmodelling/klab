@@ -45,7 +45,9 @@ Require-Bundle: javax.inject,
  org.eclipse.nebula.widgets.opal.commons;bundle-version="1.0.0",
  org.eclipse.nebula.widgets.opal.notifier;bundle-version="1.0.0",
  org.eclipse.nebula.widgets.opal.header;bundle-version="1.0.0",
- org.eclipse.nebula.widgets.richtext;bundle-version="1.3.0"
+ org.eclipse.nebula.widgets.richtext;bundle-version="1.3.0",
+ org.eclipse.nebula.widgets.pshelf;bundle-version="1.1.0",
+ org.eclipse.nebula.widgets.pshelf.css;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0" 
