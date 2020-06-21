@@ -665,4 +665,26 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 		return ret.toString();
 	}
 
+	/**
+	 * Ad-hoc behavior in need for generalization: insert the patch after every newline unless the
+	 * previous line was empty.
+	 * 
+	 * @param stripLeadingWhitespace
+	 * @param string
+	 * @return
+	 */
+	public static String insertBeginning(String string, String patch) {
+		String lines[] = string.split("\\r?\\n");
+		StringBuffer ret = new StringBuffer(string.length() + (lines.length * patch.length()));
+		boolean wasEmpty = true;
+		for (String line : lines) {
+			if (!wasEmpty && !line.trim().isEmpty()) {
+				ret.append(patch);
+			}
+			ret.append(line + "\n");
+			wasEmpty = line.trim().isEmpty();
+		}
+		return ret.toString();
+	}
+
 }

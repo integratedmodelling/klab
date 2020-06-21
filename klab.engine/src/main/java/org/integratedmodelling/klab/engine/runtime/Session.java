@@ -147,6 +147,7 @@ import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewAction.Operation;
 import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
@@ -1213,7 +1214,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			break;
 		case RunTest:
 		case RunScript:
-			// these run to the end or can be stopped through their monitor (not handled for now)
+			// these run to the end or can be stopped through their monitor (not handled for
+			// now)
 			run(request.getScriptUrl());
 		default:
 			break;
@@ -1223,12 +1225,14 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@MessageHandler
 	private void handleViewAction(ViewAction action) {
 
-		@SuppressWarnings("unchecked")
-		IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(action.getComponent().getIdentity(),
-				IActorIdentity.class);
-		if (receiver != null) {
-			receiver.getActor().tell(
-					new UserAction(action, action.getComponent().getApplicationId(), new SimpleRuntimeScope(this)));
+		if (action.getOperation() == Operation.UserAction) {
+			@SuppressWarnings("unchecked")
+			IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE
+					.getIdentity(action.getComponent().getIdentity(), IActorIdentity.class);
+			if (receiver != null) {
+				receiver.getActor().tell(
+						new UserAction(action, action.getComponent().getApplicationId(), new SimpleRuntimeScope(this)));
+			}
 		}
 	}
 

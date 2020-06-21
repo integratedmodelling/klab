@@ -239,6 +239,64 @@ public class ViewBehavior {
 			
 		}
 	}
+	
+	@Action(id = "checkbutton")
+	public static class CheckButton extends KlabWidgetAction {
+
+		public CheckButton(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		public ViewComponent createViewComponent(Scope scope) {
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.CheckButton);
+			message.setName(this.evaluateArgument(0, scope, "Button Text"));
+			message.getAttributes().putAll(getMetadata(arguments, scope));
+			return message;
+		}
+
+		@Override
+		protected Object getFiredResult(ViewAction action) {
+			return DEFAULT_FIRE;
+		}
+
+		@Override
+		public void onMessage(KlabMessage message, Scope scope) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	@Action(id = "radiobutton")
+	public static class RadioButton extends KlabWidgetAction {
+
+		public RadioButton(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		public ViewComponent createViewComponent(Scope scope) {
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.RadioButton);
+			message.setName(this.evaluateArgument(0, scope, "Button Text"));
+			message.getAttributes().putAll(getMetadata(arguments, scope));
+			return message;
+		}
+
+		@Override
+		protected Object getFiredResult(ViewAction action) {
+			return DEFAULT_FIRE;
+		}
+
+		@Override
+		public void onMessage(KlabMessage message, Scope scope) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
 
 	@Action(id = "label")
 	public static class Label extends KlabWidgetAction {
@@ -441,7 +499,12 @@ public class ViewBehavior {
 		/*
 		 * TODO engage the template system to merge with the runtime context
 		 */
-		return MarkdownUtils.INSTANCE.format(StringUtils.stripLeadingWhitespace(template));
+		/*
+		 * FIXME The insertBeginning (which should be more generic) is needed because of a bug in the
+		 * Nebula component. May be bad for the sensible HTML in the explorer?
+		 */
+		template = StringUtils.insertBeginning(StringUtils.stripLeadingWhitespace(template), "&nbsp;");
+		return MarkdownUtils.INSTANCE.format(template);
 	}
 
 	public static Map<String, String> getMetadata(IParameters<String> arguments, Scope scope) {

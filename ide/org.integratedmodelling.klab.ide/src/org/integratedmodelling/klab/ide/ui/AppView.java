@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.nebula.widgets.opal.header.Header;
 import org.eclipse.nebula.widgets.pshelf.PShelf;
 import org.eclipse.nebula.widgets.pshelf.PShelfItem;
+import org.eclipse.nebula.widgets.pshelf.RedmondShelfRenderer;
 import org.eclipse.nebula.widgets.richtext.RichTextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -373,6 +374,15 @@ public class AppView extends Composite {
 
 		switch (component.getType()) {
 		case CheckButton:
+			Button checkbutton = new Button(parent, SWT.CHECK);
+			checkbutton.setText(component.getName() == null ? "Button" : component.getName());
+			checkbutton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.ViewAction,
+							new ViewAction(component, checkbutton.getSelection()));
+				}
+			});
 			break;
 		case Combo:
 			break;
@@ -405,7 +415,15 @@ public class AppView extends Composite {
 			button.setLayoutData(getGridData(component, SWT.LEFT, SWT.TOP, false, false, defaults));
 			break;
 		case RadioButton:
-			break;
+			Button radiobutton = new Button(parent, SWT.RADIO);
+			radiobutton.setText(component.getName() == null ? "Button" : component.getName());
+			radiobutton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.ViewAction,
+							new ViewAction(component, radiobutton.getSelection()));
+				}
+			});			break;
 		case TextInput:
 			Text text = new Text(parent, SWT.BORDER);
 			text.setLayoutData(getGridData(component, SWT.FILL, SWT.TOP, true, false, defaults));
@@ -421,7 +439,7 @@ public class AppView extends Composite {
 			});
 			break;
 		case Tree:
-			TreeViewer viewer = new TreeViewer(parent, SWT.CHECK);
+			TreeViewer viewer = new TreeViewer(parent, getSWTFlags(component));
 			viewers.put(component.getId(), viewer);
 			viewer.getTree().setLayoutData(getGridData(component, SWT.FILL, SWT.FILL, true, false, defaults));
 			viewer.setLabelProvider(new TreeLabelProvider());
@@ -447,6 +465,65 @@ public class AppView extends Composite {
 			break;
 		}
 
+	}
+
+	private int getSWTFlags(ViewComponent component) {
+
+		int ret = SWT.NONE;
+		switch (component.getType()) {
+		case Alert:
+			break;
+		case CheckButton:
+			break;
+		case Combo:
+			break;
+		case Confirm:
+			break;
+		case Container:
+			break;
+		case Group:
+			break;
+		case Label:
+			break;
+		case Map:
+			break;
+		case MultiContainer:
+			break;
+		case Notification:
+			break;
+		case Panel:
+			break;
+		case PushButton:
+			break;
+		case RadioButton:
+			break;
+		case Table:
+			break;
+		case Text:
+			break;
+		case TextInput:
+			String border = component.getAttributes().get("border");
+			if (border == null) {
+				// default
+				ret |= SWT.BORDER;
+			}
+			break;
+		case Tree:
+			if (component.getAttributes().containsKey("check")) {
+				ret |= SWT.CHECK;
+			} else if (component.getAttributes().containsKey("radio")) {
+				ret |= SWT.RADIO;
+			}
+			break;
+		case TreeItem:
+			break;
+		case View:
+			break;
+		default:
+			break;
+		}
+
+		return ret;
 	}
 
 	private Control makeContainer(ViewComponent component, Composite parent, Map<String, String> defaults) {
@@ -491,9 +568,10 @@ public class AppView extends Composite {
 		case Shelf:
 			container = new PShelf(parent, SWT.NONE);
 			((PShelf) container).setLayoutData(getGridData(component, SWT.LEFT, SWT.TOP, false, false, defaults));
+			((PShelf) container).setRenderer(new RedmondShelfRenderer());
 			int n = 1;
 			for (ViewComponent panel : component.getComponents()) {
-				PShelfItem item = new PShelfItem((PShelf)container, SWT.NONE);
+				PShelfItem item = new PShelfItem((PShelf) container, SWT.NONE);
 				item.getBody().setLayout(new GridLayout(1, false));
 				item.setText(panel.getName() == null ? ("Panel " + n) : panel.getName());
 				makeComponent(panel, item.getBody(), defaults);

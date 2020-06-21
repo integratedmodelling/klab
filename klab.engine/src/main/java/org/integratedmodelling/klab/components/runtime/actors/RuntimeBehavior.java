@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 
@@ -63,6 +64,42 @@ public class RuntimeBehavior {
 				}
 			}
 
+		}
+	}
+
+	@Action(id = "new", fires = Type.ANYVALUE, description = "Create a new actor with the specified behavior. Use a tag to name it for later referral.")
+	public static class New extends KlabAction implements KlabAction.Actor {
+
+		public New(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(KlabActor.Scope scope) {
+			List<Object> args = new ArrayList<>();
+			for (Object arg : arguments.values()) {
+				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+			}
+//			scope.runtimeScope.getMonitor().error(args.toArray());
+		}
+
+		@Override
+		public String getName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setName(String name) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onMessage(KlabMessage message, Scope scope) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 

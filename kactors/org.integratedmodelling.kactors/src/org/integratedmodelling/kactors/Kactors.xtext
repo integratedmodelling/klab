@@ -162,7 +162,6 @@ Value:
 	quantity=Quantity
 	;
 
-
 ValueWithMetadata returns Value:
 	(tree=Tree |
 	 argvalue=ARGVALUE |

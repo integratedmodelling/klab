@@ -322,10 +322,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private Object getActionValue(ViewAction action) {
 		if (action.getStringValue() != null) {
 			return action.getStringValue();
-		} else if (action.getListValue() != null) {
-			return action.getListValue();
-		} else if (action.getMapValue() != null) {
-			return action.getMapValue();
 		} else if (action.getDateValue() != null) {
 			return action.getDoubleValue();
 		} else if (action.getIntValue() != null) {
