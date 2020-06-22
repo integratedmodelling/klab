@@ -12,9 +12,10 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ISession.ObservationListener;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope.ObservationListener;
 import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
@@ -108,18 +109,24 @@ public class ObjectBehavior {
 
 		@Override
 		void run(KlabActor.Scope scope) {
-			this.listener = scope.runtimeScope.addListener(new ObservationListener() {
+			this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
+					.addObservationListener(new ISession.ObservationListener() {
 				@Override
-				public void newObservation(IObservation observation) {
+				public void newObservation(IObservation observation, ISubject context) {
 					// TODO filter if a filter was configured
 					fire(observation, false);
+				}
+
+				@Override
+				public void newContext(ISubject context) {
 				}
 			});
 		}
 
 		@Override
-		void dispose() {
-			scope.runtimeScope.removeListener(this.listener);
+		public void dispose() {
+			scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
+			.removeObservationListener(this.listener);
 		}
 	}
 

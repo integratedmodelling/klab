@@ -101,6 +101,13 @@ public abstract class KlabAction {
 		this.callId = callId;
 	}
 
+	/**
+	 * Called at actor shutdown
+	 */
+	protected void dispose() {
+		
+	}
+	
 	public void fire(Object value, boolean isFinal) {
 		if (scope.listenerId != null) {
 			this.sender.tell(new Fire(scope.listenerId, value, isFinal, scope.appId));
@@ -125,14 +132,6 @@ public abstract class KlabAction {
 	protected void error(String message) {
 		// TODO actor-specific error management
 		scope.runtimeScope.getMonitor().error(message);
-	}
-
-	/**
-	 * TODO call this - used to remove listeners etc. when an action has finished
-	 * running and nothing should be fired.
-	 */
-	void dispose() {
-
 	}
 
 	protected Object evaluateInContext(KActorsValue arg, Scope scope) {

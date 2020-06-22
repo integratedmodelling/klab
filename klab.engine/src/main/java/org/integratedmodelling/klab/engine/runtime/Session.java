@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -188,6 +189,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	ActorRef<KlabMessage> actor;
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
 	private View view;
+	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
+
 
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
@@ -544,6 +547,22 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			}
 		}
 		return false;
+	}
+	
+	public Collection<ObservationListener> getObservationListeners() {
+		return observationListeners.values();
+	}
+	
+	@Override
+	public String addObservationListener(ISession.ObservationListener listener) {
+		String ret = NameGenerator.newName();
+		observationListeners.put(ret, listener);
+		return ret;
+	}
+
+	@Override
+	public void removeObservationListener(String listenerId) {
+		observationListeners.remove(listenerId);
 	}
 
 	/**

@@ -12,11 +12,15 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ISession.ObservationListener;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
 import akka.actor.typed.ActorRef;
 
@@ -43,8 +47,11 @@ public class RuntimeBehavior {
 	/**
 	 * Set the root context
 	 */
-	@Action(id = "context", fires = Type.OBSERVATION)
+	@Action(id = "context", fires = Type.OBSERVATION, description = "Used with a URN as parameter, creates the context from an observe statement. If used without parameters, fire the observation when a new context is established")
 	public static class Observe extends KlabAction {
+
+		String listenerId = null;
+		IRuntimeScope lsc = null;
 
 		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -54,16 +61,41 @@ public class RuntimeBehavior {
 		@Override
 		void run(KlabActor.Scope scope) {
 
-			Object arg = evaluateArgument(0, scope);
-			if (arg instanceof Urn) {
-				try {
-					Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
-					fire(future.get(), true);
-				} catch (Throwable e) {
-					fail();
+			if (arguments.getUnnamedKeys().isEmpty()) {
+				this.lsc = scope.runtimeScope;
+				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
+						.addObservationListener(new ISession.ObservationListener() {
+							@Override
+							public void newContext(ISubject observation) {
+								if (scope.runtimeScope.getRootSubject().equals(observation)) {
+									fire(observation, false);
+								}
+							}
+
+							@Override
+							public void newObservation(IObservation observation, ISubject context) {
+							}
+						});
+			} else {
+
+				Object arg = evaluateArgument(0, scope);
+				if (arg instanceof Urn) {
+					try {
+						Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
+						fire(future.get(), true);
+					} catch (Throwable e) {
+						fail();
+					}
 				}
 			}
+		}
 
+		@Override
+		public void dispose() {
+			if (this.listenerId == null) {
+				scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
+						.removeObservationListener(this.listenerId);
+			}
 		}
 	}
 
@@ -93,13 +125,13 @@ public class RuntimeBehavior {
 		@Override
 		public void setName(String name) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onMessage(KlabMessage message, Scope scope) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
 

@@ -69,6 +69,15 @@ public interface KactorsFactory extends EFactory
   MessageBody createMessageBody();
 
   /**
+   * Returns a new object of class '<em>Actor Instantiation</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Actor Instantiation</em>'.
+   * @generated
+   */
+  ActorInstantiation createActorInstantiation();
+
+  /**
    * Returns a new object of class '<em>Message Call</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

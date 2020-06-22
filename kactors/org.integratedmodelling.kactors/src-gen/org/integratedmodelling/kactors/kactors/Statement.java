@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getAssignment <em>Assignment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getInstantiation <em>Instantiation</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getText <em>Text</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getMetadata <em>Metadata</em>}</li>
@@ -76,6 +77,28 @@ public interface Statement extends EObject
    * @generated
    */
   void setGroup(StatementGroup value);
+
+  /**
+   * Returns the value of the '<em><b>Instantiation</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Instantiation</em>' containment reference.
+   * @see #setInstantiation(ActorInstantiation)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Instantiation()
+   * @model containment="true"
+   * @generated
+   */
+  ActorInstantiation getInstantiation();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getInstantiation <em>Instantiation</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Instantiation</em>' containment reference.
+   * @see #getInstantiation()
+   * @generated
+   */
+  void setInstantiation(ActorInstantiation value);
 
   /**
    * Returns the value of the '<em><b>Verb</b></em>' containment reference.

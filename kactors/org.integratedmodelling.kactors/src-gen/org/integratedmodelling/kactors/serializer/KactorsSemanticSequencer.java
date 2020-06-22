@@ -15,6 +15,7 @@ import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
 import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Assignment;
@@ -73,6 +74,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 			switch (semanticObject.eClass().getClassifierID()) {
 			case KactorsPackage.ACTIONS:
 				sequence_Actions(context, (Actions) semanticObject); 
+				return; 
+			case KactorsPackage.ACTOR_INSTANTIATION:
+				sequence_ActorInstantiation(context, (ActorInstantiation) semanticObject); 
 				return; 
 			case KactorsPackage.ANNOTATION:
 				sequence_Annotation(context, (Annotation) semanticObject); 
@@ -229,6 +233,18 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     (match=Match | (matches+=Match matches+=Match*) | statement=Statement | statements=StatementList)
 	 */
 	protected void sequence_Actions(ISerializationContext context, Actions semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ActorInstantiation returns ActorInstantiation
+	 *
+	 * Constraint:
+	 *     (behavior=PathName parameters=ParameterList? actions=Actions?)
+	 */
+	protected void sequence_ActorInstantiation(ISerializationContext context, ActorInstantiation semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -738,6 +754,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         (
 	 *             assignment=Assignment | 
 	 *             group=StatementGroup | 
+	 *             instantiation=ActorInstantiation | 
 	 *             verb=MessageCall | 
 	 *             (text=EMBEDDEDTEXT metadata=Metadata?) | 
 	 *             if=IfStatement | 

@@ -14,7 +14,7 @@ import java.util.Map;
 public class ViewAction {
 
 	public enum Operation {
-		UserAction
+		UserAction,
 	}
 
 	/**

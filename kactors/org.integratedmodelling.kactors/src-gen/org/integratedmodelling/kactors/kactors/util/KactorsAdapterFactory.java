@@ -11,6 +11,7 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Assignment;
@@ -139,6 +140,11 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseMessageBody(MessageBody object)
       {
         return createMessageBodyAdapter();
+      }
+      @Override
+      public Adapter caseActorInstantiation(ActorInstantiation object)
+      {
+        return createActorInstantiationAdapter();
       }
       @Override
       public Adapter caseMessageCall(MessageCall object)
@@ -413,6 +419,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createMessageBodyAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.ActorInstantiation <em>Actor Instantiation</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.ActorInstantiation
+   * @generated
+   */
+  public Adapter createActorInstantiationAdapter()
   {
     return null;
   }

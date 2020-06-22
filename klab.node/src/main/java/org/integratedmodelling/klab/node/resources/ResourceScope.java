@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -774,18 +775,6 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public String addListener(ObservationListener listener) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void removeListener(String listenerId) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public Set<String> getWatchedObservationIds() {
 		// TODO Auto-generated method stub
 		return null;
@@ -819,6 +808,12 @@ public class ResourceScope implements IRuntimeScope {
 	public List<String> getNamedKeys() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void notifyListeners(IObservation object) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

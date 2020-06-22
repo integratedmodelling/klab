@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -22,10 +21,10 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
@@ -33,7 +32,6 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.utils.Pair;
-import org.jgrapht.Graph;
 
 /**
  * This API extends {@link IContextualizationScope} to add setters and other
@@ -45,16 +43,6 @@ import org.jgrapht.Graph;
  *
  */
 public interface IRuntimeScope extends IContextualizationScope {
-
-	/**
-	 * These can be installed to be notified of each new observation.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	interface ObservationListener {
-		void newObservation(IObservation observation);
-	}
 
 	/**
 	 * Return any of the observations created within the context of the root
@@ -403,21 +391,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings();
 
-	/**
-	 * Add a listener, return an ID that can be passed later to
-	 * {@link #removeListener(String)} to remove it.
-	 * 
-	 * @param listener
-	 * @return
-	 */
-	public String addListener(ObservationListener listener);
-
-	/**
-	 * Remove a previously installed #{@link ObservationListener}.
-	 * 
-	 * @param listenerId
-	 */
-	public void removeListener(String listenerId);
 
 	/**
 	 * Scopes must maintain a synchronized set of IDs for all observations that are
@@ -445,5 +418,12 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param result
 	 */
 	void swapArtifact(IArtifact ret, IArtifact result);
+
+	/**
+	 * Called by actuators after contextualization is complete for any observation.
+	 * 
+	 * @param object
+	 */
+	void notifyListeners(IObservation object);
 
 }

@@ -255,7 +255,7 @@ public class AppView extends Composite {
 		Composite footer = null;
 		Composite center = null;
 
-		int ncols = 3;
+		int ncols = 1;
 		if (view.getLeftPanels().size() > 0) {
 			ncols++;
 		}
@@ -272,7 +272,7 @@ public class AppView extends Composite {
 		if (view.getHeader() != null) {
 			header = new Composite(ret, SWT.NONE);
 			header.setLayout(gridLayout(view.getHeader().getComponents().size(), false));
-			header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+			header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
 		} else if (view.getLabel() != null && view.getDescription() != null) {
 			final Header description = new Header(ret, SWT.NONE);
 			description.setTitle(view.getLabel());
@@ -285,18 +285,13 @@ public class AppView extends Composite {
 			}
 			description.setImage(logo);
 			description.setDescription(view.getDescription());
-			description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, ncols, 1));
 		}
 
 		center = new Composite(ret, SWT.NONE);
 		center.setLayout(gridLayout(ncols, false));
 		center.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		if (view.getFooter() != null) {
-			footer = new Composite(ret, SWT.NONE);
-			footer.setLayout(gridLayout(view.getFooter().getComponents().size(), false));
-			footer.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
-		}
 
 		Composite leftArea = null;
 		Composite rightArea = null;
@@ -307,14 +302,22 @@ public class AppView extends Composite {
 			leftArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 		}
 
-		centerArea = makePanel(view.getPanels(), center);
-		centerArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 3, 1));
-
+		if (view.getPanels().size() > 0) {
+			centerArea = makePanel(view.getPanels(), center);
+			centerArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+		}
+		
 		if (view.getRightPanels().size() > 0) {
 			rightArea = makePanel(view.getRightPanels(), center);
 			rightArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 		}
 
+		if (view.getFooter() != null) {
+			footer = new Composite(ret, SWT.NONE);
+			footer.setLayout(gridLayout(view.getFooter().getComponents().size(), false));
+			footer.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+		}
+		
 		return ret;
 	}
 
@@ -423,7 +426,8 @@ public class AppView extends Composite {
 					Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.ViewAction,
 							new ViewAction(component, radiobutton.getSelection()));
 				}
-			});			break;
+			});
+			break;
 		case TextInput:
 			Text text = new Text(parent, SWT.BORDER);
 			text.setLayoutData(getGridData(component, SWT.FILL, SWT.TOP, true, false, defaults));

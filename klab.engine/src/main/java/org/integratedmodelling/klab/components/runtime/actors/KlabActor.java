@@ -276,6 +276,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected KlabActor onPostStop() {
+		
+		/*
+		 * this may intercept listeners
+		 */
+		for (KlabAction action : actionCache.values()) {
+			action.dispose();
+		}
+		
 		// TODO deactivate the underlying observation, send changes
 		return this;
 	}

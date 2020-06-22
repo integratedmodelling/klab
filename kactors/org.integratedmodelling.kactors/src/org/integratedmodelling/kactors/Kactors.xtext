@@ -60,6 +60,10 @@ ArgumentDeclaration: {ArgumentDeclaration}
  */
 MessageBody: {MessageBody} lists+=StatementList*;
 
+ActorInstantiation:
+	'new' behavior=PathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)?
+;
+
 MessageCall:
 	(name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 ;
@@ -82,6 +86,7 @@ StatementList:
 Statement:
 	(assignment=Assignment |
 	 group=StatementGroup |
+	 instantiation=ActorInstantiation |
 	 verb=MessageCall |
 	 text=EMBEDDEDTEXT (metadata=Metadata)? |
 	 if=IfStatement |

@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Assignment;
@@ -113,6 +114,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.DEFINITION: return createDefinition();
       case KactorsPackage.ARGUMENT_DECLARATION: return createArgumentDeclaration();
       case KactorsPackage.MESSAGE_BODY: return createMessageBody();
+      case KactorsPackage.ACTOR_INSTANTIATION: return createActorInstantiation();
       case KactorsPackage.MESSAGE_CALL: return createMessageCall();
       case KactorsPackage.STATEMENT_GROUP: return createStatementGroup();
       case KactorsPackage.METADATA: return createMetadata();
@@ -246,6 +248,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     MessageBodyImpl messageBody = new MessageBodyImpl();
     return messageBody;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ActorInstantiation createActorInstantiation()
+  {
+    ActorInstantiationImpl actorInstantiation = new ActorInstantiationImpl();
+    return actorInstantiation;
   }
 
   /**

@@ -60,6 +60,19 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public interface ISession extends IEngineSessionIdentity, Closeable {
 
 	/**
+	 * These can be installed to be notified of each new observation.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface ObservationListener {
+	
+		void newObservation(IObservation observation, ISubject context);
+	
+		void newContext(ISubject context);
+	}
+
+	/**
 	 * The observation action called on ISession always creates a new root subject.
 	 * The URN must specify a
 	 * {@link org.integratedmodelling.klab.api.model.IObserver} unless
@@ -133,5 +146,9 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 * @return true if the human has set the session to interactive.
 	 */
 	boolean isInteractive();
+
+	String addObservationListener(ObservationListener listener);
+
+	void removeObservationListener(String listenerId);
 
 }

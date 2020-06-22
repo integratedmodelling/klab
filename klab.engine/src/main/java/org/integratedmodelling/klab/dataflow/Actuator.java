@@ -633,7 +633,10 @@ public class Actuator implements IActuator {
 
 			if (this.model != null && ret instanceof Observation) {
 				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
-			}
+				/*
+				 * tell the scope to notify internal listeners (for actors and the like)
+				 */
+				ctx.notifyListeners((IObservation)ret);			}
 
 		} else if (contextualizer instanceof IResolver) {
 
@@ -715,6 +718,11 @@ public class Actuator implements IActuator {
 											IMessage.Type.ModifiedObservation, change));
 						}
 					}
+					
+					/*
+					 * tell the scope to notify internal listeners (for actors and the like)
+					 */
+					ctx.notifyListeners((IObservation)object);
 
 					/*
 					 * notify end of contextualization if we're subscribed to the parent

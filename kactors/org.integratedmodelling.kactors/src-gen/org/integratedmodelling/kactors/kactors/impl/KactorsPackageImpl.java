@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Assignment;
@@ -96,6 +97,13 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass messageBodyEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass actorInstantiationEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -854,6 +862,50 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EClass getActorInstantiation()
+  {
+    return actorInstantiationEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getActorInstantiation_Behavior()
+  {
+    return (EAttribute)actorInstantiationEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getActorInstantiation_Parameters()
+  {
+    return (EReference)actorInstantiationEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getActorInstantiation_Actions()
+  {
+    return (EReference)actorInstantiationEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getMessageCall()
   {
     return messageCallEClass;
@@ -1074,7 +1126,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Verb()
+  public EReference getStatement_Instantiation()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(2);
   }
@@ -1085,9 +1137,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getStatement_Verb()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getStatement_Text()
   {
-    return (EAttribute)statementEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)statementEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1098,7 +1161,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getStatement_Metadata()
   {
-    return (EReference)statementEClass.getEStructuralFeatures().get(4);
+    return (EReference)statementEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -1109,7 +1172,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getStatement_If()
   {
-    return (EReference)statementEClass.getEStructuralFeatures().get(5);
+    return (EReference)statementEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -1120,7 +1183,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getStatement_While()
   {
-    return (EReference)statementEClass.getEStructuralFeatures().get(6);
+    return (EReference)statementEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1131,7 +1194,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getStatement_Do()
   {
-    return (EReference)statementEClass.getEStructuralFeatures().get(7);
+    return (EReference)statementEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -1142,7 +1205,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getStatement_For()
   {
-    return (EReference)statementEClass.getEStructuralFeatures().get(8);
+    return (EReference)statementEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -1153,7 +1216,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getStatement_Value()
   {
-    return (EReference)statementEClass.getEStructuralFeatures().get(9);
+    return (EReference)statementEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -1164,7 +1227,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getStatement_Tag()
   {
-    return (EAttribute)statementEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)statementEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -3090,6 +3153,11 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     messageBodyEClass = createEClass(MESSAGE_BODY);
     createEReference(messageBodyEClass, MESSAGE_BODY__LISTS);
 
+    actorInstantiationEClass = createEClass(ACTOR_INSTANTIATION);
+    createEAttribute(actorInstantiationEClass, ACTOR_INSTANTIATION__BEHAVIOR);
+    createEReference(actorInstantiationEClass, ACTOR_INSTANTIATION__PARAMETERS);
+    createEReference(actorInstantiationEClass, ACTOR_INSTANTIATION__ACTIONS);
+
     messageCallEClass = createEClass(MESSAGE_CALL);
     createEAttribute(messageCallEClass, MESSAGE_CALL__NAME);
     createEReference(messageCallEClass, MESSAGE_CALL__PARAMETERS);
@@ -3115,6 +3183,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     statementEClass = createEClass(STATEMENT);
     createEReference(statementEClass, STATEMENT__ASSIGNMENT);
     createEReference(statementEClass, STATEMENT__GROUP);
+    createEReference(statementEClass, STATEMENT__INSTANTIATION);
     createEReference(statementEClass, STATEMENT__VERB);
     createEAttribute(statementEClass, STATEMENT__TEXT);
     createEReference(statementEClass, STATEMENT__METADATA);
@@ -3401,6 +3470,11 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEClass(messageBodyEClass, MessageBody.class, "MessageBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getMessageBody_Lists(), this.getStatementList(), null, "lists", null, 0, -1, MessageBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+    initEClass(actorInstantiationEClass, ActorInstantiation.class, "ActorInstantiation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getActorInstantiation_Behavior(), ecorePackage.getEString(), "behavior", null, 0, 1, ActorInstantiation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActorInstantiation_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, ActorInstantiation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActorInstantiation_Actions(), this.getActions(), null, "actions", null, 0, 1, ActorInstantiation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(messageCallEClass, MessageCall.class, "MessageCall", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMessageCall_Name(), ecorePackage.getEString(), "name", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMessageCall_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3426,6 +3500,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatement_Assignment(), this.getAssignment(), null, "assignment", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Group(), this.getStatementGroup(), null, "group", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_Instantiation(), this.getActorInstantiation(), null, "instantiation", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Verb(), this.getMessageCall(), null, "verb", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStatement_Text(), ecorePackage.getEString(), "text", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

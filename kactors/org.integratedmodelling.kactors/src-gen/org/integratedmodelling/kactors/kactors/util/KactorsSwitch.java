@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
 
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Assignment;
@@ -145,6 +146,13 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         MessageBody messageBody = (MessageBody)theEObject;
         T result = caseMessageBody(messageBody);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.ACTOR_INSTANTIATION:
+      {
+        ActorInstantiation actorInstantiation = (ActorInstantiation)theEObject;
+        T result = caseActorInstantiation(actorInstantiation);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -480,6 +488,22 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseMessageBody(MessageBody object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Actor Instantiation</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Actor Instantiation</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseActorInstantiation(ActorInstantiation object)
   {
     return null;
   }
