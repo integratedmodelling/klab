@@ -62,6 +62,7 @@ import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
+import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.Pair;
@@ -490,6 +491,11 @@ public class KlabSession extends KlabPeer {
 
 	@MessageHandler(type = Type.CreateViewComponent)
 	public void handleCreateComponent(IMessage message, ViewComponent component) {
+		send(message);
+	}
+	
+	@MessageHandler(type = Type.ViewAction)
+	public void handleViewAction(IMessage message, ViewAction component) {
 		send(message);
 	}
 

@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KAc
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewAction.Operation;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
@@ -151,9 +152,18 @@ public class ViewBehavior {
 
 			if (message instanceof KActorsMessage) {
 
-				KActorsMessage mess = (KActorsMessage)message;
-				
-				ViewAction action = getResponse(mess, scope);
+				KActorsMessage mess = (KActorsMessage) message;
+				ViewAction action = null;
+				switch (mess.message) {
+				case "disable":
+					action = new ViewAction(Operation.Enable, false);
+				case "enable":
+					action = new ViewAction(Operation.Enable, true);
+				default:
+					action = getResponse(mess, scope);
+				}
+				action.setApplicationId(mess.appId);
+				action.setData(getMetadata(mess.arguments, scope));
 				action.setComponentTag(this.getName());
 				session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
 			}
@@ -352,6 +362,10 @@ public class ViewBehavior {
 		@Override
 		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
 			ViewAction ret = new ViewAction();
+			if ("update".equals(message.message)) {
+				ret.setOperation(Operation.Update);
+				ret.setStringValue(getDefaultAsString(message.arguments, this, scope));
+			}
 			return ret;
 		}
 
@@ -520,6 +534,22 @@ public class ViewBehavior {
 			ret.getLinks().add(new Pair<>(ids.get(graph.getEdgeSource(edge)), ids.get(graph.getEdgeTarget(edge))));
 		}
 		ret.setRootId(rootId);
+		return ret;
+	}
+
+	public static String getDefaultAsString(IParameters<String> arguments, KlabAction action, Scope scope) {
+		String ret = "";
+		if (arguments.getUnnamedKeys().size() > 0) {
+			Object a = arguments.get(arguments.getUnnamedKeys().iterator().next());
+			if (a != null) {
+				if (a instanceof KActorsValue) {
+					a = action.evaluateInContext((KActorsValue)a, scope);
+				}
+				if (a != null) {
+					ret = a.toString();
+				}
+			}
+		}
 		return ret;
 	}
 

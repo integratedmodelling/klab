@@ -32,7 +32,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -77,6 +76,7 @@ public class AppView extends Composite {
 	private Layout currentLayout;
 	private Map<String, ViewComponent> components = new HashMap<>();
 	private Map<String, StructuredViewer> viewers = new HashMap<>();
+	private Map<String, Control> reactors = new HashMap<>();
 
 	private static Set<ViewComponent.Type> containerTypes;
 
@@ -321,7 +321,7 @@ public class AppView extends Composite {
 				footer.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -390,6 +390,9 @@ public class AppView extends Composite {
 							new ViewAction(component, checkbutton.getSelection()));
 				}
 			});
+			if (getTag(component) != null) {
+				reactors.put(getTag(component), checkbutton);
+			}
 			break;
 		case Combo:
 			break;
@@ -408,6 +411,9 @@ public class AppView extends Composite {
 			Label label = new Label(parent, SWT.NONE);
 			label.setText(component.getContent());
 			label.setLayoutData(getGridData(component, SWT.LEFT, SWT.CENTER, false, false, defaults));
+			if (getTag(component) != null) {
+				reactors.put(getTag(component), label);
+			}
 			break;
 		case PushButton:
 			Button button = new Button(parent, SWT.NONE);
@@ -419,6 +425,9 @@ public class AppView extends Composite {
 							new ViewAction(component));
 				}
 			});
+			if (getTag(component) != null) {
+				reactors.put(getTag(component), button);
+			}
 			button.setLayoutData(getGridData(component, SWT.LEFT, SWT.TOP, false, false, defaults));
 			break;
 		case RadioButton:
@@ -431,6 +440,9 @@ public class AppView extends Composite {
 							new ViewAction(component, radiobutton.getSelection()));
 				}
 			});
+			if (getTag(component) != null) {
+				reactors.put(getTag(component), radiobutton);
+			}
 			break;
 		case TextInput:
 			Text text = new Text(parent, SWT.BORDER);
@@ -445,6 +457,9 @@ public class AppView extends Composite {
 							new ViewAction(component, text.getText()));
 				}
 			});
+			if (getTag(component) != null) {
+				reactors.put(getTag(component), text);
+			}
 			break;
 		case Tree:
 			TreeViewer viewer = new TreeViewer(parent, getSWTFlags(component));
@@ -456,6 +471,9 @@ public class AppView extends Composite {
 			viewer.setLabelProvider(new TreeLabelProvider());
 			// TODO add needed listeners based on metadata and options
 			viewer.setInput(tree);
+			if (getTag(component) != null) {
+				reactors.put(getTag(component), viewer.getTree());
+			}
 			break;
 		case Table:
 			break;
@@ -463,6 +481,9 @@ public class AppView extends Composite {
 			RichTextViewer textViewer = new RichTextViewer(parent, SWT.WRAP);
 			textViewer.setText(component.getContent());
 			textViewer.setLayoutData(getGridData(component, SWT.FILL, SWT.CENTER, true, false, defaults));
+			if (getTag(component) != null) {
+				reactors.put(getTag(component), textViewer);
+			}
 			break;
 		case TreeItem:
 			break;
@@ -473,6 +494,10 @@ public class AppView extends Composite {
 			break;
 		}
 
+	}
+
+	private String getTag(ViewComponent component) {
+		return component.getAttributes().get("tag");
 	}
 
 	private int getSWTFlags(ViewComponent component) {
@@ -822,6 +847,7 @@ public class AppView extends Composite {
 		this.currentLayout = layout;
 		this.containers.clear();
 		this.components.clear();
+		this.reactors.clear();
 
 		Display.getDefault().asyncExec(() -> {
 			refreshView();
@@ -867,6 +893,41 @@ public class AppView extends Composite {
 //		widget.getData().put(MESSAGE_ID_KEY, message.getId());
 //		this.widgets.add(widget);
 //		Display.getDefault().asyncExec(() -> refresh());
+	}
+
+	public void updateWidget(ViewAction component) {
+		Control control = reactors.get(component.getComponentTag());
+		if (control != null) {
+			switch (component.getOperation()) {
+			case Enable:
+				control.setEnabled(component.isBooleanValue());
+				break;
+			case Hide:
+				control.setVisible(!component.isBooleanValue());
+				break;
+			case Update:
+				if (control instanceof Label) {
+					// TODO images
+					if (component.getStringValue() != null) {
+						((Label)control).setText(component.getStringValue());
+					}
+				}
+				if (control instanceof Text) {
+					if (component.getStringValue() != null) {
+						((Text)control).setText(component.getStringValue());
+					}
+				}
+				if (component.getData() != null) {
+					// TODO update from metadata: colors, borders, fonts etc
+				}
+				break;
+			case UserAction:
+				break;
+			default:
+				break;
+
+			}
+		}
 	}
 
 }

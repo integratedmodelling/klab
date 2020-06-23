@@ -16,6 +16,7 @@ public class ViewAction {
 	public enum Operation {
 		UserAction,
 		Enable, // true/false
+		Hide, // true/false
 		Update  // according to type; data may also contain new attribute values
 	}
 
@@ -30,7 +31,7 @@ public class ViewAction {
 	 * operation
 	 */
 	private String componentTag;
-
+	private String applicationId;
 	private Boolean booleanValue = null;
 	private Double doubleValue = null;
 	private Integer intValue = null;
@@ -54,6 +55,11 @@ public class ViewAction {
 	public ViewAction(ViewComponent component, boolean value) {
 		this.component = component;
 		this.booleanValue = value;
+	}
+
+	public ViewAction(Operation operation, boolean b) {
+		this.operation = operation;
+		this.booleanValue = b;
 	}
 
 	public Boolean isBooleanValue() {
@@ -127,5 +133,22 @@ public class ViewAction {
 	public void setOperation(Operation operation) {
 		this.operation = operation;
 	}
+
+	public String getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(String applicationId) {
+		this.applicationId = applicationId;
+	}
+
+	@Override
+	public String toString() {
+		return "ViewAction [componentTag=" + componentTag + ", booleanValue=" + booleanValue + ", doubleValue="
+				+ doubleValue + ", intValue=" + intValue + ", stringValue=" + stringValue + ", dateValue=" + dateValue
+				+ ", data=" + data + ", operation=" + operation + "]";
+	}
+	
+	
 
 }

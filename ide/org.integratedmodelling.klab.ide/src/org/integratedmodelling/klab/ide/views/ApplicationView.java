@@ -17,17 +17,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
-import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.ui.AppView;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
+import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 
@@ -200,6 +199,9 @@ public class ApplicationView extends ViewPart {
 		case CreateViewComponent:
 			addWidget(message);
 			break;
+		case ViewAction:
+			Display.getDefault().asyncExec(() -> updateWidget(message));
+			break;
 		default:
 			break;
 
@@ -226,6 +228,20 @@ public class ApplicationView extends ViewPart {
 					&& component.getApplicationId().equals(layout.getApplicationId())) {
 				tabFolder.setSelection(tab);
 				Display.getDefault().asyncExec(() -> apps.get(behavior).addWidget(message));
+				break;
+			}
+		}
+	}
+	
+	private void updateWidget(IMessage message) {
+		ViewAction component = message.getPayload(ViewAction.class);
+		for (String behavior : tabs.keySet()) {
+			CTabItem tab = tabs.get(behavior);
+			Layout layout = (Layout) tab.getData();
+			if (component.getApplicationId() != null
+					&& component.getApplicationId().equals(layout.getApplicationId())) {
+				tabFolder.setSelection(tab);
+				Display.getDefault().asyncExec(() -> apps.get(behavior).updateWidget(component));
 				break;
 			}
 		}
