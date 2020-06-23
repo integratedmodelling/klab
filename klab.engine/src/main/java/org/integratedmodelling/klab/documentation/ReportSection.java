@@ -218,7 +218,11 @@ public class ReportSection extends Parameters<String> implements Section {
 
         // TODO Auto-generated method stub
         if (item instanceof Classifier) {
-            return ((Classifier)item).getSourceCode();
+        	Classifier i = (Classifier)item;
+        	if (i.isUniversal()) {
+        		return "\\*";
+        	}
+        	return i.getSourceCode();
         }
         return item.toString();
         

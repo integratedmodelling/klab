@@ -5,6 +5,9 @@
   .q-layout-page-container.q-layout-transition {
   	padding: 0 !important;
   }
+  #mc-report-content table td {
+    word-break: break-all;
+  }
   #mc-report-content {
     display: block !important;
     position: relative !important;
@@ -75,4 +78,7 @@
 #mc-report-content h6 {
   font-size: 1.1em;
   margin: 0.1em 0;
+}
+#mc-report-content table {
+  border-spacing: 10px 5px;
 }
